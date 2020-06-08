@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -8,35 +8,34 @@
  */
 
 (function() {
-  var PrintCashUp = function() {
-    var terminal = OB.MobileApp.model.get('terminal');
-    this.templatecashup = new OB.DS.HWResource(
+  const PrintCloseCash = function() {
+    const terminal = OB.MobileApp.model.get('terminal');
+    this.templateCloseCash = new OB.DS.HWResource(
       terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate
     );
-    this.cancelOrDismiss = function() {
+    this.cancelOrDismiss = () => {
       OB.POS.navigate('retail.pointofsale');
       OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
     };
     this.isRetry = false;
   };
 
-  PrintCashUp.prototype.print = function(report, sumary, closed, callback) {
-    var me = this;
+  PrintCloseCash.prototype.print = function(report, sumary, closed, callback) {
     // callbacks definition
-    var successfunc = function() {
-      var printCashUp = new OB.OBPOSCashUp.Print.CashUp();
-      printCashUp.isRetry = true;
-      printCashUp.print(report, sumary, closed, me.cancelOrDismiss);
+    const successfunc = () => {
+      const printCloseCash = new OB.PrintCloseCash.Print.CloseCash();
+      printCloseCash.isRetry = true;
+      printCloseCash.print(report, sumary, closed, this.cancelOrDismiss);
       return true;
     };
-    var cancelfunc = function() {
-      me.cancelOrDismiss();
+    const cancelfunc = () => {
+      this.cancelOrDismiss();
       return true;
     };
-    var printProcess = function() {
+    const printProcess = () => {
       OB.POS.hwserver.cleanDisplay();
       OB.POS.hwserver.print(
-        me.templatecashup,
+        this.templateCloseCash,
         {
           cashup: {
             closed: closed,
@@ -44,7 +43,7 @@
             summary: sumary
           }
         },
-        function(result) {
+        result => {
           if (result && result.exception) {
             OB.OBPOS.showSelectPrinterDialog(
               successfunc,
@@ -67,7 +66,7 @@
         cancelfunc,
         cancelfunc,
         false,
-        me.isRetry
+        this.isRetry
       );
     } else {
       printProcess();
@@ -75,8 +74,8 @@
   };
 
   // Public object definition
-  OB.OBPOSCashUp = OB.OBPOSCashUp || {};
-  OB.OBPOSCashUp.Print = OB.OBPOSCashUp.Print || {};
+  OB.OBPOSCloseCash = OB.OBPOSCloseCash || {};
+  OB.OBPOSCloseCash.Print = OB.OBPOSCloseCash.Print || {};
 
-  OB.OBPOSCashUp.Print.CashUp = PrintCashUp;
+  OB.OBPOSCloseCash.Print.CloseCash = PrintCloseCash;
 })();

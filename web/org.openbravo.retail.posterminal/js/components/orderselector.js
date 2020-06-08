@@ -647,15 +647,24 @@ enyo.kind({
       obposPrepaymentlimitamt,
       payment;
 
-    const isInvoiceCreated = order => {
-      if (order.bp.invoiceTerms === 'O') {
+    const isInvoiceCreated = (order, orderLines) => {
+      let invoiceCreated = false;
+      if (order.invoiceTerms === 'O') {
         // After Order Delivered -> invoice will be generated if full order is delivered
-        return !order.lines.find(line => line.qtyPending !== line.toPrepare);
-      } else if (order.bp.invoiceTerms === 'D') {
+        invoiceCreated = !orderLines.find(
+          line => line.qtyPending !== line.toPrepare
+        );
+      } else if (order.invoiceTerms === 'D') {
         // After Delivery -> invoice will be generated for delivered lines
-        return true;
+        invoiceCreated = true;
       }
-      return false;
+
+      if (invoiceCreated && !order.bp.taxID) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+        return false;
+      }
+
+      return invoiceCreated;
     };
 
     function continueExecution(model) {
@@ -855,6 +864,7 @@ enyo.kind({
                     printDate: OB.I18N.formatDate(new Date()),
                     headerDescription: line.headerDescription,
                     orderTotal: line.orderTotal,
+                    invoiceTerms: line.invoiceTerms,
                     lines: [],
                     order: null
                   };
@@ -876,8 +886,16 @@ enyo.kind({
                 }
               });
 
-              groupedLinesToPrepare.forEach(async order => {
-                if (isInvoiceCreated(order)) {
+              Object.keys(
+                _.groupBy(groupedLinesToPrepare, l => l.order)
+              ).forEach(async key => {
+                const order = _.last(
+                  groupedLinesToPrepare.filter(l => l.order === key)
+                );
+                const orderLines = groupedLinesToPrepare
+                  .filter(l => l.order === key)
+                  .flatMap(l => l.lines);
+                if (isInvoiceCreated(order, orderLines)) {
                   const {
                     sequenceName,
                     sequenceNumber,
@@ -907,12 +925,21 @@ enyo.kind({
                         orders: groupedLinesToPrepare
                       },
                       function(data) {
-                        var message;
                         if (data && data.exception) {
-                          message = data.exception.status.errorMessage;
+                          if (data.exception.inSender !== 'timeout') {
+                            groupedLinesToPrepare.forEach(async order => {
+                              if (order.invoiceDocumentNo) {
+                                await OB.App.State.DocumentSequence.decreaseSequence(
+                                  {
+                                    sequenceName: 'fullinvoiceslastassignednum'
+                                  }
+                                );
+                              }
+                            });
+                          }
                           OB.UTIL.showConfirmation.display(
                             OB.I18N.getLabel('OBMOBC_Error'),
-                            message,
+                            data.exception.status.errorMessage,
                             [
                               {
                                 label: OB.I18N.getLabel('OBMOBC_LblOk'),
@@ -1095,7 +1122,7 @@ enyo.kind({
               obposPrepaymentamt: iter.obposPrepaymentamt,
               obposPrepaymentlimitamt: iter.obposPrepaymentlimitamt,
               payment: iter.payment,
-              invoiceTerms: iter.bpInvoiceTerms
+              taxID: iter.bpTaxID
             };
             order = new OB.Model.OBRDM_OrderToSelectorIssue({
               id: iter.orderId,
@@ -1186,7 +1213,7 @@ enyo.kind({
               OB.MobileApp.model.get('OBRDM_storeDocumentTypes'),
               'id'
             ),
-            _limit: OB.Model.OrderToIssue.prototype.dataLimit,
+            _limit: OB.Dal.REMOTE_DATALIMIT,
             remoteFilters: filters,
             orderby: inEvent.advanced
               ? inEvent.orderby

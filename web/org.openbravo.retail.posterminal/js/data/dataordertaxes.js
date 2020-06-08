@@ -24,67 +24,31 @@
 
   const regenerateTaxes = function(receipt) {
     const value = _.map(receipt.get('lines').models, function(line) {
-      var discAmt,
-        lineObj = {};
+      const taxes = {};
       _.forEach(line.get('taxes'), function(tax) {
-        lineObj[tax.taxId] = {
+        taxes[tax.taxId] = {
           amount: tax.taxAmount,
           name: tax.identifier,
           net: tax.taxableAmount,
           rate: tax.taxRate
         };
-        line.set(
-          {
-            taxLines: lineObj,
-            taxAmount: OB.DEC.add(line.get('taxAmount') || 0, tax.taxAmount)
-          },
-          {
-            silent: true
-          }
-        );
       });
-      discAmt = line.get('promotions').reduce(function(memo, disc) {
-        return OB.DEC.add(memo, disc.actualAmt || disc.amt || 0);
-      }, 0);
-      line.set(
-        {
-          net: receipt.get('priceIncludesTax')
-            ? line.get('linenetamount')
-            : line.get('net')
-        },
-        {
-          silent: true
-        }
-      );
-      if (receipt.get('priceIncludesTax')) {
-        line.set(
-          {
-            discountedNet: line.get('net'),
-            discountedLinePrice: OB.DEC.add(
-              line.get('net'),
-              line.get('taxAmount')
-            )
-          },
-          {
-            silent: true
-          }
-        );
-      } else {
-        line.set(
-          {
-            gross: OB.DEC.add(line.get('net'), line.get('taxAmount')),
-            discountedNet: OB.DEC.sub(line.get('net'), discAmt),
-            discountedNetPrice: OB.DEC.sub(line.get('net'), discAmt),
-            discountedGross: OB.DEC.add(
-              OB.DEC.sub(line.get('net'), discAmt),
-              line.get('taxAmount')
-            )
-          },
-          {
-            silent: true
-          }
-        );
-      }
+
+      const taxAmount = getTaxAmount(taxes);
+      setLineTaxes(receipt, line, {
+        grossUnitAmount: OB.DEC.mul(
+          line.get('grossUnitPrice'),
+          line.get('qty')
+        ),
+        netUnitAmount: OB.DEC.sub(
+          OB.DEC.mul(line.get('grossUnitPrice'), line.get('qty')),
+          taxAmount
+        ),
+        grossUnitPrice: line.get('grossUnitPrice'),
+        netUnitPrice: OB.DEC.sub(line.get('grossUnitPrice'), taxAmount),
+        taxes,
+        taxAmount
+      });
     });
 
     if (value.length !== receipt.get('lines').length) {
@@ -92,17 +56,7 @@
       return;
     }
 
-    receipt.set(
-      'net',
-      receipt.get('lines').reduce(function(memo, line) {
-        return OB.DEC.add(memo, line.get('discountedNet'));
-      }, 0),
-      {
-        silent: true
-      }
-    );
-
-    var taxesColl = {};
+    const taxes = {};
     _.forEach(receipt.get('receiptTaxes'), function(receiptTax) {
       var taxObj = {
         amount: receiptTax.amount,
@@ -114,9 +68,21 @@
         rate: receiptTax.rate,
         taxBase: receiptTax.taxBase
       };
-      taxesColl[receiptTax.taxid] = taxObj;
+      taxes[receiptTax.taxid] = taxObj;
     });
-    receipt.set('taxes', taxesColl);
+
+    receipt.set(
+      {
+        gross: receipt.get('gross'),
+        net: receipt.get('lines').reduce(function(memo, line) {
+          return OB.DEC.add(memo, line.get('netUnitAmount'));
+        }, 0),
+        taxes: taxes
+      },
+      {
+        silent: true
+      }
+    );
   };
 
   const initializeTaxes = function(receipt) {
@@ -143,49 +109,38 @@
     );
     receipt.get('lines').forEach(line => {
       const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
-      if (receipt.get('priceIncludesTax')) {
-        if (line.get('recalculateTax')) {
-          line.set(
-            {
-              gross: lineTax.grossAmount,
-              discountedGross: lineTax.grossAmount,
-              price: lineTax.grossPrice,
-              recalculateTax: false
-            },
-            {
-              silent: true
-            }
-          );
-        }
-        line.set(
-          {
-            net: lineTax.netAmount,
-            discountedNet: lineTax.netAmount,
-            pricenet: lineTax.netPrice,
-            lineRate: lineTax.taxRate,
-            tax: lineTax.tax,
-            taxLines: lineTax.taxes
-          },
-          {
-            silent: true
-          }
-        );
-      } else {
-        line.set(
-          {
-            gross: lineTax.grossAmount,
-            discountedGross: lineTax.grossAmount,
-            lineRate: lineTax.taxRate,
-            tax: lineTax.tax,
-            taxLines: lineTax.taxes
-          },
-          {
-            silent: true
-          }
-        );
-      }
+      setLineTaxes(receipt, line, lineTax);
     });
   };
+
+  const setLineTaxes = function(receipt, line, values) {
+    const taxAmount = getTaxAmount(values.taxes);
+    line.set(
+      {
+        gross: receipt.get('priceIncludesTax')
+          ? line.get('gross')
+          : OB.DEC.add(line.get('net'), taxAmount),
+        net: receipt.get('priceIncludesTax')
+          ? OB.DEC.sub(line.get('gross'), taxAmount)
+          : line.get('net'),
+        grossUnitAmount: values.grossUnitAmount,
+        netUnitAmount: values.netUnitAmount,
+        grossUnitPrice: values.grossUnitPrice,
+        unitPrice: values.netUnitPrice,
+        lineRate: values.taxRate ? values.taxRate : line.get('lineRate'),
+        tax: values.tax ? values.tax : line.get('tax'),
+        taxLines: values.taxes
+      },
+      {
+        silent: true
+      }
+    );
+  };
+
+  const getTaxAmount = taxes =>
+    Object.keys(taxes)
+      .map(key => taxes[key].amount)
+      .reduce((sum, amount) => sum + amount);
 
   const showLineTaxError = function(receipt, error) {
     // We use Promise.reject to show async message in case of error

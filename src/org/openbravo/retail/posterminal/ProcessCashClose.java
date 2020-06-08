@@ -18,10 +18,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.openbravo.advpaymentmngt.dao.TransactionsDao;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
@@ -29,11 +31,15 @@ import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.financialmgmt.gl.GLItem;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
+import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -89,6 +95,27 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     OBPOSAppCashup cashUp = UpdateCashup.getAndUpdateCashUp(cashUpId, jsonCashup, cashUpDate);
 
     if (cashUp.isProcessed() && !cashUp.isProcessedbo()) {
+      // Get safe box defined in the terminal
+      OBPOSSafeBox safeBox = null;
+      if (jsonCashup.has("currentSafeBox")) {
+        String safeBoxSK = jsonCashup.getString("currentSafeBox");
+        OBCriteria<OBPOSSafeBox> safeBoxCriteria = OBDal.getInstance()
+            .createCriteria(OBPOSSafeBox.class);
+        safeBoxCriteria.add(Restrictions.eq(OBPOSSafeBox.PROPERTY_SEARCHKEY, safeBoxSK));
+
+        safeBox = (OBPOSSafeBox) safeBoxCriteria.uniqueResult();
+      }
+      if (jsonCashup.has("cashPaymentMethodInfo") && safeBox != null) {
+        JSONArray paymentCashupInfo = jsonCashup.getJSONArray("cashPaymentMethodInfo");
+        for (int i = 0; i < paymentCashupInfo.length(); ++i) {
+          JSONObject payment = paymentCashupInfo.getJSONObject(i);
+          OBPOSAppPayment appPayment = OBDal.getInstance()
+              .get(OBPOSAppPayment.class, payment.getString("paymentmethod_id"));
+          if (appPayment.getPaymentMethod().isSafebox()) {
+            createSafeBoxTransactions(cashUp, safeBox, payment);
+          }
+        }
+      }
       if (jsonCashup.has("approvals")) {
         JSONObject jsonApprovals = jsonCashup.getJSONObject("approvals");
         OBPOSCashupApproval cashupApproval = OBProvider.getInstance()
@@ -164,6 +191,109 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
 
     return jsonData;
+  }
+
+  /**
+   * Create the adjust transactions for safe box from json
+   *
+   * @param jsonPayment
+   * @throws JSONException
+   */
+  private static void createSafeBoxTransactions(OBPOSAppCashup cashup, OBPOSSafeBox safeBox,
+      JSONObject jsonPayment) throws JSONException {
+    // get POS Payment Method
+    OBPOSAppPayment paymentMethod = OBDal.getInstance()
+        .get(OBPOSAppPayment.class, jsonPayment.getString("paymentMethodId"));
+    // Get SafeBox Payment Method
+    OBCriteria<OBPOSSafeBoxPaymentMethod> safeBoxPaymentMethodCriteria = OBDal.getInstance()
+        .createCriteria(OBPOSSafeBoxPaymentMethod.class);
+    safeBoxPaymentMethodCriteria
+        .add(Restrictions.eq(OBPOSSafeBoxPaymentMethod.PROPERTY_OBPOSSAFEBOX, safeBox));
+    safeBoxPaymentMethodCriteria
+        .add(Restrictions.eq(OBPOSSafeBoxPaymentMethod.PROPERTY_PAYMENTMETHOD,
+            paymentMethod.getPaymentMethod().getPaymentMethod()));
+
+    OBPOSSafeBoxPaymentMethod safeBoxPaymentMethod = (OBPOSSafeBoxPaymentMethod) safeBoxPaymentMethodCriteria
+        .uniqueResult();
+
+    Date cashMgmtTrxDate = new Date();
+    cashMgmtTrxDate = OBMOBCUtils.stripTime(cashMgmtTrxDate);
+
+    // Calculate the amount to move
+    BigDecimal totalSales = new BigDecimal(jsonPayment.getString("totalSales"));
+    BigDecimal totalReturns = new BigDecimal(jsonPayment.getString("totalReturns"));
+    BigDecimal totalDeposits = new BigDecimal(jsonPayment.getString("totalDeposits"));
+    BigDecimal totalDrops = new BigDecimal(jsonPayment.getString("totalDrops"));
+
+    BigDecimal amount = totalSales.add(totalDeposits).subtract(totalReturns).subtract(totalDrops);
+
+    // Avoid to create transaction if the amount to move is 0
+    if (amount == BigDecimal.ZERO) {
+      return;
+    }
+
+    // Prepare some information for cash up event
+    String isoCode = jsonPayment.getString("isocode");
+
+    TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
+    GLItem glItemMain = terminalPaymentMethod.getGLItemForDrops();
+    GLItem glItemSecondary = terminalPaymentMethod.getGLItemForDeposits();
+
+    // Save cash up events for payment method status
+    OBPOSPaymentcashupEvents paymentcashupEvent = null;
+
+    OBPOSPaymentMethodCashup paymentmethodcashup = OBDal.getInstance()
+        .get(OBPOSPaymentMethodCashup.class, jsonPayment.get("id"));
+
+    paymentcashupEvent = OBProvider.getInstance().get(OBPOSPaymentcashupEvents.class);
+    paymentcashupEvent.setObposPaymentmethodcashup(paymentmethodcashup);
+    paymentcashupEvent.setAmount(amount);
+    paymentcashupEvent.setName(OBMessageUtils.messageBD("OBPOS_SafeBoxCashUpEvent"));
+    paymentcashupEvent.setType("drop");
+    paymentcashupEvent.setCurrency(isoCode);
+    paymentcashupEvent.setRate(paymentmethodcashup.getRate());
+    OBDal.getInstance().save(paymentcashupEvent);
+
+    // Create withdrawal movement from POS payment financial account
+    FIN_FinancialAccount account = paymentMethod.getFinancialAccount();
+    FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
+    transaction.setObposAppCashup(cashup);
+    transaction.setCurrency(account.getCurrency());
+    transaction.setAccount(account);
+    transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
+    transaction.setGLItem(glItemMain);
+    transaction.setPaymentAmount(amount);
+    account.setCurrentBalance(account.getCurrentBalance().subtract(amount));
+    transaction.setTransactionType("BPW");
+    transaction.setStatus("PWNC");
+    transaction.setProcessed(true);
+    transaction.setDateAcct(cashMgmtTrxDate);
+    transaction.setTransactionDate(cashMgmtTrxDate);
+
+    OBDal.getInstance().save(transaction);
+    paymentcashupEvent.setFINFinaccTransaction(transaction);
+
+    // Create deposit movement to safe box payment financial account
+    FIN_FinancialAccount safeBoxAccount = safeBoxPaymentMethod.getFINFinancialaccount();
+    FIN_FinaccTransaction safeBoxTransaction = OBProvider.getInstance()
+        .get(FIN_FinaccTransaction.class);
+    safeBoxTransaction.setObposAppCashup(cashup);
+    safeBoxTransaction.setCurrency(safeBoxAccount.getCurrency());
+    safeBoxTransaction.setAccount(safeBoxAccount);
+    safeBoxTransaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
+    safeBoxTransaction.setGLItem(glItemSecondary);
+    safeBoxTransaction.setDepositAmount(amount);
+    safeBoxAccount.setCurrentBalance(safeBoxAccount.getCurrentBalance().add(amount));
+    safeBoxTransaction.setTransactionType("BPD");
+    safeBoxTransaction.setStatus("RDNC");
+    safeBoxTransaction.setProcessed(true);
+    safeBoxTransaction.setDateAcct(cashMgmtTrxDate);
+    safeBoxTransaction.setTransactionDate(cashMgmtTrxDate);
+
+    OBDal.getInstance().save(safeBoxTransaction);
+    paymentcashupEvent.setRelatedTransaction(safeBoxTransaction);
+
+    OBDal.getInstance().save(paymentcashupEvent);
   }
 
   private void doAccumulatePaymentMethodCashup(String cashUpId) {

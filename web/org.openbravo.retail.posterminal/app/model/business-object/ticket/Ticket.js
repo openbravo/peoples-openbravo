@@ -31,15 +31,24 @@ OB.UTIL.HookManager.registerHook(
           bp: 'businessPartner',
           gross: 'grossAmount',
           net: 'netAmount',
-          'lines[*].gross': 'grossAmount',
-          'lines[*].discountedGross': 'discountedGrossAmount',
-          'lines[*].price': 'grossPrice',
-          'lines[*].discountedPrice': 'discountedGrossPrice',
-          'lines[*].net': 'netAmount',
-          'lines[*].discountedNet': 'discountedNetAmount',
-          'lines[*].pricenet': 'netPrice',
+          'lines[*].gross': 'baseGrossUnitAmount',
+          'lines[*].net': 'baseNetUnitAmount',
+          'lines[*].unitPrice': 'netUnitPrice',
+          'lines[*].listPrice': 'netListPrice',
+          'lines[*].price': bbTicket =>
+            bbTicket.get('priceIncludesTax')
+              ? 'baseGrossUnitPrice'
+              : 'baseNetUnitPrice',
+          'lines[*].pricenet': bbTicket =>
+            bbTicket.get('priceIncludesTax') ? 'baseNetUnitPrice' : undefined,
           'lines[*].lineRate': 'taxRate',
           'lines[*].taxLines': 'taxes'
+        },
+        mapStateBackboneProperties: {
+          'lines[*].baseGrossUnitPrice': ticket =>
+            ticket.priceIncludesTax ? 'price' : undefined,
+          'lines[*].baseNetUnitPrice': ticket =>
+            ticket.priceIncludesTax ? undefined : 'price'
         }
       }
     );

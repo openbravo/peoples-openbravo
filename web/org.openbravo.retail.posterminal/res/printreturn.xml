@@ -246,7 +246,7 @@
     
     <line></line>
     <line size="1">
-      <% if (order.get('hasbeenpaid') === 'N') { %>
+      <% if (order.get('hasbeenpaid') === 'N' && !order.get('isPaid')) { %>
         <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_draft')) %></text>
       <% } else { %>
         <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_returned')) %></text>

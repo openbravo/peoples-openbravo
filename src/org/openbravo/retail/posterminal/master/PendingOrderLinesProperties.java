@@ -28,10 +28,11 @@ public class PendingOrderLinesProperties extends ModelExtension {
         new HQLProperty("ol.description", "description"), //
         new HQLProperty("salesOrder.description", "headerDescription"), //
         new HQLProperty("salesOrder.orderDate", "orderDate"), //
+        new HQLProperty("salesOrder.invoiceTerms", "invoiceTerms"), //
         new HQLProperty("bp.id", "bpId"), //
         new HQLProperty("bp.name", "bpName"), //
         new HQLProperty("bp.searchKey", "bpSearchKey"), //
-        new HQLProperty("bp.invoiceTerms", "bpInvoiceTerms"), //
+        new HQLProperty("bp.taxID", "bpTaxID"), //
         new HQLProperty("locAddress.id", "bpLocId"), //
         new HQLProperty("locAddress.addressLine1", "bpLocName"), //
         new HQLProperty("locAddress.addressLine2", "addressLine2"),

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -645,6 +645,12 @@ enyo.kind({
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalAdvancedFilterOrders'
         },
         {
+          kind: 'OB.UI.ModalSafeBox',
+          name: 'OBPOS_modalSafeBox',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalSafeBox'
+        },
+        {
           kind: 'OBPOS.UI.CrossStoreSelector',
           name: 'OBPOS_modalCrossStoreSelector',
           classes:
@@ -818,18 +824,22 @@ enyo.kind({
                 return;
               }
               receipt.trigger('print', receipt, {
-                forcePrint: true,
-                callback: inEvent.callback
+                forcePrint: true
               });
+              if (inEvent.callback && inEvent.callback instanceof Function) {
+                inEvent.callback();
+              }
             }
           );
 
           return;
         }
         receipt.trigger('print', receipt, {
-          forcePrint: true,
-          callback: inEvent.callback
+          forcePrint: true
         });
+        if (inEvent.callback && inEvent.callback instanceof Function) {
+          inEvent.callback();
+        }
         return;
       }
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -837,9 +847,11 @@ enyo.kind({
           this.model.get('multiOrders').get('multiOrdersList').models,
           function(order) {
             this.model.get('multiOrders').trigger('print', order, {
-              forcePrint: true,
-              callback: inEvent.callback
+              forcePrint: true
             });
+            if (inEvent.callback && inEvent.callback instanceof Function) {
+              inEvent.callback();
+            }
           },
           this
         );
@@ -2236,7 +2248,7 @@ enyo.kind({
     this.waterfall('onPointOfSaleLoad');
 
     // Try to print the pending receipts.
-    OB.Model.OfflinePrinter.printPendingJobs();
+    OB.OBPOSPointOfSale.OfflinePrinter.printPendingJobs();
 
     this.model.get('leftColumnViewManager').on(
       'change:currentView',

@@ -46,14 +46,11 @@
           ((countLayawayAsSales &&
             !(order.get('isLayaway') && !order.get('voidLayaway'))) ||
             (!countLayawayAsSales &&
+              !order.get('cancelLayaway') &&
               (order.get('payOnCredit') || order.get('completeTicket'))))
         ) {
           order.get('lines').models.forEach(line => {
-            if (order.get('priceIncludesTax')) {
-              gross = line.get('lineGrossAmount');
-            } else {
-              gross = line.get('discountedGross');
-            }
+            gross = line.get('grossUnitAmount');
             if (order.get('doCancelAndReplace')) {
               if (!line.get('replacedorderline')) {
                 netSales = OB.DEC.add(netSales, line.get('net'));

@@ -218,7 +218,10 @@
     );
   };
 
-  OB.UTIL.cashupAddPaymentWithMovement = function(paymentWithMovement, values) {
+  OB.UTIL.closeCashAddPaymentWithMovement = function(
+    paymentWithMovement,
+    values
+  ) {
     _.each(values, function(value) {
       var searchKey = value.get('searchKey');
       var item = _.find(paymentWithMovement, function(p) {
@@ -248,7 +251,7 @@
     });
   };
 
-  OB.UTIL.cashupAddPaymentWithSummaryMovement = function(
+  OB.UTIL.closeCashAddPaymentWithSummaryMovement = function(
     paymentWithMovement,
     values
   ) {
@@ -264,7 +267,10 @@
     });
   };
 
-  OB.UTIL.cashupGetPaymentWithMovement = function(paymentWithMovement, values) {
+  OB.UTIL.closeCashGetPaymentWithMovement = function(
+    paymentWithMovement,
+    values
+  ) {
     var filtered = _.filter(values, function(value) {
       var item = _.find(paymentWithMovement, function(p) {
         return p.searchKey === value.get('searchKey');

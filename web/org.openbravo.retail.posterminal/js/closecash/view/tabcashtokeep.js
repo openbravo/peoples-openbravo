@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,13 +10,13 @@
 /*global enyo */
 
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+  name: 'OB.OBPOSCloseCash.UI.CashToKeepRadioButton',
   kind: 'OB.UI.RadioButton',
-  classes: 'obObposCashupUiCashToKeepRadioButton',
+  classes: 'obObposCloseCashUiCashToKeepRadioButton',
   components: [
     {
       name: 'lbl',
-      classes: 'obObposCashupUiCashToKeepRadioButton-lbl'
+      classes: 'obObposCloseCashUiCashToKeepRadioButton-lbl'
     }
   ],
   events: {
@@ -48,73 +48,72 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.KeepDetails',
-  classes: 'obObposCashupUiKeepDetails',
+  name: 'OB.OBPOSCloseCash.UI.KeepDetails',
+  classes: 'obObposCloseCashUiKeepDetails',
   events: {
     onResetQtyToKeep: ''
   },
   init: function(model) {
     this.model = model;
-    var me = this;
-    this.model.on(
-      'change:otherInput',
-      function() {
-        if (OB.DEC.isNumber(me.model.get('otherInput'))) {
-          me.$.variableInput.setContent(OB.DEC.abs(me.model.get('otherInput')));
-          me.$.allowvariableamount.setQtyToKeep(
-            OB.DEC.abs(me.model.get('otherInput'))
-          );
-        } else {
-          me.$.variableInput.setContent('');
-          me.$.allowvariableamount.setQtyToKeep(null);
-        }
-        me.$.allowvariableamount.tap();
-      },
-      this
-    );
+    this.model.on('change:otherInput', () => {
+      if (OB.DEC.isNumber(this.model.get('otherInput'))) {
+        this.$.variableInput.setContent(
+          OB.DEC.abs(this.model.get('otherInput'))
+        );
+        this.$.allowvariableamount.setQtyToKeep(
+          OB.DEC.abs(this.model.get('otherInput'))
+        );
+      } else {
+        this.$.variableInput.setContent('');
+        this.$.allowvariableamount.setQtyToKeep(null);
+      }
+      this.$.allowvariableamount.tap();
+    });
   },
   components: [
     {
       kind: 'Group',
       name: 'RadioGroup',
-      classes: 'obObposCashupUiKeepDetails-RadioGroup',
+      classes: 'obObposCloseCashUiKeepDetails-RadioGroup',
       components: [
         {
           name: 'keepfixedamount',
-          classes: 'obObposCashupUiKeepDetails-RadioGroup-keepfixedamount',
+          classes: 'obObposCloseCashUiKeepDetails-RadioGroup-keepfixedamount',
           showing: false,
-          kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton'
+          kind: 'OB.OBPOSCloseCash.UI.CashToKeepRadioButton'
         },
         {
           name: 'allowmoveeverything',
-          classes: 'obObposCashupUiKeepDetails-RadioGroup-allowmoveeverything',
-          kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+          classes:
+            'obObposCloseCashUiKeepDetails-RadioGroup-allowmoveeverything',
+          kind: 'OB.OBPOSCloseCash.UI.CashToKeepRadioButton',
           qtyToKeep: 0,
           i18nLabel: 'OBPOS_LblNothing',
           showing: false
         },
         {
           name: 'allowdontmove',
-          classes: 'obObposCashupUiKeepDetails-RadioGroup-allowdontmove',
-          kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+          classes: 'obObposCloseCashUiKeepDetails-RadioGroup-allowdontmove',
+          kind: 'OB.OBPOSCloseCash.UI.CashToKeepRadioButton',
           showing: false
         },
         {
           name: 'allowvariableamount',
-          classes: 'obObposCashupUiKeepDetails-RadioGroup-allowvariableamount',
+          classes:
+            'obObposCloseCashUiKeepDetails-RadioGroup-allowvariableamount',
           binded: false,
-          kind: 'OB.OBPOSCashUp.UI.CashToKeepRadioButton',
+          kind: 'OB.OBPOSCloseCash.UI.CashToKeepRadioButton',
           showing: false,
           qtyToKeep: 0,
           components: [
             {
               classes:
-                'obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1',
+                'obObposCloseCashUiKeepDetails-RadioGroup-allowvariableamount-container1',
               components: [
                 {
                   name: 'variableamount',
                   classes:
-                    'obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1-variableamount',
+                    'obObposCloseCashUiKeepDetails-RadioGroup-allowvariableamount-container1-variableamount',
                   setAmount: function(amount) {
                     this.setContent(
                       enyo.format(
@@ -130,7 +129,7 @@ enyo.kind({
                 {
                   name: 'variableInput',
                   classes:
-                    'obObposCashupUiKeepDetails-RadioGroup-allowvariableamount-container1-variableInput',
+                    'obObposCloseCashUiKeepDetails-RadioGroup-allowvariableamount-container1-variableInput',
                   content: OB.DEC.Zero
                 }
               ]
@@ -143,38 +142,38 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.CashToKeep',
-  classes: 'obObposCashupUiCashToKeep',
+  name: 'OB.OBPOSCloseCash.UI.CashToKeep',
+  classes: 'obObposCloseCashUiCashToKeep',
   published: {
     paymentToKeep: null
   },
   components: [
     {
-      classes: 'obObposCashupUiCashToKeep-wrapper',
+      classes: 'obObposCloseCashUiCashToKeep-wrapper',
       components: [
         {
-          classes: 'obObposCashupUiCashToKeep-wrapper-components',
+          classes: 'obObposCloseCashUiCashToKeep-wrapper-components',
           components: [
             {
               name: 'cashtokeepheader',
-              classes: 'obObposCashupUiCashToKeep-wrapper-components-title',
+              classes: 'obObposCloseCashUiCashToKeep-wrapper-components-title',
               renderHeader: function(value, step, count) {
                 this.setContent(
                   OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
                     ' ' +
                     OB.I18N.getLabel('OBPOS_LblStepCashToKeep', [value]) +
-                    OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
+                    OB.OBPOSCloseCash.UI.CloseCash.getTitleExtensions()
                 );
               }
             },
             {
-              classes: 'obObposCashupUiCashToKeep-wrapper-components-body',
+              classes: 'obObposCloseCashUiCashToKeep-wrapper-components-body',
               components: [
                 {
-                  kind: 'OB.OBPOSCashUp.UI.KeepDetails',
+                  kind: 'OB.OBPOSCloseCash.UI.KeepDetails',
                   name: 'formkeep',
                   classes:
-                    'obObposCashupUiCashToKeep-wrapper-components-body-formkeep',
+                    'obObposCloseCashUiCashToKeep-wrapper-components-body-formkeep',
                   handlers: {
                     onChangeOption: 'changeOption'
                   },
@@ -222,7 +221,7 @@ enyo.kind({
                     }
                   },
                   renderFixedAmount: function(modelToDraw) {
-                    var cnted;
+                    let cnted;
 
                     if (modelToDraw.get('foreignCounted')) {
                       cnted = modelToDraw.get('foreignCounted');
@@ -268,7 +267,7 @@ enyo.kind({
                     }
                   },
                   renderBody: function(modelToDraw) {
-                    var paymentMethod = modelToDraw.get('paymentMethod');
+                    const paymentMethod = modelToDraw.get('paymentMethod');
                     if (!paymentMethod.automatemovementtoother) {
                       return true;
                     }
@@ -313,7 +312,7 @@ enyo.kind({
   paymentToKeepChanged: function(model) {
     this.$.cashtokeepheader.renderHeader(
       this.paymentToKeep.get('name'),
-      this.model.stepNumber('OB.CashUp.CashToKeep'),
+      this.model.stepNumber('OB.CloseCash.CashToKeep'),
       this.model.stepCount()
     );
     this.$.formkeep.renderBody(this.paymentToKeep);
@@ -321,13 +320,9 @@ enyo.kind({
     //If fixed quantity to keep is more than counted quantity,
     //counted quantity should be propossed to keep.
     if (this.paymentToKeep.get('paymentMethod').keepfixedamount) {
-      this.paymentToKeep.on(
-        'change:counted',
-        function(mod) {
-          this.$.formkeep.renderFixedAmount(this.paymentToKeep);
-        },
-        this
-      );
+      this.paymentToKeep.on('change:counted', mod => {
+        this.$.formkeep.renderFixedAmount(this.paymentToKeep);
+      });
     }
   },
   displayStep: function(model) {

@@ -344,32 +344,23 @@ enyo.kind({
           // register that is already built
           currenciesManaged[payment.paymentMethod.currency] = true;
 
-          // Build the panel
-          OB.Dal.find(
-            OB.Model.CurrencyPanel,
-            {
-              currency: payment.paymentMethod.currency,
-              _orderByClause: 'line'
-            },
-            function(datacurrency) {
-              if (datacurrency.length > 0) {
-                me.buildCoinsAndNotesPanel(
-                  payment,
-                  payment.symbol,
-                  datacurrency
-                );
-              } else if (
-                payment.payment.searchKey === 'OBPOS_payment.cash' &&
-                payment.paymentMethod.currency === '102'
-              ) {
-                // Add the legacy keypad if is the legacy hardcoded cash method for euros.
-                me.addKeypad('OB.UI.KeypadCoinsLegacy');
-              }
-            },
-            function(tx, error) {
-              OB.UTIL.showError(error);
-            }
-          );
+          let coins = OB.MobileApp.model
+            .get('currencyPanel')
+            .filter(m => m.currency === payment.paymentMethod.currency);
+
+          if (coins.length > 0) {
+            let datacurrency = new Backbone.Collection();
+            coins.forEach(function(coin) {
+              datacurrency.add(new Backbone.Model(coin));
+            });
+            me.buildCoinsAndNotesPanel(payment, payment.symbol, datacurrency);
+          } else if (
+            payment.payment.searchKey === 'OBPOS_payment.cash' &&
+            payment.paymentMethod.currency === '102'
+          ) {
+            // Add the legacy keypad if is the legacy hardcoded cash method for euros.
+            me.addKeypad('OB.UI.KeypadCoinsLegacy');
+          }
         }
       },
       this

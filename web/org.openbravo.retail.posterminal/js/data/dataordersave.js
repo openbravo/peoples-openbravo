@@ -40,7 +40,7 @@
         var linesGross = 0;
         var isFieldUndefined = false;
         _.each(this.get('lines').models, function(line) {
-          var fieldValue = line.get('discountedNet');
+          var fieldValue = line.get('netUnitAmount');
           if (!fieldValue) {
             isFieldUndefined = true;
             return;
@@ -814,6 +814,7 @@
                 },
                 function(args) {
                   OB.Dal.transaction(function(tx) {
+                    let idx = 0;
                     _.each(
                       model.get('multiOrders').get('multiOrdersList').models,
                       function(theReceipt) {
@@ -822,8 +823,11 @@
                         me.context
                           .get('multiOrders')
                           .trigger('print', theReceipt, {
-                            offline: true
+                            offline: true,
+                            skipSelectPrinters: idx > 0
                           });
+
+                        idx += 1;
 
                         if (invoice && invoice.get('id')) {
                           var invoiceToPrint = OB.UTIL.clone(invoice);

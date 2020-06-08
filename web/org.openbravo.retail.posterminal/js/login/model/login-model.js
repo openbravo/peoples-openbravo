@@ -450,33 +450,41 @@
             );
           };
 
+          // If a safe box is defined in this terminal and that safe box is assign to
+          // a user, check the current logged user before continue login process
+          // except if the user is a Safe Box Manager
+          if (
+            !OB.UTIL.isNullOrUndefined(
+              OB.UTIL.localStorage.getItem('currentSafeBox')
+            )
+          ) {
+            const currentSafeBox = JSON.parse(
+              OB.UTIL.localStorage.getItem('currentSafeBox')
+            );
+            if (
+              !OB.UTIL.isNullOrUndefined(currentSafeBox.userId) &&
+              currentSafeBox.userId !==
+                OB.MobileApp.model.usermodel.get('id') &&
+              !OB.MobileApp.model.hasPermission(
+                'OBPOS_approval.manager.safebox',
+                true
+              )
+            ) {
+              handleError({
+                exception: {
+                  message: 'OBPOS_DifferCurrentAssignedSafeBox',
+                  params: [currentSafeBox.userName]
+                }
+              });
+              return;
+            }
+          }
+
           const currentCashUpId = OB.App.State.Cashup.Utils.getCashupId();
           if (currentCashUpId !== null) {
             params.cashUpId = currentCashUpId;
           }
           loadTerminalModel();
-        }
-      });
-
-      this.get('dataSyncModels').push({
-        name: 'Customer',
-        model: OB.Model.ChangedBusinessPartners,
-        modelFunc: 'OB.Model.ChangedBusinessPartners',
-        className: 'org.openbravo.retail.posterminal.CustomerLoader',
-        criteria: {},
-        getIdentifier: function(model) {
-          return model.businessPartnerCategory_name + ' : ' + model._identifier;
-        }
-      });
-
-      this.get('dataSyncModels').push({
-        name: 'Customer Address',
-        model: OB.Model.ChangedBPlocation,
-        modelFunc: 'OB.Model.ChangedBPlocation',
-        className: 'org.openbravo.retail.posterminal.CustomerAddrLoader',
-        criteria: {},
-        getIdentifier: function(model) {
-          return model.customerName + ' : ' + model.name;
         }
       });
 
@@ -504,6 +512,25 @@
         isPersistent: false
       });
 
+      this.get('dataSyncModels').push({
+        name: 'Count Safe Box',
+        model: OB.Model.CountSafeBox,
+        modelFunc: 'OB.Model.CountSafeBox',
+        className: 'org.openbravo.retail.posterminal.ProcessCountSafeBox',
+        timeout: 600000,
+        timePerRecord: 10000,
+        isPersistent: false,
+        criteria: {
+          isprocessed: 'Y'
+        },
+        getIdentifier: function(model) {
+          return (
+            model.user +
+            ' - ' +
+            OB.I18N.formatDateISO(new Date(model.creationDate))
+          );
+        }
+      });
       this.on('ready', function() {
         OB.debug("next process: 'retail.pointofsale' window");
         if (this.get('terminal').currencyFormat) {
@@ -1483,6 +1510,23 @@
         callback();
       }
     },
+    manageTerminalSafeBoxes: function(safeBoxInfo) {
+      if (safeBoxInfo && safeBoxInfo.isSafeBox) {
+        OB.UTIL.localStorage.setItem('isSafeBox', safeBoxInfo.isSafeBox);
+        if (safeBoxInfo.safeBoxes && safeBoxInfo.safeBoxes.length > 0) {
+          // Replace safe boxes list only if we have some safebox comming from the server
+          OB.UTIL.localStorage.setItem(
+            'safeBoxes',
+            JSON.stringify(safeBoxInfo.safeBoxes)
+          );
+        }
+      } else {
+        // The terminal is no longer a safe box, delete the previous safeBoxe information
+        OB.UTIL.localStorage.removeItem('isSafeBox');
+        OB.UTIL.localStorage.removeItem('safeBoxes');
+        OB.UTIL.localStorage.removeItem('currentSafeBox');
+      }
+    },
     linkTerminal: function(terminalData, callback) {
       var params = this.get('loginUtilsParams') || {},
         me = this,
@@ -1583,6 +1627,7 @@
                 parsedTerminalData.cacheSessionId +
                 '"'
             );
+            me.manageTerminalSafeBoxes(inResponse.safeBoxInfo);
             callback();
           }
         })
@@ -1651,6 +1696,9 @@
             'offlineSessionTimeExpiration',
             inResponse.offlineSessionTimeExpiration
           );
+
+          me.manageTerminalSafeBoxes(inResponse.safeBoxInfo);
+
           if (
             !(
               OB.UTIL.localStorage.getItem('cacheSessionId') &&

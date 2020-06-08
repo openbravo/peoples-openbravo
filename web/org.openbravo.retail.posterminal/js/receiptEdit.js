@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -100,6 +100,29 @@ var ReceiptDeliveryModeDefinition = {
           } else if (triggerUpdateRelations) {
             this.model.get('lines').trigger('updateRelations');
           }
+        }
+        if (model.get('obrdmDeliveryMode') === 'HomeDelivery') {
+          model.set(
+            'country',
+            OB.MobileApp.model.receipt.get('bp').get('shipLocId')
+              ? OB.MobileApp.model.receipt
+                  .get('bp')
+                  .get('locationModel')
+                  .get('countryId')
+              : null
+          );
+          model.set(
+            'region',
+            OB.MobileApp.model.receipt.get('bp').get('shipLocId')
+              ? OB.MobileApp.model.receipt
+                  .get('bp')
+                  .get('locationModel')
+                  .get('regionId')
+              : null
+          );
+        } else {
+          model.set('country', model.get('organization').country);
+          model.set('region', model.get('organization').region);
         }
       },
       this

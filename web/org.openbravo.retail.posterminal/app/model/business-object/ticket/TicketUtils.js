@@ -39,16 +39,23 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         discountsResult.lines[line.id].discounts;
       const newLine = {
         ...line,
-        discountedGrossAmount:
-          discounts && priceIncludesTax
-            ? discounts.finalLinePrice
-            : OB.DEC.mul(line.qty, line.grossPrice),
-        discountedNetAmount:
-          discounts && !priceIncludesTax
-            ? discounts.finalLinePrice
-            : OB.DEC.mul(line.qty, line.netPrice),
         promotions: discounts ? discounts.promotions : []
       };
+      if (priceIncludesTax) {
+        newLine.grossUnitPrice = discounts
+          ? discounts.grossUnitPrice
+          : line.baseGrossUnitPrice;
+        newLine.grossUnitAmount = discounts
+          ? discounts.grossUnitAmount
+          : OB.DEC.mul(line.qty, line.baseGrossUnitPrice);
+      } else {
+        newLine.netUnitPrice = discounts
+          ? discounts.netUnitPrice
+          : line.baseNetUnitPrice;
+        newLine.netUnitAmount = discounts
+          ? discounts.netUnitAmount
+          : OB.DEC.mul(line.qty, line.baseNetUnitPrice);
+      }
       return newLine;
     });
 
@@ -61,15 +68,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     newTicket.taxes = taxesResult.header.taxes;
     taxesResult.lines.forEach(taxLine => {
       const line = newTicket.lines.find(l => l.id === taxLine.id);
-      if (priceIncludesTax) {
-        line.netAmount = taxLine.netAmount;
-        line.discountedNetAmount = taxLine.netAmount;
-        line.netPrice = taxLine.netPrice;
-      } else {
-        line.grossAmount = taxLine.grossAmount;
-        line.discountedGrossAmount = taxLine.grossAmount;
-        line.grossPrice = taxLine.grossPrice;
-      }
+      line.grossUnitAmount = taxLine.grossUnitAmount;
+      line.netUnitAmount = taxLine.netUnitAmount;
+      line.grossUnitPrice = taxLine.grossUnitPrice;
+      line.netUnitPrice = taxLine.netUnitPrice;
       line.taxRate = taxLine.taxRate;
       line.tax = taxLine.tax;
       line.taxes = taxLine.taxes;

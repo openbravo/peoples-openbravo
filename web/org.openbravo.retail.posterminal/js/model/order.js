@@ -47,7 +47,6 @@
       priceIncludesTax: true,
       gross: true,
       lineGrossAmount: true,
-      grossListPrice: true,
       description: true,
       promotions: true,
       shipmentlines: true,
@@ -107,6 +106,12 @@
         : OB.DEC.Zero;
     },
 
+    getInvoicedQuantity: function() {
+      return this.has('invoicedQuantity')
+        ? this.get('invoicedQuantity')
+        : OB.DEC.Zero;
+    },
+
     printQty: function() {
       return OB.DEC.toNumber(
         OB.DEC.toBigDecimal(this.get('qty')),
@@ -115,11 +120,7 @@
     },
 
     printPrice: function() {
-      return OB.I18N.formatCurrency(
-        this.get('_price') ||
-          this.get('nondiscountedprice') ||
-          this.get('price')
-      );
+      return OB.I18N.formatCurrency(this.get('price'));
     },
 
     isPrintableService: function() {
@@ -165,35 +166,11 @@
           silent: true
         });
         this.set('gross', OB.DEC.mul(this.getQty(), this.get('price')));
-        this.set(
-          'discountedGross',
-          OB.DEC.compare(this.get('gross')) === 0
-            ? this.get('gross')
-            : OB.DEC.sub(this.get('gross'), this.getDiscount())
-        );
-        this.set(
-          'discountedPrice',
-          this.getQty() === 0
-            ? 0
-            : OB.DEC.div(this.get('discountedGross'), this.getQty())
-        );
       } else {
         this.set('gross', null, {
           silent: true
         });
         this.set('net', OB.DEC.mul(this.getQty(), this.get('price')));
-        this.set(
-          'discountedNet',
-          OB.DEC.compare(this.get('net')) === 0
-            ? this.get('net')
-            : OB.DEC.sub(this.get('net'), this.getDiscount())
-        );
-        this.set(
-          'discountedNetPrice',
-          this.getQty() === 0
-            ? 0
-            : OB.DEC.div(this.get('discountedNet'), this.getQty())
-        );
       }
     },
 
@@ -218,9 +195,7 @@
     },
 
     printNet: function() {
-      return OB.I18N.formatCurrency(
-        this.get('nondiscountednet') || this.getNet()
-      );
+      return OB.I18N.formatCurrency(this.getNet());
     },
 
     printTotalLine: function() {
@@ -431,6 +406,12 @@
         this.set('createdBy', attributes.createdBy);
         this.set('updatedBy', attributes.updatedBy);
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
+        if (attributes.calculatedInvoice) {
+          this.set(
+            'calculatedInvoice',
+            new OB.Model.Order(attributes.calculatedInvoice)
+          );
+        }
         this.set('generateInvoice', attributes.generateInvoice);
         this.set('fullInvoice', attributes.fullInvoice);
         this.set('isQuotation', attributes.isQuotation);
@@ -664,37 +645,21 @@
       // Apply calculated discounts and promotions to price and gross prices
       // so ERP saves them in the proper place
       this.get('lines').each(function(line) {
-        var price = line.get('price'),
-          gross = line.get('gross'),
-          totalDiscount = 0,
-          grossListPrice = line.get('grossListPrice') || line.get('priceList'),
-          creationPriceList =
-            line.get('creationListPrice') ||
-            line.get('grossListPrice') ||
-            line.get('priceList'),
-          grossUnitPrice,
-          discountPercentage,
-          base;
-
         // Calculate inline discount: discount applied before promotions
+        const listPrice = line.get('grossListPrice') || line.get('priceList');
+        let discountPercentage;
         if (
-          (line.get('product').get('standardPrice') &&
-            line.get('product').get('standardPrice') !== price) ||
-          (_.isNumber(line.get('discountedLinePrice')) &&
-            line.get('discountedLinePrice') !==
-              line.get('product').get('standardPrice')) ||
-          (OB.UTIL.isNullOrUndefined(line.get('discountedLinePrice')) &&
-            line.get('grossListPrice') !== line.get('grossUnitPrice'))
+          line.get('product').get('standardPrice') !== line.get('price') ||
+          line.get('grossListPrice') !== line.get('grossUnitPrice')
         ) {
-          grossUnitPrice = new BigDecimal(price.toString());
-          if (OB.DEC.compare(grossListPrice) === 0) {
+          if (OB.DEC.compare(listPrice) === 0) {
             discountPercentage = OB.DEC.Zero;
           } else {
-            discountPercentage = OB.DEC.toBigDecimal(creationPriceList)
-              .subtract(grossUnitPrice)
+            discountPercentage = OB.DEC.toBigDecimal(listPrice)
+              .subtract(new BigDecimal(line.get('price').toString()))
               .multiply(new BigDecimal('100'))
               .divide(
-                OB.DEC.toBigDecimal(creationPriceList),
+                OB.DEC.toBigDecimal(listPrice),
                 2,
                 BigDecimal.prototype.ROUND_HALF_UP
               );
@@ -706,13 +671,33 @@
             );
           }
         } else {
-          discountPercentage = line.get('discountPercentage')
-            ? line.get('discountPercentage')
-            : OB.DEC.Zero;
+          discountPercentage = line.get('discountPercentage') || OB.DEC.Zero;
         }
         line.set(
           {
-            discountPercentage: discountPercentage
+            discountPercentage: discountPercentage,
+            gross: this.get('priceIncludesTax')
+              ? line.get('grossUnitAmount')
+              : OB.DEC.Zero,
+            net: line.get('netUnitAmount'),
+            lineGrossAmount: this.get('priceIncludesTax')
+              ? line.get('grossUnitAmount')
+              : OB.DEC.Zero,
+            lineNetAmount: line.get('netUnitAmount'),
+            grossUnitPrice: line.get('grossUnitPrice'),
+            pricenet: line.get('netUnitPrice'),
+            baseGrossUnitPrice: this.get('priceIncludesTax')
+              ? line.get('price')
+              : undefined,
+            standardPrice: this.get('priceIncludesTax')
+              ? OB.DEC.Zero
+              : line.get('price'),
+            grossListPrice: this.get('priceIncludesTax')
+              ? line.get('grossListPrice')
+              : OB.DEC.Zero,
+            listPrice: this.get('priceIncludesTax')
+              ? OB.DEC.Zero
+              : line.get('priceList')
           },
           {
             silent: true
@@ -720,7 +705,8 @@
         );
 
         // Calculate prices after promotions
-        base = line.get('price');
+        let base = line.get('price');
+        let totalDiscount = OB.DEC.Zero;
         _.forEach(
           line.get('promotions') || [],
           function(discount) {
@@ -735,49 +721,6 @@
           },
           this
         );
-
-        gross = OB.DEC.sub(gross, totalDiscount);
-        price = line.get('qty') !== 0 ? OB.DEC.div(gross, line.get('qty')) : 0;
-
-        if (grossListPrice === undefined) {
-          grossListPrice = price;
-        }
-
-        if (this.get('priceIncludesTax')) {
-          line.set(
-            {
-              net: OB.DEC.toNumber(line.get('discountedNet')),
-              pricenet:
-                line.get('qty') !== 0
-                  ? OB.DEC.div(line.get('discountedNet'), line.get('qty'))
-                  : 0,
-              listPrice: 0,
-              standardPrice: 0,
-              grossListPrice: grossListPrice,
-              grossUnitPrice: price,
-              lineGrossAmount: gross
-            },
-            {
-              silent: true
-            }
-          );
-        } else {
-          line.set(
-            {
-              nondiscountedprice: line.get('price'),
-              nondiscountednet: line.get('net'),
-              standardPrice: line.get('price'),
-              net: line.get('discountedNet'),
-              pricenet: OB.DEC.toNumber(line.get('discountedNetPrice')),
-              listPrice: line.get('priceList'),
-              grossListPrice: 0,
-              lineGrossAmount: 0
-            },
-            {
-              silent: true
-            }
-          );
-        }
       }, this);
     },
     getTotal: function() {
@@ -951,10 +894,10 @@
         } else {
           // If the price doesn't include tax, the discounted gross has already been calculated
           gross = me.get('lines').reduce(function(memo, e) {
-            if (_.isUndefined(e.get('discountedGross'))) {
+            if (_.isUndefined(e.get('grossUnitAmount'))) {
               return memo;
             }
-            grossLine = e.get('discountedGross');
+            grossLine = e.get('grossUnitAmount');
             if (grossLine) {
               return OB.DEC.add(memo, grossLine);
             } else {
@@ -2801,15 +2744,31 @@
           const relatedLine = this.get('lines').find(
             line => line.id === relatedProduct.orderlineId
           );
-          if (relatedLine && relatedLine.get('product').has('oldTaxCategory')) {
-            relatedLine
-              .get('product')
-              .set(
-                'taxCategory',
-                relatedLine.get('product').get('oldTaxCategory')
-              );
-            relatedLine.get('product').unset('oldTaxCategory');
-            relatedLine.set('recalculateTax', true);
+          if (
+            relatedLine &&
+            relatedLine.get('previousPrice') &&
+            relatedLine.get('product').has('previousTaxCategory')
+          ) {
+            relatedLine.set(
+              {
+                price: relatedLine.get('previousPrice'),
+                previousPrice: null
+              },
+              {
+                silent: true
+              }
+            );
+            relatedLine.get('product').set(
+              {
+                taxCategory: relatedLine
+                  .get('product')
+                  .get('previousTaxCategory'),
+                previousTaxCategory: null
+              },
+              {
+                silent: true
+              }
+            );
           }
         });
       }
@@ -4305,7 +4264,12 @@
           'productBOM',
           productBOM.map(bomLine => {
             return {
-              amount: OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
+              grossUnitAmount: me.get('priceIncludesTax')
+                ? OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity)
+                : undefined,
+              netUnitAmount: me.get('priceIncludesTax')
+                ? undefined
+                : OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
               qty: bomLine.bomquantity,
               product: {
                 id: bomLine.bomproduct,
@@ -5145,6 +5109,29 @@
               );
             }
           }
+          if (line.get('obrdmDeliveryMode') === 'HomeDelivery') {
+            line.set(
+              'country',
+              OB.MobileApp.model.receipt.get('bp').get('shipLocId')
+                ? OB.MobileApp.model.receipt
+                    .get('bp')
+                    .get('locationModel')
+                    .get('countryId')
+                : null
+            );
+            line.set(
+              'region',
+              OB.MobileApp.model.receipt.get('bp').get('shipLocId')
+                ? OB.MobileApp.model.receipt
+                    .get('bp')
+                    .get('locationModel')
+                    .get('regionId')
+                : null
+            );
+          } else {
+            line.set('country', line.get('organization').country);
+            line.set('region', line.get('organization').region);
+          }
         };
         if (
           me.validateAllowSalesWithReturn(
@@ -5236,23 +5223,51 @@
                       relatedLine
                         .get('product')
                         .set(
-                          'oldTaxCategory',
+                          'previousTaxCategory',
                           relatedLine.get('product').get('taxCategory')
                         );
+                      relatedLine.set(
+                        'previousPrice',
+                        relatedLine.get('price')
+                      );
                       relatedLine
                         .get('product')
                         .set(
                           'taxCategory',
                           productServiceLinked.get('taxCategory')
                         );
-                      relatedLine.set(
-                        'previousLineRate',
-                        relatedLine.get('lineRate')
-                      );
-                      relatedLine.set('recalculateTax', true);
                     }
                   });
               });
+
+            if (
+              me.get('priceIncludesTax') &&
+              me
+                .get('lines')
+                .find(line => line.get('previousPrice') && line.get('lineRate'))
+            ) {
+              const taxes = OB.Taxes.Pos.calculateTaxes(me);
+              me.get('lines')
+                .filter(
+                  line => line.get('previousPrice') && line.get('lineRate')
+                )
+                .forEach(line => {
+                  const lineTax = taxes.lines.find(lt => lt.id === line.id);
+                  line.set(
+                    'price',
+                    OB.DEC.mul(
+                      OB.DEC.div(
+                        line.get('previousPrice'),
+                        line.get('lineRate')
+                      ),
+                      lineTax.taxRate
+                    ),
+                    {
+                      silent: true
+                    }
+                  );
+                });
+            }
           }
         }
 
@@ -5736,14 +5751,6 @@
       }
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         if (oldbp.id !== businessPartner.id) {
-          //Business Partner have changed
-          OB.Dal.saveOrUpdate(
-            businessPartner,
-            function() {},
-            function() {
-              OB.error(arguments);
-            }
-          );
           if (
             OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
           ) {
@@ -5803,47 +5810,56 @@
           }
         };
 
-        var saveLocModel = function(locModel, lid, callback) {
+        var saveLocModel = async function(locModel, lid, callback) {
           if (businessPartner.get(locModel)) {
-            OB.Dal.saveOrUpdate(
-              businessPartner.get(locModel),
-              function() {},
-              function(tx, error) {
-                OB.UTIL.showError(error);
-              }
-            );
             if (callback) {
               callback();
             }
           } else if (businessPartner.get(lid)) {
-            OB.Dal.get(
-              OB.Model.BPLocation,
-              businessPartner.get(lid),
-              function(location) {
-                OB.Dal.saveOrUpdate(
-                  location,
-                  function() {},
-                  function(tx, error) {
-                    OB.UTIL.showError(error);
+            if (
+              OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
+            ) {
+              OB.Dal.get(
+                OB.Model.BPLocation,
+                businessPartner.get(lid),
+                function(location) {
+                  businessPartner.set(locModel, location);
+                  if (callback) {
+                    callback();
                   }
+                },
+                function() {
+                  OB.error(arguments);
+                  if (callback) {
+                    callback();
+                  }
+                },
+                function() {
+                  if (callback) {
+                    callback();
+                  }
+                }
+              );
+            } else {
+              try {
+                let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                  businessPartner.get(lid)
+                );
+                let location = OB.Dal.transform(
+                  OB.Model.BPLocation,
+                  bPLocation
                 );
                 businessPartner.set(locModel, location);
                 if (callback) {
                   callback();
                 }
-              },
-              function() {
+              } catch (error) {
                 OB.error(arguments);
                 if (callback) {
                   callback();
                 }
-              },
-              function() {
-                if (callback) {
-                  callback();
-                }
               }
-            );
+            }
           } else {
             if (callback) {
               callback();
@@ -6772,6 +6788,9 @@
       notPrePayments = _.filter(this.get('payments').models, function(payment) {
         return !payment.get('isPrePayment');
       });
+      OB.info(
+        '[checkNotProcessedPayments] Non Prepayments ' + notPrePayments.length
+      );
       if (notPrePayments.length) {
         var paymentList = [OB.I18N.getLabel('OBPOS_C&RDeletePaymentsBodyInit')];
         var symbol = OB.MobileApp.model.get('terminal').symbol;
@@ -6811,6 +6830,7 @@
           },
           function(data) {
             if (data && data.exception) {
+              OB.info('[CanCancelOrder] Exception');
               if (data.exception.message) {
                 OB.UTIL.showConfirmation.display(
                   OB.I18N.getLabel('OBMOBC_Error'),
@@ -6824,6 +6844,7 @@
               );
               return;
             } else if (data && data.orderCancelled) {
+              OB.info('[CanCancelOrder] Order Cancelled');
               OB.UTIL.showConfirmation.display(
                 OB.I18N.getLabel('OBMOBC_Error'),
                 OB.I18N.getLabel('OBPOS_OrderCanceledError')
@@ -6834,6 +6855,7 @@
               data.notDeliveredDeferredServices &&
               data.notDeliveredDeferredServices.length
             ) {
+              OB.info('[CanCancelOrder] notDeliveredDeferredServices');
               var components = [];
               components.push({
                 content: OB.I18N.getLabel('OBPOS_CannotCancelLayWithDeferred'),
@@ -6859,6 +6881,7 @@
               );
               return;
             } else {
+              OB.info('[CanCancelOrder] cancelLayawayOrder');
               var cancelLayawayOrder = function() {
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_PreCancelLayaway',
@@ -6867,8 +6890,11 @@
                   },
                   function(args) {
                     if (args && args.cancelOperation) {
+                      OB.info('[OBPOS_PreCancelLayaway] Error');
                       return;
                     }
+
+                    OB.info('[OBPOS_PreCancelLayaway] Callback');
                     //Cloning order to be canceled
                     var clonedReceipt = new OB.Model.Order();
                     OB.UTIL.clone(me, clonedReceipt);
@@ -6955,6 +6981,7 @@
                       if (linesToDelete.length) {
                         me.get('lines').remove(linesToDelete);
                       }
+                      OB.info('[OBPOS_PreCancelLayaway] update lines');
                       // Remove or update the related lines id
                       _.each(me.get('lines').models, function(line) {
                         if (
@@ -7004,6 +7031,7 @@
                       me.set('forceCalculateTaxes', true);
                       me.unset('id');
                       me.unset('skipCalculateReceipt');
+                      OB.info('[OBPOS_PreCancelLayaway] calculateReceipt');
                       me.calculateReceipt(function() {
                         me.getPrepaymentAmount(function() {
                           me.set('isEditable', false);
@@ -7143,25 +7171,7 @@
               args.order.get('lines').each(function(line) {
                 oldId = line.get('id');
                 line.set('id', OB.UTIL.get_UUID());
-                //issue 25055 -> If we don't do the following prices and taxes are calculated
-                //wrongly because the calculation starts with discountedNet instead of
-                //the real net.
-                //It only happens if the order is created from quotation just after save the quotation
-                //(without load the quotation from quotations window)
-                if (!this.get('priceIncludesTax')) {
-                  line.set('net', line.get('nondiscountednet'));
-                }
-
-                //issues 24994 & 24993
-                //if the order is created from quotation just after save the quotation
-                //(without load the quotation from quotations window). The order has the fields added
-                //by adjust prices. We need to work without these values
-                //price not including taxes
-                line.unset('nondiscountedprice');
-                line.unset('nondiscountednet');
-                //price including taxes
                 line.unset('netFull');
-                line.unset('grossListPrice');
                 line.unset('grossUnitPrice');
                 line.unset('lineGrossAmount');
                 line.unset('obposQtytodeliver');
@@ -7296,13 +7306,7 @@
       this.get('lines').each(function(line) {
         oldId = line.get('id');
         line.set('id', OB.UTIL.get_UUID());
-        if (!this.get('priceIncludesTax')) {
-          line.set('net', line.get('nondiscountednet'));
-        }
-        line.unset('nondiscountedprice');
-        line.unset('nondiscountednet');
         line.unset('netFull');
-        line.unset('grossListPrice');
         line.unset('grossUnitPrice');
         line.unset('lineGrossAmount');
         line.unset('promotions');
@@ -9416,14 +9420,12 @@
           l.get('gross') +
           "', LineGrossAmount: '" +
           l.get('lineGrossAmount') +
-          "', DiscountedGross: '" +
-          l.get('discountedGross') +
+          "', GrossUnitAmount: '" +
+          l.get('grossUnitAmount') +
           "', Net: '" +
           l.get('net') +
-          "', DiscountedNet: '" +
-          l.get('discountedNet') +
-          "', NonDiscountedNet: '" +
-          l.get('nondiscountednet') +
+          "', NetUnitAmount: '" +
+          l.get('netUnitAmount') +
           "', TaxAmount: '" +
           l.get('taxAmount') +
           "', GrossUnitPrice: '" +
@@ -9662,7 +9664,15 @@
           model
             .get('lines')
             .at(i)
-            .set('listPrice', 0);
+            .set('grossUnitPrice', 0);
+          model
+            .get('lines')
+            .at(i)
+            .set('pricenet', 0);
+          model
+            .get('lines')
+            .at(i)
+            .set('price', 0);
           model
             .get('lines')
             .at(i)
@@ -9670,11 +9680,11 @@
           model
             .get('lines')
             .at(i)
-            .set('grossUnitPrice', 0);
+            .set('lineGrossAmount', 0);
           model
             .get('lines')
             .at(i)
-            .set('lineGrossAmount', 0);
+            .set('lineNetAmount', 0);
         }
         model.get('approvals').forEach(function(approval) {
           if (typeof approval.approvalType === 'object') {
@@ -9884,10 +9894,22 @@
           deliveredNotInvoicedLine = _.find(this.get('lines').models, function(
             line
           ) {
-            return line.getDeliveredQuantity() !== line.get('invoicedQuantity');
+            return line.getDeliveredQuantity() !== line.getInvoicedQuantity();
           });
           receiptShouldBeInvoiced = !_.isUndefined(deliveredNotInvoicedLine);
         }
+      }
+
+      if (
+        receiptShouldBeInvoiced &&
+        (this.get('fullInvoice') ||
+          this.getInvoiceTerms() === 'D' ||
+          this.getInvoiceTerms() === 'O') &&
+        !this.get('bp').get('taxID')
+      ) {
+        OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+        finalCallback();
+        return;
       }
 
       if (receiptShouldBeInvoiced) {
@@ -9910,7 +9932,7 @@
 
         this.get('lines').forEach(function(ol) {
           var originalQty = ol.get('qty'),
-            qtyAlreadyInvoiced = ol.get('invoicedQuantity') || OB.DEC.Zero,
+            qtyAlreadyInvoiced = ol.getInvoicedQuantity(),
             qtyPendingToBeInvoiced = OB.DEC.sub(
               ol.get('qty'),
               qtyAlreadyInvoiced
@@ -10280,28 +10302,53 @@
           );
         };
 
-        loadLocations = function(bp) {
+        loadLocations = async function(bp) {
           if (bpLocId === bpBillLocId) {
             if (isLoadedPartiallyFromBackend) {
               finalCallback(bp, bpLoc, null);
             } else {
-              OB.Dal.get(
-                OB.Model.BPLocation,
-                bpLocId,
-                function(bpLoc) {
-                  finalCallback(bp, bpLoc, null);
-                },
-                function(tx, error) {
-                  OB.UTIL.showError(error);
-                },
-                function() {
-                  loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
-                    data
-                  ) {
-                    finalCallback(bp, data.bpLoc, null);
-                  });
+              if (
+                OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
+              ) {
+                OB.Dal.get(
+                  OB.Model.BPLocation,
+                  bpLocId,
+                  function(bpLoc) {
+                    finalCallback(bp, bpLoc, null);
+                  },
+                  function(tx, error) {
+                    OB.UTIL.showError(error);
+                  },
+                  function() {
+                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                      data
+                    ) {
+                      finalCallback(bp, data.bpLoc, null);
+                    });
+                  }
+                );
+              } else {
+                try {
+                  let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                    bpLocId
+                  );
+                  if (bPLocation) {
+                    let bpLoc = OB.Dal.transform(
+                      OB.Model.BPLocation,
+                      bPLocation
+                    );
+                    finalCallback(bp, bpLoc, null);
+                  } else {
+                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                      data
+                    ) {
+                      finalCallback(bp, data.bpLoc, null);
+                    });
+                  }
+                } catch (error) {
+                  OB.error(error);
                 }
-              );
+              }
             }
           } else {
             if (
@@ -10311,7 +10358,7 @@
             ) {
               finalCallback(bp, bpLoc, bpBillLoc);
             } else {
-              var criteria = {};
+              var criteria;
               if (
                 OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
               ) {
@@ -10322,24 +10369,55 @@
                     value: [bpLocId, bpBillLocId]
                   }
                 ];
+                criteria = {};
                 criteria.remoteFilters = remoteCriteria;
+                OB.Dal.find(
+                  OB.Model.BPLocation,
+                  criteria,
+                  function(locations) {
+                    if (locations.models.length === 2) {
+                      _.each(locations.models, function(l) {
+                        if (l.id === bpLocId) {
+                          bpLoc = l;
+                        } else if (l.id === bpBillLocId) {
+                          bpBillLoc = l;
+                        }
+                      });
+                      finalCallback(bp, bpLoc, bpBillLoc);
+                    } else {
+                      loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                        data
+                      ) {
+                        finalCallback(bp, data.bpLoc, data.bpBillLoc);
+                      });
+                    }
+                  },
+                  function(tx, error) {
+                    OB.UTIL.showError(error);
+                  },
+                  bpLoc
+                );
               } else {
-                criteria._whereClause =
-                  'where c_bpartner_location_id in (?, ?)';
-                criteria.params = [bpLocId, bpBillLocId];
-              }
-              OB.Dal.find(
-                OB.Model.BPLocation,
-                criteria,
-                function(locations) {
-                  if (locations.models.length === 2) {
-                    _.each(locations.models, function(l) {
+                try {
+                  criteria = new OB.App.Class.Criteria();
+                  criteria.criterion('id', [bpLocId, bpBillLocId], 'in');
+                  let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+                    criteria.build()
+                  );
+                  let locations = [];
+                  for (let i = 0; i < bPLocations.length; i++) {
+                    locations.push(
+                      OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
+                    );
+                  }
+                  if (locations.length === 2) {
+                    for (const l of locations) {
                       if (l.id === bpLocId) {
                         bpLoc = l;
                       } else if (l.id === bpBillLocId) {
                         bpBillLoc = l;
                       }
-                    });
+                    }
                     finalCallback(bp, bpLoc, bpBillLoc);
                   } else {
                     loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
@@ -10348,33 +10426,50 @@
                       finalCallback(bp, data.bpLoc, data.bpBillLoc);
                     });
                   }
-                },
-                function(tx, error) {
+                } catch (error) {
                   OB.UTIL.showError(error);
-                },
-                bpLoc
-              );
+                }
+              }
             }
           }
         };
-        OB.Dal.get(
-          OB.Model.BusinessPartner,
-          bpId,
-          function(bp) {
-            loadLocations(bp);
-          },
-          null,
-          function() {
-            //Empty
-            loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
-              bpLoc = data.bpLoc;
-              if (bpLocId !== bpBillLocId) {
-                bpBillLoc = data.bpBillLoc;
-              }
-              loadLocations(data.bpartner);
-            });
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          OB.Dal.get(
+            OB.Model.BusinessPartner,
+            bpId,
+            function(bp) {
+              loadLocations(bp);
+            },
+            null,
+            function() {
+              //Empty
+              loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
+                bpLoc = data.bpLoc;
+                if (bpLocId !== bpBillLocId) {
+                  bpBillLoc = data.bpBillLoc;
+                }
+                loadLocations(data.bpartner);
+              });
+            }
+          );
+        } else {
+          try {
+            let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpId);
+            if (bp !== undefined) {
+              loadLocations(OB.Dal.transform(OB.Model.BusinessPartner, bp));
+            } else {
+              loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
+                bpLoc = data.bpLoc;
+                if (bpLocId !== bpBillLocId) {
+                  bpBillLoc = data.bpBillLoc;
+                }
+                loadLocations(data.bpartner);
+              });
+            }
+          } catch (error) {
+            OB.error(error);
           }
-        );
+        }
       },
 
       newPaidReceipt: async function(model, callback) {
@@ -10593,12 +10688,12 @@
           for (let i = 0; i < model.receiptLines.length; i++) {
             let iter = model.receiptLines[i];
             var price = OB.DEC.number(iter.unitPrice),
-              lineNet = order.get('priceIncludesTax')
-                ? null
-                : OB.DEC.number(iter.lineGrossAmount || iter.linenetamount),
               lineGross = order.get('priceIncludesTax')
                 ? OB.DEC.number(iter.lineGrossAmount)
-                : null;
+                : null,
+              lineNet = order.get('priceIncludesTax')
+                ? null
+                : OB.DEC.number(iter.lineGrossAmount || iter.lineNetAmount);
             iter.linepos = linepos;
             var addLineForProduct = async function(prod) {
               // Set product services
@@ -10681,7 +10776,6 @@
                       prod.get('listPrice') !== price
                         ? price
                         : prod.get('listPrice'),
-                    grossListPrice: iter.grossListPrice,
                     net: lineNet,
                     gross: lineGross,
                     promotions: iter.promotions,
@@ -10700,17 +10794,32 @@
                     attSetInstanceDesc: iter.attSetInstanceDesc
                       ? iter.attSetInstanceDesc
                       : null,
-                    lineGrossAmount: iter.lineGrossAmount
+                    lineGrossAmount: iter.lineGrossAmount,
+                    country:
+                      iter.obrdmDeliveryMode === 'HomeDelivery'
+                        ? order.get('bp').get('shipLocId')
+                          ? order
+                              .get('bp')
+                              .get('locationModel')
+                              .get('countryId')
+                          : null
+                        : iter.organization
+                        ? iter.organization.country
+                        : OB.MobileApp.model.get('terminal')
+                            .organizationCountryId,
+                    region:
+                      iter.obrdmDeliveryMode === 'HomeDelivery'
+                        ? order.get('bp').get('shipLocId')
+                          ? order
+                              .get('bp')
+                              .get('locationModel')
+                              .get('regionId')
+                          : null
+                        : iter.organization
+                        ? iter.organization.region
+                        : OB.MobileApp.model.get('terminal')
+                            .organizationRegionId
                   });
-
-                  if (!order.get('isQuotation')) {
-                    newline.set(
-                      'creationListPrice',
-                      iter.priceIncludesTax
-                        ? iter.grossListPrice
-                        : iter.listPrice
-                    );
-                  }
 
                   // copy verbatim not owned properties -> modular properties.
                   _.each(iter, function(value, key) {
@@ -10870,10 +10979,6 @@
       },
 
       addNewOrder: function(isFirstOrder) {
-        var me = this;
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          me.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-        }
         this.saveCurrent();
         this.current = this.newOrder();
         this.unshift(this.current);
@@ -10907,10 +11012,6 @@
               }
             }
           );
-        }
-
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          this.doRemoteBPSettings(model.get('bp'));
         }
 
         this.saveCurrent();
@@ -10950,24 +11051,6 @@
         );
       },
 
-      doRemoteBPSettings: function(businessPartner) {
-        OB.Dal.saveOrUpdate(
-          businessPartner,
-          function() {},
-          function() {
-            OB.error(arguments);
-          }
-        );
-        OB.Dal.saveOrUpdate(
-          businessPartner.get('locationModel'),
-          function() {},
-          function() {
-            OB.error(arguments);
-          }
-        );
-        OB.UTIL.showLoading(false);
-      },
-
       addNewQuotation: function() {
         this.saveCurrent();
         this.current = this.newOrder();
@@ -10997,9 +11080,6 @@
           var order = this.newOrder();
 
           this.unshift(order);
-          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-            this.doRemoteBPSettings(OB.MobileApp.model.get('businessPartner'));
-          }
         }
         this.current = this.at(0);
         this.loadCurrent(createNew);
@@ -11415,6 +11495,12 @@
           'orderManualPromotions',
           new OB.Collection.OrderManualPromotionsList()
         );
+        if (
+          OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)
+        ) {
+          order.set('obrdmDeliveryModeProperty', 'PickAndCarry');
+        }
+
         OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
           newOrder: order
         });

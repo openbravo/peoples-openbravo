@@ -18,45 +18,31 @@
       orderDate: receipt.get('orderDate'),
       priceIncludesTax: receipt.get('priceIncludesTax'),
       cashVAT: receipt.get('cashVAT'),
+      country: receipt.get('country'),
+      region: receipt.get('region'),
       businessPartner: {
         id: receipt.get('bp').id,
         taxCategory: receipt.get('bp').get('taxCategory'),
-        taxExempt: receipt.get('bp').get('taxExempt'),
-        shipCountryId: receipt.get('bp').get('shipCountryId'),
-        shipRegionId: receipt.get('bp').get('shipRegionId'),
-        shipLocId: receipt.get('bp').get('shipLocId'),
-        locationModel: {
-          countryId: receipt
-            .get('bp')
-            .get('locationModel')
-            .get('countryId'),
-          regionId: receipt
-            .get('bp')
-            .get('locationModel')
-            .get('regionId')
-        }
+        taxExempt: receipt.get('bp').get('taxExempt')
       },
       lines: receipt.get('lines').map(line => {
         return {
           id: line.get('id'),
-          recalculateTax: line.get('recalculateTax'),
           lineRate: line.get('lineRate'),
-          obrdmDeliveryMode: line.get('obrdmDeliveryMode'),
-          discountedGrossAmount:
-            line.get('discountedGross') || line.get('discountedGross') === 0
-              ? line.get('discountedGross')
-              : line.get('gross'),
-          discountedNetAmount:
-            line.get('discountedNet') || line.get('discountedNet') === 0
-              ? line.get('discountedNet')
-              : line.get('net'),
+          country: line.get('country'),
+          region: line.get('region'),
+          grossUnitAmount: receipt.get('priceIncludesTax')
+            ? OB.DEC.compare(line.get('gross')) === 0
+              ? line.get('gross')
+              : OB.DEC.sub(line.get('gross'), line.getDiscount())
+            : undefined,
+          netUnitAmount: receipt.get('priceIncludesTax')
+            ? undefined
+            : OB.DEC.compare(line.get('net')) === 0
+            ? line.get('net')
+            : OB.DEC.sub(line.get('net'), line.getDiscount()),
           qty: line.get('qty'),
-          originalTaxCategory: line.get('originalTaxCategory'),
-          originalTaxExempt: line.get('originalTaxExempt'),
-          organization: {
-            country: line.get('organization').country,
-            region: line.get('organization').region
-          },
+          taxExempt: line.get('taxExempt'),
           product: {
             id: line.get('product').id,
             taxCategory: line.get('product').get('taxCategory')
@@ -65,6 +51,43 @@
         };
       })
     };
+  };
+
+  const translateTaxes = taxes => {
+    const newTaxes = { ...taxes };
+
+    const translateTaxArray = taxArray => {
+      if (!taxArray) {
+        return {};
+      }
+
+      return taxArray
+        .map(tax => ({
+          id: tax.tax.id,
+          net: tax.base,
+          amount: tax.amount,
+          name: tax.tax.name,
+          docTaxAmount: tax.tax.docTaxAmount,
+          rate: tax.tax.rate,
+          taxBase: tax.tax.taxBase,
+          cascade: tax.tax.cascade,
+          lineNo: tax.tax.lineNo
+        }))
+        .reduce((obj, item) => {
+          const newObj = { ...obj };
+          newObj[[item.id]] = item;
+          return newObj;
+        }, {});
+    };
+
+    newTaxes.header.taxes = translateTaxArray(taxes.header.taxes);
+    newTaxes.lines = taxes.lines.map(line => {
+      const newLine = { ...line };
+      newLine.taxes = translateTaxArray(line.taxes);
+      return newLine;
+    });
+
+    return newTaxes;
   };
 
   /**
@@ -78,6 +101,11 @@
 
     const ticket = translateReceipt(receipt);
     return OB.Taxes.Pos.applyTaxes(ticket, OB.Taxes.Pos.ruleImpls);
+  };
+
+  OB.Taxes.Pos.applyTaxes = (ticket, rules) => {
+    const taxes = OB.Taxes.applyTaxes(ticket, rules);
+    return translateTaxes(taxes);
   };
 
   /**

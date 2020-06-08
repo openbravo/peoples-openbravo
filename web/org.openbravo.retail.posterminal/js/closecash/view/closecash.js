@@ -1,18 +1,18 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, enyo, _ */
+/*global OB, enyo */
 
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.Button',
+  name: 'OB.OBPOSCloseCash.UI.Button',
   kind: 'OB.UI.ToolbarButton',
-  classes: 'obObPosCashUpUiButton',
+  classes: 'obObPosCloseCashUiButton',
   disabled: true,
   events: {
     onChangeStep: ''
@@ -36,46 +36,46 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.CancelButton',
+  name: 'OB.OBPOSCloseCash.UI.CancelButton',
   kind: 'OB.UI.ToolbarButton',
-  classes: 'obObPosCashUpUiCancelButton',
+  classes: 'obObPosCloseCashUiCancelButton',
   i18nLabel: 'OBMOBC_LblCancel',
   disabled: true,
   events: {
-    onCancelCashup: ''
+    onCancelCloseCash: ''
   },
   tap: function() {
     OB.POS.hwserver.checkDrawer(function() {
-      this.doCancelCashup();
+      this.doCancelCloseCash();
     }, this);
   }
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
+  name: 'OB.OBPOSCloseCash.UI.LeftToolbarImpl',
   kind: 'OB.UI.MultiColumn.Toolbar',
-  classes: 'obObPosCashUpUiLeftToolbarImpl',
+  classes: 'obObPosCloseCashUiLeftToolbarImpl',
   published: {
     model: null
   },
   buttons: [
     {
-      name: 'btnCashUp',
-      kind: 'OB.OBPOSCashUp.UI.Button',
-      classes: 'obObPosCashupUiCashUp-rightToolbar-btnCashUp',
+      name: 'btnCloseCash',
+      kind: 'OB.OBPOSCloseCash.UI.Button',
+      classes: 'obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash',
       disabled: true,
       i18nLabel: 'OBPOS_LblCloseCash'
     },
     {
       name: 'btnToggleView',
       kind: 'OB.UI.ToolbarButton',
-      classes: 'obObPosCashUpUiLeftToolbarImpl-btnToggleView',
+      classes: 'obObPosCloseCashUiLeftToolbarImpl-btnToggleView',
       i18nLabel: 'OBPOS_LblSwitchView',
       tap: function() {
         if (!this.disabled) {
           var keypadClass = 'obUiMultiColumn-panels-showKeypad',
             panels = OB.POS.terminal.$.containerWindow.getRoot().$
-              .cashupMultiColumn.$.panels;
+              .closeCashMultiColumn.$.panels;
           if (panels.hasClass(keypadClass)) {
             panels.removeClass(keypadClass);
           } else {
@@ -85,9 +85,9 @@ enyo.kind({
       }
     },
     {
-      kind: 'OB.OBPOSCashUp.UI.Button',
+      kind: 'OB.OBPOSCloseCash.UI.Button',
       name: 'btnPrevious',
-      classes: 'obObPosCashUpUiLeftToolbarImpl-btnPrevious',
+      classes: 'obObPosCloseCashUiLeftToolbarImpl-btnPrevious',
       i18nLabel: 'OBPOS_LblPrevStep',
       stepCount: -1,
       span: 4,
@@ -102,16 +102,16 @@ enyo.kind({
       }
     },
     {
-      kind: 'OB.OBPOSCashUp.UI.CancelButton',
+      kind: 'OB.OBPOSCloseCash.UI.CancelButton',
       name: 'btnCancel',
-      classes: 'obObPosCashUpUiLeftToolbarImpl-btnCancel',
+      classes: 'obObPosCloseCashUiLeftToolbarImpl-btnCancel',
       disabled: false,
       span: 4
     },
     {
-      kind: 'OB.OBPOSCashUp.UI.Button',
+      kind: 'OB.OBPOSCloseCash.UI.Button',
       name: 'btnNext',
-      classes: 'obObPosCashUpUiLeftToolbarImpl-btnNext',
+      classes: 'obObPosCloseCashUiLeftToolbarImpl-btnNext',
       i18nLabel: 'OBPOS_LblNextStep',
       stepCount: 1,
       span: 4,
@@ -121,7 +121,7 @@ enyo.kind({
         onDisableNextButton: 'disableNextButton',
         onEnableNextButton: 'enableNextButton'
       },
-      processesToListen: ['cashupWindow'],
+      processesToListen: ['closeCashWindow'],
       disableButton: function() {
         this.setDisabled(true);
       },
@@ -157,39 +157,31 @@ enyo.kind({
 });
 
 enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.CashUp',
+  name: 'OB.OBPOSCloseCash.UI.CloseCash',
   kind: 'OB.UI.WindowView',
-  classes: 'obObPosCashupUiCashUp',
+  classes: 'obObPosCloseCashUiCloseCash',
   allowedIncrementalRefresh: false,
   incrementalRefreshOnNavigate: false,
   synchId: null,
   statics: {
     TitleExtensions: [],
     getTitleExtensions: function() {
-      return _.reduce(
-        this.TitleExtensions,
-        function(memo, item) {
-          return memo + ' ' + item();
-        },
-        ''
-      );
+      return this.TitleExtensions.reduce((memo, item) => {
+        return memo + ' ' + item();
+      }, '');
     }
   },
-  windowmodel: OB.OBPOSCashUp.Model.CashUp,
-  titleLabel: 'OBPOS_LblCloseCash',
-  finishCloseDialogLabel: 'OBPOS_FinishCloseDialog',
-  cashupSentHook: 'OBPOS_AfterCashUpSent',
   handlers: {
     onButtonOk: 'buttonOk',
     onTapRadio: 'tapRadio',
     onChangeStep: 'changeStep',
-    onCancelCashup: 'cancelCashup',
+    onCancelCloseCash: 'cancelCloseCash',
     onCountAllOK: 'countAllOK',
     onLineEditCount: 'lineEditCount',
     onPaymentMethodKept: 'paymentMethodKept',
     onResetQtyToKeep: 'resetQtyToKeep',
     onHoldActiveCmd: 'holdActiveCmd',
-    onChangeCashupReport: 'changeCashupReport',
+    onChangeCloseCashReport: 'changeCloseCashReport',
     onCommandFired: 'commandHandler'
   },
   published: {
@@ -203,96 +195,97 @@ enyo.kind({
     onEnableNextButton: '',
     onSetPaymentMethodStatus: ''
   },
+  letfPanelComponents: [
+    {
+      classes:
+        'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel-cashPayments',
+      kind: 'OB.OBPOSCloseCash.UI.CashPayments',
+      name: 'cashPayments',
+      showing: false
+    },
+    {
+      classes:
+        'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel-listPaymentMethods',
+      kind: 'OB.OBPOSCloseCash.UI.ListPaymentMethods',
+      name: 'listPaymentMethods',
+      showing: false
+    },
+    {
+      classes:
+        'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel-cashToKeep',
+      kind: 'OB.OBPOSCloseCash.UI.CashToKeep',
+      name: 'cashToKeep',
+      showing: false
+    },
+    {
+      classes:
+        'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel-postPrintClose',
+      kind: 'OB.OBPOSCloseCash.UI.PostPrintClose',
+      name: 'postPrintClose',
+      showing: false
+    }
+  ],
+  modalComponents: [
+    {
+      kind: 'OB.UI.ModalCancel',
+      name: 'modalCancel',
+      classes: 'obObPosCloseCashUiCloseCash-modalCancel'
+    },
+    {
+      kind: 'OB.UI.ModalSelectPrinters',
+      name: 'modalSelectPrinters',
+      classes: 'obObPosCloseCashUiCloseCash-modalSelectPrinters'
+    }
+  ],
   components: [
     {
       kind: 'OB.UI.MultiColumn',
-      name: 'cashupMultiColumn',
-      classes: 'obObPosCashupUiCashUp-cashupMultiColumn',
+      name: 'closeCashMultiColumn',
+      classes: 'obObPosCloseCashUiCloseCash-closeCashMultiColumn',
       leftToolbar: {
-        kind: 'OB.OBPOSCashUp.UI.LeftToolbarImpl',
+        kind: 'OB.OBPOSCloseCash.UI.LeftToolbarImpl',
         name: 'leftToolbar',
-        classes: 'obObPosCashupUiCashUp-cashupMultiColumn-leftToolbar',
+        classes: 'obObPosCloseCashUiCloseCash-closeCashMultiColumn-leftToolbar',
         showMenu: false,
         showWindowsMenu: false
       },
       rightToolbar: {
         kind: 'OB.UI.MultiColumn.Toolbar',
         name: 'rightToolbar',
-        classes: 'obObPosCashupUiCashUp-cashupMultiColumn-rightToolbar',
+        classes:
+          'obObPosCloseCashUiCloseCash-closeCashMultiColumn-rightToolbar',
         showMenu: false,
         showWindowsMenu: false,
         buttons: [
           {
-            kind: 'OB.OBPOSCashUp.UI.Button',
-            name: 'btnCashUp',
-            classes: 'obObPosCashupUiCashUp-rightToolbar-btnCashUp',
+            kind: 'OB.OBPOSCloseCash.UI.Button',
+            name: 'btnCloseCash',
+            classes: 'obObPosCloseCashUiCloseCash-rightToolbar-btnCloseCash',
             span: 12
           }
         ]
       },
       leftPanel: {
-        name: 'cashupLeftPanel',
-        classes: 'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel',
-        components: [
-          {
-            classes:
-              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPendingReceipts',
-            kind: 'OB.OBPOSCashUp.UI.ListPendingReceipts',
-            name: 'listPendingReceipts',
-            showing: false
-          },
-          {
-            classes:
-              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashMaster',
-            kind: 'OB.OBPOSCashUp.UI.CashMaster',
-            name: 'cashMaster',
-            showing: false
-          },
-          {
-            classes:
-              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashPayments',
-            kind: 'OB.OBPOSCashUp.UI.CashPayments',
-            name: 'cashPayments',
-            showing: false
-          },
-          {
-            classes:
-              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-listPaymentMethods',
-            kind: 'OB.OBPOSCashUp.UI.ListPaymentMethods',
-            name: 'listPaymentMethods',
-            showing: false
-          },
-          {
-            classes:
-              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-cashToKeep',
-            kind: 'OB.OBPOSCashUp.UI.CashToKeep',
-            name: 'cashToKeep',
-            showing: false
-          },
-          {
-            classes:
-              'obObPosCashupUiCashUp-cashupMultiColumn-cashupLeftPanel-postPrintClose',
-            kind: 'OB.OBPOSCashUp.UI.PostPrintClose',
-            name: 'postPrintClose',
-            showing: false
-          }
-        ]
+        name: 'closeCashLeftPanel',
+        classes:
+          'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashLeftPanel'
       },
       rightPanel: {
-        classes: 'obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel',
-        name: 'cashupRightPanel',
+        classes:
+          'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashRightPanel',
+        name: 'closeCashRightPanel',
         components: [
           {
-            kind: 'OB.OBPOSCashUp.UI.CashUpInfo',
-            name: 'cashUpInfo',
+            kind: 'OB.OBPOSCloseCash.UI.CloseCashInfo',
+            name: 'closeCashInfo',
             classes:
-              'obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel-cashUpInfo'
+              'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashRightPanel-closeCashInfo'
           },
           {
-            kind: 'OB.OBPOSCashUp.UI.CashUpKeyboard',
-            name: 'cashUpKeyboard',
+            kind: 'OB.OBPOSCloseCash.UI.CloseCashKeyboard',
+            name: 'closeCashKeyboard',
             classes:
-              'obObPosCashupUiCashUp-cashupMultiColumn-cashupRightPanel-cashUpKeyboard'
+              'obObPosCloseCashUiCloseCash-closeCashMultiColumn-closeCashRightPanel-closeCashKeyboard'
           }
         ]
       },
@@ -303,372 +296,256 @@ enyo.kind({
           me.render();
         }, 1);
       }
-    },
-    {
-      kind: 'OB.UI.ModalCancel',
-      name: 'modalCancel',
-      classes: 'obObPosCashupUiCashUp-modalCancel'
-    },
-    {
-      kind: 'OB.OBPOSCashUp.UI.modalPendingToProcess',
-      name: 'modalPendingToProcess',
-      classes: 'obObPosCashupUiCashUp-modalPendingToProcess'
-    },
-    {
-      kind: 'OB.UI.ModalSelectPrinters',
-      name: 'modalSelectPrinters',
-      classes: 'obObPosCashupUiCashUp-modalSelectPrinters'
     }
   ],
   finalAction: function() {
     OB.POS.navigate('retail.pointofsale');
   },
   init: function() {
-    var me = this;
-    this.inherited(arguments);
-    this.execution = OB.UTIL.ProcessController.start('cashupWindow');
+    // Create dinamically modal components
+    this.modalComponents.forEach(modal => {
+      this.createComponent(modal);
+    });
+    // Create dinamically Left Panel components
+    this.letfPanelComponents.forEach(component => {
+      this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.createComponent(
+        component
+      );
+    });
 
-    this.$.cashupMultiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.btnCashUp.setContent(
+    this.inherited(arguments);
+    this.execution = OB.UTIL.ProcessController.start('closeCashWindow');
+
+    this.$.closeCashMultiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.btnCloseCash.setContent(
       OB.I18N.getLabel(this.titleLabel)
     );
 
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpInfo.setModel(this.model);
-    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.setModel(this.model);
-
-    //step 0
-    this.model.on(
-      'change:pendingOrdersToProcess',
-      function(model) {
-        this.doShowPopup({
-          popup: 'modalprocessreceipts'
-        });
-      },
-      this
+    this.$.closeCashMultiColumn.$.rightPanel.$.closeCashInfo.setModel(
+      this.model
+    );
+    this.$.closeCashMultiColumn.$.leftToolbar.$.leftToolbar.setModel(
+      this.model
     );
 
-    // Pending Orders - Step 1
-    this.$.cashupMultiColumn.$.leftPanel.$.listPendingReceipts.setCollection(
-      this.model.get('orderlist')
-    );
-    this.model.get('orderlist').on(
-      'all',
-      function() {
-        this.refreshButtons();
-      },
-      this
-    );
+    // Initialize not common steps
+    this.initializeWindow();
 
-    // Cash count - Step 2
-    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.setCollection(
+    // Cash count
+    this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPaymentMethods.setCollection(
       this.model.get('paymentList')
     );
-    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.printAmount(
+    this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPaymentMethods.$.total.printAmount(
       this.model.get('totalExpected')
     );
-    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.counted.printAmount(
+    this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPaymentMethods.$.counted.printAmount(
       0
     );
-    this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(
+    this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPaymentMethods.$.difference.printAmount(
       OB.DEC.sub(0, this.model.get('totalExpected'))
     );
 
-    this.model.on(
-      'change:totalExpected',
-      function() {
-        this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.total.printAmount(
+    this.model.on('change:totalExpected', () => {
+      this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPaymentMethods.$.total.printAmount(
+        this.model.get('totalExpected')
+      );
+    });
+
+    this.model.on('change:totalCounted', () => {
+      this.model.set(
+        'totalDifference',
+        OB.DEC.sub(
+          this.model.get('totalCounted'),
           this.model.get('totalExpected')
+        )
+      );
+      this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPaymentMethods.$.counted.printAmount(
+        this.model.get('totalCounted')
+      );
+      this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPaymentMethods.$.difference.printAmount(
+        this.model.get('totalDifference')
+      );
+      if (this.model.get('totalDifference') <= 0) {
+        this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPaymentMethods.$.differenceLbl.setContent(
+          OB.I18N.getLabel('OBPOS_Remaining')
         );
-      },
-      this
-    );
+      } else {
+        this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPaymentMethods.$.differenceLbl.setContent(
+          OB.I18N.getLabel('OBPOS_Surplus')
+        );
+      }
+      this.waterfall('onAnyCounted');
+      this.refreshButtons();
+    });
 
-    this.model.on(
-      'change:totalCounted',
-      function() {
-        this.model.set(
-          'totalDifference',
-          OB.DEC.sub(
-            this.model.get('totalCounted'),
-            this.model.get('totalExpected')
-          )
-        );
-        this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.counted.printAmount(
-          this.model.get('totalCounted')
-        );
-        this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.difference.printAmount(
-          this.model.get('totalDifference')
-        );
-        if (this.model.get('totalDifference') <= 0) {
-          this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.differenceLbl.setContent(
-            OB.I18N.getLabel('OBPOS_Remaining')
-          );
-        } else {
-          this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods.$.differenceLbl.setContent(
-            OB.I18N.getLabel('OBPOS_Surplus')
-          );
-        }
-        this.waterfall('onAnyCounted');
-        this.refreshButtons();
-      },
-      this
-    );
-
-    // Cash to keep - Step 3.
-    this.model.on(
-      'change:stepOfStep3',
-      function(model) {
-        this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.disableSelection();
-        this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.setPaymentToKeep(
-          this.model.get('paymentList').at(this.model.get('stepOfStep3'))
-        );
-        this.refresh();
-      },
-      this
-    );
+    // Cash to keep
+    this.model.on('change:stepOfStep3', model => {
+      this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.cashToKeep.disableSelection();
+      this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.cashToKeep.setPaymentToKeep(
+        this.model.get('paymentList').at(this.model.get('stepOfStep3'))
+      );
+      this.refresh();
+    });
     //FIXME:It is triggered only once, but it is not the best way to do it
-    this.model.get('paymentList').on(
-      'reset',
-      function() {
-        var paymentList = this.model
-          .get('paymentList')
-          .at(this.model.get('substep'));
-        if (paymentList) {
-          paymentList.on(
-            'change:foreignCounted',
-            function() {
-              this.$.cashupMultiColumn.$.leftPanel.$.cashToKeep.$.formkeep.renderBody(
-                this.model.get('paymentList').at(this.model.get('substep'))
-              );
-            },
-            this
+    this.model.get('paymentList').on('reset', () => {
+      const paymentList = this.model
+        .get('paymentList')
+        .at(this.model.get('substep'));
+      if (paymentList) {
+        paymentList.on('change:foreignCounted', () => {
+          this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.cashToKeep.$.formkeep.renderBody(
+            this.model.get('paymentList').at(this.model.get('substep'))
           );
-        }
-      },
-      this
-    );
+        });
+      }
+    });
 
-    // Cash Up Report - Step 4
+    // Close Cash Report
     //this data doesn't changes
-    this.model.get('cashUpReport').on('reset', function(model) {
-      this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setModel(
-        this.model.get('cashUpReport').at(0)
+    this.model.get('closeCashReport').on('reset', model => {
+      this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.postPrintClose.setModel(
+        this.model.get('closeCashReport').at(0)
       );
     });
 
     //This data changed when money is counted
     //difference is calculated after counted
-    this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setSummary(
+    this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.postPrintClose.setSummary(
       this.model.getCountCashSummary()
     );
-    this.model.on(
-      'change:totalDifference',
-      function(model) {
-        this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setSummary(
-          this.model.getCountCashSummary()
-        );
-      },
-      this
-    );
+    this.model.on('change:totalDifference', model => {
+      this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.postPrintClose.setSummary(
+        this.model.getCountCashSummary()
+      );
+    });
 
     //finished
-    this.model.on(
-      'change:finished',
-      function() {
-        var content;
-        var i;
-        var messages = this.model.get('messages');
-        var me = this;
+    this.model.on('change:finished', () => {
+      let content;
+      const messages = this.model.get('messages');
 
-        // Build the content of the dialog.
-        if (messages && messages.length) {
-          content = [
-            {
-              content: OB.I18N.getLabel(me.finishCloseDialogLabel)
-            },
-            {
-              allowHtml: true,
-              content: '&nbsp;'
-            }
-          ];
-          for (i = 0; i < messages.length; i++) {
-            content.push({
-              content: OB.UTIL.decodeXMLComponent(messages[i])
-            });
-          }
-        } else {
-          content = OB.I18N.getLabel(me.finishCloseDialogLabel);
-        }
-
-        OB.UTIL.HookManager.executeHooks(me.cashupSentHook, {}, function() {
-          if (
-            OB.MobileApp.view.$.confirmationContainer.getAttribute(
-              'openedPopup'
-            ) !== OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp')
-          ) {
-            // Only display the good job message if there are no components displayed
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_LblGoodjob'),
-              content,
-              [
-                {
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  isConfirmButton: true,
-                  action: function() {
-                    me.finalAction();
-                    return true;
-                  }
-                }
-              ],
-              {
-                autoDismiss: false,
-                onHideFunction: function() {
-                  me.finalAction();
-                }
-              }
-            );
-          }
-        });
-      },
-      this
-    );
-    //finishedWrongly
-    this.model.on(
-      'change:finishedWrongly',
-      function(model) {
-        // in case of synchronized mode then don't do specific things
-        // message is already displayed
-        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          return;
-        }
-        var message = '';
-        if (model.get('errorMessage')) {
-          message = OB.I18N.getLabel(model.get('errorMessage'), [
-            model.get('errorDetail')
-          ]);
-        } else {
-          message = OB.I18N.getLabel('OBPOS_CashUpWrongly');
-        }
-
-        var errorNoNavigateToInitialScreen = model.get(
-          'errorNoNavigateToInitialScreen'
-        );
-        if (
-          errorNoNavigateToInitialScreen &&
-          errorNoNavigateToInitialScreen === 'true'
-        ) {
-          model.set('cashUpSent', false);
-          model.set('finishedWrongly', false);
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'),
-            message,
-            [
-              {
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                isConfirmButton: true,
-                action: function() {
-                  me.waterfall('onEnableNextButton');
-                  return true;
-                }
-              }
-            ],
-            {
-              autoDismiss: false,
-              onHideFunction: function() {
-                me.waterfall('onEnableNextButton');
-              }
-            }
-          );
-        } else {
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'),
-            message,
-            [
-              {
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                isConfirmButton: true,
-                action: function() {
-                  OB.POS.navigate('retail.pointofsale');
-                  return true;
-                }
-              }
-            ],
-            {
-              autoDismiss: false,
-              onHideFunction: function() {
-                OB.POS.navigate('retail.pointofsale');
-              }
-            }
-          );
-        }
-      },
-      this
-    );
-
-    this.refreshButtons();
-
-    this.model.on('change:loadFinished', function(model) {
-      async function processCashCloseSlave(callback) {
-        const response = await OB.App.Request.mobileServiceRequest(
-          'org.openbravo.retail.posterminal.ProcessCashCloseSlave',
+      // Build the content of the dialog.
+      if (messages && messages.length) {
+        content = [
           {
-            cashUpId: OB.App.State.Cashup.Utils.getCashupId()
+            content: OB.I18N.getLabel(this.finishCloseDialogLabel)
+          },
+          {
+            allowHtml: true,
+            content: '&nbsp;'
           }
-        );
-
-        if (response && response.response && response.response.error) {
-          // Error handler
-          OB.log('error', response.response.error.message);
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBPOS_CashMgmtError'),
-            OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
-              response.response.error.message,
-            [
-              {
-                label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                action: function() {
-                  processCashCloseSlave(callback);
-                }
-              }
-            ],
-            {
-              autoDismiss: false,
-              onHideFunction: function() {
-                OB.POS.navigate('retail.pointofsale');
-              }
-            }
-          );
-        } else {
-          callback(response.response.data);
+        ];
+        for (let i = 0; i < messages.length; i++) {
+          content.push({
+            content: OB.UTIL.decodeXMLComponent(messages[i])
+          });
         }
+      } else {
+        content = OB.I18N.getLabel(this.finishCloseDialogLabel);
       }
 
-      if (model.get('loadFinished')) {
-        if (OB.POS.modelterminal.get('terminal').isslave) {
-          processCashCloseSlave(function(data) {
-            if (data.hasMaster) {
-              me.moveStep(0);
-            } else {
-              OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'),
-                OB.I18N.getLabel('OBPOS_ErrCashupMasterNotOpen'),
-                null,
-                {
-                  autoDismiss: false,
-                  onHideFunction: function() {
-                    OB.POS.navigate('retail.pointofsale');
-                  }
+      OB.UTIL.HookManager.executeHooks(this.cashupSentHook, {}, () => {
+        if (
+          OB.MobileApp.view.$.confirmationContainer.getAttribute(
+            'openedPopup'
+          ) !== OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp')
+        ) {
+          // Only display the good job message if there are no components displayed
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_LblGoodjob'),
+            content,
+            [
+              {
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: () => {
+                  this.finalAction();
+                  return true;
                 }
-              );
+              }
+            ],
+            {
+              autoDismiss: false,
+              onHideFunction: () => {
+                this.finalAction();
+              }
             }
-          });
-        } else {
-          me.moveStep(0);
+          );
         }
+      });
+    });
+    //finishedWrongly
+    this.model.on('change:finishedWrongly', model => {
+      // in case of synchronized mode then don't do specific things
+      // message is already displayed
+      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
+        return;
+      }
+      let message = '';
+      if (model.get('errorMessage')) {
+        message = OB.I18N.getLabel(model.get('errorMessage'), [
+          model.get('errorDetail')
+        ]);
+      } else {
+        message = OB.I18N.getLabel('OBPOS_CashUpWrongly');
+      }
+
+      const errorNoNavigateToInitialScreen = model.get(
+        'errorNoNavigateToInitialScreen'
+      );
+      if (
+        errorNoNavigateToInitialScreen &&
+        errorNoNavigateToInitialScreen === 'true'
+      ) {
+        model.set('cashUpSent', false);
+        model.set('finishedWrongly', false);
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'),
+          message,
+          [
+            {
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              isConfirmButton: true,
+              action: () => {
+                this.waterfall('onEnableNextButton');
+                return true;
+              }
+            }
+          ],
+          {
+            autoDismiss: false,
+            onHideFunction: () => {
+              this.waterfall('onEnableNextButton');
+            }
+          }
+        );
+      } else {
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashUpWronglyHeader'),
+          message,
+          [
+            {
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              isConfirmButton: true,
+              action: () => {
+                OB.POS.navigate('retail.pointofsale');
+                return true;
+              }
+            }
+          ],
+          {
+            autoDismiss: false,
+            onHideFunction: function() {
+              OB.POS.navigate('retail.pointofsale');
+            }
+          }
+        );
       }
     });
 
-    this.model.on('change:slavesCashupCompleted', function(model) {
-      me.refreshButtons();
+    this.refreshButtons();
+
+    this.model.on('change:loadFinished', model => {
+      this.loadFinished(model);
     });
 
     // Disconnect RFID
@@ -676,8 +553,16 @@ enyo.kind({
       OB.UTIL.RfidController.disconnectRFIDDevice();
     }
   },
+  initializeWindow: function() {
+    // To be implemented in each window that extends from OB.OBPOSCloseCash.UI.CloseCash
+  },
+  loadFinished: function(model) {
+    if (model.get('loadFinished')) {
+      this.moveStep(0);
+    }
+  },
   rendered: function() {
-    OB.UTIL.ProcessController.finish('cashupWindow', this.execution);
+    OB.UTIL.ProcessController.finish('closeCashWindow', this.execution);
   },
   refreshButtons: function() {
     // Disable/Enable buttons
@@ -688,76 +573,80 @@ enyo.kind({
       disable: !this.model.allowNext()
     });
     // Show step keyboard
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.showToolbar(
+    this.$.closeCashMultiColumn.$.rightPanel.$.closeCashKeyboard.showToolbar(
       this.model.getStepToolbar()
     );
   },
 
   refresh: function() {
     // Show step panel
-    this.model.showStep(this.$.cashupMultiColumn.$.leftPanel.$);
+    this.model.showStep(
+      this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$
+    );
     // Refresh buttons
     this.refreshButtons();
     // Show button label.
-    var nextButtonI18NLabel = this.model.nextButtonI18NLabel();
-    this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.$.btnNext.setContent(
+    const nextButtonI18NLabel = this.model.nextButtonI18NLabel();
+    this.$.closeCashMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.$.btnNext.setContent(
       OB.I18N.getLabel(nextButtonI18NLabel)
     );
   },
   changeStep: function(inSender, inEvent) {
-    var direction = inEvent.originator.stepCount;
-    var me = this;
+    const direction = inEvent.originator.stepCount;
 
     if (direction > 0) {
       // Check with the step if can go next.
-      this.model.verifyStep(this.$.cashupMultiColumn.$.leftPanel.$, function() {
-        me.moveStep(direction);
-        OB.info('Cashup step: ' + me.model.get('step'));
-      });
+      this.model.verifyStep(
+        this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$,
+        () => {
+          this.moveStep(direction);
+          OB.info(`Cashup step: ${this.model.get('step')}`);
+        }
+      );
     } else {
       this.moveStep(direction);
-      OB.info('Cashup step: ' + me.model.get('step'));
+      OB.info(`Cashup step: ${this.model.get('step')}`);
     }
   },
-  cancelCashup: function(inSender, inEvent) {
+  cancelCloseCash: function(inSender, inEvent) {
     OB.POS.navigate('retail.pointofsale');
   },
   moveStep: function(direction) {
     // direction can be -1, 0 or +1
     // allways moving substep by substep
-    var nextstep = this.model.get('step');
-    var nextsubstep = this.model.get('substep') + direction;
+    const nextstep = this.model.get('step'),
+      nextsubstep = this.model.get('substep') + direction;
 
     if (nextstep <= 0) {
       // error. go to the begining
-      var step = this.model.getFirstStep();
+      const step = this.model.getFirstStep();
       this.model.set('step', step);
       this.model.set('substep', -1);
       this.moveStep(step);
     } else if (this.model.isFinishedWizard(nextstep)) {
       // Sets the time
       this.model
-        .get('cashUpReport')
+        .get('closeCashReport')
         .at(0)
         .set('time', new Date());
       //send cash up to the server if it has not been sent yet
       if (this.model.get('cashUpSent')) {
         return true;
       }
-      this.$.cashupMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.$.btnNext.setDisabled(
+      this.$.closeCashMultiColumn.$.leftToolbar.$.leftToolbar.$.toolbar.$.btnNext.setDisabled(
         true
       );
       this.model.set('cashUpSent', true);
-      this.model.processAndFinishCashUp();
+      this.model.processAndFinishCloseCash();
     } else if (nextsubstep < 0) {
       // jump to previous step
-      var previous = this.model.getPreviousStep();
+      const previous = this.model.getPreviousStep();
       this.model.set('step', previous);
       this.model.set('substep', this.model.getSubstepsLength(previous));
       this.moveStep(-1);
     } else if (nextsubstep >= this.model.getSubstepsLength(nextstep)) {
       // jump to next step
-      var next = this.model.getNextStep();
+      const next = this.model.getNextStep();
       this.model.set('step', next || nextstep + 1);
       this.model.set('substep', -1);
       this.moveStep(1);
@@ -781,16 +670,15 @@ enyo.kind({
     this.waterfall('onShowColumn', {
       colNum: 1
     });
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setStatus(
+    this.$.closeCashMultiColumn.$.rightPanel.$.closeCashKeyboard.setStatus(
       inEvent.originator.model.get('_id')
     );
   },
   commandHandler: function(inSender, inEvent) {
     //On selecting payment method, focus corresponding payment's counted field
-    var paymentList = this.$.cashupMultiColumn.$.leftPanel.$.listPaymentMethods
-        .$.paymentsList.$.tbody.children,
-      paymentLine;
-    paymentLine = _.find(paymentList, function(payment) {
+    const paymentList = this.$.closeCashMultiColumn.$.leftPanel.$
+      .closeCashLeftPanel.$.listPaymentMethods.$.paymentsList.$.tbody.children;
+    let paymentLine = paymentList.find(payment => {
       return payment.controls[0].model.get('searchKey') === inEvent.key;
     });
 
@@ -801,7 +689,7 @@ enyo.kind({
     }
   },
   paymentMethodKept: function(inSender, inEvent) {
-    var validationResult = this.model.validateCashKeep(inEvent.qtyToKeep);
+    const validationResult = this.model.validateCashKeep(inEvent.qtyToKeep);
     if (validationResult.result) {
       this.model
         .get('paymentList')
@@ -823,7 +711,7 @@ enyo.kind({
       OB.UTIL.showWarning(validationResult.message);
     }
     this.refreshButtons();
-    this.$.cashupMultiColumn.$.rightPanel.$.cashUpKeyboard.setStatus(
+    this.$.closeCashMultiColumn.$.rightPanel.$.closeCashKeyboard.setStatus(
       inEvent.name
     );
   },
@@ -839,98 +727,9 @@ enyo.kind({
       cmd: inEvent.cmd
     });
   },
-  changeCashupReport: function() {
-    this.$.cashupMultiColumn.$.leftPanel.$.postPrintClose.setModel(
-      this.model.get('cashUpReport').at(0)
+  changeCloseCashReport: function() {
+    this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.postPrintClose.setModel(
+      this.model.get('closeCashReport').at(0)
     );
-  }
-});
-
-OB.POS.registerWindow({
-  windowClass: OB.OBPOSCashUp.UI.CashUp,
-  route: 'retail.cashup',
-  online: false,
-  menuPosition: 20,
-  menuI18NLabel: 'OBPOS_LblCloseCash',
-  permission: 'OBPOS_retail.cashup',
-  approvalType: 'OBPOS_approval.cashup',
-  rfidState: false,
-  navigateTo: function(args, successCallback, errorCallback) {
-    // Cannot navigate to the cashup window in case of being a seller terminal
-    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_NavigationNotAllowedHeader'),
-        OB.I18N.getLabel('OBPOS_CannotNavigateToCashUp'),
-        [
-          {
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            action: function() {
-              errorCallback();
-            }
-          }
-        ],
-        {
-          onHideFunction: function() {
-            errorCallback();
-          }
-        }
-      );
-      return;
-    }
-    successCallback(args.route);
-  },
-  menuItemDisplayLogic: function() {
-    return OB.MobileApp.model.get('hasPaymentsForCashup');
-  }
-});
-
-enyo.kind({
-  name: 'OB.OBPOSCashUp.UI.CashUpPartial',
-  kind: 'OB.OBPOSCashUp.UI.CashUp',
-  classes: 'obObPosCashUpUiCashUpPartial',
-  windowmodel: OB.OBPOSCashUp.Model.CashUpPartial,
-  titleLabel: 'OBPOS_LblCloseCashPartial',
-  finishCloseDialogLabel: 'OBPOS_FinishPartialDialog',
-  cashupSentHook: 'OBPOS_AfterCashUpPartialSent',
-  finalAction: function() {
-    OB.POS.navigate('retail.pointofsale');
-  }
-});
-
-OB.POS.registerWindow({
-  windowClass: OB.OBPOSCashUp.UI.CashUpPartial,
-  route: 'retail.cashuppartial',
-  online: false,
-  menuPosition: 21,
-  menuI18NLabel: 'OBPOS_LblCloseCashPartial',
-  permission: 'OBPOS_retail.cashuppartial',
-  approvalType: 'OBPOS_approval.cashuppartial',
-  rfidState: false,
-  navigateTo: function(args, successCallback, errorCallback) {
-    if (!OB.MobileApp.model.get('hasPaymentsForCashup')) {
-      // Cannot navigate to the cashup partial window in case of being a seller terminal
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_NavigationNotAllowedHeader'),
-        OB.I18N.getLabel('OBPOS_CannotNavigateToPartialCashUp'),
-        [
-          {
-            label: OB.I18N.getLabel('OBMOBC_LblOk'),
-            action: function() {
-              errorCallback();
-            }
-          }
-        ],
-        {
-          onHideFunction: function() {
-            errorCallback();
-          }
-        }
-      );
-      return;
-    }
-    successCallback(args.route);
-  },
-  menuItemDisplayLogic: function() {
-    return OB.MobileApp.model.get('hasPaymentsForCashup');
   }
 });

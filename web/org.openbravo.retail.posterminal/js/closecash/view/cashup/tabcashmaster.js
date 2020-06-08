@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -89,7 +89,7 @@ enyo.kind({
                   OB.I18N.getLabel('OBPOS_LblStepNumber', [step, count]) +
                     ' ' +
                     OB.I18N.getLabel('OBPOS_LblStepMaster') +
-                    OB.OBPOSCashUp.UI.CashUp.getTitleExtensions()
+                    OB.OBPOSCloseCash.UI.CloseCash.getTitleExtensions()
                 );
               }
             },
@@ -187,7 +187,7 @@ enyo.kind({
   },
 
   updateCashUpModel: function(model, payments, updateCallback) {
-    var cashUpReport = model.get('cashUpReport').at(0);
+    var closeCashReport = model.get('closeCashReport').at(0);
     _.each(payments, function(payment) {
       // Update share payments
       _.each(model.get('paymentList').models, function(item) {
@@ -235,7 +235,7 @@ enyo.kind({
         }
       });
       // Update CashUpReport with shared payments
-      _.each(cashUpReport.get('deposits'), function(item) {
+      _.each(closeCashReport.get('deposits'), function(item) {
         if (item.get('searchKey') === payment.searchKey) {
           var sum = OB.DEC.add(
             OB.DEC.add(item.get('amount'), payment.totalDeposits),
@@ -248,7 +248,7 @@ enyo.kind({
           item.set('amount', sum);
         }
       });
-      _.each(cashUpReport.get('drops'), function(item) {
+      _.each(closeCashReport.get('drops'), function(item) {
         if (item.get('searchKey') === payment.searchKey) {
           var sum = OB.DEC.add(
             OB.DEC.add(item.get('amount'), payment.totalDrops),
@@ -261,7 +261,7 @@ enyo.kind({
           item.set('amount', sum);
         }
       });
-      _.each(cashUpReport.get('startings'), function(item) {
+      _.each(closeCashReport.get('startings'), function(item) {
         if (item.get('searchKey') === payment.searchKey) {
           var sum = OB.DEC.add(item.get('amount'), payment.startingCash);
           item.set(
@@ -273,30 +273,30 @@ enyo.kind({
       });
     });
     // Update CashUpReport totals
-    cashUpReport.set(
+    closeCashReport.set(
       'totalDeposits',
       _.reduce(
-        cashUpReport.get('deposits'),
+        closeCashReport.get('deposits'),
         function(accum, trx) {
           return OB.DEC.add(accum, trx.get('origAmount'));
         },
         0
       )
     );
-    cashUpReport.set(
+    closeCashReport.set(
       'totalDrops',
       _.reduce(
-        cashUpReport.get('drops'),
+        closeCashReport.get('drops'),
         function(accum, trx) {
           return OB.DEC.add(accum, trx.get('origAmount'));
         },
         0
       )
     );
-    cashUpReport.set(
+    closeCashReport.set(
       'totalStartings',
       _.reduce(
-        cashUpReport.get('startings'),
+        closeCashReport.get('startings'),
         function(accum, trx) {
           return OB.DEC.add(accum, trx.get('origAmount'));
         },

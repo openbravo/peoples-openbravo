@@ -193,6 +193,7 @@ enyo.kind({
     }
 
     me.$.btnApply.setDisabled(true);
+    me.$.formElementCheckOverride.coreElement.setChecked(false);
     me.discounts.reset();
     me.order.trigger('showDiscount');
     //uncheck lines
@@ -459,7 +460,16 @@ enyo.kind({
           me.order.get('discountsFromUser') &&
           me.order.get('discountsFromUser').manualPromotions
         ) {
-          me.order.get('discountsFromUser').manualPromotions = [];
+          me.order
+            .get('discountsFromUser')
+            .manualPromotions.forEach(function(p) {
+              me.checkedLines.forEach(function(l) {
+                const index = p.linesToApply.indexOf(l.get('id'));
+                if (index !== -1) {
+                  p.linesToApply.splice(index, 1);
+                }
+              });
+            });
         }
 
         if (

@@ -1891,7 +1891,11 @@ enyo.kind({
           !_.isNull(paymentstatus.pending))
       ) {
         // avoid checking for shared paymentMethod
-        if (hasChange && selectedPayment.paymentMethod.isshared) {
+        if (
+          (hasChange && selectedPayment.paymentMethod.isshared) ||
+          (JSON.parse(OB.UTIL.localStorage.getItem('isSafeBox')) &&
+            selectedPayment.paymentMethod.issafebox)
+        ) {
           resultOK = true;
         } else {
           resultOK = this.checkEnoughCashAvailable(
