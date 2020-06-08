@@ -115,7 +115,8 @@
 
     const newLines = [];
     for (let count = 0; count < Math.abs(qty); count += 1) {
-      newLines.push(createLine(productInfo, ticket, options, attrs));
+      const newProductInfo = { ...productInfo, qty: 1 };
+      newLines.push(createLine(newProductInfo, ticket, options, attrs));
     }
     return newLines;
   }
