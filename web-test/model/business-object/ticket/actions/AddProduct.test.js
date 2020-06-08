@@ -27,6 +27,7 @@ require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/ArrayUtils');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 
@@ -154,6 +155,73 @@ describe('addProduct', () => {
       ]);
     });
 
+    it('adds external attributes to new line', () => {
+      const newTicket = addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }],
+        attrs: { externalProperty: 'dummy' }
+      });
+
+      expect(newTicket.lines).toMatchObject([
+        {
+          qty: 1,
+          grossPrice: 5,
+          priceList: 5,
+          priceIncludesTax: true,
+          product: { id: 'stdProduct' },
+          externalProperty: 'dummy'
+        }
+      ]);
+    });
+
+    it('adds external attributes to existing line', () => {
+      const baseTicket = addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }]
+      });
+
+      const newTicket = addProduct(baseTicket, {
+        products: [{ product: productA, qty: 10 }],
+        attrs: { externalProperty: 'dummy' }
+      });
+
+      expect(newTicket.lines).toMatchObject([
+        {
+          qty: 11,
+          grossPrice: 5,
+          priceList: 5,
+          priceIncludesTax: true,
+          product: { id: 'stdProduct' },
+          externalProperty: 'dummy'
+        }
+      ]);
+    });
+
+    it('do not add product to existing line if has splitline', () => {
+      const baseTicket = addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }],
+        attrs: {
+          splitline: true,
+          originalLine: {
+            warehouse: { id: 'A154EC30A296479BB078B0AFFD74CA22' }
+          }
+        }
+      });
+
+      const newTicket = addProduct(baseTicket, {
+        products: [{ product: productA, qty: 10 }]
+      });
+
+      expect(newTicket.lines).toMatchObject([
+        {
+          qty: 1,
+          product: { id: 'stdProduct' }
+        },
+        {
+          qty: 10,
+          product: { id: 'stdProduct' }
+        }
+      ]);
+    });
+
     it.each`
       productType         | expectNewLine
       ${'stdProduct'}     | ${false}
@@ -237,6 +305,66 @@ describe('addProduct', () => {
         isEditable: false,
         isDeletable: false
       });
+    });
+
+    it('create multiple lines of ungrouped product', () => {
+      const baseTicket = addProduct(emptyTicket, {
+        products: [{ product: ungroupProduct, qty: 5 }]
+      });
+
+      expect(baseTicket.lines[0]).toMatchObject({
+        qty: 1,
+        grossPrice: 5,
+        priceList: 5,
+        product: { id: 'ungroupProduct' }
+      });
+
+      expect(baseTicket.lines).toHaveLength(5);
+    });
+  });
+
+  describe('related lines', () => {
+    it('merge related lines', () => {
+      const groupedService = { ...serviceProduct, groupProduct: true };
+      const newTicket = addProduct(emptyTicket, {
+        products: [
+          { product: productA, qty: 1 },
+          { product: productB, qty: 1 },
+          { product: groupedService, qty: 1 }
+        ]
+      });
+
+      newTicket.lines[2].relatedLines = [{ id: '0' }];
+
+      const changedTicket = addProduct(newTicket, {
+        products: [{ product: groupedService, qty: 1 }],
+        attrs: { relatedLines: [{ id: '0' }, { id: '1' }] }
+      });
+
+      expect(changedTicket.lines).toMatchObject([
+        {
+          qty: 1,
+          grossPrice: 5,
+          priceList: 5,
+          priceIncludesTax: true,
+          product: { id: 'stdProduct' }
+        },
+        {
+          qty: 1,
+          grossPrice: 10,
+          priceList: 11,
+          priceIncludesTax: true,
+          product: { id: 'pB' }
+        },
+        {
+          qty: 2,
+          grossPrice: 10,
+          priceList: 11,
+          priceIncludesTax: true,
+          product: { id: 'serviceProduct' },
+          relatedLines: [{ id: '0' }, { id: '1' }]
+        }
+      ]);
     });
   });
 
