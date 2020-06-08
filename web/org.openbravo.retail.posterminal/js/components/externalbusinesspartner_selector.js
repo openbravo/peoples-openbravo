@@ -425,7 +425,6 @@ enyo.kind({
             'obUiListBpsSobUiListExternalBpsSelectorelector-container1-renderLoading',
           showing: false,
           initComponents: function() {
-            this.inherited();
             this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
           }
         }
