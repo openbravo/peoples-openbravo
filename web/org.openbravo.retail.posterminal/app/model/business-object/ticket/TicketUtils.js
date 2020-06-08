@@ -1184,6 +1184,7 @@
       invoice.id = OB.App.UUID.generate();
       invoice.isInvoice = true;
       invoice.documentNo = null;
+      invoice.orderDocumentNo = ticket.documentNo;
       invoice.lines = invoiceLines;
 
       // FIXME: wait CAR fix

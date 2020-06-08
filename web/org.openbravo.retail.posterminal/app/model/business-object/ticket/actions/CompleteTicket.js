@@ -18,6 +18,7 @@
       const newGlobalState = { ...globalState };
       let newTicket = { ...newGlobalState.Ticket };
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
+      let newMessages = [...newGlobalState.Messages];
 
       const {
         terminal,
@@ -112,15 +113,33 @@
         ));
       }
 
-      const newMessage = OB.App.State.Messages.Utils.createNewMessage(
-        'Order',
-        'org.openbravo.retail.posterminal.OrderLoader',
-        newTicket
-      );
+      // Ticket synchronization message
+      newMessages = [
+        ...newMessages,
+        OB.App.State.Messages.Utils.createNewMessage(
+          'Order',
+          'org.openbravo.retail.posterminal.OrderLoader',
+          newTicket
+        )
+      ];
+
+      // Ticket print message
+      newMessages = [
+        ...newMessages,
+        OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket)
+      ];
+      if (newTicket.calculatedInvoice) {
+        newMessages = [
+          ...newMessages,
+          OB.App.State.Messages.Utils.createPrintTicketMessage(
+            newTicket.calculatedInvoice
+          )
+        ];
+      }
 
       newGlobalState.Ticket = newTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
-      newGlobalState.Messages = [...newGlobalState.Messages, newMessage];
+      newGlobalState.Messages = newMessages;
 
       return newGlobalState;
     }

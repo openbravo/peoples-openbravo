@@ -2588,24 +2588,7 @@ enyo.kind({
                     )
                   );
 
-                  // Print ticket
-                  OB.MobileApp.model.receipt.trigger(
-                    'print',
-                    OB.MobileApp.model.receipt,
-                    {
-                      offline: true
-                    }
-                  );
-                  if (OB.MobileApp.model.receipt.has('calculatedInvoice')) {
-                    OB.MobileApp.model.receipt.trigger(
-                      'print',
-                      OB.MobileApp.model.receipt.get('calculatedInvoice'),
-                      {
-                        offline: true
-                      }
-                    );
-                  }
-
+                  // FIXME: Use TicketListUtils
                   // Remove completed ticket
                   OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
                     OB.MobileApp.model.receipt
