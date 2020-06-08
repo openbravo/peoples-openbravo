@@ -94,6 +94,16 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     return newTicket;
   },
 
+  /**
+   * Checks if a ticket is a layaway
+   *
+   * @param {object} ticket - The ticket to check
+   * @returns {boolean} - True if the given ticket is a layaway, otherwise false is returned
+   */
+  isLayaway(ticket) {
+    return ticket.orderType === 2 || ticket.orderType === 3 || ticket.isLayaway;
+  }
+
   getCurrentDiscountedLinePrice(line, ignoreExecutedAtTheEndPromo) {
     let currentDiscountedLinePrice;
     let allDiscountedAmt = OB.DEC.Zero;

@@ -126,8 +126,6 @@
     const organization = getOrganization(ticket, product, attrs);
     const warehouse = getWarehouse(attrs);
 
-    // TODO: validateAllowSalesWithReturn
-
     const lineQty =
       attrs.relatedLines &&
       attrs.relatedLines[0].deferred &&
@@ -321,7 +319,7 @@
   }
 
   function checkRestrictions(ticket, payload) {
-    const { products, options } = payload;
+    const { products, options, attrs } = payload;
 
     checkProductWithoutPrice(products);
     checkGenericProduct(products);
@@ -330,6 +328,7 @@
     checkNotReturnable(ticket, products, options);
     checkClosedQuotation(ticket);
     checkProductLocked(ticket, products);
+    checkAllowSalesWithReturn(ticket, products, options, attrs);
   }
 
   function checkProductWithoutPrice(products) {
@@ -445,6 +444,41 @@
         ]
       });
     }
+  }
+
+  function checkAllowSalesWithReturn(ticket, products, options, attrs) {
+    const newLineProducts = products.filter(
+      pi => getLineToEdit(pi, ticket, options, attrs) != null
+    );
+
+    newLineProducts.forEach(pi => {
+      if (
+        OB.App.Security.hasPermission('OBPOS_NotAllowSalesWithReturn') &&
+        !options.allowLayawayWithReturn
+      ) {
+        const receiptLines = ticket.lines.length;
+        const negativeLines = ticket.lines.filter(l => l.qty < 0).length;
+        if (pi.qty > 0 && negativeLines > 0) {
+          throw new OB.App.Class.ActionCanceled({
+            errorMsg: 'OBPOS_MsgCannotAddPositive'
+          });
+        } else if (pi.qty < 0 && negativeLines !== receiptLines) {
+          throw new OB.App.Class.ActionCanceled({
+            errorMsg: 'OBPOS_MsgCannotAddNegative'
+          });
+        }
+      }
+      if (
+        !OB.App.Security.hasPermission('OBPOS_AllowLayawaysNegativeLines') &&
+        OB.App.State.Ticket.Utils.isLayaway(ticket) &&
+        pi.qty < 0 &&
+        !options.allowLayawayWithReturn
+      ) {
+        throw new OB.App.Class.ActionCanceled({
+          errorMsg: 'OBPOS_layawaysOrdersWithReturnsNotAllowed'
+        });
+      }
+    });
   }
 
   async function preparePacks(payload) {
@@ -941,7 +975,8 @@
     const line = options.line
       ? ticket.lines.find(l => l.id === options.line)
       : null;
-    const requireServiceReturnApproval = products.some(p => {
+
+    const servicesWithReturnApproval = products.filter(p => {
       const qty = isAReturn(ticket) ? -p.qty : p.qty;
       return (
         (line ? line.qty + qty : qty) < 0 &&
@@ -949,9 +984,21 @@
         !p.product.ignoreReturnApproval
       );
     });
-    if (requireServiceReturnApproval) {
+
+    if (servicesWithReturnApproval.length > 0) {
+      const separator = `<br>${OB.App.SpecialCharacters.bullet()}`;
+      const servicesToApprove = `
+        ${separator} 
+        ${servicesWithReturnApproval
+          // eslint-disable-next-line no-underscore-dangle
+          .map(p => p._identifier)
+          .join(separator)}`;
       const newPayload = await OB.App.Security.requestApprovalForAction(
-        'OBPOS_approval.returnService',
+        {
+          approvalType: 'OBPOS_approval.returnService',
+          message: 'OBPOS_approval.returnService',
+          params: [servicesToApprove]
+        },
         payload
       );
       return newPayload;

@@ -21,6 +21,7 @@ OB = {
       ProductPrice: { find: jest.fn() }
     },
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
+    SpecialCharacters: { bullet: jest.fn() },
     StateBackwardCompatibility: { setProperties: jest.fn() },
     TerminalProperty: { get: jest.fn() },
     View: { DialogUIHandler: { inputData: jest.fn() } }
