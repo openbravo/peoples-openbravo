@@ -105,7 +105,8 @@ public class DocLineCashVATReady_PaymentTransactionReconciliation extends DocLin
                       " where itcv.paymentDetails.id = :finPaymentDetailID " +
                       "   and itcv.canceled = false" +
                       "   and itcv.active = true" +
-                      "   and itcv.isPaidAtInvoicing = false";
+                      "   and (itcv.isPaidAtInvoicing = false" +
+                      "        or itcv.isPaidAtInvoicing is null)";
         //@formatter:on
 
         final Query<String> obq = OBDal.getInstance()
