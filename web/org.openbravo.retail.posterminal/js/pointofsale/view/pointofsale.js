@@ -1158,6 +1158,7 @@ enyo.kind({
                   ])
                 );
               }
+              finalCallback(true);
             })
             .catch(OB.App.View.ActionCanceledUIHandler.handle);
           return;
