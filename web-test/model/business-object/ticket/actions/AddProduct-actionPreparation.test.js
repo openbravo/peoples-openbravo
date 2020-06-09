@@ -360,7 +360,79 @@ describe('addProduct preparation', () => {
     });
   });
 
-  describe('scale products', () => {
+  describe('prepare product packs', () => {
+    it('add standard pack to ticket', async () => {
+      const pack = {
+        ...Product.base,
+        ispack: true,
+        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      };
+      const payload = {
+        products: [{ product: pack, qty: 1 }, { product: Product.base, qty: 2 }]
+      };
+      const packContent = [
+        {
+          product: {
+            id: '1',
+            standardPrice: 23,
+            listPrice: 29
+          },
+          qty: 1,
+          belongsToPack: true
+        },
+        {
+          product: {
+            id: '2',
+            standardPrice: 23,
+            listPrice: 11
+          },
+          qty: 2,
+          belongsToPack: true
+        }
+      ];
+      const standardPack =
+        OB.App.ProductPackProvider.packs['BE5D42E554644B6AA262CCB097753951'];
+      standardPack.process = jest.fn().mockResolvedValueOnce(packContent);
+      OB.App.ProductPackProvider.getPack = jest
+        .fn()
+        .mockReturnValueOnce(standardPack) // for the pack
+        .mockReturnValueOnce(undefined); // for the regular product
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products).toEqual([
+        ...packContent,
+        { product: Product.base, qty: 2 }
+      ]);
+    });
+
+    it('more than one pack not allowed', async () => {
+      const pack = {
+        ...Product.base,
+        ispack: true,
+        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      };
+      await expect(
+        prepareAction({
+          products: [{ product: pack }, { product: pack }]
+        })
+      ).rejects.toThrow('Cannot handle more than one pack');
+    });
+
+    it('more than one unit of a pack is not allowed', async () => {
+      const pack = {
+        ...Product.base,
+        ispack: true,
+        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      };
+      await expect(
+        prepareAction({
+          products: [{ product: pack, qty: 2 }]
+        })
+      ).rejects.toThrow('Cannot handle more than unit of a pack');
+    });
+  });
+
+  describe('prepare scale products', () => {
     const scaleProduct = { ...Product.base, obposScale: true };
     it('more than one is not allowed', async () => {
       await expect(
@@ -818,283 +890,211 @@ describe('addProduct preparation', () => {
         })
       ).rejects.toThrow('Cannot handle attributes for more than one product');
     });
-
-    describe('prepare product price (multi pricelist)', () => {
-      it('multi pricelist disabled', async () => {
-        OB.App.Security.hasPermission.mockImplementation(
-          property => property !== 'EnableMultiPriceList'
-        );
-        const crossStoreProduct = {
-          ...Product.base,
-          crossStore: true
-        };
-        const payload = {
-          products: [{ product: crossStoreProduct, qty: 1 }],
-          options: {},
-          attrs: {}
-        };
-        const newPayload = await prepareAction(payload);
-        expect(newPayload).toEqual(payload);
-      });
-
-      it('product update price from pricelist disabled', async () => {
-        OB.App.Security.hasPermission.mockReturnValue(true);
-        const crossStoreProduct = {
-          ...Product.base,
-          crossStore: true,
-          updatePriceFromPricelist: false
-        };
-        const payload = {
-          products: [{ product: crossStoreProduct, qty: 1 }],
-          options: {},
-          attrs: {}
-        };
-        const newPayload = await prepareAction(payload);
-        expect(newPayload).toEqual(payload);
-      });
-
-      it('packs are ignored', async () => {
-        OB.App.Security.hasPermission.mockReturnValue(true);
-        const crossStoreProduct = {
-          ...Product.base,
-          ispack: true
-        };
-        const payload = {
-          products: [{ product: crossStoreProduct, qty: 1 }],
-          options: {},
-          attrs: {}
-        };
-        const newPayload = await prepareAction(payload);
-        expect(newPayload).toEqual(payload);
-      });
-
-      it('cross store product without price', async () => {
-        OB.App.Security.hasPermission.mockReturnValue(true);
-        const crossStoreProduct = {
-          ...Product.base,
-          crossStore: true,
-          productPrices: []
-        };
-        await expectError(
-          () =>
-            prepareAction({
-              products: [{ product: crossStoreProduct, qty: 1 }]
-            }),
-          {
-            warningMsg: 'OBPOS_ProductNotFoundInPriceList'
-          }
-        );
-      });
-
-      it('change price of cross store product', async () => {
-        OB.App.Security.hasPermission.mockReturnValue(true);
-        const productPrice = {
-          priceListId: '5D47B13F42A44352B09C97A72EE42ED8',
-          price: 23
-        };
-        const crossStoreProduct = {
-          ...Product.base,
-          crossStore: true,
-          productPrices: [productPrice]
-        };
-        const payload = {
-          products: [{ product: crossStoreProduct, qty: 1 }]
-        };
-        const newPayload = await prepareAction(payload);
-        expect(newPayload).toEqual({
-          products: [
-            {
-              product: {
-                ...crossStoreProduct,
-                standardPrice: productPrice.price,
-                listPrice: productPrice.price,
-                currentPrice: productPrice
-              },
-              qty: 1
-            }
-          ],
-          options: {},
-          attrs: {}
-        });
-      });
-
-      it('no price for product in pricelist', async () => {
-        OB.App.Security.hasPermission.mockImplementation(
-          property => property !== 'OBPOS_remote.product'
-        );
-        OB.App.MasterdataModels.ProductPrice.find.mockResolvedValueOnce([]);
-        const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
-        const ticket = {
-          ...Ticket.empty,
-          priceList: otherPriceList
-        };
-        await expectError(
-          () =>
-            prepareAction(
-              {
-                products: [{ product: Product.base, qty: 1 }]
-              },
-              ticket
-            ),
-          {
-            warningMsg: 'OBPOS_ProductNotFoundInPriceList'
-          }
-        );
-      });
-
-      it('no price for product in pricelist (remote)', async () => {
-        OB.App.Security.hasPermission.mockReturnValue(true);
-        OB.App.DAL.find.mockResolvedValue([]);
-        const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
-        const ticket = {
-          ...Ticket.empty,
-          priceList: otherPriceList
-        };
-        await expectError(
-          () =>
-            prepareAction(
-              {
-                products: [{ product: Product.base, qty: 1 }]
-              },
-              ticket
-            ),
-          {
-            warningMsg: 'OBPOS_ProductNotFoundInPriceList'
-          }
-        );
-      });
-
-      it('change price of product', async () => {
-        OB.App.Security.hasPermission.mockImplementation(
-          property => property !== 'OBPOS_remote.product'
-        );
-        OB.App.MasterdataModels.ProductPrice.find.mockResolvedValueOnce([
-          { pricestd: 23, pricelist: 29 }
-        ]);
-        const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
-        const ticket = {
-          ...Ticket.empty,
-          priceList: otherPriceList
-        };
-        const payload = {
-          products: [{ product: Product.base, qty: 1 }]
-        };
-        const newPayload = await prepareAction(payload, ticket);
-        expect(newPayload).toEqual({
-          products: [
-            {
-              product: {
-                ...Product.base,
-                standardPrice: 23,
-                listPrice: 29
-              },
-              qty: 1
-            }
-          ],
-          options: {},
-          attrs: {}
-        });
-      });
-
-      it('change price of product (remote)', async () => {
-        OB.App.Security.hasPermission.mockReturnValue(true);
-        OB.App.DAL.find.mockResolvedValue([{ pricestd: 23, pricelist: 29 }]);
-        const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
-        const ticket = {
-          ...Ticket.empty,
-          priceList: otherPriceList
-        };
-        const payload = {
-          products: [{ product: Product.base, qty: 1 }]
-        };
-        const newPayload = await prepareAction(payload, ticket);
-        expect(newPayload).toEqual({
-          products: [
-            {
-              product: {
-                ...Product.base,
-                standardPrice: 23,
-                listPrice: 29
-              },
-              qty: 1
-            }
-          ],
-          options: {},
-          attrs: {}
-        });
-      });
-    });
   });
 
-  describe('prepare product packs', () => {
-    it('add standard pack to ticket', async () => {
-      const pack = {
+  describe('prepare product price (multi pricelist)', () => {
+    it('multi pricelist disabled', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        property => property !== 'EnableMultiPriceList'
+      );
+      const crossStoreProduct = {
         ...Product.base,
-        ispack: true,
-        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+        crossStore: true
       };
       const payload = {
-        products: [{ product: pack, qty: 1 }, { product: Product.base, qty: 2 }]
+        products: [{ product: crossStoreProduct, qty: 1 }],
+        options: {},
+        attrs: {}
       };
-      const packContent = [
-        {
-          product: {
-            id: '1',
-            standardPrice: 23,
-            listPrice: 29
-          },
-          qty: 1,
-          belongsToPack: true
-        },
-        {
-          product: {
-            id: '2',
-            standardPrice: 23,
-            listPrice: 11
-          },
-          qty: 2,
-          belongsToPack: true
-        }
-      ];
-      const standardPack =
-        OB.App.ProductPackProvider.packs['BE5D42E554644B6AA262CCB097753951'];
-      standardPack.process = jest.fn().mockResolvedValueOnce(packContent);
-      OB.App.ProductPackProvider.getPack = jest
-        .fn()
-        .mockReturnValueOnce(standardPack) // for the pack
-        .mockReturnValueOnce(undefined); // for the regular product
-
       const newPayload = await prepareAction(payload);
-      expect(newPayload.products).toEqual([
-        ...packContent,
-        { product: Product.base, qty: 2 }
+      expect(newPayload).toEqual(payload);
+    });
+
+    it('product update price from pricelist disabled', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      const crossStoreProduct = {
+        ...Product.base,
+        crossStore: true,
+        updatePriceFromPricelist: false
+      };
+      const payload = {
+        products: [{ product: crossStoreProduct, qty: 1 }],
+        options: {},
+        attrs: {}
+      };
+      const newPayload = await prepareAction(payload);
+      expect(newPayload).toEqual(payload);
+    });
+
+    it('packs are ignored', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      const crossStoreProduct = {
+        ...Product.base,
+        ispack: true
+      };
+      const payload = {
+        products: [{ product: crossStoreProduct, qty: 1 }],
+        options: {},
+        attrs: {}
+      };
+      const newPayload = await prepareAction(payload);
+      expect(newPayload).toEqual(payload);
+    });
+
+    it('cross store product without price', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      const crossStoreProduct = {
+        ...Product.base,
+        crossStore: true,
+        productPrices: []
+      };
+      await expectError(
+        () =>
+          prepareAction({
+            products: [{ product: crossStoreProduct, qty: 1 }]
+          }),
+        {
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+        }
+      );
+    });
+
+    it('change price of cross store product', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      const productPrice = {
+        priceListId: '5D47B13F42A44352B09C97A72EE42ED8',
+        price: 23
+      };
+      const crossStoreProduct = {
+        ...Product.base,
+        crossStore: true,
+        productPrices: [productPrice]
+      };
+      const payload = {
+        products: [{ product: crossStoreProduct, qty: 1 }]
+      };
+      const newPayload = await prepareAction(payload);
+      expect(newPayload).toEqual({
+        products: [
+          {
+            product: {
+              ...crossStoreProduct,
+              standardPrice: productPrice.price,
+              listPrice: productPrice.price,
+              currentPrice: productPrice
+            },
+            qty: 1
+          }
+        ],
+        options: {},
+        attrs: {}
+      });
+    });
+
+    it('no price for product in pricelist', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        property => property !== 'OBPOS_remote.product'
+      );
+      OB.App.MasterdataModels.ProductPrice.find.mockResolvedValueOnce([]);
+      const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
+      const ticket = {
+        ...Ticket.empty,
+        priceList: otherPriceList
+      };
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.base, qty: 1 }]
+            },
+            ticket
+          ),
+        {
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+        }
+      );
+    });
+
+    it('no price for product in pricelist (remote)', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.DAL.find.mockResolvedValue([]);
+      const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
+      const ticket = {
+        ...Ticket.empty,
+        priceList: otherPriceList
+      };
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.base, qty: 1 }]
+            },
+            ticket
+          ),
+        {
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+        }
+      );
+    });
+
+    it('change price of product', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        property => property !== 'OBPOS_remote.product'
+      );
+      OB.App.MasterdataModels.ProductPrice.find.mockResolvedValueOnce([
+        { pricestd: 23, pricelist: 29 }
       ]);
+      const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
+      const ticket = {
+        ...Ticket.empty,
+        priceList: otherPriceList
+      };
+      const payload = {
+        products: [{ product: Product.base, qty: 1 }]
+      };
+      const newPayload = await prepareAction(payload, ticket);
+      expect(newPayload).toEqual({
+        products: [
+          {
+            product: {
+              ...Product.base,
+              standardPrice: 23,
+              listPrice: 29
+            },
+            qty: 1
+          }
+        ],
+        options: {},
+        attrs: {}
+      });
     });
 
-    it('more than one pack not allowed', async () => {
-      const pack = {
-        ...Product.base,
-        ispack: true,
-        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+    it('change price of product (remote)', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.DAL.find.mockResolvedValue([{ pricestd: 23, pricelist: 29 }]);
+      const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
+      const ticket = {
+        ...Ticket.empty,
+        priceList: otherPriceList
       };
-      await expect(
-        prepareAction({
-          products: [{ product: pack }, { product: pack }]
-        })
-      ).rejects.toThrow('Cannot handle more than one pack');
-    });
-
-    it('more than one unit of a pack is not allowed', async () => {
-      const pack = {
-        ...Product.base,
-        ispack: true,
-        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      const payload = {
+        products: [{ product: Product.base, qty: 1 }]
       };
-      await expect(
-        prepareAction({
-          products: [{ product: pack, qty: 2 }]
-        })
-      ).rejects.toThrow('Cannot handle more than unit of a pack');
+      const newPayload = await prepareAction(payload, ticket);
+      expect(newPayload).toEqual({
+        products: [
+          {
+            product: {
+              ...Product.base,
+              standardPrice: 23,
+              listPrice: 29
+            },
+            qty: 1
+          }
+        ],
+        options: {},
+        attrs: {}
+      });
     });
   });
 
