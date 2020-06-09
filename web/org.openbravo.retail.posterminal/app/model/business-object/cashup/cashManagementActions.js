@@ -15,13 +15,13 @@
    * Create a cash management: add it in draft mode inside the corresponding Cashup Payment method of the Cashup(State)
    */
   OB.App.StateAPI.Cashup.registerActions({
-    createCashManagement(state, payload) {
-      const cashup = { ...state };
+    createCashManagement(cashup, payload) {
+      const newCashup = { ...cashup };
 
       const cashManagement = { ...payload.cashManagement };
       cashManagement.isDraft = true;
 
-      cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
+      newCashup.cashPaymentMethodInfo = newCashup.cashPaymentMethodInfo.map(
         paymentMethod => {
           if (
             paymentMethod.paymentMethodId !== cashManagement.paymentMethodId
@@ -36,7 +36,7 @@
         }
       );
 
-      return cashup;
+      return newCashup;
     }
   });
 
@@ -46,11 +46,11 @@
   OB.App.StateAPI.Global.registerActions({
     processCashManagements(state, payload) {
       const newState = { ...state };
-      const cashup = { ...newState.Cashup };
+      const newCashup = { ...newState.Cashup };
       const { terminalPayments } = payload.parameters;
       const cashManagementsToProcess = [];
 
-      cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
+      newCashup.cashPaymentMethodInfo = newCashup.cashPaymentMethodInfo.map(
         paymentMethod => {
           const newPaymentMethod = { ...paymentMethod };
           if (paymentMethod.cashManagements.length > 0) {
@@ -78,7 +78,7 @@
                 }
 
                 // Update the Cashup information with cash management to process
-                const cashupToSend = { ...cashup };
+                const cashupToSend = { ...newCashup };
                 cashupToSend.cashPaymentMethodInfo = cashupToSend.cashPaymentMethodInfo.map(
                   cashupReportPaymentMethod => {
                     if (cashupReportPaymentMethod.id === newPaymentMethod.id) {
@@ -129,7 +129,7 @@
           newState.Messages = [...newState.Messages, newMessage];
         });
 
-      newState.Cashup = cashup;
+      newState.Cashup = newCashup;
 
       return newState;
     }
@@ -139,10 +139,10 @@
    * Cancel cash managements in Draft: Remove cash managements not processed yet
    */
   OB.App.StateAPI.Cashup.registerActions({
-    cancelCashManagements(state) {
-      const cashup = { ...state };
+    cancelCashManagements(cashup) {
+      const newCashup = { ...cashup };
 
-      cashup.cashPaymentMethodInfo = cashup.cashPaymentMethodInfo.map(
+      newCashup.cashPaymentMethodInfo = newCashup.cashPaymentMethodInfo.map(
         paymentMethod => {
           if (paymentMethod.cashManagements.length === 0) {
             return paymentMethod;
@@ -157,7 +157,7 @@
         }
       );
 
-      return cashup;
+      return newCashup;
     }
   });
 })();
