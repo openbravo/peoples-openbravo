@@ -235,13 +235,13 @@
       ticket.hasServices = true;
     }
 
-    // Check if it is necessary to modify the tax category of related products
     if (!line.product.productServiceLinked) {
       return;
     }
 
-    ticket.product.productServiceLinked.forEach(productServiceLinked => {
-      ticket.relatedLines
+    // Check if it is necessary to modify the tax category of related products
+    line.product.productServiceLinked.forEach(productServiceLinked => {
+      line.relatedLines
         .filter(
           relatedProduct =>
             relatedProduct.productCategory ===
