@@ -6196,6 +6196,12 @@
         allLinesCalculated
       );
 
+      // Ensure state model is in sync with backbone. There are processes (ie. Create Order from quotation)
+      // that mutate backbone model siltently before reaching this point.
+      OB.App.StateBackwardCompatibility.getInstance(
+        'Ticket'
+      ).resetStateFromBackbone();
+
       this.get('lines').each(async function(line) {
         //remove promotions
         line.unset('promotions');
