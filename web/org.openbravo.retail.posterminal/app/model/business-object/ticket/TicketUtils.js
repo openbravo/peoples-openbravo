@@ -1195,6 +1195,223 @@
       newTicket.calculatedInvoice = invoice;
 
       return newTicket;
+    },
+
+    /**
+     * Generates the corresponding invoice for the given ticket.
+     *
+     * @param {object} ticket - The ticket whose invoice will be generated
+     * @param {object} settings - The calculation settings, which include:
+     *             * multiChange - OB.MobileApp.model.get('terminal').multiChange
+     *             * splitChange - OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true)
+     *             * paymentNames - OB.MobileApp.model.paymentnames
+     *
+     * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
+     */
+    completePayment(ticket, settings) {
+      let newTicket = { ...ticket };
+
+      // Manage change payments if there is change
+      if (newTicket.changePayments && newTicket.changePayments.length > 0) {
+        const prevChange = newTicket.change;
+        const mergeable = !settings.multiChange && !settings.splitChange;
+
+        // FIXME: change addPayment with generatePayment and return only the payment?
+        newTicket.changePayments.forEach(changePayment => {
+          const terminalPayment = settings.paymentNames[changePayment.key];
+
+          // Generate change payment
+          newTicket = OB.App.State.Ticket.Utils.generatePayment(newTicket, {
+            ...settings,
+            payment: {
+              kind: terminalPayment.payment.searchKey,
+              name: terminalPayment.payment.commercialName,
+              amount: OB.DEC.sub(
+                OB.DEC.Zero,
+                changePayment.amount,
+                terminalPayment.obposPosprecision
+              ),
+              amountRounded: OB.DEC.sub(
+                OB.DEC.Zero,
+                changePayment.amountRounded,
+                terminalPayment.obposPosprecision
+              ),
+              origAmount: OB.DEC.sub(OB.DEC.Zero, changePayment.origAmount),
+              origAmountRounded: OB.DEC.sub(
+                OB.DEC.Zero,
+                OB.DEC.mul(changePayment.amountRounded, terminalPayment.rate)
+              ),
+              rate: terminalPayment.rate,
+              mulrate: terminalPayment.mulrate,
+              isocode: terminalPayment.isocode,
+              allowOpenDrawer: terminalPayment.paymentMethod.allowopendrawer,
+              isCash: terminalPayment.paymentMethod.iscash,
+              openDrawer: terminalPayment.paymentMethod.openDrawer,
+              printtwice: terminalPayment.paymentMethod.printtwice,
+              changePayment: true,
+              paymentData: {
+                mergeable,
+                label: changePayment.label
+              }
+            }
+          });
+
+          // Recalculate payment and paymentWithSign properties
+          const paidAmt = newTicket.payments.reduce((accumulator, payment) => {
+            if (
+              payment.isPrePayment ||
+              payment.isReversePayment ||
+              !newTicket.isNegative
+            ) {
+              return OB.DEC.add(accumulator, payment.origAmount);
+            }
+            return OB.DEC.sub(accumulator, payment.origAmount);
+          }, OB.DEC.Zero);
+          newTicket.payment = OB.DEC.abs(paidAmt);
+          newTicket.paymentWithSign = paidAmt;
+          newTicket.change = prevChange;
+        });
+      }
+
+      // Convert return payments in negative
+      if (OB.App.State.Ticket.Utils.isReturnTicket(newTicket, settings)) {
+        newTicket.payments = newTicket.payments.map(payment => {
+          const newPayment = { ...payment };
+
+          if (
+            !payment.isPrePayment &&
+            !payment.reversedPaymentId &&
+            !newTicket.isPaid
+          ) {
+            newPayment.amount = -payment.amount;
+            if (payment.amountRounded) {
+              newPayment.amountRounded = -payment.amountRounded;
+            }
+            newPayment.origAmount = -payment.origAmount;
+            if (payment.origAmountRounded) {
+              newPayment.origAmountRounded = -payment.origAmountRounded;
+            }
+            newPayment.paid = -payment.paid;
+          } else {
+            newPayment.paid = payment.amount;
+          }
+
+          return newPayment;
+        });
+      }
+
+      return newTicket;
+    },
+
+    /**
+     * Generates the corresponding payment for the given ticket.
+     *
+     * @param {object} ticket - The ticket whose invoice will be generated
+     * @param {object} settings - The calculation settings, which include:
+     *             * paymentNames - OB.MobileApp.model.paymentnames
+     *             * terminal - OB.MobileApp.model.get('terminal')
+     *
+     * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
+     */
+    generatePayment(ticket, settings) {
+      const newTicket = { ...ticket };
+      const precision = settings.paymentNames[settings.payment.kind]
+        ? settings.paymentNames[settings.payment.kind].obposPosprecision
+        : OB.DEC.getScale();
+
+      // FIXME: needed in complete ticket?
+      // this.addPaymentRounding(
+      //   payment,
+      //   settings.paymentNames[payment.get('kind')]
+      // );
+
+      // FIXME: needed in complete ticket?
+      // if (this.get('prepaymentChangeMode')) {
+      //   this.unset('prepaymentChangeMode');
+      //   this.adjustPayment();
+      // }
+
+      // FIXME: needed in complete ticket?
+      // OB.UTIL.PrepaymentUtils.managePrepaymentChange();
+
+      if (!settings.payment.reversedPaymentId) {
+        const paymentIndex = newTicket.payments.findIndex(
+          payment =>
+            payment.kind === settings.payment.kind &&
+            !payment.isPrePayment &&
+            !payment.reversedPaymentId &&
+            (!settings.payment.paymentData ||
+              settings.payment.paymentData.mergeable ||
+              (payment.paymentData &&
+                settings.payment.paymentData &&
+                payment.paymentData.groupingCriteria &&
+                settings.payment.paymentData.groupingCriteria &&
+                payment.paymentData.groupingCriteria ===
+                  settings.payment.paymentData.groupingCriteria))
+        );
+        if (paymentIndex > 0) {
+          newTicket.payments = newTicket.payments.map((payment, index) => {
+            if (index !== paymentIndex) {
+              return payment;
+            }
+
+            const newAmount = OB.DEC.add(
+              OB.DEC.mul(
+                settings.payment.amount,
+                payment.signChanged && payment.amount < 0 ? -1 : 1,
+                precision
+              ),
+              payment.amount,
+              precision
+            );
+            return {
+              ...payment,
+              amount: newAmount,
+              origAmount:
+                payment.rate && payment.rate !== '1'
+                  ? OB.DEC.div(newAmount, payment.mulrate)
+                  : newAmount,
+              paymentRoundingLine: settings.payment.paymentRoundingLine
+                ? {
+                    ...settings.payment.paymentRoundingLine,
+                    roundedPaymentId: payment.id
+                  }
+                : undefined
+            };
+          });
+
+          return newTicket;
+        }
+      }
+
+      const newPayment = { ...settings.payment };
+      newPayment.date = new Date();
+      newPayment.id = OB.UTIL.get_UUID();
+      newPayment.oBPOSPOSTerminal = settings.terminalId;
+      newPayment.orderGross = newTicket.grossAmount;
+      newPayment.isPaid = newTicket.isPaid;
+      newPayment.isReturnOrder = newTicket.isNegative;
+      newPayment.cancelAndReplace =
+        (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
+        newTicket.cancelAndReplaceChangePending;
+
+      // FIXME: payments.add(payment, { at: newPayment.get('index') });
+      newTicket.payments = [...newTicket.payments, newPayment];
+
+      if (newPayment.reversedPayment) {
+        newPayment.reversedPayment.isReversed = true;
+      }
+      if (newPayment.paymentRoundingLine) {
+        newPayment.paymentRoundingLine.roundedPaymentId = newPayment.id;
+      }
+      if (
+        newPayment.openDrawer &&
+        (newPayment.allowOpenDrawer || newPayment.isCash)
+      ) {
+        newTicket.openDrawer = newPayment.openDrawer;
+      }
+
+      return newTicket;
     }
   });
 })();

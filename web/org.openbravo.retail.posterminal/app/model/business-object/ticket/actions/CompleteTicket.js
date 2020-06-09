@@ -20,10 +20,13 @@
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newMessages = [...newGlobalState.Messages];
 
+      // FIXME: send terminal and preference objects in settings?
       const {
         terminal,
+        paymentNames,
         documentNumberSeparator,
         salesWithOneLineNegativeAsReturns,
+        splitChange,
         discountRules,
         bpSets,
         taxRules
@@ -32,6 +35,7 @@
         discountRules,
         bpSets,
         taxRules,
+        terminalId: terminal.id,
         terminalOrganization: terminal.organization,
         documentTypeForSales: terminal.terminalType.documentType,
         documentTypeForReturns: terminal.terminalType.documentTypeForReturns,
@@ -42,7 +46,10 @@
           terminal.simplifiedReturnInvoiceDocNoPrefix,
         documentNumberSeparator,
         documentNumberPadding: terminal.documentnoPadding,
-        salesWithOneLineNegativeAsReturns
+        paymentNames,
+        multiChange: terminal.multiChange,
+        salesWithOneLineNegativeAsReturns,
+        splitChange
       };
 
       newTicket.created = new Date().getTime();
@@ -54,32 +61,11 @@
         settings
       );
 
-      // FIXME: Move to add payment action?
-      if (OB.App.State.Ticket.Utils.isReturnTicket(newTicket, settings)) {
-        newTicket.payments = newTicket.payments.map(payment => {
-          const newPayment = { ...payment };
-
-          if (
-            !payment.isPrePayment &&
-            !payment.reversedPaymentId &&
-            !newTicket.isPaid
-          ) {
-            newPayment.amount = -payment.amount;
-            if (payment.amountRounded) {
-              newPayment.amountRounded = -payment.amountRounded;
-            }
-            newPayment.origAmount = -payment.origAmount;
-            if (payment.origAmountRounded) {
-              newPayment.origAmountRounded = -payment.origAmountRounded;
-            }
-            newPayment.paid = -payment.paid;
-          } else {
-            newPayment.paid = payment.amount;
-          }
-
-          return newPayment;
-        });
-      }
+      // Complete ticket payment
+      newTicket = OB.App.State.Ticket.Utils.completePayment(
+        newTicket,
+        settings
+      );
 
       // Document number generation
       ({

@@ -2546,6 +2546,7 @@ enyo.kind({
                   // Complete Ticket action
                   await OB.App.State.Global.completeTicket({
                     terminal: OB.MobileApp.model.get('terminal'),
+                    paymentNames: OB.MobileApp.model.paymentnames,
                     documentNumberSeparator: OB.Model.Order.prototype
                       .includeDocNoSeperator
                       ? '/'
@@ -2553,6 +2554,10 @@ enyo.kind({
                     salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get(
                       'permissions'
                     ).OBPOS_SalesWithOneLineNegativeAsReturns,
+                    splitChange: OB.MobileApp.model.hasPermission(
+                      'OBPOS_SplitChange',
+                      true
+                    ),
                     discountRules: OB.Discounts.Pos.ruleImpls,
                     bpSets: OB.Discounts.Pos.bpSets,
                     taxRules: OB.Taxes.Pos.ruleImpls
