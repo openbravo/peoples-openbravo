@@ -584,7 +584,7 @@ describe('addProduct preparation', () => {
     });
   });
 
-  describe('prepare product service', () => {
+  describe('prepare linked product service', () => {
     it('add ProductServiceLinked information (local)', async () => {
       const productServiceLinked = {
         ...Product.base,

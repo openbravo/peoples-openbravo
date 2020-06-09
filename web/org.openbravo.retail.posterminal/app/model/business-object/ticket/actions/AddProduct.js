@@ -63,7 +63,7 @@
 
       newPayload = await prepareScaleProducts(newPayload);
       newPayload = await prepareBOMProducts(ticket, newPayload);
-      newPayload = await prepareServiceLinkedToProduct(newPayload);
+      newPayload = await prepareLinkedProductService(newPayload);
       newPayload = await prepareProductCharacteristics(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
       newPayload = await prepareRelatedServices(newPayload);
@@ -619,7 +619,7 @@
     return newPayload;
   }
 
-  async function prepareServiceLinkedToProduct(payload) {
+  async function prepareLinkedProductService(payload) {
     const shouldLinkService = product => {
       return product.modifyTax && !product.productServiceLinked;
     };
