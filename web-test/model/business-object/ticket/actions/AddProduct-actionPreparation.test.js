@@ -1026,6 +1026,78 @@ describe('addProduct preparation', () => {
     });
   });
 
+  describe('prepare product packs', () => {
+    it('add standard pack to ticket', async () => {
+      const pack = {
+        ...Product.base,
+        ispack: true,
+        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      };
+      const payload = {
+        products: [{ product: pack, qty: 1 }, { product: Product.base, qty: 2 }]
+      };
+      const packContent = [
+        {
+          product: {
+            id: '1',
+            standardPrice: 23,
+            listPrice: 29
+          },
+          qty: 1,
+          belongsToPack: true
+        },
+        {
+          product: {
+            id: '2',
+            standardPrice: 23,
+            listPrice: 11
+          },
+          qty: 2,
+          belongsToPack: true
+        }
+      ];
+      const standardPack =
+        OB.App.ProductPackProvider.packs['BE5D42E554644B6AA262CCB097753951'];
+      standardPack.process = jest.fn().mockResolvedValueOnce(packContent);
+      OB.App.ProductPackProvider.getPack = jest
+        .fn()
+        .mockReturnValueOnce(standardPack) // for the pack
+        .mockReturnValueOnce(undefined); // for the regular product
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products).toEqual([
+        ...packContent,
+        { product: Product.base, qty: 2 }
+      ]);
+    });
+
+    it('more than one pack not allowed', async () => {
+      const pack = {
+        ...Product.base,
+        ispack: true,
+        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      };
+      await expect(
+        prepareAction({
+          products: [{ product: pack }, { product: pack }]
+        })
+      ).rejects.toThrow('Cannot handle more than one pack');
+    });
+
+    it('more than one unit of a pack is not allowed', async () => {
+      const pack = {
+        ...Product.base,
+        ispack: true,
+        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      };
+      await expect(
+        prepareAction({
+          products: [{ product: pack, qty: 2 }]
+        })
+      ).rejects.toThrow('Cannot handle more than unit of a pack');
+    });
+  });
+
   describe('approvals', () => {
     const service = { ...Product.base, productType: 'S', returnable: true };
     it('return service accepted approval', async () => {
