@@ -281,6 +281,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="BPARTNER_EXTREF" primaryKey="false" required="false" type="NVARCHAR" size="256" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_BPLOCATION_CINVOICE">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
@@ -356,6 +360,10 @@
       <index name="C_INVOICE_AD_USER" unique="false">
         <index-column name="AD_USER_ID"/>
         <whereClause><![CDATA[AD_USER_ID IS NOT NULL]]></whereClause>
+      </index>
+      <index name="C_INVOICE_BP_EXTREF_IDX" unique="false">
+        <index-column name="BPARTNER_EXTREF"/>
+        <whereClause><![CDATA[BPARTNER_EXTREF IS NOT NULL]]></whereClause>
       </index>
       <index name="C_INVOICE_BPARTNER" unique="false">
         <index-column name="C_BPARTNER_ID"/>

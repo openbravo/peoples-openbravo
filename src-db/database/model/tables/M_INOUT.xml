@@ -265,6 +265,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="BPARTNER_EXTREF" primaryKey="false" required="false" type="NVARCHAR" size="256" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHTCATEGORY_M_INOUT">
         <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
       </foreign-key>
@@ -340,6 +344,10 @@
       <index name="M_INOUT_AD_USER" unique="false">
         <index-column name="AD_USER_ID"/>
         <whereClause><![CDATA[AD_USER_ID IS NOT NULL]]></whereClause>
+      </index>
+      <index name="M_INOUT_BP_EXTREF_IDX" unique="false">
+        <index-column name="BPARTNER_EXTREF"/>
+        <whereClause><![CDATA[BPARTNER_EXTREF IS NOT NULL]]></whereClause>
       </index>
       <index name="M_INOUT_BP_MOVEMENTDATE" unique="false">
         <index-column name="C_BPARTNER_ID"/>

@@ -365,6 +365,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="BPARTNER_EXTREF" primaryKey="false" required="false" type="NVARCHAR" size="256" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="C_DOCTYPE_CORDER">
         <reference local="C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
@@ -471,6 +475,10 @@
       <index name="C_ORDER_BPARTNER_DATEORDERED" unique="false">
         <index-column name="C_BPARTNER_ID"/>
         <index-column name="DATEORDERED"/>
+      </index>
+      <index name="C_ORDER_BPARTNER_EXTREF_IDX" unique="false">
+        <index-column name="BPARTNER_EXTREF"/>
+        <whereClause><![CDATA[BPARTNER_EXTREF IS NOT NULL]]></whereClause>
       </index>
       <index name="C_ORDER_C_RETURN_REASON" unique="false">
         <index-column name="C_RETURN_REASON_ID"/>
