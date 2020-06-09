@@ -503,10 +503,11 @@
           const packProducts = await pack.process();
           newPayload.products = newPayload.products.concat(packProducts);
         } catch (error) {
+          const data = error.data || {};
           throw new OB.App.Class.ActionCanceled({
-            title: error.title,
-            errorConfirmation: error.message || 'OBMOBC_Error',
-            messageParams: error.messageParams
+            title: data.title,
+            errorConfirmation: data.message,
+            messageParams: data.params
           });
         }
       } else {

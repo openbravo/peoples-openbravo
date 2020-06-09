@@ -45,15 +45,15 @@
         const now = new Date();
         const nowWithoutTime = new Date(now.toISOString().split('T')[0]);
         if (nowWithoutTime > objDate) {
-          throw new Error({
-            title: 'OBPOS_PackExpired_header',
-            message: 'OBPOS_PackExpired_body',
-            messageParams: [
+          throw new OB.App.Class.ErrorMessage(
+            'OBPOS_PackExpired_header',
+            'OBPOS_PackExpired_body',
+            [
               // eslint-disable-next-line no-underscore-dangle
               discount._identifier,
               objDate.toLocaleDateString()
             ]
-          });
+          );
         }
       }
     }
