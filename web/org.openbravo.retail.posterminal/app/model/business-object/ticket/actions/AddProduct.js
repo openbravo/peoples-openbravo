@@ -481,8 +481,15 @@
   }
 
   async function preparePacks(payload) {
-    if (!payload.products.some(p => p.product.ispack)) {
+    const packs = payload.products.filter(p => p.product.ispack);
+    if (packs.length === 0) {
       return payload;
+    }
+    if (packs.length > 1) {
+      throw new Error('Cannot handle more than one pack');
+    }
+    if (packs[0].qty !== 1) {
+      throw new Error('Cannot handle more than unit of a pack');
     }
 
     const newPayload = { ...payload };
@@ -493,7 +500,7 @@
       if (pack) {
         try {
           // eslint-disable-next-line no-await-in-loop
-          const packProducts = await pack.getProducts();
+          const packProducts = await pack.process();
           newPayload.products = newPayload.products.concat(packProducts);
         } catch (error) {
           throw new OB.App.Class.ActionCanceled({

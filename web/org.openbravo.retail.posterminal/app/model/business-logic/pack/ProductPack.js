@@ -28,9 +28,29 @@
      *             * message: the error message
      *             * messageParams: the dynamic message parameters (if any)
      */
-    async getProducts() {
+    async process() {
+      const data = await this.getExternalData();
+      return this.getProducts(data);
+    }
+
+    /**
+     * To be overriden when it is necessary to retrieve external data to calculate the pack contents.
+     * For example, when requesting data to the user.
+     * @return {Object} data - An array of the products that belongs to the pack
+     */
+    // eslint-disable-next-line class-methods-use-this
+    async getExternalData() {
+      return null;
+    }
+
+    /**
+     * @param data - Data that may be used to calculate the products to be retrieved
+     * @return {Object[]} product - An array of the products that belongs to the pack
+     */
+    // eslint-disable-next-line no-unused-vars
+    async getProducts(data) {
       throw new Error(
-        `process() function is not implemented in abstract ${this.constructor.name}`
+        `getProducts() function is not implemented in abstract ${this.constructor.name}`
       );
     }
   }

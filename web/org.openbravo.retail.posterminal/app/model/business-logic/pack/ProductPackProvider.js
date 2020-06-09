@@ -17,7 +17,7 @@
    */
   class ProductPackProvider {
     constructor() {
-      this.packs = [];
+      this.packs = {};
     }
 
     /**
