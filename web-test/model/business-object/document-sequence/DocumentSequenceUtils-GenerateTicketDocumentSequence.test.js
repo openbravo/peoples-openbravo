@@ -28,8 +28,10 @@ describe('Document Sequence Utils generateTicketDocumentSequence method', () => 
       ticket,
       documentSequence,
       {
-        documentNumberSeparator: '/',
-        documentNumberPadding: 5
+        terminal: {
+          documentNumberSeparator: '/',
+          documentNumberPadding: 5
+        }
       }
     );
     expect(newTicketAndDocumentSequence).toEqual({
@@ -56,8 +58,10 @@ describe('Document Sequence Utils generateTicketDocumentSequence method', () => 
       ticket,
       documentSequence,
       {
-        documentNumberSeparator: '/',
-        documentNumberPadding: 5
+        terminal: {
+          documentNumberSeparator: '/',
+          documentNumberPadding: 5
+        }
       }
     );
     expect(newTicketAndDocumentSequence).toEqual({

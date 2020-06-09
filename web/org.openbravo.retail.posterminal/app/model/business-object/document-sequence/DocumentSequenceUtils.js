@@ -63,9 +63,9 @@
      *
      * @param {object} ticket - The ticket whose order sequence name will be calculated
      * @param {object} settings - The calculation settings, which include:
-     *             * returnSequencePrefix - Return document sequence prefix
-     *             * quotationSequencePrefix - Quotation document sequence prefix
-     *             * salesWithOneLineNegativeAsReturns - SalesWithOneLineNegativeAsReturns preference value
+     *             * terminal.returnSequencePrefix - Return document sequence prefix
+     *             * terminal.quotationSequencePrefix - Quotation document sequence prefix
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {string} The order sequence name.
      */
@@ -74,10 +74,10 @@
         ticket,
         settings
       );
-      if (ticket.isQuotation && settings.quotationSequencePrefix) {
+      if (ticket.isQuotation && settings.terminal.quotationSequencePrefix) {
         return 'quotationslastassignednum';
       }
-      if (isReturnTicket && settings.returnSequencePrefix) {
+      if (isReturnTicket && settings.terminal.returnSequencePrefix) {
         return 'returnslastassignednum';
       }
       return 'lastassignednum';
@@ -88,9 +88,9 @@
      *
      * @param {object} ticket - The ticket whose invoice sequence name will be calculated
      * @param {object} settings - The calculation settings, which include:
-     *             * fullReturnInvoiceSequencePrefix - Full return invoice document sequence prefix
-     *             * simplifiedReturnInvoiceSequencePrefix - Simplified return invoice document sequence prefix
-     *             * salesWithOneLineNegativeAsReturns - SalesWithOneLineNegativeAsReturns preference value
+     *             * terminal.fullReturnInvoiceSequencePrefix - Full return invoice document sequence prefix
+     *             * terminal.simplifiedReturnInvoiceSequencePrefix - Simplified return invoice document sequence prefix
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {string} The invoice sequence name.
      */
@@ -102,14 +102,14 @@
       if (
         !ticket.fullInvoice &&
         isReturnTicket &&
-        settings.simplifiedReturnInvoiceSequencePrefix
+        settings.terminal.simplifiedReturnInvoiceSequencePrefix
       ) {
         return 'simplifiedreturninvoiceslastassignednum';
       }
       if (
         ticket.fullInvoice &&
         isReturnTicket &&
-        settings.fullReturnInvoiceSequencePrefix
+        settings.terminal.fullReturnInvoiceSequencePrefix
       ) {
         return 'fullreturninvoiceslastassignednum';
       }
@@ -125,13 +125,13 @@
      * @param {object} ticket - The ticket whose document sequence will be generated
      * @param {object} documentSequence - The ticket whose type will be updated
      * @param {object} settings - The calculation settings, which include:
-     *             * returnSequencePrefix - Return document sequence prefix
-     *             * quotationSequencePrefix - Quotation document sequence prefix
-     *             * fullReturnInvoiceSequencePrefix - Full return invoice document sequence prefix
-     *             * simplifiedReturnInvoiceSequencePrefix - Simplified return invoice document sequence prefix
-     *             * documentNumberSeparator - Character to separate prefix and suffix in document number
-     *             * documentNumberPadding - Padding to use in the the suffix of document number
-     *             * salesWithOneLineNegativeAsReturns - SalesWithOneLineNegativeAsReturns preference value
+     *             * terminal.returnSequencePrefix - Return document sequence prefix
+     *             * terminal.quotationSequencePrefix - Quotation document sequence prefix
+     *             * terminal.fullReturnInvoiceSequencePrefix - Full return invoice document sequence prefix
+     *             * terminal.simplifiedReturnInvoiceSequencePrefix - Simplified return invoice document sequence prefix
+     *             * terminal.documentNumberSeparator - Character to separate prefix and suffix in document number
+     *             * terminal.documentNumberPadding - Padding to use in the the suffix of document number
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {object} The new state of Ticket and DocumentSequence after document number generation.
      */
@@ -162,8 +162,8 @@
       newTicket.documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
         {
           sequencePrefix,
-          documentNumberSeparator: settings.documentNumberSeparator,
-          documentNumberPadding: settings.documentNumberPadding,
+          documentNumberSeparator: settings.terminal.documentNumberSeparator,
+          documentNumberPadding: settings.terminal.documentNumberPadding,
           sequenceNumber
         }
       );

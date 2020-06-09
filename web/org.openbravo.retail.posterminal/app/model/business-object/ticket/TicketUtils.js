@@ -702,6 +702,8 @@
   OB.App.StateAPI.Ticket.registerUtilityFunctions({
     /**
      * Checks whether a ticket is a return or a sale.
+     *
+     * @param {object} ticket - The ticket whose will be checked
      * @param {object} settings - The calculation settings, which include:
      *             * salesWithOneLineNegativeAsReturns - SalesWithOneLineNegativeAsReturns preference value
      *
@@ -721,8 +723,10 @@
 
     /**
      * Checks whether a ticket belongs to a different store.
+     *
+     * @param {object} ticket - The ticket whose will be checked
      * @param {object} settings - The calculation settings, which include:
-     *             * terminalOrganization - Organization of the current terminal.
+     *             * terminalOrganization - Organization of the current terminal
      *
      * @returns {boolean} true in case the ticket is cross store, false otherwise.
      */
@@ -741,6 +745,8 @@
      * @param {object} settings - The calculation settings, which include:
      *             * documentTypeForSales - Terminal document type for sales
      *             * documentTypeForReturns - Terminal document type for returns
+     *             * terminalOrganization - Organization of the current terminal
+     *             * salesWithOneLineNegativeAsReturns - SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {object} The new state of Ticket after type update.
      */
@@ -760,8 +766,8 @@
       );
       newTicket.orderType = isReturnTicket ? 1 : 0;
       newTicket.documentType = isReturnTicket
-        ? OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns
-        : OB.MobileApp.model.get('terminal').terminalType.documentTypeForSales;
+        ? settings.documentTypeForReturns
+        : settings.documentTypeForSales;
 
       return newTicket;
     },

@@ -24,8 +24,10 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
       {
-        returnSequencePrefix: 'R',
-        quotationSequencePrefix: 'Q'
+        terminal: {
+          returnSequencePrefix: 'R',
+          quotationSequencePrefix: 'Q'
+        }
       }
     );
     expect(sequenceName).toEqual('lastassignednum');
@@ -36,8 +38,10 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
       {
-        returnSequencePrefix: 'R',
-        quotationSequencePrefix: 'Q'
+        terminal: {
+          returnSequencePrefix: 'R',
+          quotationSequencePrefix: 'Q'
+        }
       }
     );
     expect(sequenceName).toEqual('returnslastassignednum');
@@ -48,8 +52,10 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
       {
-        returnSequencePrefix: 'R',
-        quotationSequencePrefix: 'Q'
+        terminal: {
+          returnSequencePrefix: 'R',
+          quotationSequencePrefix: 'Q'
+        }
       }
     );
     expect(sequenceName).toEqual('quotationslastassignednum');
@@ -60,7 +66,9 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
       {
-        quotationSequencePrefix: 'Q'
+        terminal: {
+          quotationSequencePrefix: 'Q'
+        }
       }
     );
     expect(sequenceName).toEqual('lastassignednum');
@@ -71,7 +79,9 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
       {
-        returnSequencePrefix: 'R'
+        terminal: {
+          returnSequencePrefix: 'R'
+        }
       }
     );
     expect(sequenceName).toEqual('lastassignednum');
@@ -82,9 +92,13 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
       {
-        returnSequencePrefix: 'R',
-        quotationSequencePrefix: 'Q',
-        salesWithOneLineNegativeAsReturns: false
+        terminal: {
+          returnSequencePrefix: 'R',
+          quotationSequencePrefix: 'Q'
+        },
+        preferences: {
+          salesWithOneLineNegativeAsReturns: false
+        }
       }
     );
     expect(sequenceName).toEqual('lastassignednum');
@@ -95,9 +109,13 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
       ticket,
       {
-        returnSequencePrefix: 'R',
-        quotationSequencePrefix: 'Q',
-        salesWithOneLineNegativeAsReturns: true
+        terminal: {
+          returnSequencePrefix: 'R',
+          quotationSequencePrefix: 'Q'
+        },
+        preferences: {
+          salesWithOneLineNegativeAsReturns: true
+        }
       }
     );
     expect(sequenceName).toEqual('returnslastassignednum');

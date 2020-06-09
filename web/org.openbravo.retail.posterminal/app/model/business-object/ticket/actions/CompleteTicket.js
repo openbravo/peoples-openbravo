@@ -20,52 +20,17 @@
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newMessages = [...newGlobalState.Messages];
 
-      // FIXME: send terminal and preference objects in settings?
-      const {
-        terminal,
-        paymentNames,
-        documentNumberSeparator,
-        salesWithOneLineNegativeAsReturns,
-        splitChange,
-        discountRules,
-        bpSets,
-        taxRules
-      } = payload;
-      const settings = {
-        discountRules,
-        bpSets,
-        taxRules,
-        terminalId: terminal.id,
-        terminalOrganization: terminal.organization,
-        documentTypeForSales: terminal.terminalType.documentType,
-        documentTypeForReturns: terminal.terminalType.documentTypeForReturns,
-        returnSequencePrefix: terminal.returnDocNoPrefix,
-        quotationSequencePrefix: terminal.quotationDocNoPrefix,
-        fullReturnInvoiceSequencePrefix: terminal.fullReturnInvoiceDocNoPrefix,
-        simplifiedReturnInvoiceSequencePrefix:
-          terminal.simplifiedReturnInvoiceDocNoPrefix,
-        documentNumberSeparator,
-        documentNumberPadding: terminal.documentnoPadding,
-        paymentNames,
-        multiChange: terminal.multiChange,
-        salesWithOneLineNegativeAsReturns,
-        splitChange
-      };
-
       newTicket.created = new Date().getTime();
       newTicket.completeTicket = true;
       newTicket.hasbeenpaid = 'Y';
-      newTicket.obposAppCashup = terminal.cashUpId;
+      newTicket.obposAppCashup = payload.terminal.cashupId;
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(
         newTicket,
-        settings
+        payload
       );
 
       // Complete ticket payment
-      newTicket = OB.App.State.Ticket.Utils.completePayment(
-        newTicket,
-        settings
-      );
+      newTicket = OB.App.State.Ticket.Utils.completePayment(newTicket, payload);
 
       // Document number generation
       ({
@@ -74,20 +39,17 @@
       } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
         newTicket,
         newDocumentSequence,
-        settings
+        payload
       ));
 
       // Shipment generation
       newTicket = OB.App.State.Ticket.Utils.generateShipment(
         newTicket,
-        settings
+        payload
       );
 
       // Invoice generation
-      newTicket = OB.App.State.Ticket.Utils.generateInvoice(
-        newTicket,
-        settings
-      );
+      newTicket = OB.App.State.Ticket.Utils.generateInvoice(newTicket, payload);
       if (newTicket.calculatedInvoice) {
         ({
           ticket: newTicket.calculatedInvoice,
@@ -95,7 +57,7 @@
         } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
           newTicket.calculatedInvoice,
           newDocumentSequence,
-          settings
+          payload
         ));
       }
 

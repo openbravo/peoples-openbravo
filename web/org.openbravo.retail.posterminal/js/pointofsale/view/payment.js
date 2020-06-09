@@ -2545,19 +2545,46 @@ enyo.kind({
                 async function() {
                   // Complete Ticket action
                   await OB.App.State.Global.completeTicket({
-                    terminal: OB.MobileApp.model.get('terminal'),
-                    paymentNames: OB.MobileApp.model.paymentnames,
-                    documentNumberSeparator: OB.Model.Order.prototype
-                      .includeDocNoSeperator
-                      ? '/'
-                      : '',
-                    salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get(
-                      'permissions'
-                    ).OBPOS_SalesWithOneLineNegativeAsReturns,
-                    splitChange: OB.MobileApp.model.hasPermission(
-                      'OBPOS_SplitChange',
-                      true
-                    ),
+                    terminal: {
+                      id: OB.MobileApp.model.get('terminal').id,
+                      organization: OB.MobileApp.model.get('terminal')
+                        .organization,
+                      cashupId: OB.MobileApp.model.get('terminal').cashUpId,
+                      documentTypeForSales: OB.MobileApp.model.get('terminal')
+                        .terminalType.documentType,
+                      documentTypeForReturns: OB.MobileApp.model.get('terminal')
+                        .terminalType.documentTypeForReturns,
+                      paymentTypes: OB.MobileApp.model.paymentnames,
+                      returnSequencePrefix: OB.MobileApp.model.get('terminal')
+                        .returnDocNoPrefix,
+                      quotationSequencePrefix: OB.MobileApp.model.get(
+                        'terminal'
+                      ).quotationDocNoPrefix,
+                      fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
+                        'terminal'
+                      ).fullReturnInvoiceDocNoPrefix,
+                      simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
+                        'terminal'
+                      ).simplifiedReturnInvoiceDocNoPrefix,
+                      documentNumberSeparator: OB.Model.Order.prototype
+                        .includeDocNoSeperator
+                        ? '/'
+                        : '',
+                      documentNumberPadding: OB.MobileApp.model.get('terminal')
+                        .documentnoPadding,
+                      multiChange: OB.MobileApp.model.get('terminal')
+                        .multiChange
+                    },
+                    preferences: {
+                      salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
+                        'OBPOS_SalesWithOneLineNegativeAsReturns',
+                        true
+                      ),
+                      splitChange: OB.MobileApp.model.hasPermission(
+                        'OBPOS_SplitChange',
+                        true
+                      )
+                    },
                     discountRules: OB.Discounts.Pos.ruleImpls,
                     bpSets: OB.Discounts.Pos.bpSets,
                     taxRules: OB.Taxes.Pos.ruleImpls
