@@ -41,7 +41,7 @@
   });
 
   /**
-   * Process cash managemets: Set as processed cash managements in draft and move to Messages(State)
+   * Process cash managements events: Set as processed cash managements in draft and move to Messages(State)
    */
   OB.App.StateAPI.Global.registerActions({
     processCashManagements(state, payload) {
