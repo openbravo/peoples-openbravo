@@ -21,6 +21,7 @@ OB = {
       ProductServiceLinked: { find: jest.fn() },
       ProductPrice: { find: jest.fn() }
     },
+    ProductPackProvider: { getPack: jest.fn() },
     Request: { mobileServiceRequest: jest.fn() },
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
     SpecialCharacters: { bullet: jest.fn() },
@@ -63,9 +64,6 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionSilentlyCanceled');
 
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/stock/StockChecker');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/ProductPack');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/ProductPackProvider');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/Pack');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 
@@ -396,12 +394,11 @@ describe('addProduct preparation', () => {
           belongsToPack: true
         }
       ];
-      const standardPack =
-        OB.App.ProductPackProvider.packs['BE5D42E554644B6AA262CCB097753951'];
-      standardPack.process = jest.fn().mockResolvedValueOnce(packContent);
-      OB.App.ProductPackProvider.getPack = jest
-        .fn()
-        .mockReturnValueOnce(standardPack) // for the pack
+
+      OB.App.ProductPackProvider.getPack
+        .mockReturnValueOnce({
+          process: jest.fn().mockResolvedValue(packContent)
+        }) // for the pack
         .mockReturnValueOnce(undefined); // for the regular product
 
       const newPayload = await prepareAction(payload);
