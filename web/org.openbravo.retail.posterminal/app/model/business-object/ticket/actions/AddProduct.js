@@ -829,7 +829,7 @@
   }
 
   async function loadRelatedServices(productType, productId, productCategory) {
-    const result = { hasservices: false, hasMandatoryServices: false };
+    const result = { hasservices: false, hasmandatoryservices: false };
     if (productType === 'S') {
       return result;
     }

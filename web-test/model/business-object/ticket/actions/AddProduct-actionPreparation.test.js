@@ -15,11 +15,13 @@ OB = {
     Class: {},
     DAL: { find: jest.fn() },
     MasterdataModels: {
+      Product: { find: jest.fn() },
       ProductBOM: { find: jest.fn() },
       ProductCharacteristicValue: { find: jest.fn() },
       ProductServiceLinked: { find: jest.fn() },
       ProductPrice: { find: jest.fn() }
     },
+    Request: { mobileServiceRequest: jest.fn() },
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
     SpecialCharacters: { bullet: jest.fn() },
     StateBackwardCompatibility: { setProperties: jest.fn() },
@@ -77,6 +79,10 @@ OB.App.Class.Criteria = class MockedCriteria {
         return { build: jest.fn };
       }
     };
+  }
+
+  build() {
+    return {};
   }
 };
 
@@ -399,7 +405,7 @@ describe('addProduct preparation', () => {
         .mockReturnValueOnce(undefined); // for the regular product
 
       const newPayload = await prepareAction(payload);
-      expect(newPayload.products).toEqual([
+      expect(newPayload.products).toMatchObject([
         ...packContent,
         { product: Product.base, qty: 2 }
       ]);
@@ -525,7 +531,7 @@ describe('addProduct preparation', () => {
         products: [{ product: productWithBOM, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, Ticket.empty);
-      expect(newPayload.products[0]).toEqual({
+      expect(newPayload.products[0]).toMatchObject({
         product: {
           ...payload.products[0].product,
           productBOM: [
@@ -554,7 +560,7 @@ describe('addProduct preparation', () => {
         products: [{ product: productWithBOM, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, Ticket.empty);
-      expect(newPayload.products).toEqual(payload.products);
+      expect(newPayload.products).toMatchObject(payload.products);
     });
 
     it('product BOM nas no price', async () => {
@@ -606,7 +612,7 @@ describe('addProduct preparation', () => {
         serviceLinked
       );
       const newPayload = await prepareAction(payload, Ticket.empty);
-      expect(newPayload.products[0]).toEqual({
+      expect(newPayload.products[0]).toMatchObject({
         product: {
           ...payload.products[0].product,
           productServiceLinked: serviceLinked
@@ -669,7 +675,7 @@ describe('addProduct preparation', () => {
         products: [{ product: productWithCharacteritics, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, Ticket.empty);
-      expect(newPayload.products[0]).toEqual({
+      expect(newPayload.products[0]).toMatchObject({
         product: {
           ...payload.products[0].product,
           productCharacteristics: characteristics
@@ -892,6 +898,153 @@ describe('addProduct preparation', () => {
     });
   });
 
+  describe('prepare related services', () => {
+    it('product with related services (local)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        property => property !== 'OBPOS_remote.product'
+      );
+      OB.App.MasterdataModels.Product.find.mockResolvedValueOnce([
+        {
+          id: 'dummy'
+        }
+      ]);
+      const payload = {
+        products: [{ product: Product.base, qty: 1 }]
+      };
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products).toMatchObject([
+        {
+          product: Product.base,
+          qty: 1,
+          hasRelatedServices: true,
+          hasMandatoryServices: false
+        }
+      ]);
+    });
+
+    it('product with mandatory services (local)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        property => property !== 'OBPOS_remote.product'
+      );
+      OB.App.MasterdataModels.Product.find.mockResolvedValueOnce([
+        {
+          id: 'dummy',
+          proposalType: 'MP'
+        }
+      ]);
+      const payload = {
+        products: [{ product: Product.base, qty: 1 }]
+      };
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products).toMatchObject([
+        {
+          product: Product.base,
+          qty: 1,
+          hasRelatedServices: true,
+          hasMandatoryServices: true
+        }
+      ]);
+    });
+
+    it('related services retrieval fails (local)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        property => property !== 'OBPOS_remote.product'
+      );
+      OB.App.MasterdataModels.Product.find.mockRejectedValue(new Error());
+      const payload = {
+        products: [{ product: Product.base, qty: 1 }]
+      };
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products[0].hasRelatedServices).toBeFalsy();
+      expect(newPayload.products[0].hasMandatoryServices).toBeFalsy();
+    });
+
+    it('product with related services (remote)', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Request.mobileServiceRequest.mockResolvedValueOnce({
+        response: { data: { hasservices: true, hasmandatoryservices: false } }
+      });
+      const payload = {
+        products: [{ product: Product.base, qty: 1 }]
+      };
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products).toMatchObject([
+        {
+          product: Product.base,
+          qty: 1,
+          hasRelatedServices: true,
+          hasMandatoryServices: false
+        }
+      ]);
+    });
+
+    it('related services retrieval fails (remote)', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Request.mobileServiceRequest.mockRejectedValue(new Error());
+      const payload = {
+        products: [{ product: Product.base, qty: 1 }]
+      };
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products[0].hasRelatedServices).toBeFalsy();
+      expect(newPayload.products[0].hasMandatoryServices).toBeFalsy();
+    });
+
+    it('service does not have related services', async () => {
+      OB.App.Security.hasPermission.mockReturnValue(true);
+      const service = { ...Product.base, productType: 'S' };
+      const payload = {
+        products: [{ product: service, qty: 1 }]
+      };
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products[0].hasRelatedServices).toBeFalsy();
+      expect(newPayload.products[0].hasMandatoryServices).toBeFalsy();
+    });
+
+    it('skip related services preparation (isSilentAddProduct)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        property => property !== 'OBPOS_remote.product'
+      );
+      OB.App.MasterdataModels.Product.find.mockResolvedValueOnce([
+        {
+          id: 'dummy'
+        }
+      ]);
+      const payload = {
+        products: [{ product: Product.base, qty: 1 }],
+        options: { isSilentAddProduct: true }
+      };
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products[0].hasRelatedServices).toBeFalsy();
+      expect(newPayload.products[0].hasMandatoryServices).toBeFalsy();
+    });
+
+    it('skip related services preparation (originalOrderLineId)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        property => property !== 'OBPOS_remote.product'
+      );
+      OB.App.MasterdataModels.Product.find.mockResolvedValueOnce([
+        {
+          id: 'dummy'
+        }
+      ]);
+      const payload = {
+        products: [{ product: Product.base, qty: 1 }],
+        attrs: { originalOrderLineId: {} }
+      };
+
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products[0].hasRelatedServices).toBeFalsy();
+      expect(newPayload.products[0].hasMandatoryServices).toBeFalsy();
+    });
+  });
+
   describe('prepare product price (multi pricelist)', () => {
     it('multi pricelist disabled', async () => {
       OB.App.Security.hasPermission.mockImplementation(
@@ -1053,7 +1206,7 @@ describe('addProduct preparation', () => {
         products: [{ product: Product.base, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, ticket);
-      expect(newPayload).toEqual({
+      expect(newPayload).toMatchObject({
         products: [
           {
             product: {
@@ -1063,9 +1216,7 @@ describe('addProduct preparation', () => {
             },
             qty: 1
           }
-        ],
-        options: {},
-        attrs: {}
+        ]
       });
     });
 
