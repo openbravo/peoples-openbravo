@@ -114,8 +114,7 @@ enyo.kind({
       let result = provider.validate(
         oldCustomer,
         me.modelProperty,
-        me.getValue(),
-        function(r) {}
+        me.getValue()
       );
       if (result && result.status) {
         me.formElement.setMessage();

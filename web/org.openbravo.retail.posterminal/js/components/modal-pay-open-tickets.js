@@ -268,6 +268,14 @@ enyo.kind({
       organization: order.get('organization'),
       documentNo: order.get('documentNo'),
       businessPartner: order.get('bp').get('id'),
+      externalBusinessPartner: order.get('externalBusinessPartner')
+        ? order.get('externalBusinessPartner')
+        : null,
+      externalBusinessPartnerReference: order.get(
+        'externalBusinessPartnerReference'
+      )
+        ? order.get('externalBusinessPartnerReference')
+        : null,
       orderDateFrom: order.get('orderDate'),
       orderDateTo: order.get('orderDate'),
       totalamountFrom: order.get('gross'),

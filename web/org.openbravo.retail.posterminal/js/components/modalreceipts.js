@@ -138,7 +138,14 @@ enyo.kind({
       )
     );
     this.$.orderNo.setContent(this.model.get('documentNo'));
-    this.$.bp.setContent(this.model.get('bp').get('_identifier'));
+    if (this.model.get('externalBusinessPartner')) {
+      const bp = new OB.App.Class.ExternalBusinessPartner(
+        this.model.get('externalBusinessPartner')
+      );
+      this.$.bp.setContent(bp.getIdentifier());
+    } else {
+      this.$.bp.setContent(this.model.get('bp').get('_identifier'));
+    }
     this.$.total.setContent(this.model.printTotal());
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
       listReceiptLine: this

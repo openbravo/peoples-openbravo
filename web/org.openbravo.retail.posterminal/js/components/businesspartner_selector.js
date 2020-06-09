@@ -60,9 +60,15 @@ enyo.kind({
 
     if (!this.disabled) {
       this.doShowPopup({
-        popup: 'modalcustomer',
+        popup: OB.UTIL.modalCustomer(),
         args: {
           presetCustomerId: OB.MobileApp.model.receipt.get('bp').id,
+          presetExternalBpId: OB.MobileApp.model.receipt.get(
+            'externalBusinessPartnerReference'
+          ),
+          presetExternalBp: OB.MobileApp.model.receipt.get(
+            'externalBusinessPartner'
+          ),
           target: 'order',
           clean: true,
           navigationPath: []
@@ -76,89 +82,93 @@ enyo.kind({
   renderCustomer: function(newCustomerId, newCustomerName) {
     this.setValue(newCustomerId, newCustomerName);
   },
-  orderChanged: function(oldValue) {
-    if (this.order.get('bp')) {
+  renderCurrentCustomer: function() {
+    if (this.order.get('externalBusinessPartner')) {
+      // External Business Partner if available
+      const bp = new OB.App.Class.ExternalBusinessPartner(
+        this.order.get('externalBusinessPartner')
+      );
+      this.renderCustomer(bp.getKey(), bp.getIdentifier());
+    } else if (this.order.get('bp')) {
+      // Business Partner if available
       this.renderCustomer(
         this.order.get('bp').get('id'),
         this.order.get('bp').get('_identifier')
       );
     } else {
+      // No Business Partner available
       this.renderCustomer(null, '');
     }
+  },
+  orderChanged: function(oldValue) {
+    this.renderCurrentCustomer();
+    this.order.on('change:externalBusinessPartner', () => {
+      this.renderCurrentCustomer();
+    });
+    this.order.on('change:bp', () => {
+      const model = this.order;
+      if (model.get('bp')) {
+        model.set('invoiceTerms', model.get('bp').get('invoiceTerms'));
+        model.setFullInvoice(model.get('fullInvoice'), true);
 
-    this.order.on(
-      'change:bp',
-      function(model) {
-        if (model.get('bp')) {
-          model.set('invoiceTerms', model.get('bp').get('invoiceTerms'));
-          model.setFullInvoice(model.get('fullInvoice'), true);
-
-          if (
-            model.get('isEditable') &&
-            !model.get('cloningReceipt') &&
-            OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
-            (model.get('priceIncludesTax') !==
-              OB.MobileApp.model.get('pricelist').priceIncludesTax ||
-              model.get('bp').get('priceListCurrency') !==
-                OB.MobileApp.model.get('pricelist').currency)
-          ) {
-            model.set('priceList', OB.MobileApp.model.get('pricelist').id, {
-              silent: true
-            });
-            model.set(
-              'priceIncludesTax',
-              OB.MobileApp.model.get('pricelist').priceIncludesTax
-            );
-            model.set('currency', OB.MobileApp.model.get('pricelist').currency);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_ChangeOfPriceList'),
-              OB.I18N.getLabel('OBPOS_ChangeOfPriceListConfig', [
-                model.get('bp').get('priceListName'),
-                OB.MobileApp.model.get('pricelist')._identifier
-              ]),
-              null,
-              {
-                onHideFunction: function() {
-                  model.trigger('change:documentNo', model);
-                }
-              }
-            );
-          }
-
-          model
-            .get('lines')
-            .filter(line => line.get('obrdmDeliveryMode') === 'HomeDelivery')
-            .forEach(line => {
-              line.set(
-                'country',
-                model.get('bp').get('shipLocId')
-                  ? model
-                      .get('bp')
-                      .get('locationModel')
-                      .get('countryId')
-                  : null
-              );
-              line.set(
-                'region',
-                model.get('bp').get('shipLocId')
-                  ? model
-                      .get('bp')
-                      .get('locationModel')
-                      .get('regionId')
-                  : null
-              );
-            });
-
-          this.renderCustomer(
-            model.get('bp').get('id'),
-            model.get('bp').get('_identifier')
+        if (
+          model.get('isEditable') &&
+          !model.get('cloningReceipt') &&
+          OB.MobileApp.model.hasPermission('EnableMultiPriceList', true) &&
+          (model.get('priceIncludesTax') !==
+            OB.MobileApp.model.get('pricelist').priceIncludesTax ||
+            model.get('bp').get('priceListCurrency') !==
+              OB.MobileApp.model.get('pricelist').currency)
+        ) {
+          model.set('priceList', OB.MobileApp.model.get('pricelist').id, {
+            silent: true
+          });
+          model.set(
+            'priceIncludesTax',
+            OB.MobileApp.model.get('pricelist').priceIncludesTax
           );
-        } else {
-          this.renderCustomer(null, '');
+          model.set('currency', OB.MobileApp.model.get('pricelist').currency);
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_ChangeOfPriceList'),
+            OB.I18N.getLabel('OBPOS_ChangeOfPriceListConfig', [
+              model.get('bp').get('priceListName'),
+              OB.MobileApp.model.get('pricelist')._identifier
+            ]),
+            null,
+            {
+              onHideFunction: function() {
+                model.trigger('change:documentNo', model);
+              }
+            }
+          );
         }
-      },
-      this
-    );
+
+        model
+          .get('lines')
+          .filter(line => line.get('obrdmDeliveryMode') === 'HomeDelivery')
+          .forEach(line => {
+            line.set(
+              'country',
+              model.get('bp').get('shipLocId')
+                ? model
+                    .get('bp')
+                    .get('locationModel')
+                    .get('countryId')
+                : null
+            );
+            line.set(
+              'region',
+              model.get('bp').get('shipLocId')
+                ? model
+                    .get('bp')
+                    .get('locationModel')
+                    .get('regionId')
+                : null
+            );
+          });
+      }
+      this.renderCurrentCustomer();
+    });
   }
 });
 

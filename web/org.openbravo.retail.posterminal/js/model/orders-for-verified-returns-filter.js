@@ -75,11 +75,19 @@
       caption: 'OBPOS_LblCustomer',
       isSelector: true,
       selectorPopup: 'modalcustomer',
+      selectorPopupFunction: OB.UTIL.modalCustomer,
       operator: OB.Dal.EQ,
       preset: {
         id: '',
         name: ''
       }
+    },
+    {
+      name: 'externalBusinessPartnerReference',
+      column: 'externalBusinessPartnerReference',
+      filter: false,
+      type: 'TEXT',
+      caption: 'OBPOS_LblCustomer'
     },
     {
       name: 'orderDateFrom',

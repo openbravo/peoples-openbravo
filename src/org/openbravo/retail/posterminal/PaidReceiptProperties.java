@@ -70,6 +70,8 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.updated", "loaded"));
         add(new HQLProperty("ord.cashVAT", "cashVAT"));
         add(new HQLProperty("ord.invoiceTerms", "invoiceTerms"));
+        add(new HQLProperty("ord.externalBusinessPartnerReference",
+            "externalBusinessPartnerReference"));
       }
     };
 

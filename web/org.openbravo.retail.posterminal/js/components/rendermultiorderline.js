@@ -52,7 +52,14 @@ enyo.kind({
                 'obUiRenderMultiOrdersLineValues-multiTopLine-documentNo',
               initComponents: function() {
                 const docNo = this.owner.owner.model.get('documentNo');
-                const bp = this.owner.owner.model.get('bp').get('_identifier');
+                let bp = '';
+                if (this.owner.owner.model.get('externalBusinessPartner')) {
+                  bp = new OB.App.Class.ExternalBusinessPartner(
+                    this.owner.owner.model.get('externalBusinessPartner')
+                  ).getIdentifier();
+                } else {
+                  bp = this.owner.owner.model.get('bp').get('_identifier');
+                }
                 if (docNo) {
                   this.setContent(docNo + ' - ' + bp);
                 } else {

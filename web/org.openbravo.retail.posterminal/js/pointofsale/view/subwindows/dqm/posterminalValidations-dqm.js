@@ -21,17 +21,29 @@
     /* @Override */
     static validate(oldCustomer, property, value, callback) {
       let result;
+      let functionCallback = function functionCalllback(callbackResult) {
+        if (callback) {
+          callback(callbackResult);
+        }
+        return callbackResult;
+      };
       switch (property) {
         case 'phone':
-          return (result = validatePhoneFormat(value));
+          result = validatePhoneFormat(value, functionCallback);
+          break;
         case 'alternativePhone':
-          return (result = validatePhoneFormat(value));
+          result = validatePhoneFormat(value, functionCallback);
+          break;
         case 'email':
-          return (result = validateEmailFormat(value));
+          result = validateEmailFormat(value, functionCallback);
+          break;
         case 'taxID':
-          return (result = validateTaxID(oldCustomer.taxID, value));
+          result = validateTaxID(oldCustomer.taxID, value, functionCallback);
+          break;
+        default:
+          result = functionCallback({ status: true });
       }
-      callback(result);
+      return result;
     }
     /* @Override */
     static getImplementorSearchKey() {
@@ -39,7 +51,7 @@
     }
   }
 
-  function validateEmailFormat(email) {
+  function validateEmailFormat(email, callback) {
     let result = { status: true, message: '' },
       regex = new RegExp(
         "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$"
@@ -48,10 +60,10 @@
       result.status = false;
       result.message = OB.I18N.getLabel('OBPOS_WrongFormat');
     }
-    return result;
+    return callback(result);
   }
 
-  function validatePhoneFormat(phone) {
+  function validatePhoneFormat(phone, callback) {
     let result = { status: true, message: '' },
       regex = new RegExp(/^([0-9-()+])*$/);
     phone = phone.toString().replace(/\s/g, '');
@@ -59,10 +71,10 @@
       result.status = false;
       result.message = OB.I18N.getLabel('OBPOS_WrongFormat');
     }
-    return result;
+    return callback(result);
   }
 
-  function validateTaxID(oldValue, newValue) {
+  function validateTaxID(oldValue, newValue, callback) {
     let result = { status: true, message: '' };
     if (!oldValue) {
       result.status = true;
@@ -70,7 +82,7 @@
       result.status = false;
       result.message = OB.I18N.getLabel('OBPOS_TaxIDCannotBeChanged');
     }
-    return result;
+    return callback(result);
   }
 
   OB.DQMController.registerProvider(PosterminalValidations);
