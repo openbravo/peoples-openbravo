@@ -1126,7 +1126,6 @@ enyo.kind({
     }
     if (OB.POS.modelterminal.get('terminal').ismaster) {
       if (OB.MobileApp.view.currentWindow === 'retail.cashuppartial') {
-        var me = this;
         const response = await OB.App.Request.mobileServiceRequest(
           'org.openbravo.retail.posterminal.ProcessCashMgmtMaster',
           {
@@ -1135,10 +1134,10 @@ enyo.kind({
           }
         );
         if (response && response.response && !response.response.error) {
-          me.owner.$.cashMaster.updateCashUpModel(
+          this.owner.$.cashMaster.updateCashUpModel(
             model,
             response.response.data,
-            function() {
+            () => {
               this.closeCashReportChanged(model.get('closeCashReport').at(0));
             }
           );

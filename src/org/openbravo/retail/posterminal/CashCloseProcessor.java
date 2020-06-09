@@ -155,7 +155,7 @@ public class CashCloseProcessor {
       // Check if current payment method is from Safe Box
       JSONObject cashPaymentMethodInfoObj = cashPaymentMethodInfo.getJSONObject(i);
       OBPOSAppPayment paymentMethod = OBDal.getInstance()
-          .get(OBPOSAppPayment.class, cashPaymentMethodInfoObj.getString("paymentmethod_id"));
+          .get(OBPOSAppPayment.class, cashPaymentMethodInfoObj.getString("paymentMethodId"));
 
       if (!paymentMethod.getPaymentMethod().isSafebox()) {
         continue;
