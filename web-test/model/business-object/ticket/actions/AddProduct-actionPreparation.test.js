@@ -66,9 +66,26 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/stock/StockChecker');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/UUID');
+
+const getTicketUtility = name => {
+  return OB.App.StateAPI.Ticket.utilities
+    .filter(util => util.functionName === name)
+    .map(util => util.implementation)
+    .pop();
+};
+// set Ticket model required utility functions
+OB.App.State = {
+  Ticket: {
+    Utils: {
+      isLayaway: getTicketUtility('isLayaway'),
+      isReturn: getTicketUtility('isReturn')
+    }
+  }
+};
 
 OB.App.Class.Criteria = class MockedCriteria {
   criterion() {

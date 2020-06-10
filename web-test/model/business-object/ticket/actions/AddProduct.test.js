@@ -29,7 +29,24 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/ArrayUtils');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
+
+const getTicketUtility = name => {
+  return OB.App.StateAPI.Ticket.utilities
+    .filter(util => util.functionName === name)
+    .map(util => util.implementation)
+    .pop();
+};
+// set Ticket model required utility functions
+OB.App.State = {
+  Ticket: {
+    Utils: {
+      isLayaway: getTicketUtility('isLayaway'),
+      isReturn: getTicketUtility('isReturn')
+    }
+  }
+};
 
 OB.App.TerminalProperty.get.mockImplementation(property => {
   if (property === 'warehouses') {

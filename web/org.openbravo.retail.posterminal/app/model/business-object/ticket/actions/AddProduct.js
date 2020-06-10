@@ -27,7 +27,9 @@
       .map(productInfo => {
         return {
           ...productInfo,
-          qty: isAReturn(ticket) ? -productInfo.qty : productInfo.qty
+          qty: OB.App.State.Ticket.Utils.isReturn(ticket)
+            ? -productInfo.qty
+            : productInfo.qty
         };
       })
       .forEach(productInfo => {
@@ -76,10 +78,6 @@
       return payloadWithApprovals;
     }
   );
-
-  function isAReturn(ticket) {
-    return ticket.orderType === 1;
-  }
 
   function getLineToEdit(productInfo, ticket, options = {}, attrs = {}) {
     const { product, qty } = productInfo;
@@ -413,7 +411,7 @@
       ? ticket.lines.find(l => l.id === options.line)
       : null;
     const notReturnable = products.find(p => {
-      const qty = isAReturn(ticket) ? -p.qty : p.qty;
+      const qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -p.qty : p.qty;
       return (line ? line.qty + qty : qty) < 0 && !p.product.returnable;
     });
     if (notReturnable) {
@@ -447,7 +445,7 @@
 
     const productLocked = products
       .filter(p => {
-        const qty = isAReturn(ticket) ? -p.qty : p.qty;
+        const qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -p.qty : p.qty;
         return OB.DEC.compare(qty) === 1;
       })
       .map(p => {
@@ -1002,7 +1000,7 @@
       : null;
 
     const servicesWithReturnApproval = products.filter(p => {
-      const qty = isAReturn(ticket) ? -p.qty : p.qty;
+      const qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -p.qty : p.qty;
       return (
         (line ? line.qty + qty : qty) < 0 &&
         p.product.productType === 'S' &&
@@ -1036,7 +1034,9 @@
 
     for (let i = 0; i < products.length; i += 1) {
       const { product } = products[i];
-      const qty = isAReturn(ticket) ? -products[i].qty : products[i].qty;
+      const qty = OB.App.State.Ticket.Utils.isReturn(ticket)
+        ? -products[i].qty
+        : products[i].qty;
       const line = getLineToEdit(products[i], ticket, options, attrs);
       const lineId = line ? line.id : payload.line;
       const settings = { ticket, lineId, options, attrs };

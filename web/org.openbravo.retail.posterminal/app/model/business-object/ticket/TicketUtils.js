@@ -102,6 +102,16 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    */
   isLayaway(ticket) {
     return ticket.orderType === 2 || ticket.orderType === 3 || ticket.isLayaway;
+  },
+
+  /**
+   * Checks if a ticket is a return
+   *
+   * @param {object} ticket - The ticket to check
+   * @returns {boolean} - True if the given ticket is a return, otherwise false is returned
+   */
+  isReturn(ticket) {
+    return ticket.orderType === 1;
   }
 
   getCurrentDiscountedLinePrice(line, ignoreExecutedAtTheEndPromo) {
