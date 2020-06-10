@@ -26,19 +26,22 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
   },
   pendingToSaveHaveCashManagementProvider: function() {
     var hasPayment = false;
-    _.each(OB.App.State.Cashup.Utils.getCashManagementsInDraft(), function(
-      drop
-    ) {
-      var payment = _.find(OB.POS.modelterminal.get('payments'), function(p) {
-        return (
-          p.payment.id === drop.paymentMethodId &&
-          p.paymentMethod.cashManagementProvider
-        );
-      });
-      if (!OB.UTIL.isNullOrUndefined(payment) || drop.allowOnlyOne) {
-        hasPayment = true;
+    _.each(
+      OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+        OB.App.State.getState().Cashup.cashPaymentMethodInfo
+      ),
+      function(drop) {
+        var payment = _.find(OB.POS.modelterminal.get('payments'), function(p) {
+          return (
+            p.payment.id === drop.paymentMethodId &&
+            p.paymentMethod.cashManagementProvider
+          );
+        });
+        if (!OB.UTIL.isNullOrUndefined(payment) || drop.allowOnlyOne) {
+          hasPayment = true;
+        }
       }
-    });
+    );
     return hasPayment;
   },
   initModels: function(initModelsCallback) {
@@ -87,7 +90,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
         var asyncToSyncWrapper = new Promise(async function(resolve, reject) {
           const cashup = OB.Dal.transform(
             OB.Model.CashUp,
-            OB.App.State.Cashup.Utils.getCashup()
+            OB.App.State.getState().Cashup
           );
           var now = new Date();
           var addedCashMgmt = new OB.Model.CashManagement({
@@ -164,7 +167,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
     );
 
     var makeDepositsFunction = function(me) {
-      const cashManagementsInDraft = OB.App.State.Cashup.Utils.getCashManagementsInDraft();
+      const cashManagementsInDraft = OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+        OB.App.State.getState().Cashup.cashPaymentMethodInfo
+      );
       OB.info(
         '[CashMgmntSync][1] Cash management synchronization started. ' +
           cashManagementsInDraft.length +
@@ -188,7 +193,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
 
       TestRegistry.CashMgmt.isCashDepositPrinted = true;
 
-      const cashManagementsToPrint = OB.App.State.Cashup.Utils.getCashManagementsInDraft();
+      const cashManagementsToPrint = OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+        OB.App.State.getState().Cashup.cashPaymentMethodInfo
+      );
       OB.App.State.Global.processCashManagements({
         parameters: {
           terminalName: OB.MobileApp.model.get('logConfiguration')
@@ -216,7 +223,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_PreSaveCashManagements',
               {
-                dropsdeps: OB.App.State.Cashup.Utils.getCashManagementsInDraft()
+                dropsdeps: OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+                  OB.App.State.getState().Cashup.cashPaymentMethodInfo
+                )
               },
               function(args) {
                 makeDepositsFunction(me);
@@ -227,7 +236,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PreSaveCashManagements',
             {
-              dropsdeps: OB.App.State.Cashup.Utils.getCashManagementsInDraft()
+              dropsdeps: OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+                OB.App.State.getState().Cashup.cashPaymentMethodInfo
+              )
             },
             function(args) {
               makeDepositsFunction(me);
@@ -298,12 +309,15 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       var i;
       var asyncToSyncWrapper = new Promise(function(resolve, reject) {
         const pays = new OB.Collection.PaymentMethodCashUpList();
-        OB.App.State.Cashup.Utils.getPaymentMethods().forEach(function(
+        OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(function(
           paymentMethod
         ) {
-          paymentMethod.paymentmethod_id = paymentMethod.paymentMethodId;
+          const newPaymentMethod = {
+            ...paymentMethod,
+            paymentmethod_id: paymentMethod.paymentMethodId
+          };
           pays.add(
-            OB.Dal.transform(OB.Model.PaymentMethodCashUp, paymentMethod)
+            OB.Dal.transform(OB.Model.PaymentMethodCashUp, newPaymentMethod)
           );
         });
 
@@ -345,11 +359,12 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
               }
 
               const cashMgmts = new OB.Collection.CashManagementList();
-              OB.App.State.Cashup.Utils.getCashManagements().forEach(
-                cashManagement =>
-                  cashMgmts.add(
-                    OB.Dal.transform(OB.Model.CashManagement, cashManagement)
-                  )
+              OB.App.State.Cashup.Utils.getCashManagements(
+                OB.App.State.getState().Cashup.cashPaymentMethodInfo
+              ).forEach(cashManagement =>
+                cashMgmts.add(
+                  OB.Dal.transform(OB.Model.CashManagement, cashManagement)
+                )
               );
 
               if (cashMgmts.length > 0) {
@@ -398,14 +413,15 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                 function(args) {
                   if (args.includePay) {
                     const cashMgmts = new OB.Collection.CashManagementList();
-                    OB.App.State.Cashup.Utils.getCashManagements().forEach(
-                      cashManagement =>
-                        cashMgmts.add(
-                          OB.Dal.transform(
-                            OB.Model.CashManagement,
-                            cashManagement
-                          )
+                    OB.App.State.Cashup.Utils.getCashManagements(
+                      OB.App.State.getState().Cashup.cashPaymentMethodInfo
+                    ).forEach(cashManagement =>
+                      cashMgmts.add(
+                        OB.Dal.transform(
+                          OB.Model.CashManagement,
+                          cashManagement
                         )
+                      )
                     );
 
                     if (cashMgmts.length > 0) {

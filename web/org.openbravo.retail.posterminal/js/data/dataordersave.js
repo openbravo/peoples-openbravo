@@ -531,6 +531,7 @@
                             'cashUpReportInformation',
                             OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
                               {
+                                cashup: OB.App.State.getState().Cashup,
                                 terminalPayments: OB.MobileApp.model.get(
                                   'payments'
                                 )
@@ -727,6 +728,7 @@
               'cashUpReportInformation',
               OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
                 {
+                  cashup: OB.App.State.getState().Cashup,
                   terminalPayments: OB.MobileApp.model.get('payments')
                 }
               )

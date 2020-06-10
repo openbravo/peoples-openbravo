@@ -14,6 +14,7 @@
 
   OB.UTIL.CashManagementUtils.addCashManagementTransaction = function(
     newCashManagementTransaction,
+    cashup,
     successCallback,
     errorCallback,
     options
@@ -71,10 +72,7 @@
 
     //execute cash management event
     //1st load current cash up
-    const cashUp = OB.Dal.transform(
-      OB.Model.CashUp,
-      OB.App.State.Cashup.Utils.getCashup()
-    );
+    const cashUp = OB.Dal.transform(OB.Model.CashUp, cashup);
 
     // Prepare object to Send
     //cashUp.set('objToSend', JSON.stringify(cashUp));
@@ -108,6 +106,7 @@
       if (
         OB.DEC.sub(
           OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+            OB.App.State.getState().Cashup.cashPaymentMethodInfo,
             newCashManagementTransaction.get('paymentMethod').payment.id,
             OB.MobileApp.model.paymentnames,
             OB.UTIL.currency.webPOSDefaultCurrencyId(),
@@ -120,6 +119,7 @@
           'Amount to drop is greater than available amount (' +
             OB.I18N.formatCurrency(
               OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+                OB.App.State.getState().Cashup.cashPaymentMethodInfo,
                 newCashManagementTransaction.get('paymentMethod').payment.id,
                 OB.MobileApp.model.paymentnames,
                 OB.UTIL.currency.webPOSDefaultCurrencyId(),

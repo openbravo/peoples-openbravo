@@ -198,12 +198,9 @@
       return newCashup;
     },
 
-    getPaymentMethods() {
-      return OB.App.State.getState().Cashup.cashPaymentMethodInfo;
-    },
-
     /**
      * Retrieves current cash (also foreign currency) of a given paymentMethod
+     * @param {Object} paymentMethods - The payment methods from the cashup
      * @param {string} paymentMethodId - The id of the paymentMethod
      * @param {Object[]}   payments - payments available in the terminal
      * @param  {currencyId} defaultCurrencyId - the currencyId of the default payment method
@@ -211,12 +208,13 @@
      * @return {Object} A JS Object with the currentCash and foreignCurrentCash
      */
     getPaymentMethodCurrentCash(
+      paymentMethods,
       paymentMethodId,
       payments,
       defaultCurrencyId,
       conversions
     ) {
-      const paymentMethod = OB.App.State.getState().Cashup.cashPaymentMethodInfo.find(
+      const paymentMethod = paymentMethods.find(
         payment => payment.paymentMethodId === paymentMethodId
       );
       // (totalDeposits - totalDrops) + startingCash + (totalSales - totalReturns) - Deposits or Drops in Draft

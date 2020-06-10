@@ -13,33 +13,36 @@
   OB.App.StateAPI.Cashup.registerUtilityFunctions({
     /**
      * Retrieves all cash managements in the Cashup
+     * @param {Object} paymentMethods The payment methods information from the cashup
      * @return {Object[]} An array with cash managements
      */
-    getCashManagements() {
-      return OB.App.State.getState()
-        .Cashup.cashPaymentMethodInfo.map(payment => payment.cashManagements) // get all cashmng
+    getCashManagements(paymentMethods) {
+      return paymentMethods
+        .map(payment => payment.cashManagements) // get all cashmng
         .reduce((a, b) => a.concat(b)); // concat all arrays into one
     },
 
     /**
      * Retrieves cash managements not yet processed (isDraft)
+     * @param {Object} paymentMethods The payment methods information from the cashup
      * @return {Object[]} An array with cash managements
      */
-    getCashManagementsInDraft() {
-      return OB.App.State.Cashup.Utils.getCashManagements().filter(
-        cashMgmt => cashMgmt.isDraft
-      );
+    getCashManagementsInDraft(paymentMethods) {
+      return OB.App.State.Cashup.Utils.getCashManagements(
+        paymentMethods
+      ).filter(cashMgmt => cashMgmt.isDraft);
     },
 
     /**
      * Retrieves cash managements of a given paymentMethod
+     * @param {Object} paymentMethods The payment methods information from the cashup
      * @param {string} paymentMethodId - The id of the paymentMethod
      * @return {Object[]} An array with cash managements of the paymentMethod passed by parameters
      */
-    getCashManagementsByPaymentMethodId(paymentMethodId) {
-      return OB.App.State.Cashup.Utils.getCashManagements().filter(
-        cashMgmt => cashMgmt.paymentMethod === paymentMethodId
-      );
+    getCashManagementsByPaymentMethodId(paymentMethods, paymentMethodId) {
+      return OB.App.State.Cashup.Utils.getCashManagements(
+        paymentMethods
+      ).filter(cashMgmt => cashMgmt.paymentMethod === paymentMethodId);
     }
   });
 })();

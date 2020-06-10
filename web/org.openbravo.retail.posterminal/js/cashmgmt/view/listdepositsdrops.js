@@ -237,6 +237,7 @@ enyo.kind({
   create: function() {
     const transactionsCollection = new OB.Collection.CashManagementList();
     OB.App.State.Cashup.Utils.getCashManagementsByPaymentMethodId(
+      OB.App.State.getState().Cashup.cashPaymentMethodInfo,
       this.model.get('paymentmethod_id')
     ).forEach(cashManagement =>
       transactionsCollection.add(

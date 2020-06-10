@@ -81,19 +81,17 @@ enyo.kind({
           var hasProvider = false,
             payment = null,
             currentDrop = null;
-          OB.App.State.Cashup.Utils.getCashManagementsInDraft().forEach(
-            function(drop) {
-              payment = _.find(OB.POS.modelterminal.get('payments'), function(
-                p
-              ) {
-                return p.payment.id === drop.paymentMethodId;
-              });
-              if (payment && payment.paymentMethod.cashManagementProvider) {
-                hasProvider = true;
-                currentDrop = drop;
-              }
+          OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+            OB.App.State.getState().Cashup.cashPaymentMethodInfo
+          ).forEach(function(drop) {
+            payment = _.find(OB.POS.modelterminal.get('payments'), function(p) {
+              return p.payment.id === drop.paymentMethodId;
+            });
+            if (payment && payment.paymentMethod.cashManagementProvider) {
+              hasProvider = true;
+              currentDrop = drop;
             }
-          );
+          });
           if (hasProvider) {
             this.bubble('onShowPopup', {
               popup: 'modalpayment',
@@ -296,14 +294,14 @@ enyo.kind({
             OB.info(
               '[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' +
                 JSON.stringify(
-                  OB.App.State.Cashup.Utils.getCashManagementsInDraft().map(
-                    function(item) {
-                      return OB.Dal.transform(
-                        OB.Model.CashManagement,
-                        item
-                      ).getRelevantInformationString();
-                    }
-                  )
+                  OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+                    OB.App.State.getState().Cashup.cashPaymentMethodInfo
+                  ).map(function(item) {
+                    return OB.Dal.transform(
+                      OB.Model.CashManagement,
+                      item
+                    ).getRelevantInformationString();
+                  })
                 )
             );
             delete me.currentPayment;
@@ -329,14 +327,14 @@ enyo.kind({
             OB.info(
               '[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' +
                 JSON.stringify(
-                  OB.App.State.Cashup.Utils.getCashManagementsInDraft().map(
-                    function(item) {
-                      return OB.Dal.transform(
-                        OB.Model.CashManagement,
-                        item
-                      ).getRelevantInformationString();
-                    }
-                  )
+                  OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+                    OB.App.State.getState().Cashup.cashPaymentMethodInfo
+                  ).map(function(item) {
+                    return OB.Dal.transform(
+                      OB.Model.CashManagement,
+                      item
+                    ).getRelevantInformationString();
+                  })
                 )
             );
             delete me.currentPayment;

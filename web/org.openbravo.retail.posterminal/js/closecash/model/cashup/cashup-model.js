@@ -99,7 +99,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     this.set('orderlist', new OB.Collection.OrderList());
     this.set('paymentList', new Backbone.Collection());
     const payMthds = new Backbone.Collection(
-      OB.App.State.Cashup.Utils.getPaymentMethods()
+      OB.App.State.getState().Cashup.cashPaymentMethodInfo
     );
 
     //OB.Dal.find success
@@ -253,7 +253,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     synch1 = true;
     finish();
 
-    closeCashReport = new Backbone.Model(OB.App.State.Cashup.Utils.getCashup());
+    closeCashReport = new Backbone.Model(OB.App.State.getState().Cashup);
 
     initModelsCallback();
 
@@ -262,7 +262,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     this.deposit = 0;
     this.drop = 0;
     const cashMgmts = new OB.Collection.CashManagementList();
-    OB.App.State.Cashup.Utils.getCashManagements().forEach(cashManagement =>
+    OB.App.State.Cashup.Utils.getCashManagements(
+      OB.App.State.getState().Cashup.cashPaymentMethodInfo
+    ).forEach(cashManagement =>
       cashMgmts.add(OB.Dal.transform(OB.Model.CashManagement, cashManagement))
     );
 
@@ -299,7 +301,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     delete this.deposit;
     delete this.drop;
 
-    const cashup = OB.App.State.Cashup.Utils.getCashup();
+    const cashup = OB.App.State.getState().Cashup;
     closeCashReport.set(
       'salesTaxes',
       new Backbone.Collection(
@@ -589,9 +591,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
   processAndFinish: function() {
     OB.UTIL.showLoading(true);
     OB.Dal.transaction(tx => {
-      const cashUp = new Backbone.Collection([
-        OB.App.State.Cashup.Utils.getCashup()
-      ]);
+      const cashUp = new Backbone.Collection([OB.App.State.getState().Cashup]);
 
       const now = new Date();
       let paymentMethodInfo,
@@ -636,7 +636,9 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       let cashMgmtIds = [];
       objToSend.cashMgmtIds = cashMgmtIds;
       const cashMgmts = new OB.Collection.CashManagementList();
-      OB.App.State.Cashup.Utils.getCashManagements().forEach(cashManagement =>
+      OB.App.State.Cashup.Utils.getCashManagements(
+        OB.App.State.getState().Cashup.cashPaymentMethodInfo
+      ).forEach(cashManagement =>
         cashMgmts.add(OB.Dal.transform(OB.Model.CashManagement, cashManagement))
       );
       cashMgmts.models.forEach(cashMgmt => {

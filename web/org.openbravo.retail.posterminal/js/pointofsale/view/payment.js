@@ -871,6 +871,7 @@ enyo.kind({
       var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
       if (
         OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+          OB.App.State.getState().Cashup.cashPaymentMethodInfo,
           paymentMethod.payment.id,
           OB.MobileApp.model.paymentnames,
           OB.UTIL.currency.webPOSDefaultCurrencyId(),
@@ -1606,6 +1607,7 @@ enyo.kind({
                 OB.DEC.compare(
                   OB.DEC.sub(
                     OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+                      OB.App.State.getState().Cashup.cashPaymentMethodInfo,
                       paymentmethod.payment.id,
                       OB.MobileApp.model.paymentnames,
                       OB.UTIL.currency.webPOSDefaultCurrencyId(),
@@ -1655,6 +1657,7 @@ enyo.kind({
                   paymentmethod &&
                   payment.get('amount') >
                     OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+                      OB.App.State.getState().Cashup.cashPaymentMethodInfo,
                       paymentmethod.payment.id,
                       OB.MobileApp.model.paymentnames,
                       OB.UTIL.currency.webPOSDefaultCurrencyId(),
@@ -2224,6 +2227,7 @@ enyo.kind({
     if (selectedPayment && selectedPayment.paymentMethod.iscash) {
       currentCash =
         OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+          OB.App.State.getState().Cashup.cashPaymentMethodInfo,
           selectedPayment.payment.id,
           OB.MobileApp.model.paymentnames,
           OB.UTIL.currency.webPOSDefaultCurrencyId(),

@@ -1027,6 +1027,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       'cashUpReportInformation',
                       OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
                         {
+                          cashup: OB.App.State.getState().Cashup,
                           terminalPayments: OB.MobileApp.model.get('payments')
                         }
                       )
@@ -1197,6 +1198,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                                   'cashUpReportInformation',
                                   OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
                                     {
+                                      cashup: OB.App.State.getState().Cashup,
                                       terminalPayments: OB.MobileApp.model.get(
                                         'payments'
                                       )

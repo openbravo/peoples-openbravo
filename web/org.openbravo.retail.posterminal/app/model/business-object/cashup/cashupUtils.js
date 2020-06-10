@@ -130,14 +130,11 @@
       return newCashup;
     },
 
-    getCashup() {
-      return OB.App.State.getState().Cashup;
-    },
-
     getCashupFilteredForSendToBackendInEachTicket(payload) {
-      const cashupToSend = OB.App.State.getState().Cashup;
+      const { terminalPayments, cashup } = payload;
+
+      const cashupToSend = { ...cashup };
       const cashupPayments = cashupToSend.cashPaymentMethodInfo;
-      const { terminalPayments } = payload;
 
       cashupToSend.cashPaymentMethodInfo = OB.App.State.Cashup.Utils.getCashupPaymentsThatAreAlsoInTerminalPayments(
         cashupPayments,
