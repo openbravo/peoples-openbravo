@@ -409,6 +409,30 @@ describe('addProduct preparation', () => {
       ]);
     });
 
+    it('pack processing fails', async () => {
+      const pack = {
+        ...Product.base,
+        ispack: true,
+        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      };
+      const payload = {
+        products: [{ product: pack, qty: 1 }]
+      };
+
+      OB.App.ProductPackProvider.getPack.mockReturnValueOnce({
+        process: jest
+          .fn()
+          .mockRejectedValue(
+            new OB.App.Class.TranslatableError('title', 'message', ['param'])
+          )
+      });
+      await expectError(() => prepareAction(payload), {
+        title: 'title',
+        errorMsg: 'message',
+        messageParams: ['param']
+      });
+    });
+
     it('more than one pack not allowed', async () => {
       const pack = {
         ...Product.base,
