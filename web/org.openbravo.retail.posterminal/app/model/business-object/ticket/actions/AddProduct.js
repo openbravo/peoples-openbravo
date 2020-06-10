@@ -492,23 +492,20 @@
       throw new Error('Cannot handle more than unit of a pack');
     }
 
-    const newPayload = { ...payload };
-    newPayload.products = [];
-    for (let i = 0; i < payload.products.length; i += 1) {
-      const p = payload.products[i];
-      const pack = OB.App.ProductPackProvider.getPack(p.product);
-      if (pack) {
-        try {
-          // eslint-disable-next-line no-await-in-loop
-          const packProducts = await pack.process();
-          newPayload.products = newPayload.products.concat(packProducts);
-        } catch (error) {
-          throw new OB.App.Class.ActionCanceled(error);
-        }
-      } else {
-        newPayload.products.push(p);
+    const packProcessings = payload.products.map(async pi => {
+      const pack = OB.App.ProductPackProvider.getPack(pi.product);
+      if (!pack) {
+        return pi;
       }
-    }
+      try {
+        const packProducts = await pack.process();
+        return packProducts;
+      } catch (error) {
+        throw new OB.App.Class.ActionCanceled(error);
+      }
+    });
+    const newPayload = { ...payload };
+    newPayload.products = (await Promise.all(packProcessings)).flat();
     return newPayload;
   }
 
