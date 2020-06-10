@@ -15,17 +15,15 @@
     }
 
     applyTaxes() {
-      const taxes = {};
-      taxes.header = {};
-      taxes.lines = [];
-
       // Calculate taxes for each ticket line
-      taxes.lines = this.ticket.lines.map(line => this.applyLineTaxes(line));
+      const lineTaxes = this.ticket.lines.map(line =>
+        this.applyLineTaxes(line)
+      );
 
       // Calculate taxes for ticket header
-      taxes.header = this.applyHeaderTaxes(taxes.lines);
+      const headerTaxes = this.applyHeaderTaxes(lineTaxes);
 
-      return taxes;
+      return { ...headerTaxes, lines: lineTaxes };
     }
 
     applyLineTaxes(line) {

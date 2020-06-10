@@ -78,7 +78,7 @@
         }, {});
     };
 
-    newTaxes.header.taxes = translateTaxArray(taxes.header.taxes);
+    newTaxes.taxes = translateTaxArray(taxes.taxes);
     newTaxes.lines = taxes.lines.map(line => {
       const newLine = { ...line };
       newLine.taxes = translateTaxArray(line.taxes);
