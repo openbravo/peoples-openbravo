@@ -288,7 +288,7 @@
       let productDeliveryDate;
       let productDeliveryTime;
 
-      if (ticket.isLayaway || ticket.orderType === 2) {
+      if (OB.App.State.Ticket.Utils.isLayaway(ticket)) {
         productDeliveryMode = line.product.obrdmDeliveryModeLyw;
       } else {
         productDeliveryMode = line.product.obrdmDeliveryMode;
