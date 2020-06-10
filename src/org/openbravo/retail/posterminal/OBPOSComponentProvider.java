@@ -375,6 +375,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/cashup/actions/ProcessCashManagements");
     appDependency.add("model/business-object/cashup/actions/UpdateCashup");
 
+    // ticket list model
+    appDependency.add("model/business-object/ticket-list/TicketList");
+    appDependency.add("model/business-object/ticket-list/actions/AddNewTicket");
+
     // Synchronization Buffer
     appDependency.add("model/synchronization-buffer/HardwareManagerEndpoint");
 

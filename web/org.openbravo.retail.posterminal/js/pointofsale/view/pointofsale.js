@@ -920,7 +920,7 @@ enyo.kind({
   },
   addNewOrder: function(inSender, inEvent) {
     this.$.receiptPropertiesDialog.resetProperties();
-    this.model.get('orderList').addNewOrder();
+    OB.App.State.Global.addNewTicket();
     return true;
   },
   deleteCurrentOrder: function(inSender, inEvent) {

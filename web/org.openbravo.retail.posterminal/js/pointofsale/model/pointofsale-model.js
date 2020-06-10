@@ -280,6 +280,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     var multiOrders = new OB.Model.MultiOrders();
     OB.MobileApp.model.multiOrders = multiOrders;
     // create the orderList and expose it
+    // TODO: orderList should be removed
     var orderList = new OB.Collection.OrderList(receipt);
     OB.MobileApp.model.orderList = orderList;
 

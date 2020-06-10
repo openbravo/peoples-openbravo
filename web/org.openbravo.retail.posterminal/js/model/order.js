@@ -10662,6 +10662,7 @@
       },
 
       addFirstOrder: function() {
+        // TODO: replace with state
         this.addNewOrder(true);
       },
 

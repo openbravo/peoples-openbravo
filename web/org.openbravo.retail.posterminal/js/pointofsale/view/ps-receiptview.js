@@ -74,7 +74,7 @@ enyo.kind({
     this.$.receiptFooter.setOrder(this.order);
   },
   orderListChanged: function(oldValue) {
-    this.$.receiptcounter.setOrderList(this.orderList);
+    // this.$.receiptcounter.setOrderList(this.orderList);
   },
   toggleSelectionMode: function(inSender, inEvent) {
     this.waterfall('onToggleSelectionTable', inEvent);
