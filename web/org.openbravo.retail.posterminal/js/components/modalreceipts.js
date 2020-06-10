@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -138,7 +138,14 @@ enyo.kind({
       )
     );
     this.$.orderNo.setContent(this.model.get('documentNo'));
-    this.$.bp.setContent(this.model.get('bp').get('_identifier'));
+    if (this.model.get('externalBusinessPartner')) {
+      const bp = new OB.App.Class.ExternalBusinessPartner(
+        this.model.get('externalBusinessPartner')
+      );
+      this.$.bp.setContent(bp.getIdentifier());
+    } else {
+      this.$.bp.setContent(this.model.get('bp').get('_identifier'));
+    }
     this.$.total.setContent(this.model.printTotal());
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
       listReceiptLine: this

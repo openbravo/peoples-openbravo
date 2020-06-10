@@ -60,13 +60,13 @@
         (c_invoice_id, ad_client_id, ad_org_id, ad_orgtrx_id, isactive, created, createdby, updated, updatedby, issotrx,
          documentno, docstatus, docaction, processing, processed, posted, c_doctype_id, c_doctypetarget_id, c_order_id, description, dateordered,
          salesrep_id, dateinvoiced, dateacct, c_bpartner_id, c_bpartner_location_id,  c_currency_id, c_paymentterm_id, totallines,
-         grandtotal, m_pricelist_id, ispaid, totalpaid, outstandingamt, fin_paymentmethod_id, ad_user_id, em_aprm_processinvoice, iscashvat)
+         grandtotal, m_pricelist_id, ispaid, totalpaid, outstandingamt, fin_paymentmethod_id, ad_user_id, em_aprm_processinvoice, iscashvat, bpartner_extref)
         select get_uuid(), o.ad_client_id, o.ad_org_id, o.ad_orgtrx_id, 'Y', to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')), ?, to_timestamp(to_char(?), to_char('DD-MM-YYYY HH24:MI:SS')), ?, 'Y', ?,
         'CO', 'RE', 'N', 'Y', 'N', dt.c_doctypeaggrinvoice_id, dt.c_doctypeaggrinvoice_id,
         null, ?, null, max(o.salesrep_id), to_date(substr(to_char(?), 1, 11), to_char('DD-MM-YYYY')),
         to_date(substr(to_char(?), 1, 11), to_char('DD-MM-YYYY')), o.c_bpartner_id, coalesce(o.billto_id, o.c_bpartner_location_id),
         o.c_currency_id, bp.c_paymentterm_id, sum(o.totallines), sum(o.grandtotal), max(o.m_pricelist_id),
-        'Y', sum(o.grandtotal),  0, bp.fin_paymentmethod_id, o.ad_user_id, 'RE', o.iscashvat
+        'Y', sum(o.grandtotal),  0, bp.fin_paymentmethod_id, o.ad_user_id, 'RE', o.iscashvat, o.bpartner_extref
         from  c_order o, obpos_applications ap, ad_org org, c_doctype dt, c_bpartner bp
         where o.em_obpos_applications_id = ap.obpos_applications_id
         and o.ad_org_id = org.ad_org_id
@@ -81,7 +81,7 @@
         and o.em_obpos_notinvoiceoncashup = 'N'
         group by  o.ad_client_id, o.ad_org_id, o.ad_orgtrx_id, dt.c_doctypeaggrinvoice_id, dt.c_doctypeaggrinvoice_id,
         o.c_bpartner_id, coalesce(o.billto_id, o.c_bpartner_location_id), o.c_currency_id,
-        bp.c_paymentterm_id, o.m_pricelist_id, bp.fin_paymentmethod_id, o.ad_user_id, o.iscashvat
+        bp.c_paymentterm_id, o.m_pricelist_id, bp.fin_paymentmethod_id, o.ad_user_id, o.iscashvat, o.bpartner_extref
     ]]>
     </Sql>
     <Parameter name="currentDate"/>
@@ -133,7 +133,7 @@
         and o.em_obpos_notinvoiceoncashup = 'N'
         and o.iscashvat = i.iscashvat
         and i.documentno = ?
-        and i.c_bpartner_id = o.c_bpartner_id and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
+        and i.c_bpartner_id = o.c_bpartner_id and coalesce(i.bpartner_extref, n'1') = coalesce(o.bpartner_extref, n'1') and i.c_bpartner_location_id = coalesce(o.billto_id, o.c_bpartner_location_id)
         and coalesce(i.ad_user_id, '1') = coalesce(o.ad_user_id, '1')
         group by i.ad_client_id, i.ad_org_id, i.created, i.createdby, i.updated, i.updatedby,
         i.c_invoice_id, ol.c_orderline_id, ol.description, ol.m_product_id,
@@ -142,7 +142,7 @@
         ol.linenetamt , ol.line_gross_amount, ol.gross_unit_price,
         ol.c_bpartner_id, ol.grosspricestd, ol.grosspricelist,
         ol.a_asset_id, ol.c_project_id, ol.user1_id, ol.user2_id, ol.c_costcenter_id, pl.istaxincluded,
-        o.documentno, ol.line, o.c_order_id, o.ad_user_id
+        o.documentno, ol.line, o.c_order_id, o.ad_user_id, o.bpartner_extref
         order by o.documentno, ol.line
       ]]>
     </Sql>

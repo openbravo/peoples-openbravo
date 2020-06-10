@@ -278,7 +278,33 @@ enyo.kind({
       OB.I18N.formatCurrency(this.model.get('totalamount'))
     );
     this.$.time.setContent(OB.I18N.formatHour(orderDate));
-    this.$.customer.setContent(this.model.get('businessPartnerName'));
+    if (!OB.UTIL.externalBp()) {
+      this.$.customer.setContent(this.model.get('businessPartnerName'));
+    } else {
+      let extBpLabelToShow = '';
+      if (this.model.get('externalBusinessPartner')) {
+        extBpLabelToShow = new OB.App.Class.ExternalBusinessPartner(
+          this.model.get('externalBusinessPartner')
+        ).getIdentifier();
+      } else if (this.model.get('externalBusinessPartnerReference')) {
+        //Async
+        OB.App.ExternalBusinessPartnerAPI.getBusinessPartner(
+          this.model.get('externalBusinessPartnerReference')
+        ).then(extBpFromApi => {
+          me.model.set(
+            'externalBusinessPartner',
+            extBpFromApi.getPlainObject(),
+            {
+              silent: true
+            }
+          );
+          me.$.customer.setContent(extBpFromApi.getIdentifier());
+        });
+        //Show dots until info is retrieved
+        extBpLabelToShow = '...';
+      }
+      this.$.customer.setContent(extBpLabelToShow);
+    }
     if (this.owner.owner.owner.hideBusinessPartnerColumn === true) {
       this.$.customer.addClass('u-hideFromUI');
     }
@@ -435,7 +461,9 @@ enyo.kind({
               var property = getProperty(tokens[i]);
               if (property) {
                 message.push({
-                  content: OB.I18N.getLabel(property.caption),
+                  content: property.caption
+                    ? OB.I18N.getLabel(property.caption)
+                    : property.noTranslatableText,
                   classes: 'u-textalign-default',
                   tag: 'li'
                 });
@@ -519,14 +547,14 @@ enyo.kind({
         if (flt.hqlFilter) {
           criteria.remoteFilters.push({
             value: flt.hqlFilter,
-            columns: [fullFlt.name],
+            columns: [OB.UTIL.filterColumn(fullFlt)],
             operator: OB.Dal.FILTER,
             params: [flt.value]
           });
         } else {
           criteria.remoteFilters.push({
             value: flt.value,
-            columns: [fullFlt.name],
+            columns: [OB.UTIL.filterColumn(fullFlt)],
             operator: flt.operator || OB.Dal.STARTSWITH,
             isId: flt.column === 'orderType' || flt.isId
           });

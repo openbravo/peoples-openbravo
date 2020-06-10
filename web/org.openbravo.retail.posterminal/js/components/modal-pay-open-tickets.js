@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -268,6 +268,14 @@ enyo.kind({
       organization: order.get('organization'),
       documentNo: order.get('documentNo'),
       businessPartner: order.get('bp').get('id'),
+      externalBusinessPartner: order.get('externalBusinessPartner')
+        ? order.get('externalBusinessPartner')
+        : null,
+      externalBusinessPartnerReference: order.get(
+        'externalBusinessPartnerReference'
+      )
+        ? order.get('externalBusinessPartnerReference')
+        : null,
       orderDateFrom: order.get('orderDate'),
       orderDateTo: order.get('orderDate'),
       totalamountFrom: order.get('gross'),

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2019 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,6 +69,8 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
         "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=OBDISC_Offer_Role&modelName=DiscountFilterRole&source=org.openbravo.retail.posterminal.master.DiscountFilterRole");
     resources.add(
         "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentCharacteristic&modelName=DiscountFilterCharacteristic&source=org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic");
+    resources.add(
+        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerExtRef&modelName=DiscountFilterBusinessPartnerExtRef&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerExtRef");
 
     // Sounds
     resources.add("../../web/org.openbravo.retail.posterminal/sounds/drawerAlert.mp3");

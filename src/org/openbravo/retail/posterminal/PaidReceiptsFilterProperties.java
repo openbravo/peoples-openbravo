@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2019 Openbravo S.L.U.
+ * Copyright (C) 2017-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -42,6 +42,8 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
         add(new HQLProperty("ord.organization.id", "organization"));
         add(new HQLProperty("ord.organization.name", "organizationName"));
         add(new HQLProperty("ord.obposApplications.organization.id", "trxOrganization"));
+        add(new HQLProperty("ord.externalBusinessPartnerReference",
+            "externalBusinessPartnerReference"));
         String orderTypeFilter = PaidReceiptsFilter.getOrderTypeFilter((JSONObject) params);
         switch (orderTypeFilter) {
           case "ORD":
