@@ -17,6 +17,8 @@
     const ticket = { ...state };
     const { products, options, attrs } = payload;
 
+    delete ticket.deferredOrder;
+
     ticket.lines = ticket.lines.map(l => {
       return { ...l };
     });
@@ -48,9 +50,7 @@
   });
 
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
-    async (state, payload) => {
-      const ticket = state.Ticket;
-
+    async (ticket, payload) => {
       let newPayload = { options: {}, attrs: {}, ...payload };
 
       newPayload.products = newPayload.products.map(productInfo => {
@@ -72,8 +72,6 @@
       await checkStock(ticket, newPayload);
 
       const payloadWithApprovals = await checkApprovals(ticket, newPayload);
-
-      delete ticket.deferredOrder;
 
       return payloadWithApprovals;
     }
@@ -142,7 +140,6 @@
       warehouse,
       uOM: product.uOM,
       qty: OB.DEC.number(lineQty, product.uOMstandardPrecision),
-      priceList: OB.DEC.number(product.listPrice),
       priceIncludesTax: ticket.priceIncludesTax,
       isEditable: lodash.has(options, 'isEditable') ? options.isEditable : true,
       isDeletable: lodash.has(options, 'isDeletable')
@@ -151,9 +148,11 @@
     };
 
     if (newLine.priceIncludesTax) {
-      newLine.grossPrice = OB.DEC.number(product.standardPrice);
+      newLine.grossListPrice = OB.DEC.number(product.listPrice);
+      newLine.baseGrossUnitPrice = OB.DEC.number(product.standardPrice);
     } else {
-      newLine.netPrice = OB.DEC.number(product.standardPrice);
+      newLine.netListPrice = OB.DEC.number(product.listPrice);
+      newLine.baseNetUnitPrice = OB.DEC.number(product.standardPrice);
     }
 
     setLineAttributes(newLine, attrs, productInfo);
@@ -252,16 +251,23 @@
             l => l.id === relatedProduct.orderlineId
           );
           if (relatedLine) {
-            relatedLine.product.oldTaxCategory =
+            relatedLine.product.previousTaxCategory =
               relatedLine.product.taxCategory;
             relatedLine.product.taxCategory = productServiceLinked.taxCategory;
-            relatedLine.previousLineRate = relatedLine.lineRate;
+            if (relatedLine.priceIncludesTax) {
+              relatedLine.previousBaseGrossUnitPrice =
+                relatedLine.baseGrossUnitPrice;
+            } else {
+              relatedLine.previousBaseNetUnitPrice =
+                relatedLine.baseNetUnitPrice;
+            }
           }
         });
     });
   }
 
   function setDeliveryMode(line, ticket) {
+    /* eslint-disable no-param-reassign */
     if (
       line.product.productType === 'S' ||
       line.obrdmDeliveryMode // TODO: can line have it already set?
@@ -277,7 +283,6 @@
       productDeliveryMode = line.product.obrdmDeliveryModeLyw;
     } else {
       productDeliveryMode = line.product.obrdmDeliveryMode;
-
       productDeliveryDate = line.product.obrdmDeliveryDate;
       productDeliveryTime = line.product.obrdmDeliveryTime;
     }
@@ -285,7 +290,6 @@
     const deliveryMode =
       productDeliveryMode || ticket.obrdmDeliveryModeProperty || 'PickAndCarry';
 
-    // eslint-disable-next-line no-param-reassign
     line.obrdmDeliveryMode = deliveryMode;
 
     if (
@@ -299,7 +303,6 @@
       currentDate.setSeconds(0);
       currentDate.setMilliseconds(0);
 
-      // eslint-disable-next-line no-param-reassign
       line.obrdmDeliveryDate = productDeliveryMode
         ? productDeliveryDate || currentDate
         : ticket.obrdmDeliveryDateProperty;
@@ -310,11 +313,22 @@
       currentTime.setSeconds(0);
       currentTime.setMilliseconds(0);
 
-      // eslint-disable-next-line no-param-reassign
       line.obrdmDeliveryTime = productDeliveryMode
         ? productDeliveryTime || currentTime
         : ticket.obrdmDeliveryTimeProperty;
+
+      const { shipLocId } = ticket.businessPartner;
+      line.country = shipLocId
+        ? ticket.businessPartner.locationModel.countryId
+        : null;
+      line.country = shipLocId
+        ? ticket.businessPartner.locationModel.regionId
+        : null;
+    } else {
+      line.country = line.organization.country;
+      line.region = line.organization.region;
     }
+    /* eslint-enable no-param-reassign */
   }
 
   function checkRestrictions(ticket, payload) {
@@ -370,8 +384,6 @@
 
     if (anonymousNotAllowed) {
       if (ticket.deferredOrder) {
-        // eslint-disable-next-line no-param-reassign
-        delete ticket.deferredOrder;
         throw new OB.App.Class.ActionCanceled({
           errorConfirmation: 'OBPOS_AnonymousSaleNotAllowedDeferredSale'
         });
