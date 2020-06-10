@@ -138,7 +138,7 @@ const Ticket = {
 const prepareAction = async (payload, ticket = Ticket.empty) => {
   const newPayload = await executeActionPreparations(
     OB.App.StateAPI.Ticket.addProduct,
-    deepfreeze({ Ticket: ticket }),
+    deepfreeze(ticket),
     deepfreeze(payload)
   );
   return newPayload;

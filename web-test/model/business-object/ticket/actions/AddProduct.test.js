@@ -51,7 +51,7 @@ OB.App.TerminalProperty.get.mockImplementation(property => {
   return {};
 });
 
-const emptyTicket = { priceIncludesTax: true, lines: [] };
+const emptyTicket = { priceIncludesTax: true, lines: [], businessPartner: {} };
 
 const productA = {
   id: 'stdProduct',
@@ -119,16 +119,45 @@ describe('addProduct', () => {
       expect(newTicket.lines).toMatchObject([
         {
           qty: 1,
-          grossPrice: 5,
-          priceList: 5,
+          baseGrossUnitPrice: 5,
+          grossListPrice: 5,
           priceIncludesTax: true,
           product: { id: 'stdProduct' }
         },
         {
           qty: 2,
-          grossPrice: 10,
-          priceList: 11,
+          baseGrossUnitPrice: 10,
+          grossListPrice: 11,
           priceIncludesTax: true,
+          product: { id: 'pB' }
+        }
+      ]);
+    });
+
+    it('adds new lines if product not present (price not including taxes)', () => {
+      const newTicket = addProduct(
+        { ...emptyTicket, priceIncludesTax: false },
+        {
+          products: [
+            { product: productA, qty: 1 },
+            { product: productB, qty: 2 }
+          ]
+        }
+      );
+
+      expect(newTicket.lines).toMatchObject([
+        {
+          qty: 1,
+          baseNetUnitPrice: 5,
+          netListPrice: 5,
+          priceIncludesTax: false,
+          product: { id: 'stdProduct' }
+        },
+        {
+          qty: 2,
+          baseNetUnitPrice: 10,
+          netListPrice: 11,
+          priceIncludesTax: false,
           product: { id: 'pB' }
         }
       ]);
@@ -164,8 +193,8 @@ describe('addProduct', () => {
       expect(newTicket.lines).toMatchObject([
         {
           qty: 1,
-          grossPrice: 5,
-          priceList: 5,
+          baseGrossUnitPrice: 5,
+          grossListPrice: 5,
           priceIncludesTax: true,
           product: { id: 'stdProduct' },
           externalProperty: 'dummy'
@@ -186,8 +215,8 @@ describe('addProduct', () => {
       expect(newTicket.lines).toMatchObject([
         {
           qty: 11,
-          grossPrice: 5,
-          priceList: 5,
+          baseGrossUnitPrice: 5,
+          grossListPrice: 5,
           priceIncludesTax: true,
           product: { id: 'stdProduct' },
           externalProperty: 'dummy'
@@ -314,8 +343,8 @@ describe('addProduct', () => {
 
       expect(baseTicket.lines[0]).toMatchObject({
         qty: 1,
-        grossPrice: 5,
-        priceList: 5,
+        baseGrossUnitPrice: 5,
+        grossListPrice: 5,
         product: { id: 'ungroupProduct' }
       });
 
@@ -344,22 +373,22 @@ describe('addProduct', () => {
       expect(changedTicket.lines).toMatchObject([
         {
           qty: 1,
-          grossPrice: 5,
-          priceList: 5,
+          baseGrossUnitPrice: 5,
+          grossListPrice: 5,
           priceIncludesTax: true,
           product: { id: 'stdProduct' }
         },
         {
           qty: 1,
-          grossPrice: 10,
-          priceList: 11,
+          baseGrossUnitPrice: 10,
+          grossListPrice: 11,
           priceIncludesTax: true,
           product: { id: 'pB' }
         },
         {
           qty: 2,
-          grossPrice: 10,
-          priceList: 11,
+          baseGrossUnitPrice: 10,
+          grossListPrice: 11,
           priceIncludesTax: true,
           product: { id: 'serviceProduct' },
           relatedLines: [{ id: '0' }, { id: '1' }]

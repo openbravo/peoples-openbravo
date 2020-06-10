@@ -156,7 +156,7 @@
     }
 
     setLineAttributes(newLine, attrs, productInfo);
-    setRelatedLines(newLine, ticket);
+    updateServiceRelatedLines(newLine, ticket);
     setDeliveryMode(newLine, ticket);
     return newLine;
   }
@@ -220,7 +220,7 @@
     Object.assign(line, lineAttrs);
   }
 
-  function setRelatedLines(line, ticket) {
+  function updateServiceRelatedLines(line, ticket) {
     if (!line.relatedLines) {
       return;
     }
@@ -238,7 +238,7 @@
       return;
     }
 
-    // Check if it is necessary to modify the tax category of related products
+    // Check if it is necessary to modify the tax category of related lines
     line.product.productServiceLinked.forEach(productServiceLinked => {
       line.relatedLines
         .filter(
@@ -257,66 +257,80 @@
             if (relatedLine.priceIncludesTax) {
               relatedLine.previousBaseGrossUnitPrice =
                 relatedLine.baseGrossUnitPrice;
-            } else {
-              relatedLine.previousBaseNetUnitPrice =
-                relatedLine.baseNetUnitPrice;
             }
           }
         });
     });
+
+    // Update the price of the related lines whose tax category has changed
+    if (
+      ticket.priceIncludesTax &&
+      ticket.lines.some(l => l.previousBaseGrossUnitPrice && l.taxRate)
+    ) {
+      const taxes = OB.Taxes.Pos.applyTaxes(ticket);
+      ticket.lines
+        .filter(l => l.previousBaseGrossUnitPrice && l.taxRate)
+        .forEach(l => {
+          const lineTax = taxes.lines.find(lt => lt.id === line.id);
+          // eslint-disable-next-line no-param-reassign
+          l.baseGrossUnitPrice = OB.DEC.mul(
+            OB.DEC.div(l.previousBaseGrossUnitPrice, l.taxRate),
+            lineTax.taxRate
+          );
+        });
+    }
   }
 
   function setDeliveryMode(line, ticket) {
     /* eslint-disable no-param-reassign */
-    if (
-      line.product.productType === 'S' ||
-      line.obrdmDeliveryMode // TODO: can line have it already set?
-    ) {
-      return;
+    if (line.product.productType !== 'S' && !line.obrdmDeliveryMode) {
+      let productDeliveryMode;
+      let productDeliveryDate;
+      let productDeliveryTime;
+
+      if (ticket.isLayaway || ticket.orderType === 2) {
+        productDeliveryMode = line.product.obrdmDeliveryModeLyw;
+      } else {
+        productDeliveryMode = line.product.obrdmDeliveryMode;
+        productDeliveryDate = line.product.obrdmDeliveryDate;
+        productDeliveryTime = line.product.obrdmDeliveryTime;
+      }
+
+      const deliveryMode =
+        productDeliveryMode ||
+        ticket.obrdmDeliveryModeProperty ||
+        'PickAndCarry';
+
+      line.obrdmDeliveryMode = deliveryMode;
+
+      if (
+        deliveryMode === 'PickupInStoreDate' ||
+        deliveryMode === 'HomeDelivery'
+      ) {
+        // TODO: review
+        const currentDate = new Date();
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
+        currentDate.setMilliseconds(0);
+
+        line.obrdmDeliveryDate = productDeliveryMode
+          ? productDeliveryDate || currentDate
+          : ticket.obrdmDeliveryDateProperty;
+      }
+
+      if (deliveryMode === 'HomeDelivery') {
+        const currentTime = new Date();
+        currentTime.setSeconds(0);
+        currentTime.setMilliseconds(0);
+
+        line.obrdmDeliveryTime = productDeliveryMode
+          ? productDeliveryTime || currentTime
+          : ticket.obrdmDeliveryTimeProperty;
+      }
     }
 
-    let productDeliveryMode;
-    let productDeliveryDate;
-    let productDeliveryTime;
-
-    if (ticket.isLayaway || ticket.orderType === 2) {
-      productDeliveryMode = line.product.obrdmDeliveryModeLyw;
-    } else {
-      productDeliveryMode = line.product.obrdmDeliveryMode;
-      productDeliveryDate = line.product.obrdmDeliveryDate;
-      productDeliveryTime = line.product.obrdmDeliveryTime;
-    }
-
-    const deliveryMode =
-      productDeliveryMode || ticket.obrdmDeliveryModeProperty || 'PickAndCarry';
-
-    line.obrdmDeliveryMode = deliveryMode;
-
-    if (
-      deliveryMode === 'PickupInStoreDate' ||
-      deliveryMode === 'HomeDelivery'
-    ) {
-      // TODO: review
-      const currentDate = new Date();
-      currentDate.setHours(0);
-      currentDate.setMinutes(0);
-      currentDate.setSeconds(0);
-      currentDate.setMilliseconds(0);
-
-      line.obrdmDeliveryDate = productDeliveryMode
-        ? productDeliveryDate || currentDate
-        : ticket.obrdmDeliveryDateProperty;
-    }
-
-    if (deliveryMode === 'HomeDelivery') {
-      const currentTime = new Date();
-      currentTime.setSeconds(0);
-      currentTime.setMilliseconds(0);
-
-      line.obrdmDeliveryTime = productDeliveryMode
-        ? productDeliveryTime || currentTime
-        : ticket.obrdmDeliveryTimeProperty;
-
+    if (line.obrdmDeliveryMode === 'HomeDelivery') {
       const { shipLocId } = ticket.businessPartner;
       line.country = shipLocId
         ? ticket.businessPartner.locationModel.countryId
