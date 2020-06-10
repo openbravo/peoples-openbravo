@@ -31,6 +31,7 @@
         appModuleId: 'FF808181326CC34901326D53DBCF0018',
         appModulePrefix: 'OBPOS',
         supportsOffline: true,
+        supportsExternalBusinessPartnerIntegration: true,
         profileHandlerUrl:
           'org.openbravo.retail.posterminal.ProfileUtilsServlet',
         loginUtilsUrl:

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2019 Openbravo S.L.U.
+ * Copyright (C) 2016-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -52,7 +52,7 @@ enyo.kind({
         }
       });
       this.doShowPopup({
-        popup: 'modalcustomer',
+        popup: OB.UTIL.modalCustomer(),
         args: {
           target: this.target
         }
@@ -66,30 +66,29 @@ enyo.kind({
   renderCustomer: function(newCustomerId, newCustomerName) {
     this.setValue(newCustomerId, newCustomerName);
   },
-  orderChanged: function(oldValue) {
-    if (this.order.get('bp')) {
+  renderCurrentCustomer: function() {
+    if (this.order.get('externalBusinessPartner')) {
+      // External Business Partner if available
+      const bp = new OB.App.Class.ExternalBusinessPartner(
+        this.order.get('externalBusinessPartner')
+      );
+      this.renderCustomer(bp.getKey(), bp.getIdentifier());
+    } else if (this.order.get('bp')) {
+      // Business Partner if available
       this.renderCustomer(
         this.order.get('bp').get('id'),
         this.order.get('bp').get('_identifier')
       );
     } else {
+      // No Business Partner available
       this.renderCustomer(null, '');
     }
-
-    this.order.on(
-      'change:bp',
-      function(model) {
-        if (model.get('bp')) {
-          this.renderCustomer(
-            this.order.get('bp').get('id'),
-            this.order.get('bp').get('_identifier')
-          );
-        } else {
-          this.renderCustomer(null, '');
-        }
-      },
-      this
-    );
+  },
+  orderChanged: function(oldValue) {
+    this.renderCurrentCustomer();
+    this.order.on('change:bp change:externalBusinessPartner', () => {
+      this.renderCurrentCustomer();
+    });
   }
 });
 
@@ -129,6 +128,9 @@ enyo.kind({
     this.setValue(newAddrId, newAddrName);
   },
   orderChanged: function(oldValue) {
+    if (OB.UTIL.externalBp()) {
+      return;
+    }
     if (this.order.get('bp')) {
       this.renderAddrShip(
         this.order.get('bp').get('shipLocId'),
@@ -190,6 +192,9 @@ enyo.kind({
     this.setValue(newAddrId, newAddrName);
   },
   orderChanged: function(oldValue) {
+    if (OB.UTIL.externalBp()) {
+      return;
+    }
     if (this.order.get('bp')) {
       this.renderAddrBill(
         this.order.get('bp').get('locId'),

@@ -217,6 +217,7 @@ enyo.kind({
   multiSelectAll: function(inSender, inEvent) {
     this.doTableMultiSelectAll();
   },
+  processesToListen: ['setExternalBusinessPartner'],
   initComponents: function() {
     this.inherited(arguments);
     this.showPin = false;
@@ -235,6 +236,22 @@ enyo.kind({
       },
       this
     );
+    if (OB.UTIL.externalBp()) {
+      this.$.receiptButtons.$.formElementBplocbutton.hide(true);
+      this.$.receiptButtons.$.formElementBplocshipbutton.hide(true);
+    }
+    OB.UTIL.ProcessController.subscribe(this.processesToListen, this);
+  },
+  destroyComponents: function() {
+    this.inherited(arguments);
+    OB.UTIL.ProcessController.unSubscribe(this.processesToListen, this);
+  },
+  processFinished: function(process, execution, processesInExec) {
+    if (processesInExec.models.length === 0) {
+      this.$.receiptButtons.$.formElementBpbutton.coreElement.setContent(
+        execution.businessPartner.getIdentifier()
+      );
+    }
   }
 });
 

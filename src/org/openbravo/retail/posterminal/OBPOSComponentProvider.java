@@ -86,11 +86,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/order",
         // "model/terminal",
         // "model/user",
-        "utils/ob-utilitiesuipos", "model/bpartnerfilter", "model/orderfilter",
-        "model/crossstorefilter", "model/orders-for-verified-returns-filter", "model/bplocation", // Model
-                                                                                                  // for
-                                                                                                  // Customer
-                                                                                                  // Address
+        "utils/ob-utilitiesuipos", "utils/externalBpUtils", "model/bpartnerfilter",
+        "model/orderfilter", "model/crossstorefilter", "model/orders-for-verified-returns-filter",
+        "model/bplocation", // Model
+                            // for
+                            // Customer
+                            // Address
 
         "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter", "webprinter/escpos",
         "webprinter/standardprinters", "webprinter/typedarrays", "webprinter/testprinter",
@@ -134,6 +135,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalselectopenreceipts", "components/modalsplitlines",
         "components/modalassociatetickets", "components/modalremoveassociatedtickets",
         "components/openRelatedReceiptsModal",
+
+        // externalBP UI components
+        "components/externalbusinesspartner_viewedit",
+        "components/externalbusinesspartner_selector",
 
         // Old Tickets
         "components/modalpaidreceipts", "components/modal-pay-open-tickets",
@@ -316,6 +321,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterProductCategoryModel");
     appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
+    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerExtRef");
     appDependency.add("model/masterdata/discount/DiscountModel");
     // Business-Object
     appDependency.add("model/business-object/document-sequence/DocumentSequence");

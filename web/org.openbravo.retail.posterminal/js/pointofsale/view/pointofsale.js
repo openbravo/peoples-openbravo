@@ -305,10 +305,28 @@ enyo.kind({
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalcustomer'
         },
         {
+          kind: 'OB.UI.ModalSelectorExternalBusinessPartners',
+          name: 'modalExternalBusinessPartner',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalExternalBusinessPartner'
+        },
+        {
+          kind: 'OB.OBPOSPointOfSale.UI.ModalExternalBusinessPartnerViewEdit',
+          name: 'modalExternalBusinessPartnerViewEdit',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalExternalBusinessPartnerViewEdit'
+        },
+        {
           kind: 'OB.UI.ModalAdvancedFilterBP',
           name: 'modalAdvancedFilterBP',
           classes:
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalAdvancedFilterBP'
+        },
+        {
+          kind: 'OB.UI.ModalAdvancedFiltersExternalBp',
+          name: 'modalAdvancedFiltersExternalBp',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalAdvancedFiltersExternalBp'
         },
         {
           kind: 'OB.UI.ModalBPLocation',

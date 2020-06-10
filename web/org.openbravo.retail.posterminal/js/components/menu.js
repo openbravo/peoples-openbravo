@@ -227,7 +227,6 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_CancelLayaway',
   tap: function() {
-    OB.info('[CancelLayaway] menu disabled ' + this.disabled);
     if (this.disabled) {
       return true;
     }
@@ -260,7 +259,6 @@ enyo.kind({
       return;
     }
 
-    OB.info('[CancelLayaway] Cancel Layaway Started');
     this.model.get('order').cancelLayaway(this);
   },
   displayLogic: function() {
@@ -441,7 +439,7 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
     this.doShowPopup({
-      popup: 'modalcustomer',
+      popup: OB.UTIL.modalCustomer(),
       args: {
         target: 'order'
       }

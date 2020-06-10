@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2016 Openbravo S.L.U.
+ * Copyright (C) 2013-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -52,7 +52,14 @@ enyo.kind({
                 'obUiRenderMultiOrdersLineValues-multiTopLine-documentNo',
               initComponents: function() {
                 const docNo = this.owner.owner.model.get('documentNo');
-                const bp = this.owner.owner.model.get('bp').get('_identifier');
+                let bp = '';
+                if (this.owner.owner.model.get('externalBusinessPartner')) {
+                  bp = new OB.App.Class.ExternalBusinessPartner(
+                    this.owner.owner.model.get('externalBusinessPartner')
+                  ).getIdentifier();
+                } else {
+                  bp = this.owner.owner.model.get('bp').get('_identifier');
+                }
                 if (docNo) {
                   this.setContent(docNo + ' - ' + bp);
                 } else {
