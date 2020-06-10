@@ -43,9 +43,9 @@
           taxExempt: line.get('taxExempt'),
           product: {
             id: line.get('product').id,
-            taxCategory: line.get('product').get('taxCategory')
-          },
-          bomLines: line.get('product').get('productBOM')
+            taxCategory: line.get('product').get('taxCategory'),
+            productBOM: line.get('product').get('productBOM')
+          }
         };
       })
     };
