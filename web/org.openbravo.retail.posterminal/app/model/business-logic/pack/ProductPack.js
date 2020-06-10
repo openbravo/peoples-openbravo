@@ -22,7 +22,7 @@
 
     /**
      * Processes the pack in order to retrieve the products that forms it
-     * @return {Object[]} product - An array of the products that belongs to the pack
+     * @return {Object[]} product - An array with the products that belong to the pack
      * @throws {TranslatableError} - If an error happens during the pack processing
      */
     async process() {
