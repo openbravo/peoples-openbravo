@@ -39,7 +39,7 @@ OB = {
   }
 };
 
-require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/ErrorMessage');
+require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/exception/TranslatableError');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/ProductPack');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/ProductPackProvider');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/Pack');
@@ -109,8 +109,8 @@ describe('product pack infrastructure', () => {
       }
       expect(error).toEqual({
         title: 'OBPOS_PackExpired_header',
-        message: 'OBPOS_PackExpired_body',
-        params: [
+        errorMsg: 'OBPOS_PackExpired_body',
+        messageParams: [
           // eslint-disable-next-line no-underscore-dangle
           'packB',
           new Date('2013-07-06T23:01:14+02:00').toLocaleDateString()

@@ -45,7 +45,7 @@
         const now = new Date();
         const nowWithoutTime = new Date(now.toISOString().split('T')[0]);
         if (nowWithoutTime > objDate) {
-          throw new OB.App.Class.ErrorMessage(
+          throw new OB.App.Class.TranslatableError(
             'OBPOS_PackExpired_header',
             'OBPOS_PackExpired_body',
             [

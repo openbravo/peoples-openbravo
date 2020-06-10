@@ -60,6 +60,7 @@ const {
   executeActionPreparations
 } = require('../../../../../../org.openbravo.mobile.core/web-test/base/state-utils');
 
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/exception/TranslatableError');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionSilentlyCanceled');
 

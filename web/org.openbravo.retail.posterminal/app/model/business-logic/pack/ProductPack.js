@@ -23,10 +23,7 @@
     /**
      * Processes the pack in order to retrieve the products that forms it
      * @return {Object[]} product - An array of the products that belongs to the pack
-     * @throws {Error} - If an error happends during the pack processing. The thrown error may contain:
-     *             * title: a short decription of the error
-     *             * message: the error message
-     *             * messageParams: the dynamic message parameters (if any)
+     * @throws {TranslatableError} - If an error happens during the pack processing
      */
     async process() {
       const data = await this.getExternalData();
