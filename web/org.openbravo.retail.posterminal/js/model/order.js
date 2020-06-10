@@ -166,11 +166,23 @@
           silent: true
         });
         this.set('gross', OB.DEC.mul(this.getQty(), this.get('price')));
+        this.set(
+          'grossUnitAmount',
+          OB.DEC.compare(this.get('gross')) === 0
+            ? this.get('gross')
+            : OB.DEC.sub(this.get('gross'), this.getDiscount())
+        );
       } else {
         this.set('gross', null, {
           silent: true
         });
         this.set('net', OB.DEC.mul(this.getQty(), this.get('price')));
+        this.set(
+          'netUnitAmount',
+          OB.DEC.compare(this.get('net')) === 0
+            ? this.get('net')
+            : OB.DEC.sub(this.get('net'), this.getDiscount())
+        );
       }
     },
 
