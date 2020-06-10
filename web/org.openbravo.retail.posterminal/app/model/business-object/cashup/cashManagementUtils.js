@@ -16,16 +16,9 @@
      * @return {Object[]} An array with cash managements
      */
     getCashManagements() {
-      let cashManagements = [];
-      OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(
-        function getCashManagementsInDraft(paymentMethod) {
-          cashManagements = [
-            ...cashManagements,
-            ...paymentMethod.cashManagements
-          ];
-        }
-      );
-      return cashManagements;
+      return OB.App.State.getState()
+        .Cashup.cashPaymentMethodInfo.map(payment => payment.cashManagements) // get all cashmng
+        .reduce((a, b) => a.concat(b)); // concat all arrays into one
     },
 
     /**
@@ -33,19 +26,9 @@
      * @return {Object[]} An array with cash managements
      */
     getCashManagementsInDraft() {
-      let cashManagementsInDraft = [];
-      OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(
-        function getCashManagementsInDraft(paymentMethod) {
-          const cashManagementInDraftByPayment = paymentMethod.cashManagements.filter(
-            cashManagement => cashManagement.isDraft
-          );
-          cashManagementsInDraft = [
-            ...cashManagementsInDraft,
-            ...cashManagementInDraftByPayment
-          ];
-        }
+      return OB.App.State.Cashup.Utils.getCashManagements().filter(
+        cashMgmt => cashMgmt.isDraft
       );
-      return cashManagementsInDraft;
     },
 
     /**
@@ -54,18 +37,9 @@
      * @return {Object[]} An array with cash managements of the paymentMethod passed by parameters
      */
     getCashManagementsByPaymentMethodId(paymentMethodId) {
-      let cashManagements = [];
-      OB.App.State.getState().Cashup.cashPaymentMethodInfo.forEach(
-        function getCashManagementsInDraft(paymentMethod) {
-          if (paymentMethodId === paymentMethod.paymentMethodId) {
-            cashManagements = [
-              ...cashManagements,
-              ...paymentMethod.cashManagements
-            ];
-          }
-        }
+      return OB.App.State.Cashup.Utils.getCashManagements().filter(
+        cashMgmt => cashMgmt.paymentMethod === paymentMethodId
       );
-      return cashManagements;
     }
   });
 })();
