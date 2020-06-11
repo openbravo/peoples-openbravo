@@ -68,6 +68,8 @@ enyo.kind({
     this.externalBPListViewData = new OB.App.Class.ExternalBusinessPartnerListViewData();
     this.filters = this.externalBPListViewData.getMainFilters();
     this.inherited(arguments);
+    // disable auto search when key is pressed
+    this.$.filterExternalBpSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
   }
 });
 
