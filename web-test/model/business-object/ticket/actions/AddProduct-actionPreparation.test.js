@@ -869,18 +869,19 @@ describe('addProduct preparation', () => {
 
   describe('prepare product attributes', () => {
     it('product with attribute', async () => {
-      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_EnableSupportForProductAttributes'
+      );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
         ...Product.productA,
         hasAttributes: true
       };
       const payload = {
-        products: [{ product: productWithAttributes, qty: 1 }],
-        options: {}
+        products: [{ product: productWithAttributes, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, Ticket.attributeLine);
-      expect(newPayload).toEqual({
+      expect(newPayload).toMatchObject({
         ...payload,
         line: '1',
         attrs: {
@@ -892,7 +893,9 @@ describe('addProduct preparation', () => {
     });
 
     it('product with attribute and option line', async () => {
-      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_EnableSupportForProductAttributes'
+      );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
         ...Product.productA,
@@ -903,7 +906,7 @@ describe('addProduct preparation', () => {
         options: { line: '1' }
       };
       const newPayload = await prepareAction(payload, Ticket.attributeLine);
-      expect(newPayload).toEqual({
+      expect(newPayload).toMatchObject({
         ...payload,
         attrs: {
           attributeSearchAllowed: true,
@@ -913,18 +916,19 @@ describe('addProduct preparation', () => {
     });
 
     it('product with attribute and different attribute', async () => {
-      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_EnableSupportForProductAttributes'
+      );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('5678');
       const productWithAttributes = {
         ...Product.productA,
         hasAttributes: true
       };
       const payload = {
-        products: [{ product: productWithAttributes, qty: 1 }],
-        options: {}
+        products: [{ product: productWithAttributes, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, Ticket.attributeLine);
-      expect(newPayload).toEqual({
+      expect(newPayload).toMatchObject({
         ...payload,
         attrs: {
           attributeSearchAllowed: true,
@@ -935,18 +939,19 @@ describe('addProduct preparation', () => {
     });
 
     it('product with attribute and different attribute in line', async () => {
-      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_EnableSupportForProductAttributes'
+      );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
         ...Product.productA,
         hasAttributes: true
       };
       const payload = {
-        products: [{ product: productWithAttributes, qty: 1 }],
-        options: {}
+        products: [{ product: productWithAttributes, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, Ticket.singleLine);
-      expect(newPayload).toEqual({
+      expect(newPayload).toMatchObject({
         ...payload,
         attrs: {
           attributeSearchAllowed: true,
@@ -957,19 +962,22 @@ describe('addProduct preparation', () => {
     });
 
     it('product with attribute in quotation (allowed)', async () => {
-      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Security.hasPermission.mockImplementation(
+        p =>
+          p === 'OBPOS_EnableSupportForProductAttributes' ||
+          p === 'OBPOS_AskForAttributesWhenCreatingQuotation'
+      );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
         ...Product.productA,
         hasAttributes: true
       };
       const payload = {
-        products: [{ product: productWithAttributes, qty: 1 }],
-        options: {}
+        products: [{ product: productWithAttributes, qty: 1 }]
       };
       const quotation = { ...Ticket.attributeLine, isQuotation: true };
       const newPayload = await prepareAction(payload, quotation);
-      expect(newPayload).toEqual({
+      expect(newPayload).toMatchObject({
         ...payload,
         line: '1',
         attrs: {
@@ -982,7 +990,7 @@ describe('addProduct preparation', () => {
 
     it('product with attribute in quotation (not allowed)', async () => {
       OB.App.Security.hasPermission.mockImplementation(
-        p => p !== 'OBPOS_AskForAttributesWhenCreatingQuotation'
+        p => p === 'OBPOS_EnableSupportForProductAttributes'
       );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
@@ -990,12 +998,11 @@ describe('addProduct preparation', () => {
         hasAttributes: true
       };
       const payload = {
-        products: [{ product: productWithAttributes, qty: 1 }],
-        options: {}
+        products: [{ product: productWithAttributes, qty: 1 }]
       };
       const quotation = { ...Ticket.attributeLine, isQuotation: true };
       const newPayload = await prepareAction(payload, quotation);
-      expect(newPayload).toEqual({
+      expect(newPayload).toMatchObject({
         ...payload,
         attrs: {
           attributeSearchAllowed: true,
@@ -1005,7 +1012,9 @@ describe('addProduct preparation', () => {
     });
 
     it('no attribute value provided by user', async () => {
-      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_EnableSupportForProductAttributes'
+      );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce(null);
       const productWithAttributes = {
         ...Product.productA,
@@ -1021,7 +1030,9 @@ describe('addProduct preparation', () => {
     });
 
     it('check serial attribute', async () => {
-      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_EnableSupportForProductAttributes'
+      );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('5678');
       const productWithSerialAttributes = {
         ...Product.productA,
@@ -1043,7 +1054,9 @@ describe('addProduct preparation', () => {
     });
 
     it('more than one is not allowed', async () => {
-      OB.App.Security.hasPermission.mockReturnValue(true);
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_EnableSupportForProductAttributes'
+      );
       const productWithAttributes = {
         ...Product.productA,
         hasAttributes: true

@@ -652,10 +652,7 @@ describe('addProduct', () => {
           }
         );
         const currentDate = new Date();
-        currentDate.setHours(0);
-        currentDate.setMinutes(0);
-        currentDate.setSeconds(0);
-        currentDate.setMilliseconds(0);
+        currentDate.setHours(0, 0, 0, 0);
         const dateToExpect =
           expectedDate === 'currentDate' ? currentDate : expectedDate;
 

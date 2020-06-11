@@ -15,6 +15,9 @@
 
   OB.App.StateAPI.Ticket.registerAction('addProduct', (state, payload) => {
     const ticket = { ...state };
+    // products: the product information to create the lines
+    // options: settings that allow to change the behavior of the action
+    // attrs: additional properties to be included in the created lines
     const { products, options, attrs } = payload;
 
     delete ticket.deferredOrder;
@@ -36,12 +39,15 @@
         const { product } = productInfo;
         const lineToEdit = getLineToEdit(productInfo, ticket, options, attrs);
         if (lineToEdit) {
+          // add product to an existing line
           lineToEdit.qty += productInfo.qty;
           setLineAttributes(lineToEdit, attrs, productInfo);
         } else if (product.groupProduct || product.avoidSplitProduct) {
+          // add product to a new line
           const newLine = createLine(productInfo, ticket, options, attrs);
           ticket.lines.push(newLine);
         } else {
+          // add product creating multiple new lines with quantity 1 each
           ticket.lines = ticket.lines.concat(
             createLines(productInfo, ticket, options, attrs)
           );
@@ -58,14 +64,12 @@
         attrs: {},
         ...payload
       };
-
       newPayload.options.taxRules = OB.Taxes.Pos.ruleImpls;
-
       newPayload.products = newPayload.products.map(productInfo => {
         return { ...productInfo, qty: productInfo.qty || 1 };
       });
 
-      newPayload = await preparePacks(newPayload);
+      newPayload = await processPacks(newPayload);
 
       checkRestrictions(ticket, newPayload);
 
@@ -288,7 +292,6 @@
   }
 
   function setDeliveryMode(line, ticket) {
-    /* eslint-disable no-param-reassign */
     if (line.product.productType !== 'S' && !line.obrdmDeliveryMode) {
       let productDeliveryMode;
       let productDeliveryDate;
@@ -307,19 +310,17 @@
         ticket.obrdmDeliveryModeProperty ||
         'PickAndCarry';
 
+      // eslint-disable-next-line no-param-reassign
       line.obrdmDeliveryMode = deliveryMode;
 
       if (
         deliveryMode === 'PickupInStoreDate' ||
         deliveryMode === 'HomeDelivery'
       ) {
-        // TODO: review
         const currentDate = new Date();
-        currentDate.setHours(0);
-        currentDate.setMinutes(0);
-        currentDate.setSeconds(0);
-        currentDate.setMilliseconds(0);
+        currentDate.setHours(0, 0, 0, 0);
 
+        // eslint-disable-next-line no-param-reassign
         line.obrdmDeliveryDate = productDeliveryMode
           ? productDeliveryDate || currentDate
           : ticket.obrdmDeliveryDateProperty;
@@ -330,25 +331,31 @@
         currentTime.setSeconds(0);
         currentTime.setMilliseconds(0);
 
+        // eslint-disable-next-line no-param-reassign
         line.obrdmDeliveryTime = productDeliveryMode
           ? productDeliveryTime || currentTime
           : ticket.obrdmDeliveryTimeProperty;
       }
     }
 
+    let country;
+    let region;
     if (line.obrdmDeliveryMode === 'HomeDelivery') {
       const { shipLocId } = ticket.businessPartner;
-      line.country = shipLocId
+      country = shipLocId
         ? ticket.businessPartner.locationModel.countryId
         : null;
-      line.country = shipLocId
+      country = shipLocId
         ? ticket.businessPartner.locationModel.regionId
         : null;
     } else {
-      line.country = line.organization.country;
-      line.region = line.organization.region;
+      country = line.organization.country;
+      region = line.organization.region;
     }
-    /* eslint-enable no-param-reassign */
+    // eslint-disable-next-line no-param-reassign
+    line.country = country;
+    // eslint-disable-next-line no-param-reassign
+    line.region = region;
   }
 
   function checkRestrictions(ticket, payload) {
@@ -448,7 +455,7 @@
           productStatus => status === productStatus.id
         );
       }
-      return {};
+      return undefined;
     };
 
     const productLocked = products
@@ -512,7 +519,7 @@
     });
   }
 
-  async function preparePacks(payload) {
+  async function processPacks(payload) {
     const packs = payload.products.filter(p => p.product.ispack);
     if (packs.length === 0) {
       return payload;
