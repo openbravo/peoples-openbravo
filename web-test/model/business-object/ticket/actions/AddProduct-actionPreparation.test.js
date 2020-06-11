@@ -103,12 +103,20 @@ OB.App.Class.Criteria = class MockedCriteria {
 };
 
 const Product = {
-  base: {
+  productA: {
     id: '0',
-    _identifier: 'test product',
+    _identifier: 'pA',
     uOMstandardPrecision: 3,
     standardPrice: 10,
     listPrice: 11
+  },
+  productB: {
+    id: '1',
+    _identifier: 'pB',
+    uOMstandardPrecision: 3,
+    standardPrice: 10,
+    listPrice: 11,
+    returnable: true
   }
 };
 
@@ -127,17 +135,33 @@ const Ticket = {
     businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 1
   },
+  emptyLayaway: {
+    priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
+    lines: [],
+    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
+    orderType: 2
+  },
   singleLine: {
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
-    lines: [{ id: '1', product: Product.base, qty: 1 }],
+    lines: [{ id: '1', product: Product.productA, qty: 1 }],
+    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
+    orderType: 0
+  },
+  returnedLine: {
+    priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
+    lines: [{ id: '1', product: Product.productA, qty: -1 }],
     businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 0
   },
   attributeLine: {
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
-    lines: [{ id: '1', product: Product.base, qty: 1, attributeValue: '1234' }],
+    lines: [
+      { id: '1', product: Product.productA, qty: 1, attributeValue: '1234' }
+    ],
     businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 0
   },
@@ -145,7 +169,7 @@ const Ticket = {
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [
-      { id: '1', product: Product.base, qty: -1, replacedorderline: true }
+      { id: '1', product: Product.productA, qty: -1, replacedorderline: true }
     ],
     businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 0
@@ -212,11 +236,13 @@ describe('addProduct preparation', () => {
       await expectError(
         () =>
           prepareAction({
-            products: [{ product: { ...Product.base, listPrice: undefined } }]
+            products: [
+              { product: { ...Product.productA, listPrice: undefined } }
+            ]
           }),
         {
           warningMsg: 'OBPOS_productWithoutPriceInPriceList',
-          messageParams: ['test product']
+          messageParams: ['pA']
         }
       );
     });
@@ -225,7 +251,7 @@ describe('addProduct preparation', () => {
       await expectError(
         () =>
           prepareAction({
-            products: [{ product: { ...Product.base, isGeneric: true } }]
+            products: [{ product: { ...Product.productA, isGeneric: true } }]
           }),
         {
           warningMsg: 'OBPOS_GenericNotAllowed'
@@ -238,7 +264,7 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.base }],
+              products: [{ product: Product.productA }],
               options: { line: '1' }
             },
             Ticket.cancelAndReplace
@@ -257,7 +283,7 @@ describe('addProduct preparation', () => {
               products: [
                 {
                   product: {
-                    ...Product.base,
+                    ...Product.productA,
                     oBPOSAllowAnonymousSale: false
                   }
                 }
@@ -280,7 +306,7 @@ describe('addProduct preparation', () => {
               products: [
                 {
                   product: {
-                    ...Product.base,
+                    ...Product.productA,
                     oBPOSAllowAnonymousSale: false
                   }
                 }
@@ -296,12 +322,11 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (1)', async () => {
-      const unReturnableProduct = { ...Product.base, returnable: false };
       await expectError(
         () =>
           prepareAction(
             {
-              products: [{ product: unReturnableProduct, qty: 1 }]
+              products: [{ product: Product.productA, qty: 1 }]
             },
             Ticket.emptyReturn
           ),
@@ -312,12 +337,11 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (2)', async () => {
-      const unReturnableProduct = { ...Product.base, returnable: false };
       await expectError(
         () =>
           prepareAction(
             {
-              products: [{ product: unReturnableProduct, qty: -1 }]
+              products: [{ product: Product.productA, qty: -1 }]
             },
             Ticket.empty
           ),
@@ -328,12 +352,11 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (3)', async () => {
-      const unReturnableProduct = { ...Product.base, returnable: false };
       await expectError(
         () =>
           prepareAction(
             {
-              products: [{ product: unReturnableProduct, qty: -2 }],
+              products: [{ product: Product.productA, qty: -2 }],
               options: { line: '1' }
             },
             Ticket.singleLine
@@ -354,7 +377,7 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.base, qty: 1 }]
+              products: [{ product: Product.productA, qty: 1 }]
             },
             closedQuotation
           ),
@@ -366,7 +389,7 @@ describe('addProduct preparation', () => {
 
     it('product locked', async () => {
       const lockedProduct = {
-        ...Product.base,
+        ...Product.productA,
         productStatus: '7E4B33B5FB6444409E45D61668269FA3'
       };
       await expectError(
@@ -376,7 +399,103 @@ describe('addProduct preparation', () => {
           }),
         {
           errorConfirmation: 'OBPOS_ErrorProductLocked',
-          messageParams: ['test product', 'Obsolete']
+          messageParams: ['pA', 'Obsolete']
+        }
+      );
+    });
+
+    it('allow sales with return', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_NotAllowSalesWithReturn'
+      );
+
+      const newPayload = await prepareAction(
+        {
+          products: [{ product: Product.productB, qty: -1 }],
+          options: { allowLayawayWithReturn: true }
+        },
+        Ticket.singleLine
+      );
+
+      expect(newPayload.products).toMatchObject([
+        {
+          product: Product.productB,
+          qty: -1
+        }
+      ]);
+    });
+
+    it('not allow sales with return (1)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_NotAllowSalesWithReturn'
+      );
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.productB, qty: -1 }]
+            },
+            Ticket.singleLine
+          ),
+        {
+          errorMsg: 'OBPOS_MsgCannotAddNegative'
+        }
+      );
+    });
+
+    it('not allow sales with return (2)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_NotAllowSalesWithReturn'
+      );
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.productB, qty: 1 }]
+            },
+            Ticket.returnedLine
+          ),
+        {
+          errorMsg: 'OBPOS_MsgCannotAddPositive'
+        }
+      );
+    });
+
+    it('allow layaways with negative lines', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p !== 'OBPOS_AllowLayawaysNegativeLines'
+      );
+
+      const newPayload = await prepareAction(
+        {
+          products: [{ product: Product.productB, qty: -1 }],
+          options: { allowLayawayWithReturn: true }
+        },
+        Ticket.emptyLayaway
+      );
+
+      expect(newPayload.products).toMatchObject([
+        {
+          product: Product.productB,
+          qty: -1
+        }
+      ]);
+    });
+
+    it('not allow layaways with negative lines', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p !== 'OBPOS_AllowLayawaysNegativeLines'
+      );
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.productB, qty: -1 }]
+            },
+            Ticket.emptyLayaway
+          ),
+        {
+          errorMsg: 'OBPOS_layawaysOrdersWithReturnsNotAllowed'
         }
       );
     });
@@ -385,12 +504,15 @@ describe('addProduct preparation', () => {
   describe('prepare product packs', () => {
     it('add standard pack to ticket', async () => {
       const pack = {
-        ...Product.base,
+        ...Product.productA,
         ispack: true,
         productCategory: 'BE5D42E554644B6AA262CCB097753951'
       };
       const payload = {
-        products: [{ product: pack, qty: 1 }, { product: Product.base, qty: 2 }]
+        products: [
+          { product: pack, qty: 1 },
+          { product: Product.productA, qty: 2 }
+        ]
       };
       const packContent = [
         {
@@ -422,13 +544,13 @@ describe('addProduct preparation', () => {
       const newPayload = await prepareAction(payload);
       expect(newPayload.products).toMatchObject([
         ...packContent,
-        { product: Product.base, qty: 2 }
+        { product: Product.productA, qty: 2 }
       ]);
     });
 
     it('pack processing fails', async () => {
       const pack = {
-        ...Product.base,
+        ...Product.productA,
         ispack: true,
         productCategory: 'BE5D42E554644B6AA262CCB097753951'
       };
@@ -452,7 +574,7 @@ describe('addProduct preparation', () => {
 
     it('more than one pack not allowed', async () => {
       const pack = {
-        ...Product.base,
+        ...Product.productA,
         ispack: true,
         productCategory: 'BE5D42E554644B6AA262CCB097753951'
       };
@@ -465,7 +587,7 @@ describe('addProduct preparation', () => {
 
     it('more than one unit of a pack is not allowed', async () => {
       const pack = {
-        ...Product.base,
+        ...Product.productA,
         ispack: true,
         productCategory: 'BE5D42E554644B6AA262CCB097753951'
       };
@@ -478,7 +600,7 @@ describe('addProduct preparation', () => {
   });
 
   describe('prepare scale products', () => {
-    const scaleProduct = { ...Product.base, obposScale: true };
+    const scaleProduct = { ...Product.productA, obposScale: true };
     it('more than one is not allowed', async () => {
       await expect(
         prepareAction({
@@ -541,10 +663,10 @@ describe('addProduct preparation', () => {
       OB.App.StockChecker.hasStock.mockResolvedValueOnce(false);
       await expect(
         prepareAction({
-          products: [{ product: Product.base }]
+          products: [{ product: Product.productA }]
         })
       ).rejects.toThrow(
-        `Add product canceled: there is no stock of product ${Product.base.id}`
+        `Add product canceled: there is no stock of product ${Product.productA.id}`
       );
     });
   });
@@ -559,11 +681,11 @@ describe('addProduct preparation', () => {
           bomquantity: 2,
           bomtaxcategory: 'FF80818123B7FC160123B804AB8C0019',
           id: '32182CDA9D544392A092A913A68AFEC1',
-          product: Product.base.id
+          product: Product.productA.id
         }
       ]);
       const productWithBOM = {
-        ...Product.base,
+        ...Product.productA,
         taxCategory: 'FF80818123B7FC160123B804AB8C0019'
       };
       const payload = {
@@ -592,7 +714,7 @@ describe('addProduct preparation', () => {
     it('product has no BOM', async () => {
       OB.App.MasterdataModels.ProductBOM.find.mockResolvedValueOnce([]);
       const productWithBOM = {
-        ...Product.base,
+        ...Product.productA,
         taxCategory: 'FF80818123B7FC160123B804AB8C0019'
       };
       const payload = {
@@ -610,11 +732,11 @@ describe('addProduct preparation', () => {
           bomquantity: 2,
           bomtaxcategory: 'FF80818123B7FC160123B804AB8C0019',
           id: '32182CDA9D544392A092A913A68AFEC1',
-          product: Product.base.id
+          product: Product.productA.id
         }
       ]);
       const productWithBOM = {
-        ...Product.base,
+        ...Product.productA,
         taxCategory: 'FF80818123B7FC160123B804AB8C0019'
       };
       await expectError(
@@ -632,13 +754,13 @@ describe('addProduct preparation', () => {
   describe('prepare linked product service', () => {
     it('add ProductServiceLinked information (local)', async () => {
       const productServiceLinked = {
-        ...Product.base,
+        ...Product.productA,
         modifyTax: true
       };
       const serviceLinked = [
         {
           id: '0BF2B3F4F7B843B6B777CA7A2AEFB1C3',
-          product: Product.base.id,
+          product: Product.productA.id,
           productCategory: '5E0287DDDBB9432B9CA00CCCE9296BEC',
           taxCategory: 'FF80818123B7FC160123B804AB880008'
         }
@@ -662,13 +784,13 @@ describe('addProduct preparation', () => {
 
     it('add ProductServiceLinked information (remote)', async () => {
       const productServiceLinked = {
-        ...Product.base,
+        ...Product.productA,
         modifyTax: true
       };
       const serviceLinked = [
         {
           id: '0BF2B3F4F7B843B6B777CA7A2AEFB1C3',
-          product: Product.base.id,
+          product: Product.productA.id,
           productCategory: '5E0287DDDBB9432B9CA00CCCE9296BEC',
           taxCategory: 'FF80818123B7FC160123B804AB880008'
         }
@@ -698,7 +820,7 @@ describe('addProduct preparation', () => {
           characteristicValue: 'C6A9CF2813DC49C1BE5A9A6094DD967E',
           id: '1983C55A254D41A7AD2E17E84CA5F70A',
           obposFilteronwebpos: true,
-          product: Product.base.id,
+          product: Product.productA.id,
           _identifier: 'Color'
         }
       ];
@@ -706,7 +828,7 @@ describe('addProduct preparation', () => {
         characteristics
       );
       const productWithCharacteritics = {
-        ...Product.base,
+        ...Product.productA,
         _identifier: 'productWithCharacteristics',
         characteristicDescription: 'Color: Black/Silver'
       };
@@ -728,7 +850,7 @@ describe('addProduct preparation', () => {
         new Error()
       );
       const productWithCharacteritics = {
-        ...Product.base,
+        ...Product.productA,
         _identifier: 'productWithCharacteristics',
         characteristicDescription: 'Color: Black/Silver'
       };
@@ -750,7 +872,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.base,
+        ...Product.productA,
         hasAttributes: true
       };
       const payload = {
@@ -773,7 +895,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.base,
+        ...Product.productA,
         hasAttributes: true
       };
       const payload = {
@@ -794,7 +916,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('5678');
       const productWithAttributes = {
-        ...Product.base,
+        ...Product.productA,
         hasAttributes: true
       };
       const payload = {
@@ -816,7 +938,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.base,
+        ...Product.productA,
         hasAttributes: true
       };
       const payload = {
@@ -838,7 +960,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.base,
+        ...Product.productA,
         hasAttributes: true
       };
       const payload = {
@@ -864,7 +986,7 @@ describe('addProduct preparation', () => {
       );
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithAttributes = {
-        ...Product.base,
+        ...Product.productA,
         hasAttributes: true
       };
       const payload = {
@@ -886,7 +1008,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce(null);
       const productWithAttributes = {
-        ...Product.base,
+        ...Product.productA,
         hasAttributes: true
       };
       await expect(
@@ -902,7 +1024,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('5678');
       const productWithSerialAttributes = {
-        ...Product.base,
+        ...Product.productA,
         hasAttributes: true,
         isSerialNo: true
       };
@@ -923,7 +1045,7 @@ describe('addProduct preparation', () => {
     it('more than one is not allowed', async () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       const productWithAttributes = {
-        ...Product.base,
+        ...Product.productA,
         hasAttributes: true
       };
       await expect(
@@ -948,13 +1070,13 @@ describe('addProduct preparation', () => {
         }
       ]);
       const payload = {
-        products: [{ product: Product.base, qty: 1 }]
+        products: [{ product: Product.productA, qty: 1 }]
       };
 
       const newPayload = await prepareAction(payload);
       expect(newPayload.products).toMatchObject([
         {
-          product: Product.base,
+          product: Product.productA,
           qty: 1,
           hasRelatedServices: true,
           hasMandatoryServices: false
@@ -973,13 +1095,13 @@ describe('addProduct preparation', () => {
         }
       ]);
       const payload = {
-        products: [{ product: Product.base, qty: 1 }]
+        products: [{ product: Product.productA, qty: 1 }]
       };
 
       const newPayload = await prepareAction(payload);
       expect(newPayload.products).toMatchObject([
         {
-          product: Product.base,
+          product: Product.productA,
           qty: 1,
           hasRelatedServices: true,
           hasMandatoryServices: true
@@ -993,7 +1115,7 @@ describe('addProduct preparation', () => {
       );
       OB.App.MasterdataModels.Product.find.mockRejectedValue(new Error());
       const payload = {
-        products: [{ product: Product.base, qty: 1 }]
+        products: [{ product: Product.productA, qty: 1 }]
       };
 
       const newPayload = await prepareAction(payload);
@@ -1007,13 +1129,13 @@ describe('addProduct preparation', () => {
         response: { data: { hasservices: true, hasmandatoryservices: false } }
       });
       const payload = {
-        products: [{ product: Product.base, qty: 1 }]
+        products: [{ product: Product.productA, qty: 1 }]
       };
 
       const newPayload = await prepareAction(payload);
       expect(newPayload.products).toMatchObject([
         {
-          product: Product.base,
+          product: Product.productA,
           qty: 1,
           hasRelatedServices: true,
           hasMandatoryServices: false
@@ -1025,7 +1147,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.Request.mobileServiceRequest.mockRejectedValue(new Error());
       const payload = {
-        products: [{ product: Product.base, qty: 1 }]
+        products: [{ product: Product.productA, qty: 1 }]
       };
 
       const newPayload = await prepareAction(payload);
@@ -1035,7 +1157,7 @@ describe('addProduct preparation', () => {
 
     it('service does not have related services', async () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
-      const service = { ...Product.base, productType: 'S' };
+      const service = { ...Product.productA, productType: 'S' };
       const payload = {
         products: [{ product: service, qty: 1 }]
       };
@@ -1055,7 +1177,7 @@ describe('addProduct preparation', () => {
         }
       ]);
       const payload = {
-        products: [{ product: Product.base, qty: 1 }],
+        products: [{ product: Product.productA, qty: 1 }],
         options: { isSilentAddProduct: true }
       };
 
@@ -1074,7 +1196,7 @@ describe('addProduct preparation', () => {
         }
       ]);
       const payload = {
-        products: [{ product: Product.base, qty: 1 }],
+        products: [{ product: Product.productA, qty: 1 }],
         attrs: { originalOrderLineId: {} }
       };
 
@@ -1090,7 +1212,7 @@ describe('addProduct preparation', () => {
         property => property !== 'EnableMultiPriceList'
       );
       const crossStoreProduct = {
-        ...Product.base,
+        ...Product.productA,
         crossStore: true
       };
       const payload = {
@@ -1105,7 +1227,7 @@ describe('addProduct preparation', () => {
     it('product update price from pricelist disabled', async () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       const crossStoreProduct = {
-        ...Product.base,
+        ...Product.productA,
         crossStore: true,
         updatePriceFromPricelist: false
       };
@@ -1121,7 +1243,7 @@ describe('addProduct preparation', () => {
     it('packs are ignored', async () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       const crossStoreProduct = {
-        ...Product.base,
+        ...Product.productA,
         ispack: true
       };
       const payload = {
@@ -1136,7 +1258,7 @@ describe('addProduct preparation', () => {
     it('cross store product without price', async () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       const crossStoreProduct = {
-        ...Product.base,
+        ...Product.productA,
         crossStore: true,
         productPrices: []
       };
@@ -1158,7 +1280,7 @@ describe('addProduct preparation', () => {
         price: 23
       };
       const crossStoreProduct = {
-        ...Product.base,
+        ...Product.productA,
         crossStore: true,
         productPrices: [productPrice]
       };
@@ -1197,7 +1319,7 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.base, qty: 1 }]
+              products: [{ product: Product.productA, qty: 1 }]
             },
             ticket
           ),
@@ -1219,7 +1341,7 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.base, qty: 1 }]
+              products: [{ product: Product.productA, qty: 1 }]
             },
             ticket
           ),
@@ -1242,14 +1364,14 @@ describe('addProduct preparation', () => {
         priceList: otherPriceList
       };
       const payload = {
-        products: [{ product: Product.base, qty: 1 }]
+        products: [{ product: Product.productA, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, ticket);
       expect(newPayload).toMatchObject({
         products: [
           {
             product: {
-              ...Product.base,
+              ...Product.productA,
               standardPrice: 23,
               listPrice: 29
             },
@@ -1268,14 +1390,14 @@ describe('addProduct preparation', () => {
         priceList: otherPriceList
       };
       const payload = {
-        products: [{ product: Product.base, qty: 1 }]
+        products: [{ product: Product.productA, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, ticket);
       expect(newPayload).toEqual({
         products: [
           {
             product: {
-              ...Product.base,
+              ...Product.productA,
               standardPrice: 23,
               listPrice: 29
             },
@@ -1289,7 +1411,7 @@ describe('addProduct preparation', () => {
   });
 
   describe('approvals', () => {
-    const service = { ...Product.base, productType: 'S', returnable: true };
+    const service = { ...Product.productA, productType: 'S', returnable: true };
     it('return service accepted approval', async () => {
       const payloadWithApproval = {
         products: [{ product: service }],

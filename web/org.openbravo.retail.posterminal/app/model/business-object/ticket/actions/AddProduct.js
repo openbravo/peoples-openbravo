@@ -479,7 +479,7 @@
 
   function checkAllowSalesWithReturn(ticket, products, options, attrs) {
     const newLineProducts = products.filter(
-      pi => getLineToEdit(pi, ticket, options, attrs) != null
+      pi => getLineToEdit(pi, ticket, options, attrs) === undefined
     );
 
     newLineProducts.forEach(pi => {
