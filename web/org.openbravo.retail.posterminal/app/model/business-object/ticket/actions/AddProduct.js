@@ -53,7 +53,13 @@
 
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
     async (ticket, payload) => {
-      let newPayload = { options: {}, attrs: {}, ...payload };
+      let newPayload = {
+        options: {},
+        attrs: {},
+        ...payload
+      };
+
+      newPayload.options.taxRules = OB.Taxes.Pos.ruleImpls;
 
       newPayload.products = newPayload.products.map(productInfo => {
         return { ...productInfo, qty: productInfo.qty || 1 };
@@ -65,7 +71,7 @@
 
       newPayload = await prepareScaleProducts(newPayload);
       newPayload = await prepareBOMProducts(ticket, newPayload);
-      newPayload = await prepareLinkedProductService(newPayload);
+      newPayload = await prepareProductServiceLinked(newPayload);
       newPayload = await prepareProductCharacteristics(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
       newPayload = await prepareRelatedServices(newPayload);
@@ -79,7 +85,7 @@
     }
   );
 
-  function getLineToEdit(productInfo, ticket, options = {}, attrs = {}) {
+  function getLineToEdit(productInfo, ticket, options, attrs) {
     const { product, qty } = productInfo;
     if (product.obposScale || !product.groupProduct) {
       return undefined;
@@ -106,7 +112,7 @@
     );
   }
 
-  function createLines(productInfo, ticket, options = {}, attrs = {}) {
+  function createLines(productInfo, ticket, options, attrs) {
     const { qty } = productInfo;
 
     const newLines = [];
@@ -117,7 +123,7 @@
     return newLines;
   }
 
-  function createLine(productInfo, ticket, options = {}, attrs = {}) {
+  function createLine(productInfo, ticket, options, attrs) {
     const { product, qty } = productInfo;
 
     const organization = getOrganization(ticket, product, attrs);
@@ -154,7 +160,7 @@
     }
 
     setLineAttributes(newLine, attrs, productInfo);
-    updateServiceRelatedLines(newLine, ticket);
+    updateServiceRelatedLines(newLine, ticket, options.taxRules);
     setDeliveryMode(newLine, ticket);
     return newLine;
   }
@@ -218,7 +224,7 @@
     Object.assign(line, lineAttrs);
   }
 
-  function updateServiceRelatedLines(line, ticket) {
+  function updateServiceRelatedLines(line, ticket, taxRules) {
     if (!line.relatedLines) {
       return;
     }
@@ -249,9 +255,11 @@
             l => l.id === relatedProduct.orderlineId
           );
           if (relatedLine) {
-            relatedLine.product.previousTaxCategory =
-              relatedLine.product.taxCategory;
-            relatedLine.product.taxCategory = productServiceLinked.taxCategory;
+            relatedLine.product = {
+              ...relatedLine.product,
+              previousTaxCategory: relatedLine.product.taxCategory,
+              taxCategory: productServiceLinked.taxCategory
+            };
             if (relatedLine.priceIncludesTax) {
               relatedLine.previousBaseGrossUnitPrice =
                 relatedLine.baseGrossUnitPrice;
@@ -265,11 +273,11 @@
       ticket.priceIncludesTax &&
       ticket.lines.some(l => l.previousBaseGrossUnitPrice && l.taxRate)
     ) {
-      const taxes = OB.Taxes.Pos.applyTaxes(ticket);
+      const taxes = OB.Taxes.Pos.applyTaxes(ticket, taxRules);
       ticket.lines
         .filter(l => l.previousBaseGrossUnitPrice && l.taxRate)
         .forEach(l => {
-          const lineTax = taxes.lines.find(lt => lt.id === line.id);
+          const lineTax = taxes.lines.find(lt => lt.id === l.id);
           // eslint-disable-next-line no-param-reassign
           l.baseGrossUnitPrice = OB.DEC.mul(
             OB.DEC.div(l.previousBaseGrossUnitPrice, l.taxRate),
@@ -636,7 +644,7 @@
     return newPayload;
   }
 
-  async function prepareLinkedProductService(payload) {
+  async function prepareProductServiceLinked(payload) {
     const shouldLinkService = product => {
       return product.modifyTax && !product.productServiceLinked;
     };

@@ -17,6 +17,7 @@ OB = {
     UUID: { generate: jest.fn() }
   },
   MobileApp: { model: { get: jest.fn(() => jest.fn()) } },
+  Taxes: { Pos: { applyTaxes: jest.fn() } },
   TerminalProperty: { get: jest.fn() },
   UTIL: { HookManager: { registerHook: jest.fn() } }
 };
@@ -120,9 +121,10 @@ const products = [
 ];
 
 const addProduct = (ticket, payload) => {
+  const preparedPayload = { options: {}, attrs: {}, ...payload };
   return OB.App.StateAPI.Ticket.addProduct(
     deepfreeze(ticket),
-    deepfreeze(payload)
+    deepfreeze(preparedPayload)
   );
 };
 
@@ -370,25 +372,131 @@ describe('addProduct', () => {
   });
 
   describe('related lines', () => {
-    it('merge related lines', () => {
-      const groupedService = { ...serviceProduct, groupProduct: true };
-      const newTicket = addProduct(emptyTicket, {
-        products: [
-          { product: productA, qty: 1 },
-          { product: productB, qty: 1 },
-          { product: groupedService, qty: 1 }
+    it('update related line tax information', () => {
+      const product = { ...productA, productCategory: '1', taxCategory: '1' };
+      OB.App.UUID.generate.mockReturnValueOnce('0'); // id of the new line
+      const baseTicket = addProduct(emptyTicket, {
+        products: [{ product, qty: 1 }]
+      });
+      baseTicket.lines[0].taxRate = 1.21; // simulate tax calculation
+
+      const service = {
+        ...serviceProduct,
+        productServiceLinked: [
+          {
+            id: '0',
+            product: serviceProduct.id,
+            productCategory: '1',
+            taxCategory: '2'
+          }
         ]
+      };
+      OB.Taxes.Pos.applyTaxes.mockReturnValueOnce({
+        header: {},
+        lines: [{ id: '0', taxRate: 1.11 }]
+      });
+      const newTicket = addProduct(baseTicket, {
+        products: [{ product: service, qty: 1 }],
+        attrs: {
+          relatedLines: [
+            {
+              orderlineId: '0',
+              productCategory: '1',
+              productId: product.id,
+              productName: product.name
+            }
+          ]
+        }
       });
 
-      newTicket.lines[2].relatedLines = [{ id: '0' }];
-
-      const changedTicket = addProduct(newTicket, {
-        products: [{ product: groupedService, qty: 1 }],
-        attrs: { relatedLines: [{ id: '0' }, { id: '1' }] }
-      });
-
-      expect(changedTicket.lines).toMatchObject([
+      expect(newTicket.lines).toMatchObject([
         {
+          qty: 1,
+          baseGrossUnitPrice: 4.58,
+          previousBaseGrossUnitPrice: 5,
+          grossListPrice: 5,
+          priceIncludesTax: true,
+          product: {
+            id: 'stdProduct',
+            taxCategory: '2',
+            previousTaxCategory: '1'
+          }
+        },
+        {
+          qty: 1,
+          baseGrossUnitPrice: 10,
+          grossListPrice: 11,
+          priceIncludesTax: true,
+          product: { id: 'serviceProduct' }
+        }
+      ]);
+    });
+
+    it('merge related lines', () => {
+      // ids of the new lines
+      OB.App.UUID.generate.mockReturnValueOnce('0').mockReturnValueOnce('1');
+      const baseTicket = addProduct(emptyTicket, {
+        products: [{ product: productA, qty: 1 }, { product: productB, qty: 1 }]
+      });
+
+      const groupedService = {
+        ...serviceProduct,
+        groupProduct: true,
+        productServiceLinked: [
+          {
+            id: '0',
+            product: serviceProduct.id,
+            productCategory: '1',
+            taxCategory: '2'
+          }
+        ]
+      };
+
+      const ticketWithOneService = addProduct(baseTicket, {
+        products: [{ product: groupedService, qty: 1 }],
+        attrs: {
+          relatedLines: [
+            {
+              orderlineId: '0',
+              productCategory: '2',
+              productId: productA.id,
+              productName: productA.name
+            }
+          ]
+        }
+      });
+
+      const ticketWithTwoServices = addProduct(ticketWithOneService, {
+        products: [{ product: groupedService, qty: 1 }],
+        attrs: {
+          relatedLines: [
+            {
+              orderlineId: '1',
+              productCategory: '2',
+              productId: productB.id,
+              productName: productB.name
+            }
+          ]
+        }
+      });
+
+      const ticketWithThreeServices = addProduct(ticketWithTwoServices, {
+        products: [{ product: groupedService, qty: 1 }],
+        attrs: {
+          relatedLines: [
+            {
+              orderlineId: '0',
+              productCategory: '2',
+              productId: productA.id,
+              productName: productA.name
+            }
+          ]
+        }
+      });
+
+      expect(ticketWithThreeServices.lines).toMatchObject([
+        {
+          id: '0',
           qty: 1,
           baseGrossUnitPrice: 5,
           grossListPrice: 5,
@@ -396,6 +504,7 @@ describe('addProduct', () => {
           product: { id: 'stdProduct' }
         },
         {
+          id: '1',
           qty: 1,
           baseGrossUnitPrice: 10,
           grossListPrice: 11,
@@ -403,12 +512,25 @@ describe('addProduct', () => {
           product: { id: 'pB' }
         },
         {
-          qty: 2,
+          qty: 3,
           baseGrossUnitPrice: 10,
           grossListPrice: 11,
           priceIncludesTax: true,
           product: { id: 'serviceProduct' },
-          relatedLines: [{ id: '0' }, { id: '1' }]
+          relatedLines: [
+            {
+              orderlineId: '0',
+              productCategory: '2',
+              productId: productA.id,
+              productName: productA.name
+            },
+            {
+              orderlineId: '1',
+              productCategory: '2',
+              productId: productB.id,
+              productName: productB.name
+            }
+          ]
         }
       ]);
     });
