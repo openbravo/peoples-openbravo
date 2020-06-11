@@ -1129,7 +1129,7 @@ enyo.kind({
         const response = await OB.App.Request.mobileServiceRequest(
           'org.openbravo.retail.posterminal.ProcessCashMgmtMaster',
           {
-            cashUpId: OB.App.State.Cashup.Utils.getCashupId(),
+            cashUpId: OB.App.State.getState().Cashup.id,
             terminalSlave: OB.POS.modelterminal.get('terminal').isslave
           }
         );

@@ -76,7 +76,7 @@
         }
 
         // 4. verify that a cashupId is available
-        var cashupId = OB.App.State.Cashup.Utils.getCashupId();
+        var cashupId = OB.App.State.getState().Cashup.id;
         if (!cashupId) {
           OB.error(
             'The receipt has been closed with empty cashUpId (current value: ' +
@@ -293,7 +293,7 @@
 
                   frozenReceipt.set(
                     'obposAppCashup',
-                    OB.App.State.Cashup.Utils.getCashupId()
+                    OB.App.State.getState().Cashup.id
                   );
                   // convert returns
                   if (receipt.isNegative()) {
@@ -1064,7 +1064,7 @@
                             ); // Absolute date in ISO format
                             currentReceipt.set(
                               'obposAppCashup',
-                              OB.App.State.Cashup.Utils.getCashupId()
+                              OB.App.State.getState().Cashup.id
                             );
                             if (
                               OB.UTIL.isNullOrUndefined(

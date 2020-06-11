@@ -1153,7 +1153,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   ); // Absolute date in ISO format
                   receipt.set(
                     'obposAppCashup',
-                    OB.App.State.Cashup.Utils.getCashupId()
+                    OB.App.State.getState().Cashup.id
                   );
                   OB.UTIL.HookManager.executeHooks(
                     'OBPOS_FinishCancelLayaway',

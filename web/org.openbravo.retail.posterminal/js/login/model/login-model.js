@@ -481,7 +481,7 @@
             }
           }
 
-          const currentCashUpId = OB.App.State.Cashup.Utils.getCashupId();
+          const currentCashUpId = OB.App.State.getState().Cashup.id;
           if (currentCashUpId !== null) {
             params.cashUpId = currentCashUpId;
           }

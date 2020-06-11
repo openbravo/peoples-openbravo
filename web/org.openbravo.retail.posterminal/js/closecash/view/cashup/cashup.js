@@ -116,7 +116,7 @@ enyo.kind({
       const response = await OB.App.Request.mobileServiceRequest(
         'org.openbravo.retail.posterminal.ProcessCashCloseSlave',
         {
-          cashUpId: OB.App.State.Cashup.Utils.getCashupId()
+          cashUpId: OB.App.State.getState().Cashup.id
         }
       );
 

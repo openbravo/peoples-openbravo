@@ -6962,7 +6962,7 @@
                       );
                       me.set(
                         'obposAppCashup',
-                        OB.App.State.Cashup.Utils.getCashupId()
+                        OB.App.State.getState().Cashup.id
                       );
                       me.set('timezoneOffset', new Date().getTimezoneOffset());
                       var linesToDelete = [];
@@ -9693,7 +9693,7 @@
             model.get('id') +
             ' as obposIsDeleted to true'
         );
-        model.set('obposAppCashup', OB.App.State.Cashup.Utils.getCashupId());
+        model.set('obposAppCashup', OB.App.State.getState().Cashup.id);
         for (i = 0; i < model.get('lines').length; i++) {
           model
             .get('lines')

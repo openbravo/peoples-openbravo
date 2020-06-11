@@ -106,7 +106,7 @@
       if (
         OB.DEC.sub(
           OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
-            OB.App.State.getState().Cashup.cashPaymentMethodInfo,
+            cashup.cashPaymentMethodInfo,
             newCashManagementTransaction.get('paymentMethod').payment.id,
             OB.MobileApp.model.paymentnames,
             OB.UTIL.currency.webPOSDefaultCurrencyId(),
@@ -119,7 +119,7 @@
           'Amount to drop is greater than available amount (' +
             OB.I18N.formatCurrency(
               OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
-                OB.App.State.getState().Cashup.cashPaymentMethodInfo,
+                cashup.cashPaymentMethodInfo,
                 newCashManagementTransaction.get('paymentMethod').payment.id,
                 OB.MobileApp.model.paymentnames,
                 OB.UTIL.currency.webPOSDefaultCurrencyId(),

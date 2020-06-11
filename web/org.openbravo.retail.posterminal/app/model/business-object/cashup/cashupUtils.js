@@ -144,13 +144,6 @@
       return cashupToSend;
     },
 
-    // TODO : this function is for compatibility with old code,
-    // when all models that used it are moved to indexeddb,
-    // this function should be deleted
-    getCashupId() {
-      return OB.App.State.persistence.getState().Cashup.id;
-    },
-
     /**
      * converts an amount to the WebPOS amount currency
      * @param  {currencyId} fromCurrencyId    the currencyId of the amount to be converted

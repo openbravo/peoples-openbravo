@@ -136,7 +136,7 @@ enyo.kind({
         'org.openbravo.retail.posterminal.ProcessCashCloseMaster',
         {
           masterterminal: OB.POS.modelterminal.get('terminal').id,
-          cashUpId: OB.App.State.Cashup.Utils.getCashupId()
+          cashUpId: OB.App.State.getState().Cashup.id
         }
       );
 
