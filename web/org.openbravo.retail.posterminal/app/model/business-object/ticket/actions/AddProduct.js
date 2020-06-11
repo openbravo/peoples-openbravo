@@ -549,16 +549,17 @@
   }
 
   async function prepareScaleProducts(payload) {
-    const { products } = payload;
-    if (!products.some(pi => pi.product.obposScale)) {
+    const { products, options } = payload;
+    if (
+      !products.some(pi => pi.product.obposScale) ||
+      options.isVerifiedReturn
+    ) {
       return payload;
     }
 
     if (products.length > 1) {
       throw new Error('Cannot handle more than one scale product');
     }
-
-    // TODO: should we allow it if options.isVerifiedReturn?
 
     const weightResponse = await OB.POS.hwserver.getAsyncWeight();
 

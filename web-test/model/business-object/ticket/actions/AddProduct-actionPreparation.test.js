@@ -625,6 +625,15 @@ describe('addProduct preparation', () => {
       expect(newPayload).toMatchObject({ products: [{ qty: 10 }] });
     });
 
+    it('skip scale preparation on verified return', async () => {
+      const newPayload = await prepareAction({
+        products: [{ product: scaleProduct }],
+        options: { isVerifiedReturn: true }
+      });
+
+      expect(newPayload).toMatchObject({ products: [{ qty: 1 }] });
+    });
+
     it('fails when scale returns 0', async () => {
       OB.POS.hwserver.getAsyncWeight.mockImplementation(() =>
         Promise.resolve({ result: 0 })
