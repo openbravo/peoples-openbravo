@@ -881,8 +881,10 @@
     contextUser
   ) {
     let ticket = {
+      id: OB.App.UUID.generate(),
       orderType: 0, // 0: Sales order, 1: Return order
       orderDate: OB.I18N.normalizeDate(new Date()),
+      creationDate: OB.I18N.normalizeDate(new Date()),
       documentNo: '',
       lines: [],
       orderManualPromotions: [],

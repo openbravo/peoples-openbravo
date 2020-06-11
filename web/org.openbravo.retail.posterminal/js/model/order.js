@@ -10647,23 +10647,11 @@
         callback(order);
       },
 
-      addNewOrder: function(isFirstOrder) {
-        this.saveCurrent();
-        this.current = this.newOrder();
-        this.unshift(this.current);
-        this.loadCurrent(true);
-      },
-
       addThisOrder: function(model) {
         this.saveCurrent();
         this.current = model;
         this.unshift(this.current);
         this.loadCurrent();
-      },
-
-      addFirstOrder: function() {
-        // TODO: replace with state
-        this.addNewOrder(true);
       },
 
       addPaidReceipt: function(model, callback) {

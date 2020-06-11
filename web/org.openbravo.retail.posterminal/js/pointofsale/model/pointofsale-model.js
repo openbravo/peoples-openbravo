@@ -61,7 +61,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
                     // If there are no pending orders,
                     //  add an initial empty order
-                    orderlist.addFirstOrder();
+                    OB.App.State.Ticket.createEmptyTicket();
                   } else {
                     // The order object is stored in the json property of the row fetched from the database
                     orderlist.reset(args.ordersNotPaid.models);
