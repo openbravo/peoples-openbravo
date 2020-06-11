@@ -55,10 +55,6 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@fromClause@", getFromClauseHQL());
     transformedHql = transformedHql.replace("@whereClause@", getWhereClauseHQL());
     transformedHql = transformedHql.replace("@groupByClause@", getGroupByHQL());
-    transformedHql = transformedHql.replace("@created@", getCreated());
-    transformedHql = transformedHql.replace("@createdBy@", getCreatedBy());
-    transformedHql = transformedHql.replace("@updated@", getUpdated());
-    transformedHql = transformedHql.replace("@updatedBy@", getUpdatedBy());
     transformedHql = transformedHql.replace("@movementQuantity@", getMovementQuantityHQL());
     transformedHql = transformedHql.replace("@operativeQuantity@", getOperativeQuantityHQL());
     transformedHql = transformedHql.replace("@orderQuantity@", getOrderQuantityHQL());
@@ -131,9 +127,9 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  e.explode,");
     groupByClause.append("  e.bOMParent.id,");
     groupByClause.append("  e.creationDate,");
-    groupByClause.append("  e.createdBy,");
+    groupByClause.append("  e.createdBy.name,");
     groupByClause.append("  e.updated,");
-    groupByClause.append("  e.updatedBy,");
+    groupByClause.append("  e.updatedBy.name,");
     groupByClause.append("  e.operativeUOM.id,");
     groupByClause.append("  e.operativeQuantity,");
     groupByClause.append("  sh.documentType.id,");
@@ -154,22 +150,6 @@ public class InOutLinePEHQLTransformer extends HqlQueryTransformer {
           " HAVING ((e.movementQuantity-SUM(COALESCE(mil.invoicedQuantity,0))) <> 0 OR (e.explode='Y'))");
     }
     return groupByClause.toString();
-  }
-
-  protected String getCreated() {
-    return "e.creationDate";
-  }
-
-  protected String getCreatedBy() {
-    return "e.createdBy.id";
-  }
-
-  protected String getUpdated() {
-    return "e.updated";
-  }
-
-  protected String getUpdatedBy() {
-    return "e.updatedBy.id";
   }
 
   protected String getMovementQuantityHQL() {

@@ -66,10 +66,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     transformedHql = transformedHql.replace("@operativeUOM@", getOperativeUOM());
     transformedHql = transformedHql.replace("@documentNo@", getDocumentNo());
     transformedHql = transformedHql.replace("@grandTotalAmount@", getGrandTotalAmount());
-    transformedHql = transformedHql.replace("@created@", getCreated());
-    transformedHql = transformedHql.replace("@createdBy@", getCreatedBy());
-    transformedHql = transformedHql.replace("@updated@", getUpdated());
-    transformedHql = transformedHql.replace("@updatedBy@", getUpdatedBy());
     transformedHql = transformedHql.replace("@scheduledDeliveryDate@", getScheduledDeliveryDate());
     transformedHql = transformedHql.replace("@warehouse@", getWarehouse());
     transformedHql = transformedHql.replace("@filterByDocumentsProcessedSinceNDaysAgo@",
@@ -138,6 +134,10 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append("  e.orderDate,");
     groupByClause.append("  e.lineNo,");
     groupByClause.append("  e.id,");
+    groupByClause.append("  e.creationDate,");
+    groupByClause.append("  e.createdBy.name,");
+    groupByClause.append("  e.updated,");
+    groupByClause.append("  e.updatedBy.name,");
     groupByClause.append("  e.explode,");
     groupByClause.append("  e.operativeQuantity,");
     groupByClause.append("  e.uOM.id, e.product.id, e.operativeUOM.id,");
@@ -146,10 +146,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
     groupByClause.append(isSalesTransaction ? " ic.documentNo," : " o.documentNo,");
     groupByClause.append(isSalesTransaction ? " ic.orderDate," : " o.orderDate,");
     groupByClause.append(isSalesTransaction ? " ic.grandTotalAmount," : " o.grandTotalAmount,");
-    groupByClause.append(isSalesTransaction ? " ic.creationDate," : " o.creationDate,");
-    groupByClause.append(isSalesTransaction ? " ic.createdBy," : " o.createdBy,");
-    groupByClause.append(isSalesTransaction ? " ic.updated," : " o.updated,");
-    groupByClause.append(isSalesTransaction ? " ic.updatedBy," : " o.updatedBy,");
     groupByClause
         .append(isSalesTransaction ? " ic.scheduledDeliveryDate," : " o.scheduledDeliveryDate,");
     groupByClause.append(isSalesTransaction ? " COALESCE(e.asset.id, ic.asset.id),"
@@ -235,22 +231,6 @@ public class OrderLinePEHQLTransformer extends HqlQueryTransformer {
       operativeUOMHql.append("'' ");
     }
     return operativeUOMHql.toString();
-  }
-
-  protected String getCreated() {
-    return isSalesTransaction ? " ic.creationDate" : " o.creationDate";
-  }
-
-  protected String getCreatedBy() {
-    return isSalesTransaction ? " ic.createdBy.id" : " o.createdBy.id";
-  }
-
-  protected String getUpdated() {
-    return isSalesTransaction ? " ic.updated" : " o.updated";
-  }
-
-  protected String getUpdatedBy() {
-    return isSalesTransaction ? " ic.updatedBy.id" : " o.updatedBy.id";
   }
 
   protected String getDocumentNo() {
