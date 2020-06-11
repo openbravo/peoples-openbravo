@@ -591,6 +591,9 @@
           OB.info('[NewOrder] New order set with id ' + uuid);
           this.id = uuid;
           forceInsert = true;
+        } else if (this.get('isNew')) {
+          this.set('isNew', false);
+          forceInsert = true;
         }
 
         this.set('json', JSON.stringify(this.serializeToJSON()));
@@ -1414,7 +1417,8 @@
     },
 
     clearOrderAttributes: function() {
-      this.set('id', null);
+      this.set('id', OB.UTIL.get_UUID());
+      this.set('isNew', true);
       this.set('client', null);
       this.set('organization', null);
       this.set('createdBy', null);
