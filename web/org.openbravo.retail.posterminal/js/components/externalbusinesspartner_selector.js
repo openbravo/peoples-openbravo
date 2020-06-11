@@ -488,48 +488,52 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalExternalBpSelectorFooter',
   classes: 'obUiModalExternalBpSelectorFooter',
+  events: {
+    onExternalBpSelected: '',
+    onHideThisPopup: ''
+  },
   components: [
     {
-      classes: 'obUiModalExternalBpSelectorFooter-container1',
+      classes: 'obUiModalExternalBpSelectorFooter-maincontainer',
       showing: true,
       components: [
         {
+          kind: 'OB.UI.AdvancedFilterButtonExternalBp',
+          name: 'advancedFilters',
           classes:
-            'obUiModal-footer-secondaryButtons obUiModalExternalBpSelectorFooter-container1-container1',
-          components: [
-            {
-              kind: 'OB.UI.AdvancedFilterButtonExternalBp',
-              classes:
-                'obUiModalExternalBpSelectorFooter-container1-container1-element1'
-            }
-          ]
+            'obUiModalExternalBpSelectorFooter-maincontainer-advancedFilters'
         },
         {
+          name: 'useAnonymousCustomer',
+          kind: 'OB.UI.ModalDialogButton',
           classes:
-            'obUiModal-footer-mainButtons obUiModalExternalBpSelectorFooter-container1-container2',
-          components: [
-            {
-              kind: 'OB.UI.NewExternalBusinessPartner',
-              name: 'newAction',
-              classes:
-                'obUiModalExternalBpSelectorFooter-container1-container2-newAction'
-            },
-            {
-              kind: 'OB.UI.ModalDialogButton',
-              classes:
-                'obUiModalExternalBpSelectorFooter-container1-container2-close',
-              i18nLabel: 'OBRDM_LblClose',
-              tap: function() {
-                if (this.disabled === false) {
-                  this.doHideThisPopup();
-                }
-              }
+            'obUiModalExternalBpSelectorFooter-maincontainer-useAnonymousCustomer',
+          i18nLabel: 'OBPOS_UseAnonymousBp',
+          ontap: 'useAnonymousCustomer'
+        },
+        {
+          kind: 'OB.UI.NewExternalBusinessPartner',
+          name: 'newAction',
+          classes: 'obUiModalExternalBpSelectorFooter-maincontainer-newAction'
+        },
+        {
+          kind: 'OB.UI.ModalDialogButton',
+          classes: 'obUiModalExternalBpSelectorFooter-maincontainer-close',
+          i18nLabel: 'OBMOBC_Close',
+          tap: function() {
+            if (this.disabled === false) {
+              this.doHideThisPopup();
             }
-          ]
+          }
         }
       ]
     }
   ],
+  useAnonymousCustomer: function() {
+    this.doHideThisPopup(null);
+    this.doExternalBpSelected(null);
+    return true;
+  },
   setAllowCreate: function(allowCreate) {
     this.$.newAction.setDisabled(!allowCreate);
   }
