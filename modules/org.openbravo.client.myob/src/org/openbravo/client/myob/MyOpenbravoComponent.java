@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.client.myob;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -327,6 +328,9 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
 
   private List<WidgetInstance> getWidgetInstances(Client client, Role visibleAtRole,
       User visibleAtUser, List<String> widgetClasses) {
+    if (widgetClasses.isEmpty()){
+      return Collections.emptyList();
+    }
     OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
     obc.setFilterOnReadableClients(false);
     obc.setFilterOnActive(false);
