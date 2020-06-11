@@ -42,7 +42,7 @@
     getCashManagementsByPaymentMethodId(paymentMethods, paymentMethodId) {
       return OB.App.State.Cashup.Utils.getCashManagements(
         paymentMethods
-      ).filter(cashMgmt => cashMgmt.paymentMethod === paymentMethodId);
+      ).filter(cashMgmt => cashMgmt.paymentMethodId === paymentMethodId);
     }
   });
 })();
