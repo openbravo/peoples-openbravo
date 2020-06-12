@@ -705,7 +705,7 @@
      *
      * @param {object} ticket - The ticket whose will be checked
      * @param {object} settings - The calculation settings, which include:
-     *             * salesWithOneLineNegativeAsReturns - SalesWithOneLineNegativeAsReturns preference value
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
      */
@@ -717,7 +717,8 @@
       const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
       return (
         negativeLines === ticket.lines.length ||
-        (negativeLines > 0 && settings.salesWithOneLineNegativeAsReturns)
+        (negativeLines > 0 &&
+          settings.preferences.salesWithOneLineNegativeAsReturns)
       );
     },
 
@@ -726,16 +727,16 @@
      *
      * @param {object} ticket - The ticket whose will be checked
      * @param {object} settings - The calculation settings, which include:
-     *             * terminalOrganization - Organization of the current terminal
+     *             * terminal.organization - Organization of the current terminal
      *
      * @returns {boolean} true in case the ticket is cross store, false otherwise.
      */
     isCrossStoreTicket(ticket, settings) {
-      if (!ticket.organization || !settings.terminalOrganization) {
+      if (!ticket.organization || !settings.terminal.organization) {
         return false;
       }
 
-      return ticket.organization !== settings.terminalOrganization;
+      return ticket.organization !== settings.terminal.organization;
     },
 
     /**
@@ -743,10 +744,10 @@
      *
      * @param {object} ticket - The ticket whose type will be updated
      * @param {object} settings - The calculation settings, which include:
-     *             * documentTypeForSales - Terminal document type for sales
-     *             * documentTypeForReturns - Terminal document type for returns
-     *             * terminalOrganization - Organization of the current terminal
-     *             * salesWithOneLineNegativeAsReturns - SalesWithOneLineNegativeAsReturns preference value
+     *             * terminal.documentTypeForSales - Terminal document type for sales
+     *             * terminal.documentTypeForReturns - Terminal document type for returns
+     *             * terminal.organization - Organization of the current terminal
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {object} The new state of Ticket after type update.
      */
@@ -766,8 +767,8 @@
       );
       newTicket.orderType = isReturnTicket ? 1 : 0;
       newTicket.documentType = isReturnTicket
-        ? settings.documentTypeForReturns
-        : settings.documentTypeForSales;
+        ? settings.terminal.documentTypeForReturns
+        : settings.terminal.documentTypeForSales;
 
       return newTicket;
     },
@@ -949,7 +950,7 @@
      *
      * @param {object} ticket - The ticket whose shipment will be generated
      * @param {object} settings - The calculation settings, which include:
-     *             * terminalOrganization - The terminal organization.
+     *             * terminal.organization - The terminal organization.
      *
      * @returns {object} The ticket with the result of the shipment generation
      */
@@ -1204,15 +1205,15 @@
     },
 
     /**
-     * Generates the corresponding invoice for the given ticket.
+     * Completes ticket payment generating change payment if needed and converting payment to negative in case of return.
      *
-     * @param {object} ticket - The ticket whose invoice will be generated
+     * @param {object} ticket - The ticket whose payment will be completed
      * @param {object} settings - The calculation settings, which include:
-     *             * multiChange - OB.MobileApp.model.get('terminal').multiChange
-     *             * splitChange - OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true)
-     *             * paymentNames - OB.MobileApp.model.paymentnames
+     *             * terminal.paymentTypes - Terminal payment types
+     *             * terminal.multiChange - Terminal multichange configuration
+     *             * preferences.splitChange - OBPOS_SplitChange preference value
      *
-     * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
+     * @returns {object} The new state of Ticket after payment completing.
      */
     completePayment(ticket, settings) {
       let newTicket = { ...ticket };
@@ -1220,11 +1221,13 @@
       // Manage change payments if there is change
       if (newTicket.changePayments && newTicket.changePayments.length > 0) {
         const prevChange = newTicket.change;
-        const mergeable = !settings.multiChange && !settings.splitChange;
+        const mergeable =
+          !settings.terminal.multiChange && !settings.preferences.splitChange;
 
         // FIXME: change addPayment with generatePayment and return only the payment?
         newTicket.changePayments.forEach(changePayment => {
-          const terminalPayment = settings.paymentNames[changePayment.key];
+          const terminalPayment =
+            settings.terminal.paymentTypes[changePayment.key];
 
           // Generate change payment
           newTicket = OB.App.State.Ticket.Utils.generatePayment(newTicket, {
@@ -1312,23 +1315,25 @@
     /**
      * Generates the corresponding payment for the given ticket.
      *
-     * @param {object} ticket - The ticket whose invoice will be generated
+     * @param {object} ticket - The ticket whose payment will be generated
      * @param {object} settings - The calculation settings, which include:
-     *             * paymentNames - OB.MobileApp.model.paymentnames
-     *             * terminal - OB.MobileApp.model.get('terminal')
+     *             * payment - The payment that will be added to the ticket
+     *             * terminal.id - Terminal id
+     *             * terminal.paymentTypes - Terminal payment types
      *
-     * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
+     * @returns {object} The new state of Ticket after payment generation.
      */
     generatePayment(ticket, settings) {
       const newTicket = { ...ticket };
-      const precision = settings.paymentNames[settings.payment.kind]
-        ? settings.paymentNames[settings.payment.kind].obposPosprecision
+      const precision = settings.terminal.paymentTypes[settings.payment.kind]
+        ? settings.terminal.paymentTypes[settings.payment.kind]
+            .obposPosprecision
         : OB.DEC.getScale();
 
       // FIXME: needed in complete ticket?
       // this.addPaymentRounding(
       //   payment,
-      //   settings.paymentNames[payment.get('kind')]
+      //   settings.terminal.paymentTypes[payment.get('kind')]
       // );
 
       // FIXME: needed in complete ticket?
@@ -1393,7 +1398,7 @@
       const newPayment = { ...settings.payment };
       newPayment.date = new Date();
       newPayment.id = OB.UTIL.get_UUID();
-      newPayment.oBPOSPOSTerminal = settings.terminalId;
+      newPayment.oBPOSPOSTerminal = settings.terminal.id;
       newPayment.orderGross = newTicket.grossAmount;
       newPayment.isPaid = newTicket.isPaid;
       newPayment.isReturnOrder = newTicket.isNegative;
