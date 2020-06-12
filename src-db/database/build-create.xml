@@ -120,7 +120,7 @@ create.database: creates the database from scratch.
         </fileset>
       </classpath>
       <transaction>
-        DROP ROLE IF EXISTS ${user};
+        DROP ROLE IF EXISTS "${user}";
       </transaction>
     </sql>
   </target>
@@ -220,7 +220,7 @@ create.database: creates the database from scratch.
       </classpath>
       <transaction>
         --CREATING USER
-        CREATE ROLE ${user} LOGIN PASSWORD '${password}'
+        CREATE ROLE "${user}" LOGIN PASSWORD '${password}'
                CREATEDB CREATEROLE
                VALID UNTIL 'infinity';
       </transaction>
