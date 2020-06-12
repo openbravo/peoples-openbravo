@@ -32,18 +32,13 @@
   };
 
   function getExternalBusinessPartnerCategory(externalBusinessPartner) {
-    const extbpint = OB.MobileApp.model.get('externalBpIntegration');
-    if (!extbpint || !externalBusinessPartner) {
+    if (!OB.UTIL.externalBp()) {
       return null;
     }
-    return extbpint.properties
-      .filter(p => p.categoryKey)
-      .sort(
-        (a, b) =>
-          (a.categoryKeySequenceNumber || 0) -
-          (b.categoryKeySequenceNumber || 0)
-      )
-      .reduce((key, p) => key + externalBusinessPartner[p.apiKey], '');
+    const extbp = new OB.App.Class.ExternalBusinessPartner(
+      externalBusinessPartner
+    );
+    return extbp.getCategoryKey();
   }
 
   const applyDiscounts = (ticket, result) => {

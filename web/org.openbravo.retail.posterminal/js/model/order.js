@@ -5664,11 +5664,17 @@
         let execution = OB.UTIL.ProcessController.start(
           'setExternalBusinessPartner'
         );
-        execution.businessPartner = bp;
+        execution.businessPartner = bp || order.get('bp');
         OB.App.ExternalBusinessPartnerAPI.onBusinessPartnerSelected(bp, order)
           .then(() => {
-            order.set('externalBusinessPartnerReference', bp.getKey());
-            order.set('externalBusinessPartner', bp.getPlainObject());
+            order.set(
+              'externalBusinessPartnerReference',
+              bp ? bp.getKey() : null
+            );
+            order.set(
+              'externalBusinessPartner',
+              bp ? bp.getPlainObject() : null
+            );
             order.save(function() {
               OB.MobileApp.model.orderList.saveCurrent();
               OB.UTIL.ProcessController.finish(

@@ -248,8 +248,17 @@ enyo.kind({
   },
   processFinished: function(process, execution, processesInExec) {
     if (processesInExec.models.length === 0) {
+      let content = '';
+      if (
+        execution.businessPartner &&
+        execution.businessPartner.getIdentifier
+      ) {
+        content = execution.businessPartner.getIdentifier();
+      } else {
+        content = execution.businessPartner.get('_identifier');
+      }
       this.$.receiptButtons.$.formElementBpbutton.coreElement.setContent(
-        execution.businessPartner.getIdentifier()
+        content
       );
     }
   }
