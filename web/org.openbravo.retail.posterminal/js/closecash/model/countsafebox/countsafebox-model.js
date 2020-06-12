@@ -424,7 +424,7 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
             OB.UTIL.localStorage.getItem('currentSafeBox')
           ),
           now = new Date();
-        let countSafeBox = new OB.Model.CountSafeBox();
+        let countSafeBox = {};
         // objToSend initialization
         let objToSend = new Backbone.Model({
           safeBox: currentSafeBox.searchKey,
@@ -464,17 +464,15 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
           objToSend.get('countSafeBoxInfo').push(countSafeBoxInfo);
         });
 
-        countSafeBox.set('isbeingprocessed', 'Y');
-        countSafeBox.set('creationDate', now);
-        countSafeBox.set('safebox', currentSafeBox.searchKey);
-        countSafeBox.set('userId', OB.MobileApp.model.get('context').user.id);
-        countSafeBox.set('objToSend', JSON.stringify(objToSend));
-        countSafeBox.set('isprocessed', 'Y');
+        countSafeBox.isbeingprocessed = 'Y';
+        countSafeBox.creationDate = now;
+        countSafeBox.safebox = currentSafeBox.searchKey;
+        countSafeBox.userId = OB.MobileApp.model.get('context').user.id;
+        countSafeBox.objToSend = JSON.stringify(objToSend);
+        countSafeBox.isprocessed = 'Y';
 
-        OB.Dal.saveInTransaction(
-          tx,
-          countSafeBox,
-          () => {
+        OB.App.State.Global.synchronizeCountSafeBox(countSafeBox)
+          .then(sync => {
             const callbackFinishedSuccess = () => {
               OB.UTIL.showLoading(true);
               this.set('finished', true);
@@ -556,9 +554,13 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
 
             const callbackFinishedWrongly = () => {
               // reset to N
-              countSafeBox.set('isprocessed', 'N');
-              OB.Dal.saveInTransaction(tx, countSafeBox);
-              this.set('finishedWrongly', true);
+              countSafeBox.isprocessed = 'N';
+
+              OB.App.State.Global.synchronizeCountSafeBox(countSafeBox)
+                .then(sync => {
+                  this.set('finishedWrongly', true);
+                })
+                .catch(error => OB.error(error));
             };
 
             const callbackFunc = () => {
@@ -591,9 +593,8 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
               );
             };
             callbackFunc();
-          },
-          null
-        );
+          })
+          .catch(error => OB.error(error));
       });
     }
   }
