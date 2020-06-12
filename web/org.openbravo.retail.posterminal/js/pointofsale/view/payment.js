@@ -2522,7 +2522,7 @@ enyo.kind({
       return true;
     }
 
-    if (!isMultiOrder) {
+    if (!isMultiOrder && OB.MobileApp.model.receipt.get('orderType') !== 3) {
       const completeReceiptExecution = OB.UTIL.ProcessController.start(
         'completeReceipt'
       );
