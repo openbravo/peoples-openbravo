@@ -33,14 +33,14 @@ require('../../../../../org.openbravo.client.kernel/web/org.openbravo.client.ker
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic.js');
 OB.App.StateAPI.registerModel('Ticket');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/ApplyDiscountsAndTaxesModelHook');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CalculateTotalsModelHook');
 
-// set Ticket model "applyDiscountsAndTaxes" utility function
+// set Ticket model "calculateTotals" utility function
 OB.App.State = {
   Ticket: {
     Utils: {
-      applyDiscountsAndTaxes: OB.App.StateAPI.Ticket.utilities
-        .filter(util => util.functionName === 'applyDiscountsAndTaxes')
+      calculateTotals: OB.App.StateAPI.Ticket.utilities
+        .filter(util => util.functionName === 'calculateTotals')
         .map(util => util.implementation)
         .pop()
     }

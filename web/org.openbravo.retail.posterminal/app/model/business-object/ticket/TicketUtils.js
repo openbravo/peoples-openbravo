@@ -12,16 +12,16 @@
 
 OB.App.StateAPI.Ticket.registerUtilityFunctions({
   /**
-   * Applies the discounts and taxes to the given ticket
+   * Computes the totals of a given ticket which include: discounts, taxes and other calculated fields.
    *
-   * @param {object} ticket - The ticket whose discounts and taxes will be calculated
+   * @param {object} ticket - The ticket whose totals will be calculated
    * @param {object} settings - The calculation settings, which include:
    *             * discountRules - The discount rules to be considered
    *             * taxRules - The tax rules to be considered
    *             * bpSets - The businessPartner sets
-   * @returns The ticket with the result of the discounts and taxes calculation
+   * @returns The ticket with the result of the totals calculation
    */
-  applyDiscountsAndTaxes(ticket, settings) {
+  calculateTotals(ticket, settings) {
     const newTicket = { ...ticket };
     const { priceIncludesTax } = newTicket;
 
