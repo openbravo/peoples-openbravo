@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -171,6 +171,7 @@ public class ModuleUtiltiy {
     core.add(new File(obDir + "/web"));
     core.add(new File(obDir + "/src-test"));
     core.add(new File(obDir + "/src-util"));
+    core.add(new File(obDir + "/referencedata"));
     return core;
   }
 }
