@@ -22,8 +22,8 @@
 
       // TODO: update statistics
 
-      tickets.forEach(order => {
-        const orderType = order.get('orderType');
+      tickets.forEach(ticket => {
+        const orderType = ticket.get('orderType');
 
         let gross;
         let taxOrderType;
@@ -41,26 +41,26 @@
         let ctaxReturns;
         const maxtaxReturns = OB.DEC.Zero;
         if (
-          !(order.has('isQuotation') && order.get('isQuotation')) &&
-          !order.get('isPaid') &&
+          !(ticket.has('isQuotation') && ticket.get('isQuotation')) &&
+          !ticket.get('isPaid') &&
           ((countLayawayAsSales &&
-            !(order.get('isLayaway') && !order.get('voidLayaway'))) ||
+            !(ticket.get('isLayaway') && !ticket.get('voidLayaway'))) ||
             (!countLayawayAsSales &&
-              !order.get('cancelLayaway') &&
-              (order.get('payOnCredit') || order.get('completeTicket'))))
+              !ticket.get('cancelLayaway') &&
+              (ticket.get('payOnCredit') || ticket.get('completeTicket'))))
         ) {
-          order.get('lines').models.forEach(line => {
+          ticket.get('lines').models.forEach(line => {
             gross = line.get('grossUnitAmount');
-            if (order.get('doCancelAndReplace')) {
+            if (ticket.get('doCancelAndReplace')) {
               if (!line.get('replacedorderline')) {
                 netSales = OB.DEC.add(netSales, line.get('net'));
                 grossSales = OB.DEC.add(grossSales, gross);
               }
-            } else if (order.get('cancelLayaway')) {
+            } else if (ticket.get('cancelLayaway')) {
               // Cancel Layaway
               netSales = OB.DEC.add(netSales, line.get('net'));
               grossSales = OB.DEC.add(grossSales, gross);
-            } else if (order.get('voidLayaway')) {
+            } else if (ticket.get('voidLayaway')) {
               // Void Layaway
               netSales = OB.DEC.add(netSales, -line.get('net'));
               grossSales = OB.DEC.add(grossSales, -gross);
@@ -89,13 +89,13 @@
 
         // group and sum the taxes
         const newCashupTaxes = [];
-        order.get('lines').each(function perLine(line) {
+        ticket.get('lines').each(function perLine(line) {
           const taxLines = line.get('taxLines');
           if (
             orderType === 1 ||
             (line.get('qty') < 0 &&
-              !order.get('cancelLayaway') &&
-              !order.get('voidLayaway'))
+              !ticket.get('cancelLayaway') &&
+              !ticket.get('voidLayaway'))
           ) {
             taxOrderType = '1';
           } else {
@@ -103,15 +103,15 @@
           }
 
           Object.values(taxLines).forEach(taxLine => {
-            if (!(order.has('isQuotation') && order.get('isQuotation'))) {
+            if (!(ticket.has('isQuotation') && ticket.get('isQuotation'))) {
               if (
-                order.get('cancelLayaway') ||
-                (line.get('qty') > 0 && !order.get('isLayaway'))
+                ticket.get('cancelLayaway') ||
+                (line.get('qty') > 0 && !ticket.get('isLayaway'))
               ) {
                 taxAmount = taxLine.amount;
               } else if (
-                order.get('voidLayaway') ||
-                (line.get('qty') < 0 && !order.get('isLayaway'))
+                ticket.get('voidLayaway') ||
+                (line.get('qty') < 0 && !ticket.get('isLayaway'))
               ) {
                 taxAmount = -taxLine.amount;
               }
@@ -191,7 +191,7 @@
           }
         });
 
-        order.get('payments').models.forEach(orderPayment => {
+        ticket.get('payments').models.forEach(orderPayment => {
           const cashupPayment = newCashup.cashPaymentMethodInfo.filter(
             function filter(cashupPaymentMethodFilter) {
               return (
