@@ -19,6 +19,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    *             * discountRules - The discount rules to be considered
    *             * taxRules - The tax rules to be considered
    *             * bpSets - The businessPartner sets
+   *             * qtyScale - The scale of the ticket quantity (qty)
    * @returns The ticket with the result of the totals calculation
    */
   calculateTotals(ticket, settings) {
@@ -76,6 +77,17 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       line.tax = taxLine.tax;
       line.taxes = taxLine.taxes;
     });
+
+    // set the total quantity
+    if (ticket.lines.length > 0) {
+      newTicket.qty = newTicket.lines
+        .map(l => l.qty)
+        .reduce((total, qty) =>
+          qty > 0 ? OB.DEC.add(total, qty, settings.qtyScale) : total
+        );
+    } else {
+      newTicket.qty = OB.DEC.Zero;
+    }
 
     return newTicket;
   }

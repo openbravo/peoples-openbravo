@@ -14,10 +14,12 @@
 
 OB.App.StateAPI.Ticket.addModelHook({
   generatePayload: () => {
+    const { qtyEdition } = OB.Format.formats;
     return {
       discountRules: OB.Discounts.Pos.ruleImpls,
       taxRules: OB.Taxes.Pos.ruleImpls,
-      bpSets: OB.Discounts.Pos.bpSets
+      bpSets: OB.Discounts.Pos.bpSets,
+      qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1
     };
   },
 
