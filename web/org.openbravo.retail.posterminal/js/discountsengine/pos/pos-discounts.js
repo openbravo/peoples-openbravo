@@ -14,15 +14,13 @@
 
   const applyDiscounts = (ticket, result) => {
     ticket.get('lines').forEach(line => {
-      const discountInfoForLine =
-          result.lines[line.get('id')] &&
-          result.lines[line.get('id')].discounts.promotions,
-        excludedFromEnginePromotions = line.get('promotions')
-          ? line.get('promotions').filter(promo => {
-              return !promo.calculatedOnDiscountEngine;
-            })
-          : [];
-      if (!discountInfoForLine) {
+      const discountLine = result.lines.find(l => l.id === line.get('id'));
+      const excludedFromEnginePromotions = line.get('promotions')
+        ? line.get('promotions').filter(promo => {
+            return !promo.calculatedOnDiscountEngine;
+          })
+        : [];
+      if (!discountLine) {
         //No discounts for this line, we keep existing discounts if they exist, and move to the next
         line.set('promotions', excludedFromEnginePromotions);
         return;
@@ -31,7 +29,7 @@
       // Concatenate new promotions and excluded promotions in line
       line.set('promotions', [
         ...excludedFromEnginePromotions,
-        ...discountInfoForLine
+        ...discountLine.discounts
       ]);
       return;
     });

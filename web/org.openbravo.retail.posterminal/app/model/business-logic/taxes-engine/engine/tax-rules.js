@@ -15,17 +15,15 @@
     }
 
     applyTaxes() {
-      const taxes = {};
-      taxes.header = {};
-      taxes.lines = [];
-
       // Calculate taxes for each ticket line
-      taxes.lines = this.ticket.lines.map(line => this.applyLineTaxes(line));
+      const lineTaxes = this.ticket.lines.map(line =>
+        this.applyLineTaxes(line)
+      );
 
       // Calculate taxes for ticket header
-      taxes.header = this.applyHeaderTaxes(taxes.lines);
+      const headerTaxes = this.applyHeaderTaxes(lineTaxes);
 
-      return taxes;
+      return { ...headerTaxes, lines: lineTaxes };
     }
 
     applyLineTaxes(line) {
@@ -34,8 +32,8 @@
         ? line.grossUnitAmount
         : line.netUnitAmount;
 
-      if (newLine.bomLines) {
-        newLine.bomLines = line.bomLines.map(bomLine => {
+      if (newLine.product.productBOM) {
+        newLine.product.productBOM = line.product.productBOM.map(bomLine => {
           const newBomLine = { ...bomLine };
           newBomLine.amount = this.ticket.priceIncludesTax
             ? bomLine.grossUnitAmount
@@ -63,12 +61,12 @@
     }
 
     calculateLineBOMTaxes(line) {
-      const bomTotalAmount = line.bomLines.reduce(
+      const bomTotalAmount = line.product.productBOM.reduce(
         (total, bomLine) => OB.DEC.add(total, bomLine.amount),
         OB.DEC.Zero
       );
 
-      const bomGroups = line.bomLines
+      const bomGroups = line.product.productBOM
         .reduce((result, bomLine) => {
           const bomGroup = result.find(
             group => group.product.taxCategory === bomLine.product.taxCategory

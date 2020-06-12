@@ -99,9 +99,9 @@
   const setTaxes = function(receipt, taxes) {
     receipt.set(
       {
-        gross: taxes.header.grossAmount,
-        net: taxes.header.netAmount,
-        taxes: taxes.header.taxes
+        gross: taxes.grossAmount,
+        net: taxes.netAmount,
+        taxes: taxes.taxes
       },
       {
         silent: true
