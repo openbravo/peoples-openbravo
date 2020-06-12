@@ -10617,6 +10617,7 @@
         if (model.isLayaway) {
           order.set('isLayaway', true);
           order.set('id', model.orderid);
+          order.set('isNew', false);
           order.set('hasbeenpaid', 'N');
         } else {
           order.set('isPaid', true);
@@ -10641,6 +10642,7 @@
             order.set('paidOnCredit', true);
           }
           order.set('id', model.orderid);
+          order.set('isNew', false);
           if (
             order.get('documentType') ===
             OB.MobileApp.model.get('terminal').terminalType
