@@ -1347,34 +1347,36 @@
     },
 
     getDocumentSequenceName: function(document) {
+      const settings = {
+        terminal: {
+          returnSequencePrefix: OB.MobileApp.model.get('terminal')
+            .returnDocNoPrefix,
+          quotationSequencePrefix: OB.MobileApp.model.get('terminal')
+            .quotationDocNoPrefix,
+          fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get('terminal')
+            .fullReturnInvoiceDocNoPrefix,
+          simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
+            'terminal'
+          ).simplifiedReturnInvoiceDocNoPrefix
+        },
+        preferences: {
+          salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
+            'OBPOS_SalesWithOneLineNegativeAsReturns',
+            true
+          )
+        }
+      };
+
       if (document.get('isInvoice')) {
         return OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
           document.toJSON(),
-          {
-            fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get('terminal')
-              .fullReturnInvoiceDocNoPrefix,
-            simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
-              'terminal'
-            ).simplifiedReturnInvoiceDocNoPrefix,
-            salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get(
-              'permissions'
-            ).OBPOS_SalesWithOneLineNegativeAsReturns
-          }
-        );
-      } else {
-        return OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
-          document.toJSON(),
-          {
-            returnSequencePrefix: OB.MobileApp.model.get('terminal')
-              .returnDocNoPrefix,
-            quotationSequencePrefix: OB.MobileApp.model.get('terminal')
-              .quotationDocNoPrefix,
-            salesWithOneLineNegativeAsReturns: OB.MobileApp.model.get(
-              'permissions'
-            ).OBPOS_SalesWithOneLineNegativeAsReturns
-          }
+          settings
         );
       }
+      return OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
+        document.toJSON(),
+        settings
+      );
     },
 
     getDocumentNo: async function(sequenceName) {
