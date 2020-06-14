@@ -29,6 +29,15 @@
         payload
       );
 
+      // FIXME: is it needed with new
+      newTicket.approvals = newTicket.approvals.map(approval => {
+        const newApproval = { ...approval };
+        if (typeof approval.approvalType === 'object') {
+          newApproval.approvalType = approval.approvalType.approval;
+        }
+        return newApproval;
+      });
+
       // Complete ticket payment
       newTicket = OB.App.State.Ticket.Utils.completePayment(newTicket, payload);
 
