@@ -51,8 +51,8 @@
         payload
       ));
 
-      // Shipment generation
-      newTicket = OB.App.State.Ticket.Utils.generateShipment(
+      // Delivery generation
+      newTicket = OB.App.State.Ticket.Utils.generateDelivery(
         newTicket,
         payload
       );

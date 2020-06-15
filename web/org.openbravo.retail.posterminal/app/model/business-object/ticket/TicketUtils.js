@@ -1038,6 +1038,95 @@
     },
 
     /**
+     * Generates the corresponding delivery for the given ticket.
+     *
+     * @param {object} ticket - The ticket whose delivery will be generated
+     * @param {object} settings - The calculation settings, which include:
+     *             * terminal.organization - The terminal organization.
+     *
+     * @returns {object} The ticket with the result of the delivery generation
+     */
+    generateDelivery(ticket, settings) {
+      const newTicket = { ...ticket };
+      const isFullyPaid =
+        ticket.payment >= OB.DEC.abs(ticket.grossAmount) || ticket.payOnCredit;
+      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStoreTicket(
+        ticket,
+        settings
+      );
+
+      newTicket.lines = ticket.lines.map(line => {
+        const newLine = { ...line };
+
+        if (isFullyPaid) {
+          newLine.obposCanbedelivered = true;
+          newLine.obposIspaid = true;
+        } else if (newLine.obposCanbedelivered) {
+          newLine.obposIspaid = true;
+        }
+
+        if (isCrossStoreTicket && !newLine.originalOrderLineId) {
+          newLine.obposQtytodeliver = newLine.deliveredQuantity || OB.DEC.Zero;
+        } else if (!newLine.obposQtytodeliver) {
+          if (
+            newLine.product.productType === 'S' &&
+            newLine.product.isLinkedToProduct
+          ) {
+            if (newLine.qty > 0) {
+              const qtyToDeliver =
+                newLine.product.quantityRule === 'UQ'
+                  ? OB.DEC.One
+                  : newLine.relatedLines.reduce((accumulator, relatedLine) => {
+                      const orderLine = ticket.lines.find(
+                        l => l.id === relatedLine.orderlineId
+                      );
+                      if (
+                        orderLine &&
+                        (isFullyPaid || orderLine.obposCanbedelivered)
+                      ) {
+                        return OB.DEC.add(accumulator, orderLine.qty);
+                      }
+                      if (relatedLine.obposIspaid) {
+                        return OB.DEC.add(
+                          accumulator,
+                          relatedLine.deliveredQuantity
+                        );
+                      }
+                      return accumulator;
+                    }, OB.DEC.Zero);
+
+              newLine.obposQtytodeliver = qtyToDeliver;
+              if (qtyToDeliver) {
+                newLine.obposCanbedelivered = true;
+              }
+            } else if (newLine.qty < 0) {
+              newLine.obposQtytodeliver = newLine.qty;
+              newLine.obposCanbedelivered = true;
+            }
+          } else if (newLine.obposCanbedelivered) {
+            newLine.obposQtytodeliver = newLine.qty;
+          } else {
+            newLine.obposQtytodeliver =
+              newLine.deliveredQuantity || OB.DEC.Zero;
+          }
+        }
+
+        return newLine;
+      });
+
+      newTicket.generateShipment = newTicket.lines.some(line => {
+        return (
+          line.obposQtytodeliver !== (line.deliveredQuantity || OB.DEC.Zero)
+        );
+      });
+      newTicket.deliver = !newTicket.lines.some(line => {
+        return line.obposQtytodeliver !== line.qty;
+      });
+
+      return newTicket;
+    },
+
+    /**
      * Generates the corresponding invoice for the given ticket.
      *
      * @param {object} ticket - The ticket whose invoice will be generated
