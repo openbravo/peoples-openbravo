@@ -105,6 +105,7 @@ public class ClassLoaderTest extends OBBaseTest {
     // Checking manual servlets
     obc = OBDal.getInstance().createCriteria(ModelImplementation.class);
     obc.add(Restrictions.eq(ModelImplementation.PROPERTY_OBJECTTYPE, "S"));
+    obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_TAB));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_SPECIALFORM));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_PROCESS));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_CALLOUT));
