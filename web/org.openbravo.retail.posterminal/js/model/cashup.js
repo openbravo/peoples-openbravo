@@ -14,7 +14,7 @@
     modelName: 'CashUp',
     tableName: 'cashup',
     entityName: 'CashUp',
-    source: '',
+    legacyModel: true,
     local: true
   });
 
