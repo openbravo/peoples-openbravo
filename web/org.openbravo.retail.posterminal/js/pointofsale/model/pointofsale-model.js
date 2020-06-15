@@ -122,7 +122,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             OB.MobileApp.model.off('window:ready', null, model);
             // If there is an error fetching the pending orders,
             // add an initial empty order
-            orderlist.addFirstOrder();
+            OB.App.State.Ticket.createEmptyTicket();
           },
           model
         );
@@ -1124,6 +1124,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           });
         }
       }
+
       let checkBPInLocal;
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         checkBPInLocal = function() {

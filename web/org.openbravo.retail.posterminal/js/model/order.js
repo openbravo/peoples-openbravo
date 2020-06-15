@@ -799,6 +799,12 @@
     },
 
     save: function(callback) {
+      // TODO: Remove save operations as it's no longer needed to save in c_order
+      if (callback) {
+        callback();
+      }
+      return;
+
       if (
         !OB.MobileApp.model.get('preventOrderSave') &&
         !this.get('preventOrderSave') &&
@@ -4080,6 +4086,7 @@
           }
         }
       }
+
       function errorCallback() {
         OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
         OB.UTIL.ProcessController.finish('addProduct', execution);
@@ -6130,6 +6137,7 @@
         me.unset('preventServicesUpdate');
         finishSetOrderType();
       }
+
       if (orderType === OB.DEC.One) {
         this.set(
           'documentType',
@@ -10233,6 +10241,7 @@
               return receiptPayment.paymentId === payment.reversedPaymentId;
             })[0];
           }
+
           i = 0;
           // Sort payments array, puting reverser payments inmediatly after their reversed payment
           while (i < model.receiptPayments.length) {
@@ -10608,6 +10617,7 @@
             }
           );
         }
+
         if (OB.UTIL.isNotEmptyString(model.externalBusinessPartnerReference)) {
           var me = this;
           this.loadExternalCustomer(
@@ -10645,13 +10655,6 @@
           }
         });
         callback(order);
-      },
-
-      addThisOrder: function(model) {
-        this.saveCurrent();
-        this.current = model;
-        this.unshift(this.current);
-        this.loadCurrent();
       },
 
       addPaidReceipt: function(model, callback) {

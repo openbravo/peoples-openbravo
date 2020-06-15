@@ -22,6 +22,19 @@ enyo.kind({
     name: 'listreceipts',
     classes: 'obUiModalReceipts-listreceipts'
   },
+  initComponents: function() {
+    this.inherited(arguments);
+    this.receiptsList = new Backbone.Collection(
+      OB.App.State.getState().TicketList
+    );
+    OB.App.PersistenceChangeListenerManager.addListener(
+      state => {
+        this.receiptsList = new Backbone.Collection(state.TicketList);
+        this.receiptsListChanged();
+      },
+      ['TicketList']
+    );
+  },
   receiptsListChanged: function(oldValue) {
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
   }
@@ -144,9 +157,11 @@ enyo.kind({
       );
       this.$.bp.setContent(bp.getIdentifier());
     } else {
-      this.$.bp.setContent(this.model.get('bp').get('_identifier'));
+      this.$.bp.setContent(this.model.get('businessPartner')._identifier);
     }
-    this.$.total.setContent(this.model.printTotal());
+    this.$.total.setContent(
+      OB.I18N.formatCurrency(this.model.get('grossAmount'))
+    );
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
       listReceiptLine: this
     });

@@ -2289,7 +2289,8 @@ enyo.kind({
     var receipt, receiptList, LeftColumnCurrentView;
     this.inherited(arguments);
     receipt = this.model.get('order');
-    receiptList = this.model.get('orderList');
+    // receiptList = new Backbone.Collection(OB.App.State.getState().TicketList);
+
     OB.MobileApp.view.scanningFocus(true);
 
     this.waterfall('onPointOfSaleLoad');
@@ -2473,7 +2474,7 @@ enyo.kind({
     );
 
     this.$.multiColumn.$.leftPanel.$.receiptview.setOrder(receipt);
-    this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(receiptList);
+    //this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(receiptList);
     this.$.multiColumn.$.rightPanel.$.toolbarpane.setModel(this.model);
     this.$.multiColumn.$.rightPanel.$.keyboard.setReceipt(receipt);
     this.$.multiColumn.$.rightToolbar.$.rightToolbar.setReceipt(receipt);

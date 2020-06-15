@@ -93,6 +93,7 @@ enyo.kind({
             function promiseResolve() {
               resolve(params);
             }
+
             if (
               params.product.get('modifyTax') &&
               params.attrs.relatedLines &&
@@ -500,8 +501,10 @@ enyo.kind({
       this.$.time.setContent(OB.I18N.formatHour(this.model.get('orderDate')));
     }
     this.$.orderNo.setContent(this.model.get('documentNo'));
-    this.$.bp.setContent(this.model.get('bp').get('_identifier'));
-    this.$.total.setContent(this.model.printTotal());
+    this.$.bp.setContent(this.model.get('businessPartner')._identifier);
+    this.$.total.setContent(
+      OB.I18N.formatCurrency(this.model.get('grossAmount'))
+    );
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
       listReceiptLine: this
     });
