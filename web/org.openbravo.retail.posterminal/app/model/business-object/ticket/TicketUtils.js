@@ -79,15 +79,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     });
 
     // set the total quantity
-    if (ticket.lines.length > 0) {
-      newTicket.qty = newTicket.lines
-        .map(l => l.qty)
-        .reduce((total, qty) =>
-          qty > 0 ? OB.DEC.add(total, qty, settings.qtyScale) : total
-        );
-    } else {
-      newTicket.qty = OB.DEC.Zero;
-    }
+    newTicket.qty = newTicket.lines
+      .map(l => l.qty)
+      .reduce(
+        (total, qty) =>
+          qty > 0 ? OB.DEC.add(total, qty, settings.qtyScale) : total,
+        0
+      );
 
     return newTicket;
   }
