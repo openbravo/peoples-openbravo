@@ -40,9 +40,9 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
   }
 
   @Override
-  public JSONObject saveRecord(JSONObject jsonCountSafeBox) throws Exception {
+  public JSONObject saveRecord(JSONObject countSafeBox) throws Exception {
     JSONObject jsonData = new JSONObject();
-
+    JSONObject jsonCountSafeBox = new JSONObject(countSafeBox.getString("objToSend"));
     Date countSafeBoxDate = new Date();
     // get and prepare the countSafeBox Date
     if (jsonCountSafeBox.has("countSafeBoxDate") && jsonCountSafeBox.get("countSafeBoxDate") != null

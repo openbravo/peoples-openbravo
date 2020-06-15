@@ -166,11 +166,23 @@
           silent: true
         });
         this.set('gross', OB.DEC.mul(this.getQty(), this.get('price')));
+        this.set(
+          'grossUnitAmount',
+          OB.DEC.compare(this.get('gross')) === 0
+            ? this.get('gross')
+            : OB.DEC.sub(this.get('gross'), this.getDiscount())
+        );
       } else {
         this.set('gross', null, {
           silent: true
         });
         this.set('net', OB.DEC.mul(this.getQty(), this.get('price')));
+        this.set(
+          'netUnitAmount',
+          OB.DEC.compare(this.get('net')) === 0
+            ? this.get('net')
+            : OB.DEC.sub(this.get('net'), this.getDiscount())
+        );
       }
     },
 
@@ -590,6 +602,9 @@
           this.set('id', uuid);
           OB.info('[NewOrder] New order set with id ' + uuid);
           this.id = uuid;
+          forceInsert = true;
+        } else if (this.get('isNew')) {
+          this.set('isNew', false);
           forceInsert = true;
         }
 
@@ -1414,7 +1429,8 @@
     },
 
     clearOrderAttributes: function() {
-      this.set('id', null);
+      this.set('id', OB.UTIL.get_UUID());
+      this.set('isNew', true);
       this.set('client', null);
       this.set('organization', null);
       this.set('createdBy', null);
@@ -10591,6 +10607,7 @@
         if (model.isLayaway) {
           order.set('isLayaway', true);
           order.set('id', model.orderid);
+          order.set('isNew', false);
           order.set('hasbeenpaid', 'N');
         } else {
           order.set('isPaid', true);
@@ -10615,6 +10632,7 @@
             order.set('paidOnCredit', true);
           }
           order.set('id', model.orderid);
+          order.set('isNew', false);
           if (
             order.get('documentType') ===
             OB.MobileApp.model.get('terminal').terminalType

@@ -513,25 +513,6 @@
         isPersistent: false
       });
 
-      this.get('dataSyncModels').push({
-        name: 'Count Safe Box',
-        model: OB.Model.CountSafeBox,
-        modelFunc: 'OB.Model.CountSafeBox',
-        className: 'org.openbravo.retail.posterminal.ProcessCountSafeBox',
-        timeout: 600000,
-        timePerRecord: 10000,
-        isPersistent: false,
-        criteria: {
-          isprocessed: 'Y'
-        },
-        getIdentifier: function(model) {
-          return (
-            model.user +
-            ' - ' +
-            OB.I18N.formatDateISO(new Date(model.creationDate))
-          );
-        }
-      });
       this.on('ready', function() {
         OB.debug("next process: 'retail.pointofsale' window");
         if (this.get('terminal').currencyFormat) {
