@@ -723,6 +723,17 @@
     },
 
     /**
+     * Checks whether a ticket is fully paid.
+     *
+     * @param {object} ticket - The ticket whose payment will be checked
+     *
+     * @returns {boolean} true in case the ticket is fully paid, false in case it is not paid or it is partially paid.
+     */
+    isFullyPaid(ticket) {
+      return ticket.payment >= OB.DEC.abs(ticket.grossAmount);
+    },
+
+    /**
      * Checks whether a ticket belongs to a different store.
      *
      * @param {object} ticket - The ticket whose will be checked
@@ -1045,8 +1056,8 @@
      */
     generateDelivery(ticket, settings) {
       const newTicket = { ...ticket };
-      const isFullyPaid =
-        ticket.payment >= OB.DEC.abs(ticket.grossAmount) || ticket.payOnCredit;
+      const isFullyPaidOrPaidOnCredit =
+        OB.App.State.Ticket.Utils.isFullyPaid(ticket) || ticket.payOnCredit;
       const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStoreTicket(
         ticket,
         settings
@@ -1055,7 +1066,7 @@
       newTicket.lines = ticket.lines.map(line => {
         const newLine = { ...line };
 
-        if (isFullyPaid) {
+        if (isFullyPaidOrPaidOnCredit) {
           newLine.obposCanbedelivered = true;
           newLine.obposIspaid = true;
         } else if (newLine.obposCanbedelivered) {
@@ -1079,7 +1090,8 @@
                       );
                       if (
                         orderLine &&
-                        (isFullyPaid || orderLine.obposCanbedelivered)
+                        (isFullyPaidOrPaidOnCredit ||
+                          orderLine.obposCanbedelivered)
                       ) {
                         return OB.DEC.add(accumulator, orderLine.qty);
                       }
