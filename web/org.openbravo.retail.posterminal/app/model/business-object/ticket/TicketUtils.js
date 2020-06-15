@@ -709,7 +709,7 @@
      *
      * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
      */
-    isReturnTicket(ticket, settings) {
+    isReturn(ticket, settings) {
       if (!ticket.lines) {
         return false;
       }
@@ -761,12 +761,9 @@
       }
 
       const newTicket = { ...ticket };
-      const isReturnTicket = OB.App.State.Ticket.Utils.isReturnTicket(
-        ticket,
-        settings
-      );
-      newTicket.orderType = isReturnTicket ? 1 : 0;
-      newTicket.documentType = isReturnTicket
+      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, settings);
+      newTicket.orderType = isReturn ? 1 : 0;
+      newTicket.documentType = isReturn
         ? settings.terminal.documentTypeForReturns
         : settings.terminal.documentTypeForSales;
 
@@ -1372,7 +1369,7 @@
       }
 
       // Convert return payments in negative
-      if (OB.App.State.Ticket.Utils.isReturnTicket(newTicket, settings)) {
+      if (OB.App.State.Ticket.Utils.isReturn(newTicket, settings)) {
         newTicket.payments = newTicket.payments.map(payment => {
           const newPayment = { ...payment };
 

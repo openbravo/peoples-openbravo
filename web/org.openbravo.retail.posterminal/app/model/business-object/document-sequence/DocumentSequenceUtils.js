@@ -70,14 +70,11 @@
      * @returns {string} The order sequence name.
      */
     getOrderSequenceName(ticket, settings) {
-      const isReturnTicket = OB.App.State.Ticket.Utils.isReturnTicket(
-        ticket,
-        settings
-      );
+      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, settings);
       if (ticket.isQuotation && settings.terminal.quotationSequencePrefix) {
         return 'quotationslastassignednum';
       }
-      if (isReturnTicket && settings.terminal.returnSequencePrefix) {
+      if (isReturn && settings.terminal.returnSequencePrefix) {
         return 'returnslastassignednum';
       }
       return 'lastassignednum';
@@ -95,20 +92,17 @@
      * @returns {string} The invoice sequence name.
      */
     getInvoiceSequenceName(ticket, settings) {
-      const isReturnTicket = OB.App.State.Ticket.Utils.isReturnTicket(
-        ticket,
-        settings
-      );
+      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, settings);
       if (
         !ticket.fullInvoice &&
-        isReturnTicket &&
+        isReturn &&
         settings.terminal.simplifiedReturnInvoiceSequencePrefix
       ) {
         return 'simplifiedreturninvoiceslastassignednum';
       }
       if (
         ticket.fullInvoice &&
-        isReturnTicket &&
+        isReturn &&
         settings.terminal.fullReturnInvoiceSequencePrefix
       ) {
         return 'fullreturninvoiceslastassignednum';
