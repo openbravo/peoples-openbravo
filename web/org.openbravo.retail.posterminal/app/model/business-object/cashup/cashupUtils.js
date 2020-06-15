@@ -41,28 +41,6 @@
       return response.response.data;
     },
 
-    showPopupNotEnoughDataInCache() {
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBMOBC_Error'),
-        OB.I18N.getLabel('OBMOBC_NotEnoughDataInCache') +
-          OB.I18N.getLabel('OBMOBC_LoadingErrorBody'),
-        [
-          {
-            label: OB.I18N.getLabel('OBMOBC_Reload'),
-            action() {
-              window.location.reload();
-            }
-          }
-        ],
-        {
-          onShowFunction(popup) {
-            popup.$.headerCloseButton.hide();
-          },
-          autoDismiss: false
-        }
-      );
-    },
-
     resetStatistics() {
       // TODO: modify state instead run methods
       // TODO !!!!!!!!!!!
