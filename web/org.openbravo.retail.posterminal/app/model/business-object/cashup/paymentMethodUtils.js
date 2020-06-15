@@ -93,23 +93,20 @@
     },
 
     getPaymentMethodFromBackendObject(paymentMethodCashUpModel) {
-      return {
-        id: paymentMethodCashUpModel.id,
-        paymentMethodId: paymentMethodCashUpModel.paymentmethod_id,
-        searchKey: paymentMethodCashUpModel.searchKey,
-        // eslint-disable-next-line no-underscore-dangle
-        name: paymentMethodCashUpModel._identifier,
-        startingCash: paymentMethodCashUpModel.startingCash,
-        totalSales: paymentMethodCashUpModel.totalSales,
-        totalReturns: paymentMethodCashUpModel.totalReturns,
-        totalDeposits: paymentMethodCashUpModel.totalDeposits,
-        totalDrops: paymentMethodCashUpModel.totalDrops,
-        rate: paymentMethodCashUpModel.rate,
-        isocode: paymentMethodCashUpModel.isocode,
-        lineNo: paymentMethodCashUpModel.lineNo,
-        newPaymentMethod: false,
-        cashManagements: []
-      };
+      const newPayment = { ...paymentMethodCashUpModel };
+
+      newPayment.newPaymentMethod = false;
+      newPayment.cashManagements = [];
+
+      newPayment.paymentMethodId = newPayment.paymentmethod_id;
+      delete newPayment.paymentmethod_id;
+
+      // eslint-disable-next-line no-underscore-dangle
+      newPayment.name = newPayment._identifier;
+      // eslint-disable-next-line no-underscore-dangle
+      delete newPayment._identifier;
+
+      return newPayment;
     },
 
     addPaymentsFromBackendCashup(payload) {
