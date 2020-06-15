@@ -19,6 +19,9 @@ OB = {
       bpSets: []
     }
   },
+  Format: {
+    formats: { qtyEdition: '#0.###' }
+  },
   Taxes: {
     Pos: {
       ruleImpls: []
@@ -33,14 +36,14 @@ require('../../../../../org.openbravo.client.kernel/web/org.openbravo.client.ker
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic.js');
 OB.App.StateAPI.registerModel('Ticket');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/ApplyDiscountsAndTaxesModelHook');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CalculateTotalsModelHook');
 
-// set Ticket model "applyDiscountsAndTaxes" utility function
+// set Ticket model "calculateTotals" utility function
 OB.App.State = {
   Ticket: {
     Utils: {
-      applyDiscountsAndTaxes: OB.App.StateAPI.Ticket.utilities
-        .filter(util => util.functionName === 'applyDiscountsAndTaxes')
+      calculateTotals: OB.App.StateAPI.Ticket.utilities
+        .filter(util => util.functionName === 'calculateTotals')
         .map(util => util.implementation)
         .pop()
     }
@@ -216,6 +219,7 @@ const results = [
     grossAmount: 540,
     netAmount: 446.28,
     priceIncludesTax: true,
+    qty: 2,
     lines: [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A3941',
@@ -271,6 +275,7 @@ const results = [
     grossAmount: 459.8,
     netAmount: 380,
     priceIncludesTax: false,
+    qty: 2,
     lines: [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A3942',
@@ -347,10 +352,55 @@ describe('Apply Discounts and Taxes Model Hook', () => {
     index | ticket
     ${0}  | ${'ticket #0'}
     ${1}  | ${'ticket #1'}
-  `('Apply discounts and taxes to $ticket', ({ index }) => {
+  `('Calculate totals of $ticket', ({ index }) => {
     setDiscountsEngineResultAs(discountResults[index]);
     setTaxesEngineResultAs(taxesResults[index]);
     const result = hook(deepfreeze(tickets[index]), payload());
     expect(result).toEqual(results[index]);
+  });
+
+  it('Negative lines are not computed for the ticket qty', () => {
+    const ticketWithNegativeLines = {
+      id: '0',
+      priceIncludesTax: true,
+      lines: [
+        {
+          id: '1',
+          qty: 1,
+          baseGrossUnitPrice: 300
+        },
+        {
+          id: '2',
+          qty: -1,
+          baseGrossUnitPrice: 100
+        },
+        {
+          id: '3',
+          qty: 2,
+          baseGrossUnitPrice: 200
+        },
+        {
+          id: '4',
+          qty: -1,
+          baseGrossUnitPrice: 50
+        }
+      ]
+    };
+    setDiscountsEngineResultAs({ lines: [] });
+    setTaxesEngineResultAs({ header: {}, lines: [] });
+    const result = hook(deepfreeze(ticketWithNegativeLines), payload());
+    expect(result.qty).toEqual(3);
+  });
+
+  it('Ticket with no lines results in qty 0', () => {
+    const ticketWithNegativeLines = {
+      id: '0',
+      priceIncludesTax: true,
+      lines: []
+    };
+    setDiscountsEngineResultAs({ lines: [] });
+    setTaxesEngineResultAs({ header: {}, lines: [] });
+    const result = hook(deepfreeze(ticketWithNegativeLines), payload());
+    expect(result.qty).toEqual(0);
   });
 });
