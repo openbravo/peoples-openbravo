@@ -57,21 +57,27 @@
     return ticket;
   });
 
+  // prepares the initial payload information including pack processing and checks the restrictions
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
     async (ticket, payload) => {
-      let newPayload = {
-        options: {},
-        attrs: {},
-        ...payload
-      };
+      let newPayload = { options: {}, attrs: {}, ...payload };
       newPayload.options.taxRules = OB.Taxes.Pos.ruleImpls;
       newPayload.products = newPayload.products.map(productInfo => {
         return { ...productInfo, qty: productInfo.qty || 1 };
       });
-
       newPayload = await processPacks(newPayload);
 
       checkRestrictions(ticket, newPayload);
+      return newPayload;
+    },
+    async (ticket, payload) => payload,
+    100
+  );
+
+  // main action preparations of the products to be added which may include validations
+  OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
+    async (ticket, payload) => {
+      let newPayload = { ...payload };
 
       newPayload = await prepareScaleProducts(newPayload);
       newPayload = await prepareBOMProducts(ticket, newPayload);
@@ -81,12 +87,32 @@
       newPayload = await prepareRelatedServices(newPayload);
       newPayload = await prepareProductPrices(ticket, newPayload);
 
+      return newPayload;
+    },
+    async (ticket, payload) => payload,
+    200
+  );
+
+  // checks the stock, this may be the most time-cost operation so it is executed once the payload is validated
+  OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
+    async (ticket, payload) => {
+      const newPayload = { ...payload };
       await checkStock(ticket, newPayload);
+      return newPayload;
+    },
+    async (ticket, payload) => payload,
+    300
+  );
 
+  // check the approvals
+  OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
+    async (ticket, payload) => {
+      const newPayload = { ...payload };
       const payloadWithApprovals = await checkApprovals(ticket, newPayload);
-
       return payloadWithApprovals;
-    }
+    },
+    async (ticket, payload) => payload,
+    400
   );
 
   function getLineToEdit(productInfo, ticket, options, attrs) {
