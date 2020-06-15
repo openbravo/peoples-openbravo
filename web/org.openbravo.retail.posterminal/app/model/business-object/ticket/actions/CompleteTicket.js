@@ -20,10 +20,28 @@
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newMessages = [...newGlobalState.Messages];
 
-      newTicket.created = new Date().getTime();
+      // Set complete ticket properties
       newTicket.completeTicket = true;
       newTicket.hasbeenpaid = 'Y';
       newTicket.obposAppCashup = payload.terminal.cashupId;
+      newTicket.creationDate = newTicket.creationDate || new Date();
+      newTicket.timezoneOffset = newTicket.creationDate.getTimezoneOffset();
+      newTicket.created = newTicket.creationDate.getTime();
+      newTicket.obposCreatedabsolute = OB.I18N.formatDateISO(
+        newTicket.creationDate
+      );
+      newTicket.orderDate = OB.I18N.normalizeDate(new Date());
+      newTicket.movementDate = OB.I18N.normalizeDate(new Date());
+      newTicket.accountingDate = OB.I18N.normalizeDate(new Date());
+      newTicket.creationDate = OB.I18N.normalizeDate(newTicket.creationDate);
+      newTicket.posTerminal = payload.terminal.id;
+      newTicket.undo = null;
+      newTicket.multipleUndo = null;
+      newTicket.paymentMethodKind =
+        newTicket.payments.length === 1 &&
+        OB.App.State.Ticket.Utils.isFullyPaid(newTicket)
+          ? newTicket.payments[0].kind
+          : null;
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(
         newTicket,
         payload
