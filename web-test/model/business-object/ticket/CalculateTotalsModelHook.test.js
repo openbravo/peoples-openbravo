@@ -391,4 +391,16 @@ describe('Apply Discounts and Taxes Model Hook', () => {
     const result = hook(deepfreeze(ticketWithNegativeLines), payload());
     expect(result.qty).toEqual(3);
   });
+
+  it('Ticket with no lines results in qty 0', () => {
+    const ticketWithNegativeLines = {
+      id: '0',
+      priceIncludesTax: true,
+      lines: []
+    };
+    setDiscountsEngineResultAs({ lines: [] });
+    setTaxesEngineResultAs({ header: {}, lines: [] });
+    const result = hook(deepfreeze(ticketWithNegativeLines), payload());
+    expect(result.qty).toEqual(0);
+  });
 });
