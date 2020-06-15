@@ -14,6 +14,19 @@
    * Initialize the cashup
    */
   OB.App.StateAPI.Global.registerActions({
+    /**
+     * Initialize a new cashup
+     * - If local cashup is ok, it will use it
+     * - In case there is no a local cashup, will try to load from backend
+     * - In case there is no a open cashup in the backend will create a new one from scratch
+     *   For this case will try to load the previous procesed cashup from the backend to know wich are the left cash
+     * @param {*} state
+     * @param {*} payload.terminalIsSlave/terminalIsMaster if using shared payment methods
+     * @param {*} payload.initCashupFrom local, backend form scratch
+     * @param {*} payload.terminalPayments the payments loaded in the terminal request
+     * @param {*} payload.lastCashUpPayments the payments from the previous cashup, to get the left cash
+     * @param {*} payload.terminalName/cacheSessionId info of the terminal and session
+     */
     initCashup(state, payload) {
       const newState = { ...state };
       const cashup = { ...newState.Cashup };
