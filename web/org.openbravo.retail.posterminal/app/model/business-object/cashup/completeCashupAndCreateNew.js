@@ -11,9 +11,17 @@
  */
 (function completeCashupAndCreateNewDefinition() {
   /**
-   * Complete the cashup
+   * Complete the cashup and create a new one
    */
   OB.App.StateAPI.Global.registerActions({
+    /**
+     * After process a cashup in the cashup window, this method is called, it sends the current cashup to the backend.
+     * In the message of the cashup to the backend also adds all the edited info in the cashup window.
+     * And after that, creates a new empty cashup
+     * @param {*} state
+     * @param {*} payload.completedCashupParams params for the cashup to complete and send to backend, including the closeCashupInfo
+     * @param {*} payload.newCashupParams params with info for create the new cashup
+     */
     completeCashupAndCreateNew(state, payload) {
       const newState = { ...state };
       const oldCashup = { ...newState.Cashup };
