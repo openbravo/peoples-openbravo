@@ -1178,10 +1178,10 @@
           });
         }
 
-        return [invoiceLine];
+        return invoiceLine;
       });
 
-      if (!invoiceLines) {
+      if (!invoiceLines.length) {
         return ticket;
       }
 
