@@ -84,7 +84,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       .reduce(
         (total, qty) =>
           qty > 0 ? OB.DEC.add(total, qty, settings.qtyScale) : total,
-        0
+        OB.DEC.Zero
       );
 
     return newTicket;
