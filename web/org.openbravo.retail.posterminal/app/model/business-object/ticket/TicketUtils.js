@@ -35,12 +35,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     // set the discount calculation result into the ticket
     newTicket.lines = newTicket.lines.map(line => {
-      const discounts =
-        discountsResult.lines[line.id] &&
-        discountsResult.lines[line.id].discounts;
+      const discounts = discountsResult.lines.find(l => l.id === line.id);
       const newLine = {
         ...line,
-        promotions: discounts ? discounts.promotions : []
+        promotions: discounts ? discounts.discounts : []
       };
       if (priceIncludesTax) {
         newLine.grossUnitPrice = discounts
@@ -64,9 +62,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     const taxesResult = OB.Taxes.Pos.applyTaxes(newTicket, settings.taxRules);
 
     // set the tax calculation result into the ticket
-    newTicket.grossAmount = taxesResult.header.grossAmount;
-    newTicket.netAmount = taxesResult.header.netAmount;
-    newTicket.taxes = taxesResult.header.taxes;
+    newTicket.grossAmount = taxesResult.grossAmount;
+    newTicket.netAmount = taxesResult.netAmount;
+    newTicket.taxes = taxesResult.taxes;
     taxesResult.lines.forEach(taxLine => {
       const line = newTicket.lines.find(l => l.id === taxLine.id);
       line.grossUnitAmount = taxLine.grossUnitAmount;
