@@ -21,13 +21,17 @@
       throw 'Local tax cache is not yet initialized, execute: OB.Taxes.Pos.initCache()';
     }
 
-    OB.App.StateBackwardCompatibility.getInstance(
-      'Ticket'
-    ).resetStateFromBackbone();
-    return OB.Taxes.Pos.applyTaxes(
-      OB.App.State.getState().Ticket,
-      OB.Taxes.Pos.ruleImpls
-    );
+    const ticket = {
+      ...receipt.toJSON(),
+      businessPartner: receipt.get('bp').toJSON(),
+      lines: receipt.get('lines').map(line => {
+        return {
+          ...line.toJSON(),
+          product: line.get('product').toJSON()
+        };
+      })
+    };
+    return OB.Taxes.Pos.applyTaxes(ticket, OB.Taxes.Pos.ruleImpls);
   };
 
   /**
