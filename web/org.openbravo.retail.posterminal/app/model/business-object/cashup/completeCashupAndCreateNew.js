@@ -26,14 +26,30 @@
       const newState = { ...state };
       const oldCashup = { ...newState.Cashup };
 
-      oldCashup.isprocessed = 'Y';
-
-      // create new message with current cashup
       const {
         closeCashupInfo,
         terminalName,
         cacheSessionId
       } = payload.completedCashupParams;
+
+      let newCashup = {};
+      const {
+        terminalIsSlave,
+        terminalIsMaster,
+        terminalPayments,
+        currentDate,
+        userId,
+        terminalId
+      } = payload.newCashupParams;
+
+      oldCashup.isprocessed = 'Y';
+      oldCashup.cashPaymentMethodInfo = OB.App.State.Cashup.Utils.getCashupPaymentsThatAreAlsoInTerminalPayments(
+        oldCashup.cashPaymentMethodInfo,
+        terminalPayments
+      );
+
+      // create new message with current cashup
+
       const newMessagePayload = {
         id: OB.App.UUID.generate(),
         terminal: terminalName,
@@ -48,15 +64,6 @@
       newState.Messages = [...newState.Messages, newMessage];
 
       // initialize the new cashup
-      let newCashup = {};
-      const {
-        terminalIsSlave,
-        terminalIsMaster,
-        terminalPayments,
-        currentDate,
-        userId,
-        terminalId
-      } = payload.newCashupParams;
 
       OB.App.State.Cashup.Utils.resetStatistics();
 
