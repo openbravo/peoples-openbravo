@@ -29,13 +29,11 @@
       newTicket.creationDate = newTicket.creationDate || new Date();
       newTicket.timezoneOffset = newTicket.creationDate.getTimezoneOffset();
       newTicket.created = newTicket.creationDate.getTime();
-      newTicket.obposCreatedabsolute = OB.I18N.formatDateISO(
-        newTicket.creationDate
-      );
-      newTicket.orderDate = OB.I18N.normalizeDate(new Date());
-      newTicket.movementDate = OB.I18N.normalizeDate(new Date());
-      newTicket.accountingDate = OB.I18N.normalizeDate(new Date());
-      newTicket.creationDate = OB.I18N.normalizeDate(newTicket.creationDate);
+      newTicket.orderDate = new Date().toISOString();
+      newTicket.movementDate = new Date().toISOString();
+      newTicket.accountingDate = new Date().toISOString();
+      newTicket.creationDate = newTicket.creationDate.toISOString();
+      newTicket.obposCreatedabsolute = newTicket.creationDate;
       newTicket.posTerminal = payload.terminal.id;
       newTicket.undo = null;
       newTicket.multipleUndo = null;
