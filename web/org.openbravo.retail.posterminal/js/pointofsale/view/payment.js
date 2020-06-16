@@ -2695,7 +2695,17 @@ enyo.kind({
           }
         );
       } else {
-        completeTicket(true);
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_PreOrderSave',
+          {
+            // context: context,
+            // model: model,
+            receipt: OB.MobileApp.model.receipt
+          },
+          function(args) {
+            completeTicket(!args || !args.cancellation);
+          }
+        );
       }
       return;
     }
