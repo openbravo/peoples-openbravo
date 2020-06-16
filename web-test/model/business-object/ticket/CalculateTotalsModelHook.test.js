@@ -78,66 +78,62 @@ const tickets = [
 
 const discountResults = [
   {
-    lines: {
-      BB66D8D151964A8A39586FCD7D9A3941: {
-        discounts: {
-          grossUnitAmount: 540,
-          grossUnitPrice: 270,
-          promotions: [
-            {
-              ruleId: 'C26B841C84B14FE2AB1A334DD3672E87',
-              discountType: '697A7AB9FD9C4EE0A3E891D3D3CCA0A7',
-              name: 'GPS_10_per',
-              applyNext: true,
-              amt: 30,
-              qtyOffer: 1
-            }
-          ]
-        }
+    lines: [
+      {
+        id: 'BB66D8D151964A8A39586FCD7D9A3941',
+        grossUnitAmount: 540,
+        grossUnitPrice: 270,
+        discounts: [
+          {
+            ruleId: 'C26B841C84B14FE2AB1A334DD3672E87',
+            discountType: '697A7AB9FD9C4EE0A3E891D3D3CCA0A7',
+            name: 'GPS_10_per',
+            applyNext: true,
+            amt: 30,
+            qtyOffer: 1
+          }
+        ]
       }
-    }
+    ]
   },
   {
-    lines: {
-      BB66D8D151964A8A39586FCD7D9A3942: {
-        discounts: {
-          netUnitAmount: 380,
-          netUnitPrice: 190,
-          promotions: [
-            {
-              ruleId: '08C2C89DB15443478B659A8645828F63',
-              discountType: '20E4EC27397344309A2185097392D964',
-              name: 'disc_5_ var_perc',
-              applyNext: true,
-              amt: 10,
-              qtyOffer: 0,
-              manual: true
-            }
-          ]
-        }
+    lines: [
+      {
+        id: 'BB66D8D151964A8A39586FCD7D9A3942',
+        netUnitAmount: 380,
+        netUnitPrice: 190,
+        discounts: [
+          {
+            ruleId: '08C2C89DB15443478B659A8645828F63',
+            discountType: '20E4EC27397344309A2185097392D964',
+            name: 'disc_5_ var_perc',
+            applyNext: true,
+            amt: 10,
+            qtyOffer: 0,
+            manual: true
+          }
+        ]
       }
-    }
+    ]
   }
 ];
 
 const taxesResults = [
   {
-    header: {
-      id: '6FD3CDDDBB2A3805895853BB22F2E9F1',
-      grossAmount: 540,
-      netAmount: 446.28,
-      taxes: {
-        '5235D8E99A2749EFA17A5C92A52AEFC6': {
-          id: '5235D8E99A2749EFA17A5C92A52AEFC6',
-          net: 446.28,
-          amount: 93.72,
-          name: 'Entregas IVA 21%',
-          docTaxAmount: 'D',
-          rate: 21,
-          taxBase: null,
-          cascade: false,
-          lineNo: 10
-        }
+    id: '6FD3CDDDBB2A3805895853BB22F2E9F1',
+    grossAmount: 540,
+    netAmount: 446.28,
+    taxes: {
+      '5235D8E99A2749EFA17A5C92A52AEFC6': {
+        id: '5235D8E99A2749EFA17A5C92A52AEFC6',
+        net: 446.28,
+        amount: 93.72,
+        name: 'Entregas IVA 21%',
+        docTaxAmount: 'D',
+        rate: 21,
+        taxBase: null,
+        cascade: false,
+        lineNo: 10
       }
     },
     lines: [
@@ -167,22 +163,20 @@ const taxesResults = [
     ]
   },
   {
-    header: {
-      id: '6FD3CDDDBB2A3805895853BB22F2E9F2',
-      grossAmount: 459.8,
-      netAmount: 380,
-      taxes: {
-        '5235D8E99A2749EFA17A5C92A52AEFC6': {
-          id: '5235D8E99A2749EFA17A5C92A52AEFC6',
-          net: 380,
-          amount: 79.8,
-          name: 'Entregas IVA 21%',
-          docTaxAmount: 'D',
-          rate: 21,
-          taxBase: null,
-          cascade: false,
-          lineNo: 10
-        }
+    id: '6FD3CDDDBB2A3805895853BB22F2E9F2',
+    grossAmount: 459.8,
+    netAmount: 380,
+    taxes: {
+      '5235D8E99A2749EFA17A5C92A52AEFC6': {
+        id: '5235D8E99A2749EFA17A5C92A52AEFC6',
+        net: 380,
+        amount: 79.8,
+        name: 'Entregas IVA 21%',
+        docTaxAmount: 'D',
+        rate: 21,
+        taxBase: null,
+        cascade: false,
+        lineNo: 10
       }
     },
     lines: [
@@ -387,7 +381,7 @@ describe('Apply Discounts and Taxes Model Hook', () => {
       ]
     };
     setDiscountsEngineResultAs({ lines: [] });
-    setTaxesEngineResultAs({ header: {}, lines: [] });
+    setTaxesEngineResultAs({ lines: [] });
     const result = hook(deepfreeze(ticketWithNegativeLines), payload());
     expect(result.qty).toEqual(3);
   });
@@ -399,7 +393,7 @@ describe('Apply Discounts and Taxes Model Hook', () => {
       lines: []
     };
     setDiscountsEngineResultAs({ lines: [] });
-    setTaxesEngineResultAs({ header: {}, lines: [] });
+    setTaxesEngineResultAs({ lines: [] });
     const result = hook(deepfreeze(ticketWithNegativeLines), payload());
     expect(result.qty).toEqual(0);
   });
