@@ -50,6 +50,19 @@
       // TODO !!!!!!!!!!!
     },
 
+    getTaxesFromBackendObject(backendTaxes) {
+      const taxes = [];
+      backendTaxes.forEach(backendTax => {
+        taxes.push({
+          id: backendTax.id,
+          orderType: backendTax.orderType,
+          name: backendTax.name,
+          amount: backendTax.amount
+        });
+      });
+      return taxes;
+    },
+
     createNewCashupFromScratch(payload) {
       const { cashup } = payload;
       const newCashup = { ...cashup };
@@ -73,19 +86,24 @@
 
     createNewCashupFromBackend(payload) {
       const { cashup, currentCashupFromBackend } = payload;
+      const newCashup = { ...cashup };
 
-      const newCashup = { ...cashup, ...currentCashupFromBackend };
-
+      newCashup.id = currentCashupFromBackend.id;
+      newCashup.netSales = currentCashupFromBackend.netSales;
+      newCashup.grossSales = currentCashupFromBackend.grossSales;
+      newCashup.netReturns = currentCashupFromBackend.netReturns;
+      newCashup.grossReturns = currentCashupFromBackend.grossReturns;
+      newCashup.totalRetailTransactions =
+        currentCashupFromBackend.totalRetailTransactions;
       newCashup.totalStartings = OB.DEC.Zero;
-      delete newCashup.cashMgmInfo;
-
-      newCashup.cashTaxInfo = currentCashupFromBackend.cashTaxInfo.map(
-        cashTax => {
-          const newCashTax = { ...cashTax };
-          delete newCashTax.cashup_id;
-          return newCashTax;
-        }
+      newCashup.creationDate = currentCashupFromBackend.creationDate;
+      newCashup.userId = currentCashupFromBackend.userId;
+      newCashup.posterminal = currentCashupFromBackend.posterminal;
+      newCashup.isprocessed = currentCashupFromBackend.isprocessed;
+      newCashup.cashTaxInfo = OB.App.State.Cashup.Utils.getTaxesFromBackendObject(
+        currentCashupFromBackend.cashTaxInfo
       );
+      newCashup.cashCloseInfo = currentCashupFromBackend.cashCloseInfo;
 
       return newCashup;
     },
