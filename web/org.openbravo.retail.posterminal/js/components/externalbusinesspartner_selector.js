@@ -68,6 +68,8 @@ enyo.kind({
     this.externalBPListViewData = new OB.App.Class.ExternalBusinessPartnerListViewData();
     this.filters = this.externalBPListViewData.getMainFilters();
     this.inherited(arguments);
+    // disable auto search when key is pressed
+    this.$.filterExternalBpSelector.$.formElementEntityFilterText.coreElement.skipAutoFilterPref = true;
   }
 });
 
@@ -437,39 +439,34 @@ enyo.kind({
     this.bpsList.reset();
     return true;
   },
-
   searchAction: function(inSender, inEvent) {
     this.$.stBPAssignToReceipt.renderLineParams = { dialog: this.dialog };
     this.dialog.externalBPListViewData
       .fetchBusinessPartnersFromAPI(inEvent.filters)
       .then(bps => {
-        successCallbackBPs(bps), errorCallbackBPs;
-      });
-    let me = this;
-    function successCallbackBPs(dataBps) {
-      me.dialog.setSearchPerformed(true);
-      me.$.renderLoading.hide();
-      if (dataBps && dataBps.length > 0) {
-        me.bpsList.reset(dataBps);
-        me.$.stBPAssignToReceipt.$.tbody.show();
-      } else {
-        me.bpsList.reset();
-        me.$.stBPAssignToReceipt.$.tempty.show();
-      }
-    }
-    function errorCallbackBPs(error) {
-      me.dialog.setSearchPerformed(true);
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBMOBC_Error'),
-        error.message,
-        null,
-        {
-          onHideFunction: function() {
-            me.doShowSelector();
-          }
+        this.dialog.setSearchPerformed(true);
+        this.$.renderLoading.hide();
+        if (bps && bps.length > 0) {
+          this.bpsList.reset(bps);
+          this.$.stBPAssignToReceipt.$.tbody.show();
+        } else {
+          this.bpsList.reset();
+          this.$.stBPAssignToReceipt.$.tempty.show();
         }
-      );
-    }
+      })
+      .catch(error => {
+        this.dialog.setSearchPerformed(true);
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBMOBC_Error'),
+          error.message,
+          null,
+          {
+            onHideFunction: function() {
+              this.doShowSelector();
+            }
+          }
+        );
+      });
   },
   drawResultsInList: function() {
     this.$.stBPAssignToReceipt.renderLineParams = { dialog: this.dialog };
@@ -491,48 +488,52 @@ enyo.kind({
 enyo.kind({
   name: 'OB.UI.ModalExternalBpSelectorFooter',
   classes: 'obUiModalExternalBpSelectorFooter',
+  events: {
+    onExternalBpSelected: '',
+    onHideThisPopup: ''
+  },
   components: [
     {
-      classes: 'obUiModalExternalBpSelectorFooter-container1',
+      classes: 'obUiModalExternalBpSelectorFooter-maincontainer',
       showing: true,
       components: [
         {
+          kind: 'OB.UI.AdvancedFilterButtonExternalBp',
+          name: 'advancedFilters',
           classes:
-            'obUiModal-footer-secondaryButtons obUiModalExternalBpSelectorFooter-container1-container1',
-          components: [
-            {
-              kind: 'OB.UI.AdvancedFilterButtonExternalBp',
-              classes:
-                'obUiModalExternalBpSelectorFooter-container1-container1-element1'
-            }
-          ]
+            'obUiModalExternalBpSelectorFooter-maincontainer-advancedFilters'
         },
         {
+          name: 'useAnonymousCustomer',
+          kind: 'OB.UI.ModalDialogButton',
           classes:
-            'obUiModal-footer-mainButtons obUiModalExternalBpSelectorFooter-container1-container2',
-          components: [
-            {
-              kind: 'OB.UI.NewExternalBusinessPartner',
-              name: 'newAction',
-              classes:
-                'obUiModalExternalBpSelectorFooter-container1-container2-newAction'
-            },
-            {
-              kind: 'OB.UI.ModalDialogButton',
-              classes:
-                'obUiModalExternalBpSelectorFooter-container1-container2-close',
-              i18nLabel: 'OBRDM_LblClose',
-              tap: function() {
-                if (this.disabled === false) {
-                  this.doHideThisPopup();
-                }
-              }
+            'obUiModalExternalBpSelectorFooter-maincontainer-useAnonymousCustomer',
+          i18nLabel: 'OBPOS_UseAnonymousBp',
+          ontap: 'useAnonymousCustomer'
+        },
+        {
+          kind: 'OB.UI.NewExternalBusinessPartner',
+          name: 'newAction',
+          classes: 'obUiModalExternalBpSelectorFooter-maincontainer-newAction'
+        },
+        {
+          kind: 'OB.UI.ModalDialogButton',
+          classes: 'obUiModalExternalBpSelectorFooter-maincontainer-close',
+          i18nLabel: 'OBMOBC_Close',
+          tap: function() {
+            if (this.disabled === false) {
+              this.doHideThisPopup();
             }
-          ]
+          }
         }
       ]
     }
   ],
+  useAnonymousCustomer: function() {
+    this.doHideThisPopup(null);
+    this.doExternalBpSelected(null);
+    return true;
+  },
   setAllowCreate: function(allowCreate) {
     this.$.newAction.setDisabled(!allowCreate);
   }
