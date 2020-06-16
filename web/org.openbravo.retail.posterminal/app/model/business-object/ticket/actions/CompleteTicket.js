@@ -42,7 +42,10 @@
         OB.App.State.Ticket.Utils.isFullyPaid(newTicket)
           ? newTicket.payments[0].kind
           : null;
-      newTicket.approvals = [...newTicket.approvals, ...payload.approvals];
+      newTicket.approvals = [
+        ...newTicket.approvals,
+        ...(payload.approvals || [])
+      ];
 
       // FIXME: Move to calculateTotals?
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(
