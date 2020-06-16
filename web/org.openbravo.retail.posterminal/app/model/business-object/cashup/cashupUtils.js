@@ -20,9 +20,6 @@
         'org.openbravo.retail.posterminal.master.Cashup',
         { isprocessed: 'N', isprocessedbo: 'N' }
       );
-      if (response.response.error) {
-        throw new Error(response.response.error.message);
-      }
       return response.response.data;
     },
 
@@ -41,32 +38,7 @@
         'org.openbravo.retail.posterminal.master.Cashup',
         { isprocessed: 'Y' }
       );
-      if (response.response.error) {
-        throw new Error(response.response.error.message);
-      }
       return response.response.data;
-    },
-
-    showPopupNotEnoughDataInCache() {
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBMOBC_Error'),
-        OB.I18N.getLabel('OBMOBC_NotEnoughDataInCache') +
-          OB.I18N.getLabel('OBMOBC_LoadingErrorBody'),
-        [
-          {
-            label: OB.I18N.getLabel('OBMOBC_Reload'),
-            action() {
-              window.location.reload();
-            }
-          }
-        ],
-        {
-          onShowFunction(popup) {
-            popup.$.headerCloseButton.hide();
-          },
-          autoDismiss: false
-        }
-      );
     },
 
     resetStatistics() {
@@ -76,19 +48,6 @@
       // OB.UTIL.resetNetworkInformation();
       // OB.UTIL.resetNumberOfLogClientErrors();
       // TODO !!!!!!!!!!!
-    },
-
-    getTaxesFromBackendObject(backendTaxes) {
-      const taxes = [];
-      backendTaxes.forEach(backendTax => {
-        taxes.push({
-          id: backendTax.id,
-          orderType: backendTax.orderType,
-          name: backendTax.name,
-          amount: backendTax.amount
-        });
-      });
-      return taxes;
     },
 
     createNewCashupFromScratch(payload) {
@@ -114,24 +73,19 @@
 
     createNewCashupFromBackend(payload) {
       const { cashup, currentCashupFromBackend } = payload;
-      const newCashup = { ...cashup };
 
-      newCashup.id = currentCashupFromBackend.id;
-      newCashup.netSales = currentCashupFromBackend.netSales;
-      newCashup.grossSales = currentCashupFromBackend.grossSales;
-      newCashup.netReturns = currentCashupFromBackend.netReturns;
-      newCashup.grossReturns = currentCashupFromBackend.grossReturns;
-      newCashup.totalRetailTransactions =
-        currentCashupFromBackend.totalRetailTransactions;
+      const newCashup = { ...cashup, ...currentCashupFromBackend };
+
       newCashup.totalStartings = OB.DEC.Zero;
-      newCashup.creationDate = currentCashupFromBackend.creationDate;
-      newCashup.userId = currentCashupFromBackend.userId;
-      newCashup.posterminal = currentCashupFromBackend.posterminal;
-      newCashup.isprocessed = currentCashupFromBackend.isprocessed;
-      newCashup.cashTaxInfo = OB.App.State.Cashup.Utils.getTaxesFromBackendObject(
-        currentCashupFromBackend.cashTaxInfo
+      delete newCashup.cashMgmInfo;
+
+      newCashup.cashTaxInfo = currentCashupFromBackend.cashTaxInfo.map(
+        cashTax => {
+          const newCashTax = { ...cashTax };
+          delete newCashTax.cashup_id;
+          return newCashTax;
+        }
       );
-      newCashup.cashCloseInfo = currentCashupFromBackend.cashCloseInfo;
 
       return newCashup;
     },
