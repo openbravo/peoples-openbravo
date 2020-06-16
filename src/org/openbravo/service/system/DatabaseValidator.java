@@ -596,7 +596,7 @@ public class DatabaseValidator implements SystemValidator {
       final Class<?> prim = property.getPrimitiveObjectType();
       if (prim == String.class || property.getDomainType() instanceof ButtonDomainType) {
         checkType(dbColumn, dbTable, result,
-            new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR", "CLOB" });
+            new String[] { "VARCHAR", "NVARCHAR", "CHAR", "NCHAR", "CLOB", "TSVECTOR" });
         // there are too many differences which make this check not relevant/practical at the moment
         // checkLength(dbColumn, dbTable, result, property.getFieldLength());
       } else if (prim == Long.class) {
