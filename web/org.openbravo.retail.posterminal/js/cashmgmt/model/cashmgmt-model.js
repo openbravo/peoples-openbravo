@@ -15,7 +15,7 @@ OB.OBPOSCashMgmt.UI = OB.OBPOSCashMgmt.UI || {};
 
 // Window model
 OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
-  models: [OB.Model.CashManagement],
+  models: [],
   payments: null,
   init: function() {
     OB.error(
