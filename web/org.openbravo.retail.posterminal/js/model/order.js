@@ -9858,7 +9858,8 @@
           ) {
             if (
               OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
-              receipt.get('id') !== null
+              receipt.get('id') !== null &&
+              receipt.get('isNew') === false
             ) {
               receipt.setIsCalculateReceiptLockState(true);
               receipt.setIsCalculateGrossLockState(true);
