@@ -20,7 +20,7 @@
         'org.openbravo.retail.posterminal.master.Cashup',
         { isprocessed: 'N', isprocessedbo: 'N' }
       );
-      return response.response.data;
+      return response.response;
     },
 
     isValidTheBackendCashup(data) {
@@ -38,7 +38,7 @@
         'org.openbravo.retail.posterminal.master.Cashup',
         { isprocessed: 'Y' }
       );
-      return response.response.data;
+      return response.response;
     },
 
     resetStatistics() {

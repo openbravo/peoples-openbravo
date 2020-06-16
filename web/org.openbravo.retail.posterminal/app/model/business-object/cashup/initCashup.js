@@ -116,30 +116,33 @@
         // init from local
         newPayload.initCashupFrom = 'local';
       } else {
-        const backendCashupData = await OB.App.State.Cashup.Utils.requestNoProcessedCashupFromBackend();
+        const backendCashupResponse = await OB.App.State.Cashup.Utils.requestNoProcessedCashupFromBackend();
         if (
-          OB.App.State.Cashup.Utils.isValidTheBackendCashup(backendCashupData)
+          !backendCashupResponse.error &&
+          OB.App.State.Cashup.Utils.isValidTheBackendCashup(
+            backendCashupResponse.data
+          )
         ) {
           // init from backend
           newPayload.initCashupFrom = 'backend';
           // eslint-disable-next-line prefer-destructuring
-          newPayload.currentCashupFromBackend = backendCashupData[0];
+          newPayload.currentCashupFromBackend = backendCashupResponse.data[0];
           newPayload.currentCashupFromBackend.totalStartings = OB.DEC.Zero;
         } else {
           // init from scratch
           newPayload.initCashupFrom = 'scratch';
-          const lastBackendCashupData = await OB.App.State.Cashup.Utils.requestProcessedCashupFromBackend();
-          if (lastBackendCashupData[0]) {
+          const lastBackendCashupResponse = await OB.App.State.Cashup.Utils.requestProcessedCashupFromBackend();
+          if (lastBackendCashupResponse.error) {
+            // error reading payments of backend last cashup
+            throw new OB.App.Class.ActionCanceled(
+              lastBackendCashupResponse.error.message
+            );
+          }
+          newPayload.lastCashUpPayments = null;
+          if (lastBackendCashupResponse.data[0]) {
             // payments from backend last cashup
             newPayload.lastCashUpPayments =
-              lastBackendCashupData[0].cashPaymentMethodInfo;
-          } else {
-            if (lastBackendCashupData.exception) {
-              // error reading payments of backend last cashup
-              throw new OB.App.Class.ActionCanceled('notEnoughDataInCache');
-            }
-            // is the first cashup of the terminal, initialize all payments to 0
-            newPayload.lastCashUpPayments = null;
+              lastBackendCashupResponse.data[0].cashPaymentMethodInfo;
           }
         }
       }
