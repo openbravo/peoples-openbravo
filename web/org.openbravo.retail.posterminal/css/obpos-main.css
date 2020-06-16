@@ -16489,6 +16489,22 @@ div.obrdmUiListOrdersLine-orderLine-container2-container3:nth-child(odd) {
   padding-right: 0.3em;
 }
 
+.obUiModalExternalBpSelectorFooter .obUiModalDialogButton {
+  min-width: 90px;
+  max-width: 100px;
+}
+
+.obUiModalExternalBpSelectorFooter-maincontainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.obUiModalExternalBpSelectorFooter-maincontainer-advancedFilters {
+  margin-right: auto;
+}
+
 
 /***********************   *****************************/
 /*       File: externalbusinesspartner_viewedit.js     */
