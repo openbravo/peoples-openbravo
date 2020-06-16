@@ -14,7 +14,7 @@
   window.newAddProduct = true; // TODO: remove this testing code
 
   OB.App.StateAPI.Ticket.registerAction('addProduct', (state, payload) => {
-    const ticket = { ...state };
+    let ticket = { ...state };
     // products: the product information to create the lines
     // options: settings that allow to change the behavior of the action
     // attrs: additional properties to be included in the created lines
@@ -44,15 +44,14 @@
           setLineAttributes(lineToEdit, attrs, productInfo);
         } else if (product.groupProduct || product.avoidSplitProduct) {
           // add product to a new line
-          const newLine = createLine(productInfo, ticket, options, attrs);
-          ticket.lines.push(newLine);
+          ticket = createLine(productInfo, ticket, options, attrs);
         } else {
           // add product creating multiple new lines with quantity 1 each
-          ticket.lines = ticket.lines.concat(
-            createLines(productInfo, ticket, options, attrs)
-          );
+          ticket = createLines(productInfo, ticket, options, attrs);
         }
       });
+
+    ticket = OB.App.State.Ticket.Utils.updateServicesInformation(ticket);
 
     return ticket;
   });
@@ -144,20 +143,18 @@
 
   function createLines(productInfo, ticket, options, attrs) {
     const { qty } = productInfo;
+    let newTicket = ticket;
 
-    const newLines = [];
     for (let count = 0; count < Math.abs(qty); count += 1) {
       const newProductInfo = { ...productInfo, qty: 1 };
-      newLines.push(createLine(newProductInfo, ticket, options, attrs));
+      newTicket = createLine(newProductInfo, newTicket, options, attrs);
     }
-    return newLines;
+
+    return newTicket;
   }
 
   function createLine(productInfo, ticket, options, attrs) {
     const { product, qty } = productInfo;
-
-    const organization = getOrganization(ticket, product, attrs);
-    const warehouse = getWarehouse(attrs);
 
     const lineQty =
       attrs.relatedLines &&
@@ -167,72 +164,40 @@
         ? attrs.relatedLines[0].qty
         : qty;
 
-    const newLine = {
-      id: OB.App.UUID.generate(),
+    const { newTicket, newLine } = OB.App.State.Ticket.Utils.createLine(
+      ticket,
       product,
-      organization,
-      warehouse,
-      uOM: product.uOM,
-      qty: OB.DEC.number(lineQty, product.uOMstandardPrecision),
-      priceIncludesTax: ticket.priceIncludesTax,
-      isEditable: lodash.has(options, 'isEditable') ? options.isEditable : true,
-      isDeletable: lodash.has(options, 'isDeletable')
-        ? options.isDeletable
-        : true
-    };
+      lineQty
+    );
 
-    if (newLine.priceIncludesTax) {
-      newLine.grossListPrice = OB.DEC.number(product.listPrice);
-      newLine.baseGrossUnitPrice = OB.DEC.number(product.standardPrice);
-    } else {
-      newLine.netListPrice = OB.DEC.number(product.listPrice);
-      newLine.baseNetUnitPrice = OB.DEC.number(product.standardPrice);
-    }
-
-    setLineAttributes(newLine, attrs, productInfo);
-    updateServiceRelatedLines(newLine, ticket, options.taxRules);
-    setDeliveryMode(newLine, ticket);
-    return newLine;
-  }
-
-  function getOrganization(ticket, product, attrs) {
     if (attrs.organization) {
-      return {
+      newLine.organization = {
         id: attrs.organization.id,
         orgName: attrs.organization.name,
         country: attrs.organization.country,
         region: attrs.organization.region
       };
     }
-    if (product.crossStore) {
-      const store = OB.App.TerminalProperty.get('store').find(
-        s => s.id === ticket.organization
-      );
-      return {
-        id: store.id,
-        orgName: store.name,
-        country: store.country,
-        region: store.region
+
+    if (attrs.splitline != null) {
+      newLine.warehouse = {
+        id: attrs.originalLine.warehouse.id,
+        warehousename: attrs.originalLine.warehouse.warehousename
       };
     }
-    return {
-      id: OB.App.TerminalProperty.get('terminal').organization,
-      orgName: OB.App.TerminalProperty.get('terminal').organization$_identifier,
-      country: OB.App.TerminalProperty.get('terminal').organizationCountryId,
-      region: OB.App.TerminalProperty.get('terminal').organizationRegionId
-    };
-  }
 
-  function getWarehouse(attrs) {
-    const splitLine = attrs.splitline == null;
-    return {
-      id: splitLine
-        ? OB.App.TerminalProperty.get('warehouses')[0].warehouseid
-        : attrs.originalLine.warehouse.id,
-      warehousename: splitLine
-        ? OB.App.TerminalProperty.get('warehouses')[0].warehousename
-        : attrs.originalLine.warehouse.warehousename
-    };
+    if (lodash.has(options, 'isEditable')) {
+      newLine.isEditable = options.isEditable;
+    }
+
+    if (lodash.has(options, 'isDeletable')) {
+      newLine.isDeletable = options.isDeletable;
+    }
+
+    setLineAttributes(newLine, attrs, productInfo);
+    updateServiceRelatedLines(newLine, newTicket, options.taxRules);
+
+    return newTicket;
   }
 
   function setLineAttributes(line, attrs, productInfo) {
@@ -260,9 +225,8 @@
     }
     // eslint-disable-next-line no-param-reassign
     line.groupService = line.product.groupProduct;
-    // Set the 'hasServices' property if the new line is adding a service related to a product to the order
+    // Set the 'hasServices' property if the new line is adding a service related to a product
     // Without the 'hasServices' property the quantity rules for services are not executed
-    // TODO: do we need this?
     if (!ticket.hasServices) {
       // eslint-disable-next-line no-param-reassign
       ticket.hasServices = true;
@@ -315,73 +279,6 @@
           );
         });
     }
-  }
-
-  function setDeliveryMode(line, ticket) {
-    if (line.product.productType !== 'S' && !line.obrdmDeliveryMode) {
-      let productDeliveryMode;
-      let productDeliveryDate;
-      let productDeliveryTime;
-
-      if (OB.App.State.Ticket.Utils.isLayaway(ticket)) {
-        productDeliveryMode = line.product.obrdmDeliveryModeLyw;
-      } else {
-        productDeliveryMode = line.product.obrdmDeliveryMode;
-        productDeliveryDate = line.product.obrdmDeliveryDate;
-        productDeliveryTime = line.product.obrdmDeliveryTime;
-      }
-
-      const deliveryMode =
-        productDeliveryMode ||
-        ticket.obrdmDeliveryModeProperty ||
-        'PickAndCarry';
-
-      // eslint-disable-next-line no-param-reassign
-      line.obrdmDeliveryMode = deliveryMode;
-
-      if (
-        deliveryMode === 'PickupInStoreDate' ||
-        deliveryMode === 'HomeDelivery'
-      ) {
-        const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
-
-        // eslint-disable-next-line no-param-reassign
-        line.obrdmDeliveryDate = productDeliveryMode
-          ? productDeliveryDate || currentDate
-          : ticket.obrdmDeliveryDateProperty;
-      }
-
-      if (deliveryMode === 'HomeDelivery') {
-        const currentTime = new Date();
-        currentTime.setSeconds(0);
-        currentTime.setMilliseconds(0);
-
-        // eslint-disable-next-line no-param-reassign
-        line.obrdmDeliveryTime = productDeliveryMode
-          ? productDeliveryTime || currentTime
-          : ticket.obrdmDeliveryTimeProperty;
-      }
-    }
-
-    let country;
-    let region;
-    if (line.obrdmDeliveryMode === 'HomeDelivery') {
-      const { shipLocId } = ticket.businessPartner;
-      country = shipLocId
-        ? ticket.businessPartner.locationModel.countryId
-        : null;
-      country = shipLocId
-        ? ticket.businessPartner.locationModel.regionId
-        : null;
-    } else {
-      country = line.organization.country;
-      region = line.organization.region;
-    }
-    // eslint-disable-next-line no-param-reassign
-    line.country = country;
-    // eslint-disable-next-line no-param-reassign
-    line.region = region;
   }
 
   function checkRestrictions(ticket, payload) {

@@ -33,21 +33,11 @@ require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
 
-const getTicketUtility = name => {
-  return OB.App.StateAPI.Ticket.utilities
-    .filter(util => util.functionName === name)
-    .map(util => util.implementation)
-    .pop();
-};
-// set Ticket model required utility functions
-OB.App.State = {
-  Ticket: {
-    Utils: {
-      isLayaway: getTicketUtility('isLayaway'),
-      isReturn: getTicketUtility('isReturn')
-    }
-  }
-};
+// set Ticket model utility functions
+OB.App.State = { Ticket: { Utils: {} } };
+OB.App.StateAPI.Ticket.utilities.forEach(
+  util => (OB.App.State.Ticket.Utils[util.functionName] = util.implementation)
+);
 
 OB.App.TerminalProperty.get.mockImplementation(property => {
   if (property === 'warehouses') {

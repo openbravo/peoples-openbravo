@@ -1137,7 +1137,8 @@ enyo.kind({
           !this.order.get('hasServices') ||
           this.updating ||
           this.order.get('preventServicesUpdate') ||
-          !this.order.get('isEditable')
+          !this.order.get('isEditable') ||
+          window.newAddProduct // TODO: remove this testing code
         ) {
           return;
         }
