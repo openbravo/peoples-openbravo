@@ -751,6 +751,84 @@
     },
 
     /**
+     * Returns ticket payment status.
+     *
+     * @param {object} ticket - The ticket whose payment status will be retrieved
+     * @param {object} settings - The calculation settings, which include:
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
+     *
+     * @returns {object} Ticket payment status.
+     */
+    getPaymentStatus(ticket, settings) {
+      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, settings);
+      const isReversal = ticket.payments.some(
+        payment => payment.reversedPaymentId
+      );
+      const paymentsAmount = ticket.payments.reduce((accumulator, payment) => {
+        if (
+          ticket.cancelAndReplaceChangePending ||
+          (!ticket.isLayaway &&
+            !ticket.isPaid &&
+            ticket.isNegative &&
+            !payment.isReversePayment)
+        ) {
+          return OB.DEC.sub(accumulator, payment.origAmount);
+        }
+        return OB.DEC.add(accumulator, payment.origAmount);
+      }, OB.DEC.Zero);
+      const remainingToPay = OB.DEC.sub(
+        ticket.grossAmount,
+        OB.DEC.add(paymentsAmount, ticket.nettingPayment || OB.DEC.Zero)
+      );
+
+      if (ticket.isNegative) {
+        return {
+          done:
+            OB.DEC.compare(ticket.lines.length) === 1 &&
+            OB.DEC.compare(remainingToPay) !== -1,
+          total: ticket.grossAmount,
+          pending:
+            OB.DEC.compare(remainingToPay) === -1
+              ? OB.DEC.mul(remainingToPay, -1)
+              : OB.DEC.Zero,
+          overpayment:
+            OB.DEC.compare(remainingToPay) === 1
+              ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
+              : OB.DEC.Zero,
+          isReturn,
+          isNegative: ticket.isNegative,
+          totalAmt: ticket.grossAmount,
+          pendingAmt:
+            OB.DEC.compare(remainingToPay) === -1
+              ? OB.DEC.mul(remainingToPay, -1)
+              : OB.DEC.Zero,
+          payments: ticket.payments,
+          isReversal
+        };
+      }
+
+      return {
+        done:
+          OB.DEC.compare(ticket.lines.length) === 1 &&
+          OB.DEC.compare(remainingToPay) !== 1,
+        total: ticket.grossAmount,
+        pending:
+          OB.DEC.compare(remainingToPay) === 1 ? remainingToPay : OB.DEC.Zero,
+        overpayment:
+          OB.DEC.compare(remainingToPay) === -1
+            ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
+            : OB.DEC.Zero,
+        isReturn,
+        isNegative: ticket.isNegative,
+        totalAmt: ticket.grossAmount,
+        pendingAmt:
+          OB.DEC.compare(remainingToPay) === 1 ? remainingToPay : OB.DEC.Zero,
+        payments: ticket.payments,
+        isReversal
+      };
+    },
+
+    /**
      * Updates the type of the given ticket.
      *
      * @param {object} ticket - The ticket whose type will be updated

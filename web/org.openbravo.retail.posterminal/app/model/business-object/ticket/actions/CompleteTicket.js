@@ -11,6 +11,8 @@
  * @fileoverview defines the Ticket global action that completes a ticket and moves it to a message in the state
  */
 
+/* eslint-disable no-use-before-define */
+
 (() => {
   OB.App.StateAPI.Global.registerAction(
     'completeTicket',
@@ -42,19 +44,13 @@
         OB.App.State.Ticket.Utils.isFullyPaid(newTicket)
           ? newTicket.payments[0].kind
           : null;
+      newTicket.approvals = [...newTicket.approvals, ...payload.approvals];
+
+      // FIXME: Move to calculateTotals?
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(
         newTicket,
         payload
       );
-
-      // FIXME: is it needed with new
-      newTicket.approvals = newTicket.approvals.map(approval => {
-        const newApproval = { ...approval };
-        if (typeof approval.approvalType === 'object') {
-          newApproval.approvalType = approval.approvalType.approval;
-        }
-        return newApproval;
-      });
 
       // Complete ticket payment
       newTicket = OB.App.State.Ticket.Utils.completePayment(newTicket, payload);
@@ -119,4 +115,55 @@
       return newGlobalState;
     }
   );
+
+  OB.App.StateAPI.Global.completeTicket.addActionPreparation(
+    async (globalState, payload) => {
+      const newPayload = await checkPrepaymentApproval(
+        globalState.Ticket,
+        payload
+      );
+      return newPayload;
+    },
+    async (globalState, payload) => payload,
+    100
+  );
+
+  const checkPrepaymentApproval = async (ticket, payload) => {
+    const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(ticket);
+    if (
+      !payload.terminal.calculatePrepayments ||
+      ticket.orderType === 1 ||
+      ticket.orderType === 3 ||
+      ticket.obposPrepaymentlimitamt === OB.DEC.Zero ||
+      paymentStatus.totalAmt <= OB.DEC.Zero ||
+      OB.DEC.sub(
+        OB.DEC.add(ticket.obposPrepaymentlimitamt, paymentStatus.pendingAmt),
+        paymentStatus.totalAmt
+      ) <= OB.DEC.Zero
+    ) {
+      return payload;
+    }
+
+    if (!OB.App.Security.hasPermission('OBPOS_AllowPrepaymentUnderLimit')) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_PrepaymentUnderLimit_NotAllowed',
+        messageParams: [ticket.obposPrepaymentlimitamt]
+      });
+    }
+
+    if (
+      ticket.approvals.some(
+        approval =>
+          approval.approvalType === 'OBPOS_approval.prepaymentUnderLimit'
+      )
+    ) {
+      return payload;
+    }
+
+    const newPayload = await OB.App.Security.requestApprovalForAction(
+      'OBPOS_approval.prepaymentUnderLimit',
+      payload
+    );
+    return newPayload;
+  };
 })();
