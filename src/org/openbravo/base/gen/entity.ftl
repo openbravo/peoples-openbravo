@@ -134,12 +134,16 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#if p.name?matches("Id")>
     @Override
     </#if>
-    public void set${p.getterSetterName?cap_first}(${p.shorterTypeName} ${p.javaName}) {
+    public void set${p.getterSetterName?cap_first}(${p.shorterTypeName} ${p.javaName}) <#if p.domainType?? && p.domainType.reference.name?matches("Search Vector")>throws OBException </#if>{
     <#if p.partOfCompositeId>
 	    ((Id)getId()).set${p.getterSetterName?cap_first}(${p.javaName});
 	<#else>
       <#if !p.computedColumn>
-        set(PROPERTY_${p.name?upper_case}, ${p.javaName});
+        <#if p.domainType?? && p.domainType.reference.name?matches("Search Vector")>
+          throw new OBException("It is not allowed to set a property that is of Search Vector reference");
+        <#else>
+          set(PROPERTY_${p.name?upper_case}, ${p.javaName});
+        </#if>
       <#else>
         set(COMPUTED_COLUMN_${p.name?upper_case}, ${p.javaName});
       </#if>
