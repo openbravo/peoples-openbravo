@@ -205,19 +205,6 @@
     );
   };
 
-  OB.UTIL.updateCashupCreationDate = function() {
-    OB.Dal.get(
-      OB.Model.CashUp,
-      OB.MobileApp.model.get('terminal').cashUpId,
-      function(cashup) {
-        if (cashup) {
-          cashup.set('creationDate', OB.I18N.normalizeDate(new Date()));
-          OB.Dal.save(cashup);
-        }
-      }
-    );
-  };
-
   OB.UTIL.closeCashAddPaymentWithMovement = function(
     paymentWithMovement,
     values
