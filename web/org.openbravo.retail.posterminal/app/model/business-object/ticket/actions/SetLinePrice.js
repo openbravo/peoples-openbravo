@@ -144,12 +144,15 @@
 
   OB.App.StateAPI.Ticket.setLinePrice.addActionPreparation(
     async (ticket, payload) => {
-      const { price, lineIds } = payload;
+      const { price, lineIds, ignoreValidations } = payload;
 
       checkParameters(ticket, lineIds, price);
 
       const lines = ticket.lines.filter(l => lineIds.includes(l.id));
-      checkRestrictions(ticket, lines, price);
+
+      if (!ignoreValidations) {
+        checkRestrictions(ticket, lines, price);
+      }
 
       const payloadWithApprovals = await checkApprovals(payload, lines);
       return payloadWithApprovals;

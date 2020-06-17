@@ -252,6 +252,15 @@ describe('Ticket.setQuantity action preparation', () => {
       expect(OB.App.Security.requestApprovalForAction).toHaveBeenCalled();
     });
 
+    it('validations can be skipped', async () => {
+      await expect(
+        prepareAction(
+          { lineIds: ['1'], price: 5, ignoreValidations: true },
+          { ...basicTicket, isEditable: false }
+        )
+      ).resolves.not.toThrow();
+    });
+
     describe('verified return', () => {
       it('cannot increase price without permission', async () => {
         await expectError(
