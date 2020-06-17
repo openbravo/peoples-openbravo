@@ -10749,29 +10749,6 @@
         // Refresh Master Data
         OB.UTIL.checkRefreshMasterData();
       },
-
-      load: function(model) {
-        // Workaround to prevent the pending receipts moder window from remaining open
-        // when the current receipt is selected from the list
-        if (
-          model &&
-          this.current &&
-          model.get('id') === this.current.get('id')
-        ) {
-          return;
-        }
-        this.saveCurrent();
-        this.current = model;
-        this.loadCurrent();
-      },
-      loadById: function(id) {
-        var mdl = _.find(OB.MobileApp.model.orderList.models, function(model) {
-          return model.get('id') === id;
-        });
-        if (mdl) {
-          this.load(mdl);
-        }
-      },
       saveCurrent: function() {
         if (this.current) {
           OB.UTIL.clone(this.modelorder, this.current);

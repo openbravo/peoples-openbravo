@@ -76,18 +76,23 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       },
                       function(args) {
                         reCalculateReceipt = args.reCalculateReceipt;
-                        orderlist.load(currentOrder);
-                        if (reCalculateReceipt) {
-                          OB.MobileApp.model.receipt.calculateGrossAndSave();
-                        }
-                        loadOrderStr =
-                          OB.I18N.getLabel('OBPOS_Order') +
-                          currentOrder.get('documentNo') +
-                          OB.I18N.getLabel('OBPOS_Loaded');
-                        OB.UTIL.showAlert.display(
-                          loadOrderStr,
-                          OB.I18N.getLabel('OBPOS_Info')
-                        );
+                        OB.App.State.Global.loadTicket({
+                          ticket: JSON.parse(
+                            JSON.stringify(currentOrder.toJSON())
+                          )
+                        }).then(() => {
+                          if (reCalculateReceipt) {
+                            OB.MobileApp.model.receipt.calculateGrossAndSave();
+                          }
+                          loadOrderStr =
+                            OB.I18N.getLabel('OBPOS_Order') +
+                            currentOrder.get('documentNo') +
+                            OB.I18N.getLabel('OBPOS_Loaded');
+                          OB.UTIL.showAlert.display(
+                            loadOrderStr,
+                            OB.I18N.getLabel('OBPOS_Info')
+                          );
+                        });
                       }
                     );
                   }

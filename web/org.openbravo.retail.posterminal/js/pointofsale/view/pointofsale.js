@@ -1764,8 +1764,9 @@ enyo.kind({
     );
   },
   changeCurrentOrder: function(inSender, inEvent) {
-    //TODO: Change
-    this.model.get('orderList').load(inEvent.newCurrentOrder);
+    OB.App.State.Global.loadTicket({
+      ticket: JSON.parse(JSON.stringify(inEvent.newCurrentOrder.toJSON()))
+    });
     return true;
   },
   removePayment: function(inSender, inEvent) {
