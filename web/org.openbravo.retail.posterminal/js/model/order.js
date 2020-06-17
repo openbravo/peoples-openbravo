@@ -1265,8 +1265,7 @@
           !this.isNegative() &&
           !this.get('cancelLayaway') &&
           this.get('bp') &&
-          this.get('bp').get('id') !==
-            OB.MobileApp.model.get('businessPartner').get('id')
+          this.get('bp').get('id') !== OB.MobileApp.model.get('businesspartner')
         ) {
           OB.UTIL.prepaymentRules[
             OB.MobileApp.model.get('terminal').prepaymentAlgorithm
