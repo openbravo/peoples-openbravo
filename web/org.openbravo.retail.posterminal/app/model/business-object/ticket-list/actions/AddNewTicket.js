@@ -17,7 +17,7 @@ OB.App.StateAPI.Global.registerAction('addNewTicket', (state, payload) => {
   newState.Ticket = { ...state.Ticket };
   newState.TicketList = [...state.TicketList];
 
-  newState.TicketList.push(newState.Ticket);
+  newState.TicketList.unshift(newState.Ticket);
   newState.Ticket = OB.App.State.Ticket.Utils.newTicket(
     payload.businessPartner,
     payload.terminal,

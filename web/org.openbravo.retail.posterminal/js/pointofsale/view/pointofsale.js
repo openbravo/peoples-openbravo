@@ -1764,6 +1764,7 @@ enyo.kind({
     );
   },
   changeCurrentOrder: function(inSender, inEvent) {
+    //TODO: Change
     this.model.get('orderList').load(inEvent.newCurrentOrder);
     return true;
   },
@@ -2289,7 +2290,9 @@ enyo.kind({
     var receipt, receiptList, LeftColumnCurrentView;
     this.inherited(arguments);
     receipt = this.model.get('order');
-    // receiptList = new Backbone.Collection(OB.App.State.getState().TicketList);
+    receiptList = new Backbone.Collection(
+      OB.App.OpenTicketList.getAllTickets()
+    );
 
     OB.MobileApp.view.scanningFocus(true);
 
@@ -2297,6 +2300,16 @@ enyo.kind({
 
     // Try to print the pending receipts.
     OB.OBPOSPointOfSale.OfflinePrinter.printPendingJobs();
+
+    OB.App.PersistenceChangeListenerManager.addListener(
+      state => {
+        const ticketList = new Backbone.Collection(
+          OB.App.OpenTicketList.getAllTickets()
+        );
+        this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(ticketList);
+      },
+      ['TicketList']
+    );
 
     this.model.get('leftColumnViewManager').on(
       'change:currentView',
@@ -2474,7 +2487,7 @@ enyo.kind({
     );
 
     this.$.multiColumn.$.leftPanel.$.receiptview.setOrder(receipt);
-    //this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(receiptList);
+    this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(receiptList);
     this.$.multiColumn.$.rightPanel.$.toolbarpane.setModel(this.model);
     this.$.multiColumn.$.rightPanel.$.keyboard.setReceipt(receipt);
     this.$.multiColumn.$.rightToolbar.$.rightToolbar.setReceipt(receipt);

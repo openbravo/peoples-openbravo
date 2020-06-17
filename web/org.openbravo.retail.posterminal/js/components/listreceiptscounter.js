@@ -28,22 +28,6 @@ enyo.kind({
   },
   initComponents: function() {
     this.inherited(arguments);
-    this.orderList = new Backbone.Collection(
-      OB.App.State.getState().TicketList
-    );
-
-    OB.App.PersistenceChangeListenerManager.addListener(
-      state => {
-        this.orderList = new Backbone.Collection(state.TicketList);
-
-        this.doSetReceiptsList({
-          orderList: this.orderList
-        });
-        this.renderNrItems(this.orderList.length + 1);
-      },
-      ['TicketList']
-    );
-    this.renderNrItems(this.orderList.length + 1);
   },
   renderNrItems: function(nrItems) {
     var receiptLabels;
@@ -85,7 +69,12 @@ enyo.kind({
       this.hide();
     }
   },
-  orderListChanged: function(oldValue) {}
+  orderListChanged: function(oldValue) {
+    this.doSetReceiptsList({
+      orderList: this.orderList
+    });
+    this.renderNrItems(this.orderList.length);
+  }
 });
 
 enyo.kind({
