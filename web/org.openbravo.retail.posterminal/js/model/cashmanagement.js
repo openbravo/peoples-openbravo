@@ -14,7 +14,7 @@
     modelName: 'CashManagement',
     tableName: 'cashmanagement',
     entityName: 'CashManagement',
-    source: '',
+    legacyModel: true,
     local: true,
     serializeToJSON: function() {
       return JSON.parse(JSON.stringify(this.toJSON()));

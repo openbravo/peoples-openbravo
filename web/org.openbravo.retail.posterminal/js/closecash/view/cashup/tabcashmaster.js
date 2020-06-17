@@ -131,42 +131,40 @@ enyo.kind({
   ],
 
   displayStep: function(model) {
-    function processCashCloseMaster(callback) {
-      new OB.DS.Process(
-        'org.openbravo.retail.posterminal.ProcessCashCloseMaster'
-      ).exec(
+    async function processCashCloseMaster(callback) {
+      const response = await OB.App.Request.mobileServiceRequest(
+        'org.openbravo.retail.posterminal.ProcessCashCloseMaster',
         {
           masterterminal: OB.POS.modelterminal.get('terminal').id,
-          cashUpId: OB.POS.modelterminal.get('terminal').cashUpId
-        },
-        function(data) {
-          if (data && data.exception) {
-            // Error handler
-            OB.log('error', data.exception.message);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_CashMgmtError'),
-              OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
-                data.exception.message,
-              [
-                {
-                  label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                  action: function() {
-                    processCashCloseMaster(callback);
-                  }
-                }
-              ],
-              {
-                autoDismiss: false,
-                onHideFunction: function() {
-                  OB.POS.navigate('retail.pointofsale');
-                }
-              }
-            );
-          } else {
-            callback(data);
-          }
+          cashUpId: OB.App.State.getState().Cashup.id
         }
       );
+
+      if (response && response.response && response.response.error) {
+        // Error handler
+        OB.log('error', response.response.error.message);
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashMgmtError'),
+          OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
+            response.response.error.message,
+          [
+            {
+              label: OB.I18N.getLabel('OBPOS_LblRetry'),
+              action: function() {
+                processCashCloseMaster(callback);
+              }
+            }
+          ],
+          {
+            autoDismiss: false,
+            onHideFunction: function() {
+              OB.POS.navigate('retail.pointofsale');
+            }
+          }
+        );
+      } else {
+        callback(response.response.data);
+      }
     }
 
     // this function is invoked when displayed.

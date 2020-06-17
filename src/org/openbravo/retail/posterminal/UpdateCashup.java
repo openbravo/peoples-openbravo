@@ -98,7 +98,7 @@ public class UpdateCashup {
         cashUp.setCreationDate(cashUpReportDate);
         cashUp.setPOSTerminal(posTerminal);
         cashUp.setUserContact(dalUser);
-        cashUp.setBeingprocessed(jsonCashup.getString("isbeingprocessed").equalsIgnoreCase("Y"));
+        cashUp.setBeingprocessed(false); // no longer used in the pos
         cashUp.setNewOBObject(true);
         OBDal.getInstance().save(cashUp);
 

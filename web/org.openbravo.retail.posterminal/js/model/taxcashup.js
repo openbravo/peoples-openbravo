@@ -12,7 +12,7 @@
     modelName: 'TaxCashUp',
     tableName: 'taxcashup',
     entityName: 'TaxCashUp',
-    source: '',
+    legacyModel: true,
     local: true
   });
 

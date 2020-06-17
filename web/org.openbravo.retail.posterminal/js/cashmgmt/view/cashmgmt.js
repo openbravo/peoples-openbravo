@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -47,9 +47,15 @@ enyo.kind({
       disabled: false,
       i18nLabel: 'OBMOBC_LblCancel',
       stepCount: 0,
+      init: function(model) {
+        this.model = model;
+      },
       tap: function() {
+        var me = this;
         OB.POS.hwserver.checkDrawer(function() {
-          OB.POS.navigate('retail.pointofsale');
+          me.model.cancelDeposits(function() {
+            OB.POS.navigate('retail.pointofsale');
+          });
         });
       }
     },
@@ -75,9 +81,11 @@ enyo.kind({
           var hasProvider = false,
             payment = null,
             currentDrop = null;
-          this.model.depsdropstosave.each(function(drop) {
+          OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+            OB.App.State.getState().Cashup.cashPaymentMethodInfo
+          ).forEach(function(drop) {
             payment = _.find(OB.POS.modelterminal.get('payments'), function(p) {
-              return p.payment.id === drop.get('paymentMethodId');
+              return p.payment.id === drop.paymentMethodId;
             });
             if (payment && payment.paymentMethod.cashManagementProvider) {
               hasProvider = true;
@@ -94,14 +102,14 @@ enyo.kind({
                 key: payment.paymentMethod.searchKey,
                 name: payment.paymentMethod._identifier,
                 paymentMethod: payment.paymentMethod,
-                amount: currentDrop.get('amount'),
+                amount: currentDrop.amount,
                 rate: payment.rate,
                 mulrate: payment.mulrate,
                 isocode: payment.isocode
               }
             });
           } else {
-            this.model.depsdropstosave.trigger('makeDeposits');
+            this.model.trigger('makeDeposits');
           }
         }, this);
       }
@@ -278,7 +286,7 @@ enyo.kind({
       'click',
       function(model) {
         var me = this;
-        this.model.depsdropstosave.trigger(
+        this.model.trigger(
           'paymentDone',
           model,
           this.currentPayment,
@@ -286,8 +294,13 @@ enyo.kind({
             OB.info(
               '[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' +
                 JSON.stringify(
-                  me.model.depsdropstosave.models.map(function(item) {
-                    return item.getRelevantInformationString();
+                  OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+                    OB.App.State.getState().Cashup.cashPaymentMethodInfo
+                  ).map(function(item) {
+                    return OB.Dal.transform(
+                      OB.Model.CashManagement,
+                      item
+                    ).getRelevantInformationString();
                   })
                 )
             );
@@ -306,7 +319,7 @@ enyo.kind({
       'click',
       function(model) {
         var me = this;
-        this.model.depsdropstosave.trigger(
+        this.model.trigger(
           'paymentDone',
           model,
           this.currentPayment,
@@ -314,8 +327,13 @@ enyo.kind({
             OB.info(
               '[CashMgmntEvent] Item Added. Current Cash Mgmnt items: ' +
                 JSON.stringify(
-                  me.model.depsdropstosave.models.map(function(item) {
-                    return item.getRelevantInformationString();
+                  OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+                    OB.App.State.getState().Cashup.cashPaymentMethodInfo
+                  ).map(function(item) {
+                    return OB.Dal.transform(
+                      OB.Model.CashManagement,
+                      item
+                    ).getRelevantInformationString();
                   })
                 )
             );

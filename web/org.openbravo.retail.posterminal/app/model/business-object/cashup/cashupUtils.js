@@ -1,0 +1,424 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2020 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+/**
+ * @fileoverview Define utility functions for the Cashup Model
+ */
+(function CashupUtilsDefinition() {
+  OB.App.StateAPI.Cashup.registerUtilityFunctions({
+    isValidTheLocalCashup(cashup) {
+      return cashup.id != null;
+    },
+
+    async requestNoProcessedCashupFromBackend() {
+      const response = await OB.App.Request.mobileServiceRequest(
+        'org.openbravo.retail.posterminal.master.Cashup',
+        { isprocessed: 'N', isprocessedbo: 'N' }
+      );
+      return response.response;
+    },
+
+    isValidTheBackendCashup(data) {
+      if (data && data.exception) {
+        throw new Error(data.exception);
+      } else if (data && _.isArray(data) && data.length > 0 && data[0]) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    async requestProcessedCashupFromBackend() {
+      const response = await OB.App.Request.mobileServiceRequest(
+        'org.openbravo.retail.posterminal.master.Cashup',
+        { isprocessed: 'Y' }
+      );
+      return response.response;
+    },
+
+    resetStatistics() {
+      // TODO: modify state instead run methods
+      // TODO !!!!!!!!!!!
+      // OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
+      // OB.UTIL.resetNetworkInformation();
+      // OB.UTIL.resetNumberOfLogClientErrors();
+      // TODO !!!!!!!!!!!
+    },
+
+    getTaxesFromBackendObject(backendTaxes) {
+      const taxes = [];
+      backendTaxes.forEach(backendTax => {
+        taxes.push({
+          id: backendTax.id,
+          orderType: backendTax.orderType,
+          name: backendTax.name,
+          amount: backendTax.amount
+        });
+      });
+      return taxes;
+    },
+
+    createNewCashupFromScratch(payload) {
+      const { cashup } = payload;
+      const newCashup = { ...cashup };
+
+      newCashup.id = OB.App.UUID.generate();
+      newCashup.netSales = OB.DEC.Zero;
+      newCashup.grossSales = OB.DEC.Zero;
+      newCashup.netReturns = OB.DEC.Zero;
+      newCashup.grossReturns = OB.DEC.Zero;
+      newCashup.totalRetailTransactions = OB.DEC.Zero;
+      newCashup.totalStartings = OB.DEC.Zero;
+      newCashup.creationDate = payload.payload.currentDate.toISOString();
+      newCashup.userId = payload.payload.userId;
+      newCashup.posterminal = payload.payload.posterminal;
+      newCashup.isprocessed = false;
+      newCashup.cashTaxInfo = [];
+      newCashup.cashCloseInfo = [];
+
+      return newCashup;
+    },
+
+    createNewCashupFromBackend(payload) {
+      const { cashup, currentCashupFromBackend } = payload;
+      const newCashup = { ...cashup };
+
+      newCashup.id = currentCashupFromBackend.id;
+      newCashup.netSales = currentCashupFromBackend.netSales;
+      newCashup.grossSales = currentCashupFromBackend.grossSales;
+      newCashup.netReturns = currentCashupFromBackend.netReturns;
+      newCashup.grossReturns = currentCashupFromBackend.grossReturns;
+      newCashup.totalRetailTransactions =
+        currentCashupFromBackend.totalRetailTransactions;
+      newCashup.totalStartings = OB.DEC.Zero;
+      newCashup.creationDate = currentCashupFromBackend.creationDate;
+      newCashup.userId = currentCashupFromBackend.userId;
+      newCashup.posterminal = currentCashupFromBackend.posterminal;
+      newCashup.isprocessed = currentCashupFromBackend.isprocessed;
+      newCashup.cashTaxInfo = OB.App.State.Cashup.Utils.getTaxesFromBackendObject(
+        currentCashupFromBackend.cashTaxInfo
+      );
+      newCashup.cashCloseInfo = currentCashupFromBackend.cashCloseInfo;
+
+      return newCashup;
+    },
+
+    getCashupFilteredForSendToBackendInEachTicket(payload) {
+      const { terminalPayments, cashup } = payload;
+
+      const cashupToSend = { ...cashup };
+      const cashupPayments = cashupToSend.cashPaymentMethodInfo;
+
+      cashupToSend.cashPaymentMethodInfo = OB.App.State.Cashup.Utils.getCashupPaymentsThatAreAlsoInTerminalPayments(
+        cashupPayments,
+        terminalPayments
+      );
+
+      return cashupToSend;
+    },
+
+    /**
+     * converts an amount to the WebPOS amount currency
+     * @param  {currencyId} fromCurrencyId    the currencyId of the amount to be converted
+     * @param  {float}      amount            the amount to be converted
+     * @param  {currencyId} defaultCurrencyId the currencyId of the default payment method
+     * @param  {Object[]}   conversions       array of converters availables
+     * @return {float}                        the converted amount
+     */
+    toDefaultCurrency(fromCurrencyId, amount, defaultCurrencyId, conversions) {
+      if (
+        fromCurrencyId === defaultCurrencyId &&
+        fromCurrencyId != null &&
+        defaultCurrencyId != null
+      ) {
+        return amount;
+      }
+
+      const converter = conversions.find(function getConverter(c) {
+        return (
+          c.fromCurrencyId === fromCurrencyId &&
+          c.toCurrencyId === defaultCurrencyId
+        );
+      });
+
+      if (!converter.length === 0) {
+        OB.error(
+          `Currency converter not added: ${fromCurrencyId} -> ${defaultCurrencyId}`
+        );
+      }
+
+      return OB.DEC.mul(amount, converter.rate);
+    },
+
+    /**
+     * converts an amount from the WebPOS currency to the toCurrencyId currency
+     * @param  {currencyId} toCurrencyId      the currencyId of the final amount
+     * @param  {float}      amount            the amount to be converted
+     * @param  {currencyId} defaultCurrencyId the currencyId of the default payment method
+     * @param  {Object[]}   conversions       array of converters availables
+     * @return {float}                        the converted amount
+     */
+    toForeignCurrency(toCurrencyId, amount, defaultCurrencyId, conversions) {
+      if (
+        toCurrencyId === defaultCurrencyId &&
+        toCurrencyId != null &&
+        defaultCurrencyId != null
+      ) {
+        return amount;
+      }
+
+      const converter = conversions.find(function getConverter(c) {
+        return (
+          c.fromCurrencyId === defaultCurrencyId &&
+          c.toCurrencyId === toCurrencyId
+        );
+      });
+
+      if (!converter.length === 0) {
+        OB.error(
+          `Currency converter not added: ${toCurrencyId} -> ${defaultCurrencyId}`
+        );
+      }
+
+      return OB.DEC.mul(amount, converter.rate);
+    },
+
+    countTicketInCashup(cashup, ticket, countLayawayAsSales, paymentnames) {
+      const newCashup = { ...cashup };
+
+      const { orderType } = ticket;
+
+      let gross;
+      let taxOrderType;
+      let taxAmount;
+      let amount;
+      let precision;
+      let netSales = OB.DEC.Zero;
+      let grossSales = OB.DEC.Zero;
+      let netReturns = OB.DEC.Zero;
+      let grossReturns = OB.DEC.Zero;
+      let taxSales = OB.DEC.Zero;
+      let taxReturns = OB.DEC.Zero;
+      let ctaxSales;
+      const maxtaxSales = OB.DEC.Zero;
+      let ctaxReturns;
+      const maxtaxReturns = OB.DEC.Zero;
+      if (
+        !ticket.isQuotation &&
+        !ticket.isPaid &&
+        ((countLayawayAsSales && !(ticket.isLayaway && !ticket.voidLayaway)) ||
+          (!countLayawayAsSales &&
+            !ticket.cancelLayaway &&
+            (ticket.payOnCredit || ticket.completeTicket)))
+      ) {
+        ticket.lines.forEach(line => {
+          gross = line.grossUnitAmount;
+          if (ticket.doCancelAndReplace) {
+            if (!line.replacedorderline) {
+              netSales = OB.DEC.add(netSales, line.baseNetUnitAmount);
+              grossSales = OB.DEC.add(grossSales, gross);
+            }
+          } else if (ticket.cancelLayaway) {
+            // Cancel Layaway
+            netSales = OB.DEC.add(netSales, line.baseNetUnitAmount);
+            grossSales = OB.DEC.add(grossSales, gross);
+          } else if (ticket.voidLayaway) {
+            // Void Layaway
+            netSales = OB.DEC.add(netSales, -line.baseNetUnitAmount);
+            grossSales = OB.DEC.add(grossSales, -gross);
+          } else if (line.qty > 0) {
+            // Sales order: Positive line
+            netSales = OB.DEC.add(netSales, line.baseNetUnitAmount);
+            grossSales = OB.DEC.add(grossSales, gross);
+          } else if (line.qty < 0) {
+            // Return from customer or Sales with return: Negative line
+            netReturns = OB.DEC.add(netReturns, -line.baseNetUnitAmount);
+            grossReturns = OB.DEC.add(grossReturns, -gross);
+          }
+        });
+      }
+      newCashup.netSales = OB.DEC.add(newCashup.netSales, netSales);
+      newCashup.grossSales = OB.DEC.add(newCashup.grossSales, grossSales);
+      newCashup.netReturns = OB.DEC.add(newCashup.netReturns, netReturns);
+      newCashup.grossReturns = OB.DEC.add(newCashup.grossReturns, grossReturns);
+      newCashup.totalRetailTransactions = OB.DEC.sub(
+        newCashup.grossSales,
+        newCashup.grossReturns
+      );
+
+      // group and sum the taxes
+      const newCashupTaxes = [];
+      ticket.lines.forEach(line => {
+        const { taxes } = line;
+        if (
+          orderType === 1 ||
+          (line.qty < 0 && !ticket.cancelLayaway && !ticket.voidLayaway)
+        ) {
+          taxOrderType = '1';
+        } else {
+          taxOrderType = '0';
+        }
+
+        Object.values(taxes).forEach(taxLine => {
+          if (!ticket.isQuotation) {
+            if (ticket.cancelLayaway || (line.qty > 0 && !ticket.isLayaway)) {
+              taxAmount = taxLine.amount;
+            } else if (
+              ticket.voidLayaway ||
+              (line.qty < 0 && !ticket.isLayaway)
+            ) {
+              taxAmount = -taxLine.amount;
+            }
+          }
+
+          if (taxAmount != null) {
+            newCashupTaxes.push({
+              taxName: taxLine.name,
+              taxAmount,
+              taxOrderType
+            });
+          }
+        });
+      });
+
+      // Calculate adjustment taxes
+      newCashupTaxes.forEach(t => {
+        if (t.taxOrderType === '0') {
+          // sale
+          taxSales = OB.DEC.add(taxSales, t.taxAmount);
+          if (t.taxAmount > maxtaxSales) {
+            ctaxSales = t;
+          }
+        } else {
+          // return
+          taxReturns = OB.DEC.add(taxReturns, t.taxAmount);
+          if (t.taxAmount > maxtaxReturns) {
+            ctaxReturns = t;
+          }
+        }
+      });
+
+      // Do the adjustment
+      if (ctaxSales) {
+        ctaxSales.taxAmount = OB.DEC.add(
+          ctaxSales.taxAmount,
+          OB.DEC.sub(OB.DEC.sub(grossSales, netSales), taxSales)
+        );
+      }
+      if (ctaxReturns) {
+        ctaxReturns.taxAmount = OB.DEC.add(
+          ctaxReturns.taxAmount,
+          OB.DEC.sub(OB.DEC.sub(grossReturns, netReturns), taxReturns)
+        );
+      }
+
+      // save the calculated taxes into the cashup
+      newCashupTaxes.forEach(newCashupTax => {
+        const cashupTax = newCashup.cashTaxInfo.filter(function filter(
+          cashupTaxFilter
+        ) {
+          return (
+            cashupTaxFilter.name === newCashupTax.taxName &&
+            cashupTaxFilter.orderType === newCashupTax.taxOrderType
+          );
+        })[0];
+        if (cashupTax) {
+          cashupTax.amount = OB.DEC.add(
+            cashupTax.amount,
+            newCashupTax.taxAmount
+          );
+        } else {
+          newCashup.cashTaxInfo.push({
+            id: OB.App.UUID.generate(),
+            name: newCashupTax.taxName,
+            amount: newCashupTax.taxAmount,
+            orderType: newCashupTax.taxOrderType
+          });
+        }
+      });
+
+      // set all payment methods to not used in the trx
+      newCashup.cashPaymentMethodInfo.forEach(paymentMethod => {
+        if (paymentMethod.usedInCurrentTrx !== false) {
+          // eslint-disable-next-line no-param-reassign
+          paymentMethod.usedInCurrentTrx = false;
+        }
+      });
+
+      ticket.payments.forEach(orderPayment => {
+        const cashupPayment = newCashup.cashPaymentMethodInfo.filter(
+          cashupPaymentMethodFilter => {
+            return (
+              cashupPaymentMethodFilter.searchKey === orderPayment.kind &&
+              !orderPayment.isPrePayment
+            );
+          }
+        )[0];
+        if (!cashupPayment) {
+          // We cannot find this payment in local database, it must be a new payment method, we skip it.
+          return;
+        }
+        precision = paymentnames[cashupPayment.searchKey].obposPosprecision;
+        amount = orderPayment.amountRounded
+          ? orderPayment.amountRounded
+          : orderPayment.amount;
+        if (
+          amount < 0 ||
+          (orderPayment.paymentRounding && orderPayment.isReturnOrder)
+        ) {
+          cashupPayment.totalReturns = OB.DEC.sub(
+            cashupPayment.totalReturns,
+            amount,
+            precision
+          );
+        } else {
+          cashupPayment.totalSales = OB.DEC.add(
+            cashupPayment.totalSales,
+            amount,
+            precision
+          );
+        }
+        // set used in transaction payment methods to true
+        cashupPayment.usedInCurrentTrx = true;
+      });
+
+      return newCashup;
+    },
+
+    updateCashupFromTicket(
+      state,
+      terminalPayments,
+      countLayawayAsSales,
+      paymentnames
+    ) {
+      const newState = { ...state };
+
+      // update cashup
+
+      newState.Cashup = OB.App.State.Cashup.Utils.countTicketInCashup(
+        newState.Cashup,
+        newState.Ticket,
+        countLayawayAsSales,
+        paymentnames
+      );
+
+      // insert cashup in the ticket
+      newState.Ticket = {
+        ...state.Ticket,
+        cashupReportInformation: OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
+          {
+            cashup: newState.Cashup,
+            terminalPayments
+          }
+        )
+      };
+
+      return newState;
+    }
+  });
+})();

@@ -14,7 +14,7 @@
     modelName: 'PaymentMethodCashUp',
     tableName: 'paymentmethodcashup',
     entityName: 'PaymentMethodCashUp',
-    source: '',
+    legacyModel: true,
     local: true
   });
 
