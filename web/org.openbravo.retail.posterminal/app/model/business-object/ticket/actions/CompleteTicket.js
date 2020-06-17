@@ -24,16 +24,19 @@
       let newMessages = [...newGlobalState.Messages];
 
       // Set complete ticket properties
+      const currentDate = new Date();
+      const creationDate = newTicket.creationDate
+        ? new Date(newTicket.creationDate)
+        : currentDate;
       newTicket.completeTicket = true;
       newTicket.hasbeenpaid = 'Y';
-      newTicket.creationDate = newTicket.creationDate || new Date();
-      newTicket.timezoneOffset = newTicket.creationDate.getTimezoneOffset();
-      newTicket.created = newTicket.creationDate.getTime();
-      newTicket.orderDate = new Date().toISOString();
-      newTicket.movementDate = new Date().toISOString();
-      newTicket.accountingDate = new Date().toISOString();
-      newTicket.creationDate = newTicket.creationDate.toISOString();
-      newTicket.obposCreatedabsolute = newTicket.creationDate;
+      newTicket.orderDate = currentDate.toISOString();
+      newTicket.movementDate = currentDate.toISOString();
+      newTicket.accountingDate = currentDate.toISOString();
+      newTicket.creationDate = creationDate.toISOString();
+      newTicket.obposCreatedabsolute = creationDate.toISOString();
+      newTicket.created = creationDate.getTime();
+      newTicket.timezoneOffset = creationDate.getTimezoneOffset();
       newTicket.posTerminal = payload.terminal.id;
       newTicket.undo = null;
       newTicket.multipleUndo = null;
