@@ -114,7 +114,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 All files under Apache Software License 2.0, available at
 http://www.apache.org/licenses/LICENSE-2.0
 
-# postgresql-42.2.2.jre7.jar
+# postgresql-42.2.14.jar
 Under the BSD license, also available at http://jdbc.postgresql.org/license.html  
 
 # Dojo Foundation javascripts in web/js/dojo/
