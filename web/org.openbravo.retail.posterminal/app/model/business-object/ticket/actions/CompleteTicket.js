@@ -50,6 +50,15 @@
         ...(payload.approvals || [])
       ];
 
+      // FIXME: Remove once every use of OB.UTIL.Approval.requestApproval() send approvalType as string
+      newTicket.approvals = newTicket.approvals.map(approval => {
+        const newApproval = { ...approval };
+        if (typeof approval.approvalType === 'object') {
+          newApproval.approvalType = approval.approvalType.approval;
+        }
+        return newApproval;
+      });
+
       // FIXME: Move to calculateTotals?
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(
         newTicket,
