@@ -20,12 +20,12 @@
       const newGlobalState = { ...globalState };
       let newTicket = { ...newGlobalState.Ticket };
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
+      let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
 
       // Set complete ticket properties
       newTicket.completeTicket = true;
       newTicket.hasbeenpaid = 'Y';
-      newTicket.obposAppCashup = payload.terminal.cashupId;
       newTicket.creationDate = newTicket.creationDate || new Date();
       newTicket.timezoneOffset = newTicket.creationDate.getTimezoneOffset();
       newTicket.created = newTicket.creationDate.getTime();
@@ -85,6 +85,16 @@
         ));
       }
 
+      // Cashup update
+      ({
+        ticket: newTicket,
+        cashup: newCashup
+      } = OB.App.State.Cashup.Utils.updateCashupFromTicket(
+        newTicket,
+        newCashup,
+        payload
+      ));
+
       // Ticket synchronization message
       newMessages = [
         ...newMessages,
@@ -111,6 +121,7 @@
 
       newGlobalState.Ticket = newTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
+      newGlobalState.Cashup = newCashup;
       newGlobalState.Messages = newMessages;
 
       return newGlobalState;

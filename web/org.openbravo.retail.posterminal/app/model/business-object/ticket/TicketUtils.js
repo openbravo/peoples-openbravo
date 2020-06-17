@@ -1402,8 +1402,9 @@
 
         // FIXME: change addPayment with generatePayment and return only the payment?
         newTicket.changePayments.forEach(changePayment => {
-          const terminalPayment =
-            settings.terminal.paymentTypes[changePayment.key];
+          const terminalPayment = settings.terminal.paymentTypes.find(
+            paymentType => paymentType.payment.searchKey === changePayment.key
+          );
 
           // Generate change payment
           newTicket = OB.App.State.Ticket.Utils.generatePayment(newTicket, {
@@ -1501,15 +1502,17 @@
      */
     generatePayment(ticket, settings) {
       const newTicket = { ...ticket };
-      const precision = settings.terminal.paymentTypes[settings.payment.kind]
-        ? settings.terminal.paymentTypes[settings.payment.kind]
-            .obposPosprecision
+      const terminalPayment = settings.terminal.paymentTypes.find(
+        paymentType => paymentType.payment.searchKey === settings.payment.kind
+      );
+      const precision = terminalPayment
+        ? terminalPayment.obposPosprecision
         : OB.DEC.getScale();
 
       // FIXME: needed in complete ticket?
       // this.addPaymentRounding(
       //   payment,
-      //   settings.terminal.paymentTypes[payment.get('kind')]
+      //   settings.terminal.paymentTypes.find(paymentType => paymentType.payment.searchKey === payment.get('kind'))
       // );
 
       // FIXME: needed in complete ticket?
