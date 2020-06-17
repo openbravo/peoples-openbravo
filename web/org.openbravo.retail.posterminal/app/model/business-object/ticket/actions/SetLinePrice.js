@@ -78,7 +78,7 @@
 
   function checkRestrictions(ticket, lines, price) {
     if (ticket.isEditable === false) {
-      throw new OB.App.Class.ActionSilentlyCanceled({
+      throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_modalNoEditableBody'
       });
     }
@@ -89,13 +89,13 @@
           !l.product.obposEditablePrice || l.product.isEditablePrice === false
       )
     ) {
-      throw new OB.App.Class.ActionSilentlyCanceled({
+      throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_modalNoEditableLineBody'
       });
     }
 
     if (lines.some(l => l.replacedorderline && l.qty < 0)) {
-      throw new OB.App.Class.ActionSilentlyCanceled({
+      throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_CancelReplaceReturnPriceChange'
       });
     }
@@ -120,7 +120,7 @@
           )
       )
     ) {
-      throw new OB.App.Class.ActionSilentlyCanceled({
+      throw new OB.App.Class.ActionCanceled({
         errorMsg: 'OBPOS_CannotChangePrice'
       });
     }
