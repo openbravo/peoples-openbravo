@@ -343,6 +343,7 @@
     calculateTotals(settings) {
       this.calculateDiscounts(settings.discountRules, settings.bpSets);
       this.calculateTaxes(settings.taxRules);
+      this.setIsNegative();
       this.setTotalQuantity(settings.qtyScale);
     }
 
@@ -407,6 +408,29 @@
           (total, qty) => (qty > 0 ? OB.DEC.add(total, qty, qtyScale) : total),
           OB.DEC.Zero
         );
+    }
+
+    setIsNegative() {
+      // TODO: replace this with the complete implementation of "adjustPayment"
+      const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
+      const { grossAmount } = this.ticket;
+      if (loadedFromBackend) {
+        this.ticket.isNegative = OB.DEC.compare(grossAmount) === -1;
+      } else {
+        let processedPaymentsAmount = this.ticket.payments
+          .filter(p => p.isPrePayment)
+          .reduce((t, p) => OB.DEC.add(t, p.origAmount), OB.DEC.Zero);
+
+        processedPaymentsAmount = OB.DEC.add(
+          processedPaymentsAmount,
+          this.ticket.nettingPayment ? this.ticket.nettingPayment : OB.DEC.Zero
+        );
+        if (OB.DEC.compare(grossAmount) === -1) {
+          this.ticket.isNegative = processedPaymentsAmount >= grossAmount;
+        } else {
+          this.ticket.isNegative = processedPaymentsAmount > grossAmount;
+        }
+      }
     }
   }
 
