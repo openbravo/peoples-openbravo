@@ -572,11 +572,11 @@ public class ExternalOrderLoader extends OrderLoader {
       setBusinessPartnerInformation(orderJson);
       transformTaxes(orderJson.getJSONObject("taxes"));
       transformLines(orderJson);
-    } else {
-      setQuantitiesToDeliver(orderJson);
     }
 
     transformPayments(orderJson);
+
+    setQuantitiesToDeliver(orderJson);
   }
 
   private void disableConcurrencyCheck(JSONObject orderJson) throws JSONException {
@@ -651,8 +651,6 @@ public class ExternalOrderLoader extends OrderLoader {
 
     copyPropertyValue(lineJson, "quantity", "qty");
 
-    setQuantityToDeliver(lineJson, orderJson.getString("step"));
-
     if (lineJson.has("warehouse")) {
       final String warehouseId = resolveJsonValue(Warehouse.ENTITY_NAME,
           lineJson.getString("warehouse"), new String[] { "id", "name", "searchKey" });
@@ -682,11 +680,12 @@ public class ExternalOrderLoader extends OrderLoader {
   private void setQuantitiesToDeliver(JSONObject orderJson) throws JSONException {
     final String step = orderJson.getString("step");
     for (int i = 0; i < orderJson.getJSONArray("lines").length(); i++) {
-      setQuantityToDeliver(orderJson.getJSONArray("lines").getJSONObject(i), step);
+      setQuantityToDeliver(orderJson, orderJson.getJSONArray("lines").getJSONObject(i), step);
     }
   }
 
-  private void setQuantityToDeliver(JSONObject lineJson, String step) throws JSONException {
+  private void setQuantityToDeliver(JSONObject orderJson, JSONObject lineJson, String step)
+      throws JSONException {
     if (CREATE.equals(step) || PAY.equals(step)) {
       if (lineJson.has("deliveredQuantity")) {
         copyPropertyValue(lineJson, "deliveredQuantity", "obposQtytodeliver");
@@ -695,6 +694,9 @@ public class ExternalOrderLoader extends OrderLoader {
       }
     } else {
       copyPropertyValue(lineJson, "qty", "obposQtytodeliver");
+    }
+    if (orderJson.optBoolean("completeTicket") || orderJson.optBoolean("payOnCredit")) {
+      lineJson.put("obposIspaid", true);
     }
   }
 
