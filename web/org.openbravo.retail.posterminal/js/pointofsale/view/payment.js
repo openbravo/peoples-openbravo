@@ -2564,7 +2564,10 @@ enyo.kind({
               .documentnoPadding,
             multiChange: OB.MobileApp.model.get('terminal').multiChange,
             countLayawayAsSales: OB.MobileApp.model.get('terminal')
-              .countLayawayAsSales
+              .countLayawayAsSales,
+            symbol: OB.MobileApp.model.get('terminal').symbol,
+            currencySymbolAtTheRight: OB.MobileApp.model.get('terminal')
+              .currencySymbolAtTheRight
           },
           preferences: {
             salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
@@ -2633,50 +2636,17 @@ enyo.kind({
         );
       };
 
-      // FIXME: Move overpayment validation to action preparation
-      if (OB.MobileApp.model.receipt.overpaymentExists()) {
-        var symbol = OB.MobileApp.model.get('terminal').symbol;
-        var symbolAtRight = OB.MobileApp.model.get('terminal')
-          .currencySymbolAtTheRight;
-        var amount = OB.MobileApp.model.receipt.getPaymentStatus().overpayment;
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBPOS_OverpaymentWarningTitle'),
-          OB.I18N.getLabel('OBPOS_OverpaymentWarningBody', [
-            OB.I18N.formatCurrencyWithSymbol(amount, symbol, symbolAtRight)
-          ]),
-          [
-            {
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
-              isConfirmButton: true,
-              action: function() {
-                completeTicket(true);
-              }
-            },
-            {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-              action: function() {
-                completeTicket(false);
-              }
-            }
-          ],
-          {
-            autoDismiss: false,
-            hideCloseButton: true
-          }
-        );
-      } else {
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_PreOrderSave',
-          {
-            // context: context,
-            // model: model,
-            receipt: OB.MobileApp.model.receipt
-          },
-          function(args) {
-            completeTicket(!args || !args.cancellation);
-          }
-        );
-      }
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreOrderSave',
+        {
+          // context: context,
+          // model: model,
+          receipt: OB.MobileApp.model.receipt
+        },
+        function(args) {
+          completeTicket(!args || !args.cancellation);
+        }
+      );
       return;
     }
 

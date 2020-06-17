@@ -133,18 +133,20 @@
 
   OB.App.StateAPI.Global.completeTicket.addActionPreparation(
     async (globalState, payload) => {
-      const newPayload = await checkPrepaymentApproval(
-        globalState.Ticket,
-        payload
-      );
+      let newPayload = { ...payload };
+
+      newPayload = await checkPrepayment(globalState.Ticket, newPayload);
+      newPayload = await checkOverpayment(globalState.Ticket, newPayload);
+
       return newPayload;
     },
     async (globalState, payload) => payload,
     100
   );
 
-  const checkPrepaymentApproval = async (ticket, payload) => {
+  const checkPrepayment = async (ticket, payload) => {
     const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(ticket);
+
     if (
       !payload.terminal.calculatePrepayments ||
       ticket.orderType === 1 ||
@@ -180,5 +182,29 @@
       payload
     );
     return newPayload;
+  };
+
+  const checkOverpayment = async (ticket, payload) => {
+    const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(ticket);
+    if (!paymentStatus.overpayment) {
+      return payload;
+    }
+
+    const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+      title: 'OBPOS_OverpaymentWarningTitle',
+      message: 'OBPOS_OverpaymentWarningBody',
+      messageParams: [
+        OB.I18N.formatCurrencyWithSymbol(
+          paymentStatus.overpayment,
+          payload.terminal.symbol,
+          payload.terminal.currencySymbolAtTheRight
+        )
+      ]
+    });
+    if (!confirmation) {
+      throw new OB.App.Class.ActionCanceled();
+    }
+
+    return payload;
   };
 })();
