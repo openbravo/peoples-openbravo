@@ -259,7 +259,7 @@ enyo.kind({
     return true;
   },
   change: function(inSender, inEvent) {
-    const processExecution = OB.UTIL.ProcessController.start(
+    const execution = OB.UTIL.ProcessController.start(
       'obpos_extbp_propertychanged'
     );
     this.inherited(arguments);
@@ -276,21 +276,12 @@ enyo.kind({
       this.bp,
       this.bpProperty
     )
-      .then(retBp => {
-        if (
-          JSON.stringify(retBp.getPropertiesList()) !==
-          JSON.stringify(this.bp.getPropertiesList())
-        ) {
-          this.bp = retBp;
-          processExecution.reDraw = true;
-          processExecution.newBp = retBp;
-        }
-      })
+      .then(() => {})
       .catch(errorObj => {})
       .finally(() => {
         OB.UTIL.ProcessController.finish(
           'obpos_extbp_propertychanged',
-          processExecution
+          execution
         );
       });
     return true;
@@ -386,16 +377,7 @@ enyo.kind({
       this.bp,
       this.bpProperty
     )
-      .then(retBp => {
-        if (
-          JSON.stringify(retBp.getPropertiesList()) !==
-          JSON.stringify(this.bp.getPropertiesList())
-        ) {
-          this.bp = retBp;
-          processExecution.reDraw = true;
-          processExecution.newBp = retBp;
-        }
-      })
+      .then(() => {})
       .catch(errorObj => {})
       .finally(() => {
         OB.UTIL.ProcessController.finish(
@@ -581,7 +563,6 @@ enyo.kind({
       processExecution.reDraw
     ) {
       this.drawBp(processExecution.newBp);
-      this.dialog.configDataManager.bp = processExecution.newBp;
     }
     if (
       process.get('searchkey') === 'obpos_extbp_propertychanged' ||
