@@ -7,39 +7,10 @@
  ************************************************************************************
  */
 /**
- * @fileoverview Defines actions for cash managements.
+ * @fileoverview Defines processCashManagement action.
  * @author Miguel de Juana <miguel.dejuana@openbravo.com>
  */
 (function cashManagementActionsDefinition() {
-  /**
-   * Create a cash management: add it in draft mode inside the corresponding Cashup Payment method of the Cashup(State)
-   */
-  OB.App.StateAPI.Cashup.registerActions({
-    createCashManagement(cashup, payload) {
-      const newCashup = { ...cashup };
-
-      const cashManagement = { ...payload.cashManagement };
-      cashManagement.isDraft = true;
-
-      newCashup.cashPaymentMethodInfo = newCashup.cashPaymentMethodInfo.map(
-        paymentMethod => {
-          if (
-            paymentMethod.paymentMethodId !== cashManagement.paymentMethodId
-          ) {
-            return paymentMethod;
-          }
-          const cashManagements = [
-            ...paymentMethod.cashManagements,
-            cashManagement
-          ];
-          return { ...paymentMethod, cashManagements };
-        }
-      );
-
-      return newCashup;
-    }
-  });
-
   /**
    * Process cash managements events: Set as processed cash managements in draft and move to Messages(State)
    */
@@ -109,7 +80,6 @@
           return newPaymentMethod;
         }
       );
-
       // Create a Message to synchronize the Cash Management
       const { terminalName, cacheSessionId } = payload.parameters;
       cashManagementsToProcess
@@ -132,32 +102,6 @@
       newState.Cashup = newCashup;
 
       return newState;
-    }
-  });
-
-  /**
-   * Cancel cash managements in Draft: Remove cash managements not processed yet
-   */
-  OB.App.StateAPI.Cashup.registerActions({
-    cancelCashManagements(cashup) {
-      const newCashup = { ...cashup };
-
-      newCashup.cashPaymentMethodInfo = newCashup.cashPaymentMethodInfo.map(
-        paymentMethod => {
-          if (paymentMethod.cashManagements.length === 0) {
-            return paymentMethod;
-          }
-
-          // Get only processed cash managements
-          const cashManagements = paymentMethod.cashManagements.filter(
-            cashManagement => !cashManagement.isDraft
-          );
-
-          return { ...paymentMethod, cashManagements };
-        }
-      );
-
-      return newCashup;
     }
   });
 })();
