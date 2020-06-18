@@ -1524,84 +1524,46 @@
       // FIXME: needed in complete ticket?
       // OB.UTIL.PrepaymentUtils.managePrepaymentChange();
 
-      if (!settings.payment.reversedPaymentId) {
-        const paymentIndex = newTicket.payments.findIndex(
-          payment =>
-            payment.kind === settings.payment.kind &&
-            !payment.isPrePayment &&
-            !payment.reversedPaymentId &&
-            (!settings.payment.paymentData ||
-              settings.payment.paymentData.mergeable ||
-              (payment.paymentData &&
-                settings.payment.paymentData &&
-                payment.paymentData.groupingCriteria &&
-                settings.payment.paymentData.groupingCriteria &&
-                payment.paymentData.groupingCriteria ===
-                  settings.payment.paymentData.groupingCriteria))
+      const payment = newTicket.payments.find(
+        p =>
+          p.kind === settings.payment.kind &&
+          !p.isPrePayment &&
+          !p.reversedPaymentId &&
+          !settings.payment.reversedPaymentId &&
+          (!settings.payment.paymentData ||
+            settings.payment.paymentData.mergeable ||
+            (p.paymentData &&
+              settings.payment.paymentData &&
+              p.paymentData.groupingCriteria &&
+              settings.payment.paymentData.groupingCriteria &&
+              p.paymentData.groupingCriteria ===
+                settings.payment.paymentData.groupingCriteria))
+      );
+
+      if (payment) {
+        const newAmount = OB.DEC.add(
+          OB.DEC.mul(
+            settings.payment.amount,
+            payment.signChanged && payment.amount < 0 ? -1 : 1,
+            precision
+          ),
+          payment.amount,
+          precision
         );
-        if (paymentIndex > 0) {
-          newTicket.payments = newTicket.payments.map((payment, index) => {
-            if (index !== paymentIndex) {
-              return payment;
+        payment.amount = newAmount;
+        payment.origAmount =
+          payment.rate && payment.rate !== '1'
+            ? OB.DEC.div(newAmount, payment.mulrate)
+            : newAmount;
+        payment.paymentRoundingLine = settings.payment.paymentRoundingLine
+          ? {
+              ...settings.payment.paymentRoundingLine,
+              roundedPaymentId: payment.id
             }
+          : undefined;
 
-            const newAmount = OB.DEC.add(
-              OB.DEC.mul(
-                settings.payment.amount,
-                payment.signChanged && payment.amount < 0 ? -1 : 1,
-                precision
-              ),
-              payment.amount,
-              precision
-            );
-            return {
-              ...payment,
-              amount: newAmount,
-              origAmount:
-                payment.rate && payment.rate !== '1'
-                  ? OB.DEC.div(newAmount, payment.mulrate)
-                  : newAmount,
-              paymentRoundingLine: settings.payment.paymentRoundingLine
-                ? {
-                    ...settings.payment.paymentRoundingLine,
-                    roundedPaymentId: payment.id
-                  }
-                : undefined
-            };
-          });
-
-          return newTicket;
-        }
+        return newTicket;
       }
-
-      const newPayment = { ...settings.payment };
-      newPayment.date = new Date();
-      newPayment.id = OB.UTIL.get_UUID();
-      newPayment.oBPOSPOSTerminal = settings.terminal.id;
-      newPayment.orderGross = newTicket.grossAmount;
-      newPayment.isPaid = newTicket.isPaid;
-      newPayment.isReturnOrder = newTicket.isNegative;
-      newPayment.cancelAndReplace =
-        (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
-        newTicket.cancelAndReplaceChangePending;
-
-      // FIXME: payments.add(payment, { at: newPayment.get('index') });
-      newTicket.payments = [...newTicket.payments, newPayment];
-
-      if (newPayment.reversedPayment) {
-        newPayment.reversedPayment.isReversed = true;
-      }
-      if (newPayment.paymentRoundingLine) {
-        newPayment.paymentRoundingLine.roundedPaymentId = newPayment.id;
-      }
-      if (
-        newPayment.openDrawer &&
-        (newPayment.allowOpenDrawer || newPayment.isCash)
-      ) {
-        newTicket.openDrawer = newPayment.openDrawer;
-      }
-
-      return newTicket;
     }
   });
 })();
