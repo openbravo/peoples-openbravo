@@ -2029,13 +2029,11 @@
         if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
           me.calculateReceipt(
             function() {
-              if (!me.get('deletedLines')) {
-                me.set('deletedLines', []);
-              }
               _.each(linesToDelete, function(line) {
                 // Move to deleted lines
-                var deletedLine = new OrderLine(line.attributes);
-                me.get('deletedLines').push(deletedLine);
+                var deletedLines = me.get('deletedLines') || [];
+                deletedLines.push(new OrderLine(line.attributes));
+                me.set('deletedLines', deletedLines);
               });
               me.get('lines').remove(linesToDelete);
               cleanReceipt();
