@@ -206,17 +206,15 @@ enyo.kind({
                 // 'Create New One' case
                 var orderList = me.owner.owner.owner.model.get('orderList');
                 OB.MobileApp.model.receipt.trigger('updateView');
-                var newOrder = orderList.newOrder(orderList.current.get('bp'));
+                var newOrder = orderList.newOrder(
+                  OB.MobileApp.model.receipt.get('bp')
+                );
                 orderList.unshift(newOrder);
                 orderModel = newOrder;
                 orderModel.set('deferredOrder', true);
               }
-              orderModel.set(
-                'bp',
-                me.owner.owner.owner.model.get('orderList').current.get('bp')
-              );
-              const current = me.owner.owner.owner.model.get('orderList')
-                .current;
+              orderModel.set('bp', OB.MobileApp.model.receipt.get('bp'));
+              const current = OB.MobileApp.model.receipt;
               // Change the UI receipt to add the product on the newly created ticket
               me.owner.owner.doChangeCurrentOrder({
                 newCurrentOrder: orderModel

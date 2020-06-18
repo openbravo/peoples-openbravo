@@ -21,111 +21,84 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     // Shows a modal window with the orders pending to be paid
     var orderlist = this.get('orderList'),
       model = this,
-      reCalculateReceipt = false,
-      criteria = {
-        hasbeenpaid: 'N'
-      };
-    OB.Dal.find(
-      OB.Model.Order,
-      criteria,
-      function(ordersNotPaid) {
-        //OB.Dal.find success
-        var currentOrder = {},
-          loadOrderStr;
+      reCalculateReceipt = false;
 
-        // Removing Orders which are created in other users session
-        var outOfSessionOrder = _.filter(ordersNotPaid.models, function(order) {
-          if (
-            order &&
-            order.get('session') !== OB.MobileApp.model.get('session')
-          ) {
-            return true;
-          }
-        });
-        _.each(outOfSessionOrder, function(orderToRemove) {
-          ordersNotPaid.remove(orderToRemove);
-        });
+    let ordersNotPaid = OB.App.OpenTicketList.getAllTickets().filter(
+      ticket => ticket.hasbeenpaid === 'N'
+    );
 
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_PreLoadUnpaidOrdersHook',
-          {
-            ordersNotPaid: ordersNotPaid,
-            model: model
-          },
-          function(args) {
-            OB.MobileApp.model.on(
-              'window:ready',
-              function() {
-                OB.MobileApp.model.off('window:ready', null, model);
-                const addNewOrderCallback = () => {
-                  if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
-                    // If there are no pending orders,
-                    //  add an initial empty order
-                    OB.App.State.Ticket.createEmptyTicket();
-                  } else {
-                    // The order object is stored in the json property of the row fetched from the database
-                    orderlist.reset(args.ordersNotPaid.models);
-                    // At this point it is sure that there exists at least one order
-                    // Function to continue of there is some error
-                    currentOrder = args.ordersNotPaid.models[0];
-                    //removing Orders lines without mandatory fields filled
-                    OB.UTIL.HookManager.executeHooks(
-                      'OBPOS_CheckReceiptMandatoryFields',
-                      {
-                        orders: orderlist.models
-                      },
-                      function(args) {
-                        reCalculateReceipt = args.reCalculateReceipt;
-                        OB.UTIL.TicketListUtils.loadTicket(currentOrder).then(
-                          () => {
-                            if (reCalculateReceipt) {
-                              OB.MobileApp.model.receipt.calculateGrossAndSave();
-                            }
-                            loadOrderStr =
-                              OB.I18N.getLabel('OBPOS_Order') +
-                              currentOrder.get('documentNo') +
-                              OB.I18N.getLabel('OBPOS_Loaded');
-                            OB.UTIL.showAlert.display(
-                              loadOrderStr,
-                              OB.I18N.getLabel('OBPOS_Info')
-                            );
-                          }
-                        );
-                      }
-                    );
-                  }
-                };
-                if (
-                  OB.MobileApp.model.get('terminal').terminalType.safebox &&
-                  OB.UTIL.isNullOrUndefined(
-                    OB.UTIL.localStorage.getItem('currentSafeBox')
-                  )
-                ) {
-                  OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-                    popup: 'OBPOS_modalSafeBox',
-                    args: {
-                      callback: addNewOrderCallback
-                    }
-                  });
-                } else {
-                  addNewOrderCallback();
-                }
-              },
-              model
-            );
-            loadUnpaidOrdersCallback();
-          }
-        );
+    let currentOrder = {},
+      loadOrderStr;
+
+    // Removing Orders which are created in other users session
+    ordersNotPaid = ordersNotPaid.filter(order => {
+      return order.session !== OB.MobileApp.model.get('session');
+    });
+
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_PreLoadUnpaidOrdersHook',
+      {
+        ordersNotPaid: ordersNotPaid,
+        model: model
       },
-      function() {
-        //OB.Dal.find error
+      function(args) {
         OB.MobileApp.model.on(
           'window:ready',
           function() {
             OB.MobileApp.model.off('window:ready', null, model);
-            // If there is an error fetching the pending orders,
-            // add an initial empty order
-            OB.App.State.Ticket.createEmptyTicket();
+            const addNewOrderCallback = () => {
+              if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
+                // If there are no pending orders,
+                //  add an initial empty order
+                OB.App.State.Ticket.createEmptyTicket();
+              } else {
+                // The order object is stored in the json property of the row fetched from the database
+                orderlist.reset(args.ordersNotPaid.models);
+                // At this point it is sure that there exists at least one order
+                // Function to continue of there is some error
+                currentOrder = args.ordersNotPaid.models[0];
+                //removing Orders lines without mandatory fields filled
+                OB.UTIL.HookManager.executeHooks(
+                  'OBPOS_CheckReceiptMandatoryFields',
+                  {
+                    orders: orderlist.models
+                  },
+                  function(args) {
+                    reCalculateReceipt = args.reCalculateReceipt;
+                    OB.UTIL.TicketListUtils.loadTicket(currentOrder).then(
+                      () => {
+                        if (reCalculateReceipt) {
+                          OB.MobileApp.model.receipt.calculateGrossAndSave();
+                        }
+                        loadOrderStr =
+                          OB.I18N.getLabel('OBPOS_Order') +
+                          currentOrder.get('documentNo') +
+                          OB.I18N.getLabel('OBPOS_Loaded');
+                        OB.UTIL.showAlert.display(
+                          loadOrderStr,
+                          OB.I18N.getLabel('OBPOS_Info')
+                        );
+                      }
+                    );
+                  }
+                );
+              }
+            };
+            if (
+              OB.MobileApp.model.get('terminal').terminalType.safebox &&
+              OB.UTIL.isNullOrUndefined(
+                OB.UTIL.localStorage.getItem('currentSafeBox')
+              )
+            ) {
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'OBPOS_modalSafeBox',
+                args: {
+                  callback: addNewOrderCallback
+                }
+              });
+            } else {
+              addNewOrderCallback();
+            }
           },
           model
         );

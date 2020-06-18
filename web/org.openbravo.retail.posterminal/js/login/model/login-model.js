@@ -1258,10 +1258,7 @@
           return;
         }
       }
-      if (
-        OB.MobileApp.model.orderList &&
-        OB.MobileApp.model.orderList.length > 1
-      ) {
+      if (OB.App.State.getState().TicketList.length > 1) {
         if (OB.MobileApp.model.orderList.checkOrderListPayment()) {
           return;
         }

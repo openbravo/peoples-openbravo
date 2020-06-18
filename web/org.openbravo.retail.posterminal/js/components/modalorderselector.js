@@ -507,6 +507,7 @@ enyo.kind({
         me.$[me.getNameOfReceiptsListItemPrinter()].$.tempty.show();
       }
     }
+
     this.$[this.getNameOfReceiptsListItemPrinter()].$.tempty.hide();
     this.$[this.getNameOfReceiptsListItemPrinter()].$.tbody.hide();
     this.$[this.getNameOfReceiptsListItemPrinter()].$.tlimit.hide();
@@ -665,12 +666,14 @@ enyo.kind({
       function(model) {
         function loadOrder(model) {
           me.execution = OB.UTIL.ProcessController.start('openVerifiedReturn');
+
           function executionCallback() {
             OB.UTIL.ProcessController.finish(
               'openVerifiedReturn',
               me.execution
             );
           }
+
           process.exec(
             {
               orderid: model.get('id'),
@@ -724,15 +727,16 @@ enyo.kind({
           );
           return true;
         }
-        receiptOrganization = OB.MobileApp.model.orderList.current.has(
+
+        receiptOrganization = OB.MobileApp.model.receipt.has(
           'originalOrganization'
         )
           ? 'originalOrganization'
           : 'organization';
         if (
-          OB.MobileApp.model.orderList.current.get(receiptOrganization) !==
+          OB.MobileApp.model.receipt.get(receiptOrganization) !==
             model.get('organization') &&
-          OB.MobileApp.model.orderList.current.get('lines').length > 0
+          OB.MobileApp.model.receipt.get('lines').length > 0
         ) {
           OB.UTIL.showConfirmation.display(
             OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'),
@@ -775,11 +779,11 @@ enyo.kind({
           );
         } else {
           if (
-            OB.MobileApp.model.orderList.current.get(receiptOrganization) !==
+            OB.MobileApp.model.receipt.get(receiptOrganization) !==
               model.get('organization') &&
-            OB.MobileApp.model.orderList.current.get('lines').length === 0
+            OB.MobileApp.model.receipt.get('lines').length === 0
           ) {
-            OB.MobileApp.model.orderList.current.deleteOrder();
+            OB.MobileApp.model.receipt.deleteOrder();
           }
           OB.MobileApp.model.orderList.checkForDuplicateReceipts(
             model,

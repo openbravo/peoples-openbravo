@@ -44,6 +44,7 @@
           }
         );
       };
+
       function sleep(x) {
         return new Promise(resolve => {
           setTimeout(() => {
@@ -120,10 +121,9 @@
       let updateLocally =
         !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) ||
         (!isNew &&
-          OB.MobileApp.model.orderList &&
-          _.filter(OB.MobileApp.model.orderList.models, function(order) {
-            return order.get('bp').get('id') === customerId;
-          }).length > 0);
+          OB.App.OpenTicketList.getAllTickets().filter(
+            ticket => ticket.businessPartner.id === customerId
+          ).length > 0);
 
       //save that the customer is being processed by server
       if (updateLocally) {
@@ -154,49 +154,9 @@
           function(args) {
             // update each order also so that new name is shown and the bp
             // in the order is the same as what got saved
-            if (OB.MobileApp.model.orderList) {
-              for (const order of OB.MobileApp.model.orderList.models) {
-                if (order.get('bp').get('id') === customerId) {
-                  var clonedBP = new OB.Model.BusinessPartner();
-                  OB.UTIL.clone(customer, clonedBP);
-                  var bp = order.get('bp');
-                  if (order.get('bp').get('locId') !== customer.get('locId')) {
-                    // if the order has a different address but same BP than the bp
-                    // then copy over the address data
-                    clonedBP.set('locId', bp.get('locId'));
-                    clonedBP.set('locName', bp.get('locName'));
-                    clonedBP.set('postalCode', bp.get('postalCode'));
-                    clonedBP.set('cityName', bp.get('cityName'));
-                    clonedBP.set('countryName', bp.get('countryName'));
-                    clonedBP.set('locationModel', bp.get('locationModel'));
-                  }
-                  if (
-                    order.get('bp').get('shipLocId') !==
-                    customer.get('shipLocId')
-                  ) {
-                    clonedBP.set('shipLocId', bp.get('shipLocId'));
-                    clonedBP.set('shipLocName', bp.get('shipLocName'));
-                    clonedBP.set('shipPostalCode', bp.get('shipPostalCode'));
-                    clonedBP.set('shipCityName', bp.get('shipCityName'));
-                    clonedBP.set('shipCountryName', bp.get('shipCountryName'));
-                  }
-                  order.set('bp', clonedBP);
-                  order.save();
-                  if (
-                    OB.MobileApp.model.orderList.modelorder &&
-                    OB.MobileApp.model.orderList.modelorder.get('id') ===
-                      order.get('id')
-                  ) {
-                    OB.MobileApp.model.orderList.modelorder.set('isNew', false);
-                    OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(
-                      clonedBP,
-                      false,
-                      true
-                    );
-                  }
-                }
-              }
-            }
+            OB.App.State.Global.updateBpInAllTickets({
+              customer: JSON.parse(JSON.stringify(customer.toJSON()))
+            });
           }
         );
         OB.UTIL.showSuccess(
