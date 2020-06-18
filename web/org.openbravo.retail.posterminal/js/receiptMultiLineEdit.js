@@ -537,8 +537,8 @@ enyo.kind({
       }
     }
 
-    this.model.get('order').save();
-    this.model.get('orderList').saveCurrent();
+    // this.model.get('order').save();
+    this.model.get('order').trigger('updateView');
     this.model.get('order').calculateReceipt();
     if (this.args.selectedLines) {
       carrierLines = this.args.selectedLines

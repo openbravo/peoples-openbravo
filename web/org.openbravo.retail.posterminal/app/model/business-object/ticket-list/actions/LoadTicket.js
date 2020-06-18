@@ -33,7 +33,6 @@
     newState.TicketList.unshift({ ...newState.Ticket });
     newState.Ticket = newCurrentTicket;
 
-    // TODO: See loadCurrent()
     return newState;
   }
 

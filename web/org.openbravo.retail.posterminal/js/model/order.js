@@ -1053,7 +1053,7 @@
               return;
             }
             me.trigger('calculategross');
-            me.trigger('saveCurrent');
+            me.trigger('updateView');
             if (callback) {
               callback();
             }
@@ -1382,7 +1382,7 @@
         me.set('obposPrepaymentamt', prepaymentAmount);
         me.set('obposPrepaymentlimitamt', prepaymentLimitAmount);
         me.set('obposPrepaymentlaylimitamt', prepaymentLayawayLimitAmount);
-        me.trigger('saveCurrent');
+        me.trigger('updateView');
         if (callback instanceof Function) {
           callback();
         }
@@ -5578,7 +5578,7 @@
               bp ? bp.getPlainObject() : null
             );
             order.save(function() {
-              OB.MobileApp.model.orderList.saveCurrent();
+              OB.MobileApp.model.receipt.trigger('updateView');
               OB.UTIL.ProcessController.finish(
                 'setExternalBusinessPartner',
                 execution
@@ -5622,7 +5622,7 @@
           me.trigger('change:bp', me);
         }
         me.save(function() {
-          OB.MobileApp.model.orderList.saveCurrent();
+          OB.MobileApp.model.receipt.trigger('updateView');
           if (saveBPCallback) {
             saveBPCallback();
           }
@@ -6264,7 +6264,7 @@
       var me = this;
       this.setFullInvoice(true, true, true);
       this.save(function() {
-        me.trigger('saveCurrent');
+        me.trigger('updateView');
       });
     },
 
@@ -6272,7 +6272,7 @@
       var me = this;
       this.setFullInvoice(false, true, true);
       this.save(function() {
-        me.trigger('saveCurrent');
+        me.trigger('updateView');
       });
     },
 
@@ -7037,7 +7037,7 @@
                           OB.MobileApp.model.orderList.unshift(me, {
                             silent: true
                           });
-                          OB.MobileApp.model.orderList.saveCurrent();
+                          OB.MobileApp.model.receipt.trigger('updateView');
                           me.trigger('updatePending', true);
                           // Finally change to the payments tab
                           context.doTabChange({
@@ -7736,7 +7736,7 @@
                         );
                         finalCallback();
                       });
-                      order.trigger('saveCurrent');
+                      order.trigger('updateView');
                     } else {
                       OB.UTIL.ProcessController.finish('addPayment', execution);
                       finalCallback();
@@ -9797,15 +9797,7 @@
         Backbone.Collection.prototype.constructor.call(this);
       },
 
-      initialize: function() {
-        var me = this;
-        this.current = null;
-        if (this.modelorder) {
-          this.modelorder.on('saveCurrent', function() {
-            me.saveCurrent();
-          });
-        }
-      },
+      initialize: function() {},
 
       newOrder: function(bp) {
         var i,
@@ -10676,7 +10668,7 @@
           );
         }
 
-        this.saveCurrent();
+        OB.MobileApp.model.receipt.trigger('updateView');
         this.current = model;
         this.unshift(this.current);
         this.loadCurrent(true);
@@ -10714,7 +10706,7 @@
       },
 
       addNewQuotation: function() {
-        this.saveCurrent();
+        OB.MobileApp.model.receipt.trigger('updateView');
         this.current = this.newOrder();
         this.current.setQuotationProperties();
         this.unshift(this.current);
@@ -10748,12 +10740,6 @@
 
         // Refresh Master Data
         OB.UTIL.checkRefreshMasterData();
-      },
-      saveCurrent: function() {
-        if (this.current) {
-          OB.UTIL.clone(this.modelorder, this.current);
-          this.current.trigger('updateView');
-        }
       },
       loadCurrent: function(isNew) {
         OB.MobileApp.model.set('terminalLogContext', this.current.get('id'));

@@ -721,6 +721,7 @@
           );
         });
       }
+
       if (OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y') {
         var process = new OB.DS.Process(
           'org.openbravo.retail.posterminal.CheckTerminalAuth'

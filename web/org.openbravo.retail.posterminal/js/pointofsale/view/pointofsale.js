@@ -1342,7 +1342,7 @@ enyo.kind({
             return true;
           }
           component.model.get('order').setBPandBPLoc(eventBP, false, true);
-          component.model.get('orderList').saveCurrent();
+          component.model.get('order').trigger('updateView');
         } else {
           component.waterfall('onChangeBPartner', inEvent);
         }
@@ -1372,7 +1372,7 @@ enyo.kind({
     var me = this;
     this.model.get('order').createOrderFromQuotation(false, function(success) {
       if (success) {
-        me.model.get('orderList').saveCurrent();
+        me.model.get('order').trigger('updateView');
       }
     });
     return true;
@@ -1391,21 +1391,20 @@ enyo.kind({
   },
 
   reactivateQuotation: function() {
-    var me = this;
     this.model
       .get('order')
       .reactivateQuotation()
       .then(() => {
-        me.model.get('orderList').saveCurrent();
+        this.model.get('order').trigger('updateView');
         if (
-          me.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$
-            .actionButtonsContainer.$.descriptionButton
+          this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent
+            .$.actionButtonsContainer.$.descriptionButton
         ) {
           if (
-            me.model.get('order').get('isEditable') &&
-            me.model.get('order').get('isQuotation')
+            this.model.get('order').get('isEditable') &&
+            this.model.get('order').get('isQuotation')
           ) {
-            me.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
+            this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
           }
         }
       });
@@ -1433,7 +1432,7 @@ enyo.kind({
       .setOrderType(inEvent.permission, inEvent.orderType, {
         applyPromotions: false
       });
-    this.model.get('orderList').saveCurrent();
+    this.model.get('order').trigger('updateView');
     return true;
   },
 
@@ -1764,9 +1763,7 @@ enyo.kind({
     );
   },
   changeCurrentOrder: function(inSender, inEvent) {
-    OB.App.State.Global.loadTicket({
-      ticket: JSON.parse(JSON.stringify(inEvent.newCurrentOrder.toJSON()))
-    });
+    OB.UTIL.TicketListUtils.loadTicket(inEvent.newCurrentOrder);
     return true;
   },
   removePayment: function(inSender, inEvent) {
@@ -2016,7 +2013,7 @@ enyo.kind({
       }
     }
     this.model.get('order').setProperty(inEvent.property, inEvent.value);
-    this.model.get('orderList').saveCurrent();
+    this.model.get('order').trigger('updateView');
     return true;
   },
   setLineProperty: function(inSender, inEvent) {
@@ -2031,7 +2028,7 @@ enyo.kind({
     if (line && receipt) {
       receipt.setLineProperty(line, inEvent.property, inEvent.value);
     }
-    this.model.get('orderList').saveCurrent();
+    this.model.get('order').trigger('updateView');
     return true;
   },
   statusChanged: function(inSender, inEvent) {
@@ -2072,7 +2069,7 @@ enyo.kind({
         'salesRepresentative$_identifier',
         inEvent.salesRepresentative.get('_identifier')
       );
-    this.model.get('orderList').saveCurrent();
+    this.model.get('order').trigger('updateView');
     return true;
   },
   selectCharacteristicValue: function(inSender, inEvent) {

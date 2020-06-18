@@ -29,7 +29,7 @@
           return;
         }
         if (OB.MobileApp.model.hasPermission('OBPOS_retail.multiorders')) {
-          view.model.get('orderList').saveCurrent();
+          OB.MobileApp.model.receipt.trigger('updateView');
           view.multiOrders();
         }
       }
