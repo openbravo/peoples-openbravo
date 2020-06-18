@@ -143,9 +143,10 @@
   function createLines(productInfo, ticket, options, attrs) {
     const { qty } = productInfo;
     let newTicket = ticket;
+    const lineQty = Math.sign(qty) === -1 ? -1 : 1;
 
     for (let count = 0; count < Math.abs(qty); count += 1) {
-      const newProductInfo = { ...productInfo, qty: 1 };
+      const newProductInfo = { ...productInfo, qty: lineQty };
       newTicket = createLine(newProductInfo, newTicket, options, attrs);
     }
 

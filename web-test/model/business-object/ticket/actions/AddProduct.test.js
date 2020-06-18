@@ -349,8 +349,19 @@ describe('addProduct', () => {
 
       expect(baseTicket.lines[0]).toMatchObject({
         qty: 1,
-        baseGrossUnitPrice: 5,
-        grossListPrice: 5,
+        product: { id: 'ungroupProduct' }
+      });
+
+      expect(baseTicket.lines).toHaveLength(5);
+    });
+
+    it('create multiple lines of ungrouped product (negative qty)', () => {
+      const baseTicket = addProduct(emptyTicket, {
+        products: [{ product: ungroupProduct, qty: -5 }]
+      });
+
+      expect(baseTicket.lines[0]).toMatchObject({
+        qty: -1,
         product: { id: 'ungroupProduct' }
       });
 
