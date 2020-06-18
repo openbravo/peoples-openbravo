@@ -359,37 +359,38 @@
   }
 
   function checkNotReturnableService(ticket, products, options, attrs) {
-    const pi = products[0];
-    const line = getLineToEdit(pi, ticket, options, attrs);
-    let relatedLines = attrs.relatedLines || [];
-    if (line && line.relatedLines) {
-      relatedLines = OB.App.ArrayUtils.union(relatedLines, line.relatedLines);
-    }
+    products.forEach(pi => {
+      const line = getLineToEdit(pi, ticket, options, attrs);
+      let relatedLines = attrs.relatedLines || [];
+      if (line && line.relatedLines) {
+        relatedLines = OB.App.ArrayUtils.union(relatedLines, line.relatedLines);
+      }
 
-    if (relatedLines.length === 0 || (line && line.originalOrderLineId)) {
-      return;
-    }
+      if (relatedLines.length === 0 || (line && line.originalOrderLineId)) {
+        return;
+      }
 
-    let newqtyminus = ticket.lines
-      .filter(
-        l => l.qty < 0 && relatedLines.some(rl => rl.orderlineId === l.id)
-      )
-      .reduce((t, l) => t + l.qty, 0);
+      let newqtyminus = ticket.lines
+        .filter(
+          l => l.qty < 0 && relatedLines.some(rl => rl.orderlineId === l.id)
+        )
+        .reduce((t, l) => t + l.qty, 0);
 
-    if (pi.product.quantityRule === 'UQ') {
-      newqtyminus = newqtyminus ? -1 : 0;
-    }
+      if (pi.product.quantityRule === 'UQ') {
+        newqtyminus = newqtyminus ? -1 : 0;
+      }
 
-    const lineQty = line ? line.qty + pi.qty : pi.qty;
-    if (newqtyminus && lineQty > 0 && !pi.product.returnable) {
-      // Cannot add not returnable service to a negative product
-      throw new OB.App.Class.ActionCanceled({
-        title: 'OBPOS_UnreturnableProduct',
-        errorConfirmation: 'OBPOS_UnreturnableProductMessage',
-        // eslint-disable-next-line no-underscore-dangle
-        messageParams: [pi.product._identifier]
-      });
-    }
+      const lineQty = line ? line.qty + pi.qty : pi.qty;
+      if (newqtyminus && lineQty > 0 && !pi.product.returnable) {
+        // Cannot add not returnable service to a negative product
+        throw new OB.App.Class.ActionCanceled({
+          title: 'OBPOS_UnreturnableProduct',
+          errorConfirmation: 'OBPOS_UnreturnableProductMessage',
+          // eslint-disable-next-line no-underscore-dangle
+          messageParams: [pi.product._identifier]
+        });
+      }
+    });
   }
 
   function checkClosedQuotation(ticket) {
