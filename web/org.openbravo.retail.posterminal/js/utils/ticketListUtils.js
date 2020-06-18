@@ -15,6 +15,10 @@
     await OB.App.State.Global.loadTicket({
       ticket: JSON.parse(JSON.stringify(ticketModel.toJSON()))
     });
+    OB.MobileApp.model.set(
+      'terminalLogContext',
+      OB.App.State.getState().Ticket.id
+    );
     OB.MobileApp.model.receipt.trigger('updateView');
     OB.MobileApp.model.receipt.trigger('paintTaxes');
     OB.MobileApp.model.receipt.trigger('updatePending');
@@ -24,6 +28,10 @@
     await OB.App.State.Global.loadTicketById({
       id: ticketId
     });
+    OB.MobileApp.model.set(
+      'terminalLogContext',
+      OB.App.State.getState().Ticket.id
+    );
     OB.MobileApp.model.receipt.trigger('updateView');
     OB.MobileApp.model.receipt.trigger('paintTaxes');
     OB.MobileApp.model.receipt.trigger('updatePending');

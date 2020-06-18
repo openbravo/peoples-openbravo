@@ -10742,36 +10742,14 @@
         OB.UTIL.checkRefreshMasterData();
       },
       loadCurrent: function(isNew) {
-        OB.MobileApp.model.set('terminalLogContext', this.current.get('id'));
-        // Check if the current order to be loaded should be deleted
-        if (this.current.get('obposIsDeleted') && this.current.get('id')) {
-          var deletedOrderDocNo = this.current.get('documentNo');
-          this.current.set('ignoreCheckIfIsActiveOrder', true); // Ignore this receipt is not loaded in the UI
-          this.current.deleteOrder(this.current, function() {
-            OB.UTIL.showWarning(
-              OB.I18N.getLabel('OBPOS_OrderMarkedToBeDeleted', [
-                deletedOrderDocNo
-              ])
-            );
-          });
-          return;
+        if (isNew) {
+          this.trigger(
+            'beforeChangeOrderForNewOne',
+            OB.MobileApp.model.receipt
+          );
         }
-
-        if (this.current) {
-          if (isNew) {
-            //set values of new attrs in current,
-            //this values will be copied to modelOrder
-            //in the next instruction
-            this.modelorder.trigger('beforeChangeOrderForNewOne', this.current);
-            this.current.set('isNewReceipt', true);
-          }
-          this.modelorder.clearWith(this.current);
-          this.modelorder.set('isNewReceipt', false);
-          this.modelorder.trigger('paintTaxes');
-          this.modelorder.trigger('updatePending');
-          this.modelorder.setIsCalculateReceiptLockState(false);
-          this.modelorder.setIsCalculateGrossLockState(false);
-        }
+        this.trigger('paintTaxes');
+        this.trigger('updatePending');
       },
       checkOrderListPayment: function() {
         var i;
