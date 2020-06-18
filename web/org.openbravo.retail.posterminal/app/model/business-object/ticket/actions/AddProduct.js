@@ -25,30 +25,21 @@
       return { ...l };
     });
 
-    products
-      .map(productInfo => {
-        return {
-          ...productInfo,
-          qty: OB.App.State.Ticket.Utils.isReturn(ticket)
-            ? -productInfo.qty
-            : productInfo.qty
-        };
-      })
-      .forEach(productInfo => {
-        const { product } = productInfo;
-        const lineToEdit = getLineToEdit(productInfo, ticket, options, attrs);
-        if (lineToEdit) {
-          // add product to an existing line
-          lineToEdit.qty += productInfo.qty;
-          setLineAttributes(lineToEdit, attrs, productInfo);
-        } else if (product.groupProduct || product.avoidSplitProduct) {
-          // add product to a new line
-          ticket = createLine(productInfo, ticket, options, attrs);
-        } else {
-          // add product creating multiple new lines with quantity 1 each
-          ticket = createLines(productInfo, ticket, options, attrs);
-        }
-      });
+    products.forEach(productInfo => {
+      const { product } = productInfo;
+      const lineToEdit = getLineToEdit(productInfo, ticket, options, attrs);
+      if (lineToEdit) {
+        // add product to an existing line
+        lineToEdit.qty += productInfo.qty;
+        setLineAttributes(lineToEdit, attrs, productInfo);
+      } else if (product.groupProduct || product.avoidSplitProduct) {
+        // add product to a new line
+        ticket = createLine(productInfo, ticket, options, attrs);
+      } else {
+        // add product creating multiple new lines with quantity 1 each
+        ticket = createLines(productInfo, ticket, options, attrs);
+      }
+    });
 
     ticket = OB.App.State.Ticket.Utils.updateServicesInformation(ticket);
 
@@ -59,10 +50,12 @@
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
     async (ticket, payload) => {
       let newPayload = { options: {}, attrs: {}, ...payload };
-      newPayload.options.taxRules = OB.Taxes.Pos.ruleImpls;
       newPayload.products = newPayload.products.map(productInfo => {
-        return { ...productInfo, qty: productInfo.qty || 1 };
+        let qty = productInfo.qty || 1;
+        qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -qty : qty;
+        return { ...productInfo, qty };
       });
+      newPayload.options.taxRules = OB.Taxes.Pos.ruleImpls;
       newPayload = await processPacks(newPayload);
 
       checkRestrictions(ticket, newPayload);
@@ -291,7 +284,8 @@
     checkGenericProduct(products);
     checkCancelAndReplaceQty(ticket, options);
     checkAnonymousBusinessPartner(ticket, products, options);
-    checkNotReturnable(ticket, products, options);
+    checkNotReturnableProduct(ticket, products, options);
+    checkNotReturnableService(ticket, products, options, attrs);
     checkClosedQuotation(ticket);
     checkProductLocked(ticket, products);
     checkAllowSalesWithReturn(ticket, products, options, attrs);
@@ -347,13 +341,12 @@
     }
   }
 
-  function checkNotReturnable(ticket, products, options) {
+  function checkNotReturnableProduct(ticket, products, options) {
     const line = options.line
       ? ticket.lines.find(l => l.id === options.line)
       : null;
     const notReturnable = products.find(p => {
-      const qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -p.qty : p.qty;
-      return (line ? line.qty + qty : qty) < 0 && !p.product.returnable;
+      return (line ? line.qty + p.qty : p.qty) < 0 && !p.product.returnable;
     });
     if (notReturnable) {
       throw new OB.App.Class.ActionCanceled({
@@ -361,6 +354,40 @@
         errorConfirmation: 'OBPOS_UnreturnableProductMessage',
         // eslint-disable-next-line no-underscore-dangle
         messageParams: [notReturnable.product._identifier]
+      });
+    }
+  }
+
+  function checkNotReturnableService(ticket, products, options, attrs) {
+    const pi = products[0];
+    const line = getLineToEdit(pi, ticket, options, attrs);
+    let relatedLines = attrs.relatedLines || [];
+    if (line && line.relatedLines) {
+      relatedLines = OB.App.ArrayUtils.union(relatedLines, line.relatedLines);
+    }
+
+    if (relatedLines.length === 0 || (line && line.originalOrderLineId)) {
+      return;
+    }
+
+    let newqtyminus = ticket.lines
+      .filter(
+        l => l.qty < 0 && relatedLines.some(rl => rl.orderlineId === l.id)
+      )
+      .reduce((t, l) => t + l.qty, 0);
+
+    if (pi.product.quantityRule === 'UQ') {
+      newqtyminus = newqtyminus ? -1 : 0;
+    }
+
+    const lineQty = line ? line.qty + pi.qty : pi.qty;
+    if (newqtyminus && lineQty > 0 && !pi.product.returnable) {
+      // Cannot add not returnable service to a negative product
+      throw new OB.App.Class.ActionCanceled({
+        title: 'OBPOS_UnreturnableProduct',
+        errorConfirmation: 'OBPOS_UnreturnableProductMessage',
+        // eslint-disable-next-line no-underscore-dangle
+        messageParams: [pi.product._identifier]
       });
     }
   }
@@ -385,10 +412,7 @@
     };
 
     const productLocked = products
-      .filter(p => {
-        const qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -p.qty : p.qty;
-        return OB.DEC.compare(qty) === 1;
-      })
+      .filter(p => OB.DEC.compare(p.qty) === 1)
       .map(p => {
         const obj = {
           // eslint-disable-next-line no-underscore-dangle
@@ -942,9 +966,8 @@
       : null;
 
     const servicesWithReturnApproval = products.filter(p => {
-      const qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -p.qty : p.qty;
       return (
-        (line ? line.qty + qty : qty) < 0 &&
+        (line ? line.qty + p.qty : p.qty) < 0 &&
         p.product.productType === 'S' &&
         !p.product.ignoreReturnApproval
       );
@@ -975,10 +998,7 @@
     const { products, options, attrs } = payload;
 
     for (let i = 0; i < products.length; i += 1) {
-      const { product } = products[i];
-      const qty = OB.App.State.Ticket.Utils.isReturn(ticket)
-        ? -products[i].qty
-        : products[i].qty;
+      const { product, qty } = products[i];
       const line = getLineToEdit(products[i], ticket, options, attrs);
       const lineId = line ? line.id : payload.line;
       const settings = { ticket, lineId, options, attrs };

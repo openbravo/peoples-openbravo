@@ -357,6 +357,27 @@ describe('addProduct preparation', () => {
       );
     });
 
+    it('not returnable service', async () => {
+      const unreturnableService = {
+        ...Product.productB,
+        productType: 'S',
+        returnable: false
+      };
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: unreturnableService, qty: 1 }],
+              attrs: { relatedLines: [{ orderlineId: '1' }] }
+            },
+            Ticket.returnedLine
+          ),
+        {
+          errorConfirmation: 'OBPOS_UnreturnableProductMessage'
+        }
+      );
+    });
+
     it('closed quotation check', async () => {
       const closedQuotation = {
         ...Ticket.singleLine,
