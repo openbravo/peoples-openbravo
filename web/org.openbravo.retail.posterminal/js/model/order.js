@@ -1217,8 +1217,7 @@
           !this.isNegative() &&
           !this.get('cancelLayaway') &&
           this.get('bp') &&
-          this.get('bp').get('id') !==
-            OB.MobileApp.model.get('businessPartner').get('id')
+          this.get('bp').get('id') !== OB.MobileApp.model.get('businesspartner')
         ) {
           OB.UTIL.prepaymentRules[
             OB.MobileApp.model.get('terminal').prepaymentAlgorithm
@@ -7863,11 +7862,18 @@
                   },
                   function(args2) {
                     if (args2.saveChanges && !payment.get('changePayment')) {
-                      order.save();
+                      order.save(function() {
+                        OB.UTIL.ProcessController.finish(
+                          'addPayment',
+                          execution
+                        );
+                        finalCallback();
+                      });
                       order.trigger('saveCurrent');
+                    } else {
+                      OB.UTIL.ProcessController.finish('addPayment', execution);
+                      finalCallback();
                     }
-                    OB.UTIL.ProcessController.finish('addPayment', execution);
-                    finalCallback();
                   }
                 );
               };
@@ -8014,7 +8020,6 @@
                   .set('roundedPaymentId', payment.get('id'));
               }
               executeFinalCallback(true);
-              OB.UTIL.ProcessController.finish('addPayment', execution);
               return;
             }
           ); // call with callback, no args
