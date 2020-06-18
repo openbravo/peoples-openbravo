@@ -2806,6 +2806,7 @@ enyo.kind({
           receiptHasPrepaymentAmount = true;
 
         function underTheLimitApprovalCallback() {
+          myModel.get('order').set('completeTicket', true);
           if (callback && callback instanceof Function) {
             callback();
           }
