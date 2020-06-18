@@ -287,7 +287,7 @@
     checkNotReturnableProduct(ticket, products, options);
     checkNotReturnableService(ticket, products, options, attrs);
     checkClosedQuotation(ticket);
-    checkProductLocked(ticket, products);
+    checkProductLocked(products);
     checkAllowSalesWithReturn(ticket, products, options, attrs);
   }
 
@@ -401,7 +401,7 @@
     }
   }
 
-  function checkProductLocked(ticket, products) {
+  function checkProductLocked(products) {
     const getProductStatus = product => {
       const status = product.productAssortmentStatus || product.productStatus;
       if (status) {
