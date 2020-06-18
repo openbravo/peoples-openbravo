@@ -161,31 +161,19 @@
         const serviceLine = serviceLines[i];
         const service = serviceLine.product;
         const { relatedLines } = serviceLine;
-        const positiveLines = [];
-        const negativeLines = [];
-        let newqtyplus = 0;
-        let newqtyminus = 0;
-
-        for (let j = 0; j < relatedLines.length; j += 1) {
-          const relatedLine = this.ticket.lines.find(
-            l => l.id === relatedLines[j].orderlineId
-          );
-          if (relatedLine && relatedLine.qty > 0) {
-            newqtyplus += relatedLine.qty;
-            positiveLines.push(relatedLine);
-          } else if (relatedLine && relatedLine.qty < 0) {
-            newqtyminus += relatedLine.qty;
-            negativeLines.push(relatedLine);
-          }
-        }
-
-        let rlp = relatedLines.filter(rl =>
+        const ticketRelatedLines = this.ticket.lines.filter(l =>
+          relatedLines.some(rl => rl.orderlineId === l.id)
+        );
+        const positiveLines = ticketRelatedLines.filter(l => l.qty > 0);
+        const negativeLines = ticketRelatedLines.filter(l => l.qty < 0);
+        const rlp = relatedLines.filter(rl =>
           positiveLines.some(pl => pl.id === rl.orderlineId)
         );
         const rln = relatedLines.filter(rl =>
           negativeLines.some(nl => nl.id === rl.orderlineId)
         );
-
+        let newqtyplus = positiveLines.reduce((t, l) => t + l.qty, 0);
+        let newqtyminus = negativeLines.reduce((t, l) => t + l.qty, 0);
         if (service.quantityRule === 'UQ') {
           newqtyplus = newqtyplus ? 1 : 0;
           newqtyminus = newqtyminus ? -1 : 0;
@@ -198,15 +186,16 @@
 
         if (serviceLine.qty > 0) {
           if (newqtyminus && newqtyplus) {
+            let newRlp = rlp;
             if (deferredLines.length > 0) {
+              newRlp = OB.App.ArrayUtils.union(rlp, deferredLines);
               const qty = service.quantityRule === 'PP' ? deferredQty : 0;
-              rlp = OB.App.ArrayUtils.union(rlp, deferredLines);
               newqtyplus += qty;
             }
             const newLine = this.createLine(service, newqtyminus);
             newLine.relatedLines = rln;
             newLine.groupService = newLine.product.groupProduct;
-            serviceLine.relatedLines = rlp;
+            serviceLine.relatedLines = newRlp;
             serviceLine.qty = newqtyplus;
           } else if (newqtyminus) {
             if (deferredLines.length > 0) {
@@ -222,8 +211,10 @@
             );
             serviceLine.qty = newqtyminus;
           } else if (newqtyplus) {
-            rlp = OB.App.ArrayUtils.union(rlp, deferredLines || []);
-            serviceLine.relatedLines = rlp;
+            serviceLine.relatedLines = OB.App.ArrayUtils.union(
+              rlp,
+              deferredLines
+            );
             if (service.quantityRule === 'PP') {
               if (serviceLine.groupService) {
                 newqtyplus += deferredQty;
@@ -266,11 +257,7 @@
     }
 
     shouldUpdateServices() {
-      return (
-        this.ticket.hasServices &&
-        !this.ticket.preventServicesUpdate &&
-        this.ticket.isEditable
-      );
+      return this.ticket.hasServices && this.ticket.isEditable;
     }
 
     getServiceLines() {
