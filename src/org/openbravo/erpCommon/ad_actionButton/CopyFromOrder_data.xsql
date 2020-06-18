@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,8 +58,8 @@
                                                                ELSE M_BOM_PRICESTD(CL.M_PRODUCT_ID, M_GET_PRICELIST_VERSION(?, TO_DATE(?))) 
                                                                 END) AS LASTPRICESO,
         C_TAX.C_TAX_ID, C_TAX.NAME AS NAMETAX, C_UOM.C_UOM_ID, C_UOM.UOMSYMBOL,
-        (CASE WHEN CL.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(CL.M_PRODUCT_ID, '01360D369B5F473686354A701A6EA559') ELSE CL.C_AUM END) AS C_AUM,
-        (CASE WHEN CL.C_AUM IS NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(CL.M_PRODUCT_ID, '01360D369B5F473686354A701A6EA559')) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = CL.C_AUM) END) AS C_AUMSYMBOL,
+        (CASE WHEN CL.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(CL.M_PRODUCT_ID, C.C_DOCTYPE_ID) ELSE CL.C_AUM END) AS C_AUM,
+        (CASE WHEN CL.C_AUM IS NULL THEN (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = M_GET_DEFAULT_AUM_FOR_DOCUMENT(CL.M_PRODUCT_ID, C.C_DOCTYPE_ID)) ELSE (SELECT UOMSYMBOL FROM C_UOM WHERE C_UOM_ID = CL.C_AUM) END) AS C_AUMSYMBOL,
         C.C_DOCTYPE_ID
         FROM C_ORDER C JOIN m_pricelist pl ON c.m_pricelist_id = pl.m_pricelist_id,
             C_ORDERLINE CL LEFT JOIN (SELECT M_ATTRIBUTESETINSTANCE_ID , DESCRIPTION FROM M_ATTRIBUTESETINSTANCE) MA ON (CL.M_ATTRIBUTESETINSTANCE_ID = MA.M_ATTRIBUTESETINSTANCE_ID), M_PRODUCT M, C_UOM, C_TAX

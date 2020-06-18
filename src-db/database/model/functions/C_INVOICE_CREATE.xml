@@ -537,6 +537,10 @@
 											END IF;
 	                  END IF;
 
+                SELECT C_DOCTYPE_ID
+                INTO c_soo_doctype
+                FROM C_ORDER
+                WHERE C_ORDER_ID = ptr_ol.C_ORDER_ID;
 	            v_default_aum := CASE WHEN v_uom_preference = 'Y' AND ptr_ol.AUMQTY IS NULL AND ptr_ol.M_Product_Uom_ID IS NULL 
 					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(ptr_ol.M_Product_ID, c_soo_doctype) 
 					 ELSE ptr_ol.C_AUM 
@@ -650,6 +654,13 @@
 											END IF;
 	                  END IF;
 		    
+		    SELECT C_DOCTYPE_ID
+		    INTO c_soo_doctype
+		    FROM C_ORDER
+		    WHERE EXISTS (SELECT 1
+		                  FROM C_ORDERLINE
+		                  WHERE C_ORDER.C_ORDER_ID = C_ORDERLINE.C_ORDER_ID
+		                  AND C_ORDERLINE.C_ORDERLINE_ID =  ptr_sl.C_ORDERLINE_ID);
 		    v_default_aum := CASE WHEN v_uom_preference = 'Y' AND ptr_sl.AUMQTY IS NULL AND ptr_sl.M_Product_Uom_ID IS NULL 
 					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(ptr_sl.M_Product_ID, c_soo_doctype) 
 					 ELSE ptr_sl.C_AUM 
@@ -1224,6 +1235,12 @@
 									END IF;
                 END IF;
 
+                IF(Cur_InvoiceSchedule.C_Order_ID IS NOT NULL) THEN
+                  SELECT C_DOCTYPE_ID
+                  INTO c_soo_doctype
+                  FROM C_ORDER
+                  WHERE C_ORDER_ID = Cur_InvoiceSchedule.C_Order_ID;
+                END IF;
                 v_default_aum := CASE WHEN v_uom_preference = 'Y' AND Cur_InvoiceSchedule.AUMQTY IS NULL AND Cur_InvoiceSchedule.M_Product_Uom_ID IS NULL 
 					 THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(Cur_InvoiceSchedule.M_Product_ID, c_soo_doctype) 
 					 ELSE Cur_InvoiceSchedule.C_AUM 
