@@ -154,7 +154,10 @@
   );
 
   const checkPrepayment = async (ticket, payload) => {
-    const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(ticket);
+    const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
+      ticket,
+      payload
+    );
 
     if (
       !payload.terminal.calculatePrepayments ||
@@ -194,7 +197,10 @@
   };
 
   const checkOverpayment = async (ticket, payload) => {
-    const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(ticket);
+    const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
+      ticket,
+      payload
+    );
     if (!paymentStatus.overpayment) {
       return payload;
     }
