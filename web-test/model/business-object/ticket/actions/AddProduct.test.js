@@ -237,10 +237,7 @@ describe('addProduct', () => {
       const baseTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }],
         attrs: {
-          splitline: true,
-          originalLine: {
-            warehouse: { id: 'A154EC30A296479BB078B0AFFD74CA22' }
-          }
+          splitline: true
         }
       });
 

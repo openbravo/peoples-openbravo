@@ -1135,6 +1135,10 @@ enyo.kind({
           if (options.line) {
             options.line = args.options.line.id;
           }
+          const attrs = args.attrs ? { ...args.attrs } : {};
+          if (attrs.originalLine) {
+            attrs.originalLine = attrs.originalLine.id;
+          }
           options.businessPartner = OB.MobileApp.model.get(
             'terminal'
           ).businessPartner;
@@ -1147,7 +1151,7 @@ enyo.kind({
               }
             ],
             options,
-            attrs: args.attrs || {}
+            attrs
           })
             .then(() => {
               if (OB.UI.MultiColumn.isSingleColumn()) {

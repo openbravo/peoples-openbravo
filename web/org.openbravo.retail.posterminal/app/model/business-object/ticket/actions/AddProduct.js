@@ -19,7 +19,6 @@
     // options: settings that allow to change the behavior of the action
     // attrs: additional properties to be included in the created lines
     const { products, options, attrs } = payload;
-
     delete ticket.deferredOrder;
 
     ticket.lines = ticket.lines.map(l => {
@@ -179,10 +178,13 @@
       };
     }
 
-    if (attrs.splitline != null) {
+    if (attrs.splitline != null && attrs.originalLine) {
+      const originalLine = newTicket.lines.find(
+        l => l.id === attrs.originalLine
+      );
       newLine.warehouse = {
-        id: attrs.originalLine.warehouse.id,
-        warehousename: attrs.originalLine.warehouse.warehousename
+        id: originalLine.warehouse.id,
+        warehousename: originalLine.warehouse.warehousename
       };
     }
 
