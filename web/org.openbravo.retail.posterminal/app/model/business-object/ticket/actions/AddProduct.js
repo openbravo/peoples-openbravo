@@ -359,7 +359,25 @@
   }
 
   function checkNotReturnableService(ticket, products, options, attrs) {
-    products.forEach(pi => {
+    const service = findServiceForNegativeProduct(
+      ticket,
+      products,
+      options,
+      attrs
+    );
+    if (service && !service.product.returnable) {
+      // Cannot add not returnable service to a negative product
+      throw new OB.App.Class.ActionCanceled({
+        title: 'OBPOS_UnreturnableProduct',
+        errorConfirmation: 'OBPOS_UnreturnableProductMessage',
+        // eslint-disable-next-line no-underscore-dangle
+        messageParams: [service.product._identifier]
+      });
+    }
+  }
+
+  function findServiceForNegativeProduct(ticket, products, options, attrs) {
+    return products.find(pi => {
       const line = getLineToEdit(pi, ticket, options, attrs);
       let relatedLines = attrs.relatedLines || [];
       if (line && line.relatedLines) {
@@ -367,7 +385,7 @@
       }
 
       if (relatedLines.length === 0 || (line && line.originalOrderLineId)) {
-        return;
+        return false;
       }
 
       let newqtyminus = ticket.lines
@@ -381,15 +399,7 @@
       }
 
       const lineQty = line ? line.qty + pi.qty : pi.qty;
-      if (newqtyminus && lineQty > 0 && !pi.product.returnable) {
-        // Cannot add not returnable service to a negative product
-        throw new OB.App.Class.ActionCanceled({
-          title: 'OBPOS_UnreturnableProduct',
-          errorConfirmation: 'OBPOS_UnreturnableProductMessage',
-          // eslint-disable-next-line no-underscore-dangle
-          messageParams: [pi.product._identifier]
-        });
-      }
+      return newqtyminus && lineQty > 0;
     });
   }
 
@@ -961,7 +971,7 @@
   }
 
   async function checkApprovals(ticket, payload) {
-    const { products, options } = payload;
+    const { products, options, attrs } = payload;
     const line = options.line
       ? ticket.lines.find(l => l.id === options.line)
       : null;
@@ -973,6 +983,18 @@
         !p.product.ignoreReturnApproval
       );
     });
+
+    if (servicesWithReturnApproval.length === 0) {
+      const service = findServiceForNegativeProduct(
+        ticket,
+        products,
+        options,
+        attrs
+      );
+      if (service) {
+        servicesWithReturnApproval.push(service);
+      }
+    }
 
     if (servicesWithReturnApproval.length > 0) {
       const separator = `<br>${OB.App.SpecialCharacters.bullet()}`;

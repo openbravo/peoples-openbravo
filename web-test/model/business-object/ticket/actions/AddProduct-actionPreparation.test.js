@@ -1454,8 +1454,26 @@ describe('addProduct preparation', () => {
         payloadWithApproval
       );
       const newPayload = await prepareAction(
-        { products: [{ product: service }] },
+        { products: [{ product: service, qty: 1 }] },
         Ticket.emptyReturn
+      );
+      expect(newPayload).toEqual(payloadWithApproval);
+    });
+
+    it('returnable service in negative line accepted approval', async () => {
+      const payloadWithApproval = {
+        products: [{ product: service }],
+        approvals: ['OBPOS_approval.returnService']
+      };
+      OB.App.Security.requestApprovalForAction.mockResolvedValue(
+        payloadWithApproval
+      );
+      const newPayload = await prepareAction(
+        {
+          products: [{ product: service, qty: 1 }],
+          attrs: { relatedLines: [{ orderlineId: '1' }] }
+        },
+        Ticket.returnedLine
       );
       expect(newPayload).toEqual(payloadWithApproval);
     });
@@ -1469,7 +1487,7 @@ describe('addProduct preparation', () => {
       await expect(
         prepareAction(
           {
-            products: [{ product: service }]
+            products: [{ product: service, qty: 1 }]
           },
           Ticket.emptyReturn
         )
