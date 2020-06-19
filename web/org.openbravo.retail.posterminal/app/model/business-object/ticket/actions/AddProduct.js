@@ -200,7 +200,9 @@
     const lineAttrs = {
       ...attrs,
       hasRelatedServices: productInfo.hasRelatedServices,
-      hasMandatoryServices: productInfo.hasMandatoryServices
+      hasMandatoryServices: attrs.splitline
+        ? false
+        : productInfo.hasMandatoryServices
     };
     if (
       productInfo.product.productType === 'S' &&

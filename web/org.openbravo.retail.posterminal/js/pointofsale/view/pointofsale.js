@@ -1143,6 +1143,8 @@ enyo.kind({
             'terminal'
           ).businessPartner;
 
+          const beforeAddTicket = OB.App.State.getState().Ticket;
+
           OB.App.State.Ticket.addProduct({
             products: [
               {
@@ -1162,6 +1164,26 @@ enyo.kind({
                   ])
                 );
               }
+
+              const afterAddTicket = OB.App.State.getState().Ticket;
+
+              const newLine = afterAddTicket.lines.find(
+                nl => !beforeAddTicket.lines.some(l => l.id === nl.id)
+              );
+
+              if (
+                !options.isSilentAddProduct &&
+                newLine &&
+                !newLine.splitline &&
+                newLine.product.productType !== 'S'
+              ) {
+                args.receipt.trigger(
+                  'showProductList',
+                  args.receipt.get('lines').get(newLine.id),
+                  'mandatory'
+                );
+              }
+
               finalCallback(true);
             })
             .catch(OB.App.View.ActionCanceledUIHandler.handle);
