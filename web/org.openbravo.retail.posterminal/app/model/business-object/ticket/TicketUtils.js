@@ -292,7 +292,7 @@
             i += 1
           ) {
             const notGroupedProduct = { ...line.product, groupProduct: false };
-            const { newLine } = this.createLine(notGroupedProduct, qtyLineServ);
+            const newLine = this.createLine(notGroupedProduct, qtyLineServ);
             newLine.relatedLines = siblingServicesLines[0].relatedLines;
             newLine.groupService = false;
           }
@@ -319,9 +319,9 @@
           const ticketLine = this.ticket.lines.find(
             l => l.id === rl.orderlineId
           );
-          const result = this.createLine(serviceLine.product, ticketLine.qty);
-          result.newLine.relatedLines = [rl];
-          result.newLine.groupService = false;
+          const newLine = this.createLine(serviceLine.product, ticketLine.qty);
+          newLine.relatedLines = [rl];
+          newLine.groupService = false;
         });
         this.deleteLine(serviceLine.id);
       }
