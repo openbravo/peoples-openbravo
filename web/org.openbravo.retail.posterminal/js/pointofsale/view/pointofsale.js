@@ -1174,6 +1174,7 @@ enyo.kind({
               if (
                 !options.isSilentAddProduct &&
                 newLine &&
+                newLine.hasMandatoryServices &&
                 !newLine.splitline &&
                 newLine.product.productType !== 'S'
               ) {
