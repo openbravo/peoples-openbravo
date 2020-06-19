@@ -700,16 +700,7 @@
   }
 
   OB.App.StateAPI.Ticket.registerUtilityFunctions({
-    /**
-     * Checks whether a ticket is a return or a sale.
-     *
-     * @param {object} ticket - The ticket whose will be checked
-     * @param {object} settings - The calculation settings, which include:
-     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
-     *
-     * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
-     */
-    isReturn(ticket, settings) {
+    isReturn(ticket, payload) {
       if (!ticket.lines) {
         return false;
       }
@@ -718,7 +709,7 @@
       return (
         negativeLines === ticket.lines.length ||
         (negativeLines > 0 &&
-          settings.preferences.salesWithOneLineNegativeAsReturns)
+          payload.preferences.salesWithOneLineNegativeAsReturns)
       );
     },
 
@@ -737,30 +728,30 @@
      * Checks whether a ticket belongs to a different store.
      *
      * @param {object} ticket - The ticket whose will be checked
-     * @param {object} settings - The calculation settings, which include:
+     * @param {object} payload - The calculation payload, which include:
      *             * terminal.organization - Organization of the current terminal
      *
      * @returns {boolean} true in case the ticket is cross store, false otherwise.
      */
-    isCrossStoreTicket(ticket, settings) {
-      if (!ticket.organization || !settings.terminal.organization) {
+    isCrossStoreTicket(ticket, payload) {
+      if (!ticket.organization || !payload.terminal.organization) {
         return false;
       }
 
-      return ticket.organization !== settings.terminal.organization;
+      return ticket.organization !== payload.terminal.organization;
     },
 
     /**
      * Returns ticket payment status.
      *
      * @param {object} ticket - The ticket whose payment status will be retrieved
-     * @param {object} settings - The calculation settings, which include:
+     * @param {object} payload - The calculation payload, which include:
      *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {object} Ticket payment status.
      */
-    getPaymentStatus(ticket, settings) {
-      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, settings);
+    getPaymentStatus(ticket, payload) {
+      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, payload);
       const isReversal = ticket.payments.some(
         payment => payment.reversedPaymentId
       );
@@ -832,7 +823,7 @@
      * Updates the type of the given ticket.
      *
      * @param {object} ticket - The ticket whose type will be updated
-     * @param {object} settings - The calculation settings, which include:
+     * @param {object} payload - The calculation payload, which include:
      *             * terminal.documentTypeForSales - Terminal document type for sales
      *             * terminal.documentTypeForReturns - Terminal document type for returns
      *             * terminal.organization - Organization of the current terminal
@@ -840,21 +831,21 @@
      *
      * @returns {object} The new state of Ticket after type update.
      */
-    updateTicketType(ticket, settings) {
+    updateTicketType(ticket, payload) {
       const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStoreTicket(
         ticket,
-        settings
+        payload
       );
       if (isCrossStoreTicket) {
         return ticket;
       }
 
       const newTicket = { ...ticket };
-      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, settings);
+      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, payload);
       newTicket.orderType = isReturn ? 1 : 0;
       newTicket.documentType = isReturn
-        ? settings.terminal.documentTypeForReturns
-        : settings.terminal.documentTypeForSales;
+        ? payload.terminal.documentTypeForReturns
+        : payload.terminal.documentTypeForSales;
 
       return newTicket;
     },
@@ -1127,18 +1118,18 @@
      * Generates the corresponding delivery for the given ticket.
      *
      * @param {object} ticket - The ticket whose delivery will be generated
-     * @param {object} settings - The calculation settings, which include:
+     * @param {object} payload - The calculation payload, which include:
      *             * terminal.organization - The terminal organization.
      *
      * @returns {object} The ticket with the result of the delivery generation
      */
-    generateDelivery(ticket, settings) {
+    generateDelivery(ticket, payload) {
       const newTicket = { ...ticket };
       const isFullyPaidOrPaidOnCredit =
         OB.App.State.Ticket.Utils.isFullyPaid(ticket) || ticket.payOnCredit;
       const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStoreTicket(
         ticket,
-        settings
+        payload
       );
 
       newTicket.lines = ticket.lines.map(line => {
@@ -1217,7 +1208,7 @@
      * Generates the corresponding invoice for the given ticket.
      *
      * @param {object} ticket - The ticket whose invoice will be generated
-     * @param {object} settings - The calculation settings, which include:
+     * @param {object} payload - The calculation payload, which include:
      *             * discountRules - The discount rules to be considered for discount calculation
      *             * bpSets - The businessPartner sets for discount calculation
      *             * taxRules - The tax rules to be considered for tax calculation
@@ -1373,7 +1364,7 @@
       // FIXME: wait CAR fix
       // invoice = OB.App.State.Ticket.Utils.applyDiscountsAndTaxes(
       //   invoice,
-      //   settings
+      //   payload
       // );
       newTicket.calculatedInvoice = invoice;
 
@@ -1384,31 +1375,31 @@
      * Completes ticket payment generating change payment if needed and converting payment to negative in case of return.
      *
      * @param {object} ticket - The ticket whose payment will be completed
-     * @param {object} settings - The calculation settings, which include:
+     * @param {object} payload - The calculation payload, which include:
      *             * terminal.paymentTypes - Terminal payment types
      *             * terminal.multiChange - Terminal multichange configuration
      *             * preferences.splitChange - OBPOS_SplitChange preference value
      *
      * @returns {object} The new state of Ticket after payment completing.
      */
-    completePayment(ticket, settings) {
+    completePayment(ticket, payload) {
       let newTicket = { ...ticket };
 
       // Manage change payments if there is change
       if (newTicket.changePayments && newTicket.changePayments.length > 0) {
         const prevChange = newTicket.change;
         const mergeable =
-          !settings.terminal.multiChange && !settings.preferences.splitChange;
+          !payload.terminal.multiChange && !payload.preferences.splitChange;
 
         // FIXME: change addPayment with generatePayment and return only the payment?
         newTicket.changePayments.forEach(changePayment => {
-          const terminalPayment = settings.terminal.paymentTypes.find(
+          const terminalPayment = payload.terminal.paymentTypes.find(
             paymentType => paymentType.payment.searchKey === changePayment.key
           );
 
           // Generate change payment
           newTicket = OB.App.State.Ticket.Utils.generatePayment(newTicket, {
-            ...settings,
+            ...payload,
             payment: {
               kind: terminalPayment.payment.searchKey,
               name: terminalPayment.payment.commercialName,
@@ -1460,7 +1451,7 @@
       }
 
       // Convert return payments in negative
-      if (OB.App.State.Ticket.Utils.isReturn(newTicket, settings)) {
+      if (OB.App.State.Ticket.Utils.isReturn(newTicket, payload)) {
         newTicket.payments = newTicket.payments.map(payment => {
           const newPayment = { ...payment };
 
@@ -1493,17 +1484,17 @@
      * Generates the corresponding payment for the given ticket.
      *
      * @param {object} ticket - The ticket whose payment will be generated
-     * @param {object} settings - The calculation settings, which include:
+     * @param {object} payload - The calculation payload, which include:
      *             * payment - The payment that will be added to the ticket
      *             * terminal.id - Terminal id
      *             * terminal.paymentTypes - Terminal payment types
      *
      * @returns {object} The new state of Ticket after payment generation.
      */
-    generatePayment(ticket, settings) {
+    generatePayment(ticket, payload) {
       const newTicket = { ...ticket };
-      const terminalPayment = settings.terminal.paymentTypes.find(
-        paymentType => paymentType.payment.searchKey === settings.payment.kind
+      const terminalPayment = payload.terminal.paymentTypes.find(
+        paymentType => paymentType.payment.searchKey === payload.payment.kind
       );
       const precision = terminalPayment
         ? terminalPayment.obposPosprecision
@@ -1512,7 +1503,7 @@
       // FIXME: needed in complete ticket?
       // this.addPaymentRounding(
       //   payment,
-      //   settings.terminal.paymentTypes.find(paymentType => paymentType.payment.searchKey === payment.get('kind'))
+      //   payload.terminal.paymentTypes.find(paymentType => paymentType.payment.searchKey === payment.get('kind'))
       // );
 
       // FIXME: needed in complete ticket?
@@ -1526,24 +1517,24 @@
 
       const payment = newTicket.payments.find(
         p =>
-          p.kind === settings.payment.kind &&
+          p.kind === payload.payment.kind &&
           !p.isPrePayment &&
           !p.reversedPaymentId &&
-          !settings.payment.reversedPaymentId &&
-          (!settings.payment.paymentData ||
-            settings.payment.paymentData.mergeable ||
+          !payload.payment.reversedPaymentId &&
+          (!payload.payment.paymentData ||
+            payload.payment.paymentData.mergeable ||
             (p.paymentData &&
-              settings.payment.paymentData &&
+              payload.payment.paymentData &&
               p.paymentData.groupingCriteria &&
-              settings.payment.paymentData.groupingCriteria &&
+              payload.payment.paymentData.groupingCriteria &&
               p.paymentData.groupingCriteria ===
-                settings.payment.paymentData.groupingCriteria))
+                payload.payment.paymentData.groupingCriteria))
       );
 
       if (payment) {
         const newAmount = OB.DEC.add(
           OB.DEC.mul(
-            settings.payment.amount,
+            payload.payment.amount,
             payment.signChanged && payment.amount < 0 ? -1 : 1,
             precision
           ),
@@ -1555,15 +1546,44 @@
           payment.rate && payment.rate !== '1'
             ? OB.DEC.div(newAmount, payment.mulrate)
             : newAmount;
-        payment.paymentRoundingLine = settings.payment.paymentRoundingLine
+        payment.paymentRoundingLine = payload.payment.paymentRoundingLine
           ? {
-              ...settings.payment.paymentRoundingLine,
+              ...payload.payment.paymentRoundingLine,
               roundedPaymentId: payment.id
             }
           : undefined;
 
         return newTicket;
       }
+
+      const newPayment = { ...payload.payment };
+      newPayment.date = new Date();
+      newPayment.id = OB.UTIL.get_UUID();
+      newPayment.oBPOSPOSTerminal = payload.terminal.id;
+      newPayment.orderGross = newTicket.grossAmount;
+      newPayment.isPaid = newTicket.isPaid;
+      newPayment.isReturnOrder = newTicket.isNegative;
+      newPayment.cancelAndReplace =
+        (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
+        newTicket.cancelAndReplaceChangePending;
+
+      // FIXME: payments.add(payment, { at: newPayment.get('index') });
+      newTicket.payments = [...newTicket.payments, newPayment];
+
+      if (newPayment.reversedPayment) {
+        newPayment.reversedPayment.isReversed = true;
+      }
+      if (newPayment.paymentRoundingLine) {
+        newPayment.paymentRoundingLine.roundedPaymentId = newPayment.id;
+      }
+      if (
+        newPayment.openDrawer &&
+        (newPayment.allowOpenDrawer || newPayment.isCash)
+      ) {
+        newTicket.openDrawer = newPayment.openDrawer;
+      }
+
+      return newTicket;
     }
   });
 })();
