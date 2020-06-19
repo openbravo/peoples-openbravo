@@ -131,6 +131,9 @@
         ];
       }
 
+      // FIXME: remove
+      newTicket.payments = [];
+
       newGlobalState.Ticket = newTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Cashup = newCashup;
