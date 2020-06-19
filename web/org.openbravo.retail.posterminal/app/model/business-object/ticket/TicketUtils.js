@@ -1481,108 +1481,106 @@
     },
 
     /**
-     * Generates the corresponding payment for the given ticket.
-     *
-     * @param {object} ticket - The ticket whose payment will be generated
-     * @param {object} payload - The calculation payload, which include:
-     *             * payment - The payment that will be added to the ticket
-     *             * terminal.id - Terminal id
-     *             * terminal.paymentTypes - Terminal payment types
-     *
-     * @returns {object} The new state of Ticket after payment generation.
-     */
-    generatePayment(ticket, payload) {
-      const newTicket = { ...ticket };
-      const terminalPayment = payload.terminal.paymentTypes.find(
-        paymentType => paymentType.payment.searchKey === payload.payment.kind
-      );
-      const precision = terminalPayment
-        ? terminalPayment.obposPosprecision
-        : OB.DEC.getScale();
+   * Generates the corresponding payment for the given ticket.
+   *
+   * @param {object} ticket - The ticket whose payment will be generated
+   * @param {object} payload - The calculation payload, which include:
+   *             * payment - The payment that will be added to the ticket
+   *             * terminal.id - Terminal id
+   *             * terminal.paymentTypes - Terminal payment types
+   *
+   * @returns {object} The new state of Ticket after payment generation.
+   */
+  generatePayment(ticket, payload) {
+    const newTicket = { ...ticket };
+    const terminalPayment = payload.terminal.paymentTypes.find(
+      paymentType => paymentType.payment.searchKey === payload.payment.kind
+    );
+    const precision = terminalPayment
+      ? terminalPayment.obposPosprecision
+      : OB.DEC.getScale();
 
-      // FIXME: needed in complete ticket?
-      // this.addPaymentRounding(
-      //   payment,
-      //   payload.terminal.paymentTypes.find(paymentType => paymentType.payment.searchKey === payment.get('kind'))
-      // );
+    // FIXME: needed in complete ticket?
+    // this.addPaymentRounding(
+    //   payment,
+    //   payload.terminal.paymentTypes.find(paymentType => paymentType.payment.searchKey === payment.get('kind'))
+    // );
 
-      // FIXME: needed in complete ticket?
-      // if (this.get('prepaymentChangeMode')) {
-      //   this.unset('prepaymentChangeMode');
-      //   this.adjustPayment();
-      // }
+    // FIXME: needed in complete ticket?
+    // if (this.get('prepaymentChangeMode')) {
+    //   this.unset('prepaymentChangeMode');
+    //   this.adjustPayment();
+    // }
 
-      // FIXME: needed in complete ticket?
-      // OB.UTIL.PrepaymentUtils.managePrepaymentChange();
+    // FIXME: needed in complete ticket?
+    // OB.UTIL.PrepaymentUtils.managePrepaymentChange();
 
-      const payment = newTicket.payments.find(
-        p =>
-          p.kind === payload.payment.kind &&
-          !p.isPrePayment &&
-          !p.reversedPaymentId &&
-          !payload.payment.reversedPaymentId &&
-          (!payload.payment.paymentData ||
-            payload.payment.paymentData.mergeable ||
-            (p.paymentData &&
-              payload.payment.paymentData &&
-              p.paymentData.groupingCriteria &&
-              payload.payment.paymentData.groupingCriteria &&
-              p.paymentData.groupingCriteria ===
-                payload.payment.paymentData.groupingCriteria))
-      );
+    const payment = newTicket.payments.find(
+      p =>
+        p.kind === payload.payment.kind &&
+        !p.isPrePayment &&
+        !p.reversedPaymentId &&
+        !payload.payment.reversedPaymentId &&
+        (!payload.payment.paymentData ||
+          payload.payment.paymentData.mergeable ||
+          (p.paymentData &&
+            payload.payment.paymentData &&
+            p.paymentData.groupingCriteria &&
+            payload.payment.paymentData.groupingCriteria &&
+            p.paymentData.groupingCriteria ===
+              payload.payment.paymentData.groupingCriteria))
+    );
 
-      if (payment) {
-        const newAmount = OB.DEC.add(
-          OB.DEC.mul(
-            payload.payment.amount,
-            payment.signChanged && payment.amount < 0 ? -1 : 1,
-            precision
-          ),
-          payment.amount,
+    if (payment) {
+      const newAmount = OB.DEC.add(
+        OB.DEC.mul(
+          payload.payment.amount,
+          payment.signChanged && payment.amount < 0 ? -1 : 1,
           precision
-        );
-        payment.amount = newAmount;
-        payment.origAmount =
-          payment.rate && payment.rate !== '1'
-            ? OB.DEC.div(newAmount, payment.mulrate)
-            : newAmount;
-        payment.paymentRoundingLine = payload.payment.paymentRoundingLine
-          ? {
-              ...payload.payment.paymentRoundingLine,
-              roundedPaymentId: payment.id
-            }
-          : undefined;
-
-        return newTicket;
-      }
-
-      const newPayment = { ...payload.payment };
-      newPayment.date = new Date();
-      newPayment.id = OB.App.UUID.generate();
-      newPayment.oBPOSPOSTerminal = payload.terminal.id;
-      newPayment.orderGross = newTicket.grossAmount;
-      newPayment.isPaid = newTicket.isPaid;
-      newPayment.isReturnOrder = newTicket.isNegative;
-      newPayment.cancelAndReplace =
-        (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
-        newTicket.cancelAndReplaceChangePending;
-
-      newTicket.payments = [...newTicket.payments, newPayment];
-
-      if (newPayment.reversedPayment) {
-        newPayment.reversedPayment.isReversed = true;
-      }
-      if (newPayment.paymentRoundingLine) {
-        newPayment.paymentRoundingLine.roundedPaymentId = newPayment.id;
-      }
-      if (
-        newPayment.openDrawer &&
-        (newPayment.allowOpenDrawer || newPayment.isCash)
-      ) {
-        newTicket.openDrawer = newPayment.openDrawer;
-      }
+        ),
+        payment.amount,
+        precision
+      );
+      payment.amount = newAmount;
+      payment.origAmount =
+        payment.rate && payment.rate !== '1'
+          ? OB.DEC.div(newAmount, payment.mulrate)
+          : newAmount;
+      payment.paymentRoundingLine = payload.payment.paymentRoundingLine
+        ? {
+            ...payload.payment.paymentRoundingLine,
+            roundedPaymentId: payment.id
+          }
+        : undefined;
 
       return newTicket;
     }
+
+    const newPayment = { ...payload.payment };
+    newPayment.date = new Date();
+    newPayment.id = OB.App.UUID.generate();
+    newPayment.oBPOSPOSTerminal = payload.terminal.id;
+    newPayment.orderGross = newTicket.grossAmount;
+    newPayment.isPaid = newTicket.isPaid;
+    newPayment.isReturnOrder = newTicket.isNegative;
+    newPayment.cancelAndReplace =
+      (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
+      newTicket.cancelAndReplaceChangePending;
+    if (newPayment.reversedPayment) {
+      newPayment.reversedPayment.isReversed = true;
+    }
+    if (newPayment.paymentRoundingLine) {
+      newPayment.paymentRoundingLine.roundedPaymentId = newPayment.id;
+    }
+    if (
+      newPayment.openDrawer &&
+      (newPayment.allowOpenDrawer || newPayment.isCash)
+    ) {
+      newTicket.openDrawer = newPayment.openDrawer;
+    }
+    newTicket.payments = [...newTicket.payments, newPayment];
+
+    return newTicket;
+  }
   });
 })();
