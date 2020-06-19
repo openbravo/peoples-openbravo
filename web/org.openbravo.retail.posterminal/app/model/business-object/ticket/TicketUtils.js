@@ -1558,7 +1558,7 @@
 
       const newPayment = { ...payload.payment };
       newPayment.date = new Date();
-      newPayment.id = OB.UTIL.get_UUID();
+      newPayment.id = OB.App.UUID.generate();
       newPayment.oBPOSPOSTerminal = payload.terminal.id;
       newPayment.orderGross = newTicket.grossAmount;
       newPayment.isPaid = newTicket.isPaid;
@@ -1567,7 +1567,6 @@
         (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
         newTicket.cancelAndReplaceChangePending;
 
-      // FIXME: payments.add(payment, { at: newPayment.get('index') });
       newTicket.payments = [...newTicket.payments, newPayment];
 
       if (newPayment.reversedPayment) {
