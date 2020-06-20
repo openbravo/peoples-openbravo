@@ -97,12 +97,12 @@
       <foreign-key foreignTable="FIN_FINANCIAL_ACCOUNT" name="FIN_RECONCIL_FINFINANCIALACC">
         <reference local="FIN_FINANCIAL_ACCOUNT_ID" foreign="FIN_FINANCIAL_ACCOUNT_ID"/>
       </foreign-key>
-      <index name="FIN_RECONCILE_CREATED_FINACC" unique="false">
+      <index name="FIN_RECONCILE_CREATED" unique="false">
         <index-column name="CREATED"/>
-        <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
       </index>
-      <index name="FIN_RECONCILE_FINACCOUNT" unique="false">
+      <index name="FIN_RECONCILE_FINACC_CREATED" unique="false">
         <index-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
+        <index-column name="CREATED"/>
       </index>
       <index name="FIN_RECONCILIATION_POSTED" unique="false">
         <index-column name="POSTED"/>
