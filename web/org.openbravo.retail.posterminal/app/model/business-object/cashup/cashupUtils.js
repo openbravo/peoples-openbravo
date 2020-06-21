@@ -188,7 +188,7 @@
       return OB.DEC.mul(amount, converter.rate);
     },
 
-    countTicketInCashup(cashup, ticket, countLayawayAsSales, paymentnames) {
+    countTicketInCashup(cashup, ticket, countLayawayAsSales, terminalPayments) {
       const newCashup = { ...cashup };
 
       const { orderType } = ticket;
@@ -363,7 +363,10 @@
           // We cannot find this payment in local database, it must be a new payment method, we skip it.
           return;
         }
-        precision = paymentnames[cashupPayment.searchKey].obposPosprecision;
+        precision = terminalPayments.find(
+          paymentType =>
+            paymentType.payment.searchKey === cashupPayment.searchKey
+        ).obposPosprecision;
         amount = orderPayment.amountRounded
           ? orderPayment.amountRounded
           : orderPayment.amount;
@@ -390,35 +393,28 @@
       return newCashup;
     },
 
-    updateCashupFromTicket(
-      state,
-      terminalPayments,
-      countLayawayAsSales,
-      paymentnames
-    ) {
-      const newState = { ...state };
-
+    updateCashupFromTicket(ticket, cashup, payload) {
       // update cashup
-
-      newState.Cashup = OB.App.State.Cashup.Utils.countTicketInCashup(
-        newState.Cashup,
-        newState.Ticket,
-        countLayawayAsSales,
-        paymentnames
+      const newCashup = OB.App.State.Cashup.Utils.countTicketInCashup(
+        cashup,
+        ticket,
+        payload.terminal.countLayawayAsSales,
+        payload.terminal.paymentTypes
       );
 
       // insert cashup in the ticket
-      newState.Ticket = {
-        ...state.Ticket,
-        cashupReportInformation: OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
+      const newTicket = {
+        ...ticket,
+        obposAppCashup: newCashup.id,
+        cashUpReportInformation: OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
           {
-            cashup: newState.Cashup,
-            terminalPayments
+            cashup: newCashup,
+            terminalPayments: payload.terminal.paymentTypes
           }
         )
       };
 
-      return newState;
+      return { ticket: newTicket, cashup: newCashup };
     }
   });
 })();
