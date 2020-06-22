@@ -74,6 +74,19 @@
     if (price < 0) {
       throw new Error('Cannot set price less than 0');
     }
+
+    const lines = ticket.lines.filter(l => lineIds.includes(l.id));
+    if (
+      ticket.deliveryPaymentMode === 'PD' &&
+      price === 0 &&
+      lines.some(
+        l => l.product.obrdmIsdeliveryservice && l.obrdmAmttopayindelivery !== 0
+      )
+    ) {
+      // Covers the case price being reset by order backbone listener, this check should be removed
+      // once backbone ticket disappers (see test DeliveryRates_PayInDelivery_SingleDeliveryService)
+      throw new OB.App.Class.ActionSilentlyCanceled();
+    }
   }
 
   function checkRestrictions(ticket, lines, price) {
