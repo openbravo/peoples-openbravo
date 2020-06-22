@@ -7,8 +7,8 @@
  ************************************************************************************
  */
 
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/cashupUtils');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/paymentMethodUtils');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/CashupUtils');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/PaymentMethodUtils');
 
 OB.App.State = {
   Cashup: {

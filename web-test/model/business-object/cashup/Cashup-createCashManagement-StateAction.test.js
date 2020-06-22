@@ -9,7 +9,7 @@
 
 require('./SetupCashup');
 const deepfreeze = require('deepfreeze');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/cashManagementActions');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/actions/CreateCashManagement');
 
 describe('Cashup - create Cash Management State Action', () => {
   it('create a cash management', () => {
