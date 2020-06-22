@@ -345,9 +345,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     // Cashup
     appDependency.add("model/business-object/cashup/Cashup");
-    appDependency.add("model/business-object/cashup/cashupUtils");
-    appDependency.add("model/business-object/cashup/paymentMethodUtils");
-    appDependency.add("model/business-object/cashup/cashManagementUtils");
+    appDependency.add("model/business-object/cashup/CashupUtils");
+    appDependency.add("model/business-object/cashup/PaymentMethodUtils");
+    appDependency.add("model/business-object/cashup/CashManagementUtils");
     appDependency.add("model/business-object/cashup/actions/CancelCashManagements");
     appDependency.add("model/business-object/cashup/actions/CompleteCashupAndCreateNew");
     appDependency.add("model/business-object/cashup/actions/CreateCashManagement");
