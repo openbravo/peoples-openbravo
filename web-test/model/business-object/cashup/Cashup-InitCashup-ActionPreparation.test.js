@@ -15,23 +15,38 @@ const deepfreeze = require('deepfreeze');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/actions/InitCashup');
 require('./SetupCashupUtils');
 
+const terminalPayments = require('./test-data/terminalPayments');
+const currentCashup = require('./test-data/cleanCashup');
+
 describe('init cashup Action Preparation', () => {
-  it('initialize from backend', async () => {
+  it('initialize from local', async () => {
     const currentState = {
-      Cashup: {
-        id: 'D208D4D868EC1E5C9316006606A90911'
-      }
+      Cashup: currentCashup
+    };
+
+    const payloadForInitCashupActionPreparation = {
+      currentDate:
+        'Mon Jun 22 2020 17:35:33 GMT+0200 (Central European Summer Time)',
+      userId: '3073EDF96A3C42CC86C7069E379522D2',
+      terminalId: '9104513C2D0741D4850AE8493998A7C8',
+      terminalIsSlave: false,
+      terminalIsMaster: false,
+      terminalPayments: terminalPayments,
+      terminalName: 'VBS-1',
+      cacheSessionId: 'B0C3C343D9104FA29E805F5424CE2BE8'
     };
 
     const expectedPayload = {
+      ...payloadForInitCashupActionPreparation,
       initCashupFrom: 'local'
     };
 
     deepfreeze(currentState);
+    deepfreeze(payloadForInitCashupActionPreparation);
     const result = await executeActionPreparations(
       OB.App.StateAPI.Global.initCashup,
       currentState,
-      {}
+      payloadForInitCashupActionPreparation
     );
 
     expect(result).toEqual(expectedPayload);
