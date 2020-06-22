@@ -13,10 +13,6 @@
       super();
       this.indices = [
         new OB.App.Class.Index({
-          name: 'id',
-          properties: [{ property: 'id' }]
-        }),
-        new OB.App.Class.Index({
           name: 'name',
           properties: [{ property: 'name' }]
         })

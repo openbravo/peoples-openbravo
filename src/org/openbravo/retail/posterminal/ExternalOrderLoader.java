@@ -1056,6 +1056,17 @@ public class ExternalOrderLoader extends OrderLoader {
         orderJson.put(name, defaults.get(name));
       }
     }
+
+    // Update IDs to Upper case
+    if (orderJson.has("id")) {
+      orderJson.put("id", orderJson.getString("id").toUpperCase());
+    }
+    for (int i = 0; i < orderJson.getJSONArray("lines").length(); i++) {
+      JSONObject jsonOrderLine = orderJson.getJSONArray("lines").getJSONObject(i);
+      if (jsonOrderLine.has("id")) {
+        jsonOrderLine.put("id", jsonOrderLine.getString("id").toUpperCase());
+      }
+    }
   }
 
   protected JSONObject createOrderDefaults(JSONObject orderJson) throws JSONException {

@@ -43,10 +43,18 @@ enyo.kind({
   },
   tap: function() {
     var me = this,
-      leftSubWindow = me.parent.leftSubWindow;
+      leftSubWindow = me.parent.leftSubWindow,
+      organization = leftSubWindow.organization || {
+        id: OB.MobileApp.model.get('terminal').organization,
+        name: OB.I18N.getLabel('OBPOS_LblThisStore', [
+          OB.MobileApp.model.get('terminal').organization$_identifier
+        ]),
+        country: OB.MobileApp.model.get('terminal').organizationCountryId,
+        region: OB.MobileApp.model.get('terminal').organizationRegionId
+      };
     if (
       OB.MobileApp.model.hasPermission('OBPOS_remote.product', true) &&
-      !OB.UTIL.isCrossStoreOrganization(leftSubWindow.organization)
+      !OB.UTIL.isCrossStoreOrganization(organization)
     ) {
       var serverCallStoreDetailedStock = new OB.DS.Process(
         'org.openbravo.retail.posterminal.stock.OtherStoresDetailedStock'
