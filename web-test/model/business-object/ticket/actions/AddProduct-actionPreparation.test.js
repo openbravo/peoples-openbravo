@@ -1053,7 +1053,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockImplementation(
         p => p === 'OBPOS_EnableSupportForProductAttributes'
       );
-      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('5678');
+      OB.App.View.DialogUIHandler.inputData.mockResolvedValueOnce('1234');
       const productWithSerialAttributes = {
         ...Product.productA,
         hasAttributes: true,

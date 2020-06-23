@@ -199,6 +199,7 @@
   function setLineAttributes(line, attrs, productInfo) {
     const lineAttrs = {
       ...attrs,
+      attributeValue: attrs.attributeValue,
       hasRelatedServices: productInfo.hasRelatedServices,
       hasMandatoryServices: attrs.splitline
         ? false
@@ -716,10 +717,10 @@
       return attributeSearchAllowed && productInfo.product.hasAttributes;
     };
     const checkSerialAttribute = (product, attributeValue) => {
-      if (!attributeValue || !product.isSerialNo) {
+      if (!attributeValue || !product.isSerialNo || ticket.lines.length === 0) {
         return true;
       }
-      return ticket.lines.some(
+      return !ticket.lines.some(
         l =>
           (l.attSetInstanceDesc === attributeValue ||
             l.attributeValue === attributeValue) &&
