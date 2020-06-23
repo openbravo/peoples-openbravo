@@ -96,7 +96,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       this.stepIndex('OB.CloseCash.PaymentMethods')
     ].loaded = false;
 
-    this.set('orderlist', new OB.Collection.OrderList());
+    this.set('orderlist', new Backbone.Collection());
     this.set('paymentList', new Backbone.Collection());
     const payMthds = new Backbone.Collection(
       OB.App.State.getState().Cashup.cashPaymentMethodInfo
