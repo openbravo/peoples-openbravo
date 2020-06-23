@@ -237,6 +237,20 @@ describe('addProduct preparation', () => {
       );
     });
 
+    it('product without price check (allow products without price preference)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_allowProductsNoPriceInMainPricelist'
+      );
+      const productWithoutPrice = { ...Product.productA, listPrice: undefined };
+      const payload = {
+        products: [{ product: productWithoutPrice }]
+      };
+      const newPayload = await prepareAction(payload);
+      expect(newPayload.products).toMatchObject([
+        { product: productWithoutPrice, qty: 1 }
+      ]);
+    });
+
     it('generic product check', async () => {
       await expectError(
         () =>

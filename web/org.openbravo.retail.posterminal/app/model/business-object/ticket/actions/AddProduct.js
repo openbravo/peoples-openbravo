@@ -295,6 +295,13 @@
   }
 
   function checkProductWithoutPrice(products) {
+    if (
+      OB.App.Security.hasPermission('OBPOS_allowProductsNoPriceInMainPricelist')
+    ) {
+      // With the preference OBPOS_allowProductsNoPriceInMainPricelist
+      // it is possible to add product without price in the terminal's main list
+      return;
+    }
     const productWithoutPrice = products.find(
       p => !p.product.listPrice && !p.product.ispack
     );
