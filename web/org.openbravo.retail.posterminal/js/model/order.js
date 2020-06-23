@@ -666,7 +666,7 @@
       // so ERP saves them in the proper place
       this.get('lines').each(function(line) {
         // Calculate inline discount: discount applied before promotions
-        const listPrice = line.get('grossListPrice') || line.get('priceList');
+        const listPrice = line.get('grossListPrice') || line.get('listPrice');
         let discountPercentage;
         if (
           line.get('product').get('standardPrice') !== line.get('price') ||
@@ -717,7 +717,7 @@
               : OB.DEC.Zero,
             listPrice: this.get('priceIncludesTax')
               ? OB.DEC.Zero
-              : line.get('priceList')
+              : line.get('listPrice')
           },
           {
             silent: true
