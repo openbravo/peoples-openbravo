@@ -345,6 +345,9 @@
 
       // set the discount calculation result into the ticket
       this.ticket.lines = this.ticket.lines.map(line => {
+        if (line.skipApplyPromotions) {
+          return { ...line };
+        }
         const discounts = discountsResult.lines.find(l => l.id === line.id);
         const newLine = {
           ...line,
