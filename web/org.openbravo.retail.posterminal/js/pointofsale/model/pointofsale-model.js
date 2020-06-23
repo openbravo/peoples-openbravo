@@ -53,10 +53,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 OB.App.State.Ticket.createEmptyTicket();
               } else {
                 // The order object is stored in the json property of the row fetched from the database
-                orderlist.reset(args.ordersNotPaid.models);
+                orderlist.reset(new Backbone.Collection(args.ordersNotPaid));
                 // At this point it is sure that there exists at least one order
                 // Function to continue of there is some error
-                currentOrder = args.ordersNotPaid.models[0];
+                currentOrder = args.ordersNotPaid[0];
                 //removing Orders lines without mandatory fields filled
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_CheckReceiptMandatoryFields',
@@ -72,7 +72,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                         }
                         loadOrderStr =
                           OB.I18N.getLabel('OBPOS_Order') +
-                          currentOrder.get('documentNo') +
+                          currentOrder.documentNo +
                           OB.I18N.getLabel('OBPOS_Loaded');
                         OB.UTIL.showAlert.display(
                           loadOrderStr,
