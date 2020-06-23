@@ -10,6 +10,8 @@
 require('./SetupCashup');
 const deepfreeze = require('deepfreeze');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/actions/InitCashup');
+require('../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3.min.js');
+require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic.js');
 require('./SetupCashupUtils');
 
 const terminalPayments = require('./test-data/terminalPayments');
@@ -27,7 +29,7 @@ const payloadForInitCashupActionPreparation = {
   cacheSessionId: 'B0C3C343D9104FA29E805F5424CE2BE8'
 };
 
-const payloadForInitCashupAction = {
+const payloadInitFromLocal = {
   ...payloadForInitCashupActionPreparation,
   initCashupFrom: 'local'
 };
@@ -41,12 +43,73 @@ describe('Cashup - init cashup State Action', () => {
 
   it('initialize cashup from local', () => {
     const initialState = { Cashup: cleanCashup };
-
     const expectedState = { Cashup: cleanCashup };
-
     deepfreeze(initialState);
-    const result = initCashup(initialState, payloadForInitCashupAction);
+    deepfreeze(payloadInitFromLocal);
+    const result = initCashup(initialState, payloadInitFromLocal);
+    expect(result).toEqual(expectedState);
+  });
 
+  it('initialize cashup from local - new Payment', () => {
+    deepfreeze(cleanCashup);
+    // remove payment card from the initial state
+    const cashupWithoutCard = { ...cleanCashup };
+    cashupWithoutCard.cashPaymentMethodInfo = cashupWithoutCard.cashPaymentMethodInfo.filter(
+      payment => payment.name !== 'Card'
+    );
+    const initialState = { Cashup: cashupWithoutCard };
+
+    // readd the payment card in the expected state,
+    // note: readding instead using the cleanState, because when added the new payment it is added at the end of the array.
+    deepfreeze(cashupWithoutCard);
+    const cashupAddingCard = { ...cashupWithoutCard };
+    cashupAddingCard.cashPaymentMethodInfo.push(
+      cleanCashup.cashPaymentMethodInfo
+        .filter(payment => payment.name === 'Card')
+        .reduce((a, b) => a.concat(b))
+    );
+    const expectedState = { Cashup: cashupAddingCard };
+
+    OB.App.UUID = {};
+    OB.App.UUID.generate = jest.fn();
+    OB.App.UUID.generate.mockReturnValue('225405573F92976A56776BC5C5BF6595');
+    deepfreeze(initialState);
+    deepfreeze(payloadInitFromLocal);
+    const result = initCashup(initialState, payloadInitFromLocal);
+    expect(result).toEqual(expectedState);
+  });
+
+  it('initialize cashup from local - payment name changed', () => {
+    // change payment name in the payload
+    deepfreeze(payloadInitFromLocal);
+    const payloadPaymentNameChanged = { ...payloadInitFromLocal };
+    payloadPaymentNameChanged.terminalPayments = [
+      ...payloadInitFromLocal.terminalPayments
+    ];
+    payloadPaymentNameChanged.terminalPayments[0].paymentMethod = {
+      ...payloadPaymentNameChanged.terminalPayments[0].paymentMethod
+    };
+    payloadPaymentNameChanged.terminalPayments[0].paymentMethod._identifier =
+      'Credit card - Modified';
+
+    // change payment name in the expected state
+    deepfreeze(cleanCashup);
+    const expectedCashupWithPaymentNameModified = { ...cleanCashup };
+    expectedCashupWithPaymentNameModified.cashPaymentMethodInfo = cleanCashup.cashPaymentMethodInfo.map(
+      payment => {
+        if (payment.name === 'Credit Card') {
+          return { ...payment, name: 'Credit card - Modified' };
+        } else {
+          return payment;
+        }
+      }
+    );
+
+    const initialState = { Cashup: cleanCashup };
+    const expectedState = { Cashup: expectedCashupWithPaymentNameModified };
+    deepfreeze(initialState);
+    deepfreeze(payloadPaymentNameChanged);
+    const result = initCashup(initialState, payloadInitFromLocal);
     expect(result).toEqual(expectedState);
   });
 });
