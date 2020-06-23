@@ -1635,6 +1635,11 @@ enyo.kind({
         }
 
         const setPriceCallback = function(line, price) {
+          // Ensure state model is in sync with backbone before setting the price as this
+          // occurs while mutating backbone model
+          OB.App.StateBackwardCompatibility.getInstance(
+            'Ticket'
+          ).resetStateFromBackbone();
           OB.App.State.Ticket.setLinePrice({
             lineIds: [line.id],
             price,
