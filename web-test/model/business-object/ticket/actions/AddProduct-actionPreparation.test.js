@@ -223,12 +223,11 @@ describe('addProduct preparation', () => {
 
   describe('check restrictions', () => {
     it('product without price check', async () => {
+      const productWithoutPrice = { ...Product.productA, listPrice: undefined };
       await expectError(
         () =>
           prepareAction({
-            products: [
-              { product: { ...Product.productA, listPrice: undefined } }
-            ]
+            products: [{ product: productWithoutPrice, qty: 1 }]
           }),
         {
           warningMsg: 'OBPOS_productWithoutPriceInPriceList',
@@ -242,10 +241,9 @@ describe('addProduct preparation', () => {
         p => p === 'OBPOS_allowProductsNoPriceInMainPricelist'
       );
       const productWithoutPrice = { ...Product.productA, listPrice: undefined };
-      const payload = {
-        products: [{ product: productWithoutPrice }]
-      };
-      const newPayload = await prepareAction(payload);
+      const newPayload = await prepareAction({
+        products: [{ product: productWithoutPrice, qty: 1 }]
+      });
       expect(newPayload.products).toMatchObject([
         { product: productWithoutPrice, qty: 1 }
       ]);
