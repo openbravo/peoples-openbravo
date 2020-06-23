@@ -35,6 +35,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     // set the discount calculation result into the ticket
     newTicket.lines = newTicket.lines.map(line => {
+      if (line.skipApplyPromotions) {
+        return { ...line };
+      }
       const discounts = discountsResult.lines.find(l => l.id === line.id);
       const newLine = {
         ...line,
