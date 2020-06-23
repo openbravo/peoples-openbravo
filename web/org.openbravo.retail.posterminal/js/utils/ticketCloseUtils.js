@@ -323,8 +323,6 @@
             }
             receipt.setIsCalculateReceiptLockState(false);
             receipt.setIsCalculateGrossLockState(false);
-
-            orderList.synchronizeCurrentOrder();
           }
           OB.UTIL.ProcessController.finish('completeReceipt', execution);
           if (triggerClosedCallback instanceof Function) {

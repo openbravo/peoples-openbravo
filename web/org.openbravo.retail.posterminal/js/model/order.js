@@ -10760,11 +10760,6 @@
         }
         return false;
       },
-      synchronizeCurrentOrder: function() {
-        // NOTE: No need to execute any business logic here
-        // The new functionality of loading document no, makes this function obsolete.
-        // The function is not removed to avoid api changes
-      },
       checkForDuplicateReceipts: function(
         model,
         callback,

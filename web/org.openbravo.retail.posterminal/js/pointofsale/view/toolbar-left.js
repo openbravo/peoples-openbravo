@@ -463,6 +463,7 @@ enyo.kind({
       // All requirements are met
       return true;
     }
+
     var newIsDisabledState;
     // [TODO] Must discuss if there is a better way to show discretionary discount pane
     var discountEdit = this.owner.owner.owner.owner.$.rightPanel.$.toolbarpane
@@ -745,6 +746,7 @@ enyo.kind({
             me.doClearUserInput();
           }
         }
+
         function errorCallback(trx, error) {
           completePayment();
           me.doClearUserInput();
