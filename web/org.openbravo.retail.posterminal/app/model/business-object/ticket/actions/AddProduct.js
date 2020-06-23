@@ -57,6 +57,7 @@
       });
       newPayload.options.taxRules = OB.Taxes.Pos.ruleImpls;
       newPayload = await processPacks(newPayload);
+      newPayload = await prepareProductAttributes(ticket, newPayload);
 
       checkRestrictions(ticket, newPayload);
       return newPayload;
@@ -74,7 +75,6 @@
       newPayload = await prepareBOMProducts(ticket, newPayload);
       newPayload = await prepareProductServiceLinked(newPayload);
       newPayload = await prepareProductCharacteristics(newPayload);
-      newPayload = await prepareProductAttributes(ticket, newPayload);
       newPayload = await prepareRelatedServices(newPayload);
       newPayload = await prepareProductPrices(ticket, newPayload);
 
