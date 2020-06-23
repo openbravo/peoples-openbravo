@@ -283,6 +283,7 @@
   function checkRestrictions(ticket, payload) {
     const { products, options, attrs } = payload;
 
+    checkQuantities(ticket, products, options, attrs);
     checkProductWithoutPrice(products);
     checkGenericProduct(products);
     checkCancelAndReplaceQty(ticket, options);
@@ -292,6 +293,19 @@
     checkClosedQuotation(ticket);
     checkProductLocked(products);
     checkAllowSalesWithReturn(ticket, products, options, attrs);
+  }
+
+  function checkQuantities(ticket, products, options, attrs) {
+    products.forEach(pi => {
+      const line = getLineToEdit(pi, ticket, options, attrs);
+      const qty = line ? line.qty + pi.qty : pi.qty;
+
+      if (OB.App.State.Ticket.Utils.isReturn(ticket) && qty > 0) {
+        throw new OB.App.Class.ActionCanceled({
+          errorMsg: 'OBPOS_MsgCannotAddNegative'
+        });
+      }
+    });
   }
 
   function checkProductWithoutPrice(products) {

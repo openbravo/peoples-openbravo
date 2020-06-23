@@ -132,6 +132,13 @@ const Ticket = {
     businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 2
   },
+  returned: {
+    priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
+    lines: [{ id: '1', product: Product.productA, qty: 1 }],
+    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
+    orderType: 1
+  },
   singleLine: {
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
@@ -222,6 +229,21 @@ describe('addProduct preparation', () => {
   });
 
   describe('check restrictions', () => {
+    it('quantities check', async () => {
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.productA, qty: -2 }]
+            },
+            Ticket.returned
+          ),
+        {
+          errorMsg: 'OBPOS_MsgCannotAddNegative'
+        }
+      );
+    });
+
     it('product without price check', async () => {
       const productWithoutPrice = { ...Product.productA, listPrice: undefined };
       await expectError(
