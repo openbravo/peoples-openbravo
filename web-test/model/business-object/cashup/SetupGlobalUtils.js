@@ -6,12 +6,15 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/CashupUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/PaymentMethodUtils');
+require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/MessagesUtils.js');
 
-OB.App.State = { Cashup: { Utils: {} } };
+OB.App.State = { Cashup: { Utils: {} }, Messages: { Utils: {} } };
 
 OB.App.StateAPI.Cashup.utilities.forEach(util => {
   OB.App.State.Cashup.Utils[util.functionName] = util.implementation;
+});
+OB.App.StateAPI.Messages.utilities.forEach(util => {
+  OB.App.State.Messages.Utils[util.functionName] = util.implementation;
 });
