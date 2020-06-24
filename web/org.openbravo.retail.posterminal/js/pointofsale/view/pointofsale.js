@@ -2073,24 +2073,25 @@ enyo.kind({
     me.model
       .get('multiOrders')
       .get('multiOrdersList')
-      .trigger('loadedMultiOrder');
-    OB.UTIL.HookManager.executeHooks(
-      'OBPOS_hookPostMultiOrder',
-      {
-        context: me,
-        multiOrdersList: me.model.get('multiOrders').get('multiOrdersList')
-      },
-      function(args) {
-        if (args.cancellation) {
-          me.removeOrderAndExitMultiOrder(me.model);
-          OB.UTIL.showLoading(false);
-          return;
-        }
-        if (inEvent.callback && inEvent.callback instanceof Function) {
-          inEvent.callback();
-        }
-      }
-    );
+      .trigger('loadedMultiOrder', function() {
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_hookPostMultiOrder',
+          {
+            context: me,
+            multiOrdersList: me.model.get('multiOrders').get('multiOrdersList')
+          },
+          function(args) {
+            if (args.cancellation) {
+              me.removeOrderAndExitMultiOrder(me.model);
+              OB.UTIL.showLoading(false);
+              return;
+            }
+            if (inEvent.callback && inEvent.callback instanceof Function) {
+              inEvent.callback();
+            }
+          }
+        );
+      });
   },
   removeOrderAndExitMultiOrder: function(model) {
     model.deleteMultiOrderList();
