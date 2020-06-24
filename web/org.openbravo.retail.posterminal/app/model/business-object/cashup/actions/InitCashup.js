@@ -125,8 +125,9 @@
         ) {
           // init from backend
           newPayload.initCashupFrom = 'backend';
-          // eslint-disable-next-line prefer-destructuring
-          newPayload.currentCashupFromBackend = backendCashupResponse.data[0];
+          newPayload.currentCashupFromBackend = {
+            ...backendCashupResponse.data[0]
+          };
           newPayload.currentCashupFromBackend.totalStartings = OB.DEC.Zero;
         } else {
           // init from scratch
