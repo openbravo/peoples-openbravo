@@ -686,37 +686,8 @@
       // Apply calculated discounts and promotions to price and gross prices
       // so ERP saves them in the proper place
       this.get('lines').each(function(line) {
-        // Calculate inline discount: discount applied before promotions
-        const listPrice = line.get('grossListPrice') || line.get('listPrice');
-        let discountPercentage;
-        if (
-          line.get('product').get('standardPrice') !== line.get('price') ||
-          line.get('grossListPrice') !== line.get('grossUnitPrice')
-        ) {
-          if (OB.DEC.compare(listPrice) === 0) {
-            discountPercentage = OB.DEC.Zero;
-          } else {
-            discountPercentage = OB.DEC.toBigDecimal(listPrice)
-              .subtract(new BigDecimal(line.get('price').toString()))
-              .multiply(new BigDecimal('100'))
-              .divide(
-                OB.DEC.toBigDecimal(listPrice),
-                2,
-                BigDecimal.prototype.ROUND_HALF_UP
-              );
-            discountPercentage = parseFloat(
-              discountPercentage
-                .setScale(2, BigDecimal.prototype.ROUND_HALF_UP)
-                .toString(),
-              10
-            );
-          }
-        } else {
-          discountPercentage = line.get('discountPercentage') || OB.DEC.Zero;
-        }
         line.set(
           {
-            discountPercentage: discountPercentage,
             gross: this.get('priceIncludesTax')
               ? line.get('grossUnitAmount')
               : OB.DEC.Zero,
@@ -738,29 +709,11 @@
               : OB.DEC.Zero,
             listPrice: this.get('priceIncludesTax')
               ? OB.DEC.Zero
-              : line.get('listPrice')
+              : line.get('priceList')
           },
           {
             silent: true
           }
-        );
-
-        // Calculate prices after promotions
-        let base = line.get('price');
-        let totalDiscount = OB.DEC.Zero;
-        _.forEach(
-          line.get('promotions') || [],
-          function(discount) {
-            var discountAmt = discount.actualAmt || discount.amt || 0;
-            discount.basePrice = base;
-            discount.unitDiscount = OB.DEC.div(
-              discountAmt,
-              discount.obdiscQtyoffer || line.get('qty')
-            );
-            totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
-            base = OB.DEC.sub(base, discount.unitDiscount);
-          },
-          this
         );
       }, this);
     },
