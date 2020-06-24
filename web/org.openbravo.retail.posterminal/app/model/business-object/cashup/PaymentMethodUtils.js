@@ -49,10 +49,10 @@
           }
         }
 
-        if (!deposits !== 'local') {
+        if (!deposits) {
           deposits = OB.DEC.Zero;
         }
-        if (!drops !== 'local') {
+        if (!drops) {
           drops = OB.DEC.Zero;
         }
 
