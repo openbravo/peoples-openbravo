@@ -135,7 +135,7 @@
         country = shipLocId
           ? this.ticket.businessPartner.locationModel.countryId
           : null;
-        country = shipLocId
+        region = shipLocId
           ? this.ticket.businessPartner.locationModel.regionId
           : null;
       } else {
