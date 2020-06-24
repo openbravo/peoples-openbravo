@@ -204,7 +204,6 @@
   function setLineAttributes(line, attrs, productInfo) {
     const lineAttrs = {
       ...attrs,
-      attributeValue: attrs.attributeValue,
       hasRelatedServices: productInfo.hasRelatedServices,
       hasMandatoryServices: attrs.splitline
         ? false
