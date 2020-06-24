@@ -14,16 +14,18 @@ require('../../../../../org.openbravo.client.kernel/web/org.openbravo.client.ker
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic.js');
 require('./SetupCashupUtils');
 
-const terminalPayments = require('./test-data/terminalPayments');
-deepfreeze(terminalPayments);
+const terminalPaymentsWhenLoadingCashupFromBackend = require('./test-data/terminalPaymentsWhenLoadingCashupFromBackend');
+deepfreeze(terminalPaymentsWhenLoadingCashupFromBackend);
 const cleanCashup = require('./test-data/cleanCashup');
 deepfreeze(cleanCashup);
 const unInitializeCashup = require('./test-data/unInitializeCashup');
 deepfreeze(unInitializeCashup);
 const requestCashupFromBackend = require('./test-data/requestCashupFromBackend');
 deepfreeze(requestCashupFromBackend);
-const cleanCacashupAfterLoadCashupFromBackendshup = require('./test-data/cashupAfterLoadCashupFromBackend');
-deepfreeze(cleanCacashupAfterLoadCashupFromBackendshup);
+const cashupAfterLoadCashupFromBackend = require('./test-data/cashupAfterLoadCashupFromBackend');
+deepfreeze(cashupAfterLoadCashupFromBackend);
+const cashupAfterLoadCashupFromBackendWithoutPayments = require('./test-data/cashupAfterLoadCashupFromBackendWithoutPayments');
+deepfreeze(cashupAfterLoadCashupFromBackendWithoutPayments);
 
 const payloadForInitCashupActionPreparation = {
   currentDate:
@@ -32,7 +34,7 @@ const payloadForInitCashupActionPreparation = {
   terminalId: '9104513C2D0741D4850AE8493998A7C8',
   terminalIsSlave: false,
   terminalIsMaster: false,
-  terminalPayments: terminalPayments,
+  terminalPayments: terminalPaymentsWhenLoadingCashupFromBackend,
   terminalName: 'VBS-1',
   cacheSessionId: 'B0C3C343D9104FA29E805F5424CE2BE8'
 };
@@ -57,12 +59,40 @@ describe('Cashup - init cashup State Action - from backend', () => {
 
   it('initialize cashup from backend', () => {
     const initialState = { Cashup: unInitializeCashup };
-    const expectedState = {
-      Cashup: cleanCacashupAfterLoadCashupFromBackendshup
-    };
     deepfreeze(initialState);
-    deepfreeze(payloadInitFromBackend);
+    const expectedState = {
+      Cashup: cashupAfterLoadCashupFromBackend
+    };
+    deepfreeze(expectedState);
     const result = initCashup(initialState, payloadInitFromBackend);
+    expect(result).toEqual(expectedState);
+  });
+
+  it('initialize cashup from backend - without cashPaymentMethodInfo', () => {
+    const initialState = { Cashup: unInitializeCashup };
+    deepfreeze(initialState);
+    const payloadWithoutCashPaymentMethodInfo = { ...payloadInitFromBackend };
+    payloadWithoutCashPaymentMethodInfo.currentCashupFromBackend = {
+      ...payloadWithoutCashPaymentMethodInfo.currentCashupFromBackend,
+      cashPaymentMethodInfo: []
+    };
+    deepfreeze(payloadWithoutCashPaymentMethodInfo);
+    const expectedState = {
+      Cashup: cashupAfterLoadCashupFromBackendWithoutPayments
+    };
+    deepfreeze(expectedState);
+    OB.App.UUID = {};
+    OB.App.UUID.generate = jest
+      .fn()
+      .mockReturnValueOnce('8819C1397B056247DAE6C3151BEA12E6')
+      .mockReturnValueOnce('9C9B00E0AF528CF677903DA413252EFF')
+      .mockReturnValueOnce('67BCD015B8732AD381492A9BBE0D2DE7')
+      .mockReturnValueOnce('8157C9E1C0A9748CA9A4F1A4D58D562F');
+
+    const result = initCashup(
+      initialState,
+      payloadWithoutCashPaymentMethodInfo
+    );
     expect(result).toEqual(expectedState);
   });
 });
