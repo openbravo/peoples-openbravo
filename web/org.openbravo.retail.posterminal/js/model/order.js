@@ -10519,10 +10519,9 @@
                     ),
                     price: price,
                     unitPrice: iter.unitPrice,
-                    priceList:
-                      prod.get('listPrice') !== price
-                        ? price
-                        : prod.get('listPrice'),
+                    priceList: order.get('priceIncludesTax')
+                      ? OB.DEC.number(iter.grossListPrice)
+                      : OB.DEC.number(iter.listPrice),
                     net: lineNet,
                     gross: lineGross,
                     promotions: iter.promotions,
