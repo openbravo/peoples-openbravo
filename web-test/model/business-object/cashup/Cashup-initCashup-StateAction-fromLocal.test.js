@@ -15,7 +15,9 @@ require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/
 require('./SetupCashupUtils');
 
 const terminalPayments = require('./test-data/terminalPayments');
+deepfreeze(terminalPayments);
 const cleanCashup = require('./test-data/cleanCashup');
+deepfreeze(cleanCashup);
 
 const payloadForInitCashupActionPreparation = {
   currentDate:
@@ -28,13 +30,15 @@ const payloadForInitCashupActionPreparation = {
   terminalName: 'VBS-1',
   cacheSessionId: 'B0C3C343D9104FA29E805F5424CE2BE8'
 };
+deepfreeze(payloadForInitCashupActionPreparation);
 
 const payloadInitFromLocal = {
   ...payloadForInitCashupActionPreparation,
   initCashupFrom: 'local'
 };
+deepfreeze(payloadInitFromLocal);
 
-describe('Cashup - init cashup State Action', () => {
+describe('Cashup - init cashup State Action - from local', () => {
   let initCashup;
 
   beforeAll(() => {
@@ -43,46 +47,49 @@ describe('Cashup - init cashup State Action', () => {
 
   it('initialize cashup from local', () => {
     const initialState = { Cashup: cleanCashup };
-    const expectedState = { Cashup: cleanCashup };
     deepfreeze(initialState);
-    deepfreeze(payloadInitFromLocal);
+    const expectedState = { Cashup: cleanCashup };
+    deepfreeze(expectedState);
     const result = initCashup(initialState, payloadInitFromLocal);
     expect(result).toEqual(expectedState);
   });
 
   it('initialize cashup from local - new Payment', () => {
-    deepfreeze(cleanCashup);
     // remove payment card from the initial state
     const cashupWithoutCard = { ...cleanCashup };
+    deepfreeze(cashupWithoutCard);
     cashupWithoutCard.cashPaymentMethodInfo = cashupWithoutCard.cashPaymentMethodInfo.filter(
       payment => payment.name !== 'Card'
     );
     const initialState = { Cashup: cashupWithoutCard };
+    deepfreeze(initialState);
 
     // readd the payment card in the expected state,
     // note: readding instead using the cleanState, because when added the new payment it is added at the end of the array.
-    deepfreeze(cashupWithoutCard);
     const cashupAddingCard = { ...cashupWithoutCard };
-    cashupAddingCard.cashPaymentMethodInfo.push(
-      cleanCashup.cashPaymentMethodInfo
-        .filter(payment => payment.name === 'Card')
-        .reduce((a, b) => a.concat(b))
-    );
+    deepfreeze(cashupAddingCard);
+    const cardPayment = cleanCashup.cashPaymentMethodInfo
+      .filter(payment => payment.name === 'Card')
+      .reduce((a, b) => a.concat(b));
+    deepfreeze(cardPayment);
+    cashupAddingCard.cashPaymentMethodInfo = {
+      ...cashupAddingCard.cashPaymentMethodInfo,
+      cardPayment
+    };
     const expectedState = { Cashup: cashupAddingCard };
+    deepfreeze(expectedState);
 
     OB.App.UUID = {};
     OB.App.UUID.generate = jest.fn();
     OB.App.UUID.generate.mockReturnValue('225405573F92976A56776BC5C5BF6595');
-    deepfreeze(initialState);
-    deepfreeze(payloadInitFromLocal);
     const result = initCashup(initialState, payloadInitFromLocal);
     expect(result).toEqual(expectedState);
   });
 
   it('initialize cashup from local - payment name changed', () => {
     // change payment name in the payload
-    deepfreeze(payloadInitFromLocal);
     const payloadPaymentNameChanged = { ...payloadInitFromLocal };
+    deepfreeze(payloadPaymentNameChanged);
     payloadPaymentNameChanged.terminalPayments = [
       ...payloadInitFromLocal.terminalPayments
     ];
@@ -93,8 +100,8 @@ describe('Cashup - init cashup State Action', () => {
       'Credit card - Modified';
 
     // change payment name in the expected state
-    deepfreeze(cleanCashup);
     const expectedCashupWithPaymentNameModified = { ...cleanCashup };
+    deepfreeze(expectedCashupWithPaymentNameModified);
     expectedCashupWithPaymentNameModified.cashPaymentMethodInfo = cleanCashup.cashPaymentMethodInfo.map(
       payment => {
         if (payment.name === 'Credit Card') {
@@ -106,9 +113,9 @@ describe('Cashup - init cashup State Action', () => {
     );
 
     const initialState = { Cashup: cleanCashup };
-    const expectedState = { Cashup: expectedCashupWithPaymentNameModified };
     deepfreeze(initialState);
-    deepfreeze(payloadPaymentNameChanged);
+    const expectedState = { Cashup: expectedCashupWithPaymentNameModified };
+    deepfreeze(expectedState);
     const result = initCashup(initialState, payloadInitFromLocal);
     expect(result).toEqual(expectedState);
   });
