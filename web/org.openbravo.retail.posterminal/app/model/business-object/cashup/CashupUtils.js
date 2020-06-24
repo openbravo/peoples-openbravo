@@ -26,7 +26,7 @@
     isValidTheBackendCashup(data) {
       if (data && data.exception) {
         throw new Error(data.exception);
-      } else if (data && _.isArray(data) && data.length > 0 && data[0]) {
+      } else if (data && Array.isArray(data) && data.length > 0 && data[0]) {
         return true;
       } else {
         return false;
