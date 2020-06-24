@@ -71,7 +71,8 @@ const productA = {
   groupProduct: true,
   uOMstandardPrecision: 2,
   standardPrice: 5,
-  listPrice: 5
+  listPrice: 5,
+  returnable: true
 };
 
 const productB = {
@@ -372,6 +373,21 @@ describe('addProduct', () => {
       });
 
       expect(baseTicket.lines).toHaveLength(5);
+    });
+
+    it('delete lines with quantity zero', () => {
+      const returned = { ...emptyTicket, orderType: 1 };
+      OB.App.UUID.generate.mockReturnValueOnce('1'); // id for the the product line
+      const baseTicket = addProduct(returned, {
+        products: [{ product: productA, qty: 1 }]
+      });
+
+      const finalTicket = addProduct(baseTicket, {
+        products: [{ product: productA, qty: -1 }],
+        options: { line: '1' }
+      });
+
+      expect(finalTicket.lines).toMatchObject([]);
     });
   });
 

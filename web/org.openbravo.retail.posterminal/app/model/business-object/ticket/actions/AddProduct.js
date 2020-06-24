@@ -41,6 +41,9 @@
       }
     });
 
+    // delete the lines resulting with quantity zero
+    ticket.lines = ticket.lines.filter(l => l.qty !== 0);
+
     ticket = OB.App.State.Ticket.Utils.updateServicesInformation(ticket);
 
     return ticket;
@@ -50,11 +53,13 @@
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
     async (ticket, payload) => {
       let newPayload = { options: {}, attrs: {}, ...payload };
-      newPayload.products = newPayload.products.map(productInfo => {
-        let qty = productInfo.qty || 1;
-        qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -qty : qty;
-        return { ...productInfo, qty };
-      });
+      newPayload.products = newPayload.products
+        .filter(productInfo => productInfo.qty !== 0)
+        .map(productInfo => {
+          let qty = productInfo.qty || 1;
+          qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -qty : qty;
+          return { ...productInfo, qty };
+        });
       newPayload.options.taxRules = OB.Taxes.Pos.ruleImpls;
       newPayload = await processPacks(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
@@ -302,7 +307,7 @@
 
       if (OB.App.State.Ticket.Utils.isReturn(ticket) && qty > 0) {
         throw new OB.App.Class.ActionCanceled({
-          errorMsg: 'OBPOS_MsgCannotAddNegative'
+          errorMsg: 'OBPOS_MsgCannotAddPostiveToReturn'
         });
       }
     });
@@ -999,6 +1004,20 @@
     const line = options.line
       ? ticket.lines.find(l => l.id === options.line)
       : null;
+    let newPayload = { ...payload };
+
+    const linesWithQuantityZero = products.some(pi => {
+      const lineToEdit = getLineToEdit(pi, ticket, options, attrs);
+      const qty = lineToEdit ? lineToEdit.qty + pi.qty : pi.qty;
+      return qty === 0;
+    });
+
+    if (linesWithQuantityZero) {
+      newPayload = await OB.App.Security.requestApprovalForAction(
+        'OBPOS_approval.deleteLine',
+        newPayload
+      );
+    }
 
     const servicesWithReturnApproval = products.filter(p => {
       return (
@@ -1028,7 +1047,7 @@
           // eslint-disable-next-line no-underscore-dangle
           .map(p => p._identifier)
           .join(separator)}`;
-      const newPayload = await OB.App.Security.requestApprovalForAction(
+      newPayload = await OB.App.Security.requestApprovalForAction(
         {
           approvalType: 'OBPOS_approval.returnService',
           message: 'OBPOS_approval.returnService',
@@ -1036,9 +1055,8 @@
         },
         payload
       );
-      return newPayload;
     }
-    return payload;
+    return newPayload;
   }
 
   async function checkStock(ticket, payload) {

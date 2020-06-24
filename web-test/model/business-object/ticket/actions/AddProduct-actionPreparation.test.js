@@ -106,7 +106,8 @@ const Product = {
     uOMstandardPrecision: 3,
     standardPrice: 10,
     listPrice: 11,
-    returnable: true
+    returnable: true,
+    groupProduct: true
   }
 };
 
@@ -135,7 +136,7 @@ const Ticket = {
   returned: {
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
-    lines: [{ id: '1', product: Product.productA, qty: 1 }],
+    lines: [{ id: '1', product: Product.productB, qty: -1, isEditable: true }],
     businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 1
   },
@@ -234,12 +235,13 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.productA, qty: -2 }]
+              products: [{ product: Product.productB, qty: -2 }],
+              options: { line: '1' }
             },
             Ticket.returned
           ),
         {
-          errorMsg: 'OBPOS_MsgCannotAddNegative'
+          errorMsg: 'OBPOS_MsgCannotAddPostiveToReturn'
         }
       );
     });
@@ -1479,6 +1481,25 @@ describe('addProduct preparation', () => {
 
   describe('approvals', () => {
     const service = { ...Product.productA, productType: 'S', returnable: true };
+
+    it('delete line approval', async () => {
+      const payloadWithApproval = {
+        products: [{ product: service }],
+        approvals: ['OBPOS_approval.deleteLine']
+      };
+      OB.App.Security.requestApprovalForAction.mockResolvedValue(
+        payloadWithApproval
+      );
+      const newPayload = await prepareAction(
+        {
+          products: [{ product: Product.productB, qty: -1 }],
+          options: { line: '1' }
+        },
+        Ticket.returned
+      );
+      expect(newPayload).toEqual(payloadWithApproval);
+    });
+
     it('return service accepted approval', async () => {
       const payloadWithApproval = {
         products: [{ product: service }],
