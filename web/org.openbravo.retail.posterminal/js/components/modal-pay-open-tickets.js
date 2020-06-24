@@ -401,7 +401,7 @@ enyo.kind({
       j,
       wrongOrder,
       firstCheck = true,
-      cancellingOrdersToCheck = me.owner.owner.model.get('orderList').models,
+      cancellingOrdersToCheck = OB.App.OpenTicketList.getAllTickets(),
       showSomeOrderIsPaidPopup;
 
     if (checkedMultiOrders.length === 0) {
@@ -510,8 +510,8 @@ enyo.kind({
         for (j = 0; j < cancellingOrdersToCheck.length; j++) {
           var order = cancellingOrdersToCheck[j];
           if (firstCheck) {
-            if (order.get('canceledorder')) {
-              if (order.get('canceledorder').id === iter.id) {
+            if (order.canceledorder) {
+              if (order.canceledorder.id === iter.id) {
                 wrongOrder = {
                   docNo: iter.get('documentNo'),
                   error: 'cancellingOrder'
@@ -521,7 +521,7 @@ enyo.kind({
               cancellingOrders.push(order);
             }
           } else {
-            if (order.get('canceledorder').id === iter.id) {
+            if (order.canceledorder.id === iter.id) {
               wrongOrder = {
                 docNo: iter.get('documentNo'),
                 error: 'cancellingOrder'

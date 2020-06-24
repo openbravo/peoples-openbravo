@@ -61,7 +61,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_CheckReceiptMandatoryFields',
                   {
-                    orders: orderlist.models
+                    orders: orderlist.models // local backbone array, not OrderList instance
                   },
                   function(args) {
                     reCalculateReceipt = args.reCalculateReceipt;
@@ -400,7 +400,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     receipt.on(
       'paymentAccepted',
       function() {
-        OB.UTIL.TicketCloseUtils.paymentAccepted(receipt, orderList, null);
+        OB.UTIL.TicketCloseUtils.paymentAccepted(
+          receipt,
+          OB.App.OpenTicketList.getAllTickets(),
+          null
+        );
       },
       this
     );

@@ -9935,32 +9935,31 @@
             orderTypeMsg,
             this.at(i).get('documentNo')
           );
-          if (this.at(i).get('isLayaway')) {
-            orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
-            errorMsg = enyo.format(
-              OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
-              orderTypeMsg,
-              this.at(i).get('documentNo')
-            );
-          } else if (
-            OB.MobileApp.model.orderList.models[i].get('isQuotation')
-          ) {
-            orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
-            errorMsg = enyo.format(
-              OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
-              orderTypeMsg,
-              this.at(i).get('documentNo')
-            );
-          } else if (
-            !_.isNull(this.at(i).get('oldId')) &&
-            this.at(i).get('oldId') === model.get('id')
-          ) {
-            var SoFromQtDocNo = this.at(i).get('documentNo');
-            var QtDocumentNo = model.get('documentNo');
-            errorMsg = OB.I18N.getLabel(
-              'OBPOS_OrderAssociatedToQuotationInProgress',
-              [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]
-            );
+            if (this.at(i).get('isLayaway')) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+              errorMsg = enyo.format(
+                OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
+                orderTypeMsg,
+                this.at(i).get('documentNo')
+              );
+            } else if (OB.App.OpenTicketList.getAllTickets()[i].isQuotation) {
+              orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+              errorMsg = enyo.format(
+                OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
+                orderTypeMsg,
+                this.at(i).get('documentNo')
+              );
+            } else if (
+              !_.isNull(this.at(i).get('oldId')) &&
+              this.at(i).get('oldId') === model.get('id')
+            ) {
+              var SoFromQtDocNo = this.at(i).get('documentNo');
+              var QtDocumentNo = model.get('documentNo');
+              errorMsg = OB.I18N.getLabel(
+                'OBPOS_OrderAssociatedToQuotationInProgress',
+                [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]
+              );
+            }
           }
           showErrorMessage(errorMsg);
           if (

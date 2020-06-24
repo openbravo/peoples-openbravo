@@ -183,16 +183,17 @@
           }
           receipt.set('isBeingClosed', false);
 
-          _.each(
-            orderList.models,
-            function(ol) {
-              if (ol.get('id') === receipt.get('id')) {
-                ol.set('isBeingClosed', false);
-                return true;
-              }
-            },
-            this
-          );
+          // Not needed now. Current ticket already closed in the previous line
+          // _.each(
+          //     orderList.models,
+          //     function (ol) {
+          //         if (ol.get('id') === receipt.get('id')) {
+          //             ol.set('isBeingClosed', false);
+          //             return true;
+          //         }
+          //     },
+          //     this
+          // );
           OB.UTIL.setScanningFocus(true);
           OB.UTIL.Debug.execute(function() {
             if (!args.frozenReceipt) {

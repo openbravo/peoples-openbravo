@@ -762,16 +762,17 @@
                         OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
                     );
 
-                    _.each(
-                      me.context.get('orderList').models,
-                      function(mdl) {
-                        if (mdl.get('id') === currentReceipt.get('id')) {
-                          mdl.set('hasbeenpaid', 'Y');
-                          return true;
-                        }
-                      },
-                      this
-                    );
+                      // Not needed. Current ticket was already updated
+                      // _.each(
+                      //   me.context.get('orderList').models,
+                      //   function(mdl) {
+                      //     if (mdl.get('id') === currentReceipt.get('id')) {
+                      //       mdl.set('hasbeenpaid', 'Y');
+                      //       return true;
+                      //     }
+                      //   },
+                      //   this
+                      // );
 
                     OB.Dal.getInTransaction(
                       tx,
@@ -932,9 +933,9 @@
           validateMultiOrder,
           completeMultiOrder;
 
-        _.forEach(orderList.models, function(sortedOrder) {
+        orderList.forEach(ticket => {
           _.forEach(multiOrderList, function(multiOrder) {
-            if (multiOrder.get('id') === sortedOrder.get('id')) {
+            if (multiOrder.get('id') === ticket.id) {
               closedReceipts.push(multiOrder);
             }
           });

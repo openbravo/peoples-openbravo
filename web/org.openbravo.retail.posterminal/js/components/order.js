@@ -1829,7 +1829,7 @@ enyo.kind({
             me.multiOrders.set('amountToLayaway', me.amountToLayaway);
             me.multiOrders.set('existingPayment', me.existingPayment);
             me.$.totalMultiReceiptLine.renderTotal(me.total);
-            me.listMultiOrders.reset(me.orderList.models);
+            me.listMultiOrders.reset(me.orderList.models); // Multiorder list, not to remove yet
             if (model.get('leftColumnViewManager').isMultiOrder()) {
               me.doChangeTotal({
                 newTotal: me.total
