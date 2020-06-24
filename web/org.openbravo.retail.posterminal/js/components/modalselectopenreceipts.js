@@ -214,6 +214,11 @@ enyo.kind({
                 'bp',
                 me.owner.owner.owner.model.get('orderList').current.get('bp')
               );
+              if (me.owner.owner.$.body.$.chkSelectOpenedReceiptModal.checked) {
+                me.owner.owner.doChangeCurrentOrder({
+                  newCurrentOrder: orderModel
+                });
+              }
               me.owner.owner.doAddProduct({
                 targetOrder: orderModel,
                 product: product,
@@ -229,9 +234,6 @@ enyo.kind({
                   if (
                     me.owner.owner.$.body.$.chkSelectOpenedReceiptModal.checked
                   ) {
-                    me.owner.owner.doChangeCurrentOrder({
-                      newCurrentOrder: orderModel
-                    });
                     me.owner.owner.owner.model
                       .get('order')
                       .calculateReceipt(function() {
