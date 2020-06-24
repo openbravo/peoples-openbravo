@@ -377,14 +377,15 @@ describe('addProduct', () => {
 
     it('delete lines with quantity zero', () => {
       const returned = { ...emptyTicket, orderType: 1 };
-      OB.App.UUID.generate.mockReturnValueOnce('1'); // id for the the product line
+      const lineId = '1'; // id of the new line
+      OB.App.UUID.generate.mockReturnValueOnce(lineId);
       const baseTicket = addProduct(returned, {
         products: [{ product: productA, qty: 1 }]
       });
 
       const finalTicket = addProduct(baseTicket, {
         products: [{ product: productA, qty: -1 }],
-        options: { line: '1' }
+        options: { line: lineId }
       });
 
       expect(finalTicket.lines).toMatchObject([]);
@@ -393,7 +394,8 @@ describe('addProduct', () => {
 
   describe('services', () => {
     it('add service', () => {
-      OB.App.UUID.generate.mockReturnValueOnce('1'); // id for the the product line
+      const lineId = '1';
+      OB.App.UUID.generate.mockReturnValueOnce(lineId);
       // add product
       const baseTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }]
@@ -402,19 +404,19 @@ describe('addProduct', () => {
       // add service related with product
       const ticketWithService = addProduct(baseTicket, {
         products: [{ product: serviceProduct, qty: 1 }],
-        attrs: { relatedLines: [{ orderlineId: '1' }] }
+        attrs: { relatedLines: [{ orderlineId: lineId }] }
       });
 
       expect(ticketWithService.lines).toMatchObject([
         {
-          id: '1',
+          id: lineId,
           product: productA,
           qty: 1
         },
         {
           product: serviceProduct,
           qty: 1,
-          relatedLines: [{ orderlineId: '1' }]
+          relatedLines: [{ orderlineId: lineId }]
         }
       ]);
     });
@@ -427,8 +429,11 @@ describe('addProduct', () => {
       "Add service with quantity rule '$quantityRule' for ungrouped product",
       ({ quantityRule, expectedQty }) => {
         const service = { ...serviceProduct, quantityRule };
-        // ids for the the product lines
-        OB.App.UUID.generate.mockReturnValueOnce('1').mockReturnValueOnce('2');
+        const line1Id = '1';
+        const line2Id = '2';
+        OB.App.UUID.generate
+          .mockReturnValueOnce(line1Id)
+          .mockReturnValueOnce(line2Id);
         // add product
         const baseTicket = addProduct(emptyTicket, {
           products: [
@@ -440,30 +445,30 @@ describe('addProduct', () => {
         // add service related with line '1' product
         let ticketWithService = addProduct(baseTicket, {
           products: [{ product: service, qty: 1 }],
-          attrs: { relatedLines: [{ orderlineId: '1' }] }
+          attrs: { relatedLines: [{ orderlineId: line1Id }] }
         });
 
         // add service related with line '2' product
         ticketWithService = addProduct(ticketWithService, {
           products: [{ product: service, qty: 1 }],
-          attrs: { relatedLines: [{ orderlineId: '2' }] }
+          attrs: { relatedLines: [{ orderlineId: line2Id }] }
         });
 
         expect(ticketWithService.lines).toMatchObject([
           {
-            id: '1',
+            id: line1Id,
             product: ungroupProduct,
             qty: 1
           },
           {
-            id: '2',
+            id: line2Id,
             product: ungroupProduct,
             qty: 1
           },
           {
             product: serviceProduct,
             qty: expectedQty,
-            relatedLines: [{ orderlineId: '1' }, { orderlineId: '2' }]
+            relatedLines: [{ orderlineId: line1Id }, { orderlineId: line2Id }]
           }
         ]);
       }
@@ -471,7 +476,8 @@ describe('addProduct', () => {
 
     it('add service multiple times (Unique quantity rule)', () => {
       const service = { ...serviceProduct, quantityRule: 'UQ' };
-      OB.App.UUID.generate.mockReturnValueOnce('1'); // id for the the product line
+      const lineId = '1';
+      OB.App.UUID.generate.mockReturnValueOnce(lineId);
       // add product
       const baseTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }]
@@ -480,32 +486,33 @@ describe('addProduct', () => {
       // add service related with product
       let ticketWithService = addProduct(baseTicket, {
         products: [{ product: service, qty: 1 }],
-        attrs: { relatedLines: [{ orderlineId: '1' }] }
+        attrs: { relatedLines: [{ orderlineId: lineId }] }
       });
 
       // add service related with product again
       ticketWithService = addProduct(ticketWithService, {
         products: [{ product: service, qty: 1 }],
-        attrs: { relatedLines: [{ orderlineId: '1' }] }
+        attrs: { relatedLines: [{ orderlineId: lineId }] }
       });
 
       expect(ticketWithService.lines).toMatchObject([
         {
-          id: '1',
+          id: lineId,
           product: productA,
           qty: 1
         },
         {
           product: serviceProduct,
           qty: 1,
-          relatedLines: [{ orderlineId: '1' }]
+          relatedLines: [{ orderlineId: lineId }]
         }
       ]);
     });
 
     it('add multiple qty of service (Unique quantity rule)', () => {
       const service = { ...serviceProduct, quantityRule: 'UQ' };
-      OB.App.UUID.generate.mockReturnValueOnce('1'); // id for the the product line
+      const lineId = '1';
+      OB.App.UUID.generate.mockReturnValueOnce(lineId);
       // add product
       const baseTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }]
@@ -514,26 +521,27 @@ describe('addProduct', () => {
       // add multiple qty of service related with product
       let ticketWithService = addProduct(baseTicket, {
         products: [{ product: service, qty: 2 }],
-        attrs: { relatedLines: [{ orderlineId: '1' }] }
+        attrs: { relatedLines: [{ orderlineId: lineId }] }
       });
 
       expect(ticketWithService.lines).toMatchObject([
         {
-          id: '1',
+          id: lineId,
           product: productA,
           qty: 1
         },
         {
           product: serviceProduct,
           qty: 1,
-          relatedLines: [{ orderlineId: '1' }]
+          relatedLines: [{ orderlineId: lineId }]
         }
       ]);
     });
 
     it('add returnable service related to negative line', () => {
       const service = { ...serviceProduct, quantityRule: 'UQ' };
-      OB.App.UUID.generate.mockReturnValueOnce('1'); // id for the the product line
+      const lineId = '1';
+      OB.App.UUID.generate.mockReturnValueOnce(lineId);
       // add product
       const baseTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: -1 }]
@@ -542,26 +550,27 @@ describe('addProduct', () => {
       // add service related with product
       let ticketWithService = addProduct(baseTicket, {
         products: [{ product: service, qty: 1 }],
-        attrs: { relatedLines: [{ orderlineId: '1' }] }
+        attrs: { relatedLines: [{ orderlineId: lineId }] }
       });
 
       expect(ticketWithService.lines).toMatchObject([
         {
-          id: '1',
+          id: lineId,
           product: productA,
           qty: -1
         },
         {
           product: serviceProduct,
           qty: -1,
-          relatedLines: [{ orderlineId: '1' }]
+          relatedLines: [{ orderlineId: lineId }]
         }
       ]);
     });
 
     it('update related line tax information', () => {
       const product = { ...productA, productCategory: '1', taxCategory: '1' };
-      OB.App.UUID.generate.mockReturnValueOnce('0'); // id of the new line
+      const lineId = '0';
+      OB.App.UUID.generate.mockReturnValueOnce(lineId);
       const baseTicket = addProduct(emptyTicket, {
         products: [{ product, qty: 1 }]
       });
@@ -571,7 +580,7 @@ describe('addProduct', () => {
         ...serviceProduct,
         productServiceLinked: [
           {
-            id: '0',
+            id: lineId,
             product: serviceProduct.id,
             productCategory: '1',
             taxCategory: '2'
@@ -580,14 +589,14 @@ describe('addProduct', () => {
       };
       OB.Taxes.Pos.applyTaxes.mockReturnValueOnce({
         header: {},
-        lines: [{ id: '0', taxRate: 1.11 }]
+        lines: [{ id: lineId, taxRate: 1.11 }]
       });
       const newTicket = addProduct(baseTicket, {
         products: [{ product: service, qty: 1 }],
         attrs: {
           relatedLines: [
             {
-              orderlineId: '0',
+              orderlineId: lineId,
               productCategory: '1',
               productId: product.id,
               productName: product.name
@@ -620,8 +629,11 @@ describe('addProduct', () => {
     });
 
     it('merge related lines', () => {
-      // ids of the new lines
-      OB.App.UUID.generate.mockReturnValueOnce('0').mockReturnValueOnce('1');
+      const line1Id = '1';
+      const line2Id = '2';
+      OB.App.UUID.generate
+        .mockReturnValueOnce(line1Id)
+        .mockReturnValueOnce(line2Id);
       const baseTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }, { product: productB, qty: 1 }]
       });
@@ -631,7 +643,7 @@ describe('addProduct', () => {
         quantityRule: 'UQ',
         productServiceLinked: [
           {
-            id: '0',
+            id: line1Id,
             product: serviceProduct.id,
             productCategory: '1',
             taxCategory: '2'
@@ -644,7 +656,7 @@ describe('addProduct', () => {
         attrs: {
           relatedLines: [
             {
-              orderlineId: '0',
+              orderlineId: line1Id,
               productCategory: '1',
               productId: productA.id,
               productName: productA.name
@@ -658,7 +670,7 @@ describe('addProduct', () => {
         attrs: {
           relatedLines: [
             {
-              orderlineId: '1',
+              orderlineId: line2Id,
               productCategory: '1',
               productId: productB.id,
               productName: productB.name
@@ -672,7 +684,7 @@ describe('addProduct', () => {
         attrs: {
           relatedLines: [
             {
-              orderlineId: '0',
+              orderlineId: line1Id,
               productCategory: '1',
               productId: productA.id,
               productName: productA.name
@@ -683,7 +695,7 @@ describe('addProduct', () => {
 
       expect(ticket.lines).toMatchObject([
         {
-          id: '0',
+          id: line1Id,
           qty: 1,
           baseGrossUnitPrice: 5,
           grossListPrice: 5,
@@ -691,7 +703,7 @@ describe('addProduct', () => {
           product: { id: 'stdProduct' }
         },
         {
-          id: '1',
+          id: line2Id,
           qty: 1,
           baseGrossUnitPrice: 10,
           grossListPrice: 11,
@@ -706,13 +718,13 @@ describe('addProduct', () => {
           product: { id: 'serviceProduct' },
           relatedLines: [
             {
-              orderlineId: '0',
+              orderlineId: line1Id,
               productCategory: '1',
               productId: productA.id,
               productName: productA.name
             },
             {
-              orderlineId: '1',
+              orderlineId: line2Id,
               productCategory: '1',
               productId: productB.id,
               productName: productB.name
