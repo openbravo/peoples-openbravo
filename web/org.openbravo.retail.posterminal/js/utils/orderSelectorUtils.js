@@ -128,8 +128,9 @@
               errorCallback();
               return;
             }
-            currentOrderList.newPaidReceipt(data[0], function(newOrder) {
-              currentOrderList.addPaidReceipt(
+            OB.UTIL.TicketListUtils.newPaidReceipt(data[0], function(newOrder) {
+              OB.UTIL.TicketListUtils.addPaidReceipt(
+                this,
                 newOrder,
                 continueAfterPaidReceipt
               );

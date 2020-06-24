@@ -1364,7 +1364,7 @@ enyo.kind({
     }
   },
   createQuotation: function() {
-    this.model.get('orderList').addNewQuotation();
+    OB.UTIL.TicketListUtils.addNewQuotation();
     return true;
   },
 
@@ -2157,7 +2157,6 @@ enyo.kind({
       if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
         me.model.get('orderList').current = inEvent.order;
         me.model.get('orderList').deleteCurrent();
-        me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
       }
       return true;
     } else {

@@ -206,7 +206,7 @@ enyo.kind({
                 // 'Create New One' case
                 var orderList = me.owner.owner.owner.model.get('orderList');
                 OB.MobileApp.model.receipt.trigger('updateView');
-                var newOrder = orderList.newOrder(
+                var newOrder = OB.UTIL.TicketListUtils.newOrder(
                   OB.MobileApp.model.receipt.get('bp')
                 );
                 orderList.unshift(newOrder);

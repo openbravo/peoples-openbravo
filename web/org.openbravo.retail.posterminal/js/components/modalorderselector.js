@@ -707,13 +707,14 @@ enyo.kind({
                     },
                     function(args) {
                       if (!args.cancelOperation) {
-                        me.model
-                          .get('orderList')
-                          .newPaidReceipt(data[0], function(order) {
+                        OB.UTIL.TicketListUtils.newPaidReceipt(
+                          data[0],
+                          function(order) {
                             me.doChangePaidReceipt({
                               newPaidReceipt: order
                             });
-                          });
+                          }
+                        );
                       }
                     }
                   );

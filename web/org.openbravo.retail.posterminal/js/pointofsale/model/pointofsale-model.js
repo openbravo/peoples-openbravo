@@ -224,9 +224,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         if (order.get('loadedFromServer')) {
           this.get('orderList').current = order;
           this.get('orderList').deleteCurrent();
-          if (order.get('id')) {
-            this.get('orderList').deleteCurrentFromDatabase(order);
-          }
         }
       },
       this

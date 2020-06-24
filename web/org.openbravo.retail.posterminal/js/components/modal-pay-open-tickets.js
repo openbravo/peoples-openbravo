@@ -600,33 +600,29 @@ enyo.kind({
                 );
                 return;
               }
-              me.owner.owner.model
-                .get('orderList')
-                .newPaidReceipt(data[0], function(order) {
-                  if (
-                    (order.get('isPaid') || order.get('isLayaway')) &&
-                    order.getPayment() >= order.getGross()
-                  ) {
-                    OB.Dal.remove(order);
-                    alreadyPaidOrders.push(order);
-                    alreadyPaidOrdersDocNo = alreadyPaidOrdersDocNo.concat(
-                      ' ' + order.get('documentNo')
-                    );
+              OB.UTIL.TicketListUtils.newPaidReceipt(data[0], function(order) {
+                if (
+                  (order.get('isPaid') || order.get('isLayaway')) &&
+                  order.getPayment() >= order.getGross()
+                ) {
+                  OB.Dal.remove(order);
+                  alreadyPaidOrders.push(order);
+                  alreadyPaidOrdersDocNo = alreadyPaidOrdersDocNo.concat(
+                    ' ' + order.get('documentNo')
+                  );
+                  addOrdersToOrderList();
+                } else {
+                  order.set('loadedFromServer', true);
+                  me.owner.owner.model.get('orderList').addMultiReceipt(order);
+                  order.set('checked', iter.get('checked'));
+                  OB.DATA.OrderTaxes(order);
+                  order.set('belongsToMultiOrder', true);
+                  order.calculateReceipt(function() {
+                    selectedMultiOrders.push(order);
                     addOrdersToOrderList();
-                  } else {
-                    order.set('loadedFromServer', true);
-                    me.owner.owner.model
-                      .get('orderList')
-                      .addMultiReceipt(order);
-                    order.set('checked', iter.get('checked'));
-                    OB.DATA.OrderTaxes(order);
-                    order.set('belongsToMultiOrder', true);
-                    order.calculateReceipt(function() {
-                      selectedMultiOrders.push(order);
-                      addOrdersToOrderList();
-                    });
-                  }
-                });
+                  });
+                }
+              });
             } else {
               OB.UTIL.ProcessController.finish(
                 'payOpenTicketsValidation',
