@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -105,7 +105,6 @@ public class ClassLoaderTest extends OBBaseTest {
     // Checking manual servlets
     obc = OBDal.getInstance().createCriteria(ModelImplementation.class);
     obc.add(Restrictions.eq(ModelImplementation.PROPERTY_OBJECTTYPE, "S"));
-    obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_TAB));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_SPECIALFORM));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_PROCESS));
     obc.add(Restrictions.isNull(ModelImplementation.PROPERTY_CALLOUT));
