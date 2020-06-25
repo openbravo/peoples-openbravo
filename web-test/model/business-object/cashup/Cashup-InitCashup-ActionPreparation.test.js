@@ -25,6 +25,10 @@ const unInitializeCashup = require('./test-data/unInitializeCashup');
 deepfreeze(unInitializeCashup);
 const requestCashupFromBackend = require('./test-data/requestCashupFromBackend');
 deepfreeze(requestCashupFromBackend);
+const requestCashupFromBackendNoData = require('./test-data/requestCashupFromBackendNoData');
+deepfreeze(requestCashupFromBackendNoData);
+const requestCashupFromBackendProcessed = require('./test-data/requestCashupFromBackendProcessed');
+deepfreeze(requestCashupFromBackendProcessed);
 
 const payloadForInitCashupActionPreparation = {
   currentDate:
@@ -41,6 +45,7 @@ deepfreeze(payloadForInitCashupActionPreparation);
 
 describe('init cashup Action Preparation', () => {
   it('initialize from local', async () => {
+    // normal case
     const currentState = {
       Cashup: currentCashup
     };
@@ -59,7 +64,7 @@ describe('init cashup Action Preparation', () => {
   });
 
   it('initialize from backend', async () => {
-    // current local cashup should not be valid
+    // clear cache after a ticket or cash management
     const currentState = {
       Cashup: unInitializeCashup
     };
@@ -79,6 +84,39 @@ describe('init cashup Action Preparation', () => {
     OB.App.Request.mobileServiceRequest.mockReturnValue(
       requestCashupFromBackend
     );
+
+    const result = await executeActionPreparations(
+      OB.App.StateAPI.Global.initCashup,
+      currentState,
+      payloadForInitCashupActionPreparation
+    );
+    expect(result).toEqual(expectedPayload);
+  });
+
+  it('initialize from scratch', async () => {
+    // clear cache just after a cashup
+    const currentState = {
+      Cashup: unInitializeCashup
+    };
+    deepfreeze(currentState);
+
+    const expectedPayload = {
+      ...payloadForInitCashupActionPreparation,
+      initCashupFrom: 'scratch',
+      lastCashUpPayments:
+        requestCashupFromBackendProcessed.response.data[0].cashPaymentMethodInfo
+    };
+    deepfreeze(expectedPayload);
+    OB.App.Request = {};
+    OB.App.Request.mobileServiceRequest = jest
+      .fn()
+      .mockImplementation((model, params) => {
+        if (params.isprocessed === 'Y') {
+          return requestCashupFromBackendProcessed;
+        } else {
+          return requestCashupFromBackendNoData;
+        }
+      });
 
     const result = await executeActionPreparations(
       OB.App.StateAPI.Global.initCashup,
