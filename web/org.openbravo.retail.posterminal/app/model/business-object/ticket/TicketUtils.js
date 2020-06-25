@@ -343,30 +343,37 @@
         bpSets
       );
 
-      // set the discount calculation result into the ticket
+      // sets initial line amounts and prices and applies the discount calculation result into the ticket
       this.ticket.lines = this.ticket.lines.map(line => {
-        if (line.skipApplyPromotions) {
-          return { ...line };
-        }
-        const discounts = discountsResult.lines.find(l => l.id === line.id);
-        const newLine = {
-          ...line,
-          promotions: discounts ? discounts.discounts : []
-        };
+        const newLine = { ...line };
         if (priceIncludesTax) {
-          newLine.grossUnitPrice = discounts
-            ? discounts.grossUnitPrice
-            : line.baseGrossUnitPrice;
-          newLine.grossUnitAmount = discounts
-            ? discounts.grossUnitAmount
-            : OB.DEC.mul(line.qty, line.baseGrossUnitPrice);
+          newLine.grossUnitPrice = line.baseGrossUnitPrice;
+          newLine.grossUnitAmount = OB.DEC.mul(
+            line.qty,
+            line.baseGrossUnitPrice
+          );
         } else {
-          newLine.netUnitPrice = discounts
-            ? discounts.netUnitPrice
-            : line.baseNetUnitPrice;
-          newLine.netUnitAmount = discounts
-            ? discounts.netUnitAmount
-            : OB.DEC.mul(line.qty, line.baseNetUnitPrice);
+          newLine.netUnitPrice = line.baseNetUnitPrice;
+          newLine.netUnitAmount = OB.DEC.mul(line.qty, line.baseNetUnitPrice);
+        }
+
+        if (line.skipApplyPromotions) {
+          return newLine;
+        }
+
+        const discounts = discountsResult.lines.find(l => l.id === line.id);
+        newLine.promotions = discounts ? discounts.discounts : [];
+
+        if (!discounts) {
+          return newLine;
+        }
+
+        if (priceIncludesTax) {
+          newLine.grossUnitPrice = discounts.grossUnitPrice;
+          newLine.grossUnitAmount = discounts.grossUnitAmount;
+        } else {
+          newLine.netUnitPrice = discounts.netUnitPrice;
+          newLine.netUnitAmount = discounts.netUnitAmount;
         }
         return newLine;
       });
