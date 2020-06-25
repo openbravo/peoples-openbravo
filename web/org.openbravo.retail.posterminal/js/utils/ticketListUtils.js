@@ -6,7 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*global OB, _,moment, Backbone, BigDecimal*/
+/*global OB, _,moment, Backbone, enyo, BigDecimal*/
 
 (function() {
   OB.UTIL = window.OB.UTIL || {};
@@ -936,7 +936,6 @@
     }
 
     if (OB.UTIL.isNotEmptyString(model.externalBusinessPartnerReference)) {
-      var me = this;
       OB.UTIL.TicketListUtils.loadExternalCustomer(
         model.externalBusinessPartnerReference,
         function(extBp) {
@@ -945,11 +944,11 @@
             'externalBusinessPartnerReference',
             model.externalBusinessPartnerReference
           );
-          callToLoadCustomer.call(me);
+          callToLoadCustomer.call();
         }
       );
     } else {
-      callToLoadCustomer.call(this);
+      callToLoadCustomer.call();
     }
   };
 
@@ -964,7 +963,7 @@
     OB.MobileApp.model.receipt.trigger('updatePending');
   };
 
-  OB.UTIL.TicketListUtils.addPaidReceipt = function(me, model, callback) {
+  OB.UTIL.TicketListUtils.addPaidReceipt = function(model, callback) {
     let execution = OB.UTIL.ProcessController.start('addPaidReceipt');
 
     function executeFinalCallback() {
@@ -975,7 +974,7 @@
         },
         function(args) {
           if (callback instanceof Function) {
-            callback(me.modelorder);
+            callback(OB.MobileApp.Model.receipt);
           }
         }
       );
@@ -1009,9 +1008,224 @@
 
   OB.UTIL.TicketListUtils.addNewQuotation = function() {
     OB.MobileApp.model.receipt.trigger('updateView');
-    this.current = this.newOrder();
-    this.current.setQuotationProperties();
-    this.unshift(this.current);
+    OB.App.State.Global.addNewQuotation();
     loadCurrent();
+  };
+
+  OB.UTIL.TicketListUtils.checkOrderListPayment = function() {
+    if (
+      OB.App.State.Ticket.Utils.checkTicketPayments(
+        OB.App.State.getState().Ticket
+      )
+    ) {
+      return true;
+    } else {
+      return OB.App.State.getState().TicketList.reduce(
+        (accum, ticket) =>
+          accum || OB.App.State.Ticket.Utils.checkTicketPayments(ticket),
+        false
+      );
+    }
+  };
+
+  OB.UTIL.TicketListUtils.checkForDuplicateReceipts = function(
+    model,
+    callback,
+    errorCallback,
+    calledFrom
+  ) {
+    function openReceiptPermissionError(orderType) {
+      if (calledFrom === 'orderSelector' || calledFrom === 'return') {
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBMOBC_Error'),
+          OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType])
+        );
+      } else {
+        OB.UTIL.showError(
+          OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType])
+        );
+      }
+      if (errorCallback) {
+        errorCallback();
+      }
+    }
+
+    //Check Permissions
+    switch (model.get('orderType')) {
+      case 'QT':
+        if (!OB.MobileApp.model.hasPermission('OBPOS_retail.quotations')) {
+          openReceiptPermissionError(OB.I18N.getLabel('OBPOS_Quotations'));
+          return;
+        }
+        break;
+      case 'LAY':
+        if (!OB.MobileApp.model.hasPermission('OBPOS_retail.layaways')) {
+          openReceiptPermissionError(OB.I18N.getLabel('OBPOS_LblLayaways'));
+          return;
+        }
+        break;
+      default:
+        if (!OB.MobileApp.model.hasPermission('OBPOS_retail.paidReceipts')) {
+          openReceiptPermissionError(OB.I18N.getLabel('OBPOS_LblPaidReceipts'));
+          return;
+        }
+        break;
+    }
+
+    var orderTypeMsg,
+      i,
+      showErrorMessage = function(errorMsg) {
+        if (calledFrom === 'orderSelector' || calledFrom === 'return') {
+          OB.POS.terminal.$.containerWindow.getRoot().doShowPopup({
+            popup: 'OB_UI_MessageDialog',
+            args: {
+              message: errorMsg
+            }
+          });
+        } else {
+          OB.UTIL.showWarning(errorMsg);
+        }
+        if (errorCallback) {
+          errorCallback();
+        }
+      };
+
+    // Check in Current Session
+    for (i = 0; i < this.length; i++) {
+      const modelAtIndex = OB.App.OpenTicketList.getAllTickets()[i];
+      if (
+        modelAtIndex.id === model.get('id') ||
+        (!_.isNull(modelAtIndex.oldId) &&
+          modelAtIndex.oldId === model.get('id')) ||
+        (modelAtIndex.canceledorder &&
+          modelAtIndex.canceledorder.id === model.get('id'))
+      ) {
+        var errorMsg;
+        orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+        errorMsg = enyo.format(
+          OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
+          orderTypeMsg,
+          modelAtIndex.documentNo
+        );
+        if (modelAtIndex.isLayaway) {
+          orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+          errorMsg = enyo.format(
+            OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
+            orderTypeMsg,
+            modelAtIndex.documentNo
+          );
+        } else if (modelAtIndex.isQuotation) {
+          orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+          errorMsg = enyo.format(
+            OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
+            orderTypeMsg,
+            modelAtIndex.documentNo
+          );
+        } else if (
+          !_.isNull(modelAtIndex.oldId) &&
+          modelAtIndex.oldId === model.get('id')
+        ) {
+          var SoFromQtDocNo = modelAtIndex.documentNo;
+          var QtDocumentNo = model.get('documentNo');
+          errorMsg = OB.I18N.getLabel(
+            'OBPOS_OrderAssociatedToQuotationInProgress',
+            [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]
+          );
+        }
+        showErrorMessage(errorMsg);
+        if (
+          OB.MobileApp.model.receipt.get('documentNo') !==
+          model.get('documentNo')
+        ) {
+          OB.UTIL.TicketListUtils.loadStateTicket(modelAtIndex);
+        }
+        if (model.get('searchSynchId')) {
+          model.unset('searchSynchId');
+        }
+        return true;
+      }
+    }
+
+    // Check in Other Session
+    const ordersNotProcessed = OB.App.OpenTicketList.getAllTickets().filter(
+      ticket => ticket.hasbeenpaid === 'N'
+    );
+
+    if (ordersNotProcessed.length > 0) {
+      var existingOrder = _.find(ordersNotProcessed.models, function(order) {
+        return (
+          order.get('id') === model.get('id') ||
+          order.get('oldId') === model.get('id') ||
+          (order.get('canceledorder') &&
+            order.get('canceledorder').get('id') === model.get('id'))
+        );
+      });
+      if (existingOrder) {
+        orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
+        if (existingOrder.get('isLayaway')) {
+          orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
+        } else if (existingOrder.get('isQuotation')) {
+          orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
+        }
+        // Getting Other Session User's username
+
+        OB.App.OfflineSession.sessionWithId(existingOrder.get('session'))
+          .then(session => {
+            if (!session) {
+              return null;
+            }
+            return OB.App.OfflineSession.withId(this.model.get('updatedBy'));
+          })
+          .then(user => {
+            if (!user) {
+              return;
+            }
+            OB.UTIL.showConfirmation.display(
+              enyo.format(
+                OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'),
+                orderTypeMsg,
+                existingOrder.get('documentNo'),
+                user.name
+              ),
+              enyo.format(
+                OB.I18N.getLabel('OBPOS_MsgConfirmSaveInCurrentSession'),
+                user.name
+              ),
+              [
+                {
+                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                  action: function() {
+                    //replace for state action that removes ticket in ticketlist
+                    OB.Dal.remove(
+                      existingOrder,
+                      function() {
+                        callback(model);
+                      },
+                      OB.UTIL.showError
+                    );
+                  }
+                },
+                {
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                  action: function() {
+                    if (errorCallback) {
+                      errorCallback();
+                    }
+                  }
+                }
+              ],
+              {
+                onHideFunction: function(dialog) {
+                  return true;
+                }
+              }
+            );
+          });
+      } else {
+        return callback(model);
+      }
+    } else {
+      return callback(model);
+    }
   };
 })();

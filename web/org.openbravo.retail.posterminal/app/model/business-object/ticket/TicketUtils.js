@@ -827,156 +827,167 @@
       );
     },
 
-  setFullInvoice(
-    ticket,
-    terminal,
-    active,
-    applyDefaultConfiguration = false,
-    showError = false
-  ) {
-    const newTicket = { ...ticket };
+    setFullInvoice(
+      ticket,
+      terminal,
+      active,
+      applyDefaultConfiguration = false,
+      showError = false
+    ) {
+      const newTicket = { ...ticket };
 
-    const checkFullInvoice = () => {
-      if (showError) {
-        if (!terminal.fullInvoiceDocNoPrefix) {
-          OB.UTIL.showError(
-            OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
-          );
-        } else if (!newTicket.businessPartner.taxID) {
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+      const checkFullInvoice = () => {
+        if (showError) {
+          if (!terminal.fullInvoiceDocNoPrefix) {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
+            );
+          } else if (!newTicket.businessPartner.taxID) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+          }
         }
-      }
 
-      return (
-        OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
-        terminal.fullInvoiceDocNoPrefix &&
-        newTicket.businessPartner.taxID
-      );
-    };
+        return (
+          OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
+          terminal.fullInvoiceDocNoPrefix &&
+          newTicket.businessPartner.taxID
+        );
+      };
 
-    const fullInvoice =
-      (active ||
+      const fullInvoice =
+        (active ||
+          (applyDefaultConfiguration
+            ? newTicket.invoiceTerms === 'D' || newTicket.invoiceTerms === 'O'
+            : active)) &&
+        checkFullInvoice();
+      const generateInvoice =
+        fullInvoice ||
         (applyDefaultConfiguration
-          ? newTicket.invoiceTerms === 'D' || newTicket.invoiceTerms === 'O'
-          : active)) &&
-      checkFullInvoice();
-    const generateInvoice =
-      fullInvoice ||
-      (applyDefaultConfiguration
-        ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-        : fullInvoice);
+          ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+          : fullInvoice);
 
-    newTicket.fullInvoice = fullInvoice;
-    newTicket.generateInvoice = generateInvoice;
+      newTicket.fullInvoice = fullInvoice;
+      newTicket.generateInvoice = generateInvoice;
 
-    return newTicket;
-  },
+      return newTicket;
+    },
 
-  newTicket(
-    businessPartner,
-    terminal,
-    sessionId,
-    orgUserId,
-    priceList,
-    contextUser
-  ) {
-    let ticket = {
-      id: OB.App.UUID.generate(),
-      orderType: 0, // 0: Sales order, 1: Return order
-      orderDate: OB.I18N.normalizeDate(new Date()),
-      creationDate: OB.I18N.normalizeDate(new Date()),
-      documentNo: '',
-      lines: [],
-      orderManualPromotions: [],
-      payments: [],
-      payment: OB.DEC.Zero,
-      paymentWithSign: OB.DEC.Zero,
-      change: OB.DEC.Zero,
-      qty: OB.DEC.Zero,
-      grossAmount: OB.DEC.Zero,
-      netAmount: OB.DEC.Zero,
-      taxes: {},
-      hasbeenpaid: 'N',
-      isbeingprocessed: 'N',
-      description: '',
-      print: true,
-      sendEmail: false,
-      isPaid: false,
-      creditAmount: OB.DEC.Zero,
-      paidPartiallyOnCredit: false,
-      paidOnCredit: false,
-      isLayaway: false,
-      isPartiallyDelivered: false,
-      isEditable: true,
-      openDrawer: false,
-      approvals: [],
-      obposPrepaymentamt: OB.DEC.Zero,
-      obposPrepaymentlimitamt: OB.DEC.Zero,
-      obposPrepaymentlaylimitamt: OB.DEC.Zero
-    };
+    newTicket(
+      businessPartner,
+      terminal,
+      sessionId,
+      orgUserId,
+      priceList,
+      contextUser
+    ) {
+      let ticket = {
+        id: OB.App.UUID.generate(),
+        orderType: 0, // 0: Sales order, 1: Return order
+        orderDate: OB.I18N.normalizeDate(new Date()),
+        creationDate: OB.I18N.normalizeDate(new Date()),
+        documentNo: '',
+        lines: [],
+        orderManualPromotions: [],
+        payments: [],
+        payment: OB.DEC.Zero,
+        paymentWithSign: OB.DEC.Zero,
+        change: OB.DEC.Zero,
+        qty: OB.DEC.Zero,
+        grossAmount: OB.DEC.Zero,
+        netAmount: OB.DEC.Zero,
+        taxes: {},
+        hasbeenpaid: 'N',
+        isbeingprocessed: 'N',
+        description: '',
+        print: true,
+        sendEmail: false,
+        isPaid: false,
+        creditAmount: OB.DEC.Zero,
+        paidPartiallyOnCredit: false,
+        paidOnCredit: false,
+        isLayaway: false,
+        isPartiallyDelivered: false,
+        isEditable: true,
+        openDrawer: false,
+        approvals: [],
+        obposPrepaymentamt: OB.DEC.Zero,
+        obposPrepaymentlimitamt: OB.DEC.Zero,
+        obposPrepaymentlaylimitamt: OB.DEC.Zero
+      };
 
-    ticket.client = terminal.client;
-    ticket.organization = terminal.organization;
-    ticket.organizationAddressIdentifier =
-      terminal.organizationAddressIdentifier;
-    ticket.trxOrganization = terminal.organization;
-    ticket.createdBy = orgUserId;
-    ticket.updatedBy = orgUserId;
-    ticket.documentType = terminal.terminalType.documentType;
-    ticket.orderType = terminal.terminalType.layawayorder ? 2 : 0; // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+      ticket.client = terminal.client;
+      ticket.organization = terminal.organization;
+      ticket.organizationAddressIdentifier =
+        terminal.organizationAddressIdentifier;
+      ticket.trxOrganization = terminal.organization;
+      ticket.createdBy = orgUserId;
+      ticket.updatedBy = orgUserId;
+      ticket.documentType = terminal.terminalType.documentType;
+      ticket.orderType = terminal.terminalType.layawayorder ? 2 : 0; // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
 
-    ticket = OB.App.State.Ticket.Utils.setFullInvoice(ticket, terminal, false);
+      ticket = OB.App.State.Ticket.Utils.setFullInvoice(
+        ticket,
+        terminal,
+        false
+      );
 
-    ticket.isQuotation = false;
-    ticket.oldId = null;
-    ticket.session = sessionId;
-    ticket.cashVAT = terminal.cashVat;
-    ticket.businessPartner = businessPartner;
-    ticket.invoiceTerms = businessPartner.invoiceTerms;
-    if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-      // Set price list for order
-      ticket.priceList = businessPartner.priceList;
-      let { priceIncludesTax } = businessPartner;
-      if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-        priceIncludesTax = priceList.priceIncludesTax;
+      ticket.isQuotation = false;
+      ticket.oldId = null;
+      ticket.session = sessionId;
+      ticket.cashVAT = terminal.cashVat;
+      ticket.businessPartner = businessPartner;
+      ticket.invoiceTerms = businessPartner.invoiceTerms;
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        // Set price list for order
+        ticket.priceList = businessPartner.priceList;
+        let { priceIncludesTax } = businessPartner;
+        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+          priceIncludesTax = priceList.priceIncludesTax;
+        }
+        ticket.priceIncludesTax = priceIncludesTax;
+      } else {
+        ticket.priceList = terminal.priceList;
+        ticket.priceIncludesTax = priceList.priceIncludesTax;
       }
-      ticket.priceIncludesTax = priceIncludesTax;
-    } else {
-      ticket.priceList = terminal.priceList;
-      ticket.priceIncludesTax = priceList.priceIncludesTax;
-    }
-    ticket.currency = terminal.currency;
-    ticket[`currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`] =
-      terminal[
+      ticket.currency = terminal.currency;
+      ticket[
         `currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
-      ];
-    ticket.warehouse = terminal.warehouse;
-    if (contextUser.isSalesRepresentative) {
-      ticket.salesRepresentative = contextUser.id;
+      ] =
+        terminal[
+          `currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+        ];
+      ticket.warehouse = terminal.warehouse;
+      if (contextUser.isSalesRepresentative) {
+        ticket.salesRepresentative = contextUser.id;
+        ticket[
+          `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+          // eslint-disable-next-line no-underscore-dangle
+        ] = contextUser._identifier;
+      } else {
+        ticket.salesRepresentative = null;
+        ticket[
+          `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+        ] = null;
+      }
+      ticket.posTerminal = terminal.id;
       ticket[
-        `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+        `posTerminal${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
         // eslint-disable-next-line no-underscore-dangle
-      ] = contextUser._identifier;
-    } else {
-      ticket.salesRepresentative = null;
-      ticket[
-        `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
-      ] = null;
-    }
-    ticket.posTerminal = terminal.id;
-    ticket[
-      `posTerminal${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
-      // eslint-disable-next-line no-underscore-dangle
-    ] = terminal._identifier;
+      ] = terminal._identifier;
 
-    if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-      ticket.obrdmDeliveryModeProperty = 'PickAndCarry';
-    }
+      if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+        ticket.obrdmDeliveryModeProperty = 'PickAndCarry';
+      }
 
-    return ticket;
-  },
+      return ticket;
+    },
 
-
+    checkTicketPayments(ticket) {
+      if (!ticket.receiptPayments) {
+        return ticket.payments.length > 0;
+      }
+      return ticket.payments.length > ticket.receiptPayments.length;
+    },
 
     getCurrentDiscountedLinePrice(line, ignoreExecutedAtTheEndPromo) {
       let currentDiscountedLinePrice;

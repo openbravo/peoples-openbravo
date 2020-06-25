@@ -760,7 +760,7 @@ enyo.kind({
                 label: OB.I18N.getLabel('OBMOBC_Continue'),
                 isConfirmButton: true,
                 action: function() {
-                  OB.MobileApp.model.orderList.checkForDuplicateReceipts(
+                  OB.UTIL.TicketListUtils.checkForDuplicateReceipts(
                     model,
                     loadOrder,
                     undefined,
@@ -786,7 +786,7 @@ enyo.kind({
           ) {
             OB.MobileApp.model.receipt.deleteOrder();
           }
-          OB.MobileApp.model.orderList.checkForDuplicateReceipts(
+          OB.UTIL.TicketListUtils.checkForDuplicateReceipts(
             model,
             loadOrder,
             undefined,

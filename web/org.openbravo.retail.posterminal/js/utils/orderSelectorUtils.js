@@ -130,7 +130,6 @@
             }
             OB.UTIL.TicketListUtils.newPaidReceipt(data[0], function(newOrder) {
               OB.UTIL.TicketListUtils.addPaidReceipt(
-                this,
                 newOrder,
                 continueAfterPaidReceipt
               );
@@ -251,7 +250,7 @@
       me.listOfExecution.push(
         OB.UTIL.ProcessController.start('loadPaidReceipts')
       );
-      orderList.checkForDuplicateReceipts(
+      OB.UTIL.TicketListUtils.checkForDuplicateReceipts(
         model,
         function(order) {
           if (
@@ -292,7 +291,7 @@
                       } else {
                         newOrder = data[idx];
                         newModel = new Backbone.Model(newOrder);
-                        currentOrderList.checkForDuplicateReceipts(
+                        OB.UTIL.TicketListUtils.checkForDuplicateReceipts(
                           newModel,
                           function(checkedOrder) {
                             models.push(checkedOrder);

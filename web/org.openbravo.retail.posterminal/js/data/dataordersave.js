@@ -762,17 +762,17 @@
                         OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
                     );
 
-                      // Not needed. Current ticket was already updated
-                      // _.each(
-                      //   me.context.get('orderList').models,
-                      //   function(mdl) {
-                      //     if (mdl.get('id') === currentReceipt.get('id')) {
-                      //       mdl.set('hasbeenpaid', 'Y');
-                      //       return true;
-                      //     }
-                      //   },
-                      //   this
-                      // );
+                    // Not needed. Current ticket was already updated
+                    // _.each(
+                    //   me.context.get('orderList').models,
+                    //   function(mdl) {
+                    //     if (mdl.get('id') === currentReceipt.get('id')) {
+                    //       mdl.set('hasbeenpaid', 'Y');
+                    //       return true;
+                    //     }
+                    //   },
+                    //   this
+                    // );
 
                     OB.Dal.getInTransaction(
                       tx,

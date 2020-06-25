@@ -396,8 +396,12 @@ enyo.kind({
       }
     }
 
-    if (this.collection.checkOrderListPayment()) {
-      return false;
+    if (OB.UTIL.TicketListUtils.checkOrderListPayment.checkOrderListPayment()) {
+      OB.UTIL.showConfirmation.display(
+        '',
+        OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment')
+      );
+      return;
     }
 
     function removeOneModel(model, collection) {

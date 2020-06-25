@@ -1255,17 +1255,13 @@
           return;
         }
       }
-      if (OB.App.State.getState().TicketList.length > 1) {
-        if (OB.MobileApp.model.orderList.checkOrderListPayment()) {
-          return;
-        }
-      } else if (
-        OB.MobileApp.model.receipt &&
-        OB.MobileApp.model.receipt.get('lines').length > 0
-      ) {
-        if (OB.MobileApp.model.receipt.checkOrderPayment()) {
-          return;
-        }
+
+      if (OB.UTIL.TicketListUtils.checkOrderListPayment()) {
+        OB.UTIL.showConfirmation.display(
+          '',
+          OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment')
+        );
+        return;
       }
 
       OB.UTIL.Approval.requestApproval(
