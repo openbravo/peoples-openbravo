@@ -27,6 +27,16 @@ public interface TicketPropertyMapping {
   }
 
   /**
+   * Returns taxes property from json if exists. Otherwise returns taxLines property.
+   * 
+   * @throws JSONException
+   */
+  default JSONObject getTaxes(JSONObject json) throws JSONException {
+    return json.optJSONObject("taxes") != null ? json.getJSONObject("taxes")
+        : json.getJSONObject("taxLines");
+  }
+
+  /**
    * Returns grossListPrice property from json.
    * 
    * @throws JSONException
@@ -128,15 +138,6 @@ public interface TicketPropertyMapping {
   default BigDecimal getNetAmount(JSONObject json) throws JSONException {
     return BigDecimal
         .valueOf(json.has("netAmount") ? json.getDouble("netAmount") : json.getDouble("net"));
-  }
-
-  /**
-   * Returns taxes property from json if exists. Otherwise returns taxLines property.
-   * 
-   * @throws JSONException
-   */
-  default JSONObject getTaxes(JSONObject json) throws JSONException {
-    return json.has("taxes") ? json.getJSONObject("taxes") : json.getJSONObject("taxLines");
   }
 
 }
