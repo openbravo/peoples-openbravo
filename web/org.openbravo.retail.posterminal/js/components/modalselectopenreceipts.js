@@ -210,15 +210,12 @@ enyo.kind({
                 orderModel = newOrder;
                 orderModel.set('deferredOrder', true);
               }
-              orderModel.set(
-                'bp',
-                me.owner.owner.owner.model.get('orderList').current.get('bp')
-              );
-              if (me.owner.owner.$.body.$.chkSelectOpenedReceiptModal.checked) {
-                me.owner.owner.doChangeCurrentOrder({
-                  newCurrentOrder: orderModel
-                });
-              }
+              const current = me.owner.owner.owner.model.get('orderList')
+                .current;
+              // Change the UI receipt to add the product on the newly created ticket
+              me.owner.owner.doChangeCurrentOrder({
+                newCurrentOrder: orderModel
+              });
               me.owner.owner.doAddProduct({
                 targetOrder: orderModel,
                 product: product,
@@ -243,6 +240,10 @@ enyo.kind({
                           .trigger('updateRelations');
                       });
                   } else {
+                    // The UI receipt should be restored
+                    me.owner.owner.doChangeCurrentOrder({
+                      newCurrentOrder: current
+                    });
                     //Hack to calculate totals even if the receipt is not the UI receipt
                     orderModel.setIsCalculateReceiptLockState(false);
                     orderModel.setIsCalculateGrossLockState(false);
