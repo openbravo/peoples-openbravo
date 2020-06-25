@@ -564,11 +564,11 @@ enyo.kind({
         })
         .indexOf(iter.id);
       if (idx !== -1) {
-        var order = me.owner.owner.model.get('orderList').at(idx);
-        order.set('checked', true);
-        order.save();
-        selectedMultiOrders.push(order);
-        addOrdersToOrderList();
+        // var order = me.owner.owner.model.get('orderList').at(idx);
+        // order.set('checked', true);
+        // order.save();
+        // selectedMultiOrders.push(order);
+        // addOrdersToOrderList();
       } else {
         process.exec(
           {

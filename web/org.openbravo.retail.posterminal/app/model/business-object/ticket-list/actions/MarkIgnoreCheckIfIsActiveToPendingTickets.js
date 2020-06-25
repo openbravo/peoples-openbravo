@@ -8,8 +8,11 @@
  */
 
 (function markIgnoreCheckIfItsActiveToPendingTickets() {
-  const updateIgnoreCheckFlagInNonPaidTicket = ticket => {
-    if (ticket.hasbeenpaid === 'N') {
+  const updateIgnoreCheckFlagInNonPaidTicket = (ticket, session) => {
+    if (
+      ticket.hasbeenpaid === 'N' &&
+      (!session || (session && ticket.session === session))
+    ) {
       const newTicket = { ...ticket };
       newTicket.ignoreCheckIfIsActiveOrder = true;
       return newTicket;
@@ -19,12 +22,16 @@
 
   OB.App.StateAPI.Global.registerAction(
     'markIgnoreCheckIfIsActiveOrderToPendingTickets',
-    state => {
+    (state, payload = {}) => {
       const newState = { ...state };
+      const { session } = payload;
 
-      newState.Ticket = updateIgnoreCheckFlagInNonPaidTicket(newState.Ticket);
+      newState.Ticket = updateIgnoreCheckFlagInNonPaidTicket(
+        newState.Ticket,
+        session
+      );
       newState.TicketList = newState.TicketList.map(ticket => {
-        return updateIgnoreCheckFlagInNonPaidTicket(ticket);
+        return updateIgnoreCheckFlagInNonPaidTicket(ticket, session);
       });
 
       return newState;

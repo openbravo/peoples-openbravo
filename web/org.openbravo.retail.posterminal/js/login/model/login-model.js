@@ -1226,18 +1226,20 @@
           return;
         }
 
-        model.deleteOrder(me, function() {
-          collection.remove(model);
-          removeOneModel(collection.at(0), collection, callback);
-        });
+        // TODO: Implement model deleteOrder action
+        //model.deleteOrder(me, function() {
+        collection.remove(model);
+        removeOneModel(collection[0], collection, callback);
+        //});
       }
 
       function success(collection) {
         if (collection.length > 0) {
-          _.each(collection.models, function(model) {
-            model.set('ignoreCheckIfIsActiveOrder', true);
+          OB.App.State.Global.markIgnoreCheckIfIsActiveOrderToPendingTickets({
+            session: OB.MobileApp.model.get('session')
+          }).then(() => {
+            removeOneModel(collection[0], collection, finalCallback);
           });
-          removeOneModel(collection.at(0), collection, finalCallback);
         } else {
           if (finalCallback && finalCallback instanceof Function) {
             me.cleanSessionInfo().then(() => finalCallback());
@@ -1245,10 +1247,10 @@
         }
       }
 
-      function error() {
-        OB.error('postCloseSession', arguments);
-        OB.MobileApp.model.triggerLogout();
-      }
+      // function error() {
+      //   OB.error('postCloseSession', arguments);
+      //   OB.MobileApp.model.triggerLogout();
+      // }
 
       if (OB.MobileApp.model.get('isMultiOrderState')) {
         if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
@@ -1270,9 +1272,16 @@
         function(approved, supervisor, approvalType) {
           if (approved) {
             //All pending to be paid orders will be removed on logout
-            criteria.session = OB.MobileApp.model.get('session');
-            criteria.hasbeenpaid = 'N';
-            OB.Dal.find(OB.Model.Order, criteria, success, error);
+            const filteredTickets = OB.App.OpenTicketList.getAllTickets().filter(
+              ticket => {
+                return (
+                  ticket.session === OB.MobileApp.model.get('session') &&
+                  ticket.hasbeenpaid === 'N'
+                );
+              }
+            );
+
+            success(filteredTickets);
           }
         }
       );
