@@ -330,6 +330,7 @@ enyo.kind({
             me.collection.remove(model);
           };
           model.deleteOrder(me, callback);
+          this.parent.parent.parent.parent.parent.refreshButtons();
         }
       }
     );
@@ -416,6 +417,7 @@ enyo.kind({
       function(approved, supervisor, approvalType) {
         if (approved) {
           removeOneModel(me.collection.at(0), me.collection);
+          this.parent.parent.parent.parent.parent.refreshButtons();
         }
       }
     );

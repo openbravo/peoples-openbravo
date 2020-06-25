@@ -18,7 +18,7 @@
   };
 
   OB.App.StateAPI.Global.registerAction(
-    'markIgnoreCheckIfIsActiveToPendingTickets',
+    'markIgnoreCheckIfIsActiveOrderToPendingTickets',
     state => {
       const newState = { ...state };
 

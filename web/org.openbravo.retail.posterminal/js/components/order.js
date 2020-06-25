@@ -1916,9 +1916,6 @@ enyo.kind({
       this.multiOrders.off('change:additionalInfo', null, this);
       this.multiOrders.off('change:total', null, this);
     }
-    if (this.orderList) {
-      this.orderList.off('reset add remove amountToLayaway', null, this);
-    }
     if (this.orderListPayment) {
       this.orderListPayment.off('add remove', null, this);
     }

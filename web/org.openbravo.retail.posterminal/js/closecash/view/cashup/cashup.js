@@ -103,9 +103,6 @@ enyo.kind({
     this.$.closeCashMultiColumn.$.leftPanel.$.closeCashLeftPanel.$.listPendingReceipts.setCollection(
       this.model.get('orderlist')
     );
-    this.model.get('orderlist').on('all', () => {
-      this.refreshButtons();
-    });
 
     this.model.on('change:slavesCashupCompleted', model => {
       this.refreshButtons();
