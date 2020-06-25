@@ -1143,6 +1143,11 @@ enyo.kind({
             'terminal'
           ).businessPartner;
 
+          const preventServicesUpdate = args.receipt.get(
+            'preventServicesUpdate'
+          );
+          args.receipt.set('preventServicesUpdate', true);
+
           const beforeAddTicket = OB.App.State.getState().Ticket;
 
           OB.App.State.Ticket.addProduct({
@@ -1187,7 +1192,10 @@ enyo.kind({
 
               finalCallback(true);
             })
-            .catch(OB.App.View.ActionCanceledUIHandler.handle);
+            .catch(OB.App.View.ActionCanceledUIHandler.handle)
+            .finally(() => {
+              args.receipt.set('preventServicesUpdate', preventServicesUpdate);
+            });
           return;
         }
 
