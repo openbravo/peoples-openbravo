@@ -36,7 +36,7 @@
           if (lastCashUpPayment != null) {
             // if the last cashup payments are read locally then their structure
             // is different from when reading from the server
-            if (_.isObject(lastCashUpPayment.paymentMethod)) {
+            if ('paymentMethod' in lastCashUpPayment) {
               startingCash = lastCashUpPayment.paymentMethod.amountToKeep;
             } else {
               startingCash = lastCashUpPayment.amountToKeep;
