@@ -228,12 +228,6 @@
     }
     // eslint-disable-next-line no-param-reassign
     line.groupService = line.product.groupProduct;
-    // Set the 'hasServices' property if the new line is adding a service related to a product
-    // Without the 'hasServices' property the quantity rules for services are not executed
-    if (!ticket.hasServices) {
-      // eslint-disable-next-line no-param-reassign
-      ticket.hasServices = true;
-    }
 
     if (!line.product.productServiceLinked) {
       return;
