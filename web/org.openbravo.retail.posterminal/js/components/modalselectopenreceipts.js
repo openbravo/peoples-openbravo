@@ -209,9 +209,9 @@ enyo.kind({
                 var newOrder = OB.UTIL.TicketListUtils.newOrder(
                   OB.MobileApp.model.receipt.get('bp')
                 );
-                orderList.unshift(newOrder);
-                orderModel = newOrder;
-                orderModel.set('deferredOrder', true);
+                // orderList.unshift(newOrder);
+                // orderModel = newOrder;
+                // orderModel.set('deferredOrder', true);
               }
               orderModel.set('bp', OB.MobileApp.model.receipt.get('bp'));
               const current = OB.MobileApp.model.receipt;

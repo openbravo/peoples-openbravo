@@ -6767,10 +6767,6 @@
                 me.unset('skipApplyPromotions');
                 me.unset('preventServicesUpdate');
                 me.preventOrderSave(false);
-                me.save();
-                OB.MobileApp.model.orderList.unshift(me, {
-                  silent: true
-                });
               });
             }
           );
@@ -7033,10 +7029,6 @@
                           me.set('isEditable', false);
                           me.unset('preventServicesUpdate');
                           me.preventOrderSave(false);
-                          me.save();
-                          OB.MobileApp.model.orderList.unshift(me, {
-                            silent: true
-                          });
                           OB.MobileApp.model.receipt.trigger('updateView');
                           me.trigger('updatePending', true);
                           // Finally change to the payments tab
