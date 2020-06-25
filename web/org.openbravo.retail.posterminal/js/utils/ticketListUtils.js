@@ -12,9 +12,9 @@
   OB.UTIL = window.OB.UTIL || {};
   OB.UTIL.TicketListUtils = OB.UTIL.TicketListUtils || {};
 
-  OB.UTIL.TicketListUtils.loadTicket = async function(ticketModel) {
+  OB.UTIL.TicketListUtils.loadStateTicket = async function(ticket) {
     await OB.App.State.Global.loadTicket({
-      ticket: JSON.parse(JSON.stringify(ticketModel.toJSON()))
+      ticket
     });
     OB.MobileApp.model.set(
       'terminalLogContext',
@@ -23,6 +23,12 @@
     OB.MobileApp.model.receipt.trigger('updateView');
     OB.MobileApp.model.receipt.trigger('paintTaxes');
     OB.MobileApp.model.receipt.trigger('updatePending');
+  };
+
+  OB.UTIL.TicketListUtils.loadTicket = async function(ticketModel) {
+    return OB.UTIL.TicketListUtils.loadStateTicket(
+      JSON.parse(JSON.stringify(ticketModel.toJSON()))
+    );
   };
 
   OB.UTIL.TicketListUtils.loadTicketById = async function(ticketId) {
@@ -946,6 +952,18 @@
       callToLoadCustomer.call(this);
     }
   };
+
+  const loadCurrent = function(isNew) {
+    if (isNew) {
+      OB.MobileApp.model.receipt.trigger(
+        'beforeChangeOrderForNewOne',
+        OB.MobileApp.model.receipt
+      );
+    }
+    OB.MobileApp.model.receipt.trigger('paintTaxes');
+    OB.MobileApp.model.receipt.trigger('updatePending');
+  };
+
   OB.UTIL.TicketListUtils.addPaidReceipt = function(me, model, callback) {
     let execution = OB.UTIL.ProcessController.start('addPaidReceipt');
 
@@ -966,7 +984,7 @@
     OB.MobileApp.model.receipt.trigger('updateView');
     this.current = model;
     this.unshift(this.current);
-    this.loadCurrent(true);
+    loadCurrent(true);
 
     if (!model.get('isQuotation')) {
       // OB.Dal.save is done here because we want to force to save with the original id, only this time.
@@ -994,6 +1012,6 @@
     this.current = this.newOrder();
     this.current.setQuotationProperties();
     this.unshift(this.current);
-    this.loadCurrent();
+    loadCurrent();
   };
 })();
