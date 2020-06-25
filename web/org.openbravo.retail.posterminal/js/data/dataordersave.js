@@ -774,37 +774,29 @@
                     //   this
                     // );
 
-                    OB.Dal.getInTransaction(
-                      tx,
-                      OB.Model.Order,
-                      me.receipt.get('id'),
-                      function(savedReceipt) {
-                        if (
-                          !OB.UTIL.isNullOrUndefined(
-                            savedReceipt.get('amountToLayaway')
-                          ) &&
-                          savedReceipt.get('generateInvoice')
-                        ) {
-                          me.hasInvLayaways = true;
-                        }
-                        recursiveSaveFn(receiptIndex + 1);
-                      },
-                      null
-                    );
-                  },
-                  function() {
-                    recursiveSaveFn(receiptIndex + 1);
-                  }
-                );
-              }
-            );
-          };
+                      const savedReceipt = OB.App.OpenTicketList.getAllTickets().find(
+                        ticket => ticket.id === me.receipt.get('id')
+                      );
 
-          OB.App.State.Cashup.updateCashup({
-            tickets: [currentReceipt],
-            countLayawayAsSales: OB.MobileApp.model.get('terminal')
-              .countLayawayAsSales
-          }).then(() => cashUpReportSuccessCallback());
+                      if (
+                        !OB.UTIL.isNullOrUndefined(
+                          savedReceipt.amountToLayaway
+                        ) &&
+                        savedReceipt.generateInvoice
+                      ) {
+                        me.hasInvLayaways = true;
+                      }
+                      recursiveSaveFn(receiptIndex + 1);
+                    },
+                    function() {
+                      recursiveSaveFn(receiptIndex + 1);
+                    }
+                  );
+                }
+              );
+            },
+            tx
+          );
         } else {
           OB.MobileApp.model.runSyncProcess(
             function() {

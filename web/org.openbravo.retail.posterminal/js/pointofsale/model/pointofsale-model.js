@@ -114,47 +114,40 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     var checkedMultiOrders,
       multiOrders = this.get('multiOrders'),
       multiOrderList = multiOrders.get('multiOrdersList'),
-      me = this,
-      criteria = {
-        hasbeenpaid: 'N',
-        session: OB.MobileApp.model.get('session')
-      };
-    OB.Dal.find(
-      OB.Model.Order,
-      criteria,
-      function(possibleMultiOrder) {
-        //OB.Dal.find success
-        if (possibleMultiOrder && possibleMultiOrder.length > 0) {
-          checkedMultiOrders = _.compact(
-            possibleMultiOrder.map(function(e) {
-              if (e.get('checked')) {
-                return e;
-              }
-            })
-          );
+      me = this;
 
-          multiOrderList.reset(checkedMultiOrders);
-
-          // MultiOrder payments
-          var multiOrderAddPayments = function() {
-            var payments = JSON.parse(
-              OB.UTIL.localStorage.getItem('multiOrdersPayment')
-            );
-            _.each(payments, function(payment) {
-              multiOrders.addPayment(new OB.Model.PaymentLine(payment));
-            });
-          };
-          multiOrderList.trigger('loadedMultiOrder', multiOrderAddPayments);
-        } else if (me.isValidMultiOrderState()) {
-          multiOrders.resetValues();
-          me.get('leftColumnViewManager').setOrderMode();
-        }
-      },
-      function() {
-        // If there is an error fetching the checked orders of multiorders,
-        //OB.Dal.find error
-      }
+    const possibleMultiOrder = OB.App.OpenTicketList.getAllTickets().filter(
+      ticket =>
+        ticket.hasbeenpaid === 'N' &&
+        ticket.session === OB.MobileApp.model.get('session')
     );
+
+    //OB.Dal.find success
+    if (possibleMultiOrder && possibleMultiOrder.length > 0) {
+      checkedMultiOrders = _.compact(
+        possibleMultiOrder.map(function(e) {
+          if (e.checked) {
+            return e;
+          }
+        })
+      );
+
+      multiOrderList.reset(new Backbone.Collection(checkedMultiOrders));
+
+      // MultiOrder payments
+      var multiOrderAddPayments = function() {
+        var payments = JSON.parse(
+          OB.UTIL.localStorage.getItem('multiOrdersPayment')
+        );
+        _.each(payments, function(payment) {
+          multiOrders.addPayment(new OB.Model.PaymentLine(payment));
+        });
+      };
+      multiOrderList.trigger('loadedMultiOrder', multiOrderAddPayments);
+    } else if (me.isValidMultiOrderState()) {
+      multiOrders.resetValues();
+      me.get('leftColumnViewManager').setOrderMode();
+    }
   },
   isValidMultiOrderState: function() {
     if (this.get('leftColumnViewManager') && this.get('multiOrders')) {
