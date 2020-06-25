@@ -22,7 +22,7 @@ public interface TicketPropertyMapping {
    * @throws JSONException
    */
   default JSONObject getBusinessPartner(JSONObject json) throws JSONException {
-    return json.has("businessPartner") ? json.getJSONObject("businessPartner")
+    return json.optJSONObject("businessPartner") != null ? json.getJSONObject("businessPartner")
         : json.getJSONObject("bp");
   }
 
