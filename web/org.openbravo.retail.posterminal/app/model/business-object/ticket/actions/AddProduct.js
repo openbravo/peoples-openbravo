@@ -229,6 +229,11 @@
     // eslint-disable-next-line no-param-reassign
     line.groupService = line.product.groupProduct;
 
+    if (!ticket.hasServices) {
+      // eslint-disable-next-line no-param-reassign
+      ticket.hasServices = true;
+    }
+
     if (!line.product.productServiceLinked) {
       return;
     }

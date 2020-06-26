@@ -257,7 +257,8 @@
     }
 
     shouldUpdateServices() {
-      const hasServices = this.ticket.lines.some(l => l.relatedLines);
+      const hasServices =
+        this.ticket.hasServices || this.ticket.lines.some(l => l.relatedLines);
       return hasServices && this.ticket.isEditable;
     }
 
