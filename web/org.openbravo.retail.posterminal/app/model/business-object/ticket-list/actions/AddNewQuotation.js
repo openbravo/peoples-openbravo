@@ -8,7 +8,7 @@
  */
 
 /**
- * @fileoverview Declares a global action that creates a new ticket in the state.Ticket object
+ * @fileoverview Declares a global action that creates a new quotation ticket in the state.Ticket object
  * and stores the existing one into state.TicketList
  */
 // eslint-disable-next-line no-unused-vars

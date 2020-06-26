@@ -974,36 +974,21 @@
         },
         function(args) {
           if (callback instanceof Function) {
-            callback(OB.MobileApp.Model.receipt);
+            callback(OB.MobileApp.model.receipt);
           }
         }
       );
     }
 
     OB.MobileApp.model.receipt.trigger('updateView');
-    this.current = model;
-    this.unshift(this.current);
+    OB.App.State.Global.insertTicketIntoTicketList().then(() => {
+      OB.MobileApp.model.receipt.clearWith(model);
+    });
+
     loadCurrent(true);
 
-    if (!model.get('isQuotation')) {
-      // OB.Dal.save is done here because we want to force to save with the original id, only this time.
-      OB.Dal.save(
-        model,
-        function() {
-          OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
-          executeFinalCallback();
-        },
-        function() {
-          OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
-          OB.error(arguments);
-          executeFinalCallback();
-        },
-        true
-      );
-    } else {
-      OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
-      executeFinalCallback();
-    }
+    OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
+    executeFinalCallback();
   };
 
   OB.UTIL.TicketListUtils.addNewQuotation = function() {
