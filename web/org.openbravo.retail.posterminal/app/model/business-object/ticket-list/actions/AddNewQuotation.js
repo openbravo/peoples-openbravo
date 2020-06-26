@@ -13,6 +13,11 @@
  */
 // eslint-disable-next-line no-unused-vars
 OB.App.StateAPI.Global.registerAction('addNewQuotation', (state, payload) => {
+  const newState = { ...state };
+  newState.Ticket = { ...state.Ticket };
+  newState.TicketList = [...state.TicketList];
+
+  newState.TicketList.unshift(newState.Ticket);
   let ticket = OB.App.State.Ticket.Utils.newTicket(
     payload.businessPartner,
     payload.terminal,
@@ -28,8 +33,8 @@ OB.App.StateAPI.Global.registerAction('addNewQuotation', (state, payload) => {
     payload.terminal,
     false
   );
-
-  return ticket;
+  newState.Ticket = ticket;
+  return newState;
 });
 
 OB.App.StateAPI.Global.addNewQuotation.addActionPreparation(
