@@ -9803,7 +9803,7 @@
         });
       }
 
-      OB.TicketListUtils.loadTicketById(OB.App.State.getState.Ticket.id).then(
+      OB.TicketListUtils.loadTicketById(OB.App.State.getState().Ticket.id).then(
         () => {
           OB.UTIL.checkRefreshMasterData();
         }
