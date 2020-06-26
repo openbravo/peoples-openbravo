@@ -110,38 +110,36 @@
       OB.UTIL.clone(receipt, diffReceipt);
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
         // rollback other changes
-        OB.Dal.get(OB.Model.Order, receipt.get('id'), function(loadedReceipt) {
-          receipt.clearWith(loadedReceipt);
-          //We need to restore the payment tab, as that's what the user should see if synchronization fails
-          OB.MobileApp.view.waterfall('onTabChange', {
-            tabPanel: 'payment',
-            keyboard: 'toolbarpayment',
-            edit: false
-          });
-          receipt.set('hasbeenpaid', 'N');
-          diffReceipt.set('hasbeenpaid', 'N');
-          frozenReceipt.set('hasbeenpaid', 'N');
-          receipt.unset('completeTicket');
-          diffReceipt.unset('completeTicket');
-          frozenReceipt.unset('completeTicket');
-          OB.Dal.save(
-            receipt,
-            function() {
-              if (eventParams && eventParams.callback) {
-                eventParams.callback({
-                  frozenReceipt: frozenReceipt,
-                  diffReceipt: diffReceipt,
-                  isCancelled: true
-                });
-                receipt.setIsCalculateReceiptLockState(false);
-                receipt.setIsCalculateGrossLockState(false);
-                receipt.trigger('paymentCancel');
-              }
-            },
-            null,
-            false
-          );
+        const ticketObj = OB.App.OpenTicketList.getAllTickets().find(
+          ticket => ticket.id === receipt.get('id')
+        );
+        receipt.clearWith(new Backbone.Model(ticketObj));
+
+        //We need to restore the payment tab, as that's what the user should see if synchronization fails
+        OB.MobileApp.view.waterfall('onTabChange', {
+          tabPanel: 'payment',
+          keyboard: 'toolbarpayment',
+          edit: false
         });
+        receipt.set('hasbeenpaid', 'N');
+        diffReceipt.set('hasbeenpaid', 'N');
+        frozenReceipt.set('hasbeenpaid', 'N');
+        receipt.unset('completeTicket');
+        diffReceipt.unset('completeTicket');
+        frozenReceipt.unset('completeTicket');
+
+        OB.UTIL.calculateCurrentCash();
+
+        if (eventParams && eventParams.callback) {
+          eventParams.callback({
+            frozenReceipt: frozenReceipt,
+            diffReceipt: diffReceipt,
+            isCancelled: true
+          });
+          receipt.setIsCalculateReceiptLockState(false);
+          receipt.setIsCalculateGrossLockState(false);
+          receipt.trigger('paymentCancel');
+        }
       } else if (eventParams && eventParams.callback) {
         eventParams.callback({
           frozenReceipt: frozenReceipt,
