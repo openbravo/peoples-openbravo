@@ -846,8 +846,10 @@
                         me.context
                           .get('multiOrders')
                           .trigger('integrityOk', theReceipt);
-                        me.context.get('orderList').current = theReceipt;
-                        me.context.get('orderList').deleteCurrent();
+
+                        OB.UTIL.TicketListUtils.removeTicket({
+                          id: theReceipt.get('id')
+                        });
                       }
                     );
 

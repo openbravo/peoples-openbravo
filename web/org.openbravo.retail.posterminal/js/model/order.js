@@ -9788,27 +9788,7 @@
       Backbone.Collection.prototype.constructor.call(this);
     },
 
-    initialize: function() {},
-
-    deleteCurrent: function(forceCreateNew) {
-      if (!this.current) {
-        return;
-      }
-
-      this.remove(this.current);
-      var createNew = forceCreateNew || this.length === 0;
-      if (createNew) {
-        OB.App.State.Global.addNewTicket().then(() => {
-          OB.UTIL.checkRefreshMasterData();
-        });
-      }
-
-      OB.TicketListUtils.loadTicketById(OB.App.State.getState().Ticket.id).then(
-        () => {
-          OB.UTIL.checkRefreshMasterData();
-        }
-      );
-    }
+    initialize: function() {}
   });
 
   var MultiOrders = Backbone.Model.extend({
