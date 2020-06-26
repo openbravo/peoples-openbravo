@@ -6581,9 +6581,9 @@
       OB.Dal.remove(
         this,
         function() {
-          OB.MobileApp.model.orderList.remove(me, {
-            silent: true
-          });
+          // OB.MobileApp.model.orderList.remove(me, {
+          //   silent: true
+          // });
           var deliveredLine,
             linesWithDeferred = [];
 
@@ -6893,9 +6893,9 @@
                     var clonedReceipt = new OB.Model.Order();
                     OB.UTIL.clone(me, clonedReceipt);
                     OB.Dal.remove(me, function() {
-                      OB.MobileApp.model.orderList.remove(me, {
-                        silent: true
-                      });
+                      // OB.MobileApp.model.orderList.remove(me, {
+                      //   silent: true
+                      // });
                       var idMap = {};
                       me.set('skipCalculateReceipt', true);
                       me.preventOrderSave(true);
@@ -9777,20 +9777,6 @@
     }
   });
 
-  var OrderList = Backbone.Collection.extend({
-    model: Order,
-
-    constructor: function(modelOrder) {
-      if (modelOrder) {
-        //this._id = 'modelorderlist';
-        this.modelorder = modelOrder;
-      }
-      Backbone.Collection.prototype.constructor.call(this);
-    },
-
-    initialize: function() {}
-  });
-
   var MultiOrders = Backbone.Model.extend({
     modelName: 'MultiOrders',
     defaults: {
@@ -10445,7 +10431,6 @@
   // order model is not registered using standard Registry method because list is
   // because collection is specific
   window.OB.Model.Order = Order;
-  window.OB.Collection.OrderList = OrderList;
   window.OB.Model.TaxLine = TaxLine;
   window.OB.Model.MultiOrders = MultiOrders;
 

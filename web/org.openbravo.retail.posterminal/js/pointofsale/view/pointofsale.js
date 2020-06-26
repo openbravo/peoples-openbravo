@@ -2155,8 +2155,8 @@ enyo.kind({
         .get('multiOrdersList')
         .remove(inEvent.order);
       if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
-        me.model.get('orderList').current = inEvent.order;
-        me.model.get('orderList').deleteCurrent();
+        //me.model.get('orderList').current = inEvent.order;
+        //me.model.get('orderList').deleteCurrent();
       }
       return true;
     } else {

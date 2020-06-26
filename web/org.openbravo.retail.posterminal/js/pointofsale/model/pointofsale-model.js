@@ -249,14 +249,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     // create the multiOrders and expose it
     var multiOrders = new OB.Model.MultiOrders();
     OB.MobileApp.model.multiOrders = multiOrders;
-    // create the orderList and expose it
-    // TODO: orderList should be removed
-    var orderList = new OB.Collection.OrderList(receipt);
-    OB.MobileApp.model.orderList = orderList;
 
     // changing this initialization order may break the loading
     this.set('order', receipt);
-    this.set('orderList', orderList);
     this.set('customer', new OB.Model.BusinessPartner());
     this.set('customerAddr', new OB.Model.BPLocation());
     this.set('multiOrders', multiOrders);
