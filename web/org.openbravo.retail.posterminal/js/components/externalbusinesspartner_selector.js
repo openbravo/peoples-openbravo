@@ -234,29 +234,31 @@ enyo.kind({
   },
   externalBpSelected: function(inSender, inEvent) {
     const order = OB.MobileApp.model.orderList.modelorder;
-    order
-      .setAndSaveExternalBP(inEvent.bp)
-      .then(() => {
-        if (this.target.startsWith('filterSelectorButton_')) {
-          this.$.body.$.listExternalBpsSelector.doChangeFilterSelector({
-            selector: {
-              name: this.target.substring('filterSelectorButton_'.length),
-              value: inEvent.bp.getKey(),
-              text: inEvent.bp.getIdentifier(),
-              businessPartner: inEvent.bp
-            }
-          });
-        }
-      })
-      .catch(objError => {
-        let reasonTitle = objError.reason
-          ? objError.reason
-          : OB.I18N.getLabel('OBPOS_BusinessPartnerAssignCanceledTitle');
-        let reasonDetail = objError.reasonDetail
-          ? objError.reasonDetail
-          : OB.I18N.getLabel('OBPOS_BusinessPartnerAssignCanceledDetail');
-        OB.UTIL.showConfirmation.display(reasonTitle, reasonDetail);
-      });
+    if (this.target && this.target !== 'order') {
+      if (this.args.targetCallback) {
+        this.args.targetCallback(inEvent.bp);
+        return true;
+      } else if (this.target.startsWith('filterSelectorButton_')) {
+        this.$.body.$.listExternalBpsSelector.doChangeFilterSelector({
+          selector: {
+            name: this.target.substring('filterSelectorButton_'.length),
+            value: inEvent.bp.getKey(),
+            text: inEvent.bp.getIdentifier(),
+            businessPartner: inEvent.bp
+          }
+        });
+        return true;
+      }
+    }
+    order.setAndSaveExternalBP(inEvent.bp).catch(objError => {
+      let reasonTitle = objError.reason
+        ? objError.reason
+        : OB.I18N.getLabel('OBPOS_BusinessPartnerAssignCanceledTitle');
+      let reasonDetail = objError.reasonDetail
+        ? objError.reasonDetail
+        : OB.I18N.getLabel('OBPOS_BusinessPartnerAssignCanceledDetail');
+      OB.UTIL.showConfirmation.display(reasonTitle, reasonDetail);
+    });
   }
 });
 
@@ -459,12 +461,7 @@ enyo.kind({
         OB.UTIL.showConfirmation.display(
           OB.I18N.getLabel('OBMOBC_Error'),
           error.message,
-          null,
-          {
-            onHideFunction: function() {
-              this.doShowSelector();
-            }
-          }
+          null
         );
       });
   },
