@@ -28,8 +28,7 @@ const cashupAfterLoadCashupFromBackendWithoutPayments = require('./test-data/cas
 deepfreeze(cashupAfterLoadCashupFromBackendWithoutPayments);
 
 const payloadForInitCashupActionPreparation = {
-  currentDate:
-    'Mon Jun 22 2020 17:35:33 GMT+0200 (Central European Summer Time)',
+  currentDate: new Date('2020-06-25T17:15:04.299Z'),
   userId: '3073EDF96A3C42CC86C7069E379522D2',
   terminalId: '9104513C2D0741D4850AE8493998A7C8',
   terminalIsSlave: false,
