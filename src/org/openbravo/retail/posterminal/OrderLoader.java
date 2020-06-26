@@ -212,7 +212,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       OBPOSApplications posTerminal = null;
       JSONObject paymentResponse = null;
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
-      JSONArray orderlines = new JSONArray(jsonorder.getJSONArray("lines").toString());
+      final JSONArray orderlines = jsonorder.getJSONArray("lines");
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
           && validateOrder(jsonorder)
