@@ -928,9 +928,6 @@ enyo.kind({
       inEvent.status = false;
       me.leftToolbarDisabled(inSender, inEvent);
       OB.UTIL.ProcessController.finish('deleteCurrentOrder', execution);
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        OB.MobileApp.model.runSyncProcess();
-      }
     });
   },
   addProductToOrder: function(inSender, inEvent) {
