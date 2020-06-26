@@ -12,8 +12,8 @@
  * and stores the existing one into state.TicketList
  */
 // eslint-disable-next-line no-unused-vars
-OB.App.StateAPI.Global.registerAction('addNewQuotation', payload => {
-  const ticket = OB.App.State.Ticket.Utils.newTicket(
+OB.App.StateAPI.Global.registerAction('addNewQuotation', (state, payload) => {
+  let ticket = OB.App.State.Ticket.Utils.newTicket(
     payload.businessPartner,
     payload.terminal,
     payload.session,
@@ -22,8 +22,13 @@ OB.App.StateAPI.Global.registerAction('addNewQuotation', payload => {
     payload.contextUser
   );
   ticket.isQuotation = true;
-  ticket.setFullInvoice(false);
   ticket.orderType = '0';
+  ticket = OB.App.State.Ticket.Utils.setFullInvoice(
+    ticket,
+    payload.terminal,
+    false
+  );
+
   return ticket;
 });
 
