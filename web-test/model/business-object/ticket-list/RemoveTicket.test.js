@@ -83,4 +83,23 @@ describe('Remove Ticket actions', () => {
 
     delete OB.App.State;
   });
+
+  it('creates new ticket when list is empty', () => {
+    const state = {
+      Ticket: { id: 'A' },
+      TicketList: []
+    };
+    const payload = {};
+    deepfreeze(state);
+
+    OB.App.State = { Ticket: { Utils: {} } };
+    OB.App.State.Ticket.Utils.newTicket = jest
+      .fn()
+      .mockReturnValue({ id: 'C' });
+
+    const newState = action(state, payload);
+    expect(newState.Ticket.id).toEqual('C');
+
+    delete OB.App.State;
+  });
 });

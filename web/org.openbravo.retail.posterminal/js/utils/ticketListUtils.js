@@ -1228,4 +1228,9 @@
       return callback(model);
     }
   };
+
+  OB.UTIL.TicketListUtils.removeTicket = async function(payload) {
+    await OB.App.State.Global.removeTicket(payload);
+    OB.UTIL.checkRefreshMasterData();
+  };
 })();
