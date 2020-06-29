@@ -289,7 +289,6 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     this.set('multiOrders', multiOrders);
     OB.DATA.CustomerSave(this);
     OB.DATA.CustomerAddrSave(this);
-    OB.DATA.OrderDiscount(receipt);
     OB.DATA.OrderSave(this);
     OB.DATA.OrderTaxes(receipt);
 

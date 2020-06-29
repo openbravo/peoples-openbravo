@@ -1798,167 +1798,12 @@
       }
     },
 
-    setPrices: function(selectedModels, price, options, callback) {
-      var me = this,
-        cancelChange = false,
-        finalCallback = function() {
-          if (callback && callback instanceof Function) {
-            callback();
-          }
-        };
-      if (selectedModels.length > 1) {
-        var setNextPrice;
-        this.set('undo', null);
-        this.set('multipleUndo', true);
-        _.each(selectedModels, function(model) {
-          if (model.get('replacedorderline') && model.get('qty') < 0) {
-            cancelChange = true;
-          }
-        });
-        if (cancelChange) {
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange')
-          );
-          return;
-        }
-        setNextPrice = function(idx) {
-          if (idx === selectedModels.length) {
-            me.preventOrderSave(false);
-            me.unset('skipCalculateReceipt');
-            me.set('multipleUndo', null);
-            me.calculateReceipt();
-            finalCallback();
-            return;
-          }
-          me.setPrice(selectedModels[idx], price, options, function() {
-            setNextPrice(idx + 1);
-          });
-        };
-        this.set('skipCalculateReceipt', true);
-        this.preventOrderSave(true);
-        setNextPrice(0);
-      } else {
-        this.setPrice(selectedModels[0], price, options, finalCallback);
-      }
-    },
-
     setPrice: function(line, price, options, callback) {
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_PreSetPrice',
-        {
-          context: this,
-          line: line,
-          price: price,
-          options: options
-        },
-        function(args) {
-          var me = args.context;
-          if (args.cancellation && args.cancellation === true) {
-            return;
-          }
-
-          options = args.options || {};
-          options.setUndo =
-            _.isUndefined(options.setUndo) ||
-            _.isNull(options.setUndo) ||
-            options.setUndo !== false
-              ? true
-              : options.setUndo;
-
-          var allowModifyVerifyReturnLinePrice =
-            OB.MobileApp.model.hasPermission(
-              'OBPOS_ModifyPriceVerifiedReturns',
-              true
-            ) &&
-            args.line.get('originalDocumentNo') &&
-            !args.context.get('isPaid');
-          if (
-            !args.line.get('isEditable') &&
-            !(
-              allowModifyVerifyReturnLinePrice &&
-              args.price < args.line.get('price')
-            )
-          ) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
-          } else if (
-            args.line.get('replacedorderline') &&
-            args.line.get('qty') < 0
-          ) {
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBMOBC_Error'),
-              OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange')
-            );
-            return;
-          } else if (OB.DEC.isNumber(args.price)) {
-            var oldprice = args.line.get('price');
-            if (OB.DEC.compare(args.price) >= 0) {
-              // sets the new listPrice and price
-              args.line.set(
-                'priceList',
-                args.line.get('product').get('listPrice')
-              );
-              args.line.set('price', args.price);
-              // sets the undo action
-              if (options.setUndo) {
-                if (me.get('multipleUndo')) {
-                  var text = '',
-                    oldprices = [],
-                    lines = [],
-                    undo = me.get('undo');
-                  if (undo && undo.oldprices) {
-                    text = undo.text + ', ';
-                    oldprices = undo.oldprices;
-                    lines = undo.lines;
-                  }
-                  text += OB.I18N.getLabel('OBPOS_SetPrice', [
-                    args.line.printPrice(),
-                    args.line.get('product').get('_identifier')
-                  ]);
-                  oldprices.push(oldprice);
-                  lines.push(args.line);
-                  me.setUndo('EditLine', {
-                    text: text,
-                    oldprices: oldprices,
-                    lines: lines,
-                    undo: function() {
-                      var i;
-                      me.set('skipCalculateReceipt', true);
-                      me.preventOrderSave(true);
-                      for (i = 0; i < me.get('undo').lines.length; i++) {
-                        me.get('undo').lines[i].set(
-                          'price',
-                          me.get('undo').oldprices[i]
-                        );
-                      }
-                      me.preventOrderSave(false);
-                      me.unset('skipCalculateReceipt');
-                      me.set('undo', null);
-                      me.calculateReceipt();
-                    }
-                  });
-                } else {
-                  me.setUndo('EditLine', {
-                    text: OB.I18N.getLabel('OBPOS_SetPrice', [
-                      args.line.printPrice(),
-                      args.line.get('product').get('_identifier')
-                    ]),
-                    oldprice: oldprice,
-                    line: args.line,
-                    undo: function() {
-                      me.set('undo', null);
-                      args.line.set('price', oldprice);
-                    }
-                  });
-                }
-              }
-              me.save();
-            }
-            if (callback && callback instanceof Function) {
-              callback();
-            }
-          }
-        }
+      // TODO: remove this method
+      OB.warn('setPrice should not be invoked in old order model!');
+      const lineIds = [line.get('id')];
+      OB.App.State.Ticket.setLinePrice({ lineIds, price }).catch(
+        OB.App.View.ActionCanceledUIHandler.handle
       );
     },
 
@@ -6351,6 +6196,12 @@
         allLinesCalculated
       );
 
+      // Ensure state model is in sync with backbone. There are processes (ie. Create Order from quotation)
+      // that mutate backbone model siltently before reaching this point.
+      OB.App.StateBackwardCompatibility.getInstance(
+        'Ticket'
+      ).resetStateFromBackbone();
+
       this.get('lines').each(async function(line) {
         //remove promotions
         line.unset('promotions');
@@ -6360,24 +6211,26 @@
             if (
               !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
             ) {
-              order.setPrice(
-                line,
-                dataPrices.get('standardPrice', {
+              OB.App.State.Ticket.setLinePrice({
+                lineIds: [line.id],
+                price: dataPrices.get('standardPrice', {
                   setUndo: false
                 })
-              );
+              })
+                .then(() => newAllLinesCalculated())
+                .catch(OB.App.View.ActionCanceledUIHandler.handle);
             } else {
               dataPrices.each(function(price) {
-                order.setPrice(
-                  line,
-                  price.get('standardPrice', {
+                OB.App.State.Ticket.setLinePrice({
+                  lineIds: [line.id],
+                  price: price.get('standardPrice', {
                     setUndo: false
                   })
-                );
+                })
+                  .then(() => newAllLinesCalculated())
+                  .catch(OB.App.View.ActionCanceledUIHandler.handle);
               });
             }
-
-            newAllLinesCalculated();
           };
         if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           try {
@@ -6410,15 +6263,6 @@
             line
           );
         }
-
-        successCallbackPrices = function(dataPrices) {
-          dataPrices.each(function(price) {
-            order.setPrice(line, price.get('standardPrice'), {
-              setUndo: false
-            });
-          });
-          newAllLinesCalculated();
-        };
       });
     },
 
@@ -11574,6 +11418,10 @@
         order.set(
           'posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           OB.MobileApp.model.get('terminal')._identifier
+        );
+        order.set(
+          'deliveryPaymentMode',
+          OB.MobileApp.model.get('deliveryPaymentMode')
         );
         order.set('orderDate', OB.I18N.normalizeDate(new Date()));
         order.set('creationDate', null);

@@ -116,7 +116,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
         "utils/servicesUtils", "utils/remoteUtils", "components/keypadcoins", "data/dataordersave",
         "data/dataordertaxes", "data/datacustomersave", "data/datacustomeraddrsave",
-        "data/dataorderdiscount", "components/modalreceipts", "components/modalorderselector",
+        "components/modalreceipts", "components/modalorderselector",
         "components/modalcrossstoreselector", "components/storeinformation",
         "components/modalmultiorderslayaway", "components/modalcategorytree",
         "components/rendercategory", "components/renderproduct", "components/renderproductch",
@@ -343,6 +343,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/actions/Print");
     appDependency.add("model/business-object/ticket/actions/PrintLine");
     appDependency.add("model/business-object/ticket/actions/SplitLine");
+    appDependency.add("model/business-object/ticket/actions/SetLinePrice");
 
     // Cashup
     appDependency.add("model/business-object/cashup/Cashup");
