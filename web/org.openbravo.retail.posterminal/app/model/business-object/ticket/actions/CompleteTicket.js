@@ -173,7 +173,7 @@
 
   const checkExtraPayments = async (ticket, payload) => {
     ticket.payments.reduce((total, payment) => {
-      if (total >= ticket.grossAmount && !payment.paymentRounding) {
+      if (total >= OB.DEC.abs(ticket.grossAmount) && !payment.paymentRounding) {
         throw new OB.App.Class.ActionCanceled({
           errorConfirmation: 'OBPOS_UnnecessaryPaymentAdded'
         });
