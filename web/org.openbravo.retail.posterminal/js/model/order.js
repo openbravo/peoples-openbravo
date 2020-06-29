@@ -805,80 +805,80 @@
       }
       return;
 
-      if (
-        !OB.MobileApp.model.get('preventOrderSave') &&
-        !this.get('preventOrderSave') &&
-        !this.pendingCalculateReceipt
-      ) {
-        var undoCopy = this.get('undo'),
-          me = this,
-          forceInsert = false;
-
-        if (this.get('isBeingClosed')) {
-          var diffReceipt = OB.UTIL.diffJson(
-            this.serializeToJSON(),
-            this.get('json')
-          );
-          var error = new Error();
-          OB.error(
-            'The receipt is being save during the closing: ' + diffReceipt
-          );
-          OB.error('The stack trace is: ' + error.stack);
-        }
-
-        var now = new Date();
-        this.set('timezoneOffset', now.getTimezoneOffset());
-
-        if (!this.get('id') || !this.id) {
-          var uuid = OB.UTIL.get_UUID();
-          this.set('id', uuid);
-          OB.info('[NewOrder] New order set with id ' + uuid);
-          this.id = uuid;
-          forceInsert = true;
-        } else if (this.get('isNew')) {
-          this.set('isNew', false);
-          forceInsert = true;
-        }
-
-        this.set('json', JSON.stringify(this.serializeToJSON()));
-        if (callback === undefined || !(callback instanceof Function)) {
-          callback = function() {};
-        }
-
-        if (
-          (this.get('isQuotation') && !this.get('isEditable')) ||
-          this.get('isCancelling')
-        ) {
-          if (callback) {
-            callback();
-          }
-        } else {
-          OB.Dal.save(
-            this,
-            function() {
-              OB.info(
-                '[NewOrder] Order (' +
-                  (forceInsert ? 'insert' : 'update') +
-                  ') saved in DB with id ' +
-                  me.id
-              );
-              if (callback) {
-                callback();
-              }
-            },
-            function() {
-              OB.error(arguments);
-            },
-            forceInsert
-          );
-        }
-
-        this.setUndo('SaveOrder', undoCopy);
-      } else {
-        if (callback) {
-          callback();
-        }
-      }
+      // if (
+      //   !OB.MobileApp.model.get('preventOrderSave') &&
+      //   !this.get('preventOrderSave') &&
+      //   !this.pendingCalculateReceipt
+      // ) {
+      //   var undoCopy = this.get('undo'),
+      //     me = this,
+      //     forceInsert = false;
+      //
+      //   if (this.get('isBeingClosed')) {
+      //     var diffReceipt = OB.UTIL.diffJson(
+      //       this.serializeToJSON(),
+      //       this.get('json')
+      //     );
+      //     var error = new Error();
+      //     OB.error(
+      //       'The receipt is being save during the closing: ' + diffReceipt
+      //     );
+      //     OB.error('The stack trace is: ' + error.stack);
+      //   }
+      //
+      //   var now = new Date();
+      //   this.set('timezoneOffset', now.getTimezoneOffset());
+      //
+      //   if (!this.get('id') || !this.id) {
+      //     var uuid = OB.UTIL.get_UUID();
+      //     this.set('id', uuid);
+      //     OB.info('[NewOrder] New order set with id ' + uuid);
+      //     this.id = uuid;
+      //     forceInsert = true;
+      //   } else if (this.get('isNew')) {
+      //     this.set('isNew', false);
+      //     forceInsert = true;
+      //   }
+      //
+      //   this.set('json', JSON.stringify(this.serializeToJSON()));
+      //   if (callback === undefined || !(callback instanceof Function)) {
+      //     callback = function() {};
+      //   }
+      //
+      //   if (
+      //     (this.get('isQuotation') && !this.get('isEditable')) ||
+      //     this.get('isCancelling')
+      //   ) {
+      //     if (callback) {
+      //       callback();
+      //     }
+      //   } else {
+      //     OB.Dal.save(
+      //       this,
+      //       function() {
+      //         OB.info(
+      //           '[NewOrder] Order (' +
+      //             (forceInsert ? 'insert' : 'update') +
+      //             ') saved in DB with id ' +
+      //             me.id
+      //         );
+      //         if (callback) {
+      //           callback();
+      //         }
+      //       },
+      //       function() {
+      //         OB.error(arguments);
+      //       },
+      //       forceInsert
+      //     );
+      //   }
+      //
+      //   this.setUndo('SaveOrder', undoCopy);
+      // } else {
+      //   if (callback) {
+      //     callback();
+      //   }
+      // }
     },
 
     calculateTaxes: function(callback) {

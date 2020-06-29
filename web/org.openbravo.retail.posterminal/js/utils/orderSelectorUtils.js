@@ -52,7 +52,6 @@
       recursiveCallback,
       recursiveIdx,
       currentModel,
-      currentOrderList,
       currentContext,
       currentOriginServer;
 
@@ -244,7 +243,6 @@
       calledFrom
     ) {
       currentModel = model;
-      currentOrderList = orderList;
       currentContext = context;
       currentOriginServer = originServer;
       me.listOfExecution.push(
@@ -338,12 +336,11 @@
     me.loadingReceipt = true;
     if (calledFrom === 'return') {
       currentModel = model;
-      currentOrderList = orderList;
       currentContext = context;
       currentOriginServer = originServer;
       orderLoaded([model]);
     } else {
-      loadOrdersProcess(model, orderList, context, originServer, calledFrom);
+      loadOrdersProcess(model, null, context, originServer, calledFrom);
     }
   };
 })();

@@ -43,7 +43,7 @@
     'updateBpInAllTickets',
     (state, payload) => {
       const newState = { ...state };
-      const customer = payload.customer;
+      const { customer } = payload;
 
       newState.Ticket = updateBpInTicket(newState.Ticket, customer);
       newState.TicketList = newState.TicketList.map(ticket =>

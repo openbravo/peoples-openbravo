@@ -1215,7 +1215,6 @@
     },
 
     preLogoutActions: function(finalCallback) {
-      var criteria = {};
       var me = this;
 
       function removeOneModel(model, collection, callback) {
