@@ -144,6 +144,7 @@
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
+      newPayload = await checkExtraPayment(globalState.Ticket, newPayload);
       newPayload = await checkPrepayment(globalState.Ticket, newPayload);
       newPayload = await checkOverpayment(globalState.Ticket, newPayload);
 
@@ -152,6 +153,28 @@
     async (globalState, payload) => payload,
     100
   );
+
+  const checkExtraPayment = async (ticket, payload) => {
+    ticket.payments.reduce((total, payment) => {
+      if (total >= ticket.grossAmount && !payment.paymentRounding) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_UnnecessaryPaymentAdded'
+        });
+      }
+
+      if (
+        payment.isReversePayment ||
+        payment.isReversed ||
+        payment.isPrePayment
+      ) {
+        return total;
+      }
+
+      return OB.DEC.add(total, payment.origAmount);
+    }, OB.DEC.Zero);
+
+    return payload;
+  };
 
   const checkPrepayment = async (ticket, payload) => {
     const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
