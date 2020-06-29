@@ -2531,15 +2531,15 @@ enyo.kind({
         'completeReceipt'
       );
       const completeTicket = async complete => {
-        try {
-          if (!complete) {
-            OB.UTIL.ProcessController.finish(
-              'completeReceipt',
-              completeReceiptExecution
-            );
-            return;
-          }
+        if (!complete) {
+          OB.UTIL.ProcessController.finish(
+            'completeReceipt',
+            completeReceiptExecution
+          );
+          return;
+        }
 
+        try {
           OB.App.StateBackwardCompatibility.getInstance(
             'Ticket'
           ).resetStateFromBackbone();
@@ -2639,13 +2639,13 @@ enyo.kind({
           } else {
             OB.MobileApp.model.orderList.deleteCurrent();
           }
-
+        } catch (error) {
+          OB.App.View.ActionCanceledUIHandler.handle(error);
+        } finally {
           OB.UTIL.ProcessController.finish(
             'completeReceipt',
             completeReceiptExecution
           );
-        } catch (error) {
-          OB.App.View.ActionCanceledUIHandler.handle(error);
         }
       };
 
