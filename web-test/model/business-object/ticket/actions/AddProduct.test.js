@@ -587,10 +587,19 @@ describe('addProduct', () => {
           }
         ]
       };
-      OB.Taxes.Pos.applyTaxes.mockReturnValueOnce({
-        header: {},
-        lines: [{ id: lineId, taxRate: 1.11 }]
-      });
+      OB.App.State.Ticket.Utils.calculateTotals = jest
+        .fn()
+        .mockImplementation(ticket => {
+          const newTicket = { ...ticket };
+          newTicket.lines = ticket.lines.map(l => {
+            const nl = { ...l };
+            if (nl.id === lineId) {
+              return { ...nl, taxRate: 1.11 };
+            }
+            return nl;
+          });
+          return newTicket;
+        });
       const newTicket = addProduct(baseTicket, {
         products: [{ product: service, qty: 1 }],
         attrs: {

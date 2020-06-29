@@ -30,6 +30,17 @@ OB = {
     View: { DialogUIHandler: { inputData: jest.fn() } }
   },
 
+  Discounts: {
+    Pos: {
+      ruleImpls: [],
+      bpSets: []
+    }
+  },
+
+  Format: {
+    formats: { qtyEdition: '#0.###' }
+  },
+
   UTIL: {
     HookManager: { registerHook: jest.fn() },
     servicesFilter: jest.fn()
@@ -43,6 +54,7 @@ OB = {
 
   Taxes: {
     Pos: {
+      ruleImpls: [],
       taxCategoryBOM: [{ id: 'FF80818123B7FC160123B804AB8C0019' }]
     }
   },
@@ -1389,7 +1401,7 @@ describe('addProduct preparation', () => {
         products: [{ product: crossStoreProduct, qty: 1 }]
       };
       const newPayload = await prepareAction(payload);
-      expect(newPayload).toEqual({
+      expect(newPayload).toMatchObject({
         products: [
           {
             product: {
@@ -1400,9 +1412,7 @@ describe('addProduct preparation', () => {
             },
             qty: 1
           }
-        ],
-        options: {},
-        attrs: {}
+        ]
       });
     });
 
@@ -1494,7 +1504,7 @@ describe('addProduct preparation', () => {
         products: [{ product: Product.productA, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, ticket);
-      expect(newPayload).toEqual({
+      expect(newPayload).toMatchObject({
         products: [
           {
             product: {
@@ -1504,9 +1514,7 @@ describe('addProduct preparation', () => {
             },
             qty: 1
           }
-        ],
-        options: {},
-        attrs: {}
+        ]
       });
     });
   });

@@ -60,7 +60,14 @@
           qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -qty : qty;
           return { ...productInfo, qty };
         });
+
+      const { qtyEdition } = OB.Format.formats;
+      newPayload.options.discountRules = OB.Discounts.Pos.ruleImpls;
       newPayload.options.taxRules = OB.Taxes.Pos.ruleImpls;
+      newPayload.options.bpSets = OB.Discounts.Pos.bpSets;
+      newPayload.options.qtyScale =
+        qtyEdition.length - qtyEdition.indexOf('.') - 1;
+
       newPayload = await processPacks(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
 
@@ -175,6 +182,8 @@
         country: attrs.organization.country,
         region: attrs.organization.region
       };
+      newLine.country = newLine.organization.country;
+      newLine.region = newLine.organization.region;
     }
 
     if (attrs.splitline != null && attrs.originalLine) {
@@ -196,9 +205,17 @@
     }
 
     setLineAttributes(newLine, attrs, productInfo);
-    updateServiceRelatedLines(newLine, newTicket, options.taxRules);
 
-    return newTicket;
+    if (!newLine.relatedLines) {
+      return newTicket;
+    }
+
+    // update service information for the ticket
+    newLine.groupService = newLine.product.groupProduct;
+    if (!newTicket.hasServices) {
+      newTicket.hasServices = true;
+    }
+    return updateServiceRelatedLines(newLine, newTicket, options);
   }
 
   function setLineAttributes(line, attrs, productInfo) {
@@ -222,20 +239,9 @@
     Object.assign(line, lineAttrs);
   }
 
-  function updateServiceRelatedLines(line, ticket, taxRules) {
-    if (!line.relatedLines) {
-      return;
-    }
-    // eslint-disable-next-line no-param-reassign
-    line.groupService = line.product.groupProduct;
-
-    if (!ticket.hasServices) {
-      // eslint-disable-next-line no-param-reassign
-      ticket.hasServices = true;
-    }
-
+  function updateServiceRelatedLines(line, ticket, options) {
     if (!line.product.productServiceLinked) {
-      return;
+      return ticket;
     }
 
     // Check if it is necessary to modify the tax category of related lines
@@ -265,22 +271,34 @@
     });
 
     // Update the price of the related lines whose tax category has changed
-    if (
-      ticket.priceIncludesTax &&
-      ticket.lines.some(l => l.previousBaseGrossUnitPrice && l.taxRate)
-    ) {
-      const taxes = OB.Taxes.Pos.applyTaxes(ticket, taxRules);
-      ticket.lines
-        .filter(l => l.previousBaseGrossUnitPrice && l.taxRate)
-        .forEach(l => {
-          const lineTax = taxes.lines.find(lt => lt.id === l.id);
-          // eslint-disable-next-line no-param-reassign
-          l.baseGrossUnitPrice = OB.DEC.mul(
-            OB.DEC.div(l.previousBaseGrossUnitPrice, l.taxRate),
-            lineTax.taxRate
+    const changedLines = ticket.lines.filter(
+      l => l.previousBaseGrossUnitPrice && l.taxRate
+    );
+    if (ticket.priceIncludesTax && changedLines.length > 0) {
+      const newTicket = OB.App.State.Ticket.Utils.calculateTotals(ticket, {
+        discountRules: options.discountRules,
+        taxRules: options.taxRules,
+        bpSets: options.bpSets,
+        qtyScale: options.qtyScale
+      });
+      newTicket.lines = newTicket.lines.map(l => {
+        const newLine = { ...l };
+        const changedLine = changedLines.find(cl => cl.id === newLine.id);
+        if (changedLine) {
+          newLine.baseGrossUnitPrice = OB.DEC.mul(
+            OB.DEC.div(
+              changedLine.previousBaseGrossUnitPrice,
+              changedLine.taxRate
+            ),
+            newLine.taxRate
           );
-        });
+        }
+        return newLine;
+      });
+      return newTicket;
     }
+
+    return ticket;
   }
 
   function checkRestrictions(ticket, payload) {
