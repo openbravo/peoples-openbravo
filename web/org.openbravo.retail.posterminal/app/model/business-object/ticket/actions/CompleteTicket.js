@@ -157,9 +157,9 @@
 
   const checkNegativePayments = async (ticket, payload) => {
     if (
-      ticket.payments.some(
-        payment => payment.isReturnOrder !== ticket.isNegative
-      )
+      ticket.payments
+        .filter(payment => payment.isReturnOrder !== undefined)
+        .some(payment => payment.isReturnOrder !== ticket.isNegative)
     ) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: ticket.isNegative
