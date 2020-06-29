@@ -487,6 +487,16 @@
     },
 
     /**
+     * Checks if a ticket is a quotation
+     *
+     * @param {object} ticket - The ticket to check
+     * @returns {boolean} - True if the given ticket is a quotation, otherwise false is returned
+     */
+    isQuotation(ticket) {
+      return ticket.isQuotation;
+    },
+
+    /**
      * Generates a new ticket resulting of adding a new line into the provided ticket
      *
      * @param {object} ticket - The ticket which we want to add a line

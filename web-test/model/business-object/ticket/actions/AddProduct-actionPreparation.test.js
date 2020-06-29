@@ -230,7 +230,30 @@ describe('addProduct preparation', () => {
   });
 
   describe('check restrictions', () => {
-    it('quantities check', async () => {
+    it('quantities check in quotation', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_ReturnLine'
+      );
+      const quotation = {
+        ...Ticket.singleLine,
+        isQuotation: true
+      };
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.productA, qty: -2 }],
+              options: { line: '1' }
+            },
+            quotation
+          ),
+        {
+          errorMsg: 'OBPOS_MsgCannotAddNegative'
+        }
+      );
+    });
+
+    it('quantities check in return', async () => {
       await expectError(
         () =>
           prepareAction(
@@ -348,6 +371,9 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (1)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_ReturnLine'
+      );
       await expectError(
         () =>
           prepareAction(
@@ -363,6 +389,9 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (2)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_ReturnLine'
+      );
       await expectError(
         () =>
           prepareAction(
@@ -378,6 +407,9 @@ describe('addProduct preparation', () => {
     });
 
     it('not returnable check (3)', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_ReturnLine'
+      );
       await expectError(
         () =>
           prepareAction(
@@ -453,7 +485,7 @@ describe('addProduct preparation', () => {
 
     it('allow sales with return', async () => {
       OB.App.Security.hasPermission.mockImplementation(
-        p => p === 'OBPOS_NotAllowSalesWithReturn'
+        p => p === 'OBPOS_ReturnLine' || p === 'OBPOS_NotAllowSalesWithReturn'
       );
 
       const newPayload = await prepareAction(
@@ -1501,6 +1533,9 @@ describe('addProduct preparation', () => {
     });
 
     it('return service accepted approval', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_ReturnLine'
+      );
       const payloadWithApproval = {
         products: [{ product: service }],
         approvals: ['OBPOS_approval.returnService']
@@ -1534,6 +1569,9 @@ describe('addProduct preparation', () => {
     });
 
     it('return service rejected approval', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_ReturnLine'
+      );
       OB.App.Security.requestApprovalForAction.mockRejectedValue(
         new OB.App.Class.ActionCanceled('Approval required', {
           approvalRequired: 'OBPOS_approval.returnService'

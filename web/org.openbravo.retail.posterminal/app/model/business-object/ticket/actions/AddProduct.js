@@ -303,6 +303,16 @@
       const line = getLineToEdit(pi, ticket, options, attrs);
       const qty = line ? line.qty + pi.qty : pi.qty;
 
+      if (
+        (!OB.App.Security.hasPermission('OBPOS_ReturnLine') ||
+          OB.App.State.Ticket.Utils.isQuotation(ticket)) &&
+        qty < 0
+      ) {
+        throw new OB.App.Class.ActionCanceled({
+          errorMsg: 'OBPOS_MsgCannotAddNegative'
+        });
+      }
+
       if (OB.App.State.Ticket.Utils.isReturn(ticket) && qty > 0) {
         throw new OB.App.Class.ActionCanceled({
           errorMsg: 'OBPOS_MsgCannotAddPostiveToReturn'
@@ -431,7 +441,10 @@
   }
 
   function checkClosedQuotation(ticket) {
-    if (ticket.isQuotation && ticket.hasbeenpaid === 'Y') {
+    if (
+      OB.App.State.Ticket.Utils.isQuotation(ticket) &&
+      ticket.hasbeenpaid === 'Y'
+    ) {
       throw new OB.App.Class.ActionCanceled({
         errorMsg: 'OBPOS_QuotationClosed'
       });
@@ -772,7 +785,8 @@
       !options.line &&
       product.hasAttributes &&
       qty >= 1 &&
-      (!ticket.isQuotation || isQuotationAndAttributeAllowed)
+      (!OB.App.State.Ticket.Utils.isQuotation(ticket) ||
+        isQuotationAndAttributeAllowed)
     ) {
       attributeValue = await OB.App.View.DialogUIHandler.inputData(
         'modalProductAttribute',
