@@ -320,7 +320,7 @@
       return;
     }
     const productWithoutPrice = products.find(
-      p => !p.product.listPrice && !p.product.ispack
+      p => p.product.listPrice == null && !p.product.ispack
     );
     if (productWithoutPrice) {
       throw new OB.App.Class.ActionCanceled({
