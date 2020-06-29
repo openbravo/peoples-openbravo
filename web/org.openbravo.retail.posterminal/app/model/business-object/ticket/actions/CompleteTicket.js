@@ -144,9 +144,10 @@
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
-      newPayload = await checkExtraPayment(globalState.Ticket, newPayload);
-      newPayload = await checkPrepayment(globalState.Ticket, newPayload);
-      newPayload = await checkOverpayment(globalState.Ticket, newPayload);
+      newPayload = await checkNegativePayments(globalState.Ticket, newPayload);
+      newPayload = await checkExtraPayments(globalState.Ticket, newPayload);
+      newPayload = await checkPrepayments(globalState.Ticket, newPayload);
+      newPayload = await checkOverpayments(globalState.Ticket, newPayload);
 
       return newPayload;
     },
@@ -154,7 +155,23 @@
     100
   );
 
-  const checkExtraPayment = async (ticket, payload) => {
+  const checkNegativePayments = async (ticket, payload) => {
+    if (
+      ticket.payments.some(
+        payment => payment.isReturnOrder !== ticket.isNegative
+      )
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: ticket.isNegative
+          ? 'OBPOS_PaymentOnReturnReceipt'
+          : 'OBPOS_NegativePaymentOnReceipt'
+      });
+    }
+
+    return payload;
+  };
+
+  const checkExtraPayments = async (ticket, payload) => {
     ticket.payments.reduce((total, payment) => {
       if (total >= ticket.grossAmount && !payment.paymentRounding) {
         throw new OB.App.Class.ActionCanceled({
@@ -176,7 +193,7 @@
     return payload;
   };
 
-  const checkPrepayment = async (ticket, payload) => {
+  const checkPrepayments = async (ticket, payload) => {
     const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
       ticket,
       payload
@@ -219,7 +236,7 @@
     return newPayload;
   };
 
-  const checkOverpayment = async (ticket, payload) => {
+  const checkOverpayments = async (ticket, payload) => {
     const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
       ticket,
       payload
