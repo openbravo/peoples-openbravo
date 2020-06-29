@@ -4547,89 +4547,27 @@
     },
 
     addManualPromotionToList: function(promotionToApply) {
-      const discountsFromUser = { ...this.get('discountsFromUser') } || {},
-        rule = promotionToApply.rule,
-        discountRule = promotionToApply.discountRule;
-      let bytotalManualPromotions =
-        discountsFromUser && discountsFromUser.bytotalManualPromotions
-          ? [...discountsFromUser.bytotalManualPromotions]
-          : [];
-
-      if (
-        !rule.obdiscAllowmultipleinstan ||
-        bytotalManualPromotions.length <= 0
-      ) {
-        // Check there is no other manual promotion with the same ruleId and hasMultiDiscount set as false or undefined
-        const singlePromotionsList = _.filter(bytotalManualPromotions, function(
-          bytotalManualPromotion
-        ) {
-          return (
-            bytotalManualPromotion.obdiscAllowmultipleinstan ===
-              rule.obdiscAllowmultipleinstan &&
-            bytotalManualPromotion.id === rule.id
-          );
-        });
-
-        if (singlePromotionsList.length > 0) {
-          //  There should be only one rule in the list with previous conditions in manual promotions list
-          _.forEach(singlePromotionsList, function(singlePromotion) {
-            bytotalManualPromotions.splice(
-              bytotalManualPromotions.indexOf(singlePromotion),
-              1
-            );
-          });
-        }
-      }
-      if (
-        rule.obdiscAllowmultipleinstan &&
-        OB.UTIL.isNullOrUndefined(rule.discountinstance)
-      ) {
-        rule.discountinstance = OB.UTIL.get_UUID();
-      }
-
-      let bytotalManualPromotionObj = {};
-
-      for (let key in discountRule.attributes) {
-        bytotalManualPromotionObj[key] = discountRule.attributes[key];
-      }
-
-      // Override some configuration from manualPromotions
-      if (bytotalManualPromotionObj.disctTotalamountdisc) {
-        bytotalManualPromotionObj.disctTotalamountdisc = rule.userAmt;
-      } else if (bytotalManualPromotionObj.disctTotalpercdisc) {
-        bytotalManualPromotionObj.disctTotalpercdisc = rule.userAmt;
-      }
-      bytotalManualPromotionObj.noOrder = rule.noOrder;
-      bytotalManualPromotionObj.discountinstance = rule.discountinstance;
+      let promotionName;
       if (
         OB.Model.Discounts.discountRules[
-          bytotalManualPromotionObj.discountType
+          promotionToApply.discountRule.discountType
         ] &&
-        OB.Model.Discounts.discountRules[bytotalManualPromotionObj.discountType]
-          .getIdentifier
+        OB.Model.Discounts.discountRules[
+          promotionToApply.discountRule.discountType
+        ].getIdentifier
       ) {
-        let promotionName = OB.Model.Discounts.discountRules[
-          bytotalManualPromotionObj.discountType
-        ].getIdentifier(discountRule, bytotalManualPromotionObj);
-        bytotalManualPromotionObj.name = promotionName;
-        bytotalManualPromotionObj._identifier = promotionName;
+        promotionName = OB.Model.Discounts.discountRules[
+          promotionToApply.discountRule.discountType
+        ].getIdentifier(
+          promotionToApply.discountRule,
+          promotionToApply.discountRule
+        );
       }
-      bytotalManualPromotionObj.products = [];
-      bytotalManualPromotionObj.includedProducts = 'Y';
-      bytotalManualPromotionObj.productCategories = [];
-      bytotalManualPromotionObj.includedProductCategories = 'Y';
-      bytotalManualPromotionObj.productCharacteristics = [];
-      bytotalManualPromotionObj.includedCharacteristics = 'Y';
-      bytotalManualPromotionObj.allweekdays = true;
-
-      bytotalManualPromotions.push(bytotalManualPromotionObj);
-
-      bytotalManualPromotions = bytotalManualPromotions.sort((a, b) => {
-        return a.noOrder - b.noOrder;
+      let discount = JSON.parse(JSON.stringify(promotionToApply));
+      discount.name = promotionName;
+      OB.App.State.Ticket.addByTotalPromotion({
+        discount: discount
       });
-
-      discountsFromUser.bytotalManualPromotions = bytotalManualPromotions;
-      this.set('discountsFromUser', discountsFromUser);
     },
 
     getCurrentDiscountedLinePrice: function(line, ignoreExecutedAtTheEndPromo) {
