@@ -43,16 +43,15 @@ OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
 OB.App.StateAPI.Global.removeTicket.addActionPreparation(
   async (state, payload) => {
     const newPayload = { ...payload };
-    if (newPayload.forceNewTicket) {
-      newPayload.businessPartner = JSON.parse(
-        JSON.stringify(OB.MobileApp.model.get('businessPartner'))
-      );
-      newPayload.terminal = OB.MobileApp.model.get('terminal');
-      newPayload.session = OB.MobileApp.model.get('session');
-      newPayload.orgUserId = OB.MobileApp.model.get('orgUserId');
-      newPayload.pricelist = OB.MobileApp.model.get('pricelist');
-      newPayload.contextUser = OB.MobileApp.model.get('context').user;
-    }
+
+    newPayload.businessPartner = JSON.parse(
+      JSON.stringify(OB.MobileApp.model.get('businessPartner'))
+    );
+    newPayload.terminal = OB.MobileApp.model.get('terminal');
+    newPayload.session = OB.MobileApp.model.get('session');
+    newPayload.orgUserId = OB.MobileApp.model.get('orgUserId');
+    newPayload.pricelist = OB.MobileApp.model.get('pricelist');
+    newPayload.contextUser = OB.MobileApp.model.get('context').user;
 
     return newPayload;
   }

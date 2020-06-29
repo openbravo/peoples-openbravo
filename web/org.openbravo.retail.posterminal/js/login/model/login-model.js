@@ -1225,11 +1225,12 @@
           return;
         }
 
-        // TODO: Implement model deleteOrder action
-        //model.deleteOrder(me, function() {
-        collection.remove(model);
-        removeOneModel(collection[0], collection, callback);
-        //});
+        OB.UTIL.TicketListUtils.removeTicket({
+          id: model.id
+        }).then(() => {
+          const firstTicket = collection.shift();
+          removeOneModel(firstTicket, collection, callback);
+        });
       }
 
       function success(collection) {
