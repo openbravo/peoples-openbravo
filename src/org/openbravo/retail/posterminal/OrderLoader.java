@@ -931,6 +931,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
               && promotion.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
             promotion.setDisplayedTotalAmount(BigDecimal.ZERO);
           }
+          promotion.setBaseGrossUnitPrice(
+              getBaseGrossUnitPrice(jsonPromotion).setScale(pricePrecision, RoundingMode.HALF_UP));
+          promotion.setAdjustedPrice(
+              getBaseNetUnitPrice(jsonPromotion).setScale(pricePrecision, RoundingMode.HALF_UP));
           promotion.setId(OBMOBCUtils.getUUIDbyString(orderline.getId() + p));
           promotion.setNewOBObject(true);
           orderline.getOrderLineOfferList().add(promotion);
