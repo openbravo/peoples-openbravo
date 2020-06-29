@@ -2540,6 +2540,10 @@ enyo.kind({
             return;
           }
 
+          OB.App.StateBackwardCompatibility.getInstance(
+            'Ticket'
+          ).resetStateFromBackbone();
+
           // Complete Ticket action
           await OB.App.State.Global.completeTicket({
             terminal: {
