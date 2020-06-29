@@ -210,6 +210,10 @@ enyo.kind({
                 orderModel = newOrder;
                 orderModel.set('deferredOrder', true);
               }
+              orderModel.set(
+                'bp',
+                me.owner.owner.owner.model.get('orderList').current.get('bp')
+              );
               const current = me.owner.owner.owner.model.get('orderList')
                 .current;
               // Change the UI receipt to add the product on the newly created ticket
