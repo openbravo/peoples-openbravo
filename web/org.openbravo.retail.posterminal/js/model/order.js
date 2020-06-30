@@ -480,6 +480,8 @@
           bp: bpModel,
           externalBusinessPartnerReference:
             attributes.externalBusinessPartnerReference,
+          externalBusinessPartnerCategory:
+            attributes.externalBusinessPartnerCategory,
           externalBusinessPartner: attributes.externalBusinessPartner
         });
         this.set('lines', new OrderLineList().reset(attributes.lines));
@@ -1467,6 +1469,7 @@
       this.set({
         bp: null,
         externalBusinessPartnerReference: null,
+        externalBusinessPartnerCategory: null,
         externalBusinessPartner: null
       });
       this.set(
@@ -5469,6 +5472,12 @@
               bp ? bp.getKey() : null
             );
             order.set(
+              'externalBusinessPartnerCategory',
+              new OB.App.Class.ExternalBusinessPartner(
+                bp ? bp.getPlainObject() : null
+              ).getCategoryKey()
+            );
+            order.set(
               'externalBusinessPartner',
               bp ? bp.getPlainObject() : null
             );
@@ -5510,6 +5519,7 @@
         me.set({
           bp: bp,
           externalBusinessPartnerReference: null,
+          externalBusinessPartnerCategory: null,
           externalBusinessPartner: null
         });
         me.save(function() {
@@ -10893,6 +10903,12 @@
                 'externalBusinessPartnerReference',
                 model.externalBusinessPartnerReference
               );
+              order.set(
+                'externalBusinessPartnerCategory',
+                new OB.App.Class.ExternalBusinessPartner(
+                  extBp.getPlainObject()
+                ).getCategoryKey()
+              );
               callToLoadCustomer.call(me);
             }
           );
@@ -11369,6 +11385,7 @@
         order.set('bp', bp);
         order.set('externalBusinessPartner', null);
         order.set('externalBusinessPartnerReference', null);
+        order.set('externalBusinessPartnerCategory', null);
         order.set('invoiceTerms', bp.get('invoiceTerms'));
         if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
           // Set price list for order
