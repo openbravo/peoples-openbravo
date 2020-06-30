@@ -1841,7 +1841,7 @@ enyo.kind({
             }
             return;
           }
-          var order = me.orderList.at(idx);
+          var order = new OB.Model.Order(me.orderList.at(idx));
           order.getPrepaymentAmount(function() {
             if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
               total = OB.DEC.add(total, order.getPending());
