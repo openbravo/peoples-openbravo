@@ -1447,28 +1447,28 @@
       }
 
       // Convert return payments in negative
-      if (OB.App.State.Ticket.Utils.isReturn(newTicket, payload)) {
+      if (newTicket.isNegative) {
         newTicket.payments = newTicket.payments.map(payment => {
           const newPayment = { ...payment };
 
           if (
-            !payment.isPrePayment &&
-            !payment.reversedPaymentId &&
-            !newTicket.isPaid
+            payment.isPrePayment ||
+            payment.reversedPaymentId ||
+            newTicket.isPaid
           ) {
-            newPayment.amount = -payment.amount;
-            if (payment.amountRounded) {
-              newPayment.amountRounded = -payment.amountRounded;
-            }
-            newPayment.origAmount = -payment.origAmount;
-            if (payment.origAmountRounded) {
-              newPayment.origAmountRounded = -payment.origAmountRounded;
-            }
-            newPayment.paid = -payment.paid;
-          } else {
             newPayment.paid = payment.amount;
+            return newPayment;
           }
 
+          newPayment.amount = -payment.amount;
+          newPayment.origAmount = -payment.origAmount;
+          newPayment.paid = -payment.paid;
+          newPayment.amountRounded = payment.amountRounded
+            ? -payment.amountRounded
+            : payment.amountRounded;
+          newPayment.origAmountRounded = payment.origAmountRounded
+            ? -payment.origAmountRounded
+            : payment.origAmountRounded;
           return newPayment;
         });
       }
