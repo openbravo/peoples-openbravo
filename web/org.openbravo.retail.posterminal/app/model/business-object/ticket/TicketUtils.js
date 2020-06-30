@@ -92,5 +92,47 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       );
 
     return newTicket;
+  },
+
+  getCurrentDiscountedLinePrice(line, ignoreExecutedAtTheEndPromo) {
+    let currentDiscountedLinePrice = 0;
+    let allDiscountedAmt = 0;
+    let i = 0;
+    if (line.promotions) {
+      for (i = 0; i < line.promotions.length; i += 1) {
+        if (!line.promotions[i].hidden) {
+          if (
+            !ignoreExecutedAtTheEndPromo ||
+            !line.promotions[i].executedAtTheEndPromo
+          ) {
+            allDiscountedAmt += line.promotions[i].amt;
+          }
+        }
+      }
+    }
+    if (allDiscountedAmt > 0 && line.qty > 0) {
+      currentDiscountedLinePrice = OB.DEC.sub(
+        line.baseGrossUnitPrice,
+        OB.DEC.div(allDiscountedAmt, line.qty, OB.DEC.getRoundingMode()),
+        OB.DEC.getRoundingMode()
+      );
+    } else {
+      currentDiscountedLinePrice = line.baseGrossUnitPrice;
+    }
+
+    return currentDiscountedLinePrice;
+  },
+
+  calculateDiscountedLinePrice(line) {
+    const newLine = { ...line };
+    if (line.qty === 0) {
+      delete newLine.discountedLinePrice;
+    } else {
+      newLine.discountedLinePrice = OB.App.State.Ticket.Utils.getCurrentDiscountedLinePrice(
+        newLine,
+        false
+      );
+    }
+    return newLine;
   }
 });

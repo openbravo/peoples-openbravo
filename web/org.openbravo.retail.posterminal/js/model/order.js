@@ -4768,33 +4768,13 @@
       line.trigger('change');
     },
 
-    removePromotion: function(line, rule) {
-      var promotions = line.get('promotions'),
-        discountinstance = rule.discountinstance,
-        removed = false,
-        res = [],
-        i;
-      if (!promotions) {
-        return;
-      }
-
-      for (i = 0; i < promotions.length; i++) {
-        if (
-          promotions[i].ruleId === rule.id &&
-          promotions[i].discountinstance === discountinstance
-        ) {
-          removed = true;
-        } else {
-          res.push(promotions[i]);
-        }
-      }
-
-      if (removed) {
-        line.set('promotions', res);
-        // Calculate discountedLinePrice for the next promotion
-        this.calculateDiscountedLinePrice(line);
+    removePromotion: async function(line, rule) {
+      return OB.App.State.Ticket.removePromotion({
+        lineId: line.get('id'),
+        rule: JSON.parse(JSON.stringify(rule))
+      }).then(() => {
         line.trigger('change');
-      }
+      });
     },
 
     //Attrs is an object of attributes that will be set in order line
