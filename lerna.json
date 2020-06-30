@@ -1,5 +1,5 @@
 {
   "version": "1.0.0",
   "npmClient": "npm",
-  "packages": ["modules/*"]
+  "packages": ["modules/*", "modules/*/web-react"]
 }
