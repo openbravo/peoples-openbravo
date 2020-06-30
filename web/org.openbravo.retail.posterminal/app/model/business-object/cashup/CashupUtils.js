@@ -6,6 +6,9 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/* global lodash */
+
 /**
  * @fileoverview Define utility functions for the Cashup Model
  */
@@ -367,7 +370,7 @@
           paymentType =>
             paymentType.payment.searchKey === cashupPayment.searchKey
         ).obposPosprecision;
-        amount = orderPayment.amountRounded
+        amount = lodash.isNumber(orderPayment.amountRounded)
           ? orderPayment.amountRounded
           : orderPayment.amount;
         if (
