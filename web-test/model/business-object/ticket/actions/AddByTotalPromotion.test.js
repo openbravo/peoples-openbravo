@@ -54,7 +54,7 @@ const overrideUserAmt = {
   discountRule: { id: '5', disctTotalamountdisc: 10 }
 };
 
-describe('Ticket.addManualPromotion action', () => {
+describe('Ticket.addByTotalPromotion action', () => {
   it('add simple manual promotion to list', () => {
     const { discountsFromUser } = OB.App.StateAPI.Ticket.addByTotalPromotion(
       basicTicket,
