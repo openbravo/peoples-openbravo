@@ -144,6 +144,7 @@
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
+      newPayload = await checkAnonymousReturn(globalState.Ticket, newPayload);
       newPayload = await checkNegativePayments(globalState.Ticket, newPayload);
       newPayload = await checkExtraPayments(globalState.Ticket, newPayload);
       newPayload = await checkPrepayments(globalState.Ticket, newPayload);
@@ -154,6 +155,20 @@
     async (globalState, payload) => payload,
     100
   );
+
+  const checkAnonymousReturn = async (ticket, payload) => {
+    if (
+      !payload.terminal.returnsAnonymousCustomer &&
+      ticket.businessPartner.id === payload.terminal.businessPartner &&
+      ticket.lines.some(line => line.qty < 0 && !line.originalDocumentNo)
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_returnServicesWithAnonimousCust'
+      });
+    }
+
+    return payload;
+  };
 
   const checkNegativePayments = async (ticket, payload) => {
     if (

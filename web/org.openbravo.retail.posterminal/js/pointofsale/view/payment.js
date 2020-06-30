@@ -2549,6 +2549,8 @@ enyo.kind({
             terminal: {
               id: OB.MobileApp.model.get('terminal').id,
               organization: OB.MobileApp.model.get('terminal').organization,
+              businessPartner: OB.MobileApp.model.get('terminal')
+                .businessPartner,
               documentTypeForSales: OB.MobileApp.model.get('terminal')
                 .terminalType.documentType,
               documentTypeForReturns: OB.MobileApp.model.get('terminal')
@@ -2577,7 +2579,9 @@ enyo.kind({
                 .countLayawayAsSales,
               symbol: OB.MobileApp.model.get('terminal').symbol,
               currencySymbolAtTheRight: OB.MobileApp.model.get('terminal')
-                .currencySymbolAtTheRight
+                .currencySymbolAtTheRight,
+              returnsAnonymousCustomer: OB.MobileApp.model.get('terminal')
+                .returns_anonymouscustomer
             },
             preferences: {
               salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
