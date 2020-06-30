@@ -4547,24 +4547,10 @@
     },
 
     addManualPromotionToList: function(promotionToApply) {
-      let promotionName;
-      if (
-        OB.Model.Discounts.discountRules[
-          promotionToApply.discountRule.discountType
-        ] &&
-        OB.Model.Discounts.discountRules[
-          promotionToApply.discountRule.discountType
-        ].getIdentifier
-      ) {
-        promotionName = OB.Model.Discounts.discountRules[
-          promotionToApply.discountRule.discountType
-        ].getIdentifier(
-          promotionToApply.discountRule,
-          promotionToApply.discountRule
-        );
-      }
-      let discount = JSON.parse(JSON.stringify(promotionToApply));
-      discount.name = promotionName;
+      const discount = JSON.parse(JSON.stringify(promotionToApply));
+      discount.currencyIdentifier = OB.MobileApp.model.get(
+        'terminal'
+      ).currency$_identifier;
       OB.App.State.Ticket.addByTotalPromotion({
         discount: discount
       });

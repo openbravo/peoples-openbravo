@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/* global lodash */
+/* global */
 
 (function AddByTotalPromotionDefinition() {
   OB.App.StateAPI.Ticket.registerAction(
@@ -43,16 +43,27 @@
       // Override some configuration from manualPromotions
       if (bytotalManualPromotionObj.disctTotalamountdisc) {
         bytotalManualPromotionObj.disctTotalamountdisc = rule.userAmt;
+        if (discount.currencyIdentifier) {
+          bytotalManualPromotionObj.name += ` - ${rule.userAmt} ${discount.currencyIdentifier}`;
+        }
       } else if (bytotalManualPromotionObj.disctTotalpercdisc) {
         bytotalManualPromotionObj.disctTotalpercdisc = rule.userAmt;
+        if (
+          discount.discountRule.discountType ===
+          '096984DC2B944C85A9162C66C37EE7A3'
+        ) {
+          bytotalManualPromotionObj.name += ` - ${rule.userAmt} %`;
+        } else {
+          bytotalManualPromotionObj.name += ` - ${rule.userAmt}%`;
+        }
       }
       bytotalManualPromotionObj.noOrder = rule.noOrder;
       bytotalManualPromotionObj.discountinstance = rule.discountinstance;
-      if (discount.name) {
-        // let promotionName = OB.Model.Discounts.discountRules[
-        //   bytotalManualPromotionObj.discountType
-        // ].getIdentifier(discountRule, bytotalManualPromotionObj);
-        bytotalManualPromotionObj.name = discount.name;
+      if (discount.discountRules) {
+        const promotionName = discount.discountRules[
+          bytotalManualPromotionObj.discountType
+        ].getIdentifier(discount.discountRule, bytotalManualPromotionObj);
+        bytotalManualPromotionObj.name = promotionName;
         // eslint-disable-next-line no-underscore-dangle
         bytotalManualPromotionObj._identifier = discount.name;
       }
