@@ -1387,7 +1387,6 @@
         const mergeable =
           !payload.terminal.multiChange && !payload.preferences.splitChange;
 
-        // FIXME: change addPayment with generatePayment and return only the payment?
         newTicket.changePayments.forEach(changePayment => {
           const terminalPayment = payload.terminal.paymentTypes.find(
             paymentType => paymentType.payment.searchKey === changePayment.key
@@ -1495,21 +1494,6 @@
       const precision = terminalPayment
         ? terminalPayment.obposPosprecision
         : OB.DEC.getScale();
-
-      // FIXME: needed in complete ticket?
-      // this.addPaymentRounding(
-      //   payment,
-      //   payload.terminal.paymentTypes.find(paymentType => paymentType.payment.searchKey === payment.get('kind'))
-      // );
-
-      // FIXME: needed in complete ticket?
-      // if (this.get('prepaymentChangeMode')) {
-      //   this.unset('prepaymentChangeMode');
-      //   this.adjustPayment();
-      // }
-
-      // FIXME: needed in complete ticket?
-      // OB.UTIL.PrepaymentUtils.managePrepaymentChange();
 
       const payment = newTicket.payments.find(
         p =>
