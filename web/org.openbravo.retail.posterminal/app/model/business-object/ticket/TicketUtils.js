@@ -1163,9 +1163,10 @@
                       l => l.id === relatedLine.orderlineId
                     );
                     if (
+                      isFullyPaidOrPaidOnCredit &&
                       orderLine &&
-                      (isFullyPaidOrPaidOnCredit ||
-                        orderLine.obposCanbedelivered)
+                      orderLine.obposCanbedelivered &&
+                      orderLine.obrdmDeliveryMode === 'PickAndCarry'
                     ) {
                       return OB.DEC.add(total, orderLine.qty);
                     }
