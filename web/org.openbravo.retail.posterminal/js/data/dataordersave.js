@@ -760,41 +760,33 @@
                         OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
                     );
 
-                    // Not needed. Current ticket was already updated
-                    // _.each(
-                    //   me.context.get('orderList').models,
-                    //   function(mdl) {
-                    //     if (mdl.get('id') === currentReceipt.get('id')) {
-                    //       mdl.set('hasbeenpaid', 'Y');
-                    //       return true;
-                    //     }
-                    //   },
-                    //   this
-                    // );
+                    const savedReceipt = OB.App.OpenTicketList.getAllTickets().find(
+                      ticket => ticket.id === me.receipt.get('id')
+                    );
 
-                      const savedReceipt = OB.App.OpenTicketList.getAllTickets().find(
-                        ticket => ticket.id === me.receipt.get('id')
-                      );
-
-                      if (
-                        !OB.UTIL.isNullOrUndefined(
-                          savedReceipt.amountToLayaway
-                        ) &&
-                        savedReceipt.generateInvoice
-                      ) {
-                        me.hasInvLayaways = true;
-                      }
-                      recursiveSaveFn(receiptIndex + 1);
-                    },
-                    function() {
-                      recursiveSaveFn(receiptIndex + 1);
+                    if (
+                      !OB.UTIL.isNullOrUndefined(
+                        savedReceipt.amountToLayaway
+                      ) &&
+                      savedReceipt.generateInvoice
+                    ) {
+                      me.hasInvLayaways = true;
                     }
-                  );
-                }
-              );
-            },
-            tx
-          );
+                    recursiveSaveFn(receiptIndex + 1);
+                  },
+                  function() {
+                    recursiveSaveFn(receiptIndex + 1);
+                  }
+                );
+              }
+            );
+          };
+
+          OB.App.State.Cashup.updateCashup({
+            tickets: [currentReceipt],
+            countLayawayAsSales: OB.MobileApp.model.get('terminal')
+              .countLayawayAsSales
+          }).then(() => cashUpReportSuccessCallback());
         } else {
           OB.MobileApp.model.runSyncProcess(
             function() {
