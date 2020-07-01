@@ -50,7 +50,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
                 // If there are no pending orders,
                 //  add an initial empty order
-                OB.App.State.Ticket.createEmptyTicket();
+                OB.App.State.Ticket.createEmptyTicket().then(() => {
+                  OB.MobileApp.model.receipt.setIsCalculateGrossLockState(
+                    false
+                  );
+                  OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(
+                    false
+                  );
+                });
               } else {
                 // The order object is stored in the json property of the row fetched from the database
                 orderlist.reset(new Backbone.Collection(args.ordersNotPaid));

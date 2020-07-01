@@ -920,7 +920,10 @@ enyo.kind({
   },
   addNewOrder: function(inSender, inEvent) {
     this.$.receiptPropertiesDialog.resetProperties();
-    OB.App.State.Global.addNewTicket();
+    OB.App.State.Global.addNewTicket().then(() => {
+      OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
+      OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(false);
+    });
     return true;
   },
   deleteCurrentOrder: function(inSender, inEvent) {
