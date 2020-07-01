@@ -7115,36 +7115,11 @@
       });
     },
     rejectQuotation: function(rejectReasonId, scope, callback) {
-      if (!this.get('id')) {
-        OB.error(
-          'The Id of the order is not defined (current value: ' +
-            this.get('id') +
-            "'"
-        );
-      }
-      var process = new OB.DS.Process(
-        'org.openbravo.retail.posterminal.QuotationsReject'
-      );
-      OB.UTIL.showLoading(true);
-      process.exec(
-        {
-          messageId: OB.UTIL.get_UUID(),
-          data: [
-            {
-              id: this.get('id'),
-              orderid: this.get('id'),
-              rejectReasonId: rejectReasonId
-            }
-          ]
-        },
-        function(data) {
-          OB.UTIL.showLoading(false);
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SuccessRejectQuotation'));
-          if (callback) {
-            callback.call(scope, data !== null);
-          }
+      OB.App.State.Global.rejectQuotation({ rejectReasonId }).then(() => {
+        if (callback) {
+          callback.call(scope, true);
         }
-      );
+      });
     },
     getPrecision: function(payment) {
       var terminalpayment =
