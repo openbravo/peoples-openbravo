@@ -245,59 +245,67 @@
     }
 
     // Check if it is necessary to modify the tax category of related lines
-    line.product.productServiceLinked.forEach(productServiceLinked => {
-      line.relatedLines
-        .filter(
-          relatedProduct =>
-            relatedProduct.productCategory ===
-            productServiceLinked.productCategory
-        )
-        .forEach(relatedProduct => {
-          const relatedLine = ticket.lines.find(
-            l => l.id === relatedProduct.orderlineId
-          );
-          if (relatedLine) {
-            relatedLine.product = {
-              ...relatedLine.product,
-              previousTaxCategory: relatedLine.product.taxCategory,
-              taxCategory: productServiceLinked.taxCategory
+    const linesToChange = line.product.productServiceLinked
+      .map(psl => {
+        return line.relatedLines
+          .filter(rl => rl.productCategory === psl.productCategory)
+          .map(rl => ticket.lines.find(l => l.id === rl.orderlineId))
+          .filter(l => l !== undefined)
+          .map(l => {
+            const info = {
+              id: l.id,
+              product: {
+                ...l.product,
+                previousTaxCategory: l.product.taxCategory,
+                taxCategory: psl.taxCategory
+              },
+              taxRate: l.taxRate,
+              previousBaseGrossUnitPrice: l.priceIncludesTax
+                ? l.baseGrossUnitPrice
+                : undefined
             };
-            if (relatedLine.priceIncludesTax) {
-              relatedLine.previousBaseGrossUnitPrice =
-                relatedLine.baseGrossUnitPrice;
-            }
-          }
-        });
-    });
+            return info;
+          });
+      })
+      .flat();
 
     // Update the price of the related lines whose tax category has changed
-    const changedLines = ticket.lines.filter(
-      l => l.previousBaseGrossUnitPrice && l.taxRate
-    );
-    if (ticket.priceIncludesTax && changedLines.length > 0) {
-      const newTicket = OB.App.State.Ticket.Utils.calculateTotals(ticket, {
+    if (ticket.priceIncludesTax && linesToChange.length > 0) {
+      let newTicket = { ...ticket };
+
+      newTicket.lines = ticket.lines.map(l => {
+        const info = linesToChange.find(cl => cl.id === l.id);
+        if (info) {
+          return { ...l, ...info };
+        }
+        return { ...l };
+      });
+
+      newTicket = OB.App.State.Ticket.Utils.calculateTotals(newTicket, {
         discountRules: options.discountRules,
         taxRules: options.taxRules,
         bpSets: options.bpSets,
         qtyScale: options.qtyScale
       });
+
       newTicket.lines = newTicket.lines.map(l => {
         const newLine = { ...l };
-        const changedLine = changedLines.find(cl => cl.id === newLine.id);
-        if (changedLine) {
-          newLine.baseGrossUnitPrice = OB.DEC.mul(
-            OB.DEC.div(
-              changedLine.previousBaseGrossUnitPrice,
-              changedLine.taxRate
-            ),
-            newLine.taxRate
-          );
+        const info = linesToChange.find(cl => cl.id === newLine.id);
+        if (info) {
+          newLine.product = info.product;
+          if (info.previousBaseGrossUnitPrice) {
+            newLine.previousBaseGrossUnitPrice =
+              info.previousBaseGrossUnitPrice;
+            newLine.baseGrossUnitPrice = OB.DEC.mul(
+              OB.DEC.div(info.previousBaseGrossUnitPrice, info.taxRate),
+              newLine.taxRate
+            );
+          }
         }
         return newLine;
       });
       return newTicket;
     }
-
     return ticket;
   }
 

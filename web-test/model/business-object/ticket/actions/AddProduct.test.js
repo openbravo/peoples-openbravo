@@ -646,6 +646,8 @@ describe('addProduct', () => {
       const baseTicket = addProduct(emptyTicket, {
         products: [{ product: productA, qty: 1 }, { product: productB, qty: 1 }]
       });
+      baseTicket.lines[0].taxRate = 1.21;
+      baseTicket.lines[1].taxRate = 1.21;
 
       const groupedService = {
         ...serviceProduct,
