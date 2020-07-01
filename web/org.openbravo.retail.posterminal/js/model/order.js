@@ -7105,59 +7105,14 @@
       });
     },
 
-    reactivateQuotation: function() {
-      var idMap = {},
-        oldIdMap = {},
-        oldId,
-        me = this;
-      this.get('lines').each(function(line) {
-        oldId = line.get('id');
-        line.set('id', OB.UTIL.get_UUID());
-        line.unset('netFull');
-        line.unset('grossUnitPrice');
-        line.unset('lineGrossAmount');
-        line.unset('promotions');
-        idMap[line.get('id')] = OB.UTIL.get_UUID();
-        line.set('id', idMap[line.get('id')]);
-        if (line.get('hasRelatedServices')) {
-          oldIdMap[oldId] = line.get('id');
-        }
-      }, this);
-      this.set('hasbeenpaid', 'N');
-      this.set('isPaid', false);
-      this.set('isEditable', true);
-      this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      this.set('session', OB.MobileApp.model.get('session'));
-      this.set('orderDate', OB.I18N.normalizeDate(new Date()));
-      this.set('skipApplyPromotions', false);
-      this.unset('deletedLines');
-      //Sometimes the Id of Quotation is null.
-      if (this.get('id') && !_.isNull(this.get('id'))) {
-        this.set('oldId', this.get('id'));
-        this.set('documentNo', '');
-      } else {
-        //this shouldn't happen.
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_title'),
-          OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_body')
-        );
-        return;
-      }
-      if (this.get('hasServices')) {
-        this.get('lines').each(function(line) {
-          if (line.get('relatedLines')) {
-            line.get('relatedLines').forEach(function(rl) {
-              rl.orderId = me.get('id');
-              if (oldIdMap[rl.orderlineId]) {
-                rl.orderlineId = oldIdMap[rl.orderlineId];
-              }
-            });
-          }
-        }, this);
-      }
-      this.set('id', null);
-      this.save();
-      this.calculateReceipt();
+    reactivateQuotation: async function() {
+      return OB.App.State.Ticket.reactivateQuotation({
+        user: OB.MobileApp.model.get('orgUserId'),
+        session: OB.MobileApp.model.get('session'),
+        date: OB.I18N.normalizeDate(new Date())
+      }).then(() => {
+        OB.Dal.save(OB.MobileApp.model.receipt, null, null, true);
+      });
     },
     rejectQuotation: function(rejectReasonId, scope, callback) {
       if (!this.get('id')) {

@@ -1360,19 +1360,24 @@ enyo.kind({
   },
 
   reactivateQuotation: function() {
-    this.model.get('order').reactivateQuotation();
-    this.model.get('orderList').saveCurrent();
-    if (
-      this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$
-        .actionButtonsContainer.$.descriptionButton
-    ) {
-      if (
-        this.model.get('order').get('isEditable') &&
-        this.model.get('order').get('isQuotation')
-      ) {
-        this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
-      }
-    }
+    var me = this;
+    this.model
+      .get('order')
+      .reactivateQuotation()
+      .then(() => {
+        me.model.get('orderList').saveCurrent();
+        if (
+          me.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$
+            .actionButtonsContainer.$.descriptionButton
+        ) {
+          if (
+            me.model.get('order').get('isEditable') &&
+            me.model.get('order').get('isQuotation')
+          ) {
+            me.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
+          }
+        }
+      });
     return true;
   },
   rejectQuotation: function(inSender, inEvent) {
