@@ -1238,13 +1238,10 @@
         const originalQty = line.qty;
         const qtyAlreadyInvoiced = line.invoicedQuantity || OB.DEC.Zero;
         const qtyPendingToBeInvoiced = OB.DEC.sub(line.qty, qtyAlreadyInvoiced);
-        const qtyToDeliver = line.obposQtytodeliver
-          ? line.obposQtytodeliver
-          : line.qty;
 
         let qtyToInvoice;
         if (ticket.invoiceTerms === 'D') {
-          qtyToInvoice = OB.DEC.sub(qtyToDeliver, qtyAlreadyInvoiced);
+          qtyToInvoice = OB.DEC.sub(line.obposQtytodeliver, qtyAlreadyInvoiced);
         } else if (ticket.invoiceTerms === 'I' || ticket.invoiceTerms === 'O') {
           qtyToInvoice = qtyPendingToBeInvoiced;
         } else {
