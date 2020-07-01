@@ -1143,46 +1143,53 @@
 
         if (isCrossStoreTicket && !newLine.originalOrderLineId) {
           newLine.obposQtytodeliver = newLine.deliveredQuantity || OB.DEC.Zero;
-        } else if (!newLine.obposQtytodeliver) {
-          if (
-            newLine.product.productType === 'S' &&
-            newLine.product.isLinkedToProduct
-          ) {
-            if (newLine.qty > 0) {
-              const qtyToDeliver =
-                newLine.product.quantityRule === 'UQ'
-                  ? OB.DEC.One
-                  : newLine.relatedLines.reduce((total, relatedLine) => {
-                      const orderLine = ticket.lines.find(
-                        l => l.id === relatedLine.orderlineId
-                      );
-                      if (
-                        orderLine &&
-                        (isFullyPaidOrPaidOnCredit ||
-                          orderLine.obposCanbedelivered)
-                      ) {
-                        return OB.DEC.add(total, orderLine.qty);
-                      }
-                      if (relatedLine.obposIspaid) {
-                        return OB.DEC.add(total, relatedLine.deliveredQuantity);
-                      }
-                      return total;
-                    }, OB.DEC.Zero);
+          return newLine;
+        }
 
-              newLine.obposQtytodeliver = qtyToDeliver;
-              if (qtyToDeliver) {
-                newLine.obposCanbedelivered = true;
-              }
-            } else if (newLine.qty < 0) {
-              newLine.obposQtytodeliver = newLine.qty;
+        if (newLine.obposQtytodeliver) {
+          return newLine;
+        }
+
+        if (
+          newLine.product.productType === 'S' &&
+          newLine.product.isLinkedToProduct
+        ) {
+          if (newLine.qty > 0) {
+            const qtyToDeliver =
+              newLine.product.quantityRule === 'UQ'
+                ? OB.DEC.One
+                : newLine.relatedLines.reduce((total, relatedLine) => {
+                    const orderLine = ticket.lines.find(
+                      l => l.id === relatedLine.orderlineId
+                    );
+                    if (
+                      orderLine &&
+                      (isFullyPaidOrPaidOnCredit ||
+                        orderLine.obposCanbedelivered)
+                    ) {
+                      return OB.DEC.add(total, orderLine.qty);
+                    }
+                    if (relatedLine.obposIspaid) {
+                      return OB.DEC.add(total, relatedLine.deliveredQuantity);
+                    }
+                    return total;
+                  }, OB.DEC.Zero);
+
+            newLine.obposQtytodeliver = qtyToDeliver;
+            if (qtyToDeliver) {
               newLine.obposCanbedelivered = true;
             }
-          } else if (newLine.obposCanbedelivered) {
+          } else if (newLine.qty < 0) {
             newLine.obposQtytodeliver = newLine.qty;
-          } else {
-            newLine.obposQtytodeliver =
-              newLine.deliveredQuantity || OB.DEC.Zero;
+            newLine.obposCanbedelivered = true;
           }
+        } else if (
+          newLine.obposCanbedelivered &&
+          newLine.obrdmDeliveryMode === 'PickAndCarry'
+        ) {
+          newLine.obposQtytodeliver = newLine.qty;
+        } else {
+          newLine.obposQtytodeliver = newLine.deliveredQuantity || OB.DEC.Zero;
         }
 
         return newLine;
