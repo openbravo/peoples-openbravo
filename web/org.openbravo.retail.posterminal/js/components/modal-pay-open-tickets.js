@@ -123,14 +123,14 @@ enyo.kind({
       orderDate,
       me = this;
 
-    totalData = totalData.concat(this.model.get('orderList').models);
+    totalData = totalData.concat(OB.App.OpenTicketList.getAllTickets());
     totalData.forEach(function(order) {
       if (
-        order.attributes.lines.length === 0 ||
-        order.attributes.gross < 0 ||
-        order.get('isPaid') ||
-        order.get('isQuotation') ||
-        order.getOrderType() === 3
+        order.lines.length === 0 ||
+        order.grossAmount < 0 ||
+        order.isPaid ||
+        order.isQuotation ||
+        order.orderType === 3
       ) {
         popedElements.push(order);
       } else {
@@ -258,40 +258,35 @@ enyo.kind({
   },
   createOpenedOrder: function(order) {
     return new Backbone.Model({
-      id: order.get('id'),
-      documentTypeId: order.get('documentType'),
+      id: order.id,
+      documentTypeId: order.documentType,
       documentStatus: 'DR',
-      orderDate: order.get('orderDate'),
-      creationDate: order.get('orderDate'),
-      totalamount: order.get('gross'),
-      businessPartnerName: order.get('bp').get('name'),
-      organization: order.get('organization'),
-      documentNo: order.get('documentNo'),
-      businessPartner: order.get('bp').get('id'),
-      externalBusinessPartner: order.get('externalBusinessPartner')
-        ? order.get('externalBusinessPartner')
+      orderDate: order.orderDate,
+      creationDate: order.orderDate,
+      totalamount: order.grossAmount,
+      businessPartnerName: order.businessPartner.name,
+      organization: order.organization,
+      documentNo: order.documentNo,
+      businessPartner: order.businessPartner.id,
+      externalBusinessPartner: order.externalBusinessPartner
+        ? order.externalBusinessPartner
         : null,
-      externalBusinessPartnerReference: order.get(
-        'externalBusinessPartnerReference'
-      )
-        ? order.get('externalBusinessPartnerReference')
+      externalBusinessPartnerReference: order.externalBusinessPartnerReference
+        ? order.externalBusinessPartnerReference
         : null,
-      orderDateFrom: order.get('orderDate'),
-      orderDateTo: order.get('orderDate'),
-      totalamountFrom: order.get('gross'),
-      totalamountTo: order.get('gross'),
-      orderType: order.get('isLayaway') ? 'LAY' : 'DR',
+      orderDateFrom: order.orderDate,
+      orderDateTo: order.orderDate,
+      totalamountFrom: order.grossAmount,
+      totalamountTo: order.grossAmount,
+      orderType: order.isLayaway ? 'LAY' : 'DR',
       iscancelled: false,
       store:
-        order.get('organization') ===
-        OB.MobileApp.model.get('terminal').organization
+        order.organization === OB.MobileApp.model.get('terminal').organization
           ? OB.I18N.getLabel('OBPOS_LblThisStore', [
               OB.MobileApp.model.get('terminal').organization$_identifier
             ])
           : OB.MobileApp.model.get('terminal').organization$_identifier,
-      receiptSelected: order.has('receiptSelected')
-        ? order.get('receiptSelected')
-        : false,
+      receiptSelected: order.receiptSelected ? order.receiptSelected : false,
       multiselect: true
     });
   }
