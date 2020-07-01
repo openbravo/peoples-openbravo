@@ -490,8 +490,7 @@
                       'OBPOS_PreSyncReceipt',
                       {
                         receipt: frozenReceipt,
-                        model: model,
-                        tx: tx
+                        model: model
                       },
                       function(args) {
                         frozenReceipt.set(
@@ -502,9 +501,8 @@
                         // Important: at this point, the frozenReceipt is considered final. Nothing must alter it
                         // when all the properties of the frozenReceipt have been set, keep a copy
                         OB.UTIL.clone(receipt, diffReceipt);
-                        OB.Dal.saveInTransaction(tx, frozenReceipt, function() {
-                          successCallback();
-                        });
+                        OB.MobileApp.model.receipt.clearWith(frozenReceipt);
+                        successCallback();
                       }
                     );
                   };
@@ -542,29 +540,7 @@
                             JSON.stringify(frozenReceipt.serializeToJSON())
                           );
                           OB.UTIL.setScanningFocus(true);
-                          if (
-                            OB.MobileApp.model.hasPermission(
-                              'OBMOBC_SynchronizedMode',
-                              true
-                            )
-                          ) {
-                            OB.Dal.saveInTransaction(
-                              tx,
-                              frozenReceipt,
-                              function() {
-                                executePreSyncReceipt(tx);
-                              }
-                            );
-                          } else {
-                            OB.trace('Saving receipt.');
-                            OB.Dal.saveInTransaction(
-                              tx,
-                              frozenReceipt,
-                              function() {
-                                executePreSyncReceipt(tx);
-                              }
-                            );
-                          }
+                          executePreSyncReceipt();
                         };
 
                         OB.App.State.Cashup.updateCashup({
@@ -747,37 +723,27 @@
                 );
                 OB.UTIL.setScanningFocus(true);
                 currentReceipt.set('hasbeenpaid', 'Y');
-                OB.Dal.saveInTransaction(
-                  tx,
-                  currentReceipt,
-                  function() {
-                    OB.info(
-                      'Multiorders ticket closed',
-                      currentReceipt
-                        .get('json')
-                        .replace(/logclientErrors/g, 'logErrors'),
-                      'caller: ' +
-                        OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
-                    );
-
-                    const savedReceipt = OB.App.OpenTicketList.getAllTickets().find(
-                      ticket => ticket.id === me.receipt.get('id')
-                    );
-
-                    if (
-                      !OB.UTIL.isNullOrUndefined(
-                        savedReceipt.amountToLayaway
-                      ) &&
-                      savedReceipt.generateInvoice
-                    ) {
-                      me.hasInvLayaways = true;
-                    }
-                    recursiveSaveFn(receiptIndex + 1);
-                  },
-                  function() {
-                    recursiveSaveFn(receiptIndex + 1);
-                  }
+                OB.MobileApp.model.receipt.clearWith(currentReceipt);
+                OB.info(
+                  'Multiorders ticket closed',
+                  currentReceipt
+                    .get('json')
+                    .replace(/logclientErrors/g, 'logErrors'),
+                  'caller: ' +
+                    OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
                 );
+
+                const savedReceipt = OB.App.OpenTicketList.getAllTickets().find(
+                  ticket => ticket.id === me.receipt.get('id')
+                );
+
+                if (
+                  !OB.UTIL.isNullOrUndefined(savedReceipt.amountToLayaway) &&
+                  savedReceipt.generateInvoice
+                ) {
+                  me.hasInvLayaways = true;
+                }
+                recursiveSaveFn(receiptIndex + 1);
               }
             );
           };
