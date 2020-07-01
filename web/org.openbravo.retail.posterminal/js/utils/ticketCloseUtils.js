@@ -325,8 +325,8 @@
             }
 
             OB.UTIL.TicketListUtils.removeTicket(payload).then(() => {
-              receipt.setIsCalculateReceiptLockState(false);
-              receipt.setIsCalculateGrossLockState(false);
+              OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(false);
+              OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
 
               OB.UTIL.ProcessController.finish('completeReceipt', execution);
               if (triggerClosedCallback instanceof Function) {
