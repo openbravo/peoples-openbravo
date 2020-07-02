@@ -21,6 +21,8 @@ OB = {
 global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const deepfreeze = require('deepfreeze');
 
+require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3');
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/RemovePromotion');
@@ -33,9 +35,10 @@ const basicTicket = deepfreeze({
       id: '1',
       qty: 100,
       product: { id: 'p1' },
+      baseGrossUnitPrice: 5,
       promotions: [
-        { ruleId: '1', discountinstance: '1' },
-        { ruleId: '2', discountinstance: '2' }
+        { ruleId: '1', discountinstance: '1', amt: 1 },
+        { ruleId: '2', discountinstance: '2', amt: 1 }
       ]
     }
   ],
