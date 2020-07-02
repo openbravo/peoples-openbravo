@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -291,6 +291,11 @@ enyo.kind({
     this.customer.set('cityName', this.customerAddr.get('cityName'));
     this.customer.set('locationModel', this.customerAddr);
     this.customer.set('countryName', this.customerAddr.get('countryName'));
+    this.customer.set('locationBillModel', this.customerAddr);
+    if (OB.UTIL.isNullOrUndefined(this.customer.get('locations'))) {
+      this.customer.set('locations', []);
+    }
+    this.customer.get('locations').push(this.customerAddr.clone());
     this.model.get('order').trigger('change:bp', this.model.get('order'));
     this.doChangeBusinessPartner({
       businessPartner: this.customer,
