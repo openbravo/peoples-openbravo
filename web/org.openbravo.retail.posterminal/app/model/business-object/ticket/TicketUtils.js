@@ -113,7 +113,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         }
       }
     }
-    if (allDiscountedAmt > 0 && line.qty > 0) {
+    if (allDiscountedAmt > OB.DEC.Zero && line.qty > 0) {
       currentDiscountedLinePrice = OB.DEC.sub(
         line.baseGrossUnitPrice,
         OB.DEC.div(allDiscountedAmt, line.qty, OB.DEC.getRoundingMode()),
