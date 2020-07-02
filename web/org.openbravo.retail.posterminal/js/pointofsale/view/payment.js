@@ -2643,6 +2643,10 @@ enyo.kind({
           } else {
             OB.MobileApp.model.orderList.deleteCurrent();
           }
+
+          // FIXME: Remove once terminal authentication validation is moved to new message infraestructure
+          // Run terminal authentication validation
+          OB.MobileApp.model.runSyncProcess();
         } catch (error) {
           OB.App.View.ActionCanceledUIHandler.handle(error);
         } finally {
