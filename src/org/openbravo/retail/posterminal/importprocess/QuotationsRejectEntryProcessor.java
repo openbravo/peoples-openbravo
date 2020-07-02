@@ -10,7 +10,6 @@ package org.openbravo.retail.posterminal.importprocess;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
