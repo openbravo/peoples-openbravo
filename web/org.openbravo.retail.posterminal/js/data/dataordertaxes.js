@@ -24,15 +24,18 @@
 
   const regenerateTaxes = function(receipt) {
     const value = _.map(receipt.get('lines').models, function(line) {
-      const taxes = {};
-      _.forEach(line.get('taxes'), function(tax) {
-        taxes[tax.taxId] = {
-          amount: tax.taxAmount,
-          name: tax.identifier,
-          net: tax.taxableAmount,
-          rate: tax.taxRate
-        };
-      });
+      const taxes = Array.isArray(line.get('taxes'))
+        ? line.get('taxes').reduce((obj, item) => {
+            const newObj = { ...obj };
+            newObj[item.taxId] = {
+              amount: item.taxAmount,
+              name: item.identifier,
+              net: item.taxableAmount,
+              rate: item.taxRate
+            };
+            return newObj;
+          }, {})
+        : line.get('taxes');
 
       const taxAmount = getTaxAmount(taxes);
       setLineTaxes(receipt, line, {
