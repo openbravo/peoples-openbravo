@@ -76,15 +76,16 @@
       bytotalManualPromotionObj.includedCharacteristics = 'Y';
       bytotalManualPromotionObj.allweekdays = true;
 
-      newTicket.discountsFromUser.bytotalManualPromotions = newTicket
+      newTicket.discountsFromUser.bytotalManualPromotions = (newTicket
         .discountsFromUser.bytotalManualPromotions
         ? [
             ...newTicket.discountsFromUser.bytotalManualPromotions,
             bytotalManualPromotionObj
           ]
-        : [bytotalManualPromotionObj].sort((a, b) => {
-            return a.noOrder - b.noOrder;
-          });
+        : [bytotalManualPromotionObj]
+      ).sort((a, b) => {
+        return a.noOrder - b.noOrder;
+      });
 
       return newTicket;
     }
