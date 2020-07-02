@@ -48,6 +48,7 @@
         }
       } else if (bytotalManualPromotionObj.disctTotalpercdisc) {
         bytotalManualPromotionObj.disctTotalpercdisc = rule.userAmt;
+        // Percentage identifier is slightly different in Variable Percentage amount.
         if (
           discount.discountRule.discountType ===
           '096984DC2B944C85A9162C66C37EE7A3'
