@@ -61,6 +61,9 @@ describe('Ticket.addByTotalPromotion action', () => {
       { discount: basicDiscount }
     );
     expect(discountsFromUser.bytotalManualPromotions).toHaveLength(1);
+    expect(
+      discountsFromUser.bytotalManualPromotions.map(discount => discount.id)
+    ).toMatchObject(['1']);
   });
 
   it('allow multiple instance', () => {
