@@ -95,8 +95,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   getCurrentDiscountedLinePrice(line, ignoreExecutedAtTheEndPromo) {
-    let currentDiscountedLinePrice = 0;
-    let allDiscountedAmt = 0;
+    let currentDiscountedLinePrice;
+    let allDiscountedAmt = OB.DEC.Zero;
     let i = 0;
     if (line.promotions) {
       for (i = 0; i < line.promotions.length; i += 1) {
@@ -105,7 +105,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             !ignoreExecutedAtTheEndPromo ||
             !line.promotions[i].executedAtTheEndPromo
           ) {
-            allDiscountedAmt += line.promotions[i].amt;
+            allDiscountedAmt = OB.DEC.add(
+              allDiscountedAmt,
+              line.promotions[i].amt
+            );
           }
         }
       }
