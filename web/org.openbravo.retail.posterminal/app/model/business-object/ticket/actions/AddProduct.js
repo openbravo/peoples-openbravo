@@ -825,7 +825,7 @@
     ) {
       attributeValue = await OB.App.View.DialogUIHandler.inputData(
         'modalProductAttribute',
-        { options: newPayload.options }
+        { options }
       );
       if (attributeValue === null || attributeValue === undefined) {
         throw new OB.App.Class.ActionSilentlyCanceled(
