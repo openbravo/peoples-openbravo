@@ -2058,15 +2058,7 @@ enyo.kind({
     me.model
       .get('multiOrders')
       .get('multiOrdersList')
-      .reset();
-    _.each(inEvent.value, function(iter) {
-      iter.set('belongsToMultiOrder', true);
-      iter.set('originalOrderType', iter.get('orderType'));
-      me.model
-        .get('multiOrders')
-        .get('multiOrdersList')
-        .add(iter);
-    });
+      .reset(inEvent.value);
     me.model
       .get('multiOrders')
       .get('multiOrdersList')

@@ -1807,6 +1807,14 @@ enyo.kind({
           existingPayment = OB.DEC.Zero,
           amountToLayaway = OB.DEC.Zero;
 
+        // Update MultiOrder Attributes
+        me.orderList.forEach(function(receipt) {
+          if (OB.UTIL.isNullOrUndefined(receipt.get('originalOrderType'))) {
+            receipt.set('belongsToMultiOrder', true);
+            receipt.set('originalOrderType', receipt.get('orderType'));
+          }
+        });
+
         var calculatePrepayment = function(idx) {
           if (idx === me.orderList.length) {
             me.total = total;
