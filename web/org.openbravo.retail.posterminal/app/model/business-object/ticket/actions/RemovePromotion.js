@@ -17,7 +17,7 @@
       const { rule, lineId } = payload;
       const oldLine = ticket.lines.find(line => line.id === lineId);
       if (!oldLine) {
-        throw new OB.App.Class.ActionCanceled('Line doesnt exist');
+        throw new OB.App.Class.ActionCanceled("Line doesn't exist");
       }
 
       let newLine = {
