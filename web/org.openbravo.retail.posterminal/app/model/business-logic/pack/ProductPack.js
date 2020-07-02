@@ -22,30 +22,19 @@
 
     /**
      * Processes the pack in order to retrieve the products that forms it
-     * @return {Object[]} product - An array with the products that belong to the pack
+     * @return {Object} products - An array with the information of the products that belong to the pack
      * @throws {TranslatableError} - If an error happens during the pack processing
      */
     async process() {
-      const data = await this.getExternalData();
-      return this.getProducts(data);
+      const products = await this.getProducts();
+      return products;
     }
 
     /**
-     * To be overriden when it is necessary to retrieve external data to calculate the pack contents.
-     * For example, when requesting data to the user.
-     * @return {Object} data - An array of the products that belongs to the pack
+     * This function is implemented by the subclasses with the logic to retrieve the products of the pack
+     * @return {Object[]} - An array of the products that belongs to the pack
      */
-    // eslint-disable-next-line class-methods-use-this
-    async getExternalData() {
-      return null;
-    }
-
-    /**
-     * @param data - Data that may be used to calculate the products to be retrieved
-     * @return {Object[]} product - An array of the products that belongs to the pack
-     */
-    // eslint-disable-next-line no-unused-vars
-    async getProducts(data) {
+    async getProducts() {
       throw new Error(
         `getProducts() function is not implemented in abstract ${this.constructor.name}`
       );

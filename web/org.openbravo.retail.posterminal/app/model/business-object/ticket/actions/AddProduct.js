@@ -572,6 +572,11 @@
     });
     const newPayload = { ...payload };
     newPayload.products = (await Promise.all(packProcessings)).flat();
+    if (newPayload.products.length === 0) {
+      throw new OB.App.Class.ActionSilentlyCanceled(
+        `No products to add after processing packs`
+      );
+    }
     return newPayload;
   }
 
