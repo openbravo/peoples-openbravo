@@ -28,9 +28,7 @@
     async process() {
       const products = await this.getProducts();
       return products.map(p => {
-        const options = p.options || {};
-        const attrs = p.attrs || {};
-        return { ...p, options, attrs };
+        return { ...p, options: p.options || {}, attrs: p.attrs || {} };
       });
     }
 
