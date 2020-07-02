@@ -1134,10 +1134,8 @@
       newTicket.lines = ticket.lines.map(line => {
         const newLine = { ...line };
 
-        if (isFullyPaidOrPaidOnCredit) {
+        if (isFullyPaidOrPaidOnCredit || newLine.obposCanbedelivered) {
           newLine.obposCanbedelivered = true;
-          newLine.obposIspaid = true;
-        } else if (newLine.obposCanbedelivered) {
           newLine.obposIspaid = true;
         }
 
@@ -1155,28 +1153,30 @@
           newLine.product.isLinkedToProduct
         ) {
           if (newLine.qty > 0) {
-            const qtyToDeliver =
-              newLine.product.quantityRule === 'UQ'
-                ? OB.DEC.One
-                : newLine.relatedLines.reduce((total, relatedLine) => {
-                    const orderLine = ticket.lines.find(
-                      l => l.id === relatedLine.orderlineId
-                    );
-                    if (
-                      isFullyPaidOrPaidOnCredit &&
-                      orderLine &&
-                      orderLine.obposCanbedelivered &&
-                      orderLine.obrdmDeliveryMode === 'PickAndCarry'
-                    ) {
-                      return OB.DEC.add(total, orderLine.qty);
-                    }
-                    if (relatedLine.obposIspaid) {
-                      return OB.DEC.add(total, relatedLine.deliveredQuantity);
-                    }
-                    return total;
-                  }, OB.DEC.Zero);
+            const qtyToDeliver = newLine.relatedLines.reduce(
+              (total, relatedLine) => {
+                const orderLine = ticket.lines.find(
+                  l => l.id === relatedLine.orderlineId
+                );
+                if (
+                  orderLine &&
+                  orderLine.obrdmDeliveryMode === 'PickAndCarry' &&
+                  (isFullyPaidOrPaidOnCredit || orderLine.obposCanbedelivered)
+                ) {
+                  return OB.DEC.add(total, orderLine.qty);
+                }
+                if (relatedLine.obposIspaid) {
+                  return OB.DEC.add(total, relatedLine.deliveredQuantity);
+                }
+                return total;
+              },
+              OB.DEC.Zero
+            );
 
-            newLine.obposQtytodeliver = qtyToDeliver;
+            newLine.obposQtytodeliver =
+              qtyToDeliver && newLine.product.quantityRule === 'UQ'
+                ? OB.DEC.One
+                : qtyToDeliver;
             if (qtyToDeliver) {
               newLine.obposCanbedelivered = true;
             }
