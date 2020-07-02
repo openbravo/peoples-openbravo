@@ -89,8 +89,20 @@ describe('product pack infrastructure', () => {
       const pack = OB.App.ProductPackProvider.getPack(productPack);
       const packProducts = await pack.process();
       expect(packProducts).toEqual([
-        { product: { id: 'product1' }, qty: 1, belongsToPack: true },
-        { product: { id: 'product2' }, qty: 2, belongsToPack: true }
+        {
+          product: { id: 'product1' },
+          qty: 1,
+          belongsToPack: true,
+          options: {},
+          attrs: {}
+        },
+        {
+          product: { id: 'product2' },
+          qty: 2,
+          belongsToPack: true,
+          options: {},
+          attrs: {}
+        }
       ]);
     });
 

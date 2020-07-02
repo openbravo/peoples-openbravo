@@ -254,8 +254,9 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.productA, qty: -2 }],
-              options: { line: '1' }
+              products: [
+                { product: Product.productA, qty: -2, options: { line: '1' } }
+              ]
             },
             quotation
           ),
@@ -270,8 +271,9 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.productB, qty: -2 }],
-              options: { line: '1' }
+              products: [
+                { product: Product.productB, qty: -2, options: { line: '1' } }
+              ]
             },
             Ticket.returned
           ),
@@ -325,8 +327,7 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.productA }],
-              options: { line: '1' }
+              products: [{ product: Product.productA, options: { line: '1' } }]
             },
             Ticket.cancelAndReplace
           ),
@@ -346,10 +347,10 @@ describe('addProduct preparation', () => {
                   product: {
                     ...Product.productA,
                     oBPOSAllowAnonymousSale: false
-                  }
+                  },
+                  options: { businessPartner: '1' }
                 }
-              ],
-              options: { businessPartner: '1' }
+              ]
             },
             Ticket.empty
           ),
@@ -369,10 +370,10 @@ describe('addProduct preparation', () => {
                   product: {
                     ...Product.productA,
                     oBPOSAllowAnonymousSale: false
-                  }
+                  },
+                  options: { businessPartner: '1' }
                 }
-              ],
-              options: { businessPartner: '1' }
+              ]
             },
             { ...Ticket.empty, deferredOrder: true }
           ),
@@ -426,8 +427,9 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: Product.productA, qty: -2 }],
-              options: { line: '1' }
+              products: [
+                { product: Product.productA, qty: -2, options: { line: '1' } }
+              ]
             },
             Ticket.singleLine
           ),
@@ -447,8 +449,13 @@ describe('addProduct preparation', () => {
         () =>
           prepareAction(
             {
-              products: [{ product: unreturnableService, qty: 1 }],
-              attrs: { relatedLines: [{ orderlineId: '1' }] }
+              products: [
+                {
+                  product: unreturnableService,
+                  qty: 1,
+                  attrs: { relatedLines: [{ orderlineId: '1' }] }
+                }
+              ]
             },
             Ticket.returnedLine
           ),
@@ -502,8 +509,13 @@ describe('addProduct preparation', () => {
 
       const newPayload = await prepareAction(
         {
-          products: [{ product: Product.productB, qty: -1 }],
-          options: { allowLayawayWithReturn: true }
+          products: [
+            {
+              product: Product.productB,
+              qty: -1,
+              options: { allowLayawayWithReturn: true }
+            }
+          ]
         },
         Ticket.singleLine
       );
@@ -559,8 +571,13 @@ describe('addProduct preparation', () => {
 
       const newPayload = await prepareAction(
         {
-          products: [{ product: Product.productB, qty: -1 }],
-          options: { allowLayawayWithReturn: true }
+          products: [
+            {
+              product: Product.productB,
+              qty: -1,
+              options: { allowLayawayWithReturn: true }
+            }
+          ]
         },
         Ticket.emptyLayaway
       );
@@ -613,7 +630,9 @@ describe('addProduct preparation', () => {
             listPrice: 29
           },
           qty: 1,
-          belongsToPack: true
+          belongsToPack: true,
+          options: {},
+          attrs: {}
         },
         {
           product: {
@@ -622,7 +641,9 @@ describe('addProduct preparation', () => {
             listPrice: 11
           },
           qty: 2,
-          belongsToPack: true
+          belongsToPack: true,
+          options: {},
+          attrs: {}
         }
       ];
 
@@ -718,8 +739,9 @@ describe('addProduct preparation', () => {
 
     it('skip scale preparation on verified return', async () => {
       const newPayload = await prepareAction({
-        products: [{ product: scaleProduct }],
-        options: { isVerifiedReturn: true }
+        products: [
+          { product: scaleProduct, options: { isVerifiedReturn: true } }
+        ]
       });
 
       expect(newPayload).toMatchObject({ products: [{ qty: 1 }] });
@@ -901,7 +923,7 @@ describe('addProduct preparation', () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
       OB.App.DAL.find.mockResolvedValueOnce(serviceLinked);
       const newPayload = await prepareAction(payload, Ticket.empty);
-      expect(newPayload.products[0]).toEqual({
+      expect(newPayload.products[0]).toMatchObject({
         product: {
           ...payload.products[0].product,
           productServiceLinked: serviceLinked
@@ -981,9 +1003,9 @@ describe('addProduct preparation', () => {
         products: [{ product: productWithAttributes, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, Ticket.attributeLine);
-      expect(newPayload).toMatchObject({
-        ...payload,
-        line: '1',
+      expect(newPayload.products[0]).toMatchObject({
+        ...payload.products[0],
+        options: { line: '1' },
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '1234',
@@ -1002,12 +1024,13 @@ describe('addProduct preparation', () => {
         hasAttributes: true
       };
       const payload = {
-        products: [{ product: productWithAttributes, qty: 1 }],
-        options: { line: '1' }
+        products: [
+          { product: productWithAttributes, qty: 1, options: { line: '1' } }
+        ]
       };
       const newPayload = await prepareAction(payload, Ticket.attributeLine);
-      expect(newPayload).toMatchObject({
-        ...payload,
+      expect(newPayload.products[0]).toMatchObject({
+        ...payload.products[0],
         attrs: {
           attributeSearchAllowed: true,
           productHavingSameAttribute: true
@@ -1028,8 +1051,8 @@ describe('addProduct preparation', () => {
         products: [{ product: productWithAttributes, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, Ticket.attributeLine);
-      expect(newPayload).toMatchObject({
-        ...payload,
+      expect(newPayload.products[0]).toMatchObject({
+        ...payload.products[0],
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '5678',
@@ -1051,8 +1074,8 @@ describe('addProduct preparation', () => {
         products: [{ product: productWithAttributes, qty: 1 }]
       };
       const newPayload = await prepareAction(payload, Ticket.singleLine);
-      expect(newPayload).toMatchObject({
-        ...payload,
+      expect(newPayload.products[0]).toMatchObject({
+        ...payload.products[0],
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '1234',
@@ -1077,9 +1100,9 @@ describe('addProduct preparation', () => {
       };
       const quotation = { ...Ticket.attributeLine, isQuotation: true };
       const newPayload = await prepareAction(payload, quotation);
-      expect(newPayload).toMatchObject({
-        ...payload,
-        line: '1',
+      expect(newPayload.products[0]).toMatchObject({
+        ...payload.products[0],
+        options: { line: '1' },
         attrs: {
           attributeSearchAllowed: true,
           attributeValue: '1234',
@@ -1102,8 +1125,8 @@ describe('addProduct preparation', () => {
       };
       const quotation = { ...Ticket.attributeLine, isQuotation: true };
       const newPayload = await prepareAction(payload, quotation);
-      expect(newPayload).toMatchObject({
-        ...payload,
+      expect(newPayload.products[0]).toMatchObject({
+        ...payload.products[0],
         attrs: {
           attributeSearchAllowed: true,
           productHavingSameAttribute: false
@@ -1290,8 +1313,13 @@ describe('addProduct preparation', () => {
         }
       ]);
       const payload = {
-        products: [{ product: Product.productA, qty: 1 }],
-        options: { isSilentAddProduct: true }
+        products: [
+          {
+            product: Product.productA,
+            qty: 1,
+            options: { isSilentAddProduct: true }
+          }
+        ]
       };
 
       const newPayload = await prepareAction(payload);
@@ -1309,8 +1337,13 @@ describe('addProduct preparation', () => {
         }
       ]);
       const payload = {
-        products: [{ product: Product.productA, qty: 1 }],
-        attrs: { originalOrderLineId: {} }
+        products: [
+          {
+            product: Product.productA,
+            qty: 1,
+            attrs: { originalOrderLineId: {} }
+          }
+        ]
       };
 
       const newPayload = await prepareAction(payload);
@@ -1329,12 +1362,12 @@ describe('addProduct preparation', () => {
         crossStore: true
       };
       const payload = {
-        products: [{ product: crossStoreProduct, qty: 1 }],
-        options: {},
-        attrs: {}
+        products: [
+          { product: crossStoreProduct, qty: 1, options: {}, attrs: {} }
+        ]
       };
       const newPayload = await prepareAction(payload);
-      expect(newPayload).toEqual(payload);
+      expect(newPayload).toMatchObject(payload);
     });
 
     it('product update price from pricelist disabled', async () => {
@@ -1345,12 +1378,12 @@ describe('addProduct preparation', () => {
         updatePriceFromPricelist: false
       };
       const payload = {
-        products: [{ product: crossStoreProduct, qty: 1 }],
-        options: {},
-        attrs: {}
+        products: [
+          { product: crossStoreProduct, qty: 1, options: {}, attrs: {} }
+        ]
       };
       const newPayload = await prepareAction(payload);
-      expect(newPayload).toEqual(payload);
+      expect(newPayload).toMatchObject(payload);
     });
 
     it('packs are ignored', async () => {
@@ -1360,12 +1393,12 @@ describe('addProduct preparation', () => {
         ispack: true
       };
       const payload = {
-        products: [{ product: crossStoreProduct, qty: 1 }],
-        options: {},
-        attrs: {}
+        products: [
+          { product: crossStoreProduct, qty: 1, options: {}, attrs: {} }
+        ]
       };
       const newPayload = await prepareAction(payload);
-      expect(newPayload).toEqual(payload);
+      expect(newPayload).toMatchObject(payload);
     });
 
     it('cross store product without price', async () => {
@@ -1532,8 +1565,9 @@ describe('addProduct preparation', () => {
       );
       const newPayload = await prepareAction(
         {
-          products: [{ product: Product.productB, qty: -1 }],
-          options: { line: '1' }
+          products: [
+            { product: Product.productB, qty: -1, options: { line: '1' } }
+          ]
         },
         Ticket.returned
       );
@@ -1568,8 +1602,13 @@ describe('addProduct preparation', () => {
       );
       const newPayload = await prepareAction(
         {
-          products: [{ product: service, qty: 1 }],
-          attrs: { relatedLines: [{ orderlineId: '1' }] }
+          products: [
+            {
+              product: service,
+              qty: 1,
+              attrs: { relatedLines: [{ orderlineId: '1' }] }
+            }
+          ]
         },
         Ticket.returnedLine
       );

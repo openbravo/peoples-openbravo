@@ -118,7 +118,12 @@ const products = [
 ];
 
 const addProduct = (ticket, payload) => {
-  const preparedPayload = { options: {}, attrs: {}, ...payload };
+  const preparedPayload = { ...payload, extraData: {} };
+  preparedPayload.products = preparedPayload.products.map(pi => {
+    const options = pi.options || {};
+    const attrs = pi.attrs || {};
+    return { ...pi, options, attrs };
+  });
   return OB.App.StateAPI.Ticket.addProduct(
     deepfreeze(ticket),
     deepfreeze(preparedPayload)
@@ -202,8 +207,9 @@ describe('addProduct', () => {
 
     it('adds external attributes to new line', () => {
       const newTicket = addProduct(emptyTicket, {
-        products: [{ product: productA, qty: 1 }],
-        attrs: { externalProperty: 'dummy' }
+        products: [
+          { product: productA, qty: 1, attrs: { externalProperty: 'dummy' } }
+        ]
       });
 
       expect(newTicket.lines).toMatchObject([
@@ -224,8 +230,9 @@ describe('addProduct', () => {
       });
 
       const newTicket = addProduct(baseTicket, {
-        products: [{ product: productA, qty: 10 }],
-        attrs: { externalProperty: 'dummy' }
+        products: [
+          { product: productA, qty: 10, attrs: { externalProperty: 'dummy' } }
+        ]
       });
 
       expect(newTicket.lines).toMatchObject([
@@ -242,10 +249,15 @@ describe('addProduct', () => {
 
     it('do not add product to existing line if has splitline', () => {
       const baseTicket = addProduct(emptyTicket, {
-        products: [{ product: productA, qty: 1 }],
-        attrs: {
-          splitline: true
-        }
+        products: [
+          {
+            product: productA,
+            qty: 1,
+            attrs: {
+              splitline: true
+            }
+          }
+        ]
       });
 
       const newTicket = addProduct(baseTicket, {
@@ -287,8 +299,9 @@ describe('addProduct', () => {
 
     it('creates new lines if adding product with not editable line', () => {
       const baseTicket = addProduct(emptyTicket, {
-        products: [{ product: productA, qty: 1 }],
-        options: { isEditable: false }
+        products: [
+          { product: productA, qty: 1, options: { isEditable: false } }
+        ]
       });
 
       const newTicket = addProduct(baseTicket, {
@@ -318,7 +331,7 @@ describe('addProduct', () => {
             { id: 'l2', qty: 1, product: productA }
           ]
         },
-        { products: [{ qty: 1, product: productA }], options: { line: 'l1' } }
+        { products: [{ qty: 1, product: productA, options: { line: 'l1' } }] }
       );
       expect(newTicket.lines).toMatchObject([
         { id: 'l1', qty: 2 },
@@ -339,8 +352,13 @@ describe('addProduct', () => {
 
     it('can make new lines not editable', () => {
       const newTicket = addProduct(emptyTicket, {
-        products: [{ product: productA, qty: 1 }],
-        options: { isEditable: false, isDeletable: false }
+        products: [
+          {
+            product: productA,
+            qty: 1,
+            options: { isEditable: false, isDeletable: false }
+          }
+        ]
       });
 
       expect(newTicket.lines[0]).toMatchObject({
@@ -384,8 +402,7 @@ describe('addProduct', () => {
       });
 
       const finalTicket = addProduct(baseTicket, {
-        products: [{ product: productA, qty: -1 }],
-        options: { line: lineId }
+        products: [{ product: productA, qty: -1, options: { line: lineId } }]
       });
 
       expect(finalTicket.lines).toMatchObject([]);
@@ -403,8 +420,13 @@ describe('addProduct', () => {
 
       // add service related with product
       const ticketWithService = addProduct(baseTicket, {
-        products: [{ product: serviceProduct, qty: 1 }],
-        attrs: { relatedLines: [{ orderlineId: lineId }] }
+        products: [
+          {
+            product: serviceProduct,
+            qty: 1,
+            attrs: { relatedLines: [{ orderlineId: lineId }] }
+          }
+        ]
       });
 
       expect(ticketWithService.lines).toMatchObject([
@@ -444,14 +466,24 @@ describe('addProduct', () => {
 
         // add service related with line '1' product
         let ticketWithService = addProduct(baseTicket, {
-          products: [{ product: service, qty: 1 }],
-          attrs: { relatedLines: [{ orderlineId: line1Id }] }
+          products: [
+            {
+              product: service,
+              qty: 1,
+              attrs: { relatedLines: [{ orderlineId: line1Id }] }
+            }
+          ]
         });
 
         // add service related with line '2' product
         ticketWithService = addProduct(ticketWithService, {
-          products: [{ product: service, qty: 1 }],
-          attrs: { relatedLines: [{ orderlineId: line2Id }] }
+          products: [
+            {
+              product: service,
+              qty: 1,
+              attrs: { relatedLines: [{ orderlineId: line2Id }] }
+            }
+          ]
         });
 
         expect(ticketWithService.lines).toMatchObject([
@@ -485,14 +517,24 @@ describe('addProduct', () => {
 
       // add service related with product
       let ticketWithService = addProduct(baseTicket, {
-        products: [{ product: service, qty: 1 }],
-        attrs: { relatedLines: [{ orderlineId: lineId }] }
+        products: [
+          {
+            product: service,
+            qty: 1,
+            attrs: { relatedLines: [{ orderlineId: lineId }] }
+          }
+        ]
       });
 
       // add service related with product again
       ticketWithService = addProduct(ticketWithService, {
-        products: [{ product: service, qty: 1 }],
-        attrs: { relatedLines: [{ orderlineId: lineId }] }
+        products: [
+          {
+            product: service,
+            qty: 1,
+            attrs: { relatedLines: [{ orderlineId: lineId }] }
+          }
+        ]
       });
 
       expect(ticketWithService.lines).toMatchObject([
@@ -520,8 +562,13 @@ describe('addProduct', () => {
 
       // add multiple qty of service related with product
       let ticketWithService = addProduct(baseTicket, {
-        products: [{ product: service, qty: 2 }],
-        attrs: { relatedLines: [{ orderlineId: lineId }] }
+        products: [
+          {
+            product: service,
+            qty: 2,
+            attrs: { relatedLines: [{ orderlineId: lineId }] }
+          }
+        ]
       });
 
       expect(ticketWithService.lines).toMatchObject([
@@ -549,8 +596,13 @@ describe('addProduct', () => {
 
       // add service related with product
       let ticketWithService = addProduct(baseTicket, {
-        products: [{ product: service, qty: 1 }],
-        attrs: { relatedLines: [{ orderlineId: lineId }] }
+        products: [
+          {
+            product: service,
+            qty: 1,
+            attrs: { relatedLines: [{ orderlineId: lineId }] }
+          }
+        ]
       });
 
       expect(ticketWithService.lines).toMatchObject([
@@ -601,17 +653,22 @@ describe('addProduct', () => {
           return newTicket;
         });
       const newTicket = addProduct(baseTicket, {
-        products: [{ product: service, qty: 1 }],
-        attrs: {
-          relatedLines: [
-            {
-              orderlineId: lineId,
-              productCategory: '1',
-              productId: product.id,
-              productName: product.name
+        products: [
+          {
+            product: service,
+            qty: 1,
+            attrs: {
+              relatedLines: [
+                {
+                  orderlineId: lineId,
+                  productCategory: '1',
+                  productId: product.id,
+                  productName: product.name
+                }
+              ]
             }
-          ]
-        }
+          }
+        ]
       });
 
       expect(newTicket.lines).toMatchObject([
@@ -663,45 +720,60 @@ describe('addProduct', () => {
       };
 
       let ticket = addProduct(baseTicket, {
-        products: [{ product: groupedService, qty: 1 }],
-        attrs: {
-          relatedLines: [
-            {
-              orderlineId: line1Id,
-              productCategory: '1',
-              productId: productA.id,
-              productName: productA.name
+        products: [
+          {
+            product: groupedService,
+            qty: 1,
+            attrs: {
+              relatedLines: [
+                {
+                  orderlineId: line1Id,
+                  productCategory: '1',
+                  productId: productA.id,
+                  productName: productA.name
+                }
+              ]
             }
-          ]
-        }
+          }
+        ]
       });
 
       ticket = addProduct(ticket, {
-        products: [{ product: groupedService, qty: 1 }],
-        attrs: {
-          relatedLines: [
-            {
-              orderlineId: line2Id,
-              productCategory: '1',
-              productId: productB.id,
-              productName: productB.name
+        products: [
+          {
+            product: groupedService,
+            qty: 1,
+            attrs: {
+              relatedLines: [
+                {
+                  orderlineId: line2Id,
+                  productCategory: '1',
+                  productId: productB.id,
+                  productName: productB.name
+                }
+              ]
             }
-          ]
-        }
+          }
+        ]
       });
 
       ticket = addProduct(ticket, {
-        products: [{ product: groupedService, qty: 1 }],
-        attrs: {
-          relatedLines: [
-            {
-              orderlineId: line1Id,
-              productCategory: '1',
-              productId: productA.id,
-              productName: productA.name
+        products: [
+          {
+            product: groupedService,
+            qty: 1,
+            attrs: {
+              relatedLines: [
+                {
+                  orderlineId: line1Id,
+                  productCategory: '1',
+                  productId: productA.id,
+                  productName: productA.name
+                }
+              ]
             }
-          ]
-        }
+          }
+        ]
       });
 
       expect(ticket.lines).toMatchObject([

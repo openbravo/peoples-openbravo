@@ -15,10 +15,12 @@
 
   OB.App.StateAPI.Ticket.registerAction('addProduct', (state, payload) => {
     let ticket = { ...state };
-    // products: the product information to create the lines
+    // the products property of the payload contains:
+    // product: the product to add
+    // qty: the qty of the product to be added
     // options: settings that allow to change the behavior of the action
     // attrs: additional properties to be included in the created lines
-    const { products, options, attrs } = payload;
+    const { products, extraData } = payload;
     delete ticket.deferredOrder;
 
     ticket.lines = ticket.lines.map(l => {
@@ -27,17 +29,17 @@
 
     products.forEach(productInfo => {
       const { product } = productInfo;
-      const lineToEdit = getLineToEdit(productInfo, ticket, options, attrs);
+      const lineToEdit = getLineToEdit(productInfo, ticket);
       if (lineToEdit) {
         // add product to an existing line
         lineToEdit.qty += productInfo.qty;
-        setLineAttributes(lineToEdit, attrs, productInfo);
+        setLineAttributes(lineToEdit, productInfo.attrs, productInfo);
       } else if (product.groupProduct || product.avoidSplitProduct) {
         // add product to a new line
-        ticket = createLine(productInfo, ticket, options, attrs);
+        ticket = createLine(productInfo, ticket, extraData);
       } else {
         // add product creating multiple new lines with quantity 1 each
-        ticket = createLines(productInfo, ticket, options, attrs);
+        ticket = createLines(productInfo, ticket, extraData);
       }
     });
 
@@ -52,21 +54,24 @@
   // prepares the initial payload information including pack processing and checks the restrictions
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
     async (ticket, payload) => {
-      let newPayload = { options: {}, attrs: {}, ...payload };
+      let newPayload = { ...payload };
       newPayload.products = newPayload.products
         .filter(productInfo => productInfo.qty !== 0)
         .map(productInfo => {
           let qty = productInfo.qty || 1;
           qty = OB.App.State.Ticket.Utils.isReturn(ticket) ? -qty : qty;
-          return { ...productInfo, qty };
+          const options = productInfo.options || {};
+          const attrs = productInfo.attrs || {};
+          return { ...productInfo, qty, options, attrs };
         });
 
       const { qtyEdition } = OB.Format.formats;
-      newPayload.options.discountRules = OB.Discounts.Pos.ruleImpls;
-      newPayload.options.taxRules = OB.Taxes.Pos.ruleImpls;
-      newPayload.options.bpSets = OB.Discounts.Pos.bpSets;
-      newPayload.options.qtyScale =
-        qtyEdition.length - qtyEdition.indexOf('.') - 1;
+      newPayload.extraData = {
+        discountRules: OB.Discounts.Pos.ruleImpls,
+        taxRules: OB.Taxes.Pos.ruleImpls,
+        bpSets: OB.Discounts.Pos.bpSets,
+        qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1
+      };
 
       newPayload = await processPacks(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
@@ -118,8 +123,8 @@
     400
   );
 
-  function getLineToEdit(productInfo, ticket, options, attrs) {
-    const { product, qty } = productInfo;
+  function getLineToEdit(productInfo, ticket) {
+    const { product, qty, options, attrs } = productInfo;
     if (product.obposScale || !product.groupProduct) {
       return undefined;
     }
@@ -145,21 +150,21 @@
     );
   }
 
-  function createLines(productInfo, ticket, options, attrs) {
+  function createLines(productInfo, ticket, extraData) {
     const { qty } = productInfo;
     let newTicket = ticket;
     const lineQty = Math.sign(qty) === -1 ? -1 : 1;
 
     for (let count = 0; count < Math.abs(qty); count += 1) {
       const newProductInfo = { ...productInfo, qty: lineQty };
-      newTicket = createLine(newProductInfo, newTicket, options, attrs);
+      newTicket = createLine(newProductInfo, newTicket, extraData);
     }
 
     return newTicket;
   }
 
-  function createLine(productInfo, ticket, options, attrs) {
-    const { product, qty } = productInfo;
+  function createLine(productInfo, ticket, extraData) {
+    const { product, qty, options, attrs } = productInfo;
 
     const lineQty =
       attrs.relatedLines &&
@@ -215,7 +220,7 @@
     if (!newTicket.hasServices) {
       newTicket.hasServices = true;
     }
-    return updateServiceRelatedLines(newLine, newTicket, options);
+    return updateServiceRelatedLines(newLine, newTicket, extraData);
   }
 
   function setLineAttributes(line, attrs, productInfo) {
@@ -239,7 +244,7 @@
     Object.assign(line, lineAttrs);
   }
 
-  function updateServiceRelatedLines(line, ticket, options) {
+  function updateServiceRelatedLines(line, ticket, extraData) {
     if (!line.product.productServiceLinked) {
       return ticket;
     }
@@ -282,10 +287,10 @@
       });
 
       newTicket = OB.App.State.Ticket.Utils.calculateTotals(newTicket, {
-        discountRules: options.discountRules,
-        taxRules: options.taxRules,
-        bpSets: options.bpSets,
-        qtyScale: options.qtyScale
+        discountRules: extraData.discountRules,
+        taxRules: extraData.taxRules,
+        bpSets: extraData.bpSets,
+        qtyScale: extraData.qtyScale
       });
 
       newTicket.lines = newTicket.lines.map(l => {
@@ -310,23 +315,23 @@
   }
 
   function checkRestrictions(ticket, payload) {
-    const { products, options, attrs } = payload;
+    const { products } = payload;
 
-    checkQuantities(ticket, products, options, attrs);
+    checkQuantities(ticket, products);
     checkProductWithoutPrice(products);
     checkGenericProduct(products);
-    checkCancelAndReplaceQty(ticket, options);
-    checkAnonymousBusinessPartner(ticket, products, options);
-    checkNotReturnableProduct(ticket, products, options);
-    checkNotReturnableService(ticket, products, options, attrs);
+    checkCancelAndReplaceQty(ticket, products);
+    checkAnonymousBusinessPartner(ticket, products);
+    checkNotReturnableProduct(ticket, products);
+    checkNotReturnableService(ticket, products);
     checkClosedQuotation(ticket);
     checkProductLocked(products);
-    checkAllowSalesWithReturn(ticket, products, options, attrs);
+    checkAllowSalesWithReturn(ticket, products);
   }
 
-  function checkQuantities(ticket, products, options, attrs) {
+  function checkQuantities(ticket, products) {
     products.forEach(pi => {
-      const line = getLineToEdit(pi, ticket, options, attrs);
+      const line = getLineToEdit(pi, ticket);
       const qty = line ? line.qty + pi.qty : pi.qty;
 
       if (
@@ -376,21 +381,25 @@
     }
   }
 
-  function checkCancelAndReplaceQty(ticket, options) {
-    if (options.line && ticket.lines) {
-      const line = ticket.lines.find(l => l.id === options.line);
-      if (line && line.replacedorderline && line.qty < 0) {
-        throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBPOS_CancelReplaceQtyEditReturn'
-        });
-      }
-    }
+  function checkCancelAndReplaceQty(ticket, products) {
+    products
+      .filter(p => p.options.line)
+      .forEach(p => {
+        const line = ticket.lines.find(l => l.id === p.options.line);
+        if (line && line.replacedorderline && line.qty < 0) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_CancelReplaceQtyEditReturn'
+          });
+        }
+      });
   }
 
-  function checkAnonymousBusinessPartner(ticket, products, options) {
-    const anonymousNotAllowed =
-      options.businessPartner === ticket.businessPartner.id &&
-      products.some(p => p.product.oBPOSAllowAnonymousSale === false);
+  function checkAnonymousBusinessPartner(ticket, products) {
+    const anonymousNotAllowed = products.some(
+      p =>
+        p.product.oBPOSAllowAnonymousSale === false &&
+        p.options.businessPartner === ticket.businessPartner.id
+    );
 
     if (anonymousNotAllowed) {
       if (ticket.deferredOrder) {
@@ -404,11 +413,11 @@
     }
   }
 
-  function checkNotReturnableProduct(ticket, products, options) {
-    const line = options.line
-      ? ticket.lines.find(l => l.id === options.line)
-      : null;
+  function checkNotReturnableProduct(ticket, products) {
     const notReturnable = products.find(p => {
+      const line = p.options.line
+        ? ticket.lines.find(l => l.id === p.options.line)
+        : null;
       return (line ? line.qty + p.qty : p.qty) < 0 && !p.product.returnable;
     });
     if (notReturnable) {
@@ -421,13 +430,8 @@
     }
   }
 
-  function checkNotReturnableService(ticket, products, options, attrs) {
-    const service = findServiceForNegativeProduct(
-      ticket,
-      products,
-      options,
-      attrs
-    );
+  function checkNotReturnableService(ticket, products) {
+    const service = findServiceForNegativeProduct(ticket, products);
     if (service && !service.product.returnable) {
       // Cannot add not returnable service to a negative product
       throw new OB.App.Class.ActionCanceled({
@@ -439,10 +443,10 @@
     }
   }
 
-  function findServiceForNegativeProduct(ticket, products, options, attrs) {
+  function findServiceForNegativeProduct(ticket, products) {
     return products.find(pi => {
-      const line = getLineToEdit(pi, ticket, options, attrs);
-      let relatedLines = attrs.relatedLines || [];
+      const line = getLineToEdit(pi, ticket);
+      let relatedLines = pi.attrs.relatedLines || [];
       if (line && line.relatedLines) {
         relatedLines = OB.App.ArrayUtils.union(relatedLines, line.relatedLines);
       }
@@ -511,15 +515,15 @@
     }
   }
 
-  function checkAllowSalesWithReturn(ticket, products, options, attrs) {
+  function checkAllowSalesWithReturn(ticket, products) {
     const newLineProducts = products.filter(
-      pi => getLineToEdit(pi, ticket, options, attrs) === undefined
+      pi => getLineToEdit(pi, ticket) === undefined
     );
 
     newLineProducts.forEach(pi => {
       if (
         OB.App.Security.hasPermission('OBPOS_NotAllowSalesWithReturn') &&
-        !options.allowLayawayWithReturn
+        !pi.options.allowLayawayWithReturn
       ) {
         const receiptLines = ticket.lines.length;
         const negativeLines = ticket.lines.filter(l => l.qty < 0).length;
@@ -537,7 +541,7 @@
         !OB.App.Security.hasPermission('OBPOS_AllowLayawaysNegativeLines') &&
         OB.App.State.Ticket.Utils.isLayaway(ticket) &&
         pi.qty < 0 &&
-        !options.allowLayawayWithReturn
+        !pi.options.allowLayawayWithReturn
       ) {
         throw new OB.App.Class.ActionCanceled({
           errorMsg: 'OBPOS_layawaysOrdersWithReturnsNotAllowed'
@@ -581,10 +585,11 @@
   }
 
   async function prepareScaleProducts(payload) {
-    const { products, options } = payload;
+    const { products } = payload;
     if (
-      !products.some(pi => pi.product.obposScale) ||
-      options.isVerifiedReturn
+      !products.some(
+        pi => pi.product.obposScale && !pi.options.isVerifiedReturn
+      )
     ) {
       return payload;
     }
@@ -777,7 +782,6 @@
   }
 
   async function prepareProductAttributes(ticket, payload) {
-    const { options } = payload;
     const attributeSearchAllowed = OB.App.Security.hasPermission(
       'OBPOS_EnableSupportForProductAttributes'
     );
@@ -806,7 +810,7 @@
     }
 
     const newPayload = { ...payload };
-    const { product, qty } = products[0];
+    const { product, qty, options } = products[0];
 
     let attributeValue = null;
     const isQuotationAndAttributeAllowed = OB.App.Security.hasPermission(
@@ -832,12 +836,12 @@
         // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
         attributeValue = null;
       }
-      newPayload.attrs.attributeValue = attributeValue;
+      newPayload.products[0].attrs.attributeValue = attributeValue;
     }
 
-    newPayload.attrs.attributeSearchAllowed = attributeSearchAllowed;
+    newPayload.products[0].attrs.attributeSearchAllowed = attributeSearchAllowed;
     if (options.line) {
-      newPayload.attrs.productHavingSameAttribute = true;
+      newPayload.products[0].attrs.productHavingSameAttribute = true;
     } else {
       if (!checkSerialAttribute(product, attributeValue)) {
         throw new OB.App.Class.ActionCanceled({
@@ -851,23 +855,24 @@
           product.id === l.product.id
       );
       if (lineWithAttributeValue) {
-        newPayload.attrs.productHavingSameAttribute = true;
-        newPayload.line = lineWithAttributeValue.id;
+        newPayload.products[0].attrs.productHavingSameAttribute = true;
+        newPayload.products[0].options.line = lineWithAttributeValue.id;
       } else {
-        newPayload.attrs.productHavingSameAttribute = false;
+        newPayload.products[0].attrs.productHavingSameAttribute = false;
       }
     }
     return newPayload;
   }
 
   async function prepareRelatedServices(payload) {
-    const { products, options, attrs } = payload;
-    if (options.isSilentAddProduct || attrs.originalOrderLineId) {
-      return payload;
-    }
+    const { products } = payload;
     const newPayload = { ...payload };
     const productsWithRelatedServicesInfo = products.map(async pi => {
-      if (pi.product.productType === 'S') {
+      if (
+        pi.product.productType === 'S' ||
+        pi.options.isSilentAddProduct ||
+        pi.attrs.originalOrderLineId
+      ) {
         return pi;
       }
       const productId =
@@ -1043,14 +1048,11 @@
   }
 
   async function checkApprovals(ticket, payload) {
-    const { products, options, attrs } = payload;
-    const line = options.line
-      ? ticket.lines.find(l => l.id === options.line)
-      : null;
+    const { products } = payload;
     let newPayload = { ...payload };
 
     const linesWithQuantityZero = products.some(pi => {
-      const lineToEdit = getLineToEdit(pi, ticket, options, attrs);
+      const lineToEdit = getLineToEdit(pi, ticket);
       const qty = lineToEdit ? lineToEdit.qty + pi.qty : pi.qty;
       return qty === 0;
     });
@@ -1063,6 +1065,9 @@
     }
 
     const servicesWithReturnApproval = products.filter(p => {
+      const line = p.options.line
+        ? ticket.lines.find(l => l.id === p.options.line)
+        : null;
       return (
         (line ? line.qty + p.qty : p.qty) < 0 &&
         p.product.productType === 'S' &&
@@ -1071,12 +1076,7 @@
     });
 
     if (servicesWithReturnApproval.length === 0) {
-      const service = findServiceForNegativeProduct(
-        ticket,
-        products,
-        options,
-        attrs
-      );
+      const service = findServiceForNegativeProduct(ticket, products);
       if (service) {
         servicesWithReturnApproval.push(service);
       }
@@ -1103,11 +1103,11 @@
   }
 
   async function checkStock(ticket, payload) {
-    const { products, options, attrs } = payload;
+    const { products } = payload;
 
     for (let i = 0; i < products.length; i += 1) {
-      const { product, qty } = products[i];
-      const line = getLineToEdit(products[i], ticket, options, attrs);
+      const { product, qty, options, attrs } = products[i];
+      const line = getLineToEdit(products[i], ticket);
       const lineId = line ? line.id : payload.line;
       const settings = { ticket, lineId, options, attrs };
 

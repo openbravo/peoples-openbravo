@@ -1153,12 +1153,12 @@ enyo.kind({
           OB.App.State.Ticket.addProduct({
             products: [
               {
+                product: args.productToAdd.toJSON(),
                 qty: args.qtyToAdd,
-                product: args.productToAdd.toJSON()
+                options,
+                attrs
               }
-            ],
-            options,
-            attrs
+            ]
           })
             .then(() => {
               if (OB.UI.MultiColumn.isSingleColumn()) {
