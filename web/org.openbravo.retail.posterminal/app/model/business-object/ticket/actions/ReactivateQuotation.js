@@ -27,8 +27,10 @@
         }
         return newLine;
       });
+      newTicket.oldId = newTicket.id;
       newTicket.id = OB.App.UUID.generate();
       newTicket.hasbeenpaid = 'N';
+      newTicket.documentNo = '';
       newTicket.isPaid = false;
       newTicket.isEditable = true;
       newTicket.createdBy = user;
