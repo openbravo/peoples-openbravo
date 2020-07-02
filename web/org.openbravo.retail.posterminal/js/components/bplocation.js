@@ -49,7 +49,7 @@ enyo.kind({
     }
 
     this.order.on(
-      'change:bp',
+      'change:bp change:id',
       function(model) {
         if (model.get('bp')) {
           if (this.buttonShowing) {
