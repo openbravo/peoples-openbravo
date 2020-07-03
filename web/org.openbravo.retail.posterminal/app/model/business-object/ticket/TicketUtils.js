@@ -1160,7 +1160,8 @@
                 );
                 if (
                   orderLine &&
-                  orderLine.obrdmDeliveryMode === 'PickAndCarry' &&
+                  (!orderLine.obrdmDeliveryMode ||
+                    orderLine.obrdmDeliveryMode === 'PickAndCarry') &&
                   (isFullyPaidOrPaidOnCredit || orderLine.obposCanbedelivered)
                 ) {
                   return OB.DEC.add(total, orderLine.qty);
@@ -1186,7 +1187,8 @@
           }
         } else if (
           newLine.obposCanbedelivered &&
-          newLine.obrdmDeliveryMode === 'PickAndCarry'
+          (!newLine.obrdmDeliveryMode ||
+            newLine.obrdmDeliveryMode === 'PickAndCarry')
         ) {
           newLine.obposQtytodeliver = newLine.qty;
         } else {
