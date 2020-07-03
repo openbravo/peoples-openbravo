@@ -2527,15 +2527,17 @@ enyo.kind({
       !OB.MobileApp.model.receipt.get('doCancelAndReplace') &&
       !OB.MobileApp.model.receipt.get('cancelLayaway')
     ) {
-      const completeReceiptExecution = OB.UTIL.ProcessController.start(
-        'completeReceipt'
-      );
+      const startCompleteTicket = () => {
+        return OB.UTIL.ProcessController.start('completeReceipt');
+      };
+      const finishCompleteTicket = completeTicketExecution => {
+        OB.UTIL.ProcessController.finish(
+          'completeReceipt',
+          completeTicketExecution
+        );
+      };
       const completeTicket = async complete => {
         if (!complete) {
-          OB.UTIL.ProcessController.finish(
-            'completeReceipt',
-            completeReceiptExecution
-          );
           return;
         }
 
@@ -2612,6 +2614,7 @@ enyo.kind({
           // Focus on scanning window
           OB.UTIL.setScanningFocus(true);
 
+          // FIXME: Move to action
           // Print welcome message
           OB.OBPOSPointOfSale.Print.printWelcome();
 
@@ -2649,23 +2652,26 @@ enyo.kind({
           OB.MobileApp.model.runSyncProcess();
         } catch (error) {
           OB.App.View.ActionCanceledUIHandler.handle(error);
-        } finally {
-          OB.UTIL.ProcessController.finish(
-            'completeReceipt',
-            completeReceiptExecution
-          );
         }
       };
 
+      const completeTicketExecution = startCompleteTicket();
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreOrderSave',
         {
-          // context: context,
-          // model: model,
           receipt: OB.MobileApp.model.receipt
         },
         function(args) {
           completeTicket(!args || !args.cancellation);
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_PostSyncReceipt',
+            {
+              receipt: OB.MobileApp.model.receipt
+            },
+            function(args) {
+              finishCompleteTicket(completeTicketExecution);
+            }
+          );
         }
       );
       return;
