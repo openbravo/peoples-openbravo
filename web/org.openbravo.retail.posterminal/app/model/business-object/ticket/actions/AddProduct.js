@@ -317,6 +317,8 @@
   function checkRestrictions(ticket, payload) {
     const { products } = payload;
 
+    checkClosedQuotation(ticket);
+    checkIsEditable(ticket);
     checkQuantities(ticket, products);
     checkProductWithoutPrice(products);
     checkGenericProduct(products);
@@ -324,9 +326,28 @@
     checkAnonymousBusinessPartner(ticket, products);
     checkNotReturnableProduct(ticket, products);
     checkNotReturnableService(ticket, products);
-    checkClosedQuotation(ticket);
     checkProductLocked(products);
     checkAllowSalesWithReturn(ticket, products);
+  }
+
+  function checkClosedQuotation(ticket) {
+    if (
+      OB.App.State.Ticket.Utils.isQuotation(ticket) &&
+      ticket.hasbeenpaid === 'Y'
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        errorMsg: 'OBPOS_QuotationClosed'
+      });
+    }
+  }
+
+  function checkIsEditable(ticket) {
+    if (ticket.isEditable === false) {
+      throw new OB.App.Class.ActionCanceled({
+        title: 'OBPOS_modalNoEditableHeader',
+        errorConfirmation: 'OBPOS_modalNoEditableBody'
+      });
+    }
   }
 
   function checkQuantities(ticket, products) {
@@ -468,17 +489,6 @@
       const lineQty = line ? line.qty + pi.qty : pi.qty;
       return newqtyminus && lineQty > 0;
     });
-  }
-
-  function checkClosedQuotation(ticket) {
-    if (
-      OB.App.State.Ticket.Utils.isQuotation(ticket) &&
-      ticket.hasbeenpaid === 'Y'
-    ) {
-      throw new OB.App.Class.ActionCanceled({
-        errorMsg: 'OBPOS_QuotationClosed'
-      });
-    }
   }
 
   function checkProductLocked(products) {

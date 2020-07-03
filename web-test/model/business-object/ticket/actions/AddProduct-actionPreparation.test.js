@@ -465,6 +465,26 @@ describe('addProduct preparation', () => {
       );
     });
 
+    it('editable check', async () => {
+      const notEditable = {
+        ...Ticket.singleLine,
+        isEditable: false
+      };
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [{ product: Product.productA, qty: 1 }]
+            },
+            notEditable
+          ),
+        {
+          title: 'OBPOS_modalNoEditableHeader',
+          errorConfirmation: 'OBPOS_modalNoEditableBody'
+        }
+      );
+    });
+
     it('closed quotation check', async () => {
       const closedQuotation = {
         ...Ticket.singleLine,
