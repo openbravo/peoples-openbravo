@@ -486,20 +486,20 @@
         }
       });
 
-      this.get('dataSyncModels').push({
-        name: 'Order',
-        model: OB.Model.Order,
-        modelFunc: 'OB.Model.Order',
-        className: 'org.openbravo.retail.posterminal.OrderLoader',
-        timeout: 20000,
-        timePerRecord: 1000,
-        criteria: {
-          hasbeenpaid: 'Y'
-        },
-        getIdentifier: function(model) {
-          return model.documentNo;
-        }
-      });
+      // this.get('dataSyncModels').push({
+      //   name: 'Order',
+      //   model: OB.Model.Order,
+      //   modelFunc: 'OB.Model.Order',
+      //   className: 'org.openbravo.retail.posterminal.OrderLoader',
+      //   timeout: 20000,
+      //   timePerRecord: 1000,
+      //   criteria: {
+      //     hasbeenpaid: 'Y'
+      //   },
+      //   getIdentifier: function(model) {
+      //     return model.documentNo;
+      //   }
+      // });
 
       this.on('ready', function() {
         OB.debug("next process: 'retail.pointofsale' window");
@@ -693,29 +693,31 @@
         OB.debug('runSyncProcess: executing pre synchronization hook');
         OB.UTIL.HookManager.executeHooks('OBPOS_PreSynchData', {}, function() {
           OB.debug('runSyncProcess: synchronize all models');
-          OB.MobileApp.model.syncAllModels(
-            function() {
-              executeCallbacks(
-                true,
-                me.get('syncProcessCallbacks'),
-                function() {
-                  me.pendingSyncProcess = false;
-                }
-              );
-            },
-            function() {
-              OB.warn(
-                'runSyncProcess failed: the WebPOS is most likely to be offline, but a real error could be present.'
-              );
-              executeCallbacks(
-                false,
-                me.get('syncProcessCallbacks'),
-                function() {
-                  me.pendingSyncProcess = false;
-                }
-              );
-            }
-          );
+          OB.App.State.Global.syncTickets().then(() => {
+            OB.MobileApp.model.syncAllModels(
+              function() {
+                executeCallbacks(
+                  true,
+                  me.get('syncProcessCallbacks'),
+                  function() {
+                    me.pendingSyncProcess = false;
+                  }
+                );
+              },
+              function() {
+                OB.warn(
+                  'runSyncProcess failed: the WebPOS is most likely to be offline, but a real error could be present.'
+                );
+                executeCallbacks(
+                  false,
+                  me.get('syncProcessCallbacks'),
+                  function() {
+                    me.pendingSyncProcess = false;
+                  }
+                );
+              }
+            );
+          });
         });
       }
 

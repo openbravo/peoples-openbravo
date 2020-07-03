@@ -18,7 +18,7 @@ public interface TicketPropertyMapping {
 
   /**
    * Returns businessPartner property from json if exists. Otherwise returns bp property.
-   * 
+   *
    * @throws JSONException
    */
   default JSONObject getBusinessPartner(JSONObject json) throws JSONException {
@@ -28,7 +28,7 @@ public interface TicketPropertyMapping {
 
   /**
    * Returns taxes property from json if exists. Otherwise returns taxLines property.
-   * 
+   *
    * @throws JSONException
    */
   default JSONObject getTaxes(JSONObject json) throws JSONException {
@@ -38,7 +38,7 @@ public interface TicketPropertyMapping {
 
   /**
    * Returns grossListPrice property from json.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getGrossListPrice(JSONObject json) throws JSONException {
@@ -47,7 +47,7 @@ public interface TicketPropertyMapping {
 
   /**
    * Returns netListPrice property from json if exists. Otherwise returns listPrice property.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getNetListPrice(JSONObject json) throws JSONException {
@@ -57,7 +57,7 @@ public interface TicketPropertyMapping {
 
   /**
    * Returns baseGrossUnitPrice property from json if exists. Otherwise returns price property.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getBaseGrossUnitPrice(JSONObject json) throws JSONException {
@@ -68,7 +68,7 @@ public interface TicketPropertyMapping {
   /**
    * Returns baseNetUnitPrice property from json if exists. Otherwise returns standardPrice
    * property.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getBaseNetUnitPrice(JSONObject json) throws JSONException {
@@ -78,7 +78,7 @@ public interface TicketPropertyMapping {
 
   /**
    * Returns getGrossUnitAmount property from json.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getGrossUnitPrice(JSONObject json) throws JSONException {
@@ -88,7 +88,7 @@ public interface TicketPropertyMapping {
   /**
    * Returns netUnitAmount property from json if exists. Otherwise returns unitPrice property if
    * exists. Otherwise returns pricenet property.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getNetUnitPrice(JSONObject json) throws JSONException {
@@ -102,7 +102,7 @@ public interface TicketPropertyMapping {
   /**
    * Returns getGrossUnitAmount property from json if exists. Otherwise returns lineGrossAmount
    * property.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getGrossUnitAmount(JSONObject json) throws JSONException {
@@ -112,7 +112,7 @@ public interface TicketPropertyMapping {
 
   /**
    * Returns netUnitAmount property from json if exists. Otherwise returns net property.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getNetUnitAmount(JSONObject json) throws JSONException {
@@ -122,7 +122,7 @@ public interface TicketPropertyMapping {
 
   /**
    * Returns grossAmount property from json if exists. Otherwise returns gross property.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getGrossAmount(JSONObject json) throws JSONException {
@@ -132,7 +132,7 @@ public interface TicketPropertyMapping {
 
   /**
    * Returns netAmount property from json if exists. Otherwise returns net property.
-   * 
+   *
    * @throws JSONException
    */
   default BigDecimal getNetAmount(JSONObject json) throws JSONException {

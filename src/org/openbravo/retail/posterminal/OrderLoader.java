@@ -1339,7 +1339,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
       OBCriteria<OBPOSAppPayment> type = OBDal.getInstance().createCriteria(OBPOSAppPayment.class);
       type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_SEARCHKEY, paymentTypeName));
       type.add(Restrictions.eq(OBPOSAppPayment.PROPERTY_OBPOSAPPLICATIONS + ".id", posTerminalId));
-      type.setFilterOnActive(false);
       type.setMaxResults(1);
       paymentType = (OBPOSAppPayment) type.uniqueResult();
 
