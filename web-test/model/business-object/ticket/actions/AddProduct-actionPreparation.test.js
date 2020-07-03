@@ -1259,8 +1259,7 @@ describe('addProduct preparation', () => {
         {
           product: Product.productA,
           qty: 1,
-          hasRelatedServices: true,
-          hasMandatoryServices: false
+          attrs: { hasRelatedServices: true, hasMandatoryServices: false }
         }
       ]);
     });
@@ -1284,8 +1283,7 @@ describe('addProduct preparation', () => {
         {
           product: Product.productA,
           qty: 1,
-          hasRelatedServices: true,
-          hasMandatoryServices: true
+          attrs: { hasRelatedServices: true, hasMandatoryServices: true }
         }
       ]);
     });
@@ -1318,8 +1316,7 @@ describe('addProduct preparation', () => {
         {
           product: Product.productA,
           qty: 1,
-          hasRelatedServices: true,
-          hasMandatoryServices: false
+          attrs: { hasRelatedServices: true, hasMandatoryServices: false }
         }
       ]);
     });

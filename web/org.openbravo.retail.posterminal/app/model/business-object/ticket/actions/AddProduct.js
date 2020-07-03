@@ -226,10 +226,7 @@
   function setLineAttributes(line, attrs, productInfo) {
     const lineAttrs = {
       ...attrs,
-      hasRelatedServices: productInfo.hasRelatedServices,
-      hasMandatoryServices: attrs.splitline
-        ? false
-        : productInfo.hasMandatoryServices
+      hasMandatoryServices: attrs.splitline ? false : attrs.hasMandatoryServices
     };
     if (
       productInfo.product.productType === 'S' &&
@@ -909,11 +906,14 @@
         OB.error('Error getting related services information');
         return pi;
       }
-      return {
-        ...pi,
+
+      const productInfo = { ...pi };
+      productInfo.attrs = {
+        ...productInfo.attrs,
         hasRelatedServices: data.hasservices,
         hasMandatoryServices: data.hasmandatoryservices
       };
+      return productInfo;
     });
     newPayload.products = await Promise.all(productsWithRelatedServicesInfo);
     return newPayload;
