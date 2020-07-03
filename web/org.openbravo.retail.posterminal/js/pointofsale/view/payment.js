@@ -2527,6 +2527,7 @@ enyo.kind({
       !OB.MobileApp.model.receipt.get('doCancelAndReplace') &&
       !OB.MobileApp.model.receipt.get('cancelLayaway')
     ) {
+      const receipt = OB.MobileApp.model.receipt;
       const startCompleteTicket = () => {
         return OB.UTIL.ProcessController.start('completeReceipt');
       };
@@ -2601,13 +2602,11 @@ enyo.kind({
           });
 
           // Open drawer
-          OB.MobileApp.model.receipt.trigger('checkOpenDrawer');
+          receipt.trigger('checkOpenDrawer');
 
           // RFID
           if (OB.UTIL.RfidController.isRfidConfigured()) {
-            OB.UTIL.RfidController.processRemainingCodes(
-              OB.MobileApp.model.receipt
-            );
+            OB.UTIL.RfidController.processRemainingCodes(receipt);
             OB.UTIL.RfidController.updateEpcBuffers();
           }
 
@@ -2621,21 +2620,18 @@ enyo.kind({
           // Show ticket saved message
           OB.UTIL.showSuccess(
             OB.I18N.getLabel(
-              OB.MobileApp.model.receipt.get('isQuotation')
+              receipt.get('isQuotation')
                 ? 'OBPOS_QuotationSaved'
-                : OB.MobileApp.model.receipt.get('orderType') === 2 ||
-                  OB.MobileApp.model.receipt.get('isLayaway')
+                : receipt.get('orderType') === 2 || receipt.get('isLayaway')
                 ? 'OBPOS_MsgLayawaySaved'
                 : 'OBPOS_MsgReceiptSaved',
-              [OB.MobileApp.model.receipt.get('documentNo')]
+              [receipt.get('documentNo')]
             )
           );
 
           // FIXME: Use TicketListUtils
           // Remove completed ticket
-          OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
-            OB.MobileApp.model.receipt
-          );
+          OB.MobileApp.model.orderList.deleteCurrentFromDatabase(receipt);
           if (
             OB.MobileApp.model.hasPermission(
               'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
@@ -2659,14 +2655,14 @@ enyo.kind({
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreOrderSave',
         {
-          receipt: OB.MobileApp.model.receipt
+          receipt
         },
         function(args) {
           completeTicket(!args || !args.cancellation);
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PostSyncReceipt',
             {
-              receipt: OB.MobileApp.model.receipt
+              receipt: OB.UTIL.clone(receipt)
             },
             function(args) {
               finishCompleteTicket(completeTicketExecution);
