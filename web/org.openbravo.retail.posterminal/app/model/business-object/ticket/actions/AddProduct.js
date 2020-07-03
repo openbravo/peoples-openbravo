@@ -29,7 +29,7 @@
 
     products.forEach(productInfo => {
       const { product } = productInfo;
-      const lineToEdit = getLineToEdit(productInfo, ticket);
+      const lineToEdit = getLineToEdit(ticket, productInfo);
       if (lineToEdit) {
         // add product to an existing line
         lineToEdit.qty += productInfo.qty;
@@ -123,7 +123,7 @@
     400
   );
 
-  function getLineToEdit(productInfo, ticket) {
+  function getLineToEdit(ticket, productInfo) {
     const { product, qty, options, attrs } = productInfo;
     if (product.obposScale || !product.groupProduct) {
       return undefined;
@@ -352,7 +352,7 @@
 
   function checkQuantities(ticket, products) {
     products.forEach(pi => {
-      const line = getLineToEdit(pi, ticket);
+      const line = getLineToEdit(ticket, pi);
       const qty = line ? line.qty + pi.qty : pi.qty;
 
       if (
@@ -466,7 +466,7 @@
 
   function findServiceForNegativeProduct(ticket, products) {
     return products.find(pi => {
-      const line = getLineToEdit(pi, ticket);
+      const line = getLineToEdit(ticket, pi);
       let relatedLines = pi.attrs.relatedLines || [];
       if (line && line.relatedLines) {
         relatedLines = OB.App.ArrayUtils.union(relatedLines, line.relatedLines);
@@ -527,7 +527,7 @@
 
   function checkAllowSalesWithReturn(ticket, products) {
     const newLineProducts = products.filter(
-      pi => getLineToEdit(pi, ticket) === undefined
+      pi => getLineToEdit(ticket, pi) === undefined
     );
 
     newLineProducts.forEach(pi => {
@@ -1062,7 +1062,7 @@
     let newPayload = { ...payload };
 
     const linesWithQuantityZero = products.some(pi => {
-      const lineToEdit = getLineToEdit(pi, ticket);
+      const lineToEdit = getLineToEdit(ticket, pi);
       const qty = lineToEdit ? lineToEdit.qty + pi.qty : pi.qty;
       return qty === 0;
     });
@@ -1117,7 +1117,7 @@
 
     for (let i = 0; i < products.length; i += 1) {
       const { product, qty, options, attrs } = products[i];
-      const line = getLineToEdit(products[i], ticket);
+      const line = getLineToEdit(ticket, products[i]);
       const lineId = line ? line.id : payload.line;
       const settings = { ticket, lineId, options, attrs };
 
