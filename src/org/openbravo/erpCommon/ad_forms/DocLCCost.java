@@ -113,7 +113,7 @@ public class DocLCCost extends AcctServer {
         docLine.m_C_Campaign_ID = data[i].cCampaignId;
         docLine.m_A_Asset_ID = data[i].aAssetId;
 
-        docLine.m_DateAcct = DateDoc;
+        docLine.m_DateAcct = DocLineLCCostData.selectAcctDateOrMaxInvoiceAcctDate(conn, DateDoc, Record_ID);
         docLine.setLandedCostTypeId(data[i].mLcTypeId);
         docLine.setIsMatchingAdjusted(data[i].ismatchingadjusted);
         docLine.setLcCostId(data[i].mLcCostId);

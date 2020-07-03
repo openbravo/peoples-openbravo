@@ -111,5 +111,21 @@
      </Sql>
      <Parameter name="M_Product_ID"/>
      <Parameter name="C_AcctSchema_ID"/>
-   </SqlMethod>  
+   </SqlMethod>
+      <SqlMethod name="selectAcctDateOrMaxInvoiceAcctDate" type="preparedStatement" return="Date">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT MAX(dateacct)
+        FROM (SELECT GREATEST(i.dateacct, TO_DATE(?)) AS dateacct
+              FROM m_lc_matched lcm
+                JOIN c_invoiceline il ON (lcm.c_invoiceline_id = il.c_invoiceline_id)
+                JOIN c_invoice i ON (il.c_invoice_id = i.c_invoice_id)
+              WHERE lcm.isactive = 'Y'
+                AND lcm.m_lc_cost_id = ?) A
+     ]]>
+     </Sql>
+     <Parameter name="DateAcct"/>
+     <Parameter name="LCCostId"/>
+   </SqlMethod>
  </SqlClass>

@@ -91,7 +91,7 @@ public class DocLandedCost extends AcctServer {
 
     DocLineLandedCostData[] data = null;
     try {
-      data = DocLineLandedCostData.select(conn, Record_ID);
+      data = DocLineLandedCostData.select(conn, DateDoc, Record_ID);
       for (int i = 0; i < data.length; i++) {
         String Line_ID = data[i].mLcReceiptlineAmtId;
         DocLine_LandedCost docLine = new DocLine_LandedCost(DocumentType, Record_ID, Line_ID);
@@ -100,7 +100,7 @@ public class DocLandedCost extends AcctServer {
         docLine.setWarehouseId(data[i].mWarehouseId);
         docLine.m_C_BPartner_ID = data[i].cBpartnerId;
         docLine.m_M_Product_ID = data[i].mProductId;
-        docLine.m_DateAcct = DateDoc;
+        docLine.m_DateAcct = data[i].dateacct;
         docLine.setLandedCostTypeId(data[i].mLcTypeId);
         docLine.m_C_Project_ID = data[i].cProjectId;
         docLine.m_C_Costcenter_ID = data[i].cCostcenterId;
@@ -179,12 +179,18 @@ public class DocLandedCost extends AcctServer {
     String fact_Acct_Group_ID = SequenceIdData.getUUID();
     String amtDebit = "0";
     String amtCredit = "0";
+    String previousDateAcct = p_lines[0].m_DateAcct;
     // Lines
     for (int i = 0; p_lines != null && i < p_lines.length; i++) {
       DocLine_LandedCost line = (DocLine_LandedCost) p_lines[i];
 
       BigDecimal amount = new BigDecimal(line.getAmount());
       ProductInfo p = new ProductInfo(line.m_M_Product_ID, conn);
+      String currentDateAcct = p_lines[i].m_DateAcct;
+      if (!StringUtils.equals(previousDateAcct, currentDateAcct)) {
+        fact_Acct_Group_ID = SequenceIdData.getUUID();
+      }
+      previousDateAcct = currentDateAcct;
 
       log4jDocLandedCost.debug("previous to creteline, line.getAmount(): " + line.getAmount());
 
