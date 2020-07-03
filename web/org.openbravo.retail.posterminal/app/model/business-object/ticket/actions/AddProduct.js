@@ -815,62 +815,72 @@
       return payload;
     }
 
-    if (products.length > 1) {
-      throw new Error('Cannot handle attributes for more than one product');
-    }
-
     const newPayload = { ...payload };
-    const { product, qty, options } = products[0];
 
-    let attributeValue = null;
     const isQuotationAndAttributeAllowed = OB.App.Security.hasPermission(
       'OBPOS_AskForAttributesWhenCreatingQuotation'
     );
-    if (
-      !options.line &&
-      product.hasAttributes &&
-      qty >= 1 &&
-      (!OB.App.State.Ticket.Utils.isQuotation(ticket) ||
-        isQuotationAndAttributeAllowed)
-    ) {
-      attributeValue = await OB.App.View.DialogUIHandler.inputData(
-        'modalProductAttribute',
-        { options }
-      );
-      if (attributeValue === null || attributeValue === undefined) {
-        throw new OB.App.Class.ActionSilentlyCanceled(
-          `No attribute provided for product ${product.id}`
-        );
-      }
-      if (lodash.isEmpty(attributeValue)) {
-        // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
-        attributeValue = null;
-      }
-      newPayload.products[0].attrs.attributeValue = attributeValue;
-    }
 
-    newPayload.products[0].attrs.attributeSearchAllowed = attributeSearchAllowed;
-    if (options.line) {
-      newPayload.products[0].attrs.productHavingSameAttribute = true;
-    } else {
-      if (!checkSerialAttribute(product, attributeValue)) {
-        throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBPOS_ProductDefinedAsSerialNo'
-        });
+    const attributeDataRequests = newPayload.products.map(async pi => {
+      const { product, qty, options } = pi;
+      const productInfo = { ...pi };
+      const newAttrs = {};
+      const newOptions = {};
+      let attributeValue = null;
+
+      if (
+        !options.line &&
+        product.hasAttributes &&
+        qty >= 1 &&
+        (!OB.App.State.Ticket.Utils.isQuotation(ticket) ||
+          isQuotationAndAttributeAllowed)
+      ) {
+        attributeValue = await OB.App.View.DialogUIHandler.inputData(
+          'modalProductAttribute',
+          { options }
+        );
+        if (attributeValue === null || attributeValue === undefined) {
+          throw new OB.App.Class.ActionSilentlyCanceled(
+            `No attribute provided for product ${product.id}`
+          );
+        }
+        if (lodash.isEmpty(attributeValue)) {
+          // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
+          attributeValue = null;
+        }
+        newAttrs.attributeValue = attributeValue;
       }
-      const lineWithAttributeValue = ticket.lines.find(
-        l =>
-          attributeValue &&
-          l.attributeValue === attributeValue &&
-          product.id === l.product.id
-      );
-      if (lineWithAttributeValue) {
-        newPayload.products[0].attrs.productHavingSameAttribute = true;
-        newPayload.products[0].options.line = lineWithAttributeValue.id;
+
+      newAttrs.attributeSearchAllowed = attributeSearchAllowed;
+      if (options.line) {
+        newAttrs.productHavingSameAttribute = true;
       } else {
-        newPayload.products[0].attrs.productHavingSameAttribute = false;
+        if (!checkSerialAttribute(product, attributeValue)) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_ProductDefinedAsSerialNo'
+          });
+        }
+        const lineWithAttributeValue = ticket.lines.find(
+          l =>
+            attributeValue &&
+            l.attributeValue === attributeValue &&
+            product.id === l.product.id
+        );
+        if (lineWithAttributeValue) {
+          newAttrs.productHavingSameAttribute = true;
+          newOptions.line = lineWithAttributeValue.id;
+        } else {
+          newAttrs.productHavingSameAttribute = false;
+        }
       }
-    }
+
+      productInfo.attrs = { ...productInfo.attrs, ...newAttrs };
+      productInfo.options = { ...productInfo.options, ...newOptions };
+      return productInfo;
+    });
+
+    newPayload.products = await Promise.all(attributeDataRequests);
+
     return newPayload;
   }
 

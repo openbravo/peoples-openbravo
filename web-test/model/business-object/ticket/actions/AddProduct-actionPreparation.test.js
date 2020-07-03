@@ -1034,6 +1034,49 @@ describe('addProduct preparation', () => {
       });
     });
 
+    it('multiple products with attributes', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_EnableSupportForProductAttributes'
+      );
+      OB.App.View.DialogUIHandler.inputData
+        .mockResolvedValueOnce('1234')
+        .mockResolvedValueOnce('abcd');
+      const productWithAttributesA = {
+        ...Product.productA,
+        hasAttributes: true
+      };
+      const productWithAttributesB = {
+        ...Product.productB,
+        hasAttributes: true
+      };
+      const payload = {
+        products: [
+          { product: productWithAttributesA, qty: 1 },
+          { product: productWithAttributesB, qty: 2 }
+        ]
+      };
+      const newPayload = await prepareAction(payload, Ticket.attributeLine);
+      expect(newPayload.products).toMatchObject([
+        {
+          ...payload.products[0],
+          options: { line: '1' },
+          attrs: {
+            attributeSearchAllowed: true,
+            attributeValue: '1234',
+            productHavingSameAttribute: true
+          }
+        },
+        {
+          ...payload.products[1],
+          attrs: {
+            attributeSearchAllowed: true,
+            attributeValue: 'abcd',
+            productHavingSameAttribute: false
+          }
+        }
+      ]);
+    });
+
     it('product with attribute and option line', async () => {
       OB.App.Security.hasPermission.mockImplementation(
         p => p === 'OBPOS_EnableSupportForProductAttributes'
@@ -1194,24 +1237,6 @@ describe('addProduct preparation', () => {
           errorConfirmation: 'OBPOS_ProductDefinedAsSerialNo'
         }
       );
-    });
-
-    it('more than one is not allowed', async () => {
-      OB.App.Security.hasPermission.mockImplementation(
-        p => p === 'OBPOS_EnableSupportForProductAttributes'
-      );
-      const productWithAttributes = {
-        ...Product.productA,
-        hasAttributes: true
-      };
-      await expect(
-        prepareAction({
-          products: [
-            { product: productWithAttributes },
-            { product: productWithAttributes }
-          ]
-        })
-      ).rejects.toThrow('Cannot handle attributes for more than one product');
     });
   });
 
