@@ -569,8 +569,12 @@
       throw new Error('Cannot handle more than unit of a pack');
     }
 
+    const { discountRules } = payload.extraData;
     const packProcessings = payload.products.map(async pi => {
-      const pack = OB.App.ProductPackProvider.getPack(pi.product);
+      const pack = OB.App.ProductPackProvider.getPack(
+        pi.product,
+        discountRules
+      );
       if (!pack) {
         return pi;
       }

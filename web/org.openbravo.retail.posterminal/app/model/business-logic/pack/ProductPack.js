@@ -16,8 +16,13 @@
    * It should be extended to define the logic to handle a product pack
    */
   class ProductPack {
-    constructor(product) {
+    /**
+     * @param {object} product - The product pack
+     * @param {object} discountRules - The available discount rules
+     */
+    constructor(product, discountRules) {
       this.product = product;
+      this.discountRules = discountRules;
     }
 
     /**

@@ -17,9 +17,7 @@
    */
   class Pack extends OB.App.Class.ProductPack {
     async getProducts() {
-      const discount = OB.Discounts.Pos.ruleImpls.find(
-        d => d.id === this.product.id
-      );
+      const discount = this.discountRules.find(d => d.id === this.product.id);
 
       this.checkIsExpired(discount);
 

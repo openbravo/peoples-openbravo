@@ -45,6 +45,7 @@ require('../../../../web/org.openbravo.retail.posterminal/app/model/business-log
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/pack/Pack');
 
 describe('product pack infrastructure', () => {
+  const discountRules = OB.Discounts.Pos.ruleImpls;
   OB.App.MasterdataModels.Product.withId.mockImplementation(id => {
     return { id };
   });
@@ -56,7 +57,10 @@ describe('product pack infrastructure', () => {
         ispack: true,
         productCategory: 'BE5D42E554644B6AA262CCB097753951'
       };
-      const pack = OB.App.ProductPackProvider.getPack(productPack);
+      const pack = OB.App.ProductPackProvider.getPack(
+        productPack,
+        discountRules
+      );
       expect(pack).not.toBeUndefined();
     });
 
@@ -66,7 +70,10 @@ describe('product pack infrastructure', () => {
         ispack: true,
         productCategory: 'unexisting'
       };
-      const pack = OB.App.ProductPackProvider.getPack(productPack);
+      const pack = OB.App.ProductPackProvider.getPack(
+        productPack,
+        discountRules
+      );
       expect(pack).toBeUndefined();
     });
 
@@ -74,7 +81,10 @@ describe('product pack infrastructure', () => {
       const regularProduct = {
         id: '2'
       };
-      const pack = OB.App.ProductPackProvider.getPack(regularProduct);
+      const pack = OB.App.ProductPackProvider.getPack(
+        regularProduct,
+        discountRules
+      );
       expect(pack).toBeUndefined();
     });
   });
@@ -86,7 +96,10 @@ describe('product pack infrastructure', () => {
         ispack: true,
         productCategory: 'BE5D42E554644B6AA262CCB097753951'
       };
-      const pack = OB.App.ProductPackProvider.getPack(productPack);
+      const pack = OB.App.ProductPackProvider.getPack(
+        productPack,
+        discountRules
+      );
       const packProducts = await pack.process();
       expect(packProducts).toEqual([
         {
@@ -112,7 +125,10 @@ describe('product pack infrastructure', () => {
         ispack: true,
         productCategory: 'BE5D42E554644B6AA262CCB097753951'
       };
-      const pack = OB.App.ProductPackProvider.getPack(productPack);
+      const pack = OB.App.ProductPackProvider.getPack(
+        productPack,
+        discountRules
+      );
       let error;
       try {
         await pack.process();

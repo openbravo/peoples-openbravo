@@ -32,9 +32,10 @@
     /**
      * Given a product pack retrieves an instance of its corresponding ProductPack
      * @param {object} product - A product
+     * @param {object} discountRules - The available discount rules
      * @return {ProductPack} - The ProductPack related to the provided product or undefined if not found
      */
-    getPack(product) {
+    getPack(product, discountRules) {
       if (!product.ispack) {
         return undefined;
       }
@@ -42,7 +43,7 @@
       if (!Pack) {
         return undefined;
       }
-      return new Pack(product);
+      return new Pack(product, discountRules);
     }
   }
 
