@@ -272,7 +272,7 @@
       .flat();
 
     // Update the price of the related lines whose tax category has changed
-    if (ticket.priceIncludesTax && linesToChange.length > 0) {
+    if (linesToChange.length > 0) {
       let newTicket = { ...ticket };
 
       newTicket.lines = ticket.lines.map(l => {
@@ -282,6 +282,10 @@
         }
         return { ...l };
       });
+
+      if (!ticket.priceIncludesTax) {
+        return newTicket;
+      }
 
       newTicket = OB.App.State.Ticket.Utils.calculateTotals(newTicket, {
         discountRules: extraData.discountRules,
