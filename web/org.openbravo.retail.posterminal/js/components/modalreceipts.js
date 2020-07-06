@@ -22,23 +22,13 @@ enyo.kind({
     name: 'listreceipts',
     classes: 'obUiModalReceipts-listreceipts'
   },
-  initComponents: function() {
-    this.inherited(arguments);
-    // this.receiptsList = new Backbone.Collection(
-    //   OB.App.State.getState().TicketList
-    // );
-    // this.receiptsListChanged();
-    //
-    // OB.App.PersistenceChangeListenerManager.addListener(
-    //   state => {
-    //     this.receiptsList = new Backbone.Collection(state.TicketList);
-    //     this.receiptsListChanged();
-    //   },
-    //   ['TicketList']
-    // );
-  },
   receiptsListChanged: function(oldValue) {
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
+  },
+  executeOnShow: function() {
+    this.$.body.$.listreceipts.setReceiptsList(
+      new Backbone.Collection(OB.App.OpenTicketList.getAllTickets())
+    );
   }
 });
 
