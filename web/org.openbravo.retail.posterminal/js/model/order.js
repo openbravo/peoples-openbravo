@@ -4550,89 +4550,13 @@
     },
 
     addManualPromotionToList: function(promotionToApply) {
-      const discountsFromUser = { ...this.get('discountsFromUser') } || {},
-        rule = promotionToApply.rule,
-        discountRule = promotionToApply.discountRule;
-      let bytotalManualPromotions =
-        discountsFromUser && discountsFromUser.bytotalManualPromotions
-          ? [...discountsFromUser.bytotalManualPromotions]
-          : [];
-
-      if (
-        !rule.obdiscAllowmultipleinstan ||
-        bytotalManualPromotions.length <= 0
-      ) {
-        // Check there is no other manual promotion with the same ruleId and hasMultiDiscount set as false or undefined
-        const singlePromotionsList = _.filter(bytotalManualPromotions, function(
-          bytotalManualPromotion
-        ) {
-          return (
-            bytotalManualPromotion.obdiscAllowmultipleinstan ===
-              rule.obdiscAllowmultipleinstan &&
-            bytotalManualPromotion.id === rule.id
-          );
-        });
-
-        if (singlePromotionsList.length > 0) {
-          //  There should be only one rule in the list with previous conditions in manual promotions list
-          _.forEach(singlePromotionsList, function(singlePromotion) {
-            bytotalManualPromotions.splice(
-              bytotalManualPromotions.indexOf(singlePromotion),
-              1
-            );
-          });
-        }
-      }
-      if (
-        rule.obdiscAllowmultipleinstan &&
-        OB.UTIL.isNullOrUndefined(rule.discountinstance)
-      ) {
-        rule.discountinstance = OB.UTIL.get_UUID();
-      }
-
-      let bytotalManualPromotionObj = {};
-
-      for (let key in discountRule.attributes) {
-        bytotalManualPromotionObj[key] = discountRule.attributes[key];
-      }
-
-      // Override some configuration from manualPromotions
-      if (bytotalManualPromotionObj.disctTotalamountdisc) {
-        bytotalManualPromotionObj.disctTotalamountdisc = rule.userAmt;
-      } else if (bytotalManualPromotionObj.disctTotalpercdisc) {
-        bytotalManualPromotionObj.disctTotalpercdisc = rule.userAmt;
-      }
-      bytotalManualPromotionObj.noOrder = rule.noOrder;
-      bytotalManualPromotionObj.discountinstance = rule.discountinstance;
-      if (
-        OB.Model.Discounts.discountRules[
-          bytotalManualPromotionObj.discountType
-        ] &&
-        OB.Model.Discounts.discountRules[bytotalManualPromotionObj.discountType]
-          .getIdentifier
-      ) {
-        let promotionName = OB.Model.Discounts.discountRules[
-          bytotalManualPromotionObj.discountType
-        ].getIdentifier(discountRule, bytotalManualPromotionObj);
-        bytotalManualPromotionObj.name = promotionName;
-        bytotalManualPromotionObj._identifier = promotionName;
-      }
-      bytotalManualPromotionObj.products = [];
-      bytotalManualPromotionObj.includedProducts = 'Y';
-      bytotalManualPromotionObj.productCategories = [];
-      bytotalManualPromotionObj.includedProductCategories = 'Y';
-      bytotalManualPromotionObj.productCharacteristics = [];
-      bytotalManualPromotionObj.includedCharacteristics = 'Y';
-      bytotalManualPromotionObj.allweekdays = true;
-
-      bytotalManualPromotions.push(bytotalManualPromotionObj);
-
-      bytotalManualPromotions = bytotalManualPromotions.sort((a, b) => {
-        return a.noOrder - b.noOrder;
+      const discount = JSON.parse(JSON.stringify(promotionToApply));
+      discount.currencyIdentifier = OB.MobileApp.model.get(
+        'terminal'
+      ).currency$_identifier;
+      OB.App.State.Ticket.addByTotalPromotion({
+        discount: discount
       });
-
-      discountsFromUser.bytotalManualPromotions = bytotalManualPromotions;
-      this.set('discountsFromUser', discountsFromUser);
     },
 
     getCurrentDiscountedLinePrice: function(line, ignoreExecutedAtTheEndPromo) {
@@ -4847,33 +4771,13 @@
       line.trigger('change');
     },
 
-    removePromotion: function(line, rule) {
-      var promotions = line.get('promotions'),
-        discountinstance = rule.discountinstance,
-        removed = false,
-        res = [],
-        i;
-      if (!promotions) {
-        return;
-      }
-
-      for (i = 0; i < promotions.length; i++) {
-        if (
-          promotions[i].ruleId === rule.id &&
-          promotions[i].discountinstance === discountinstance
-        ) {
-          removed = true;
-        } else {
-          res.push(promotions[i]);
-        }
-      }
-
-      if (removed) {
-        line.set('promotions', res);
-        // Calculate discountedLinePrice for the next promotion
-        this.calculateDiscountedLinePrice(line);
+    removePromotion: async function(line, rule) {
+      return OB.App.State.Ticket.removePromotion({
+        lineId: line.get('id'),
+        rule: JSON.parse(JSON.stringify(rule))
+      }).then(() => {
         line.trigger('change');
-      }
+      });
     },
 
     //Attrs is an object of attributes that will be set in order line
@@ -7211,91 +7115,21 @@
       });
     },
 
-    reactivateQuotation: function() {
-      var idMap = {},
-        oldIdMap = {},
-        oldId,
-        me = this;
-      this.get('lines').each(function(line) {
-        oldId = line.get('id');
-        line.set('id', OB.UTIL.get_UUID());
-        line.unset('netFull');
-        line.unset('grossUnitPrice');
-        line.unset('lineGrossAmount');
-        line.unset('promotions');
-        idMap[line.get('id')] = OB.UTIL.get_UUID();
-        line.set('id', idMap[line.get('id')]);
-        if (line.get('hasRelatedServices')) {
-          oldIdMap[oldId] = line.get('id');
-        }
-      }, this);
-      this.set('hasbeenpaid', 'N');
-      this.set('isPaid', false);
-      this.set('isEditable', true);
-      this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      this.set('session', OB.MobileApp.model.get('session'));
-      this.set('orderDate', OB.I18N.normalizeDate(new Date()));
-      this.set('skipApplyPromotions', false);
-      this.unset('deletedLines');
-      //Sometimes the Id of Quotation is null.
-      if (this.get('id') && !_.isNull(this.get('id'))) {
-        this.set('oldId', this.get('id'));
-        this.set('documentNo', '');
-      } else {
-        //this shouldn't happen.
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_title'),
-          OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_body')
-        );
-        return;
-      }
-      if (this.get('hasServices')) {
-        this.get('lines').each(function(line) {
-          if (line.get('relatedLines')) {
-            line.get('relatedLines').forEach(function(rl) {
-              rl.orderId = me.get('id');
-              if (oldIdMap[rl.orderlineId]) {
-                rl.orderlineId = oldIdMap[rl.orderlineId];
-              }
-            });
-          }
-        }, this);
-      }
-      this.set('id', null);
-      this.save();
-      this.calculateReceipt();
+    reactivateQuotation: async function() {
+      return OB.App.State.Ticket.reactivateQuotation({
+        user: OB.MobileApp.model.get('orgUserId'),
+        session: OB.MobileApp.model.get('session'),
+        date: OB.I18N.normalizeDate(new Date())
+      }).then(() => {
+        OB.Dal.save(OB.MobileApp.model.receipt, null, null, true);
+      });
     },
     rejectQuotation: function(rejectReasonId, scope, callback) {
-      if (!this.get('id')) {
-        OB.error(
-          'The Id of the order is not defined (current value: ' +
-            this.get('id') +
-            "'"
-        );
-      }
-      var process = new OB.DS.Process(
-        'org.openbravo.retail.posterminal.QuotationsReject'
-      );
-      OB.UTIL.showLoading(true);
-      process.exec(
-        {
-          messageId: OB.UTIL.get_UUID(),
-          data: [
-            {
-              id: this.get('id'),
-              orderid: this.get('id'),
-              rejectReasonId: rejectReasonId
-            }
-          ]
-        },
-        function(data) {
-          OB.UTIL.showLoading(false);
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SuccessRejectQuotation'));
-          if (callback) {
-            callback.call(scope, data !== null);
-          }
+      OB.App.State.Global.rejectQuotation({ rejectReasonId }).then(() => {
+        if (callback) {
+          callback.call(scope, true);
         }
-      );
+      });
     },
     getPrecision: function(payment) {
       var terminalpayment =
