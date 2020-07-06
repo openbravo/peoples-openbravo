@@ -327,7 +327,8 @@ public class AverageAlgorithm extends CostingAlgorithm {
     //@formatter:off
     hql +=
             " order by startingDate desc," +
-            "   endingDate desc";
+            "   endingDate desc," +
+            "   creationDate desc";
     //@formatter:on
 
     final OBQuery<Costing> costQry = OBDal.getInstance()
