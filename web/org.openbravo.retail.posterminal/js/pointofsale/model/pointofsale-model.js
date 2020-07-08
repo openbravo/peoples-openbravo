@@ -61,7 +61,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 });
               } else {
                 // The order object is stored in the json property of the row fetched from the database
-                orderlist.reset(new Backbone.Collection(args.ordersNotPaid));
+                orderlist = new Backbone.Collection(args.ordersNotPaid);
                 // At this point it is sure that there exists at least one order
                 // Function to continue of there is some error
                 currentOrder = args.ordersNotPaid[0];
@@ -73,21 +73,22 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   },
                   function(args) {
                     reCalculateReceipt = args.reCalculateReceipt;
-                    OB.UTIL.TicketListUtils.loadTicket(currentOrder).then(
-                      () => {
-                        if (reCalculateReceipt) {
-                          OB.MobileApp.model.receipt.calculateGrossAndSave();
-                        }
-                        loadOrderStr =
-                          OB.I18N.getLabel('OBPOS_Order') +
-                          currentOrder.documentNo +
-                          OB.I18N.getLabel('OBPOS_Loaded');
-                        OB.UTIL.showAlert.display(
-                          loadOrderStr,
-                          OB.I18N.getLabel('OBPOS_Info')
-                        );
+                    OB.UTIL.TicketListUtils.loadTicketById(
+                      currentOrder.id
+                    ).then(() => {
+                      if (reCalculateReceipt) {
+                        OB.MobileApp.model.receipt.calculateGrossAndSave();
                       }
-                    );
+
+                      loadOrderStr =
+                        OB.I18N.getLabel('OBPOS_Order') +
+                        currentOrder.documentNo +
+                        OB.I18N.getLabel('OBPOS_Loaded');
+                      OB.UTIL.showAlert.display(
+                        loadOrderStr,
+                        OB.I18N.getLabel('OBPOS_Info')
+                      );
+                    });
                   }
                 );
               }
