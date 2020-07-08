@@ -7171,7 +7171,7 @@
               }, args.order);
 
               args.order.set('oldId', args.order.get('id'));
-              args.order.set('id', null);
+              args.order.set('id', OB.UTIL.get_UUID());
               args.order.set('documentNo', '');
               args.order.set('isQuotation', false);
               args.order.set(
