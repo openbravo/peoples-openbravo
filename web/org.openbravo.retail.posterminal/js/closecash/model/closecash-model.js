@@ -260,7 +260,7 @@ OB.OBPOSCloseCash.Model.CloseCash = OB.Model.TerminalWindowModel.extend({
   getCountCashSummary: function() {
     //First we fix the qty to keep for non-automated payment methods
     _.each(this.get('paymentList').models, function(model) {
-      var counted = model.get('foreignCounted');
+      var counted = model.get('foreignCounted') || model.get('counted');
       if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
         model.set('qtyToKeep', counted);
       }
