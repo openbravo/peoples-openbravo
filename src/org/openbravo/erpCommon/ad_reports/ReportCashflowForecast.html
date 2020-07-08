@@ -53,7 +53,7 @@
 
 function depurar() {
     var frm = document.frmMain;
-    seleccionarListCompleto(frm.inpcBPartnerId_IN);
+    markCheckedAllElements(frm.inpcBPartnerId_IN);
     if (frm.inpDateFrom.value==null || frm.inpDateFrom.value=="") {
         setWindowElementFocus(frm.inpDateFrom);
         mensaje(7);
