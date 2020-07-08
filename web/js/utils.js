@@ -203,26 +203,6 @@ function getBrowserInfo(param) {
   }
 }
 
-/**
-* Checks if the browser is a supported one. Just for 2.50
-*/
-function checkBrowserCompatibility250() {
-   var browserName = getBrowserInfo("name");
-   var browserVersion = getBrowserInfo("version");
-   var browserMajorVersion = getBrowserInfo("majorVersion");
-   var isValid = false;
-   if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
-     if (browserMajorVersion >= 3) {
-       isValid = true;
-     }
-   } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-     if (browserMajorVersion >= 7) {
-       isValid = true;
-     }
-   }
-   return isValid;
-}
-
 function getObjAttribute(obj, attribute) {
   attribute = attribute.toLowerCase();
   var attribute_text = "";
@@ -637,23 +617,6 @@ function checkForChanges(f) {
 		}
 		return true;
 	}	
-}
-
-/**
- * Prompt a confirmation when an autosave process has failed. If the wants to
- * stay in the page or navigate to the requested URL
- * @param refererURL String URL to navigate to
- * @return 
- */
-function continueUserAction(requestURL) {
-	if(typeof(requestURL) == 'undefined') { 
-		return false;
-	}	
-	var continueAction = showJSMessage(26, null, false);
-	if(continueAction) {
-		submitCommandForm('DEFAULT', false, null, requestURL, 'appFrame', false, true);
-	}
-	return true;
 }
 
 /**
@@ -1169,23 +1132,6 @@ function openPDF(url, _name, checkChanges) {
 */
 function openPDFFiltered(url, _name, checkChanges) {
   return openPopUp(url, _name, null, null, null, null, checkChanges, null, true, false, null);
-}
-
-/**
-* Opens a pop-up window with the default window parameters
-* @param {String} _name This is the string that just names the new window.
-* @param {Number} height Specifies the height of the content area, viewing area of the new secondary window in pixels. If is null, a fixed height of 250 pixels is used.
-* @param {Number} width Specifies the width of the content area, viewing area of the new secondary window in pixels. If is null, a fixed width of 230 pixels is used.
-* @param {Boolean} closeControl Specifies if the new window should be closed in the unload event.
-* @param {Boolean} showstatus
-* @returns An ID reference pointing to the newly opened browser window.
-* @type Object
-* @see #openPopUp
-*/
-function openPopUpDefaultSize(url, _name, height, width, closeControl, showstatus) {
-  if (height==null) height = 250;
-  if (width==null) width = 230;
-  return openPopUp(url, _name, height, width, null, null, null, null, null, closeControl, null);
 }
 
 /**
@@ -2055,68 +2001,6 @@ function selectDefaultValueFromArray (dataArray, bolSelected) {
 }
 
 /**
-* Change the sorting direction of a list.
-* @param {Object} sourceList A reference to the list that will be sorted.
-* @returns True if everything was right, otherwise false.
-* @type Boolean
-*/
-function changeOrderBy(sourceList) {
-  if (sourceList == null) return false;
-  for (var j=sourceList.length-1;j>=0;j--) {
-    if (sourceList.options[j].selected==true) {
-      var text = sourceList.options[j].text;
-      var value = sourceList.options[j].value;
-      if (value.indexOf("-")!=-1) {
-        value = value.substring(1);
-        text = text.substring(2);
-        text = "/\\" + text;
-      } else {
-        value = "-" + value;
-        text = text.substring(2);
-        text = "\\/" + text;
-      }      
-      sourceList.options[j].value = value;
-      sourceList.options[j].text = text;
-    }
-  }
-  return true;
-}
-
-/**
-* Function Description
-* @param {Object} sourceList A reference to the source list 
-* @param {Object} destinationList A reference to the destination list
-* @param {Boolean} withPrefix
-* @param {Boolean} selectAll
-* @returns Returns false if source or destination list is null.
-* @type Boolean
-*/
-function addListOrderBy(sourceList, destinationList, withPrefix, selectAll) {
-  if (sourceList==null || destinationList==null) return false;
-  if (selectAll==null) selectAll=false;
-  if (withPrefix==null) withPrefix=false;
-  var sourceListLength = sourceList.length;
-  var i = 0;
-  for (var j=0;j<sourceListLength;j++) {
-    if (selectAll || sourceList.options[i].selected==true) {
-      var text = sourceList.options[i].text;
-      var value = sourceList.options[i].value;
-      if (withPrefix) {
-        if (value.indexOf("-")!=-1) value = value.substring(1);
-        if (text.indexOf("/\\")!=-1 || text.indexOf("\\/")!=-1) text = text.substring(2);
-      } else {
-        text = "/\\" + text;
-      }
-      destinationList.options[destinationList.length] = new Option(text, value);
-      sourceList.options[i]=null;
-    } else {
-      i = i + 1;
-    }
-  }
-  return true;
-}
-
-/**
 * Moves elements from one list to another.
 * @param {Object} sourceList A reference to the source list, where the items come from.
 * @param {Object} destinationList A reference to the destination list, where the items will be copied.
@@ -2179,11 +2063,6 @@ function moveElementInList(list, incr) {
     }
   }
   return true;
-}
-
-// Depecated since 2.50, use searchArray instead
-function valorArray(dataArray, searchKey, valueIndex) {
-  searchArray(dataArray, searchKey, valueIndex);
 }
 
 /**
@@ -2341,29 +2220,6 @@ function markCheckedAllElements(field) {
   var total = field.options.length;
   for (var i=0;i<total;i++) {
     field.options[i].selected = true;
-  }
-  return true;
-}
-
-/**
-* Handles the keypress event on textarea fields. Used to control the max length of a field.
-* @param {Object} field A reference to the object in the page. Usually use the 'this' reference.
-* @param {Number} maxLength Max length of the field.
-* @param {Event} evt Event handling object.
-* @returns True if is allowed to keep entering text, otherwise false.
-*/
-function handleFieldMaxLength(field, maxLength, evt) {
-  if (field==null || !field) return false;
-  if (field.value.length>=maxLength) {
-    if (document.layers) keyCode.which=0;
-    else {
-      if (evt==null) evt = window.event;
-      evt.keyCode=0;
-      evt.returnValue = false;
-      evt.cancelBubble = true 
-    }
-    showJSMessage(11);
-    return false;
   }
   return true;
 }
@@ -2634,41 +2490,6 @@ function getAppUrl() {
 
 /**
 * Function Description
-* Resize a window progressively
-* @param {String} id ID of the window
-* @param {Number} topSize 
-* @param {Number} newSize The new size of the window
-* @param {Boolean} grow If the window should 'grow' or set the new size immediately
-*/
-function progressiveHideMenu(id, topSize, newSize, grow) {
-  var frame = parent.document;
-  var object = frame.getElementById(id);
-  if (newSize==null) {
-    var sizes = object.cols.split(",");
-    size = sizes[0];
-    size = size.replace("%", "");
-    size = size.replace("px", "");
-    newSize = parseInt(size);
-  }
-  if (grow==null) grow = !(newSize>0);
-  if (grow) {
-    newSize += 5;
-    if (newSize>=topSize) {
-      object.cols = topSize + "%, *";
-      return true;
-    } else object.cols = newSize + "%, *";
-  } else {
-    newSize -= 5;
-    if (newSize<=0) {
-      object.cols = "0%, *";
-      return true;
-    } else object.cols = newSize + "%, *";
-  }
-  return setTimeout('progressiveHideMenu("' + id + '", ' + topSize + ', ' + newSize + ', ' + grow + ')', 100);
-}
-
-/**
-* Function Description
 * Change the class of an element on the page
 * @param {String} id ID of the element
 * @param {String} class1 The class to search for
@@ -2685,31 +2506,6 @@ function changeClass(id, class1, class2, forced) {
   else if (!forced && element.className.indexOf(class2)!=-1) element.className = element.className.replace(class2, class1);
   return true;
 }
-
-/**
-* Function Description
-* Change the readonly status of a textbox or a textarea
-* @param {String} id ID of the element
-* @param {Boolean} forced: it could be "true" or "false"
-* @returns False if the element was not found, otherwise True.
-* @type Boolean
-*/
-function changeReadOnly(id, forced) {
-  if (forced==null) forced = false;
-  var element = document.getElementById(id);
-  if (!element) return false;
-  if (!forced) {
-    if (element.readOnly!=true) element.readOnly=true;
-    else element.readOnly=false;
-  } else {
-//    forced = forced.toLowerCase();
-    if (forced=="true") element.readOnly=true;
-    else if (forced=="false") element.readOnly=false;
-    else return false;
-  }
-  return true;
-}
-
 
 /**
 * Function Description
@@ -3987,87 +3783,6 @@ function windowUndo(form) {
 }
 
 /**
-* Opens a pop-up window with a processing message. Used for long wait calls.
-* @retunrs A reference ID of the newly opened window 
-* @type Object
-*/
-function processingPopUp() {
-  var complementosNS4 = ""
-
-  var strHeight=100, strWidth=200;
-  var strTop=parseInt((screen.height - strHeight)/2);
-  var strLeft=parseInt((screen.width - strWidth)/2);
-  
-  if (navigator.appName.indexOf("Netscape"))
-    complementosNS4 = "alwaysRaised=1, dependent=1, directories=0, hotkeys=0, menubar=0, ";
-  var complementos = complementosNS4 + "height=" + strHeight + ", width=" + strWidth + ", left=" + strLeft + ", top=" + strTop + ", screenX=" + strLeft + ", screenY=" + strTop + ", location=0, resizable=0, status=0, toolbar=0, titlebar=0";
-  var winPopUp = window.open("", "_blank", complementos);
-  if (winPopUp!=null) {
-    document.onunload = function(){winPopUp.close();};
-    document.onmousedown = function(){winPopUp.close();};
-    winPopUp.document.writeln("<html>\n");
-    winPopUp.document.writeln("<head>\n");
-    winPopUp.document.writeln("<title>Proceso petici&oacute;n</title>\n");
-    winPopUp.document.writeln("<script language=\"javascript\" type=\"text/javascript\">\n");
-    winPopUp.document.writeln("function selectTD(name, seleccionar) {\n");
-    winPopUp.document.writeln("  var obj = getStyle(name);\n");
-    winPopUp.document.writeln("  if (document.layers) {\n");
-    winPopUp.document.writeln("    if (seleccionar) obj.bgColor=\"" + gColorSelected + "\";\n");
-    winPopUp.document.writeln("    else obj.bgColor=\"" + gWhiteColor + "\";\n");
-    winPopUp.document.writeln("  } else {\n");
-    winPopUp.document.writeln("    if (seleccionar) obj.backgroundColor = \"" + gColorSelected + "\";\n");
-    winPopUp.document.writeln("    else obj.backgroundColor=\"" + gWhiteColor + "\";\n");
-    winPopUp.document.writeln("  }\n");
-    winPopUp.document.writeln("  return seleccionar;\n");
-    winPopUp.document.writeln("}\n");
-    winPopUp.document.writeln("function getReference(id) {\n");
-    winPopUp.document.writeln("  if (document.getElementById) return document.getElementById(id);\n");
-    winPopUp.document.writeln("  else if (document.all) return document.all[id];\n");
-    winPopUp.document.writeln("  else if (document.layers) return document.layers[id];\n");
-    winPopUp.document.writeln("  else return null;\n");
-    winPopUp.document.writeln("}\n");
-    winPopUp.document.writeln("function getStyle(id) {\n");
-    winPopUp.document.writeln("  var ref = getReference(id);\n");
-    winPopUp.document.writeln("  if (ref==null || !ref) return null;\n");
-    winPopUp.document.writeln("  return ((document.layers) ? ref : ref.style);\n");
-    winPopUp.document.writeln("}\n");
-    winPopUp.document.writeln("var total=5;\n");
-    winPopUp.document.writeln("function loading(num) {\n");
-    winPopUp.document.writeln(" if (num>=total) {\n");
-    winPopUp.document.writeln("   for (var i=0;i<total;i++) {\n");
-    winPopUp.document.writeln("     selectTD(\"TD\" + i, false);\n");
-    winPopUp.document.writeln("   }\n");
-    winPopUp.document.writeln("   num=-1;\n");
-    winPopUp.document.writeln(" } else {\n");
-    winPopUp.document.writeln("   selectTD(\"TD\" + num, true);\n");
-    winPopUp.document.writeln(" }\n");
-    winPopUp.document.writeln(" setTimeout('loading(' + (++num) + ')', 1000);\n");
-    winPopUp.document.writeln(" return true;\n");
-    winPopUp.document.writeln("}\n");
-    winPopUp.document.writeln("</script>\n");
-    winPopUp.document.writeln("</head>\n");
-    winPopUp.document.writeln("<body leftmargin=\"0\" topmargin=\"0\" marginwidth=\"0\" marginheight=\"0\" onLoad=\"loading(0);\">\n");
-    winPopUp.document.writeln("  <table width=\"80%\" border=\"0\" cellspacing=\"3\" cellpadding=\"0\" align=\"center\">\n");
-    winPopUp.document.writeln("    <tr>\n");
-    winPopUp.document.writeln("      <td colspan=\"5\" align=\"center\"><font color=\"navy\" size=\"5\">PROCESSING...</font></td>\n");
-    winPopUp.document.writeln("    </tr>\n");
-    winPopUp.document.writeln("    <tr bgcolor=\"" + gWhiteColor + "\">\n");
-    winPopUp.document.writeln("      <td width= \"20%\" id=\"TD0\" bgcolor=\"" + gWhiteColor + "\">&nbsp;</td>\n");
-    winPopUp.document.writeln("      <td width=\"20%\" id=\"TD1\" bgcolor=\"" + gWhiteColor + "\">&nbsp;</td>\n");
-    winPopUp.document.writeln("      <td width=\"20%\" id=\"TD2\" bgcolor=\"" + gWhiteColor + "\">&nbsp;</td>\n");
-    winPopUp.document.writeln("      <td width=\"20%\" id=\"TD3\" bgcolor=\"" + gWhiteColor + "\">&nbsp;</td>\n");
-    winPopUp.document.writeln("      <td width=\"20%\" id=\"TD4\" bgcolor=\"" + gWhiteColor + "\">&nbsp;</td>\n");
-    winPopUp.document.writeln("    </tr>\n");
-    winPopUp.document.writeln("  </table>\n");
-    winPopUp.document.writeln("</body>\n");
-    winPopUp.document.writeln("</html>\n");
-    winPopUp.document.close();
-    winPopUp.focus();
-  }
-  return winPopUp;
-}
-
-/**
 * Returns the rounded value of a number to specified precision (number of digits after the decimal point).
 * @param The value to round
 * @param The number of decimal digits to round to.
@@ -4505,36 +4220,6 @@ function resizeAreaHelp() {
 /**
 * Function Description
 */
-function resizeAreaUserOps() {
-  var mnu = document.getElementById("client");
-  var mnuIndex = document.getElementById("clientIndex");
-  var mTopSeparator = document.getElementById("tdSeparator");
-  var mVerSeparator = document.getElementById("tdVerSeparator");
-  var mTopNavigation = document.getElementById("tdNavigation");
-  var body = document.getElementsByTagName("BODY");
-  var h, w;
-  if (isIE9Strict) {
-    h = window.innerHeight;
-    w = window.innerWidth;
-  } else {
-    h = body[0].clientHeight;
-    w = body[0].clientWidth;
-  }
-  var name = window.navigator.userAgent;
-//  mnu.style.width = w - 18 - ((name.indexOf("MSIE")==-1)?2:0);
-  mnu.style.height = h -(mTopSeparator.clientHeight + mTopNavigation.clientHeight) - 2;
-  mnuIndex.style.height = mnu.style.height;
-
-  mnuIndex.style.display = "";
-
-  mnu.style.width= w - (mVerSeparator.clientWidth + mnuIndex.clientWidth) - 2;
-
-  mnu.style.display = "";
-}
-
-/**
-* Function Description
-*/
 function resizeAreaInfo(isOnResize) {
   if (isOnResize==null) isOnResize = false;
   var table_header = document.getElementById("table_header");
@@ -4687,14 +4372,6 @@ function changeAuditIcon(newStatus) {
     setTimeout("getDataBaseStandardMessage('hideAudit', changeAuditIconTitle)",100);
   else
     setTimeout("getDataBaseStandardMessage('showAudit', changeAuditIconTitle)",100);
-}
-
-function changeSearchIcon(filtered){
-  var obj = document.getElementById("buttonSearch") || document.getElementById("buttonSearchFiltered") ;
-  if (!obj) {
-    return false;
-  }
-  obj.className = "Main_ToolBar_Button_Icon Main_ToolBar_Button_Icon_Search"+(filtered?"Filtered":"");
 }
 
  function changeAuditIconTitle(paramXMLParticular, XMLHttpRequestObj) {
@@ -5313,21 +4990,6 @@ function formattedNumberOp(number1, operator, number2, result_maskNumeric, decSe
 }
 
 /**
-* Function that returns the reverse of a given text string
-* @param {String} text The text
-* @return The reversed string
-* @type String
-*/
-function reverseString(text) {
-  var reverseText = "";
-  for (var i=text.length; i>0 ;i--) {
-     reverseText += text.substring(i-1, i);
-  }
-  return reverseText;
-}
-
-
-/**
 * Objet CaretPosition
 */
 function CaretPosition() {
@@ -5747,276 +5409,12 @@ function moreOnLoadDoFunctions() {
 */
 
 /**
-* Start of deprecated functions in 2.40
-*/
-
-var arrTeclas=new Array();
-
-/**
-* Deprecated in 2.40: Builds the keys array on each screen. Each key that we want to use should have this structure.
-* @param {Sting} tecla A text version of the handled key.
-* @param {String} evento Event that we want to fire when the key is is pressed.
-* @param {String} campo Name of the field on the window. If is null, is a global event, for the hole window.
-* @param {String} teclaAuxiliar Text defining the auxiliar key. The value could be CTRL for the Control key, ALT for the Alt, null if we don't have to use an auxiliar key.
-*/
-function Teclas(tecla, evento, campo, teclaAuxiliar) {
-  this.tecla = tecla;
-  this.evento = evento;
-  this.campo = campo;
-  this.teclaAuxiliar = teclaAuxiliar;
-}
-
-/**
-* Deprecated in 2.40: still has one user: multilinea.js 
-* Handles the events execution of keys pressed, based on the events registered in the arrTeclas global array.   
-* @param {Event} CodigoTecla Code of the key pressed.
-* @returns True if the key is not registered in the array, false if a event for this key is registered in arrTeclas array.
-* @type Boolean
-* @see #obtainKeyCode
-*/
-function controlTecla(CodigoTecla) {
-  if (arrTeclas==null || arrTeclas.length==0) return true;
-  if (!CodigoTecla) CodigoTecla = window.event;
-  var tecla = window.event ? CodigoTecla.keyCode : CodigoTecla.which;
-  var target = (CodigoTecla.target?CodigoTecla.target: CodigoTecla.srcElement);
-  //var target = (document.layers) ? CodigoTecla.target : CodigoTecla.srcElement;
-  var total = arrTeclas.length;
-  for (var i=0;i<total;i++) {
-    if (arrTeclas[i]!=null && arrTeclas[i]) {
-      if (tecla == obtainKeyCode(arrTeclas[i].tecla)) {
-        if (arrTeclas[i].teclaAuxiliar==null || arrTeclas[i].teclaAuxiliar=="" || arrTeclas[i].teclaAuxiliar=="null") {
-          if (arrTeclas[i].campo==null || (target!=null && target.name!=null && isIdenticalField(arrTeclas[i].campo, target.name))) {
-            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
-            eval(eventoTrl);
-            return false;
-          }
-        } else if (arrTeclas[i].campo==null || (target!=null && target.name!=null && isIdenticalField(arrTeclas[i].campo, target.name))) {
-          if (arrTeclas[i].teclaAuxiliar=="ctrlKey" && CodigoTecla.ctrlKey && !CodigoTecla.altKey && !CodigoTecla.shiftKey) {
-            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
-            eval(eventoTrl);
-            return false;
-          } else if (arrTeclas[i].teclaAuxiliar=="altKey" && !CodigoTecla.ctrlKey && CodigoTecla.altKey && !CodigoTecla.shiftKey) {
-            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
-            eval(eventoTrl);
-            return false;
-          } else if (arrTeclas[i].teclaAuxiliar=="shiftKey" && !CodigoTecla.ctrlKey && !CodigoTecla.altKey && CodigoTecla.shiftKey) {
-            var eventoTrl = replaceEventString(arrTeclas[i].evento, target.name, arrTeclas[i].campo);
-            eval(eventoTrl);
-            return false;
-          }
-        }
-      }
-    }
-  }
-  return true;
-}
-
-/**
-* End of deprecated functions in 2.40
-*/
-
-/**
 * Start of deprecated functions for 2.50 (will be removed after the 2.50 release)
 */
-
-//Deprecated in 2.50
-var gAUXILIAR=0;
-
-//Deprecated in 2.50 use clearForm instead
-function limpiar(form) {
-  clearForm(form);
-}
-
-//Deprecated in 2.50, use validateNumber instead
-function esNumero(strValue, isFloatAllowed, isNegativeAllowed) {
-  validateNumber(strValue, isFloatAllowed, isNegativeAllowed);
-}
-
-//Deprecated in 2.50, use validateNumberField instead
-function campoNumerico(field, isFloatAllowed, isNegativeAllowed) {
-  validateNumberField(field, isFloatAllowed, isNegativeAllowed);
-}
-
-//Deprecated in 2.50, use openNewBrowser instead
-function abrirNuevoBrowser(url, _name, height, width, top, left) {
-  openNewBrowser(url, _name, height, width, top, left);
-}
-
-//Deprecated in 2.50, use openExcel instead
-function abrirExcel(url, _name, checkChanges) {
-  openExcel(url, _name, checkChanges);
-}
-
-//Deprecated in 2.50, use openPDF instead
-function abrirPDF(url, _name, checkChanges) {
-  openPDF(url, _name, checkChanges);
-}
-
-//Deprecated in 2.50, use openPDFFiltered instead
-function abrirPDFFiltered(url, _name, checkChanges) {
-  openPDFFiltered(url, _name, checkChanges);
-}
-
-//Deprecated in 2.50, use openPopUpDefaultSize instead
-function abrirPopUp(url, _name, height, width, closeControl, showstatus) {
-  openPopUpDefaultSize(url, _name, height, width, closeControl, showstatus);
-}
-
-//Deprecated in 2.50, use openPDFSession instead
-function abrirPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges) {
-  openPDFSession(strPage, strDirectPrinting, strHiddenKey, strHiddenValue, bolCheckChanges);
-}
-
-//Deprecated in 2.50, use openSearchWindow instead
-function abrirBusqueda(url, _name, tabId, windowName, windowId, checkChanges) {
-  openSearchWindow(url, _name, tabId, windowName, windowId, checkChanges);
-}
-
-//Deprecated in 2.50, use autoCompleteNumber instead
-function auto_complete_number(obj, isFloatAllowed, isNegativeAllowed, evt) {
-  autoCompleteNumber(obj, isFloatAllowed, isNegativeAllowed, evt);
-}
 
 //Deprecated in 2.50, use autoCompleteDate instead
 function auto_complete_date(field, fmt) {
   autoCompleteDate(field, fmt);
-}
-
-//Deprecated in 2.50, use autoCompleteTime instead
-function auto_complete_time(field, fmt) {
-  autoCompleteTime(field, fmt);
-}
-
-/**
-* Search an array for a given parent key, and fills a combo with the founded values.
-* @param {Object} combo A reference to the combo that will be filled.
-* @param {Array} arrayDatos A data array that contents the combo info. Must be in the following format:
-*               <ol>
-*                 <li>Parent key or grouping element</li>
-*                 <li>Element key</li>
-*                 <li>Element's string. That will be presented on the screen</li>
-*                 <li>Boolean flag to indicate if the element is a selected item</li>
-*               </ol>
-* @param {String} padre Parent key for search common elements.
-* @param {Boolean} bolSelected Sets if the array's last field will be used for select an item. If this parameters is null or false, the last field on the array is no mandatory. 
-* @param {Boolean} sinBlanco Set if a blank element should be added to the combo. The default value is false.
-* @returns True if everything was right, otherwise false.
-* @Type Boolean
-* Deprecated in 2.50
-*/
-function rellenarComboHijo(combo, arrayDatos, padre, bolSelected, sinBlanco) {
-  var i, value="";
-  for (i = combo.options.length;i>=0;i--)
-    combo.options[i] = null;
-  i=0;
-  if (sinBlanco==null || !sinBlanco)
-    combo.options[i++] = new Option("", "");
-  if (arrayDatos==null) return false;
-
-  var total = arrayDatos.length;
-  for (var j=0;j<total;j++) {
-    if (arrayDatos[j][0]==padre) {
-      combo.options[i] = new Option(arrayDatos[j][2], arrayDatos[j][1]);
-      if (bolSelected!=null && bolSelected && arrayDatos[j][3]=="true") {
-        value = arrayDatos[j][1];
-        combo.options[i].selected = true;
-      }
-      else combo.options[i].selected = false;
-      i++;
-    }
-  }
-  return value;
-}
-
-//Deprecated in 2.50, use fillCombo instead
-function rellenarCombo(combo, dataArray, bolSelected, withoutBlankOption) {
-  fillCombo(combo, dataArray, bolSelected, withoutBlankOption);
-}
-
-//Deprecated since 2.50, use markAll instead
-function marcarTodos(chk, bolMark) {
-  markAll(chk, bolMark);
-}
-
-//Deprecated in 2.50, use changeComboData instead
-function cambiarListaCombo(combo, dataArray, key, withBlankOption) {
-  changeComboData(combo, dataArray, key, withBlankOption);
-}
-
-//Deprecated in 2.50, use clearList instead
-function limpiarLista(field) {
-  clearList(field);
-}
-
-//Deprecated in 2.50, use clearSelectedElements instead
-function eliminarElementosList(field) {
-  clearSelectedElements(field);
-}
-
-/**
-* Generates an Array based on a list of checkboxs selected.
-* @param {Form} frm A reference to the form where the checkbox are contained.
-* @param {Object} check A reference to the checkboxs list
-* @param {String} text The textbox that has the name/index of the array. 
-* @param {Array} resultado A reference parameter with the modified/generated array
-* Deprecated in 2.50
-*/
-function generarArrayChecks(frm, check, text, resultado) {
-  var n=0;
-  if (check==null) {
-    resultado=null;
-    return;
-  }
-  if (!check.length || check.length<=1) {
-    if (check.checked) {
-      var texto = eval(frm.name + "." + text + check.value);
-      var valor = "";
-      if (texto!=null) {
-        if (!texto.length || texto.length<=1) valor = texto.value;
-        else valor = texto[0].value;
-      }
-      resultado[0] = new Array(check.value, valor);
-    }
-  } else {
-    for (var i = check.length-1;i>=0;i--) {
-      if (check[i].checked) {
-        var valor = "";
-        var texto = eval(frm.name + "." + text + check[i].value);
-        if (texto!=null) {
-          if (!texto.length || texto.length<=1) valor = texto.value;
-          else valor = texto[0].value;
-        }
-        resultado[n++] = new Array(check[i].value, valor);
-      }
-    }
-  }
-}
-
-//Deprecation in 2.50, use markCheckedAllElements instead
-function seleccionarListCompleto(field) {
-  markCheckedAllElements(field);
-}
-
-//Deprecation in 2.50, use markCheckedAllElements instead
-function seleccionarListCompleto(field) {
-  markCheckedAllElements(field);
-}
-
-/**
-* @name menuContextual
-* @format function menuContextual()
-* @comment Se trata de un funciÃ³n manejadora de eventos que sirve para el control del click con el 
-*          botÃ³n derecho sobre la pÃ¡gina. Esta funciÃ³n no permite dicho evento, presentando un mensaje 
-*          en tal caso.
-* Deprecated in 2.50
-*/
-function menuContextual(evt) {
-  var boton = (evt==null)?event.button:evt.which;
-  if (boton == 3 || boton == 2) {
-    if (document.all) alert('El boton derecho estÃ¡ deshabilitado por pruebas');
-    return false;
-  }
-  return true;
 }
 
 /**
