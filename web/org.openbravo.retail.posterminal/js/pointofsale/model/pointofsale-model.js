@@ -32,7 +32,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     // Removing Orders which are created in other users session
     ordersNotPaid = ordersNotPaid.filter(order => {
-      return order.session !== OB.MobileApp.model.get('session');
+      return order.session === OB.MobileApp.model.get('session');
     });
 
     OB.UTIL.HookManager.executeHooks(
@@ -47,6 +47,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           function() {
             OB.MobileApp.model.off('window:ready', null, model);
             const addNewOrderCallback = () => {
+              OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
               if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
                 // If there are no pending orders,
                 //  add an initial empty order

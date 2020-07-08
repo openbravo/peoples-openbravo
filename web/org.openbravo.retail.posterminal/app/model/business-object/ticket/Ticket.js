@@ -53,21 +53,4 @@ if (!OB.App.StateBackwardCompatibility) {
     initialState,
     options
   );
-
-  OB.UTIL.HookManager.registerHook(
-    'ModelReady:pointOfSale',
-    (args, callbacks) => {
-      const backboneCurrentTicket = OB.MobileApp.model.receipt;
-
-      // Associate backbone current ticket model with BackwardCompatDemoTicket Sate model
-      // So that changes in one are reflected in the other
-      OB.App.StateBackwardCompatibility.bind(
-        OB.App.State.Ticket,
-        backboneCurrentTicket
-      );
-      backboneCurrentTicket.trigger('change'); // forces backbone -> state propagation
-
-      OB.UTIL.HookManager.callbackExecutor(args, callbacks);
-    }
-  );
 }

@@ -113,20 +113,21 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
-        "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
-        "utils/servicesUtils", "utils/remoteUtils", "components/keypadcoins", "data/dataordersave",
-        "data/dataordertaxes", "data/datacustomersave", "data/datacustomeraddrsave",
-        "components/modalreceipts", "components/modalorderselector",
-        "components/modalcrossstoreselector", "components/storeinformation",
-        "components/modalmultiorderslayaway", "components/modalcategorytree",
-        "components/rendercategory", "components/renderproduct", "components/renderproductch",
-        "components/modalpayment", "components/modalprovidergroup", "components/standardprovider",
-        "components/mockprovider", "components/modalprovidergroupvoid",
-        "components/standardprovidervoid", "components/mockprovidervoid",
-        "components/renderorderline", "components/rendermultiorderline", "components/order",
-        "components/orderdetails", "components/businesspartner",
-        "components/businesspartner_selector", "components/bplocation", // Button for selecting
-                                                                        // customer address
+        "utils/cashManagementUtils", "utils/ticketUtils", "utils/ticketCloseUtils",
+        "utils/prepaymentUtils", "utils/servicesUtils", "utils/remoteUtils",
+        "components/keypadcoins", "data/dataordersave", "data/dataordertaxes",
+        "data/datacustomersave", "data/datacustomeraddrsave", "components/modalreceipts",
+        "components/modalorderselector", "components/modalcrossstoreselector",
+        "components/storeinformation", "components/modalmultiorderslayaway",
+        "components/modalcategorytree", "components/rendercategory", "components/renderproduct",
+        "components/renderproductch", "components/modalpayment", "components/modalprovidergroup",
+        "components/standardprovider", "components/mockprovider",
+        "components/modalprovidergroupvoid", "components/standardprovidervoid",
+        "components/mockprovidervoid", "components/renderorderline",
+        "components/rendermultiorderline", "components/order", "components/orderdetails",
+        "components/businesspartner", "components/businesspartner_selector",
+        "components/bplocation", // Button for selecting
+                                 // customer address
         "components/bplocationship", "components/customershipbill",
         "components/listreceiptscounter", "components/menu", "components/salesrepresentative",
         "components/modalselectterminal", "components/popupdraweropened",
