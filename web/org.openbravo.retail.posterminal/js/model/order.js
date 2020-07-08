@@ -949,9 +949,9 @@
       return affectedLines ? affectedLines : null;
     },
 
-    isCalculateGrossLocked: null,
+    isCalculateGrossLocked: false,
 
-    isCalculateReceiptLocked: null,
+    isCalculateReceiptLocked: false,
 
     setIsCalculateGrossLockState: function(state) {
       this.isCalculateGrossLocked = state;
