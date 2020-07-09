@@ -2527,7 +2527,6 @@ enyo.kind({
       !OB.MobileApp.model.receipt.get('doCancelAndReplace') &&
       !OB.MobileApp.model.receipt.get('cancelLayaway')
     ) {
-      const receipt = OB.MobileApp.model.receipt;
       const startCompleteTicket = () => {
         return OB.UTIL.ProcessController.start('completeReceipt');
       };
@@ -2537,11 +2536,7 @@ enyo.kind({
           completeTicketExecution
         );
       };
-      const completeTicket = async complete => {
-        if (!complete) {
-          return;
-        }
-
+      const completeTicket = async () => {
         try {
           OB.App.StateBackwardCompatibility.getInstance(
             'Ticket'
@@ -2602,11 +2597,13 @@ enyo.kind({
           });
 
           // Open drawer
-          receipt.trigger('checkOpenDrawer');
+          OB.MobileApp.model.receipt.trigger('checkOpenDrawer');
 
           // RFID
           if (OB.UTIL.RfidController.isRfidConfigured()) {
-            OB.UTIL.RfidController.processRemainingCodes(receipt);
+            OB.UTIL.RfidController.processRemainingCodes(
+              OB.MobileApp.model.receipt
+            );
             OB.UTIL.RfidController.updateEpcBuffers();
           }
 
@@ -2620,18 +2617,21 @@ enyo.kind({
           // Show ticket saved message
           OB.UTIL.showSuccess(
             OB.I18N.getLabel(
-              receipt.get('isQuotation')
+              OB.MobileApp.model.receipt.get('isQuotation')
                 ? 'OBPOS_QuotationSaved'
-                : receipt.get('orderType') === 2 || receipt.get('isLayaway')
+                : OB.MobileApp.model.receipt.get('orderType') === 2 ||
+                  OB.MobileApp.model.receipt.get('isLayaway')
                 ? 'OBPOS_MsgLayawaySaved'
                 : 'OBPOS_MsgReceiptSaved',
-              [receipt.get('documentNo')]
+              [OB.MobileApp.model.receipt.get('documentNo')]
             )
           );
 
           // FIXME: Use TicketListUtils
           // Remove completed ticket
-          OB.MobileApp.model.orderList.deleteCurrentFromDatabase(receipt);
+          OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
+            OB.MobileApp.model.receipt
+          );
           if (
             OB.MobileApp.model.hasPermission(
               'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
@@ -2655,17 +2655,26 @@ enyo.kind({
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreOrderSave',
         {
-          receipt
+          receipt: OB.MobileApp.model.receipt
         },
         function(args) {
-          completeTicket(!args || !args.cancellation);
+          if (args && args.cancellation) {
+            finishCompleteTicket(completeTicketExecution);
+            return;
+          }
+          const receiptForPostSyncReceipt = OB.UTIL.clone(
+            OB.MobileApp.model.receipt
+          );
+          completeTicket();
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PostSyncReceipt',
             {
-              receipt: OB.UTIL.clone(receipt)
+              receipt: receiptForPostSyncReceipt,
+              syncSuccess: true
             },
             function(args) {
               finishCompleteTicket(completeTicketExecution);
+              return;
             }
           );
         }
