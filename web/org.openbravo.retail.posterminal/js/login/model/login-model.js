@@ -1785,6 +1785,26 @@
           this.dialog.show();
         }
       } else {
+        if (OB.MobileApp.model.hasPermission('OBPOS_MaxTimeInOffline', true)) {
+          OB.UTIL.localStorage.setItem(
+            'maxTimeInOffline',
+            OB.MobileApp.model.hasPermission('OBPOS_MaxTimeInOffline', true)
+          );
+        }
+        if (
+          OB.MobileApp.model.hasPermission(
+            'OBPOS_offlineSessionTimeExpiration',
+            true
+          )
+        ) {
+          OB.UTIL.localStorage.setItem(
+            'offlineSessionTimeExpiration',
+            OB.MobileApp.model.hasPermission(
+              'OBPOS_offlineSessionTimeExpiration',
+              true
+            )
+          );
+        }
         callback();
       }
     },
