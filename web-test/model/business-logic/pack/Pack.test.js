@@ -52,37 +52,49 @@ describe('product pack infrastructure', () => {
 
   describe('OB.App.ProductPackProvider', () => {
     test('find standard pack', async () => {
-      const productPack = {
-        id: '0',
-        ispack: true,
-        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      const productInfo = {
+        product: {
+          id: '0',
+          ispack: true,
+          productCategory: 'BE5D42E554644B6AA262CCB097753951'
+        },
+        options: {},
+        attrs: {}
       };
       const pack = OB.App.ProductPackProvider.getPack(
-        productPack,
+        productInfo,
         discountRules
       );
       expect(pack).not.toBeUndefined();
     });
 
     test('pack not found', async () => {
-      const productPack = {
-        id: '2',
-        ispack: true,
-        productCategory: 'unexisting'
+      const productInfo = {
+        product: {
+          id: '2',
+          ispack: true,
+          productCategory: 'unexisting'
+        },
+        options: {},
+        attrs: {}
       };
       const pack = OB.App.ProductPackProvider.getPack(
-        productPack,
+        productInfo,
         discountRules
       );
       expect(pack).toBeUndefined();
     });
 
     test('no pack for regular product', async () => {
-      const regularProduct = {
-        id: '2'
+      const regularProductInfo = {
+        product: {
+          id: '2'
+        },
+        options: {},
+        attrs: {}
       };
       const pack = OB.App.ProductPackProvider.getPack(
-        regularProduct,
+        regularProductInfo,
         discountRules
       );
       expect(pack).toBeUndefined();
@@ -91,13 +103,17 @@ describe('product pack infrastructure', () => {
 
   describe('standard pack implementation', () => {
     test('process pack', async () => {
-      const productPack = {
-        id: '0',
-        ispack: true,
-        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      const productInfo = {
+        product: {
+          id: '0',
+          ispack: true,
+          productCategory: 'BE5D42E554644B6AA262CCB097753951'
+        },
+        options: {},
+        attrs: {}
       };
       const pack = OB.App.ProductPackProvider.getPack(
-        productPack,
+        productInfo,
         discountRules
       );
       const packProducts = await pack.process();
@@ -105,28 +121,30 @@ describe('product pack infrastructure', () => {
         {
           product: { id: 'product1' },
           qty: 1,
-          belongsToPack: true,
-          options: {},
+          options: { packId: '0', belongsToPack: true },
           attrs: {}
         },
         {
           product: { id: 'product2' },
           qty: 2,
-          belongsToPack: true,
-          options: {},
+          options: { packId: '0', belongsToPack: true },
           attrs: {}
         }
       ]);
     });
 
     test('expired pack', async () => {
-      const productPack = {
-        id: '1',
-        ispack: true,
-        productCategory: 'BE5D42E554644B6AA262CCB097753951'
+      const productInfo = {
+        product: {
+          id: '1',
+          ispack: true,
+          productCategory: 'BE5D42E554644B6AA262CCB097753951'
+        },
+        options: {},
+        attrs: {}
       };
       const pack = OB.App.ProductPackProvider.getPack(
-        productPack,
+        productInfo,
         discountRules
       );
       let error;

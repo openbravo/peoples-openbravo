@@ -17,11 +17,13 @@
    */
   class ProductPack {
     /**
-     * @param {object} product - The product pack
+     * @param {object} product - The product pack information (product, options and attrs)
      * @param {object} discountRules - The available discount rules
      */
-    constructor(product, discountRules) {
-      this.product = product;
+    constructor(productInfo, discountRules) {
+      this.product = productInfo.product;
+      this.options = productInfo.options;
+      this.attrs = productInfo.attrs;
       this.discountRules = discountRules;
     }
 
@@ -33,7 +35,13 @@
     async process() {
       const products = await this.getProducts();
       return products.map(p => {
-        return { ...p, options: p.options || {}, attrs: p.attrs || {} };
+        const options = p.options || {};
+        const attrs = p.attrs || {};
+        return {
+          ...p,
+          options: { ...this.options, ...options },
+          attrs: { ...this.attrs, ...attrs }
+        };
       });
     }
 

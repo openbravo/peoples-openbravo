@@ -575,10 +575,7 @@
 
     const { discountRules } = payload.extraData;
     const packProcessings = payload.products.map(async pi => {
-      const pack = OB.App.ProductPackProvider.getPack(
-        pi.product,
-        discountRules
-      );
+      const pack = OB.App.ProductPackProvider.getPack(pi, discountRules);
       if (!pack) {
         return pi;
       }

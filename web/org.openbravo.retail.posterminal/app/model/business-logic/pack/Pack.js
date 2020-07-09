@@ -28,7 +28,10 @@
         return {
           product,
           qty: discountProduct.obdiscQty,
-          belongsToPack: true
+          options: {
+            belongsToPack: true,
+            packId: this.product.id
+          }
         };
       });
 
