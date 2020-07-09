@@ -1144,10 +1144,6 @@
           return newLine;
         }
 
-        if (newLine.obposQtytodeliver) {
-          return newLine;
-        }
-
         if (
           newLine.product.productType === 'S' &&
           newLine.product.isLinkedToProduct
