@@ -94,6 +94,12 @@
         ? rulesAndZones
         : [...rulesAndZones, updatedRule];
     };
+    const checkValidFromDate = rule => {
+      return (
+        new Date(rule.validFromDate) <=
+        (line.originalOrderDate ? new Date(line.originalOrderDate) : new Date())
+      );
+    };
     const checkCountry = rule => {
       return (
         equals(rule.destinationCountry, line.country || ticket.country) ||
@@ -230,7 +236,7 @@
     };
 
     return rules
-      .filter(rule => checkTaxCategory(rule))
+      .filter(rule => checkValidFromDate(rule) && checkTaxCategory(rule))
       .flatMap(rule => joinRuleAndZone(rule))
       .filter(rule => checkCountry(rule) && checkRegion(rule))
       .sort(

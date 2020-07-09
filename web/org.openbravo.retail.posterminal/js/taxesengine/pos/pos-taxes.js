@@ -41,6 +41,7 @@
               : line.get('net'),
           qty: line.get('qty'),
           taxExempt: line.get('taxExempt'),
+          originalOrderDate: line.get('originalOrderDate'),
           product: {
             id: line.get('product').id,
             taxCategory: line.get('product').get('taxCategory'),
