@@ -2542,6 +2542,15 @@ enyo.kind({
             'Ticket'
           ).resetStateFromBackbone();
 
+          // Check ticket updated
+          await new Promise((resolve, reject) => {
+            OB.UTIL.TicketCloseUtils.checkOrdersUpdated(
+              OB.MobileApp.model.receipt,
+              resolve,
+              reject
+            );
+          });
+
           // Complete Ticket action
           await OB.App.State.Global.completeTicket({
             terminal: {
