@@ -1469,7 +1469,7 @@ isc.OBSelectorItem.addProperties({
   },
 
   mapDisplayToValue: function(value) {
-    if (value === '') {
+    if (value === '' || value === null) {
       return null;
     }
     return this.Super('mapDisplayToValue', arguments);
