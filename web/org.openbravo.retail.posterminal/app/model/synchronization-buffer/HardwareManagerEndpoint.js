@@ -57,7 +57,7 @@
           this.displayTotal(message.messageObj);
           break;
         case 'printTicket':
-          await this.printTicket(message.messageObj);
+          this.printTicket(message.messageObj);
           break;
         case 'printTicketLine':
           this.printTicketLine(message.messageObj);
@@ -84,13 +84,13 @@
       }
     }
 
-    async printTicket(messageData) {
+    printTicket(messageData) {
       if (!this.printer) {
         throw new Error(`The endpoint has no printer assigned`);
       }
       try {
         const order = toOrder(messageData.data.ticket);
-        await this.printer.doPrint(order, {
+        this.printer.doPrint(order, {
           ...messageData.data.printSettings
         });
       } catch (error) {
