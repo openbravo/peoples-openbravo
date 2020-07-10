@@ -35,10 +35,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
   static {
     // Set dependency on Mobile Core app
-    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME,
-        Arrays.asList(MobileCoreConstants.RETAIL_CORE,
-            DiscountsEngineAppComponentProvider.DISCOUNTS_APP,
-            TaxesEngineAppComponentProvider.TAXES_APP));
+    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME, Arrays.asList( //
+        MobileCoreConstants.RETAIL_CORE, //
+        MobileCoreConstants.BUSINESSLOGIC_APP, //
+        DiscountsEngineAppComponentProvider.DISCOUNTS_APP, //
+        TaxesEngineAppComponentProvider.TAXES_APP));
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
@@ -287,132 +288,128 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     final String[] cssDependency = { "obpos-main" };
 
-    final ArrayList<String> appDependency = new ArrayList<>();
+    // BusinessLogicEngine
+    globalResources.addAll(Arrays.asList( //
 
-    // Masterdata
-    appDependency.add("model/masterdata/BPCategoryModel");
-    appDependency.add("model/masterdata/BPSetLineModel");
-    appDependency.add("model/masterdata/BusinessPartnerModel");
-    appDependency.add("model/masterdata/BusinessPartnerLocationModel");
-    appDependency.add("model/masterdata/CountryModel");
-    appDependency.add("model/masterdata/PriceListModel");
-    appDependency.add("model/masterdata/ProductModel");
-    appDependency.add("model/masterdata/ProductPriceModel");
-    appDependency.add("model/masterdata/ProductCategoryTreeModel");
-    appDependency.add("model/masterdata/CharacteristicModel");
-    appDependency.add("model/masterdata/CharacteristicValueModel");
-    appDependency.add("model/masterdata/ProductCharacteristicValueModel");
-    appDependency.add("model/masterdata/ProductBOMModel");
-    appDependency.add("model/masterdata/ProductServiceLinkedModel");
-    appDependency.add("model/masterdata/SalesRepresentativeModel");
-    appDependency.add("model/masterdata/ServicePriceRuleModel");
-    appDependency.add("model/masterdata/ServicePriceRuleVersionModel");
-    appDependency.add("model/masterdata/ServicePriceRuleRangeModel");
-    appDependency.add("model/masterdata/ServicePriceRuleRangePricesModel");
-    appDependency.add("model/masterdata/ServiceProductModel");
-    appDependency.add("model/masterdata/ServiceProductCategoryModel");
-    appDependency.add("model/masterdata/TaxCategoryModel");
-    appDependency.add("model/masterdata/TaxCategoryBOMModel");
-    appDependency.add("model/masterdata/TaxRateModel");
-    appDependency.add("model/masterdata/TaxZoneModel");
-    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel");
-    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerModel");
-    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerSetModel");
-    appDependency.add("model/masterdata/discount/DiscountFilterCharacteristicModel");
-    appDependency.add("model/masterdata/discount/DiscountFilterPriceListModel");
-    appDependency.add("model/masterdata/discount/DiscountFilterProductCategoryModel");
-    appDependency.add("model/masterdata/discount/DiscountFilterProductModel");
-    appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
-    appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerExtRef");
-    appDependency.add("model/masterdata/discount/DiscountModel");
-    // Business-Logic
-    appDependency.add("model/business-logic/stock/StockChecker");
-    appDependency.add("model/business-logic/pack/ProductPack");
-    appDependency.add("model/business-logic/pack/ProductPackProvider");
-    appDependency.add("model/business-logic/pack/Pack");
-    appDependency.add("model/business-logic/service/ServicesFilter");
-    // Business-Object
-    appDependency.add("model/business-object/document-sequence/DocumentSequence");
-    appDependency.add("model/business-object/document-sequence/DocumentSequenceUtils");
-    appDependency.add("model/business-object/document-sequence/actions/InitializeSequence");
-    appDependency.add("model/business-object/document-sequence/actions/IncreaseSequence");
-    appDependency.add("model/business-object/document-sequence/actions/DecreaseSequence");
+        // Masterdata
+        businesslogic("app/model/masterdata/BPCategoryModel"), //
+        businesslogic("app/model/masterdata/BPSetLineModel"), //
+        businesslogic("app/model/masterdata/BusinessPartnerModel"), //
+        businesslogic("app/model/masterdata/BusinessPartnerLocationModel"), //
+        businesslogic("app/model/masterdata/CountryModel"), //
+        businesslogic("app/model/masterdata/PriceListModel"), //
+        businesslogic("app/model/masterdata/ProductModel"), //
+        businesslogic("app/model/masterdata/ProductPriceModel"), //
+        businesslogic("app/model/masterdata/ProductCategoryTreeModel"), //
+        businesslogic("app/model/masterdata/CharacteristicModel"), //
+        businesslogic("app/model/masterdata/CharacteristicValueModel"), //
+        businesslogic("app/model/masterdata/ProductCharacteristicValueModel"), //
+        businesslogic("app/model/masterdata/ProductBOMModel"), //
+        businesslogic("app/model/masterdata/ProductServiceLinkedModel"), //
+        businesslogic("app/model/masterdata/SalesRepresentativeModel"), //
+        businesslogic("app/model/masterdata/ServicePriceRuleModel"), //
+        businesslogic("app/model/masterdata/ServicePriceRuleVersionModel"), //
+        businesslogic("app/model/masterdata/ServicePriceRuleRangeModel"), //
+        businesslogic("app/model/masterdata/ServicePriceRuleRangePricesModel"), //
+        businesslogic("app/model/masterdata/ServiceProductModel"), //
+        businesslogic("app/model/masterdata/ServiceProductCategoryModel"), //
+        businesslogic("app/model/masterdata/TaxCategoryModel"), //
+        businesslogic("app/model/masterdata/TaxCategoryBOMModel"), //
+        businesslogic("app/model/masterdata/TaxRateModel"), //
+        businesslogic("app/model/masterdata/TaxZoneModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterBusinessPartnerGroupModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterBusinessPartnerModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterBusinessPartnerSetModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterCharacteristicModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterPriceListModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterProductCategoryModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterProductModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterRoleModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterBusinessPartnerExtRef"), //
+        businesslogic("app/model/masterdata/discount/DiscountModel"), //
+        // Business-Logic
+        businesslogic("app/model/business-logic/stock/StockChecker"), //
+        businesslogic("app/model/business-logic/pack/ProductPack"), //
+        businesslogic("app/model/business-logic/pack/ProductPackProvider"), //
+        businesslogic("app/model/business-logic/pack/Pack"), //
+        businesslogic("app/model/business-logic/service/ServicesFilter"), //
+        // Business-Object
+        businesslogic("app/model/business-object/document-sequence/DocumentSequence"), //
+        businesslogic("app/model/business-object/document-sequence/DocumentSequenceUtils"), //
+        businesslogic("app/model/business-object/document-sequence/actions/InitializeSequence"), //
+        businesslogic("app/model/business-object/document-sequence/actions/IncreaseSequence"), //
+        businesslogic("app/model/business-object/document-sequence/actions/DecreaseSequence"), //
 
-    appDependency.add("model/business-object/business-partner/actions/SynchronizeBusinessPartner");
-    appDependency.add("model/business-object/business-partner/actions/SynchronizeBusinessPartnerLocation");
+        businesslogic("app/model/business-object/business-partner/actions/SynchronizeBusinessPartner"), //
+        businesslogic(
+            "app/model/business-object/business-partner/actions/SynchronizeBusinessPartnerLocation"), //
 
-    appDependency.add("model/business-object/safebox/SynchronizeCountSafeBox");
+        businesslogic("app/model/business-object/safebox/SynchronizeCountSafeBox"), //
 
-    // ticket model
-    appDependency.add("model/business-object/ticket/Ticket");
-    appDependency.add("model/business-object/ticket/TicketUtils");
-    appDependency.add("model/business-object/ticket/CompleteTicketUtils");
-    appDependency.add("model/business-object/ticket/actions/CompleteTicket");
-    appDependency.add("model/business-object/ticket/actions/CompleteCreditTicket");
-    appDependency.add("model/business-object/ticket/actions/CancelTicket");
-    appDependency.add("model/business-object/ticket/actions/ReplaceTicket");
-    appDependency.add("model/business-object/ticket/actions/CompleteQuotation");
-    appDependency.add("model/business-object/ticket/actions/CompleteLayaway");
-    appDependency.add("model/business-object/ticket/actions/VoidLayaway");
-    appDependency.add("model/business-object/ticket/actions/DeleteTicket");
-    appDependency.add("model/business-object/ticket/actions/CompleteMultiTicket");
-    appDependency.add("model/business-object/ticket/actions/CompleteMultiCreditTicket");
-    appDependency.add("model/business-object/ticket/CompleteMultiTicketUtils");
-    appDependency.add("model/business-object/ticket/AddApprovalsModelHook");
-    appDependency.add("model/business-object/ticket/CalculateTotalsModelHook");
-    appDependency.add("model/business-object/ticket/actions/AddProduct");
-    appDependency.add("model/business-object/ticket/actions/CreateEmptyTicket");
-    appDependency.add("model/business-object/ticket/actions/DisplayTotal");
-    appDependency.add("model/business-object/ticket/actions/SplitLine");
-    appDependency.add("model/business-object/ticket/actions/SetLinePrice");
-    appDependency.add("model/business-object/ticket/actions/AddByTotalPromotion");
-    appDependency.add("model/business-object/ticket/actions/RemovePromotion");
-    appDependency.add("model/business-object/ticket/actions/ReactivateQuotation");
-    appDependency.add("model/business-object/ticket/actions/RejectQuotation");
-    appDependency.add("model/business-object/ticket/actions/DeleteLine");
-                                                                           
-    appDependency.add("model/business-object/ticket/actions/CheckTicketForPayOpenTickets");
-    appDependency.add("model/business-object/ticket/actions/RemovePayment");
-    appDependency.add("model/business-object/ticket/AddPaymentUtils");
-    appDependency.add("model/business-object/ticket/actions/AddPayment");
-    appDependency.add("model/business-object/ticket/actions/AddPaymentRounding");
+        // ticket model
+        businesslogic("app/model/business-object/ticket/Ticket"), //
+        businesslogic("app/model/business-object/ticket/TicketUtils"), //
+        businesslogic("app/model/business-object/ticket/CompleteTicketUtils"), //
+        businesslogic("app/model/business-object/ticket/actions/CompleteTicket"), //
+        businesslogic("app/model/business-object/ticket/actions/CompleteCreditTicket"), //
+        businesslogic("app/model/business-object/ticket/actions/CancelTicket"), //
+        businesslogic("app/model/business-object/ticket/actions/ReplaceTicket"), //
+        businesslogic("app/model/business-object/ticket/actions/CompleteQuotation"), //
+        businesslogic("app/model/business-object/ticket/actions/CompleteLayaway"), //
+        businesslogic("app/model/business-object/ticket/actions/VoidLayaway"), //
+        businesslogic("app/model/business-object/ticket/actions/DeleteTicket"), //
+        businesslogic("app/model/business-object/ticket/actions/CompleteMultiTicket"), //
+        businesslogic("app/model/business-object/ticket/actions/CompleteMultiCreditTicket"), //
+        businesslogic("app/model/business-object/ticket/CompleteMultiTicketUtils"), //
+        businesslogic("app/model/business-object/ticket/AddApprovalsModelHook"), //
+        businesslogic("app/model/business-object/ticket/CalculateTotalsModelHook"), //
+        businesslogic("app/model/business-object/ticket/actions/AddProduct"), //
+        businesslogic("app/model/business-object/ticket/actions/CreateEmptyTicket"), //
+        businesslogic("app/model/business-object/ticket/actions/DisplayTotal"), //
+        businesslogic("app/model/business-object/ticket/actions/SplitLine"), //
+        businesslogic("app/model/business-object/ticket/actions/SetLinePrice"), //
+        businesslogic("app/model/business-object/ticket/actions/AddByTotalPromotion"), //
+        businesslogic("app/model/business-object/ticket/actions/RemovePromotion"), //
+        businesslogic("app/model/business-object/ticket/actions/ReactivateQuotation"), //
+        businesslogic("app/model/business-object/ticket/actions/RejectQuotation"), //
+        businesslogic("app/model/business-object/ticket/actions/DeleteLine"), //
+        
+        businesslogic("app/model/business-object/ticket/actions/CheckTicketForPayOpenTickets"), //
+        businesslogic("app/model/business-object/ticket/actions/RemovePayment"), //
+        businesslogic("app/model/business-object/ticket/AddPaymentUtils"), //
+        businesslogic("app/model/business-object/ticket/actions/AddPayment"), //
+        businesslogic("app/model/business-object/ticket/actions/AddPaymentRounding"), //
 
-    // Cashup
-    appDependency.add("model/business-object/cashup/Cashup");
-    appDependency.add("model/business-object/cashup/CashupUtils");
-    appDependency.add("model/business-object/cashup/PaymentMethodUtils");
-    appDependency.add("model/business-object/cashup/CashManagementUtils");
-    appDependency.add("model/business-object/cashup/actions/CancelCashManagements");
-    appDependency.add("model/business-object/cashup/actions/CompleteCashupAndCreateNew");
-    appDependency.add("model/business-object/cashup/actions/CreateCashManagement");
-    appDependency.add("model/business-object/cashup/actions/InitCashup");
-    appDependency.add("model/business-object/cashup/actions/ProcessCashManagements");
-    appDependency.add("model/business-object/cashup/actions/UpdateCashup");
+        // Cashup
+        businesslogic("app/model/business-object/cashup/Cashup"), //
+        businesslogic("app/model/business-object/cashup/CashupUtils"), //
+        businesslogic("app/model/business-object/cashup/PaymentMethodUtils"), //
+        businesslogic("app/model/business-object/cashup/CashManagementUtils"), //
+        businesslogic("app/model/business-object/cashup/actions/CancelCashManagements"), //
+        businesslogic("app/model/business-object/cashup/actions/CompleteCashupAndCreateNew"), //
+        businesslogic("app/model/business-object/cashup/actions/CreateCashManagement"), //
+        businesslogic("app/model/business-object/cashup/actions/InitCashup"), //
+        businesslogic("app/model/business-object/cashup/actions/ProcessCashManagements"), //
+        businesslogic("app/model/business-object/cashup/actions/UpdateCashup"), //
 
-    // ticket list model
-    appDependency.add("model/business-object/ticket-list/TicketList");
-    appDependency.add("model/business-object/ticket-list/TicketListUtils");
-    appDependency.add("model/business-object/ticket-list/actions/AddNewTicket");
-    appDependency.add("model/business-object/ticket-list/actions/AddNewQuotation");
-    appDependency.add("model/business-object/ticket-list/actions/BringTicketToSession");
-    appDependency.add("model/business-object/ticket-list/actions/LoadTicket");
-    appDependency
-        .add("model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets");
-    appDependency.add("model/business-object/ticket-list/actions/UpdateBPInAllTickets");
-    appDependency.add("model/business-object/ticket-list/actions/SaveTicket");
-
-    // Synchronization Buffer
-    appDependency.add("model/synchronization-buffer/HardwareManagerEndpoint");
-
-    // External Device
-    appDependency.add("external-device/actions/Print");
-    appDependency.add("external-device/actions/PrintLine");
-    appDependency.add("external-device/actions/PrintWelcome");
-
-    for (final String resource : appDependency) {
-      globalResources.add(createComponentResource(ComponentResourceType.Static,
-          prefix + "/app/" + resource + ".js", POSUtils.APP_NAME));
-    }
+        // ticket list model
+        businesslogic("app/model/business-object/ticket-list/TicketList"), //
+        businesslogic("app/model/business-object/ticket-list/TicketListUtils"), //
+        businesslogic("app/model/business-object/ticket-list/actions/AddNewTicket"), //
+        businesslogic("app/model/business-object/ticket-list/actions/AddNewQuotation");
+        businesslogic("app/model/business-object/ticket-list/actions/BringTicketToSession"), //
+        businesslogic("app/model/business-object/ticket-list/actions/LoadTicket"), //
+        businesslogic("app/model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets"), //
+        businesslogic("app/model/business-object/ticket-list/actions/UpdateBPInAllTickets"), //
+        businesslogic("app/model/business-object/ticket-list/actions/SaveTicket"), //
+        
+        // Synchronization Buffer
+        businesslogic("app/model/synchronization-buffer/HardwareManagerEndpoint"), //
+    
+        // External Device
+        businesslogic("app/external-device/actions/Print"), //
+        businesslogic("app/external-device/actions/PrintLine"), // 
+        businesslogic("app/external-device/actions/PrintWelcome")));
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
@@ -428,5 +425,14 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     }
 
     return globalResources;
+  }
+
+  private ComponentResource js(String resource, String app) {
+    return createComponentResource(ComponentResourceType.Static,
+        "web/" + POSUtils.MODULE_JAVA_PACKAGE + "/" + resource + ".js", app);
+  }
+
+  private ComponentResource businesslogic(String resource) {
+    return js(resource, MobileCoreConstants.BUSINESSLOGIC_APP);
   }
 }
