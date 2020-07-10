@@ -132,7 +132,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   },
 
   loadCheckedMultiorders: function() {
-    // Shows a modal window with the orders pending to be paid
+    if (!this.get('leftColumnViewManager').isMultiOrder()) {
+      return false;
+    }
     var checkedMultiOrders,
       multiOrders = this.get('multiOrders'),
       multiOrderList = multiOrders.get('multiOrdersList'),

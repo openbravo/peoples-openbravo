@@ -280,6 +280,23 @@ enyo.kind({
   init: function() {
     this.inherited(arguments);
 
+    var openDrawer = function(currentPayment) {
+      const auxPay = OB.MobileApp.model.get('payments').filter(p => {
+        return p.payment.id === currentPayment.id;
+      });
+      if (
+        auxPay &&
+        auxPay[0] &&
+        auxPay[0].paymentMethod.iscash &&
+        auxPay[0].paymentMethod.allowopendrawer
+      ) {
+        OB.POS.hwserver.openDrawer(
+          false,
+          OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerCount
+        );
+      }
+    };
+
     // cashMgmtDepositEvents or cashMgmtDropEvents Collection is shown by OB.UI.Table, when selecting an option 'click' event
     // is triggered, propagating this UI event to model here
     this.model.get('cashMgmtDepositEvents').on(
@@ -304,6 +321,7 @@ enyo.kind({
                   })
                 )
             );
+            openDrawer(me.currentPayment);
             delete me.currentPayment;
           },
           function(error) {
@@ -337,6 +355,7 @@ enyo.kind({
                   })
                 )
             );
+            openDrawer(me.currentPayment);
             delete me.currentPayment;
           },
           function(error) {
@@ -400,6 +419,7 @@ enyo.kind({
       },
       this
     );
+
     // Disconnect RFID
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       OB.UTIL.RfidController.disconnectRFIDDevice();

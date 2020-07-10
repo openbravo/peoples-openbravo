@@ -9342,7 +9342,13 @@
     deleteOrder: function(context, callback) {
       var i;
 
-      function removePayments(receipt, callback) {
+      function finalCallback() {
+        if (callback && callback instanceof Function) {
+          callback();
+        }
+      }
+
+      function removePayments(receipt, paymentCallback) {
         var payments = receipt.get('payments');
         if (receipt.get('isEditable') && payments && payments.length > 0) {
           OB.UTIL.HookManager.executeHooks(
@@ -9354,21 +9360,21 @@
             },
             function(args) {
               if (args.cancellation) {
-                callback(false);
+                paymentCallback(false);
               } else {
                 payments.remove(payments.at(0));
                 removePayments(receipt, function(success) {
-                  callback(success);
+                  paymentCallback(success);
                 });
               }
             }
           );
         } else {
-          callback(true);
+          paymentCallback(true);
         }
       }
 
-      function removeReceiptFromDatabase(receipt, callback) {
+      function removeReceiptFromDatabase(receipt) {
         var model,
           orderList = OB.MobileApp.model.orderList;
         if (
@@ -9390,12 +9396,10 @@
         } else if (receipt && receipt.get('id')) {
           OB.Dal.remove(receipt);
         }
-        if (callback && callback instanceof Function) {
-          callback();
-        }
+        finalCallback();
       }
 
-      function markOrderAsDeleted(model, orderList, callback) {
+      function markOrderAsDeleted(model, orderList) {
         var creationDate;
         if (model.get('creationDate')) {
           creationDate = new Date(model.get('creationDate'));
@@ -9483,16 +9487,14 @@
                   orderList.synchronizeCurrentOrder();
                 }
                 model.setIsCalculateGrossLockState(false);
-                if (callback && callback instanceof Function) {
-                  callback();
-                }
+                OB.MobileApp.model.runSyncProcess(finalCallback, finalCallback);
               });
             }
           );
         });
       }
 
-      function removeOrder(receipt, callback) {
+      function removeOrder(receipt) {
         var orderList = OB.MobileApp.model.orderList;
         var isPaidQuotation =
           receipt.has('isQuotation') &&
@@ -9532,11 +9534,11 @@
                 receipt.setIsCalculateReceiptLockState(false);
                 receipt.setIsCalculateGrossLockState(false);
                 receipt.calculateReceipt(function() {
-                  markOrderAsDeleted(receipt, orderList, callback);
+                  markOrderAsDeleted(receipt, orderList);
                 });
               });
             } else {
-              removeReceiptFromDatabase(receipt, callback);
+              removeReceiptFromDatabase(receipt);
             }
           } else if (
             receipt.has('deletedLines') &&
@@ -9549,9 +9551,9 @@
               // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
               receipt.setIsCalculateReceiptLockState(false);
               receipt.setIsCalculateGrossLockState(false);
-              markOrderAsDeleted(receipt, orderList, callback);
+              markOrderAsDeleted(receipt, orderList);
             } else {
-              removeReceiptFromDatabase(receipt, callback);
+              removeReceiptFromDatabase(receipt);
             }
           } else if (
             receipt.has('lines') &&
@@ -9566,12 +9568,12 @@
             ) {
               receipt.setIsCalculateReceiptLockState(true);
               receipt.setIsCalculateGrossLockState(true);
-              markOrderAsDeleted(receipt, orderList, callback);
+              markOrderAsDeleted(receipt, orderList);
             } else {
-              removeReceiptFromDatabase(receipt, callback);
+              removeReceiptFromDatabase(receipt);
             }
           } else {
-            removeReceiptFromDatabase(receipt, callback);
+            removeReceiptFromDatabase(receipt);
           }
         }
 
@@ -9603,17 +9605,15 @@
           },
           function(args) {
             if (args && args.cancelOperation && args.cancelOperation === true) {
-              if (callback instanceof Function) {
-                OB.MobileApp.view.scanningFocus(true);
-                callback();
-              }
+              OB.MobileApp.view.scanningFocus(true);
+              finalCallback();
               return;
             }
-            removeOrder(args.receipt, callback);
+            removeOrder(args.receipt);
           }
         );
       } else {
-        removeOrder(this, callback);
+        removeOrder(this);
       }
 
       return true;

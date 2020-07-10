@@ -934,9 +934,6 @@ enyo.kind({
       inEvent.status = false;
       me.leftToolbarDisabled(inSender, inEvent);
       OB.UTIL.ProcessController.finish('deleteCurrentOrder', execution);
-      if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-        OB.MobileApp.model.runSyncProcess();
-      }
     });
   },
   addProductToOrder: function(inSender, inEvent) {
@@ -2072,36 +2069,29 @@ enyo.kind({
     me.model
       .get('multiOrders')
       .get('multiOrdersList')
-      .reset();
-    _.each(inEvent.value, function(iter) {
-      iter.set('belongsToMultiOrder', true);
-      iter.set('originalOrderType', iter.get('orderType'));
-      me.model
-        .get('multiOrders')
-        .get('multiOrdersList')
-        .add(iter);
-    });
+      .reset(inEvent.value);
     me.model
       .get('multiOrders')
       .get('multiOrdersList')
-      .trigger('loadedMultiOrder');
-    OB.UTIL.HookManager.executeHooks(
-      'OBPOS_hookPostMultiOrder',
-      {
-        context: me,
-        multiOrdersList: me.model.get('multiOrders').get('multiOrdersList')
-      },
-      function(args) {
-        if (args.cancellation) {
-          me.removeOrderAndExitMultiOrder(me.model);
-          OB.UTIL.showLoading(false);
-          return;
-        }
-        if (inEvent.callback && inEvent.callback instanceof Function) {
-          inEvent.callback();
-        }
-      }
-    );
+      .trigger('loadedMultiOrder', function() {
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_hookPostMultiOrder',
+          {
+            context: me,
+            multiOrdersList: me.model.get('multiOrders').get('multiOrdersList')
+          },
+          function(args) {
+            if (args.cancellation) {
+              me.removeOrderAndExitMultiOrder(me.model);
+              OB.UTIL.showLoading(false);
+              return;
+            }
+            if (inEvent.callback && inEvent.callback instanceof Function) {
+              inEvent.callback();
+            }
+          }
+        );
+      });
   },
   removeOrderAndExitMultiOrder: function(model) {
     model.deleteMultiOrderList();
