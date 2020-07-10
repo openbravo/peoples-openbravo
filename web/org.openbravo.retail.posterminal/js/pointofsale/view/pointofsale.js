@@ -2307,6 +2307,7 @@ enyo.kind({
           OB.App.OpenTicketList.getAllTickets()
         );
         this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(ticketList);
+        OB.MobileApp.model.orderList = ticketList;
       },
       ['TicketList']
     );
