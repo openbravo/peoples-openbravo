@@ -128,8 +128,6 @@
         diffReceipt.unset('completeTicket');
         frozenReceipt.unset('completeTicket');
 
-        OB.UTIL.calculateCurrentCash();
-
         if (eventParams && eventParams.callback) {
           eventParams.callback({
             frozenReceipt: frozenReceipt,
