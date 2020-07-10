@@ -2474,7 +2474,7 @@ enyo.kind({
     );
   },
   blocked: false,
-  tap: async function() {
+  tap: function() {
     var myModel = this.owner.model,
       me = this,
       payments,
