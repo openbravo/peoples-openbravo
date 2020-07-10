@@ -147,8 +147,9 @@
       newPayload = await checkAnonymousReturn(globalState.Ticket, newPayload);
       newPayload = await checkNegativePayments(globalState.Ticket, newPayload);
       newPayload = await checkExtraPayments(globalState.Ticket, newPayload);
-      newPayload = await checkPrepayments(globalState.Ticket, newPayload);
-      newPayload = await checkOverpayments(globalState.Ticket, newPayload);
+      newPayload = await checkPrePayments(globalState.Ticket, newPayload);
+      newPayload = await checkOverPayments(globalState.Ticket, newPayload);
+      newPayload = await checkHigherPayments(globalState.Ticket, newPayload);
 
       return newPayload;
     },
@@ -208,7 +209,7 @@
     return payload;
   };
 
-  const checkPrepayments = async (ticket, payload) => {
+  const checkPrePayments = async (ticket, payload) => {
     const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
       ticket,
       payload
@@ -251,7 +252,7 @@
     return newPayload;
   };
 
-  const checkOverpayments = async (ticket, payload) => {
+  const checkOverPayments = async (ticket, payload) => {
     const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
       ticket,
       payload
@@ -270,6 +271,29 @@
           payload.terminal.currencySymbolAtTheRight
         )
       ]
+    });
+    if (!confirmation) {
+      throw new OB.App.Class.ActionCanceled();
+    }
+
+    return payload;
+  };
+
+  const checkHigherPayments = async (ticket, payload) => {
+    if (
+      ticket.payment === OB.DEC.abs(ticket.grossAmount) ||
+      ticket.isLayaway ||
+      ticket.payOnCredit ||
+      OB.DEC.abs(ticket.obposPrepaymentamt) !==
+        OB.DEC.abs(ticket.grossAmount) ||
+      payload.terminal.calculatePrepayments
+    ) {
+      return payload;
+    }
+
+    const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+      title: 'OBPOS_PaymentAmountDistinctThanReceiptAmountTitle',
+      message: 'OBPOS_PaymentAmountDistinctThanReceiptAmountBody'
     });
     if (!confirmation) {
       throw new OB.App.Class.ActionCanceled();
