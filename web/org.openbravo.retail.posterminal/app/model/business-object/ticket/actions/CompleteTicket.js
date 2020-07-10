@@ -149,7 +149,6 @@
       newPayload = await checkExtraPayments(globalState.Ticket, newPayload);
       newPayload = await checkPrePayments(globalState.Ticket, newPayload);
       newPayload = await checkOverPayments(globalState.Ticket, newPayload);
-      newPayload = await checkHigherPayments(globalState.Ticket, newPayload);
       newPayload = await checkTicketUpdated(globalState.Ticket, newPayload);
 
       return newPayload;
@@ -258,46 +257,37 @@
       ticket,
       payload
     );
-    if (!paymentStatus.overpayment) {
-      return payload;
-    }
 
-    const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
-      title: 'OBPOS_OverpaymentWarningTitle',
-      message: 'OBPOS_OverpaymentWarningBody',
-      messageParams: [
-        OB.I18N.formatCurrencyWithSymbol(
-          paymentStatus.overpayment,
-          payload.terminal.symbol,
-          payload.terminal.currencySymbolAtTheRight
-        )
-      ]
-    });
-    if (!confirmation) {
-      throw new OB.App.Class.ActionCanceled();
-    }
-
-    return payload;
-  };
-
-  const checkHigherPayments = async (ticket, payload) => {
-    if (
-      ticket.payment === OB.DEC.abs(ticket.grossAmount) ||
-      ticket.isLayaway ||
-      ticket.payOnCredit ||
-      OB.DEC.abs(ticket.obposPrepaymentamt) !==
-        OB.DEC.abs(ticket.grossAmount) ||
-      payload.terminal.calculatePrepayments
+    if (paymentStatus.overpayment) {
+      const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+        title: 'OBPOS_OverpaymentWarningTitle',
+        message: 'OBPOS_OverpaymentWarningBody',
+        messageParams: [
+          OB.I18N.formatCurrencyWithSymbol(
+            paymentStatus.overpayment,
+            payload.terminal.symbol,
+            payload.terminal.currencySymbolAtTheRight
+          )
+        ]
+      });
+      if (!confirmation) {
+        throw new OB.App.Class.ActionCanceled();
+      }
+    } else if (
+      ticket.payment !== OB.DEC.abs(ticket.grossAmount) &&
+      !ticket.isLayaway &&
+      !ticket.payOnCredit &&
+      OB.DEC.abs(ticket.obposPrepaymentamt) ===
+        OB.DEC.abs(ticket.grossAmount) &&
+      !payload.terminal.calculatePrepayments
     ) {
-      return payload;
-    }
-
-    const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
-      title: 'OBPOS_PaymentAmountDistinctThanReceiptAmountTitle',
-      message: 'OBPOS_PaymentAmountDistinctThanReceiptAmountBody'
-    });
-    if (!confirmation) {
-      throw new OB.App.Class.ActionCanceled();
+      const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+        title: 'OBPOS_PaymentAmountDistinctThanReceiptAmountTitle',
+        message: 'OBPOS_PaymentAmountDistinctThanReceiptAmountBody'
+      });
+      if (!confirmation) {
+        throw new OB.App.Class.ActionCanceled();
+      }
     }
 
     return payload;
