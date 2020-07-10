@@ -150,6 +150,7 @@
       newPayload = await checkPrePayments(globalState.Ticket, newPayload);
       newPayload = await checkOverPayments(globalState.Ticket, newPayload);
       newPayload = await checkHigherPayments(globalState.Ticket, newPayload);
+      newPayload = await checkTicketUpdated(globalState.Ticket, newPayload);
 
       return newPayload;
     },
@@ -297,6 +298,76 @@
     });
     if (!confirmation) {
       throw new OB.App.Class.ActionCanceled();
+    }
+
+    return payload;
+  };
+
+  const checkTicketUpdated = async (ticket, payload) => {
+    if (!ticket.isPaid && !ticket.isLayaway) {
+      return payload;
+    }
+
+    const showTicketUpdatedError = async errorType => {
+      if (
+        errorType ||
+        !payload.preferences.allowToSynchronizeLoadedReceiptsOffline
+      ) {
+        const getErrorConfirmation = () => {
+          switch (errorType) {
+            case 'P':
+              return 'OBPOS_SyncPending';
+            case 'E':
+              return 'OBPOS_SyncWithErrors';
+            case 'O':
+              return 'OBPOS_RemoveAndLoad';
+            default:
+              return 'OBPOS_NotPossibleToConfirmReceipt';
+          }
+        };
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: getErrorConfirmation(),
+          messageParams: [ticket.documentNo]
+        });
+      }
+
+      const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+        title: 'OBPOS_UpdatedReceipt',
+        message: 'OBPOS_NotPossibleToConfirmReceiptWarn',
+        messageParams: [ticket.documentNo]
+      });
+      if (!confirmation) {
+        throw new OB.App.Class.ActionCanceled();
+      }
+
+      return payload;
+    };
+
+    if (!payload.terminal.connectedToERP || !navigator.onLine) {
+      return showTicketUpdatedError();
+    }
+
+    try {
+      const data = await OB.App.Request.mobileServiceRequest(
+        'org.openbravo.retail.posterminal.process.CheckUpdated',
+        {
+          order: {
+            id: ticket.id,
+            loaded: ticket.loaded,
+            lines: ticket.lines.map(line => {
+              return {
+                id: line.id,
+                loaded: line.loaded
+              };
+            })
+          }
+        }
+      );
+      if (data.response.data.type) {
+        return showTicketUpdatedError(data.response.data.type);
+      }
+    } catch (error) {
+      return showTicketUpdatedError();
     }
 
     return payload;

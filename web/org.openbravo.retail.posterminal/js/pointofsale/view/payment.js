@@ -2542,15 +2542,6 @@ enyo.kind({
             'Ticket'
           ).resetStateFromBackbone();
 
-          // Check ticket updated
-          await new Promise((resolve, reject) => {
-            OB.UTIL.TicketCloseUtils.checkOrdersUpdated(
-              OB.MobileApp.model.receipt,
-              resolve,
-              reject
-            );
-          });
-
           // Complete Ticket action
           await OB.App.State.Global.completeTicket({
             terminal: {
@@ -2588,7 +2579,8 @@ enyo.kind({
               currencySymbolAtTheRight: OB.MobileApp.model.get('terminal')
                 .currencySymbolAtTheRight,
               returnsAnonymousCustomer: OB.MobileApp.model.get('terminal')
-                .returns_anonymouscustomer
+                .returns_anonymouscustomer,
+              connectedToERP: OB.MobileApp.model.get('connectedToERP')
             },
             preferences: {
               salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
@@ -2597,6 +2589,10 @@ enyo.kind({
               ),
               splitChange: OB.MobileApp.model.hasPermission(
                 'OBPOS_SplitChange',
+                true
+              ),
+              allowToSynchronizeLoadedReceiptsOffline: OB.MobileApp.model.hasPermission(
+                'OBPOS_AllowToSynchronizeLoadedReceiptsOffline',
                 true
               )
             },
