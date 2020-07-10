@@ -7,53 +7,60 @@
  ************************************************************************************
  */
 
-OB.App.StateAPI.registerBackwardCompatibleModel('Ticket');
+if (!OB.App.StateBackwardCompatibility) {
+  // StateBackwardCompatibility is not currenlty deployed. This can occur in case only business logic
+  // is deployed without BackBone modelds. Let's regitser the ticket as a standard state model without
+  // backbone compatibility.
+  OB.App.StateAPI.registerModel('Ticket');
+} else {
+  OB.App.StateAPI.registerBackwardCompatibleModel('Ticket');
 
-OB.UTIL.HookManager.registerHook(
-  'ModelReady:pointOfSale',
-  (args, callbacks) => {
-    const backboneCurrentTicket = OB.MobileApp.model.receipt;
+  OB.UTIL.HookManager.registerHook(
+    'ModelReady:pointOfSale',
+    (args, callbacks) => {
+      const backboneCurrentTicket = OB.MobileApp.model.receipt;
 
-    // Associate backbone current ticket model with BackwardCompatDemoTicket Sate model
-    // So that changes in one are reflected in the other
-    OB.App.StateBackwardCompatibility.bind(
-      OB.App.State.Ticket,
-      backboneCurrentTicket,
-      {
-        ignoredProperties: [
-          'undo',
-          'json',
-          'lines[*].product.img',
-          'lines[*].product._filter'
-        ],
-        resetEvents: ['paintTaxes'],
-        mapProperties: {
-          bp: 'businessPartner',
-          gross: 'grossAmount',
-          net: 'netAmount',
-          'lines[*].gross': 'baseGrossUnitAmount',
-          'lines[*].net': 'baseNetUnitAmount',
-          'lines[*].unitPrice': 'netUnitPrice',
-          'lines[*].listPrice': 'netListPrice',
-          'lines[*].price': bbTicket =>
-            bbTicket.get('priceIncludesTax')
-              ? 'baseGrossUnitPrice'
-              : 'baseNetUnitPrice',
-          'lines[*].pricenet': bbTicket =>
-            bbTicket.get('priceIncludesTax') ? 'baseNetUnitPrice' : undefined,
-          'lines[*].lineRate': 'taxRate',
-          'lines[*].taxLines': 'taxes'
-        },
-        mapStateBackboneProperties: {
-          'lines[*].baseGrossUnitPrice': ticket =>
-            ticket.priceIncludesTax ? 'price' : undefined,
-          'lines[*].baseNetUnitPrice': ticket =>
-            ticket.priceIncludesTax ? undefined : 'price'
+      // Associate backbone current ticket model with BackwardCompatDemoTicket Sate model
+      // So that changes in one are reflected in the other
+      OB.App.StateBackwardCompatibility.bind(
+        OB.App.State.Ticket,
+        backboneCurrentTicket,
+        {
+          ignoredProperties: [
+            'undo',
+            'json',
+            'lines[*].product.img',
+            'lines[*].product._filter'
+          ],
+          resetEvents: ['paintTaxes'],
+          mapProperties: {
+            bp: 'businessPartner',
+            gross: 'grossAmount',
+            net: 'netAmount',
+            'lines[*].gross': 'baseGrossUnitAmount',
+            'lines[*].net': 'baseNetUnitAmount',
+            'lines[*].unitPrice': 'netUnitPrice',
+            'lines[*].listPrice': 'netListPrice',
+            'lines[*].price': bbTicket =>
+              bbTicket.get('priceIncludesTax')
+                ? 'baseGrossUnitPrice'
+                : 'baseNetUnitPrice',
+            'lines[*].pricenet': bbTicket =>
+              bbTicket.get('priceIncludesTax') ? 'baseNetUnitPrice' : undefined,
+            'lines[*].lineRate': 'taxRate',
+            'lines[*].taxLines': 'taxes'
+          },
+          mapStateBackboneProperties: {
+            'lines[*].baseGrossUnitPrice': ticket =>
+              ticket.priceIncludesTax ? 'price' : undefined,
+            'lines[*].baseNetUnitPrice': ticket =>
+              ticket.priceIncludesTax ? undefined : 'price'
+          }
         }
-      }
-    );
-    backboneCurrentTicket.trigger('change'); // forces backbone -> state propagation
+      );
+      backboneCurrentTicket.trigger('change'); // forces backbone -> state propagation
 
-    OB.UTIL.HookManager.callbackExecutor(args, callbacks);
-  }
-);
+      OB.UTIL.HookManager.callbackExecutor(args, callbacks);
+    }
+  );
+}
