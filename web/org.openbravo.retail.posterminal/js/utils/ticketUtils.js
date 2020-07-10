@@ -12,22 +12,24 @@
   OB.UTIL.TicketUtils = OB.UTIL.TicketUtils || {};
 
   OB.UTIL.TicketUtils.loadAndSyncTicketFromState = function() {
-    const tmpTicket = new OB.Model.Order();
-    const compatibleModel = OB.App.StateBackwardCompatibility.bind(
-      OB.App.State.Ticket,
-      tmpTicket
-    );
+    if (OB.App.StateBackwardCompatibility) {
+      const tmpTicket = new OB.Model.Order();
+      const compatibleModel = OB.App.StateBackwardCompatibility.bind(
+        OB.App.State.Ticket,
+        tmpTicket
+      );
 
-    const stateTicket = OB.App.State.getState().Ticket;
-    if (Object.keys(stateTicket).length !== 0) {
-      compatibleModel.handleStateChange(stateTicket);
+      const stateTicket = OB.App.State.getState().Ticket;
+      if (Object.keys(stateTicket).length !== 0) {
+        compatibleModel.handleStateChange(stateTicket);
+      }
+
+      OB.MobileApp.model.receipt.clearWith(tmpTicket);
+
+      OB.App.StateBackwardCompatibility.bind(
+        OB.App.State.Ticket,
+        OB.MobileApp.model.receipt
+      );
     }
-
-    OB.MobileApp.model.receipt.clearWith(tmpTicket);
-
-    OB.App.StateBackwardCompatibility.bind(
-      OB.App.State.Ticket,
-      OB.MobileApp.model.receipt
-    );
   };
 })();
