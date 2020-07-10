@@ -1217,7 +1217,7 @@
      *
      * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
      */
-    generateInvoice(ticket) {
+    generateInvoice(ticket, payload) {
       const generateInvoice =
         !ticket.obposIsDeleted &&
         (ticket.payOnCredit ||
@@ -1360,12 +1360,19 @@
       invoice.orderDocumentNo = ticket.documentNo;
       invoice.lines = invoiceLines;
 
-      // FIXME: wait CAR fix
-      // invoice = OB.App.State.Ticket.Utils.applyDiscountsAndTaxes(
-      //   invoice,
-      //   payload
-      // );
-      newTicket.calculatedInvoice = invoice;
+      if (invoice.lines.length === ticket.lines.length) {
+        newTicket.calculatedInvoice = invoice;
+      } else {
+        newTicket.calculatedInvoice = OB.App.State.Ticket.Utils.calculateTotals(
+          {
+            ...invoice,
+            lines: invoice.lines.map(line => {
+              return { ...line, skipApplyPromotions: true };
+            })
+          },
+          payload
+        );
+      }
 
       return newTicket;
     },
