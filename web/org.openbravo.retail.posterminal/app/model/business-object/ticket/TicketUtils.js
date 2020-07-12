@@ -1221,7 +1221,10 @@
           newLine.obposIspaid = true;
         }
 
-        if (isCrossStore && !newLine.originalOrderLineId) {
+        if (
+          OB.App.State.Ticket.Utils.isLayaway(ticket) ||
+          (isCrossStore && !newLine.originalOrderLineId)
+        ) {
           newLine.obposQtytodeliver = newLine.deliveredQuantity || OB.DEC.Zero;
           return newLine;
         }
