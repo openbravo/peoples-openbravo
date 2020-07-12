@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -275,7 +275,7 @@
       }
     } else if (
       ticket.payment !== OB.DEC.abs(ticket.grossAmount) &&
-      !ticket.isLayaway &&
+      !OB.App.State.Ticket.Utils.isLayaway(ticket) &&
       !ticket.payOnCredit &&
       OB.DEC.abs(ticket.obposPrepaymentamt) ===
         OB.DEC.abs(ticket.grossAmount) &&
@@ -294,7 +294,7 @@
   };
 
   const checkTicketUpdated = async (ticket, payload) => {
-    if (!ticket.isPaid && !ticket.isLayaway) {
+    if (!ticket.isPaid && !OB.App.State.Ticket.Utils.isLayaway(ticket)) {
       return payload;
     }
 

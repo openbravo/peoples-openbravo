@@ -758,7 +758,7 @@
       const paymentsAmount = ticket.payments.reduce((total, payment) => {
         if (
           ticket.cancelAndReplaceChangePending ||
-          (!ticket.isLayaway &&
+          (!OB.App.State.Ticket.Utils.isLayaway(ticket) &&
             !ticket.isPaid &&
             ticket.isNegative &&
             !payment.isReversePayment)
@@ -818,6 +818,7 @@
         isReversal
       };
     },
+
     /**
      * Updates the type of the given ticket.
      *
