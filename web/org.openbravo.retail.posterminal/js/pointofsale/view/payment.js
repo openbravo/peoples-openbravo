@@ -9,6 +9,160 @@
 
 /*global OB, enyo, _ */
 
+const runCompleteTicket = completeTicketAction => {
+  const completeTicketExecution = OB.UTIL.ProcessController.start(
+    'completeReceipt'
+  );
+  OB.UTIL.HookManager.executeHooks(
+    'OBPOS_PreOrderSave',
+    {
+      receipt: OB.MobileApp.model.receipt
+    },
+    function(args) {
+      if (args && args.cancellation) {
+        OB.UTIL.ProcessController.finish(
+          'completeReceipt',
+          completeTicketExecution
+        );
+        return;
+      }
+      const receiptForPostSyncReceipt = OB.UTIL.clone(
+        OB.MobileApp.model.receipt
+      );
+      runCompleteTicketAction(completeTicketAction);
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PostSyncReceipt',
+        {
+          receipt: receiptForPostSyncReceipt,
+          syncSuccess: true
+        },
+        function(args) {
+          OB.UTIL.ProcessController.finish(
+            'completeReceipt',
+            completeTicketExecution
+          );
+          return;
+        }
+      );
+    }
+  );
+};
+
+const runCompleteTicketAction = async completeTicketAction => {
+  try {
+    OB.App.StateBackwardCompatibility.getInstance(
+      'Ticket'
+    ).resetStateFromBackbone();
+
+    // Complete Ticket action
+    await completeTicketAction({
+      terminal: {
+        id: OB.MobileApp.model.get('terminal').id,
+        organization: OB.MobileApp.model.get('terminal').organization,
+        businessPartner: OB.MobileApp.model.get('terminal').businessPartner,
+        documentTypeForSales: OB.MobileApp.model.get('terminal').terminalType
+          .documentType,
+        documentTypeForReturns: OB.MobileApp.model.get('terminal').terminalType
+          .documentTypeForReturns,
+        paymentTypes: OB.MobileApp.model.get('payments'),
+        calculatePrepayments: OB.MobileApp.model.get('terminal').terminalType
+          .calculateprepayments,
+        returnSequencePrefix: OB.MobileApp.model.get('terminal')
+          .returnDocNoPrefix,
+        quotationSequencePrefix: OB.MobileApp.model.get('terminal')
+          .quotationDocNoPrefix,
+        fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get('terminal')
+          .fullReturnInvoiceDocNoPrefix,
+        simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
+          'terminal'
+        ).simplifiedReturnInvoiceDocNoPrefix,
+        documentNumberSeparator: OB.Model.Order.prototype.includeDocNoSeperator
+          ? '/'
+          : '',
+        documentNumberPadding: OB.MobileApp.model.get('terminal')
+          .documentnoPadding,
+        multiChange: OB.MobileApp.model.get('terminal').multiChange,
+        countLayawayAsSales: OB.MobileApp.model.get('terminal')
+          .countLayawayAsSales,
+        symbol: OB.MobileApp.model.get('terminal').symbol,
+        currencySymbolAtTheRight: OB.MobileApp.model.get('terminal')
+          .currencySymbolAtTheRight,
+        returnsAnonymousCustomer: OB.MobileApp.model.get('terminal')
+          .returns_anonymouscustomer,
+        connectedToERP: OB.MobileApp.model.get('connectedToERP')
+      },
+      preferences: {
+        salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
+          'OBPOS_SalesWithOneLineNegativeAsReturns',
+          true
+        ),
+        splitChange: OB.MobileApp.model.hasPermission(
+          'OBPOS_SplitChange',
+          true
+        ),
+        allowToSynchronizeLoadedReceiptsOffline: OB.MobileApp.model.hasPermission(
+          'OBPOS_AllowToSynchronizeLoadedReceiptsOffline',
+          true
+        )
+      },
+      discountRules: OB.Discounts.Pos.ruleImpls,
+      bpSets: OB.Discounts.Pos.bpSets,
+      taxRules: OB.Taxes.Pos.ruleImpls
+    });
+
+    // Open drawer
+    OB.MobileApp.model.receipt.trigger('checkOpenDrawer');
+
+    // RFID
+    if (OB.UTIL.RfidController.isRfidConfigured()) {
+      OB.UTIL.RfidController.processRemainingCodes(OB.MobileApp.model.receipt);
+      OB.UTIL.RfidController.updateEpcBuffers();
+    }
+
+    // Focus on scanning window
+    OB.UTIL.setScanningFocus(true);
+
+    // FIXME: Move to action
+    // Print welcome message
+    OB.OBPOSPointOfSale.Print.printWelcome();
+
+    // Show ticket saved message
+    OB.UTIL.showSuccess(
+      OB.I18N.getLabel(
+        OB.MobileApp.model.receipt.get('isQuotation')
+          ? 'OBPOS_QuotationSaved'
+          : OB.MobileApp.model.receipt.get('orderType') === 2 ||
+            OB.MobileApp.model.receipt.get('isLayaway')
+          ? 'OBPOS_MsgLayawaySaved'
+          : 'OBPOS_MsgReceiptSaved',
+        [OB.MobileApp.model.receipt.get('documentNo')]
+      )
+    );
+
+    // FIXME: Use TicketListUtils
+    // Remove completed ticket
+    OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
+      OB.MobileApp.model.receipt
+    );
+    if (
+      OB.MobileApp.model.hasPermission(
+        'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
+        true
+      )
+    ) {
+      OB.MobileApp.model.orderList.deleteCurrent(true);
+    } else {
+      OB.MobileApp.model.orderList.deleteCurrent();
+    }
+
+    // FIXME: Remove once terminal authentication validation is moved to new message infraestructure
+    // Run terminal authentication validation
+    OB.MobileApp.model.runSyncProcess();
+  } catch (error) {
+    OB.App.View.ActionCanceledUIHandler.handle(error);
+  }
+};
+
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.Change',
   tag: 'span',
@@ -2527,163 +2681,7 @@ enyo.kind({
       !OB.MobileApp.model.receipt.get('doCancelAndReplace') &&
       !OB.MobileApp.model.receipt.get('cancelLayaway')
     ) {
-      const startCompleteTicket = () => {
-        return OB.UTIL.ProcessController.start('completeReceipt');
-      };
-      const finishCompleteTicket = completeTicketExecution => {
-        OB.UTIL.ProcessController.finish(
-          'completeReceipt',
-          completeTicketExecution
-        );
-      };
-      const completeTicket = async () => {
-        try {
-          OB.App.StateBackwardCompatibility.getInstance(
-            'Ticket'
-          ).resetStateFromBackbone();
-
-          // Complete Ticket action
-          await OB.App.State.Global.completeTicket({
-            terminal: {
-              id: OB.MobileApp.model.get('terminal').id,
-              organization: OB.MobileApp.model.get('terminal').organization,
-              businessPartner: OB.MobileApp.model.get('terminal')
-                .businessPartner,
-              documentTypeForSales: OB.MobileApp.model.get('terminal')
-                .terminalType.documentType,
-              documentTypeForReturns: OB.MobileApp.model.get('terminal')
-                .terminalType.documentTypeForReturns,
-              paymentTypes: OB.MobileApp.model.get('payments'),
-              calculatePrepayments: OB.MobileApp.model.get('terminal')
-                .terminalType.calculateprepayments,
-              returnSequencePrefix: OB.MobileApp.model.get('terminal')
-                .returnDocNoPrefix,
-              quotationSequencePrefix: OB.MobileApp.model.get('terminal')
-                .quotationDocNoPrefix,
-              fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
-                'terminal'
-              ).fullReturnInvoiceDocNoPrefix,
-              simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
-                'terminal'
-              ).simplifiedReturnInvoiceDocNoPrefix,
-              documentNumberSeparator: OB.Model.Order.prototype
-                .includeDocNoSeperator
-                ? '/'
-                : '',
-              documentNumberPadding: OB.MobileApp.model.get('terminal')
-                .documentnoPadding,
-              multiChange: OB.MobileApp.model.get('terminal').multiChange,
-              countLayawayAsSales: OB.MobileApp.model.get('terminal')
-                .countLayawayAsSales,
-              symbol: OB.MobileApp.model.get('terminal').symbol,
-              currencySymbolAtTheRight: OB.MobileApp.model.get('terminal')
-                .currencySymbolAtTheRight,
-              returnsAnonymousCustomer: OB.MobileApp.model.get('terminal')
-                .returns_anonymouscustomer,
-              connectedToERP: OB.MobileApp.model.get('connectedToERP')
-            },
-            preferences: {
-              salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
-                'OBPOS_SalesWithOneLineNegativeAsReturns',
-                true
-              ),
-              splitChange: OB.MobileApp.model.hasPermission(
-                'OBPOS_SplitChange',
-                true
-              ),
-              allowToSynchronizeLoadedReceiptsOffline: OB.MobileApp.model.hasPermission(
-                'OBPOS_AllowToSynchronizeLoadedReceiptsOffline',
-                true
-              )
-            },
-            discountRules: OB.Discounts.Pos.ruleImpls,
-            bpSets: OB.Discounts.Pos.bpSets,
-            taxRules: OB.Taxes.Pos.ruleImpls
-          });
-
-          // Open drawer
-          OB.MobileApp.model.receipt.trigger('checkOpenDrawer');
-
-          // RFID
-          if (OB.UTIL.RfidController.isRfidConfigured()) {
-            OB.UTIL.RfidController.processRemainingCodes(
-              OB.MobileApp.model.receipt
-            );
-            OB.UTIL.RfidController.updateEpcBuffers();
-          }
-
-          // Focus on scanning window
-          OB.UTIL.setScanningFocus(true);
-
-          // FIXME: Move to action
-          // Print welcome message
-          OB.OBPOSPointOfSale.Print.printWelcome();
-
-          // Show ticket saved message
-          OB.UTIL.showSuccess(
-            OB.I18N.getLabel(
-              OB.MobileApp.model.receipt.get('isQuotation')
-                ? 'OBPOS_QuotationSaved'
-                : OB.MobileApp.model.receipt.get('orderType') === 2 ||
-                  OB.MobileApp.model.receipt.get('isLayaway')
-                ? 'OBPOS_MsgLayawaySaved'
-                : 'OBPOS_MsgReceiptSaved',
-              [OB.MobileApp.model.receipt.get('documentNo')]
-            )
-          );
-
-          // FIXME: Use TicketListUtils
-          // Remove completed ticket
-          OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
-            OB.MobileApp.model.receipt
-          );
-          if (
-            OB.MobileApp.model.hasPermission(
-              'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
-              true
-            )
-          ) {
-            OB.MobileApp.model.orderList.deleteCurrent(true);
-          } else {
-            OB.MobileApp.model.orderList.deleteCurrent();
-          }
-
-          // FIXME: Remove once terminal authentication validation is moved to new message infraestructure
-          // Run terminal authentication validation
-          OB.MobileApp.model.runSyncProcess();
-        } catch (error) {
-          OB.App.View.ActionCanceledUIHandler.handle(error);
-        }
-      };
-
-      const completeTicketExecution = startCompleteTicket();
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_PreOrderSave',
-        {
-          receipt: OB.MobileApp.model.receipt
-        },
-        function(args) {
-          if (args && args.cancellation) {
-            finishCompleteTicket(completeTicketExecution);
-            return;
-          }
-          const receiptForPostSyncReceipt = OB.UTIL.clone(
-            OB.MobileApp.model.receipt
-          );
-          completeTicket();
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PostSyncReceipt',
-            {
-              receipt: receiptForPostSyncReceipt,
-              syncSuccess: true
-            },
-            function(args) {
-              finishCompleteTicket(completeTicketExecution);
-              return;
-            }
-          );
-        }
-      );
+      runCompleteTicket(OB.App.State.Global.completeTicket);
       return;
     }
 
@@ -3822,7 +3820,8 @@ enyo.kind({
           receipt.setFullInvoice(false, false);
         }
       }
-      receipt.trigger('paymentDone', me.allowOpenDrawer);
+      runCompleteTicket(OB.App.State.Global.completeLayaway);
+      return;
     };
 
     paymentStatus = receipt.getPaymentStatus();
