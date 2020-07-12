@@ -24,40 +24,8 @@
       let newMessages = [...newGlobalState.Messages];
 
       // Set complete ticket properties
-      const currentDate = new Date();
-      const creationDate = newTicket.creationDate
-        ? new Date(newTicket.creationDate)
-        : currentDate;
       newTicket.completeTicket = true;
-      newTicket.hasbeenpaid = 'Y';
-      newTicket.orderDate = currentDate.toISOString();
-      newTicket.movementDate = currentDate.toISOString();
-      newTicket.accountingDate = currentDate.toISOString();
-      newTicket.creationDate = creationDate.toISOString();
-      newTicket.obposCreatedabsolute = creationDate.toISOString();
-      newTicket.created = creationDate.getTime();
-      newTicket.timezoneOffset = creationDate.getTimezoneOffset();
-      newTicket.posTerminal = payload.terminal.id;
-      newTicket.undo = null;
-      newTicket.multipleUndo = null;
-      newTicket.paymentMethodKind =
-        newTicket.payments.length === 1 &&
-        OB.App.State.Ticket.Utils.isFullyPaid(newTicket)
-          ? newTicket.payments[0].kind
-          : null;
-      newTicket.approvals = [
-        ...newTicket.approvals,
-        ...(payload.approvals || [])
-      ];
-
-      // FIXME: Remove once every use of OB.UTIL.Approval.requestApproval() send approvalType as string
-      newTicket.approvals = newTicket.approvals.map(approval => {
-        const newApproval = { ...approval };
-        if (typeof approval.approvalType === 'object') {
-          newApproval.approvalType = approval.approvalType.approval;
-        }
-        return newApproval;
-      });
+      newTicket = OB.App.State.Ticket.Utils.completeTicket(newTicket, payload);
 
       // FIXME: Move to calculateTotals?
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(

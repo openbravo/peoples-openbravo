@@ -851,6 +851,87 @@
     },
 
     /**
+     * Set needed properties when completing a ticket.
+     *
+     * @param {object} ticket - The ticket being completed
+     * @param {object} payload - The calculation payload, which include:
+     *             * terminal.id - Terminal id
+     *             * approvals - Approvals to add to the ticket
+     *
+     * @returns {object} The new state of Ticket after being completed.
+     */
+    completeTicket(ticket, payload) {
+      const newTicket = { ...ticket };
+      const currentDate = new Date();
+      const creationDate = newTicket.creationDate
+        ? new Date(newTicket.creationDate)
+        : currentDate;
+
+      newTicket.hasbeenpaid = 'Y';
+      newTicket.orderDate = currentDate.toISOString();
+      newTicket.movementDate = currentDate.toISOString();
+      newTicket.accountingDate = currentDate.toISOString();
+      newTicket.creationDate = creationDate.toISOString();
+      newTicket.obposCreatedabsolute = creationDate.toISOString();
+      newTicket.created = creationDate.getTime();
+      newTicket.timezoneOffset = creationDate.getTimezoneOffset();
+      newTicket.posTerminal = payload.terminal.id;
+      newTicket.undo = null;
+      newTicket.multipleUndo = null;
+      newTicket.paymentMethodKind =
+        newTicket.payments.length === 1 &&
+        OB.App.State.Ticket.Utils.isFullyPaid(newTicket)
+          ? newTicket.payments[0].kind
+          : null;
+      newTicket.approvals = [
+        ...newTicket.approvals,
+        ...(payload.approvals || [])
+      ];
+
+      // FIXME: Remove once every use of OB.UTIL.Approval.requestApproval() send approvalType as string
+      newTicket.approvals = newTicket.approvals.map(approval => {
+        const newApproval = { ...approval };
+        if (typeof approval.approvalType === 'object') {
+          newApproval.approvalType = approval.approvalType.approval;
+        }
+        return newApproval;
+      });
+
+      return newTicket;
+    },
+
+    /**
+     * Updates the type of the given ticket.
+     *
+     * @param {object} ticket - The ticket whose type will be updated
+     * @param {object} payload - The calculation payload, which include:
+     *             * terminal.documentTypeForSales - Terminal document type for sales
+     *             * terminal.documentTypeForReturns - Terminal document type for returns
+     *             * terminal.organization - Organization of the current terminal
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
+     *
+     * @returns {object} The new state of Ticket after type update.
+     */
+    updateTicketType(ticket, payload) {
+      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStore(
+        ticket,
+        payload
+      );
+      if (isCrossStoreTicket) {
+        return ticket;
+      }
+
+      const newTicket = { ...ticket };
+      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, payload);
+      newTicket.orderType = isReturn ? 1 : 0;
+      newTicket.documentType = isReturn
+        ? payload.terminal.documentTypeForReturns
+        : payload.terminal.documentTypeForSales;
+
+      return newTicket;
+    },
+
+    /**
      * Computes the totals of a given ticket which include: discounts, taxes and other calculated fields.
      *
      * @param {object} ticket - The ticket whose totals will be calculated
