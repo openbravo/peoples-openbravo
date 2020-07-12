@@ -733,7 +733,7 @@
      *
      * @returns {boolean} true in case the ticket is cross store, false otherwise.
      */
-    isCrossStoreTicket(ticket, payload) {
+    isCrossStore(ticket, payload) {
       if (!ticket.organization || !payload.terminal.organization) {
         return false;
       }
@@ -832,7 +832,7 @@
      * @returns {object} The new state of Ticket after type update.
      */
     updateTicketType(ticket, payload) {
-      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStoreTicket(
+      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStore(
         ticket,
         payload
       );
@@ -1127,7 +1127,7 @@
       const newTicket = { ...ticket };
       const isFullyPaidOrPaidOnCredit =
         OB.App.State.Ticket.Utils.isFullyPaid(ticket) || ticket.payOnCredit;
-      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStoreTicket(
+      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStore(
         ticket,
         payload
       );
