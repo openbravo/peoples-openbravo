@@ -832,11 +832,11 @@
      * @returns {object} The new state of Ticket after type update.
      */
     updateTicketType(ticket, payload) {
-      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStore(
+      const isCrossStore = OB.App.State.Ticket.Utils.isCrossStore(
         ticket,
         payload
       );
-      if (isCrossStoreTicket) {
+      if (isCrossStore) {
         return ticket;
       }
 
@@ -1208,7 +1208,7 @@
       const newTicket = { ...ticket };
       const isFullyPaidOrPaidOnCredit =
         OB.App.State.Ticket.Utils.isFullyPaid(ticket) || ticket.payOnCredit;
-      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStore(
+      const isCrossStore = OB.App.State.Ticket.Utils.isCrossStore(
         ticket,
         payload
       );
@@ -1221,7 +1221,7 @@
           newLine.obposIspaid = true;
         }
 
-        if (isCrossStoreTicket && !newLine.originalOrderLineId) {
+        if (isCrossStore && !newLine.originalOrderLineId) {
           newLine.obposQtytodeliver = newLine.deliveredQuantity || OB.DEC.Zero;
           return newLine;
         }
