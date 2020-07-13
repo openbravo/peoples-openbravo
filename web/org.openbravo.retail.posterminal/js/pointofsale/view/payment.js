@@ -3728,36 +3728,10 @@ enyo.kind({
       myModel = this.owner.model,
       payments = receipt.getPaymentStatus().payments;
 
-    if (
-      !_.isNull(receipt.get('bp')) &&
-      _.isNull(
-        myModel
-          .get('order')
-          .get('bp')
-          .get('locId')
-      )
-    ) {
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_InformationTitle'),
-        OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'),
-        [
-          {
-            label: OB.I18N.getLabel('OBPOS_LblOk')
-          }
-        ]
-      );
-      return;
-    }
-
     me.allowOpenDrawer = false;
 
     if (!me.showing || me.disabled) {
       return true;
-    }
-
-    if (receipt.get('lines').length === 0) {
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidLayawayWithoutLines'));
-      return;
     }
 
     if (myModel.get('leftColumnViewManager').isOrder()) {
@@ -3771,10 +3745,7 @@ enyo.kind({
         me.allowOpenDrawer = true;
       }
     });
-    if (receipt && receipt.get('generateInvoice')) {
-      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-      receipt.setFullInvoice(false, false);
-    }
+
     runCompleteTicket(OB.App.State.Global.completeLayaway);
   }
 });

@@ -84,6 +84,7 @@
       newPayload = await checkAnonymousLayaway(globalState.Ticket, newPayload);
       newPayload = await checkReturnLayaway(globalState.Ticket, newPayload);
       newPayload = await checkPrePayments(globalState.Ticket, newPayload);
+      newPayload = await checkInvoiceLayaway(globalState.Ticket, newPayload);
 
       return newPayload;
     },
@@ -166,5 +167,16 @@
       payload
     );
     return newPayload;
+  };
+
+  const checkInvoiceLayaway = async (ticket, payload) => {
+    if (ticket.generateInvoice) {
+      // FIXME: Do not cancel the action, just show warning
+      // throw new OB.App.Class.ActionCanceled({
+      //   warningMsg: 'OBPOS_noInvoiceIfLayaway'
+      // });
+    }
+
+    return payload;
   };
 })();
