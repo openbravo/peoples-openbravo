@@ -3724,7 +3724,6 @@ enyo.kind({
   },
   tap: function() {
     var receipt = this.owner.receipt,
-      negativeLines,
       me = this,
       myModel = this.owner.model,
       payments = receipt.getPaymentStatus().payments;
@@ -3772,32 +3771,9 @@ enyo.kind({
         me.allowOpenDrawer = true;
       }
     });
-    if (receipt) {
-      negativeLines = _.find(receipt.get('lines').models, function(line) {
-        return line.get('qty') < 0;
-      });
-      if (negativeLines) {
-        if (
-          !OB.MobileApp.model.hasPermission(
-            'OBPOS_AllowLayawaysNegativeLines',
-            true
-          )
-        ) {
-          OB.UTIL.showWarning(
-            OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed')
-          );
-          return true;
-        } else if (receipt.get('payment') > 0) {
-          OB.UTIL.showWarning(
-            OB.I18N.getLabel('OBPOS_partiallyLayawaysWithNegLinesNotAllowed')
-          );
-          return true;
-        }
-      }
-      if (receipt.get('generateInvoice')) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-        receipt.setFullInvoice(false, false);
-      }
+    if (receipt && receipt.get('generateInvoice')) {
+      OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
+      receipt.setFullInvoice(false, false);
     }
     runCompleteTicket(OB.App.State.Global.completeLayaway);
   }

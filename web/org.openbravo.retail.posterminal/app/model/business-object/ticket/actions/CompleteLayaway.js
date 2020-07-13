@@ -82,6 +82,7 @@
       let newPayload = { ...payload };
 
       newPayload = await checkAnonymousLayaway(globalState.Ticket, newPayload);
+      newPayload = await checkReturnLayaway(globalState.Ticket, newPayload);
       newPayload = await checkPrePayments(globalState.Ticket, newPayload);
 
       return newPayload;
@@ -97,6 +98,26 @@
     ) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_layawaysOrdersWithAnonimousCust'
+      });
+    }
+
+    return payload;
+  };
+
+  const checkReturnLayaway = async (ticket, payload) => {
+    const negativeLines = ticket.lines.some(line => line.qty < 0);
+    if (
+      negativeLines &&
+      !OB.App.Security.hasPermission('OBPOS_AllowLayawaysNegativeLines')
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        warningMsg: 'OBPOS_layawaysOrdersWithReturnsNotAllowed'
+      });
+    }
+
+    if (negativeLines && ticket.payment > 0) {
+      throw new OB.App.Class.ActionCanceled({
+        warningMsg: 'OBPOS_partiallyLayawaysWithNegLinesNotAllowed'
       });
     }
 
