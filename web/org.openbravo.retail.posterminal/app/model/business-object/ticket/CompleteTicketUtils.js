@@ -596,7 +596,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     const showTicketUpdatedError = async errorType => {
       if (
         errorType ||
-        !payload.preferences.allowToSynchronizeLoadedReceiptsOffline
+        !OB.App.Security.hasPermission(
+          'OBPOS_AllowToSynchronizeLoadedReceiptsOffline'
+        )
       ) {
         const getErrorConfirmation = () => {
           switch (errorType) {

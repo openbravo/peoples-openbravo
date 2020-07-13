@@ -98,14 +98,7 @@ const runCompleteTicketAction = async completeTicketAction => {
           'OBPOS_SalesWithOneLineNegativeAsReturns',
           true
         ),
-        splitChange: OB.MobileApp.model.hasPermission(
-          'OBPOS_SplitChange',
-          true
-        ),
-        allowToSynchronizeLoadedReceiptsOffline: OB.MobileApp.model.hasPermission(
-          'OBPOS_AllowToSynchronizeLoadedReceiptsOffline',
-          true
-        )
+        splitChange: OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true)
       },
       discountRules: OB.Discounts.Pos.ruleImpls,
       bpSets: OB.Discounts.Pos.bpSets,
