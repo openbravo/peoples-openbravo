@@ -262,7 +262,7 @@
   };
 
   const checkTicketUpdated = async (ticket, payload) => {
-    if (!ticket.isPaid && !OB.App.State.Ticket.Utils.isLayaway(ticket)) {
+    if (!ticket.isPaid && !ticket.isLayaway) {
       return payload;
     }
 
