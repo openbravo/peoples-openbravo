@@ -279,21 +279,21 @@
 
     // Update the price of the related lines whose tax category has changed
     if (linesToChange.length > 0) {
-      let newTicket = { ...ticket };
-
-      newTicket.lines = ticket.lines.map(l => {
+      // can direclty change the lines property because this is an internal function that receives a clone of the ticket
+      // eslint-disable-next-line no-param-reassign
+      ticket.lines = ticket.lines.map(l => {
         const info = linesToChange.find(cl => cl.id === l.id);
         if (info) {
           return { ...l, ...info };
         }
-        return { ...l };
+        return l;
       });
 
       if (!ticket.priceIncludesTax) {
-        return newTicket;
+        return ticket;
       }
 
-      newTicket = OB.App.State.Ticket.Utils.calculateTotals(newTicket, {
+      const newTicket = OB.App.State.Ticket.Utils.calculateTotals(ticket, {
         discountRules: extraData.discountRules,
         taxRules: extraData.taxRules,
         bpSets: extraData.bpSets,
