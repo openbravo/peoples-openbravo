@@ -1222,7 +1222,7 @@
         }
 
         if (
-          OB.App.State.Ticket.Utils.isLayaway(ticket) ||
+          (!ticket.completeTicket && !ticket.payOnCredit) ||
           (isCrossStore && !newLine.originalOrderLineId)
         ) {
           newLine.obposQtytodeliver = newLine.deliveredQuantity || OB.DEC.Zero;
