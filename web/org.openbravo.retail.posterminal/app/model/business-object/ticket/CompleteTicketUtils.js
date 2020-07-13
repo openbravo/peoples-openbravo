@@ -435,6 +435,113 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   /**
+   * Checks if given ticket is a return with anonymous customer.
+   */
+  async checkAnonymousReturn(ticket, payload) {
+    if (
+      !payload.terminal.returnsAnonymousCustomer &&
+      ticket.businessPartner.id === payload.terminal.businessPartner &&
+      ticket.lines.some(line => line.qty < 0 && !line.originalDocumentNo)
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_returnServicesWithAnonimousCust'
+      });
+    }
+
+    return payload;
+  },
+
+  /**
+   * Checks if given ticket includes negative payments.
+   */
+  async checkNegativePayments(ticket, payload) {
+    if (
+      ticket.payments
+        .filter(payment => payment.isReturnOrder !== undefined)
+        .some(payment => payment.isReturnOrder !== ticket.isNegative)
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: ticket.isNegative
+          ? 'OBPOS_PaymentOnReturnReceipt'
+          : 'OBPOS_NegativePaymentOnReceipt'
+      });
+    }
+
+    return payload;
+  },
+
+  /**
+   * Checks if unnecessary payments exists for given ticket.
+   */
+  async checkExtraPayments(ticket, payload) {
+    ticket.payments.reduce((total, payment) => {
+      if (total >= OB.DEC.abs(ticket.grossAmount) && !payment.paymentRounding) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_UnnecessaryPaymentAdded'
+        });
+      }
+
+      if (
+        payment.isReversePayment ||
+        payment.isReversed ||
+        payment.isPrePayment
+      ) {
+        return total;
+      }
+
+      return OB.DEC.add(total, payment.origAmount);
+    }, OB.DEC.Zero);
+
+    return payload;
+  },
+
+  /**
+   * Checks if prepayments exists for given ticket.
+   */
+  async checkPrePayments(ticket, payload) {
+    const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
+      ticket,
+      payload
+    );
+
+    if (
+      !payload.terminal.calculatePrepayments ||
+      ticket.orderType === 1 ||
+      ticket.orderType === 3 ||
+      ticket.obposPrepaymentlimitamt === OB.DEC.Zero ||
+      paymentStatus.totalAmt <= OB.DEC.Zero ||
+      OB.DEC.sub(
+        OB.DEC.add(ticket.obposPrepaymentlimitamt, paymentStatus.pendingAmt),
+        paymentStatus.totalAmt
+      ) <= OB.DEC.Zero
+    ) {
+      return payload;
+    }
+
+    if (!OB.App.Security.hasPermission('OBPOS_AllowPrepaymentUnderLimit')) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_PrepaymentUnderLimit_NotAllowed',
+        messageParams: [ticket.obposPrepaymentlimitamt]
+      });
+    }
+
+    if (
+      ticket.approvals.some(
+        approval =>
+          approval.approvalType === 'OBPOS_approval.prepaymentUnderLimit'
+      )
+    ) {
+      return payload;
+    }
+
+    const newPayload = await OB.App.Security.requestApprovalForAction(
+      'OBPOS_approval.prepaymentUnderLimit',
+      payload
+    );
+    return newPayload;
+  },
+
+  /**
    * Checks if overpayment exists for given ticket.
    */
   async checkOverPayments(ticket, payload) {

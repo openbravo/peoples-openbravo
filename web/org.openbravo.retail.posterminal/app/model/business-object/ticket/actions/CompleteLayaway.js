@@ -85,7 +85,10 @@
       newPayload = await checkReturnLayaway(globalState.Ticket, newPayload);
       newPayload = await checkPrePayments(globalState.Ticket, newPayload);
       newPayload = await checkInvoiceLayaway(globalState.Ticket, newPayload);
-      newPayload = await checkTicketUpdated(globalState.Ticket, newPayload);
+      newPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
+        globalState.Ticket,
+        newPayload
+      );
 
       return newPayload;
     },
@@ -179,9 +182,5 @@
     }
 
     return payload;
-  };
-
-  const checkTicketUpdated = async (ticket, payload) => {
-    return OB.App.State.Ticket.Utils.checkTicketUpdated(ticket, payload);
   };
 })();
