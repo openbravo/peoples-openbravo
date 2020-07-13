@@ -23,13 +23,19 @@
     const { products, extraData } = payload;
     delete ticket.deferredOrder;
 
-    ticket.lines = ticket.lines.map(l => {
-      return { ...l };
-    });
+    const linesToEdit = products
+      .map(productInfo => getLineToEdit(ticket, productInfo))
+      .filter(l => l !== undefined);
+
+    ticket.lines = ticket.lines.map(line =>
+      linesToEdit.some(lineToEdit => lineToEdit.id === line.id)
+        ? { ...line }
+        : line
+    );
 
     products.forEach(productInfo => {
-      const { product } = productInfo;
       const lineToEdit = getLineToEdit(ticket, productInfo);
+      const { product } = productInfo;
       if (lineToEdit) {
         // add product to an existing line
         lineToEdit.qty += productInfo.qty;
