@@ -76,4 +76,60 @@
       return newGlobalState;
     }
   );
+
+  OB.App.StateAPI.Global.completeLayaway.addActionPreparation(
+    async (globalState, payload) => {
+      let newPayload = { ...payload };
+
+      newPayload = await checkPrePayments(globalState.Ticket, newPayload);
+
+      return newPayload;
+    },
+    async (globalState, payload) => payload,
+    100
+  );
+
+  const checkPrePayments = async (ticket, payload) => {
+    const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
+      ticket,
+      payload
+    );
+
+    if (
+      !payload.terminal.calculatePrepayments ||
+      ticket.obposPrepaymentlaylimitamt === OB.DEC.Zero ||
+      paymentStatus.totalAmt <= OB.DEC.Zero ||
+      OB.DEC.sub(
+        OB.DEC.add(ticket.obposPrepaymentlaylimitamt, paymentStatus.pendingAmt),
+        paymentStatus.totalAmt
+      ) <= OB.DEC.Zero ||
+      !paymentStatus.payments.length
+    ) {
+      return payload;
+    }
+
+    if (
+      !OB.App.Security.hasPermission('OBPOS_AllowPrepaymentUnderLimitLayaway')
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_PrepaymentUnderLimit_NotAllowed',
+        messageParams: [ticket.obposPrepaymentlaylimitamt]
+      });
+    }
+
+    if (
+      ticket.approvals.some(
+        approval =>
+          approval.approvalType === 'OBPOS_approval.prepaymentUnderLimitLayaway'
+      )
+    ) {
+      return payload;
+    }
+
+    const newPayload = await OB.App.Security.requestApprovalForAction(
+      'OBPOS_approval.prepaymentUnderLimitLayaway',
+      payload
+    );
+    return newPayload;
+  };
 })();
