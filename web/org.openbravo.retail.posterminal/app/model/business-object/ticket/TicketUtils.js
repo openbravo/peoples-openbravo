@@ -1656,6 +1656,123 @@
       newTicket.payments = [...newTicket.payments, newPayment];
 
       return newTicket;
+    },
+
+    /**
+     * Checks if overpayment exists for given ticket.
+     */
+    async checkOverPayments(ticket, payload) {
+      const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
+        ticket,
+        payload
+      );
+
+      if (paymentStatus.overpayment) {
+        const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+          title: 'OBPOS_OverpaymentWarningTitle',
+          message: 'OBPOS_OverpaymentWarningBody',
+          messageParams: [
+            OB.I18N.formatCurrencyWithSymbol(
+              paymentStatus.overpayment,
+              payload.terminal.symbol,
+              payload.terminal.currencySymbolAtTheRight
+            )
+          ]
+        });
+        if (!confirmation) {
+          throw new OB.App.Class.ActionCanceled();
+        }
+      } else if (
+        ticket.payment !== OB.DEC.abs(ticket.grossAmount) &&
+        !OB.App.State.Ticket.Utils.isLayaway(ticket) &&
+        !ticket.payOnCredit &&
+        OB.DEC.abs(ticket.obposPrepaymentamt) ===
+          OB.DEC.abs(ticket.grossAmount) &&
+        !payload.terminal.calculatePrepayments
+      ) {
+        const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+          title: 'OBPOS_PaymentAmountDistinctThanReceiptAmountTitle',
+          message: 'OBPOS_PaymentAmountDistinctThanReceiptAmountBody'
+        });
+        if (!confirmation) {
+          throw new OB.App.Class.ActionCanceled();
+        }
+      }
+
+      return payload;
+    },
+
+    /**
+     * Checks if given ticket was updated in a different terminal or it is pending to be synchronized.
+     */
+    async checkTicketUpdated(ticket, payload) {
+      if (!ticket.isPaid && !ticket.isLayaway) {
+        return payload;
+      }
+
+      const showTicketUpdatedError = async errorType => {
+        if (
+          errorType ||
+          !payload.preferences.allowToSynchronizeLoadedReceiptsOffline
+        ) {
+          const getErrorConfirmation = () => {
+            switch (errorType) {
+              case 'P':
+                return 'OBPOS_SyncPending';
+              case 'E':
+                return 'OBPOS_SyncWithErrors';
+              case 'O':
+                return 'OBPOS_RemoveAndLoad';
+              default:
+                return 'OBPOS_NotPossibleToConfirmReceipt';
+            }
+          };
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: getErrorConfirmation(),
+            messageParams: [ticket.documentNo]
+          });
+        }
+
+        const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+          title: 'OBPOS_UpdatedReceipt',
+          message: 'OBPOS_NotPossibleToConfirmReceiptWarn',
+          messageParams: [ticket.documentNo]
+        });
+        if (!confirmation) {
+          throw new OB.App.Class.ActionCanceled();
+        }
+
+        return payload;
+      };
+
+      if (!payload.terminal.connectedToERP || !navigator.onLine) {
+        return showTicketUpdatedError();
+      }
+
+      try {
+        const data = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.process.CheckUpdated',
+          {
+            order: {
+              id: ticket.id,
+              loaded: ticket.loaded,
+              lines: ticket.lines.map(line => {
+                return {
+                  id: line.id,
+                  loaded: line.loaded
+                };
+              })
+            }
+          }
+        );
+        if (data.response.data.type) {
+          return showTicketUpdatedError(data.response.data.type);
+        }
+      } catch (error) {
+        return showTicketUpdatedError();
+      }
+
+      return payload;
     }
   });
 })();
