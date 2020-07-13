@@ -23,6 +23,9 @@ OB = {
   },
   Model: {
     Product: jest.fn(product => product)
+  },
+  OBPOSPointOfSale: {
+    StockChecker: {}
   }
 };
 
@@ -33,7 +36,9 @@ describe('OB.App.StockChecker', () => {
   const productA = '18C6723E5B53403D84D93D61F840FA30';
   const productB = '573FF496A9DC412FA3CBC0392BAADBD1';
 
-  stockChecker.checkLineStock = jest.fn(product => product.id !== productB);
+  OB.OBPOSPointOfSale.StockChecker.checkLineStock = jest.fn(
+    product => product.id !== productB
+  );
 
   describe('API', () => {
     test('has stock', async () => {
