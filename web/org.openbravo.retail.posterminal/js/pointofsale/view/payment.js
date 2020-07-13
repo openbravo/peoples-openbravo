@@ -89,6 +89,8 @@ const runCompleteTicketAction = async completeTicketAction => {
           .currencySymbolAtTheRight,
         returnsAnonymousCustomer: OB.MobileApp.model.get('terminal')
           .returns_anonymouscustomer,
+        layawaysAnonymousCustomer: OB.MobileApp.model.get('terminal')
+          .layaway_anonymouscustomer,
         connectedToERP: OB.MobileApp.model.get('connectedToERP')
       },
       preferences: {
@@ -3749,18 +3751,6 @@ enyo.kind({
     }
 
     me.allowOpenDrawer = false;
-
-    if (
-      receipt.get('bp').id ===
-        OB.MobileApp.model.get('terminal').businessPartner &&
-      !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer
-    ) {
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBMOBC_Error'),
-        OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust')
-      );
-      return;
-    }
 
     if (!me.showing || me.disabled) {
       return true;
