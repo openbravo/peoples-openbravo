@@ -18,9 +18,6 @@
   class TicketHandler {
     constructor(ticket) {
       this.ticket = { ...ticket };
-      this.ticket.lines = ticket.lines.map(l => {
-        return { ...l };
-      });
     }
 
     getTicket() {
@@ -156,7 +153,13 @@
       if (!this.shouldUpdateServices()) {
         return;
       }
-      const serviceLines = this.getServiceLines();
+
+      this.ticket.lines = this.ticket.lines.map(l =>
+        this.isServiceLine(l) ? { ...l } : l
+      );
+
+      const serviceLines = this.ticket.lines.filter(l => this.isServiceLine(l));
+
       for (let i = 0; i < serviceLines.length; i += 1) {
         const serviceLine = serviceLines[i];
         const service = serviceLine.product;
@@ -262,16 +265,19 @@
       return hasServices && this.ticket.isEditable;
     }
 
-    getServiceLines() {
-      return this.ticket.lines.filter(
-        l =>
-          l.relatedLines && l.relatedLines.length > 0 && !l.originalOrderLineId
+    // eslint-disable-next-line class-methods-use-this
+    isServiceLine(line) {
+      return (
+        line.relatedLines &&
+        line.relatedLines.length > 0 &&
+        !line.originalOrderLineId
       );
     }
 
     getSiblingServicesLines(productId, orderlineId) {
-      return this.getServiceLines().filter(
+      return this.ticket.lines.filter(
         l =>
+          this.isServiceLine(l) &&
           l.product.id === productId &&
           l.relatedLines[0].orderlineId === orderlineId
       );
@@ -330,13 +336,16 @@
     }
 
     calculateTotals(settings) {
-      this.calculateDiscounts(settings.discountRules, settings.bpSets);
-      this.calculateTaxes(settings.taxRules);
+      this.calculateDiscountsAndTaxes(
+        settings.discountRules,
+        settings.bpSets,
+        settings.taxRules
+      );
       this.setIsNegative();
       this.setTotalQuantity(settings.qtyScale);
     }
 
-    calculateDiscounts(discountRules, bpSets) {
+    calculateDiscountsAndTaxes(discountRules, bpSets, taxRules) {
       const { priceIncludesTax } = this.ticket;
 
       const discountsResult = OB.Discounts.Pos.applyDiscounts(
@@ -349,7 +358,7 @@
       this.ticket.lines = this.ticket.lines.map(line => {
         const hasDiscounts = line.promotions && line.promotions.length > 0;
         if (line.skipApplyPromotions && hasDiscounts) {
-          return { ...line };
+          return line;
         }
         const discounts = line.skipApplyPromotions
           ? undefined
@@ -375,9 +384,7 @@
         }
         return newLine;
       });
-    }
 
-    calculateTaxes(taxRules) {
       let taxesResult;
       try {
         taxesResult = OB.Taxes.Pos.applyTaxes(this.ticket, taxRules);
