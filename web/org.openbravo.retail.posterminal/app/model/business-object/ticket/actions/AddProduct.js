@@ -301,9 +301,9 @@
       });
 
       newTicket.lines = newTicket.lines.map(l => {
-        const newLine = { ...l };
-        const info = linesToChange.find(cl => cl.id === newLine.id);
+        const info = linesToChange.find(cl => cl.id === l.id);
         if (info) {
+          const newLine = { ...l };
           newLine.product = info.product;
           if (info.previousBaseGrossUnitPrice) {
             newLine.previousBaseGrossUnitPrice =
@@ -313,8 +313,9 @@
               newLine.taxRate
             );
           }
+          return newLine;
         }
-        return newLine;
+        return l;
       });
       return newTicket;
     }
