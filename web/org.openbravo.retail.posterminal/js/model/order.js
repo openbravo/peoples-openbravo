@@ -662,10 +662,10 @@
 
           // FIXME: Use TicketListUtils
           // Remove completed ticket
+          OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
+            OB.MobileApp.model.receipt
+          );
           if (!OB.MobileApp.model.receipt.get('isQuotation')) {
-            OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
-              OB.MobileApp.model.receipt
-            );
             if (
               OB.MobileApp.model.hasPermission(
                 'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
