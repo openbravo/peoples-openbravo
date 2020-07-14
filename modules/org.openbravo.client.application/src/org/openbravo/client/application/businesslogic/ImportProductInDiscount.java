@@ -43,7 +43,7 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
     @SuppressWarnings("unchecked")
     NativeQuery<String> qry = OBDal.getInstance()
         .getSession()
-        .createNativeQuery("delete from m_offer_product where m_offer_id = :m_offer_id");
+        .createNativeQuery("update m_offer_product set isactive='N' where m_offer_id = :m_offer_id");
     qry.setParameter("m_offer_id", ownerId);
     qry.executeUpdate();
   }
@@ -84,6 +84,7 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
               .createQuery(Product.class, "m_offer_id=:m_offer_id and m_product_id=:m_product_id");
           productDiscountQry.setNamedParameter("m_offer_id", discountId);
           productDiscountQry.setNamedParameter("m_product_id", productId);
+          productDiscountQry.setFilterOnActive(false);
           final List<Product> lines = productDiscountQry.list();
           Product productDiscount = null;
           if (lines.size() == 0) {
