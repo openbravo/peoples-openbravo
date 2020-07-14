@@ -978,7 +978,7 @@
         },
         function(args) {
           if (callback instanceof Function) {
-            callback(OB.MobileApp.model.receipt);
+            callback(model);
           }
         }
       );
@@ -987,12 +987,10 @@
     OB.MobileApp.model.receipt.trigger('updateView');
     OB.App.State.Global.insertTicketIntoTicketList().then(() => {
       OB.MobileApp.model.receipt.clearWith(model);
+      loadCurrent(true);
+      OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
+      executeFinalCallback();
     });
-
-    loadCurrent(true);
-
-    OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
-    executeFinalCallback();
   };
 
   OB.UTIL.TicketListUtils.addNewQuotation = function() {
