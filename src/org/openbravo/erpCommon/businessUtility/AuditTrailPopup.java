@@ -54,6 +54,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -84,6 +85,8 @@ import org.openbravo.model.ad.ui.TabTrl;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.ui.WindowTrl;
 import org.openbravo.reference.ui.UIReference;
+import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.service.json.JsonUtils;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class AuditTrailPopup extends HttpSecureAppServlet {
@@ -634,6 +637,12 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
     log4j.debug("DATA_HISTORY: tableId: " + tableId + " recordId: " + recordId);
 
+    // Set session query profile to grid if unset
+    String currentProfile = SessionInfo.getQueryProfile();
+    if (currentProfile == null || currentProfile.isEmpty()) {
+      currentProfile = "grid";
+      SessionInfo.setQueryProfile(currentProfile);
+    }
     long s1 = System.currentTimeMillis();
 
     String hql = "as f where f.tab.id = :tabId and (f.displayed = true or f.column.reference.id = '13')";
@@ -698,8 +707,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       log4j.error("Error getting row data: ", e);
       type = "Error";
       title = "Error";
-      if (e.getMessage().startsWith("<![CDATA[")) {
-        description = "<![CDATA[" + e.getMessage() + "]]>";
+      if (JsonUtils.isQueryTimeout(e)) {
+        OBDal.getInstance().rollbackAndClose();
+        description = Utility.messageBD(new DalConnectionProvider(false),
+           "OBUIAPP_QueryTimeOut", vars.getLanguage());
       } else {
         description = e.getMessage();
       }
@@ -967,6 +978,12 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       String strOrderCols, String strOrderDirs, String strOffset, String strPageSize,
       String strNewFilter) throws IOException, ServletException {
 
+    // Set session query profile to grid if unset
+    String currentProfile = SessionInfo.getQueryProfile();
+    if (currentProfile == null || currentProfile.isEmpty()) {
+      currentProfile = "grid";
+      SessionInfo.setQueryProfile(currentProfile);
+    }
     long s1 = System.currentTimeMillis();
     SQLReturnObject[] headers = getHeadersDeleted(vars, tabId, tableId);
     FieldProvider[] data = null;
@@ -998,8 +1015,10 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       log4j.error("Error getting row data: ", e);
       type = "Error";
       title = "Error";
-      if (e.getMessage().startsWith("<![CDATA[")) {
-        description = "<![CDATA[" + e.getMessage() + "]]>";
+      if (JsonUtils.isQueryTimeout(e)) {
+        OBDal.getInstance().rollbackAndClose();
+        description = Utility.messageBD(new DalConnectionProvider(false),
+           "OBUIAPP_QueryTimeOut", vars.getLanguage());
       } else {
         description = e.getMessage();
       }
