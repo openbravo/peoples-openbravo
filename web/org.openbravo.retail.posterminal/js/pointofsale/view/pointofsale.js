@@ -2306,8 +2306,12 @@ enyo.kind({
         const ticketList = new Backbone.Collection(
           OB.App.OpenTicketList.getAllTickets()
         );
-        this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(ticketList);
-        OB.MobileApp.model.orderList = ticketList;
+
+        if (this.$.multiColumn) {
+          this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(ticketList);
+        }
+
+        OB.MobileApp.model.orderList.reset(ticketList.models);
       },
       ['TicketList']
     );

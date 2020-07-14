@@ -259,13 +259,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     var multiOrders = new OB.Model.MultiOrders();
     OB.MobileApp.model.multiOrders = multiOrders;
 
-    OB.MobileApp.model.orderList = new Backbone.Collection(
+    var ticketList = new Backbone.Collection(
       OB.App.OpenTicketList.getAllTickets()
     );
+    OB.MobileApp.model.orderList = ticketList;
 
     // changing this initialization order may break the loading
     this.set('order', receipt);
-    this.set('orderList', OB.MobileApp.model.orderList); // Kept because this is used in many other places
+    this.set('orderList', ticketList); // Kept because this is used in many other places
     this.set('customer', new OB.Model.BusinessPartner());
     this.set('customerAddr', new OB.Model.BPLocation());
     this.set('multiOrders', multiOrders);
