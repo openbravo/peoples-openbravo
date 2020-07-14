@@ -12,6 +12,25 @@
  */
 
 (function TicketUtilsDefinition() {
+  // checks if the type of payment is cash
+  const isCash = paymentType => {
+    const paymentNames = OB.App.TerminalProperty.get('paymentnames');
+    if (!paymentNames[paymentType]) {
+      return false;
+    }
+    return paymentNames[paymentType].paymentMethod.iscash;
+  };
+
+  // gets the precision of a given payment
+  const getPrecision = payment => {
+    const terminalpayment = OB.App.TerminalProperty.get('paymentnames')[
+      payment.kind
+    ];
+    return terminalpayment
+      ? terminalpayment.obposPosprecision
+      : OB.DEC.getScale();
+  };
+
   /**
    * Internal helper that allows to apply changes in a ticket in a pure way
    */
@@ -341,7 +360,7 @@
         settings.bpSets,
         settings.taxRules
       );
-      this.setIsNegative();
+      this.adjustPayment();
       this.setTotalQuantity(settings.qtyScale);
     }
 
@@ -427,27 +446,249 @@
         );
     }
 
-    setIsNegative() {
-      // TODO: replace this with the complete implementation of "adjustPayment"
+    adjustPayment() {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
+
+      // set the payments origAmount property
+      this.ticket.payments = this.ticket.payments.map(p => {
+        const newPayment = this.calculateOrigAmount(p);
+        if (
+          !p.isPrePayment &&
+          this.ticket.isNegative &&
+          loadedFromBackend &&
+          !p.reversedPaymentId &&
+          !p.signChanged
+        ) {
+          newPayment.signChanged = true;
+          newPayment.amount = -newPayment.amount;
+          newPayment.origAmount = -newPayment.origAmount;
+          newPayment.paid = -newPayment.paid;
+        }
+        return newPayment;
+      });
+
+      // calculate the processed payments amount
+      const processedPaymentsAmount = this.ticket.payments
+        .filter(p => p.isPrePayment)
+        .reduce(
+          (t, p) => OB.DEC.add(t, p.origAmount, getPrecision(p)),
+          this.ticket.nettingPayment || OB.DEC.Zero
+        );
+
+      // set the 'isNegative' value
       const { grossAmount } = this.ticket;
       if (loadedFromBackend) {
         this.ticket.isNegative = OB.DEC.compare(grossAmount) === -1;
+      } else if (OB.DEC.compare(grossAmount) === -1) {
+        this.ticket.isNegative = processedPaymentsAmount >= grossAmount;
       } else {
-        let processedPaymentsAmount = this.ticket.payments
-          .filter(p => p.isPrePayment)
-          .reduce((t, p) => OB.DEC.add(t, p.origAmount), OB.DEC.Zero);
-
-        processedPaymentsAmount = OB.DEC.add(
-          processedPaymentsAmount,
-          this.ticket.nettingPayment ? this.ticket.nettingPayment : OB.DEC.Zero
-        );
-        if (OB.DEC.compare(grossAmount) === -1) {
-          this.ticket.isNegative = processedPaymentsAmount >= grossAmount;
-        } else {
-          this.ticket.isNegative = processedPaymentsAmount > grossAmount;
-        }
+        this.ticket.isNegative = processedPaymentsAmount > grossAmount;
       }
+
+      // get cash info
+      const { defaultCash, nonDefaultCash, noCash } = this.getCashInfo();
+
+      // calculate the reversed payments amount
+      const reversedPaymentsAmount = this.ticket.payments
+        .filter(p => !p.isPrePayment && p.isReversePayment)
+        .reduce((t, p) => OB.DEC.add(t, p.origAmount), OB.DEC.Zero);
+
+      // sum the total amount of the payments that cannot generate change or over payment
+      const notModifiableAmount = OB.DEC.add(
+        processedPaymentsAmount,
+        reversedPaymentsAmount
+      );
+
+      // calculate payment amounts
+      const totalCash = OB.DEC.add(defaultCash, nonDefaultCash);
+      const totalPaid = OB.DEC.add(
+        notModifiableAmount,
+        OB.DEC.add(noCash, totalCash)
+      );
+      const total = this.ticket.prepaymentChangeMode
+        ? this.ticket.obposPrepaymentamt
+        : grossAmount;
+      const cashPayment = this.ticket.payments.find(
+        p =>
+          p.kind === OB.App.TerminalProperty.get('paymentcash') ||
+          isCash(p.kind)
+      );
+      let cashPaid;
+      if (cashPayment) {
+        let payment;
+        const precision = getPrecision(cashPayment);
+        if (this.ticket.isNegative) {
+          if (OB.DEC.add(notModifiableAmount, noCash, precision) < total) {
+            payment = OB.DEC.add(notModifiableAmount, noCash, precision);
+            cashPaid = OB.DEC.Zero;
+            this.ticket.payment = OB.DEC.abs(payment);
+            this.ticket.paymentWithSign = payment;
+            this.ticket.change = OB.DEC.abs(totalCash);
+          } else if (totalPaid < total) {
+            cashPaid = OB.DEC.sub(
+              cashPayment.origAmount,
+              OB.DEC.abs(OB.DEC.sub(total, totalPaid)),
+              precision
+            );
+            this.ticket.payment = OB.DEC.abs(total);
+            this.ticket.paymentWithSign = total;
+            // The change value will be computed through a rounded total value, to ensure that the total plus change
+            // add up to the paid amount without any kind of precission loss
+            this.ticket.change = OB.DEC.abs(
+              OB.DEC.sub(totalPaid, total, precision)
+            );
+          } else {
+            cashPaid = cashPayment.origAmount;
+            this.ticket.payment = OB.DEC.abs(totalPaid);
+            this.ticket.paymentWithSign = totalPaid;
+            this.ticket.change = OB.DEC.Zero;
+          }
+        } else if (OB.DEC.add(notModifiableAmount, noCash, precision) > total) {
+          payment = OB.DEC.add(notModifiableAmount, noCash, precision);
+          cashPaid = OB.DEC.Zero;
+          this.ticket.payment = OB.DEC.abs(payment);
+          this.ticket.paymentWithSign = payment;
+          this.ticket.change = OB.DEC.abs(totalCash);
+        } else if (totalPaid > total) {
+          cashPaid = OB.DEC.sub(
+            cashPayment.origAmount,
+            OB.DEC.abs(OB.DEC.sub(totalPaid, total)),
+            precision
+          );
+          this.ticket.payment = OB.DEC.abs(total);
+          this.ticket.paymentWithSign = total;
+          // The change value will be computed through a rounded total value, to ensure that the total plus change
+          // add up to the paid amount without any kind of precission loss
+          this.ticket.change = OB.DEC.abs(
+            OB.DEC.sub(totalPaid, total, precision)
+          );
+        } else {
+          cashPaid = cashPayment.origAmount;
+          this.ticket.payment = OB.DEC.abs(totalPaid);
+          this.ticket.paymentWithSign = totalPaid;
+          this.ticket.change = OB.DEC.Zero;
+        }
+      } else {
+        this.ticket.payment = OB.DEC.abs(totalPaid);
+        this.ticket.paymentWithSign = totalPaid;
+        this.ticket.change = OB.DEC.Zero;
+      }
+
+      if (cashPaid && cashPayment) {
+        this.ticket.payments = this.ticket.payments.map(p => {
+          if (p.kind !== cashPayment.kind) {
+            return p;
+          }
+          return { ...p, paid: cashPaid };
+        });
+      }
+    }
+
+    calculateOrigAmount(payment) {
+      const precision = getPrecision(payment);
+      let origAmount;
+      if (payment.rate && payment.rate !== '1') {
+        origAmount = OB.DEC.div(payment.amount, payment.mulrate);
+
+        // Here we are trying to know if the current payment is making the pending to pay 0.
+        // to know that we are suming up every payments except the current one (getSumOfOrigAmounts)
+        // then we substract this amount from the total (getDifferenceBetweenPaymentsAndTotal)
+        // and finally we transform this difference to the foreign amount
+        // if the payment in the foreign amount makes pending to pay zero, then we will ensure that the payment
+        // in the default currency is satisfied
+        if (
+          OB.DEC.compare(
+            OB.DEC.sub(
+              this.getDifferenceRemovingSpecificPayment(payment),
+              OB.DEC.abs(payment.amount, precision),
+              precision
+            )
+          ) === OB.DEC.Zero
+        ) {
+          const multiCurrencyDifference = this.getDifferenceBetweenPaymentsAndTotal(
+            payment
+          );
+          if (
+            OB.DEC.abs(payment.origAmount) !==
+            OB.DEC.abs(multiCurrencyDifference)
+          ) {
+            origAmount = payment.changePayment
+              ? OB.DEC.mul(multiCurrencyDifference, -1)
+              : multiCurrencyDifference;
+          }
+        }
+      } else {
+        origAmount = payment.amount;
+      }
+      return { ...payment, origAmount, paid: payment.origAmount, precision };
+    }
+
+    // Returns the difference (abs) between total to pay and payments without take into account the provided payment
+    getDifferenceRemovingSpecificPayment(payment) {
+      const precision = getPrecision(payment);
+      const differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(
+        payment
+      );
+      if (payment && payment.rate) {
+        const differenceInForeingCurrency = OB.DEC.div(
+          differenceInDefaultCurrency,
+          payment.rate,
+          precision
+        );
+        return differenceInForeingCurrency;
+      }
+      return differenceInDefaultCurrency;
+    }
+
+    // Returns the difference (abs) between total to pay and payments excluding the provided payment
+    getDifferenceBetweenPaymentsAndTotal(payment) {
+      return OB.DEC.abs(
+        OB.DEC.sub(
+          OB.DEC.abs(this.ticket.grossAmount),
+          OB.DEC.sub(this.getSumOfOrigAmounts(payment), this.ticket.change)
+        )
+      );
+    }
+
+    // Returns a result with the sum up of every payments based on origAmount field excluding the provided payment
+    getSumOfOrigAmounts(payment) {
+      if (this.ticket.payments.length === 0) {
+        return OB.DEC.Zero;
+      }
+      return this.ticket.payments
+        .filter(p => !payment || p.kind !== payment.kind)
+        .reduce((t, p) => OB.DEC.add(t, p.origAmount), OB.DEC.Zero);
+    }
+
+    getCashInfo() {
+      const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
+      return this.ticket.payments
+        .filter(p => !p.isPrePayment)
+        .reduce(
+          (c, p) => {
+            let property;
+            if (p.kind === OB.App.TerminalProperty.get('paymentcash')) {
+              // the default cash method
+              property = 'defaultCash';
+            } else if (isCash(p.kind)) {
+              // another cash method
+              property = 'nonDefaultCash';
+            } else {
+              property = 'noCash';
+            }
+            const result = { ...c };
+            result[property] =
+              !this.ticket.isNegative || loadedFromBackend
+                ? OB.DEC.add(c[property], p.origAmount)
+                : OB.DEC.sub(c[property], p.origAmount);
+            return result;
+          },
+          {
+            defaultCash: OB.DEC.Zero,
+            nonDefaultCash: OB.DEC.Zero,
+            noCash: OB.DEC.Zero
+          }
+        );
     }
   }
 

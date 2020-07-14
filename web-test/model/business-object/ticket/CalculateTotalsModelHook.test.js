@@ -217,6 +217,9 @@ const results = [
     priceIncludesTax: true,
     isNegative: false,
     qty: 2,
+    change: 0,
+    payment: 0,
+    paymentWithSign: 0,
     lines: [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A3941',
@@ -275,6 +278,9 @@ const results = [
     priceIncludesTax: false,
     isNegative: false,
     qty: 2,
+    change: 0,
+    payment: 0,
+    paymentWithSign: 0,
     lines: [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A3942',
