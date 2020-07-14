@@ -679,5 +679,42 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     }
 
     return payload;
+  },
+
+  /**
+   * Checks if given ticket was canceled in a different terminal.
+   */
+  async checkTicketCanceled(ticket, payload) {
+    try {
+      const data = await OB.App.Request.mobileServiceRequest(
+        'org.openbravo.retail.posterminal.process.IsOrderCancelled',
+        {
+          orderId: ticket.canceledorder.id,
+          documentNo: ticket.canceledorder.documentNo,
+          orderLoaded: ticket.canceledorder.loaded,
+          orderLines: ticket.canceledorder.lines.map(line => {
+            return {
+              id: line.id,
+              loaded: line.loaded
+            };
+          })
+          // checkNotEditableLines: params ? params.checkNotEditableLines : false,
+          // checkNotDeliveredDeferredServices: params
+          //   ? params.checkNotDeliveredDeferredServices
+          //   : false
+        }
+      );
+      if (data.response.data.orderCancelled) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_LayawayCancelledError'
+        });
+      }
+    } catch (error) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBMOBC_OfflineWindowRequiresOnline'
+      });
+    }
+
+    return payload;
   }
 });

@@ -8,7 +8,7 @@
  */
 
 /**
- * @fileoverview defines the Ticket global action that completes a layaway and moves it to a message in the state
+ * @fileoverview defines the Ticket global action that voids a layaway and moves it to a message in the state
  */
 
 /* eslint-disable no-use-before-define */

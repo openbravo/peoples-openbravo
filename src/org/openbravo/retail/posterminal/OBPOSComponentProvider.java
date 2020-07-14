@@ -73,7 +73,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE;
 
     final String[] resourceDependency = { "main", "model/order", "model/cashup",
-        "model/cashmanagement", "model/cancelLayaway", "login/model/login-model",
+        "model/cashmanagement", "login/model/login-model",
         // Common components
         "datasource",
         // "data/dal",
@@ -345,6 +345,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/TicketUtils");
     appDependency.add("model/business-object/ticket/CompleteTicketUtils");
     appDependency.add("model/business-object/ticket/actions/CompleteTicket");
+    appDependency.add("model/business-object/ticket/actions/CancelTicket");
     appDependency.add("model/business-object/ticket/actions/CompleteQuotation");
     appDependency.add("model/business-object/ticket/actions/CompleteLayaway");
     appDependency.add("model/business-object/ticket/actions/VoidLayaway");

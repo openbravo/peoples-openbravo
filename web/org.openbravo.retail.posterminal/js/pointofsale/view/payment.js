@@ -2524,9 +2524,16 @@ enyo.kind({
 
     if (
       !isMultiOrder &&
-      !OB.MobileApp.model.receipt.get('doCancelAndReplace') &&
-      !OB.MobileApp.model.receipt.get('cancelLayaway')
+      !OB.MobileApp.model.receipt.get('doCancelAndReplace')
     ) {
+      if (OB.MobileApp.model.receipt.get('cancelLayaway')) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.cancelTicket,
+          'cancelLayaway'
+        );
+        return;
+      }
+
       OB.MobileApp.model.receipt.runCompleteTicket(
         OB.App.State.Global.completeTicket,
         'completeReceipt'
