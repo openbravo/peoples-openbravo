@@ -38,9 +38,11 @@
         OB.App.State.Messages.Utils.createNewMessage(
           'Order',
           'org.openbravo.retail.posterminal.ProcessVoidLayaway',
-          {
-            order: newTicket
-          }
+          [
+            {
+              order: newTicket
+            }
+          ]
         )
       ];
 
