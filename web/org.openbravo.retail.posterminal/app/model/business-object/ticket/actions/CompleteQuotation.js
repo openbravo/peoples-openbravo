@@ -20,6 +20,7 @@
       const newGlobalState = { ...globalState };
       let newTicket = { ...newGlobalState.Ticket };
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
+      let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
 
       // Set complete ticket properties
@@ -33,6 +34,16 @@
       } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
         newTicket,
         newDocumentSequence,
+        payload
+      ));
+
+      // Cashup update
+      ({
+        ticket: newTicket,
+        cashup: newCashup
+      } = OB.App.State.Cashup.Utils.updateCashupFromTicket(
+        newTicket,
+        newCashup,
         payload
       ));
 
@@ -54,6 +65,7 @@
 
       newGlobalState.Ticket = newTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
+      newGlobalState.Cashup = newCashup;
       newGlobalState.Messages = newMessages;
 
       return newGlobalState;
