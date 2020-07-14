@@ -48,7 +48,7 @@ public class ImportBPSet extends ProcessUploadedFile {
     @SuppressWarnings("unchecked")
     NativeQuery<String> qry = OBDal.getInstance()
         .getSession()
-        .createNativeQuery("delete from c_bp_set_line where c_bp_set_id = :c_bp_set_id");
+        .createNativeQuery("update c_bp_set_line set isactive='N' where c_bp_set_id = :c_bp_set_id");
     qry.setParameter("c_bp_set_id", ownerId);
     qry.executeUpdate();
   }
@@ -92,6 +92,7 @@ public class ImportBPSet extends ProcessUploadedFile {
                   "c_bp_set_id=:c_bp_set_id and c_bpartner_id=:c_bpartner_id");
           bpSetLineQry.setNamedParameter("c_bp_set_id", bpSetId);
           bpSetLineQry.setNamedParameter("c_bpartner_id", bpId);
+          bpSetLineQry.setFilterOnActive(false);
           final List<BusinessPartnerSetLine> lines = bpSetLineQry.list();
           BusinessPartnerSetLine bpSetLine = null;
           if (lines.size() == 0) {
