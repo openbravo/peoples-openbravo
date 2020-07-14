@@ -78,7 +78,7 @@
     }
   );
 
-  OB.App.StateAPI.Global.completeLayaway.addActionPreparation(
+  OB.App.StateAPI.Global.completeQuotation.addActionPreparation(
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
