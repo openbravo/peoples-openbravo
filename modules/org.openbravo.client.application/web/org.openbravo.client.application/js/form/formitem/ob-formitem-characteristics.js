@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -274,6 +274,10 @@ isc.OBCharacteristicsFilterDialog.addProperties({
         this.topElement.creator.internalValue
       ) {
         this.checkInitialNodes(this.topElement.creator.internalValue);
+      }
+      // Sort tree, so all values that arrived are sorted alphanumerically
+      if (this.canSort) {
+        this.sort();
       }
     };
 
