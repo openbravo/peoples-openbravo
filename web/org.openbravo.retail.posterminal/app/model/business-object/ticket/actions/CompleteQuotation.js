@@ -37,6 +37,12 @@
         payload
       ));
 
+      // Delivery generation
+      newTicket = OB.App.State.Ticket.Utils.generateDelivery(
+        newTicket,
+        payload
+      );
+
       // Cashup update
       ({
         ticket: newTicket,
