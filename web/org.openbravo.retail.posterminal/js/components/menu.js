@@ -30,42 +30,15 @@ enyo.kind({
   },
   i18nLabel: 'OBPOS_VoidLayaway',
   tap: function() {
-    var me = this;
     if (this.disabled) {
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    this.model.get('order').checkNotProcessedPayments(function() {
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_PreVoidLayaway',
-        {
-          context: me
-        },
-        function(args) {
-          if (args && args.cancelOperation) {
-            return;
-          }
-          var order = me.model.get('order');
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBPOS_VoidLayawayLbl'),
-            OB.I18N.getLabel('OBPOS_VoidLayawayConfirmation'),
-            [
-              {
-                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                isConfirmButton: true,
-                action: function() {
-                  order.set('voidLayaway', true);
-                  order.trigger('voidLayaway');
-                }
-              },
-              {
-                label: OB.I18N.getLabel('OBMOBC_LblCancel')
-              }
-            ]
-          );
-        }
-      );
-    });
+    OB.MobileApp.model.receipt.runCompleteTicket(
+      OB.App.State.Global.voidLayaway,
+      'voidLayaway'
+    );
+    return;
   },
   displayLogic: function() {
     var me = this,

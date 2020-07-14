@@ -452,6 +452,27 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   /**
+   * Checks if no processed payments exists for given ticket.
+   */
+  async checkUnprocessedPayments(ticket, payload) {
+    const payment = ticket.payments.find(p => !p.isPrePayment);
+    if (payment) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_C&RDeletePaymentsBody',
+        messageParams: [
+          `${payment.name} (${OB.I18N.formatCurrencyWithSymbol(
+            payment.amount,
+            payload.terminal.symbol,
+            payload.terminal.currencySymbolAtTheRight
+          )})`
+        ]
+      });
+    }
+
+    return payload;
+  },
+
+  /**
    * Checks if given ticket includes negative payments.
    */
   async checkNegativePayments(ticket, payload) {

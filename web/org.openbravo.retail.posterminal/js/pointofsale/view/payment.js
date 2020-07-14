@@ -2528,7 +2528,8 @@ enyo.kind({
       !OB.MobileApp.model.receipt.get('cancelLayaway')
     ) {
       OB.MobileApp.model.receipt.runCompleteTicket(
-        OB.App.State.Global.completeTicket
+        OB.App.State.Global.completeTicket,
+        'completeReceipt'
       );
       return;
     }
@@ -3593,7 +3594,8 @@ enyo.kind({
     });
 
     OB.MobileApp.model.receipt.runCompleteTicket(
-      OB.App.State.Global.completeLayaway
+      OB.App.State.Global.completeLayaway,
+      'completeReceipt'
     );
     return;
   }

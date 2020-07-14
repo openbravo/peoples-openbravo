@@ -545,7 +545,8 @@ enyo.kind({
       paymentStatus;
     if (receipt.get('isQuotation')) {
       OB.MobileApp.model.receipt.runCompleteTicket(
-        OB.App.State.Global.completeQuotation
+        OB.App.State.Global.completeQuotation,
+        'completeQuotation'
       );
       return;
     }

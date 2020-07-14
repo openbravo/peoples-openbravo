@@ -565,7 +565,7 @@
       }
     },
 
-    runCompleteTicket: function(completeTicketAction) {
+    runCompleteTicket: function(completeTicketAction, actionName) {
       const runCompleteTicketAction = async () => {
         try {
           OB.App.StateBackwardCompatibility.getInstance(
@@ -686,13 +686,8 @@
         }
       };
 
-      const completeTicketProcessName = OB.MobileApp.model.receipt.get(
-        'isQuotation'
-      )
-        ? 'completeQuotation'
-        : 'completeReceipt';
       const completeTicketExecution = OB.UTIL.ProcessController.start(
-        completeTicketProcessName
+        actionName
       );
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreOrderSave',
@@ -702,7 +697,7 @@
         function(args) {
           if (args && args.cancellation) {
             OB.UTIL.ProcessController.finish(
-              completeTicketProcessName,
+              actionName,
               completeTicketExecution
             );
             return;
@@ -719,7 +714,7 @@
             },
             function(args) {
               OB.UTIL.ProcessController.finish(
-                completeTicketProcessName,
+                actionName,
                 completeTicketExecution
               );
               return;
