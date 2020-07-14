@@ -544,6 +544,41 @@
       return handler.getTicket();
     },
 
+    /**
+     * Given a ticket and the information of a product to be added on it, returns the candidate line where the new product information would be added
+     *
+     * @param {object} ticket - A ticket
+     * @param {productInfo} productInfo - The product information that would be added to the ticket
+     * @returns {object} - The line where the product information would be added or undefined if no candidate line is found
+     */
+    getLineToEdit(ticket, productInfo) {
+      const { product, qty, options, attrs } = productInfo;
+      if (product.obposScale || !product.groupProduct) {
+        return undefined;
+      }
+
+      if (options.line) {
+        return ticket.lines.find(l => l.id === options.line);
+      }
+
+      const attributeValue =
+        attrs.attributeSearchAllowed && attrs.attributeValue;
+      const serviceProduct =
+        product.productType !== 'S' ||
+        (product.productType === 'S' && !product.isLinkedToProduct);
+
+      return ticket.lines.find(
+        l =>
+          l.product.id === product.id &&
+          l.isEditable &&
+          Math.sign(l.qty) === Math.sign(qty) &&
+          (!attributeValue || l.attributeValue === attributeValue) &&
+          !l.splitline &&
+          (l.qty > 0 || !l.replacedorderline) &&
+          (qty !== 1 || l.qty !== -1 || serviceProduct)
+      );
+    },
+
     getCurrentDiscountedLinePrice(line, ignoreExecutedAtTheEndPromo) {
       let currentDiscountedLinePrice;
       let allDiscountedAmt = OB.DEC.Zero;
