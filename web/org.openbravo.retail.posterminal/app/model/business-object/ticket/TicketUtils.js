@@ -31,6 +31,24 @@
       : OB.DEC.getScale();
   };
 
+  // gets the information of the main warehouse of the terminal
+  const getTerminalWarehouse = () => {
+    const warehouses = OB.App.TerminalProperty.get('warehouses');
+    return {
+      id: warehouses[0].warehouseid,
+      warehousename: warehouses[0].warehousename
+    };
+  };
+
+  // checks if a ticket line includes service information
+  const isServiceLine = line => {
+    return (
+      line.relatedLines &&
+      line.relatedLines.length > 0 &&
+      !line.originalOrderLineId
+    );
+  };
+
   /**
    * Internal helper that allows to apply changes in a ticket in a pure way
    */
@@ -48,7 +66,7 @@
         id: OB.App.UUID.generate(),
         product,
         organization: this.getLineOrganization(product),
-        warehouse: this.getLineWarehouse(),
+        warehouse: getTerminalWarehouse(),
         uOM: product.uOM,
         qty: OB.DEC.number(qty, product.uOMstandardPrecision),
         priceIncludesTax: this.ticket.priceIncludesTax,
@@ -88,16 +106,9 @@
       };
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    getLineWarehouse() {
-      const warehouses = OB.App.TerminalProperty.get('warehouses');
-      return {
-        id: warehouses[0].warehouseid,
-        warehousename: warehouses[0].warehousename
-      };
-    }
-
     setDeliveryMode(line) {
+      // this is an internal function used to set the delivery mode information on a newly created line
+      // therefore we can safely assign properties to the line received as parameter
       if (line.product.productType !== 'S' && !line.obrdmDeliveryMode) {
         let productDeliveryMode;
         let productDeliveryDate;
@@ -174,10 +185,10 @@
       }
 
       this.ticket.lines = this.ticket.lines.map(l =>
-        this.isServiceLine(l) ? { ...l } : l
+        isServiceLine(l) ? { ...l } : l
       );
 
-      const serviceLines = this.ticket.lines.filter(l => this.isServiceLine(l));
+      const serviceLines = this.ticket.lines.filter(l => isServiceLine(l));
 
       for (let i = 0; i < serviceLines.length; i += 1) {
         const serviceLine = serviceLines[i];
@@ -284,19 +295,10 @@
       return hasServices && this.ticket.isEditable;
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    isServiceLine(line) {
-      return (
-        line.relatedLines &&
-        line.relatedLines.length > 0 &&
-        !line.originalOrderLineId
-      );
-    }
-
     getSiblingServicesLines(productId, orderlineId) {
       return this.ticket.lines.filter(
         l =>
-          this.isServiceLine(l) &&
+          isServiceLine(l) &&
           l.product.id === productId &&
           l.relatedLines[0].orderlineId === orderlineId
       );
