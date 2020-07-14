@@ -13,7 +13,7 @@
     if (ticket.businessPartner.id === newBusinessPartner.id) {
       const clonedBP = { ...newBusinessPartner };
       const bp = ticket.businessPartner;
-      if (newTicket.businessPartner.locId !== newBusinessPartner.get('locId')) {
+      if (newTicket.businessPartner.locId !== newBusinessPartner.locId) {
         // if the order has a different address but same BP than the bp
         // then copy over the address data
         clonedBP.locId = bp.locId;
@@ -24,8 +24,7 @@
         clonedBP.locationModel = bp.locationModel;
       }
       if (
-        newTicket.businessPartner.shipLocId !==
-        newBusinessPartner.get('shipLocId')
+        newTicket.businessPartner.shipLocId !== newBusinessPartner.shipLocId
       ) {
         clonedBP.shipLocId = bp.shipLocId;
         clonedBP.shipLocName = bp.shipLocName;
