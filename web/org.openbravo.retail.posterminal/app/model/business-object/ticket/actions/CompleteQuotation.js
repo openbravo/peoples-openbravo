@@ -71,4 +71,19 @@
       return newGlobalState;
     }
   );
+
+  OB.App.StateAPI.Global.completeLayaway.addActionPreparation(
+    async (globalState, payload) => {
+      let newPayload = { ...payload };
+
+      newPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
+        globalState.Ticket,
+        newPayload
+      );
+
+      return newPayload;
+    },
+    async (globalState, payload) => payload,
+    100
+  );
 })();
