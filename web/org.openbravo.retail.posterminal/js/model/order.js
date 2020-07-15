@@ -665,6 +665,39 @@
           OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
             OB.MobileApp.model.receipt
           );
+          if (
+            OB.MobileApp.model.receipt.get('cancelLayaway') &&
+            OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew', true)
+          ) {
+            const receiptClone = OB.UTIL.clone(OB.MobileApp.model.receipt);
+            OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'),
+              OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'),
+              [
+                {
+                  label: OB.I18N.getLabel('OBPOS_LblOk'),
+                  action: function() {
+                    OB.MobileApp.model.orderList.addNewOrder();
+                    OB.MobileApp.model.receipt.set(
+                      'bp',
+                      receiptClone.get('bp')
+                    );
+                    receiptClone
+                      .get('lines')
+                      .forEach(line =>
+                        OB.MobileApp.model.receipt.addProduct(
+                          line.get('product'),
+                          -line.get('qty')
+                        )
+                      );
+                  }
+                },
+                {
+                  label: OB.I18N.getLabel('OBPOS_Cancel')
+                }
+              ]
+            );
+          }
           if (!OB.MobileApp.model.receipt.get('isQuotation')) {
             if (
               OB.MobileApp.model.hasPermission(
