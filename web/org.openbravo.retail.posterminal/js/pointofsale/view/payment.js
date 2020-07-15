@@ -2522,14 +2522,19 @@ enyo.kind({
       return true;
     }
 
-    if (
-      !isMultiOrder &&
-      !OB.MobileApp.model.receipt.get('doCancelAndReplace')
-    ) {
+    if (!isMultiOrder) {
       if (OB.MobileApp.model.receipt.get('cancelLayaway')) {
         OB.MobileApp.model.receipt.runCompleteTicket(
           OB.App.State.Global.cancelTicket,
           'cancelLayaway'
+        );
+        return;
+      }
+
+      if (OB.MobileApp.model.receipt.get('doCancelAndReplace')) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.replaceTicket,
+          'completeReceipt'
         );
         return;
       }
