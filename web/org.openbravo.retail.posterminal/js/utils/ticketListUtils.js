@@ -215,7 +215,7 @@
     });
   };
 
-  OB.UTIL.TicketListUtils.loadCustomer = async function(model, callback) {
+  OB.UTIL.TicketListUtils.loadCustomer = function(model, callback) {
     var bpId,
       bpLocId,
       bpBillLocId,
@@ -309,7 +309,7 @@
       );
     };
 
-    loadLocations = async function(bp) {
+    loadLocations = function(bp) {
       if (bpLocId === bpBillLocId) {
         if (isLoadedPartiallyFromBackend) {
           finalCallback(bp, bpLoc, null);
@@ -331,21 +331,22 @@
               }
             );
           } else {
-            try {
-              let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
-                bpLocId
-              );
-              if (bPLocation) {
-                let bpLoc = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
-                finalCallback(bp, bpLoc, null);
-              } else {
-                loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
-                  finalCallback(bp, data.bpLoc, null);
-                });
-              }
-            } catch (error) {
-              OB.error(error);
-            }
+            OB.App.MasterdataModels.BusinessPartnerLocation.withId(bpLocId)
+              .then(bPLocation => {
+                if (bPLocation) {
+                  let bpLoc = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
+                  finalCallback(bp, bpLoc, null);
+                } else {
+                  loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                    data
+                  ) {
+                    finalCallback(bp, data.bpLoc, null);
+                  });
+                }
+              })
+              .catch(error => {
+                OB.error(error);
+              });
           }
         }
       } else {
@@ -394,35 +395,38 @@
               bpLoc
             );
           } else {
-            try {
-              criteria = new OB.App.Class.Criteria();
-              criteria.criterion('id', [bpLocId, bpBillLocId], 'in');
-              let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
-                criteria.build()
-              );
-              let locations = [];
-              for (let i = 0; i < bPLocations.length; i++) {
-                locations.push(
-                  OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
-                );
-              }
-              if (locations.length === 2) {
-                for (const l of locations) {
-                  if (l.id === bpLocId) {
-                    bpLoc = l;
-                  } else if (l.id === bpBillLocId) {
-                    bpBillLoc = l;
-                  }
+            criteria = new OB.App.Class.Criteria();
+            criteria.criterion('id', [bpLocId, bpBillLocId], 'in');
+            OB.App.MasterdataModels.BusinessPartnerLocation.find(
+              criteria.build()
+            )
+              .then(bPLocations => {
+                let locations = [];
+                for (let i = 0; i < bPLocations.length; i++) {
+                  locations.push(
+                    OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
+                  );
                 }
-                finalCallback(bp, bpLoc, bpBillLoc);
-              } else {
-                loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
-                  finalCallback(bp, data.bpLoc, data.bpBillLoc);
-                });
-              }
-            } catch (error) {
-              OB.UTIL.showError(error);
-            }
+                if (locations.length === 2) {
+                  for (const l of locations) {
+                    if (l.id === bpLocId) {
+                      bpLoc = l;
+                    } else if (l.id === bpBillLocId) {
+                      bpBillLoc = l;
+                    }
+                  }
+                  finalCallback(bp, bpLoc, bpBillLoc);
+                } else {
+                  loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
+                    data
+                  ) {
+                    finalCallback(bp, data.bpLoc, data.bpBillLoc);
+                  });
+                }
+              })
+              .catch(error => {
+                OB.UTIL.showError(error);
+              });
           }
         }
       }
@@ -447,25 +451,26 @@
         }
       );
     } else {
-      try {
-        let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpId);
-        if (bp !== undefined) {
-          loadLocations(OB.Dal.transform(OB.Model.BusinessPartner, bp));
-        } else {
-          loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
-            bpLoc = data.bpLoc;
-            if (bpLocId !== bpBillLocId) {
-              bpBillLoc = data.bpBillLoc;
-            }
-            loadLocations(data.bpartner);
-          });
-        }
-      } catch (error) {
-        OB.error(error);
-      }
+      OB.App.MasterdataModels.BusinessPartner.withId(bpId)
+        .then(bp => {
+          if (bp !== undefined) {
+            loadLocations(OB.Dal.transform(OB.Model.BusinessPartner, bp));
+          } else {
+            loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
+              bpLoc = data.bpLoc;
+              if (bpLocId !== bpBillLocId) {
+                bpBillLoc = data.bpBillLoc;
+              }
+              loadLocations(data.bpartner);
+            });
+          }
+        })
+        .catch(error => {
+          OB.error(error);
+        });
     }
   };
-  OB.UTIL.TicketListUtils.newPaidReceipt = async function(model, callback) {
+  OB.UTIL.TicketListUtils.newPaidReceipt = function(model, callback) {
     var order = new OB.Model.Order(),
       lines,
       newline,
@@ -572,7 +577,7 @@
         order.set('orderType', 1);
       }
     }
-    let loadProducts = async function() {
+    let loadProducts = function() {
       var linepos = 0,
         hasDeliveredProducts = false,
         hasNotDeliveredProducts = false,
@@ -687,13 +692,13 @@
             ? null
             : OB.DEC.number(iter.lineNetAmount);
         iter.linepos = linepos;
-        var addLineForProduct = async function(prod) {
+        var addLineForProduct = function(prod) {
           // Set product services
-          await order._loadRelatedServices(
+          order._loadRelatedServices(
             prod.get('productType'),
             prod.get('id'),
             prod.get('productCategory'),
-            async function(data) {
+            function(data) {
               let hasservices;
               if (
                 !OB.UTIL.isNullOrUndefined(data) &&
@@ -877,65 +882,65 @@
         if (iter.relatedLines && !order.get('hasServices')) {
           order.set('hasServices', true);
         }
-        try {
-          const product = await OB.App.MasterdataModels.Product.withId(iter.id);
-          if (product) {
-            await addLineForProduct(
-              OB.Dal.transform(OB.Model.Product, product)
-            );
-          } else {
-            //Empty
-            const body = {
-              productId: iter.id,
-              salesOrderLineId: iter.lineId
-            };
-            try {
-              let data = await OB.App.Request.mobileServiceRequest(
+        OB.App.MasterdataModels.Product.withId(iter.id)
+          .then(product => {
+            if (product) {
+              addLineForProduct(OB.Dal.transform(OB.Model.Product, product));
+            } else {
+              //Empty
+              const body = {
+                productId: iter.id,
+                salesOrderLineId: iter.lineId
+              };
+              OB.App.Request.mobileServiceRequest(
                 'org.openbravo.retail.posterminal.master.LoadedProduct',
                 body
-              );
-              data = data.response.data;
-              await addLineForProduct(
-                OB.Dal.transform(OB.Model.Product, data[0])
-              );
-            } catch (error) {
-              if (NoFoundProduct) {
-                NoFoundProduct = false;
-                OB.UTIL.showConfirmation.display(
-                  OB.I18N.getLabel('OBPOS_InformationTitle'),
-                  OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
-                  [
-                    {
-                      label: OB.I18N.getLabel('OBPOS_LblOk'),
-                      isConfirmButton: true
-                    }
-                  ]
-                );
-              }
+              )
+                .then(data => {
+                  data = data.response.data;
+                  addLineForProduct(
+                    OB.Dal.transform(OB.Model.Product, data[0])
+                  );
+                })
+                .catch(error => {
+                  if (NoFoundProduct) {
+                    NoFoundProduct = false;
+                    OB.UTIL.showConfirmation.display(
+                      OB.I18N.getLabel('OBPOS_InformationTitle'),
+                      OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                      [
+                        {
+                          label: OB.I18N.getLabel('OBPOS_LblOk'),
+                          isConfirmButton: true
+                        }
+                      ]
+                    );
+                  }
+                });
             }
-          }
-        } catch (error) {
-          OB.error(error.message);
-        }
+          })
+          .catch(error => {
+            error.message;
+          });
         linepos++;
       }
     };
 
-    async function callToLoadCustomer() {
-      await OB.UTIL.TicketListUtils.loadCustomer(
+    function callToLoadCustomer() {
+      OB.UTIL.TicketListUtils.loadCustomer(
         {
           bpId: model.bp,
           bpLocId: model.bpLocId,
           bpBillLocId: model.bpBillLocId || model.bpLocId
         },
-        async function(bp, loc, billLoc) {
+        function(bp, loc, billLoc) {
           order.set({
             bp: bp
           });
           order.set('gross', model.totalamount);
           order.set('net', model.totalNetAmount);
           order.trigger('change:bp', order);
-          await loadProducts();
+          loadProducts();
         }
       );
     }
@@ -985,8 +990,11 @@
     }
 
     OB.MobileApp.model.receipt.trigger('updateView');
-    OB.App.State.Global.insertTicketIntoTicketList().then(() => {
-      OB.MobileApp.model.receipt.clearWith(model);
+
+    let ticket = OB.App.State.getState().Ticket;
+    OB.MobileApp.model.receipt.clearWith(model);
+
+    OB.App.State.TicketList.saveTicket(ticket).then(() => {
       loadCurrent(true);
       OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
       executeFinalCallback();

@@ -364,8 +364,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/actions/SetLinePrice");
     appDependency.add("model/business-object/ticket/actions/AddByTotalPromotion");
     appDependency.add("model/business-object/ticket/actions/RemovePromotion");
-    appDependency.add("model/business-object/ticket/actions/ReactivateQuotation"); 
-    appDependency.add("model/business-object/ticket/actions/RejectQuotation"); 
+    appDependency.add("model/business-object/ticket/actions/ReactivateQuotation");
+    appDependency.add("model/business-object/ticket/actions/RejectQuotation");
     appDependency.add("model/business-object/ticket/actions/SyncTickets"); // TODO: Remove when
                                                                            // close ticket actions
                                                                            // are available
@@ -392,7 +392,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         .add("model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets");
     appDependency.add("model/business-object/ticket-list/actions/UpdateBPInAllTickets");
     appDependency.add("model/business-object/ticket-list/actions/RemoveTicket");
-    appDependency.add("model/business-object/ticket-list/actions/InsertTicketIntoTicketList");
+    appDependency.add("model/business-object/ticket-list/actions/SaveTicket");
 
     // Utilities
     appDependency.add("util/OpenTicketList");
