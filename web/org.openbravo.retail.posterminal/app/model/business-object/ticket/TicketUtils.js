@@ -757,15 +757,15 @@
     );
     const paymentsAmount = ticket.payments.reduce((total, payment) => {
       if (
-        ticket.cancelAndReplaceChangePending ||
-        (!ticket.isLayaway &&
-          !ticket.isPaid &&
-          ticket.isNegative &&
-          !payment.isReversePayment)
+        payment.isPrePayment ||
+        ticket.isLayaway ||
+        ticket.isPaid ||
+        !ticket.isNegative ||
+        payment.isReversePayment
       ) {
-        return OB.DEC.sub(total, payment.origAmount);
+        return OB.DEC.add(total, payment.origAmount);
       }
-      return OB.DEC.add(total, payment.origAmount);
+      return OB.DEC.sub(total, payment.origAmount);
     }, OB.DEC.Zero);
     const remainingToPay = OB.DEC.sub(
       ticket.grossAmount,
