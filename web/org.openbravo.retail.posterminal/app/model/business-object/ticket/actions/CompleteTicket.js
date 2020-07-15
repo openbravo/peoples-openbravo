@@ -40,7 +40,7 @@
       ({
         ticket: newTicket,
         documentSequence: newDocumentSequence
-      } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+      } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
         newTicket,
         newDocumentSequence,
         payload
@@ -58,7 +58,7 @@
         ({
           ticket: newTicket.calculatedInvoice,
           documentSequence: newDocumentSequence
-        } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+        } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
           newTicket.calculatedInvoice,
           newDocumentSequence,
           payload

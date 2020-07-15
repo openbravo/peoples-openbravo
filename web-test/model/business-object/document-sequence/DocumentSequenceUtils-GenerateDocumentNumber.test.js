@@ -10,10 +10,10 @@
 require('./SetupDocumentSequenceAndTicket');
 const deepfreeze = require('deepfreeze');
 
-describe('Document Sequence Utils generateTicketDocumentSequence method', () => {
+describe('Document Sequence Utils generateDocumentNumber method', () => {
   it('should not generate new document number if ticket already has document number', () => {
     const ticket = deepfreeze({ documentNo: 'OS/00000' });
-    const newTicketAndDocumentSequence = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+    const newTicketAndDocumentSequence = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
       ticket
     );
     expect(newTicketAndDocumentSequence).toEqual({ ticket: ticket });
@@ -24,7 +24,7 @@ describe('Document Sequence Utils generateTicketDocumentSequence method', () => 
     const documentSequence = deepfreeze({
       lastassignednum: { sequencePrefix: 'O', sequenceNumber: 0 }
     });
-    const newTicketAndDocumentSequence = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+    const newTicketAndDocumentSequence = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
       ticket,
       documentSequence,
       {
@@ -54,7 +54,7 @@ describe('Document Sequence Utils generateTicketDocumentSequence method', () => 
         sequenceNumber: 0
       }
     });
-    const newTicketAndDocumentSequence = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+    const newTicketAndDocumentSequence = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
       ticket,
       documentSequence,
       {

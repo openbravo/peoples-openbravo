@@ -129,7 +129,7 @@
      *
      * @returns {object} The new state of Ticket and DocumentSequence after document number generation.
      */
-    generateTicketDocumentSequence(ticket, documentSequence, payload) {
+    generateDocumentNumber(ticket, documentSequence, payload) {
       if (ticket.documentNo) {
         return { ticket, documentSequence };
       }
