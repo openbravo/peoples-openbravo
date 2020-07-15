@@ -51,22 +51,19 @@ enyo.kind({
               classes:
                 'obUiRenderMultiOrdersLineValues-multiTopLine-documentNo',
               initComponents: function() {
-                const receipt = OB.MobileApp.model.receipt,
-                  docNo = receipt.get('documentNo');
+                const docNo = this.owner.owner.model.get('documentNo');
                 let bp = '';
-                if (bp) {
-                  if (receipt.get('externalBusinessPartner')) {
-                    bp = new OB.App.Class.ExternalBusinessPartner(
-                      receipt.get('externalBusinessPartner')
-                    ).getIdentifier();
-                  } else {
-                    bp = receipt.get('bp').get('_identifier');
-                  }
-                  if (docNo) {
-                    this.setContent(docNo + ' - ' + bp);
-                  } else {
-                    this.setContent(bp);
-                  }
+                if (this.owner.owner.model.get('externalBusinessPartner')) {
+                  bp = new OB.App.Class.ExternalBusinessPartner(
+                    this.owner.owner.model.get('externalBusinessPartner')
+                  ).getIdentifier();
+                } else {
+                  bp = this.owner.owner.model.get('bp').get('_identifier');
+                }
+                if (docNo) {
+                  this.setContent(docNo + ' - ' + bp);
+                } else {
+                  this.setContent(bp);
                 }
               }
             },
@@ -74,14 +71,14 @@ enyo.kind({
               name: 'total',
               classes: 'obUiRenderMultiOrdersLineValues-multiTopLine-total',
               initComponents: function() {
-                const receipt = OB.MobileApp.model.receipt;
                 this.setContent(
-                  !_.isUndefined(receipt.get('amountToLayaway')) &&
-                    !_.isNull(receipt.model.get('amountToLayaway'))
+                  !_.isUndefined(
+                    this.owner.owner.model.get('amountToLayaway')
+                  ) && !_.isNull(this.owner.owner.model.get('amountToLayaway'))
                     ? OB.I18N.formatCurrency(
-                        receipt.model.get('amountToLayaway')
+                        this.owner.owner.model.get('amountToLayaway')
                       )
-                    : receipt.printPending()
+                    : this.owner.owner.model.printPending()
                 );
               }
             }
@@ -96,11 +93,10 @@ enyo.kind({
               classes:
                 'obUiRenderMultiOrdersLineValues-totalAndLayaway-totalOrder',
               initComponents: function() {
-                const receipt = OB.MobileApp.model.receipt;
                 this.setContent(
                   OB.I18N.getLabel('OBPOS_LineTotal') +
                     ': ' +
-                    receipt.printTotal()
+                    this.owner.owner.model.printTotal()
                 );
               }
             },
@@ -109,12 +105,13 @@ enyo.kind({
               classes:
                 'obUiRenderMultiOrdersLineValues-totalAndLayaway-isLayaway',
               initComponents: function() {
-                const receipt = OB.MobileApp.model.receipt;
-                if (receipt.get('isLayaway')) {
+                if (this.owner.owner.model.get('isLayaway')) {
                   this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
                 } else if (
-                  !_.isUndefined(receipt.get('amountToLayaway')) &&
-                  !_.isNull(receipt.get('amountToLayaway'))
+                  !_.isUndefined(
+                    this.owner.owner.model.get('amountToLayaway')
+                  ) &&
+                  !_.isNull(this.owner.owner.model.get('amountToLayaway'))
                 ) {
                   this.setContent(OB.I18N.getLabel('OBPOS_ToBeLaidaway'));
                 }
@@ -126,13 +123,14 @@ enyo.kind({
           name: 'multiBottonLine',
           classes: 'obUiRenderMultiOrdersLineValues-line-multiBottonLine',
           initComponents: function() {
-            const receipt = OB.MobileApp.model.receipt;
             this.setContent(
               OB.I18N.getLabel('OBPOS_RemainingToPay') +
                 ': ' +
-                receipt.printPending() +
+                this.owner.owner.model.printPending() +
                 ' - (' +
-                OB.I18N.formatDate(new Date(receipt.get('orderDate'))) +
+                OB.I18N.formatDate(
+                  new Date(this.owner.owner.model.get('orderDate'))
+                ) +
                 ') '
             );
           }
