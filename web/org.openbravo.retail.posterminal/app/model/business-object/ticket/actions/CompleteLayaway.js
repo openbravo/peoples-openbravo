@@ -91,9 +91,7 @@
       );
 
       return newPayload;
-    },
-    async (globalState, payload) => payload,
-    100
+    }
   );
 
   const checkAnonymousLayaway = async (ticket, payload) => {

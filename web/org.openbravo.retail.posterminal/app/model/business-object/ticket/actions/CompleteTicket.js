@@ -138,8 +138,6 @@
       );
 
       return newPayload;
-    },
-    async (globalState, payload) => payload,
-    100
+    }
   );
 })();

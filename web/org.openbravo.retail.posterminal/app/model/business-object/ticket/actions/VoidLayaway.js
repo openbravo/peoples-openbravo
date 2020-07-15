@@ -75,9 +75,7 @@
       );
 
       return newPayload;
-    },
-    async (globalState, payload) => payload,
-    100
+    }
   );
 
   const checkVoidLayaway = async (ticket, payload) => {

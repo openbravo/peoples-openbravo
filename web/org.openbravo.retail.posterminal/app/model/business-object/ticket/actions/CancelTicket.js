@@ -97,9 +97,7 @@
       // newPayload = checkNewTicket(globalState.Ticket, newPayload);
 
       return newPayload;
-    },
-    async (globalState, payload) => payload,
-    100
+    }
   );
 
   // FIXME: Use payload.cancelLayawayAndNew once TicketList is implemented
