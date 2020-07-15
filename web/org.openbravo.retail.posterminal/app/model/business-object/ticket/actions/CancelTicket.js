@@ -19,51 +19,14 @@
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
       let newTicket = { ...newGlobalState.Ticket };
-      let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
 
       // Set complete ticket properties
-      newTicket.completeTicket = true;
       newTicket = OB.App.State.Ticket.Utils.completeTicket(newTicket, payload);
-
-      // FIXME: Move to calculateTotals?
-      newTicket = OB.App.State.Ticket.Utils.updateTicketType(
-        newTicket,
-        payload
-      );
 
       // Complete ticket payment
       newTicket = OB.App.State.Ticket.Utils.completePayment(newTicket, payload);
-
-      // Document number generation
-      ({
-        ticket: newTicket,
-        documentSequence: newDocumentSequence
-      } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
-        newTicket,
-        newDocumentSequence,
-        payload
-      ));
-
-      // Delivery generation
-      newTicket = OB.App.State.Ticket.Utils.generateDelivery(
-        newTicket,
-        payload
-      );
-
-      // Invoice generation
-      newTicket = OB.App.State.Ticket.Utils.generateInvoice(newTicket, payload);
-      if (newTicket.calculatedInvoice) {
-        ({
-          ticket: newTicket.calculatedInvoice,
-          documentSequence: newDocumentSequence
-        } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
-          newTicket.calculatedInvoice,
-          newDocumentSequence,
-          payload
-        ));
-      }
 
       // Cashup update
       ({
@@ -90,17 +53,8 @@
         ...newMessages,
         OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket)
       ];
-      if (newTicket.calculatedInvoice) {
-        newMessages = [
-          ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(
-            newTicket.calculatedInvoice
-          )
-        ];
-      }
 
       newGlobalState.Ticket = newTicket;
-      newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Cashup = newCashup;
       newGlobalState.Messages = newMessages;
 
