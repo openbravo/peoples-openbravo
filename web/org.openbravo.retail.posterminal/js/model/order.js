@@ -6578,213 +6578,200 @@
       var clonedreceipt = new OB.Model.Order();
       OB.UTIL.clone(me, clonedreceipt);
 
-      OB.Dal.remove(
-        this,
-        function() {
-          // OB.MobileApp.model.orderList.remove(me, {
-          //   silent: true
-          // });
-          var deliveredLine,
-            linesWithDeferred = [];
+      var deliveredLine,
+        linesWithDeferred = [];
 
-          me.preventOrderSave(true);
-          me.set('preventServicesUpdate', true);
-          me.unset('orderid');
+      me.preventOrderSave(true);
+      me.set('preventServicesUpdate', true);
+      me.unset('orderid');
 
-          if (me.get('paidOnCredit')) {
-            me.set('paidOnCredit', false);
-            me.set('paidPartiallyOnCredit', false);
-            me.set('creditAmount', OB.DEC.Zero);
-          }
+      if (me.get('paidOnCredit')) {
+        me.set('paidOnCredit', false);
+        me.set('paidPartiallyOnCredit', false);
+        me.set('creditAmount', OB.DEC.Zero);
+      }
 
-          me.set('canceledorder', clonedreceipt);
-          me.set('doCancelAndReplace', true);
+      me.set('canceledorder', clonedreceipt);
+      me.set('doCancelAndReplace', true);
 
-          me.set('hasbeenpaid', 'N');
-          me.set('isPaid', false);
-          me.set('isEditable', true);
+      me.set('hasbeenpaid', 'N');
+      me.set('isPaid', false);
+      me.set('isEditable', true);
 
-          deliveredLine = _.find(me.get('lines').models, function(line) {
-            return (
-              line.get('deliveredQuantity') &&
-              OB.DEC.compare(line.get('deliveredQuantity')) === 1
-            );
-          });
-          if (
-            me.get('isLayaway') ||
-            (OB.MobileApp.model.get('terminal').terminalType.layawayorder &&
-              !deliveredLine)
-          ) {
-            OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
-              permission: null,
-              orderType: 2
-            });
-          }
-          me.set('isLayaway', false);
+      deliveredLine = _.find(me.get('lines').models, function(line) {
+        return (
+          line.get('deliveredQuantity') &&
+          OB.DEC.compare(line.get('deliveredQuantity')) === 1
+        );
+      });
+      if (
+        me.get('isLayaway') ||
+        (OB.MobileApp.model.get('terminal').terminalType.layawayorder &&
+          !deliveredLine)
+      ) {
+        OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
+          permission: null,
+          orderType: 2
+        });
+      }
+      me.set('isLayaway', false);
 
-          me.get('lines').each(function(line) {
-            idMap[line.get('id')] = OB.UTIL.get_UUID();
-            line.set('replacedorderline', line.get('id'));
-            line.set('id', idMap[line.get('id')]);
-            line.unset('invoicedQuantity');
-            line.unset('grossUnitPrice');
-            line.unset('lineGrossAmount');
-            if (
-              !line.get('obposCanbedelivered') &&
-              line.get('deliveredQuantity') === line.get('qty')
-            ) {
-              line.set('obposCanbedelivered', true);
-            }
-            line.set('obposIspaid', false);
-            line.set('documentType', me.get('documentType'));
-          });
+      me.get('lines').each(function(line) {
+        idMap[line.get('id')] = OB.UTIL.get_UUID();
+        line.set('replacedorderline', line.get('id'));
+        line.set('id', idMap[line.get('id')]);
+        line.unset('invoicedQuantity');
+        line.unset('grossUnitPrice');
+        line.unset('lineGrossAmount');
+        if (
+          !line.get('obposCanbedelivered') &&
+          line.get('deliveredQuantity') === line.get('qty')
+        ) {
+          line.set('obposCanbedelivered', true);
+        }
+        line.set('obposIspaid', false);
+        line.set('documentType', me.get('documentType'));
+      });
 
-          // The lines must be iterated a second time after finishing the first loop, to ensure that
-          // all lines are included in the idMap map when updating the service relations
-          if (me.get('hasServices')) {
-            me.get('lines').each(function(line) {
-              if (line.get('relatedLines')) {
-                line.get('relatedLines').forEach(function(rl) {
-                  rl.orderId = me.get('id');
-                  if (idMap[rl.orderlineId]) {
-                    rl.orderlineId = idMap[rl.orderlineId];
-                  }
-                });
+      // The lines must be iterated a second time after finishing the first loop, to ensure that
+      // all lines are included in the idMap map when updating the service relations
+      if (me.get('hasServices')) {
+        me.get('lines').each(function(line) {
+          if (line.get('relatedLines')) {
+            line.get('relatedLines').forEach(function(rl) {
+              rl.orderId = me.get('id');
+              if (idMap[rl.orderlineId]) {
+                rl.orderlineId = idMap[rl.orderlineId];
               }
             });
           }
+        });
+      }
 
-          me.set('replacedorder_documentNo', me.get('documentNo'));
-          me.set('replacedorder', me.get('id'));
-          me.unset('id');
-          me.set('session', OB.MobileApp.model.get('session'));
+      me.set('replacedorder_documentNo', me.get('documentNo'));
+      me.set('replacedorder', me.get('id'));
+      me.unset('id');
+      me.set('session', OB.MobileApp.model.get('session'));
 
-          me.unset('invoiceCreated');
+      me.unset('invoiceCreated');
+      me.set(
+        'documentType',
+        OB.MobileApp.model.get('terminal').terminalType.documentType
+      );
+
+      me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      me.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
+      if (!me.get('salesRepresentative')) {
+        if (OB.MobileApp.model.get('context').isSalesRepresentative) {
           me.set(
-            'documentType',
-            OB.MobileApp.model.get('terminal').terminalType.documentType
+            'salesRepresentative',
+            OB.MobileApp.model.get('context').user.id
           );
+        } else {
+          me.unset('salesRepresentative');
+        }
+      }
 
-          me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-          me.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
-          if (!me.get('salesRepresentative')) {
-            if (OB.MobileApp.model.get('context').isSalesRepresentative) {
-              me.set(
-                'salesRepresentative',
-                OB.MobileApp.model.get('context').user.id
-              );
-            } else {
-              me.unset('salesRepresentative');
-            }
-          }
+      if (deferredLines.length) {
+        linesWithDeferred.push(
+          OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBody')
+        );
+      }
+      //Set to not editable and not deletable to all deferred lines or lines that have deferred services
+      _.each(deferredLines, function(deferredLine) {
+        var deffLine = _.find(me.get('lines').models, function(line) {
+          return (
+            deferredLine === OB.DEC.mul(OB.DEC.add(line.get('linepos'), 1), 10)
+          );
+        });
+        deffLine.set('isEditable', false);
+        deffLine.set('isDeletable', false);
+        linesWithDeferred.push(
+          OB.I18N.getLabel('OBMOBC_Character')[1] +
+            ' ' +
+            deffLine.get('product').get('_identifier') +
+            ' (' +
+            OB.I18N.getLabel('OBPOS_LineQuantity') +
+            ': ' +
+            deffLine.get('qty') +
+            ')'
+        );
+      });
+      if (deferredLines.length) {
+        linesWithDeferred.push(
+          OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter')
+        );
+        linesWithDeferred.push(
+          OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter2')
+        );
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_NotModifiableLines'),
+          linesWithDeferred
+        );
+      }
 
-          if (deferredLines.length) {
-            linesWithDeferred.push(
-              OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBody')
-            );
-          }
-          //Set to not editable and not deletable to all deferred lines or lines that have deferred services
-          _.each(deferredLines, function(deferredLine) {
-            var deffLine = _.find(me.get('lines').models, function(line) {
-              return (
-                deferredLine ===
-                OB.DEC.mul(OB.DEC.add(line.get('linepos'), 1), 10)
-              );
-            });
-            deffLine.set('isEditable', false);
-            deffLine.set('isDeletable', false);
-            linesWithDeferred.push(
-              OB.I18N.getLabel('OBMOBC_Character')[1] +
-                ' ' +
-                deffLine.get('product').get('_identifier') +
-                ' (' +
-                OB.I18N.getLabel('OBPOS_LineQuantity') +
-                ': ' +
-                deffLine.get('qty') +
-                ')'
-            );
-          });
-          if (deferredLines.length) {
-            linesWithDeferred.push(
-              OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter')
-            );
-            linesWithDeferred.push(
-              OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter2')
-            );
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_NotModifiableLines'),
-              linesWithDeferred
-            );
-          }
+      me.set('orderDate', new Date());
+      me.set('creationDate', null);
 
-          me.set('orderDate', new Date());
-          me.set('creationDate', null);
-
-          me.set('negativeDocNo', me.get('documentNo') + '*R*');
-          newDocNo = '';
-          terminalDocNoPrefix =
-            OB.MobileApp.model.attributes.terminal.docNoPrefix;
-          splittedDocNo = me
+      me.set('negativeDocNo', me.get('documentNo') + '*R*');
+      newDocNo = '';
+      terminalDocNoPrefix = OB.MobileApp.model.attributes.terminal.docNoPrefix;
+      splittedDocNo = me
+        .get('documentNo')
+        .substring(
+          terminalDocNoPrefix.length +
+            (OB.Model.Order.prototype.includeDocNoSeperator ? 1 : 0),
+          me.get('documentNo').length
+        )
+        .split(cancelAndReplaceSeparator);
+      if (splittedDocNo.length > 1) {
+        var nextNumber =
+          parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
+        newDocNo =
+          me
             .get('documentNo')
             .substring(
-              terminalDocNoPrefix.length +
-                (OB.Model.Order.prototype.includeDocNoSeperator ? 1 : 0),
-              me.get('documentNo').length
-            )
-            .split(cancelAndReplaceSeparator);
-          if (splittedDocNo.length > 1) {
-            var nextNumber =
-              parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
-            newDocNo =
-              me
-                .get('documentNo')
-                .substring(
-                  0,
-                  me.get('documentNo').lastIndexOf(cancelAndReplaceSeparator)
-                ) +
-              cancelAndReplaceSeparator +
-              nextNumber;
-          } else {
-            newDocNo = me.get('documentNo') + cancelAndReplaceSeparator + '1';
-          }
-          me.set('documentNo', newDocNo);
-          me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+              0,
+              me.get('documentNo').lastIndexOf(cancelAndReplaceSeparator)
+            ) +
+          cancelAndReplaceSeparator +
+          nextNumber;
+      } else {
+        newDocNo = me.get('documentNo') + cancelAndReplaceSeparator + '1';
+      }
+      me.set('documentNo', newDocNo);
+      me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
 
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PostCancelAndReplace',
-            {
-              context: context,
-              receipt: me
-            },
-            function(args) {
-              OB.UTIL.showSuccess(
-                OB.I18N.getLabel('OBPOS_OrderReplaced', [
-                  me.get('replacedorder_documentNo'),
-                  me.get('documentNo')
-                ])
-              );
-              me.calculateReceipt(function() {
-                me.unset('skipApplyPromotions');
-                me.unset('preventServicesUpdate');
-                me.preventOrderSave(false);
-              });
-            }
-          );
-          // Set the last line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
-          // isDeletable status for the lines (to hide or show the buttons)
-          if (deferredLines.length) {
-            me.get('lines')
-              .at(me.get('lines').models.length - 1)
-              .trigger(
-                'selected',
-                me.get('lines').at(me.get('lines').models.length - 1)
-              );
-          }
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PostCancelAndReplace',
+        {
+          context: context,
+          receipt: me
         },
-        function() {
-          OB.UTIL.showError('Error removing');
+        function(args) {
+          OB.UTIL.showSuccess(
+            OB.I18N.getLabel('OBPOS_OrderReplaced', [
+              me.get('replacedorder_documentNo'),
+              me.get('documentNo')
+            ])
+          );
+          me.calculateReceipt(function() {
+            me.unset('skipApplyPromotions');
+            me.unset('preventServicesUpdate');
+            me.preventOrderSave(false);
+          });
         }
       );
+      // Set the last line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
+      // isDeletable status for the lines (to hide or show the buttons)
+      if (deferredLines.length) {
+        me.get('lines')
+          .at(me.get('lines').models.length - 1)
+          .trigger(
+            'selected',
+            me.get('lines').at(me.get('lines').models.length - 1)
+          );
+      }
     },
 
     checkNotProcessedPayments: function(callback) {
@@ -6892,153 +6879,133 @@
                     //Cloning order to be canceled
                     var clonedReceipt = new OB.Model.Order();
                     OB.UTIL.clone(me, clonedReceipt);
-                    OB.Dal.remove(me, function() {
-                      // OB.MobileApp.model.orderList.remove(me, {
-                      //   silent: true
-                      // });
-                      var idMap = {};
-                      me.set('skipCalculateReceipt', true);
-                      me.preventOrderSave(true);
-                      me.set('preventServicesUpdate', true);
-                      me.set('isEditable', true);
-                      me.set('cancelLayaway', true);
-                      me.set('fromLayaway', me.get('isLayaway'));
-                      me.set('isLayaway', false);
-                      me.set('isPaid', false);
-                      // Set the order type
-                      context.doShowDivText({
-                        permission: context.permission,
-                        orderType: 3
-                      });
-                      me.set(
-                        'posTerminal',
-                        OB.MobileApp.model.get('terminal').id
-                      );
-                      me.set(
-                        'obposAppCashup',
-                        OB.App.State.getState().Cashup.id
-                      );
-                      me.set('timezoneOffset', new Date().getTimezoneOffset());
-                      var linesToDelete = [];
-                      _.each(me.get('lines').models, function(line) {
-                        if (
-                          OB.DEC.compare(line.getQty()) === 1 &&
-                          line.getDeliveredQuantity() !== line.getQty()
-                        ) {
-                          var canceledQty =
-                            line.getDeliveredQuantity() - line.getQty();
-                          _.each(line.get('promotions'), function(promotion) {
-                            promotion.amt = OB.DEC.mul(
-                              OB.DEC.mul(
-                                promotion.amt,
-                                OB.DEC.div(
-                                  OB.DEC.abs(canceledQty),
-                                  line.getQty()
-                                )
-                              ),
-                              -1
-                            );
-                            promotion.actualAmt = OB.DEC.mul(
-                              OB.DEC.mul(
-                                promotion.actualAmt,
-                                OB.DEC.div(
-                                  OB.DEC.abs(canceledQty),
-                                  line.getQty()
-                                )
-                              ),
-                              -1
-                            );
-                            promotion.displayedTotalAmount = OB.DEC.mul(
-                              OB.DEC.mul(
-                                promotion.displayedTotalAmount,
-                                OB.DEC.div(
-                                  OB.DEC.abs(canceledQty),
-                                  line.getQty()
-                                )
-                              ),
-                              -1
-                            );
-                          });
-                          line.set('canceledLine', line.get('id'));
-                          var newId = OB.UTIL.get_UUID();
-                          idMap[line.get('id')] = newId;
-                          line.set('id', newId);
-                          line.set('qty', canceledQty);
-                          line.unset('deliveredQuantity');
-                          line.unset('invoicedQuantity');
-                          line.set('obposCanbedelivered', true);
-                          line.set('obposIspaid', false);
-                        } else {
-                          linesToDelete.push(line);
-                        }
-                      });
-                      if (linesToDelete.length) {
-                        me.get('lines').remove(linesToDelete);
+
+                    var idMap = {};
+                    me.set('skipCalculateReceipt', true);
+                    me.preventOrderSave(true);
+                    me.set('preventServicesUpdate', true);
+                    me.set('isEditable', true);
+                    me.set('cancelLayaway', true);
+                    me.set('fromLayaway', me.get('isLayaway'));
+                    me.set('isLayaway', false);
+                    me.set('isPaid', false);
+                    // Set the order type
+                    context.doShowDivText({
+                      permission: context.permission,
+                      orderType: 3
+                    });
+                    me.set(
+                      'posTerminal',
+                      OB.MobileApp.model.get('terminal').id
+                    );
+                    me.set('obposAppCashup', OB.App.State.getState().Cashup.id);
+                    me.set('timezoneOffset', new Date().getTimezoneOffset());
+                    var linesToDelete = [];
+                    _.each(me.get('lines').models, function(line) {
+                      if (
+                        OB.DEC.compare(line.getQty()) === 1 &&
+                        line.getDeliveredQuantity() !== line.getQty()
+                      ) {
+                        var canceledQty =
+                          line.getDeliveredQuantity() - line.getQty();
+                        _.each(line.get('promotions'), function(promotion) {
+                          promotion.amt = OB.DEC.mul(
+                            OB.DEC.mul(
+                              promotion.amt,
+                              OB.DEC.div(OB.DEC.abs(canceledQty), line.getQty())
+                            ),
+                            -1
+                          );
+                          promotion.actualAmt = OB.DEC.mul(
+                            OB.DEC.mul(
+                              promotion.actualAmt,
+                              OB.DEC.div(OB.DEC.abs(canceledQty), line.getQty())
+                            ),
+                            -1
+                          );
+                          promotion.displayedTotalAmount = OB.DEC.mul(
+                            OB.DEC.mul(
+                              promotion.displayedTotalAmount,
+                              OB.DEC.div(OB.DEC.abs(canceledQty), line.getQty())
+                            ),
+                            -1
+                          );
+                        });
+                        line.set('canceledLine', line.get('id'));
+                        var newId = OB.UTIL.get_UUID();
+                        idMap[line.get('id')] = newId;
+                        line.set('id', newId);
+                        line.set('qty', canceledQty);
+                        line.unset('deliveredQuantity');
+                        line.unset('invoicedQuantity');
+                        line.set('obposCanbedelivered', true);
+                        line.set('obposIspaid', false);
+                      } else {
+                        linesToDelete.push(line);
                       }
-                      // Remove or update the related lines id
-                      _.each(me.get('lines').models, function(line) {
-                        if (
-                          line.get('product').get('productType') === 'S' &&
-                          line.get('product').get('isLinkedToProduct')
-                        ) {
-                          var relationsToRemove = [];
-                          _.each(line.get('relatedLines'), function(
-                            relatedLine
-                          ) {
-                            if (idMap[relatedLine.orderlineId]) {
-                              relatedLine.orderlineId =
-                                idMap[relatedLine.orderlineId];
-                            } else if (!relatedLine.deferred) {
-                              relationsToRemove.push(relatedLine);
-                            }
-                          });
-                          // Remove the lines that have been deleted from the inverse ticket
-                          if (relationsToRemove.length) {
-                            _.each(relationsToRemove, function(
-                              relationToRemove
-                            ) {
-                              var idx = line
-                                .get('relatedLines')
-                                .map(function(l) {
-                                  return l.orderlineId;
-                                })
-                                .indexOf(relationToRemove.orderlineId);
-                              line.get('relatedLines').splice(idx, 1);
-                            });
+                    });
+                    if (linesToDelete.length) {
+                      me.get('lines').remove(linesToDelete);
+                    }
+                    // Remove or update the related lines id
+                    _.each(me.get('lines').models, function(line) {
+                      if (
+                        line.get('product').get('productType') === 'S' &&
+                        line.get('product').get('isLinkedToProduct')
+                      ) {
+                        var relationsToRemove = [];
+                        _.each(line.get('relatedLines'), function(relatedLine) {
+                          if (idMap[relatedLine.orderlineId]) {
+                            relatedLine.orderlineId =
+                              idMap[relatedLine.orderlineId];
+                          } else if (!relatedLine.deferred) {
+                            relationsToRemove.push(relatedLine);
                           }
-                        }
-                      });
-                      if (me.get('paidOnCredit')) {
-                        me.set('paidOnCredit', false);
-                        me.set('paidPartiallyOnCredit', false);
-                        me.set('creditAmount', OB.DEC.Zero);
-                      }
-                      me.set('canceledorder', clonedReceipt);
-                      me.set('orderDate', new Date());
-                      me.set('documentNo', me.get('documentNo') + '*R*');
-                      me.set(
-                        'nettingPayment',
-                        OB.DEC.sub(me.getPayment(), me.getGross())
-                      );
-                      me.get('payments').reset();
-                      me.set('forceCalculateTaxes', true);
-                      me.unset('id');
-                      me.unset('skipCalculateReceipt');
-                      me.calculateReceipt(function() {
-                        me.getPrepaymentAmount(function() {
-                          me.set('isEditable', false);
-                          me.unset('preventServicesUpdate');
-                          me.preventOrderSave(false);
-                          OB.MobileApp.model.receipt.trigger('updateView');
-                          me.trigger('updatePending', true);
-                          // Finally change to the payments tab
-                          context.doTabChange({
-                            tabPanel: 'payment',
-                            keyboard: 'toolbarpayment',
-                            edit: false
+                        });
+                        // Remove the lines that have been deleted from the inverse ticket
+                        if (relationsToRemove.length) {
+                          _.each(relationsToRemove, function(relationToRemove) {
+                            var idx = line
+                              .get('relatedLines')
+                              .map(function(l) {
+                                return l.orderlineId;
+                              })
+                              .indexOf(relationToRemove.orderlineId);
+                            line.get('relatedLines').splice(idx, 1);
                           });
-                        }, true);
-                      });
+                        }
+                      }
+                    });
+                    if (me.get('paidOnCredit')) {
+                      me.set('paidOnCredit', false);
+                      me.set('paidPartiallyOnCredit', false);
+                      me.set('creditAmount', OB.DEC.Zero);
+                    }
+                    me.set('canceledorder', clonedReceipt);
+                    me.set('orderDate', new Date());
+                    me.set('documentNo', me.get('documentNo') + '*R*');
+                    me.set(
+                      'nettingPayment',
+                      OB.DEC.sub(me.getPayment(), me.getGross())
+                    );
+                    me.get('payments').reset();
+                    me.set('forceCalculateTaxes', true);
+                    me.unset('id');
+                    me.unset('skipCalculateReceipt');
+                    me.calculateReceipt(function() {
+                      me.getPrepaymentAmount(function() {
+                        me.set('isEditable', false);
+                        me.unset('preventServicesUpdate');
+                        me.preventOrderSave(false);
+                        OB.MobileApp.model.receipt.trigger('updateView');
+                        me.trigger('updatePending', true);
+                        // Finally change to the payments tab
+                        context.doTabChange({
+                          tabPanel: 'payment',
+                          keyboard: 'toolbarpayment',
+                          edit: false
+                        });
+                      }, true);
                     });
                   }
                 );
