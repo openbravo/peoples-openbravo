@@ -35,11 +35,15 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
   static {
     // Set dependency on Mobile Core app
-    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME, Arrays.asList( //
-        MobileCoreConstants.RETAIL_CORE, //
-        MobileCoreConstants.BUSINESSLOGIC_APP, //
+    BaseComponentProvider.setAppDependencies(POSUtils.BUSINESSLOGIC_NAME, Arrays.asList( //
+        MobileCoreConstants.BUSINESSLOGIC_NAME, //
         DiscountsEngineAppComponentProvider.DISCOUNTS_APP, //
         TaxesEngineAppComponentProvider.TAXES_APP));
+
+    // Set dependency on Mobile Core app
+    BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME, Arrays.asList( //
+        MobileCoreConstants.RETAIL_CORE, //
+        POSUtils.BUSINESSLOGIC_NAME));
   }
 
   public static final String QUALIFIER = "OBPOS_Main";
@@ -433,6 +437,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
   }
 
   private ComponentResource businesslogic(String resource) {
-    return js(resource, MobileCoreConstants.BUSINESSLOGIC_APP);
+    return js(resource, POSUtils.BUSINESSLOGIC_NAME);
   }
 }
