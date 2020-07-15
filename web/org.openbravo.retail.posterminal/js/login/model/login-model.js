@@ -693,31 +693,29 @@
         OB.debug('runSyncProcess: executing pre synchronization hook');
         OB.UTIL.HookManager.executeHooks('OBPOS_PreSynchData', {}, function() {
           OB.debug('runSyncProcess: synchronize all models');
-          OB.App.State.Global.syncTickets().then(() => {
-            OB.MobileApp.model.syncAllModels(
-              function() {
-                executeCallbacks(
-                  true,
-                  me.get('syncProcessCallbacks'),
-                  function() {
-                    me.pendingSyncProcess = false;
-                  }
-                );
-              },
-              function() {
-                OB.warn(
-                  'runSyncProcess failed: the WebPOS is most likely to be offline, but a real error could be present.'
-                );
-                executeCallbacks(
-                  false,
-                  me.get('syncProcessCallbacks'),
-                  function() {
-                    me.pendingSyncProcess = false;
-                  }
-                );
-              }
-            );
-          });
+          OB.MobileApp.model.syncAllModels(
+            function() {
+              executeCallbacks(
+                true,
+                me.get('syncProcessCallbacks'),
+                function() {
+                  me.pendingSyncProcess = false;
+                }
+              );
+            },
+            function() {
+              OB.warn(
+                'runSyncProcess failed: the WebPOS is most likely to be offline, but a real error could be present.'
+              );
+              executeCallbacks(
+                false,
+                me.get('syncProcessCallbacks'),
+                function() {
+                  me.pendingSyncProcess = false;
+                }
+              );
+            }
+          );
         });
       }
 

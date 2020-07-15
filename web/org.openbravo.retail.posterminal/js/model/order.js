@@ -9480,8 +9480,9 @@
           'deleteCurrentOrder'
         );
       } else {
-        OB.MobileApp.model.orderList.deleteCurrentFromDatabase(this);
-        OB.MobileApp.model.orderList.deleteCurrent();
+        // FIXME
+        // OB.MobileApp.model.orderList.deleteCurrentFromDatabase(this);
+        // OB.MobileApp.model.orderList.deleteCurrent();
       }
 
       if (callback && callback instanceof Function) {

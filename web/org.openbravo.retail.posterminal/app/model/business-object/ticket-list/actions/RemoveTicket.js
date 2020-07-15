@@ -7,6 +7,17 @@
  ************************************************************************************
  */
 
+/**
+ * @fileoverview Register the remove Ticket action. If no payload is used, it will remove the currently
+ * active ticket and replace it with the first item in the TicketList, or a new Ticket if no other is available.
+ *
+ * If a id property is provided in the payload, the ticket with the provided id will be removed from the TicketList if
+ * found. If the id corresponds to the active Ticket, it will be removed and replaced with the first in TicketList or
+ * a new Ticket if the list is empty.
+ *
+ * Finally, the payload can contain a forceNewTicket argument that if set to true, will replace the current ticket
+ * with a new one, regardless the content of the TicketList.
+ */
 OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
   const newState = { ...state };
   const ticketToRemoveId = payload.id;
