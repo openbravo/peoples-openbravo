@@ -31,6 +31,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -48,7 +49,9 @@ public class ImportBPSet extends ProcessUploadedFile {
     @SuppressWarnings("unchecked")
     NativeQuery<String> qry = OBDal.getInstance()
         .getSession()
-        .createNativeQuery("update c_bp_set_line set isactive='N' where c_bp_set_id = :c_bp_set_id");
+        .createNativeQuery(
+            "update c_bp_set_line set updated=now(), updatedby=:userId, isactive='N' where c_bp_set_id = :c_bp_set_id");
+    qry.setParameter("userId", OBContext.getOBContext().getUser().getId());
     qry.setParameter("c_bp_set_id", ownerId);
     qry.executeUpdate();
   }
