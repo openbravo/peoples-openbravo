@@ -91,7 +91,7 @@
         newPayload
       );
       newPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
-        globalState.Ticket,
+        globalState.Ticket.canceledorder,
         newPayload
       );
       // newPayload = checkNewTicket(globalState.Ticket, newPayload);
