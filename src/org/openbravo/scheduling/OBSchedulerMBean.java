@@ -21,26 +21,24 @@ package org.openbravo.scheduling;
 public interface OBSchedulerMBean {
 
   /*
-   * The OBScheduler is instantiated upon application startup. However, depending on the
-   * setting of the background.policy parameter, the internal Quartz Scheduler can remain
-   * in 'standby' mode. This allows jobs to be scheduled from other nodes if the scheduler
-   * is clustered.
-   * This method determines if the scheduler is started and actually executing processes.
+   * The OBScheduler is instantiated upon application startup. However, depending on the setting of
+   * the background.policy parameter, the internal Quartz Scheduler can remain in 'standby' mode.
+   * This allows jobs to be scheduled from other nodes if the scheduler is clustered. This method
+   * determines if the scheduler is started and actually executing processes.
    */
   public boolean isStarted();
-  
+
   /*
-   * Change the status of the OBScheduler's internal Quartz Scheduler to 'started' to make
-   * it fire the scheduled triggers. 
+   * Change the status of the OBScheduler's internal Quartz Scheduler to 'started' to make it fire
+   * the scheduled triggers.
    */
   public void start();
-  
+
   /*
-   * Change the status of the OBScheduler's internal Quartz Scheduler to 'standby' to
-   * prevent triggers from being fired in this instance.
-   * Shutdown should not be called on the internal scheduler except when the application is
-   * shutting down.
+   * Change the status of the OBScheduler's internal Quartz Scheduler to 'standby' to prevent
+   * triggers from being fired in this instance. Shutdown should not be called on the internal
+   * scheduler except when the application is shutting down.
    */
   public void standby();
-  
+
 }

@@ -31,7 +31,7 @@ public class QuartzConnectionProvider implements ConnectionProvider {
   public Connection getConnection() throws SQLException {
     Connection connection;
     try {
-      connection = ConnectionProviderContextListener.getPool().getConnection(); 
+      connection = ConnectionProviderContextListener.getPool().getConnection();
     } catch (NoConnectionAvailableException ex) {
       throw new SQLException(ex);
     }

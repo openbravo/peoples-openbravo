@@ -33,21 +33,17 @@ import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.se
 public class OpenbravoJDBCDelegate extends PostgreSQLDelegate {
 
   private static final String COL_SCHEDULER_STATUS = "STATUS";
-  
+
   static String SCHEDULER_STATUS_STANDBY = "STANDBY";
   static String SCHEDULER_STATUS_STARTED = "STARTED";
 
-  String UPDATE_SCHEDULER_STATE_EXTENDED = "UPDATE "
-      + TABLE_PREFIX_SUBST + TABLE_SCHEDULER_STATE + " SET " 
-      + COL_LAST_CHECKIN_TIME + " = ?, "
-      + COL_SCHEDULER_STATUS + " = ? "
-      + " WHERE " + COL_SCHEDULER_NAME + " = " + SCHED_NAME_SUBST
-      + " AND " + COL_INSTANCE_NAME + " = ?";
-  
-  static String COUNT_STARTED_SCHEDULER_INSTANCES = "SELECT count(*) "
-      + " FROM " + TABLE_PREFIX_SUBST + TABLE_SCHEDULER_STATE
-      + " WHERE " + COL_SCHEDULER_NAME + " = " + SCHED_NAME_SUBST
-      + " AND " + COL_SCHEDULER_STATUS + " = ?";
+  String UPDATE_SCHEDULER_STATE_EXTENDED = "UPDATE " + TABLE_PREFIX_SUBST + TABLE_SCHEDULER_STATE
+      + " SET " + COL_LAST_CHECKIN_TIME + " = ?, " + COL_SCHEDULER_STATUS + " = ? " + " WHERE "
+      + COL_SCHEDULER_NAME + " = " + SCHED_NAME_SUBST + " AND " + COL_INSTANCE_NAME + " = ?";
+
+  static String COUNT_STARTED_SCHEDULER_INSTANCES = "SELECT count(*) " + " FROM "
+      + TABLE_PREFIX_SUBST + TABLE_SCHEDULER_STATE + " WHERE " + COL_SCHEDULER_NAME + " = "
+      + SCHED_NAME_SUBST + " AND " + COL_SCHEDULER_STATUS + " = ?";
 
   @Override
   protected void addDefaultTriggerPersistenceDelegates() {
@@ -67,7 +63,7 @@ public class OpenbravoJDBCDelegate extends PostgreSQLDelegate {
       ps.setLong(1, checkInTime);
       ps.setString(2, status);
       ps.setString(3, theInstanceId);
-      
+
       return ps.executeUpdate();
     } finally {
       closeStatement(ps);
@@ -79,18 +75,18 @@ public class OpenbravoJDBCDelegate extends PostgreSQLDelegate {
     ResultSet rs = null;
 
     try {
-        ps = conn.prepareStatement(rtp(COUNT_STARTED_SCHEDULER_INSTANCES));
-        ps.setString(1, SCHEDULER_STATUS_STARTED);
-        rs = ps.executeQuery();
+      ps = conn.prepareStatement(rtp(COUNT_STARTED_SCHEDULER_INSTANCES));
+      ps.setString(1, SCHEDULER_STATUS_STARTED);
+      rs = ps.executeQuery();
 
-        if (rs.next()) {
-            return rs.getInt(1) > 0;
-        }
+      if (rs.next()) {
+        return rs.getInt(1) > 0;
+      }
 
-        throw new SQLException("No started instances count returned.");
+      throw new SQLException("No started instances count returned.");
     } finally {
-        closeResultSet(rs);
-        closeStatement(ps);
+      closeResultSet(rs);
+      closeStatement(ps);
     }
   }
 

@@ -33,10 +33,10 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.scheduling.trigger.TriggerProvider;
 import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.scheduling.quartz.JobInitializationListener;
 import org.openbravo.scheduling.quartz.OpenbravoPersistentJobStore;
+import org.openbravo.scheduling.trigger.TriggerProvider;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerContext;
@@ -174,14 +174,14 @@ public class OBScheduler implements OBSchedulerMBean {
   }
 
   public boolean isSchedulingAllowed() throws SchedulerException {
-    return !sched.isInStandbyMode()
-        || (sched.getMetaData().isJobStoreClustered()
-            && OpenbravoPersistentJobStore.isSchedulingAllowedInCluster(sched.getSchedulerName()));
+    return !sched.isInStandbyMode() || (sched.getMetaData().isJobStoreClustered()
+        && OpenbravoPersistentJobStore.isSchedulingAllowedInCluster(sched.getSchedulerName()));
   }
 
   /**
-   * Returns whether current node is set with no-execute background policy, which should prevent any
-   * process scheduling.
+   * Returns whether current node is set with no-execute background policy, which should prevent the
+   * scheduler instance from being started. If this instance is not started later and no other
+   * scheduler instances are active, then it should also prevent scheduling processes.
    */
   public static boolean isNoExecuteBackgroundPolicy() {
     String policy = OBPropertiesProvider.getInstance()
@@ -307,7 +307,8 @@ public class OBScheduler implements OBSchedulerMBean {
   public void start() {
     try {
       if (sched == null) {
-        throw new RuntimeException("The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
+        throw new RuntimeException(
+            "The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
       }
       if (sched.isStarted() && !sched.isInStandbyMode()) {
         throw new RuntimeException("The scheduler is already started");
@@ -322,9 +323,10 @@ public class OBScheduler implements OBSchedulerMBean {
   public void standby() {
     try {
       if (sched == null) {
-        throw new RuntimeException("The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
+        throw new RuntimeException(
+            "The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
       }
-      if (sched.isInStandbyMode()){
+      if (sched.isInStandbyMode()) {
         throw new RuntimeException("The scheduler is already in standby mode");
       }
       sched.standby();
@@ -332,4 +334,5 @@ public class OBScheduler implements OBSchedulerMBean {
       throw new RuntimeException(ex);
     }
   }
+
 }

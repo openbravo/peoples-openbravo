@@ -9,7 +9,6 @@ import org.quartz.JobPersistenceException;
 import org.quartz.SchedulerException;
 import org.quartz.impl.jdbcjobstore.JobStoreTX;
 
-@SuppressWarnings("unchecked")
 public class OpenbravoPersistentJobStore extends JobStoreTX {
 
   private static Map<String, OpenbravoPersistentJobStore> clusterJobStores = new Hashtable<String, OpenbravoPersistentJobStore>();
@@ -81,13 +80,14 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
     }
     return false;
   }
-  
+
   /*
-   * This method overridden only to suppress the warnings produced by TxJobStore in the Quartz library
+   * This method overridden only to suppress the warnings produced by TxJobStore in the Quartz
+   * library
    */
   @Override
-  protected Object executeInLock(String lockName, @SuppressWarnings("rawtypes") TransactionCallback txCallback)
-      throws JobPersistenceException {
+  protected Object executeInLock(String lockName,
+      @SuppressWarnings("rawtypes") TransactionCallback txCallback) throws JobPersistenceException {
     return super.executeInLock(lockName, txCallback);
   }
 
