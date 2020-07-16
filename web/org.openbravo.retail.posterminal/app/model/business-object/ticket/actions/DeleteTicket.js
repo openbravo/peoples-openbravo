@@ -25,7 +25,6 @@
 
       // Set complete ticket properties
       newTicket.obposIsDeleted = true;
-      newTicket.payments = [];
       newTicket.grossAmount = 0;
       newTicket.netAmount = 0;
       newTicket.lines = newTicket.lines.map(line => {
@@ -39,12 +38,6 @@
         };
       });
       newTicket = OB.App.State.Ticket.Utils.completeTicket(newTicket, payload);
-
-      // FIXME: Move to calculateTotals?
-      newTicket = OB.App.State.Ticket.Utils.updateTicketType(
-        newTicket,
-        payload
-      );
 
       // Document number generation
       ({

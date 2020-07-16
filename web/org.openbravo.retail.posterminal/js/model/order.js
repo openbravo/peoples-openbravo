@@ -722,6 +722,11 @@
       const completeTicketExecution = OB.UTIL.ProcessController.start(
         actionName
       );
+      if (actionName === 'deleteCurrentOrder') {
+        runCompleteTicketAction(completeTicketAction);
+        OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
+        return;
+      }
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreOrderSave',
         {
@@ -9450,64 +9455,6 @@
       return index;
     },
     deleteOrder: function(context, callback) {
-      var i;
-
-      function finalCallback() {
-        if (callback && callback instanceof Function) {
-          callback();
-        }
-      }
-
-      function removePayments(receipt, paymentCallback) {
-        var payments = receipt.get('payments');
-        if (receipt.get('isEditable') && payments && payments.length > 0) {
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_preRemovePayment',
-            {
-              paymentToRem: payments.at(0),
-              payments: payments,
-              receipt: receipt
-            },
-            function(args) {
-              if (args.cancellation) {
-                paymentCallback(false);
-              } else {
-                payments.remove(payments.at(0));
-                removePayments(receipt, function(success) {
-                  paymentCallback(success);
-                });
-              }
-            }
-          );
-        } else {
-          paymentCallback(true);
-        }
-      }
-
-      function removeReceiptFromDatabase(receipt) {
-        var model,
-          orderList = OB.MobileApp.model.orderList;
-        if (
-          orderList &&
-          receipt &&
-          receipt.get('session') === OB.MobileApp.model.get('session')
-        ) {
-          model = _.find(orderList.models, function(model) {
-            return model.get('id') === receipt.get('id');
-          });
-          if (model) {
-            orderList.saveCurrent();
-            orderList.load(model);
-            if (model.get('id')) {
-              OB.Dal.remove(model);
-            }
-          }
-          orderList.deleteCurrent();
-        } else if (receipt && receipt.get('id')) {
-          OB.Dal.remove(receipt);
-        }
-      }
-
       OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
       OB.MobileApp.view.scanningFocus(false);
       if (OB.UTIL.RfidController.isRfidConfigured()) {
@@ -9523,7 +9470,8 @@
           'deleteCurrentOrder'
         );
       } else {
-        removeReceiptFromDatabase(this);
+        OB.MobileApp.model.orderList.deleteCurrentFromDatabase(this);
+        OB.MobileApp.model.orderList.deleteCurrent();
       }
 
       if (callback && callback instanceof Function) {
