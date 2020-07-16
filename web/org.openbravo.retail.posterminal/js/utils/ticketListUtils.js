@@ -990,11 +990,11 @@
     }
 
     OB.MobileApp.model.receipt.trigger('updateView');
-
-    let ticket = OB.App.State.getState().Ticket;
+    const clonedTicket = JSON.parse(
+      JSON.stringify(OB.App.State.getState().Ticket)
+    );
     OB.MobileApp.model.receipt.clearWith(model);
-
-    OB.App.State.TicketList.saveTicket(ticket).then(() => {
+    OB.App.State.TicketList.saveTicket(clonedTicket).then(() => {
       loadCurrent(true);
       OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
       executeFinalCallback();
