@@ -700,18 +700,27 @@
   }
 
   OB.App.StateAPI.Ticket.registerUtilityFunctions({
-    isReturn(ticket, payload) {
-      if (!ticket.lines) {
-        return false;
-      }
+  /**
+   * Checks whether a ticket is a return or a sale.
+   *
+   * @param {object} ticket - The ticket whose sign will be checked
+   * @param {object} payload - The calculation payload, which include:
+   *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
+   *
+   * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
+   */
+  isReturn(ticket, payload) {
+    if (!ticket.lines || !ticket.lines.length) {
+      return false;
+    }
 
-      const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
-      return (
-        negativeLines === ticket.lines.length ||
-        (negativeLines > 0 &&
-          payload.preferences.salesWithOneLineNegativeAsReturns)
-      );
-    },
+    const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
+    return (
+      negativeLines === ticket.lines.length ||
+      (negativeLines > 0 &&
+        payload.preferences.salesWithOneLineNegativeAsReturns)
+    );
+  },
 
     /**
      * Checks whether a ticket belongs to a different store.
