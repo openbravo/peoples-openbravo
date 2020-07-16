@@ -9506,234 +9506,28 @@
         } else if (receipt && receipt.get('id')) {
           OB.Dal.remove(receipt);
         }
-        finalCallback();
-      }
-
-      function markOrderAsDeleted(model, orderList) {
-        let frozenReceipt = new OB.Model.Order();
-        OB.UTIL.clone(model, frozenReceipt);
-
-        var creationDate;
-        if (frozenReceipt.get('creationDate')) {
-          creationDate = new Date(frozenReceipt.get('creationDate'));
-        } else {
-          creationDate = new Date();
-        }
-        frozenReceipt.setIsCalculateGrossLockState(true);
-        frozenReceipt.set('creationDate', creationDate);
-        frozenReceipt.set('timezoneOffset', creationDate.getTimezoneOffset());
-        frozenReceipt.set('created', creationDate.getTime());
-        frozenReceipt.set(
-          'obposCreatedabsolute',
-          OB.I18N.formatDateISO(creationDate)
-        );
-        frozenReceipt.set('obposIsDeleted', true);
-        OB.info(
-          'markOrderAsDeleted has set order with documentNo ' +
-            frozenReceipt.get('documentNo') +
-            ' and id ' +
-            frozenReceipt.get('id') +
-            ' as obposIsDeleted to true'
-        );
-        frozenReceipt.set('obposAppCashup', OB.App.State.getState().Cashup.id);
-        for (i = 0; i < frozenReceipt.get('lines').length; i++) {
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('obposIsDeleted', true);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('grossUnitPrice', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('pricenet', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('price', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('standardPrice', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('lineGrossAmount', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('lineNetAmount', 0);
-        }
-        frozenReceipt.get('approvals').forEach(function(approval) {
-          if (typeof approval.approvalType === 'object') {
-            approval.approvalMessage = OB.I18N.getLabel(
-              approval.approvalType.message,
-              approval.approvalType.params
-            );
-            approval.approvalType = approval.approvalType.approval;
-          }
-        });
-        OB.Dal.transaction(async function(tx) {
-          await OB.MobileApp.model.setTicketDocumentNo(frozenReceipt);
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PreSyncReceipt',
-            {
-              receipt: frozenReceipt,
-              model: frozenReceipt,
-              tx: tx
-            },
-            function(args) {
-              frozenReceipt.set(
-                'json',
-                JSON.stringify(frozenReceipt.serializeToSaveJSON())
-              );
-              frozenReceipt.set('hasbeenpaid', 'Y');
-              OB.Dal.saveInTransaction(tx, frozenReceipt, function() {
-                if (
-                  orderList &&
-                  frozenReceipt.get('session') ===
-                    OB.MobileApp.model.get('session')
-                ) {
-                  var orderListModel = _.find(orderList.models, function(m) {
-                    return m.get('id') === frozenReceipt.get('id');
-                  });
-                  if (orderListModel) {
-                    orderList.saveCurrent();
-                    orderList.load(orderListModel);
-                  }
-                  orderList.deleteCurrent();
-                  orderList.synchronizeCurrentOrder();
-                }
-                frozenReceipt.setIsCalculateGrossLockState(false);
-                OB.MobileApp.model.runSyncProcess(finalCallback, finalCallback);
-              });
-            }
-          );
-        });
-      }
-
-      function removeOrder(receipt) {
-        var orderList = OB.MobileApp.model.orderList;
-        var isPaidQuotation =
-          receipt.has('isQuotation') &&
-          receipt.get('isQuotation') &&
-          receipt.has('hasbeenpaid') &&
-          receipt.get('hasbeenpaid') === 'Y';
-        if (OB.UTIL.RfidController.isRfidConfigured()) {
-          OB.UTIL.RfidController.eraseEpcOrder(receipt);
-        }
-
-        function finishRemoveOrder() {
-          if (
-            receipt.get('lines') &&
-            receipt.get('lines').length > 0 &&
-            receipt.get('isEditable')
-          ) {
-            if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-              receipt.prepareToSend(function() {
-                receipt.set('skipApplyPromotions', true);
-                receipt.set('skipCalculateReceipt', true);
-                receipt.set('preventServicesUpdate', true);
-                _.each(receipt.get('lines').models, function(line) {
-                  line.set('obposQtyDeleted', line.get('qty'));
-                  line.set('obposIsDeleted', true);
-                  line.set('qty', 0, {
-                    silent: true
-                  });
-                });
-                if (receipt.get('hasServices')) {
-                  receipt.unset('hasServices');
-                }
-                receipt.unset('preventServicesUpdate');
-                receipt.set('skipCalculateReceipt', false);
-                // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
-                // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
-                // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
-                receipt.setIsCalculateReceiptLockState(false);
-                receipt.setIsCalculateGrossLockState(false);
-                receipt.calculateReceipt(function() {
-                  markOrderAsDeleted(receipt, orderList);
-                });
-              });
-            } else {
-              removeReceiptFromDatabase(receipt);
-            }
-          } else if (
-            receipt.has('deletedLines') &&
-            !receipt.get('isQuotation')
-          ) {
-            if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-              receipt.set('skipCalculateReceipt', false);
-              // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
-              // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
-              // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
-              receipt.setIsCalculateReceiptLockState(false);
-              receipt.setIsCalculateGrossLockState(false);
-              markOrderAsDeleted(receipt, orderList);
-            } else {
-              removeReceiptFromDatabase(receipt);
-            }
-          } else if (
-            receipt.has('lines') &&
-            receipt.get('lines').length === 0 &&
-            receipt.get('isEditable') &&
-            !receipt.get('isQuotation')
-          ) {
-            if (
-              OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
-              receipt.get('id') !== null &&
-              receipt.get('isNew') === false
-            ) {
-              receipt.setIsCalculateReceiptLockState(true);
-              receipt.setIsCalculateGrossLockState(true);
-              markOrderAsDeleted(receipt, orderList);
-            } else {
-              removeReceiptFromDatabase(receipt);
-            }
-          } else {
-            removeReceiptFromDatabase(receipt);
-          }
-        }
-
-        function validateRemoveOrder() {
-          if (receipt.get('id') && !isPaidQuotation) {
-            removePayments(receipt, function(success) {
-              if (success) {
-                finishRemoveOrder();
-              } else {
-                OB.MobileApp.view.scanningFocus(true);
-              }
-            });
-          } else {
-            finishRemoveOrder();
-          }
-        }
-
-        validateRemoveOrder();
       }
 
       OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
       OB.MobileApp.view.scanningFocus(false);
-      if (this.get('isEditable') === true) {
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_PreDeleteCurrentOrder',
-          {
-            context: context,
-            receipt: this
-          },
-          function(args) {
-            if (args && args.cancelOperation && args.cancelOperation === true) {
-              OB.MobileApp.view.scanningFocus(true);
-              finalCallback();
-              return;
-            }
-            removeOrder(args.receipt);
-          }
+      if (OB.UTIL.RfidController.isRfidConfigured()) {
+        OB.UTIL.RfidController.eraseEpcOrder(this);
+      }
+      if (
+        OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
+        this.get('isEditable') &&
+        (this.get('lines').length || !this.get('isNew'))
+      ) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.deleteTicket,
+          'deleteCurrentOrder'
         );
       } else {
-        removeOrder(this);
+        removeReceiptFromDatabase(this);
+      }
+
+      if (callback && callback instanceof Function) {
+        callback();
       }
 
       return true;
