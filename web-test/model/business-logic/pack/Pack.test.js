@@ -11,7 +11,11 @@ OB = {
   App: {
     Class: {},
     MasterdataModels: {
-      Product: { withId: jest.fn() }
+      Product: {
+        withId: jest.fn().mockImplementation(id => {
+          return { id };
+        })
+      }
     }
   },
   Discounts: {
@@ -46,9 +50,6 @@ require('../../../../web/org.openbravo.retail.posterminal/app/model/business-log
 
 describe('product pack infrastructure', () => {
   const discountRules = OB.Discounts.Pos.ruleImpls;
-  OB.App.MasterdataModels.Product.withId.mockImplementation(id => {
-    return { id };
-  });
 
   describe('OB.App.ProductPackProvider', () => {
     test('find standard pack', async () => {

@@ -8,7 +8,6 @@
  */
 
 /* global global */
-/* eslint-disable jest/expect-expect */
 
 OB = {
   App: {
@@ -29,36 +28,30 @@ OB = {
     TerminalProperty: { get: jest.fn() },
     View: { DialogUIHandler: { inputData: jest.fn() } }
   },
-
   Discounts: {
     Pos: {
       ruleImpls: [],
       bpSets: []
     }
   },
-
   Format: {
     formats: { qtyEdition: '#0.###' }
   },
-
   UTIL: {
     HookManager: { registerHook: jest.fn() },
     servicesFilter: jest.fn()
   },
-
   POS: {
     hwserver: {
       getAsyncWeight: jest.fn()
     }
   },
-
   Taxes: {
     Pos: {
       ruleImpls: [],
       taxCategoryBOM: [{ id: 'FF80818123B7FC160123B804AB8C0019' }]
     }
   },
-
   error: jest.fn()
 };
 
