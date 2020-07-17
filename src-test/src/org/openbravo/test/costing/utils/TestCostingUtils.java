@@ -5236,11 +5236,17 @@ public class TestCostingUtils {
       criteria2.addOrderBy(AccountingFact.PROPERTY_SEQUENCENUMBER, true);
       List<AccountingFact> accountingFactList = criteria2.list();
       String groupId = accountingFactList.get(0).getGroupID();
+      Date previousDate = accountingFactList.get(0).getAccountingDate();
 
       assertEquals(accountingFactList.size(), documentPostAssertList.size());
 
       int i = 0;
       for (AccountingFact accountingFact : accountingFactList) {
+
+        if (previousDate != accountingFact.getAccountingDate()) {
+          groupId = accountingFact.getGroupID();
+          previousDate = accountingFact.getAccountingDate();
+        }
 
         String lineListProperty = Character.toLowerCase(document.getEntityName().charAt(0))
             + document.getEntityName().substring(1) + "LineList";
@@ -5547,8 +5553,15 @@ public class TestCostingUtils {
         } else if (document.getEntityName().equals(LandedCost.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
               formatDate(((LandedCost) document).getReferenceDate()));
-          assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((LandedCost) document).getReferenceDate()));
+          final Date shipmentAcctDate = (OBDal.getInstance()
+              .get(ShipmentInOutLine.class,
+                  ((LCReceiptLineAmt) line).getGoodsShipmentLine().getId())).getShipmentReceipt()
+                      .getAccountingDate();
+          Date accountingDate = ((LandedCost) document).getReferenceDate();
+          if (shipmentAcctDate.after(accountingDate)) {
+            accountingDate = shipmentAcctDate;
+          }
+          assertEquals(formatDate(accountingFact.getAccountingDate()), formatDate(accountingDate));
           if (i % 2 == 0) {
             assertEquals(accountingFact.getBusinessPartner(),
                 OBDal.getInstance()
@@ -5561,8 +5574,12 @@ public class TestCostingUtils {
         } else if (document.getEntityName().equals(LandedCostCost.ENTITY_NAME)) {
           assertEquals(formatDate(accountingFact.getTransactionDate()),
               formatDate(((LandedCostCost) document).getAccountingDate()));
-          assertEquals(formatDate(accountingFact.getAccountingDate()),
-              formatDate(((LandedCostCost) document).getAccountingDate()));
+          final Date maxInvoiceAcctDate = getMaxInvoiceAccountingDate((LandedCostCost) document);
+          Date accountingDate = ((LandedCostCost) document).getAccountingDate();
+          if (maxInvoiceAcctDate.after(accountingDate)) {
+            accountingDate = maxInvoiceAcctDate;
+          }
+          assertEquals(formatDate(accountingFact.getAccountingDate()), formatDate(accountingDate));
           if (i == 0 || (documentPostAssert.getProductId() != null
               && OBDal.getInstance()
                   .get(InvoiceLine.class,
@@ -5784,6 +5801,23 @@ public class TestCostingUtils {
     } catch (Exception e) {
       throw new OBException(e);
     }
+  }
+
+  private static Date getMaxInvoiceAccountingDate(final LandedCostCost lcCost) {
+    //@formatter:off
+    String hql = ""
+        + " select max(i.accountingDate)"
+        + " from LandedCostMatched lcm "
+        + "   join lcm.invoiceLine il"
+        + "   join il.invoice i"
+        + " where lcm.active = true"
+        + "   and lcm.landedCostCost.id = :lcCostId";
+    //@formatter:on
+    return (Date) OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("lcCostId", lcCost.getId())
+        .uniqueResult();
   }
 
   // Format date
