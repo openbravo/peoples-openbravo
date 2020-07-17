@@ -61,7 +61,8 @@ const tickets = [
         qty: 2,
         baseGrossUnitPrice: 300
       }
-    ]
+    ],
+    payments: []
   },
   {
     id: '6FD3CDDDBB2A3805895853BB22F2E9F2',
@@ -72,7 +73,8 @@ const tickets = [
         qty: 2,
         baseNetUnitPrice: 200
       }
-    ]
+    ],
+    payments: []
   }
 ];
 
@@ -213,7 +215,11 @@ const results = [
     grossAmount: 540,
     netAmount: 446.28,
     priceIncludesTax: true,
+    isNegative: false,
     qty: 2,
+    change: 0,
+    payment: 0,
+    paymentWithSign: 0,
     lines: [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A3941',
@@ -262,14 +268,19 @@ const results = [
         rate: 21,
         taxBase: null
       }
-    }
+    },
+    payments: []
   },
   {
     id: '6FD3CDDDBB2A3805895853BB22F2E9F2',
     grossAmount: 459.8,
     netAmount: 380,
     priceIncludesTax: false,
+    isNegative: false,
     qty: 2,
+    change: 0,
+    payment: 0,
+    paymentWithSign: 0,
     lines: [
       {
         id: 'BB66D8D151964A8A39586FCD7D9A3942',
@@ -319,7 +330,8 @@ const results = [
         rate: 21,
         taxBase: null
       }
-    }
+    },
+    payments: []
   }
 ];
 
@@ -378,10 +390,11 @@ describe('Apply Discounts and Taxes Model Hook', () => {
           qty: -1,
           baseGrossUnitPrice: 50
         }
-      ]
+      ],
+      payments: []
     };
     setDiscountsEngineResultAs({ lines: [] });
-    setTaxesEngineResultAs({ lines: [] });
+    setTaxesEngineResultAs({ grossAmount: 650, lines: [] });
     const result = hook(deepfreeze(ticketWithNegativeLines), payload());
     expect(result.qty).toEqual(3);
   });
@@ -390,10 +403,11 @@ describe('Apply Discounts and Taxes Model Hook', () => {
     const ticketWithNegativeLines = {
       id: '0',
       priceIncludesTax: true,
-      lines: []
+      lines: [],
+      payments: []
     };
     setDiscountsEngineResultAs({ lines: [] });
-    setTaxesEngineResultAs({ lines: [] });
+    setTaxesEngineResultAs({ grossAmount: 10, lines: [] });
     const result = hook(deepfreeze(ticketWithNegativeLines), payload());
     expect(result.qty).toEqual(0);
   });

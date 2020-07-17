@@ -2623,14 +2623,17 @@
           const relatedLine = this.get('lines').find(
             line => line.id === relatedProduct.orderlineId
           );
+          const price =
+            relatedLine.get('previousPrice') ||
+            relatedLine.get('previousBaseGrossUnitPrice');
           if (
             relatedLine &&
-            relatedLine.get('previousPrice') &&
+            price &&
             relatedLine.get('product').has('previousTaxCategory')
           ) {
             relatedLine.set(
               {
-                price: relatedLine.get('previousPrice'),
+                price: price,
                 previousPrice: null
               },
               {
