@@ -34,7 +34,7 @@ import org.openbravo.retail.posterminal.locale.POSApplicationFormatComponent;
 public class OBPOSComponentProvider extends BaseComponentProvider {
 
   static {
-    // Set dependency on Mobile Core app
+    // Set dependency on Business logic for POS
     BaseComponentProvider.setAppDependencies(POSUtils.BUSINESSLOGIC_NAME, Arrays.asList( //
         MobileCoreConstants.BUSINESSLOGIC_NAME, //
         DiscountsEngineAppComponentProvider.DISCOUNTS_APP, //
