@@ -622,6 +622,10 @@
               splitChange: OB.MobileApp.model.hasPermission(
                 'OBPOS_SplitChange',
                 true
+              ),
+              removeTicket: OB.MobileApp.model.hasPermission(
+                'OBPOS_remove_ticket',
+                true
               )
             },
             discountRules: OB.Discounts.Pos.ruleImpls,
@@ -629,8 +633,9 @@
             taxRules: OB.Taxes.Pos.ruleImpls
           });
 
-          // Open drawer
-          OB.MobileApp.model.receipt.trigger('checkOpenDrawer');
+          if (actionName !== 'deleteCurrentOrder') {
+            // Open drawer
+            OB.MobileApp.model.receipt.trigger('checkOpenDrawer');
 
           // RFID
           if (OB.UTIL.RfidController.isRfidConfigured()) {
@@ -9460,19 +9465,11 @@
       if (OB.UTIL.RfidController.isRfidConfigured()) {
         OB.UTIL.RfidController.eraseEpcOrder(this);
       }
-      if (
-        OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
-        this.get('isEditable') &&
-        (this.get('lines').length || !this.get('isNew'))
-      ) {
-        OB.MobileApp.model.receipt.runCompleteTicket(
-          OB.App.State.Global.deleteTicket,
-          'deleteCurrentOrder'
-        );
-      } else {
-        OB.MobileApp.model.orderList.deleteCurrentFromDatabase(this);
-        OB.MobileApp.model.orderList.deleteCurrent();
-      }
+
+      OB.MobileApp.model.receipt.runCompleteTicket(
+        OB.App.State.Global.deleteTicket,
+        'deleteCurrentOrder'
+      );
 
       if (callback && callback instanceof Function) {
         callback();

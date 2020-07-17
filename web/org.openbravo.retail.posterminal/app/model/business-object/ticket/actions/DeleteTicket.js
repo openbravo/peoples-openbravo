@@ -17,6 +17,14 @@
   OB.App.StateAPI.Global.registerAction(
     'deleteTicket',
     (globalState, payload) => {
+      if (
+        !payload.preferences.removeTicket ||
+        !globalState.Ticket.isEditable ||
+        (!globalState.Ticket.lines.length && globalState.Ticket.isNew)
+      ) {
+        return globalState;
+      }
+
       const newGlobalState = { ...globalState };
       let newTicket = { ...newGlobalState.Ticket };
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
