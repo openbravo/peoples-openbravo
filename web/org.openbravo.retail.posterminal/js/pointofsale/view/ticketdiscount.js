@@ -284,7 +284,22 @@ enyo.kind({
   discountChanged: function(inSender, inEvent) {
     // Build discount container info
     var formElementDiscountsList = this.$.formElementDiscountsList,
-      selectedOption = inEvent.originator.getSelected();
+      selectedOption = inEvent.originator.getSelected(),
+      me = this,
+      resetDiscountFields;
+    resetDiscountFields = function() {
+      me.order.get('lines').trigger('showAllCheckBtn');
+      me.$.formElementCheckOverride.show();
+      me.$.formElementCheckSelectAll.show();
+      me.$.btnApply.setDisabled(true);
+      me.$.btnApply.addClass(
+        '.obObposPointOfSaleUiDiscounts-buttons-btnApply_desactivate'
+      );
+    };
+    if (!inEvent || !inEvent.model) {
+      resetDiscountFields();
+      return;
+    }
     formElementDiscountsList.model = inEvent.model;
     formElementDiscountsList.requiresQty = inEvent.requiresQty;
     formElementDiscountsList.amt = inEvent.amt;
