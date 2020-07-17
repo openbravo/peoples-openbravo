@@ -12,7 +12,7 @@
 OB = {
   App: {
     Class: {},
-    DAL: { find: jest.fn() },
+    DAL: { remoteSearch: jest.fn() },
     MasterdataModels: {
       Product: { find: jest.fn() },
       ProductBOM: { find: jest.fn() },
@@ -934,7 +934,7 @@ describe('addProduct preparation', () => {
         products: [{ product: productServiceLinked, qty: 1 }]
       };
       OB.App.Security.hasPermission.mockReturnValue(true);
-      OB.App.DAL.find.mockResolvedValueOnce(serviceLinked);
+      OB.App.DAL.remoteSearch.mockResolvedValueOnce(serviceLinked);
       const newPayload = await prepareAction(payload, Ticket.empty);
       expect(newPayload.products[0]).toMatchObject({
         product: {
@@ -1510,7 +1510,7 @@ describe('addProduct preparation', () => {
 
     it('no price for product in pricelist (remote)', async () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
-      OB.App.DAL.find.mockResolvedValue([]);
+      OB.App.DAL.remoteSearch.mockResolvedValue([]);
       const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
       const ticket = {
         ...Ticket.empty,
@@ -1562,7 +1562,9 @@ describe('addProduct preparation', () => {
 
     it('change price of product (remote)', async () => {
       OB.App.Security.hasPermission.mockReturnValue(true);
-      OB.App.DAL.find.mockResolvedValue([{ pricestd: 23, pricelist: 29 }]);
+      OB.App.DAL.remoteSearch.mockResolvedValue([
+        { pricestd: 23, pricelist: 29 }
+      ]);
       const otherPriceList = 'C7F693B202DE472EA7CF3AD23CCBAD89';
       const ticket = {
         ...Ticket.empty,

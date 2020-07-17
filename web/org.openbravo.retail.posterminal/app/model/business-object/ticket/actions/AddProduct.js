@@ -693,16 +693,19 @@
       const { product } = productInfo;
       let productServiceLinked;
       if (OB.App.Security.hasPermission('OBPOS_remote.product')) {
-        productServiceLinked = await OB.App.DAL.find('ProductServiceLinked', {
-          product: product.id,
-          remoteFilters: [
-            {
-              columns: ['product'],
-              operator: 'equals',
-              value: product.id
-            }
-          ]
-        });
+        productServiceLinked = await OB.App.DAL.remoteSearch(
+          'ProductServiceLinked',
+          {
+            product: product.id,
+            remoteFilters: [
+              {
+                columns: ['product'],
+                operator: 'equals',
+                value: product.id
+              }
+            ]
+          }
+        );
       } else {
         productServiceLinked = await OB.App.MasterdataModels.ProductServiceLinked.find(
           new OB.App.Class.Criteria().criterion('product', product.id).build()
@@ -1033,7 +1036,7 @@
           value: ticket.priceList,
           isId: true
         };
-        productPrices = await OB.App.DAL.find('ProductPrice', {
+        productPrices = await OB.App.DAL.remoteSearch('ProductPrice', {
           remoteFilters: [productId, pricelistId]
         });
       } else {
