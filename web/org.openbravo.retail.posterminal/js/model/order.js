@@ -703,7 +703,10 @@
               ]
             );
           }
-          if (!OB.MobileApp.model.receipt.get('isQuotation')) {
+          if (
+            !OB.MobileApp.model.receipt.get('isQuotation') ||
+            actionName === 'deleteCurrentOrder'
+          ) {
             if (
               OB.MobileApp.model.hasPermission(
                 'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
