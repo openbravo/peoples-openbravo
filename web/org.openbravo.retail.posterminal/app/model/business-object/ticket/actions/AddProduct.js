@@ -11,8 +11,6 @@
 /* eslint-disable no-use-before-define */
 
 (function AddProductDefinition() {
-  window.newAddProduct = true; // TODO: remove this testing code
-
   OB.App.StateAPI.Ticket.registerAction('addProduct', (state, payload) => {
     let ticket = { ...state };
     // the products property of the payload contains:
