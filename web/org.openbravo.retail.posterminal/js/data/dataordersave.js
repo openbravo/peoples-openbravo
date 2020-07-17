@@ -453,34 +453,36 @@
                     }
 
                     OB.trace('Execution Sync process.');
-                    OB.MobileApp.model.runSyncProcess(
-                      function() {
-                        // in synchronized mode do the doc sequence update in the success
-                        if (
-                          OB.MobileApp.model.hasPermission(
-                            'OBMOBC_SynchronizedMode',
-                            true
-                          )
-                        ) {
-                          OB.Dal.transaction(function(tx) {
-                            // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                            receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
+                    OB.App.State.Global.syncTickets().then(() => {
+                      OB.MobileApp.model.runSyncProcess(
+                        function() {
+                          // in synchronized mode do the doc sequence update in the success
+                          if (
+                            OB.MobileApp.model.hasPermission(
+                              'OBMOBC_SynchronizedMode',
+                              true
+                            )
+                          ) {
+                            OB.Dal.transaction(function(tx) {
+                              // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                              receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
+                              syncSuccessCallback(function() {
+                                serverMessageForQuotation(frozenReceipt);
+                                closeParamCallback();
+                              }, eventParams);
+                            });
+                          } else {
                             syncSuccessCallback(function() {
                               serverMessageForQuotation(frozenReceipt);
-                              closeParamCallback();
                             }, eventParams);
-                          });
-                        } else {
-                          syncSuccessCallback(function() {
-                            serverMessageForQuotation(frozenReceipt);
-                          }, eventParams);
+                          }
+                          OB.debug('Ticket closed: runSyncProcess executed');
+                        },
+                        function() {
+                          syncErrorCallback();
                         }
-                        OB.debug('Ticket closed: runSyncProcess executed');
-                      },
-                      function() {
-                        syncErrorCallback();
-                      }
-                    );
+                      );
+                    });
                   };
 
                   var executePreSyncReceipt = function(tx) {

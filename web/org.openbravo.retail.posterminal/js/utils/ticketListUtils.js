@@ -983,7 +983,7 @@
         },
         function(args) {
           if (callback instanceof Function) {
-            callback(model);
+            callback(OB.MobileApp.model.receipt);
           }
         }
       );
