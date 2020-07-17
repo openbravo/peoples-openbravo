@@ -27,6 +27,10 @@
       newTicket.obposIsDeleted = true;
       newTicket.grossAmount = 0;
       newTicket.netAmount = 0;
+      newTicket.taxes = Object.keys(newTicket.taxes).reduce((taxes, tax) => {
+        taxes[tax] = { ...newTicket.taxes[tax], net: 0, amount: 0 };
+        return taxes;
+      }, {});
       newTicket.lines = newTicket.lines.map(line => {
         return {
           ...line,
@@ -34,7 +38,11 @@
           obposQtyDeleted: line.qty,
           grossUnitAmount: 0,
           netUnitAmount: 0,
-          qty: 0
+          qty: 0,
+          taxes: Object.keys(line.taxes).reduce((taxes, tax) => {
+            taxes[tax] = { ...newTicket.taxes[tax], net: 0, amount: 0 };
+            return taxes;
+          }, {})
         };
       });
       newTicket = OB.App.State.Ticket.Utils.completeTicket(newTicket, payload);
