@@ -73,8 +73,7 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
 
         uploadResult.incTotalCount();
 
-        final List<String> productIds = getProductIds(discount.getClient().getId(),
-            discount.getOrganization().getId(), productKey);
+        final List<String> productIds = getProductIds(productKey);
         if (productIds.size() == 0) {
           uploadResult.incErrorCount();
           uploadResult.addErrorMessage(productKey + " --> " + errorMsgProductNotFound + "\n");
@@ -112,14 +111,11 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
   }
 
   @SuppressWarnings("unchecked")
-  protected List<String> getProductIds(String clientId, String orgId, String productKey) {
-    String sql = "SELECT m_product_id from m_product where ad_client_id=:clientId and ad_org_id=:orgId and value=:value";
+  protected List<String> getProductIds(String productKey) {
+    String sql = "SELECT m_product_id from m_product where value=:value";
     Session session = OBDal.getInstance().getSession();
     @SuppressWarnings("rawtypes")
-    NativeQuery qry = session.createNativeQuery(sql);
-    qry.setParameter("clientId", clientId);
-    qry.setParameter("orgId", orgId);
-    qry.setParameter("value", productKey);
+    NativeQuery qry = session.createNativeQuery(sql).setParameter("value", productKey);
     // only need max 2 to identify that there is more than one
     qry.setMaxResults(2);
     return (List<String>) qry.list();
