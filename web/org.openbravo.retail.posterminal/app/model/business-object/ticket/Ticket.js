@@ -13,7 +13,45 @@ if (!OB.App.StateBackwardCompatibility) {
   // backbone compatibility.
   OB.App.StateAPI.registerModel('Ticket');
 } else {
-  OB.App.StateAPI.registerBackwardCompatibleModel('Ticket');
+  const initialState = {};
+  const options = {
+    ignoredProperties: [
+      'undo',
+      'json',
+      'lines[*].product.img',
+      'lines[*].product._filter'
+    ],
+    resetEvents: ['paintTaxes'],
+    mapProperties: {
+      bp: 'businessPartner',
+      gross: 'grossAmount',
+      net: 'netAmount',
+      'lines[*].gross': 'baseGrossUnitAmount',
+      'lines[*].net': 'baseNetUnitAmount',
+      'lines[*].unitPrice': 'netUnitPrice',
+      'lines[*].listPrice': 'netListPrice',
+      'lines[*].price': bbTicket =>
+        bbTicket.get('priceIncludesTax')
+          ? 'baseGrossUnitPrice'
+          : 'baseNetUnitPrice',
+      'lines[*].pricenet': bbTicket =>
+        bbTicket.get('priceIncludesTax') ? 'baseNetUnitPrice' : undefined,
+      'lines[*].lineRate': 'taxRate',
+      'lines[*].taxLines': 'taxes'
+    },
+    mapStateBackboneProperties: {
+      'lines[*].baseGrossUnitPrice': ticket =>
+        ticket.priceIncludesTax ? 'price' : undefined,
+      'lines[*].baseNetUnitPrice': ticket =>
+        ticket.priceIncludesTax ? undefined : 'price'
+    }
+  };
+
+  OB.App.StateAPI.registerBackwardCompatibleModel(
+    'Ticket',
+    initialState,
+    options
+  );
 
   OB.UTIL.HookManager.registerHook(
     'ModelReady:pointOfSale',
@@ -24,39 +62,7 @@ if (!OB.App.StateBackwardCompatibility) {
       // So that changes in one are reflected in the other
       OB.App.StateBackwardCompatibility.bind(
         OB.App.State.Ticket,
-        backboneCurrentTicket,
-        {
-          ignoredProperties: [
-            'undo',
-            'json',
-            'lines[*].product.img',
-            'lines[*].product._filter'
-          ],
-          resetEvents: ['paintTaxes'],
-          mapProperties: {
-            bp: 'businessPartner',
-            gross: 'grossAmount',
-            net: 'netAmount',
-            'lines[*].gross': 'baseGrossUnitAmount',
-            'lines[*].net': 'baseNetUnitAmount',
-            'lines[*].unitPrice': 'netUnitPrice',
-            'lines[*].listPrice': 'netListPrice',
-            'lines[*].price': bbTicket =>
-              bbTicket.get('priceIncludesTax')
-                ? 'baseGrossUnitPrice'
-                : 'baseNetUnitPrice',
-            'lines[*].pricenet': bbTicket =>
-              bbTicket.get('priceIncludesTax') ? 'baseNetUnitPrice' : undefined,
-            'lines[*].lineRate': 'taxRate',
-            'lines[*].taxLines': 'taxes'
-          },
-          mapStateBackboneProperties: {
-            'lines[*].baseGrossUnitPrice': ticket =>
-              ticket.priceIncludesTax ? 'price' : undefined,
-            'lines[*].baseNetUnitPrice': ticket =>
-              ticket.priceIncludesTax ? undefined : 'price'
-          }
-        }
+        backboneCurrentTicket
       );
       backboneCurrentTicket.trigger('change'); // forces backbone -> state propagation
 
