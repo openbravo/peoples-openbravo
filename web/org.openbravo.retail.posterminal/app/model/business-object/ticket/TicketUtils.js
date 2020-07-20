@@ -388,20 +388,25 @@
           ...line,
           promotions: discounts ? discounts.discounts : []
         };
+        const { baseGrossUnitPrice, baseNetUnitPrice, qty } = line;
         if (priceIncludesTax) {
+          newLine.baseGrossUnitAmount = OB.DEC.mul(baseGrossUnitPrice, qty);
+          newLine.baseNetUnitAmount = 0;
           newLine.grossUnitPrice = discounts
             ? discounts.grossUnitPrice
-            : line.baseGrossUnitPrice;
+            : baseGrossUnitPrice;
           newLine.grossUnitAmount = discounts
             ? discounts.grossUnitAmount
-            : OB.DEC.mul(line.qty, line.baseGrossUnitPrice);
+            : OB.DEC.mul(qty, baseGrossUnitPrice);
         } else {
+          newLine.baseGrossUnitAmount = 0;
+          newLine.baseNetUnitAmount = OB.DEC.mul(baseNetUnitPrice, qty);
           newLine.netUnitPrice = discounts
             ? discounts.netUnitPrice
-            : line.baseNetUnitPrice;
+            : baseNetUnitPrice;
           newLine.netUnitAmount = discounts
             ? discounts.netUnitAmount
-            : OB.DEC.mul(line.qty, line.baseNetUnitPrice);
+            : OB.DEC.mul(qty, baseNetUnitPrice);
         }
         return newLine;
       });
