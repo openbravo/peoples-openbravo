@@ -700,247 +700,6 @@
   }
 
   OB.App.StateAPI.Ticket.registerUtilityFunctions({
-  /**
-   * Checks whether a ticket is a return or a sale.
-   *
-   * @param {object} ticket - The ticket whose sign will be checked
-   * @param {object} payload - The calculation payload, which include:
-   *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
-   *
-   * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
-   */
-  isReturn(ticket, payload) {
-    if (!ticket.lines || !ticket.lines.length) {
-      return false;
-    }
-
-    const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
-    return (
-      negativeLines === ticket.lines.length ||
-      (negativeLines > 0 &&
-        payload.preferences.salesWithOneLineNegativeAsReturns)
-    );
-  },
-
-    /**
-     * Checks whether a ticket belongs to a different store.
-     *
-     * @param {object} ticket - The ticket whose will be checked
-     * @param {object} payload - The calculation payload, which include:
-     *             * terminal.organization - Organization of the current terminal
-     *
-     * @returns {boolean} true in case the ticket is cross store, false otherwise.
-     */
-    isCrossStore(ticket, payload) {
-      if (!ticket.organization || !payload.terminal.organization) {
-        return false;
-      }
-
-      return ticket.organization !== payload.terminal.organization;
-    },
-
-    /**
-     * Checks whether a ticket is fully paid.
-     *
-     * @param {object} ticket - The ticket whose payment will be checked
-     *
-     * @returns {boolean} true in case the ticket is fully paid, false in case it is not paid or it is partially paid.
-     */
-    isFullyPaid(ticket) {
-      return ticket.payment >= OB.DEC.abs(ticket.grossAmount);
-    },
-
-    /**
-   * Returns ticket payment status.
-   *
-   * @param {object} ticket - The ticket whose payment status will be retrieved
-   * @param {object} payload - The calculation payload, which include:
-   *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
-   *
-   * @returns {object} Ticket payment status.
-   */
-  getPaymentStatus(ticket, payload) {
-    const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, payload);
-    const isReversal = ticket.payments.some(
-      payment => payment.reversedPaymentId
-    );
-    const paymentsAmount = ticket.payments.reduce((total, payment) => {
-      if (
-        payment.isPrePayment ||
-        ticket.isLayaway ||
-        ticket.isPaid ||
-        !ticket.isNegative ||
-        payment.isReversePayment
-      ) {
-        return OB.DEC.add(total, payment.origAmount);
-      }
-      return OB.DEC.sub(total, payment.origAmount);
-    }, OB.DEC.Zero);
-    const remainingToPay = OB.DEC.sub(
-      ticket.grossAmount,
-      OB.DEC.add(paymentsAmount, ticket.nettingPayment || OB.DEC.Zero)
-    );
-
-    if (ticket.isNegative) {
-      return {
-        done:
-          OB.DEC.compare(ticket.lines.length) === 1 &&
-          OB.DEC.compare(remainingToPay) !== -1,
-        total: ticket.grossAmount,
-        pending:
-          OB.DEC.compare(remainingToPay) === -1
-            ? OB.DEC.mul(remainingToPay, -1)
-            : OB.DEC.Zero,
-        overpayment:
-          OB.DEC.compare(remainingToPay) === 1
-            ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
-            : OB.DEC.Zero,
-        isReturn,
-        isNegative: ticket.isNegative,
-        totalAmt: ticket.grossAmount,
-        pendingAmt:
-          OB.DEC.compare(remainingToPay) === -1
-            ? OB.DEC.mul(remainingToPay, -1)
-            : OB.DEC.Zero,
-        payments: ticket.payments,
-        isReversal
-      };
-    }
-
-    return {
-      done:
-        OB.DEC.compare(ticket.lines.length) === 1 &&
-        OB.DEC.compare(remainingToPay) !== 1,
-      total: ticket.grossAmount,
-      pending:
-        OB.DEC.compare(remainingToPay) === 1 ? remainingToPay : OB.DEC.Zero,
-      overpayment:
-        OB.DEC.compare(remainingToPay) === -1
-          ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
-          : OB.DEC.Zero,
-      isReturn,
-      isNegative: ticket.isNegative,
-      totalAmt: ticket.grossAmount,
-      pendingAmt:
-        OB.DEC.compare(remainingToPay) === 1 ? remainingToPay : OB.DEC.Zero,
-      payments: ticket.payments,
-      isReversal
-    };
-  },
-,
-
-    /**
-     * Updates the type of the given ticket.
-     *
-     * @param {object} ticket - The ticket whose type will be updated
-     * @param {object} payload - The calculation payload, which include:
-     *             * terminal.documentTypeForSales - Terminal document type for sales
-     *             * terminal.documentTypeForReturns - Terminal document type for returns
-     *             * terminal.organization - Organization of the current terminal
-     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
-     *
-     * @returns {object} The new state of Ticket after type update.
-     */
-    updateTicketType(ticket, payload) {
-      const isCrossStore = OB.App.State.Ticket.Utils.isCrossStore(
-        ticket,
-        payload
-      );
-      if (isCrossStore) {
-        return ticket;
-      }
-
-      const newTicket = { ...ticket };
-      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, payload);
-      newTicket.orderType = isReturn ? 1 : 0;
-      newTicket.documentType = isReturn
-        ? payload.terminal.documentTypeForReturns
-        : payload.terminal.documentTypeForSales;
-
-      return newTicket;
-    },
-
-    /**
-     * Set needed properties when completing a ticket.
-     *
-     * @param {object} ticket - The ticket being completed
-     * @param {object} payload - The calculation payload, which include:
-     *             * terminal.id - Terminal id
-     *             * approvals - Approvals to add to the ticket
-     *
-     * @returns {object} The new state of Ticket after being completed.
-     */
-    completeTicket(ticket, payload) {
-      const newTicket = { ...ticket };
-      const currentDate = new Date();
-      const creationDate = newTicket.creationDate
-        ? new Date(newTicket.creationDate)
-        : currentDate;
-
-      newTicket.hasbeenpaid = 'Y';
-      newTicket.orderDate = currentDate.toISOString();
-      newTicket.movementDate = currentDate.toISOString();
-      newTicket.accountingDate = currentDate.toISOString();
-      newTicket.creationDate = creationDate.toISOString();
-      newTicket.obposCreatedabsolute = creationDate.toISOString();
-      newTicket.created = creationDate.getTime();
-      newTicket.timezoneOffset = creationDate.getTimezoneOffset();
-      newTicket.posTerminal = payload.terminal.id;
-      newTicket.undo = null;
-      newTicket.multipleUndo = null;
-      newTicket.paymentMethodKind =
-        newTicket.payments.length === 1 &&
-        OB.App.State.Ticket.Utils.isFullyPaid(newTicket)
-          ? newTicket.payments[0].kind
-          : null;
-      newTicket.approvals = [
-        ...newTicket.approvals,
-        ...(payload.approvals || [])
-      ];
-
-      // FIXME: Remove once every use of OB.UTIL.Approval.requestApproval() send approvalType as string
-      newTicket.approvals = newTicket.approvals.map(approval => {
-        const newApproval = { ...approval };
-        if (typeof approval.approvalType === 'object') {
-          newApproval.approvalType = approval.approvalType.approval;
-        }
-        return newApproval;
-      });
-
-      return newTicket;
-    },
-
-    /**
-     * Updates the type of the given ticket.
-     *
-     * @param {object} ticket - The ticket whose type will be updated
-     * @param {object} payload - The calculation payload, which include:
-     *             * terminal.documentTypeForSales - Terminal document type for sales
-     *             * terminal.documentTypeForReturns - Terminal document type for returns
-     *             * terminal.organization - Organization of the current terminal
-     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
-     *
-     * @returns {object} The new state of Ticket after type update.
-     */
-    updateTicketType(ticket, payload) {
-      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStore(
-        ticket,
-        payload
-      );
-      if (isCrossStoreTicket) {
-        return ticket;
-      }
-
-      const newTicket = { ...ticket };
-      const isReturn = OB.App.State.Ticket.Utils.isReturn(ticket, payload);
-      newTicket.orderType = isReturn ? 1 : 0;
-      newTicket.documentType = isReturn
-        ? payload.terminal.documentTypeForReturns
-        : payload.terminal.documentTypeForSales;
-
-      return newTicket;
-    },
-
     /**
      * Computes the totals of a given ticket which include: discounts, taxes and other calculated fields.
      *
@@ -1114,468 +873,160 @@
     },
 
     /**
-     * Generates the corresponding shipment for the given ticket.
+     * Checks whether a ticket is a return or a regular sale.
      *
-     * @param {object} ticket - The ticket whose shipment will be generated
-     * @param {object} settings - The calculation settings, which include:
-     *             * terminal.organization - The terminal organization.
+     * @param {object} ticket - The ticket to check
+     * @param {object} payload - The calculation payload, which include:
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
-     * @returns {object} The ticket with the result of the shipment generation
+     * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
      */
-    generateShipment(ticket, settings) {
-      const newTicket = { ...ticket };
-      const isFullyPaid =
-        ticket.payment >= OB.DEC.abs(ticket.grossAmount) || ticket.payOnCredit;
-      const isCrossStoreTicket = OB.App.State.Ticket.Utils.isCrossStoreTicket(
-        ticket,
-        settings
+    isReturnSale(ticket, payload) {
+      if (!ticket.lines || !ticket.lines.length) {
+        return false;
+      }
+
+      const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
+      return (
+        negativeLines === ticket.lines.length ||
+        (negativeLines > 0 &&
+          payload.preferences.salesWithOneLineNegativeAsReturns)
       );
-
-      newTicket.lines = ticket.lines.map(line => {
-        const newLine = { ...line };
-
-        if (isFullyPaid) {
-          newLine.obposCanbedelivered = true;
-          newLine.obposIspaid = true;
-        } else if (line.obposCanbedelivered) {
-          newLine.obposIspaid = true;
-        }
-
-        if (isCrossStoreTicket && !line.originalOrderLineId) {
-          newLine.obposQtytodeliver = line.deliveredQuantity;
-        } else if (!line.obposQtytodeliver) {
-          if (
-            line.product.productType === 'S' &&
-            line.product.isLinkedToProduct
-          ) {
-            if (line.qty > 0) {
-              const qtyToDeliver =
-                line.product.quantityRule === 'UQ'
-                  ? OB.DEC.One
-                  : line.relatedLines.reduce((accumulator, relatedLine) => {
-                      const orderLine = ticket.lines.find(
-                        l => l.id === relatedLine.orderlineId
-                      );
-                      if (
-                        orderLine &&
-                        (isFullyPaid || orderLine.obposCanbedelivered)
-                      ) {
-                        return OB.DEC.add(accumulator, orderLine.qty);
-                      }
-                      if (relatedLine.obposIspaid) {
-                        return OB.DEC.add(
-                          accumulator,
-                          relatedLine.deliveredQuantity
-                        );
-                      }
-                      return accumulator;
-                    }, OB.DEC.Zero);
-
-              newLine.obposQtytodeliver = qtyToDeliver;
-              if (qtyToDeliver) {
-                newLine.obposCanbedelivered = true;
-              }
-            } else if (line.qty < 0) {
-              newLine.obposQtytodeliver = line.qty;
-              newLine.obposCanbedelivered = true;
-            }
-          } else if (line.obposCanbedelivered) {
-            newLine.obposQtytodeliver = line.qty;
-          } else {
-            newLine.obposQtytodeliver = line.deliveredQuantity;
-          }
-        }
-
-        return newLine;
-      });
-
-      newTicket.generateShipment = newTicket.lines.some(line => {
-        const qtyToDeliver = line.obposQtytodeliver
-          ? line.obposQtytodeliver
-          : line.qty;
-        return qtyToDeliver !== line.deliveredQuantity;
-      });
-      newTicket.deliver = !newTicket.lines.some(line => {
-        const qtyToDeliver = line.obposQtytodeliver
-          ? line.obposQtytodeliver
-          : line.qty;
-        return qtyToDeliver !== line.qty;
-      });
-
-      return newTicket;
     },
 
     /**
-     * Generates the corresponding delivery for the given ticket.
+     * Checks whether a ticket belongs to a different store.
      *
-     * @param {object} ticket - The ticket whose delivery will be generated
+     * @param {object} ticket - The ticket to check
      * @param {object} payload - The calculation payload, which include:
-     *             * terminal.organization - The terminal organization.
+     *             * terminal.organization - Organization of the current terminal
      *
-     * @returns {object} The ticket with the result of the delivery generation
+     * @returns {boolean} true in case the ticket is cross store, false otherwise.
      */
-    generateDelivery(ticket, payload) {
-      const newTicket = { ...ticket };
-      const isFullyPaidOrPaidOnCredit =
-        OB.App.State.Ticket.Utils.isFullyPaid(ticket) || ticket.payOnCredit;
+    isCrossStore(ticket, payload) {
+      if (!ticket.organization || !payload.terminal.organization) {
+        return false;
+      }
+
+      return ticket.organization !== payload.terminal.organization;
+    },
+
+    /**
+     * Checks whether a ticket is fully paid.
+     *
+     * @param {object} ticket - The ticket whose payment will be checked
+     *
+     * @returns {boolean} true in case the ticket is fully paid, false in case it is not paid or it is partially paid.
+     */
+    isFullyPaid(ticket) {
+      return ticket.payment >= OB.DEC.abs(ticket.grossAmount);
+    },
+
+    /**
+     * Returns ticket payment status.
+     *
+     * @param {object} ticket - The ticket whose payment status will be retrieved
+     * @param {object} payload - The calculation payload, which include:
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
+     *
+     * @returns {object} Ticket payment status.
+     */
+    getPaymentStatus(ticket, payload) {
+      const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
+      const isReversal = ticket.payments.some(
+        payment => payment.reversedPaymentId
+      );
+      const paymentsAmount = ticket.payments.reduce((total, payment) => {
+        if (
+          payment.isPrePayment ||
+          ticket.isLayaway ||
+          ticket.isPaid ||
+          !ticket.isNegative ||
+          payment.isReversePayment
+        ) {
+          return OB.DEC.add(total, payment.origAmount);
+        }
+        return OB.DEC.sub(total, payment.origAmount);
+      }, OB.DEC.Zero);
+      const remainingToPay = OB.DEC.sub(
+        ticket.grossAmount,
+        OB.DEC.add(paymentsAmount, ticket.nettingPayment || OB.DEC.Zero)
+      );
+
+      if (ticket.isNegative) {
+        return {
+          done:
+            OB.DEC.compare(ticket.lines.length) === 1 &&
+            OB.DEC.compare(remainingToPay) !== -1,
+          total: ticket.grossAmount,
+          pending:
+            OB.DEC.compare(remainingToPay) === -1
+              ? OB.DEC.mul(remainingToPay, -1)
+              : OB.DEC.Zero,
+          overpayment:
+            OB.DEC.compare(remainingToPay) === 1
+              ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
+              : OB.DEC.Zero,
+          isReturn,
+          isNegative: ticket.isNegative,
+          totalAmt: ticket.grossAmount,
+          pendingAmt:
+            OB.DEC.compare(remainingToPay) === -1
+              ? OB.DEC.mul(remainingToPay, -1)
+              : OB.DEC.Zero,
+          payments: ticket.payments,
+          isReversal
+        };
+      }
+
+      return {
+        done:
+          OB.DEC.compare(ticket.lines.length) === 1 &&
+          OB.DEC.compare(remainingToPay) !== 1,
+        total: ticket.grossAmount,
+        pending:
+          OB.DEC.compare(remainingToPay) === 1 ? remainingToPay : OB.DEC.Zero,
+        overpayment:
+          OB.DEC.compare(remainingToPay) === -1
+            ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
+            : OB.DEC.Zero,
+        isReturn,
+        isNegative: ticket.isNegative,
+        totalAmt: ticket.grossAmount,
+        pendingAmt:
+          OB.DEC.compare(remainingToPay) === 1 ? remainingToPay : OB.DEC.Zero,
+        payments: ticket.payments,
+        isReversal
+      };
+    },
+
+    /**
+     * Updates the type of the given ticket.
+     *
+     * @param {object} ticket - The ticket whose type will be updated
+     * @param {object} payload - The calculation payload, which include:
+     *             * terminal.documentTypeForSales - Terminal document type for sales
+     *             * terminal.documentTypeForReturns - Terminal document type for returns
+     *             * terminal.organization - Organization of the current terminal
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
+     *
+     * @returns {object} The new state of Ticket after type update.
+     */
+    updateTicketType(ticket, payload) {
       const isCrossStore = OB.App.State.Ticket.Utils.isCrossStore(
         ticket,
         payload
       );
-
-      newTicket.lines = ticket.lines.map(line => {
-        const newLine = { ...line };
-
-        if (isFullyPaidOrPaidOnCredit || newLine.obposCanbedelivered) {
-          newLine.obposCanbedelivered = true;
-          newLine.obposIspaid = true;
-        }
-
-        if (
-          (!ticket.completeTicket && !ticket.payOnCredit) ||
-          (isCrossStore && !newLine.originalOrderLineId)
-        ) {
-          newLine.obposQtytodeliver = newLine.deliveredQuantity || OB.DEC.Zero;
-          return newLine;
-        }
-
-        if (
-          newLine.product.productType === 'S' &&
-          newLine.product.isLinkedToProduct
-        ) {
-          if (newLine.qty > 0) {
-            const qtyToDeliver = newLine.relatedLines.reduce(
-              (total, relatedLine) => {
-                const orderLine = ticket.lines.find(
-                  l => l.id === relatedLine.orderlineId
-                );
-                if (
-                  orderLine &&
-                  (!orderLine.obrdmDeliveryMode ||
-                    orderLine.obrdmDeliveryMode === 'PickAndCarry') &&
-                  (isFullyPaidOrPaidOnCredit || orderLine.obposCanbedelivered)
-                ) {
-                  return OB.DEC.add(total, orderLine.qty);
-                }
-                if (relatedLine.obposIspaid) {
-                  return OB.DEC.add(total, relatedLine.deliveredQuantity);
-                }
-                return total;
-              },
-              OB.DEC.Zero
-            );
-
-            newLine.obposQtytodeliver =
-              qtyToDeliver && newLine.product.quantityRule === 'UQ'
-                ? OB.DEC.One
-                : qtyToDeliver;
-            if (qtyToDeliver) {
-              newLine.obposCanbedelivered = true;
-            }
-          } else if (newLine.qty < 0) {
-            newLine.obposQtytodeliver = newLine.qty;
-            newLine.obposCanbedelivered = true;
-          }
-        } else if (
-          newLine.obposCanbedelivered &&
-          (!newLine.obrdmDeliveryMode ||
-            newLine.obrdmDeliveryMode === 'PickAndCarry')
-        ) {
-          newLine.obposQtytodeliver = newLine.qty;
-        } else {
-          newLine.obposQtytodeliver = newLine.deliveredQuantity || OB.DEC.Zero;
-        }
-
-        return newLine;
-      });
-
-      newTicket.generateShipment = newTicket.lines.some(line => {
-        return (
-          line.obposQtytodeliver !== (line.deliveredQuantity || OB.DEC.Zero)
-        );
-      });
-      newTicket.deliver = !newTicket.lines.some(line => {
-        return line.obposQtytodeliver !== line.qty;
-      });
-
-      return newTicket;
-    },
-
-    /**
-     * Generates the corresponding invoice for the given ticket.
-     *
-     * @param {object} ticket - The ticket whose invoice will be generated
-     * @param {object} payload - The calculation payload, which include:
-     *             * discountRules - The discount rules to be considered for discount calculation
-     *             * bpSets - The businessPartner sets for discount calculation
-     *             * taxRules - The tax rules to be considered for tax calculation
-     *
-     * @returns {object} The new state of Ticket and DocumentSequence after invoice generation.
-     */
-    generateInvoice(ticket, payload) {
-      const generateInvoice =
-        !ticket.obposIsDeleted &&
-        (ticket.payOnCredit ||
-          (ticket.invoiceTerms === 'I' && ticket.generateInvoice) ||
-          (ticket.invoiceTerms === 'O' && ticket.deliver) ||
-          (ticket.invoiceTerms === 'D' &&
-            (ticket.generateShipment ||
-              ticket.lines.find(
-                line => line.deliveredQuantity !== line.invoicedQuantity
-              ))));
-
-      if (!generateInvoice) {
-        return ticket;
-      }
-
-      const invoiceLines = ticket.lines.flatMap(line => {
-        const originalQty = line.qty;
-        const qtyAlreadyInvoiced = line.invoicedQuantity || OB.DEC.Zero;
-        const qtyPendingToBeInvoiced = OB.DEC.sub(line.qty, qtyAlreadyInvoiced);
-
-        let qtyToInvoice;
-        if (ticket.invoiceTerms === 'D') {
-          qtyToInvoice = OB.DEC.sub(line.obposQtytodeliver, qtyAlreadyInvoiced);
-        } else if (ticket.invoiceTerms === 'I' || ticket.invoiceTerms === 'O') {
-          qtyToInvoice = qtyPendingToBeInvoiced;
-        } else {
-          qtyToInvoice = OB.DEC.Zero;
-        }
-
-        if (
-          !qtyToInvoice ||
-          (ticket.invoiceTerms !== 'I' &&
-            !line.obposCanbedelivered &&
-            !line.obposIspaid)
-        ) {
-          return [];
-        }
-
-        const invoiceLine = { ...line };
-        invoiceLine.id = OB.App.UUID.generate();
-        invoiceLine.qty = qtyToInvoice;
-        invoiceLine.orderLineId = line.id;
-        invoiceLine.product.ignorePromotions = true;
-        invoiceLine.product.img = undefined;
-
-        if (OB.DEC.abs(qtyAlreadyInvoiced) > 0) {
-          invoiceLine.promotions = line.promotions.map(promotion => {
-            const invoiceLinePromotion = { ...promotion };
-            if (OB.DEC.abs(qtyToInvoice) < OB.DEC.abs(qtyPendingToBeInvoiced)) {
-              invoiceLinePromotion.amt = OB.DEC.mul(
-                invoiceLinePromotion.amt,
-                OB.DEC.div(qtyToInvoice, originalQty)
-              );
-              invoiceLinePromotion.obdiscQtyoffer = qtyToInvoice;
-              if (invoiceLinePromotion.actualAmt) {
-                invoiceLinePromotion.actualAmt = OB.DEC.mul(
-                  invoiceLinePromotion.actualAmt,
-                  OB.DEC.div(qtyToInvoice, originalQty)
-                );
-              }
-              if (invoiceLinePromotion.displayedTotalAmount) {
-                invoiceLinePromotion.displayedTotalAmount = OB.DEC.mul(
-                  invoiceLinePromotion.displayedTotalAmount,
-                  OB.DEC.div(qtyToInvoice, originalQty)
-                );
-              }
-              if (invoiceLinePromotion.fullAmt) {
-                invoiceLinePromotion.fullAmt = OB.DEC.mul(
-                  invoiceLinePromotion.fullAmt,
-                  OB.DEC.div(qtyToInvoice, originalQty)
-                );
-              }
-              if (invoiceLinePromotion.qtyOffer) {
-                invoiceLinePromotion.qtyOffer = qtyToInvoice;
-              }
-              if (invoiceLinePromotion.pendingQtyOffer) {
-                invoiceLinePromotion.pendingQtyOffer = qtyToInvoice;
-              }
-            } else {
-              invoiceLinePromotion.amt = OB.DEC.sub(
-                invoiceLinePromotion.amt,
-                OB.DEC.mul(
-                  invoiceLinePromotion.amt,
-                  OB.DEC.div(qtyAlreadyInvoiced, originalQty)
-                )
-              );
-              invoiceLinePromotion.obdiscQtyoffer = qtyToInvoice;
-              if (invoiceLinePromotion.actualAmt) {
-                invoiceLinePromotion.actualAmt = OB.DEC.sub(
-                  invoiceLinePromotion.actualAmt,
-                  OB.DEC.mul(
-                    invoiceLinePromotion.actualAmt,
-                    OB.DEC.div(qtyAlreadyInvoiced, originalQty)
-                  )
-                );
-              }
-              if (invoiceLinePromotion.displayedTotalAmount) {
-                invoiceLinePromotion.displayedTotalAmount = OB.DEC.sub(
-                  invoiceLinePromotion.displayedTotalAmount,
-                  OB.DEC.mul(
-                    invoiceLinePromotion.displayedTotalAmount,
-                    OB.DEC.div(qtyAlreadyInvoiced, originalQty)
-                  )
-                );
-              }
-              if (invoiceLinePromotion.fullAmt) {
-                invoiceLinePromotion.fullAmt = OB.DEC.sub(
-                  invoiceLinePromotion.fullAmt,
-                  OB.DEC.mul(
-                    invoiceLinePromotion.fullAmt,
-                    OB.DEC.div(qtyAlreadyInvoiced, originalQty)
-                  )
-                );
-              }
-              if (invoiceLinePromotion.qtyOffer) {
-                invoiceLinePromotion.qtyOffer = qtyToInvoice;
-              }
-              if (invoiceLinePromotion.pendingQtyOffer) {
-                invoiceLinePromotion.pendingQtyOffer = qtyToInvoice;
-              }
-            }
-
-            return invoiceLinePromotion;
-          });
-        }
-
-        return invoiceLine;
-      });
-
-      if (!invoiceLines.length) {
+      if (isCrossStore) {
         return ticket;
       }
 
       const newTicket = { ...ticket };
-      const invoice = { ...ticket };
-      invoice.orderId = ticket.id;
-      invoice.id = OB.App.UUID.generate();
-      invoice.isInvoice = true;
-      invoice.documentNo = null;
-      invoice.orderDocumentNo = ticket.documentNo;
-      invoice.lines = invoiceLines;
-
-      if (invoice.lines.length === ticket.lines.length) {
-        newTicket.calculatedInvoice = invoice;
-      } else {
-        newTicket.calculatedInvoice = OB.App.State.Ticket.Utils.calculateTotals(
-          {
-            ...invoice,
-            lines: invoice.lines.map(line => {
-              return { ...line, skipApplyPromotions: true };
-            })
-          },
-          payload
-        );
-      }
-
-      return newTicket;
-    },
-
-    /**
-     * Completes ticket payment generating change payment if needed and converting payment to negative in case of return.
-     *
-     * @param {object} ticket - The ticket whose payment will be completed
-     * @param {object} payload - The calculation payload, which include:
-     *             * terminal.paymentTypes - Terminal payment types
-     *             * terminal.multiChange - Terminal multichange configuration
-     *             * preferences.splitChange - OBPOS_SplitChange preference value
-     *
-     * @returns {object} The new state of Ticket after payment completing.
-     */
-    completePayment(ticket, payload) {
-      let newTicket = { ...ticket };
-
-      // Manage change payments if there is change
-      if (newTicket.changePayments && newTicket.changePayments.length > 0) {
-        const prevChange = newTicket.change;
-        const mergeable =
-          !payload.terminal.multiChange && !payload.preferences.splitChange;
-
-        newTicket.changePayments.forEach(changePayment => {
-          const terminalPayment = payload.terminal.paymentTypes.find(
-            paymentType => paymentType.payment.searchKey === changePayment.key
-          );
-
-          // Generate change payment
-          newTicket = OB.App.State.Ticket.Utils.generatePayment(newTicket, {
-            ...payload,
-            payment: {
-              kind: terminalPayment.payment.searchKey,
-              name: terminalPayment.payment.commercialName,
-              amount: OB.DEC.sub(
-                OB.DEC.Zero,
-                changePayment.amount,
-                terminalPayment.obposPosprecision
-              ),
-              amountRounded: OB.DEC.sub(
-                OB.DEC.Zero,
-                changePayment.amountRounded,
-                terminalPayment.obposPosprecision
-              ),
-              origAmount: OB.DEC.sub(OB.DEC.Zero, changePayment.origAmount),
-              origAmountRounded: OB.DEC.sub(
-                OB.DEC.Zero,
-                OB.DEC.mul(changePayment.amountRounded, terminalPayment.rate)
-              ),
-              rate: terminalPayment.rate,
-              mulrate: terminalPayment.mulrate,
-              isocode: terminalPayment.isocode,
-              allowOpenDrawer: terminalPayment.paymentMethod.allowopendrawer,
-              isCash: terminalPayment.paymentMethod.iscash,
-              openDrawer: terminalPayment.paymentMethod.openDrawer,
-              printtwice: terminalPayment.paymentMethod.printtwice,
-              changePayment: true,
-              paymentData: {
-                mergeable,
-                label: changePayment.label
-              }
-            }
-          });
-
-          // Recalculate payment and paymentWithSign properties
-          const paidAmt = newTicket.payments.reduce((total, payment) => {
-            if (
-              payment.isPrePayment ||
-              payment.isReversePayment ||
-              !newTicket.isNegative
-            ) {
-              return OB.DEC.add(total, payment.origAmount);
-            }
-            return OB.DEC.sub(total, payment.origAmount);
-          }, OB.DEC.Zero);
-          newTicket.payment = OB.DEC.abs(paidAmt);
-          newTicket.paymentWithSign = paidAmt;
-          newTicket.change = prevChange;
-        });
-      }
-
-      // Convert return payments in negative
-      if (newTicket.isNegative) {
-        newTicket.payments = newTicket.payments.map(payment => {
-          const newPayment = { ...payment };
-
-          if (
-            payment.isPrePayment ||
-            payment.reversedPaymentId ||
-            newTicket.isPaid
-          ) {
-            newPayment.paid = payment.amount;
-            return newPayment;
-          }
-
-          newPayment.amount = -payment.amount;
-          newPayment.origAmount = -payment.origAmount;
-          newPayment.paid = -payment.paid;
-          newPayment.amountRounded = payment.amountRounded
-            ? -payment.amountRounded
-            : payment.amountRounded;
-          newPayment.origAmountRounded = payment.origAmountRounded
-            ? -payment.origAmountRounded
-            : payment.origAmountRounded;
-          return newPayment;
-        });
-      }
+      const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
+      newTicket.orderType = isReturn ? 1 : 0;
+      newTicket.documentType = isReturn
+        ? payload.terminal.documentTypeForReturns
+        : payload.terminal.documentTypeForSales;
 
       return newTicket;
     },
