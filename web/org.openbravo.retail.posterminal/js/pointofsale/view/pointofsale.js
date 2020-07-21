@@ -937,11 +937,7 @@ enyo.kind({
     });
   },
   addProductToOrder: function(inSender, inEvent) {
-    var targetOrder,
-      me = this,
-      attrs,
-      finalCallback,
-      negativeLines;
+    var targetOrder, attrs, finalCallback, negativeLines;
     finalCallback = function(success, orderline) {
       if (inEvent.callback) {
         inEvent.callback.call(inEvent.context, success || false, orderline);

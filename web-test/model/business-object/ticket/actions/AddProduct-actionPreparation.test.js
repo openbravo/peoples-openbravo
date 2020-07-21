@@ -8,6 +8,7 @@
  */
 
 /* global global */
+/* eslint-disable jest/expect-expect */
 
 OB = {
   App: {
