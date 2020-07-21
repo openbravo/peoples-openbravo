@@ -36,8 +36,9 @@
       newTicket.grossAmount = 0;
       newTicket.netAmount = 0;
       newTicket.taxes = Object.keys(newTicket.taxes).reduce((taxes, tax) => {
-        taxes[tax] = { ...newTicket.taxes[tax], net: 0, amount: 0 };
-        return taxes;
+        const result = { ...taxes };
+        result[tax] = { ...newTicket.taxes[tax], net: 0, amount: 0 };
+        return result;
       }, {});
       newTicket.lines = newTicket.lines.map(line => {
         return {
@@ -48,8 +49,9 @@
           netUnitAmount: 0,
           qty: 0,
           taxes: Object.keys(line.taxes).reduce((taxes, tax) => {
-            taxes[tax] = { ...newTicket.taxes[tax], net: 0, amount: 0 };
-            return taxes;
+            const result = { ...taxes };
+            result[tax] = { ...newTicket.taxes[tax], net: 0, amount: 0 };
+            return result;
           }, {})
         };
       });
