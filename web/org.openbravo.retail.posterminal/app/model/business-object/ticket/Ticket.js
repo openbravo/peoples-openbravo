@@ -26,6 +26,7 @@ if (!OB.App.StateBackwardCompatibility) {
       bp: 'businessPartner',
       gross: 'grossAmount',
       net: 'netAmount',
+      'calculatedInvoice.bp': 'businessPartner',
       'lines[*].gross': 'baseGrossUnitAmount',
       'lines[*].net': 'baseNetUnitAmount',
       'lines[*].unitPrice': 'netUnitPrice',
