@@ -230,6 +230,8 @@ const results = [
         baseGrossUnitPrice: 300,
         grossUnitPrice: 270,
         netUnitPrice: 223.14,
+        baseGrossUnitAmount: 600,
+        baseNetUnitAmount: 0,
         promotions: [
           {
             ruleId: 'C26B841C84B14FE2AB1A334DD3672E87',
@@ -291,6 +293,8 @@ const results = [
         baseNetUnitPrice: 200,
         grossUnitPrice: 229.9,
         netUnitPrice: 190,
+        baseGrossUnitAmount: 0,
+        baseNetUnitAmount: 400,
         promotions: [
           {
             ruleId: '08C2C89DB15443478B659A8645828F63',
