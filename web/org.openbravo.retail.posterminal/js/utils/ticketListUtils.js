@@ -1225,8 +1225,13 @@
   };
 
   OB.UTIL.TicketListUtils.removeTicket = async function(payload) {
-    await OB.App.State.Global.removeTicket(payload);
-    triggerTicketLoadEvents();
-    OB.UTIL.checkRefreshMasterData();
+    try {
+      await OB.App.State.Global.removeTicket(payload);
+      triggerTicketLoadEvents();
+    } catch (error) {
+      OB.App.View.ActionCanceledUIHandler.handle(error);
+    } finally {
+      OB.UTIL.checkRefreshMasterData();
+    }
   };
 })();
