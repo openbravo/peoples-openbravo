@@ -984,7 +984,7 @@
 
     checkTicketPayments(ticket) {
       if (!ticket.receiptPayments) {
-        return ticket.payments.length > 0;
+        return ticket.payments && ticket.payments.length > 0;
       }
       return ticket.payments.length > ticket.receiptPayments.length;
     },
