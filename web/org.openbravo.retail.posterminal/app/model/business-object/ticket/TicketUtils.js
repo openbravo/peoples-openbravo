@@ -912,7 +912,9 @@
         approvals: [],
         obposPrepaymentamt: OB.DEC.Zero,
         obposPrepaymentlimitamt: OB.DEC.Zero,
-        obposPrepaymentlaylimitamt: OB.DEC.Zero
+        obposPrepaymentlaylimitamt: OB.DEC.Zero,
+        // add ticket extra properties
+        ...OB.App.TicketExtraProperties.getAll()
       };
 
       ticket.client = terminal.client;

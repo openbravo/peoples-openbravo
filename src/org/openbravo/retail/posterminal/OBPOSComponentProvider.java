@@ -346,6 +346,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     // ticket model
     appDependency.add("model/business-object/ticket/Ticket");
+    appDependency.add("model/business-object/ticket/TicketExtraProperties");
     appDependency.add("model/business-object/ticket/TicketUtils");
     appDependency.add("model/business-object/ticket/CompleteTicketUtils");
     appDependency.add("model/business-object/ticket/actions/CompleteTicket");
@@ -358,7 +359,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/AddApprovalsModelHook");
     appDependency.add("model/business-object/ticket/CalculateTotalsModelHook");
     appDependency.add("model/business-object/ticket/actions/AddProduct");
-    appDependency.add("model/business-object/ticket/actions/CreateEmptyTicket");    
+    appDependency.add("model/business-object/ticket/actions/CreateEmptyTicket");
     appDependency.add("model/business-object/ticket/actions/DisplayTotal");
     appDependency.add("model/business-object/ticket/actions/SplitLine");
     appDependency.add("model/business-object/ticket/actions/SetLinePrice");
