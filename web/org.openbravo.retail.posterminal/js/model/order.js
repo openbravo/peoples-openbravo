@@ -705,10 +705,10 @@
             );
           }
 
-          function runTerminalAuthenticationValidation() {
+          const runTerminalAuthenticationValidation = () => {
             // FIXME: Remove once terminal authentication validation is moved to new message infraestructure
             OB.MobileApp.model.runSyncProcess();
-          }
+          };
 
           if (
             !OB.MobileApp.model.receipt.get('isQuotation') ||
