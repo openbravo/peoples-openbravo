@@ -6628,7 +6628,7 @@
 
       me.set('replacedorder_documentNo', me.get('documentNo'));
       me.set('replacedorder', me.get('id'));
-      me.unset('id');
+      me.set('id', OB.App.UUID.generate());
       me.set('session', OB.MobileApp.model.get('session'));
 
       me.unset('invoiceCreated');
