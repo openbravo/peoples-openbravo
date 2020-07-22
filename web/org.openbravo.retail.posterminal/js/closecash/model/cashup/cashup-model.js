@@ -552,22 +552,27 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       }
     });
 
+    const pendingTickets = OB.App.OpenTicketList.getAllTickets().filter(
+      ticket =>
+        ticket.hasbeenpaid === 'N' &&
+        ticket.session === OB.MobileApp.model.get('session') &&
+        ticket.lines.length > 0
+    );
+
     OB.App.State.Global.markIgnoreCheckIfIsActiveOrderToPendingTickets({
       session: OB.MobileApp.model.get('session')
     })
       .then(() => {
-        const unpaidTickets = OB.App.OpenTicketList.getAllTickets()
-          .filter(ticket => ticket.hasbeenpaid === 'N')
-          .map(ticket =>
-            OB.App.StateBackwardCompatibility.getInstance(
-              'Ticket'
-            ).toBackboneObject(ticket)
-          );
-        this.get('orderlist').reset(unpaidTickets);
+        const orderList = pendingTickets.map(ticket =>
+          OB.App.StateBackwardCompatibility.getInstance(
+            'Ticket'
+          ).toBackboneObject(ticket)
+        );
+        this.get('orderlist').reset(orderList);
         const stepDefinition = this.stepsDefinition[
           this.stepIndex('OB.CashUp.StepPendingOrders')
         ];
-        stepDefinition.active = unpaidTickets.length > 0;
+        stepDefinition.active = pendingTickets.length > 0;
         stepDefinition.loaded = true;
         synch3 = true;
         finish();
