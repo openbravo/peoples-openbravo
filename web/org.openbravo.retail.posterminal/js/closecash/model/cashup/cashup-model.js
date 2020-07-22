@@ -552,29 +552,27 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       }
     });
 
-    OB.Dal.find(
-      OB.Model.Order,
-      {
-        hasbeenpaid: 'N'
-      },
-      pendingOrderList => {
-        pendingOrderList.models.forEach(order => {
-          order.set('ignoreCheckIfIsActiveOrder', true);
-        });
-        this.get('orderlist').reset(pendingOrderList.models);
-        const indexStepPendingOrders = this.stepIndex(
-          'OB.CashUp.StepPendingOrders'
-        );
-        this.stepsDefinition[indexStepPendingOrders].active =
-          pendingOrderList.length > 0;
-        this.stepsDefinition[indexStepPendingOrders].loaded = true;
+    OB.App.State.Global.markIgnoreCheckIfIsActiveOrderToPendingTickets({
+      session: OB.MobileApp.model.get('session')
+    })
+      .then(() => {
+        const unpaidTickets = OB.App.OpenTicketList.getAllTickets()
+          .filter(ticket => ticket.hasbeenpaid === 'N')
+          .map(ticket =>
+            OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(ticket)
+          );
+        this.get('orderlist').reset(unpaidTickets);
+        const stepDefinition = this.stepsDefinition[
+          this.stepIndex('OB.CashUp.StepPendingOrders')
+        ];
+        stepDefinition.active = unpaidTickets.length > 0;
+        stepDefinition.loaded = true;
         synch3 = true;
         finish();
-      },
-      (tx, error) => {
-        OB.UTIL.showError(error);
-      }
-    );
+      })
+      .catch(OB.UTIL.showError);
   },
   isFinishedWizard: function(step) {
     // Adjust step to array index

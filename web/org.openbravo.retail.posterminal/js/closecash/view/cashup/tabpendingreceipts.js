@@ -330,7 +330,7 @@ enyo.kind({
             me.collection.remove(model);
           };
           model.deleteOrder(me, callback);
-          this.parent.parent.parent.parent.parent.refreshButtons();
+          me.parent.parent.parent.parent.parent.refreshButtons();
         }
       }
     );
@@ -389,14 +389,13 @@ enyo.kind({
   },
   voidAllOrders: function(inSender, inEvent) {
     var me = this;
-
     if (OB.MobileApp.model.get('isMultiOrderState')) {
       if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
         return;
       }
     }
 
-    if (OB.UTIL.TicketListUtils.checkOrderListPayment.checkOrderListPayment()) {
+    if (OB.UTIL.TicketListUtils.checkOrderListPayment()) {
       OB.UTIL.showConfirmation.display(
         '',
         OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment')
@@ -421,7 +420,7 @@ enyo.kind({
       function(approved, supervisor, approvalType) {
         if (approved) {
           removeOneModel(me.collection.at(0), me.collection);
-          this.parent.parent.parent.parent.parent.refreshButtons();
+          me.parent.parent.parent.parent.parent.refreshButtons();
         }
       }
     );
