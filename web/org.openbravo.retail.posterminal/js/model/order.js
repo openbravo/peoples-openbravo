@@ -682,19 +682,20 @@
                 {
                   label: OB.I18N.getLabel('OBPOS_LblOk'),
                   action: function() {
-                    OB.MobileApp.model.orderList.addNewOrder();
-                    OB.MobileApp.model.receipt.set(
-                      'bp',
-                      receiptClone.get('bp')
-                    );
-                    receiptClone
-                      .get('lines')
-                      .forEach(line =>
-                        OB.MobileApp.model.receipt.addProduct(
-                          line.get('product'),
-                          -line.get('qty')
-                        )
+                    OB.App.State.Global.addNewTicket().then(() => {
+                      OB.MobileApp.model.receipt.set(
+                        'bp',
+                        receiptClone.get('bp')
                       );
+                      receiptClone
+                        .get('lines')
+                        .forEach(line =>
+                          OB.MobileApp.model.receipt.addProduct(
+                            line.get('product'),
+                            -line.get('qty')
+                          )
+                        );
+                    });
                   }
                 },
                 {
@@ -703,20 +704,31 @@
               ]
             );
           }
+
+          function runTerminalAuthenticationValidation() {
+            // FIXME: Remove once terminal authentication validation is moved to new message infraestructure
+            OB.MobileApp.model.runSyncProcess();
+          }
+
           if (
             !OB.MobileApp.model.receipt.get('isQuotation') ||
             actionName === 'deleteCurrentOrder'
           ) {
+            let payload = {};
             if (
               OB.MobileApp.model.hasPermission(
                 'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
                 true
               )
             ) {
-              OB.MobileApp.model.orderList.deleteCurrent(true);
-            } else {
-              OB.MobileApp.model.orderList.deleteCurrent();
+              payload = { forceCreateNew: true };
             }
+
+            OB.UTIL.TicketListUtils.removeTicket(payload).then(() => {
+              runTerminalAuthenticationValidation();
+            });
+          } else {
+            runTerminalAuthenticationValidation();
           }
 
           // FIXME: Remove once terminal authentication validation is moved to new message infraestructure
@@ -9414,9 +9426,7 @@
           'deleteCurrentOrder'
         );
       } else {
-        // FIXME
-        // OB.MobileApp.model.orderList.deleteCurrentFromDatabase(this);
-        // OB.MobileApp.model.orderList.deleteCurrent();
+        OB.UTIL.TicketListUtils.removeTicket();
       }
 
       if (callback && callback instanceof Function) {
