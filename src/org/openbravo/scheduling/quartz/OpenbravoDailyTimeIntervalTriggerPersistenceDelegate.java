@@ -68,6 +68,7 @@ public class OpenbravoDailyTimeIntervalTriggerPersistenceDelegate
     }
   }
 
+  @Override
   public TriggerPropertyBundle loadExtendedTriggerProperties(Connection conn, TriggerKey triggerKey)
       throws SQLException {
 
@@ -108,6 +109,7 @@ public class OpenbravoDailyTimeIntervalTriggerPersistenceDelegate
     }
   }
 
+  @Override
   public int updateExtendedTriggerProperties(Connection conn, OperableTrigger trigger, String state,
       JobDetail jobDetail) throws SQLException, IOException {
 

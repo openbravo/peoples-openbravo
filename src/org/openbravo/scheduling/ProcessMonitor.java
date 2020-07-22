@@ -265,7 +265,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
             continue;
           }
 
-          log.info("There's another instance running, so leaving" + processName);
+          log.info("There's another instance running, so leaving {}", processName);
           stopConcurrency(trigger, jec, processName);
           return true;
         }
@@ -279,7 +279,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
         String concurrent = ProcessRunData.selectConcurrent(getConnection(),
             newJob.getProcessRequestId());
         if (!concurrent.equals("0")) {
-          log.info("There's another instance running, so leaving" + processName);
+          log.info("There's another instance running, so leaving {}", processName);
           stopConcurrency(trigger, jec, processName);
           return true;
         }
@@ -414,8 +414,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       }
 
     } catch (Exception e) {
-      log.error("Error updating context for non executed process due to concurrency " + processName,
-          e);
+      log.error("Error updating context for non executed process due to concurrency {}",
+          processName, e);
     } finally {
       // return connection to pool and remove it from current thread only in case the process is
       // not going to be executed because of concurrency, other case leave the connection to be

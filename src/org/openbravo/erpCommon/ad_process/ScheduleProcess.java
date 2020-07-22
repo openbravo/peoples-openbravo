@@ -69,10 +69,11 @@ public class ScheduleProcess extends HttpSecureAppServlet {
               OBMessageUtils.messageBD("NoSchedulerInstanceActiveTitle"),
               OBMessageUtils.messageBD("NoSchedulerInstanceActiveMsg"));
         } else {
-        log.info("Not scheduling process because current context background policy is 'no-execute'");
-        advisePopUp(request, response, "ERROR",
-            OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
-            OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
+          log.info(
+              "Not scheduling process because current context background policy is 'no-execute'");
+          advisePopUp(request, response, "ERROR",
+              OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
+              OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
         }
         return;
       }

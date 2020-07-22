@@ -20,7 +20,6 @@ import java.sql.Statement;
 import org.openbravo.exception.NoConnectionAvailableException;
 
 public interface ConnectionProvider {
-  
   public Connection getConnection() throws NoConnectionAvailableException;
 
   public String getRDBMS();

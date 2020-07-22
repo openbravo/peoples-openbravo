@@ -80,7 +80,7 @@ public class ProcessRunner {
         ctx.getUser(), executionId, status, null, bundle.getLog(), requestId, null);
 
     try {
-      log.debug("Calling execute on process " + requestId);
+      log.debug("Calling execute on process {}", requestId);
       process.execute(bundle);
       endTime = System.currentTimeMillis();
       status = SUCCESS;
@@ -88,7 +88,7 @@ public class ProcessRunner {
     } catch (final Exception e) {
       endTime = System.currentTimeMillis();
       status = ERROR;
-      log.error("Process " + requestId + " threw an Exception: " + e.getMessage(), e);
+      log.error("Process {} threw an Exception: {}", requestId, e.getMessage(), e);
       throw new ServletException(e);
     } finally {
       final String duration = ProcessMonitor.getDuration(endTime - startTime);

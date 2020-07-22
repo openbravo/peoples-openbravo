@@ -44,14 +44,12 @@ public class JobInitializationListener extends JobListenerSupport {
     super.jobToBeExecuted(ctx);
     JobDataMap dataMap = ctx.getJobDetail().getJobDataMap();
     if (dataMap == null) {
-      logger.warn("Executing job " + ctx.getJobDetail().getKey().getName()
-          + " without a ConnectionProvider because the DataMap was null.");
+      logger.warn("Executing job {} without a ConnectionProvider because the DataMap was null.", ctx.getJobDetail().getKey().getName());
       return;
     }
     ProcessBundle bundle = (ProcessBundle) dataMap.get(ProcessBundle.KEY);
     if (bundle == null) {
-      logger.warn("Executing job " + ctx.getJobDetail().getKey().getName()
-          + " without a ConnectionProvider because the ProcessBundle was null.");
+      logger.warn("Executing job {} without a ConnectionProvider because the ProcessBundle was null.", ctx.getJobDetail().getKey().getName());
       return;
     }
     if (bundle.getConnection() == null) {

@@ -93,7 +93,7 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
        * Even if the instance is not started on application startup, it can be started later by
        * using the JMX OBScheduler MBean.
        */
-      if ((startOnLoad == null || (Boolean.valueOf(startOnLoad).booleanValue()))
+      if ((startOnLoad == null || (Boolean.parseBoolean(startOnLoad)))
           && !OBScheduler.isNoExecuteBackgroundPolicy()) {
         if (startDelay <= 0) {
           // Start now

@@ -35,7 +35,6 @@ import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.exception.PoolNotFoundException;
 
 public class ConnectionProviderImpl implements ConnectionProvider {
-  
   static Logger log4j = LogManager.getLogger();
   String defaultPoolName = "";
   String bbdd = "";

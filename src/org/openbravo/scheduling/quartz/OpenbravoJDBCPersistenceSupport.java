@@ -27,6 +27,9 @@ public class OpenbravoJDBCPersistenceSupport {
   public static final String TRUE_STRING = "Y";
   public static final String FALSE_STRING = "N";
 
+  private OpenbravoJDBCPersistenceSupport() {
+  }
+
   protected static void setBooleanValue(PreparedStatement ps, int index, boolean val)
       throws SQLException {
     ps.setString(index, val ? TRUE_STRING : FALSE_STRING);

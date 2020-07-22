@@ -2,7 +2,7 @@ package org.openbravo.scheduling.quartz;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.quartz.JobPersistenceException;
@@ -11,7 +11,7 @@ import org.quartz.impl.jdbcjobstore.JobStoreTX;
 
 public class OpenbravoPersistentJobStore extends JobStoreTX {
 
-  private static Map<String, OpenbravoPersistentJobStore> clusterJobStores = new Hashtable<String, OpenbravoPersistentJobStore>();
+  private static Map<String, OpenbravoPersistentJobStore> clusterJobStores = new HashMap<>();
 
   @Override
   public void setInstanceName(String instanceName) {
@@ -25,7 +25,7 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
       super.schedulerPaused();
       updateSchedulerStatus(OpenbravoJDBCDelegate.SCHEDULER_STATUS_STANDBY);
     } catch (JobPersistenceException | SQLException e) {
-      getLog().error("Scheduler state could not be updated. " + e.getMessage());
+      getLog().error("Scheduler state could not be updated(paused). {}", e.getMessage());
     }
   }
 
@@ -35,7 +35,7 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
       super.schedulerStarted();
       updateSchedulerStatus(OpenbravoJDBCDelegate.SCHEDULER_STATUS_STARTED);
     } catch (SchedulerException | SQLException e) {
-      getLog().error("Scheduler state could not be updated. " + e.getMessage());
+      getLog().error("Scheduler state could not be updated(started). {}", e.getMessage());
     }
   }
 
@@ -49,7 +49,7 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
        */
       updateSchedulerStatus(OpenbravoJDBCDelegate.SCHEDULER_STATUS_STARTED);
     } catch (JobPersistenceException | SQLException e) {
-      getLog().error("Scheduler state could not be updated. " + e.getMessage());
+      getLog().error("Scheduler state could not be updated. {}", e.getMessage());
     }
   }
 
@@ -72,7 +72,7 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
       conn = getNonManagedTXConnection();
       return ((OpenbravoJDBCDelegate) getDelegate()).schedulersStarted(conn);
     } catch (ClassCastException | JobPersistenceException | SQLException e) {
-      getLog().error("Failed to look for started scheduler instances. " + e.getMessage());
+      getLog().error("Failed to look for started scheduler instances. {}", e.getMessage());
     } finally {
       if (conn != null) {
         cleanupConnection(conn);

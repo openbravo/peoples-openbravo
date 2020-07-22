@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
@@ -201,7 +202,7 @@ public class OBScheduler implements OBSchedulerMBean {
       sched.deleteJob(jobKey(requestId, OB_GROUP));
 
     } catch (final SchedulerException e) {
-      log.error("An error occurred rescheduling process " + bundle.toString(), e);
+      log.error("An error occurred rescheduling process {}.", bundle, e);
     }
     schedule(requestId, bundle);
   }
@@ -213,7 +214,7 @@ public class OBScheduler implements OBSchedulerMBean {
       ProcessRequestData.update(getConnection(), UNSCHEDULED, null, sqlDateTimeFormat,
           getCurrentDate(), context.getUser(), requestId);
     } catch (final Exception e) {
-      log.error("An error occurred unscheduling process " + requestId, e);
+      log.error("An error occurred unscheduling process {}", requestId, e);
     }
   }
 
@@ -258,8 +259,7 @@ public class OBScheduler implements OBSchedulerMBean {
           // Tomcat stopped
           ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, vars.getUser(),
               requestId);
-          log.debug(request.channel + " run of process id " + request.processId
-              + " was scheduled, marked as 'System Restart'");
+          log.debug("{} run of process id {} was scheduled, marked as 'System Restart'", request.channel, request.processId);
           continue;
         }
 
@@ -274,7 +274,7 @@ public class OBScheduler implements OBSchedulerMBean {
       }
       initializing = false;
     } catch (final ServletException e) {
-      log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);
+      log.error("An error occurred retrieving scheduled process data: {}", e.getMessage(), e);
     }
   }
 
@@ -284,7 +284,7 @@ public class OBScheduler implements OBSchedulerMBean {
       final ProcessBundle bundle = ProcessBundle.request(requestId, vars, getConnection());
       schedule(requestId, bundle);
     } catch (final ServletException | ParameterSerializationException e) {
-      log.error("Error scheduling process request: " + requestId, e);
+      log.error("Error scheduling process request: {}", requestId, e);
     }
   }
 
@@ -298,7 +298,7 @@ public class OBScheduler implements OBSchedulerMBean {
     try {
       started = sched != null && sched.isStarted() && !sched.isInStandbyMode();
     } catch (SchedulerException ex) {
-      throw new RuntimeException(ex);
+      throw new OBException(ex);
     }
     return started;
   }
@@ -307,15 +307,15 @@ public class OBScheduler implements OBSchedulerMBean {
   public void start() {
     try {
       if (sched == null) {
-        throw new RuntimeException(
+        throw new OBException(
             "The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
       }
       if (sched.isStarted() && !sched.isInStandbyMode()) {
-        throw new RuntimeException("The scheduler is already started");
+        throw new OBException("The scheduler is already started");
       }
       sched.start();
     } catch (SchedulerException ex) {
-      throw new RuntimeException(ex);
+      throw new OBException(ex);
     }
   }
 
@@ -323,15 +323,15 @@ public class OBScheduler implements OBSchedulerMBean {
   public void standby() {
     try {
       if (sched == null) {
-        throw new RuntimeException(
+        throw new OBException(
             "The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
       }
       if (sched.isInStandbyMode()) {
-        throw new RuntimeException("The scheduler is already in standby mode");
+        throw new OBException("The scheduler is already in standby mode");
       }
       sched.standby();
     } catch (SchedulerException ex) {
-      throw new RuntimeException(ex);
+      throw new OBException(ex);
     }
   }
 

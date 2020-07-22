@@ -34,14 +34,15 @@ public class OpenbravoJDBCDelegate extends PostgreSQLDelegate {
 
   private static final String COL_SCHEDULER_STATUS = "STATUS";
 
-  static String SCHEDULER_STATUS_STANDBY = "STANDBY";
-  static String SCHEDULER_STATUS_STARTED = "STARTED";
+  static final String SCHEDULER_STATUS_STANDBY = "STANDBY";
+  static final String SCHEDULER_STATUS_STARTED = "STARTED";
 
-  String UPDATE_SCHEDULER_STATE_EXTENDED = "UPDATE " + TABLE_PREFIX_SUBST + TABLE_SCHEDULER_STATE
-      + " SET " + COL_LAST_CHECKIN_TIME + " = ?, " + COL_SCHEDULER_STATUS + " = ? " + " WHERE "
-      + COL_SCHEDULER_NAME + " = " + SCHED_NAME_SUBST + " AND " + COL_INSTANCE_NAME + " = ?";
+  static final String UPDATE_SCHEDULER_STATE_EXTENDED = "UPDATE " + TABLE_PREFIX_SUBST
+      + TABLE_SCHEDULER_STATE + " SET " + COL_LAST_CHECKIN_TIME + " = ?, " + COL_SCHEDULER_STATUS
+      + " = ? " + " WHERE " + COL_SCHEDULER_NAME + " = " + SCHED_NAME_SUBST + " AND "
+      + COL_INSTANCE_NAME + " = ?";
 
-  static String COUNT_STARTED_SCHEDULER_INSTANCES = "SELECT count(*) " + " FROM "
+  static final String COUNT_STARTED_SCHEDULER_INSTANCES = "SELECT count(*) " + " FROM "
       + TABLE_PREFIX_SUBST + TABLE_SCHEDULER_STATE + " WHERE " + COL_SCHEDULER_NAME + " = "
       + SCHED_NAME_SUBST + " AND " + COL_SCHEDULER_STATUS + " = ?";
 
