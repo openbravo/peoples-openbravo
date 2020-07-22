@@ -470,7 +470,7 @@
         });
     }
   };
-  OB.UTIL.TicketListUtils.newPaidReceipt = function(model, callback) {
+  OB.UTIL.TicketListUtils.newPaidReceipt = async function(model, callback) {
     var order = new OB.Model.Order(),
       lines,
       newline,
@@ -577,7 +577,7 @@
         order.set('orderType', 1);
       }
     }
-    let loadProducts = function() {
+    let loadProducts = async function() {
       var linepos = 0,
         hasDeliveredProducts = false,
         hasNotDeliveredProducts = false,
@@ -692,13 +692,13 @@
             ? null
             : OB.DEC.number(iter.lineNetAmount);
         iter.linepos = linepos;
-        var addLineForProduct = function(prod) {
+        var addLineForProduct = async function(prod) {
           // Set product services
-          order._loadRelatedServices(
+          await order._loadRelatedServices(
             prod.get('productType'),
             prod.get('id'),
             prod.get('productCategory'),
-            function(data) {
+            async function(data) {
               let hasservices;
               if (
                 !OB.UTIL.isNullOrUndefined(data) &&
@@ -882,65 +882,65 @@
         if (iter.relatedLines && !order.get('hasServices')) {
           order.set('hasServices', true);
         }
-        OB.App.MasterdataModels.Product.withId(iter.id)
-          .then(product => {
-            if (product) {
-              addLineForProduct(OB.Dal.transform(OB.Model.Product, product));
-            } else {
-              //Empty
-              const body = {
-                productId: iter.id,
-                salesOrderLineId: iter.lineId
-              };
-              OB.App.Request.mobileServiceRequest(
+        try {
+          const product = await OB.App.MasterdataModels.Product.withId(iter.id);
+          if (product) {
+            await addLineForProduct(
+              OB.Dal.transform(OB.Model.Product, product)
+            );
+          } else {
+            //Empty
+            const body = {
+              productId: iter.id,
+              salesOrderLineId: iter.lineId
+            };
+            try {
+              let data = await OB.App.Request.mobileServiceRequest(
                 'org.openbravo.retail.posterminal.master.LoadedProduct',
                 body
-              )
-                .then(data => {
-                  data = data.response.data;
-                  addLineForProduct(
-                    OB.Dal.transform(OB.Model.Product, data[0])
-                  );
-                })
-                .catch(error => {
-                  if (NoFoundProduct) {
-                    NoFoundProduct = false;
-                    OB.UTIL.showConfirmation.display(
-                      OB.I18N.getLabel('OBPOS_InformationTitle'),
-                      OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
-                      [
-                        {
-                          label: OB.I18N.getLabel('OBPOS_LblOk'),
-                          isConfirmButton: true
-                        }
-                      ]
-                    );
-                  }
-                });
+              );
+              data = data.response.data;
+              await addLineForProduct(
+                OB.Dal.transform(OB.Model.Product, data[0])
+              );
+            } catch (error) {
+              if (NoFoundProduct) {
+                NoFoundProduct = false;
+                OB.UTIL.showConfirmation.display(
+                  OB.I18N.getLabel('OBPOS_InformationTitle'),
+                  OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                  [
+                    {
+                      label: OB.I18N.getLabel('OBPOS_LblOk'),
+                      isConfirmButton: true
+                    }
+                  ]
+                );
+              }
             }
-          })
-          .catch(error => {
-            error.message;
-          });
+          }
+        } catch (error) {
+          OB.error(error.message);
+        }
         linepos++;
       }
     };
 
-    function callToLoadCustomer() {
-      OB.UTIL.TicketListUtils.loadCustomer(
+    async function callToLoadCustomer() {
+      await OB.UTIL.TicketListUtils.loadCustomer(
         {
           bpId: model.bp,
           bpLocId: model.bpLocId,
           bpBillLocId: model.bpBillLocId || model.bpLocId
         },
-        function(bp, loc, billLoc) {
+        async function(bp, loc, billLoc) {
           order.set({
             bp: bp
           });
           order.set('gross', model.totalamount);
           order.set('net', model.totalNetAmount);
           order.trigger('change:bp', order);
-          loadProducts();
+          await loadProducts();
         }
       );
     }
