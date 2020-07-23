@@ -8,7 +8,7 @@
  */
 
 /**
- * @fileoverview Declares a global action that inserts the Ticket into the state.TicketList
+ * @fileoverview Declares an action that inserts the Ticket into the state.TicketList
  */
 // eslint-disable-next-line no-unused-vars
 OB.App.StateAPI.TicketList.registerAction(
