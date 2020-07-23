@@ -77,8 +77,9 @@ enyo.kind({
     this.doHideThisPopup();
     this.doChangeCurrentOrder({
       newCurrentOrder: this.model
+    }).then(() => {
+      OB.UTIL.ProcessController.finish('changeCurrentOrder', execution);
     });
-    OB.UTIL.ProcessController.finish('changeCurrentOrder', execution);
   },
   components: [
     {

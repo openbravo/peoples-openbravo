@@ -1765,8 +1765,8 @@ enyo.kind({
       'cashexact'
     );
   },
-  changeCurrentOrder: function(inSender, inEvent) {
-    OB.UTIL.TicketListUtils.loadTicket(inEvent.newCurrentOrder);
+  changeCurrentOrder: async function(inSender, inEvent) {
+    await OB.UTIL.TicketListUtils.loadTicket(inEvent.newCurrentOrder);
     return true;
   },
   removePayment: function(inSender, inEvent) {

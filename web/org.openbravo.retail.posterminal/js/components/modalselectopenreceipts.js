@@ -185,7 +185,7 @@ enyo.kind({
             }
           });
         },
-        tap: function() {
+        tap: async function() {
           // TODO: Check the behavior with the receipt multi-line selection case.
           // TODO: The 'Undo' button doesn't work in the case the target receipt is opened.
           var me = this;
@@ -193,60 +193,60 @@ enyo.kind({
           var product = this.owner.owner.args.product;
           var attrs = this.owner.owner.args.attrs;
 
-          this.checkModifyTax({
+          await this.checkModifyTax({
             product: product,
             attrs: attrs
-          }) //
-            .then(async function(params) {
-              if (
-                me.owner.owner.selectedLine.id.indexOf(
-                  'openedReceiptsListLine'
-                ) === -1
-              ) {
-                // 'Create New One' case
-                // var orderList = me.owner.owner.owner.model.get('orderList');
-                // OB.MobileApp.model.receipt.trigger('updateView');
-                // var newOrder = OB.UTIL.TicketListUtils.newOrder(
-                //   OB.MobileApp.model.receipt.get('bp')
-                // );
-                // orderList.unshift(newOrder);
-                // orderModel = newOrder;
-                // orderModel.set('deferredOrder', true);
+          });
+
+          if (
+            me.owner.owner.selectedLine.id.indexOf('openedReceiptsListLine') ===
+            -1
+          ) {
+            // 'Create New One' case
+            OB.MobileApp.model.receipt.trigger('updateView');
+            orderModel = new OB.Model.Order();
+            orderModel.set('bp', OB.MobileApp.model.receipt.get('bp'));
+            orderModel.set('deferredOrder', true);
+            await OB.App.State.TicketList.saveTicket(
+              OB.App.StateBackwardCompatibility.getInstance(
+                'Ticket'
+              ).toStateObject(orderModel)
+            );
+          }
+          orderModel.set('bp', OB.MobileApp.model.receipt.get('bp'));
+          const current = OB.MobileApp.model.receipt;
+          // Change the UI receipt to add the product on the newly created ticket
+          await me.owner.owner.doChangeCurrentOrder({
+            newCurrentOrder: orderModel
+          });
+          me.owner.owner.doAddProduct({
+            targetOrder: orderModel,
+            product: product,
+            attrs: attrs,
+            options: {
+              blockAddProduct: true
+            },
+            context: me.owner.owner.args.context,
+            callback: function() {
+              if (me.owner.owner.args.callback) {
+                me.owner.owner.args.callback();
               }
-              orderModel.set('bp', OB.MobileApp.model.receipt.get('bp'));
-              const current = OB.MobileApp.model.receipt;
-              // Change the UI receipt to add the product on the newly created ticket
-              await me.owner.owner.doChangeCurrentOrder({
-                newCurrentOrder: orderModel
-              });
-              me.owner.owner.doAddProduct({
-                targetOrder: orderModel,
-                product: product,
-                attrs: attrs,
-                options: {
-                  blockAddProduct: true
-                },
-                context: me.owner.owner.args.context,
-                callback: function() {
-                  if (me.owner.owner.args.callback) {
-                    me.owner.owner.args.callback();
-                  }
-                  if (
-                    me.owner.owner.$.body.$.chkSelectOpenedReceiptModal.checked
-                  ) {
+              if (me.owner.owner.$.body.$.chkSelectOpenedReceiptModal.checked) {
+                me.owner.owner.owner.model
+                  .get('order')
+                  .calculateReceipt(function() {
                     me.owner.owner.owner.model
                       .get('order')
-                      .calculateReceipt(function() {
-                        me.owner.owner.owner.model
-                          .get('order')
-                          .get('lines')
-                          .trigger('updateRelations');
-                      });
-                  } else {
-                    // The UI receipt should be restored
-                    me.owner.owner.doChangeCurrentOrder({
-                      newCurrentOrder: current
-                    });
+                      .get('lines')
+                      .trigger('updateRelations');
+                  });
+              } else {
+                // The UI receipt should be restored
+                me.owner.owner
+                  .doChangeCurrentOrder({
+                    newCurrentOrder: current
+                  })
+                  .then(() => {
                     //Hack to calculate totals even if the receipt is not the UI receipt
                     orderModel.setIsCalculateReceiptLockState(false);
                     orderModel.setIsCalculateGrossLockState(false);
@@ -255,12 +255,12 @@ enyo.kind({
                       orderModel.trigger('updateServicePrices');
                       orderModel.set('belongsToMultiOrder', false);
                     });
-                  }
-                }
-              });
-              me.owner.owner.args.callback = null;
-              me.owner.owner.doHideThisPopup();
-            });
+                  });
+              }
+            }
+          });
+          me.owner.owner.args.callback = null;
+          me.owner.owner.doHideThisPopup();
         }
       }
     ]
