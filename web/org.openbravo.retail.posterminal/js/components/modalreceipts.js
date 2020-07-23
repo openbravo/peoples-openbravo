@@ -149,7 +149,7 @@ enyo.kind({
       );
       this.$.bp.setContent(bp.getIdentifier());
     } else {
-      this.$.bp.setContent(this.model.get('businessPartner')._identifier);
+      this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     }
     this.$.total.setContent(
       OB.I18N.formatCurrency(this.model.get('grossAmount'))

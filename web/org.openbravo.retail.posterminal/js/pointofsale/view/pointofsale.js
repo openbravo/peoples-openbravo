@@ -2291,7 +2291,11 @@ enyo.kind({
     this.inherited(arguments);
     receipt = this.model.get('order');
     receiptList = new Backbone.Collection(
-      OB.App.OpenTicketList.getAllTickets()
+      OB.App.OpenTicketList.getAllTickets().map(ticket => {
+        return OB.App.StateBackwardCompatibility.getInstance(
+          'Ticket'
+        ).toBackboneObject(ticket);
+      })
     );
 
     OB.MobileApp.view.scanningFocus(true);
@@ -2304,7 +2308,11 @@ enyo.kind({
     OB.App.PersistenceChangeListenerManager.addListener(
       state => {
         const ticketList = new Backbone.Collection(
-          OB.App.OpenTicketList.getAllTickets()
+          OB.App.OpenTicketList.getAllTickets().map(ticket => {
+            return OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(ticket);
+          })
         );
 
         if (this.$.multiColumn) {
