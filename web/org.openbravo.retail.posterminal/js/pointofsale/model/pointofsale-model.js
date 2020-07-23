@@ -62,7 +62,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 });
               } else {
                 // The order object is stored in the json property of the row fetched from the database
-                orderlist = new Backbone.Collection(args.ordersNotPaid);
+                orderlist = args.ordersNotPaid.map(ticket =>
+                  OB.App.StateBackwardCompatibility.getInstance(
+                    'Ticket'
+                  ).toBackboneObject(ticket)
+                );
                 // At this point it is sure that there exists at least one order
                 // Function to continue of there is some error
                 currentOrder = args.ordersNotPaid[0];
