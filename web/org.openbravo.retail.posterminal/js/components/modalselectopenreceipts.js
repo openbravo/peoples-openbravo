@@ -197,7 +197,7 @@ enyo.kind({
             product: product,
             attrs: attrs
           }) //
-            .then(function(params) {
+            .then(async function(params) {
               if (
                 me.owner.owner.selectedLine.id.indexOf(
                   'openedReceiptsListLine'
@@ -216,7 +216,7 @@ enyo.kind({
               orderModel.set('bp', OB.MobileApp.model.receipt.get('bp'));
               const current = OB.MobileApp.model.receipt;
               // Change the UI receipt to add the product on the newly created ticket
-              me.owner.owner.doChangeCurrentOrder({
+              await me.owner.owner.doChangeCurrentOrder({
                 newCurrentOrder: orderModel
               });
               me.owner.owner.doAddProduct({
