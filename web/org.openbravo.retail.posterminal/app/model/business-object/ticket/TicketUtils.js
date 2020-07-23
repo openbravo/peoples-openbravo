@@ -881,6 +881,9 @@
       contextUser
     ) {
       let ticket = {
+        // ticket extra properties
+        ...OB.App.TicketExtraProperties.getAll(),
+        // ticket default properties
         id: OB.App.UUID.generate(),
         orderType: 0, // 0: Sales order, 1: Return order
         orderDate: OB.I18N.normalizeDate(new Date()),
@@ -912,9 +915,7 @@
         approvals: [],
         obposPrepaymentamt: OB.DEC.Zero,
         obposPrepaymentlimitamt: OB.DEC.Zero,
-        obposPrepaymentlaylimitamt: OB.DEC.Zero,
-        // add ticket extra properties
-        ...OB.App.TicketExtraProperties.getAll()
+        obposPrepaymentlaylimitamt: OB.DEC.Zero
       };
 
       ticket.client = terminal.client;
