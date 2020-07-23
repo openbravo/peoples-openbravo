@@ -23,17 +23,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       model = this,
       reCalculateReceipt = false;
 
-    let ordersNotPaid = OB.App.OpenTicketList.getAllTickets().filter(
-      ticket => ticket.hasbeenpaid === 'N'
-    );
+    // Get pending tickets ignoring those created in other users session
+    // Note that the ticket list is ordered to show the older tickets first
+    const ordersNotPaid = OB.App.OpenTicketList.getAllTickets()
+      .filter(
+        ticket =>
+          ticket.hasbeenpaid === 'N' &&
+          ticket.session === OB.MobileApp.model.get('session')
+      )
+      .reverse();
 
     let currentOrder = {},
       loadOrderStr;
-
-    // Removing Orders which are created in other users session
-    ordersNotPaid = ordersNotPaid.filter(order => {
-      return order.session === OB.MobileApp.model.get('session');
-    });
 
     OB.UTIL.HookManager.executeHooks(
       'OBPOS_PreLoadUnpaidOrdersHook',
