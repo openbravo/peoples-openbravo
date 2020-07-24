@@ -14,8 +14,10 @@
 OB.App.StateAPI.TicketList.registerAction(
   'saveTicket',
   (ticketList, payload) => {
-    const newTicketList = [...ticketList];
-    newTicketList.unshift({ ...payload });
+    const newTicketList = { ...ticketList };
+    newTicketList.tickets = [...newTicketList.tickets];
+    newTicketList.tickets.unshift({ ...payload });
+    newTicketList.addedIds = [...newTicketList.addedIds, payload.id];
     return newTicketList;
   }
 );

@@ -18,7 +18,8 @@
     }
 
     const newState = { ...state };
-    const newCurrentTicket = newState.TicketList.find(
+    newState.TicketList = { ...newState.TicketList };
+    const newCurrentTicket = newState.TicketList.tickets.find(
       ticket => ticket.id === ticketToLoadId
     );
     if (!newCurrentTicket) {
@@ -27,10 +28,16 @@
       });
     }
 
-    newState.TicketList = newState.TicketList.filter(
+    newState.TicketList.tickets = newState.TicketList.tickets.filter(
       ticket => ticket.id !== ticketToLoadId
     );
-    newState.TicketList.unshift({ ...newState.Ticket });
+    newState.TicketList.tickets.unshift({ ...newState.Ticket });
+    if (!newState.TicketList.addedIds.includes(newState.Ticket.id)) {
+      newState.TicketList.addedIds = [
+        ...newState.TicketList.addedIds,
+        newState.Ticket.id
+      ];
+    }
     newState.Ticket = newCurrentTicket;
 
     return newState;

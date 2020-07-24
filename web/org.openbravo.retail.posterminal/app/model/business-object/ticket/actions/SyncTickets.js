@@ -13,7 +13,7 @@
  */
 OB.App.StateAPI.Global.registerAction('syncTickets', state => {
   const newState = { ...state };
-  const allTickets = [...state.TicketList];
+  const allTickets = [...state.TicketList.tickets];
   allTickets.unshift(state.Ticket);
 
   newState.Messages = [...newState.Messages];

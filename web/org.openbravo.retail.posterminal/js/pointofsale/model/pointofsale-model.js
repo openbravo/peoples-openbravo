@@ -24,15 +24,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       reCalculateReceipt = false;
 
     // Get pending tickets ignoring those created in other users session
-    // Note that the ticket list is ordered to show the older tickets first
+    // Note that the ticket list is ordered to load the older tickets first
     const ordersNotPaid = OB.App.OpenTicketList.getAllTickets()
+      .reverse()
       .filter(
         ticket =>
           ticket.hasbeenpaid === 'N' &&
           ticket.session === OB.MobileApp.model.get('session') &&
           ticket.lines.length > 0
-      )
-      .reverse();
+      );
 
     let currentOrder = {},
       loadOrderStr;

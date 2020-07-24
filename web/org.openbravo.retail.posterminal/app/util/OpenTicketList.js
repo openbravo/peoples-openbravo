@@ -8,13 +8,30 @@
  */
 
 OB.App.OpenTicketList = {
-  getAllTickets() {
-    const allReceipts = [...OB.App.State.getState().TicketList];
+  getAllTickets(sortByRecent = true) {
     const currentTicket = OB.App.State.getState().Ticket;
-    if (currentTicket && Object.keys(currentTicket).length !== 0) {
-      allReceipts.unshift(currentTicket);
+
+    const { addedIds } = OB.App.State.getState().TicketList;
+    const allTickets = addedIds
+      .map(ticketId => {
+        if (currentTicket && ticketId === currentTicket.id) {
+          return { ...currentTicket };
+        }
+        return OB.App.State.getState().TicketList.tickets.find(
+          t => t.id === ticketId
+        );
+      })
+      .filter(ticket => ticket !== undefined);
+
+    if (
+      currentTicket &&
+      Object.keys(currentTicket).length !== 0 &&
+      !allTickets.some(ticket => ticket.id === currentTicket.id)
+    ) {
+      // current ticket has not been in ticket list yet
+      allTickets.push({ ...currentTicket });
     }
 
-    return allReceipts;
+    return sortByRecent ? allTickets.reverse() : allTickets;
   }
 };

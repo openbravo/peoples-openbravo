@@ -11,5 +11,20 @@
  * @fileoverview Declares an action that removes the empty tickets from the ticket list
  */
 OB.App.StateAPI.TicketList.registerAction('removeEmptyTickets', ticketList => {
-  return ticketList.filter(ticket => ticket.lines.length > 0);
+  if (ticketList.tickets.length === 0) {
+    return { ...ticketList, addedIds: [] };
+  }
+
+  const emptyTickets = ticketList.tickets
+    .filter(ticket => ticket.lines.length === 0)
+    .map(ticket => ticket.id);
+
+  const newTicketList = { ...ticketList };
+  newTicketList.tickets = newTicketList.tickets.filter(
+    ticket => !emptyTickets.includes(ticket.id)
+  );
+  newTicketList.addedIds = newTicketList.addedIds.filter(
+    ticketId => !emptyTickets.includes(ticketId)
+  );
+  return newTicketList;
 });

@@ -1015,7 +1015,7 @@
     ) {
       return true;
     } else {
-      return OB.App.State.getState().TicketList.reduce(
+      return OB.App.State.getState().TicketList.tickets.reduce(
         (accum, ticket) =>
           accum || OB.App.State.Ticket.Utils.checkTicketPayments(ticket),
         false

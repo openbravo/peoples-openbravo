@@ -22,9 +22,11 @@ OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
   const newState = { ...state };
   const ticketToRemoveId = payload.id;
   const forceNewTicket =
-    payload.forceNewTicket || newState.TicketList.length === 0;
+    payload.forceNewTicket || newState.TicketList.tickets.length === 0;
 
   if (forceNewTicket) {
+    newState.TicketList.addedIds = [];
+
     newState.Ticket = OB.App.State.Ticket.Utils.newTicket(
       payload.businessPartner,
       payload.terminal,
@@ -38,14 +40,20 @@ OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
   }
 
   if (!ticketToRemoveId || ticketToRemoveId === newState.Ticket.id) {
-    newState.TicketList = [...state.TicketList];
-    newState.Ticket = newState.TicketList.shift();
-
+    newState.TicketList = { ...state.TicketList };
+    newState.TicketList.tickets = [...newState.TicketList.tickets];
+    newState.Ticket = newState.TicketList.tickets.shift();
+    newState.TicketList.addedIds = newState.TicketList.addedIds.filter(
+      ticketId => ticketId !== newState.Ticket.id
+    );
     return newState;
   }
 
-  newState.TicketList = state.TicketList.filter(
+  newState.TicketList.tickets = state.TicketList.tickets.filter(
     ticket => ticket.id !== ticketToRemoveId
+  );
+  newState.TicketList.addedIds = newState.TicketList.addedIds.filter(
+    ticketId => ticketId !== ticketToRemoveId
   );
 
   return newState;
