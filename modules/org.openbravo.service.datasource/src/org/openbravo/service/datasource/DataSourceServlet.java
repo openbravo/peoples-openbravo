@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,6 +66,7 @@ import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.client.kernel.BaseKernelServlet;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.OBUserException;
+import org.openbravo.client.kernel.reference.DateTimeUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -652,8 +653,8 @@ public class DataSourceServlet extends BaseKernelServlet {
             Date localDate = JsonUtils.createDateTimeFormat().parse(repairedString);
             Date clientTimezoneDate = null;
             clientTimezoneDate = convertFromLocalToClientTimezone(localDate);
-            keyValue = UIDefinitionController.DATETIME_UI_DEFINITION
-                .convertToClassicString(clientTimezoneDate);
+            keyValue = ((DateTimeUIDefinition) UIDefinitionController.DATETIME_UI_DEFINITION)
+                .convertToClassicStringInLocalTime(clientTimezoneDate);
           } else if (timeCols.contains(key) && keyValue != null
               && !keyValue.toString().equals("null")) {
             Date UTCdate = JsonUtils.createTimeFormatWithoutGMTOffset().parse(keyValue.toString());
