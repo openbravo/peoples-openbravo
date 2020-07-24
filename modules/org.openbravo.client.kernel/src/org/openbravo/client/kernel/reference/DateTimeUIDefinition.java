@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,22 +59,46 @@ public class DateTimeUIDefinition extends DateUIDefinition {
     if (value instanceof String) {
       return (String) value;
     }
+    Date date = (Date) value;
+    date = convertLocalDateTimeToUTC(date);
 
-    StringBuffer convertedValue = convertLocalDateTimeToUTC((Date) value);
-    return convertedValue.toString();
+    return formatDateTime(date);
   }
 
-  private StringBuffer convertLocalDateTimeToUTC(Date date) {
+  /**
+   * Creates a classic string which is used by callouts from an object value.
+   * Date is formatted as is, using local timezone
+   *
+   * @param value Object to be converted
+   * @return converted of formatted date string
+   */
+  public String convertToClassicStringInLocalTime(Object value) {
+    if (value == null || value == "") {
+      return "";
+    }
+
+    if (value instanceof String) {
+      return (String) value;
+    }
+    Date date = (Date) value;
+
+    return formatDateTime(date);
+  }
+
+  private Date convertLocalDateTimeToUTC(Date date) {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
 
     int gmtMillisecondOffset = (calendar.get(Calendar.ZONE_OFFSET)
         + calendar.get(Calendar.DST_OFFSET));
     calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
+    return calendar.getTime();
+  }
+
+  private String formatDateTime(Date date) {
     SimpleDateFormat dateTimeFormat = getClassicFormat();
     synchronized (dateTimeFormat) {
-      return getClassicFormat().format(calendar.getTime(), new StringBuffer(),
-          new FieldPosition(0));
+      return getClassicFormat().format(date, new StringBuffer(), new FieldPosition(0)).toString();
     }
   }
 
