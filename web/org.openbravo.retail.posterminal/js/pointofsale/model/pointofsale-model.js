@@ -51,10 +51,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
             function() {
               OB.MobileApp.model.off('window:ready', null, model);
               const addNewOrderCallback = () => {
-                OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
                 if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
-                  // If there are no pending orders,
-                  //  add an initial empty order
+                  // If there are no pending orders, add an initial empty order
                   OB.App.State.Ticket.createEmptyTicket().then(() => {
                     OB.MobileApp.model.receipt.setIsCalculateGrossLockState(
                       false
@@ -62,8 +60,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(
                       false
                     );
+                    OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
                   });
                 } else {
+                  OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
                   // The order object is stored in the json property of the row fetched from the database
                   orderlist = new Backbone.Collection(
                     args.ordersNotPaid.map(ticket =>
