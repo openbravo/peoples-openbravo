@@ -27,7 +27,13 @@ enyo.kind({
   },
   executeOnShow: function() {
     this.$.body.$.listreceipts.setReceiptsList(
-      new Backbone.Collection(OB.App.OpenTicketList.getAllTickets())
+      new Backbone.Collection(
+        OB.App.OpenTicketList.getAllTickets().map(ticket => {
+          return OB.App.StateBackwardCompatibility.getInstance(
+            'Ticket'
+          ).toBackboneObject(ticket);
+        })
+      )
     );
   }
 });
