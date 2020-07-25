@@ -19,6 +19,12 @@ OB.App.StateAPI.Global.registerAction('addNewQuotation', (state, payload) => {
 
   newState.TicketList.tickets = [...newState.TicketList.tickets];
   newState.TicketList.tickets.unshift(newState.Ticket);
+  if (!newState.TicketList.addedIds.includes(newState.Ticket.id)) {
+    newState.TicketList.addedIds = [
+      ...newState.TicketList.addedIds,
+      newState.Ticket.id
+    ];
+  }
   let ticket = OB.App.State.Ticket.Utils.newTicket(
     payload.businessPartner,
     payload.terminal,
@@ -37,7 +43,6 @@ OB.App.StateAPI.Global.registerAction('addNewQuotation', (state, payload) => {
   ticket.documentType = OB.App.TerminalProperty.get(
     'terminal'
   ).terminalType.documentTypeForQuotations;
-  newState.TicketList.addedIds = [...newState.TicketList.addedIds, ticket.id];
   newState.Ticket = ticket;
   return newState;
 });
