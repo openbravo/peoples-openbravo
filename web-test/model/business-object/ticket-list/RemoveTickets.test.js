@@ -14,6 +14,10 @@ global.lodash = require('../../../../../org.openbravo.mobile.core/web/org.openbr
 const deepfreeze = require('deepfreeze');
 
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
+const {
+  executeActionPreparations
+} = require('../../../../../org.openbravo.mobile.core/web-test/base/state-utils');
+require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/exception/TranslatableError');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketList');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/RemoveTickets');
@@ -30,5 +34,61 @@ describe('Remove Empty Tickets action', () => {
     deepfreeze(ticketList);
     const newTicketList = action(ticketList, payload);
     expect(newTicketList.tickets).toEqual([{ id: 'C', lines: [{ id: 'C1' }] }]);
+  });
+});
+
+describe('Remove Empty Tickets action preparations', () => {
+  it('correct remove filter provided', async () => {
+    const ticketList = {
+      tickets: [{ id: 'B', lines: [] }, { id: 'C', lines: [{ id: 'C1' }] }],
+      addedIds: []
+    };
+
+    const payload = { removeFilter: ticket => ticket };
+    const newPayload = await executeActionPreparations(
+      OB.App.StateAPI.TicketList.removeTickets,
+      deepfreeze(ticketList),
+      deepfreeze(payload)
+    );
+
+    expect(newPayload).toEqual(payload);
+  });
+
+  it('throw error if no remove filter is provided', async () => {
+    const ticketList = {
+      tickets: [{ id: 'B', lines: [] }, { id: 'C', lines: [{ id: 'C1' }] }],
+      addedIds: []
+    };
+    const payload = {};
+    let error;
+    try {
+      await executeActionPreparations(
+        OB.App.StateAPI.TicketList.removeTickets,
+        deepfreeze(ticketList),
+        deepfreeze(payload)
+      );
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toEqual('Missing remove filter function');
+  });
+
+  it('throw error if wrong remove filter is provided', async () => {
+    const ticketList = {
+      tickets: [{ id: 'B', lines: [] }, { id: 'C', lines: [{ id: 'C1' }] }],
+      addedIds: []
+    };
+    const payload = { removeFilter: 'notAFunction' };
+    let error;
+    try {
+      await executeActionPreparations(
+        OB.App.StateAPI.TicketList.removeTickets,
+        deepfreeze(ticketList),
+        deepfreeze(payload)
+      );
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toEqual('Missing remove filter function');
   });
 });

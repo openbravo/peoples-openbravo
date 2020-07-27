@@ -17,19 +17,26 @@ OB.App.StateAPI.TicketList.registerAction(
       return { ...ticketList, addedIds: [] };
     }
 
-    let ticketsToDelete = ticketList.tickets;
-    if (payload.removeFilter) {
-      ticketsToDelete = ticketList.tickets.filter(payload.removeFilter);
-    }
-    const idsToDelete = ticketsToDelete.map(ticket => ticket.id);
+    const ticketsToDelete = ticketList.tickets
+      .filter(payload.removeFilter)
+      .map(ticket => ticket.id);
 
     const newTicketList = { ...ticketList };
     newTicketList.tickets = newTicketList.tickets.filter(
-      ticket => !idsToDelete.includes(ticket.id)
+      ticket => !ticketsToDelete.includes(ticket.id)
     );
     newTicketList.addedIds = newTicketList.addedIds.filter(
-      ticketId => !idsToDelete.includes(ticketId)
+      ticketId => !ticketsToDelete.includes(ticketId)
     );
     return newTicketList;
+  }
+);
+
+OB.App.StateAPI.TicketList.removeTickets.addActionPreparation(
+  async (ticketList, payload) => {
+    if (!payload.removeFilter || typeof payload.removeFilter !== 'function') {
+      throw new OB.App.Class.ActionCanceled('Missing remove filter function');
+    }
+    return payload;
   }
 );
