@@ -73,6 +73,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SHOULD_BE_KILLED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_PROCESS_RUN_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
