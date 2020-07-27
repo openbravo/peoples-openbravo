@@ -488,9 +488,7 @@ enyo.kind({
     for (i = 0; i < checkedMultiOrders.length; i++) {
       var iter = checkedMultiOrders[i];
       iter.set('checked', true, { silent: true });
-      if (
-        _.indexOf(this.owner.owner.model.get('orderList').models, iter) !== -1
-      ) {
+      if (_.indexOf(OB.App.OpenTicketList.getAllTickets(), iter) !== -1) {
         // Check if there's an order with a reverse payment
         if (iter.isNewReversed()) {
           wrongOrder = {
@@ -551,19 +549,25 @@ enyo.kind({
       return;
     }
     this.owner.owner.model.deleteMultiOrderList();
-    _.each(checkedMultiOrders, function(iter) {
-      var idx = me.owner.owner.model
-        .get('orderList')
+    _.each(checkedMultiOrders, async function(iter) {
+      var idx = OB.App.OpenTicketList.getAllTickets()
         .map(function(order) {
           return order.id;
         })
         .indexOf(iter.id);
       if (idx !== -1) {
-        // var order = me.owner.owner.model.get('orderList').at(idx);
-        // order.set('checked', true);
+        var orderState = OB.App.OpenTicketList.getAllTickets()[idx];
+        var order = OB.App.StateBackwardCompatibility.getInstance(
+          'Ticket'
+        ).toBackboneObject(orderState);
+
+        order.set('checked', true);
+        await OB.App.State.Global.checkTicketForPayOpenTickets({
+          ticketId: orderState.id
+        });
         // order.save();
-        // selectedMultiOrders.push(order);
-        // addOrdersToOrderList();
+        selectedMultiOrders.push(order);
+        addOrdersToOrderList();
       } else {
         process.exec(
           {
@@ -595,7 +599,9 @@ enyo.kind({
                 );
                 return;
               }
-              OB.UTIL.TicketListUtils.newPaidReceipt(data[0], function(order) {
+              OB.UTIL.TicketListUtils.newPaidReceipt(data[0], async function(
+                order
+              ) {
                 if (
                   (order.get('isPaid') || order.get('isLayaway')) &&
                   order.getPayment() >= order.getGross()
@@ -609,6 +615,7 @@ enyo.kind({
                 } else {
                   order.set('loadedFromServer', true);
                   order.set('checked', iter.get('checked'));
+                  await OB.UTIL.TicketListUtils.addPaidReceipt(order);
                   OB.DATA.OrderTaxes(order);
                   order.set('belongsToMultiOrder', true);
                   order.calculateReceipt(function() {

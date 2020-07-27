@@ -2187,8 +2187,9 @@ enyo.kind({
         .get('multiOrdersList')
         .remove(inEvent.order);
       if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
-        //me.model.get('orderList').current = inEvent.order;
-        //me.model.get('orderList').deleteCurrent();
+        me.model.get('orderList').current = inEvent.order;
+        me.model.get('orderList').deleteCurrent();
+        OB.App.State.Global.removeTicket({ id: inEvent.order.get('id') });
       }
       return true;
     } else {

@@ -156,12 +156,14 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       checkedMultiOrders = _.compact(
         possibleMultiOrder.map(function(e) {
           if (e.checked) {
-            return e;
+            return OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(e);
           }
         })
       );
 
-      multiOrderList.reset(new Backbone.Collection(checkedMultiOrders));
+      multiOrderList.reset(checkedMultiOrders);
 
       // MultiOrder payments
       var multiOrderAddPayments = function() {

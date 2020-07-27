@@ -1842,7 +1842,13 @@ enyo.kind({
             }
             return;
           }
-          var order = new OB.Model.Order(me.orderList.at(idx));
+          var order = me.orderList.at(idx);
+          if (
+            !order.attributes ||
+            (order.attributes && order.attributes.length === 0)
+          ) {
+            order = new OB.Model.Order(order);
+          }
           order.getPrepaymentAmount(function() {
             if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
               total = OB.DEC.add(total, order.getPending());

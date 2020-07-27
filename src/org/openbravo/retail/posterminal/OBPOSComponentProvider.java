@@ -371,6 +371,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/actions/SyncTickets"); // TODO: Remove when
                                                                            // close ticket actions
                                                                            // are available
+    appDependency.add("model/business-object/ticket/actions/CheckTicketForPayOpenTickets");
     appDependency.add("model/business-object/ticket/actions/RemovePayment");
 
     // Cashup
