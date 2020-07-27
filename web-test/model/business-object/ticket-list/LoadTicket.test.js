@@ -23,7 +23,7 @@ describe('Load Ticket actions', () => {
     it('does not modify the state when ticket to load is the current ticket', () => {
       const state = {
         Ticket: { id: 'A' },
-        TicketList: []
+        TicketList: { tickets: [], addedIds: [] }
       };
       const payload = {
         ticket: { id: 'A' }
@@ -37,7 +37,7 @@ describe('Load Ticket actions', () => {
     it('loads the ticket passed as payload and enqueues the current ticket', () => {
       const state = {
         Ticket: { id: 'A' },
-        TicketList: [{ id: 'B' }]
+        TicketList: { tickets: [{ id: 'B' }], addedIds: ['B'] }
       };
       const payload = {
         ticket: { id: 'B' }
@@ -46,14 +46,14 @@ describe('Load Ticket actions', () => {
       const newState = action(state, payload);
       expect(newState).toEqual({
         Ticket: { id: 'B' },
-        TicketList: [{ id: 'A' }]
+        TicketList: { tickets: [{ id: 'A' }], addedIds: ['B', 'A'] }
       });
     });
 
     it('throws an error if provided ticket is not valid', () => {
       const state = {
         Ticket: { id: 'A' },
-        TicketList: [{ id: 'B' }]
+        TicketList: { tickets: [{ id: 'B' }], addedIds: ['B'] }
       };
       const payload = {
         ticket: { id: 'C' }
@@ -75,7 +75,7 @@ describe('Load Ticket actions', () => {
     it('does not modify the state when ticket to load is the current ticket', () => {
       const state = {
         Ticket: { id: 'A' },
-        TicketList: []
+        TicketList: { tickets: [], addedIds: [] }
       };
       const payload = {
         id: 'A'
@@ -89,7 +89,7 @@ describe('Load Ticket actions', () => {
     it('loads the ticket passed as payload and enqueues the current ticket', () => {
       const state = {
         Ticket: { id: 'A' },
-        TicketList: [{ id: 'B' }]
+        TicketList: { tickets: [{ id: 'B' }], addedIds: ['B'] }
       };
       const payload = { id: 'B' };
 
@@ -97,14 +97,14 @@ describe('Load Ticket actions', () => {
       const newState = action(state, payload);
       expect(newState).toEqual({
         Ticket: { id: 'B' },
-        TicketList: [{ id: 'A' }]
+        TicketList: { tickets: [{ id: 'A' }], addedIds: ['B', 'A'] }
       });
     });
 
     it('throws an error if provided ticket is not valid', () => {
       const state = {
         Ticket: { id: 'A' },
-        TicketList: [{ id: 'B' }]
+        TicketList: { tickets: [{ id: 'B' }], addedIds: ['B'] }
       };
       const payload = { id: 'C' };
       deepfreeze(state);

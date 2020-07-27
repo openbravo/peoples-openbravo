@@ -16,19 +16,19 @@ const deepfreeze = require('deepfreeze');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketList');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/RemoveEmptyTickets');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/RemoveTickets');
 
 describe('Remove Empty Tickets action', () => {
-  const action = OB.App.StateAPI.TicketList.removeEmptyTickets;
+  const action = OB.App.StateAPI.TicketList.removeTickets;
 
   it('removes empty tickets from the ticket list', () => {
-    const ticketList = [
-      { id: 'B', lines: [] },
-      { id: 'C', lines: [{ id: 'C1' }] }
-    ];
-    const payload = {};
+    const ticketList = {
+      tickets: [{ id: 'B', lines: [] }, { id: 'C', lines: [{ id: 'C1' }] }],
+      addedIds: []
+    };
+    const payload = { removeFilter: ticket => ticket.lines.length === 0 };
     deepfreeze(ticketList);
     const newTicketList = action(ticketList, payload);
-    expect(newTicketList).toEqual([{ id: 'C', lines: [{ id: 'C1' }] }]);
+    expect(newTicketList.tickets).toEqual([{ id: 'C', lines: [{ id: 'C1' }] }]);
   });
 });
