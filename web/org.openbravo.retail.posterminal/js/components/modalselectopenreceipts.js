@@ -217,50 +217,53 @@ enyo.kind({
           const current = OB.MobileApp.model.receipt;
           // Change the UI receipt to add the product on the newly created ticket
           await me.owner.owner.doChangeCurrentOrder({
-            newCurrentOrder: orderModel
-          });
-          me.owner.owner.doAddProduct({
-            targetOrder: orderModel,
-            product: product,
-            attrs: attrs,
-            options: {
-              blockAddProduct: true
-            },
-            context: me.owner.owner.args.context,
+            newCurrentOrder: orderModel,
             callback: function() {
-              if (me.owner.owner.args.callback) {
-                me.owner.owner.args.callback();
-              }
-              if (me.owner.owner.$.body.$.chkSelectOpenedReceiptModal.checked) {
-                me.owner.owner.owner.model
-                  .get('order')
-                  .calculateReceipt(function() {
+              me.owner.owner.doAddProduct({
+                targetOrder: orderModel,
+                product: product,
+                attrs: attrs,
+                options: {
+                  blockAddProduct: true
+                },
+                context: me.owner.owner.args.context,
+                callback: function() {
+                  if (me.owner.owner.args.callback) {
+                    me.owner.owner.args.callback();
+                  }
+                  if (
+                    me.owner.owner.$.body.$.chkSelectOpenedReceiptModal.checked
+                  ) {
                     me.owner.owner.owner.model
                       .get('order')
-                      .get('lines')
-                      .trigger('updateRelations');
-                  });
-              } else {
-                // The UI receipt should be restored
-                me.owner.owner
-                  .doChangeCurrentOrder({
-                    newCurrentOrder: current
-                  })
-                  .then(() => {
-                    //Hack to calculate totals even if the receipt is not the UI receipt
-                    orderModel.setIsCalculateReceiptLockState(false);
-                    orderModel.setIsCalculateGrossLockState(false);
-                    orderModel.set('belongsToMultiOrder', true);
-                    orderModel.calculateReceipt(function() {
-                      orderModel.trigger('updateServicePrices');
-                      orderModel.set('belongsToMultiOrder', false);
+                      .calculateReceipt(function() {
+                        me.owner.owner.owner.model
+                          .get('order')
+                          .get('lines')
+                          .trigger('updateRelations');
+                      });
+                  } else {
+                    // The UI receipt should be restored
+                    me.owner.owner.doChangeCurrentOrder({
+                      newCurrentOrder: current,
+                      callback: function() {
+                        //Hack to calculate totals even if the receipt is not the UI receipt
+                        orderModel.setIsCalculateReceiptLockState(false);
+                        orderModel.setIsCalculateGrossLockState(false);
+                        orderModel.set('belongsToMultiOrder', true);
+                        orderModel.calculateReceipt(function() {
+                          orderModel.trigger('updateServicePrices');
+                          orderModel.set('belongsToMultiOrder', false);
+                        });
+                      }
                     });
-                  });
-              }
+                  }
+                }
+              });
+              me.owner.owner.args.callback = null;
+              me.owner.owner.doHideThisPopup();
             }
           });
-          me.owner.owner.args.callback = null;
-          me.owner.owner.doHideThisPopup();
         }
       }
     ]

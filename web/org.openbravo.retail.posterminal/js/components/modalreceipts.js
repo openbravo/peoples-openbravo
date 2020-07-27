@@ -76,9 +76,10 @@ enyo.kind({
     this.inherited(arguments);
     this.doHideThisPopup();
     this.doChangeCurrentOrder({
-      newCurrentOrder: this.model
-    }).then(() => {
-      OB.UTIL.ProcessController.finish('changeCurrentOrder', execution);
+      newCurrentOrder: this.model,
+      callback: function() {
+        OB.UTIL.ProcessController.finish('changeCurrentOrder', execution);
+      }
     });
   },
   components: [
