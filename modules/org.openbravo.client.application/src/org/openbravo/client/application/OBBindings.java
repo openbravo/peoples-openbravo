@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
+import org.openbravo.client.kernel.reference.DateTimeUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -210,7 +211,8 @@ public class OBBindings {
   }
 
   public String formatDateTime(Date d) {
-    return UIDefinitionController.DATETIME_UI_DEFINITION.convertToClassicString(d);
+    return ((DateTimeUIDefinition) UIDefinitionController.DATETIME_UI_DEFINITION)
+        .convertToClassicStringInLocalTime(d);
   }
 
   public String formatDateTime(Object d) {
