@@ -174,6 +174,15 @@ public class OBScheduler implements OBSchedulerMBean {
     sched.scheduleJob(jobDetail, trigger);
   }
 
+  /**
+   * Returns if scheduling is allowed in the current instance
+   * It is allowed when there's any scheduler active in one of the instances
+   * of the cluster. An active scheduler means that it's policy is not no-execute
+   * and it is allowed to schedule new jobs.
+   *
+   * @return true if allowed to schedule, false otherwise
+   * @throws SchedulerException
+   */
   public boolean isSchedulingAllowed() throws SchedulerException {
     return !sched.isInStandbyMode() || (sched.getMetaData().isJobStoreClustered()
         && OpenbravoPersistentJobStore.isSchedulingAllowedInCluster(sched.getSchedulerName()));
