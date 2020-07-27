@@ -1086,8 +1086,9 @@
       };
 
     // Check in Current Session
-    for (i = 0; i < this.length; i++) {
-      const modelAtIndex = OB.App.OpenTicketList.getAllTickets()[i];
+    const openTicketList = OB.App.OpenTicketList.getAllTickets();
+    for (i = 0; i < openTicketList.length; i++) {
+      const modelAtIndex = openTicketList[i];
       if (
         modelAtIndex.id === model.get('id') ||
         (!_.isNull(modelAtIndex.oldId) &&
