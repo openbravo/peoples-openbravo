@@ -39,8 +39,8 @@ OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
     return newState;
   }
 
+  newState.TicketList = { ...state.TicketList };
   if (!ticketToRemoveId || ticketToRemoveId === newState.Ticket.id) {
-    newState.TicketList = { ...state.TicketList };
     newState.TicketList.tickets = [...newState.TicketList.tickets];
     newState.Ticket = newState.TicketList.tickets.shift();
     newState.TicketList.addedIds = newState.TicketList.addedIds.filter(
@@ -49,7 +49,7 @@ OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
     return newState;
   }
 
-  newState.TicketList.tickets = state.TicketList.tickets.filter(
+  newState.TicketList.tickets = newState.TicketList.tickets.filter(
     ticket => ticket.id !== ticketToRemoveId
   );
   newState.TicketList.addedIds = newState.TicketList.addedIds.filter(
