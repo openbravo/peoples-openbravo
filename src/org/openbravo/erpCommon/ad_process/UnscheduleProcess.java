@@ -28,11 +28,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessContext;
+import org.quartz.SchedulerException;
 
 public class UnscheduleProcess extends HttpSecureAppServlet {
 
@@ -44,22 +44,33 @@ public class UnscheduleProcess extends HttpSecureAppServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    String policy = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("background.policy", "default");
-    if ("no-execute".equals(policy)) {
-      log.info("Not scheduling process because current context background policy is 'no-execute'");
-      advisePopUp(request, response, "ERROR",
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
-      return;
-    }
-
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
     final String windowId = vars.getStringParameter("inpwindowId");
     final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
-    OBScheduler.getInstance().unschedule(requestId, new ProcessContext(vars));
+    try {
+      if (!OBScheduler.getInstance().isSchedulingAllowed()) {
+        if (OBScheduler.getInstance().getScheduler().getMetaData().isJobStoreClustered()) {
+          log.info("Not un-scheduling process because there is no scheduler instance active");
+          advisePopUp(request, response, "ERROR",
+              OBMessageUtils.messageBD("NoSchedulerInstanceActiveTitle"),
+              OBMessageUtils.messageBD("NoSchedulerInstanceActiveMsg"));
+        } else {
+          log.info(
+              "Not scheduling process because current context background policy is 'no-execute'");
+          advisePopUp(request, response, "ERROR",
+              OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
+              OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
+        }
+        return;
+      }
+
+      OBScheduler.getInstance().unschedule(requestId, new ProcessContext(vars));
+    } catch (final SchedulerException e) {
+      String message = Utility.messageBD(this, "UNSCHED_ERROR", vars.getLanguage());
+      String processErrorTit = Utility.messageBD(this, "Error", vars.getLanguage());
+      advisePopUp(request, response, "ERROR", processErrorTit, message + " " + e.getMessage());
+    }
     String message = Utility.messageBD(this, "UNSCHED_SUCCESS", vars.getLanguage());
     String processTitle = Utility.messageBD(this, "Success", vars.getLanguage());
     advisePopUpRefresh(request, response, "SUCCESS", processTitle, message);
