@@ -13,11 +13,13 @@
   OB.UTIL.TicketListUtils = OB.UTIL.TicketListUtils || {};
 
   const triggerTicketLoadEvents = () => {
-    OB.MobileApp.model.receipt.trigger('updateView');
-    OB.MobileApp.model.receipt.trigger('change');
-    OB.MobileApp.model.receipt.trigger('clear');
-    OB.MobileApp.model.receipt.trigger('paintTaxes');
-    OB.MobileApp.model.receipt.trigger('updatePending');
+    if (OB.MobileApp.model.receipt) {
+      OB.MobileApp.model.receipt.trigger('updateView');
+      OB.MobileApp.model.receipt.trigger('change');
+      OB.MobileApp.model.receipt.trigger('clear');
+      OB.MobileApp.model.receipt.trigger('paintTaxes');
+      OB.MobileApp.model.receipt.trigger('updatePending');
+    }
   };
 
   OB.UTIL.TicketListUtils.loadStateTicket = async function(ticket) {

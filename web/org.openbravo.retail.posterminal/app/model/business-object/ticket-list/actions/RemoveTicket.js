@@ -61,7 +61,7 @@ OB.App.StateAPI.Global.removeTicket.addActionPreparation(
     }
     newPayload.terminal = terminal;
     newPayload.businessPartner = JSON.parse(
-      JSON.stringify(OB.App.TerminalProperty.get('businessPartner'))
+      JSON.stringify(OB.App.TerminalProperty.get('businesspartner'))
     );
     newPayload.session = OB.App.TerminalProperty.get('session');
     newPayload.orgUserId = OB.App.TerminalProperty.get('orgUserId');
