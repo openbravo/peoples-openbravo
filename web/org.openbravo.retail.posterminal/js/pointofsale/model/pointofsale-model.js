@@ -31,10 +31,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
           OB.App.TerminalProperty.get('businessPartner').id);
 
     // Get pending tickets ignoring those created in other users session
-    // Note that the ticket list is ordered to load the older tickets first
-    const ordersNotPaid = OB.App.OpenTicketList.getAllTickets()
-      .reverse()
-      .filter(isPending);
+    const ordersNotPaid = OB.App.OpenTicketList.getAllTickets().filter(
+      isPending
+    );
 
     let currentOrder = {},
       loadOrderStr;
