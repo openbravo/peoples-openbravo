@@ -931,7 +931,8 @@
       ticket = OB.App.State.Ticket.Utils.setFullInvoice(
         ticket,
         terminal,
-        false
+        false,
+        true
       );
 
       ticket.isQuotation = false;
