@@ -486,21 +486,6 @@
         }
       });
 
-      // this.get('dataSyncModels').push({
-      //   name: 'Order',
-      //   model: OB.Model.Order,
-      //   modelFunc: 'OB.Model.Order',
-      //   className: 'org.openbravo.retail.posterminal.OrderLoader',
-      //   timeout: 20000,
-      //   timePerRecord: 1000,
-      //   criteria: {
-      //     hasbeenpaid: 'Y'
-      //   },
-      //   getIdentifier: function(model) {
-      //     return model.documentNo;
-      //   }
-      // });
-
       this.on('ready', function() {
         OB.debug("next process: 'retail.pointofsale' window");
         if (this.get('terminal').currencyFormat) {

@@ -418,6 +418,7 @@
     insertStatement:
       'INSERT INTO c_order(c_order_id, json, ad_session_id, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?,?)',
     local: true,
+    legacyModel: true,
     _id: 'modelorder',
     initialize: function(attributes) {
       var orderId;

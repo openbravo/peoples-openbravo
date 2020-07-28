@@ -15,7 +15,7 @@ OB.OBPOSCashUp.UI = OB.OBPOSCashUp.UI || {};
 
 //Window model
 OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
-  models: [OB.Model.Order],
+  models: [],
   stepsDefinition: [
     {
       name: 'OB.CashUp.StepPendingOrders',
