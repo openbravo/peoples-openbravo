@@ -94,7 +94,10 @@
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
-      newPayload = await checkAnonymousLayaway(globalState.Ticket, newPayload);
+      newPayload = await OB.App.State.Ticket.Utils.checkAnonymousLayaway(
+        globalState.Ticket,
+        newPayload
+      );
       newPayload = await checkReturnLayaway(globalState.Ticket, newPayload);
       newPayload = await checkPrePayments(globalState.Ticket, newPayload);
       newPayload = await checkInvoiceLayaway(globalState.Ticket, newPayload);
@@ -106,20 +109,6 @@
       return newPayload;
     }
   );
-
-  const checkAnonymousLayaway = async (ticket, payload) => {
-    if (
-      !OB.App.TerminalProperty.get('terminal').layaway_anonymouscustomer &&
-      ticket.businessPartner.id ===
-        OB.App.TerminalProperty.get('terminal').businessPartner
-    ) {
-      throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBPOS_layawaysOrdersWithAnonimousCust'
-      });
-    }
-
-    return payload;
-  };
 
   const checkReturnLayaway = async (ticket, payload) => {
     const negativeLines = ticket.lines.some(line => line.qty < 0);

@@ -453,6 +453,23 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   /**
+   * Checks if given ticket is a layaway with anonymous customer.
+   */
+  async checkAnonymousLayaway(ticket, payload) {
+    if (
+      ticket.orderType === 2 &&
+      !payload.terminal.layawayAnonymousCustomer &&
+      ticket.businessPartner.id === payload.terminal.businessPartner
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_layawaysOrdersWithAnonimousCust'
+      });
+    }
+
+    return payload;
+  },
+
+  /**
    * Checks if no processed payments exists for given ticket.
    */
   async checkUnprocessedPayments(ticket, payload) {
