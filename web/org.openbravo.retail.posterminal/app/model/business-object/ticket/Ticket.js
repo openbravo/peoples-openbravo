@@ -49,6 +49,7 @@ if (!OB.App.StateBackwardCompatibility) {
 
   OB.App.StateAPI.registerBackwardCompatibleModel(
     'Ticket',
+    'OB.Model.Order',
     initialState,
     options
   );
