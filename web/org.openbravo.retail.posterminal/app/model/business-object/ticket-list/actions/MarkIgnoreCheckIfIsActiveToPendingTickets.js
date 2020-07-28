@@ -30,8 +30,7 @@
         newState.Ticket,
         session
       );
-      newState.TicketList = { ...state.TicketList };
-      newState.TicketList.tickets = newState.TicketList.tickets.map(ticket => {
+      newState.TicketList = newState.TicketList.map(ticket => {
         return updateIgnoreCheckFlagInNonPaidTicket(ticket, session);
       });
 

@@ -15,16 +15,9 @@
 OB.App.StateAPI.Global.registerAction('addNewQuotation', (state, payload) => {
   const newState = { ...state };
   newState.Ticket = { ...state.Ticket };
-  newState.TicketList = { ...state.TicketList };
+  newState.TicketList = [...state.TicketList];
 
-  newState.TicketList.tickets = [...newState.TicketList.tickets];
-  newState.TicketList.tickets.unshift(newState.Ticket);
-  if (!newState.TicketList.addedIds.includes(newState.Ticket.id)) {
-    newState.TicketList.addedIds = [
-      ...newState.TicketList.addedIds,
-      newState.Ticket.id
-    ];
-  }
+  newState.TicketList.unshift(newState.Ticket);
   let ticket = OB.App.State.Ticket.Utils.newTicket(
     payload.businessPartner,
     payload.terminal,

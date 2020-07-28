@@ -45,8 +45,7 @@
       const { customer } = payload;
 
       newState.Ticket = updateBpInTicket(newState.Ticket, customer);
-      newState.TicketList = { ...newState.TicketList };
-      newState.TicketList.tickets = newState.TicketList.tickets.map(ticket =>
+      newState.TicketList = newState.TicketList.map(ticket =>
         updateBpInTicket(ticket, customer)
       );
 

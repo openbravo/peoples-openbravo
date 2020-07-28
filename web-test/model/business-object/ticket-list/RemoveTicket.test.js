@@ -23,7 +23,7 @@ describe('Remove Ticket actions', () => {
   it('removes a ticket from the ticket list using the ID', () => {
     const state = {
       Ticket: { id: 'A' },
-      TicketList: { tickets: [{ id: 'B' }], addedIds: ['B'] }
+      TicketList: [{ id: 'B' }]
     };
     const payload = {
       id: 'B'
@@ -31,14 +31,13 @@ describe('Remove Ticket actions', () => {
     deepfreeze(state);
 
     const newState = action(state, payload);
-    expect(newState.TicketList.tickets).toHaveLength(0);
-    expect(newState.TicketList.addedIds).toHaveLength(0);
+    expect(newState.TicketList).toHaveLength(0);
   });
 
   it('if removing active ticket, replace with the first ticket in the list', () => {
     const state = {
       Ticket: { id: 'A' },
-      TicketList: { tickets: [{ id: 'B' }], addedIds: ['B'] }
+      TicketList: [{ id: 'B' }]
     };
     const payload = {
       id: 'A'
@@ -46,22 +45,20 @@ describe('Remove Ticket actions', () => {
     deepfreeze(state);
 
     const newState = action(state, payload);
-    expect(newState.TicketList.tickets).toHaveLength(0);
-    expect(newState.TicketList.addedIds).toHaveLength(0);
+    expect(newState.TicketList).toHaveLength(0);
     expect(newState.Ticket.id).toEqual('B');
   });
 
   it('replace with the first ticket in the list if no id provided', () => {
     const state = {
       Ticket: { id: 'A' },
-      TicketList: { tickets: [{ id: 'B' }], addedIds: ['B'] }
+      TicketList: [{ id: 'B' }]
     };
     const payload = {};
     deepfreeze(state);
 
     const newState = action(state, payload);
-    expect(newState.TicketList.tickets).toHaveLength(0);
-    expect(newState.TicketList.addedIds).toHaveLength(0);
+    expect(newState.TicketList).toHaveLength(0);
     expect(newState.Ticket.id).toEqual('B');
   });
 
@@ -90,7 +87,7 @@ describe('Remove Ticket actions', () => {
   it('creates new ticket when list is empty', () => {
     const state = {
       Ticket: { id: 'A' },
-      TicketList: { tickets: [], addedIds: [] }
+      TicketList: []
     };
     const payload = {};
     deepfreeze(state);

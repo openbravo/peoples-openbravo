@@ -22,7 +22,7 @@ describe('Mark ignore check if is active to pending tickets', () => {
   it('changes ignore check flag to pending current ticket', () => {
     const state = {
       Ticket: { id: 'A', hasbeenpaid: 'N', ignoreCheckIfIsActiveOrder: false },
-      TicketList: { tickets: [], addedIds: [] }
+      TicketList: []
     };
 
     deepfreeze(state);
@@ -34,62 +34,54 @@ describe('Mark ignore check if is active to pending tickets', () => {
   it('changes ignore check flag to enqueued tickets', () => {
     const state = {
       Ticket: { id: 'A' },
-      TicketList: {
-        tickets: [
-          { id: 'B', hasbeenpaid: 'N', ignoreCheckIfIsActiveOrder: false },
-          {
-            id: 'C',
-            hasbeenpaid: 'Y',
-            ignoreCheckIfIsActiveOrder: false
-          }
-        ]
-      }
+      TicketList: [
+        { id: 'B', hasbeenpaid: 'N', ignoreCheckIfIsActiveOrder: false },
+        {
+          id: 'C',
+          hasbeenpaid: 'Y',
+          ignoreCheckIfIsActiveOrder: false
+        }
+      ]
     };
 
     deepfreeze(state);
 
     const newState = action(state);
     expect(
-      newState.TicketList.tickets.map(
-        ticket => ticket.ignoreCheckIfIsActiveOrder
-      )
+      newState.TicketList.map(ticket => ticket.ignoreCheckIfIsActiveOrder)
     ).toEqual([true, false]);
   });
 
   it('filters by session if sessionID is provided', () => {
     const state = {
       Ticket: { id: 'A', session: 'session1' },
-      TicketList: {
-        tickets: [
-          {
-            id: 'B',
-            hasbeenpaid: 'N',
-            ignoreCheckIfIsActiveOrder: false,
-            session: 'session1'
-          },
-          {
-            id: 'C',
-            hasbeenpaid: 'Y',
-            ignoreCheckIfIsActiveOrder: false,
-            session: 'session1'
-          },
-          {
-            id: 'D',
-            hasbeenpaid: 'N',
-            ignoreCheckIfIsActiveOrder: false,
-            session: 'session2'
-          }
-        ]
-      }
+      TicketList: [
+        {
+          id: 'B',
+          hasbeenpaid: 'N',
+          ignoreCheckIfIsActiveOrder: false,
+          session: 'session1'
+        },
+        {
+          id: 'C',
+          hasbeenpaid: 'Y',
+          ignoreCheckIfIsActiveOrder: false,
+          session: 'session1'
+        },
+        {
+          id: 'D',
+          hasbeenpaid: 'N',
+          ignoreCheckIfIsActiveOrder: false,
+          session: 'session2'
+        }
+      ]
     };
 
     deepfreeze(state);
 
     const newState = action(state, { session: 'session1' });
     expect(
-      newState.TicketList.tickets.map(
-        ticket => ticket.ignoreCheckIfIsActiveOrder
-      )
+      newState.TicketList.map(ticket => ticket.ignoreCheckIfIsActiveOrder)
     ).toEqual([true, false, false]);
   });
 });

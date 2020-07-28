@@ -13,22 +13,7 @@
 OB.App.StateAPI.TicketList.registerAction(
   'removeTickets',
   (ticketList, payload) => {
-    if (ticketList.tickets.length === 0) {
-      return { ...ticketList, addedIds: [] };
-    }
-
-    const ticketsToDelete = ticketList.tickets
-      .filter(payload.removeFilter)
-      .map(ticket => ticket.id);
-
-    const newTicketList = { ...ticketList };
-    newTicketList.tickets = newTicketList.tickets.filter(
-      ticket => !ticketsToDelete.includes(ticket.id)
-    );
-    newTicketList.addedIds = newTicketList.addedIds.filter(
-      ticketId => !ticketsToDelete.includes(ticketId)
-    );
-    return newTicketList;
+    return ticketList.filter(ticket => !payload.removeFilter(ticket));
   }
 );
 

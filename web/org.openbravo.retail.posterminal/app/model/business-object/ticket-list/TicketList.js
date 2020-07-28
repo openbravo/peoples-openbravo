@@ -7,7 +7,4 @@
  ************************************************************************************
  */
 
-OB.App.StateAPI.registerModel('TicketList', {
-  tickets: [], // keeps the information of the tickets currently in the ticket list
-  addedIds: [] // ids of the tickets added into the list ordered by when they were added into the list
-});
+OB.App.StateAPI.registerModel('TicketList', []);

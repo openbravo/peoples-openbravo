@@ -26,24 +26,23 @@ describe('Remove Empty Tickets action', () => {
   const action = OB.App.StateAPI.TicketList.removeTickets;
 
   it('removes empty tickets from the ticket list', () => {
-    const ticketList = {
-      tickets: [{ id: 'B', lines: [] }, { id: 'C', lines: [{ id: 'C1' }] }],
-      addedIds: []
-    };
+    const ticketList = [
+      { id: 'B', lines: [] },
+      { id: 'C', lines: [{ id: 'C1' }] }
+    ];
     const payload = { removeFilter: ticket => ticket.lines.length === 0 };
     deepfreeze(ticketList);
     const newTicketList = action(ticketList, payload);
-    expect(newTicketList.tickets).toEqual([{ id: 'C', lines: [{ id: 'C1' }] }]);
+    expect(newTicketList).toEqual([{ id: 'C', lines: [{ id: 'C1' }] }]);
   });
 });
 
 describe('Remove Empty Tickets action preparations', () => {
   it('correct remove filter provided', async () => {
-    const ticketList = {
-      tickets: [{ id: 'B', lines: [] }, { id: 'C', lines: [{ id: 'C1' }] }],
-      addedIds: []
-    };
-
+    const ticketList = [
+      { id: 'B', lines: [] },
+      { id: 'C', lines: [{ id: 'C1' }] }
+    ];
     const payload = { removeFilter: ticket => ticket };
     const newPayload = await executeActionPreparations(
       OB.App.StateAPI.TicketList.removeTickets,
@@ -55,10 +54,10 @@ describe('Remove Empty Tickets action preparations', () => {
   });
 
   it('throw error if no remove filter is provided', async () => {
-    const ticketList = {
-      tickets: [{ id: 'B', lines: [] }, { id: 'C', lines: [{ id: 'C1' }] }],
-      addedIds: []
-    };
+    const ticketList = [
+      { id: 'B', lines: [] },
+      { id: 'C', lines: [{ id: 'C1' }] }
+    ];
     const payload = {};
     let error;
     try {
@@ -74,10 +73,10 @@ describe('Remove Empty Tickets action preparations', () => {
   });
 
   it('throw error if wrong remove filter is provided', async () => {
-    const ticketList = {
-      tickets: [{ id: 'B', lines: [] }, { id: 'C', lines: [{ id: 'C1' }] }],
-      addedIds: []
-    };
+    const ticketList = [
+      { id: 'B', lines: [] },
+      { id: 'C', lines: [{ id: 'C1' }] }
+    ];
     const payload = { removeFilter: 'notAFunction' };
     let error;
     try {
