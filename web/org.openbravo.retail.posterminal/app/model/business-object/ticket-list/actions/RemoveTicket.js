@@ -24,7 +24,7 @@ OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
   const forceNewTicket =
     payload.forceNewTicket || newState.TicketList.length === 0;
 
-  if (forceNewTicket) {
+  if (forceNewTicket && payload.businessPartner) {
     newState.Ticket = OB.App.State.Ticket.Utils.newTicket(
       payload.businessPartner,
       payload.terminal,
@@ -60,9 +60,11 @@ OB.App.StateAPI.Global.removeTicket.addActionPreparation(
       throw new OB.App.Class.ActionCanceled(`Missing terminal information`);
     }
     newPayload.terminal = terminal;
-    newPayload.businessPartner = JSON.parse(
-      JSON.stringify(OB.App.TerminalProperty.get('businessPartner'))
-    );
+    newPayload.businessPartner = OB.App.TerminalProperty.get('businessPartner')
+      ? JSON.parse(
+          JSON.stringify(OB.App.TerminalProperty.get('businessPartner'))
+        )
+      : undefined;
     newPayload.session = OB.App.TerminalProperty.get('session');
     newPayload.orgUserId = OB.App.TerminalProperty.get('orgUserId');
     newPayload.pricelist = OB.App.TerminalProperty.get('pricelist');
