@@ -154,9 +154,18 @@
           function(args) {
             // update each order also so that new name is shown and the bp
             // in the order is the same as what got saved
-            OB.App.State.Global.updateBpInAllTickets({
-              customer: JSON.parse(JSON.stringify(customer.toJSON()))
-            });
+            OB.MobileApp.model.receipt.setBPandBPLoc(
+              customer,
+              false,
+              true,
+              // call updateBpInAllTickets action in the setBPandBPLoc callback
+              // instead of this, the logic in setBPandBPLoc should be refactored and moved inside updateBpInAllTickets action
+              () => {
+                OB.App.State.Global.updateBpInAllTickets({
+                  customer: JSON.parse(JSON.stringify(customer.toJSON()))
+                });
+              }
+            );
           }
         );
         OB.UTIL.showSuccess(
