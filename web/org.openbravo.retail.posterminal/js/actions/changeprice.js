@@ -65,6 +65,9 @@
         var receipt = view.model.get('order');
         const lineIds = selectedReceiptLines.map(l => l.id);
         var setPrices = function(options = {}) {
+          // enable flag 'propagatingBackboneToState' to skip calculateReceipt execution
+          // otherwise an infinite loop causes the action to be executed repeateadly
+          receipt.propagatingBackboneToState = true;
           OB.App.State.Ticket.setLinePrice({
             lineIds,
             price,
@@ -73,7 +76,8 @@
             .then(() => {
               receipt.trigger('scan');
             })
-            .catch(OB.App.View.ActionCanceledUIHandler.handle);
+            .catch(OB.App.View.ActionCanceledUIHandler.handle)
+            .finally(() => delete receipt.propagatingBackboneToState);
         };
         var validatePrice = function() {
           if (
