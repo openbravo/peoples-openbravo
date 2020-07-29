@@ -11,8 +11,6 @@
  * @fileoverview defines the Ticket global action that completes a ticket and moves it to a message in the state
  */
 
-/* eslint-disable no-use-before-define */
-
 (() => {
   OB.App.StateAPI.Global.registerAction(
     'completeMultiTicket',
@@ -22,14 +20,14 @@
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
-      const newTicketList = [...newGlobalState.TicketList];
+      const newTicketList = { ...newGlobalState.TicketList };
 
-      payload.ticketIdToClose.forEach(ticketCloseId => {
+      payload.ticketsIdToClose.forEach(ticketCloseId => {
         let ticket;
         if (ticketCloseId === newTicket.id) {
           ticket = newTicket;
         } else {
-          ticket = newTicketList.filter(
+          [ticket] = newTicketList.tickets.filter(
             ticketOfFilter => ticketOfFilter.id === ticketCloseId
           );
         }
@@ -59,7 +57,7 @@
         ({
           ticket,
           documentSequence: newDocumentSequence
-        } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
+        } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
           ticket,
           newDocumentSequence,
           ticketPayload
@@ -132,53 +130,61 @@
     }
   );
 
-  OB.App.StateAPI.Global.completeTicket.addActionPreparation(
+  OB.App.StateAPI.Global.completeMultiTicket.addActionPreparation(
     async (globalState, payload) => {
       const newPayload = { ...payload };
 
-      payload.ticketIdToClose.forEach(async ticketCloseId => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const ticketCloseId of payload.ticketsIdToClose) {
         let ticket;
         if (ticketCloseId === globalState.Ticket.id) {
           ticket = globalState.Ticket;
         } else {
-          ticket = globalState.TicketList.filter(
+          [ticket] = globalState.TicketList.tickets.filter(
             ticketOfFilter => ticketOfFilter.id === ticketCloseId
           );
         }
 
         let ticketPayload = newPayload;
 
+        // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkAnonymousReturn(
           ticket,
           ticketPayload
         );
+        // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkAnonymousLayaway(
           ticket,
           ticketPayload
         );
+        // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkNegativePayments(
           ticket,
           ticketPayload
         );
+        // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkExtraPayments(
           ticket,
           ticketPayload
         );
+        // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkPrePayments(
           ticket,
           ticketPayload
         );
+        // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkOverPayments(
           ticket,
           ticketPayload
         );
+        // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
           ticket,
           ticketPayload
         );
 
         newPayload[ticket.id] = ticketPayload;
-      });
+      }
 
       return newPayload;
     }
