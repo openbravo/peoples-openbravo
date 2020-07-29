@@ -2478,6 +2478,7 @@ enyo.kind({
     var myModel = this.owner.model,
       me = this,
       payments,
+      isMultiOrder = !myModel.get('leftColumnViewManager').isOrder(),
       avoidPayment = false,
       orderDesc = '',
       execution;
@@ -2519,8 +2520,18 @@ enyo.kind({
       return true;
     }
 
-    const isMultiOrder = !myModel.get('leftColumnViewManager').isOrder();
-    if (!isMultiOrder) {
+    // Fixme: remove this if and the rest of the code of this function
+    // Mantained for easy switch to debug old and new code
+    const newCode = true;
+    if (newCode) {
+      if (isMultiOrder) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.completeMultiTicket,
+          'completeReceipt'
+        );
+        return;
+      }
+
       if (OB.MobileApp.model.receipt.get('cancelLayaway')) {
         OB.MobileApp.model.receipt.runCompleteTicket(
           OB.App.State.Global.cancelTicket,
