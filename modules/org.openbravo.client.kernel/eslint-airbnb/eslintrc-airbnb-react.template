@@ -1,7 +1,7 @@
 {
   "extends": [
-    "airbnb-base",
-    "plugin:prettier/recommended",
-    "plugin:react/recommended"
+    "airbnb",
+    "airbnb/hooks",
+    "plugin:prettier/recommended"
   ]
 }
