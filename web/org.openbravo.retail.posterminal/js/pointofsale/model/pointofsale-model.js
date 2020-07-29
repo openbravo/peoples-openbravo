@@ -25,10 +25,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
     const isPending = ticket =>
       ticket.hasbeenpaid === 'N' &&
-      ticket.session === OB.MobileApp.model.get('session') &&
-      (ticket.lines.length > 0 ||
-        ticket.businessPartner.id !==
-          OB.App.TerminalProperty.get('businessPartner').id);
+      ticket.session === OB.MobileApp.model.get('session');
 
     // Get pending tickets ignoring those created in other users session
     const ordersNotPaid = OB.App.OpenTicketList.getAllTickets().filter(
