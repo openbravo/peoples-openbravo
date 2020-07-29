@@ -610,7 +610,13 @@
             },
             discountRules: OB.Discounts.Pos.ruleImpls,
             bpSets: OB.Discounts.Pos.bpSets,
-            taxRules: OB.Taxes.Pos.ruleImpls
+            taxRules: OB.Taxes.Pos.ruleImpls,
+            ticketsIdToClose:
+              completeTicketAction === OB.App.State.Global.completeMultiTicket
+                ? OB.MobileApp.model.multiOrders
+                    .get('multiOrdersList')
+                    .models.map(ticket => ticket.get('id'))
+                : undefined
           });
 
           if (actionName !== 'deleteCurrentOrder') {
