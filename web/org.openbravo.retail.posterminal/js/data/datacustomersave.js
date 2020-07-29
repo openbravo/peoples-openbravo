@@ -131,7 +131,7 @@
       }
       try {
         await OB.App.State.Global.synchronizeBusinessPartner(
-          customer.attributes
+          customer.serializeToJSON()
         );
         await sleep(100);
         if (isNew) {
