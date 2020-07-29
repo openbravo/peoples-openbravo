@@ -68,7 +68,8 @@ describe('Remove Ticket actions', () => {
       TicketList: [{ id: 'B' }]
     };
     const payload = {
-      forceNewTicket: true
+      forceNewTicket: true,
+      businessPartner: { id: 'BP1' }
     };
     deepfreeze(state);
 
@@ -89,7 +90,7 @@ describe('Remove Ticket actions', () => {
       Ticket: { id: 'A' },
       TicketList: []
     };
-    const payload = {};
+    const payload = { businessPartner: { id: 'BP1' } };
     deepfreeze(state);
 
     OB.App.State = { Ticket: { Utils: {} } };
