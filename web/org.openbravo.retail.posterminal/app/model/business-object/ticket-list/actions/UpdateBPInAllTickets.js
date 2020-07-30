@@ -44,9 +44,11 @@
       const newState = { ...state };
       const { customer } = payload;
 
-      newState.Ticket = updateBpInTicket(newState.Ticket, customer);
+      if (newState.Ticket.isEditable) {
+        newState.Ticket = updateBpInTicket(newState.Ticket, customer);
+      }
       newState.TicketList = newState.TicketList.map(ticket =>
-        updateBpInTicket(ticket, customer)
+        ticket.isEditable ? updateBpInTicket(ticket, customer) : ticket
       );
 
       return newState;

@@ -152,20 +152,26 @@
             customer: customer
           },
           function(args) {
-            // update each order also so that new name is shown and the bp
-            // in the order is the same as what got saved
-            OB.MobileApp.model.receipt.setBPandBPLoc(
-              customer,
-              false,
-              true,
-              // call updateBpInAllTickets action in the setBPandBPLoc callback
-              // instead of this, the logic in setBPandBPLoc should be refactored and moved inside updateBpInAllTickets action
-              () => {
-                OB.App.State.Global.updateBpInAllTickets({
-                  customer: JSON.parse(JSON.stringify(customer.toJSON()))
-                });
-              }
-            );
+            if (OB.MobileApp.model.receipt.isEditable) {
+              OB.MobileApp.model.receipt.setBPandBPLoc(
+                customer,
+                false,
+                true,
+                // update each order also so that new name is shown and the bp
+                // in the order is the same as what got saved
+                // note that we are calling updateBpInAllTickets action in the setBPandBPLoc callback
+                // instead of this, the logic in setBPandBPLoc should be refactored and moved inside updateBpInAllTickets action
+                () => {
+                  OB.App.State.Global.updateBpInAllTickets({
+                    customer: JSON.parse(JSON.stringify(customer.toJSON()))
+                  });
+                }
+              );
+            } else {
+              OB.App.State.Global.updateBpInAllTickets({
+                customer: JSON.parse(JSON.stringify(customer.toJSON()))
+              });
+            }
           }
         );
         OB.UTIL.showSuccess(
