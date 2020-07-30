@@ -924,6 +924,10 @@ enyo.kind({
       OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
       OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(false);
       OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
+
+      OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
+        newOrder: this.model.get('order')
+      });
     });
     return true;
   },
