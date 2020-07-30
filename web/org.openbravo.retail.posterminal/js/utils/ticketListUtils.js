@@ -1229,9 +1229,20 @@
   };
 
   OB.UTIL.TicketListUtils.removeTicket = async function(payload) {
+    const ticketListLength = OB.App.OpenTicketList.getAllTickets().length;
     try {
-      await OB.App.State.Global.removeTicket(payload);
-      triggerTicketLoadEvents();
+      await OB.App.State.Global.removeTicket(payload).then(() => {
+        triggerTicketLoadEvents();
+
+        if (ticketListLength === 1) {
+          // a new ticket has been created after removing the only ticket present
+          OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
+            newOrder: OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(OB.App.State.getState().Ticket)
+          });
+        }
+      });
     } catch (error) {
       OB.App.View.ActionCanceledUIHandler.handle(error);
     } finally {

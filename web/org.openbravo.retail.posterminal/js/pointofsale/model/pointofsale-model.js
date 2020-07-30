@@ -61,6 +61,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       false
                     );
                     OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
+
+                    OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
+                      newOrder: OB.App.StateBackwardCompatibility.getInstance(
+                        'Ticket'
+                      ).toBackboneObject(OB.App.State.getState().Ticket)
+                    });
                   });
                 } else {
                   OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
