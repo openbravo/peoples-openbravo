@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -136,14 +136,14 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     try {
       ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
           ctx.getUser(), executionId, PROCESSING, null, null, jec.getJobDetail().getKey().getName(),
-          jec.getFireInstanceId());
+          jec.getScheduler().getSchedulerInstanceId());
 
       bundle.setProcessRunId(executionId);
       jec.put(EXECUTION_ID, executionId);
       jec.put(ProcessBundle.CONNECTION, getConnection());
       jec.put(ProcessBundle.CONFIG_PARAMS, getConfigParameters());
 
-    } catch (final ServletException e) {
+    } catch (final ServletException | SchedulerException e) {
       log.error(e.getMessage(), e);
     }
     // no need to return the connection because it will be done after the process is executed
@@ -403,7 +403,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
         final String executionId = SequenceIdData.getUUID();
         ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(),
             ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null,
-            trigger.getKey().getName(), jec.getFireInstanceId());
+            trigger.getKey().getName(), jec.getScheduler().getSchedulerInstanceId());
         ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, getDuration(0),
             "Concurrent attempt to execute", executionId);
 

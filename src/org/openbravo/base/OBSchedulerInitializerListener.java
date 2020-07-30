@@ -11,6 +11,7 @@ import static org.openbravo.base.ConnectionProviderContextListener.POOL_ATTRIBUT
 import static org.quartz.ee.servlet.QuartzInitializerListener.QUARTZ_FACTORY_KEY;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 import javax.servlet.ServletContext;
@@ -126,21 +127,29 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
       OBScheduler.getInstance().initialize(scheduler);
 
       // Update Interrupted Process Instance's End time with current time.
-      try {
-        Connection connection = OBDal.getInstance().getConnection();
+      try (Connection connection = OBDal.getInstance().getConnection()) {
         if (connection != null) {
-          Statement s = null;
+          PreparedStatement ps = null;
           try {
-            s = connection.createStatement();
-            String query = "UPDATE AD_PROCESS_RUN SET END_TIME=NOW(),STATUS='SYR' WHERE STATUS='PRC' AND END_TIME IS NULL";
-            int n = s.executeUpdate(query);
+            final String schedulerInstanceId = scheduler.getSchedulerInstanceId();
+            //@formatter:off
+            String query = ""
+              + "update ad_process_run"
+              + "  set end_time=NOW(), status='SYR'"
+              + " where status='PRC'"
+              + "   and end_time is null"
+              + "   and scheduler_instance=?";
+            //@formatter:on
+            ps = connection.prepareStatement(query);
+            ps.setString(1, schedulerInstanceId);
+            int n = ps.executeUpdate();
             if (n > 0) {
               log.info(n
                   + " background processes were in execution before Tomcat start, they have been marked as 'System Restarted' ");
             }
           } finally {
-            if (s != null && !s.isClosed()) {
-              s.close();
+            if (ps != null && !ps.isClosed()) {
+              ps.close();
             }
             OBDal.getInstance().flush();
             OBDal.getInstance().commitAndClose();
