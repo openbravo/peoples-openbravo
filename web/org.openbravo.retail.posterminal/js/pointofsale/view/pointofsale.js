@@ -2170,7 +2170,7 @@ enyo.kind({
       originator.addClass('btn-icon-clearPayment');
     }
   },
-  removeMultiOrders: function(inSender, inEvent) {
+  removeMultiOrders: async function(inSender, inEvent) {
     var me = this,
       originator = inEvent.originator;
     if (me.model.get('multiOrders').checkMultiOrderPayment()) {
@@ -2187,9 +2187,8 @@ enyo.kind({
         .get('multiOrdersList')
         .remove(inEvent.order);
       if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
-        me.model.get('orderList').current = inEvent.order;
-        me.model.get('orderList').deleteCurrent();
-        OB.App.State.Global.removeTicket({ id: inEvent.order.get('id') });
+        me.model.get('orderList').remove(inEvent.order);
+        await OB.App.State.Global.removeTicket({ id: inEvent.order.get('id') });
       }
       return true;
     } else {
