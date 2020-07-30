@@ -18,6 +18,7 @@
     OB.MobileApp.model.receipt.trigger('clear');
     OB.MobileApp.model.receipt.trigger('paintTaxes');
     OB.MobileApp.model.receipt.trigger('updatePending');
+    OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
   };
 
   OB.UTIL.TicketListUtils.loadStateTicket = async function(ticket) {

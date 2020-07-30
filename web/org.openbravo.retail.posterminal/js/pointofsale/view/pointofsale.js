@@ -923,6 +923,7 @@ enyo.kind({
     OB.App.State.Global.addNewTicket().then(() => {
       OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
       OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(false);
+      OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
     });
     return true;
   },

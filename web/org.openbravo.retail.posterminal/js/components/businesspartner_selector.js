@@ -105,6 +105,9 @@ enyo.kind({
     this.order.on('change:externalBusinessPartner', () => {
       this.renderCurrentCustomer();
     });
+    this.order.on('forceRenderCurrentCustomer', () => {
+      this.renderCurrentCustomer();
+    });
     this.order.on('change:bp', () => {
       const model = this.order;
       if (model.get('bp')) {
