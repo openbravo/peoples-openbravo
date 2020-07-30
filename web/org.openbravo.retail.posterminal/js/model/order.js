@@ -7238,8 +7238,6 @@
         user: OB.MobileApp.model.get('orgUserId'),
         session: OB.MobileApp.model.get('session'),
         date: OB.I18N.normalizeDate(new Date())
-      }).then(() => {
-        OB.Dal.save(OB.MobileApp.model.receipt, null, null, true);
       });
     },
     rejectQuotation: function(rejectReasonId, scope, callback) {
