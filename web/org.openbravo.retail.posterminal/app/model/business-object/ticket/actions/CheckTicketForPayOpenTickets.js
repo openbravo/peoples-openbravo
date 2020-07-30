@@ -19,7 +19,8 @@ OB.App.StateAPI.Global.registerAction(
     if (state.Ticket.id === payload.ticketId) {
       newState.Ticket = { ...newState.Ticket, checked: true };
     } else {
-      newState.TicketList = newState.TicketList.map(ticket => {
+      newState.TicketList = { ...newState.TicketList };
+      newState.TicketList.tickets = newState.TicketList.tickets.map(ticket => {
         if (ticket.id === payload.ticketId) {
           return { ...ticket, checked: true };
         }
