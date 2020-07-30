@@ -74,6 +74,7 @@
             reason: options.reason
           })
             .then(() => {
+              receipt.trigger('paintTaxes'); // refresh the Tax breakdown
               receipt.trigger('scan');
             })
             .catch(OB.App.View.ActionCanceledUIHandler.handle)
