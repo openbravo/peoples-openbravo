@@ -90,6 +90,8 @@ public class Discount extends MasterDataProcessHQLQuery {
 
     String hql = "from PricingAdjustment p ";
     hql += "where client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
+    hql += "AND ((p.$incrementalUpdateCriteria)) ";
+
     boolean multiPrices = false;
     try {
       multiPrices = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList", true,
@@ -98,12 +100,6 @@ public class Discount extends MasterDataProcessHQLQuery {
           OBContext.getOBContext().getRole(), null));
     } catch (PropertyException e1) {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
-    }
-
-    if (lastUpdated != null) {
-      hql += ""; // Incremental Refresh
-    } else {
-      hql += "AND ((p.$incrementalUpdateCriteria)) "; // Full Refresh
     }
 
     // Optional filtering by a list of m_offer_id
