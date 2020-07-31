@@ -156,7 +156,8 @@ public class KillableProcessHandler extends Thread {
     String sql = "" +
       "select ad_process_run_id" +
       "  from ad_process_run" +
-      " where should_be_killed='Y' " +
+      " where status='PRC'" +
+      "   and should_be_killed='Y' " +
       "   and scheduler_instance=?";
     //@formatter:on
 
