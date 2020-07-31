@@ -204,8 +204,9 @@ enyo.kind({
           ) {
             // 'Create New One' case
             OB.MobileApp.model.receipt.trigger('updateView');
-            orderModel = new OB.Model.Order();
-            orderModel.set('bp', OB.MobileApp.model.receipt.get('bp'));
+            orderModel = OB.UTIL.TicketListUtils.newOrder(
+              OB.MobileApp.model.receipt.get('bp')
+            );
             orderModel.set('deferredOrder', true);
             await OB.App.State.TicketList.saveTicket(
               OB.App.StateBackwardCompatibility.getInstance(
