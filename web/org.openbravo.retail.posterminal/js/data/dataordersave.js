@@ -874,7 +874,7 @@
       'closed',
       function(receipt, closedCallback) {
         let hasError = false;
-        let orderList = OB.App.OpenTicketList.getAllTickets();
+        let orderList = OB.App.OpenTicketList.getSessionTickets();
 
         let multiOrderList = this.context
             .get('multiOrders')

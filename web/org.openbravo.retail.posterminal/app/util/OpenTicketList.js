@@ -16,5 +16,17 @@ OB.App.OpenTicketList = {
     }
 
     return allReceipts;
+  },
+
+  getSessionTickets() {
+    return OB.App.OpenTicketList.getAllTickets().filter(
+      ticket => ticket.session === OB.App.TerminalProperty.get('session')
+    );
+  },
+
+  getOtherSessionsTickets() {
+    return OB.App.OpenTicketList.getAllTickets().filter(
+      ticket => ticket.session !== OB.App.TerminalProperty.get('session')
+    );
   }
 };

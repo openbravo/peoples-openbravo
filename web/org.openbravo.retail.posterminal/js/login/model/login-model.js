@@ -1257,13 +1257,8 @@
         function(approved, supervisor, approvalType) {
           if (approved) {
             //All pending to be paid orders will be removed on logout
-            const filteredTickets = OB.App.OpenTicketList.getAllTickets().filter(
-              ticket => {
-                return (
-                  ticket.session === OB.MobileApp.model.get('session') &&
-                  ticket.hasbeenpaid === 'N'
-                );
-              }
+            const filteredTickets = OB.App.OpenTicketList.getSessionTickets().filter(
+              ticket => ticket.hasbeenpaid === 'N'
             );
 
             success(filteredTickets);

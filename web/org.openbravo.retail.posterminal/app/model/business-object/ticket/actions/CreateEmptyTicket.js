@@ -10,31 +10,38 @@
 /**
  * @fileoverview defines an action that creates an empty ticket using the utility function
  */
-OB.App.StateAPI.Ticket.registerAction(
-  'createEmptyTicket',
-  (ticket, payload) => {
-    return OB.App.State.Ticket.Utils.newTicket(
-      payload.businessPartner,
-      payload.terminal,
-      payload.session,
-      payload.orgUserId,
-      payload.pricelist,
-      payload.contextUser
-    );
-  }
-);
+OB.App.StateAPI.Global.registerAction('createEmptyTicket', (state, payload) => {
+  const newState = { ...state };
 
-OB.App.StateAPI.Ticket.createEmptyTicket.addActionPreparation(
+  if (newState.Ticket.hasbeenpaid === 'N') {
+    // current ticket is in pending status, add to the list to avoid losing it
+    newState.TicketList = [...newState.TicketList];
+    newState.TicketList.unshift({ ...newState.Ticket });
+  }
+
+  newState.Ticket = OB.App.State.Ticket.Utils.newTicket(
+    payload.businessPartner,
+    payload.terminal,
+    payload.session,
+    payload.orgUserId,
+    payload.pricelist,
+    payload.contextUser
+  );
+
+  return newState;
+});
+
+OB.App.StateAPI.Global.createEmptyTicket.addActionPreparation(
   async (ticket, payload) => {
     const newPayload = { ...payload };
     newPayload.businessPartner = JSON.parse(
-      JSON.stringify(OB.MobileApp.model.get('businessPartner'))
+      JSON.stringify(OB.App.TerminalProperty.get('businessPartner'))
     );
-    newPayload.terminal = OB.MobileApp.model.get('terminal');
-    newPayload.session = OB.MobileApp.model.get('session');
-    newPayload.orgUserId = OB.MobileApp.model.get('orgUserId');
-    newPayload.pricelist = OB.MobileApp.model.get('pricelist');
-    newPayload.contextUser = OB.MobileApp.model.get('context').user;
+    newPayload.terminal = OB.App.TerminalProperty.get('terminal');
+    newPayload.session = OB.App.TerminalProperty.get('session');
+    newPayload.orgUserId = OB.App.TerminalProperty.get('orgUserId');
+    newPayload.pricelist = OB.App.TerminalProperty.get('pricelist');
+    newPayload.contextUser = OB.App.TerminalProperty.get('context').user;
 
     return newPayload;
   }

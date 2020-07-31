@@ -552,11 +552,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       }
     });
 
-    const pendingTickets = OB.App.OpenTicketList.getAllTickets().filter(
-      ticket =>
-        ticket.hasbeenpaid === 'N' &&
-        ticket.session === OB.MobileApp.model.get('session') &&
-        ticket.lines.length > 0
+    const pendingTickets = OB.App.OpenTicketList.getSessionTickets().filter(
+      ticket => ticket.hasbeenpaid === 'N' && ticket.lines.length > 0
     );
 
     OB.App.State.Global.markIgnoreCheckIfIsActiveOrderToPendingTickets({

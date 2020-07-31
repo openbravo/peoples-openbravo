@@ -1089,7 +1089,7 @@
       };
 
     // Check in Current Session
-    const openTicketList = OB.App.OpenTicketList.getAllTickets();
+    const openTicketList = OB.App.OpenTicketList.getSessionTickets();
     for (i = 0; i < openTicketList.length; i++) {
       const modelAtIndex = openTicketList[i];
       if (
@@ -1146,7 +1146,7 @@
     }
 
     // Check in Other Session
-    const ordersNotProcessed = OB.App.OpenTicketList.getAllTickets().filter(
+    const ordersNotProcessed = OB.App.OpenTicketList.getOtherSessionsTickets().filter(
       ticket => ticket.hasbeenpaid === 'N'
     );
 
@@ -1229,7 +1229,7 @@
   };
 
   OB.UTIL.TicketListUtils.removeTicket = async function(payload) {
-    const ticketListLength = OB.App.OpenTicketList.getAllTickets().length;
+    const ticketListLength = OB.App.OpenTicketList.getSessionTickets().length;
     try {
       await OB.App.State.Global.removeTicket(payload).then(() => {
         triggerTicketLoadEvents();

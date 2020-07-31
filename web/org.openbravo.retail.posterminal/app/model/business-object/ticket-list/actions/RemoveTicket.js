@@ -22,7 +22,8 @@ OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
   const newState = { ...state };
   const ticketToRemoveId = payload.id;
   const forceNewTicket =
-    payload.forceNewTicket || newState.TicketList.length === 0;
+    payload.forceNewTicket ||
+    !newState.TicketList.some(t => t.session === payload.session);
 
   if (forceNewTicket && payload.businessPartner) {
     newState.Ticket = OB.App.State.Ticket.Utils.newTicket(
@@ -38,8 +39,10 @@ OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
   }
 
   if (!ticketToRemoveId || ticketToRemoveId === newState.Ticket.id) {
-    newState.TicketList = [...state.TicketList];
-    newState.Ticket = newState.TicketList.shift();
+    newState.Ticket = state.TicketList.find(t => t.session === payload.session);
+    newState.TicketList = state.TicketList.filter(
+      ticket => ticket.id !== newState.Ticket.id
+    );
 
     return newState;
   }
