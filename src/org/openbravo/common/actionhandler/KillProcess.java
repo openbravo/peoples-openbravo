@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,10 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.ui.ProcessRun;
 import org.openbravo.scheduling.DefaultJob;
 import org.openbravo.scheduling.KillableProcess;
 import org.openbravo.scheduling.OBScheduler;
@@ -62,37 +65,45 @@ public class KillProcess extends BaseProcessActionHandler {
       Scheduler scheduler = OBScheduler.getInstance().getScheduler();
       List<JobExecutionContext> jobs = scheduler.getCurrentlyExecutingJobs();
       if (jobs.isEmpty()) {
-        throw new Exception(OBMessageUtils.getI18NMessage("ProcessNotFound", null));
-      }
+        // Try to mark this Job in database
+        markProcessShouldBeKilled(strProcessRunId);
+        return getResponseBuilder()
+            .showMsgInProcessView(MessageType.INFO,
+                OBMessageUtils.getI18NMessage("ProcessKilled", null))
+            .build();
+      } else {
+        // Look for the job
+        for (JobExecutionContext job : jobs) {
+          String jobProcessRunId = (String) job.get(org.openbravo.scheduling.Process.EXECUTION_ID);
+          if (jobProcessRunId.equals(strProcessRunId)) {
+            // Job Found
+            DefaultJob jobInstance = (DefaultJob) job.getJobInstance();
+            org.openbravo.scheduling.Process process = jobInstance.getProcessInstance();
+            if (process instanceof KillableProcess) {
+              // Kill Process
+              ((KillableProcess) process).kill(jobInstance.getBundle());
+              jobInstance.setKilled(true);
+              return getResponseBuilder()
+                  .showMsgInProcessView(MessageType.INFO,
+                      OBMessageUtils.getI18NMessage("ProcessKilled", null))
+                  .build();
+            } else {
+              // KillableProcess not implemented
+              return getResponseBuilder()
+                  .showMsgInProcessView(MessageType.WARNING,
+                      OBMessageUtils.getI18NMessage("KillableProcessNotImplemented", null))
+                  .build();
+            }
 
-      // Look for the job
-      for (JobExecutionContext job : jobs) {
-        String jobProcessRunId = (String) job.get(org.openbravo.scheduling.Process.EXECUTION_ID);
-        if (jobProcessRunId.equals(strProcessRunId)) {
-          // Job Found
-          DefaultJob jobInstance = (DefaultJob) job.getJobInstance();
-          org.openbravo.scheduling.Process process = jobInstance.getProcessInstance();
-          if (process instanceof KillableProcess) {
-            // Kill Process
-            ((KillableProcess) process).kill(jobInstance.getBundle());
-            jobInstance.setKilled(true);
-            return getResponseBuilder()
-                .showMsgInProcessView(MessageType.INFO,
-                    OBMessageUtils.getI18NMessage("ProcessKilled", null))
-                .build();
-          } else {
-            // KillableProcess not implemented
-            return getResponseBuilder()
-                .showMsgInProcessView(MessageType.WARNING,
-                    OBMessageUtils.getI18NMessage("KillableProcessNotImplemented", null))
-                .build();
           }
-
         }
       }
-
-      throw new Exception(OBMessageUtils.getI18NMessage("ProcessNotFound", null));
-
+      // Job has not been found in this instance, try to mark in database
+      markProcessShouldBeKilled(strProcessRunId);
+      return getResponseBuilder()
+          .showMsgInProcessView(MessageType.INFO,
+              OBMessageUtils.getI18NMessage("ProcessKilled", null))
+          .build();
     } catch (Exception ex) {
       Throwable e = DbUtility.getUnderlyingSQLException(ex);
       log.error("Error in Kill Process", e);
@@ -107,6 +118,23 @@ public class KillProcess extends BaseProcessActionHandler {
 
     return result;
 
+  }
+
+  /**
+   * Marks a process as should_be_killed, so the instance that's executing it can check DB and kill it
+   * It immediately persists the change to Database
+   * @param processRunId Process to be marked
+   */
+  private void markProcessShouldBeKilled(String processRunId) throws Exception {
+    ProcessRun processRun = OBDal.getInstance().get(ProcessRun.class, processRunId);
+    if (processRun != null) {
+      OBContext.setAdminMode(false);
+      processRun.setShouldBeKilled(true);
+      OBDal.getInstance().flush();
+      OBContext.restorePreviousMode();
+    } else {
+      throw new Exception(OBMessageUtils.getI18NMessage("ProcessNotFound", null));
+    }
   }
 
   private String getTranslatedExceptionMessage(Throwable throwable) {

@@ -1,3 +1,21 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo Public License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
 package org.openbravo.scheduling.quartz;
 
 import java.sql.Connection;
@@ -5,6 +23,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openbravo.scheduling.KillableProcessHandler;
 import org.quartz.JobPersistenceException;
 import org.quartz.SchedulerException;
 import org.quartz.impl.jdbcjobstore.JobStoreTX;
@@ -12,6 +31,7 @@ import org.quartz.impl.jdbcjobstore.JobStoreTX;
 public class OpenbravoPersistentJobStore extends JobStoreTX {
 
   private static Map<String, OpenbravoPersistentJobStore> clusterJobStores = new HashMap<>();
+  private KillableProcessHandler killableProcessHandler = null;
 
   @Override
   public void setInstanceName(String instanceName) {
@@ -33,6 +53,8 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
   public void schedulerStarted() {
     try {
       super.schedulerStarted();
+      killableProcessHandler = new KillableProcessHandler();
+      killableProcessHandler.initialize(this.getThreadExecutor());
       updateSchedulerStatus(OpenbravoJDBCDelegate.SCHEDULER_STATUS_STARTED);
     } catch (SchedulerException | SQLException e) {
       getLog().error("Scheduler state could not be updated(started). {}", e.getMessage());
@@ -51,6 +73,22 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
     } catch (JobPersistenceException | SQLException e) {
       getLog().error("Scheduler state could not be updated. {}", e.getMessage());
     }
+  }
+
+  /**
+   * Shuts down the killableProcessHandler
+   */
+  @Override
+  public void shutdown() {
+    if (killableProcessHandler != null) {
+      killableProcessHandler.shutdown();
+      try {
+        killableProcessHandler.join();
+      } catch (InterruptedException ignore) {
+        killableProcessHandler.interrupt();
+      }
+    }
+    super.shutdown();
   }
 
   private void updateSchedulerStatus(String status) throws JobPersistenceException, SQLException {
