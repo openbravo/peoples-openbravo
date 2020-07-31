@@ -78,9 +78,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       ).toBackboneObject(ticket)
                     )
                   );
-                  // At this point it is sure that there exists at least one order
-                  // Function to continue of there is some error
-                  currentOrder = args.ordersNotPaid[0];
+                  // current order is the one synchronized from the state
+                  currentOrder = OB.MobileApp.model.receipt;
                   //removing Orders lines without mandatory fields filled
                   OB.UTIL.HookManager.executeHooks(
                     'OBPOS_CheckReceiptMandatoryFields',
