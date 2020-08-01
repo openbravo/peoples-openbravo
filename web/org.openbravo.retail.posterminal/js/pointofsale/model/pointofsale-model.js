@@ -73,18 +73,11 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
                       // The order object is stored in the json property of the row fetched from the database
                       orderlist = new Backbone.Collection(
-                        args.ordersNotPaid
-                          .filter(
-                            // if current ticket has been updated in updateCurrentTicketIfNeeded,
-                            // then it is present in the list and we should skip it
-                            ticket =>
-                              ticket.id !== OB.App.State.getState().Ticket.id
-                          )
-                          .map(ticket =>
-                            OB.App.StateBackwardCompatibility.getInstance(
-                              'Ticket'
-                            ).toBackboneObject(ticket)
-                          )
+                        args.ordersNotPaid.map(ticket =>
+                          OB.App.StateBackwardCompatibility.getInstance(
+                            'Ticket'
+                          ).toBackboneObject(ticket)
+                        )
                       );
                       // current order is the one synchronized from the state
                       currentOrder = OB.MobileApp.model.receipt;
@@ -166,10 +159,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       multiOrderList = multiOrders.get('multiOrdersList'),
       me = this;
 
-    const possibleMultiOrder = OB.App.OpenTicketList.getAllTickets().filter(
-      ticket =>
-        ticket.hasbeenpaid === 'N' &&
-        ticket.session === OB.MobileApp.model.get('session')
+    const possibleMultiOrder = OB.App.OpenTicketList.getSessionTickets().filter(
+      ticket => ticket.hasbeenpaid === 'N'
     );
 
     //OB.Dal.find success
