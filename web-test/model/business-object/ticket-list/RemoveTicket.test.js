@@ -6,12 +6,17 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+/*global global*/
 
 OB = { App: { Class: {} } };
+
+global.lodash = require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const deepfreeze = require('deepfreeze');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketList');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/RemoveTicket');
+require('./SetupTicketListUtils');
 
 describe('Remove Ticket actions', () => {
   let action;
@@ -73,7 +78,6 @@ describe('Remove Ticket actions', () => {
     };
     deepfreeze(state);
 
-    OB.App.State = { Ticket: { Utils: {} } };
     OB.App.State.Ticket.Utils.newTicket = jest
       .fn()
       .mockReturnValue({ id: 'C' });
@@ -82,7 +86,7 @@ describe('Remove Ticket actions', () => {
     expect(newState.TicketList).toHaveLength(1);
     expect(newState.Ticket.id).toEqual('C');
 
-    delete OB.App.State;
+    delete OB.App.State.Ticket.Utils.newTicket;
   });
 
   it('creates new ticket when list is empty', () => {
@@ -93,7 +97,6 @@ describe('Remove Ticket actions', () => {
     const payload = { businessPartner: { id: 'BP1' } };
     deepfreeze(state);
 
-    OB.App.State = { Ticket: { Utils: {} } };
     OB.App.State.Ticket.Utils.newTicket = jest
       .fn()
       .mockReturnValue({ id: 'C' });
@@ -101,6 +104,6 @@ describe('Remove Ticket actions', () => {
     const newState = action(state, payload);
     expect(newState.Ticket.id).toEqual('C');
 
-    delete OB.App.State;
+    delete OB.App.State.Ticket.Utils.newTicket;
   });
 });
