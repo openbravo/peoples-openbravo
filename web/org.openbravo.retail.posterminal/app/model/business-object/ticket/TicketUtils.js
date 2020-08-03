@@ -1107,6 +1107,28 @@
      * @returns {object} Ticket payment status.
      */
     getPaymentStatus(ticket, payload) {
+      if (payload.isMultiTicket) {
+        const { total, payment } = ticket;
+        return {
+          total: OB.I18N.formatCurrency(total),
+          pending:
+            OB.DEC.compare(OB.DEC.sub(payment, total)) >= 0
+              ? OB.I18N.formatCurrency(OB.DEC.Zero)
+              : OB.I18N.formatCurrency(OB.DEC.sub(total, payment)),
+          overpayment:
+            OB.DEC.compare(OB.DEC.sub(payment, total)) > 0
+              ? OB.DEC.sub(payment, total)
+              : null,
+          isReturn: ticket.gross < 0,
+          isNegative: ticket.gross < 0,
+          totalAmt: total,
+          pendingAmt:
+            OB.DEC.compare(OB.DEC.sub(payment, total)) >= 0
+              ? OB.DEC.Zero
+              : OB.DEC.sub(total, payment),
+          payments: ticket.payments
+        };
+      }
       const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
       const isReversal = ticket.payments.some(
         payment => payment.reversedPaymentId

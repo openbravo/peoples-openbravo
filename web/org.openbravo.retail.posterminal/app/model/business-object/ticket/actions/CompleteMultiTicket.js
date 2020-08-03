@@ -27,7 +27,7 @@
         if (ticketCloseId === newTicket.id) {
           ticket = newTicket;
         } else {
-          [ticket] = newTicketList.tickets.filter(
+          [ticket] = newTicketList.filter(
             ticketOfFilter => ticketOfFilter.id === ticketCloseId
           );
         }
@@ -132,15 +132,21 @@
 
   OB.App.StateAPI.Global.completeMultiTicket.addActionPreparation(
     async (globalState, payload) => {
-      const newPayload = { ...payload };
+      let newPayload = { ...payload };
+
+      newPayload.ticketsIdToClose = newPayload.multiTickets.multiOrdersList.map(
+        ticket => ticket.id
+      );
+
+      newPayload.isMultiTicket = true;
 
       // eslint-disable-next-line no-restricted-syntax
-      for (const ticketCloseId of payload.ticketsIdToClose) {
+      for (const ticketCloseId of newPayload.ticketsIdToClose) {
         let ticket;
         if (ticketCloseId === globalState.Ticket.id) {
           ticket = globalState.Ticket;
         } else {
-          [ticket] = globalState.TicketList.tickets.filter(
+          [ticket] = globalState.TicketList.filter(
             ticketOfFilter => ticketOfFilter.id === ticketCloseId
           );
         }
@@ -157,26 +163,41 @@
           ticket,
           ticketPayload
         );
-        // eslint-disable-next-line no-await-in-loop
-        ticketPayload = await OB.App.State.Ticket.Utils.checkNegativePayments(
-          ticket,
-          ticketPayload
-        );
-        // eslint-disable-next-line no-await-in-loop
-        ticketPayload = await OB.App.State.Ticket.Utils.checkExtraPayments(
-          ticket,
-          ticketPayload
-        );
-        // eslint-disable-next-line no-await-in-loop
-        ticketPayload = await OB.App.State.Ticket.Utils.checkPrePayments(
-          ticket,
-          ticketPayload
-        );
-        // eslint-disable-next-line no-await-in-loop
-        ticketPayload = await OB.App.State.Ticket.Utils.checkOverPayments(
-          ticket,
-          ticketPayload
-        );
+      }
+
+      // eslint-disable-next-line no-await-in-loop
+      newPayload = await OB.App.State.Ticket.Utils.checkNegativePayments(
+        newPayload.multiTickets,
+        newPayload
+      );
+      // eslint-disable-next-line no-await-in-loop
+      newPayload = await OB.App.State.Ticket.Utils.checkExtraPayments(
+        newPayload.multiTickets,
+        newPayload
+      );
+      // eslint-disable-next-line no-await-in-loop
+      newPayload = await OB.App.State.Ticket.Utils.checkPrePayments(
+        newPayload.multiTickets,
+        newPayload
+      );
+      // eslint-disable-next-line no-await-in-loop
+      newPayload = await OB.App.State.Ticket.Utils.checkOverPayments(
+        newPayload.multiTickets,
+        newPayload
+      );
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const ticketCloseId of newPayload.ticketsIdToClose) {
+        let ticket;
+        if (ticketCloseId === globalState.Ticket.id) {
+          ticket = globalState.Ticket;
+        } else {
+          [ticket] = globalState.TicketList.filter(
+            ticketOfFilter => ticketOfFilter.id === ticketCloseId
+          );
+        }
+
+        let ticketPayload = newPayload;
         // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
           ticket,

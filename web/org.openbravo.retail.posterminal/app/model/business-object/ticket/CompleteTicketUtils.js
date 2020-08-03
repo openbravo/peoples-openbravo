@@ -494,13 +494,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if given ticket includes negative payments.
    */
   async checkNegativePayments(ticket, payload) {
+    const isReturnTicket = payload.isMultiTicket ? false : ticket.isNegative;
     if (
       ticket.payments
         .filter(payment => payment.isReturnOrder !== undefined)
-        .some(payment => payment.isReturnOrder !== ticket.isNegative)
+        .some(payment => payment.isReturnOrder !== isReturnTicket)
     ) {
       throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: ticket.isNegative
+        errorConfirmation: isReturnTicket
           ? 'OBPOS_PaymentOnReturnReceipt'
           : 'OBPOS_NegativePaymentOnReceipt'
       });
@@ -513,8 +514,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if unnecessary payments exists for given ticket.
    */
   async checkExtraPayments(ticket, payload) {
+    const totalToPaid = OB.DEC.abs(
+      payload.isMultiTicket ? ticket.total : ticket.grossAmount
+    );
     ticket.payments.reduce((total, payment) => {
-      if (total >= OB.DEC.abs(ticket.grossAmount) && !payment.paymentRounding) {
+      if (total >= totalToPaid && !payment.paymentRounding) {
         throw new OB.App.Class.ActionCanceled({
           errorConfirmation: 'OBPOS_UnnecessaryPaymentAdded'
         });

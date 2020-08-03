@@ -611,12 +611,9 @@
             discountRules: OB.Discounts.Pos.ruleImpls,
             bpSets: OB.Discounts.Pos.bpSets,
             taxRules: OB.Taxes.Pos.ruleImpls,
-            ticketsIdToClose:
-              completeTicketAction === OB.App.State.Global.completeMultiTicket
-                ? OB.MobileApp.model.multiOrders
-                    .get('multiOrdersList')
-                    .models.map(ticket => ticket.get('id'))
-                : undefined
+            multiTickets: OB.MobileApp.model.multiOrders
+              ? JSON.parse(JSON.stringify(OB.MobileApp.model.multiOrders))
+              : undefined
           });
 
           if (actionName !== 'deleteCurrentOrder') {
