@@ -95,10 +95,12 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
 
   private void removeProductCategoryFromAssortment(final OBRETCOProductList assortment,
       final ProductCategory productCategory) {
-    final OBRETCOProductcategory assortmentProductCategory = getAssortmentProductCategory(
-        assortment, productCategory);
-    if (assortmentProductCategory != null) {
-      removeAssortmentProductCategory(assortmentProductCategory);
+    if (getAssortmentProductCountByCategory(assortment, productCategory) == 1) {
+      final OBRETCOProductcategory assortmentProductCategory = getAssortmentProductCategory(
+          assortment, productCategory);
+      if (assortmentProductCategory != null) {
+        removeAssortmentProductCategory(assortmentProductCategory);
+      }
     }
   }
 
@@ -138,6 +140,28 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
       return (OBRETCOProductcategory) qry.uniqueResult();
     }
     return null;
+  }
+
+  private long getAssortmentProductCountByCategory(final OBRETCOProductList assortment,
+      final ProductCategory productCategory) {
+    Query<OBRETCOProductList> assormentQuery = OBDal.getInstance()
+        .getSession()
+        .createQuery("from OBRETCO_ProductList where id=:assortmentId", OBRETCOProductList.class);
+    assormentQuery.setParameter("assortmentId", assortment.getId());
+    assormentQuery.setLockOptions(LockOptions.UPGRADE);
+    OBRETCOProductList lockedAssortment = assormentQuery.uniqueResult();
+
+    if (lockedAssortment != null) {
+      final String query = "select count(id) from OBRETCO_Prol_Product where client.id=:clientId and "
+          + "obretcoProductlist.id=:assortmentId and product.productCategory.id=:categoryId";
+      @SuppressWarnings("rawtypes")
+      Query qry = OBDal.getInstance().getSession().createQuery(query);
+      qry.setParameter("clientId", lockedAssortment.getClient().getId());
+      qry.setParameter("assortmentId", lockedAssortment.getId());
+      qry.setParameter("categoryId", productCategory.getId());
+      return (long) qry.uniqueResult();
+    }
+    return 0;
   }
 
 }

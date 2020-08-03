@@ -1812,6 +1812,7 @@ enyo.kind({
             me.amountToLayaway = amountToLayaway;
             me.existingPayment = existingPayment;
             me.multiOrders.set('total', me.total);
+            me.multiOrders.set('gross', me.total); // to match the gross field in receipt class
             me.multiOrders.set('obposPrepaymentamt', me.prepayment);
             me.multiOrders.set('obposPrepaymentlimitamt', me.prepaymentLimit);
             me.multiOrders.set('amountToLayaway', me.amountToLayaway);

@@ -3239,6 +3239,7 @@ enyo.kind({
         payment: this.owner.model,
         removeCallback: function() {
           me.deleting = false;
+          me.putDisabled(false);
           me.removeClass('obObposPointOfSaleUiRemovePayment_iconLoading');
           me.addClass('obObposPointOfSaleUiRemovePayment_iconClearPayment');
         }

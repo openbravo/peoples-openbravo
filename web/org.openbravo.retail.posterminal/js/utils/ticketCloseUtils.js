@@ -223,6 +223,14 @@
             if (invoice && invoice.get('id')) {
               var invoiceToPrint = OB.UTIL.clone(invoice),
                 printInvoice = function() {
+                  invoiceToPrint.get('payments').reset();
+                  clonedCollection.each(function(model) {
+                    invoiceToPrint
+                      .get('payments')
+                      .add(new Backbone.Model(model.toJSON()), {
+                        silent: true
+                      });
+                  });
                   invoiceToPrint.set('hasbeenpaid', 'Y');
                   receipt.trigger('print', invoiceToPrint, {
                     offline: true
