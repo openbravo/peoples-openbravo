@@ -968,7 +968,7 @@ enyo.kind({
       OB.DEC.sub(this.order.getTotal(), this.order.getNet())
     );
     this.$.listOrderLines.setCollection(this.order.get('lines'));
-    this.$.listPaymentLines.setCollection(this.order.get('payments'));
+    this.$.listPaymentLines.setCollection(new Backbone.Collection());
     this.setTaxes();
     this.order.on(
       'change:isNegative',
@@ -1045,6 +1045,17 @@ enyo.kind({
       'change:hasbeenpaid',
       function(model) {
         this.$.divText.changeHasbeenpaid(model);
+      },
+      this
+    );
+    this.order.on(
+      'loadedOrder',
+      function() {
+        const payments = [];
+        this.order.get('payments').models.forEach(function(p) {
+          payments.push(p.clone());
+        });
+        this.$.listPaymentLines.getCollection().reset(payments);
       },
       this
     );

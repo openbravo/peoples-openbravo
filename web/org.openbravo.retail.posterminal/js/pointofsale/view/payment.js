@@ -3076,7 +3076,11 @@ enyo.kind({
               name: 'removePayment',
               kind: 'OB.OBPOSPointOfSale.UI.RemovePayment',
               classes:
-                'obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment'
+                'obObposPointOfSaleUiRenderPaymentLine-container1-container2-removePayment',
+              hideButton: function() {
+                this.hide();
+                this.parent.addClass('u-displayNone');
+              }
             }
           ]
         },
@@ -3088,7 +3092,11 @@ enyo.kind({
               name: 'reversePayment',
               kind: 'OB.OBPOSPointOfSale.UI.ReversePayment',
               classes:
-                'obObposPointOfSaleUiRenderPaymentLine-container1-container3-reversePayment'
+                'obObposPointOfSaleUiRenderPaymentLine-container1-container3-reversePayment',
+              hideButton: function() {
+                this.hide();
+                this.parent.addClass('u-displayNone');
+              }
             }
           ]
         }
@@ -3104,14 +3112,12 @@ enyo.kind({
         (OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
           this.model.get('name')) + OB.I18N.getLabel('OBPOS_ReversedPayment')
       );
-      this.$.amount.setContent(this.model.printAmount());
     } else if (this.model.get('isReversed')) {
       this.$.name.setContent(
         '*' +
           (OB.MobileApp.model.getPaymentName(this.model.get('kind')) ||
             this.model.get('name'))
       );
-      this.$.amount.setContent(this.model.printAmount());
     } else {
       if (this.model.get('isPrePayment') && !this.model.get('paymentAmount')) {
         this.$.name.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
@@ -3121,11 +3127,27 @@ enyo.kind({
             this.model.get('name')
         );
       }
-      this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
     }
     if (this.model.get('rate') && this.model.get('rate') !== '1') {
-      this.$.foreignAmount.setContent(this.model.printForeignAmount());
+      if (this.model.get('reversedPaymentId') || this.model.get('isReversed')) {
+        this.$.amount.setContent(this.model.printCurrencyForeignAmount());
+        this.$.foreignAmount.setContent(
+          '(' + this.model.printCurrencyAmount() + ')'
+        );
+      } else {
+        this.$.amount.setContent(
+          this.model.printCurrencyForeignAmountWithSignum(receipt)
+        );
+        this.$.foreignAmount.setContent(
+          '(' + this.model.printCurrencyAmount(receipt) + ')'
+        );
+      }
     } else {
+      if (this.model.get('reversedPaymentId') || this.model.get('isReversed')) {
+        this.$.amount.setContent(this.model.printAmount());
+      } else {
+        this.$.amount.setContent(this.model.printAmountWithSignum(receipt));
+      }
       this.$.foreignAmount.setContent('');
     }
     if (this.model.get('description')) {
@@ -3162,13 +3184,13 @@ enyo.kind({
             .get('order')
             .get('doCancelAndReplace')))
     ) {
-      this.$.removePayment.hide();
-      this.$.reversePayment.hide();
+      this.$.removePayment.hideButton();
+      this.$.reversePayment.hideButton();
     } else if (
       this.model.has('paymentRounding') &&
       this.model.get('paymentRounding')
     ) {
-      this.$.removePayment.hide();
+      this.$.removePayment.hideButton();
       if (this.model.get('isPaid') && !this.model.get('isReversePayment')) {
         this.$.reversePayment.removeClass(
           'obObposPointOfSaleUiReversePayment_iconReversePayment'
@@ -3178,23 +3200,23 @@ enyo.kind({
           'obObposPointOfSaleUiReversePaymentRounding'
         );
       } else {
-        this.$.reversePayment.hide();
+        this.$.reversePayment.hideButton();
       }
     } else if (
       this.model.get('isPrePayment') &&
       OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)
     ) {
-      this.$.removePayment.hide();
+      this.$.removePayment.hideButton();
       this.$.reversePayment.show();
     } else if (
       this.model.get('isPrePayment') &&
       !OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)
     ) {
-      this.$.removePayment.hide();
-      this.$.reversePayment.hide();
+      this.$.removePayment.hideButton();
+      this.$.reversePayment.hideButton();
     } else {
       this.$.removePayment.show();
-      this.$.reversePayment.hide();
+      this.$.reversePayment.hideButton();
     }
   },
   initComponents: function() {

@@ -332,15 +332,11 @@
         return this.get('amount');
       }
     },
+    getForeignAmount: function() {
+      return this.get('amount');
+    },
     printAmount: function() {
-      if (this.get('rate')) {
-        return OB.I18N.formatCurrency(
-          this.get('origAmount') ||
-            OB.DEC.div(this.get('amount'), this.get('mulrate'))
-        );
-      } else {
-        return OB.I18N.formatCurrency(this.get('amount'));
-      }
+      return OB.I18N.formatCurrency(this.getAmount());
     },
     printForeignAmount: function() {
       return (
@@ -351,17 +347,40 @@
         ')'
       );
     },
-    printAmountWithSignum: function(order) {
+    printAmountWithSignum: function(order, amount) {
       var paidReturn =
         !this.get('isPrePayment') &&
         OB.DEC.compare(order.getGross()) !== -1 &&
         order.isNegative();
       // if the ticket is a paid return, new payments must be displayed in negative
       if (paidReturn) {
-        return OB.I18N.formatCurrency(OB.DEC.mul(this.getAmount(), -1));
+        return OB.I18N.formatCurrency(
+          OB.DEC.mul(amount || this.getAmount(), -1)
+        );
       } else {
-        return OB.I18N.formatCurrency(this.getAmount());
+        return OB.I18N.formatCurrency(amount || this.getAmount());
       }
+    },
+    printCurrencyAmount: function() {
+      return (
+        OB.I18N.formatCurrency(this.getAmount()) +
+        ' ' +
+        OB.MobileApp.model.get('terminal').currency$_identifier
+      );
+    },
+    printCurrencyForeignAmount: function() {
+      return (
+        OB.I18N.formatCurrency(this.getForeignAmount()) +
+        ' ' +
+        this.get('isocode')
+      );
+    },
+    printCurrencyForeignAmountWithSignum: function(order) {
+      return (
+        this.printAmountWithSignum(order, this.getForeignAmount()) +
+        ' ' +
+        this.get('isocode')
+      );
     }
   });
 
@@ -10794,6 +10813,7 @@
               if (callback instanceof Function) {
                 callback(me.modelorder);
               }
+              me.modelorder.trigger('loadedOrder');
             }
           );
         }
