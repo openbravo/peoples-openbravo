@@ -552,7 +552,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       }
     });
 
-    const pendingTickets = OB.App.OpenTicketList.getSessionTickets().filter(
+    const pendingTickets = OB.App.OpenTicketList.getAllTickets().filter(
       ticket => ticket.hasbeenpaid === 'N' && ticket.lines.length > 0
     );
 

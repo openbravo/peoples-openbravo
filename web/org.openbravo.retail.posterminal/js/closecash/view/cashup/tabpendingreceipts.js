@@ -182,8 +182,7 @@ enyo.kind({
     );
   },
   bringOrder: function(inSender, inEvent) {
-    var me = this,
-      jsonOrder;
+    var me = this;
     OB.UTIL.showConfirmation.display(
       OB.I18N.getLabel('OBPOS_ConfirmBringOrder'),
       OB.I18N.getLabel('OBPOS_MsgConfirmBringOrder'),
@@ -192,13 +191,12 @@ enyo.kind({
           label: OB.I18N.getLabel('OBPOS_LblYesBring'),
           isConfirmButton: true,
           action: function() {
-            jsonOrder = JSON.parse(me.model.get('json'));
-            jsonOrder.session = OB.MobileApp.model.get('session');
-            jsonOrder.createdBy = OB.MobileApp.model.usermodel.id;
-            jsonOrder.updatedBy = OB.MobileApp.model.usermodel.id;
-            me.model.set('json', JSON.stringify(jsonOrder));
-            me.model.set('session', OB.MobileApp.model.get('session'));
-            OB.Dal.save(me.model, null, null, false);
+            OB.App.State.TicketList.bringTicket({
+              ticketIds: [me.model.id],
+              session: OB.MobileApp.model.get('session')
+            }).then(() =>
+              me.model.set('session', OB.MobileApp.model.get('session'))
+            );
           }
         },
         {
@@ -357,8 +355,7 @@ enyo.kind({
     );
   },
   bringAllPendingReceipts: function(inSender, inEvent) {
-    var me = this,
-      jsonOrder;
+    var me = this;
     OB.UTIL.showConfirmation.display(
       OB.I18N.getLabel('OBPOS_ConfirmBringOrder'),
       OB.I18N.getLabel('OBPOS_cannotBeUndone'),
@@ -367,18 +364,15 @@ enyo.kind({
           label: OB.I18N.getLabel('OBPOS_LblYesBring'),
           isConfirmButton: true,
           action: function() {
-            _.each(me.collection.models, function(model) {
-              if (model.get('session') !== OB.MobileApp.model.get('session')) {
-                jsonOrder = JSON.parse(model.get('json'));
-                jsonOrder.session = OB.MobileApp.model.get('session');
-                jsonOrder.createdBy = OB.MobileApp.model.usermodel.id;
-                jsonOrder.updatedBy = OB.MobileApp.model.usermodel.id;
-                model.set('json', JSON.stringify(jsonOrder));
-                model.set('session', OB.MobileApp.model.get('session'));
-                OB.Dal.save(model, null, null, false);
-              }
+            OB.App.State.TicketList.bringTicket({
+              ticketIds: me.collection.models.map(m => m.id),
+              session: OB.MobileApp.model.get('session')
+            }).then(() => {
+              me.collection.models.forEach(m =>
+                m.set('session', OB.MobileApp.model.get('session'))
+              );
+              me.$.btnBringAll.hide();
             });
-            me.$.btnBringAll.hide();
           }
         },
         {
