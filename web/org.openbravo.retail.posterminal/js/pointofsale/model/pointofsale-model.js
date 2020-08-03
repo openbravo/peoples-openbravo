@@ -31,119 +31,107 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     let currentOrder = {},
       loadOrderStr;
 
-    // Before loading the list, get rid of the not pending tickets
-    OB.App.State.TicketList.removeTickets({
-      removeFilter: ticket =>
-        ticket.hasbeenpaid === 'Y' &&
-        ticket.session === OB.MobileApp.model.get('session')
-    }).then(() => {
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_PreLoadUnpaidOrdersHook',
-        {
-          ordersNotPaid: ordersNotPaid,
-          model: model
-        },
-        function(args) {
-          OB.MobileApp.model.on(
-            'window:ready',
-            function() {
-              OB.MobileApp.model.off('window:ready', null, model);
-              const addNewOrderCallback = () => {
-                if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
-                  // If there are no pending orders, add an initial empty order
-                  OB.App.State.Global.createEmptyTicket().then(() => {
-                    OB.MobileApp.model.receipt.setIsCalculateGrossLockState(
-                      false
-                    );
-                    OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(
-                      false
-                    );
-                    OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_PreLoadUnpaidOrdersHook',
+      {
+        ordersNotPaid: ordersNotPaid,
+        model: model
+      },
+      function(args) {
+        OB.MobileApp.model.on(
+          'window:ready',
+          function() {
+            OB.MobileApp.model.off('window:ready', null, model);
+            const addNewOrderCallback = () => {
+              if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
+                // If there are no pending orders, add an initial empty order
+                OB.App.State.Global.createEmptyTicket().then(() => {
+                  OB.MobileApp.model.receipt.setIsCalculateGrossLockState(
+                    false
+                  );
+                  OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(
+                    false
+                  );
+                  OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
 
-                    OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
-                      newOrder: OB.App.StateBackwardCompatibility.getInstance(
-                        'Ticket'
-                      ).toBackboneObject(OB.App.State.getState().Ticket)
-                    });
+                  OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
+                    newOrder: OB.App.StateBackwardCompatibility.getInstance(
+                      'Ticket'
+                    ).toBackboneObject(OB.App.State.getState().Ticket)
                   });
-                } else {
-                  model
-                    .updateCurrentTicketIfNeeded(args.ordersNotPaid)
-                    .then(() => {
-                      OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
-                      // The order object is stored in the json property of the row fetched from the database
-                      orderlist = new Backbone.Collection(
-                        args.ordersNotPaid.map(ticket =>
-                          OB.App.StateBackwardCompatibility.getInstance(
-                            'Ticket'
-                          ).toBackboneObject(ticket)
-                        )
-                      );
-                      // current order is the one synchronized from the state
-                      currentOrder = OB.MobileApp.model.receipt;
-                      //removing Orders lines without mandatory fields filled
-                      OB.UTIL.HookManager.executeHooks(
-                        'OBPOS_CheckReceiptMandatoryFields',
-                        {
-                          orders: orderlist.models // local backbone array, not OrderList instance
-                        },
-                        function(args) {
-                          reCalculateReceipt = args.reCalculateReceipt;
-                          OB.UTIL.TicketListUtils.loadTicketById(
-                            currentOrder.id
-                          ).then(() => {
-                            if (reCalculateReceipt) {
-                              OB.MobileApp.model.receipt.calculateGrossAndSave();
-                            }
-
-                            if (currentOrder.documentNo) {
-                              loadOrderStr =
-                                OB.I18N.getLabel('OBPOS_Order') +
-                                currentOrder.documentNo +
-                                OB.I18N.getLabel('OBPOS_Loaded');
-                              OB.UTIL.showAlert.display(
-                                loadOrderStr,
-                                OB.I18N.getLabel('OBPOS_Info')
-                              );
-                            }
-                          });
-                        }
-                      );
-                    });
-                }
-              };
-              if (
-                OB.MobileApp.model.get('terminal').terminalType.safebox &&
-                OB.UTIL.isNullOrUndefined(
-                  OB.UTIL.localStorage.getItem('currentSafeBox')
-                )
-              ) {
-                OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-                  popup: 'OBPOS_modalSafeBox',
-                  args: {
-                    callback: addNewOrderCallback
-                  }
                 });
               } else {
-                addNewOrderCallback();
+                model
+                  .updateCurrentTicketIfNeeded(args.ordersNotPaid)
+                  .then(() => {
+                    OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
+                    // The order object is stored in the json property of the row fetched from the database
+                    orderlist = new Backbone.Collection(
+                      args.ordersNotPaid.map(ticket =>
+                        OB.App.StateBackwardCompatibility.getInstance(
+                          'Ticket'
+                        ).toBackboneObject(ticket)
+                      )
+                    );
+                    // current order is the one synchronized from the state
+                    currentOrder = OB.MobileApp.model.receipt;
+                    //removing Orders lines without mandatory fields filled
+                    OB.UTIL.HookManager.executeHooks(
+                      'OBPOS_CheckReceiptMandatoryFields',
+                      {
+                        orders: orderlist.models // local backbone array, not OrderList instance
+                      },
+                      function(args) {
+                        reCalculateReceipt = args.reCalculateReceipt;
+                        OB.UTIL.TicketListUtils.loadTicketById(
+                          currentOrder.id
+                        ).then(() => {
+                          if (reCalculateReceipt) {
+                            OB.MobileApp.model.receipt.calculateGrossAndSave();
+                          }
+
+                          if (currentOrder.documentNo) {
+                            loadOrderStr =
+                              OB.I18N.getLabel('OBPOS_Order') +
+                              currentOrder.documentNo +
+                              OB.I18N.getLabel('OBPOS_Loaded');
+                            OB.UTIL.showAlert.display(
+                              loadOrderStr,
+                              OB.I18N.getLabel('OBPOS_Info')
+                            );
+                          }
+                        });
+                      }
+                    );
+                  });
               }
-            },
-            model
-          );
-          loadUnpaidOrdersCallback();
-        }
-      );
-    });
+            };
+            if (
+              OB.MobileApp.model.get('terminal').terminalType.safebox &&
+              OB.UTIL.isNullOrUndefined(
+                OB.UTIL.localStorage.getItem('currentSafeBox')
+              )
+            ) {
+              OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
+                popup: 'OBPOS_modalSafeBox',
+                args: {
+                  callback: addNewOrderCallback
+                }
+              });
+            } else {
+              addNewOrderCallback();
+            }
+          },
+          model
+        );
+        loadUnpaidOrdersCallback();
+      }
+    );
   },
 
   updateCurrentTicketIfNeeded: async function(unPaidTickets) {
     const stateTicket = OB.App.State.getState().Ticket;
-    if (stateTicket.hasbeenpaid === 'Y') {
-      await OB.App.State.Global.loadTicketById({
-        id: unPaidTickets[0].id,
-        enqueueCurrent: false
-      });
-    } else if (stateTicket.session !== OB.App.TerminalProperty.get('session')) {
+    if (stateTicket.session !== OB.App.TerminalProperty.get('session')) {
       await OB.App.State.Global.loadTicketById({
         id: unPaidTickets[0].id
       });

@@ -1256,12 +1256,8 @@
         'OBPOS_approval.removereceipts',
         function(approved, supervisor, approvalType) {
           if (approved) {
-            //All pending to be paid orders will be removed on logout
-            const filteredTickets = OB.App.OpenTicketList.getSessionTickets().filter(
-              ticket => ticket.hasbeenpaid === 'N'
-            );
-
-            success(filteredTickets);
+            // On logout remove pending orders and close opened paid orders
+            success(OB.App.OpenTicketList.getSessionTickets());
           }
         }
       );
