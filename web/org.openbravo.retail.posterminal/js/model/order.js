@@ -5436,6 +5436,9 @@
           externalBusinessPartnerCategory: null,
           externalBusinessPartner: null
         });
+        if (oldbp.id === businessPartner.id) {
+          me.trigger('change:bp', me);
+        }
         me.save(function() {
           OB.MobileApp.model.orderList.saveCurrent();
           if (saveBPCallback) {
@@ -5596,117 +5599,9 @@
             );
           }
         }
+      }
 
-        var saveBP = function() {
-          if (
-            !businessPartner.get('locId') ||
-            !businessPartner.get('shipLocId')
-          ) {
-            businessPartner.loadBPLocations(
-              null,
-              null,
-              function(shipping, billing, locations) {
-                businessPartner.set('locations', locations);
-                businessPartner.set(
-                  'locationModel',
-                  shipping ? shipping : billing
-                );
-                businessPartner.set('locationBillModel', billing);
-                businessPartner.set('locId', billing.get('id'));
-                businessPartner.set('locName', billing.get('name'));
-                businessPartner.set('postalCode', billing.get('postalCode'));
-                businessPartner.set('cityName', billing.get('cityName'));
-                businessPartner.set('countryName', billing.get('countryName'));
-                if (shipping && !businessPartner.get('assignedShipAddr')) {
-                  businessPartner.set('shipLocId', shipping.get('id'));
-                  businessPartner.set('shipLocName', shipping.get('name'));
-                  businessPartner.set(
-                    'shipPostalCode',
-                    shipping.get('postalCode')
-                  );
-                  businessPartner.set('shipCityName', shipping.get('cityName'));
-                  businessPartner.set(
-                    'shipCountryName',
-                    shipping.get('countryName')
-                  );
-                  businessPartner.set('shipRegionId', shipping.get('regionId'));
-                  businessPartner.set(
-                    'shipCountryId',
-                    shipping.get('countryId')
-                  );
-                }
-                finishSaveData(callback);
-              },
-              businessPartner.get('id')
-            );
-          } else {
-            finishSaveData(callback);
-          }
-        };
-
-        var saveLocModel = async function(locModel, lid, callback) {
-          if (businessPartner.get(locModel)) {
-            if (callback) {
-              callback();
-            }
-          } else if (businessPartner.get(lid)) {
-            if (
-              OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
-            ) {
-              OB.Dal.get(
-                OB.Model.BPLocation,
-                businessPartner.get(lid),
-                function(location) {
-                  businessPartner.set(locModel, location);
-                  if (callback) {
-                    callback();
-                  }
-                },
-                function() {
-                  OB.error(arguments);
-                  if (callback) {
-                    callback();
-                  }
-                },
-                function() {
-                  if (callback) {
-                    callback();
-                  }
-                }
-              );
-            } else {
-              try {
-                let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
-                  businessPartner.get(lid)
-                );
-                let location = OB.Dal.transform(
-                  OB.Model.BPLocation,
-                  bPLocation
-                );
-                businessPartner.set(locModel, location);
-                if (callback) {
-                  callback();
-                }
-              } catch (error) {
-                OB.error(arguments);
-                if (callback) {
-                  callback();
-                }
-              }
-            }
-          } else {
-            if (callback) {
-              callback();
-            }
-          }
-        };
-
-        saveLocModel('locationModel', 'shipLocId', function() {
-          saveLocModel('locationBillModel', 'locId', function() {
-            saveBP();
-          });
-        });
-      } else {
+      var saveBP = function() {
         if (
           !businessPartner.get('locId') ||
           !businessPartner.get('shipLocId')
@@ -5746,9 +5641,100 @@
             businessPartner.get('id')
           );
         } else {
+          let locations = [];
+          if (OB.UTIL.isNullOrUndefined(businessPartner.get('locations'))) {
+            businessPartner.set('locations', []);
+          }
+          if (
+            businessPartner.get('locId') === businessPartner.get('shipLocId')
+          ) {
+            locations.push(businessPartner.get('locationModel').clone());
+          } else if (
+            businessPartner.get('locId') !== businessPartner.get('shipLocId')
+          ) {
+            locations.push(businessPartner.get('locationModel').clone());
+            locations.push(businessPartner.get('locationBillModel').clone());
+          }
+          locations.forEach(function(l1) {
+            let locExists = false;
+            businessPartner.get('locations').forEach(function(l2) {
+              if (!locExists && l1.id === l2.id) {
+                locExists = true;
+              }
+            });
+            if (!locExists) {
+              businessPartner.get('locations').push(l1);
+            }
+          });
           finishSaveData(callback);
         }
-      }
+      };
+
+      var saveLocModel = async function(locModel, lid, callback) {
+        if (businessPartner.get(locModel)) {
+          if (callback) {
+            callback();
+          }
+        } else if (businessPartner.get(lid)) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+            OB.Dal.get(
+              OB.Model.BPLocation,
+              businessPartner.get(lid),
+              function(location) {
+                businessPartner.set(locModel, location);
+                if (callback) {
+                  callback();
+                }
+              },
+              function() {
+                OB.error(arguments);
+                if (callback) {
+                  callback();
+                }
+              },
+              function() {
+                if (callback) {
+                  callback();
+                }
+              }
+            );
+          } else {
+            try {
+              let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                businessPartner.get(lid)
+              );
+              let location = OB.Dal.transform(OB.Model.BPLocation, bPLocation);
+              businessPartner.set(locModel, location);
+              if (callback) {
+                callback();
+              }
+            } catch (error) {
+              OB.error(arguments);
+              if (callback) {
+                callback();
+              }
+            }
+          }
+        } else {
+          if (callback) {
+            callback();
+          }
+        }
+      };
+
+      saveLocModel('locationModel', 'shipLocId', function() {
+        if (businessPartner.get('locId') === businessPartner.get('shipLocId')) {
+          businessPartner.set(
+            'locationBillModel',
+            businessPartner.get('locationModel')
+          );
+          saveBP();
+        } else {
+          saveLocModel('locationBillModel', 'locId', function() {
+            saveBP();
+          });
+        }
+      });
     },
 
     validateAllowSalesWithReturn: function(qty, skipValidaton, selectedModels) {
