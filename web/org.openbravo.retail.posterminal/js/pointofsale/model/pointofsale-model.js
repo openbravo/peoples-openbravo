@@ -21,7 +21,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     // Shows a modal window with the orders pending to be paid
     var orderlist = this.get('orderList'),
       model = this,
-      reCalculateReceipt = false;
+      reCalculateReceipt = false,
+      me = this;
 
     // Get pending tickets ignoring those created in other users session
     const ordersNotPaid = OB.App.OpenTicketList.getSessionTickets().filter(
@@ -52,6 +53,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                   OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(
                     false
                   );
+                  if (me.get('leftColumnViewManager').isMultiOrder()) {
+                    me.loadCheckedMultiorders();
+                  }
                   OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
 
                   OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
@@ -64,6 +68,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 model
                   .updateCurrentTicketIfNeeded(args.ordersNotPaid)
                   .then(() => {
+                    if (me.get('leftColumnViewManager').isMultiOrder()) {
+                      me.loadCheckedMultiorders();
+                    }
                     OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
                     // The order object is stored in the json property of the row fetched from the database
                     orderlist = new Backbone.Collection(
@@ -1179,10 +1186,18 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         }
       }
     }
-
-    //Because in terminal we've the BP id and we want to have the BP model.
-    //In this moment we can ensure data is already loaded in the local database
-    searchCurrentBP(loadModelsCallback);
+    OB.MobileApp.model.runSyncProcess(
+      function() {
+        OB.RR.RequestRouter.sendAllMessages();
+        //Because in terminal we've the BP id and we want to have the BP model.
+        //In this moment we can ensure data is already loaded in the local database
+        searchCurrentBP(loadModelsCallback);
+      },
+      function() {
+        OB.RR.RequestRouter.sendAllMessages();
+        searchCurrentBP(loadModelsCallback);
+      }
+    );
   },
 
   /**
