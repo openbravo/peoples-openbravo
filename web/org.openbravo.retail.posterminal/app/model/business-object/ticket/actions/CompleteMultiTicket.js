@@ -163,6 +163,8 @@
           ticket,
           ticketPayload
         );
+
+        newPayload[ticket.id] = ticketPayload;
       }
 
       // eslint-disable-next-line no-await-in-loop
