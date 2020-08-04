@@ -547,17 +547,37 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       payload
     );
 
+    let prepaymentLimitAmount;
+    let pendingPrepayment;
+    let receiptHasPrepaymentAmount;
+
+    if (payload.isMultiTicket) {
+      prepaymentLimitAmount = ticket.obposPrepaymentlimitamt;
+      pendingPrepayment = OB.DEC.sub(
+        OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt),
+        OB.DEC.add(paymentStatus.totalAmt, ticket.existingPayment)
+      );
+    } else {
+      prepaymentLimitAmount = ticket.obposPrepaymentlimitamt;
+      receiptHasPrepaymentAmount =
+        ticket.orderType !== 1 && ticket.orderType !== 3;
+      pendingPrepayment = OB.DEC.sub(
+        OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt),
+        paymentStatus.totalAmt
+      );
+    }
+
+    receiptHasPrepaymentAmount =
+      receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
+
+
     if (
       !OB.App.TerminalProperty.get('terminal').terminalType
         .calculateprepayments ||
-      ticket.orderType === 1 ||
-      ticket.orderType === 3 ||
+      !receiptHasPrepaymentAmount ||
       ticket.obposPrepaymentlimitamt === OB.DEC.Zero ||
       paymentStatus.totalAmt <= OB.DEC.Zero ||
-      OB.DEC.sub(
-        OB.DEC.add(ticket.obposPrepaymentlimitamt, paymentStatus.pendingAmt),
-        paymentStatus.totalAmt
-      ) <= OB.DEC.Zero
+      pendingPrepayment <= OB.DEC.Zero
     ) {
       return payload;
     }
@@ -567,6 +587,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         errorConfirmation: 'OBPOS_PrepaymentUnderLimit_NotAllowed',
         messageParams: [ticket.obposPrepaymentlimitamt]
       });
+    }
+
+    let approvals;
+    if (payload.isMultiTicket) {
+      approvals = ticket.multiOrders.map(ticketMap => ticketMap.approval);
+    } else {
+      approvals = ticket.approvals;
     }
 
     if (
