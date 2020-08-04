@@ -869,7 +869,15 @@ enyo.kind({
 
     activeModel.get('changePayments').forEach(function(itemchange) {
       var paymentMethod = OB.MobileApp.model.paymentnames[itemchange.key];
-      if (paymentMethod.foreignCash < itemchange.amountRounded) {
+      if (
+        OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+          OB.App.State.getState().Cashup.cashPaymentMethodInfo,
+          paymentMethod.payment.id,
+          OB.MobileApp.model.paymentnames,
+          OB.UTIL.currency.webPOSDefaultCurrencyId(),
+          OB.UTIL.currency.conversions
+        ).foreignCurrentCash < itemchange.amountRounded
+      ) {
         failedPaymentMethods.push(paymentMethod.payment._identifier);
       }
     });
@@ -1597,7 +1605,16 @@ enyo.kind({
               if (
                 selectedPayment !== paymentmethod &&
                 OB.DEC.compare(
-                  OB.DEC.sub(paymentmethod.currentCash, reversedCash)
+                  OB.DEC.sub(
+                    OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+                      OB.App.State.getState().Cashup.cashPaymentMethodInfo,
+                      paymentmethod.payment.id,
+                      OB.MobileApp.model.paymentnames,
+                      OB.UTIL.currency.webPOSDefaultCurrencyId(),
+                      OB.UTIL.currency.conversions
+                    ).currentCash,
+                    reversedCash
+                  )
                 ) < 0
               ) {
                 hasEnoughCash = false;
@@ -1635,11 +1652,17 @@ enyo.kind({
                   payment.get('origAmount')
                 );
               } else {
-                paymentmethod =
-                  OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
+                OB.POS.terminal.terminal.paymentnames[payment.get('kind')];
                 if (
                   paymentmethod &&
-                  payment.get('amount') > paymentmethod.foreignCash &&
+                  payment.get('amount') >
+                    OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+                      OB.App.State.getState().Cashup.cashPaymentMethodInfo,
+                      paymentmethod.payment.id,
+                      OB.MobileApp.model.paymentnames,
+                      OB.UTIL.currency.webPOSDefaultCurrencyId(),
+                      OB.UTIL.currency.conversions
+                    ).foreignCurrentCash &&
                   payment.get('isCash')
                 ) {
                   hasAllEnoughCash = false;
@@ -2165,47 +2188,51 @@ enyo.kind({
   },
 
   checkSlaveCashAvailable: function(selectedPayment, scope, callback) {
-    function processCashMgmtMaster(cashMgntCallback) {
-      new OB.DS.Process(
-        'org.openbravo.retail.posterminal.ProcessCashMgmtMaster'
-      ).exec(
+    async function processCashMgmtMaster(cashMgntCallback) {
+      const response = await OB.App.Request.mobileServiceRequest(
+        'org.openbravo.retail.posterminal.ProcessCashMgmtMaster',
         {
-          cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
+          cashUpId: OB.App.State.getState().Cashup.id,
           terminalSlave: OB.POS.modelterminal.get('terminal').isslave
-        },
-        function(data) {
-          if (data && data.exception) {
-            // Error handler
-            OB.log('error', data.exception.message);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_CashMgmtError'),
-              OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
-                data.exception.message,
-              [
-                {
-                  label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                  action: function() {
-                    processCashMgmtMaster(cashMgntCallback);
-                  }
-                }
-              ],
-              {
-                autoDismiss: false,
-                onHideFunction: function() {
-                  cashMgntCallback(false, null);
-                }
-              }
-            );
-          } else {
-            cashMgntCallback(true, data);
-          }
         }
       );
+      if (response && response.response && response.response.error) {
+        // Error handler
+        OB.log('error', response.response.error.message);
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CashMgmtError'),
+          OB.I18N.getLabel('OBPOS_ErrorServerGeneric') +
+            response.response.error.message,
+          [
+            {
+              label: OB.I18N.getLabel('OBPOS_LblRetry'),
+              action: function() {
+                processCashMgmtMaster(cashMgntCallback);
+              }
+            }
+          ],
+          {
+            autoDismiss: false,
+            onHideFunction: function() {
+              cashMgntCallback(false, null);
+            }
+          }
+        );
+      } else {
+        cashMgntCallback(true, response.response.data);
+      }
     }
 
     var currentCash = OB.DEC.Zero;
     if (selectedPayment && selectedPayment.paymentMethod.iscash) {
-      currentCash = selectedPayment.currentCash || OB.DEC.Zero;
+      currentCash =
+        OB.App.State.Cashup.Utils.getPaymentMethodCurrentCash(
+          OB.App.State.getState().Cashup.cashPaymentMethodInfo,
+          selectedPayment.payment.id,
+          OB.MobileApp.model.paymentnames,
+          OB.UTIL.currency.webPOSDefaultCurrencyId(),
+          OB.UTIL.currency.conversions
+        ).currentCash || OB.DEC.Zero;
     }
     if (
       (OB.POS.modelterminal.get('terminal').ismaster ||

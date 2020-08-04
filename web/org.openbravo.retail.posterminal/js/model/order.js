@@ -47,7 +47,6 @@
       priceIncludesTax: true,
       gross: true,
       lineGrossAmount: true,
-      grossListPrice: true,
       description: true,
       promotions: true,
       shipmentlines: true,
@@ -121,11 +120,7 @@
     },
 
     printPrice: function() {
-      return OB.I18N.formatCurrency(
-        this.get('_price') ||
-          this.get('nondiscountedprice') ||
-          this.get('price')
-      );
+      return OB.I18N.formatCurrency(this.get('price'));
     },
 
     isPrintableService: function() {
@@ -172,16 +167,10 @@
         });
         this.set('gross', OB.DEC.mul(this.getQty(), this.get('price')));
         this.set(
-          'discountedGross',
+          'grossUnitAmount',
           OB.DEC.compare(this.get('gross')) === 0
             ? this.get('gross')
             : OB.DEC.sub(this.get('gross'), this.getDiscount())
-        );
-        this.set(
-          'discountedPrice',
-          this.getQty() === 0
-            ? 0
-            : OB.DEC.div(this.get('discountedGross'), this.getQty())
         );
       } else {
         this.set('gross', null, {
@@ -189,16 +178,10 @@
         });
         this.set('net', OB.DEC.mul(this.getQty(), this.get('price')));
         this.set(
-          'discountedNet',
+          'netUnitAmount',
           OB.DEC.compare(this.get('net')) === 0
             ? this.get('net')
             : OB.DEC.sub(this.get('net'), this.getDiscount())
-        );
-        this.set(
-          'discountedNetPrice',
-          this.getQty() === 0
-            ? 0
-            : OB.DEC.div(this.get('discountedNet'), this.getQty())
         );
       }
     },
@@ -224,9 +207,7 @@
     },
 
     printNet: function() {
-      return OB.I18N.formatCurrency(
-        this.get('nondiscountednet') || this.getNet()
-      );
+      return OB.I18N.formatCurrency(this.getNet());
     },
 
     printTotalLine: function() {
@@ -437,6 +418,12 @@
         this.set('createdBy', attributes.createdBy);
         this.set('updatedBy', attributes.updatedBy);
         this.set('orderType', attributes.orderType); // 0: Sales order, 1: Return order
+        if (attributes.calculatedInvoice) {
+          this.set(
+            'calculatedInvoice',
+            new OB.Model.Order(attributes.calculatedInvoice)
+          );
+        }
         this.set('generateInvoice', attributes.generateInvoice);
         this.set('fullInvoice', attributes.fullInvoice);
         this.set('isQuotation', attributes.isQuotation);
@@ -493,6 +480,8 @@
           bp: bpModel,
           externalBusinessPartnerReference:
             attributes.externalBusinessPartnerReference,
+          externalBusinessPartnerCategory:
+            attributes.externalBusinessPartnerCategory,
           externalBusinessPartner: attributes.externalBusinessPartner
         });
         this.set('lines', new OrderLineList().reset(attributes.lines));
@@ -616,6 +605,9 @@
           OB.info('[NewOrder] New order set with id ' + uuid);
           this.id = uuid;
           forceInsert = true;
+        } else if (this.get('isNew')) {
+          this.set('isNew', false);
+          forceInsert = true;
         }
 
         this.set('json', JSON.stringify(this.serializeToJSON()));
@@ -675,37 +667,21 @@
       // Apply calculated discounts and promotions to price and gross prices
       // so ERP saves them in the proper place
       this.get('lines').each(function(line) {
-        var price = line.get('price'),
-          gross = line.get('gross'),
-          totalDiscount = 0,
-          grossListPrice = line.get('grossListPrice') || line.get('priceList'),
-          creationPriceList =
-            line.get('creationListPrice') ||
-            line.get('grossListPrice') ||
-            line.get('priceList'),
-          grossUnitPrice,
-          discountPercentage,
-          base;
-
         // Calculate inline discount: discount applied before promotions
+        const listPrice = line.get('grossListPrice') || line.get('listPrice');
+        let discountPercentage;
         if (
-          (line.get('product').get('standardPrice') &&
-            line.get('product').get('standardPrice') !== price) ||
-          (_.isNumber(line.get('discountedLinePrice')) &&
-            line.get('discountedLinePrice') !==
-              line.get('product').get('standardPrice')) ||
-          (OB.UTIL.isNullOrUndefined(line.get('discountedLinePrice')) &&
-            line.get('grossListPrice') !== line.get('grossUnitPrice'))
+          line.get('product').get('standardPrice') !== line.get('price') ||
+          line.get('grossListPrice') !== line.get('grossUnitPrice')
         ) {
-          grossUnitPrice = new BigDecimal(price.toString());
-          if (OB.DEC.compare(grossListPrice) === 0) {
+          if (OB.DEC.compare(listPrice) === 0) {
             discountPercentage = OB.DEC.Zero;
           } else {
-            discountPercentage = OB.DEC.toBigDecimal(creationPriceList)
-              .subtract(grossUnitPrice)
+            discountPercentage = OB.DEC.toBigDecimal(listPrice)
+              .subtract(new BigDecimal(line.get('price').toString()))
               .multiply(new BigDecimal('100'))
               .divide(
-                OB.DEC.toBigDecimal(creationPriceList),
+                OB.DEC.toBigDecimal(listPrice),
                 2,
                 BigDecimal.prototype.ROUND_HALF_UP
               );
@@ -717,13 +693,33 @@
             );
           }
         } else {
-          discountPercentage = line.get('discountPercentage')
-            ? line.get('discountPercentage')
-            : OB.DEC.Zero;
+          discountPercentage = line.get('discountPercentage') || OB.DEC.Zero;
         }
         line.set(
           {
-            discountPercentage: discountPercentage
+            discountPercentage: discountPercentage,
+            gross: this.get('priceIncludesTax')
+              ? line.get('grossUnitAmount')
+              : OB.DEC.Zero,
+            net: line.get('netUnitAmount'),
+            lineGrossAmount: this.get('priceIncludesTax')
+              ? line.get('grossUnitAmount')
+              : OB.DEC.Zero,
+            lineNetAmount: line.get('netUnitAmount'),
+            grossUnitPrice: line.get('grossUnitPrice'),
+            pricenet: line.get('netUnitPrice'),
+            baseGrossUnitPrice: this.get('priceIncludesTax')
+              ? line.get('price')
+              : undefined,
+            standardPrice: this.get('priceIncludesTax')
+              ? OB.DEC.Zero
+              : line.get('price'),
+            grossListPrice: this.get('priceIncludesTax')
+              ? line.get('grossListPrice')
+              : OB.DEC.Zero,
+            listPrice: this.get('priceIncludesTax')
+              ? OB.DEC.Zero
+              : line.get('listPrice')
           },
           {
             silent: true
@@ -731,7 +727,8 @@
         );
 
         // Calculate prices after promotions
-        base = line.get('price');
+        let base = line.get('price');
+        let totalDiscount = OB.DEC.Zero;
         _.forEach(
           line.get('promotions') || [],
           function(discount) {
@@ -746,49 +743,6 @@
           },
           this
         );
-
-        gross = OB.DEC.sub(gross, totalDiscount);
-        price = line.get('qty') !== 0 ? OB.DEC.div(gross, line.get('qty')) : 0;
-
-        if (grossListPrice === undefined) {
-          grossListPrice = price;
-        }
-
-        if (this.get('priceIncludesTax')) {
-          line.set(
-            {
-              net: OB.DEC.toNumber(line.get('discountedNet')),
-              pricenet:
-                line.get('qty') !== 0
-                  ? OB.DEC.div(line.get('discountedNet'), line.get('qty'))
-                  : 0,
-              listPrice: 0,
-              standardPrice: 0,
-              grossListPrice: grossListPrice,
-              grossUnitPrice: price,
-              lineGrossAmount: gross
-            },
-            {
-              silent: true
-            }
-          );
-        } else {
-          line.set(
-            {
-              nondiscountedprice: line.get('price'),
-              nondiscountednet: line.get('net'),
-              standardPrice: line.get('price'),
-              net: line.get('discountedNet'),
-              pricenet: OB.DEC.toNumber(line.get('discountedNetPrice')),
-              listPrice: line.get('priceList'),
-              grossListPrice: 0,
-              lineGrossAmount: 0
-            },
-            {
-              silent: true
-            }
-          );
-        }
       }, this);
     },
     getTotal: function() {
@@ -962,10 +916,10 @@
         } else {
           // If the price doesn't include tax, the discounted gross has already been calculated
           gross = me.get('lines').reduce(function(memo, e) {
-            if (_.isUndefined(e.get('discountedGross'))) {
+            if (_.isUndefined(e.get('grossUnitAmount'))) {
               return memo;
             }
-            grossLine = e.get('discountedGross');
+            grossLine = e.get('grossUnitAmount');
             if (grossLine) {
               return OB.DEC.add(memo, grossLine);
             } else {
@@ -989,6 +943,13 @@
 
     // This function calculate the promotions, taxes and gross of all the receipt
     calculateReceipt: function(callback, line, forceCalculateReceipt) {
+      if (this.propagatingBackboneToState) {
+        // calculateReceipt was invoked by a backbone trigger while propagating a change from
+        // state to backbone model: it is not necessary to calculate anything here as it will
+        // be calculated by state ticket hook.
+        return;
+      }
+
       // verify if we are cloning the receipt
       if (this.get('cloningReceipt')) {
         this.addToListOfCallbacks(callback);
@@ -1476,7 +1437,8 @@
     },
 
     clearOrderAttributes: function() {
-      this.set('id', null);
+      this.set('id', OB.UTIL.get_UUID());
+      this.set('isNew', true);
       this.set('client', null);
       this.set('organization', null);
       this.set('createdBy', null);
@@ -1514,6 +1476,7 @@
       this.set({
         bp: null,
         externalBusinessPartnerReference: null,
+        externalBusinessPartnerCategory: null,
         externalBusinessPartner: null
       });
       this.set(
@@ -1845,167 +1808,12 @@
       }
     },
 
-    setPrices: function(selectedModels, price, options, callback) {
-      var me = this,
-        cancelChange = false,
-        finalCallback = function() {
-          if (callback && callback instanceof Function) {
-            callback();
-          }
-        };
-      if (selectedModels.length > 1) {
-        var setNextPrice;
-        this.set('undo', null);
-        this.set('multipleUndo', true);
-        _.each(selectedModels, function(model) {
-          if (model.get('replacedorderline') && model.get('qty') < 0) {
-            cancelChange = true;
-          }
-        });
-        if (cancelChange) {
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange')
-          );
-          return;
-        }
-        setNextPrice = function(idx) {
-          if (idx === selectedModels.length) {
-            me.preventOrderSave(false);
-            me.unset('skipCalculateReceipt');
-            me.set('multipleUndo', null);
-            me.calculateReceipt();
-            finalCallback();
-            return;
-          }
-          me.setPrice(selectedModels[idx], price, options, function() {
-            setNextPrice(idx + 1);
-          });
-        };
-        this.set('skipCalculateReceipt', true);
-        this.preventOrderSave(true);
-        setNextPrice(0);
-      } else {
-        this.setPrice(selectedModels[0], price, options, finalCallback);
-      }
-    },
-
     setPrice: function(line, price, options, callback) {
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_PreSetPrice',
-        {
-          context: this,
-          line: line,
-          price: price,
-          options: options
-        },
-        function(args) {
-          var me = args.context;
-          if (args.cancellation && args.cancellation === true) {
-            return;
-          }
-
-          options = args.options || {};
-          options.setUndo =
-            _.isUndefined(options.setUndo) ||
-            _.isNull(options.setUndo) ||
-            options.setUndo !== false
-              ? true
-              : options.setUndo;
-
-          var allowModifyVerifyReturnLinePrice =
-            OB.MobileApp.model.hasPermission(
-              'OBPOS_ModifyPriceVerifiedReturns',
-              true
-            ) &&
-            args.line.get('originalDocumentNo') &&
-            !args.context.get('isPaid');
-          if (
-            !args.line.get('isEditable') &&
-            !(
-              allowModifyVerifyReturnLinePrice &&
-              args.price < args.line.get('price')
-            )
-          ) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_CannotChangePrice'));
-          } else if (
-            args.line.get('replacedorderline') &&
-            args.line.get('qty') < 0
-          ) {
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBMOBC_Error'),
-              OB.I18N.getLabel('OBPOS_CancelReplaceReturnPriceChange')
-            );
-            return;
-          } else if (OB.DEC.isNumber(args.price)) {
-            var oldprice = args.line.get('price');
-            if (OB.DEC.compare(args.price) >= 0) {
-              // sets the new listPrice and price
-              args.line.set(
-                'priceList',
-                args.line.get('product').get('listPrice')
-              );
-              args.line.set('price', args.price);
-              // sets the undo action
-              if (options.setUndo) {
-                if (me.get('multipleUndo')) {
-                  var text = '',
-                    oldprices = [],
-                    lines = [],
-                    undo = me.get('undo');
-                  if (undo && undo.oldprices) {
-                    text = undo.text + ', ';
-                    oldprices = undo.oldprices;
-                    lines = undo.lines;
-                  }
-                  text += OB.I18N.getLabel('OBPOS_SetPrice', [
-                    args.line.printPrice(),
-                    args.line.get('product').get('_identifier')
-                  ]);
-                  oldprices.push(oldprice);
-                  lines.push(args.line);
-                  me.setUndo('EditLine', {
-                    text: text,
-                    oldprices: oldprices,
-                    lines: lines,
-                    undo: function() {
-                      var i;
-                      me.set('skipCalculateReceipt', true);
-                      me.preventOrderSave(true);
-                      for (i = 0; i < me.get('undo').lines.length; i++) {
-                        me.get('undo').lines[i].set(
-                          'price',
-                          me.get('undo').oldprices[i]
-                        );
-                      }
-                      me.preventOrderSave(false);
-                      me.unset('skipCalculateReceipt');
-                      me.set('undo', null);
-                      me.calculateReceipt();
-                    }
-                  });
-                } else {
-                  me.setUndo('EditLine', {
-                    text: OB.I18N.getLabel('OBPOS_SetPrice', [
-                      args.line.printPrice(),
-                      args.line.get('product').get('_identifier')
-                    ]),
-                    oldprice: oldprice,
-                    line: args.line,
-                    undo: function() {
-                      me.set('undo', null);
-                      args.line.set('price', oldprice);
-                    }
-                  });
-                }
-              }
-              me.save();
-            }
-            if (callback && callback instanceof Function) {
-              callback();
-            }
-          }
-        }
+      // TODO: remove this method
+      OB.warn('setPrice should not be invoked in old order model!');
+      const lineIds = [line.get('id')];
+      OB.App.State.Ticket.setLinePrice({ lineIds, price }).catch(
+        OB.App.View.ActionCanceledUIHandler.handle
       );
     },
 
@@ -2815,14 +2623,17 @@
           const relatedLine = this.get('lines').find(
             line => line.id === relatedProduct.orderlineId
           );
+          const price =
+            relatedLine.get('previousPrice') ||
+            relatedLine.get('previousBaseGrossUnitPrice');
           if (
             relatedLine &&
-            relatedLine.get('previousPrice') &&
+            price &&
             relatedLine.get('product').has('previousTaxCategory')
           ) {
             relatedLine.set(
               {
-                price: relatedLine.get('previousPrice'),
+                price: price,
                 previousPrice: null
               },
               {
@@ -4749,89 +4560,13 @@
     },
 
     addManualPromotionToList: function(promotionToApply) {
-      const discountsFromUser = { ...this.get('discountsFromUser') } || {},
-        rule = promotionToApply.rule,
-        discountRule = promotionToApply.discountRule;
-      let bytotalManualPromotions =
-        discountsFromUser && discountsFromUser.bytotalManualPromotions
-          ? [...discountsFromUser.bytotalManualPromotions]
-          : [];
-
-      if (
-        !rule.obdiscAllowmultipleinstan ||
-        bytotalManualPromotions.length <= 0
-      ) {
-        // Check there is no other manual promotion with the same ruleId and hasMultiDiscount set as false or undefined
-        const singlePromotionsList = _.filter(bytotalManualPromotions, function(
-          bytotalManualPromotion
-        ) {
-          return (
-            bytotalManualPromotion.obdiscAllowmultipleinstan ===
-              rule.obdiscAllowmultipleinstan &&
-            bytotalManualPromotion.id === rule.id
-          );
-        });
-
-        if (singlePromotionsList.length > 0) {
-          //  There should be only one rule in the list with previous conditions in manual promotions list
-          _.forEach(singlePromotionsList, function(singlePromotion) {
-            bytotalManualPromotions.splice(
-              bytotalManualPromotions.indexOf(singlePromotion),
-              1
-            );
-          });
-        }
-      }
-      if (
-        rule.obdiscAllowmultipleinstan &&
-        OB.UTIL.isNullOrUndefined(rule.discountinstance)
-      ) {
-        rule.discountinstance = OB.UTIL.get_UUID();
-      }
-
-      let bytotalManualPromotionObj = {};
-
-      for (let key in discountRule.attributes) {
-        bytotalManualPromotionObj[key] = discountRule.attributes[key];
-      }
-
-      // Override some configuration from manualPromotions
-      if (bytotalManualPromotionObj.disctTotalamountdisc) {
-        bytotalManualPromotionObj.disctTotalamountdisc = rule.userAmt;
-      } else if (bytotalManualPromotionObj.disctTotalpercdisc) {
-        bytotalManualPromotionObj.disctTotalpercdisc = rule.userAmt;
-      }
-      bytotalManualPromotionObj.noOrder = rule.noOrder;
-      bytotalManualPromotionObj.discountinstance = rule.discountinstance;
-      if (
-        OB.Model.Discounts.discountRules[
-          bytotalManualPromotionObj.discountType
-        ] &&
-        OB.Model.Discounts.discountRules[bytotalManualPromotionObj.discountType]
-          .getIdentifier
-      ) {
-        let promotionName = OB.Model.Discounts.discountRules[
-          bytotalManualPromotionObj.discountType
-        ].getIdentifier(discountRule, bytotalManualPromotionObj);
-        bytotalManualPromotionObj.name = promotionName;
-        bytotalManualPromotionObj._identifier = promotionName;
-      }
-      bytotalManualPromotionObj.products = [];
-      bytotalManualPromotionObj.includedProducts = 'Y';
-      bytotalManualPromotionObj.productCategories = [];
-      bytotalManualPromotionObj.includedProductCategories = 'Y';
-      bytotalManualPromotionObj.productCharacteristics = [];
-      bytotalManualPromotionObj.includedCharacteristics = 'Y';
-      bytotalManualPromotionObj.allweekdays = true;
-
-      bytotalManualPromotions.push(bytotalManualPromotionObj);
-
-      bytotalManualPromotions = bytotalManualPromotions.sort((a, b) => {
-        return a.noOrder - b.noOrder;
+      const discount = JSON.parse(JSON.stringify(promotionToApply));
+      discount.currencyIdentifier = OB.MobileApp.model.get(
+        'terminal'
+      ).currency$_identifier;
+      OB.App.State.Ticket.addByTotalPromotion({
+        discount: discount
       });
-
-      discountsFromUser.bytotalManualPromotions = bytotalManualPromotions;
-      this.set('discountsFromUser', discountsFromUser);
     },
 
     getCurrentDiscountedLinePrice: function(line, ignoreExecutedAtTheEndPromo) {
@@ -5046,33 +4781,13 @@
       line.trigger('change');
     },
 
-    removePromotion: function(line, rule) {
-      var promotions = line.get('promotions'),
-        discountinstance = rule.discountinstance,
-        removed = false,
-        res = [],
-        i;
-      if (!promotions) {
-        return;
-      }
-
-      for (i = 0; i < promotions.length; i++) {
-        if (
-          promotions[i].ruleId === rule.id &&
-          promotions[i].discountinstance === discountinstance
-        ) {
-          removed = true;
-        } else {
-          res.push(promotions[i]);
-        }
-      }
-
-      if (removed) {
-        line.set('promotions', res);
-        // Calculate discountedLinePrice for the next promotion
-        this.calculateDiscountedLinePrice(line);
+    removePromotion: async function(line, rule) {
+      return OB.App.State.Ticket.removePromotion({
+        lineId: line.get('id'),
+        rule: JSON.parse(JSON.stringify(rule))
+      }).then(() => {
         line.trigger('change');
-      }
+      });
     },
 
     //Attrs is an object of attributes that will be set in order line
@@ -5671,6 +5386,12 @@
               bp ? bp.getKey() : null
             );
             order.set(
+              'externalBusinessPartnerCategory',
+              new OB.App.Class.ExternalBusinessPartner(
+                bp ? bp.getPlainObject() : null
+              ).getCategoryKey()
+            );
+            order.set(
               'externalBusinessPartner',
               bp ? bp.getPlainObject() : null
             );
@@ -5712,6 +5433,7 @@
         me.set({
           bp: bp,
           externalBusinessPartnerReference: null,
+          externalBusinessPartnerCategory: null,
           externalBusinessPartner: null
         });
         me.save(function() {
@@ -6398,6 +6120,12 @@
         allLinesCalculated
       );
 
+      // Ensure state model is in sync with backbone. There are processes (ie. Create Order from quotation)
+      // that mutate backbone model siltently before reaching this point.
+      OB.App.StateBackwardCompatibility.getInstance(
+        'Ticket'
+      ).resetStateFromBackbone();
+
       this.get('lines').each(async function(line) {
         //remove promotions
         line.unset('promotions');
@@ -6407,24 +6135,26 @@
             if (
               !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
             ) {
-              order.setPrice(
-                line,
-                dataPrices.get('standardPrice', {
+              OB.App.State.Ticket.setLinePrice({
+                lineIds: [line.id],
+                price: dataPrices.get('standardPrice', {
                   setUndo: false
                 })
-              );
+              })
+                .then(() => newAllLinesCalculated())
+                .catch(OB.App.View.ActionCanceledUIHandler.handle);
             } else {
               dataPrices.each(function(price) {
-                order.setPrice(
-                  line,
-                  price.get('standardPrice', {
+                OB.App.State.Ticket.setLinePrice({
+                  lineIds: [line.id],
+                  price: price.get('standardPrice', {
                     setUndo: false
                   })
-                );
+                })
+                  .then(() => newAllLinesCalculated())
+                  .catch(OB.App.View.ActionCanceledUIHandler.handle);
               });
             }
-
-            newAllLinesCalculated();
           };
         if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
           try {
@@ -6457,15 +6187,6 @@
             line
           );
         }
-
-        successCallbackPrices = function(dataPrices) {
-          dataPrices.each(function(price) {
-            order.setPrice(line, price.get('standardPrice'), {
-              setUndo: false
-            });
-          });
-          newAllLinesCalculated();
-        };
       });
     },
 
@@ -7030,7 +6751,7 @@
                       );
                       me.set(
                         'obposAppCashup',
-                        OB.MobileApp.model.get('terminal').cashUpId
+                        OB.App.State.getState().Cashup.id
                       );
                       me.set('timezoneOffset', new Date().getTimezoneOffset());
                       var linesToDelete = [];
@@ -7277,25 +6998,7 @@
               args.order.get('lines').each(function(line) {
                 oldId = line.get('id');
                 line.set('id', OB.UTIL.get_UUID());
-                //issue 25055 -> If we don't do the following prices and taxes are calculated
-                //wrongly because the calculation starts with discountedNet instead of
-                //the real net.
-                //It only happens if the order is created from quotation just after save the quotation
-                //(without load the quotation from quotations window)
-                if (!this.get('priceIncludesTax')) {
-                  line.set('net', line.get('nondiscountednet'));
-                }
-
-                //issues 24994 & 24993
-                //if the order is created from quotation just after save the quotation
-                //(without load the quotation from quotations window). The order has the fields added
-                //by adjust prices. We need to work without these values
-                //price not including taxes
-                line.unset('nondiscountedprice');
-                line.unset('nondiscountednet');
-                //price including taxes
                 line.unset('netFull');
-                line.unset('grossListPrice');
                 line.unset('grossUnitPrice');
                 line.unset('lineGrossAmount');
                 line.unset('obposQtytodeliver');
@@ -7422,97 +7125,21 @@
       });
     },
 
-    reactivateQuotation: function() {
-      var idMap = {},
-        oldIdMap = {},
-        oldId,
-        me = this;
-      this.get('lines').each(function(line) {
-        oldId = line.get('id');
-        line.set('id', OB.UTIL.get_UUID());
-        if (!this.get('priceIncludesTax')) {
-          line.set('net', line.get('nondiscountednet'));
-        }
-        line.unset('nondiscountedprice');
-        line.unset('nondiscountednet');
-        line.unset('netFull');
-        line.unset('grossListPrice');
-        line.unset('grossUnitPrice');
-        line.unset('lineGrossAmount');
-        line.unset('promotions');
-        idMap[line.get('id')] = OB.UTIL.get_UUID();
-        line.set('id', idMap[line.get('id')]);
-        if (line.get('hasRelatedServices')) {
-          oldIdMap[oldId] = line.get('id');
-        }
-      }, this);
-      this.set('hasbeenpaid', 'N');
-      this.set('isPaid', false);
-      this.set('isEditable', true);
-      this.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-      this.set('session', OB.MobileApp.model.get('session'));
-      this.set('orderDate', OB.I18N.normalizeDate(new Date()));
-      this.set('skipApplyPromotions', false);
-      this.unset('deletedLines');
-      //Sometimes the Id of Quotation is null.
-      if (this.get('id') && !_.isNull(this.get('id'))) {
-        this.set('oldId', this.get('id'));
-        this.set('documentNo', '');
-      } else {
-        //this shouldn't happen.
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_title'),
-          OB.I18N.getLabel('OBPOS_QuotationCannotBeReactivated_body')
-        );
-        return;
-      }
-      if (this.get('hasServices')) {
-        this.get('lines').each(function(line) {
-          if (line.get('relatedLines')) {
-            line.get('relatedLines').forEach(function(rl) {
-              rl.orderId = me.get('id');
-              if (oldIdMap[rl.orderlineId]) {
-                rl.orderlineId = oldIdMap[rl.orderlineId];
-              }
-            });
-          }
-        }, this);
-      }
-      this.set('id', null);
-      this.save();
-      this.calculateReceipt();
+    reactivateQuotation: async function() {
+      return OB.App.State.Ticket.reactivateQuotation({
+        user: OB.MobileApp.model.get('orgUserId'),
+        session: OB.MobileApp.model.get('session'),
+        date: OB.I18N.normalizeDate(new Date())
+      }).then(() => {
+        OB.Dal.save(OB.MobileApp.model.receipt, null, null, true);
+      });
     },
     rejectQuotation: function(rejectReasonId, scope, callback) {
-      if (!this.get('id')) {
-        OB.error(
-          'The Id of the order is not defined (current value: ' +
-            this.get('id') +
-            "'"
-        );
-      }
-      var process = new OB.DS.Process(
-        'org.openbravo.retail.posterminal.QuotationsReject'
-      );
-      OB.UTIL.showLoading(true);
-      process.exec(
-        {
-          messageId: OB.UTIL.get_UUID(),
-          data: [
-            {
-              id: this.get('id'),
-              orderid: this.get('id'),
-              rejectReasonId: rejectReasonId
-            }
-          ]
-        },
-        function(data) {
-          OB.UTIL.showLoading(false);
-          OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_SuccessRejectQuotation'));
-          if (callback) {
-            callback.call(scope, data !== null);
-          }
+      OB.App.State.Global.rejectQuotation({ rejectReasonId }).then(() => {
+        if (callback) {
+          callback.call(scope, true);
         }
-      );
+      });
     },
     getPrecision: function(payment) {
       var terminalpayment =
@@ -9556,14 +9183,12 @@
           l.get('gross') +
           "', LineGrossAmount: '" +
           l.get('lineGrossAmount') +
-          "', DiscountedGross: '" +
-          l.get('discountedGross') +
+          "', GrossUnitAmount: '" +
+          l.get('grossUnitAmount') +
           "', Net: '" +
           l.get('net') +
-          "', DiscountedNet: '" +
-          l.get('discountedNet') +
-          "', NonDiscountedNet: '" +
-          l.get('nondiscountednet') +
+          "', NetUnitAmount: '" +
+          l.get('netUnitAmount') +
           "', TaxAmount: '" +
           l.get('taxAmount') +
           "', GrossUnitPrice: '" +
@@ -9797,10 +9422,7 @@
             model.get('id') +
             ' as obposIsDeleted to true'
         );
-        model.set(
-          'obposAppCashup',
-          OB.MobileApp.model.get('terminal').cashUpId
-        );
+        model.set('obposAppCashup', OB.App.State.getState().Cashup.id);
         for (i = 0; i < model.get('lines').length; i++) {
           model
             .get('lines')
@@ -9809,7 +9431,15 @@
           model
             .get('lines')
             .at(i)
-            .set('listPrice', 0);
+            .set('grossUnitPrice', 0);
+          model
+            .get('lines')
+            .at(i)
+            .set('pricenet', 0);
+          model
+            .get('lines')
+            .at(i)
+            .set('price', 0);
           model
             .get('lines')
             .at(i)
@@ -9817,11 +9447,11 @@
           model
             .get('lines')
             .at(i)
-            .set('grossUnitPrice', 0);
+            .set('lineGrossAmount', 0);
           model
             .get('lines')
             .at(i)
-            .set('lineGrossAmount', 0);
+            .set('lineNetAmount', 0);
         }
         model.get('approvals').forEach(function(approval) {
           if (typeof approval.approvalType === 'object') {
@@ -9936,7 +9566,8 @@
           ) {
             if (
               OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
-              receipt.get('id') !== null
+              receipt.get('id') !== null &&
+              receipt.get('isNew') === false
             ) {
               receipt.setIsCalculateReceiptLockState(true);
               receipt.setIsCalculateGrossLockState(true);
@@ -9963,14 +9594,7 @@
           }
         }
 
-        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          OB.UTIL.rebuildCashupFromServer(function() {
-            OB.UTIL.showLoading(false);
-            validateRemoveOrder();
-          });
-        } else {
-          validateRemoveOrder();
-        }
+        validateRemoveOrder();
       }
 
       OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
@@ -10693,6 +10317,7 @@
         if (model.isLayaway) {
           order.set('isLayaway', true);
           order.set('id', model.orderid);
+          order.set('isNew', false);
           order.set('hasbeenpaid', 'N');
         } else {
           order.set('isPaid', true);
@@ -10717,6 +10342,7 @@
             order.set('paidOnCredit', true);
           }
           order.set('id', model.orderid);
+          order.set('isNew', false);
           if (
             order.get('documentType') ===
             OB.MobileApp.model.get('terminal').terminalType
@@ -10834,12 +10460,12 @@
           for (let i = 0; i < model.receiptLines.length; i++) {
             let iter = model.receiptLines[i];
             var price = OB.DEC.number(iter.unitPrice),
-              lineNet = order.get('priceIncludesTax')
-                ? null
-                : OB.DEC.number(iter.lineGrossAmount || iter.linenetamount),
               lineGross = order.get('priceIncludesTax')
                 ? OB.DEC.number(iter.lineGrossAmount)
-                : null;
+                : null,
+              lineNet = order.get('priceIncludesTax')
+                ? null
+                : OB.DEC.number(iter.lineGrossAmount || iter.lineNetAmount);
             iter.linepos = linepos;
             var addLineForProduct = async function(prod) {
               // Set product services
@@ -10922,7 +10548,6 @@
                       prod.get('listPrice') !== price
                         ? price
                         : prod.get('listPrice'),
-                    grossListPrice: iter.grossListPrice,
                     net: lineNet,
                     gross: lineGross,
                     promotions: iter.promotions,
@@ -10967,15 +10592,6 @@
                         : OB.MobileApp.model.get('terminal')
                             .organizationRegionId
                   });
-
-                  if (!order.get('isQuotation')) {
-                    newline.set(
-                      'creationListPrice',
-                      iter.priceIncludesTax
-                        ? iter.grossListPrice
-                        : iter.listPrice
-                    );
-                  }
 
                   // copy verbatim not owned properties -> modular properties.
                   _.each(iter, function(value, key) {
@@ -11130,6 +10746,12 @@
               order.set(
                 'externalBusinessPartnerReference',
                 model.externalBusinessPartnerReference
+              );
+              order.set(
+                'externalBusinessPartnerCategory',
+                new OB.App.Class.ExternalBusinessPartner(
+                  extBp.getPlainObject()
+                ).getCategoryKey()
               );
               callToLoadCustomer.call(me);
             }
@@ -11607,6 +11229,7 @@
         order.set('bp', bp);
         order.set('externalBusinessPartner', null);
         order.set('externalBusinessPartnerReference', null);
+        order.set('externalBusinessPartnerCategory', null);
         order.set('invoiceTerms', bp.get('invoiceTerms'));
         if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
           // Set price list for order
@@ -11656,6 +11279,10 @@
         order.set(
           'posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
           OB.MobileApp.model.get('terminal')._identifier
+        );
+        order.set(
+          'deliveryPaymentMode',
+          OB.MobileApp.model.get('deliveryPaymentMode')
         );
         order.set('orderDate', OB.I18N.normalizeDate(new Date()));
         order.set('creationDate', null);

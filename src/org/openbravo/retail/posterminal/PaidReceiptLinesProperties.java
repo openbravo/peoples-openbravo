@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2019 Openbravo S.L.U.
+ * Copyright (C) 2014-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -36,16 +36,16 @@ public class PaidReceiptLinesProperties extends ModelExtension {
         add(new HQLProperty("product.id", "id"));
         add(new HQLProperty("product.name", "name"));
         add(new HQLProperty("product.uOM.id", "uOM"));
-        add(new HQLProperty("ordLine.orderedQuantity", "quantity"));
-        add(new HQLProperty("ordLine.baseGrossUnitPrice", "unitPrice"));
-        add(new HQLProperty("ordLine.grossUnitPrice", "grossUnitPrice"));
-        add(new HQLProperty("ordLine.grossListPrice", "grossListPrice"));
         add(new HQLProperty("ordLine.lineGrossAmount", "lineGrossAmount"));
-        add(new HQLProperty("ordLine.lineNetAmount", "linenetamount"));
+        add(new HQLProperty("ordLine.lineNetAmount", "lineNetAmount"));
+        add(new HQLProperty("ordLine.orderedQuantity", "quantity"));
+        add(new HQLProperty("ordLine.grossUnitPrice", "grossUnitPrice"));
+        add(new HQLProperty("ordLine.baseGrossUnitPrice", "unitPrice"));
+        add(new HQLProperty("ordLine.grossListPrice", "grossListPrice"));
+        add(new HQLProperty("ordLine.listPrice", "listPrice"));
+        add(new HQLProperty("ordLine.standardPrice", "baseNetUnitPrice"));
         add(new HQLProperty("ordLine.discount", "discountPercentage"));
         add(new HQLProperty("ordLine.id", "lineId"));
-        add(new HQLProperty("ordLine.standardPrice", "baseNetUnitPrice"));
-        add(new HQLProperty("ordLine.listPrice", "listPrice"));
         add(new HQLProperty("ordLine.salesOrder.currency.pricePrecision", "pricePrecision"));
         add(new HQLProperty("ordLine.warehouse.id", "warehouse"));
         add(new HQLProperty("ordLine.warehouse.name", "warehousename"));

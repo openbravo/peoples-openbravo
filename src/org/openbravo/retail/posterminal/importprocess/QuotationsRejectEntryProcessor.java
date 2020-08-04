@@ -10,7 +10,6 @@ package org.openbravo.retail.posterminal.importprocess;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
@@ -57,15 +56,13 @@ public class QuotationsRejectEntryProcessor extends ImportEntryProcessor {
 
     @Override
     protected void processEntry(ImportEntry importEntry) throws Exception {
+      // check that there are no other import entries for the terminal
+      // which have not yet been processed
+
       try {
         OBContext.setAdminMode(false);
 
-        JSONObject json = new JSONObject(importEntry.getJsonInfo());
-        if (json.has("data") && json.getJSONArray("data").length() > 0) {
-          json = json.getJSONArray("data").getJSONObject(0);
-        }
-        if (json.has("isprocessed") && "Y".equals(json.getString("isprocessed"))
-            && thereIsDataInImportQueue(importEntry)) {
+        if (thereIsDataInImportQueue(importEntry)) {
           // close and commit
           OBDal.getInstance().commitAndClose();
           return;

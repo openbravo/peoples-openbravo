@@ -12,83 +12,6 @@
   OB.Taxes = OB.Taxes || {};
   OB.Taxes.Pos = OB.Taxes.Pos || {};
 
-  const translateReceipt = receipt => {
-    return {
-      id: receipt.get('id'),
-      orderDate: receipt.get('orderDate'),
-      priceIncludesTax: receipt.get('priceIncludesTax'),
-      cashVAT: receipt.get('cashVAT'),
-      country: receipt.get('country'),
-      region: receipt.get('region'),
-      businessPartner: {
-        id: receipt.get('bp').id,
-        taxCategory: receipt.get('bp').get('taxCategory'),
-        taxExempt: receipt.get('bp').get('taxExempt')
-      },
-      lines: receipt.get('lines').map(line => {
-        return {
-          id: line.get('id'),
-          lineRate: line.get('lineRate'),
-          country: line.get('country'),
-          region: line.get('region'),
-          grossUnitAmount:
-            line.get('discountedGross') || line.get('discountedGross') === 0
-              ? line.get('discountedGross')
-              : line.get('gross'),
-          netUnitAmount:
-            line.get('discountedNet') || line.get('discountedNet') === 0
-              ? line.get('discountedNet')
-              : line.get('net'),
-          qty: line.get('qty'),
-          taxExempt: line.get('taxExempt'),
-          originalOrderDate: line.get('originalOrderDate'),
-          product: {
-            id: line.get('product').id,
-            taxCategory: line.get('product').get('taxCategory'),
-            productBOM: line.get('product').get('productBOM')
-          }
-        };
-      })
-    };
-  };
-
-  const translateTaxes = taxes => {
-    const newTaxes = { ...taxes };
-
-    const translateTaxArray = taxArray => {
-      if (!taxArray) {
-        return {};
-      }
-
-      return taxArray
-        .map(tax => ({
-          id: tax.tax.id,
-          net: tax.base,
-          amount: tax.amount,
-          name: tax.tax.name,
-          docTaxAmount: tax.tax.docTaxAmount,
-          rate: tax.tax.rate,
-          taxBase: tax.tax.taxBase,
-          cascade: tax.tax.cascade,
-          lineNo: tax.tax.lineNo
-        }))
-        .reduce((obj, item) => {
-          const newObj = { ...obj };
-          newObj[[item.id]] = item;
-          return newObj;
-        }, {});
-    };
-
-    newTaxes.taxes = translateTaxArray(taxes.taxes);
-    newTaxes.lines = taxes.lines.map(line => {
-      const newLine = { ...line };
-      newLine.taxes = translateTaxArray(line.taxes);
-      return newLine;
-    });
-
-    return newTaxes;
-  };
-
   /**
    * Finds the list of taxes that apply to given receipt.
    * @param {Object} receipt - The receipt that taxes will apply to.
@@ -98,9 +21,17 @@
       throw 'Local tax cache is not yet initialized, execute: OB.Taxes.Pos.initCache()';
     }
 
-    const ticket = translateReceipt(receipt);
-    const taxes = OB.Taxes.applyTaxes(ticket, OB.Taxes.Pos.ruleImpls);
-    return translateTaxes(taxes);
+    const ticket = {
+      ...receipt.toJSON(),
+      businessPartner: receipt.get('bp').toJSON(),
+      lines: receipt.get('lines').map(line => {
+        return {
+          ...line.toJSON(),
+          product: line.get('product').toJSON()
+        };
+      })
+    };
+    return OB.Taxes.Pos.applyTaxes(ticket, OB.Taxes.Pos.ruleImpls);
   };
 
   /**

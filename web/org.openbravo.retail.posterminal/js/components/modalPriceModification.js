@@ -97,42 +97,22 @@ enyo.kind({
     onPriceModificationDone: 'doPriceModificationDone'
   },
   doPriceModificationDone: function() {
-    var me = this,
-      i;
-    if (this.args.selectedModels.length > 1) {
-      for (i = 0; i < this.args.selectedModels.length; i++) {
-        this.args.selectedModels[i].set(
-          'oBPOSPriceModificationReason',
-          me.$.body.$.priceModificationReason.getValue()
-        );
-      }
-    } else {
-      this.args.line.set(
-        'oBPOSPriceModificationReason',
-        me.$.body.$.priceModificationReason.getValue()
-      );
-    }
-    this.args.callback();
+    this.args.callback({
+      reason: this.$.body.$.priceModificationReason.getValue()
+    });
   },
   executeOnShow: function() {
-    var i;
-    if (
-      this.args.selectedModels.length <= 1 &&
-      this.args.line.get('oBPOSPriceModificationReason')
-    ) {
-      for (
-        i = 0;
-        i < OB.MobileApp.model.get('priceModificationReasons').length;
-        i++
-      ) {
-        if (
-          OB.MobileApp.model.get('priceModificationReasons')[i].id ===
-          this.args.line.get('oBPOSPriceModificationReason')
-        ) {
-          this.$.body.$.priceModificationReason.setSelected(i);
-          break;
-        }
-      }
+    const defaultReason = OB.App.State.getState().Ticket.lines.find(
+      l => this.args.lineIds.includes(l.id) && l.oBPOSPriceModificationReason
+    );
+
+    if (defaultReason) {
+      this.$.body.$.priceModificationReason.setSelected(
+        OB.MobileApp.model
+          .get('priceModificationReasons')
+          .map(r => r.id)
+          .indexOf(defaultReason.oBPOSPriceModificationReason)
+      );
     }
   },
   initComponents: function() {

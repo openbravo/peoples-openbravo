@@ -333,24 +333,12 @@ OB.UTIL.currency = {
    * @return {float}                        the converted amount
    */
   toDefaultCurrency: function(fromCurrencyId, amount) {
-    // argument checks
-    OB.UTIL.Debug.isDefined(
+    return OB.App.State.Cashup.Utils.toDefaultCurrency(
       fromCurrencyId,
-      "Missing required argument 'fromCurrencyId' in OB.UTIL.currency.toDefaultCurrency"
-    );
-    OB.UTIL.Debug.isDefined(
       amount,
-      "Missing required argument 'amount' in OB.UTIL.currency.toDefaultCurrency"
+      this.webPOSDefaultCurrencyId(),
+      OB.UTIL.currency.conversions
     );
-
-    fromCurrencyId = fromCurrencyId.toString();
-
-    if (fromCurrencyId === this.webPOSDefaultCurrencyId()) {
-      return amount;
-    }
-    var converter = this.getToLocalConverter(fromCurrencyId);
-    var foreignAmount = converter.getFinancialAmountOf(amount);
-    return foreignAmount;
   },
   /**
    * converts an amount from the WebPOS currency to the toCurrencyId currency

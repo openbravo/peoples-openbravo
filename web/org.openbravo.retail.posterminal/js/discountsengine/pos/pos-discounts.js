@@ -12,35 +12,6 @@
   OB.Discounts = OB.Discounts || {};
   OB.Discounts.Pos = OB.Discounts.Pos || {};
 
-  OB.Discounts.Pos.local = true;
-
-  const calculateLocal = (ticket, rules) => {
-    return OB.Discounts.applyDiscounts(ticket, rules, OB.Discounts.Pos.bpSets);
-  };
-
-  const calculateRemote = ticket => {
-    ticket = JSON.stringify(ticket);
-    fetch('../../discount', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: ticket
-    })
-      .then(response => response.json())
-      .then(disc => OB.info(disc));
-  };
-
-  function getExternalBusinessPartnerCategory(externalBusinessPartner) {
-    if (!OB.UTIL.externalBp()) {
-      return null;
-    }
-    const extbp = new OB.App.Class.ExternalBusinessPartner(
-      externalBusinessPartner
-    );
-    return extbp.getCategoryKey();
-  }
-
   const applyDiscounts = (ticket, result) => {
     ticket.get('lines').forEach(line => {
       const discountLine = result.lines.find(l => l.id === line.get('id'));
@@ -64,124 +35,39 @@
     });
   };
 
-  const transformNewEngineManualPromotions = (
-    ticket,
-    ticketManualPromos,
-    result
-  ) => {
-    ticket.get('lines').forEach(line => {
-      const discountLine = result.lines.find(l => l.id === line.get('id'));
-      if (!discountLine) {
-        return;
-      }
-      // Create new instances of original definitions for manual promotions
-      discountLine.discounts.forEach(promotion => {
-        if (promotion.manual) {
-          let promotionRuleId = promotion.ruleId,
-            promotionDiscountInstance = promotion.discountinstance,
-            promotionNoOrder = promotion.noOrder,
-            promotionSplitAmt = promotion.splitAmt;
-
-          let discountInstance = ticketManualPromos.find(ticketManualPromo => {
-            return (
-              ticketManualPromo.ruleId === promotionRuleId &&
-              ticketManualPromo.discountinstance ===
-                promotionDiscountInstance &&
-              ticketManualPromo.noOrder === promotionNoOrder &&
-              ticketManualPromo.splitAmt === promotionSplitAmt
-            );
-          });
-
-          let newPromoInstance = {};
-
-          for (let key in discountInstance) {
-            newPromoInstance[key] = discountInstance[key];
-          }
-
-          for (let key in promotion) {
-            newPromoInstance[key] = promotion[key];
-          }
-
-          delete newPromoInstance.linesToApply;
-
-          for (let key in newPromoInstance) {
-            promotion[key] = newPromoInstance[key];
-          }
-        }
-        promotion.calculatedOnDiscountEngine = true;
-        promotion.obdiscQtyoffer = promotion.qtyOffer;
-        promotion.displayedTotalAmount = promotion.amt;
-        promotion.fullAmt = promotion.amt;
-        promotion.actualAmt = promotion.amt;
-      });
-    });
-  };
-
-  const translateReceipt = receipt => {
-    return {
-      id: receipt.get('id'),
-      orderDate: receipt.get('orderDate'),
-      priceList: receipt.get('priceList'),
-      priceIncludesTax: receipt.get('priceIncludesTax'),
-      businessPartner: {
-        id: receipt.get('bp').id,
-        businessPartnerCategory: receipt
-          .get('bp')
-          .get('businessPartnerCategory'),
-        _identifier: receipt.get('bp')._identifier
-      },
-      externalBusinessPartnerCategory: getExternalBusinessPartnerCategory(
-        receipt.get('externalBusinessPartner')
-      ),
-      discountsFromUser: receipt.get('discountsFromUser') || {},
-      lines: receipt.get('lines').map(line => {
-        return {
-          id: line.get('id'),
-          product: line.get('product').toJSON(),
-          qty: line.get('qty'),
-          baseGrossUnitPrice: line.get('price'),
-          baseNetUnitPrice: line.get('price')
-        };
-      })
-    };
-  };
-
   OB.Discounts.Pos.calculateDiscounts = (receipt, callback) => {
-    const ticketForEngine = translateReceipt(receipt);
-    let result;
-    if (OB.Discounts.Pos.local) {
-      if (!OB.Discounts.Pos.ruleImpls) {
-        throw 'Local discount cache is not yet initialized, execute: OB.Discounts.Pos.initCache()';
-      }
-      // This hook cannot be asynchronous
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_PreApplyNewDiscountEngine',
-        {
-          receipt: receipt,
-          rules: [...OB.Discounts.Pos.ruleImpls]
-        },
-        args => {
-          result = calculateLocal(ticketForEngine, args.rules);
-          transformNewEngineManualPromotions(
-            receipt,
-            ticketForEngine.discountsFromUser.manualPromotions,
-            result
-          );
-          applyDiscounts(receipt, result);
-          callback();
-        }
-      );
-    } else {
-      result = calculateRemote(receipt, callback);
+    if (!OB.Discounts.Pos.ruleImpls) {
+      throw 'Local discount cache is not yet initialized, execute: OB.Discounts.Pos.initCache()';
     }
-  };
-
-  /**
-   * Retrieves the list of manual promotions
-   * @return {string[]} An array containg the manual promotions
-   */
-  OB.Discounts.Pos.getManualPromotions = () => {
-    return Object.keys(OB.Model.Discounts.discountRules);
+    // This hook cannot be asynchronous
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_PreApplyNewDiscountEngine',
+      {
+        receipt: receipt,
+        rules: [...OB.Discounts.Pos.ruleImpls]
+      },
+      args => {
+        const ticket = {
+          ...receipt.toJSON(),
+          businessPartner: receipt.get('bp').toJSON(),
+          lines: receipt.get('lines').map(line => {
+            return {
+              ...line.toJSON(),
+              product: line.get('product').toJSON(),
+              baseGrossUnitPrice: line.get('price'),
+              baseNetUnitPrice: line.get('price')
+            };
+          })
+        };
+        const result = OB.Discounts.Pos.applyDiscounts(
+          ticket,
+          args.rules,
+          OB.Discounts.Pos.bpSets
+        );
+        applyDiscounts(receipt, result);
+        callback();
+      }
+    );
   };
 
   /**

@@ -17,7 +17,7 @@ enyo.kind({
     onApplyChanges: 'applyChanges'
   },
   executeOnShow: function() {
-    if (this.currentLine) {
+    if (this.currentLine || this.args.forceLoad) {
       var diff = this.propertycomponents;
       var att,
         receiptLineDescription,
@@ -54,6 +54,9 @@ enyo.kind({
     }
   },
   executeOnHide: function() {
+    if (this.args.callback) {
+      this.args.callback({ ...this.formData });
+    }
     if (
       this.args &&
       this.args.requiredFiedls &&
@@ -106,13 +109,18 @@ enyo.kind({
   loadValue: function(mProperty, component) {
     this.waterfall('onLoadValue', {
       model: this.currentLine,
-      modelProperty: mProperty
+      modelProperty: mProperty,
+      extraParams: this.args
     });
     // Make it visible or not...
     if (component.showProperty) {
-      component.showProperty(this.currentLine, function(value) {
-        component.owner.owner.setShowing(value);
-      });
+      component.showProperty(
+        this.currentLine,
+        function(value) {
+          component.owner.owner.setShowing(value);
+        },
+        this.args
+      );
     } // else make it visible...
   },
   applyChanges: function(inSender, inEvent) {
@@ -120,10 +128,16 @@ enyo.kind({
       att,
       result = true;
     diff = this.propertycomponents;
+    this.formData = {};
     for (att in diff) {
       if (diff.hasOwnProperty(att)) {
         if (diff[att].owner.owner.getShowing()) {
-          result = result && diff[att].applyValue(this.currentLine);
+          if (this.args.callback) {
+            this.formData[diff[att].modelProperty] = diff[att].value;
+            this.formData[diff[att].modelPropertyText] = diff[att].content;
+          } else {
+            result = result && diff[att].applyValue(this.currentLine);
+          }
         }
       }
     }
@@ -220,7 +234,7 @@ enyo.kind({
         }
       },
       loadValue: function(inSender, inEvent) {
-        if (inEvent.modelProperty === this.modelProperty) {
+        if (inEvent.modelProperty === this.modelProperty && inEvent.model) {
           if (inEvent.model.get('oBPOSPriceModificationReason')) {
             var i;
             for (
@@ -247,6 +261,7 @@ enyo.kind({
       },
       showProperty: function(orderline, callback) {
         if (
+          orderline &&
           orderline.get('oBPOSPriceModificationReason') &&
           OB.MobileApp.model.get('priceModificationReasons').length > 0
         ) {

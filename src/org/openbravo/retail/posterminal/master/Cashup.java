@@ -95,7 +95,14 @@ public class Cashup extends JSONProcessSimple {
         result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
         return result;
       }
-      String isprocessed = jsonsent.getString("isprocessed");
+
+      String isprocessed;
+      if (jsonsent.has("isprocessed")) {
+        isprocessed = jsonsent.getString("isprocessed");
+      } else {
+        isprocessed = jsonsent.getJSONObject("data").getString("isprocessed");
+      }
+
       String isprocessedbo = "";
       if (jsonsent.has("isprocessedbo")) {
         isprocessedbo = " and c.isprocessedbo = :isprocessedbo";
@@ -103,7 +110,7 @@ public class Cashup extends JSONProcessSimple {
 
       String hqlCashup = "select c.id, c.netsales as netSales, c.grosssales as grossSales, "
           + "c.netreturns as netReturns, c.grossreturns as grossReturns, c.totalretailtransactions as totalRetailTransactions,"
-          + "c.creationDate as creationDate, c.createdBy.id as userId, c.isbeingprocessed, c.isProcessed, c.pOSTerminal.id as posterminal "
+          + "c.creationDate as creationDate, c.createdBy.id as userId, c.isProcessed, c.pOSTerminal.id as posterminal "
           + "from OBPOS_App_Cashup c where c.isProcessed=:isprocessed and c.pOSTerminal.id= :terminal "
           + isprocessedbo + " order by c.creationDate desc";
 
@@ -139,9 +146,8 @@ public class Cashup extends JSONProcessSimple {
         String nowAsISO = df.format(cashup[6]);
         cashupJSON.put("creationDate", nowAsISO);
         cashupJSON.put("userId", cashup[7]);
-        cashupJSON.put("isbeingprocessed", ((Boolean) cashup[8]) ? "Y" : "N");
-        cashupJSON.put("isprocessed", ((Boolean) cashup[9]) ? "Y" : "N");
-        cashupJSON.put("posterminal", cashup[10]);
+        cashupJSON.put("isprocessed", ((Boolean) cashup[8]) ? "Y" : "N");
+        cashupJSON.put("posterminal", cashup[9]);
 
         // Get Payments
         JSONArray cashPaymentMethodInfo = getPayments((String) cashup[0], converter);
@@ -329,7 +335,6 @@ public class Cashup extends JSONProcessSimple {
         result.put("isocode", cashMgmtJSON.get("currency$_identifier"));
         result.put("cashup_id", cashMgmtJSON.get("obposAppCashup"));
         result.put("glItem", cashMgmtJSON.get("gLItem"));
-        result.put("isbeingprocessed", cashMgmtJSON.get("aprmProcessed").equals("P") ? "Y" : "N");
         result.put("_idx", "");
         respArray.put(result);
       }

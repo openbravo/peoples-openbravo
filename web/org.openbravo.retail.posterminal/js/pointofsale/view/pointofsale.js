@@ -842,18 +842,22 @@ enyo.kind({
                 return;
               }
               receipt.trigger('print', receipt, {
-                forcePrint: true,
-                callback: inEvent.callback
+                forcePrint: true
               });
+              if (inEvent.callback && inEvent.callback instanceof Function) {
+                inEvent.callback();
+              }
             }
           );
 
           return;
         }
         receipt.trigger('print', receipt, {
-          forcePrint: true,
-          callback: inEvent.callback
+          forcePrint: true
         });
+        if (inEvent.callback && inEvent.callback instanceof Function) {
+          inEvent.callback();
+        }
         return;
       }
       if (this.model.get('leftColumnViewManager').isMultiOrder()) {
@@ -861,9 +865,11 @@ enyo.kind({
           this.model.get('multiOrders').get('multiOrdersList').models,
           function(order) {
             this.model.get('multiOrders').trigger('print', order, {
-              forcePrint: true,
-              callback: inEvent.callback
+              forcePrint: true
             });
+            if (inEvent.callback && inEvent.callback instanceof Function) {
+              inEvent.callback();
+            }
           },
           this
         );
@@ -931,11 +937,7 @@ enyo.kind({
     });
   },
   addProductToOrder: function(inSender, inEvent) {
-    var targetOrder,
-      me = this,
-      attrs,
-      finalCallback,
-      negativeLines;
+    var targetOrder, attrs, finalCallback, negativeLines;
     finalCallback = function(success, orderline) {
       if (inEvent.callback) {
         inEvent.callback.call(inEvent.context, success || false, orderline);
@@ -1123,31 +1125,69 @@ enyo.kind({
           finalCallback(false);
           return true;
         }
-        args.receipt.addProcess = {};
-        args.receipt.addProcess.pending = true;
-        args.receipt.addProcess.hasProduct = false;
-        args.receipt.addProcess.products = [];
-        args.receipt.addProduct(
-          args.productToAdd,
-          args.qtyToAdd,
-          args.options,
-          args.attrs,
-          function(success, orderline) {
-            args.receipt.addProcess.pending = false;
-            args.context.model.get('orderList').saveCurrent();
-            finalCallback(success, orderline);
-            if (success && orderline) {
-              if (
-                orderline.get('hasMandatoryServices') === false &&
-                args.receipt.addProcess.hasProduct === true
-              ) {
-                args.receipt.addProcess.products.forEach(function(product) {
-                  me.addProductToOrder(product.inSender, product.inEvent);
-                });
-              }
+        const options = args.options ? { ...args.options } : {};
+        if (options.line) {
+          options.line = args.options.line.id;
+        }
+        const attrs = args.attrs ? { ...args.attrs } : {};
+        if (attrs.originalLine) {
+          attrs.originalLine = attrs.originalLine.id;
+        }
+        options.businessPartner = OB.MobileApp.model.get(
+          'terminal'
+        ).businessPartner;
+
+        const preventServicesUpdate = args.receipt.get('preventServicesUpdate');
+        args.receipt.set('preventServicesUpdate', true);
+
+        const beforeAddTicket = OB.App.State.getState().Ticket;
+
+        OB.App.State.Ticket.addProduct({
+          products: [
+            {
+              product: args.productToAdd.toJSON(),
+              qty: args.qtyToAdd,
+              options,
+              attrs
             }
-          }
-        );
+          ]
+        })
+          .then(() => {
+            if (OB.UI.MultiColumn.isSingleColumn()) {
+              OB.UTIL.showSuccess(
+                OB.I18N.getLabel('OBPOS_AddLine', [
+                  args.qtyToAdd,
+                  args.productToAdd.toJSON()._identifier
+                ])
+              );
+            }
+
+            const afterAddTicket = OB.App.State.getState().Ticket;
+
+            const newLine = afterAddTicket.lines.find(
+              nl => !beforeAddTicket.lines.some(l => l.id === nl.id)
+            );
+
+            if (
+              !options.isSilentAddProduct &&
+              newLine &&
+              newLine.hasMandatoryServices &&
+              !newLine.splitline &&
+              newLine.product.productType !== 'S'
+            ) {
+              args.receipt.trigger(
+                'showProductList',
+                args.receipt.get('lines').get(newLine.id),
+                'mandatory'
+              );
+            }
+
+            finalCallback(true);
+          })
+          .catch(OB.App.View.ActionCanceledUIHandler.handle)
+          .finally(() => {
+            args.receipt.set('preventServicesUpdate', preventServicesUpdate);
+          });
       }
     );
     return true;
@@ -1351,19 +1391,24 @@ enyo.kind({
   },
 
   reactivateQuotation: function() {
-    this.model.get('order').reactivateQuotation();
-    this.model.get('orderList').saveCurrent();
-    if (
-      this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$
-        .actionButtonsContainer.$.descriptionButton
-    ) {
-      if (
-        this.model.get('order').get('isEditable') &&
-        this.model.get('order').get('isQuotation')
-      ) {
-        this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
-      }
-    }
+    var me = this;
+    this.model
+      .get('order')
+      .reactivateQuotation()
+      .then(() => {
+        me.model.get('orderList').saveCurrent();
+        if (
+          me.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$
+            .actionButtonsContainer.$.descriptionButton
+        ) {
+          if (
+            me.model.get('order').get('isEditable') &&
+            me.model.get('order').get('isQuotation')
+          ) {
+            me.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
+          }
+        }
+      });
     return true;
   },
   rejectQuotation: function(inSender, inEvent) {

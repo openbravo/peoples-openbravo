@@ -1095,7 +1095,7 @@ enyo.kind({
     this.modelChanger();
   },
 
-  displayStep: function(model) {
+  displayStep: async function(model) {
     if (
       OB.MobileApp.model.hasPermission('OBPOS_HideCashUpInfoToCashier', true)
     ) {
@@ -1126,21 +1126,22 @@ enyo.kind({
     }
     if (OB.POS.modelterminal.get('terminal').ismaster) {
       if (OB.MobileApp.view.currentWindow === 'retail.cashuppartial') {
-        new OB.DS.Process(
-          'org.openbravo.retail.posterminal.ProcessCashMgmtMaster'
-        ).exec(
+        const response = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.ProcessCashMgmtMaster',
           {
-            cashUpId: OB.POS.modelterminal.get('terminal').cashUpId,
+            cashUpId: OB.App.State.getState().Cashup.id,
             terminalSlave: OB.POS.modelterminal.get('terminal').isslave
-          },
-          data => {
-            if (data && !data.exception) {
-              this.owner.$.cashMaster.updateCashUpModel(model, data, () => {
-                this.closeCashReportChanged(model.get('closeCashReport').at(0));
-              });
-            }
           }
         );
+        if (response && response.response && !response.response.error) {
+          this.owner.$.cashMaster.updateCashUpModel(
+            model,
+            response.response.data,
+            () => {
+              this.closeCashReportChanged(model.get('closeCashReport').at(0));
+            }
+          );
+        }
       } else {
         this.closeCashReportChanged(model.get('closeCashReport').at(0));
       }

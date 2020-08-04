@@ -187,6 +187,7 @@
                     OB.MobileApp.model.orderList.modelorder.get('id') ===
                       order.get('id')
                   ) {
+                    OB.MobileApp.model.orderList.modelorder.set('isNew', false);
                     OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(
                       clonedBP,
                       false,

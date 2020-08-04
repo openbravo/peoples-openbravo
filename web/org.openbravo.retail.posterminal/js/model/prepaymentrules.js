@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2019 Openbravo S.L.U.
+ * Copyright (C) 2017-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -97,7 +97,7 @@
     currentLinePrepaymentAmount: function(line, percentage, units) {
       var price, discount;
       if (units) {
-        price = line.get('grossListPrice') || line.get('priceList');
+        price = line.get('priceList');
         if (line.get('promotions') && line.get('promotions').length > 0) {
           discount = line.get('promotions').reduce(function(total, model) {
             return OB.DEC.add(total, model.amt);

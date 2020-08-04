@@ -481,21 +481,11 @@
             }
           }
 
-          OB.Dal.find(
-            OB.Model.CashUp,
-            {
-              isprocessed: 'N'
-            },
-            function(cashUps) {
-              if (cashUps.length === 1) {
-                params.cashUpId = cashUps.at(0).get('id');
-              }
-              loadTerminalModel();
-            },
-            function() {
-              loadTerminalModel();
-            }
-          );
+          const currentCashUpId = OB.App.State.getState().Cashup.id;
+          if (currentCashUpId !== null) {
+            params.cashUpId = currentCashUpId;
+          }
+          loadTerminalModel();
         }
       });
 
@@ -523,162 +513,6 @@
         isPersistent: false
       });
 
-      this.get('dataSyncModels').push({
-        name: 'Cash Management',
-        model: OB.Model.CashManagement,
-        modelFunc: 'OB.Model.CashManagement',
-        isPersistent: true,
-        className: 'org.openbravo.retail.posterminal.ProcessCashMgmt',
-        criteria: {
-          isbeingprocessed: 'N'
-        },
-        getIdentifier: function(model) {
-          return (
-            model.type +
-            ': ' +
-            model.user +
-            ' - ' +
-            OB.I18N.formatDateISO(new Date(model.creationDate))
-          );
-        }
-      });
-
-      this.get('dataSyncModels').push({
-        name: 'Cash Up',
-        model: OB.Model.CashUp,
-        modelFunc: 'OB.Model.CashUp',
-        isPersistent: true,
-        className: 'org.openbravo.retail.posterminal.ProcessCashClose',
-        timeout: 600000,
-        timePerRecord: 10000,
-        getIdentifier: function(model) {
-          return OB.I18N.formatDateISO(new Date(model.creationDate));
-        },
-        getCriteria: function() {
-          if (
-            OB.UTIL.isNullOrUndefined(OB.MobileApp.model.get('terminal')) ||
-            (OB.MobileApp.model.get('terminal') &&
-              (OB.MobileApp.model.get('terminal').ismaster ||
-                OB.MobileApp.model.get('terminal').isslave))
-          ) {
-            return {};
-          } else {
-            return {
-              isprocessed: 'Y'
-            };
-          }
-        },
-        changesPendingCriteria: {
-          isprocessed: 'Y'
-        },
-        removeSyncedElemsCallback: function(dataToSync, tx, requestCallback) {
-          OB.UTIL.deleteCashUps(dataToSync, tx, requestCallback);
-        },
-        postProcessingFunction: function(data, callback) {
-          function endCallback() {
-            // Get Cashup id, if objToSend is not filled compose and synchronize
-            OB.UTIL.calculateCurrentCash(
-              function() {
-                if (callback) {
-                  callback();
-                }
-              },
-              null,
-              data.at(0)
-            );
-          }
-          if (data.at(0).get('isprocessed') === 'N') {
-            return endCallback();
-          }
-          OB.Dal.find(
-            OB.Model.CashUp,
-            {
-              isprocessed: 'N'
-            },
-            function(currentCashup) {
-              if (currentCashup.length === 0) {
-                OB.UTIL.initCashUp(
-                  function() {
-                    var cashUpId = data.at(0).get('id');
-                    OB.Dal.find(
-                      OB.Model.CashUp,
-                      {
-                        id: cashUpId
-                      },
-                      function(cU) {
-                        if (cU.length !== 0) {
-                          if (!cU.at(0).get('objToSend')) {
-                            OB.UTIL.composeCashupInfo(data, null, function() {
-                              OB.MobileApp.model.runSyncProcess();
-                            });
-                          }
-                        }
-                      }
-                    );
-                    endCallback();
-                  },
-                  null,
-                  true,
-                  data.at(0)
-                );
-              } else {
-                endCallback();
-                OB.UTIL.HookManager.executeHooks(
-                  'OBPOS_PostProcessingNoNewCashup',
-                  {},
-                  function() {
-                    return;
-                  }
-                );
-              }
-            }
-          );
-        },
-        // skip the syncing of the cashup if it is the same as the last one
-        preSendModel: function(me, dataToSync) {
-          if (dataToSync.length === 0) {
-            return;
-          } else {
-            if (
-              dataToSync.length === 1 &&
-              this.model === OB.Model.CashUp &&
-              !OB.UTIL.isNullOrUndefined(
-                OB.UTIL.localStorage.getItem('lastCashupSendInfo')
-              ) &&
-              OB.UTIL.localStorage.getItem('lastCashupSendInfo') ===
-                dataToSync.models[0].get('objToSend')
-            ) {
-              me.skipSyncModel = true;
-            }
-            OB.UTIL.localStorage.setItem(
-              'lastCashupSendInfo',
-              dataToSync.models[0].get('objToSend')
-            );
-          }
-        },
-        // keep track of successfull send
-        successSendModel: function() {
-          OB.UTIL.localStorage.setItem(
-            'lastCashupInfo',
-            OB.UTIL.localStorage.getItem('lastCashupSendInfo')
-          );
-        }
-      });
-
-      // move terminal log model to the end of models to sync since has less priority
-      var i,
-        indexTerminalLogModel = -1;
-      for (i = 0; i < this.get('dataSyncModels').length; i++) {
-        if (this.get('dataSyncModels')[i].name === 'OBMOBC_TerminalLog') {
-          indexTerminalLogModel = i;
-        }
-      }
-      if (indexTerminalLogModel !== -1) {
-        this.get('dataSyncModels').push(
-          this.get('dataSyncModels').splice(indexTerminalLogModel, 1)[0]
-        );
-      }
-
       this.on('ready', function() {
         OB.debug("next process: 'retail.pointofsale' window");
         if (this.get('terminal').currencyFormat) {
@@ -686,82 +520,77 @@
         }
         // register models which are cached during synchronized transactions
         OB.MobileApp.model.addSyncCheckpointModel(OB.Model.Order);
-        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.PaymentMethodCashUp);
-        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.TaxCashUp);
-        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.CashUp);
 
         var terminal = this.get('terminal');
 
-        OB.UTIL.initCashUp(
-          function() {
-            function finishAndNavigate() {
-              OB.UTIL.calculateCurrentCash(function() {
-                OB.UTIL.HookManager.executeHooks(
-                  'OBPOS_LoadPOSWindow',
-                  {},
-                  function(args) {
-                    if (
-                      args &&
-                      args.cancellation &&
-                      args.cancellation === true
-                    ) {
-                      return;
-                    }
-                    var nextWindow = OB.MobileApp.model.get('nextWindow');
-                    if (nextWindow) {
-                      OB.POS.navigate(nextWindow);
-                      OB.MobileApp.model.unset('nextWindow');
-                    } else {
-                      OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
-                    }
-                  }
-                );
-              }, null);
-            }
-            if (
-              !OB.MobileApp.model.get('terminal').ismaster &&
-              !OB.MobileApp.model.get('terminal').isslave
-            ) {
-              finishAndNavigate();
-            } else {
-              OB.Dal.find(
-                OB.Model.CashUp,
-                {
-                  isprocessed: 'N'
-                },
-                function(cashUps) {
-                  OB.UTIL.composeCashupInfo(cashUps, null, finishAndNavigate);
+        const onInitCashupSucess = function() {
+          function finishAndNavigate() {
+            OB.UTIL.HookManager.executeHooks(
+              'OBPOS_LoadPOSWindow',
+              {},
+              function(args) {
+                if (args && args.cancellation && args.cancellation === true) {
+                  return;
                 }
-              );
-            }
-          },
-          function() {
-            //There was an error when retrieving the cashup from the backend.
-            // This means that there is a cashup saved as an error, and we don't have
-            //the necessary information to have a working cashup in the client side.
-            //We therefore need to logout
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_CashupErrors'),
-              OB.I18N.getLabel('OBPOS_CashupErrorsMsg'),
-              [
-                {
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  isConfirmButton: true,
-                  action: function() {
-                    OB.UTIL.showLoading(true);
-                    me.logout();
-                  }
-                }
-              ],
-              {
-                onHideFunction: function() {
-                  OB.UTIL.showLoading(true);
-                  me.logout();
+                var nextWindow = OB.MobileApp.model.get('nextWindow');
+                if (nextWindow) {
+                  OB.POS.navigate(nextWindow);
+                  OB.MobileApp.model.unset('nextWindow');
+                } else {
+                  OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
                 }
               }
             );
           }
-        );
+
+          finishAndNavigate();
+        };
+
+        const onInitCashupError = function() {
+          //There was an error when retrieving the cashup from the backend.
+          // This means that there is a cashup saved as an error, and we don't have
+          //the necessary information to have a working cashup in the client side.
+          //We therefore need to logout
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_CashupErrors'),
+            OB.I18N.getLabel('OBPOS_CashupErrorsMsg'),
+            [
+              {
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: function() {
+                  OB.UTIL.showLoading(true);
+                  me.logout();
+                }
+              }
+            ],
+            {
+              onHideFunction: function() {
+                OB.UTIL.showLoading(true);
+                me.logout();
+              }
+            }
+          );
+        };
+
+        OB.App.State.Global.initCashup({
+          currentDate: new Date(),
+          userId: OB.MobileApp.model.get('context').user.id,
+          terminalId: OB.MobileApp.model.get('terminal').id,
+          terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
+          terminalIsMaster: OB.POS.modelterminal.get('terminal').ismaster,
+          terminalPayments: OB.MobileApp.model.get('payments'),
+          terminalName: OB.POS.modelterminal.get('terminal').searchKey,
+          cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
+        })
+          .then(() => {
+            onInitCashupSucess();
+          })
+          .catch(e => {
+            onInitCashupError();
+            OB.error(e.stack);
+          });
+
         // Set Hardware..
         OB.POS.hwserver = new OB.DS.HWServer(
           this.get('hardwareURL'),
@@ -1241,131 +1070,6 @@
               }
             }
           );
-        }
-        if (
-          OB.UTIL.localStorage.getItem('synchronizedMessageId') &&
-          !this.checkProcessingMessageLocked
-        ) {
-          this.checkProcessingMessageLocked = true;
-          var me = this;
-          if (!me.showSynchronizedDialog) {
-            me.showSynchronizingDialog('CheckProcessingMessage');
-          }
-          var prcss = new OB.DS.Process(
-            'org.openbravo.retail.posterminal.CheckProcessingMessage'
-          );
-          var checkProcessingMessage;
-          checkProcessingMessage = function(counter) {
-            prcss.exec(
-              {
-                messageId: OB.UTIL.localStorage.getItem('synchronizedMessageId')
-              },
-              function(data) {
-                if (data && data.exception) {
-                  //ERROR or no connection
-                  OB.error('renderMain', data.exception.message);
-                } else if (data) {
-                  if (data.status === 'Processed') {
-                    var orderId = JSON.parse(data.json).data[0].data[0].id;
-                    var callback = function() {
-                      me.checkProcessingMessageLocked = false;
-                      OB.UTIL.localStorage.removeItem('synchronizedMessageId');
-                      OB.UTIL.showLoading(false);
-                      if (OB.MobileApp.model.showSynchronizedDialog) {
-                        OB.MobileApp.model.hideSynchronizingDialog(
-                          'CheckProcessingMessage'
-                        );
-                      }
-                    };
-                    OB.MobileApp.model.orderList.loadById(orderId);
-                    if (orderId === OB.MobileApp.model.orderList.current.id) {
-                      OB.UTIL.rebuildCashupFromServer(function() {
-                        OB.MobileApp.model.orderList.saveCurrent();
-                        OB.Dal.remove(
-                          OB.MobileApp.model.orderList.current,
-                          null,
-                          null
-                        );
-                        OB.MobileApp.model.orderList.deleteCurrent();
-                        callback();
-                      });
-                    } else {
-                      callback();
-                    }
-                  } else if (data.status === 'Initial') {
-                    //recursively check process status
-                    setTimeout(function() {
-                      counter++;
-                      OB.UTIL.showConfirmation.setText(
-                        OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') +
-                          ' ' +
-                          OB.I18N.getLabel('OBMOBC_NumOfRetries') +
-                          ' ' +
-                          counter
-                      );
-                      checkProcessingMessage(counter);
-                    }, 15000);
-                  } else if (data.status === 'Error') {
-                    //Show modal advising that there was an error
-                    me.checkProcessingMessageLocked = false;
-                    OB.UTIL.localStorage.removeItem('synchronizedMessageId');
-                    if (OB.MobileApp.model.showSynchronizedDialog) {
-                      OB.MobileApp.model.hideSynchronizingDialog(
-                        'CheckProcessingMessage'
-                      );
-                    }
-                    OB.UTIL.showConfirmation.display(
-                      OB.I18N.getLabel('OBMOBC_TransactionFailedTitle'),
-                      OB.I18N.getLabel('OBMOBC_TransactionFailed', [
-                        data.errorMessage
-                      ]),
-                      [
-                        {
-                          isConfirmButton: true,
-                          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                          action: function() {
-                            if (
-                              OB.MobileApp.view.currentWindow !==
-                              'retail.pointofsale'
-                            ) {
-                              OB.POS.navigate('retail.pointofsale');
-                              return true;
-                            }
-                          }
-                        }
-                      ]
-                    );
-                  } else {
-                    me.checkProcessingMessageLocked = false;
-                    OB.UTIL.localStorage.removeItem('synchronizedMessageId');
-                    OB.UTIL.showLoading(false);
-                    if (OB.MobileApp.model.showSynchronizedDialog) {
-                      OB.MobileApp.model.hideSynchronizingDialog(
-                        'CheckProcessingMessage'
-                      );
-                    }
-                  }
-                }
-              },
-              function(data) {
-                //Continue retrying till we know the status of the message
-                counter++;
-                setTimeout(function() {
-                  OB.UTIL.showConfirmation.setText(
-                    OB.I18N.getLabel('OBMOBC_DataIsBeingProcessed') +
-                      ' ' +
-                      OB.I18N.getLabel('OBMOBC_NumOfRetries') +
-                      ' ' +
-                      counter
-                  );
-                  checkProcessingMessage(counter);
-                }, 15000);
-              },
-              undefined,
-              15000
-            );
-          };
-          checkProcessingMessage(0);
         }
       });
       this.trigger('ready');

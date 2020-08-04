@@ -116,7 +116,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
         "utils/servicesUtils", "utils/remoteUtils", "components/keypadcoins", "data/dataordersave",
         "data/dataordertaxes", "data/datacustomersave", "data/datacustomeraddrsave",
-        "data/dataorderdiscount", "components/modalreceipts", "components/modalorderselector",
+        "components/modalreceipts", "components/modalorderselector",
         "components/modalcrossstoreselector", "components/storeinformation",
         "components/modalmultiorderslayaway", "components/modalcategorytree",
         "components/rendercategory", "components/renderproduct", "components/renderproductch",
@@ -161,11 +161,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/ps-gridkeyboard", "pointofsale/view/ps-gridkeyboard-edit",
         "pointofsale/view/ps-gridkeyboard-scan", "pointofsale/model/pointofsale-print",
         "pointofsale/model/pointofsale-model", "pointofsale/model/localstock",
-        "pointofsale/model/otherstoresstock", "pointofsale/view/pointofsale",
-        "pointofsale/view/ps-receiptview", "pointofsale/view/ps-multireceiptview",
-        "pointofsale/view/ps-productdetailsview", "pointofsale/view/obpos-toolbar",
-        "pointofsale/view/toolbar-left", "pointofsale/view/toolbar-right", "pointofsale/view/scan",
-        "pointofsale/view/editline", "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
+        "pointofsale/model/stock-checker", "pointofsale/model/otherstoresstock",
+        "pointofsale/view/pointofsale", "pointofsale/view/ps-receiptview",
+        "pointofsale/view/ps-multireceiptview", "pointofsale/view/ps-productdetailsview",
+        "pointofsale/view/obpos-toolbar", "pointofsale/view/toolbar-left",
+        "pointofsale/view/toolbar-right", "pointofsale/view/scan", "pointofsale/view/editline",
+        "pointofsale/view/payment", "pointofsale/view/ticketdiscount",
         "pointofsale/view/keyboard-toolbars", "pointofsale/view/keyboardorder",
 
         // Point of sale subwindows
@@ -322,6 +323,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/masterdata/discount/DiscountFilterRoleModel");
     appDependency.add("model/masterdata/discount/DiscountFilterBusinessPartnerExtRef");
     appDependency.add("model/masterdata/discount/DiscountModel");
+    // Business-Logic
+    appDependency.add("model/business-logic/stock/StockChecker");
+    appDependency.add("model/business-logic/pack/ProductPack");
+    appDependency.add("model/business-logic/pack/ProductPackProvider");
+    appDependency.add("model/business-logic/pack/Pack");
     // Business-Object
     appDependency.add("model/business-object/document-sequence/DocumentSequence");
     appDependency.add("model/business-object/document-sequence/DocumentSequenceUtils");
@@ -333,6 +339,37 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/business-partner/SynchronizeBusinessPartnerLocation");
 
     appDependency.add("model/business-object/safebox/SynchronizeCountSafeBox");
+
+    // ticket model
+    appDependency.add("model/business-object/ticket/Ticket");
+    appDependency.add("model/business-object/ticket/TicketUtils");
+    appDependency.add("model/business-object/ticket/AddApprovalsModelHook");
+    appDependency.add("model/business-object/ticket/CalculateTotalsModelHook");
+    appDependency.add("model/business-object/ticket/actions/AddProduct");
+    appDependency.add("model/business-object/ticket/actions/DisplayTotal");
+    appDependency.add("model/business-object/ticket/actions/Print");
+    appDependency.add("model/business-object/ticket/actions/PrintLine");
+    appDependency.add("model/business-object/ticket/actions/SplitLine");
+    appDependency.add("model/business-object/ticket/actions/SetLinePrice");
+    appDependency.add("model/business-object/ticket/actions/AddByTotalPromotion");
+    appDependency.add("model/business-object/ticket/actions/RemovePromotion");
+    appDependency.add("model/business-object/ticket/actions/ReactivateQuotation");
+    appDependency.add("model/business-object/ticket/actions/RejectQuotation");
+
+    // Cashup
+    appDependency.add("model/business-object/cashup/Cashup");
+    appDependency.add("model/business-object/cashup/CashupUtils");
+    appDependency.add("model/business-object/cashup/PaymentMethodUtils");
+    appDependency.add("model/business-object/cashup/CashManagementUtils");
+    appDependency.add("model/business-object/cashup/actions/CancelCashManagements");
+    appDependency.add("model/business-object/cashup/actions/CompleteCashupAndCreateNew");
+    appDependency.add("model/business-object/cashup/actions/CreateCashManagement");
+    appDependency.add("model/business-object/cashup/actions/InitCashup");
+    appDependency.add("model/business-object/cashup/actions/ProcessCashManagements");
+    appDependency.add("model/business-object/cashup/actions/UpdateCashup");
+
+    // Synchronization Buffer
+    appDependency.add("model/synchronization-buffer/HardwareManagerEndpoint");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

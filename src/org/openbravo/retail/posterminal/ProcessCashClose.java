@@ -110,7 +110,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
         for (int i = 0; i < paymentCashupInfo.length(); ++i) {
           JSONObject payment = paymentCashupInfo.getJSONObject(i);
           OBPOSAppPayment appPayment = OBDal.getInstance()
-              .get(OBPOSAppPayment.class, payment.getString("paymentmethod_id"));
+              .get(OBPOSAppPayment.class, payment.getString("paymentMethodId"));
           if (appPayment.getPaymentMethod().isSafebox()) {
             createSafeBoxTransactions(cashUp, safeBox, payment);
           }

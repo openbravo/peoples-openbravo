@@ -17,9 +17,6 @@
     remoteDataLimit: OB.Dal.REMOTE_DATALIMIT,
     includeTerminalDate: true,
     remote: 'OBPOS_remote.product',
-    initialize: function() {
-      this.set('originalStandardPrice', this.get('standardPrice'));
-    },
     indexDBModel: OB.App.MasterdataModels.Product.getName(),
     legacyModel: true
   });

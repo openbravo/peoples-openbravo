@@ -121,7 +121,7 @@ enyo.kind({
         })
       );
     } else if (this.owner.cashManagement) {
-      this.owner.cashManagement.depsdropstosave.trigger('makeDeposits');
+      this.owner.cashManagement.trigger('makeDeposits');
     }
     this.doHideThisPopup();
   }
