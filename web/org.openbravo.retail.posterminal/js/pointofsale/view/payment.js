@@ -3151,6 +3151,7 @@ enyo.kind({
     }
     if (
       (!receipt.get('isEditable') &&
+        !receipt.get('paidOnCredit') &&
         payment &&
         !payment.paymentMethod.isreversable) ||
       this.model.get('isReversed') ||
