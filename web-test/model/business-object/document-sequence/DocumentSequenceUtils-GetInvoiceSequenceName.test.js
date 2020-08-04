@@ -25,8 +25,8 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          fullReturnInvoiceSequencePrefix: 'FRI',
-          simplifiedReturnInvoiceSequencePrefix: 'SRI'
+          fullReturnInvoiceDocNoPrefix: 'FRI',
+          simplifiedReturnInvoiceDocNoPrefix: 'SRI'
         }
       }
     );
@@ -39,8 +39,8 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          fullReturnInvoiceSequencePrefix: 'FRI',
-          simplifiedReturnInvoiceSequencePrefix: 'SRI'
+          fullReturnInvoiceDocNoPrefix: 'FRI',
+          simplifiedReturnInvoiceDocNoPrefix: 'SRI'
         }
       }
     );
@@ -53,8 +53,8 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          fullReturnInvoiceSequencePrefix: 'FRI',
-          simplifiedReturnInvoiceSequencePrefix: 'SRI'
+          fullReturnInvoiceDocNoPrefix: 'FRI',
+          simplifiedReturnInvoiceDocNoPrefix: 'SRI'
         }
       }
     );
@@ -67,8 +67,8 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          fullReturnInvoiceSequencePrefix: 'FRI',
-          simplifiedReturnInvoiceSequencePrefix: 'SRI'
+          fullReturnInvoiceDocNoPrefix: 'FRI',
+          simplifiedReturnInvoiceDocNoPrefix: 'SRI'
         }
       }
     );
@@ -81,7 +81,7 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          simplifiedReturnInvoiceSequencePrefix: 'SRI'
+          simplifiedReturnInvoiceDocNoPrefix: 'SRI'
         }
       }
     );
@@ -94,7 +94,7 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          fullReturnInvoiceSequencePrefix: 'FRI'
+          fullReturnInvoiceDocNoPrefix: 'FRI'
         }
       }
     );
@@ -110,8 +110,8 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          fullReturnInvoiceSequencePrefix: 'FRI',
-          simplifiedReturnInvoiceSequencePrefix: 'SRI'
+          fullReturnInvoiceDocNoPrefix: 'FRI',
+          simplifiedReturnInvoiceDocNoPrefix: 'SRI'
         },
         preferences: {
           salesWithOneLineNegativeAsReturns: false
@@ -130,8 +130,8 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          fullReturnInvoiceSequencePrefix: 'FRI',
-          simplifiedReturnInvoiceSequencePrefix: 'SRI'
+          fullReturnInvoiceDocNoPrefix: 'FRI',
+          simplifiedReturnInvoiceDocNoPrefix: 'SRI'
         },
         preferences: {
           salesWithOneLineNegativeAsReturns: true
@@ -150,8 +150,8 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          fullReturnInvoiceSequencePrefix: 'FRI',
-          simplifiedReturnInvoiceSequencePrefix: 'SRI'
+          fullReturnInvoiceDocNoPrefix: 'FRI',
+          simplifiedReturnInvoiceDocNoPrefix: 'SRI'
         },
         preferences: {
           salesWithOneLineNegativeAsReturns: false
@@ -170,8 +170,8 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
       ticket,
       {
         terminal: {
-          fullReturnInvoiceSequencePrefix: 'FRI',
-          simplifiedReturnInvoiceSequencePrefix: 'SRI'
+          fullReturnInvoiceDocNoPrefix: 'FRI',
+          simplifiedReturnInvoiceDocNoPrefix: 'SRI'
         },
         preferences: {
           salesWithOneLineNegativeAsReturns: true

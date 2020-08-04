@@ -18,6 +18,7 @@
     'voidLayaway',
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
+      let newTicketList = [...newGlobalState.TicketList];
       let newTicket = { ...newGlobalState.Ticket };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
@@ -52,6 +53,17 @@
         OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket)
       ];
 
+      // TicketList update
+      ({
+        ticketList: newTicketList,
+        ticket: newTicket
+      } = OB.App.State.TicketList.Utils.removeCurrentTicket(
+        newTicketList,
+        newTicket,
+        payload
+      ));
+
+      newGlobalState.TicketList = newTicketList;
       newGlobalState.Ticket = newTicket;
       newGlobalState.Cashup = newCashup;
       newGlobalState.Messages = newMessages;

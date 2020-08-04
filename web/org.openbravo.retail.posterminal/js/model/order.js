@@ -575,46 +575,19 @@
 
           // Complete Ticket action
           await completeTicketAction({
-            terminal: {
-              id: OB.MobileApp.model.get('terminal').id,
-              organization: OB.MobileApp.model.get('terminal').organization,
-              businessPartner: OB.MobileApp.model.get('terminal')
-                .businessPartner,
-              documentTypeForSales: OB.MobileApp.model.get('terminal')
-                .terminalType.documentType,
-              documentTypeForReturns: OB.MobileApp.model.get('terminal')
-                .terminalType.documentTypeForReturns,
-              paymentTypes: OB.MobileApp.model.get('payments'),
-              calculatePrepayments: OB.MobileApp.model.get('terminal')
-                .terminalType.calculateprepayments,
-              returnSequencePrefix: OB.MobileApp.model.get('terminal')
-                .returnDocNoPrefix,
-              quotationSequencePrefix: OB.MobileApp.model.get('terminal')
-                .quotationDocNoPrefix,
-              fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
-                'terminal'
-              ).fullReturnInvoiceDocNoPrefix,
-              simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
-                'terminal'
-              ).simplifiedReturnInvoiceDocNoPrefix,
-              documentNumberSeparator: OB.Model.Order.prototype
-                .includeDocNoSeperator
-                ? '/'
-                : '',
-              documentNumberPadding: OB.MobileApp.model.get('terminal')
-                .documentnoPadding,
-              multiChange: OB.MobileApp.model.get('terminal').multiChange,
-              countLayawayAsSales: OB.MobileApp.model.get('terminal')
-                .countLayawayAsSales,
-              symbol: OB.MobileApp.model.get('terminal').symbol,
-              currencySymbolAtTheRight: OB.MobileApp.model.get('terminal')
-                .currencySymbolAtTheRight,
-              returnsAnonymousCustomer: OB.MobileApp.model.get('terminal')
-                .returns_anonymouscustomer,
-              layawaysAnonymousCustomer: OB.MobileApp.model.get('terminal')
-                .layaway_anonymouscustomer,
-              connectedToERP: OB.MobileApp.model.get('connectedToERP')
-            },
+            terminal: OB.MobileApp.model.get('terminal'),
+            businessPartner: JSON.parse(
+              JSON.stringify(OB.App.TerminalProperty.get('businessPartner'))
+            ),
+            payments: OB.MobileApp.model.get('payments'),
+            session: OB.MobileApp.model.get('session'),
+            orgUserId: OB.MobileApp.model.get('orgUserId'),
+            pricelist: OB.MobileApp.model.get('pricelist'),
+            contextUser: OB.MobileApp.model.get('context').user,
+            documentNumberSeparator: OB.Model.Order.prototype
+              .includeDocNoSeperator
+              ? '/'
+              : '',
             preferences: {
               salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
                 'OBPOS_SalesWithOneLineNegativeAsReturns',
@@ -626,6 +599,10 @@
               ),
               removeTicket: OB.MobileApp.model.hasPermission(
                 'OBPOS_remove_ticket',
+                true
+              ),
+              alwaysCreateNewReceiptAfterPayReceipt: OB.MobileApp.model.hasPermission(
+                'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
                 true
               )
             },
@@ -666,11 +643,6 @@
             )
           );
 
-          // FIXME: Use TicketListUtils
-          // Remove completed ticket
-          OB.MobileApp.model.orderList.deleteCurrentFromDatabase(
-            OB.MobileApp.model.receipt
-          );
           if (
             OB.MobileApp.model.receipt.get('cancelLayaway') &&
             OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew', true)
@@ -706,35 +678,9 @@
             );
           }
 
-          const runTerminalAuthenticationValidation = () => {
-            // FIXME: Remove once terminal authentication validation is moved to new message infraestructure
-            OB.MobileApp.model.runSyncProcess();
-          };
-
-          if (
-            !OB.MobileApp.model.receipt.get('isQuotation') ||
-            actionName === 'deleteCurrentOrder'
-          ) {
-            let payload = {};
-            if (
-              OB.MobileApp.model.hasPermission(
-                'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
-                true
-              )
-            ) {
-              payload = { forceCreateNew: true };
-            }
-
-            OB.UTIL.TicketListUtils.removeTicket(payload).then(() => {
-              runTerminalAuthenticationValidation();
-            });
-          } else {
-            runTerminalAuthenticationValidation();
-          }
-
-          // FIXME: Remove once terminal authentication validation is moved to new message infraestructure
-          // Run terminal authentication validation
+          OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
           OB.MobileApp.model.runSyncProcess();
+          OB.UTIL.checkRefreshMasterData();
         } catch (error) {
           OB.App.View.ActionCanceledUIHandler.handle(error);
         }

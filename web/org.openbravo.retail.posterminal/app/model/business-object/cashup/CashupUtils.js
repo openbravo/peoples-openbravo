@@ -402,7 +402,7 @@
         cashup,
         ticket,
         payload.terminal.countLayawayAsSales,
-        payload.terminal.paymentTypes
+        payload.payments
       );
 
       // insert cashup in the ticket
@@ -412,7 +412,7 @@
         cashUpReportInformation: OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
           {
             cashup: newCashup,
-            terminalPayments: payload.terminal.paymentTypes
+            terminalPayments: payload.payments
           }
         )
       };

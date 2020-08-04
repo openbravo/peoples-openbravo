@@ -25,8 +25,8 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
       ticket,
       {
         terminal: {
-          returnSequencePrefix: 'R',
-          quotationSequencePrefix: 'Q'
+          returnDocNoPrefix: 'R',
+          quotationDocNoPrefix: 'Q'
         }
       }
     );
@@ -39,8 +39,8 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
       ticket,
       {
         terminal: {
-          returnSequencePrefix: 'R',
-          quotationSequencePrefix: 'Q'
+          returnDocNoPrefix: 'R',
+          quotationDocNoPrefix: 'Q'
         }
       }
     );
@@ -53,8 +53,8 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
       ticket,
       {
         terminal: {
-          returnSequencePrefix: 'R',
-          quotationSequencePrefix: 'Q'
+          returnDocNoPrefix: 'R',
+          quotationDocNoPrefix: 'Q'
         }
       }
     );
@@ -67,7 +67,7 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
       ticket,
       {
         terminal: {
-          quotationSequencePrefix: 'Q'
+          quotationDocNoPrefix: 'Q'
         }
       }
     );
@@ -80,7 +80,7 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
       ticket,
       {
         terminal: {
-          returnSequencePrefix: 'R'
+          returnDocNoPrefix: 'R'
         }
       }
     );
@@ -93,8 +93,8 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
       ticket,
       {
         terminal: {
-          returnSequencePrefix: 'R',
-          quotationSequencePrefix: 'Q'
+          returnDocNoPrefix: 'R',
+          quotationDocNoPrefix: 'Q'
         },
         preferences: {
           salesWithOneLineNegativeAsReturns: false
@@ -110,8 +110,8 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
       ticket,
       {
         terminal: {
-          returnSequencePrefix: 'R',
-          quotationSequencePrefix: 'Q'
+          returnDocNoPrefix: 'R',
+          quotationDocNoPrefix: 'Q'
         },
         preferences: {
           salesWithOneLineNegativeAsReturns: true

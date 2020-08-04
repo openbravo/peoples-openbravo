@@ -18,6 +18,7 @@
     'replaceTicket',
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
+      let newTicketList = [...newGlobalState.TicketList];
       let newTicket = { ...newGlobalState.Ticket };
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
@@ -90,6 +91,17 @@
         ];
       }
 
+      // TicketList update
+      ({
+        ticketList: newTicketList,
+        ticket: newTicket
+      } = OB.App.State.TicketList.Utils.removeCurrentTicket(
+        newTicketList,
+        newTicket,
+        payload
+      ));
+
+      newGlobalState.TicketList = newTicketList;
       newGlobalState.Ticket = newTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Cashup = newCashup;

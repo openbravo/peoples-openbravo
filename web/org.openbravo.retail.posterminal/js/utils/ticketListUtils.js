@@ -12,17 +12,6 @@
   OB.UTIL = window.OB.UTIL || {};
   OB.UTIL.TicketListUtils = OB.UTIL.TicketListUtils || {};
 
-  const triggerTicketLoadEvents = () => {
-    if (OB.MobileApp.model.receipt) {
-      OB.MobileApp.model.receipt.trigger('updateView');
-      OB.MobileApp.model.receipt.trigger('change');
-      OB.MobileApp.model.receipt.trigger('clear');
-      OB.MobileApp.model.receipt.trigger('paintTaxes');
-      OB.MobileApp.model.receipt.trigger('updatePending');
-      OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
-    }
-  };
-
   OB.UTIL.TicketListUtils.loadStateTicket = async function(ticket) {
     await OB.App.State.Global.loadTicket({
       ticket
@@ -31,14 +20,14 @@
       'terminalLogContext',
       OB.App.State.getState().Ticket.id
     );
-    triggerTicketLoadEvents();
+    OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
   };
 
   OB.UTIL.TicketListUtils.loadTicket = async function(ticketModel) {
     await OB.UTIL.TicketListUtils.loadStateTicket(
       JSON.parse(JSON.stringify(ticketModel.toJSON()))
     );
-    triggerTicketLoadEvents();
+    OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
   };
 
   OB.UTIL.TicketListUtils.loadTicketById = async function(ticketId) {
@@ -49,7 +38,7 @@
       'terminalLogContext',
       OB.App.State.getState().Ticket.id
     );
-    triggerTicketLoadEvents();
+    OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
   };
 
   const newOrder = function(bp, propertiesToReset) {
@@ -972,7 +961,7 @@
         OB.MobileApp.model.receipt
       );
     }
-    triggerTicketLoadEvents();
+    OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
   };
 
   OB.UTIL.TicketListUtils.addPaidReceipt = function(model, callback) {
@@ -1236,7 +1225,7 @@
         currentReceipt.set('preventServicesUpdate', true);
       }
       await OB.App.State.Global.removeTicket(payload).then(() => {
-        triggerTicketLoadEvents();
+        OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
 
         if (ticketListLength === 1 && OB.App.State.getState().Ticket) {
           // a new ticket has been created after removing the only ticket present
@@ -1254,6 +1243,17 @@
         currentReceipt.unset('preventServicesUpdate');
       }
       OB.UTIL.checkRefreshMasterData();
+    }
+  };
+
+  OB.UTIL.TicketListUtils.triggerTicketLoadEvents = function() {
+    if (OB.MobileApp.model.receipt) {
+      OB.MobileApp.model.receipt.trigger('updateView');
+      OB.MobileApp.model.receipt.trigger('change');
+      OB.MobileApp.model.receipt.trigger('clear');
+      OB.MobileApp.model.receipt.trigger('paintTaxes');
+      OB.MobileApp.model.receipt.trigger('updatePending');
+      OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
     }
   };
 })();

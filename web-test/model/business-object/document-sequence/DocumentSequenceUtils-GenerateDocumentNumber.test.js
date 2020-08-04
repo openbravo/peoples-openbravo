@@ -28,9 +28,9 @@ describe('Document Sequence Utils generateDocumentNumber method', () => {
       ticket,
       documentSequence,
       {
+        documentNumberSeparator: '/',
         terminal: {
-          documentNumberSeparator: '/',
-          documentNumberPadding: 5
+          documentnoPadding: 5
         }
       }
     );
@@ -58,9 +58,9 @@ describe('Document Sequence Utils generateDocumentNumber method', () => {
       ticket,
       documentSequence,
       {
+        documentNumberSeparator: '/',
         terminal: {
-          documentNumberSeparator: '/',
-          documentNumberPadding: 5
+          documentnoPadding: 5
         }
       }
     );

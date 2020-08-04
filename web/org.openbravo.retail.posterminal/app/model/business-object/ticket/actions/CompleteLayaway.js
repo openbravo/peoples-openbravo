@@ -18,6 +18,7 @@
     'completeLayaway',
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
+      let newTicketList = [...newGlobalState.TicketList];
       let newTicket = { ...newGlobalState.Ticket };
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
@@ -69,6 +70,17 @@
         OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket)
       ];
 
+      // TicketList update
+      ({
+        ticketList: newTicketList,
+        ticket: newTicket
+      } = OB.App.State.TicketList.Utils.removeCurrentTicket(
+        newTicketList,
+        newTicket,
+        payload
+      ));
+
+      newGlobalState.TicketList = newTicketList;
       newGlobalState.Ticket = newTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Cashup = newCashup;
@@ -97,8 +109,9 @@
 
   const checkAnonymousLayaway = async (ticket, payload) => {
     if (
-      !payload.terminal.layawaysAnonymousCustomer &&
-      ticket.businessPartner.id === payload.terminal.businessPartner
+      !OB.App.TerminalProperty.get('terminal').layaway_anonymouscustomer &&
+      ticket.businessPartner.id ===
+        OB.App.TerminalProperty.get('terminal').businessPartner
     ) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_layawaysOrdersWithAnonimousCust'
@@ -135,7 +148,8 @@
     );
 
     if (
-      !payload.terminal.calculatePrepayments ||
+      !OB.App.TerminalProperty.get('terminal').terminalType
+        .calculatePrepayments ||
       ticket.obposPrepaymentlaylimitamt === OB.DEC.Zero ||
       paymentStatus.totalAmt <= OB.DEC.Zero ||
       OB.DEC.sub(

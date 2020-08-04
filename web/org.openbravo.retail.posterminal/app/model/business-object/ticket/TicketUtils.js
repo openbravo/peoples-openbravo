@@ -1186,8 +1186,8 @@
      *
      * @param {object} ticket - The ticket whose type will be updated
      * @param {object} payload - The calculation payload, which include:
-     *             * terminal.documentTypeForSales - Terminal document type for sales
-     *             * terminal.documentTypeForReturns - Terminal document type for returns
+     *             * terminal.terminalType.documentType - Terminal document type for sales
+     *             * terminal.terminalType.documentTypeForReturns - Terminal document type for returns
      *             * terminal.organization - Organization of the current terminal
      *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
@@ -1206,8 +1206,8 @@
       const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
       newTicket.orderType = isReturn ? 1 : 0;
       newTicket.documentType = isReturn
-        ? payload.terminal.documentTypeForReturns
-        : payload.terminal.documentTypeForSales;
+        ? payload.terminal.terminalType.documentTypeForReturns
+        : payload.terminal.terminalType.documentType;
 
       return newTicket;
     },
@@ -1219,13 +1219,13 @@
      * @param {object} payload - The calculation payload, which include:
      *             * payment - The payment that will be added to the ticket
      *             * terminal.id - Terminal id
-     *             * terminal.paymentTypes - Terminal payment types
+     *             * payments - Terminal payment types
      *
      * @returns {object} The new state of Ticket after payment generation.
      */
     generatePayment(ticket, payload) {
       const newTicket = { ...ticket };
-      const terminalPayment = payload.terminal.paymentTypes.find(
+      const terminalPayment = payload.payments.find(
         paymentType => paymentType.payment.searchKey === payload.payment.kind
       );
       const precision = terminalPayment

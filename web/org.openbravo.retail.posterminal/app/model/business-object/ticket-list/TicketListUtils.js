@@ -8,44 +8,32 @@
  */
 
 (function TicketListUtilsDefinition() {
-  const replaceCurrentTicketWithANewOne = (state, newTicketData) => {
-    const newState = { ...state };
-    if (newTicketData.businessPartner) {
-      newState.Ticket = OB.App.State.Ticket.Utils.newTicket(
-        newTicketData.businessPartner,
-        newTicketData.terminal,
-        newTicketData.session,
-        newTicketData.orgUserId,
-        newTicketData.pricelist,
-        newTicketData.contextUser
-      );
-    }
-    return newState;
-  };
-
   OB.App.StateAPI.TicketList.registerUtilityFunctions({
-    removeCurrentTicketAndForceCreateNew(state, newTicketData) {
-      return replaceCurrentTicketWithANewOne(state, newTicketData);
-    },
+    removeCurrentTicket(ticketList, ticket, payload) {
+      const shouldCreateNewTicket =
+        (payload.preferences &&
+          payload.preferences.alwaysCreateNewReceiptAfterPayReceipt) ||
+        !ticketList.some(t => t.session === payload.session);
 
-    removeCurrentTicket(state, newTicketData) {
-      const newState = { ...state };
-      const shouldCreateNewTicket = !newState.TicketList.some(
-        t => t.session === newTicketData.session
-      );
-
-      if (!shouldCreateNewTicket) {
-        newState.Ticket = state.TicketList.find(
-          t => t.session === newTicketData.session
-        );
-        newState.TicketList = state.TicketList.filter(
-          ticket => ticket.id !== newState.Ticket.id
-        );
-
-        return newState;
+      if (shouldCreateNewTicket) {
+        let newTicket = { ...ticket };
+        if (payload.businessPartner) {
+          newTicket = OB.App.State.Ticket.Utils.newTicket(
+            payload.businessPartner,
+            payload.terminal,
+            payload.session,
+            payload.orgUserId,
+            payload.pricelist,
+            payload.contextUser
+          );
+        }
+        return { ticketList, ticket: newTicket };
       }
 
-      return replaceCurrentTicketWithANewOne(state, newTicketData);
+      const newTicket = ticketList.find(t => t.session === payload.session);
+      const newTicketList = ticketList.filter(t => t.id !== newTicket.id);
+
+      return { ticketList: newTicketList, ticket: newTicket };
     }
   });
 })();

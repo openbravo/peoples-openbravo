@@ -15,31 +15,35 @@
  * found. If the id corresponds to the active Ticket, it will be removed and replaced with the first in TicketList or
  * a new Ticket if the list is empty.
  *
- * Finally, the payload can contain a forceNewTicket argument that if set to true, will replace the current ticket
+ * Finally, the payload can contain alwaysCreateNewReceiptAfterPayReceipt preference that if set to true, will replace the current ticket
  * with a new one, regardless the content of the TicketList.
  */
-OB.App.StateAPI.Global.registerAction('removeTicket', (state, payload) => {
-  const newState = { ...state };
-  const ticketToRemoveId = payload.id;
-  const { forceNewTicket } = payload;
+OB.App.StateAPI.Global.registerAction(
+  'removeTicket',
+  (globalState, payload) => {
+    const newGlobalState = { ...globalState };
+    let newTicketList = [...newGlobalState.TicketList];
+    let newTicket = { ...newGlobalState.Ticket };
 
-  if (forceNewTicket) {
-    return OB.App.State.TicketList.Utils.removeCurrentTicketAndForceCreateNew(
-      newState,
-      payload
-    );
+    if (!payload.id || payload.id === newTicket.id) {
+      ({
+        ticketList: newTicketList,
+        ticket: newTicket
+      } = OB.App.State.TicketList.Utils.removeCurrentTicket(
+        newTicketList,
+        newTicket,
+        payload
+      ));
+    } else {
+      newTicketList = newTicketList.filter(ticket => ticket.id !== payload.id);
+    }
+
+    newGlobalState.TicketList = newTicketList;
+    newGlobalState.Ticket = newTicket;
+
+    return newGlobalState;
   }
-
-  if (!ticketToRemoveId || ticketToRemoveId === newState.Ticket.id) {
-    return OB.App.State.TicketList.Utils.removeCurrentTicket(newState, payload);
-  }
-
-  newState.TicketList = state.TicketList.filter(
-    ticket => ticket.id !== ticketToRemoveId
-  );
-
-  return newState;
-});
+);
 
 OB.App.StateAPI.Global.removeTicket.addActionPreparation(
   async (state, payload) => {

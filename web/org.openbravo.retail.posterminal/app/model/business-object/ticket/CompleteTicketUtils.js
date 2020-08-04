@@ -331,7 +331,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    *
    * @param {object} ticket - The ticket whose payment will be completed
    * @param {object} payload - The calculation payload, which include:
-   *             * terminal.paymentTypes - Terminal payment types
+   *             * payments - Terminal payment types
    *             * terminal.multiChange - Terminal multichange configuration
    *             * preferences.splitChange - OBPOS_SplitChange preference value
    *
@@ -347,7 +347,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         !payload.terminal.multiChange && !payload.preferences.splitChange;
 
       newTicket.changePayments.forEach(changePayment => {
-        const terminalPayment = payload.terminal.paymentTypes.find(
+        const terminalPayment = payload.payments.find(
           paymentType => paymentType.payment.searchKey === changePayment.key
         );
 
@@ -439,8 +439,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    */
   async checkAnonymousReturn(ticket, payload) {
     if (
-      !payload.terminal.returnsAnonymousCustomer &&
-      ticket.businessPartner.id === payload.terminal.businessPartner &&
+      !OB.App.TerminalProperty.get('terminal').returns_anonymouscustomer &&
+      ticket.businessPartner.id ===
+        OB.App.TerminalProperty.get('terminal').businessPartner &&
       ticket.lines.some(line => line.qty < 0 && !line.originalDocumentNo)
     ) {
       throw new OB.App.Class.ActionCanceled({
@@ -462,8 +463,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         messageParams: [
           `${payment.name} (${OB.I18N.formatCurrencyWithSymbol(
             payment.amount,
-            payload.terminal.symbol,
-            payload.terminal.currencySymbolAtTheRight
+            OB.App.TerminalProperty.get('terminal').symbol,
+            OB.App.TerminalProperty.get('terminal').currencySymbolAtTheRight
           )})`
         ]
       });
@@ -526,7 +527,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     );
 
     if (
-      !payload.terminal.calculatePrepayments ||
+      !OB.App.TerminalProperty.get('terminal').terminalType
+        .calculatePrepayments ||
       ticket.orderType === 1 ||
       ticket.orderType === 3 ||
       ticket.obposPrepaymentlimitamt === OB.DEC.Zero ||
@@ -578,8 +580,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         messageParams: [
           OB.I18N.formatCurrencyWithSymbol(
             paymentStatus.overpayment,
-            payload.terminal.symbol,
-            payload.terminal.currencySymbolAtTheRight
+            OB.App.TerminalProperty.get('terminal').symbol,
+            OB.App.TerminalProperty.get('terminal').currencySymbolAtTheRight
           )
         ]
       });
@@ -592,7 +594,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       !ticket.payOnCredit &&
       OB.DEC.abs(ticket.obposPrepaymentamt) ===
         OB.DEC.abs(ticket.grossAmount) &&
-      !payload.terminal.calculatePrepayments
+      !OB.App.TerminalProperty.get('terminal').terminalType.calculatePrepayments
     ) {
       const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
         title: 'OBPOS_PaymentAmountDistinctThanReceiptAmountTitle',
@@ -651,7 +653,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       return payload;
     };
 
-    if (!payload.terminal.connectedToERP || !navigator.onLine) {
+    if (!OB.App.TerminalProperty.get('connectedToERP') || !navigator.onLine) {
       return showTicketUpdatedError();
     }
 

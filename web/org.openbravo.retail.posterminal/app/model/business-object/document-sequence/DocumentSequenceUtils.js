@@ -63,18 +63,18 @@
      *
      * @param {object} ticket - The ticket whose order sequence name will be calculated
      * @param {object} payload - The calculation payload, which include:
-     *             * terminal.returnSequencePrefix - Return document sequence prefix
-     *             * terminal.quotationSequencePrefix - Quotation document sequence prefix
+     *             * terminal.returnDocNoPrefix - Return document sequence prefix
+     *             * terminal.quotationDocNoPrefix - Quotation document sequence prefix
      *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {string} The order sequence name.
      */
     getOrderSequenceName(ticket, payload) {
       const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
-      if (ticket.isQuotation && payload.terminal.quotationSequencePrefix) {
+      if (ticket.isQuotation && payload.terminal.quotationDocNoPrefix) {
         return 'quotationslastassignednum';
       }
-      if (isReturn && payload.terminal.returnSequencePrefix) {
+      if (isReturn && payload.terminal.returnDocNoPrefix) {
         return 'returnslastassignednum';
       }
       return 'lastassignednum';
@@ -85,8 +85,8 @@
      *
      * @param {object} ticket - The ticket whose invoice sequence name will be calculated
      * @param {object} payload - The calculation payload, which include:
-     *             * terminal.fullReturnInvoiceSequencePrefix - Full return invoice document sequence prefix
-     *             * terminal.simplifiedReturnInvoiceSequencePrefix - Simplified return invoice document sequence prefix
+     *             * terminal.fullReturnInvoiceDocNoPrefix - Full return invoice document sequence prefix
+     *             * terminal.simplifiedReturnInvoiceDocNoPrefix - Simplified return invoice document sequence prefix
      *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {string} The invoice sequence name.
@@ -96,14 +96,14 @@
       if (
         !ticket.fullInvoice &&
         isReturn &&
-        payload.terminal.simplifiedReturnInvoiceSequencePrefix
+        payload.terminal.simplifiedReturnInvoiceDocNoPrefix
       ) {
         return 'simplifiedreturninvoiceslastassignednum';
       }
       if (
         ticket.fullInvoice &&
         isReturn &&
-        payload.terminal.fullReturnInvoiceSequencePrefix
+        payload.terminal.fullReturnInvoiceDocNoPrefix
       ) {
         return 'fullreturninvoiceslastassignednum';
       }
@@ -119,12 +119,12 @@
      * @param {object} ticket - The ticket whose document sequence will be generated
      * @param {object} documentSequence - The ticket whose type will be updated
      * @param {object} payload - The calculation payload, which include:
-     *             * terminal.returnSequencePrefix - Return document sequence prefix
-     *             * terminal.quotationSequencePrefix - Quotation document sequence prefix
-     *             * terminal.fullReturnInvoiceSequencePrefix - Full return invoice document sequence prefix
-     *             * terminal.simplifiedReturnInvoiceSequencePrefix - Simplified return invoice document sequence prefix
-     *             * terminal.documentNumberSeparator - Character to separate prefix and suffix in document number
-     *             * terminal.documentNumberPadding - Padding to use in the the suffix of document number
+     *             * documentNumberSeparator - Character to separate prefix and suffix in document number
+     *             * terminal.returnDocNoPrefix - Return document sequence prefix
+     *             * terminal.quotationDocNoPrefix - Quotation document sequence prefix
+     *             * terminal.fullReturnInvoiceDocNoPrefix - Full return invoice document sequence prefix
+     *             * terminal.simplifiedReturnInvoiceDocNoPrefix - Simplified return invoice document sequence prefix
+     *             * terminal.documentnoPadding - Padding to use in the the suffix of document number
      *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
      * @returns {object} The new state of Ticket and DocumentSequence after document number generation.
@@ -156,8 +156,8 @@
       newTicket.documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
         {
           sequencePrefix,
-          documentNumberSeparator: payload.terminal.documentNumberSeparator,
-          documentNumberPadding: payload.terminal.documentNumberPadding,
+          documentNumberSeparator: payload.documentNumberSeparator,
+          documentNumberPadding: payload.terminal.documentnoPadding,
           sequenceNumber
         }
       );

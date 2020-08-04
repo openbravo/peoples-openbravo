@@ -1316,15 +1316,14 @@
     getDocumentSequenceName: function(document) {
       const settings = {
         terminal: {
-          returnSequencePrefix: OB.MobileApp.model.get('terminal')
+          returnDocNoPrefix: OB.MobileApp.model.get('terminal')
             .returnDocNoPrefix,
-          quotationSequencePrefix: OB.MobileApp.model.get('terminal')
+          quotationDocNoPrefix: OB.MobileApp.model.get('terminal')
             .quotationDocNoPrefix,
-          fullReturnInvoiceSequencePrefix: OB.MobileApp.model.get('terminal')
+          fullReturnInvoiceDocNoPrefix: OB.MobileApp.model.get('terminal')
             .fullReturnInvoiceDocNoPrefix,
-          simplifiedReturnInvoiceSequencePrefix: OB.MobileApp.model.get(
-            'terminal'
-          ).simplifiedReturnInvoiceDocNoPrefix
+          simplifiedReturnInvoiceDocNoPrefix: OB.MobileApp.model.get('terminal')
+            .simplifiedReturnInvoiceDocNoPrefix
         },
         preferences: {
           salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
