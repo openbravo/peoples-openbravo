@@ -14,8 +14,10 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBException;
 
+@AuthenticationManager.Stateless
 public class ExportOrder extends PaidReceipts {
 
   @Override
