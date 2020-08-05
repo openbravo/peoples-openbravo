@@ -639,6 +639,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         throw new OB.App.Class.ActionCanceled();
       }
     } else if (
+      !payload.isMultiTicket &&
       ticket.payment !== OB.DEC.abs(ticket.grossAmount) &&
       !OB.App.State.Ticket.Utils.isLayaway(ticket) &&
       !ticket.payOnCredit &&
