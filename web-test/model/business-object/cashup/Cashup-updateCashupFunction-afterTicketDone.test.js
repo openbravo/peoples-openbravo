@@ -36,9 +36,9 @@ describe('Cashup - updateCashup function', () => {
       cashupBeforeTicketDone,
       {
         terminal: {
-          countLayawayAsSales: true,
-          paymentTypes: terminalPayments
-        }
+          countLayawayAsSales: true
+        },
+        payments: terminalPayments
       }
     );
     expect(result).toEqual(expectedResult);
