@@ -20,7 +20,7 @@
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
-      const newTicketList = { ...newGlobalState.TicketList };
+      const newTicketList = [...newGlobalState.TicketList];
 
       payload.ticketsIdToClose.forEach(ticketCloseId => {
         let ticket;
