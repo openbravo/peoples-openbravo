@@ -345,8 +345,9 @@ enyo.kind({
                 : 'Discount Container')
           );
         } else if (
-          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.amt) ||
-          OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.units)
+          !formElementDiscountsList.requiresQty &&
+          (OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.amt) ||
+            OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.units))
         ) {
           // Without this information, the discounts could not be applied
           OB.UTIL.showWarning(
