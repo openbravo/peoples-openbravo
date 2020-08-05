@@ -73,7 +73,7 @@ describe('Remove Ticket actions', () => {
       TicketList: [{ id: 'B' }]
     };
     const payload = {
-      forceNewTicket: true,
+      preferences: { alwaysCreateNewReceiptAfterPayReceipt: true },
       businessPartner: { id: 'BP1' }
     };
     deepfreeze(state);
