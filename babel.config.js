@@ -19,6 +19,18 @@
 
 /* eslint-disable no-undef */
 module.exports = {
-  presets: ['@babel/preset-env', '@babel/preset-react'],
-  plugins: ['@babel/plugin-transform-runtime']
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        // keep this list in sync with userinterface.react
+        targets: [
+          'last 2 Chrome versions',
+          'last 2 Firefox versions',
+          'last 2 Safari versions'
+        ]
+      }
+    ],
+    '@babel/preset-react'
+  ]
 };
