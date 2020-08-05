@@ -24,11 +24,13 @@
     "jest-html-reporters": "~2.1.2",
     "lerna": "~3.18.3",
     "prettier": "~1.18.2",
+    "react-test-renderer": "^16.13.1",
     "xmldom": "~0.1.27"
   },
   "jest": {
     "testMatch": [
-      "**/web-test/**/?(*.)+(test).[jt]s?(x)"
+      "**/web-test/**/?(*.)+(test).[jt]s?(x)",
+      "**/web-react/**/?(*.)+(test).[jt]s?(x)"
     ],
     "coverageDirectory": "./test-reports/coverage",
     "reporters": [
