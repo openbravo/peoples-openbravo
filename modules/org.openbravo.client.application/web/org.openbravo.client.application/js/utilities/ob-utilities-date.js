@@ -17,7 +17,7 @@
  ************************************************************************
  */
 
-OB = window.OB || {};
+window.OB = window.OB || {};
 OB.Utilities = window.OB.Utilities || {};
 
 // = Openbravo Date Utilities =

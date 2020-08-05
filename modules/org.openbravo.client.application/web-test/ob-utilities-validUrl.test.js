@@ -16,7 +16,10 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-OB = {};
+
+/* global global */
+
+global.OB = {};
 require('../web/org.openbravo.client.application/js/utilities/ob-utilities');
 
 describe('OB.Utilities.isValidUrl', () => {
