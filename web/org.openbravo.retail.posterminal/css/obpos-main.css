@@ -6400,13 +6400,13 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiRelatedReceipt-checkboxButtonOpenRelatedReceipts {
   /*Inherits: [OB.UI.CheckboxButtonOpenRelatedReceipts]*/
+  width: 50px;
 }
 
 .obUiRelatedReceipt-documentNo {
   line-height: 25px;
   font-size: var(--font-medium-large);
   width: 180px;
-  padding-left: 15px;
 }
 
 .obUiRelatedReceipt-orderedDate {
@@ -6451,12 +6451,30 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   }
 }
 
+@media all and (max-aspect-ratio: 9/8) {
+	.obUiModalOpenRelatedReceipts .obUiModal-header, .obUiModalOpenRelatedReceipts .obUiModal-footer {
+	  width: calc(95% - 150px);
+	}
+	
+	.obUiModalOpenRelatedReceipts .obUiModal-header-header {
+	  width: calc(95% - 104px);
+	}
+	
+	.obUiModalOpenRelatedReceipts .obUiModal-body {
+	  width: calc(95% - 124px);
+	}	
+}
+
 .obUiModalOpenRelatedReceipts-body {
   max-height: 225px;
   background-color: white;
   margin-top: -8px;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+.obUiModalOpenRelatedReceipts-body .enyo-touch-scroller {
+  max-height: 225px;
 }
 
 .obUiModalOpenRelatedReceipts-body-attributes {}
@@ -6470,13 +6488,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obUiModalOpenRelatedReceipts-header {
   padding-bottom: 0px;
   margin: 0px;
-  height: 140px;
+  height: 85px;
 }
-
-.obUiModalOpenRelatedReceipts-header-checkAllHeaderDocNum {
-  text-align: center;
-  color: white;
-}
+   
+.obUiModalOpenRelatedReceipts-header-checkAllHeaderDocNum {}
 
 .obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-headerLbl {
   line-height: 50px;
@@ -6489,22 +6504,23 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalOpenRelatedReceipts-header-checkAllHeader {
   overflow: hidden;
-  padding-top: 20px;
-  border-bottom: 3px solid var(--color-quaternary-variant);
+  border-bottom: var(--separator-slim);
   text-align: center;
-  color: black;
+  color: var(--color-secondary);
   margin-top: 15px;
-  padding-bottom: 7px;
   font-weight: bold;
   background-color: white;
-  height: 40px;
+  height: 30px;
+  font-size: 11px;
+  display: flex;
+  flex-direction: row;
 }
 
 .obUiModalOpenRelatedReceipts-checkAllHeader-documentNoLbl {
   line-height: 25px;
   font-size: var(--font-medium-large);
   width: 180px;
-  padding-left: 70px;
+  padding-left: 50px;
 }
 
 .obUiModalOpenRelatedReceipts-checkAllHeader-orderedDateLbl {
@@ -6528,6 +6544,20 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 
 .obUiModalOpenRelatedReceipts-checkAllHeader-element1 {
   clear: both;
+}
+
+@media all and (max-aspect-ratio: 9/8) {
+  .obUiModalOpenRelatedReceipts-checkAllHeader-documentNoLbl {
+    padding-left: unset;
+  }
+  
+  .obUiModalOpenRelatedReceipts-checkAllHeader-orderedDateLbl {
+    width: 150px;
+  }
+  
+  .obUiModalOpenRelatedReceipts-checkAllHeader-pendingLbl {
+    padding-left: 10px;
+  }
 }
 
 
