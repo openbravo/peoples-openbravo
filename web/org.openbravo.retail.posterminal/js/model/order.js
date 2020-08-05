@@ -627,18 +627,6 @@
             // FIXME: Move to action
             // Print welcome message
             OB.OBPOSPointOfSale.Print.printWelcome();
-
-            // Show ticket saved message
-            OB.UTIL.showSuccess(
-              OB.I18N.getLabel(
-                receipt.get('isQuotation')
-                  ? 'OBPOS_QuotationSaved'
-                  : receipt.get('orderType') === 2 || receipt.get('isLayaway')
-                  ? 'OBPOS_MsgLayawaySaved'
-                  : 'OBPOS_MsgReceiptSaved',
-                [receipt.get('documentNo')]
-              )
-            );
           }
 
           // Trigger some UI events
