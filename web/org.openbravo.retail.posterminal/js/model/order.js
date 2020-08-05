@@ -9335,19 +9335,10 @@
         OB.UTIL.RfidController.eraseEpcOrder(this);
       }
 
-      // FIXME: Move this if to delete ticket action once TicketList is implemented
-      if (
-        OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
-        this.get('isEditable') &&
-        (this.get('lines').length || !this.get('isNew'))
-      ) {
-        OB.MobileApp.model.receipt.runCompleteTicket(
-          OB.App.State.Global.deleteTicket,
-          'deleteCurrentOrder'
-        );
-      } else {
-        OB.UTIL.TicketListUtils.removeTicket();
-      }
+      OB.MobileApp.model.receipt.runCompleteTicket(
+        OB.App.State.Global.deleteTicket,
+        'deleteCurrentOrder'
+      );
 
       if (callback && callback instanceof Function) {
         callback();
