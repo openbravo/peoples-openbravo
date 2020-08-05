@@ -134,6 +134,8 @@
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
+      const baseTicketPayload = { ...newPayload };
+
       newPayload.ticketsIdToClose = newPayload.multiTickets.multiOrdersList.map(
         ticket => ticket.id
       );
@@ -151,7 +153,7 @@
           );
         }
 
-        let ticketPayload = { ...newPayload };
+        let ticketPayload = { ...baseTicketPayload };
 
         // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkAnonymousReturn(
