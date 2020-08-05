@@ -151,7 +151,7 @@
           );
         }
 
-        let ticketPayload = newPayload;
+        let ticketPayload = { ...newPayload };
 
         // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkAnonymousReturn(
@@ -199,7 +199,8 @@
           );
         }
 
-        let ticketPayload = newPayload;
+        let ticketPayload = newPayload[ticket.id];
+
         // eslint-disable-next-line no-await-in-loop
         ticketPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
           ticket,
