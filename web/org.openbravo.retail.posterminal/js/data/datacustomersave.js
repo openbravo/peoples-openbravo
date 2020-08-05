@@ -152,15 +152,40 @@
             customer: customer
           },
           function(args) {
-            if (OB.MobileApp.model.receipt.isEditable) {
+            const currentReceipt = OB.MobileApp.model.receipt;
+            const updateCustomerLocations = () => {
+              const clonedBP = new OB.Model.BusinessPartner();
+              OB.UTIL.clone(customer, clonedBP);
+              const bp = currentReceipt.get('bp');
+              if (bp.get('locId') !== customer.get('locId')) {
+                // if the order has a different address but same BP than the bp
+                // then copy over the address data
+                clonedBP.set('locId', bp.get('locId'));
+                clonedBP.set('locName', bp.get('locName'));
+                clonedBP.set('postalCode', bp.get('postalCode'));
+                clonedBP.set('cityName', bp.get('cityName'));
+                clonedBP.set('countryName', bp.get('countryName'));
+                clonedBP.set('locationModel', bp.get('locationModel'));
+              }
+              if (bp.get('shipLocId') !== customer.get('shipLocId')) {
+                clonedBP.set('shipLocId', bp.get('shipLocId'));
+                clonedBP.set('shipLocName', bp.get('shipLocName'));
+                clonedBP.set('shipPostalCode', bp.get('shipPostalCode'));
+                clonedBP.set('shipCityName', bp.get('shipCityName'));
+                clonedBP.set('shipCountryName', bp.get('shipCountryName'));
+              }
+              return clonedBP;
+            };
+            // update each order also so that new name is shown and the bp
+            // in the order is the same as what got saved
+            if (currentReceipt.get('isEditable')) {
+              const updatedCustomer = updateCustomerLocations();
               OB.MobileApp.model.receipt.setBPandBPLoc(
-                customer,
+                updatedCustomer,
                 false,
                 true,
-                // update each order also so that new name is shown and the bp
-                // in the order is the same as what got saved
                 // note that we are calling updateBpInAllTickets action in the setBPandBPLoc callback
-                // instead of this, the logic in setBPandBPLoc should be refactored and moved inside updateBpInAllTickets action
+                // instead of this, the logic in setBPandBPLoc should be refactored into a new action
                 () => {
                   OB.App.State.Global.updateBpInAllTickets({
                     customer: JSON.parse(JSON.stringify(customer.toJSON()))
