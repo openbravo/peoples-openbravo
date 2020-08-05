@@ -19,14 +19,7 @@ OB.App.StateAPI.Global.registerAction('createEmptyTicket', (state, payload) => {
     newState.TicketList.unshift({ ...newState.Ticket });
   }
 
-  newState.Ticket = OB.App.State.Ticket.Utils.newTicket(
-    payload.businessPartner,
-    payload.terminal,
-    payload.session,
-    payload.orgUserId,
-    payload.pricelist,
-    payload.contextUser
-  );
+  newState.Ticket = OB.App.State.Ticket.Utils.newTicket(payload);
 
   return newState;
 });

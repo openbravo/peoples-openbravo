@@ -18,14 +18,7 @@ OB.App.StateAPI.Global.registerAction('addNewQuotation', (state, payload) => {
   newState.TicketList = [...state.TicketList];
 
   newState.TicketList.unshift(newState.Ticket);
-  let ticket = OB.App.State.Ticket.Utils.newTicket(
-    payload.businessPartner,
-    payload.terminal,
-    payload.session,
-    payload.orgUserId,
-    payload.pricelist,
-    payload.contextUser
-  );
+  let ticket = OB.App.State.Ticket.Utils.newTicket(payload);
   ticket.isQuotation = true;
   ticket.orderType = '0';
   ticket = OB.App.State.Ticket.Utils.setFullInvoice(

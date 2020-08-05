@@ -18,14 +18,7 @@
       if (shouldCreateNewTicket) {
         let newTicket = { ...ticket };
         if (payload.businessPartner) {
-          newTicket = OB.App.State.Ticket.Utils.newTicket(
-            payload.businessPartner,
-            payload.terminal,
-            payload.session,
-            payload.orgUserId,
-            payload.pricelist,
-            payload.contextUser
-          );
+          newTicket = OB.App.State.Ticket.Utils.newTicket(payload);
         }
         return { ticketList, ticket: newTicket };
       }

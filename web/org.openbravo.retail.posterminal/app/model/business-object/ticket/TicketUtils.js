@@ -887,14 +887,7 @@
       return newTicket;
     },
 
-    newTicket(
-      businessPartner,
-      terminal,
-      sessionId,
-      orgUserId,
-      priceList,
-      contextUser
-    ) {
+    newTicket(payload) {
       let ticket = {
         // ticket extra properties
         ...OB.App.TicketExtraProperties.getAll(),
@@ -909,6 +902,7 @@
         payments: [],
         payment: OB.DEC.Zero,
         paymentWithSign: OB.DEC.Zero,
+        nettingPayment: OB.DEC.Zero,
         change: OB.DEC.Zero,
         qty: OB.DEC.Zero,
         grossAmount: OB.DEC.Zero,
@@ -933,66 +927,66 @@
         obposPrepaymentlaylimitamt: OB.DEC.Zero
       };
 
-      ticket.client = terminal.client;
-      ticket.organization = terminal.organization;
+      ticket.client = payload.terminal.client;
+      ticket.organization = payload.terminal.organization;
       ticket.organizationAddressIdentifier =
-        terminal.organizationAddressIdentifier;
-      ticket.trxOrganization = terminal.organization;
-      ticket.createdBy = orgUserId;
-      ticket.updatedBy = orgUserId;
-      ticket.documentType = terminal.terminalType.documentType;
-      ticket.orderType = terminal.terminalType.layawayorder ? 2 : 0; // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+        payload.terminal.organizationAddressIdentifier;
+      ticket.trxOrganization = payload.terminal.organization;
+      ticket.createdBy = payload.orgUserId;
+      ticket.updatedBy = payload.orgUserId;
+      ticket.documentType = payload.terminal.terminalType.documentType;
+      ticket.orderType = payload.terminal.terminalType.layawayorder ? 2 : 0; // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
 
       ticket = OB.App.State.Ticket.Utils.setFullInvoice(
         ticket,
-        terminal,
+        payload.terminal,
         false,
         true
       );
 
       ticket.isQuotation = false;
       ticket.oldId = null;
-      ticket.session = sessionId;
-      ticket.cashVAT = terminal.cashVat;
-      ticket.businessPartner = businessPartner;
-      ticket.invoiceTerms = businessPartner.invoiceTerms;
+      ticket.session = payload.session;
+      ticket.cashVAT = payload.terminal.cashVat;
+      ticket.businessPartner = payload.businessPartner;
+      ticket.invoiceTerms = payload.businessPartner.invoiceTerms;
       if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
         // Set price list for order
-        ticket.priceList = businessPartner.priceList;
-        let { priceIncludesTax } = businessPartner;
+        ticket.priceList = payload.businessPartner.priceList;
+        let { priceIncludesTax } = payload.businessPartner;
         if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-          priceIncludesTax = priceList.priceIncludesTax;
+          priceIncludesTax = payload.pricelist.priceIncludesTax;
         }
         ticket.priceIncludesTax = priceIncludesTax;
       } else {
-        ticket.priceList = terminal.priceList;
-        ticket.priceIncludesTax = priceList.priceIncludesTax;
+        ticket.priceList = payload.terminal.priceList;
+        ticket.priceIncludesTax = payload.pricelist.priceIncludesTax;
       }
-      ticket.currency = terminal.currency;
+      ticket.currency = payload.terminal.currency;
       ticket[
         `currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
       ] =
-        terminal[
+        payload.terminal[
           `currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
         ];
-      ticket.warehouse = terminal.warehouse;
-      if (contextUser.isSalesRepresentative) {
-        ticket.salesRepresentative = contextUser.id;
+      ticket.warehouse = payload.terminal.warehouse;
+      if (payload.contextUser.isSalesRepresentative) {
+        ticket.salesRepresentative = payload.contextUser.id;
         ticket[
           `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
           // eslint-disable-next-line no-underscore-dangle
-        ] = contextUser._identifier;
+        ] = payload.contextUser._identifier;
       } else {
         ticket.salesRepresentative = null;
         ticket[
           `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
         ] = null;
       }
-      ticket.posTerminal = terminal.id;
+      ticket.posTerminal = payload.terminal.id;
       ticket[
         `posTerminal${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
         // eslint-disable-next-line no-underscore-dangle
-      ] = terminal._identifier;
+      ] = payload.terminal._identifier;
 
       if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
         ticket.obrdmDeliveryModeProperty = 'PickAndCarry';

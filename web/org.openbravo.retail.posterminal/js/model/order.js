@@ -567,7 +567,7 @@
     },
 
     runCompleteTicket: function(completeTicketAction, actionName) {
-      const runCompleteTicketAction = async () => {
+      const runCompleteTicketAction = async receipt => {
         try {
           OB.App.StateBackwardCompatibility.getInstance(
             'Ticket'
@@ -613,86 +613,55 @@
 
           if (actionName !== 'deleteCurrentOrder') {
             // Open drawer
-            OB.MobileApp.model.receipt.trigger('checkOpenDrawer');
+            receipt.trigger('checkOpenDrawer');
 
-          // RFID
-          if (OB.UTIL.RfidController.isRfidConfigured()) {
-            OB.UTIL.RfidController.processRemainingCodes(
-              OB.MobileApp.model.receipt
-            );
-            OB.UTIL.RfidController.updateEpcBuffers();
-          }
+            // RFID
+            if (OB.UTIL.RfidController.isRfidConfigured()) {
+              OB.UTIL.RfidController.processRemainingCodes(receipt);
+              OB.UTIL.RfidController.updateEpcBuffers();
+            }
 
-          // Focus on scanning window
-          OB.UTIL.setScanningFocus(true);
+            // Focus on scanning window
+            OB.UTIL.setScanningFocus(true);
 
-          // FIXME: Move to action
-          // Print welcome message
-          OB.OBPOSPointOfSale.Print.printWelcome();
+            // FIXME: Move to action
+            // Print welcome message
+            OB.OBPOSPointOfSale.Print.printWelcome();
 
-          // Show ticket saved message
-          OB.UTIL.showSuccess(
-            OB.I18N.getLabel(
-              OB.MobileApp.model.receipt.get('isQuotation')
-                ? 'OBPOS_QuotationSaved'
-                : OB.MobileApp.model.receipt.get('orderType') === 2 ||
-                  OB.MobileApp.model.receipt.get('isLayaway')
-                ? 'OBPOS_MsgLayawaySaved'
-                : 'OBPOS_MsgReceiptSaved',
-              [OB.MobileApp.model.receipt.get('documentNo')]
-            )
-          );
-
-          if (
-            OB.MobileApp.model.receipt.get('cancelLayaway') &&
-            OB.MobileApp.model.hasPermission('OBPOS_cancelLayawayAndNew', true)
-          ) {
-            const receiptClone = OB.UTIL.clone(OB.MobileApp.model.receipt);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_cancelLayawayAndNewHeader'),
-              OB.I18N.getLabel('OBPOS_cancelLayawayAndNewBody'),
-              [
-                {
-                  label: OB.I18N.getLabel('OBPOS_LblOk'),
-                  action: function() {
-                    OB.App.State.Global.addNewTicket().then(() => {
-                      OB.MobileApp.model.receipt.set(
-                        'bp',
-                        receiptClone.get('bp')
-                      );
-                      receiptClone
-                        .get('lines')
-                        .forEach(line =>
-                          OB.MobileApp.model.receipt.addProduct(
-                            line.get('product'),
-                            -line.get('qty')
-                          )
-                        );
-                    });
-                  }
-                },
-                {
-                  label: OB.I18N.getLabel('OBPOS_Cancel')
-                }
-              ]
+            // Show ticket saved message
+            OB.UTIL.showSuccess(
+              OB.I18N.getLabel(
+                receipt.get('isQuotation')
+                  ? 'OBPOS_QuotationSaved'
+                  : receipt.get('orderType') === 2 || receipt.get('isLayaway')
+                  ? 'OBPOS_MsgLayawaySaved'
+                  : 'OBPOS_MsgReceiptSaved',
+                [receipt.get('documentNo')]
+              )
             );
           }
 
+          // Trigger some UI events
           OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
+
+          // Run terminal authentication validation
           OB.MobileApp.model.runSyncProcess();
+
+          // Check if masterdata needs to be refreshed
           OB.UTIL.checkRefreshMasterData();
         } catch (error) {
           OB.App.View.ActionCanceledUIHandler.handle(error);
         }
       };
 
+      const receipt = OB.UTIL.clone(OB.MobileApp.model.receipt);
       const completeTicketExecution = OB.UTIL.ProcessController.start(
         actionName
       );
       if (actionName === 'deleteCurrentOrder') {
-        OB.MobileApp.model.receipt.set('preventServicesUpdate', true);
-        runCompleteTicketAction(completeTicketAction).finally(() =>
-          OB.MobileApp.model.receipt.unset('preventServicesUpdate')
+        receipt.set('preventServicesUpdate', true);
+        runCompleteTicketAction(receipt).finally(() =>
+          receipt.unset('preventServicesUpdate')
         );
         OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
         return;
@@ -700,7 +669,7 @@
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreOrderSave',
         {
-          receipt: OB.MobileApp.model.receipt
+          receipt
         },
         function(args) {
           if (args && args.cancellation) {
@@ -710,14 +679,11 @@
             );
             return;
           }
-          const receiptForPostSyncReceipt = OB.UTIL.clone(
-            OB.MobileApp.model.receipt
-          );
-          runCompleteTicketAction(completeTicketAction);
+          runCompleteTicketAction(receipt);
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PostSyncReceipt',
             {
-              receipt: receiptForPostSyncReceipt,
+              receipt,
               syncSuccess: true
             },
             function(args) {

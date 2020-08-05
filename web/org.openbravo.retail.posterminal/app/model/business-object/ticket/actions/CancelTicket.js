@@ -65,6 +65,27 @@
         payload
       ));
 
+      // Create new ticket copy of the cancelled one
+      if (payload.cancelLayawayAndNew) {
+        newTicketList.unshift(newTicket);
+        newTicket = OB.App.State.Ticket.Utils.newTicket({
+          ...payload,
+          businessPartner: globalState.Ticket.businessPartner
+        });
+        newTicket.lines = globalState.Ticket.lines.map(
+          line =>
+            OB.App.State.Ticket.Utils.createLine(
+              newTicket,
+              line.product,
+              -line.qty
+            ).newLine
+        );
+        newTicket = OB.App.State.Ticket.Utils.calculateTotals(
+          newTicket,
+          payload
+        );
+      }
+
       newGlobalState.TicketList = newTicketList;
       newGlobalState.Ticket = newTicket;
       newGlobalState.Cashup = newCashup;
@@ -106,23 +127,22 @@
         globalState.Ticket.canceledorder,
         newPayload
       );
-      // newPayload = checkNewTicket(globalState.Ticket, newPayload);
+      newPayload = checkNewTicket(newPayload);
 
       return newPayload;
     }
   );
 
-  // FIXME: Use payload.cancelLayawayAndNew once TicketList is implemented
-  // const checkNewTicket = async (ticket, payload) => {
-  // if (OB.App.Security.hasPermission('OBPOS_cancelLayawayAndNew')) {
-  //   const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
-  //     title: 'OBPOS_cancelLayawayAndNewHeader',
-  //     message: 'OBPOS_cancelLayawayAndNewBody'
-  //   });
-  //   const newPayload = { ...payload };
-  //   newPayload.cancelLayawayAndNew = confirmation;
-  //   return newPayload;
-  // }
-  // return payload;
-  // };
+  const checkNewTicket = async payload => {
+    if (OB.App.Security.hasPermission('OBPOS_cancelLayawayAndNew')) {
+      const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+        title: 'OBPOS_cancelLayawayAndNewHeader',
+        message: 'OBPOS_cancelLayawayAndNewBody'
+      });
+      const newPayload = { ...payload };
+      newPayload.cancelLayawayAndNew = confirmation;
+      return newPayload;
+    }
+    return payload;
+  };
 })();
