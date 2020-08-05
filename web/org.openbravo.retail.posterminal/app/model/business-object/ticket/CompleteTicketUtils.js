@@ -549,7 +549,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     let prepaymentLimitAmount;
     let pendingPrepayment;
-    let receiptHasPrepaymentAmount;
+    let receiptHasPrepaymentAmount = true;
 
     if (payload.isMultiTicket) {
       prepaymentLimitAmount = ticket.obposPrepaymentlimitamt;
@@ -591,7 +591,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     let approvals;
     if (payload.isMultiTicket) {
-      approvals = ticket.multiOrders.map(ticketMap => ticketMap.approval);
+      approvals = ticket.multiOrdersList
+        .map(ticketMap => ticketMap.approvals)
+        .reduce((a, b) => a.concat(b));
     } else {
       approvals = ticket.approvals;
     }
