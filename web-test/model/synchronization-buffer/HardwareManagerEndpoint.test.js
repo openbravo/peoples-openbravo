@@ -7,7 +7,9 @@
  ************************************************************************************
  */
 
-OB = { debug: jest.fn() };
+/* global global */
+
+global.OB = { debug: jest.fn() };
 OB.App = {
   Class: {},
   MessageModelController: {

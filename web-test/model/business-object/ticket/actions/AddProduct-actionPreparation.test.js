@@ -10,7 +10,7 @@
 /* global global */
 /* eslint-disable jest/expect-expect */
 
-OB = {
+global.OB = {
   App: {
     Class: {},
     DAL: { remoteSearch: jest.fn() },

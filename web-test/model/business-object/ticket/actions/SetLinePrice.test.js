@@ -14,7 +14,7 @@
  * @see SetQuantity-actionPreparation.test for action preparation
  **/
 
-OB = {
+global.OB = {
   App: { StateBackwardCompatibility: { setProperties: jest.fn() }, Class: {} },
   UTIL: { HookManager: { registerHook: jest.fn() } }
 };

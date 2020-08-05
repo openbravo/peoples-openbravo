@@ -8,7 +8,7 @@
  */
 
 /* global global */
-OB = {
+global.OB = {
   App: {
     Class: {},
     TerminalProperty: { get: jest.fn() },

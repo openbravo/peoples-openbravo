@@ -9,7 +9,7 @@
 
 /* global global */
 
-OB = {
+global.OB = {
   App: {
     Class: {},
     StateBackwardCompatibility: { setProperties: jest.fn() },

@@ -15,7 +15,7 @@
  * @see SetQuantity.test for unit tests on setQuantity action
  **/
 
-OB = {
+global.OB = {
   App: {
     StateBackwardCompatibility: { setProperties: jest.fn() },
     Class: {},
