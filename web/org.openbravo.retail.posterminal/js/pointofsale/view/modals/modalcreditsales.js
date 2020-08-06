@@ -81,6 +81,7 @@ enyo.kind({
     this.model = model;
   },
   tap: function() {
+    // FIXME: Replace by creditTicket action and add popup as action preparation
     this.owner.owner.actionCancel = false;
     this.doHideThisPopup();
     this.model.get('order').set('payOnCredit', true);
@@ -115,20 +116,12 @@ enyo.kind({
     } else {
       bp.set('creditUsed', bpCreditUsed + totalPending);
     }
-    me.model.get('order').trigger('paymentDone');
-    // when in multiorder view, delete the order from the list after payment
-    if (me.model.get('leftColumnViewManager').isMultiOrder()) {
-      me.model
-        .get('multiOrders')
-        .get('multiOrdersList')
-        .remove(me.model.get('order'));
 
-      if (me.model.get('multiOrders').get('multiOrdersList').length === 0) {
-        me.model.deleteMultiOrderList();
-        me.model.get('multiOrders').resetValues();
-        me.model.get('leftColumnViewManager').setOrderMode();
-      }
-    }
+    OB.MobileApp.model.receipt.runCompleteTicket(
+      OB.App.State.Global.completeTicket,
+      'completeReceipt'
+    );
+    return;
   }
 });
 
