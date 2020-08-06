@@ -677,7 +677,7 @@
       }
 
       const receipt = OB.UTIL.clone(me);
-      await runCompleteTicketAction(receiptForPostSyncReceipt);
+      await runCompleteTicketAction(receipt);
 
       const receiptForPostSyncReceipt = isMultiTicket
         ? OB.MobileApp.model.multiOrders.get('multiOrdersList').models
