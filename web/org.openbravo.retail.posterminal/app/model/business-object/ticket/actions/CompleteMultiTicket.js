@@ -32,26 +32,15 @@
           );
         }
 
-        const ticketPayload = payload[ticket.id];
-
         // Set complete ticket properties
         ticket.completeTicket = true;
-        ticket = OB.App.State.Ticket.Utils.completeTicket(
-          ticket,
-          ticketPayload
-        );
+        ticket = OB.App.State.Ticket.Utils.completeTicket(ticket, payload);
 
         // FIXME: Move to calculateTotals?
-        ticket = OB.App.State.Ticket.Utils.updateTicketType(
-          ticket,
-          ticketPayload
-        );
+        ticket = OB.App.State.Ticket.Utils.updateTicketType(ticket, payload);
 
         // Complete ticket payment
-        ticket = OB.App.State.Ticket.Utils.completePayment(
-          ticket,
-          ticketPayload
-        );
+        ticket = OB.App.State.Ticket.Utils.completePayment(ticket, payload);
 
         // Document number generation
         ({
@@ -60,20 +49,14 @@
         } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
           ticket,
           newDocumentSequence,
-          ticketPayload
+          payload
         ));
 
         // Delivery generation
-        ticket = OB.App.State.Ticket.Utils.generateDelivery(
-          ticket,
-          ticketPayload
-        );
+        ticket = OB.App.State.Ticket.Utils.generateDelivery(ticket, payload);
 
         // Invoice generation
-        ticket = OB.App.State.Ticket.Utils.generateInvoice(
-          ticket,
-          ticketPayload
-        );
+        ticket = OB.App.State.Ticket.Utils.generateInvoice(ticket, payload);
         if (ticket.calculatedInvoice) {
           ({
             ticket: ticket.calculatedInvoice,
@@ -81,7 +64,7 @@
           } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
             ticket.calculatedInvoice,
             newDocumentSequence,
-            ticketPayload
+            payload
           ));
         }
 
@@ -92,7 +75,7 @@
         } = OB.App.State.Cashup.Utils.updateCashupFromTicket(
           ticket,
           newCashup,
-          ticketPayload
+          payload
         ));
 
         // Ticket synchronization message
@@ -134,8 +117,6 @@
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
-      const baseTicketPayload = { ...newPayload };
-
       newPayload.ticketsIdToClose = newPayload.multiTickets.multiOrdersList.map(
         ticket => ticket.id
       );
@@ -153,20 +134,16 @@
           );
         }
 
-        let ticketPayload = { ...baseTicketPayload };
-
         // eslint-disable-next-line no-await-in-loop
-        ticketPayload = await OB.App.State.Ticket.Utils.checkAnonymousReturn(
+        newPayload = await OB.App.State.Ticket.Utils.checkAnonymousReturn(
           ticket,
-          ticketPayload
+          newPayload
         );
         // eslint-disable-next-line no-await-in-loop
-        ticketPayload = await OB.App.State.Ticket.Utils.checkAnonymousLayaway(
+        newPayload = await OB.App.State.Ticket.Utils.checkAnonymousLayaway(
           ticket,
-          ticketPayload
+          newPayload
         );
-
-        newPayload[ticket.id] = ticketPayload;
       }
 
       // eslint-disable-next-line no-await-in-loop
@@ -201,15 +178,11 @@
           );
         }
 
-        let ticketPayload = newPayload[ticket.id];
-
         // eslint-disable-next-line no-await-in-loop
-        ticketPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
+        newPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
           ticket,
-          ticketPayload
+          newPayload
         );
-
-        newPayload[ticket.id] = ticketPayload;
       }
 
       return newPayload;
