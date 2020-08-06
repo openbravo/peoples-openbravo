@@ -26,10 +26,9 @@
     );
 
     OB.DATA.executeCustomerSave = async function(customer, callback) {
-      let customerId = customer.get('id'),
-        isNew = false,
-        finalCallback;
-      finalCallback = function(result) {
+      const customerId = customer.get('id');
+      let isNew = false;
+      const finalCallback = function(result) {
         if (callback) {
           callback(result);
         }
@@ -178,7 +177,10 @@
             };
             // update each order also so that new name is shown and the bp
             // in the order is the same as what got saved
-            if (currentReceipt.get('isEditable')) {
+            if (
+              currentReceipt.get('isEditable') &&
+              currentReceipt.get('bp').get('id') === customerId
+            ) {
               const updatedCustomer = updateCustomerLocations();
               OB.MobileApp.model.receipt.setBPandBPLoc(
                 updatedCustomer,
