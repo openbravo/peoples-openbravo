@@ -1234,7 +1234,7 @@
       await OB.App.State.Global.removeTicket(payload).then(() => {
         triggerTicketLoadEvents();
 
-        if (ticketListLength === 1) {
+        if (ticketListLength === 1 && OB.App.State.getState().Ticket) {
           // a new ticket has been created after removing the only ticket present
           OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
             newOrder: OB.App.StateBackwardCompatibility.getInstance(
