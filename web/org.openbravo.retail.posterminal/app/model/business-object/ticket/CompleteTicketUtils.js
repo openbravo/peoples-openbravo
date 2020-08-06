@@ -528,7 +528,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     if (
       !OB.App.TerminalProperty.get('terminal').terminalType
-        .calculatePrepayments ||
+        .calculateprepayments ||
       ticket.orderType === 1 ||
       ticket.orderType === 3 ||
       ticket.obposPrepaymentlimitamt === OB.DEC.Zero ||
@@ -594,7 +594,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       !ticket.payOnCredit &&
       OB.DEC.abs(ticket.obposPrepaymentamt) ===
         OB.DEC.abs(ticket.grossAmount) &&
-      !OB.App.TerminalProperty.get('terminal').terminalType.calculatePrepayments
+      !OB.App.TerminalProperty.get('terminal').terminalType.calculateprepayments
     ) {
       const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
         title: 'OBPOS_PaymentAmountDistinctThanReceiptAmountTitle',

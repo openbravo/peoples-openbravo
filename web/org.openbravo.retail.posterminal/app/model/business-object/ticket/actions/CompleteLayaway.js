@@ -149,7 +149,7 @@
 
     if (
       !OB.App.TerminalProperty.get('terminal').terminalType
-        .calculatePrepayments ||
+        .calculateprepayments ||
       ticket.obposPrepaymentlaylimitamt === OB.DEC.Zero ||
       paymentStatus.totalAmt <= OB.DEC.Zero ||
       OB.DEC.sub(
