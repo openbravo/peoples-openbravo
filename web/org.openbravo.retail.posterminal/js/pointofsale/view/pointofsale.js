@@ -1161,6 +1161,9 @@ enyo.kind({
           ]
         })
           .then(() => {
+            args.receipt.set('preventServicesUpdate', preventServicesUpdate);
+            args.receipt.trigger('updateLinesWithPriceRuleBasedServices');
+
             if (OB.UI.MultiColumn.isSingleColumn()) {
               OB.UTIL.showSuccess(
                 OB.I18N.getLabel('OBPOS_AddLine', [

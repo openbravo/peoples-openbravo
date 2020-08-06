@@ -1974,9 +1974,9 @@
       // TODO: remove this method
       OB.warn('setPrice should not be invoked in old order model!');
       const lineIds = [line.get('id')];
-      OB.App.State.Ticket.setLinePrice({ lineIds, price }).catch(
-        OB.App.View.ActionCanceledUIHandler.handle
-      );
+      OB.App.State.Ticket.setLinePrice({ lineIds, price })
+        .then(() => this.trigger('updateLinesWithPriceRuleBasedServices'))
+        .catch(OB.App.View.ActionCanceledUIHandler.handle);
     },
 
     setLineProperty: function(line, property, value) {
@@ -6289,7 +6289,10 @@
                   setUndo: false
                 })
               })
-                .then(() => newAllLinesCalculated())
+                .then(() => {
+                  this.trigger('updateLinesWithPriceRuleBasedServices');
+                  newAllLinesCalculated();
+                })
                 .catch(OB.App.View.ActionCanceledUIHandler.handle);
             } else {
               dataPrices.each(function(price) {
@@ -6299,7 +6302,10 @@
                     setUndo: false
                   })
                 })
-                  .then(() => newAllLinesCalculated())
+                  .then(() => {
+                    this.trigger('updateLinesWithPriceRuleBasedServices');
+                    newAllLinesCalculated();
+                  })
                   .catch(OB.App.View.ActionCanceledUIHandler.handle);
               });
             }
