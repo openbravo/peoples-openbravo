@@ -1105,7 +1105,7 @@
 
     // This function calculate the promotions, taxes and gross of all the receipt
     calculateReceipt: function(callback, line, forceCalculateReceipt) {
-      if (this.propagatingBackboneToState) {
+      if (this.propagatingStateToBackbone) {
         // calculateReceipt was invoked by a backbone trigger while propagating a change from
         // state to backbone model: it is not necessary to calculate anything here as it will
         // be calculated by state ticket hook.

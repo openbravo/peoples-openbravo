@@ -373,13 +373,10 @@ enyo.kind({
   splittedLines: [],
 
   splitLines: function() {
-    this.receipt.propagatingBackboneToState = true;
     OB.App.State.Ticket.splitLine({
       lineId: this.orderline.get('id'),
       quantities: this.$.body.$.qtyLines.getValues()
-    })
-      .catch(e => OB.App.View.ActionCanceledUIHandler.handle)
-      .finally(() => delete this.receipt.propagatingBackboneToState);
+    }).catch(e => OB.App.View.ActionCanceledUIHandler.handle);
   },
 
   getSplitProposal: function() {

@@ -1234,7 +1234,6 @@
     let preventServicesUpdate;
     try {
       if (currentReceipt) {
-        currentReceipt.propagatingBackboneToState = true;
         preventServicesUpdate = currentReceipt.get('preventServicesUpdate');
         currentReceipt.set('preventServicesUpdate', true);
       }
@@ -1254,7 +1253,6 @@
       OB.App.View.ActionCanceledUIHandler.handle(error);
     } finally {
       if (currentReceipt) {
-        delete currentReceipt.propagatingBackboneToState;
         currentReceipt.set('preventServicesUpdate', preventServicesUpdate);
       }
       OB.UTIL.checkRefreshMasterData();

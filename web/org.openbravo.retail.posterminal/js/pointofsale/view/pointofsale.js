@@ -1163,6 +1163,7 @@ enyo.kind({
           .then(() => {
             args.receipt.set('preventServicesUpdate', preventServicesUpdate);
             args.receipt.trigger('updateLinesWithPriceRuleBasedServices');
+            args.receipt.trigger('paintTaxes'); // refresh the Tax breakdown
 
             if (OB.UI.MultiColumn.isSingleColumn()) {
               OB.UTIL.showSuccess(
