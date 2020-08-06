@@ -170,4 +170,14 @@ public class BPartnerFilter extends ProcessHQLQueryValidated {
     }
     return null;
   }
+
+  @Override
+  protected boolean mustHaveRemoteFilters() {
+    return true;
+  }
+
+  @Override
+  protected String messageWhenNoFilters() {
+    return "OBPOS_CustomerSearchTooBroad";
+  }
 }

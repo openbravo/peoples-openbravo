@@ -830,8 +830,8 @@ enyo.kind({
 
     function errorCallback(tx, error) {
       me.$.renderLoading.hide();
+      me.$.stBPAssignToReceipt.$.scrollArea.hide();
       me.$.stBPAssignToReceipt.$.tempty.show();
-      me.doHideSelector();
       var i, message, tokens;
 
       function getProperty(property) {
@@ -840,55 +840,60 @@ enyo.kind({
         });
       }
 
-      // Generate a generic message if error is not defined
-      if (
-        OB.UTIL.isNullOrUndefined(error) ||
-        OB.UTIL.isNullOrUndefined(error.message)
-      ) {
-        error = {
-          message: OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable')
-        };
-      }
-
-      if (error.message.startsWith('###')) {
-        tokens = error.message.split('###');
-        message = [];
-        for (i = 0; i < tokens.length; i++) {
-          if (tokens[i] !== '') {
-            if (
-              tokens[i] === 'OBMOBC_FilteringNotAllowed' ||
-              tokens[i] === 'OBMOBC_SortingNotAllowed'
-            ) {
-              message.push({
-                content: OB.I18N.getLabel(tokens[i]),
-                classes: 'obUiListBpsSelector-errorMessage'
-              });
-            } else {
-              var property = getProperty(tokens[i]);
-              if (property) {
+      if (error && error.message) {
+        if (error.message.startsWith('###')) {
+          tokens = error.message.split('###');
+          message = [];
+          for (i = 0; i < tokens.length; i++) {
+            if (tokens[i] !== '') {
+              if (
+                tokens[i] === 'OBMOBC_FilteringNotAllowed' ||
+                tokens[i] === 'OBMOBC_SortingNotAllowed'
+              ) {
                 message.push({
-                  content: OB.I18N.getLabel(property.caption),
-                  classes: 'obUiListBpsSelector-errorMessage',
-                  tag: 'li'
+                  content: OB.I18N.getLabel(tokens[i]),
+                  classes: 'obUiListBpsSelector-errorMessage'
                 });
+              } else {
+                var property = getProperty(tokens[i]);
+                if (property) {
+                  message.push({
+                    content: OB.I18N.getLabel(property.caption),
+                    classes: 'obUiListBpsSelector-errorMessage',
+                    tag: 'li'
+                  });
+                }
               }
             }
           }
+        } else {
+          message = error.message;
         }
       } else {
-        message = error.message;
+        message = [
+          {
+            content: OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable')
+          }
+        ];
       }
 
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBMOBC_Error'),
-        message,
-        null,
-        {
-          onHideFunction: function() {
-            me.doShowSelector();
+      if (Array.isArray(message)) {
+        me.doHideSelector();
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBMOBC_Error'),
+          message,
+          null,
+          {
+            onHideFunction: function() {
+              me.doShowSelector();
+            }
           }
-        }
-      );
+        );
+      } else {
+        OB.UTIL.showWarning(
+          OB.I18N.hasLabel(message) ? OB.I18N.getLabel(message) : message
+        );
+      }
     }
 
     function createBPartnerFilter(bp, bploc) {
