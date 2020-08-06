@@ -133,8 +133,12 @@ enyo.kind({
       if (diff.hasOwnProperty(att)) {
         if (diff[att].owner.owner.getShowing()) {
           if (this.args.callback) {
-            this.formData[diff[att].modelProperty] = diff[att].value;
-            this.formData[diff[att].modelPropertyText] = diff[att].content;
+            this.formData[diff[att].modelProperty] = diff[att].getValue
+              ? diff[att].getValue()
+              : diff[att].value;
+            this.formData[diff[att].modelPropertyText] = diff[att].getContent
+              ? diff[att].getContent()
+              : diff[att].content;
           } else {
             result = result && diff[att].applyValue(this.currentLine);
           }
