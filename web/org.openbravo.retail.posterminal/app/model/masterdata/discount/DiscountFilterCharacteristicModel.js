@@ -23,6 +23,11 @@
       ];
       this.setPaginationById(true);
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'DiscountFilterCharacteristic';
+    }
   }
 
   OB.App.MasterdataController.registerModel(DiscountFilterCharacteristic);

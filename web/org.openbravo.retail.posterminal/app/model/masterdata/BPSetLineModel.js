@@ -13,6 +13,11 @@
       super();
       this.setPaginationById(true);
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'BPSetLine';
+    }
   }
 
   OB.App.MasterdataController.registerModel(BPSetLine);

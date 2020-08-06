@@ -24,6 +24,11 @@
       ];
       this.setPaginationById(true);
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'DiscountFilterBusinessPartnerGroup';
+    }
   }
 
   OB.App.MasterdataController.registerModel(DiscountFilterBusinessPartnerGroup);

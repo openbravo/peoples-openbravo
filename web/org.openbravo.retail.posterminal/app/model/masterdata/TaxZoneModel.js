@@ -8,7 +8,12 @@
  */
 
 (function taxZoneModel() {
-  class TaxZone extends OB.App.Class.MasterdataModel {}
+  class TaxZone extends OB.App.Class.MasterdataModel {
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'TaxZone';
+    }
+  }
 
   OB.App.MasterdataController.registerModel(TaxZone);
 })();

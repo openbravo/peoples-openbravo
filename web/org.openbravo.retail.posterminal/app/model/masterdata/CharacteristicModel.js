@@ -17,6 +17,11 @@
         })
       ];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'Characteristic';
+    }
   }
   OB.App.MasterdataController.registerModel(Characteristic);
 })();

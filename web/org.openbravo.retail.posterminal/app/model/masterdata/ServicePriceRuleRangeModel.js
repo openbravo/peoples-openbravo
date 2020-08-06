@@ -21,6 +21,11 @@
         })
       ];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'ServicePriceRuleRange';
+    }
   }
 
   OB.App.MasterdataController.registerModel(ServicePriceRuleRange);

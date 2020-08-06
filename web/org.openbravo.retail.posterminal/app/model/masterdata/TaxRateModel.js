@@ -8,7 +8,12 @@
  */
 
 (function taxRateModel() {
-  class TaxRate extends OB.App.Class.MasterdataModel {}
+  class TaxRate extends OB.App.Class.MasterdataModel {
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'TaxRate';
+    }
+  }
 
   OB.App.MasterdataController.registerModel(TaxRate);
 })();

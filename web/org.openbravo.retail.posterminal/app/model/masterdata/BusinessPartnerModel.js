@@ -21,6 +21,11 @@
         'id'
       ];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'BusinessPartner';
+    }
   }
   OB.App.MasterdataController.registerModel(BusinessPartner);
 })();

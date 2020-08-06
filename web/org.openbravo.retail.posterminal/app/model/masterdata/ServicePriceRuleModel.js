@@ -8,7 +8,12 @@
  */
 
 (function servicePriceRuleModel() {
-  class ServicePriceRule extends OB.App.Class.MasterdataModel {}
+  class ServicePriceRule extends OB.App.Class.MasterdataModel {
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'ServicePriceRule';
+    }
+  }
 
   OB.App.MasterdataController.registerModel(ServicePriceRule);
 })();

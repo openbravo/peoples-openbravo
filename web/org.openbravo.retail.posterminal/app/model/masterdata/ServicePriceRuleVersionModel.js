@@ -18,6 +18,11 @@
         })
       ];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'ServicePriceRuleVersion';
+    }
   }
 
   OB.App.MasterdataController.registerModel(ServicePriceRuleVersion);

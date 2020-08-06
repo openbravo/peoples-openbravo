@@ -109,6 +109,11 @@
         'generic_product_id'
       ];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'Product';
+    }
   }
   OB.App.MasterdataController.registerModel(Product);
 })();

@@ -32,6 +32,11 @@
       ];
       this.searchProperties = ['name', 'postalCode', 'cityName', 'bpartner'];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'BusinessPartnerLocation';
+    }
   }
   OB.App.MasterdataController.registerModel(BusinessPartnerLocation);
 })();

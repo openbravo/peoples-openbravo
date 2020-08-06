@@ -18,6 +18,11 @@
         })
       ];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'SalesRepresentative';
+    }
   }
   OB.App.MasterdataController.registerModel(SalesRepresentative);
 })();

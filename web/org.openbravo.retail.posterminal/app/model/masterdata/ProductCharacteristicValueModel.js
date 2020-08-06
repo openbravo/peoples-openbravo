@@ -22,6 +22,11 @@
       ];
       this.setPaginationById(true);
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'ProductCharacteristicValue';
+    }
   }
   OB.App.MasterdataController.registerModel(ProductCharacteristicValue);
 })();

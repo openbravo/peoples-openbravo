@@ -18,6 +18,11 @@
         })
       ];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'BPCategory';
+    }
   }
   OB.App.MasterdataController.registerModel(BPCategory);
 })();

@@ -18,6 +18,11 @@
       ];
       this.setPaginationById(true);
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'PriceList';
+    }
   }
 
   OB.App.MasterdataController.registerModel(PriceList);

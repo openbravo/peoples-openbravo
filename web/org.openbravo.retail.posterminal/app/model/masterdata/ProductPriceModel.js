@@ -21,6 +21,11 @@
       ];
       this.setPaginationById(true);
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'ProductPrice';
+    }
   }
   OB.App.MasterdataController.registerModel(ProductPrice);
 })();

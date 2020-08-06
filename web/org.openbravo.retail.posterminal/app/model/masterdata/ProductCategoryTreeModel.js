@@ -24,6 +24,11 @@
         })
       ];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'ProductCategoryTree';
+    }
   }
   OB.App.MasterdataController.registerModel(ProductCategoryTree);
 })();

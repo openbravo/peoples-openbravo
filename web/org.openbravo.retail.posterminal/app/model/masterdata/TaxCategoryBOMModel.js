@@ -21,6 +21,11 @@
         })
       ];
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    getName() {
+      return 'TaxCategoryBOM';
+    }
   }
 
   OB.App.MasterdataController.registerModel(TaxCategoryBOM);
