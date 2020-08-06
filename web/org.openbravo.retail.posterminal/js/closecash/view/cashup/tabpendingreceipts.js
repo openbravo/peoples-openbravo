@@ -324,11 +324,10 @@ enyo.kind({
       function(approved, supervisor, approvalType) {
         if (approved) {
           // approved so remove the entry
-          var callback = function() {
+          model.deleteOrder(me, () => {
             me.collection.remove(model);
-          };
-          model.deleteOrder(me, callback);
-          me.parent.parent.parent.parent.parent.refreshButtons();
+            me.parent.parent.parent.parent.parent.refreshButtons();
+          });
         }
       }
     );
@@ -397,24 +396,17 @@ enyo.kind({
       return;
     }
 
-    function removeOneModel(model, collection) {
-      if (collection.length === 0) {
-        return;
-      }
-      var callback = function() {
-        collection.remove(model);
-        removeOneModel(collection.at(0), collection);
-      };
-      model.deleteOrder(me, callback);
-    }
-
     OB.UTIL.Approval.requestApproval(
       this.model,
       'OBPOS_approval.cashupremovereceipts',
       function(approved, supervisor, approvalType) {
         if (approved) {
-          removeOneModel(me.collection.at(0), me.collection);
-          me.parent.parent.parent.parent.parent.refreshButtons();
+          me.collection.forEach(model => {
+            model.deleteOrder(me, () => {
+              me.collection.remove(model);
+              me.parent.parent.parent.parent.parent.refreshButtons();
+            });
+          });
         }
       }
     );

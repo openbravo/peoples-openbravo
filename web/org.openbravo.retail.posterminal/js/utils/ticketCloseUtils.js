@@ -312,26 +312,12 @@
               );
             }
 
-            let payload = {};
-            if (
-              OB.MobileApp.model.hasPermission(
-                'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
-                true
-              )
-            ) {
-              payload = {
-                forceCreateNew: true
-              };
-            }
-
             receipt.setIsCalculateReceiptLockState(false);
             receipt.setIsCalculateGrossLockState(false);
-            OB.UTIL.TicketListUtils.removeTicket(payload).then(() => {
-              OB.UTIL.ProcessController.finish('completeReceipt', execution);
-              if (triggerClosedCallback instanceof Function) {
-                triggerClosedCallback();
-              }
-            });
+            OB.UTIL.ProcessController.finish('completeReceipt', execution);
+            if (triggerClosedCallback instanceof Function) {
+              triggerClosedCallback();
+            }
             return;
           }
           OB.UTIL.ProcessController.finish('completeReceipt', execution);

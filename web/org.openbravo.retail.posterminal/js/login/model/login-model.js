@@ -1202,40 +1202,32 @@
     preLogoutActions: function(finalCallback) {
       var me = this;
 
-      function removeOneModel(model, collection, callback) {
-        if (collection.length === 0) {
-          if (callback && callback instanceof Function) {
-            me.cleanSessionInfo().then(() => callback());
-          }
-          return;
+      function callback() {
+        if (finalCallback && finalCallback instanceof Function) {
+          me.cleanSessionInfo().then(() => finalCallback());
         }
-
-        OB.UTIL.TicketListUtils.removeTicket({
-          id: model.id
-        }).then(() => {
-          const firstTicket = collection.shift();
-          removeOneModel(firstTicket, collection, callback);
-        });
       }
 
       function success(collection) {
         if (collection.length > 0) {
           OB.App.State.Global.markIgnoreCheckIfIsActiveOrderToPendingTickets({
             session: OB.MobileApp.model.get('session')
-          }).then(() => {
-            removeOneModel(collection[0], collection, finalCallback);
-          });
+          })
+            .then(() => {
+              collection.forEach(receipt => {
+                const model = OB.App.StateBackwardCompatibility.getInstance(
+                  'Ticket'
+                ).toBackboneObject(receipt);
+                model.deleteOrder();
+              });
+            })
+            .then(() => {
+              callback();
+            });
         } else {
-          if (finalCallback && finalCallback instanceof Function) {
-            me.cleanSessionInfo().then(() => finalCallback());
-          }
+          callback();
         }
       }
-
-      // function error() {
-      //   OB.error('postCloseSession', arguments);
-      //   OB.MobileApp.model.triggerLogout();
-      // }
 
       if (OB.MobileApp.model.get('isMultiOrderState')) {
         if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {

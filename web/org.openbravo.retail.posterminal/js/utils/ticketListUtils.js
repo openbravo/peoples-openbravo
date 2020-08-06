@@ -1217,35 +1217,6 @@
     }
   };
 
-  OB.UTIL.TicketListUtils.removeTicket = async function(payload) {
-    const ticketListLength = OB.App.OpenTicketList.getSessionTickets().length;
-    const currentReceipt = OB.MobileApp.model.receipt;
-    try {
-      if (currentReceipt) {
-        currentReceipt.set('preventServicesUpdate', true);
-      }
-      await OB.App.State.Global.removeTicket(payload).then(() => {
-        OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
-
-        if (ticketListLength === 1 && OB.App.State.getState().Ticket) {
-          // a new ticket has been created after removing the only ticket present
-          OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
-            newOrder: OB.App.StateBackwardCompatibility.getInstance(
-              'Ticket'
-            ).toBackboneObject(OB.App.State.getState().Ticket)
-          });
-        }
-      });
-    } catch (error) {
-      OB.App.View.ActionCanceledUIHandler.handle(error);
-    } finally {
-      if (currentReceipt) {
-        currentReceipt.unset('preventServicesUpdate');
-      }
-      OB.UTIL.checkRefreshMasterData();
-    }
-  };
-
   OB.UTIL.TicketListUtils.triggerTicketLoadEvents = function() {
     if (OB.MobileApp.model.receipt) {
       OB.MobileApp.model.receipt.trigger('updateView');

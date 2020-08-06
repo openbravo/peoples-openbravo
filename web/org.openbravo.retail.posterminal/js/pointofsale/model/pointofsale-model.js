@@ -244,12 +244,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
         order.unset('originalOrderType');
         order.unset('belongsToMultiOrder');
         if (order.get('loadedFromServer')) {
-          //Fixme:
-          // this.get('orderList').current = order;
-          // this.get('orderList').deleteCurrent();
-          OB.UTIL.TicketListUtils.removeTicket({
-            id: order.get('id')
-          });
+          order.deleteOrder();
         }
       },
       this

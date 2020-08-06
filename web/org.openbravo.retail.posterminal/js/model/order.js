@@ -9316,14 +9316,14 @@
       });
       return index;
     },
-    deleteOrder: function(context, callback) {
+    deleteOrder: async function(context, callback) {
       OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
       OB.MobileApp.view.scanningFocus(false);
       if (OB.UTIL.RfidController.isRfidConfigured()) {
         OB.UTIL.RfidController.eraseEpcOrder(this);
       }
 
-      OB.MobileApp.model.receipt.runCompleteTicket(
+      await OB.MobileApp.model.receipt.runCompleteTicket(
         OB.App.State.Global.deleteTicket,
         'deleteCurrentOrder'
       );

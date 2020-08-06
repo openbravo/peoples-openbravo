@@ -804,10 +804,6 @@
                         me.context
                           .get('multiOrders')
                           .trigger('integrityOk', theReceipt);
-
-                        OB.UTIL.TicketListUtils.removeTicket({
-                          id: theReceipt.get('id')
-                        });
                       }
                     );
 
