@@ -611,9 +611,9 @@
             discountRules: OB.Discounts.Pos.ruleImpls,
             bpSets: OB.Discounts.Pos.bpSets,
             taxRules: OB.Taxes.Pos.ruleImpls,
-            multiTickets: OB.MobileApp.model.multiOrders
-              ? JSON.parse(JSON.stringify(OB.MobileApp.model.multiOrders))
-              : undefined
+            multiTickets: JSON.parse(
+              JSON.stringify(OB.MobileApp.model.multiOrders)
+            )
           });
 
           if (actionName !== 'deleteCurrentOrder') {
@@ -657,37 +657,40 @@
         OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
         return;
       }
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_PreOrderSave',
-        {
-          receipt: me
-        },
-        async function(args) {
-          if (args && args.cancellation) {
-            OB.UTIL.ProcessController.finish(
-              actionName,
-              completeTicketExecution
-            );
-            return;
+
+      const isMultiTicket =
+        completeTicketAction === OB.App.State.Global.completeMultiTicket;
+      const receiptsForPreOrderSave = isMultiTicket
+        ? OB.MobileApp.model.multiOrders.get('multiOrdersList').models
+        : [me];
+      for (const receiptForPreOrderSave of receiptsForPreOrderSave) {
+        const result = await OB.UTIL.HookManager.executeHooks(
+          'OBPOS_PreOrderSave',
+          {
+            receipt: receiptForPreOrderSave
           }
-          const receipt = OB.UTIL.clone(me);
-          await runCompleteTicketAction(receipt);
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PostSyncReceipt',
-            {
-              receipt,
-              syncSuccess: true
-            },
-            function(args) {
-              OB.UTIL.ProcessController.finish(
-                actionName,
-                completeTicketExecution
-              );
-              return;
-            }
-          );
+        );
+        if (result && result.cancellation) {
+          OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
+          return;
+        }
+      }
+
+      const receipt = OB.UTIL.clone(me);
+      await runCompleteTicketAction(receiptForPostSyncReceipt);
+
+      const receiptForPostSyncReceipt = isMultiTicket
+        ? OB.MobileApp.model.multiOrders.get('multiOrdersList').models
+        : receipt;
+      await OB.UTIL.HookManager.executeHooks(
+        isMultiTicket ? 'OBPOS_PostSyncMultiReceipt' : 'OBPOS_PostSyncReceipt',
+        {
+          receipt: receiptForPostSyncReceipt,
+          syncSuccess: true
         }
       );
+
+      OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
     },
 
     preventOrderSave: function(value) {
