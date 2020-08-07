@@ -139,6 +139,16 @@ enyo.kind({
             this.formData[diff[att].modelPropertyText] = diff[att].getContent
               ? diff[att].getContent()
               : diff[att].content;
+            if (
+              diff[att].additionalProperties ||
+              diff[att].container.additionalProperties
+            ) {
+              this.formData[
+                diff[att].modelProperty + 'AdditionalProperties'
+              ] = diff[att].additionalProperties
+                ? diff[att].additionalProperties
+                : diff[att].container.additionalProperties;
+            }
           } else {
             result = result && diff[att].applyValue(this.currentLine);
           }
