@@ -663,34 +663,53 @@
       const receiptsForPreOrderSave = isMultiTicket
         ? OB.MobileApp.model.multiOrders.get('multiOrdersList').models
         : [me];
-      for (const receiptForPreOrderSave of receiptsForPreOrderSave) {
-        const result = await OB.UTIL.HookManager.executeHooks(
-          'OBPOS_PreOrderSave',
-          {
-            receipt: receiptForPreOrderSave
-          }
-        );
-        if (result && result.cancellation) {
-          OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
-          return;
-        }
-      }
 
-      const receipt = OB.UTIL.clone(me);
-      await runCompleteTicketAction(receipt);
+      const afterPreOrderSave = _.after(
+        receiptsForPreOrderSave.length,
+        function() {
+          const receipt = OB.UTIL.clone(me);
+          await runCompleteTicketAction(receipt);
 
-      const receiptForPostSyncReceipt = isMultiTicket
-        ? OB.MobileApp.model.multiOrders.get('multiOrdersList').models
-        : receipt;
-      await OB.UTIL.HookManager.executeHooks(
-        isMultiTicket ? 'OBPOS_PostSyncMultiReceipt' : 'OBPOS_PostSyncReceipt',
-        {
-          receipt: receiptForPostSyncReceipt,
-          syncSuccess: true
+          const receiptForPostSyncReceipt = isMultiTicket
+            ? OB.MobileApp.model.multiOrders.get('multiOrdersList').models
+            : receipt;
+          OB.UTIL.HookManager.executeHooks(
+            isMultiTicket
+              ? 'OBPOS_PostSyncMultiReceipt'
+              : 'OBPOS_PostSyncReceipt',
+            {
+              receipt: receiptForPostSyncReceipt,
+              syncSuccess: true
+            },
+            function(args) {
+              OB.UTIL.ProcessController.finish(
+                actionName,
+                completeTicketExecution
+              );
+             return;
+            }
+          );
         }
       );
 
-      OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
+      for (const receiptForPreOrderSave of receiptsForPreOrderSave) {
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_PreOrderSave',
+          {
+            receipt: receiptForPreOrderSave
+          },
+          function(args) {
+            if (args && args.cancellation) {
+              OB.UTIL.ProcessController.finish(
+                actionName,
+                completeTicketExecution
+              );
+              return;
+            }
+            afterPreOrderSave();
+          }
+        );
+      }
     },
 
     preventOrderSave: function(value) {
