@@ -6449,20 +6449,17 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
     margin-left: 0px;
     width: 95%;
   }
-}
-
-@media all and (max-aspect-ratio: 9/8) {
-	.obUiModalOpenRelatedReceipts .obUiModal-header, .obUiModalOpenRelatedReceipts .obUiModal-footer {
-	  width: calc(95% - 150px);
-	}
-	
-	.obUiModalOpenRelatedReceipts .obUiModal-header-header {
-	  width: calc(95% - 104px);
-	}
-	
-	.obUiModalOpenRelatedReceipts .obUiModal-body {
-	  width: calc(95% - 124px);
-	}	
+  .obUiModalOpenRelatedReceipts .obUiModal-header, .obUiModalOpenRelatedReceipts .obUiModal-footer {
+    width: calc(95% - 150px);
+  }
+  
+  .obUiModalOpenRelatedReceipts .obUiModal-header-header {
+    width: calc(95% - 104px);
+  }
+  
+  .obUiModalOpenRelatedReceipts .obUiModal-body {
+    width: calc(95% - 124px);
+  }
 }
 
 .obUiModalOpenRelatedReceipts-body {
@@ -6490,7 +6487,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   margin: 0px;
   height: 85px;
 }
-   
+
 .obUiModalOpenRelatedReceipts-header-checkAllHeaderDocNum {}
 
 .obUiModalOpenRelatedReceipts-checkAllHeaderDocNum-headerLbl {
