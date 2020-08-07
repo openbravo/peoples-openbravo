@@ -612,17 +612,41 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if given ticket was updated in a different terminal or it is pending to be synchronized.
    */
   async checkTicketUpdated(ticket, payload) {
-    if (!ticket.isPaid && !ticket.isLayaway) {
-      return payload;
-    }
+    const runCheckTicketUpdatedRequest = async () => {
+      try {
+        const data = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.process.CheckUpdated',
+          {
+            order: {
+              id: ticket.id,
+              loaded: ticket.loaded,
+              lines: ticket.lines.map(line => {
+                return {
+                  id: line.id,
+                  loaded: line.loaded
+                };
+              })
+            }
+          }
+        );
+        return data;
+      } catch (error) {
+        if (
+          !OB.App.Security.hasPermission(
+            'OBPOS_AllowToSynchronizeLoadedReceiptsOffline'
+          )
+        ) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_NotPossibleToConfirmReceipt',
+            messageParams: [ticket.documentNo]
+          });
+        }
+        return false;
+      }
+    };
 
     const showTicketUpdatedError = async errorType => {
-      if (
-        errorType ||
-        !OB.App.Security.hasPermission(
-          'OBPOS_AllowToSynchronizeLoadedReceiptsOffline'
-        )
-      ) {
+      if (errorType) {
         const getErrorConfirmation = () => {
           switch (errorType) {
             case 'P':
@@ -640,7 +664,6 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           messageParams: [ticket.documentNo]
         });
       }
-
       const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
         title: 'OBPOS_UpdatedReceipt',
         message: 'OBPOS_NotPossibleToConfirmReceiptWarn',
@@ -649,35 +672,16 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       if (!confirmation) {
         throw new OB.App.Class.ActionCanceled();
       }
-
       return payload;
     };
 
-    if (!OB.App.TerminalProperty.get('connectedToERP') || !navigator.onLine) {
-      return showTicketUpdatedError();
+    if (!ticket.isPaid && !ticket.isLayaway) {
+      return payload;
     }
 
-    try {
-      const data = await OB.App.Request.mobileServiceRequest(
-        'org.openbravo.retail.posterminal.process.CheckUpdated',
-        {
-          order: {
-            id: ticket.id,
-            loaded: ticket.loaded,
-            lines: ticket.lines.map(line => {
-              return {
-                id: line.id,
-                loaded: line.loaded
-              };
-            })
-          }
-        }
-      );
-      if (data.response.data.type) {
-        return showTicketUpdatedError(data.response.data.type);
-      }
-    } catch (error) {
-      return showTicketUpdatedError();
+    const data = await runCheckTicketUpdatedRequest();
+    if (!data || data.response.data.type) {
+      return showTicketUpdatedError(data ? data.response.data.type : undefined);
     }
 
     return payload;
@@ -687,36 +691,105 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if given ticket was canceled in a different terminal.
    */
   async checkTicketCanceled(ticket, payload) {
-    try {
-      const data = await OB.App.Request.mobileServiceRequest(
-        'org.openbravo.retail.posterminal.process.IsOrderCancelled',
-        {
-          orderId: ticket.canceledorder.id,
-          documentNo: ticket.canceledorder.documentNo,
-          orderLoaded: ticket.canceledorder.loaded,
-          orderLines: ticket.canceledorder.lines.map(line => {
-            return {
-              id: line.id,
-              loaded: line.loaded
-            };
-          })
-          // checkNotEditableLines: params ? params.checkNotEditableLines : false,
-          // checkNotDeliveredDeferredServices: params
-          //   ? params.checkNotDeliveredDeferredServices
-          //   : false
-        }
-      );
-      if (data.response.data.orderCancelled) {
+    const runCheckTicketCanceledRequest = async () => {
+      try {
+        const data = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.process.IsOrderCancelled',
+          {
+            orderId: ticket.canceledorder.id,
+            documentNo: ticket.canceledorder.documentNo,
+            orderLoaded: ticket.canceledorder.loaded,
+            orderLines: ticket.canceledorder.lines.map(line => {
+              return {
+                id: line.id,
+                loaded: line.loaded
+              };
+            })
+          }
+        );
+        return data;
+      } catch (error) {
         throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBPOS_LayawayCancelledError'
+          errorConfirmation: 'OBMOBC_OfflineWindowRequiresOnline'
         });
       }
-    } catch (error) {
+    };
+
+    const data = await runCheckTicketCanceledRequest();
+    if (data.response.data.orderCancelled) {
       throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBMOBC_OfflineWindowRequiresOnline'
+        errorConfirmation: 'OBPOS_LayawayCancelledError'
       });
     }
 
     return payload;
+  },
+
+  /**
+   * Checks if given ticket business partner has available credit.
+   */
+  async checkBusinessPartnerCredit(ticket, payload) {
+    const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
+      ticket,
+      payload
+    );
+
+    const showCompleteCreditTicketConfirmation = async message => {
+      const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+        title: 'OBPOS_SellingOnCreditHeader',
+        message
+      });
+      if (!confirmation) {
+        throw new OB.App.Class.ActionCanceled();
+      }
+      return payload;
+    };
+
+    const runCheckBusinessPartnerCreditRequest = async () => {
+      try {
+        const data = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.CheckBusinessPartnerCredit',
+          {
+            businessPartnerId: ticket.businessPartner.id,
+            totalPending: paymentStatus.pendingAmt
+          }
+        );
+        return data;
+      } catch (error) {
+        if (
+          !OB.App.Security.hasPermission('OBPOS_AllowSellOnCreditWhileOffline')
+        ) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_UnabletoSellOncredit'
+          });
+        }
+        return false;
+      }
+    };
+
+    if (paymentStatus.isReturn) {
+      return showCompleteCreditTicketConfirmation();
+    }
+
+    const data = await runCheckBusinessPartnerCreditRequest();
+    if (data && !data.response.data) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_MsgErrorCreditSales'
+      });
+    }
+
+    if (data && !data.response.data.enoughCredit) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_notEnoughCreditBody',
+        messageParams: [
+          data.response.data.bpName,
+          data.response.data.actualCredit
+        ]
+      });
+    }
+
+    return showCompleteCreditTicketConfirmation(
+      data ? undefined : 'OBPOS_Unabletocheckcredit'
+    );
   }
 });

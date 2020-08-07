@@ -79,49 +79,6 @@ enyo.kind({
   isDefaultAction: true,
   init: function(model) {
     this.model = model;
-  },
-  tap: function() {
-    // FIXME: Replace by creditTicket action and add popup as action preparation
-    this.owner.owner.actionCancel = false;
-    this.doHideThisPopup();
-    this.model.get('order').set('payOnCredit', true);
-    this.allowOpenDrawer = false;
-    var payments = this.model.get('order').get('payments');
-    var me = this;
-
-    payments.each(function(payment) {
-      if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
-        me.allowOpenDrawer = true;
-      }
-    });
-
-    if (this.allowOpenDrawer) {
-      OB.POS.hwserver.openDrawer(
-        {
-          openFirst: false,
-          receipt: this.model.get('order')
-        },
-        OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales
-      );
-    }
-    var bp = this.model.get('order').get('bp');
-    var bpCreditUsed = this.model
-      .get('order')
-      .get('bp')
-      .get('creditUsed');
-    var totalPending = this.model.get('order').getPending();
-
-    if (this.parent.parent.parent.args.order.get('gross') < 0) {
-      bp.set('creditUsed', bpCreditUsed - totalPending);
-    } else {
-      bp.set('creditUsed', bpCreditUsed + totalPending);
-    }
-
-    OB.MobileApp.model.receipt.runCompleteTicket(
-      OB.App.State.Global.completeTicket,
-      'completeReceipt'
-    );
-    return;
   }
 });
 

@@ -350,6 +350,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/TicketUtils");
     appDependency.add("model/business-object/ticket/CompleteTicketUtils");
     appDependency.add("model/business-object/ticket/actions/CompleteTicket");
+    appDependency.add("model/business-object/ticket/actions/CompleteCreditTicket");
     appDependency.add("model/business-object/ticket/actions/CancelTicket");
     appDependency.add("model/business-object/ticket/actions/ReplaceTicket");
     appDependency.add("model/business-object/ticket/actions/CompleteQuotation");

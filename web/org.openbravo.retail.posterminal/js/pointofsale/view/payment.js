@@ -2478,9 +2478,6 @@ enyo.kind({
     var myModel = this.owner.model,
       me = this,
       payments,
-      isMultiOrder = myModel.get('leftColumnViewManager').isOrder()
-        ? false
-        : true,
       avoidPayment = false,
       orderDesc = '',
       execution;
@@ -2522,6 +2519,7 @@ enyo.kind({
       return true;
     }
 
+    const isMultiOrder = !myModel.get('leftColumnViewManager').isOrder();
     if (!isMultiOrder) {
       if (OB.MobileApp.model.receipt.get('cancelLayaway')) {
         OB.MobileApp.model.receipt.runCompleteTicket(
@@ -3410,142 +3408,14 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-    var execution = OB.UTIL.ProcessController.start('payOnCredit');
 
-    OB.UTIL.ProcessController.finish('payOnCredit', execution);
-    if (
-      !_.isNull(this.model.get('order').get('bp')) &&
-      _.isNull(
-        this.model
-          .get('order')
-          .get('bp')
-          .get('locId')
-      )
-    ) {
-      OB.UTIL.ProcessController.finish('payOnCredit', execution);
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_InformationTitle'),
-        OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'),
-        [
-          {
-            label: OB.I18N.getLabel('OBPOS_LblOk')
-          }
-        ]
+    const isMultiOrder = !this.model.get('leftColumnViewManager').isOrder();
+    if (!isMultiOrder) {
+      OB.MobileApp.model.receipt.runCompleteTicket(
+        OB.App.State.Global.completeCreditTicket,
+        'completeReceipt'
       );
-      return true;
-    }
-    // Checking blind returned lines
-    if (!OB.MobileApp.model.get('terminal').returns_anonymouscustomer) {
-      if (this.model.get('leftColumnViewManager').isOrder()) {
-        if (this.owner.receipt.isAnonymousBlindReturn()) {
-          OB.UTIL.ProcessController.finish('payOnCredit', execution);
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_returnServicesWithAnonimousCust')
-          );
-          return;
-        }
-      } else {
-        var orderList = this.model.get('multiOrders').get('multiOrdersList');
-        orderList.forEach(function(receipt) {
-          if (receipt.isAnonymousBlindReturn()) {
-            OB.UTIL.ProcessController.finish('payOnCredit', execution);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBMOBC_Error'),
-              OB.I18N.getLabel('OBPOS_returnServicesWithAnonimousCust')
-            );
-            return;
-          }
-        });
-      }
-    }
-    var me = this,
-      paymentstatus = this.model.get('order').getPaymentStatus(),
-      process = new OB.DS.Process(
-        'org.openbravo.retail.posterminal.CheckBusinessPartnerCredit'
-      );
-    if (!paymentstatus.isReturn) {
-      //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-      process.exec(
-        {
-          businessPartnerId: this.model
-            .get('order')
-            .get('bp')
-            .get('id'),
-          totalPending: paymentstatus.pendingAmt
-        },
-        function(data) {
-          if (data) {
-            if (data.enoughCredit) {
-              OB.UTIL.ProcessController.finish('payOnCredit', execution);
-              me.doShowPopup({
-                popup: 'modalEnoughCredit',
-                args: {
-                  order: me.model.get('order')
-                }
-              });
-              //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
-            } else {
-              var bpName = data.bpName;
-              var actualCredit = data.actualCredit;
-              OB.UTIL.ProcessController.finish('payOnCredit', execution);
-              me.doShowPopup({
-                popup: 'modalNotEnoughCredit',
-                args: {
-                  bpName: bpName,
-                  actualCredit: actualCredit
-                }
-              });
-              //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
-              //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
-            }
-          } else {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
-            OB.UTIL.ProcessController.finish('payOnCredit', execution);
-          }
-          me.setDisabled(false);
-        },
-        function() {
-          if (
-            OB.MobileApp.model.hasPermission(
-              'OBPOS_AllowSellOnCreditWhileOffline',
-              true
-            )
-          ) {
-            OB.UTIL.ProcessController.finish('payOnCredit', execution);
-            me.doShowPopup({
-              popup: 'modalEnoughCredit',
-              args: {
-                order: me.model.get('order'),
-                message: 'OBPOS_Unabletocheckcredit'
-              }
-            });
-          } else {
-            OB.UTIL.ProcessController.finish('payOnCredit', execution);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_SellingOnCreditHeader'),
-              OB.I18N.getLabel('OBPOS_UnabletoSellOncredit'),
-              [
-                {
-                  isConfirmButton: true,
-                  label: OB.I18N.getLabel('OBMOBC_LblOk')
-                }
-              ]
-            );
-          }
-        }
-      );
-      //    } else if (this.model.get('order').get('orderType') === 1) {
-    } else if (paymentstatus.isReturn) {
-      OB.UTIL.ProcessController.finish('payOnCredit', execution);
-      this.doShowPopup({
-        popup: 'modalEnoughCredit',
-        args: {
-          order: this.model.get('order')
-        }
-      });
-    } else {
-      OB.UTIL.ProcessController.finish('payOnCredit', execution);
+      return;
     }
   }
 });
@@ -3582,28 +3452,9 @@ enyo.kind({
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
   },
   tap: function() {
-    var receipt = this.owner.receipt,
-      me = this,
-      myModel = this.owner.model,
-      payments = receipt.getPaymentStatus().payments;
-
-    me.allowOpenDrawer = false;
-
-    if (!me.showing || me.disabled) {
+    if (!this.showing || this.disabled) {
       return true;
     }
-
-    if (myModel.get('leftColumnViewManager').isOrder()) {
-      payments = receipt.get('payments');
-    } else {
-      payments = myModel.get('multiOrders').get('payments');
-    }
-
-    payments.each(function(payment) {
-      if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
-        me.allowOpenDrawer = true;
-      }
-    });
 
     OB.MobileApp.model.receipt.runCompleteTicket(
       OB.App.State.Global.completeLayaway,
