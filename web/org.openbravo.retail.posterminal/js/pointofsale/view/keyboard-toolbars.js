@@ -564,12 +564,15 @@ enyo.kind({
                 );
               }
             } else {
+              var permission = OB.MobileApp.model.hasPermission(
+                payment.payment.searchKey
+              );
               btncomponent = me.getButtonComponent({
                 command: payment.payment.searchKey,
                 label:
                   payment.payment._identifier +
                   (payment.paymentMethod.paymentMethodCategory ? '*' : ''),
-                permission: payment.payment.searchKey,
+                permission: permission ? payment.payment.searchKey : null,
                 stateless: false,
                 action: function(keyboard, txt) {
                   var options = {},
@@ -755,10 +758,13 @@ enyo.kind({
                 exactpayment.obposPosprecision
               );
             }
+            var permission = OB.MobileApp.model.hasPermission(
+              exactpayment.payment.searchKey
+            );
             if (
               amount > 0 &&
               exactpayment &&
-              OB.MobileApp.model.hasPermission(exactpayment.payment.searchKey)
+              (_.isUndefined(permission) || permission)
             ) {
               me.pay(
                 amount,

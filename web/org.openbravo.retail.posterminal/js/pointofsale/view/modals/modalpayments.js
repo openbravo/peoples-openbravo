@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -179,11 +179,16 @@ enyo.kind({
       enyo.forEach(
         payments,
         function(payment) {
+          var permission = !_.isUndefined(
+            OB.MobileApp.model.hasPermission(payment.payment.searchKey)
+          )
+            ? OB.MobileApp.model.hasPermission(payment.payment.searchKey)
+            : true;
           if (
             payment.paymentMethod.paymentMethodCategory &&
             payment.paymentMethod.paymentMethodCategory ===
               this.args.idCategory &&
-            OB.MobileApp.model.hasPermission(payment.payment.searchKey)
+            permission
           ) {
             if (
               filterBy === '' ||
