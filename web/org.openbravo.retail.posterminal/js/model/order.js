@@ -7867,86 +7867,38 @@
     },
 
     removePayment: function(payment, cancellationCallback, removeCallback) {
-      var payments = this.get('payments'),
-        max,
-        i,
-        p,
-        me = this;
+      var me = this;
       if (this.get('isBeingClosed')) {
+        //We keep this check in the old code, in the new implementation it should not be necessary but here we are keeping it just in case
         var error = new Error();
         OB.error('The receipt is being save, you cannot remove payments.');
         OB.error('The stack trace is: ' + error.stack);
         return;
       }
 
-      if (this.get('prepaymentChangeMode')) {
-        this.unset('prepaymentChangeMode');
-        this.adjustPayment();
-      }
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_preRemovePayment',
-        {
-          paymentToRem: payment,
-          payments: payments,
-          receipt: this
-        },
-        function(args) {
-          var reversedPaymentRoundingId;
-          if (args.cancellation) {
-            if (cancellationCallback) {
-              cancellationCallback();
-            }
-            return true;
-          }
-          payments.remove(payment);
-          if (payment.has('paymentRoundingLine')) {
-            payments.remove(payment.get('paymentRoundingLine'));
-            reversedPaymentRoundingId = payment
-              .get('paymentRoundingLine')
-              .get('reversedPaymentId');
-          }
-
-          if (!me.get('deletedPayments')) {
-            me.set('deletedPayments', [payment]);
-          } else {
-            me.get('deletedPayments').push(payment);
-          }
-          // Remove isReversed attribute from payment reversed by removed payment
-          if (payment.get('reversedPaymentId')) {
-            for (i = 0, max = payments.length; i < max; i++) {
-              p = payments.at(i);
-              if (
-                p.get('paymentId') === payment.get('reversedPaymentId') ||
-                (!OB.UTIL.isNullOrUndefined(reversedPaymentRoundingId) &&
-                  p.get('paymentId') === reversedPaymentRoundingId)
-              ) {
-                p.unset('isReversed');
-                if (
-                  OB.UTIL.isNullOrUndefined(reversedPaymentRoundingId) ||
-                  p.get('paymentId') === reversedPaymentRoundingId
-                ) {
-                  break;
-                }
-              }
-            }
-          }
+      OB.App.State.Ticket.removePayment({ paymentIds: [payment.get('id')] })
+        .then(() => {
           if (payment.get('openDrawer')) {
-            args.receipt.set('openDrawer', false);
+            me.set('openDrawer', false);
           }
-          args.receipt.adjustPayment();
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_postRemovePayment',
             {
-              receipt: args.receipt,
+              receipt: me,
               payment: payment
             },
-            function(args) {
-              args.receipt.save(removeCallback);
-              args.receipt.trigger('saveCurrent');
+            args => {
+              me.trigger('saveCurrent');
+              // Adjust payment logic was executed as part of the action hook.
+              // However, we need to force the updatePending trigger
+              me.trigger('updatePending');
+              if (removeCallback) {
+                removeCallback();
+              }
             }
           );
-        }
-      );
+        })
+        .catch(cancellationCallback);
     },
 
     reversePayment: function(payment, sender, reverseCallback) {
