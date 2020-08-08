@@ -1235,9 +1235,7 @@
     try {
       if (currentReceipt) {
         currentReceipt.propagatingBackboneToState = true;
-        preventServicesUpdate = OB.MobileApp.model.receipt.get(
-          'preventServicesUpdate'
-        );
+        preventServicesUpdate = currentReceipt.get('preventServicesUpdate');
         currentReceipt.set('preventServicesUpdate', true);
       }
       await OB.App.State.Global.removeTicket(payload).then(() => {
