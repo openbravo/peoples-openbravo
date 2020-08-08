@@ -1231,9 +1231,14 @@
   OB.UTIL.TicketListUtils.removeTicket = async function(payload) {
     const ticketListLength = OB.App.OpenTicketList.getSessionTickets().length;
     const currentReceipt = OB.MobileApp.model.receipt;
+    let preventServicesUpdate;
     try {
       if (currentReceipt) {
         currentReceipt.propagatingBackboneToState = true;
+        preventServicesUpdate = OB.MobileApp.model.receipt.get(
+          'preventServicesUpdate'
+        );
+        currentReceipt.set('preventServicesUpdate', true);
       }
       await OB.App.State.Global.removeTicket(payload).then(() => {
         triggerTicketLoadEvents();
@@ -1252,6 +1257,7 @@
     } finally {
       if (currentReceipt) {
         delete currentReceipt.propagatingBackboneToState;
+        currentReceipt.set('preventServicesUpdate', preventServicesUpdate);
       }
       OB.UTIL.checkRefreshMasterData();
     }

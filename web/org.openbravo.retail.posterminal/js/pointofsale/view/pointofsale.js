@@ -1774,11 +1774,22 @@ enyo.kind({
     );
   },
   changeCurrentOrder: function(inSender, inEvent) {
-    OB.UTIL.TicketListUtils.loadTicket(inEvent.newCurrentOrder).then(() => {
-      if (inEvent.callback) {
-        inEvent.callback();
-      }
-    });
+    const preventServicesUpdate = OB.MobileApp.model.receipt.get(
+      'preventServicesUpdate'
+    );
+    OB.MobileApp.model.receipt.set('preventServicesUpdate', true);
+    OB.UTIL.TicketListUtils.loadTicket(inEvent.newCurrentOrder)
+      .then(() => {
+        if (inEvent.callback) {
+          inEvent.callback();
+        }
+      })
+      .finally(() =>
+        OB.MobileApp.model.receipt.set(
+          'preventServicesUpdate',
+          preventServicesUpdate
+        )
+      );
     return true;
   },
   removePayment: function(inSender, inEvent) {
