@@ -1208,22 +1208,20 @@
         }
       }
 
-      function success(collection) {
+      async function success(collection) {
         if (collection.length > 0) {
-          OB.App.State.Global.markIgnoreCheckIfIsActiveOrderToPendingTickets({
-            session: OB.MobileApp.model.get('session')
-          })
-            .then(() => {
-              collection.forEach(receipt => {
-                const model = OB.App.StateBackwardCompatibility.getInstance(
-                  'Ticket'
-                ).toBackboneObject(receipt);
-                model.deleteOrder();
-              });
-            })
-            .then(() => {
-              callback();
-            });
+          await OB.App.State.Global.markIgnoreCheckIfIsActiveOrderToPendingTickets(
+            {
+              session: OB.MobileApp.model.get('session')
+            }
+          );
+          for (let i = 0; i < collection.length; i++) {
+            const model = OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(collection[i]);
+            await model.deleteOrder();
+          }
+          callback();
         } else {
           callback();
         }

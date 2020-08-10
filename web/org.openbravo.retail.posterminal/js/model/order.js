@@ -566,7 +566,7 @@
       }
     },
 
-    runCompleteTicket: function(completeTicketAction, actionName) {
+    runCompleteTicket: async function(completeTicketAction, actionName) {
       const runCompleteTicketAction = async receipt => {
         try {
           OB.App.StateBackwardCompatibility.getInstance(
@@ -576,9 +576,11 @@
           // Complete Ticket action
           await completeTicketAction({
             terminal: OB.MobileApp.model.get('terminal'),
-            businessPartner: JSON.parse(
-              JSON.stringify(OB.App.TerminalProperty.get('businessPartner'))
-            ),
+            businessPartner: OB.MobileApp.model.get('businessPartner')
+              ? JSON.parse(
+                  JSON.stringify(OB.MobileApp.model.get('businessPartner'))
+                )
+              : undefined,
             payments: OB.MobileApp.model.get('payments'),
             session: OB.MobileApp.model.get('session'),
             orgUserId: OB.MobileApp.model.get('orgUserId'),
@@ -642,15 +644,14 @@
         }
       };
 
-      const receipt = OB.UTIL.clone(OB.MobileApp.model.receipt);
+      const receipt = OB.UTIL.clone(this);
       const completeTicketExecution = OB.UTIL.ProcessController.start(
         actionName
       );
       if (actionName === 'deleteCurrentOrder') {
         receipt.set('preventServicesUpdate', true);
-        runCompleteTicketAction(receipt).finally(() =>
-          receipt.unset('preventServicesUpdate')
-        );
+        await runCompleteTicketAction(receipt);
+        receipt.unset('preventServicesUpdate')
         OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
         return;
       }
@@ -659,7 +660,7 @@
         {
           receipt
         },
-        function(args) {
+        async function(args) {
           if (args && args.cancellation) {
             OB.UTIL.ProcessController.finish(
               actionName,
@@ -667,7 +668,7 @@
             );
             return;
           }
-          runCompleteTicketAction(receipt);
+          await runCompleteTicketAction(receipt);
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PostSyncReceipt',
             {
@@ -9323,7 +9324,7 @@
         OB.UTIL.RfidController.eraseEpcOrder(this);
       }
 
-      await OB.MobileApp.model.receipt.runCompleteTicket(
+      await this.runCompleteTicket(
         OB.App.State.Global.deleteTicket,
         'deleteCurrentOrder'
       );
