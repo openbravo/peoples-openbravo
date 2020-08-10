@@ -1194,6 +1194,15 @@ enyo.kind({
               );
             }
 
+            if (
+              newLine &&
+              afterAddTicket.grossAmount === beforeAddTicket.grossAmount
+            ) {
+              // a new line has been added with total 0, the 'onChangeTotal' event is not being fired in this case
+              // trigger the 'forceChangeTotal' to force the 'checkout' button to be enabled
+              args.receipt.trigger('forceChangeTotal');
+            }
+
             finalCallback(true);
           })
           .catch(OB.App.View.ActionCanceledUIHandler.handle)
