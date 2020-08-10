@@ -1626,7 +1626,7 @@ enyo.kind({
       this
     );
     this.order.on(
-      'calculatedReceipt updateServicePrices updateLinesWithPriceRuleBasedServices',
+      'calculatedReceipt updateServicePrices',
       function() {
         var me = this,
           handleError,
