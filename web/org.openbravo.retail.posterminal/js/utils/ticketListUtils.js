@@ -1231,10 +1231,8 @@
   OB.UTIL.TicketListUtils.removeTicket = async function(payload) {
     const ticketListLength = OB.App.OpenTicketList.getSessionTickets().length;
     const currentReceipt = OB.MobileApp.model.receipt;
-    let preventServicesUpdate;
     try {
       if (currentReceipt) {
-        preventServicesUpdate = currentReceipt.get('preventServicesUpdate');
         currentReceipt.set('preventServicesUpdate', true);
       }
       await OB.App.State.Global.removeTicket(payload).then(() => {
@@ -1253,7 +1251,7 @@
       OB.App.View.ActionCanceledUIHandler.handle(error);
     } finally {
       if (currentReceipt) {
-        currentReceipt.set('preventServicesUpdate', preventServicesUpdate);
+        currentReceipt.unset('preventServicesUpdate');
       }
       OB.UTIL.checkRefreshMasterData();
     }

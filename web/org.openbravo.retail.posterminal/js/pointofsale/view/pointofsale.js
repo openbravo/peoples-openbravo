@@ -1145,7 +1145,6 @@ enyo.kind({
           'terminal'
         ).businessPartner;
 
-        const preventServicesUpdate = args.receipt.get('preventServicesUpdate');
         args.receipt.set('preventServicesUpdate', true);
 
         const beforeAddTicket = OB.App.State.getState().Ticket;
@@ -1161,7 +1160,7 @@ enyo.kind({
           ]
         })
           .then(() => {
-            args.receipt.set('preventServicesUpdate', preventServicesUpdate);
+            args.receipt.unset('preventServicesUpdate');
             args.receipt.trigger('updateLinesWithPriceRuleBasedServices');
             args.receipt.trigger('paintTaxes'); // refresh the Tax breakdown
 
@@ -1207,7 +1206,7 @@ enyo.kind({
           })
           .catch(OB.App.View.ActionCanceledUIHandler.handle)
           .finally(() => {
-            args.receipt.set('preventServicesUpdate', preventServicesUpdate);
+            args.receipt.unset('preventServicesUpdate');
           });
       }
     );
@@ -1784,9 +1783,6 @@ enyo.kind({
     );
   },
   changeCurrentOrder: function(inSender, inEvent) {
-    const preventServicesUpdate = OB.MobileApp.model.receipt.get(
-      'preventServicesUpdate'
-    );
     OB.MobileApp.model.receipt.set('preventServicesUpdate', true);
     OB.UTIL.TicketListUtils.loadTicket(inEvent.newCurrentOrder)
       .then(() => {
@@ -1794,12 +1790,7 @@ enyo.kind({
           inEvent.callback();
         }
       })
-      .finally(() =>
-        OB.MobileApp.model.receipt.set(
-          'preventServicesUpdate',
-          preventServicesUpdate
-        )
-      );
+      .finally(() => OB.MobileApp.model.receipt.unset('preventServicesUpdate'));
     return true;
   },
   removePayment: function(inSender, inEvent) {
