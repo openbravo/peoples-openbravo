@@ -662,7 +662,7 @@ enyo.kind({
   },
   processesToListen: ['calculateReceipt'],
   processStarted: function() {},
-  processFinished: function(process, execution, processesInExec) {
+  checkServicesToDelete: function() {
     var removedServices = [],
       servicesToBeDeleted = [];
     removedServices.push(OB.I18N.getLabel('OBPOS_ServiceRemoved'));
@@ -735,6 +735,9 @@ enyo.kind({
         removedServices
       );
     }
+  },
+  processFinished: function(process, execution, processesInExec) {
+    this.checkServicesToDelete();
   },
   components: [
     {

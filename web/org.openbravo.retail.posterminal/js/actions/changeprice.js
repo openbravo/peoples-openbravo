@@ -71,7 +71,7 @@
             reason: options.reason
           })
             .then(() => {
-              receipt.trigger('updateServicePrices');
+              OB.UTIL.handlePriceRuleBasedServices(receipt);
               receipt.trigger('paintTaxes'); // refresh the Tax breakdown
               receipt.trigger('scan');
             })
