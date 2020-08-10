@@ -85,6 +85,22 @@ const ticketWithReversedPayment = deepfreeze({
   ]
 });
 
+const ticketWithNullPaymentId = deepfreeze({
+  lines: [
+    {
+      id: '1',
+      qty: 100,
+      product: { id: 'p1' },
+      baseGrossUnitPrice: 5
+    }
+  ],
+  payments: [
+    { id: '1', amount: 200, kind: 'OBPOS_payment.cash' },
+    { amount: 800, kind: 'OBPOS_payment.card' }
+  ],
+  deletedPayments: [{ id: '3', amount: 800, kind: 'OBPOS_payment.card' }]
+});
+
 describe('Ticket.removePayment action', () => {
   it('remove simple payment', () => {
     const { payments } = OB.App.StateAPI.Ticket.removePayment(basicTicket, {
@@ -125,5 +141,15 @@ describe('Ticket.removePayment action', () => {
       }
     );
     expect(deletedPayments).toHaveLength(2);
+  });
+
+  it('remove simple payment in ticket with null id', () => {
+    const { payments } = OB.App.StateAPI.Ticket.removePayment(
+      ticketWithNullPaymentId,
+      {
+        paymentIds: ['1']
+      }
+    );
+    expect(payments).toHaveLength(1);
   });
 });
