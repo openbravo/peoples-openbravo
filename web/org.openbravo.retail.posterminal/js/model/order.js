@@ -744,7 +744,10 @@
         actionName
       );
       if (actionName === 'deleteCurrentOrder') {
-        runCompleteTicketAction(completeTicketAction);
+        OB.MobileApp.model.receipt.set('preventServicesUpdate', true);
+        runCompleteTicketAction(completeTicketAction).finally(() =>
+          OB.MobileApp.model.receipt.unset('preventServicesUpdate')
+        );
         OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
         return;
       }
