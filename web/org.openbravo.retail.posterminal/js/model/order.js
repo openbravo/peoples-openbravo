@@ -644,21 +644,22 @@
         }
       };
 
-      const receipt = OB.UTIL.clone(this);
+      const me = this;
       const completeTicketExecution = OB.UTIL.ProcessController.start(
         actionName
       );
       if (actionName === 'deleteCurrentOrder') {
-        receipt.set('preventServicesUpdate', true);
+        me.set('preventServicesUpdate', true);
+        const receipt = OB.UTIL.clone(me);
         await runCompleteTicketAction(receipt);
-        receipt.unset('preventServicesUpdate')
+        me.unset('preventServicesUpdate');
         OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
         return;
       }
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PreOrderSave',
         {
-          receipt
+          receipt: me
         },
         async function(args) {
           if (args && args.cancellation) {
@@ -668,6 +669,7 @@
             );
             return;
           }
+          const receipt = OB.UTIL.clone(me);
           await runCompleteTicketAction(receipt);
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PostSyncReceipt',
