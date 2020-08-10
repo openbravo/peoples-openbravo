@@ -84,24 +84,25 @@ public class UpdateProductCategoryByAssortmentBackground extends DalBaseProcess 
             final String productCategoryId = (String) scroll.get()[0];
             final ProductCategory productCategory = OBDal.getInstance()
                 .get(ProductCategory.class, productCategoryId);
+            if (!productCategory.isSummaryLevel()) {
+              final OBRETCOProductcategory productCategoryElement = OBProvider.getInstance()
+                  .get(OBRETCOProductcategory.class);
+              productCategoryElement.setClient(assortment.getClient());
+              productCategoryElement.setOrganization(assortment.getOrganization());
+              productCategoryElement.setProductCategory(productCategory);
+              productCategoryElement.setObretcoProductlist(assortment);
+              OBDal.getInstance().save(productCategoryElement);
+              productCategoryElementList.add(productCategoryElement);
+              assortment.getOBRETCOProductcategoryList().add(productCategoryElement);
 
-            final OBRETCOProductcategory productCategoryElement = OBProvider.getInstance()
-                .get(OBRETCOProductcategory.class);
-            productCategoryElement.setClient(assortment.getClient());
-            productCategoryElement.setOrganization(assortment.getOrganization());
-            productCategoryElement.setProductCategory(productCategory);
-            productCategoryElement.setObretcoProductlist(assortment);
-            OBDal.getInstance().save(productCategoryElement);
-            productCategoryElementList.add(productCategoryElement);
-            assortment.getOBRETCOProductcategoryList().add(productCategoryElement);
-
-            String logMsg = "Product category: " + productCategory.getName()
-                + " created for assortment: " + assortment.getName();
-            bgLogger.log(logMsg + "\n\n");
-            log.debug(logMsg);
-            if ((i++) % 1000 == 0) {
-              session.flush();
-              session.clear();
+              String logMsg = "Product category: " + productCategory.getName()
+                  + " created for assortment: " + assortment.getName();
+              bgLogger.log(logMsg + "\n\n");
+              log.debug(logMsg);
+              if ((i++) % 1000 == 0) {
+                session.flush();
+                session.clear();
+              }
             }
           }
         } finally {
