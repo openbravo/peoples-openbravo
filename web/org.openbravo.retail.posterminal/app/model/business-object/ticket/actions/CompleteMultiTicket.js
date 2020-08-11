@@ -166,22 +166,18 @@
         );
       }
 
-      // eslint-disable-next-line no-await-in-loop
       newPayload = await OB.App.State.Ticket.Utils.checkNegativePayments(
         newPayload.multiTickets,
         newPayload
       );
-      // eslint-disable-next-line no-await-in-loop
       newPayload = await OB.App.State.Ticket.Utils.checkExtraPayments(
         newPayload.multiTickets,
         newPayload
       );
-      // eslint-disable-next-line no-await-in-loop
       newPayload = await OB.App.State.Ticket.Utils.checkPrePayments(
         newPayload.multiTickets,
         newPayload
       );
-      // eslint-disable-next-line no-await-in-loop
       newPayload = await OB.App.State.Ticket.Utils.checkOverPayments(
         newPayload.multiTickets,
         newPayload

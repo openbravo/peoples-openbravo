@@ -547,34 +547,19 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       payload
     );
 
-    let prepaymentLimitAmount;
-    let pendingPrepayment;
-    let receiptHasPrepaymentAmount = true;
-
-    if (payload.isMultiTicket) {
-      prepaymentLimitAmount = ticket.obposPrepaymentlimitamt;
-      pendingPrepayment = OB.DEC.sub(
-        OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt),
-        OB.DEC.add(paymentStatus.totalAmt, ticket.existingPayment)
-      );
-    } else {
-      prepaymentLimitAmount = ticket.obposPrepaymentlimitamt;
-      receiptHasPrepaymentAmount =
-        ticket.orderType !== 1 && ticket.orderType !== 3;
-      pendingPrepayment = OB.DEC.sub(
-        OB.DEC.add(prepaymentLimitAmount, paymentStatus.pendingAmt),
-        paymentStatus.totalAmt
-      );
-    }
-
-    receiptHasPrepaymentAmount =
-      receiptHasPrepaymentAmount && prepaymentLimitAmount !== 0;
-
+    const ticketHasPrepayment =
+      (payload.isMultiTicket ||
+        (ticket.orderType !== 1 && ticket.orderType !== 3)) &&
+      ticket.obposPrepaymentlimitamt !== OB.DEC.Zero;
+    const pendingPrepayment = OB.DEC.sub(
+      OB.DEC.add(ticket.obposPrepaymentlimitamt, paymentStatus.pendingAmt),
+      OB.DEC.add(paymentStatus.totalAmt, ticket.existingPayment || OB.DEC.Zero)
+    );
 
     if (
       !OB.App.TerminalProperty.get('terminal').terminalType
         .calculateprepayments ||
-      !receiptHasPrepaymentAmount ||
+      !ticketHasPrepayment ||
       ticket.obposPrepaymentlimitamt === OB.DEC.Zero ||
       paymentStatus.totalAmt <= OB.DEC.Zero ||
       pendingPrepayment <= OB.DEC.Zero
@@ -589,17 +574,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       });
     }
 
-    let approvals;
-    if (payload.isMultiTicket) {
-      approvals = ticket.multiOrdersList
-        .map(ticketMap => ticketMap.approvals)
-        .reduce((a, b) => a.concat(b));
-    } else {
-      approvals = ticket.approvals;
-    }
-
+    const approvals = payload.isMultiTicket
+      ? ticket.multiOrdersList
+          .map(ticketMap => ticketMap.approvals)
+          .reduce((a, b) => a.concat(b))
+      : ticket.approvals;
     if (
-      ticket.approvals.some(
+      approvals.some(
         approval =>
           approval.approvalType === 'OBPOS_approval.prepaymentUnderLimit'
       )
