@@ -458,8 +458,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   async checkAnonymousLayaway(ticket, payload) {
     if (
       ticket.orderType === 2 &&
-      !payload.terminal.layawaysAnonymousCustomer &&
-      ticket.businessPartner.id === payload.terminal.businessPartner
+      !OB.App.TerminalProperty.get('terminal').layaway_anonymouscustomer &&
+      ticket.businessPartner.id ===
+        OB.App.TerminalProperty.get('terminal').businessPartner
     ) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_layawaysOrdersWithAnonimousCust'
