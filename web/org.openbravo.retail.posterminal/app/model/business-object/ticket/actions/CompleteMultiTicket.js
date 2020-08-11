@@ -16,11 +16,11 @@
     'completeMultiTicket',
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
-      const newTicket = { ...newGlobalState.Ticket };
+      let newTicketList = [...newGlobalState.TicketList];
+      let newTicket = { ...newGlobalState.Ticket };
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
-      const newTicketList = [...newGlobalState.TicketList];
 
       payload.ticketsIdToClose.forEach(ticketCloseId => {
         let ticket;
@@ -101,6 +101,16 @@
             )
           ];
         }
+
+        // TicketList update
+        ({
+          ticketList: newTicketList,
+          ticket: newTicket
+        } = OB.App.State.TicketList.Utils.removeCurrentTicket(
+          newTicketList,
+          newTicket,
+          payload
+        ));
       });
 
       newGlobalState.Ticket = newTicket;
