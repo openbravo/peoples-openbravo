@@ -7876,7 +7876,9 @@
         return;
       }
 
-      OB.App.State.Ticket.removePayment({ paymentIds: [payment.get('id')] })
+      OB.App.State.Ticket.removePayment({
+        paymentIds: [payment.get('id') || payment.get('paymentId')]
+      })
         .then(() => {
           if (payment.get('openDrawer')) {
             me.set('openDrawer', false);
