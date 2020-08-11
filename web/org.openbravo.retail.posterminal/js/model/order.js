@@ -659,8 +659,10 @@
         actionName
       );
       if (actionName === 'deleteCurrentOrder') {
+        me.set('preventServicesUpdate', true);
         const receipt = OB.UTIL.clone(me);
         await runCompleteTicketAction(receipt);
+        me.unset('preventServicesUpdate');
         OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
         return;
       }
