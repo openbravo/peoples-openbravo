@@ -666,7 +666,7 @@
 
       const afterPreOrderSave = _.after(
         receiptsForPreOrderSave.length,
-        function() {
+        async function() {
           const receipt = OB.UTIL.clone(me);
           await runCompleteTicketAction(receipt);
 
@@ -686,7 +686,7 @@
                 actionName,
                 completeTicketExecution
               );
-             return;
+              return;
             }
           );
         }
