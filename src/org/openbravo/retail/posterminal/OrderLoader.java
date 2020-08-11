@@ -108,6 +108,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private boolean isDeleted = false;
   private boolean isModified = false;
   private boolean doCancelAndReplace = false;
+  private boolean orderFromQuotation = false;
   private boolean doCancelLayaway = false;
   private boolean paidReceipt = false;
   private boolean deliver = false;
@@ -185,6 +186,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
     doCancelAndReplace = jsonorder.optBoolean("doCancelAndReplace", false);
     doCancelLayaway = jsonorder.optBoolean("cancelLayaway", false);
+    orderFromQuotation = jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null");
   }
 
   @Override
@@ -1146,7 +1148,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
     order.setObposSendemail((jsonorder.has("sendEmail") && jsonorder.getBoolean("sendEmail")));
     order.setDelivered(deliver);
 
-    if (!doCancelAndReplace && !doCancelLayaway) {
+    if (!doCancelAndReplace && !doCancelLayaway
+        && (jsonorder.has("loaded") ? orderFromQuotation : true)) {
       updateTerminalDocumentSequence(order.getObposApplications(), jsonorder);
     }
 
