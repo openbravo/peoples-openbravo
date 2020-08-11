@@ -26,20 +26,24 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    *
    * @returns {Ticket[]} The new TicketList but with payments included.
    */
-  addPaymentLine(newTicket, paymentLine, terminalPayments) {
+  addPaymentLine(newTicket, paymentLine, terminal, terminalPayments) {
     let newTicketWithPayment = { ...newTicket };
-    const prevChange = newTicket.change;
+    const prevChange = newTicketWithPayment.change;
     newTicketWithPayment = OB.App.State.Ticket.Utils.generatePayment(
-      newTicket,
+      newTicketWithPayment,
       {
         payment: paymentLine,
-        terminal: { paymentTypes: Object.values(terminalPayments) }
+        terminal,
+        payments: terminalPayments
       }
     );
-
     // Recalculate payment and paymentWithSign properties
-    const paidAmt = newTicket.payments.reduce((total, p) => {
-      if (p.isPrePayment || p.isReversePayment || !newTicket.isNegative) {
+    const paidAmt = newTicketWithPayment.payments.reduce((total, p) => {
+      if (
+        p.isPrePayment ||
+        p.isReversePayment ||
+        !newTicketWithPayment.isNegative
+      ) {
         return OB.DEC.add(total, p.origAmount);
       }
       return OB.DEC.sub(total, p.origAmount);
@@ -70,14 +74,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * @returns {Ticket[]} The new TicketList but with payments included.
    */
 
-  setPaymentsToReceipts(ticketList, ticketListPayload) {
-    const newTicketList = [...ticketList];
-    const {
-      payments,
-      changePayments,
-      considerPrepaymentAmount,
-      terminalPayments
-    } = ticketListPayload;
+  setPaymentsToReceipts(checkedTicketList, ticketListPayload) {
+    const newTicketList = [...checkedTicketList];
+    const { payments, changePayments } = ticketListPayload.multiTickets;
+    const considerPrepaymentAmount =
+      ticketListPayload.considerPrepaymentAmount || true;
+    const { terminal } = ticketListPayload;
+    const terminalPayments = ticketListPayload.payments;
     const me = this;
     let index;
     const ticketListWithPayments = newTicketList.map(function iterateTickets(
@@ -109,6 +112,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
               newTicket = me.addPaymentLine(
                 newTicket,
                 paymentLine,
+                terminal,
                 terminalPayments
               );
             } else {
@@ -123,14 +127,19 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
               amountToPay = OB.DEC.sub(
                 newTicket.obposPrepaymentamt
                   ? newTicket.obposPrepaymentamt
-                  : newTicket.gross,
+                  : newTicket.grossAmount,
                 newTicket.payment
               );
             } else {
-              amountToPay = OB.DEC.sub(newTicket.gross, newTicket.payment);
+              amountToPay = OB.DEC.sub(
+                newTicket.grossAmount,
+                newTicket.payment
+              );
             }
             if (OB.DEC.compare(amountToPay) > 0) {
-              const paymentMethod = terminalPayments[payment.kind];
+              const paymentMethod = terminalPayments.find(
+                p => p.payment.searchKey === payment.kind
+              );
               paymentLine = { ...payment };
 
               if (payment.origAmount <= amountToPay) {
@@ -140,6 +149,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
                 newTicket = me.addPaymentLine(
                   newTicket,
                   paymentLine,
+                  terminal,
                   terminalPayments
                 );
               } else {
@@ -160,6 +170,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
                 newTicket = me.addPaymentLine(
                   newTicket,
                   paymentLine,
+                  terminal,
                   terminalPayments
                 );
                 break;
@@ -177,7 +188,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     if (index < payments.length && considerPrepaymentAmount) {
       ticketListPayload.paymentsIndex = index;
       ticketListPayload.considerPrepaymentAmount = false;
-      this.setPaymentsToReceipts(ticketList, ticketListPayload);
+      this.setPaymentsToReceipts(checkedTicketList, ticketListPayload);
     }
 
     return ticketListWithPayments;

@@ -1265,6 +1265,7 @@
       );
 
       if (payment) {
+        payment.oBPOSPOSTerminal = payload.terminal.id;
         const newAmount = OB.DEC.add(
           OB.DEC.mul(
             payload.payment.amount,
@@ -1279,6 +1280,8 @@
           payment.rate && payment.rate !== '1'
             ? OB.DEC.div(newAmount, payment.mulrate)
             : newAmount;
+        payment.paid = payment.origAmount;
+        payment.precision = precision;
         payment.paymentRoundingLine = payload.payment.paymentRoundingLine
           ? {
               ...payload.payment.paymentRoundingLine,
@@ -1296,6 +1299,8 @@
       newPayment.orderGross = newTicket.grossAmount;
       newPayment.isPaid = newTicket.isPaid;
       newPayment.isReturnOrder = newTicket.isNegative;
+      newPayment.paid = newPayment.origAmount;
+      newPayment.precision = precision;
       newPayment.cancelAndReplace =
         (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
         newTicket.cancelAndReplaceChangePending;

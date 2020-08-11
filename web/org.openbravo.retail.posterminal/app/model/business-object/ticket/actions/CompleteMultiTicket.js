@@ -22,15 +22,25 @@
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
 
+      let checkedTicketList = [];
       payload.ticketsIdToClose.forEach(ticketCloseId => {
-        let ticket;
         if (ticketCloseId === newTicket.id) {
-          ticket = newTicket;
+          checkedTicketList.push(newTicket);
         } else {
-          [ticket] = newTicketList.filter(
-            ticketOfFilter => ticketOfFilter.id === ticketCloseId
+          checkedTicketList.push(
+            newTicketList.find(
+              ticketOfFind => ticketOfFind.id === ticketCloseId
+            )
           );
         }
+      });
+      checkedTicketList = OB.App.State.Ticket.Utils.setPaymentsToReceipts(
+        checkedTicketList,
+        payload
+      );
+
+      checkedTicketList.forEach(checkedTicket => {
+        let ticket = { ...checkedTicket };
 
         // Set complete ticket properties
         ticket.completeTicket = true;
