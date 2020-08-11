@@ -13,61 +13,36 @@ OB = { App: { Class: {} } };
 global.lodash = require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const deepfreeze = require('deepfreeze');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
-require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketList');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/RemoveTicket');
-require('./SetupTicketListUtils');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketListUtils');
 
-describe('Remove Ticket actions', () => {
-  let action;
+OB.App.State = { Ticket: { Utils: {} } };
 
-  beforeEach(() => {
-    action = OB.App.StateAPI.Global.removeTicket;
+describe('Remove Ticket utilities', () => {
+  let removeCurrentTicket;
+
+  beforeAll(() => {
+    removeCurrentTicket = OB.App.StateAPI.TicketList.utilities.find(
+      util => util.functionName === 'removeCurrentTicket'
+    ).implementation;
   });
 
-  it('removes a ticket from the ticket list using the ID', () => {
+  it('replaces current ticket with the first ticket in the list', () => {
     const state = {
-      Ticket: { id: 'A' },
-      TicketList: [{ id: 'B' }]
+      Ticket: { id: 'A', session: 'ABCD' },
+      TicketList: [{ id: 'B', session: 'ABCD' }]
     };
     const payload = {
-      id: 'B'
+      session: 'ABCD'
     };
     deepfreeze(state);
 
-    const newState = action(state, payload);
-    expect(newState.TicketList).toHaveLength(0);
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticketList).toHaveLength(0);
+    expect(result.ticket.id).toEqual('B');
   });
 
-  it('if removing active ticket, replace with the first ticket in the list', () => {
-    const state = {
-      Ticket: { id: 'A' },
-      TicketList: [{ id: 'B' }]
-    };
-    const payload = {
-      id: 'A'
-    };
-    deepfreeze(state);
-
-    const newState = action(state, payload);
-    expect(newState.TicketList).toHaveLength(0);
-    expect(newState.Ticket.id).toEqual('B');
-  });
-
-  it('replace with the first ticket in the list if no id provided', () => {
-    const state = {
-      Ticket: { id: 'A' },
-      TicketList: [{ id: 'B' }]
-    };
-    const payload = {};
-    deepfreeze(state);
-
-    const newState = action(state, payload);
-    expect(newState.TicketList).toHaveLength(0);
-    expect(newState.Ticket.id).toEqual('B');
-  });
-
-  it('replaces current ticket with a new one', () => {
+  it('replaces current ticket with a new one when forced via parameters', () => {
     const state = {
       Ticket: { id: 'A' },
       TicketList: [{ id: 'B' }]
@@ -82,9 +57,9 @@ describe('Remove Ticket actions', () => {
       .fn()
       .mockReturnValue({ id: 'C' });
 
-    const newState = action(state, payload);
-    expect(newState.TicketList).toHaveLength(1);
-    expect(newState.Ticket.id).toEqual('C');
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticketList).toHaveLength(1);
+    expect(result.ticket.id).toEqual('C');
 
     delete OB.App.State.Ticket.Utils.newTicket;
   });
@@ -101,8 +76,8 @@ describe('Remove Ticket actions', () => {
       .fn()
       .mockReturnValue({ id: 'C' });
 
-    const newState = action(state, payload);
-    expect(newState.Ticket.id).toEqual('C');
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticket.id).toEqual('C');
 
     delete OB.App.State.Ticket.Utils.newTicket;
   });
