@@ -626,8 +626,7 @@
               OB.UTIL.RfidController.updateEpcBuffers();
             }
 
-            // FIXME: Move to action
-            // Print welcome message
+            // Focus on scanning window
             OB.MobileApp.model.multiOrders.resetValues();
             OB.MobileApp.view.$.containerWindow
               .getRoot()
@@ -635,20 +634,10 @@
                 'leftColumnViewManager'
               )
               .setOrderMode();
-            OB.UTIL.showLoading(false);
-            //Select printers pop up can be showed after multiorders execution
-            // if (me.hasInvLayaways) {
-            //   OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-            //   me.hasInvLayaways = false;
-            // }
-            OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_MsgAllReceiptSaved'));
-            OB.MobileApp.model.multiOrders.trigger('checkOpenDrawer');
-            // OB.UTIL.ProcessController.finish(
-            //   'saveAndSyncMultiOrder',
-            //   execution
-            // );
-            // Focus on scanning window
             OB.UTIL.setScanningFocus(true);
+
+            // FIXME: Move to action
+            // Print welcome message
             OB.OBPOSPointOfSale.Print.printWelcome();
           }
 
