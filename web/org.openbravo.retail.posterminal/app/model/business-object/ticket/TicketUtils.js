@@ -73,12 +73,27 @@
         isEditable: true,
         isDeletable: true
       };
+
+      const isDeliveryService =
+        newLine.product.obrdmIsdeliveryservice &&
+        OB.App.TerminalProperty.get('deliveryPaymentMode') === 'PD';
+      if (isDeliveryService) {
+        newLine.obrdmAmttopayindelivery = OB.DEC.mul(
+          product.listPrice,
+          newLine.qty
+        );
+      }
+
       if (newLine.priceIncludesTax) {
         newLine.grossListPrice = OB.DEC.number(product.listPrice);
-        newLine.baseGrossUnitPrice = OB.DEC.number(product.standardPrice);
+        newLine.baseGrossUnitPrice = isDeliveryService
+          ? OB.DEC.Zero
+          : OB.DEC.number(product.standardPrice);
       } else {
         newLine.netListPrice = OB.DEC.number(product.listPrice);
-        newLine.baseNetUnitPrice = OB.DEC.number(product.standardPrice);
+        newLine.baseNetUnitPrice = isDeliveryService
+          ? OB.DEC.Zero
+          : OB.DEC.number(product.standardPrice);
       }
       this.setDeliveryMode(newLine);
       this.ticket.lines = this.ticket.lines.concat(newLine);
