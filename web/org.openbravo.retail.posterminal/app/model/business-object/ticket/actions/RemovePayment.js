@@ -22,7 +22,8 @@
 
     // First we remove the payments specified in the payload
     newTicket.payments = ticket.payments.filter(
-      payment => !paymentIds.find(pId => payment.id === pId)
+      payment =>
+        !paymentIds.find(pId => payment.id === pId || payment.paymentId === pId)
     );
 
     const removedPayments = ticket.payments.filter(
@@ -34,7 +35,10 @@
       payment =>
         !removedPayments.find(
           removedPayment =>
-            removedPayment.paymentRoundingLine === payment.id && payment.id // sometimes payment.id is null, payment should be ignored in this case
+            (removedPayment.paymentRoundingLine === payment.id && payment.id) ||
+            (removedPayment.paymentRoundingLine === payment.paymentId &&
+              payment.paymentId)
+          // sometimes payment.id is null, payment should be ignored in this case
         )
     );
 
