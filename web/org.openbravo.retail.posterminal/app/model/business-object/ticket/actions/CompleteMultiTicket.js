@@ -43,7 +43,7 @@
         let ticket = { ...checkedTicket };
 
         // Set complete ticket properties
-        ticket.completeTicket = true;
+        ticket.completeTicket = !ticket.amountToLayaway;
         ticket = OB.App.State.Ticket.Utils.completeTicket(ticket, payload);
 
         // FIXME: Move to calculateTotals?
