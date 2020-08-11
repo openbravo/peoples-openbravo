@@ -49,7 +49,10 @@
     // And finally if a removed payment reversed another payment, we need to remove the isReversed attribute from it
     newTicket.payments = newTicket.payments.map(payment => {
       const reversingPayment = removedPayments.find(
-        removedPayment => removedPayment.reversedPaymentId === payment.id // sometimes payment.id is null, payment should be ignored in this case
+        removedPayment =>
+          (removedPayment.reversedPaymentId === payment.id && payment.id) || // sometimes payment.id is null, payment should be ignored in this case
+          (removedPayment.reversedPaymentId === payment.paymentId &&
+            payment.paymentId)
       );
       if (reversingPayment) {
         return { ...payment, isReversed: false };
