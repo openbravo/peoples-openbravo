@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-loop-func */
 /*
  ************************************************************************************
  * Copyright (C) 2020 Openbravo S.L.U.
@@ -11,203 +13,173 @@
  */
 
 OB.App.StateAPI.Ticket.registerUtilityFunctions({
-  updateAmountToLayaway(order, amount) {
-    const { amountToLayaway } = order;
-    if (amountToLayaway != null) {
-      // eslint-disable-next-line no-param-reassign
-      order.amountToLayaway = OB.DEC.sub(amountToLayaway, amount);
-    }
-  },
   /**
    * Set needed properties when completing a ticket.
    *
-   * @param {object} ticket - The ticket being completed
-   * @param {object} payload - The calculation payload, which include:
-   *             * terminal.id - Terminal id
-   *             * approvals - Approvals to add to the ticket
+   * @param {Ticket[]} ticketList - The ticket being completed
+   * @param {object} object - The calculation payload, which include:
+   *             * payments - Terminal id
+   *             * changePayments - Approvals to add to the ticket
+   *             * considerPrepaymentAmount - Approvals to add to the ticket
+   *             * terminalPayments - Approvals to add to the ticket
+   *             * index -
    *
-   * @returns {object} The new state of Ticket after being completed.
+   * @returns {Ticket[]} The new TicketList but with payments included.
    */
-
-  setPaymentsToReceipts(
-    orderListParams,
-    paymentListParams,
-    changePayments,
-    orderListIndex,
-    paymentListIndex,
-    considerPrepaymentAmount,
-    paymentnames
-  ) {
-    const orderList = [...orderListParams];
-    const paymentList = [...paymentListParams];
-    if (
-      orderListIndex >= orderList.length ||
-      paymentListIndex >= paymentList.length
-    ) {
-      if (paymentListIndex < paymentList.length && considerPrepaymentAmount) {
-        return this.setPaymentsToReceipts(
-          orderList,
-          paymentList,
-          changePayments,
-          0,
-          paymentListIndex,
-          false,
-          paymentnames
-        );
+  addPaymentLine(newTicket, paymentLine, terminalPayments) {
+    let newTicketWithPayment = { ...newTicket };
+    const prevChange = newTicket.change;
+    newTicketWithPayment = OB.App.State.Ticket.Utils.generatePayment(
+      newTicket,
+      {
+        payment: paymentLine,
+        terminal: { paymentTypes: Object.values(terminalPayments) }
       }
-      // Finished
+    );
 
-      return orderList;
-    }
-
-    let order = orderList[orderListIndex];
-    const payment = paymentList[paymentListIndex];
-    let paymentLine = {};
-    const me = this;
-    if (payment.origAmount) {
-      const addPaymentLine = function addPaymentLine(
-        pymntLine,
-        pymnt,
-        addPaymentCallback
-      ) {
-        const prevChange = order.change;
-        // FIXME
-        order = OB.App.State.Ticket.Utils.generatePayment(order, {
-          payment: paymentLine,
-          terminal: { paymentTypes: Object.values(paymentnames) }
-        });
-
-        // Recalculate payment and paymentWithSign properties
-        const paidAmt = order.payments.reduce((total, p) => {
-          if (p.isPrePayment || p.isReversePayment || !order.isNegative) {
-            return OB.DEC.add(total, p.origAmount);
-          }
-          return OB.DEC.sub(total, p.origAmount);
-        }, OB.DEC.Zero);
-        order.payment = OB.DEC.abs(paidAmt);
-        order.paymentWithSign = paidAmt;
-        order.change = prevChange;
-        orderList[orderListIndex] = order;
-        // order.addPayment(paymentLine, function addPayment() {
-        me.updateAmountToLayaway(order, paymentLine.origAmount);
-        if (addPaymentCallback instanceof Function) {
-          addPaymentCallback();
-        }
-        // });
-      };
-
-      if (
-        orderListIndex === orderList.length - 1 &&
-        !considerPrepaymentAmount
-      ) {
-        // Transfer everything
-        order.changePayments = changePayments;
-        if (paymentListIndex < paymentList.length) {
-          // Pending payments to add
-          paymentLine = { ...payment };
-          paymentLine.forceAddPayment = true;
-
-          payment.origAmount = OB.DEC.Zero;
-          payment.amount = OB.DEC.Zero;
-          addPaymentLine(
-            paymentLine,
-            payment,
-            function addPaymentLineCallback() {
-              return me.setPaymentsToReceipts(
-                orderList,
-                paymentList,
-                changePayments,
-                orderListIndex,
-                paymentListIndex + 1,
-                considerPrepaymentAmount,
-                paymentnames
-              );
-            }
-          );
-        } else {
-          // Finished
-          return orderList;
-        }
-      } else {
-        let amountToPay;
-        if (order.amountToLayaway != null) {
-          amountToPay = order.amountToLayaway;
-        } else if (considerPrepaymentAmount) {
-          amountToPay = OB.DEC.sub(
-            order.obposPrepaymentamt ? order.obposPrepaymentamt : order.gross,
-            order.payment
-          );
-        } else {
-          amountToPay = OB.DEC.sub(order.gross, order.payment);
-        }
-        if (OB.DEC.compare(amountToPay) > 0) {
-          const paymentMethod = paymentnames[payment.kind];
-          paymentLine = { ...payment };
-
-          if (payment.origAmount <= amountToPay) {
-            // Use all the remaining payment amount for this receipt
-            payment.origAmount = OB.DEC.Zero;
-            payment.amount = OB.DEC.Zero;
-            addPaymentLine(paymentLine, payment, function recursiveCallback() {
-              return me.setPaymentsToReceipts(
-                orderList,
-                paymentList,
-                changePayments,
-                orderListIndex,
-                paymentListIndex + 1,
-                considerPrepaymentAmount,
-                paymentnames
-              );
-            });
-          } else {
-            // Get part of the payment and go with the next order
-            const amountToPayForeign = OB.DEC.mul(
-              amountToPay,
-              paymentMethod.mulrate,
-              paymentMethod.obposPosprecision
-            );
-            payment.origAmount = OB.DEC.sub(payment.origAmount, amountToPay);
-            payment.amount = OB.DEC.sub(payment.amount, amountToPayForeign);
-
-            paymentLine.origAmount = amountToPay;
-            paymentLine.amount = amountToPayForeign;
-
-            addPaymentLine(paymentLine, payment, function recursiveCallback() {
-              return me.setPaymentsToReceipts(
-                orderList,
-                paymentList,
-                changePayments,
-                orderListIndex + 1,
-                paymentListIndex,
-                considerPrepaymentAmount,
-                paymentnames
-              );
-            });
-          }
-        } else {
-          // This order is already paid, go to the next order
-          return me.setPaymentsToReceipts(
-            orderList,
-            paymentList,
-            changePayments,
-            orderListIndex + 1,
-            paymentListIndex,
-            considerPrepaymentAmount,
-            paymentnames
-          );
-        }
+    // Recalculate payment and paymentWithSign properties
+    const paidAmt = newTicket.payments.reduce((total, p) => {
+      if (p.isPrePayment || p.isReversePayment || !newTicket.isNegative) {
+        return OB.DEC.add(total, p.origAmount);
       }
-    } else {
-      return me.setPaymentsToReceipts(
-        orderList,
-        paymentList,
-        changePayments,
-        orderListIndex,
-        paymentListIndex + 1,
-        considerPrepaymentAmount,
-        paymentnames
+      return OB.DEC.sub(total, p.origAmount);
+    }, OB.DEC.Zero);
+    newTicketWithPayment.payment = OB.DEC.abs(paidAmt);
+    newTicketWithPayment.paymentWithSign = paidAmt;
+    newTicketWithPayment.change = prevChange;
+    if (newTicketWithPayment.amountToLayaway != null) {
+      newTicketWithPayment.amountToLayaway = OB.DEC.sub(
+        newTicketWithPayment.amountToLayaway,
+        paymentLine.get('origAmount')
       );
     }
-    return orderList;
+    return newTicketWithPayment;
+  },
+
+  /**
+   * Set needed properties when completing a ticket.
+   *
+   * @param {Ticket[]} ticketList - The ticket being completed
+   * @param {object} object - The calculation payload, which include:
+   *             * payments - Terminal id
+   *             * changePayments - Approvals to add to the ticket
+   *             * considerPrepaymentAmount - Approvals to add to the ticket
+   *             * terminalPayments - Approvals to add to the ticket
+   *             * index -
+   *
+   * @returns {Ticket[]} The new TicketList but with payments included.
+   */
+
+  setPaymentsToReceipts(ticketList, ticketListPayload) {
+    const newTicketList = [...ticketList];
+    const {
+      payments,
+      changePayments,
+      considerPrepaymentAmount,
+      terminalPayments
+    } = ticketListPayload;
+    const me = this;
+    let index;
+    const ticketListWithPayments = newTicketList.map(function iterateTickets(
+      ticket
+    ) {
+      let newTicket = { ...ticket };
+      for (
+        index = ticketListPayload.paymentsIndex || 0;
+        index < payments.length;
+        index += 1
+      ) {
+        const payment = payments[index];
+        let paymentLine = {};
+
+        if (payment.origAmount) {
+          if (
+            newTicketList.indexOf(newTicket) === newTicketList.length - 1 &&
+            !considerPrepaymentAmount
+          ) {
+            // Transfer everything
+            newTicket.changePayments = changePayments;
+            if (index < payments.length) {
+              // Pending payments to add
+              paymentLine = { ...payment };
+              paymentLine.forceAddPayment = true;
+
+              payment.origAmount = OB.DEC.Zero;
+              payment.amount = OB.DEC.Zero;
+              newTicket = me.addPaymentLine(
+                newTicket,
+                paymentLine,
+                terminalPayments
+              );
+            } else {
+              // Finished
+              break;
+            }
+          } else {
+            let amountToPay;
+            if (newTicket.amountToLayaway != null) {
+              amountToPay = newTicket.amountToLayaway;
+            } else if (considerPrepaymentAmount) {
+              amountToPay = OB.DEC.sub(
+                newTicket.obposPrepaymentamt
+                  ? newTicket.obposPrepaymentamt
+                  : newTicket.gross,
+                newTicket.payment
+              );
+            } else {
+              amountToPay = OB.DEC.sub(newTicket.gross, newTicket.payment);
+            }
+            if (OB.DEC.compare(amountToPay) > 0) {
+              const paymentMethod = terminalPayments[payment.kind];
+              paymentLine = { ...payment };
+
+              if (payment.origAmount <= amountToPay) {
+                // Use all the remaining payment amount for this receipt
+                payment.origAmount = OB.DEC.Zero;
+                payment.amount = OB.DEC.Zero;
+                newTicket = me.addPaymentLine(
+                  newTicket,
+                  paymentLine,
+                  terminalPayments
+                );
+              } else {
+                // Get part of the payment and go with the next order
+                const amountToPayForeign = OB.DEC.mul(
+                  amountToPay,
+                  paymentMethod.mulrate,
+                  paymentMethod.obposPosprecision
+                );
+                payment.origAmount = OB.DEC.sub(
+                  payment.origAmount,
+                  amountToPay
+                );
+                payment.amount = OB.DEC.sub(payment.amount, amountToPayForeign);
+
+                paymentLine.origAmount = amountToPay;
+                paymentLine.amount = amountToPayForeign;
+                newTicket = me.addPaymentLine(
+                  newTicket,
+                  paymentLine,
+                  terminalPayments
+                );
+                break;
+              }
+            } else {
+              // This order is already paid, go to the next order
+              break;
+            }
+          }
+        }
+      }
+      return newTicket;
+    });
+
+    if (index < payments.length && considerPrepaymentAmount) {
+      ticketListPayload.paymentsIndex = index;
+      ticketListPayload.considerPrepaymentAmount = false;
+      this.setPaymentsToReceipts(ticketList, ticketListPayload);
+    }
+
+    return ticketListWithPayments;
   }
 });
