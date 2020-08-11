@@ -74,8 +74,8 @@ public class AgingDao {
   public FieldProvider[] getOpenReceivablesAgingSchedule(ConnectionProvider connectionProvider,
       String strcBpartnerId, String strAccSchema, Date currentDate, String strcolumn1,
       String strcolumn2, String strcolumn3, String strcolumn4, String strOrg,
-      Set<String> organizations, String recOrPay, boolean showDoubtfulDebt, boolean excludeVoids)
-      throws IOException, ServletException {
+      Set<String> organizations, String recOrPay, boolean showDoubtfulDebt, boolean excludeVoids,
+      boolean excludeReverseds) throws IOException, ServletException {
 
     // Initialization of some variables
     List<String> paidStatus = FIN_Utility.getListPaymentConfirmed();
@@ -158,8 +158,8 @@ public class AgingDao {
       dataCreditSR = AgingDaoData.selectCredit(connectionProvider, convCurrency.getId(),
           Utility.getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
           OBDateUtils.formatDate(currentDate),
-          StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N", strcBpartnerId, pgLimit,
-          oraLimit);
+          StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N", strcBpartnerId,
+          excludeReverseds ? "excludeReverseds" : "", pgLimit, oraLimit);
       log4j.debug("Credit Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       i = 0;
@@ -218,7 +218,8 @@ public class AgingDao {
       ConnectionProvider connectionProvider, Date currentDate, SimpleDateFormat dateFormat,
       Currency convCurrency, Set<String> organizations, String recOrPay, String strcolumn1,
       String strcolumn2, String strcolumn3, String strcolumn4, String strcBpartnerId,
-      boolean showDoubtfulDebt, Boolean excludeVoid) throws IOException, ServletException {
+      boolean showDoubtfulDebt, Boolean excludeVoid, Boolean excludeReversed)
+      throws IOException, ServletException {
 
     List<HashMap<String, String>> hashMapList = new ArrayList<HashMap<String, String>>();
     FieldProvider[] data = null;
@@ -285,8 +286,8 @@ public class AgingDao {
       dataCreditSR = AgingDaoData.selectCredit(connectionProvider, convCurrency.getId(),
           Utility.getInStrSet(organizations), Utility.getInStrSet(new HashSet<String>(paidStatus)),
           OBDateUtils.formatDate(currentDate),
-          StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N", strcBpartnerId, pgLimit,
-          oraLimit);
+          StringUtils.equals(recOrPay, "RECEIVABLES") ? "Y" : "N", strcBpartnerId,
+          excludeReversed ? "excludeReverseds" : "", pgLimit, oraLimit);
       log4j.debug("Credit Query: " + (System.currentTimeMillis() - init));
       init = System.currentTimeMillis();
       i = 0;

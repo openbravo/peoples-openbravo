@@ -106,6 +106,9 @@
 	<parameter name="void" class="java.lang.String">
 		<defaultValueExpression><![CDATA["true"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="reversed" class="java.lang.String">
+		<defaultValueExpression><![CDATA["true"]]></defaultValueExpression>
+	</parameter>
 	<parameter name="processId" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
@@ -454,7 +457,8 @@
 		+"    Doubtful:\'"+$P{showDoubtfulDebt}+"\',"
 		+"    Organization:\'"+$P{Organization}+"\',"
 		+"    RecOrPay:\'"+$P{recOrPay}+"\',"
-		+"    ShowVoid:\'"+$P{void}+"\'"
+		+"    ShowVoid:\'"+$P{void}+"\',"
+		+"    ShowReversed:\'"+$P{reversed}+"\'"
 		+"  }"
 		+"},"
 		+"{"

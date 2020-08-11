@@ -78,6 +78,8 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
   private static final String PARAM_BP = "BusinessPartner";
   private static final String PARAM_SHOWVOID = "ShowVoid";
   private static final String PREFERENCE_SHOWVOID = "AGING_ShowVoidCheckbox";
+  private static final String PARAM_SHOWREVERSED = "ShowReversed";
+  private static final String PREFERENCE_SHOWREVERSED = "AGING_ShowReversedCheckbox";
   private static final String PARAM_DOUBTFUL = "Doubtful";
   private static final String PARAM_RECORPAY = "RecOrPay";
   private static final String RECEIVABLES = "RECEIVABLES";
@@ -178,6 +180,19 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
           strVoid = TRUE;
         }
         return strVoid;
+      } else if (PARAM_SHOWREVERSED.equals(parameter)) {
+        String strReversed;
+        try {
+          strReversed = Preferences
+              .getPreferenceValue(PREFERENCE_SHOWREVERSED, true,
+                  OBContext.getOBContext().getCurrentClient(),
+                  OBContext.getOBContext().getCurrentOrganization(),
+                  OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null)
+              .equals("Y") ? params.getString(PARAM_SHOWREVERSED) : TRUE;
+        } catch (Exception ex) {
+          strReversed = TRUE;
+        }
+        return strReversed;
       } else if (PARAM_DOUBTFUL.equals(parameter)) {
         String recOrPay = params.getString(PARAM_RECORPAY);
         String strDoubtful = FALSE;
@@ -201,6 +216,8 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
     FieldProvider[] data;
     boolean showDoubtful = TRUE.equals(getParameter(PARAM_DOUBTFUL, content));
     boolean excludeVoid = FALSE.equals(getParameter(PARAM_SHOWVOID, content));
+    boolean excludeReversed = FALSE.equals(getParameter(PARAM_SHOWREVERSED, content));
+
     Currency convCurrency = null;
     String dateFormatString = OBPropertiesProvider.getInstance()
         .getOpenbravoProperties()
@@ -227,7 +244,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         getParameter(PARAM_RECORPAY, content), getParameter(PARAM_COLUMN1, content),
         getParameter(PARAM_COLUMN2, content), getParameter(PARAM_COLUMN3, content),
         getParameter(PARAM_COLUMN4, content), getParameter(PARAM_BP, content), showDoubtful,
-        excludeVoid);
+        excludeVoid, excludeReversed);
     return data;
   }
 
@@ -271,6 +288,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
     cal.setTime(currentDate);
     boolean showDoubtful = TRUE.equals(getParameter(PARAM_DOUBTFUL, content));
     boolean excludeVoid = FALSE.equals(getParameter(PARAM_SHOWVOID, content));
+    boolean excludeReversed = FALSE.equals(getParameter(PARAM_SHOWREVERSED, content));
 
     // Save in session report limit
     RequestContext.get()
@@ -280,9 +298,10 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         getParameter(PARAM_BP, content), getParameter(PARAM_GL, content), currentDate,
         getParameter(PARAM_COLUMN1, content), getParameter(PARAM_COLUMN2, content),
         getParameter(PARAM_COLUMN3, content), getParameter(PARAM_COLUMN4, content),
-        getParameter(PARAM_ORGANIZATION, content), new OrganizationStructureProvider()
-            .getChildTree(getParameter(PARAM_ORGANIZATION, content), true),
-        getParameter(PARAM_RECORPAY, content), showDoubtful, excludeVoid);
+        getParameter(PARAM_ORGANIZATION, content),
+        new OrganizationStructureProvider().getChildTree(getParameter(PARAM_ORGANIZATION, content),
+            true),
+        getParameter(PARAM_RECORPAY, content), showDoubtful, excludeVoid, excludeReversed);
     return data;
   }
 
@@ -397,6 +416,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
       String strCurrentDate = getParameter(PARAM_CURRENTDATE, jsonContent);
       String strcBpartnerId = getParameter(PARAM_BP, jsonContent);
       String strVoid = getParameter(PARAM_SHOWVOID, jsonContent);
+      String strReversed = getParameter(PARAM_SHOWREVERSED, jsonContent);
       String strDoubtful = getParameter(PARAM_DOUBTFUL, jsonContent);
       String dateFormatString = OBPropertiesProvider.getInstance()
           .getOpenbravoProperties()
@@ -435,6 +455,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         parameters.put("inpLabel4", (Integer.valueOf(strColumn3) + 1) + "-" + strColumn4);
         parameters.put("inpLabel5", "Over " + strColumn4);
         parameters.put("void", strVoid);
+        parameters.put("reversed", strReversed);
         if (RECEIVABLES.equals(recOrPay)) {
           parameters.put("title", Utility.messageBD(conn, "AGING_ORASD", vars.getLanguage()));
           parameters.put("tabID", "263");
@@ -494,6 +515,7 @@ public class AgingBalanceReportActionHandler extends BaseReportActionHandler {
         parameters.put("toCurrency", toCurrency.getId());
         parameters.put("showDoubtfulDebt", strDoubtful);
         parameters.put("void", strVoid);
+        parameters.put("reversed", strReversed);
         if (RECEIVABLES.equals(recOrPay)) {
           parameters.put("tabTitle", Utility.messageBD(conn, "AGING_ORASD", vars.getLanguage()));
           parameters.put("title", Utility.messageBD(conn, "AGING_ORAS", vars.getLanguage()));

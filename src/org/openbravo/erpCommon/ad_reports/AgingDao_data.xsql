@@ -185,6 +185,7 @@
     <Parameter name="asOfDate"/>
     <Parameter name="recOrPay"/>
     <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND fp2.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="excludeReverseds" type="none" optional="true" after="AND 2=2" text=" AND (fp2.fin_rev_payment_id is null AND fp2.documentno not like ('*R*%'))"/>
     <Parameter name="asOfDate"/>
     <Parameter name="paidStatus" type="replace" optional="true" after="OR ( fp1.status IN (" text="'1'"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
