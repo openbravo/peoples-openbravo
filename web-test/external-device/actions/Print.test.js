@@ -14,13 +14,13 @@ global.OB = {
   }
 };
 
-global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
+global.lodash = require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const deepfreeze = require('deepfreeze');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/UUID');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/Messages');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/MessagesUtils');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/Print');
+require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/UUID');
+require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
+require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/Messages');
+require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/MessagesUtils');
+require('../../../web/org.openbravo.retail.posterminal/app/external-device/actions/Print');
 
 OB.App.State = { Messages: { Utils: {} } };
 OB.App.StateAPI.Messages.utilities.forEach(util => {

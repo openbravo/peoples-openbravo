@@ -36,17 +36,19 @@
   class HardwareManagerEndpoint extends OB.App.Class.SynchronizationEndpoint {
     constructor(name) {
       super(name || 'HardwareManager');
-      this.messageTypes.push('displayTotal', 'printTicket', 'printTicketLine');
+      this.messageTypes.push(
+        'displayTotal',
+        'printTicket',
+        'printTicketLine',
+        'printWelcome'
+      );
     }
 
-    // Sets the main printer
-    setPrinter(printer) {
-      this.printer = printer;
-    }
-
-    // Sets the lines printer
-    setLinePrinter(linePrinter) {
-      this.linePrinter = linePrinter;
+    // Sets the printers
+    setPrinters(printers) {
+      this.printer = printers.printer;
+      this.linePrinter = printers.linePrinter;
+      this.welcomePrinter = printers.welcomePrinter;
     }
 
     async synchronizeMessage(message) {
@@ -59,6 +61,9 @@
           break;
         case 'printTicketLine':
           this.printTicketLine(message.messageObj);
+          break;
+        case 'printWelcome':
+          this.printWelcome();
           break;
         default:
           throw new Error(
@@ -103,6 +108,13 @@
       } catch (error) {
         OB.error(`Error printing ticket line: ${error}`);
       }
+    }
+
+    printWelcome() {
+      if (!this.welcomePrinter) {
+        throw new Error(`The endpoint has no printer assigned`);
+      }
+      this.welcomePrinter.doPrintWelcome();
     }
   }
 

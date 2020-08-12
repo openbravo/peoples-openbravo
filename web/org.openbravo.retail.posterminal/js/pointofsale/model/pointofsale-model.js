@@ -1647,9 +1647,15 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.Taxes.Pos.initCache(function() {
                 OB.Discounts.Pos.initCache(function() {
                   me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
-                  var hardwareManagerEnpoint = new OB.App.Class.HardwareManagerEndpoint();
-                  hardwareManagerEnpoint.setPrinter(me.printReceipt);
-                  hardwareManagerEnpoint.setLinePrinter(me.printLine);
+                  const welcomePrinter = {
+                    doPrintWelcome: OB.OBPOSPointOfSale.Print.doPrintWelcome
+                  };
+                  const hardwareManagerEnpoint = new OB.App.Class.HardwareManagerEndpoint();
+                  hardwareManagerEnpoint.setPrinters({
+                    printer: me.printReceipt,
+                    linePrinter: me.printLine,
+                    welcomePrinter
+                  });
                   OB.App.SynchronizationBuffer.registerEndpoint(
                     hardwareManagerEnpoint
                   );
