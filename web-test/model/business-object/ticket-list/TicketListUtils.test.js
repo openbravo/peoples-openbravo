@@ -19,11 +19,11 @@ require('../../../../web/org.openbravo.retail.posterminal/app/model/business-obj
 OB.App.State = { Ticket: { Utils: {} } };
 
 describe('Remove Ticket utilities', () => {
-  let removeCurrentTicket;
+  let removeTicket;
 
   beforeAll(() => {
-    removeCurrentTicket = OB.App.StateAPI.TicketList.utilities.find(
-      util => util.functionName === 'removeCurrentTicket'
+    removeTicket = OB.App.StateAPI.TicketList.utilities.find(
+      util => util.functionName === 'removeTicket'
     ).implementation;
   });
 
@@ -37,7 +37,7 @@ describe('Remove Ticket utilities', () => {
     };
     deepfreeze(state);
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticketList).toHaveLength(0);
     expect(result.ticket.id).toEqual('B');
   });
@@ -57,7 +57,7 @@ describe('Remove Ticket utilities', () => {
       .fn()
       .mockReturnValue({ id: 'C' });
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticketList).toHaveLength(1);
     expect(result.ticket.id).toEqual('C');
 
@@ -76,7 +76,7 @@ describe('Remove Ticket utilities', () => {
       .fn()
       .mockReturnValue({ id: 'C' });
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticket.id).toEqual('C');
 
     delete OB.App.State.Ticket.Utils.newTicket;
@@ -97,7 +97,7 @@ describe('Remove Ticket utilities', () => {
       .fn()
       .mockReturnValue({ id: 'B' });
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticket.id).toEqual('B');
     expect(result.ticketList).toEqual([]);
 
@@ -119,7 +119,7 @@ describe('Remove Ticket utilities', () => {
       .fn()
       .mockReturnValue({ id: 'C' });
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticket.id).toEqual('A');
     expect(result.ticketList).toEqual([]);
 
@@ -141,7 +141,7 @@ describe('Remove Ticket utilities', () => {
       .fn()
       .mockReturnValue({ id: 'D' });
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticket.id).toEqual('B');
     expect(result.ticketList).toEqual([{ id: 'C' }]);
 
@@ -163,7 +163,7 @@ describe('Remove Ticket utilities', () => {
       .fn()
       .mockReturnValue({ id: 'D' });
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticket.id).toEqual('A');
     expect(result.ticketList).toEqual([{ id: 'C' }]);
 
@@ -185,7 +185,7 @@ describe('Remove Ticket utilities', () => {
       .fn()
       .mockReturnValue({ id: 'D' });
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticket.id).toEqual('C');
     expect(result.ticketList).toEqual([]);
 
@@ -207,7 +207,7 @@ describe('Remove Ticket utilities', () => {
       .fn()
       .mockReturnValue({ id: 'D' });
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticket.id).toEqual('A');
     expect(result.ticketList).toEqual([]);
 
@@ -229,7 +229,7 @@ describe('Remove Ticket utilities', () => {
       .fn()
       .mockReturnValue({ id: 'D' });
 
-    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    const result = removeTicket(state.TicketList, state.Ticket, payload);
     expect(result.ticket.id).toEqual('D');
     expect(result.ticketList).toEqual([]);
 

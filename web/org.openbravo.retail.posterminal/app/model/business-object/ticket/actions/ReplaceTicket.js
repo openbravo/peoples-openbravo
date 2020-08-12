@@ -95,7 +95,7 @@
       ({
         ticketList: newTicketList,
         ticket: newTicket
-      } = OB.App.State.TicketList.Utils.removeCurrentTicket(
+      } = OB.App.State.TicketList.Utils.removeTicket(
         newTicketList,
         newTicket,
         payload

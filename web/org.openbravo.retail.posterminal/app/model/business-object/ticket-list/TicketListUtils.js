@@ -9,7 +9,7 @@
 
 (function TicketListUtilsDefinition() {
   OB.App.StateAPI.TicketList.registerUtilityFunctions({
-    removeCurrentTicket(ticketList, ticket, payload) {
+    removeTicket(ticketList, ticket, payload) {
       const multiTicketListIds = (payload.multiTicketList || []).map(t => t.id);
       let newTicket = { ...ticket };
       let newTicketList = ticketList.filter(
