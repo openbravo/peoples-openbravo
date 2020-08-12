@@ -40,39 +40,54 @@
       );
 
       checkedTicketList.forEach(checkedTicket => {
-        let ticket = { ...checkedTicket };
+        let currentTicket = { ...checkedTicket };
 
         // Set complete ticket properties
-        ticket.completeTicket = !ticket.amountToLayaway;
-        ticket = OB.App.State.Ticket.Utils.completeTicket(ticket, payload);
+        currentTicket.completeTicket = !currentTicket.amountToLayaway;
+        currentTicket = OB.App.State.Ticket.Utils.completeTicket(
+          currentTicket,
+          payload
+        );
 
         // FIXME: Move to calculateTotals?
-        ticket = OB.App.State.Ticket.Utils.updateTicketType(ticket, payload);
+        currentTicket = OB.App.State.Ticket.Utils.updateTicketType(
+          currentTicket,
+          payload
+        );
 
         // Complete ticket payment
-        ticket = OB.App.State.Ticket.Utils.completePayment(ticket, payload);
+        currentTicket = OB.App.State.Ticket.Utils.completePayment(
+          currentTicket,
+          payload
+        );
 
         // Document number generation
         ({
-          ticket,
+          ticket: currentTicket,
           documentSequence: newDocumentSequence
         } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
-          ticket,
+          currentTicket,
           newDocumentSequence,
           payload
         ));
 
         // Delivery generation
-        ticket = OB.App.State.Ticket.Utils.generateDelivery(ticket, payload);
+        currentTicket = OB.App.State.Ticket.Utils.generateDelivery(
+          currentTicket,
+          payload
+        );
 
         // Invoice generation
-        ticket = OB.App.State.Ticket.Utils.generateInvoice(ticket, payload);
-        if (ticket.calculatedInvoice) {
+        currentTicket = OB.App.State.Ticket.Utils.generateInvoice(
+          currentTicket,
+          payload
+        );
+        if (currentTicket.calculatedInvoice) {
           ({
-            ticket: ticket.calculatedInvoice,
+            ticket: currentTicket.calculatedInvoice,
             documentSequence: newDocumentSequence
-          } = OB.App.State.DocumentSequence.Utils.generateTicketDocumentSequence(
-            ticket.calculatedInvoice,
+          } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
+            currentTicket.calculatedInvoice,
             newDocumentSequence,
             payload
           ));
@@ -80,10 +95,10 @@
 
         // Cashup update
         ({
-          ticket,
+          ticket: currentTicket,
           cashup: newCashup
         } = OB.App.State.Cashup.Utils.updateCashupFromTicket(
-          ticket,
+          currentTicket,
           newCashup,
           payload
         ));
@@ -94,20 +109,21 @@
           OB.App.State.Messages.Utils.createNewMessage(
             'Order',
             'org.openbravo.retail.posterminal.OrderLoader',
-            ticket
+            [currentTicket],
+            payload.extraProperties
           )
         ];
 
         // Ticket print message
         newMessages = [
           ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(ticket)
+          OB.App.State.Messages.Utils.createPrintTicketMessage(currentTicket)
         ];
-        if (ticket.calculatedInvoice) {
+        if (currentTicket.calculatedInvoice) {
           newMessages = [
             ...newMessages,
             OB.App.State.Messages.Utils.createPrintTicketMessage(
-              ticket.calculatedInvoice
+              currentTicket.calculatedInvoice
             )
           ];
         }
@@ -118,7 +134,7 @@
           ticket: newTicket
         } = OB.App.State.TicketList.Utils.removeCurrentTicket(
           newTicketList,
-          newTicket,
+          currentTicket,
           payload
         ));
       });
