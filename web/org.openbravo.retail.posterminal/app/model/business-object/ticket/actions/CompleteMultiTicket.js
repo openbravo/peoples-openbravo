@@ -22,72 +22,60 @@
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
 
-      let checkedTicketList = [];
-      payload.ticketsIdToClose.forEach(ticketCloseId => {
-        if (ticketCloseId === newTicket.id) {
-          checkedTicketList.push(newTicket);
-        } else {
-          checkedTicketList.push(
-            newTicketList.find(
-              ticketOfFind => ticketOfFind.id === ticketCloseId
-            )
-          );
-        }
-      });
-      checkedTicketList = OB.App.State.Ticket.Utils.setPaymentsToReceipts(
-        checkedTicketList,
+      const multiTicketList = OB.App.State.Ticket.Utils.setPaymentsToReceipts(
+        payload.multiTicketList,
         payload
       );
 
-      checkedTicketList.forEach(checkedTicket => {
-        let currentTicket = { ...checkedTicket };
+      multiTicketList.forEach(multiTicket => {
+        let newMultiTicket = { ...multiTicket };
 
         // Set complete ticket properties
-        currentTicket.completeTicket = !currentTicket.amountToLayaway;
-        currentTicket = OB.App.State.Ticket.Utils.completeTicket(
-          currentTicket,
+        newMultiTicket.completeTicket = !newMultiTicket.amountToLayaway;
+        newMultiTicket = OB.App.State.Ticket.Utils.completeTicket(
+          newMultiTicket,
           payload
         );
 
         // FIXME: Move to calculateTotals?
-        currentTicket = OB.App.State.Ticket.Utils.updateTicketType(
-          currentTicket,
+        newMultiTicket = OB.App.State.Ticket.Utils.updateTicketType(
+          newMultiTicket,
           payload
         );
 
         // Complete ticket payment
-        currentTicket = OB.App.State.Ticket.Utils.completePayment(
-          currentTicket,
+        newMultiTicket = OB.App.State.Ticket.Utils.completePayment(
+          newMultiTicket,
           payload
         );
 
         // Document number generation
         ({
-          ticket: currentTicket,
+          ticket: newMultiTicket,
           documentSequence: newDocumentSequence
         } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
-          currentTicket,
+          newMultiTicket,
           newDocumentSequence,
           payload
         ));
 
         // Delivery generation
-        currentTicket = OB.App.State.Ticket.Utils.generateDelivery(
-          currentTicket,
+        newMultiTicket = OB.App.State.Ticket.Utils.generateDelivery(
+          newMultiTicket,
           payload
         );
 
         // Invoice generation
-        currentTicket = OB.App.State.Ticket.Utils.generateInvoice(
-          currentTicket,
+        newMultiTicket = OB.App.State.Ticket.Utils.generateInvoice(
+          newMultiTicket,
           payload
         );
-        if (currentTicket.calculatedInvoice) {
+        if (newMultiTicket.calculatedInvoice) {
           ({
-            ticket: currentTicket.calculatedInvoice,
+            ticket: newMultiTicket.calculatedInvoice,
             documentSequence: newDocumentSequence
           } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
-            currentTicket.calculatedInvoice,
+            newMultiTicket.calculatedInvoice,
             newDocumentSequence,
             payload
           ));
@@ -95,10 +83,10 @@
 
         // Cashup update
         ({
-          ticket: currentTicket,
+          ticket: newMultiTicket,
           cashup: newCashup
         } = OB.App.State.Cashup.Utils.updateCashupFromTicket(
-          currentTicket,
+          newMultiTicket,
           newCashup,
           payload
         ));
@@ -109,7 +97,7 @@
           OB.App.State.Messages.Utils.createNewMessage(
             'Order',
             'org.openbravo.retail.posterminal.OrderLoader',
-            [currentTicket],
+            [newMultiTicket],
             payload.extraProperties
           )
         ];
@@ -117,27 +105,27 @@
         // Ticket print message
         newMessages = [
           ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(currentTicket)
+          OB.App.State.Messages.Utils.createPrintTicketMessage(newMultiTicket)
         ];
-        if (currentTicket.calculatedInvoice) {
+        if (newMultiTicket.calculatedInvoice) {
           newMessages = [
             ...newMessages,
             OB.App.State.Messages.Utils.createPrintTicketMessage(
-              currentTicket.calculatedInvoice
+              newMultiTicket.calculatedInvoice
             )
           ];
         }
-
-        // TicketList update
-        ({
-          ticketList: newTicketList,
-          ticket: newTicket
-        } = OB.App.State.TicketList.Utils.removeCurrentTicket(
-          newTicketList,
-          currentTicket,
-          payload
-        ));
       });
+
+      // TicketList update
+      ({
+        ticketList: newTicketList,
+        ticket: newTicket
+      } = OB.App.State.TicketList.Utils.removeCurrentTicket(
+        newTicketList,
+        newTicket,
+        payload
+      ));
 
       newGlobalState.Ticket = newTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
@@ -153,31 +141,25 @@
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
-      newPayload.ticketsIdToClose = newPayload.multiTickets.multiOrdersList.map(
-        ticket => ticket.id
+      newPayload.multiTicketList = newPayload.multiTickets.multiOrdersList.map(
+        multiTicket =>
+          globalState.Ticket.id === multiTicket.id
+            ? globalState.Ticket
+            : globalState.TicketList.find(
+                ticket => ticket.id === multiTicket.id
+              )
       );
 
-      newPayload.isMultiTicket = true;
-
       // eslint-disable-next-line no-restricted-syntax
-      for (const ticketCloseId of newPayload.ticketsIdToClose) {
-        let ticket;
-        if (ticketCloseId === globalState.Ticket.id) {
-          ticket = globalState.Ticket;
-        } else {
-          [ticket] = globalState.TicketList.filter(
-            ticketOfFilter => ticketOfFilter.id === ticketCloseId
-          );
-        }
-
+      for (const multiTicket of newPayload.multiTicketList) {
         // eslint-disable-next-line no-await-in-loop
         newPayload = await OB.App.State.Ticket.Utils.checkAnonymousReturn(
-          ticket,
+          multiTicket,
           newPayload
         );
         // eslint-disable-next-line no-await-in-loop
         newPayload = await OB.App.State.Ticket.Utils.checkAnonymousLayaway(
-          ticket,
+          multiTicket,
           newPayload
         );
       }
@@ -200,19 +182,10 @@
       );
 
       // eslint-disable-next-line no-restricted-syntax
-      for (const ticketCloseId of newPayload.ticketsIdToClose) {
-        let ticket;
-        if (ticketCloseId === globalState.Ticket.id) {
-          ticket = globalState.Ticket;
-        } else {
-          [ticket] = globalState.TicketList.filter(
-            ticketOfFilter => ticketOfFilter.id === ticketCloseId
-          );
-        }
-
+      for (const multiTicket of newPayload.multiTicketList) {
         // eslint-disable-next-line no-await-in-loop
         newPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
-          ticket,
+          multiTicket,
           newPayload
         );
       }

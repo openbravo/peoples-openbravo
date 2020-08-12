@@ -495,7 +495,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if given ticket includes negative payments.
    */
   async checkNegativePayments(ticket, payload) {
-    const isReturnTicket = payload.isMultiTicket ? false : ticket.isNegative;
+    const isReturnTicket = payload.multiTicketList ? false : ticket.isNegative;
     if (
       ticket.payments
         .filter(payment => payment.isReturnOrder !== undefined)
@@ -516,7 +516,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    */
   async checkExtraPayments(ticket, payload) {
     const totalToPaid = OB.DEC.abs(
-      payload.isMultiTicket ? ticket.total : ticket.grossAmount
+      payload.multiTicketList ? ticket.total : ticket.grossAmount
     );
     ticket.payments.reduce((total, payment) => {
       if (total >= totalToPaid && !payment.paymentRounding) {
@@ -549,7 +549,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     );
 
     const ticketHasPrepayment =
-      (payload.isMultiTicket ||
+      (payload.multiTicketList ||
         (ticket.orderType !== 1 && ticket.orderType !== 3)) &&
       ticket.obposPrepaymentlimitamt !== OB.DEC.Zero;
     const pendingPrepayment = OB.DEC.sub(
@@ -575,7 +575,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       });
     }
 
-    const approvals = payload.isMultiTicket
+    const approvals = payload.multiTicketList
       ? ticket.multiOrdersList
           .map(ticketMap => ticketMap.approvals)
           .reduce((a, b) => a.concat(b))
@@ -621,7 +621,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         throw new OB.App.Class.ActionCanceled();
       }
     } else if (
-      !payload.isMultiTicket &&
+      !payload.multiTicketList &&
       ticket.payment !== OB.DEC.abs(ticket.grossAmount) &&
       !OB.App.State.Ticket.Utils.isLayaway(ticket) &&
       !ticket.payOnCredit &&

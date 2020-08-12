@@ -10,21 +10,31 @@
 (function TicketListUtilsDefinition() {
   OB.App.StateAPI.TicketList.registerUtilityFunctions({
     removeCurrentTicket(ticketList, ticket, payload) {
+      const multiTicketListIds = (payload.multiTicketList || []).map(t => t.id);
+      let newTicket = { ...ticket };
+      let newTicketList = ticketList.filter(
+        t => !multiTicketListIds.includes(t.id)
+      );
+
+      const shouldReplaceCurrentTicket =
+        !payload.multiTicketList || multiTicketListIds.includes(newTicket.id);
       const shouldCreateNewTicket =
         (payload.preferences &&
           payload.preferences.alwaysCreateNewReceiptAfterPayReceipt) ||
-        !ticketList.some(t => t.session === payload.session);
+        (shouldReplaceCurrentTicket &&
+          !newTicketList.some(t => t.session === payload.session));
 
       if (shouldCreateNewTicket) {
-        let newTicket = { ...ticket };
         if (payload.businessPartner) {
           newTicket = OB.App.State.Ticket.Utils.newTicket(payload);
         }
-        return { ticketList, ticket: newTicket };
+        return { ticketList: newTicketList, ticket: newTicket };
       }
 
-      const newTicket = ticketList.find(t => t.session === payload.session);
-      const newTicketList = ticketList.filter(t => t.id !== newTicket.id);
+      newTicket = shouldReplaceCurrentTicket
+        ? newTicketList.find(t => t.session === payload.session)
+        : newTicket;
+      newTicketList = newTicketList.filter(t => t.id !== newTicket.id);
 
       return { ticketList: newTicketList, ticket: newTicket };
     }

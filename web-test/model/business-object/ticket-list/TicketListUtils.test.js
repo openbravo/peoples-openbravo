@@ -81,4 +81,158 @@ describe('Remove Ticket utilities', () => {
 
     delete OB.App.State.Ticket.Utils.newTicket;
   });
+
+  it('creates new ticket when list is empty and ticket is present in the list to delete', () => {
+    const state = {
+      Ticket: { id: 'A' },
+      TicketList: []
+    };
+    const payload = {
+      businessPartner: { id: 'BP1' },
+      multiTicketList: [{ id: 'A' }]
+    };
+    deepfreeze(state);
+
+    OB.App.State.Ticket.Utils.newTicket = jest
+      .fn()
+      .mockReturnValue({ id: 'B' });
+
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticket.id).toEqual('B');
+    expect(result.ticketList).toEqual([]);
+
+    delete OB.App.State.Ticket.Utils.newTicket;
+  });
+
+  it('keeps current ticket when list is empty and ticket is not present in the list to delete', () => {
+    const state = {
+      Ticket: { id: 'A' },
+      TicketList: [{ id: 'B' }]
+    };
+    const payload = {
+      businessPartner: { id: 'BP1' },
+      multiTicketList: [{ id: 'B' }]
+    };
+    deepfreeze(state);
+
+    OB.App.State.Ticket.Utils.newTicket = jest
+      .fn()
+      .mockReturnValue({ id: 'C' });
+
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticket.id).toEqual('A');
+    expect(result.ticketList).toEqual([]);
+
+    delete OB.App.State.Ticket.Utils.newTicket;
+  });
+
+  it('replaces current ticket when list is not empty and ticket is present in the list to delete', () => {
+    const state = {
+      Ticket: { id: 'A' },
+      TicketList: [{ id: 'B' }, { id: 'C' }]
+    };
+    const payload = {
+      businessPartner: { id: 'BP1' },
+      multiTicketList: [{ id: 'A' }]
+    };
+    deepfreeze(state);
+
+    OB.App.State.Ticket.Utils.newTicket = jest
+      .fn()
+      .mockReturnValue({ id: 'D' });
+
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticket.id).toEqual('B');
+    expect(result.ticketList).toEqual([{ id: 'C' }]);
+
+    delete OB.App.State.Ticket.Utils.newTicket;
+  });
+
+  it('keeps current ticket when list is not empty and ticket is not present in the list to delete', () => {
+    const state = {
+      Ticket: { id: 'A' },
+      TicketList: [{ id: 'B' }, { id: 'C' }]
+    };
+    const payload = {
+      businessPartner: { id: 'BP1' },
+      multiTicketList: [{ id: 'B' }]
+    };
+    deepfreeze(state);
+
+    OB.App.State.Ticket.Utils.newTicket = jest
+      .fn()
+      .mockReturnValue({ id: 'D' });
+
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticket.id).toEqual('A');
+    expect(result.ticketList).toEqual([{ id: 'C' }]);
+
+    delete OB.App.State.Ticket.Utils.newTicket;
+  });
+
+  it('replaces current ticket when list is not empty and ticket and another ticket from list is present in the list to delete', () => {
+    const state = {
+      Ticket: { id: 'A' },
+      TicketList: [{ id: 'B' }, { id: 'C' }]
+    };
+    const payload = {
+      businessPartner: { id: 'BP1' },
+      multiTicketList: [{ id: 'A' }, { id: 'B' }]
+    };
+    deepfreeze(state);
+
+    OB.App.State.Ticket.Utils.newTicket = jest
+      .fn()
+      .mockReturnValue({ id: 'D' });
+
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticket.id).toEqual('C');
+    expect(result.ticketList).toEqual([]);
+
+    delete OB.App.State.Ticket.Utils.newTicket;
+  });
+
+  it('keeps current ticket when list is not empty and ticket is not present in the list to delete but another ticket from the list is', () => {
+    const state = {
+      Ticket: { id: 'A' },
+      TicketList: [{ id: 'B' }, { id: 'C' }]
+    };
+    const payload = {
+      businessPartner: { id: 'BP1' },
+      multiTicketList: [{ id: 'B' }, { id: 'C' }]
+    };
+    deepfreeze(state);
+
+    OB.App.State.Ticket.Utils.newTicket = jest
+      .fn()
+      .mockReturnValue({ id: 'D' });
+
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticket.id).toEqual('A');
+    expect(result.ticketList).toEqual([]);
+
+    delete OB.App.State.Ticket.Utils.newTicket;
+  });
+
+  it('creates new ticket when list is not empty and ticket and every ticket from the list are present in the list to delete', () => {
+    const state = {
+      Ticket: { id: 'A' },
+      TicketList: [{ id: 'B' }, { id: 'C' }]
+    };
+    const payload = {
+      businessPartner: { id: 'BP1' },
+      multiTicketList: [{ id: 'A' }, { id: 'B' }, { id: 'C' }]
+    };
+    deepfreeze(state);
+
+    OB.App.State.Ticket.Utils.newTicket = jest
+      .fn()
+      .mockReturnValue({ id: 'D' });
+
+    const result = removeCurrentTicket(state.TicketList, state.Ticket, payload);
+    expect(result.ticket.id).toEqual('D');
+    expect(result.ticketList).toEqual([]);
+
+    delete OB.App.State.Ticket.Utils.newTicket;
+  });
 });

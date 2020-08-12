@@ -1107,7 +1107,7 @@
      * @returns {object} Ticket payment status.
      */
     getPaymentStatus(ticket, payload) {
-      if (payload.isMultiTicket) {
+      if (payload.multiTicketList) {
         const { total, payment } = ticket;
         return {
           total: OB.I18N.formatCurrency(total),
@@ -1129,6 +1129,7 @@
           payments: ticket.payments
         };
       }
+
       const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
       const isReversal = ticket.payments.some(
         payment => payment.reversedPaymentId
