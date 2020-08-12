@@ -54,7 +54,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     if (newTicketWithPayment.amountToLayaway != null) {
       newTicketWithPayment.amountToLayaway = OB.DEC.sub(
         newTicketWithPayment.amountToLayaway,
-        paymentLine.get('origAmount')
+        paymentLine.origAmount
       );
     }
     return newTicketWithPayment;

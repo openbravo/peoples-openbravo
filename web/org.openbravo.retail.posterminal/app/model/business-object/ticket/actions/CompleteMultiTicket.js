@@ -142,12 +142,18 @@
       let newPayload = { ...payload };
 
       newPayload.multiTicketList = newPayload.multiTickets.multiOrdersList.map(
-        multiTicket =>
-          globalState.Ticket.id === multiTicket.id
-            ? globalState.Ticket
-            : globalState.TicketList.find(
-                ticket => ticket.id === multiTicket.id
-              )
+        multiTicket => {
+          const newMultiTicket =
+            globalState.Ticket.id === multiTicket.id
+              ? globalState.Ticket
+              : globalState.TicketList.find(
+                  ticket => ticket.id === multiTicket.id
+                );
+          return {
+            ...newMultiTicket,
+            amountToLayaway: multiTicket.amountToLayaway
+          };
+        }
       );
 
       // eslint-disable-next-line no-restricted-syntax
