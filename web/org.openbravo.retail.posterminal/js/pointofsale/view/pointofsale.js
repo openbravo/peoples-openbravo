@@ -1206,6 +1206,7 @@ enyo.kind({
                 currentReceipt.trigger('forceChangeTotal');
               }
             }
+            currentReceipt.trigger('updatePending');
             finalCallback(true);
           })
           .catch(OB.App.View.ActionCanceledUIHandler.handle)
