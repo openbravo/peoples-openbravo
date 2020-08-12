@@ -151,6 +151,7 @@
                 );
           return {
             ...newMultiTicket,
+            orderType: multiTicket.orderType,
             amountToLayaway: multiTicket.amountToLayaway
           };
         }
