@@ -1145,7 +1145,8 @@ enyo.kind({
           'terminal'
         ).businessPartner;
 
-        args.receipt.set('preventServicesUpdate', true);
+        const currentReceipt = OB.MobileApp.model.receipt;
+        currentReceipt.set('preventServicesUpdate', true);
 
         const beforeAddTicket = OB.App.State.getState().Ticket;
 
@@ -1160,9 +1161,9 @@ enyo.kind({
           ]
         })
           .then(() => {
-            args.receipt.unset('preventServicesUpdate');
-            OB.UTIL.handlePriceRuleBasedServices(args.receipt);
-            args.receipt.trigger('paintTaxes'); // refresh the Tax breakdown
+            currentReceipt.unset('preventServicesUpdate');
+            OB.UTIL.handlePriceRuleBasedServices(currentReceipt);
+            currentReceipt.trigger('paintTaxes'); // refresh the Tax breakdown
 
             if (OB.UI.MultiColumn.isSingleColumn()) {
               OB.UTIL.showSuccess(
@@ -1186,30 +1187,30 @@ enyo.kind({
               !newLine.splitline &&
               newLine.product.productType !== 'S'
             ) {
-              args.receipt.trigger(
+              currentReceipt.trigger(
                 'showProductList',
-                args.receipt.get('lines').get(newLine.id),
+                currentReceipt.get('lines').get(newLine.id),
                 'mandatory'
               );
             }
 
             if (newLine) {
               // force trigger updateView to execute OBPOS_RenderOrderLine hooks
-              args.receipt
+              currentReceipt
                 .get('lines')
                 .get(newLine.id)
                 .trigger('updateView');
               if (afterAddTicket.grossAmount === beforeAddTicket.grossAmount) {
                 // a new line has been added with total 0, the 'onChangeTotal' event is not being fired in this case
                 // trigger the 'forceChangeTotal' to force the 'checkout' button to be enabled
-                args.receipt.trigger('forceChangeTotal');
+                currentReceipt.trigger('forceChangeTotal');
               }
             }
             finalCallback(true);
           })
           .catch(OB.App.View.ActionCanceledUIHandler.handle)
           .finally(() => {
-            args.receipt.unset('preventServicesUpdate');
+            currentReceipt.unset('preventServicesUpdate');
           });
       }
     );
