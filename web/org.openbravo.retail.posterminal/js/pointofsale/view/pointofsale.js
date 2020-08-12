@@ -1214,7 +1214,13 @@ enyo.kind({
             currentReceipt.trigger('updatePending');
             finalCallback(true);
           })
-          .catch(OB.App.View.ActionCanceledUIHandler.handle)
+          .catch(error => {
+            const epcCode = attrs.obposEpccode;
+            if (OB.UTIL.RfidController.isRfidConfigured() && epcCode) {
+              OB.UTIL.RfidController.removeEpc(epcCode);
+            }
+            OB.App.View.ActionCanceledUIHandler.handle(error);
+          })
           .finally(() => {
             currentReceipt.unset('preventServicesUpdate');
           });
