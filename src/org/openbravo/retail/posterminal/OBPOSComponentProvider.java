@@ -328,6 +328,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-logic/pack/ProductPack");
     appDependency.add("model/business-logic/pack/ProductPackProvider");
     appDependency.add("model/business-logic/pack/Pack");
+    appDependency.add("model/business-logic/service/ServicesFilter");
     // Business-Object
     appDependency.add("model/business-object/document-sequence/DocumentSequence");
     appDependency.add("model/business-object/document-sequence/DocumentSequenceUtils");

@@ -25,6 +25,7 @@ global.OB = {
     Request: { mobileServiceRequest: jest.fn() },
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
     SpecialCharacters: { bullet: jest.fn() },
+    StandardFilters: { Services: { apply: jest.fn() } },
     StateBackwardCompatibility: { setProperties: jest.fn() },
     TerminalProperty: { get: jest.fn() },
     View: { DialogUIHandler: { inputData: jest.fn() } }
@@ -39,8 +40,7 @@ global.OB = {
     formats: { qtyEdition: '#0.###' }
   },
   UTIL: {
-    HookManager: { registerHook: jest.fn() },
-    servicesFilter: jest.fn()
+    HookManager: { registerHook: jest.fn() }
   },
   POS: {
     hwserver: {
@@ -205,7 +205,9 @@ describe('addProduct preparation', () => {
       Promise.resolve({ result: 10 })
     );
     OB.App.StockChecker.hasStock = jest.fn().mockResolvedValue(true);
-    OB.UTIL.servicesFilter.mockResolvedValue(new OB.App.Class.Criteria());
+    OB.App.StandardFilters.Services.apply.mockResolvedValue(
+      new OB.App.Class.Criteria()
+    );
     OB.App.TerminalProperty.get.mockImplementation(property => {
       if (property === 'productStatusList') {
         return [
