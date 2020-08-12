@@ -566,7 +566,7 @@ enyo.kind({
           ticketId: orderState.id
         });
         // order.save();
-        selectedMultiOrders.push(order);
+        selectedMultiOrders.unshift(order);
         addOrdersToOrderList();
       } else {
         process.exec(
@@ -606,7 +606,6 @@ enyo.kind({
                   (order.get('isPaid') || order.get('isLayaway')) &&
                   order.getPayment() >= order.getGross()
                 ) {
-                  OB.Dal.remove(order);
                   alreadyPaidOrders.push(order);
                   alreadyPaidOrdersDocNo = alreadyPaidOrdersDocNo.concat(
                     ' ' + order.get('documentNo')
@@ -619,7 +618,7 @@ enyo.kind({
                   OB.DATA.OrderTaxes(order);
                   order.set('belongsToMultiOrder', true);
                   order.calculateReceipt(function() {
-                    selectedMultiOrders.push(order);
+                    selectedMultiOrders.unshift(order);
                     addOrdersToOrderList();
                   });
                 }

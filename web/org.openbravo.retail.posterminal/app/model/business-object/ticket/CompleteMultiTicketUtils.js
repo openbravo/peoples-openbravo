@@ -1,5 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-loop-func */
 /*
  ************************************************************************************
  * Copyright (C) 2020 Openbravo S.L.U.
@@ -9,22 +7,19 @@
  ************************************************************************************
  */
 /**
- * @fileoverview Define utility functions for the Complete Ticket action
+ * @fileoverview Define utility functions for the Complete MultiTicket action
  */
 
 OB.App.StateAPI.Ticket.registerUtilityFunctions({
   /**
-   * Set needed properties when completing a ticket.
+   * Add a payment to a ticket
    *
-   * @param {Ticket[]} ticketList - The ticket being completed
-   * @param {object} object - The calculation payload, which include:
-   *             * payments - Terminal id
-   *             * changePayments - Approvals to add to the ticket
-   *             * considerPrepaymentAmount - Approvals to add to the ticket
-   *             * terminalPayments - Approvals to add to the ticket
-   *             * index -
+   * @param {Ticket[]} ticketList - The ticket to add the payment
+   * @param {object} paymentLine - The payment to be added
+   * @param {object} terminal - Terminal object to use it's attributes
+   * @param {object[]} terminalPayments - Payments of the terminal for amount conversions
    *
-   * @returns {Ticket[]} The new TicketList but with payments included.
+   * @returns {Ticket} The ticket with the payment added
    */
   addPaymentLine(newTicket, paymentLine, terminal, terminalPayments) {
     let newTicketWithPayment = { ...newTicket };
@@ -61,15 +56,16 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   /**
-   * Set needed properties when completing a ticket.
+   * Add payments between checked tickets
    *
-   * @param {Ticket[]} ticketList - The ticket being completed
-   * @param {object} object - The calculation payload, which include:
-   *             * payments - Terminal id
+   * @param {Ticket[]} checkedTicketList - Checked TicketList from Pay Open Tickets
+   * @param {object} ticketListPayload - The payload, which include:
+   *             * payments - Payments added to be shared
    *             * changePayments - Approvals to add to the ticket
-   *             * considerPrepaymentAmount - Approvals to add to the ticket
-   *             * terminalPayments - Approvals to add to the ticket
-   *             * index -
+   *             * considerPrepaymentAmount - True by default to consider prePayments
+   *             * terminal - Terminal object to use it's attributes
+   *             * terminalPayments - Payments of the terminal for amount conversions
+   *             * index - Index of payments to continue sharing between tickets (in case not all payments shared)
    *
    * @returns {Ticket[]} The new TicketList but with payments included.
    */
@@ -153,7 +149,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
                   terminalPayments
                 );
               } else {
-                // Get part of the payment and go with the next order
+                // Get part of the payment and go with the next ticket
                 const amountToPayForeign = OB.DEC.mul(
                   amountToPay,
                   paymentMethod.mulrate,
@@ -176,7 +172,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
                 break;
               }
             } else {
-              // This order is already paid, go to the next order
+              // This ticket is already paid, go to the next ticket
               break;
             }
           }
@@ -185,10 +181,12 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       return newTicket;
     });
 
+    // If payments are not totally shared between tickets we need to iterate again tickets to add them as overpayment, change...
     if (index < payments.length && considerPrepaymentAmount) {
-      ticketListPayload.paymentsIndex = index;
-      ticketListPayload.considerPrepaymentAmount = false;
-      this.setPaymentsToReceipts(checkedTicketList, ticketListPayload);
+      const ticketListPayloadRecursive = { ...ticketListPayload };
+      ticketListPayloadRecursive.paymentsIndex = index;
+      ticketListPayloadRecursive.considerPrepaymentAmount = false;
+      this.setPaymentsToReceipts(checkedTicketList, ticketListPayloadRecursive);
     }
 
     return ticketListWithPayments;
