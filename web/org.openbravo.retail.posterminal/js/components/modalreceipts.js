@@ -159,9 +159,7 @@ enyo.kind({
     } else {
       this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     }
-    this.$.total.setContent(
-      OB.I18N.formatCurrency(this.model.get('grossAmount'))
-    );
+    this.$.total.setContent(OB.I18N.formatCurrency(this.model.printTotal()));
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
       listReceiptLine: this
     });
