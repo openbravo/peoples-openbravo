@@ -640,7 +640,6 @@
                 )
                 .setOrderMode();
             }
-
             // Focus on scanning window
             OB.UTIL.setScanningFocus(true);
 

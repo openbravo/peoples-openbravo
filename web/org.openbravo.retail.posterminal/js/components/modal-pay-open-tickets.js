@@ -124,6 +124,7 @@ enyo.kind({
       me = this;
 
     totalData = totalData.concat(OB.App.OpenTicketList.getAllTickets());
+
     totalData.forEach(function(order) {
       if (
         order.lines.length === 0 ||
@@ -134,6 +135,15 @@ enyo.kind({
       ) {
         popedElements.push(order);
       } else {
+        if (
+          !OB.MobileApp.model.get('connectedToERP') ||
+          OB.MobileApp.model.hasPermission(
+            'OBPOS_SelectCurrentTicketsOnPaidOpen',
+            true
+          )
+        ) {
+          order.receiptSelected = true;
+        }
         popedElements.push(order);
         openedOrders.push(me.createOpenedOrder(order));
       }
@@ -263,11 +273,15 @@ enyo.kind({
       documentStatus: 'DR',
       orderDate: order.orderDate,
       creationDate: order.orderDate,
-      totalamount: order.grossAmount,
-      businessPartnerName: order.businessPartner.name,
+      totalamount: order.grossAmount || order.gross,
+      businessPartnerName: order.businessPartner
+        ? order.businessPartner.name
+        : order.bp.name,
       organization: order.organization,
       documentNo: order.documentNo,
-      businessPartner: order.businessPartner.id,
+      businessPartner: order.businessPartner
+        ? order.businessPartner.id
+        : order.bp.id,
       externalBusinessPartner: order.externalBusinessPartner
         ? order.externalBusinessPartner
         : null,
@@ -276,8 +290,8 @@ enyo.kind({
         : null,
       orderDateFrom: order.orderDate,
       orderDateTo: order.orderDate,
-      totalamountFrom: order.grossAmount,
-      totalamountTo: order.grossAmount,
+      totalamountFrom: order.grossAmount || order.gross,
+      totalamountTo: order.grossAmount || order.gross,
       orderType: order.isLayaway ? 'LAY' : 'DR',
       iscancelled: false,
       store:
@@ -734,7 +748,7 @@ enyo.kind({
             if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
               iter.set('receiptSelected', true);
               openOrder = me.$.body.$.receiptsForPayOpenTicketsList.createOpenedOrder(
-                iter
+                JSON.parse(JSON.stringify(iter))
               );
               me.$.body.$.receiptsForPayOpenTicketsList.receiptList.add(
                 openOrder
