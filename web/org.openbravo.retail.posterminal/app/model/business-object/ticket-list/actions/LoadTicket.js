@@ -12,11 +12,7 @@
  * and enqueues the active ticket into the list
  */
 (function LoadTicketActions() {
-  function loadTicketAndEnqueueCurrentById(
-    state,
-    ticketToLoadId,
-    enqueueCurrent
-  ) {
+  function loadTicketById(state, ticketToLoadId) {
     if (ticketToLoadId && state.Ticket.id === ticketToLoadId) {
       return state;
     }
@@ -34,33 +30,17 @@
     newState.TicketList = newState.TicketList.filter(
       ticket => ticket.id !== ticketToLoadId
     );
-    if (enqueueCurrent) {
-      newState.TicketList.unshift({ ...newState.Ticket });
-    }
+    newState.TicketList = [{ ...newState.Ticket }, ...newState.TicketList];
     newState.Ticket = newCurrentTicket;
 
     return newState;
   }
 
   OB.App.StateAPI.Global.registerAction('loadTicket', (state, payload) => {
-    const ticketToLoadId = payload.ticket.id;
-    const enqueueCurrent =
-      payload.enqueueCurrent != null ? payload.enqueueCurrent : true;
-    return loadTicketAndEnqueueCurrentById(
-      state,
-      ticketToLoadId,
-      enqueueCurrent
-    );
+    return loadTicketById(state, payload.ticket.id);
   });
 
   OB.App.StateAPI.Global.registerAction('loadTicketById', (state, payload) => {
-    const ticketToLoadId = payload.id;
-    const enqueueCurrent =
-      payload.enqueueCurrent != null ? payload.enqueueCurrent : true;
-    return loadTicketAndEnqueueCurrentById(
-      state,
-      ticketToLoadId,
-      enqueueCurrent
-    );
+    return loadTicketById(state, payload.id);
   });
 })();
