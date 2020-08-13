@@ -2186,9 +2186,18 @@ enyo.kind({
         .get('multiOrders')
         .get('multiOrdersList')
         .remove(inEvent.order);
-      if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
-        me.model.get('orderList').remove(inEvent.order);
-        await OB.App.State.Global.removeTicket({ id: inEvent.order.get('id') });
+      if (inEvent && inEvent.order) {
+        if (inEvent.order.get('loadedFromServer')) {
+          me.model.get('orderList').remove(inEvent.order);
+          await OB.App.State.Global.removeTicket({
+            id: inEvent.order.get('id')
+          });
+        } else {
+          await OB.App.State.Global.checkTicketForPayOpenTickets({
+            ticketId: inEvent.order.get('id'),
+            checked: false
+          });
+        }
       }
       return true;
     } else {

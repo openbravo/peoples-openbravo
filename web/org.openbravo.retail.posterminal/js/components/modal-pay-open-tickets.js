@@ -563,7 +563,8 @@ enyo.kind({
 
         order.set('checked', true);
         await OB.App.State.Global.checkTicketForPayOpenTickets({
-          ticketId: orderState.id
+          ticketId: orderState.id,
+          checked: true
         });
         // order.save();
         selectedMultiOrders.unshift(order);

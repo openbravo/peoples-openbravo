@@ -8,7 +8,7 @@
  */
 
 /**
- * @fileoverview Mark as checked the selected tickets in pay open tickets window.
+ * @fileoverview Mark as checked/unchecked the selected tickets in pay open tickets window.
  * This is used for the logic to mantain the seleted tickets, after press F5 in the pay open tickets window
  */
 // eslint-disable-next-line no-unused-vars
@@ -17,12 +17,12 @@ OB.App.StateAPI.Global.registerAction(
   (state, payload) => {
     const newState = { ...state };
     if (state.Ticket.id === payload.ticketId) {
-      newState.Ticket = { ...newState.Ticket, checked: true };
+      newState.Ticket = { ...newState.Ticket, checked: payload.checked };
     } else {
       newState.TicketList = [...newState.TicketList];
       newState.TicketList = newState.TicketList.map(ticket => {
         if (ticket.id === payload.ticketId) {
-          return { ...ticket, checked: true };
+          return { ...ticket, checked: payload.checked };
         }
         return ticket;
       });
