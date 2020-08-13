@@ -3421,12 +3421,16 @@ enyo.kind({
     }
 
     const isMultiOrder = !this.model.get('leftColumnViewManager').isOrder();
-    if (!isMultiOrder) {
+    if (isMultiOrder) {
+      OB.MobileApp.model.receipt.runCompleteTicket(
+        OB.App.State.Global.completeMultiCreditTicket,
+        'completeReceipt'
+      );
+    } else {
       OB.MobileApp.model.receipt.runCompleteTicket(
         OB.App.State.Global.completeCreditTicket,
         'completeReceipt'
       );
-      return;
     }
   }
 });

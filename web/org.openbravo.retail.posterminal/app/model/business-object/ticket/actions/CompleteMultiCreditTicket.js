@@ -8,12 +8,12 @@
  */
 
 /**
- * @fileoverview defines the Ticket global action that completes multiple tickets and moves them to messages in the state
+ * @fileoverview defines the Ticket global action that completes multiple credit tickets and moves them to messages in the state
  */
 
 (() => {
   OB.App.StateAPI.Global.registerAction(
-    'completeMultiTicket',
+    'completeMultiCreditTicket',
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
       let newTicketList = [...newGlobalState.TicketList];
@@ -22,16 +22,20 @@
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
 
-      const multiTicketList = OB.App.State.Ticket.Utils.setPaymentsToReceipts(
-        payload.multiTicketList,
-        payload
-      );
-
-      multiTicketList.forEach(multiTicket => {
+      payload.multiTicketList.forEach(multiTicket => {
         let newMultiTicket = { ...multiTicket };
 
         // Set complete ticket properties
-        newMultiTicket.completeTicket = newMultiTicket.amountToLayaway == null;
+        newMultiTicket.payOnCredit = true;
+        newMultiTicket.businessPartner.creditUsed += OB.DEC.mul(
+          OB.DEC.abs(
+            OB.DEC.sub(
+              newMultiTicket.grossAmount,
+              newMultiTicket.paymentWithSign
+            )
+          ),
+          Math.sign(newMultiTicket.grossAmount)
+        );
         newMultiTicket = OB.App.State.Ticket.Utils.completeTicket(
           newMultiTicket,
           payload
@@ -137,7 +141,7 @@
     }
   );
 
-  OB.App.StateAPI.Global.completeMultiTicket.addActionPreparation(
+  OB.App.StateAPI.Global.completeMultiCreditTicket.addActionPreparation(
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
@@ -164,26 +168,10 @@
           multiTicket,
           newPayload
         );
-        // eslint-disable-next-line no-await-in-loop
-        newPayload = await OB.App.State.Ticket.Utils.checkAnonymousLayaway(
-          multiTicket,
-          newPayload
-        );
       }
 
-      newPayload = await OB.App.State.Ticket.Utils.checkNegativePayments(
-        newPayload.multiTickets,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.checkExtraPayments(
-        newPayload.multiTickets,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.checkPrePayments(
-        newPayload.multiTickets,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.checkOverPayments(
+      // eslint-disable-next-line no-await-in-loop
+      newPayload = await OB.App.State.Ticket.Utils.checkBusinessPartnerCredit(
         newPayload.multiTickets,
         newPayload
       );
