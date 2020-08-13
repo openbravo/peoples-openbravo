@@ -611,9 +611,9 @@
             discountRules: OB.Discounts.Pos.ruleImpls,
             bpSets: OB.Discounts.Pos.bpSets,
             taxRules: OB.Taxes.Pos.ruleImpls,
-            multiTickets: JSON.parse(
-              JSON.stringify(OB.MobileApp.model.multiOrders)
-            )
+            multiTickets: OB.MobileApp.model.multiOrders
+              ? JSON.parse(JSON.stringify(OB.MobileApp.model.multiOrders))
+              : undefined
           });
 
           if (actionName !== 'deleteCurrentOrder') {
