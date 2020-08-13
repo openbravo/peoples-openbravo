@@ -567,6 +567,10 @@
     },
 
     runCompleteTicket: async function(completeTicketAction, actionName) {
+      const isMultiTicket =
+        completeTicketAction === OB.App.State.Global.completeMultiTicket;
+      const isDeleteTicket =
+        completeTicketAction === OB.App.State.Global.deleteTicket;
       const runCompleteTicketAction = async receipt => {
         try {
           OB.App.StateBackwardCompatibility.getInstance(
@@ -616,7 +620,7 @@
               : undefined
           });
 
-          if (actionName !== 'deleteCurrentOrder') {
+          if (!isDeleteTicket) {
             // Open drawer
             receipt.trigger('checkOpenDrawer');
 
@@ -626,14 +630,18 @@
               OB.UTIL.RfidController.updateEpcBuffers();
             }
 
+            // Multi ticket
+            if (isMultiTicket) {
+              OB.MobileApp.model.multiOrders.resetValues();
+              OB.MobileApp.view.$.containerWindow
+                .getRoot()
+                .$.multiColumn.$.leftPanel.$.receiptview.model.get(
+                  'leftColumnViewManager'
+                )
+                .setOrderMode();
+            }
+
             // Focus on scanning window
-            OB.MobileApp.model.multiOrders.resetValues();
-            OB.MobileApp.view.$.containerWindow
-              .getRoot()
-              .$.multiColumn.$.leftPanel.$.receiptview.model.get(
-                'leftColumnViewManager'
-              )
-              .setOrderMode();
             OB.UTIL.setScanningFocus(true);
 
             // FIXME: Move to action
@@ -658,7 +666,7 @@
       const completeTicketExecution = OB.UTIL.ProcessController.start(
         actionName
       );
-      if (actionName === 'deleteCurrentOrder') {
+      if (isDeleteTicket) {
         me.set('preventServicesUpdate', true);
         const receipt = OB.UTIL.clone(me);
         await runCompleteTicketAction(receipt);
@@ -667,8 +675,6 @@
         return;
       }
 
-      const isMultiTicket =
-        completeTicketAction === OB.App.State.Global.completeMultiTicket;
       const receiptsForPreOrderSave = isMultiTicket
         ? OB.MobileApp.model.multiOrders.get('multiOrdersList').models
         : [me];
