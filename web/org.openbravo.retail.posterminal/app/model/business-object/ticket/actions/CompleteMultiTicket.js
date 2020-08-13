@@ -66,19 +66,21 @@
         );
 
         // Invoice generation
-        newMultiTicket = OB.App.State.Ticket.Utils.generateInvoice(
-          newMultiTicket,
-          payload
-        );
-        if (newMultiTicket.calculatedInvoice) {
-          ({
-            ticket: newMultiTicket.calculatedInvoice,
-            documentSequence: newDocumentSequence
-          } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
-            newMultiTicket.calculatedInvoice,
-            newDocumentSequence,
+        if (newMultiTicket.completeTicket) {
+          newMultiTicket = OB.App.State.Ticket.Utils.generateInvoice(
+            newMultiTicket,
             payload
-          ));
+          );
+          if (newMultiTicket.calculatedInvoice) {
+            ({
+              ticket: newMultiTicket.calculatedInvoice,
+              documentSequence: newDocumentSequence
+            } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
+              newMultiTicket.calculatedInvoice,
+              newDocumentSequence,
+              payload
+            ));
+          }
         }
 
         // Cashup update
