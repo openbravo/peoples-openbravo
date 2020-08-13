@@ -328,6 +328,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-logic/pack/ProductPack");
     appDependency.add("model/business-logic/pack/ProductPackProvider");
     appDependency.add("model/business-logic/pack/Pack");
+    appDependency.add("model/business-logic/service/ServicesFilter");
     // Business-Object
     appDependency.add("model/business-object/document-sequence/DocumentSequence");
     appDependency.add("model/business-object/document-sequence/DocumentSequenceUtils");
@@ -347,8 +348,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/CalculateTotalsModelHook");
     appDependency.add("model/business-object/ticket/actions/AddProduct");
     appDependency.add("model/business-object/ticket/actions/DisplayTotal");
-    appDependency.add("model/business-object/ticket/actions/Print");
-    appDependency.add("model/business-object/ticket/actions/PrintLine");
     appDependency.add("model/business-object/ticket/actions/SplitLine");
     appDependency.add("model/business-object/ticket/actions/SetLinePrice");
     appDependency.add("model/business-object/ticket/actions/AddByTotalPromotion");
@@ -370,6 +369,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
     // Synchronization Buffer
     appDependency.add("model/synchronization-buffer/HardwareManagerEndpoint");
+
+    // External Device
+    appDependency.add("external-device/actions/Print");
+    appDependency.add("external-device/actions/PrintLine");
+    appDependency.add("external-device/actions/PrintWelcome");
 
     for (final String resource : appDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

@@ -945,12 +945,10 @@
       }
     } else {
       // non-high volumes: indexedDB
-      let criteria = new OB.App.Class.Criteria();
-      criteria = await OB.UTIL.servicesFilter(
-        criteria,
+      const criteria = await OB.App.StandardFilters.Services.apply({
         productId,
         productCategory
-      );
+      });
       criteria.criterion('obrdmIsdeliveryservice', false);
       try {
         const products = await OB.App.MasterdataModels.Product.find(
