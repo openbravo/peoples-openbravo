@@ -74,6 +74,16 @@ public class AgingDao {
   public FieldProvider[] getOpenReceivablesAgingSchedule(ConnectionProvider connectionProvider,
       String strcBpartnerId, String strAccSchema, Date currentDate, String strcolumn1,
       String strcolumn2, String strcolumn3, String strcolumn4, String strOrg,
+      Set<String> organizations, String recOrPay, boolean showDoubtfulDebt, boolean excludeVoids)
+      throws IOException, ServletException {
+    return getOpenReceivablesAgingSchedule(connectionProvider, strcBpartnerId, strAccSchema,
+        currentDate, strcolumn1, strcolumn2, strcolumn3, strcolumn4, strOrg, organizations,
+        recOrPay, showDoubtfulDebt, excludeVoids, false);
+  }
+
+  public FieldProvider[] getOpenReceivablesAgingSchedule(ConnectionProvider connectionProvider,
+      String strcBpartnerId, String strAccSchema, Date currentDate, String strcolumn1,
+      String strcolumn2, String strcolumn3, String strcolumn4, String strOrg,
       Set<String> organizations, String recOrPay, boolean showDoubtfulDebt, boolean excludeVoids,
       boolean excludeReverseds) throws IOException, ServletException {
 
@@ -214,6 +224,17 @@ public class AgingDao {
    * This method returns an array of fieldProviders with the necessary information to print the
    * Aging Schedule Details report.
    */
+
+  public FieldProvider[] getOpenReceivablesAgingScheduleDetails(
+      ConnectionProvider connectionProvider, Date currentDate, SimpleDateFormat dateFormat,
+      Currency convCurrency, Set<String> organizations, String recOrPay, String strcolumn1,
+      String strcolumn2, String strcolumn3, String strcolumn4, String strcBpartnerId,
+      boolean showDoubtfulDebt, Boolean excludeVoid) throws IOException, ServletException {
+    return getOpenReceivablesAgingScheduleDetails(connectionProvider, currentDate, dateFormat,
+        convCurrency, organizations, recOrPay, strcolumn1, strcolumn2, strcolumn3, strcolumn4,
+        strcBpartnerId, showDoubtfulDebt, excludeVoid, false);
+  }
+
   public FieldProvider[] getOpenReceivablesAgingScheduleDetails(
       ConnectionProvider connectionProvider, Date currentDate, SimpleDateFormat dateFormat,
       Currency convCurrency, Set<String> organizations, String recOrPay, String strcolumn1,
