@@ -25,7 +25,9 @@
 
   OB.UTIL.TicketListUtils.loadTicket = async function(ticketModel) {
     await OB.UTIL.TicketListUtils.loadStateTicket(
-      JSON.parse(JSON.stringify(ticketModel.toJSON()))
+      OB.App.StateBackwardCompatibility.getInstance('Ticket').toStateObject(
+        ticketModel
+      )
     );
     OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
   };

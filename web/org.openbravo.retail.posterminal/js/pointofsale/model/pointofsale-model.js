@@ -83,24 +83,24 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       },
                       function(args) {
                         reCalculateReceipt = args.reCalculateReceipt;
-                        OB.UTIL.TicketListUtils.loadTicketById(
-                          currentOrder.id
-                        ).then(() => {
-                          if (reCalculateReceipt) {
-                            OB.MobileApp.model.receipt.calculateGrossAndSave();
-                          }
+                        OB.UTIL.TicketListUtils.loadTicket(currentOrder).then(
+                          () => {
+                            if (reCalculateReceipt) {
+                              OB.MobileApp.model.receipt.calculateGrossAndSave();
+                            }
 
-                          if (currentOrder.documentNo) {
-                            loadOrderStr =
-                              OB.I18N.getLabel('OBPOS_Order') +
-                              currentOrder.documentNo +
-                              OB.I18N.getLabel('OBPOS_Loaded');
-                            OB.UTIL.showAlert.display(
-                              loadOrderStr,
-                              OB.I18N.getLabel('OBPOS_Info')
-                            );
+                            if (currentOrder.documentNo) {
+                              loadOrderStr =
+                                OB.I18N.getLabel('OBPOS_Order') +
+                                currentOrder.documentNo +
+                                OB.I18N.getLabel('OBPOS_Loaded');
+                              OB.UTIL.showAlert.display(
+                                loadOrderStr,
+                                OB.I18N.getLabel('OBPOS_Info')
+                              );
+                            }
                           }
-                        });
+                        );
                       }
                     );
                   });
