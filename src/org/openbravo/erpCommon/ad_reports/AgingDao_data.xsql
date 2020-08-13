@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2017 Openbravo SLU
+ * All portions are Copyright (C) 2016-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -139,6 +139,8 @@
                 FROM   fin_payment_scheduledetail fpsd
                        INNER JOIN fin_payment_detail fpd ON fpsd.fin_payment_detail_id = fpd.fin_payment_detail_id
                        INNER JOIN fin_payment fp2 ON fpd.fin_payment_id = fp2.fin_payment_id
+                       LEFT JOIN fin_payment_schedule fpsi ON (fpsd.fin_payment_schedule_invoice = fpsi.fin_payment_schedule_id)
+                       LEFT JOIN c_invoice i ON (fpsi.c_invoice_id = i.c_invoice_id)
                 WHERE  (fp2.AD_Org_ID in ('1'))
                        AND (fp2.status IN ('1'))
                        AND Trunc(fp2.paymentdate) <= TO_DATE(?)
@@ -146,7 +148,8 @@
                        AND 2=2
                        AND fpsd.isactive = 'Y'
                        AND fpsd.iscanceled = 'N'
-                       AND fpsd.fin_payment_schedule_invoice IS NULL
+                       AND (fpsd.fin_payment_schedule_invoice IS NULL
+                            OR i.DATEINVOICED >= TO_DATE(?))
                        AND fpsd.fin_payment_schedule_order IS NOT NULL
                 ) P 
                 LEFT JOIN 
@@ -186,6 +189,7 @@
     <Parameter name="recOrPay"/>
     <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 2=2"><![CDATA[ AND fp2.C_BPARTNER_ID IN]]></Parameter>
     <Parameter name="excludeReverseds" type="none" optional="true" after="AND 2=2" text=" AND (fp2.fin_rev_payment_id is null AND NOT EXISTS (SELECT 1 FROM fin_payment WHERE fin_rev_payment_id = fp2.fin_payment_id))"/>
+    <Parameter name="asOfDate"/>
     <Parameter name="asOfDate"/>
     <Parameter name="paidStatus" type="replace" optional="true" after="OR ( fp1.status IN (" text="'1'"/>
     <Parameter name="pgLimit" type="argument" optional="true" after=") B"><![CDATA[LIMIT ]]></Parameter>
