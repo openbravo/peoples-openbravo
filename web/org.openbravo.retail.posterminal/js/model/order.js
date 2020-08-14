@@ -685,17 +685,18 @@
           const receipt = OB.UTIL.clone(me);
           await runCompleteTicketAction(receipt);
 
-          const receiptForPostSyncReceipt = isMultiTicket
-            ? OB.MobileApp.model.multiOrders.get('multiOrdersList').models
-            : receipt;
           OB.UTIL.HookManager.executeHooks(
             isMultiTicket
               ? 'OBPOS_PostSyncMultiReceipt'
               : 'OBPOS_PostSyncReceipt',
-            {
-              receipt: receiptForPostSyncReceipt,
-              syncSuccess: true
-            },
+            isMultiTicket
+              ? {
+                  receipts: OB.MobileApp.model.multiOrders.get(
+                    'multiOrdersList'
+                  ).models,
+                  syncSuccess: true
+                }
+              : { receipt, syncSuccess: true },
             function(args) {
               OB.UTIL.ProcessController.finish(
                 actionName,
