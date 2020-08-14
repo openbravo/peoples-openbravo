@@ -180,4 +180,12 @@ describe('Document Sequence Utils getInvoiceSequenceName method', () => {
     );
     expect(sequenceName).toEqual('simplifiedreturninvoiceslastassignednum');
   });
+
+  it('should return custom sequence name if defined', () => {
+    const ticket = deepfreeze({ obposSequencename: 'custom' });
+    const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
+      ticket
+    );
+    expect(sequenceName).toEqual('custom');
+  });
 });

@@ -70,6 +70,10 @@
      * @returns {string} The order sequence name.
      */
     getOrderSequenceName(ticket, payload) {
+      if (ticket.obposSequencename) {
+        return ticket.obposSequencename;
+      }
+
       const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
       if (ticket.isQuotation && payload.terminal.quotationDocNoPrefix) {
         return 'quotationslastassignednum';
@@ -92,6 +96,10 @@
      * @returns {string} The invoice sequence name.
      */
     getInvoiceSequenceName(ticket, payload) {
+      if (ticket.obposSequencename) {
+        return ticket.obposSequencename;
+      }
+
       const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
       if (
         !ticket.fullInvoice &&

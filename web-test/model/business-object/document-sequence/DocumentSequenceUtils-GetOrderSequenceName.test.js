@@ -120,4 +120,12 @@ describe('Document Sequence Utils getOrderSequenceName method', () => {
     );
     expect(sequenceName).toEqual('returnslastassignednum');
   });
+
+  it('should return custom sequence name if defined', () => {
+    const ticket = deepfreeze({ obposSequencename: 'custom' });
+    const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
+      ticket
+    );
+    expect(sequenceName).toEqual('custom');
+  });
 });
