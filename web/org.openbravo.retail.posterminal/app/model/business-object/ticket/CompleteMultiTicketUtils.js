@@ -12,50 +12,6 @@
 
 OB.App.StateAPI.Ticket.registerUtilityFunctions({
   /**
-   * Add a payment to a ticket
-   *
-   * @param {Ticket[]} ticketList - The ticket to add the payment
-   * @param {object} paymentLine - The payment to be added
-   * @param {object} terminal - Terminal object to use it's attributes
-   * @param {object[]} terminalPayments - Payments of the terminal for amount conversions
-   *
-   * @returns {Ticket} The ticket with the payment added
-   */
-  addPaymentLine(newTicket, paymentLine, terminal, terminalPayments) {
-    let newTicketWithPayment = { ...newTicket };
-    const prevChange = newTicketWithPayment.change;
-    newTicketWithPayment = OB.App.State.Ticket.Utils.generatePayment(
-      newTicketWithPayment,
-      {
-        payment: paymentLine,
-        terminal,
-        payments: terminalPayments
-      }
-    );
-    // Recalculate payment and paymentWithSign properties
-    const paidAmt = newTicketWithPayment.payments.reduce((total, p) => {
-      if (
-        p.isPrePayment ||
-        p.isReversePayment ||
-        !newTicketWithPayment.isNegative
-      ) {
-        return OB.DEC.add(total, p.origAmount);
-      }
-      return OB.DEC.sub(total, p.origAmount);
-    }, OB.DEC.Zero);
-    newTicketWithPayment.payment = OB.DEC.abs(paidAmt);
-    newTicketWithPayment.paymentWithSign = paidAmt;
-    newTicketWithPayment.change = prevChange;
-    if (newTicketWithPayment.amountToLayaway != null) {
-      newTicketWithPayment.amountToLayaway = OB.DEC.sub(
-        newTicketWithPayment.amountToLayaway,
-        paymentLine.origAmount
-      );
-    }
-    return newTicketWithPayment;
-  },
-
-  /**
    * Add payments between checked tickets
    *
    * @param {Ticket[]} checkedTicketList - Checked TicketList from Pay Open Tickets
@@ -70,7 +26,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * @returns {Ticket[]} The new TicketList but with payments included.
    */
 
-  setPaymentsToReceipts(checkedTicketList, ticketListPayload) {
+  sharePaymentsBetweenTickets(checkedTicketList, ticketListPayload) {
     const newTicketList = [...checkedTicketList];
     const { payments, changePayments } = ticketListPayload.multiTickets;
     const considerPrepaymentAmount =
@@ -79,7 +35,6 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         : true;
     const { terminal } = ticketListPayload;
     const terminalPayments = ticketListPayload.payments;
-    const me = this;
     let index;
     let ticketListWithPayments = newTicketList.map(function iterateTickets(
       ticket
@@ -104,12 +59,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
               payment.origAmount = OB.DEC.Zero;
               payment.amount = OB.DEC.Zero;
-              newTicket = me.addPaymentLine(
-                newTicket,
+              newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, {
                 paymentLine,
                 terminal,
                 terminalPayments
-              );
+              });
             } else {
               // Finished
               break;
@@ -141,12 +95,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
                 // Use all the remaining payment amount for this receipt
                 payment.origAmount = OB.DEC.Zero;
                 payment.amount = OB.DEC.Zero;
-                newTicket = me.addPaymentLine(
-                  newTicket,
+                newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, {
                   paymentLine,
                   terminal,
                   terminalPayments
-                );
+                });
               } else {
                 // Get part of the payment and go with the next ticket
                 const amountToPayForeign = OB.DEC.mul(
@@ -162,12 +115,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
                 paymentLine.origAmount = amountToPay;
                 paymentLine.amount = amountToPayForeign;
-                newTicket = me.addPaymentLine(
-                  newTicket,
+                newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, {
                   paymentLine,
                   terminal,
                   terminalPayments
-                );
+                });
                 break;
               }
             } else {
@@ -185,7 +137,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       const ticketListPayloadRecursive = { ...ticketListPayload };
       ticketListPayloadRecursive.paymentsIndex = index;
       ticketListPayloadRecursive.considerPrepaymentAmount = false;
-      ticketListWithPayments = this.setPaymentsToReceipts(
+      ticketListWithPayments = this.sharePaymentsBetweenTickets(
         checkedTicketList,
         ticketListPayloadRecursive
       );

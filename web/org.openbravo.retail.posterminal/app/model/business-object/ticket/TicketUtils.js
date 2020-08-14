@@ -1320,6 +1320,47 @@
       newTicket.payments = [...newTicket.payments, newPayment];
 
       return newTicket;
+    },
+    /**
+     * Add a payment to a ticket
+     *
+     * @param {Ticket[]} ticketList - The ticket to add the payment
+     * @param {object} paymentLine - The payment to be added
+     * @param {object} terminal - Terminal object to use it's attributes
+     * @param {object[]} terminalPayments - Payments of the terminal for amount conversions
+     *
+     * @returns {Ticket} The ticket with the payment added
+     */
+    addPayment(ticket, payload) {
+      let newTicketWithPayment = { ...ticket };
+      const { paymentLine, terminal, terminalPayments } = payload;
+      const prevChange = newTicketWithPayment.change;
+      newTicketWithPayment = this.generatePayment(newTicketWithPayment, {
+        payment: paymentLine,
+        terminal,
+        payments: terminalPayments
+      });
+      // Recalculate payment and paymentWithSign properties
+      const paidAmt = newTicketWithPayment.payments.reduce((total, p) => {
+        if (
+          p.isPrePayment ||
+          p.isReversePayment ||
+          !newTicketWithPayment.isNegative
+        ) {
+          return OB.DEC.add(total, p.origAmount);
+        }
+        return OB.DEC.sub(total, p.origAmount);
+      }, OB.DEC.Zero);
+      newTicketWithPayment.payment = OB.DEC.abs(paidAmt);
+      newTicketWithPayment.paymentWithSign = paidAmt;
+      newTicketWithPayment.change = prevChange;
+      if (newTicketWithPayment.amountToLayaway != null) {
+        newTicketWithPayment.amountToLayaway = OB.DEC.sub(
+          newTicketWithPayment.amountToLayaway,
+          paymentLine.origAmount
+        );
+      }
+      return newTicketWithPayment;
     }
   });
 })();

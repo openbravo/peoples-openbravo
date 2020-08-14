@@ -22,7 +22,7 @@
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
 
-      const multiTicketList = OB.App.State.Ticket.Utils.setPaymentsToReceipts(
+      const multiTicketList = OB.App.State.Ticket.Utils.sharePaymentsBetweenTickets(
         payload.multiTicketList,
         payload
       );
