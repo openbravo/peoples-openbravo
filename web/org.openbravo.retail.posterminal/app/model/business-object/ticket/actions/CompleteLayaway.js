@@ -177,10 +177,9 @@
 
   const checkInvoiceLayaway = async (ticket, payload) => {
     if (ticket.generateInvoice) {
-      // FIXME: Do not cancel the action, just show warning
-      // throw new OB.App.Class.ActionCanceled({
-      //   warningMsg: 'OBPOS_noInvoiceIfLayaway'
-      // });
+      OB.App.UserNotifier.notifyWarning({
+        message: 'OBPOS_noInvoiceIfLayaway'
+      });
     }
 
     return payload;
