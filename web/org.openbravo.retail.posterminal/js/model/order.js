@@ -568,7 +568,8 @@
 
     runCompleteTicket: async function(completeTicketAction, actionName) {
       const isMultiTicket =
-        completeTicketAction === OB.App.State.Global.completeMultiTicket;
+        completeTicketAction === OB.App.State.Global.completeMultiTicket ||
+        completeTicketAction === OB.App.State.Global.completeMultiCreditTicket;
       const isDeleteTicket =
         completeTicketAction === OB.App.State.Global.deleteTicket;
       const runCompleteTicketAction = async receipt => {
