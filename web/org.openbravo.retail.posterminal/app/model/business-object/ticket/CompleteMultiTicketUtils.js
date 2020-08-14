@@ -74,12 +74,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     const newTicketList = [...checkedTicketList];
     const { payments, changePayments } = ticketListPayload.multiTickets;
     const considerPrepaymentAmount =
-      ticketListPayload.considerPrepaymentAmount || true;
+      ticketListPayload.considerPrepaymentAmount != null
+        ? ticketListPayload.considerPrepaymentAmount
+        : true;
     const { terminal } = ticketListPayload;
     const terminalPayments = ticketListPayload.payments;
     const me = this;
     let index;
-    const ticketListWithPayments = newTicketList.map(function iterateTickets(
+    let ticketListWithPayments = newTicketList.map(function iterateTickets(
       ticket
     ) {
       let newTicket = { ...ticket };
@@ -92,10 +94,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         let paymentLine = {};
 
         if (payment.origAmount) {
-          if (
-            newTicketList.indexOf(newTicket) === newTicketList.length - 1 &&
-            !considerPrepaymentAmount
-          ) {
+          if (newTicketList.indexOf(ticket) === newTicketList.length - 1) {
             // Transfer everything
             newTicket.changePayments = changePayments;
             if (index < payments.length) {
@@ -182,11 +181,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     });
 
     // If payments are not totally shared between tickets we need to iterate again tickets to add them as overpayment, change...
-    if (index < payments.length && considerPrepaymentAmount) {
+    if (index < payments.length - 1 && considerPrepaymentAmount) {
       const ticketListPayloadRecursive = { ...ticketListPayload };
       ticketListPayloadRecursive.paymentsIndex = index;
       ticketListPayloadRecursive.considerPrepaymentAmount = false;
-      this.setPaymentsToReceipts(checkedTicketList, ticketListPayloadRecursive);
+      ticketListWithPayments = this.setPaymentsToReceipts(
+        checkedTicketList,
+        ticketListPayloadRecursive
+      );
     }
 
     return ticketListWithPayments;
