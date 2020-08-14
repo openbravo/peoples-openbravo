@@ -479,10 +479,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_C&RDeletePaymentsBody',
         messageParams: [
-          `${payment.name} (${OB.I18N.formatCurrencyWithSymbol(
-            payment.amount,
-            OB.App.TerminalProperty.get('terminal').symbol,
-            OB.App.TerminalProperty.get('terminal').currencySymbolAtTheRight
+          `${payment.name} (${OB.App.Locale.toStringWithCurrencySymbol(
+            payment.amount
           )})`
         ]
       });
@@ -610,11 +608,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         title: 'OBPOS_OverpaymentWarningTitle',
         message: 'OBPOS_OverpaymentWarningBody',
         messageParams: [
-          OB.I18N.formatCurrencyWithSymbol(
-            paymentStatus.overpayment,
-            OB.App.TerminalProperty.get('terminal').symbol,
-            OB.App.TerminalProperty.get('terminal').currencySymbolAtTheRight
-          )
+          OB.App.Locale.toStringWithCurrencySymbol(paymentStatus.overpayment)
         ]
       });
       if (!confirmation) {
