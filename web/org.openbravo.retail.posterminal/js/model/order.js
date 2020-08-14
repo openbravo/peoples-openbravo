@@ -9408,57 +9408,63 @@
       }
 
       function markOrderAsDeleted(model, orderList) {
+        let frozenReceipt = new OB.Model.Order();
+        OB.UTIL.clone(model, frozenReceipt);
+
         var creationDate;
-        if (model.get('creationDate')) {
-          creationDate = new Date(model.get('creationDate'));
+        if (frozenReceipt.get('creationDate')) {
+          creationDate = new Date(frozenReceipt.get('creationDate'));
         } else {
           creationDate = new Date();
         }
-        model.setIsCalculateGrossLockState(true);
-        model.set('creationDate', creationDate);
-        model.set('timezoneOffset', creationDate.getTimezoneOffset());
-        model.set('created', creationDate.getTime());
-        model.set('obposCreatedabsolute', OB.I18N.formatDateISO(creationDate));
-        model.set('obposIsDeleted', true);
+        frozenReceipt.setIsCalculateGrossLockState(true);
+        frozenReceipt.set('creationDate', creationDate);
+        frozenReceipt.set('timezoneOffset', creationDate.getTimezoneOffset());
+        frozenReceipt.set('created', creationDate.getTime());
+        frozenReceipt.set(
+          'obposCreatedabsolute',
+          OB.I18N.formatDateISO(creationDate)
+        );
+        frozenReceipt.set('obposIsDeleted', true);
         OB.info(
           'markOrderAsDeleted has set order with documentNo ' +
-            model.get('documentNo') +
+            frozenReceipt.get('documentNo') +
             ' and id ' +
-            model.get('id') +
+            frozenReceipt.get('id') +
             ' as obposIsDeleted to true'
         );
-        model.set('obposAppCashup', OB.App.State.getState().Cashup.id);
-        for (i = 0; i < model.get('lines').length; i++) {
-          model
+        frozenReceipt.set('obposAppCashup', OB.App.State.getState().Cashup.id);
+        for (i = 0; i < frozenReceipt.get('lines').length; i++) {
+          frozenReceipt
             .get('lines')
             .at(i)
             .set('obposIsDeleted', true);
-          model
+          frozenReceipt
             .get('lines')
             .at(i)
             .set('grossUnitPrice', 0);
-          model
+          frozenReceipt
             .get('lines')
             .at(i)
             .set('pricenet', 0);
-          model
+          frozenReceipt
             .get('lines')
             .at(i)
             .set('price', 0);
-          model
+          frozenReceipt
             .get('lines')
             .at(i)
             .set('standardPrice', 0);
-          model
+          frozenReceipt
             .get('lines')
             .at(i)
             .set('lineGrossAmount', 0);
-          model
+          frozenReceipt
             .get('lines')
             .at(i)
             .set('lineNetAmount', 0);
         }
-        model.get('approvals').forEach(function(approval) {
+        frozenReceipt.get('approvals').forEach(function(approval) {
           if (typeof approval.approvalType === 'object') {
             approval.approvalMessage = OB.I18N.getLabel(
               approval.approvalType.message,
@@ -9468,24 +9474,28 @@
           }
         });
         OB.Dal.transaction(async function(tx) {
-          await OB.MobileApp.model.setTicketDocumentNo(model);
+          await OB.MobileApp.model.setTicketDocumentNo(frozenReceipt);
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_PreSyncReceipt',
             {
-              receipt: model,
-              model: model,
+              receipt: frozenReceipt,
+              model: frozenReceipt,
               tx: tx
             },
             function(args) {
-              model.set('json', JSON.stringify(model.serializeToSaveJSON()));
-              model.set('hasbeenpaid', 'Y');
-              OB.Dal.saveInTransaction(tx, model, function() {
+              frozenReceipt.set(
+                'json',
+                JSON.stringify(frozenReceipt.serializeToSaveJSON())
+              );
+              frozenReceipt.set('hasbeenpaid', 'Y');
+              OB.Dal.saveInTransaction(tx, frozenReceipt, function() {
                 if (
                   orderList &&
-                  model.get('session') === OB.MobileApp.model.get('session')
+                  frozenReceipt.get('session') ===
+                    OB.MobileApp.model.get('session')
                 ) {
                   var orderListModel = _.find(orderList.models, function(m) {
-                    return m.get('id') === model.get('id');
+                    return m.get('id') === frozenReceipt.get('id');
                   });
                   if (orderListModel) {
                     orderList.saveCurrent();
@@ -9494,7 +9504,7 @@
                   orderList.deleteCurrent();
                   orderList.synchronizeCurrentOrder();
                 }
-                model.setIsCalculateGrossLockState(false);
+                frozenReceipt.setIsCalculateGrossLockState(false);
                 OB.MobileApp.model.runSyncProcess(finalCallback, finalCallback);
               });
             }
