@@ -6162,7 +6162,7 @@
         return (
           OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
           OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix &&
-          (this.get('bp').has('taxID') ||
+          (this.get('bp').get('taxID') ||
             this.get('externalBusinessPartnerReference'))
         );
       };
