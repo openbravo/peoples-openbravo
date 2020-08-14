@@ -894,8 +894,8 @@
         // ticket default properties
         id: OB.App.UUID.generate(),
         orderType: 0, // 0: Sales order, 1: Return order
-        orderDate: OB.I18N.normalizeDate(new Date()),
-        creationDate: OB.I18N.normalizeDate(new Date()),
+        orderDate: new Date().toISOString(),
+        creationDate: new Date().toISOString(),
         documentNo: '',
         lines: [],
         orderManualPromotions: [],
