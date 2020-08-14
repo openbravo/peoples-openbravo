@@ -91,13 +91,10 @@
   );
 
   const checkVoidLayaway = async (ticket, payload) => {
-    const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+    await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
       title: 'OBPOS_VoidLayawayLbl',
       message: 'OBPOS_VoidLayawayConfirmation'
     });
-    if (!confirmation) {
-      throw new OB.App.Class.ActionCanceled();
-    }
 
     return payload;
   };

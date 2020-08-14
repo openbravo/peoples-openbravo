@@ -604,16 +604,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     );
 
     if (paymentStatus.overpayment) {
-      const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+      await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
         title: 'OBPOS_OverpaymentWarningTitle',
         message: 'OBPOS_OverpaymentWarningBody',
         messageParams: [
           OB.App.Locale.toStringWithCurrencySymbol(paymentStatus.overpayment)
         ]
       });
-      if (!confirmation) {
-        throw new OB.App.Class.ActionCanceled();
-      }
     } else if (
       !payload.multiTicketList &&
       ticket.payment !== OB.DEC.abs(ticket.grossAmount) &&
@@ -623,13 +620,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         OB.DEC.abs(ticket.grossAmount) &&
       !OB.App.TerminalProperty.get('terminal').terminalType.calculateprepayments
     ) {
-      const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+      await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
         title: 'OBPOS_PaymentAmountDistinctThanReceiptAmountTitle',
         message: 'OBPOS_PaymentAmountDistinctThanReceiptAmountBody'
       });
-      if (!confirmation) {
-        throw new OB.App.Class.ActionCanceled();
-      }
     }
 
     return payload;
@@ -691,14 +685,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           messageParams: [ticket.documentNo]
         });
       }
-      const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+      await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
         title: 'OBPOS_UpdatedReceipt',
         message: 'OBPOS_NotPossibleToConfirmReceiptWarn',
         messageParams: [ticket.documentNo]
       });
-      if (!confirmation) {
-        throw new OB.App.Class.ActionCanceled();
-      }
       return payload;
     };
 
@@ -762,13 +753,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     );
 
     const showCompleteCreditTicketConfirmation = async message => {
-      const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+      await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
         title: 'OBPOS_SellingOnCreditHeader',
         message
       });
-      if (!confirmation) {
-        throw new OB.App.Class.ActionCanceled();
-      }
       return payload;
     };
 
