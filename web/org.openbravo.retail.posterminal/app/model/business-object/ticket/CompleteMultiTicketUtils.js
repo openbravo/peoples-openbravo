@@ -14,8 +14,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   /**
    * Add payments between checked tickets
    *
-   * @param {Ticket[]} checkedTicketList - Checked TicketList from Pay Open Tickets
-   * @param {object} ticketListPayload - The payload, which include:
+   * @param {Ticket[]} multiTicketList - Checked TicketList from Pay Open Tickets
+   * @param {object} payload - The payload, which include:
    *             * payments - Payments added to be shared
    *             * changePayments - Approvals to add to the ticket
    *             * considerPrepaymentAmount - True by default to consider prePayments
@@ -26,22 +26,20 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * @returns {Ticket[]} The new TicketList but with payments included.
    */
 
-  sharePaymentsBetweenTickets(checkedTicketList, ticketListPayload) {
-    const newTicketList = [...checkedTicketList];
-    const { payments, changePayments } = ticketListPayload.multiTickets;
+  sharePaymentsBetweenTickets(multiTicketList, payload) {
+    const newTicketList = [...multiTicketList];
+    const { payments, changePayments } = payload.multiTickets;
     const considerPrepaymentAmount =
-      ticketListPayload.considerPrepaymentAmount != null
-        ? ticketListPayload.considerPrepaymentAmount
+      payload.considerPrepaymentAmount != null
+        ? payload.considerPrepaymentAmount
         : true;
-    const { terminal } = ticketListPayload;
-    const terminalPayments = ticketListPayload.payments;
     let index;
     let ticketListWithPayments = newTicketList.map(function iterateTickets(
       ticket
     ) {
       let newTicket = { ...ticket };
       for (
-        index = ticketListPayload.paymentsIndex || 0;
+        index = payload.paymentsIndex || 0;
         index < payments.length;
         index += 1
       ) {
@@ -60,9 +58,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
               payment.origAmount = OB.DEC.Zero;
               payment.amount = OB.DEC.Zero;
               newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, {
-                paymentLine,
-                terminal,
-                terminalPayments
+                ...payload,
+                payment: paymentLine
               });
             } else {
               // Finished
@@ -86,7 +83,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
               );
             }
             if (OB.DEC.compare(amountToPay) > 0) {
-              const paymentMethod = terminalPayments.find(
+              const paymentMethod = payload.payments.find(
                 p => p.payment.searchKey === payment.kind
               );
               paymentLine = { ...payment };
@@ -96,9 +93,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
                 payment.origAmount = OB.DEC.Zero;
                 payment.amount = OB.DEC.Zero;
                 newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, {
-                  paymentLine,
-                  terminal,
-                  terminalPayments
+                  ...payload,
+                  payment: paymentLine
                 });
               } else {
                 // Get part of the payment and go with the next ticket
@@ -116,9 +112,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
                 paymentLine.origAmount = amountToPay;
                 paymentLine.amount = amountToPayForeign;
                 newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, {
-                  paymentLine,
-                  terminal,
-                  terminalPayments
+                  ...payload,
+                  payment: paymentLine
                 });
                 break;
               }
@@ -134,11 +129,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     // If payments are not totally shared between tickets we need to iterate again tickets to add them as overpayment, change...
     if (index < payments.length - 1 && considerPrepaymentAmount) {
-      const ticketListPayloadRecursive = { ...ticketListPayload };
+      const ticketListPayloadRecursive = { ...payload };
       ticketListPayloadRecursive.paymentsIndex = index;
       ticketListPayloadRecursive.considerPrepaymentAmount = false;
       ticketListWithPayments = this.sharePaymentsBetweenTickets(
-        checkedTicketList,
+        multiTicketList,
         ticketListPayloadRecursive
       );
     }
