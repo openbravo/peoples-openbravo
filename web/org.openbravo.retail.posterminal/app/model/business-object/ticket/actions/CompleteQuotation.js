@@ -69,6 +69,12 @@
         OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket)
       ];
 
+      // Welcome message
+      newMessages = [
+        ...newMessages,
+        OB.App.State.Messages.Utils.createPrintWelcomeMessage()
+      ];
+
       newGlobalState.Ticket = newTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Cashup = newCashup;

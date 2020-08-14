@@ -643,10 +643,6 @@
             }
             // Focus on scanning window
             OB.UTIL.setScanningFocus(true);
-
-            // FIXME: Move to action
-            // Print welcome message
-            OB.OBPOSPointOfSale.Print.printWelcome();
           }
 
           // Trigger some UI events
