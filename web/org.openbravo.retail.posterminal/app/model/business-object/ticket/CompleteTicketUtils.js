@@ -305,7 +305,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     invoice.orderId = ticket.id;
     invoice.id = OB.App.UUID.generate();
     invoice.isInvoice = true;
-    invoice.documentNo = null;
+    invoice.documentNo = undefined;
+    invoice.obposSequencename = undefined;
+    invoice.obposSequencenumber = undefined;
     invoice.orderDocumentNo = ticket.documentNo;
     invoice.lines = invoiceLines;
 
