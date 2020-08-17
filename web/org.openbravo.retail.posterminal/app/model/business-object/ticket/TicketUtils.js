@@ -765,7 +765,10 @@
      *
      * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
      */
-    isSale(ticket, payload) {
+    isSale(
+      ticket,
+      payload = { preferences: { salesWithOneLineNegativeAsReturns: false } }
+    ) {
       if (!ticket.lines || !ticket.lines.length) {
         return true;
       }

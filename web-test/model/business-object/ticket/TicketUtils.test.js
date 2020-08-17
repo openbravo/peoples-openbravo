@@ -123,13 +123,14 @@ describe('TicketUtils', () => {
 
   test.each`
     ticket                                  | payload                                                          | expected
-    ${{}}                                   | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
-    ${{ lines: [] }}                        | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
-    ${{ lines: [{ qty: 0 }] }}              | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
-    ${{ lines: [{ qty: 1 }] }}              | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
-    ${{ lines: [{ qty: -1 }] }}             | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${false}
-    ${{ lines: [{ qty: 0 }, { qty: 1 }] }}  | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
-    ${{ lines: [{ qty: 0 }, { qty: -1 }] }} | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
+    ${{}}                                   | ${undefined}                                                     | ${true}
+    ${{ lines: [] }}                        | ${undefined}                                                     | ${true}
+    ${{ lines: [{ qty: 0 }] }}              | ${undefined}                                                     | ${true}
+    ${{ lines: [{ qty: 1 }] }}              | ${undefined}                                                     | ${true}
+    ${{ lines: [{ qty: -1 }] }}             | ${undefined}                                                     | ${false}
+    ${{ lines: [{ qty: 0 }, { qty: 1 }] }}  | ${undefined}                                                     | ${true}
+    ${{ lines: [{ qty: 0 }, { qty: -1 }] }} | ${undefined}                                                     | ${true}
+    ${{ lines: [{ qty: 1 }, { qty: -1 }] }} | ${undefined}                                                     | ${true}
     ${{ lines: [{ qty: 1 }, { qty: -1 }] }} | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
     ${{ lines: [{ qty: 1 }, { qty: -1 }] }} | ${{ preferences: { salesWithOneLineNegativeAsReturns: true } }}  | ${false}
   `("Ticket '$ticket' is a sale", async ({ ticket, payload, expected }) => {
