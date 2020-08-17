@@ -95,6 +95,14 @@ describe('TicketUtils', () => {
   });
 
   test.each`
+    ticket                    | expected
+    ${{ isQuotation: false }} | ${false}
+    ${{ isQuotation: true }}  | ${true}
+  `("Ticket '$ticket' is a quotation", async ({ ticket, expected }) => {
+    expect(OB.App.State.Ticket.Utils.isQuotation(ticket)).toBe(expected);
+  });
+
+  test.each`
     ticket                 | expected
     ${{ orderType: 0 }}    | ${false}
     ${{ orderType: 2 }}    | ${true}
