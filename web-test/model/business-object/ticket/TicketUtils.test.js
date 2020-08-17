@@ -136,4 +136,20 @@ describe('TicketUtils', () => {
   `("Ticket '$ticket' is a sale", async ({ ticket, payload, expected }) => {
     expect(OB.App.State.Ticket.Utils.isSale(ticket, payload)).toBe(expected);
   });
+
+  test.each`
+    ticket                   | payload                                | expected
+    ${{}}                    | ${undefined}                           | ${false}
+    ${{}}                    | ${{ terminal: { organization: 'A' } }} | ${false}
+    ${{ organization: 'A' }} | ${undefined}                           | ${false}
+    ${{ organization: 'A' }} | ${{ terminal: { organization: 'A' } }} | ${false}
+    ${{ organization: 'A' }} | ${{ terminal: { organization: 'B' } }} | ${true}
+  `(
+    "Ticket '$ticket' is cross store",
+    async ({ ticket, payload, expected }) => {
+      expect(OB.App.State.Ticket.Utils.isCrossStore(ticket, payload)).toBe(
+        expected
+      );
+    }
+  );
 });

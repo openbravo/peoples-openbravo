@@ -1082,7 +1082,7 @@
      *
      * @returns {boolean} true in case the ticket is cross store, false otherwise.
      */
-    isCrossStore(ticket, payload) {
+    isCrossStore(ticket, payload = { terminal: {} }) {
       if (!ticket.organization || !payload.terminal.organization) {
         return false;
       }
