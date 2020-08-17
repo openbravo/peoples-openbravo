@@ -757,7 +757,7 @@
     },
 
     /**
-     * Checks whether a ticket is a return or a regular sale based on ticket lines.
+     * Checks whether a ticket is a sale or a return based on ticket lines.
      *
      * @param {object} ticket - The ticket to check
      * @param {object} payload - The calculation payload, which include:
@@ -765,16 +765,17 @@
      *
      * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
      */
-    isReturnSale(ticket, payload) {
+    isSale(ticket, payload) {
       if (!ticket.lines || !ticket.lines.length) {
-        return false;
+        return true;
       }
 
-      const negativeLines = ticket.lines.filter(line => line.qty < 0).length;
+      const existsPositiveLines = ticket.lines.some(line => line.qty >= 0);
+      const existsNegativeLines = ticket.lines.some(line => line.qty < 0);
       return (
-        negativeLines === ticket.lines.length ||
-        (negativeLines > 0 &&
-          payload.preferences.salesWithOneLineNegativeAsReturns)
+        !existsNegativeLines ||
+        (existsPositiveLines &&
+          !payload.preferences.salesWithOneLineNegativeAsReturns)
       );
     },
 
@@ -1132,7 +1133,7 @@
         };
       }
 
-      const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
+      const isSale = OB.App.State.Ticket.Utils.isSale(ticket, payload);
       const isReversal = ticket.payments.some(
         payment => payment.reversedPaymentId
       );
@@ -1167,7 +1168,7 @@
             OB.DEC.compare(remainingToPay) === 1
               ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
               : OB.DEC.Zero,
-          isReturn,
+          isReturn: !isSale,
           isNegative: ticket.isNegative,
           totalAmt: ticket.grossAmount,
           pendingAmt:
@@ -1190,7 +1191,7 @@
           OB.DEC.compare(remainingToPay) === -1
             ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
             : OB.DEC.Zero,
-        isReturn,
+        isReturn: !isSale,
         isNegative: ticket.isNegative,
         totalAmt: ticket.grossAmount,
         pendingAmt:
@@ -1222,11 +1223,11 @@
       }
 
       const newTicket = { ...ticket };
-      const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
-      newTicket.orderType = isReturn ? 1 : 0;
-      newTicket.documentType = isReturn
-        ? payload.terminal.terminalType.documentTypeForReturns
-        : payload.terminal.terminalType.documentType;
+      const isSale = OB.App.State.Ticket.Utils.isSale(ticket, payload);
+      newTicket.orderType = isSale ? 0 : 1;
+      newTicket.documentType = isSale
+        ? payload.terminal.terminalType.documentType
+        : payload.terminal.terminalType.documentTypeForReturns;
 
       return newTicket;
     },

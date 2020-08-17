@@ -74,11 +74,11 @@
         return ticket.obposSequencename;
       }
 
-      const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
+      const isSale = OB.App.State.Ticket.Utils.isSale(ticket, payload);
       if (ticket.isQuotation && payload.terminal.quotationDocNoPrefix) {
         return 'quotationslastassignednum';
       }
-      if (isReturn && payload.terminal.returnDocNoPrefix) {
+      if (!isSale && payload.terminal.returnDocNoPrefix) {
         return 'returnslastassignednum';
       }
       return 'lastassignednum';
@@ -100,17 +100,17 @@
         return ticket.obposSequencename;
       }
 
-      const isReturn = OB.App.State.Ticket.Utils.isReturnSale(ticket, payload);
+      const isSale = OB.App.State.Ticket.Utils.isSale(ticket, payload);
       if (
         !ticket.fullInvoice &&
-        isReturn &&
+        !isSale &&
         payload.terminal.simplifiedReturnInvoiceDocNoPrefix
       ) {
         return 'simplifiedreturninvoiceslastassignednum';
       }
       if (
         ticket.fullInvoice &&
-        isReturn &&
+        !isSale &&
         payload.terminal.fullReturnInvoiceDocNoPrefix
       ) {
         return 'fullreturninvoiceslastassignednum';

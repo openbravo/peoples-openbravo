@@ -112,4 +112,19 @@ describe('TicketUtils', () => {
   `("Ticket '$ticket' is a return", async ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isReturn(ticket)).toBe(expected);
   });
+
+  test.each`
+    ticket                                  | payload                                                          | expected
+    ${{}}                                   | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
+    ${{ lines: [] }}                        | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
+    ${{ lines: [{ qty: 0 }] }}              | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
+    ${{ lines: [{ qty: 1 }] }}              | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
+    ${{ lines: [{ qty: -1 }] }}             | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${false}
+    ${{ lines: [{ qty: 0 }, { qty: 1 }] }}  | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
+    ${{ lines: [{ qty: 0 }, { qty: -1 }] }} | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
+    ${{ lines: [{ qty: 1 }, { qty: -1 }] }} | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
+    ${{ lines: [{ qty: 1 }, { qty: -1 }] }} | ${{ preferences: { salesWithOneLineNegativeAsReturns: true } }}  | ${false}
+  `("Ticket '$ticket' is a sale", async ({ ticket, payload, expected }) => {
+    expect(OB.App.State.Ticket.Utils.isSale(ticket, payload)).toBe(expected);
+  });
 });
