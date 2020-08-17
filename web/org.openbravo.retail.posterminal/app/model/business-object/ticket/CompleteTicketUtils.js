@@ -344,7 +344,6 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     // Manage change payments if there is change
     if (newTicket.changePayments && newTicket.changePayments.length > 0) {
-      const prevChange = newTicket.change;
       const mergeable =
         !payload.terminal.multiChange && !payload.preferences.splitChange;
 
@@ -354,7 +353,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         );
 
         // Generate change payment
-        newTicket = OB.App.State.Ticket.Utils.generatePayment(newTicket, {
+        newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, {
           ...payload,
           payment: {
             kind: terminalPayment.payment.searchKey,
@@ -388,21 +387,6 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             }
           }
         });
-
-        // Recalculate payment and paymentWithSign properties
-        const paidAmt = newTicket.payments.reduce((total, payment) => {
-          if (
-            payment.isPrePayment ||
-            payment.isReversePayment ||
-            !newTicket.isNegative
-          ) {
-            return OB.DEC.add(total, payment.origAmount);
-          }
-          return OB.DEC.sub(total, payment.origAmount);
-        }, OB.DEC.Zero);
-        newTicket.payment = OB.DEC.abs(paidAmt);
-        newTicket.paymentWithSign = paidAmt;
-        newTicket.change = prevChange;
       });
     }
 

@@ -1234,16 +1234,17 @@
     /**
      * Generates the corresponding payment for the given ticket.
      *
-     * @param {object} ticket - The ticket whose payment will be generated
+     * @param {object} ticket - The ticket where payment will be added
      * @param {object} payload - The calculation payload, which include:
      *             * payment - The payment that will be added to the ticket
      *             * terminal.id - Terminal id
      *             * payments - Terminal payment types
      *
-     * @returns {object} The new state of Ticket after payment generation.
+     * @returns {Ticket} The new state of Ticket after payment generation.
      */
-    generatePayment(ticket, payload) {
+    addPayment(ticket, payload) {
       const newTicket = { ...ticket };
+
       const terminalPayment = payload.payments.find(
         paymentType => paymentType.payment.searchKey === payload.payment.kind
       );
@@ -1321,23 +1322,6 @@
       }
       newTicket.payments = [...newTicket.payments, newPayment];
 
-      return newTicket;
-    },
-    /**
-     * Add a payment to a ticket
-     *
-     * @param {object} ticket - The ticket where payment will be added
-     * @param {object} payload - The calculation payload, which include:
-     *             * payment - The payment that will be added to the ticket
-     *             * terminal.id - Terminal id
-     *             * payments - Terminal payment types
-     *
-     * @returns {Ticket} The ticket with the payment added
-     */
-    addPayment(ticket, payload) {
-      const prevChange = ticket.change;
-      const newTicket = this.generatePayment(ticket, payload);
-      // Recalculate payment and paymentWithSign properties
       const paidAmt = newTicket.payments.reduce((total, p) => {
         if (p.isPrePayment || p.isReversePayment || !newTicket.isNegative) {
           return OB.DEC.add(total, p.origAmount);
@@ -1346,13 +1330,13 @@
       }, OB.DEC.Zero);
       newTicket.payment = OB.DEC.abs(paidAmt);
       newTicket.paymentWithSign = paidAmt;
-      newTicket.change = prevChange;
       if (newTicket.amountToLayaway != null) {
         newTicket.amountToLayaway = OB.DEC.sub(
           newTicket.amountToLayaway,
           payload.payment.origAmount
         );
       }
+
       return newTicket;
     }
   });
