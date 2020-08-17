@@ -59,7 +59,8 @@
         OB.App.State.Messages.Utils.createNewMessage(
           'Order',
           'org.openbravo.retail.posterminal.OrderLoader',
-          [OB.App.State.Ticket.Utils.cleanTicket(newTicket)]
+          [OB.App.State.Ticket.Utils.cleanTicket(newTicket)],
+          payload.extraProperties
         )
       ];
 

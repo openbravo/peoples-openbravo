@@ -43,7 +43,8 @@
             {
               order: OB.App.State.Ticket.Utils.cleanTicket(newTicket)
             }
-          ]
+          ],
+          payload.extraProperties
         )
       ];
 
