@@ -58,7 +58,18 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       return newApproval;
     });
 
-    // Remove unneeded product properties
+    return newTicket;
+  },
+
+  /**
+   * Remove some unneeded properties from ticket to make it smaller.
+   *
+   * @param {object} ticket - The ticket being cleaned
+   *
+   * @returns {object} The new state of Ticket after being cleaned.
+   */
+  cleanTicket(ticket) {
+    const newTicket = { ...ticket };
     const productPropertiesToRemove = [
       'uOM',
       'uOMsymbol',
@@ -118,6 +129,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         product: newProduct
       };
     };
+
     newTicket.lines = newTicket.lines.map(removeProductProperties);
     if (newTicket.deletedLines) {
       newTicket.deletedLines = newTicket.deletedLines.map(

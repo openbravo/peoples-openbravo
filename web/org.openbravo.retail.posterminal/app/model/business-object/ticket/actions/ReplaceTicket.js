@@ -66,6 +66,9 @@
         payload
       ));
 
+      // Clean some ticket properties
+      newTicket = OB.App.State.Ticket.Utils.cleanTicket(newTicket);
+
       // Ticket synchronization message
       newMessages = [
         ...newMessages,
