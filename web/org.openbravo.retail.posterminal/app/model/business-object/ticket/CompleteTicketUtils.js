@@ -120,6 +120,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       'obrdmIsdeliveryservice'
     ];
     const removeProductProperties = line => {
+      if (line.product.saveToReceipt) {
+        return line;
+      }
       const newProduct = { ...line.product };
       productPropertiesToRemove.forEach(
         property => delete newProduct[property]
