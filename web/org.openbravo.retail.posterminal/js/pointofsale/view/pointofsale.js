@@ -520,18 +520,6 @@ enyo.kind({
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalStockInOtherStores'
         },
         {
-          kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
-          name: 'modalEnoughCredit',
-          classes:
-            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalEnoughCredit'
-        },
-        {
-          kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
-          name: 'modalNotEnoughCredit',
-          classes:
-            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotEnoughCredit'
-        },
-        {
           kind: 'OB.UI.ValidateAction',
           name: 'modalValidateAction',
           classes:
