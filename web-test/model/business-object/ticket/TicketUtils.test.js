@@ -152,4 +152,18 @@ describe('TicketUtils', () => {
       );
     }
   );
+
+  test.each`
+    ticket                             | expected
+    ${{ grossAmount: 0, payment: 0 }}  | ${true}
+    ${{ grossAmount: 0, payment: 1 }}  | ${true}
+    ${{ grossAmount: 1, payment: 0 }}  | ${false}
+    ${{ grossAmount: 1, payment: 1 }}  | ${true}
+    ${{ grossAmount: -1, payment: 0 }} | ${false}
+    ${{ grossAmount: -1, payment: 1 }} | ${true}
+  `("Ticket '$ticket' is fully paid", async ({ ticket, payload, expected }) => {
+    expect(OB.App.State.Ticket.Utils.isFullyPaid(ticket, payload)).toBe(
+      expected
+    );
+  });
 });
