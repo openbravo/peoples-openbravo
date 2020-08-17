@@ -58,6 +58,73 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       return newApproval;
     });
 
+    // Remove unneeded product properties
+    const productPropertiesToRemove = [
+      'uOM',
+      'uOMsymbol',
+      'uOMstandardPrecision',
+      'productCategory',
+      'taxCategory',
+      'img',
+      'imgId',
+      'description',
+      'obposScale',
+      'groupProduct',
+      'stocked',
+      'showstock',
+      'isGeneric',
+      'generic_product_id',
+      'characteristicDescription',
+      'showchdesc',
+      'bestseller',
+      'ispack',
+      'listPrice',
+      'standardPrice',
+      'priceLimit',
+      'cost',
+      'algorithm',
+      'currentStandardPrice',
+      'includeProductCategories',
+      'includeProducts',
+      'printDescription',
+      'oBPOSAllowAnonymousSale',
+      'returnable',
+      'overdueReturnDays',
+      'isPriceRuleBased',
+      'proposalType',
+      'availableForMultiline',
+      'isLinkedToProduct',
+      'modifyTax',
+      'allowDeferredSell',
+      'deferredSellMaxDays',
+      'quantityRule',
+      'isPrintServices',
+      'obposEditablePrice',
+      'isSerialNo',
+      'productStatus',
+      'productAssortmentStatus',
+      'crossStore',
+      'obrdmDeliveryMode',
+      'obrdmDeliveryModeLyw',
+      'obrdmIsdeliveryservice'
+    ];
+    const removeProductProperties = line => {
+      const newProduct = { ...line.product };
+      productPropertiesToRemove.forEach(
+        property => delete newProduct[property]
+      );
+      return {
+        ...line,
+        product: newProduct
+      };
+    };
+    newTicket.lines = newTicket.lines.map(removeProductProperties);
+    if (newTicket.deletedLines) {
+      newTicket.deletedLines = newTicket.deletedLines.map(
+        removeProductProperties
+      );
+    }
+
     return newTicket;
   },
 
