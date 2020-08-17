@@ -33,9 +33,6 @@
         payload
       ));
 
-      // Clean some ticket properties
-      newTicket = OB.App.State.Ticket.Utils.cleanTicket(newTicket);
-
       // Ticket synchronization message
       newMessages = [
         ...newMessages,
@@ -44,7 +41,7 @@
           'org.openbravo.retail.posterminal.ProcessVoidLayaway',
           [
             {
-              order: newTicket
+              order: OB.App.State.Ticket.Utils.cleanTicket(newTicket)
             }
           ]
         )

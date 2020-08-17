@@ -39,16 +39,13 @@
         payload
       ));
 
-      // Clean some ticket properties
-      newTicket = OB.App.State.Ticket.Utils.cleanTicket(newTicket);
-
       // Ticket synchronization message
       newMessages = [
         ...newMessages,
         OB.App.State.Messages.Utils.createNewMessage(
           'Order',
           'org.openbravo.retail.posterminal.CancelLayawayLoader',
-          [newTicket]
+          [OB.App.State.Ticket.Utils.cleanTicket(newTicket)]
         )
       ];
 
