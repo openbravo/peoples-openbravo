@@ -81,11 +81,11 @@
         });
         newTicket.lines = globalState.Ticket.lines.map(
           line =>
-            OB.App.State.Ticket.Utils.createLine(
-              newTicket,
-              line.product,
-              -line.qty
-            ).newLine
+            OB.App.State.Ticket.Utils.createLine(newTicket, {
+              ...payload,
+              product: line.product,
+              qty: -line.qty
+            }).line
         );
         newTicket = OB.App.State.Ticket.Utils.calculateTotals(
           newTicket,

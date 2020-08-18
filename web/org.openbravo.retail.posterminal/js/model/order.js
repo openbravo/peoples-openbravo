@@ -581,12 +581,15 @@
           // Complete Ticket action
           await completeTicketAction({
             terminal: OB.MobileApp.model.get('terminal'),
+            store: OB.MobileApp.model.get('store'),
+            warehouses: OB.MobileApp.model.get('warehouses'),
             businessPartner: OB.MobileApp.model.get('businessPartner')
               ? JSON.parse(
                   JSON.stringify(OB.MobileApp.model.get('businessPartner'))
                 )
               : undefined,
             payments: OB.MobileApp.model.get('payments'),
+            deliveryPaymentMode: OB.MobileApp.model.get('deliveryPaymentMode'),
             session: OB.MobileApp.model.get('session'),
             orgUserId: OB.MobileApp.model.get('orgUserId'),
             pricelist: OB.MobileApp.model.get('pricelist'),
