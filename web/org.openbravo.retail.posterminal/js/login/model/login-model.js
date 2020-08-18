@@ -155,7 +155,8 @@
                   onShowFunction: function(popup) {
                     popup.$.headerCloseButton.hide();
                   },
-                  autoDismiss: false
+                  autoDismiss: false,
+                  showLoading: true
                 }
               );
             } else if (OB.MobileApp.model.get('isLoggingIn') === true) {
@@ -192,7 +193,8 @@
                         onShowFunction: function(popup) {
                           popup.$.headerCloseButton.hide();
                         },
-                        autoDismiss: false
+                        autoDismiss: false,
+                        showLoading: true
                       }
                     );
                   };
@@ -404,6 +406,7 @@
                             ],
                             {
                               autoDismiss: false,
+                              showLoading: true,
                               onHideFunction: function(popup) {
                                 OB.UTIL.showLoading(true);
                                 terminalModel.set(
@@ -538,6 +541,7 @@
               }
             ],
             {
+              showLoading: true,
               onHideFunction: function() {
                 OB.UTIL.showLoading(true);
                 me.logout();
@@ -747,6 +751,7 @@
                   ],
                   {
                     autoDismiss: false,
+                    showLoading: true,
                     closeOnEscKey: false,
                     execHideFunction: true,
                     onHideFunction: function() {
@@ -788,6 +793,7 @@
                 ],
                 {
                   autoDismiss: false,
+                  showLoading: true,
                   closeOnEscKey: false,
                   execHideFunction: true,
                   onHideFunction: function() {
@@ -1032,6 +1038,7 @@
                   ],
                   {
                     autoDismiss: false,
+                    showLoading: true,
                     closeOnEscKey: false,
                     execHideFunction: true,
                     onHideFunction: function() {
@@ -1399,6 +1406,7 @@
           }
         ],
         {
+          showLoading: true,
           onHideFunction: function() {
             OB.MobileApp.model.lock();
           }
@@ -1527,6 +1535,7 @@
                 }
               ],
               {
+                showLoading: true,
                 onHideFunction: function() {
                   if (OB.UI.ModalSelectTerminal) {
                     me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent(
