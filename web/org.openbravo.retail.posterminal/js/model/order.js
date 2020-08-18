@@ -7900,7 +7900,12 @@
             }
           );
         })
-        .catch(cancellationCallback);
+        .catch(err => {
+          OB.error('RemovePayment action failed: ' + err.message);
+          if (cancellationCallback) {
+            cancellationCallback();
+          }
+        });
     },
 
     reversePayment: function(payment, sender, reverseCallback) {
