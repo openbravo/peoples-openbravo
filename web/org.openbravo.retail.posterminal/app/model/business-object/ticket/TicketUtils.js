@@ -13,8 +13,7 @@
 
 (function TicketUtilsDefinition() {
   // checks if the type of payment is cash
-  const isCash = paymentType => {
-    const paymentNames = OB.App.TerminalProperty.get('paymentnames');
+  const isCash = (paymentType, paymentNames) => {
     if (!paymentNames[paymentType]) {
       return false;
     }
@@ -22,22 +21,11 @@
   };
 
   // gets the precision of a given payment
-  const getPrecision = payment => {
-    const terminalpayment = OB.App.TerminalProperty.get('paymentnames')[
-      payment.kind
-    ];
+  const getPrecision = (payment, paymentNames) => {
+    const terminalpayment = paymentNames[payment.kind];
     return terminalpayment
       ? terminalpayment.obposPosprecision
       : OB.DEC.getScale();
-  };
-
-  // gets the information of the main warehouse of the terminal
-  const getTerminalWarehouse = () => {
-    const warehouses = OB.App.TerminalProperty.get('warehouses');
-    return {
-      id: warehouses[0].warehouseid,
-      warehousename: warehouses[0].warehousename
-    };
   };
 
   // checks if a ticket line includes service information
@@ -61,12 +49,15 @@
       return this.ticket;
     }
 
-    createLine(product, qty) {
+    createLine(product, qty, settings) {
       const newLine = {
         id: OB.App.UUID.generate(),
         product,
-        organization: this.getLineOrganization(product),
-        warehouse: getTerminalWarehouse(),
+        organization: this.getLineOrganization(product, settings),
+        warehouse: {
+          id: settings.warehouses[0].warehouseid,
+          warehousename: settings.warehouses[0].warehousename
+        },
         uOM: product.uOM,
         qty: OB.DEC.number(qty, product.uOMstandardPrecision),
         priceIncludesTax: this.ticket.priceIncludesTax,
@@ -76,7 +67,7 @@
 
       const isDeliveryService =
         newLine.product.obrdmIsdeliveryservice &&
-        OB.App.TerminalProperty.get('deliveryPaymentMode') === 'PD';
+        settings.deliveryPaymentMode === 'PD';
       if (isDeliveryService) {
         newLine.obrdmAmttopayindelivery = OB.DEC.mul(
           product.listPrice,
@@ -100,9 +91,9 @@
       return newLine;
     }
 
-    getLineOrganization(product) {
+    getLineOrganization(product, settings) {
       if (product.crossStore) {
-        const store = OB.App.TerminalProperty.get('store').find(
+        const store = settings.store.find(
           s => s.id === this.ticket.organization
         );
         return {
@@ -112,7 +103,7 @@
           region: store.region
         };
       }
-      const terminal = OB.App.TerminalProperty.get('terminal');
+      const { terminal } = settings;
       return {
         id: terminal.organization,
         orgName: terminal.organization$_identifier,
@@ -194,7 +185,7 @@
       this.ticket.lines = this.ticket.lines.filter(l => l.id !== lineId);
     }
 
-    updateServicesInformation() {
+    updateServicesInformation(settings) {
       if (!this.shouldUpdateServices()) {
         return;
       }
@@ -240,7 +231,7 @@
               const qty = service.quantityRule === 'PP' ? deferredQty : 0;
               newqtyplus += qty;
             }
-            const newLine = this.createLine(service, newqtyminus);
+            const newLine = this.createLine(service, newqtyminus, settings);
             newLine.relatedLines = rln;
             newLine.groupService = newLine.product.groupProduct;
             serviceLine.relatedLines = newRlp;
@@ -248,14 +239,15 @@
           } else if (newqtyminus) {
             if (deferredLines.length > 0) {
               const qty = service.quantityRule === 'PP' ? deferredQty : 1;
-              const newLine = this.createLine(service, qty);
+              const newLine = this.createLine(service, qty, settings);
               newLine.relatedLines = deferredLines;
               newLine.qty = qty;
             }
             serviceLine.relatedLines = rln;
             newqtyminus = this.adjustNotGroupedServices(
               serviceLine,
-              newqtyminus
+              newqtyminus,
+              settings
             );
             serviceLine.qty = newqtyminus;
           } else if (newqtyplus) {
@@ -269,7 +261,8 @@
               } else {
                 newqtyplus = this.adjustNotGroupedServices(
                   serviceLine,
-                  newqtyplus
+                  newqtyplus,
+                  settings
                 );
               }
             }
@@ -285,22 +278,30 @@
             serviceLine.qty = qty;
           }
         } else if (newqtyminus && newqtyplus) {
-          const newLine = this.createLine(service, newqtyplus);
+          const newLine = this.createLine(service, newqtyplus, settings);
           newLine.relatedLines = rlp;
           serviceLine.relatedLines = rln;
           serviceLine.qty = newqtyminus;
         } else if (newqtyplus) {
           serviceLine.relatedLines = rlp;
-          newqtyplus = this.adjustNotGroupedServices(serviceLine, newqtyplus);
+          newqtyplus = this.adjustNotGroupedServices(
+            serviceLine,
+            newqtyplus,
+            settings
+          );
           serviceLine.qty = newqtyplus;
         } else if (newqtyminus) {
           serviceLine.relatedLines = rln;
-          newqtyminus = this.adjustNotGroupedServices(serviceLine, newqtyminus);
+          newqtyminus = this.adjustNotGroupedServices(
+            serviceLine,
+            newqtyminus,
+            settings
+          );
           serviceLine.qty = newqtyminus;
         } else if (deferredLines.length === 0 && !serviceLine.obposIsDeleted) {
           this.deleteLine(serviceLine.id);
         }
-        this.adjustNotDeferredRelatedLines(serviceLine);
+        this.adjustNotDeferredRelatedLines(serviceLine, settings);
       }
     }
 
@@ -319,7 +320,7 @@
       );
     }
 
-    adjustNotGroupedServices(line, qty) {
+    adjustNotGroupedServices(line, qty, settings) {
       if (line.product.quantityRule === 'PP' && !line.groupService) {
         const qtyService = OB.DEC.abs(qty);
         const qtyLineServ = qty > 0 ? 1 : -1;
@@ -336,7 +337,11 @@
             i += 1
           ) {
             const notGroupedProduct = { ...line.product, groupProduct: false };
-            const newLine = this.createLine(notGroupedProduct, qtyLineServ);
+            const newLine = this.createLine(
+              notGroupedProduct,
+              qtyLineServ,
+              settings
+            );
             newLine.relatedLines = siblingServicesLines[0].relatedLines;
             newLine.groupService = false;
           }
@@ -354,7 +359,7 @@
       return qty;
     }
 
-    adjustNotDeferredRelatedLines(serviceLine) {
+    adjustNotDeferredRelatedLines(serviceLine, settings) {
       const notDeferredLines = serviceLine.relatedLines.filter(
         rl => rl.deferred === false
       );
@@ -363,7 +368,11 @@
           const ticketLine = this.ticket.lines.find(
             l => l.id === rl.orderlineId
           );
-          const newLine = this.createLine(serviceLine.product, ticketLine.qty);
+          const newLine = this.createLine(
+            serviceLine.product,
+            ticketLine.qty,
+            settings
+          );
           newLine.relatedLines = [rl];
           newLine.groupService = false;
         });
@@ -377,7 +386,7 @@
         settings.bpSets,
         settings.taxRules
       );
-      this.adjustPayment();
+      this.adjustPayment(settings.paymentNames, settings.paymentCash);
       this.setTotalQuantity(settings.qtyScale);
     }
 
@@ -468,12 +477,12 @@
         );
     }
 
-    adjustPayment() {
+    adjustPayment(paymentNames, paymentCash) {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
 
       // set the payments origAmount property
       this.ticket.payments = this.ticket.payments.map(p => {
-        const newPayment = this.calculateOrigAmount(p);
+        const newPayment = this.calculateOrigAmount(p, paymentNames);
         if (
           !p.isPrePayment &&
           this.ticket.isNegative &&
@@ -493,7 +502,7 @@
       const processedPaymentsAmount = this.ticket.payments
         .filter(p => p.isPrePayment)
         .reduce(
-          (t, p) => OB.DEC.add(t, p.origAmount, getPrecision(p)),
+          (t, p) => OB.DEC.add(t, p.origAmount, getPrecision(p, paymentNames)),
           this.ticket.nettingPayment || OB.DEC.Zero
         );
 
@@ -508,7 +517,10 @@
       }
 
       // get cash info
-      const { defaultCash, nonDefaultCash, noCash } = this.getCashInfo();
+      const { defaultCash, nonDefaultCash, noCash } = this.getCashInfo(
+        paymentNames,
+        paymentCash
+      );
 
       // calculate the reversed payments amount
       const reversedPaymentsAmount = this.ticket.payments
@@ -531,14 +543,12 @@
         ? this.ticket.obposPrepaymentamt
         : grossAmount;
       const cashPayment = this.ticket.payments.find(
-        p =>
-          p.kind === OB.App.TerminalProperty.get('paymentcash') ||
-          isCash(p.kind)
+        p => p.kind === paymentCash || isCash(p.kind, paymentNames)
       );
       let cashPaid;
       if (cashPayment) {
         let payment;
-        const precision = getPrecision(cashPayment);
+        const precision = getPrecision(cashPayment, paymentNames);
         if (this.ticket.isNegative) {
           if (OB.DEC.add(notModifiableAmount, noCash, precision) < total) {
             payment = OB.DEC.add(notModifiableAmount, noCash, precision);
@@ -606,8 +616,8 @@
       }
     }
 
-    calculateOrigAmount(payment) {
-      const precision = getPrecision(payment);
+    calculateOrigAmount(payment, paymentNames) {
+      const precision = getPrecision(payment, paymentNames);
       let origAmount;
       if (payment.rate && payment.rate !== '1') {
         origAmount = OB.DEC.div(payment.amount, payment.mulrate);
@@ -621,7 +631,7 @@
         if (
           OB.DEC.compare(
             OB.DEC.sub(
-              this.getDifferenceRemovingSpecificPayment(payment),
+              this.getDifferenceRemovingSpecificPayment(payment, paymentNames),
               OB.DEC.abs(payment.amount, precision),
               precision
             )
@@ -646,8 +656,8 @@
     }
 
     // Returns the difference (abs) between total to pay and payments without take into account the provided payment
-    getDifferenceRemovingSpecificPayment(payment) {
-      const precision = getPrecision(payment);
+    getDifferenceRemovingSpecificPayment(payment, paymentNames) {
+      const precision = getPrecision(payment, paymentNames);
       const differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(
         payment
       );
@@ -682,17 +692,17 @@
         .reduce((t, p) => OB.DEC.add(t, p.origAmount), OB.DEC.Zero);
     }
 
-    getCashInfo() {
+    getCashInfo(paymentNames, paymentCash) {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
       return this.ticket.payments
         .filter(p => !p.isPrePayment)
         .reduce(
           (c, p) => {
             let property;
-            if (p.kind === OB.App.TerminalProperty.get('paymentcash')) {
+            if (p.kind === paymentCash) {
               // the default cash method
               property = 'defaultCash';
-            } else if (isCash(p.kind)) {
+            } else if (isCash(p.kind, paymentNames)) {
               // another cash method
               property = 'nonDefaultCash';
             } else {
@@ -724,6 +734,8 @@
      *             * taxRules - The tax rules to be considered
      *             * bpSets - The businessPartner sets
      *             * qtyScale - The scale of the ticket quantity (qty)
+     *             * paymentNames - The avaialable payment names
+     *             * paymentCash - Default cash payment
      * @returns The ticket with the result of the totals calculation
      */
     calculateTotals(ticket, settings) {
@@ -798,13 +810,18 @@
      * @param {object} ticket - The ticket which we want to add a line
      * @param {object} product - The product of the new line
      * @param {number} qty - The quantity of the new line
+     * @param {settings} settings - Additional information which contains:
+     *                              * terminal: terminal information
+     *                              * store: store information
+     *                              * warehouses: warehouse information
+     *                              * deliveryPaymentMode: delivery payment mode
      * @returns {object} - An object with the following properties:
      *                   * newTicket: a new ticket result of adding the new line into the provided ticket
      *                   * newLine: the newly created line
      */
-    createLine(ticket, product, qty) {
+    createLine(ticket, product, qty, settings) {
       const handler = new TicketHandler(ticket);
-      const newLine = handler.createLine(product, qty);
+      const newLine = handler.createLine(product, qty, settings);
       return { newTicket: handler.getTicket(), newLine };
     },
 
@@ -825,11 +842,16 @@
      * Updates information regarding services of a ticket by handling its lines with services and their related lines
      *
      * @param {object} ticket - The ticket whose information about services should be updated
+     * @param {settings} settings - Additional information which contains:
+     *                              * terminal: terminal information
+     *                              * store: store information
+     *                              * warehouses: warehouse information
+     *                              * deliveryPaymentMode: delivery payment mode
      * @returns {object} - A new ticket with the services information properly updated
      */
-    updateServicesInformation(ticket) {
+    updateServicesInformation(ticket, settings) {
       const handler = new TicketHandler(ticket);
-      handler.updateServicesInformation();
+      handler.updateServicesInformation(settings);
       return handler.getTicket();
     },
 
