@@ -37,6 +37,26 @@
       newTicketList = newTicketList.filter(t => t.id !== newTicket.id);
 
       return { ticketList: newTicketList, ticket: newTicket };
+    },
+
+    getAllTickets() {
+      const currentTicket = OB.App.State.getState().Ticket;
+      if (currentTicket && Object.keys(currentTicket).length !== 0) {
+        return [{ ...currentTicket }, ...OB.App.State.getState().TicketList];
+      }
+      return [...OB.App.State.getState().TicketList];
+    },
+
+    getSessionTickets(session) {
+      return OB.App.State.TicketList.Utils.getAllTickets().filter(
+        ticket => ticket.session === session
+      );
+    },
+
+    getOtherSessionsTickets(session) {
+      return OB.App.State.TicketList.Utils.getAllTickets().filter(
+        ticket => ticket.session !== session
+      );
     }
   });
 })();

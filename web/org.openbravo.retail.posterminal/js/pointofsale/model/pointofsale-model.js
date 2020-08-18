@@ -25,9 +25,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       me = this;
 
     // Get pending tickets ignoring those created in other users session
-    const ordersNotPaid = OB.App.OpenTicketList.getSessionTickets().filter(
-      ticket => ticket.hasbeenpaid === 'N'
-    );
+    const session = OB.MobileApp.model.get('session');
+    const ordersNotPaid = OB.App.State.TicketList.Utils.getSessionTickets(
+      session
+    ).filter(ticket => ticket.hasbeenpaid === 'N');
 
     let currentOrder = {},
       loadOrderStr;
@@ -156,9 +157,10 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       multiOrderList = multiOrders.get('multiOrdersList'),
       me = this;
 
-    const possibleMultiOrder = OB.App.OpenTicketList.getSessionTickets().filter(
-      ticket => ticket.hasbeenpaid === 'N'
-    );
+    const session = OB.MobileApp.model.get('session');
+    const possibleMultiOrder = OB.App.State.TicketList.Utils.getSessionTickets(
+      session
+    ).filter(ticket => ticket.hasbeenpaid === 'N');
 
     //OB.Dal.find success
     if (possibleMultiOrder && possibleMultiOrder.length > 0) {
@@ -285,8 +287,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
     var multiOrders = new OB.Model.MultiOrders();
     OB.MobileApp.model.multiOrders = multiOrders;
 
+    const session = OB.MobileApp.model.get('session');
     var ticketList = new Backbone.Collection(
-      OB.App.OpenTicketList.getSessionTickets().map(ticket => {
+      OB.App.State.TicketList.Utils.getSessionTickets(session).map(ticket => {
         return OB.App.StateBackwardCompatibility.getInstance(
           'Ticket'
         ).toBackboneObject(ticket);
@@ -439,7 +442,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       function() {
         OB.UTIL.TicketCloseUtils.paymentAccepted(
           receipt,
-          OB.App.OpenTicketList.getAllTickets(),
+          OB.App.State.TicketList.Utils.getAllTickets(),
           null
         );
       },

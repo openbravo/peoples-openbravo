@@ -2336,8 +2336,9 @@ enyo.kind({
     var receipt, receiptList, LeftColumnCurrentView;
     this.inherited(arguments);
     receipt = this.model.get('order');
+    const session = OB.MobileApp.model.get('session');
     receiptList = new Backbone.Collection(
-      OB.App.OpenTicketList.getSessionTickets().map(ticket => {
+      OB.App.State.TicketList.Utils.getSessionTickets(session).map(ticket => {
         return OB.App.StateBackwardCompatibility.getInstance(
           'Ticket'
         ).toBackboneObject(ticket);
@@ -2353,12 +2354,15 @@ enyo.kind({
 
     OB.App.PersistenceChangeListenerManager.addListener(
       state => {
+        const session = OB.MobileApp.model.get('session');
         const ticketList = new Backbone.Collection(
-          OB.App.OpenTicketList.getSessionTickets().map(ticket => {
-            return OB.App.StateBackwardCompatibility.getInstance(
-              'Ticket'
-            ).toBackboneObject(ticket);
-          })
+          OB.App.State.TicketList.Utils.getSessionTickets(session).map(
+            ticket => {
+              return OB.App.StateBackwardCompatibility.getInstance(
+                'Ticket'
+              ).toBackboneObject(ticket);
+            }
+          )
         );
 
         if (this.$.multiColumn) {

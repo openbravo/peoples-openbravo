@@ -26,9 +26,10 @@ enyo.kind({
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
   },
   executeOnShow: function() {
+    const session = OB.MobileApp.model.get('session');
     this.$.body.$.listreceipts.setReceiptsList(
       new Backbone.Collection(
-        OB.App.OpenTicketList.getSessionTickets().map(ticket => {
+        OB.App.State.TicketList.Utils.getSessionTickets(session).map(ticket => {
           return OB.App.StateBackwardCompatibility.getInstance(
             'Ticket'
           ).toBackboneObject(ticket);

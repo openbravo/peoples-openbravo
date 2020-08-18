@@ -110,7 +110,7 @@
       OB.UTIL.clone(receipt, diffReceipt);
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
         // rollback other changes
-        const ticketObj = OB.App.OpenTicketList.getAllTickets().find(
+        const ticketObj = OB.App.State.TicketList.Utils.getAllTickets().find(
           ticket => ticket.id === receipt.get('id')
         );
         receipt.clearWith(new Backbone.Model(ticketObj));
@@ -733,7 +733,7 @@
                     OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
                 );
 
-                const savedReceipt = OB.App.OpenTicketList.getAllTickets().find(
+                const savedReceipt = OB.App.State.TicketList.Utils.getAllTickets().find(
                   ticket => ticket.id === me.receipt.get('id')
                 );
 
@@ -870,7 +870,10 @@
       'closed',
       function(receipt, closedCallback) {
         let hasError = false;
-        let orderList = OB.App.OpenTicketList.getSessionTickets();
+        const session = OB.MobileApp.model.get('session');
+        let orderList = OB.App.State.TicketList.Utils.getSessionTickets(
+          session
+        );
 
         let multiOrderList = this.context
             .get('multiOrders')

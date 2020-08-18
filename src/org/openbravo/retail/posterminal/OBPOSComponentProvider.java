@@ -400,9 +400,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket-list/actions/UpdateBPInAllTickets");
     appDependency.add("model/business-object/ticket-list/actions/SaveTicket");
 
-    // Utilities
-    appDependency.add("util/OpenTicketList");
-
     // Synchronization Buffer
     appDependency.add("model/synchronization-buffer/HardwareManagerEndpoint");
 

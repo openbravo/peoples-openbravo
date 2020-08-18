@@ -1247,7 +1247,8 @@
         function(approved, supervisor, approvalType) {
           if (approved) {
             // On logout remove pending orders and close opened paid orders
-            success(OB.App.OpenTicketList.getSessionTickets());
+            const session = OB.MobileApp.model.get('session');
+            success(OB.App.State.TicketList.Utils.getSessionTickets(session));
           }
         }
       );

@@ -1083,8 +1083,12 @@
         }
       };
 
+    const session = OB.MobileApp.model.get('session');
+
     // Check in Current Session
-    const openTicketList = OB.App.OpenTicketList.getSessionTickets();
+    const openTicketList = OB.App.State.TicketList.Utils.getSessionTickets(
+      session
+    );
     for (i = 0; i < openTicketList.length; i++) {
       const modelAtIndex = openTicketList[i];
       if (
@@ -1141,9 +1145,9 @@
     }
 
     // Check in Other Session
-    const ordersNotProcessed = OB.App.OpenTicketList.getOtherSessionsTickets().filter(
-      ticket => ticket.hasbeenpaid === 'N'
-    );
+    const ordersNotProcessed = OB.App.State.TicketList.Utils.getOtherSessionsTickets(
+      session
+    ).filter(ticket => ticket.hasbeenpaid === 'N');
 
     if (ordersNotProcessed.length > 0) {
       var existingOrder = _.find(ordersNotProcessed.models, function(order) {

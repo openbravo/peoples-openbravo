@@ -123,7 +123,7 @@ enyo.kind({
       orderDate,
       me = this;
 
-    totalData = totalData.concat(OB.App.OpenTicketList.getAllTickets());
+    totalData = totalData.concat(OB.App.State.TicketList.Utils.getAllTickets());
 
     totalData.forEach(function(order) {
       if (
@@ -410,7 +410,7 @@ enyo.kind({
       j,
       wrongOrder,
       firstCheck = true,
-      cancellingOrdersToCheck = OB.App.OpenTicketList.getAllTickets(),
+      cancellingOrdersToCheck = OB.App.State.TicketList.Utils.getAllTickets(),
       showSomeOrderIsPaidPopup;
 
     if (checkedMultiOrders.length === 0) {
@@ -502,7 +502,9 @@ enyo.kind({
     for (i = 0; i < checkedMultiOrders.length; i++) {
       var iter = checkedMultiOrders[i];
       iter.set('checked', true, { silent: true });
-      if (_.indexOf(OB.App.OpenTicketList.getAllTickets(), iter) !== -1) {
+      if (
+        _.indexOf(OB.App.State.TicketList.Utils.getAllTickets(), iter) !== -1
+      ) {
         // Check if there's an order with a reverse payment
         if (iter.isNewReversed()) {
           wrongOrder = {
@@ -564,13 +566,13 @@ enyo.kind({
     }
     this.owner.owner.model.deleteMultiOrderList();
     _.each(checkedMultiOrders, async function(iter) {
-      var idx = OB.App.OpenTicketList.getAllTickets()
+      var idx = OB.App.State.TicketList.Utils.getAllTickets()
         .map(function(order) {
           return order.id;
         })
         .indexOf(iter.id);
       if (idx !== -1) {
-        var orderState = OB.App.OpenTicketList.getAllTickets()[idx];
+        var orderState = OB.App.State.TicketList.Utils.getAllTickets()[idx];
         var order = OB.App.StateBackwardCompatibility.getInstance(
           'Ticket'
         ).toBackboneObject(orderState);

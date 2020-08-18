@@ -120,7 +120,7 @@
       let updateLocally =
         !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) ||
         (!isNew &&
-          OB.App.OpenTicketList.getAllTickets().filter(
+          OB.App.State.TicketList.Utils.getAllTickets().filter(
             ticket => ticket.businessPartner.id === customerId
           ).length > 0);
 
