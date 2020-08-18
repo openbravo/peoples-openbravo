@@ -162,9 +162,9 @@
 
     const { newTicket, newLine } = OB.App.State.Ticket.Utils.createLine(
       ticket,
-      product,
-      lineQty,
       {
+        product,
+        qty: lineQty,
         terminal: extraData.terminal,
         store: extraData.store,
         warehouses: extraData.warehouses,

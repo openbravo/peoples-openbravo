@@ -49,17 +49,18 @@
       return this.ticket;
     }
 
-    createLine(product, qty, settings) {
+    createLine(payload) {
+      const product = { payload };
       const newLine = {
         id: OB.App.UUID.generate(),
         product,
-        organization: this.getLineOrganization(product, settings),
+        organization: this.getLineOrganization(payload),
         warehouse: {
-          id: settings.warehouses[0].warehouseid,
-          warehousename: settings.warehouses[0].warehousename
+          id: payload.warehouses[0].warehouseid,
+          warehousename: payload.warehouses[0].warehousename
         },
         uOM: product.uOM,
-        qty: OB.DEC.number(qty, product.uOMstandardPrecision),
+        qty: OB.DEC.number(payload.qty, product.uOMstandardPrecision),
         priceIncludesTax: this.ticket.priceIncludesTax,
         isEditable: true,
         isDeletable: true
@@ -67,7 +68,7 @@
 
       const isDeliveryService =
         newLine.product.obrdmIsdeliveryservice &&
-        settings.deliveryPaymentMode === 'PD';
+        payload.deliveryPaymentMode === 'PD';
       if (isDeliveryService) {
         newLine.obrdmAmttopayindelivery = OB.DEC.mul(
           product.listPrice,
@@ -91,9 +92,9 @@
       return newLine;
     }
 
-    getLineOrganization(product, settings) {
-      if (product.crossStore) {
-        const store = settings.store.find(
+    getLineOrganization(payload) {
+      if (payload.product.crossStore) {
+        const store = payload.store.find(
           s => s.id === this.ticket.organization
         );
         return {
@@ -103,7 +104,7 @@
           region: store.region
         };
       }
-      const { terminal } = settings;
+      const { terminal } = payload;
       return {
         id: terminal.organization,
         orgName: terminal.organization$_identifier,
@@ -185,7 +186,7 @@
       this.ticket.lines = this.ticket.lines.filter(l => l.id !== lineId);
     }
 
-    updateServicesInformation(settings) {
+    updateServicesInformation(payload) {
       if (!this.shouldUpdateServices()) {
         return;
       }
@@ -231,7 +232,11 @@
               const qty = service.quantityRule === 'PP' ? deferredQty : 0;
               newqtyplus += qty;
             }
-            const newLine = this.createLine(service, newqtyminus, settings);
+            const newLine = this.createLine({
+              product: service,
+              qty: newqtyminus,
+              ...payload
+            });
             newLine.relatedLines = rln;
             newLine.groupService = newLine.product.groupProduct;
             serviceLine.relatedLines = newRlp;
@@ -239,16 +244,20 @@
           } else if (newqtyminus) {
             if (deferredLines.length > 0) {
               const qty = service.quantityRule === 'PP' ? deferredQty : 1;
-              const newLine = this.createLine(service, qty, settings);
+              const newLine = this.createLine({
+                product: service,
+                qty,
+                ...payload
+              });
               newLine.relatedLines = deferredLines;
               newLine.qty = qty;
             }
             serviceLine.relatedLines = rln;
-            newqtyminus = this.adjustNotGroupedServices(
-              serviceLine,
-              newqtyminus,
-              settings
-            );
+            newqtyminus = this.adjustNotGroupedServices({
+              product: serviceLine,
+              qty: newqtyminus,
+              ...payload
+            });
             serviceLine.qty = newqtyminus;
           } else if (newqtyplus) {
             serviceLine.relatedLines = OB.App.ArrayUtils.union(
@@ -259,11 +268,11 @@
               if (serviceLine.groupService) {
                 newqtyplus += deferredQty;
               } else {
-                newqtyplus = this.adjustNotGroupedServices(
-                  serviceLine,
-                  newqtyplus,
-                  settings
-                );
+                newqtyplus = this.adjustNotGroupedServices({
+                  product: serviceLine,
+                  qty: newqtyplus,
+                  ...payload
+                });
               }
             }
             serviceLine.qty = newqtyplus;
@@ -278,30 +287,34 @@
             serviceLine.qty = qty;
           }
         } else if (newqtyminus && newqtyplus) {
-          const newLine = this.createLine(service, newqtyplus, settings);
+          const newLine = this.createLine({
+            product: service,
+            qty: newqtyplus,
+            ...payload
+          });
           newLine.relatedLines = rlp;
           serviceLine.relatedLines = rln;
           serviceLine.qty = newqtyminus;
         } else if (newqtyplus) {
           serviceLine.relatedLines = rlp;
-          newqtyplus = this.adjustNotGroupedServices(
-            serviceLine,
-            newqtyplus,
-            settings
-          );
+          newqtyplus = this.adjustNotGroupedServices({
+            product: serviceLine,
+            qty: newqtyplus,
+            ...payload
+          });
           serviceLine.qty = newqtyplus;
         } else if (newqtyminus) {
           serviceLine.relatedLines = rln;
-          newqtyminus = this.adjustNotGroupedServices(
-            serviceLine,
-            newqtyminus,
-            settings
-          );
+          newqtyminus = this.adjustNotGroupedServices({
+            product: serviceLine,
+            qty: newqtyminus,
+            ...payload
+          });
           serviceLine.qty = newqtyminus;
         } else if (deferredLines.length === 0 && !serviceLine.obposIsDeleted) {
           this.deleteLine(serviceLine.id);
         }
-        this.adjustNotDeferredRelatedLines(serviceLine, settings);
+        this.adjustNotDeferredRelatedLines(serviceLine, payload);
       }
     }
 
@@ -320,7 +333,7 @@
       );
     }
 
-    adjustNotGroupedServices(line, qty, settings) {
+    adjustNotGroupedServices(line, qty, payload) {
       if (line.product.quantityRule === 'PP' && !line.groupService) {
         const qtyService = OB.DEC.abs(qty);
         const qtyLineServ = qty > 0 ? 1 : -1;
@@ -337,11 +350,11 @@
             i += 1
           ) {
             const notGroupedProduct = { ...line.product, groupProduct: false };
-            const newLine = this.createLine(
-              notGroupedProduct,
-              qtyLineServ,
-              settings
-            );
+            const newLine = this.createLine({
+              product: notGroupedProduct,
+              qty: qtyLineServ,
+              ...payload
+            });
             newLine.relatedLines = siblingServicesLines[0].relatedLines;
             newLine.groupService = false;
           }
@@ -359,7 +372,7 @@
       return qty;
     }
 
-    adjustNotDeferredRelatedLines(serviceLine, settings) {
+    adjustNotDeferredRelatedLines(serviceLine, payload) {
       const notDeferredLines = serviceLine.relatedLines.filter(
         rl => rl.deferred === false
       );
@@ -368,11 +381,11 @@
           const ticketLine = this.ticket.lines.find(
             l => l.id === rl.orderlineId
           );
-          const newLine = this.createLine(
-            serviceLine.product,
-            ticketLine.qty,
-            settings
-          );
+          const newLine = this.createLine({
+            product: serviceLine.product,
+            qty: ticketLine.qty,
+            ...payload
+          });
           newLine.relatedLines = [rl];
           newLine.groupService = false;
         });
@@ -808,9 +821,9 @@
      * Generates a new ticket resulting of adding a new line into the provided ticket
      *
      * @param {object} ticket - The ticket which we want to add a line
-     * @param {object} product - The product of the new line
-     * @param {number} qty - The quantity of the new line
-     * @param {settings} settings - Additional information which contains:
+     * @param {object} payload - The information required to create the new line:
+     *                              * product - The product of the new line
+     *                              * qty - The quantity of the new line
      *                              * terminal: terminal information
      *                              * store: store information
      *                              * warehouses: warehouse information
@@ -819,9 +832,9 @@
      *                   * newTicket: a new ticket result of adding the new line into the provided ticket
      *                   * newLine: the newly created line
      */
-    createLine(ticket, product, qty, settings) {
+    createLine(ticket, payload) {
       const handler = new TicketHandler(ticket);
-      const newLine = handler.createLine(product, qty, settings);
+      const newLine = handler.createLine(payload);
       return { newTicket: handler.getTicket(), newLine };
     },
 
@@ -842,16 +855,16 @@
      * Updates information regarding services of a ticket by handling its lines with services and their related lines
      *
      * @param {object} ticket - The ticket whose information about services should be updated
-     * @param {settings} settings - Additional information which contains:
+     * @param {settings} payload - Additional information which contains:
      *                              * terminal: terminal information
      *                              * store: store information
      *                              * warehouses: warehouse information
      *                              * deliveryPaymentMode: delivery payment mode
      * @returns {object} - A new ticket with the services information properly updated
      */
-    updateServicesInformation(ticket, settings) {
+    updateServicesInformation(ticket, payload) {
       const handler = new TicketHandler(ticket);
-      handler.updateServicesInformation(settings);
+      handler.updateServicesInformation(payload);
       return handler.getTicket();
     },
 
