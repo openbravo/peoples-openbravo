@@ -11,7 +11,6 @@
 global.OB = {
   App: {
     Class: {},
-    TerminalProperty: { get: jest.fn() },
     UUID: { generate: jest.fn() }
   }
 };
@@ -31,26 +30,6 @@ OB.App.StateAPI.Ticket.utilities.forEach(
   util => (OB.App.State.Ticket.Utils[util.functionName] = util.implementation)
 );
 
-OB.App.TerminalProperty.get.mockImplementation(property => {
-  if (property === 'warehouses') {
-    return [
-      {
-        priority: 10,
-        warehouseid: 'A154EC30A296479BB078B0AFFD74CA22',
-        warehousename: 'Vall Blanca Store Warehouse'
-      }
-    ];
-  } else if (property === 'terminal') {
-    return {
-      organization: 'D270A5AC50874F8BA67A88EE977F8E3B',
-      organization$_identifier: 'Vall Blanca Store',
-      country: '106',
-      region: 'AF310D01B53B461283EB40DB21DCA6B5'
-    };
-  }
-  return {};
-});
-
 const productA = {
   id: 'A',
   listPrice: 10
@@ -69,7 +48,22 @@ describe('TicketUtils', () => {
     const { newTicket, newLine } = OB.App.State.Ticket.Utils.createLine(
       deepfreeze(ticket),
       productB,
-      23
+      23,
+      {
+        terminal: {
+          organization: 'D270A5AC50874F8BA67A88EE977F8E3B',
+          organization$_identifier: 'Vall Blanca Store',
+          country: '106',
+          region: 'AF310D01B53B461283EB40DB21DCA6B5'
+        },
+        warehouses: [
+          {
+            priority: 10,
+            warehouseid: 'A154EC30A296479BB078B0AFFD74CA22',
+            warehousename: 'Vall Blanca Store Warehouse'
+          }
+        ]
+      }
     );
     expect(newLine).toMatchObject({ product: productB, qty: 23 });
     expect(newTicket.lines).toMatchObject([
