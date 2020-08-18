@@ -11,7 +11,7 @@
  * @fileoverview Declares an action that brings tickets present in the list to a session
  */
 OB.App.StateAPI.TicketList.registerAction(
-  'bringTicket',
+  'bringTicketToSession',
   (ticketList, payload) => {
     return ticketList.map(ticket => {
       if (payload.ticketIds.some(id => id === ticket.id)) {
@@ -27,7 +27,7 @@ OB.App.StateAPI.TicketList.registerAction(
   }
 );
 
-OB.App.StateAPI.TicketList.bringTicket.addActionPreparation(
+OB.App.StateAPI.TicketList.bringTicketToSession.addActionPreparation(
   async (ticketList, payload) => {
     const newPayload = { ...payload };
 

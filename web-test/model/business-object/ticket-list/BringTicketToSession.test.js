@@ -18,16 +18,16 @@ const {
 
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketList');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/BringTicket');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/BringTicketToSession');
 
-describe('Bring Ticket', () => {
-  describe('Bring Ticket action preparation', () => {
+describe('Bring Ticket To Session', () => {
+  describe('Bring Ticket To Session action preparation', () => {
     OB.App.TerminalProperty.get.mockImplementation(property =>
       property === 'usermodel' ? { id: 'user1' } : undefined
     );
     const prepareAction = async (ticketList, payload) => {
       const newPayload = await executeActionPreparations(
-        OB.App.StateAPI.TicketList.bringTicket,
+        OB.App.StateAPI.TicketList.bringTicketToSession,
         deepfreeze(ticketList),
         deepfreeze(payload)
       );
@@ -95,7 +95,7 @@ describe('Bring Ticket', () => {
     });
   });
 
-  describe('Bring Ticket action', () => {
+  describe('Bring Ticket To Session action', () => {
     it('brings a single ticket to the current session', () => {
       const ticketList = [
         { id: 'A', session: '1', createdBy: 'user0', updatedBy: 'user0' },
@@ -108,7 +108,7 @@ describe('Bring Ticket', () => {
         userId: 'user1'
       };
       deepfreeze(ticketList);
-      const newState = OB.App.StateAPI.TicketList.bringTicket(
+      const newState = OB.App.StateAPI.TicketList.bringTicketToSession(
         ticketList,
         payload
       );
@@ -131,7 +131,7 @@ describe('Bring Ticket', () => {
         userId: 'user1'
       };
       deepfreeze(ticketList);
-      const newState = OB.App.StateAPI.TicketList.bringTicket(
+      const newState = OB.App.StateAPI.TicketList.bringTicketToSession(
         ticketList,
         payload
       );

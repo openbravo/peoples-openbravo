@@ -191,7 +191,7 @@ enyo.kind({
           label: OB.I18N.getLabel('OBPOS_LblYesBring'),
           isConfirmButton: true,
           action: function() {
-            OB.App.State.TicketList.bringTicket({
+            OB.App.State.TicketList.bringTicketToSession({
               ticketIds: [me.model.id],
               session: OB.MobileApp.model.get('session')
             }).then(() =>
@@ -363,7 +363,7 @@ enyo.kind({
           label: OB.I18N.getLabel('OBPOS_LblYesBring'),
           isConfirmButton: true,
           action: function() {
-            OB.App.State.TicketList.bringTicket({
+            OB.App.State.TicketList.bringTicketToSession({
               ticketIds: me.collection.models.map(m => m.id),
               session: OB.MobileApp.model.get('session')
             }).then(() => {

@@ -394,7 +394,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket-list/TicketListUtils");
     appDependency.add("model/business-object/ticket-list/actions/AddNewTicket");
     appDependency.add("model/business-object/ticket-list/actions/AddNewQuotation");
-    appDependency.add("model/business-object/ticket-list/actions/BringTicket");
+    appDependency.add("model/business-object/ticket-list/actions/BringTicketToSession");
     appDependency.add("model/business-object/ticket-list/actions/LoadTicket");
     appDependency
         .add("model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets");
