@@ -32,4 +32,18 @@
       );
     }
   };
+
+  OB.UTIL.TicketUtils.addTicketCreationDataToPayload = function(payload) {
+    const newPayload = { ...payload };
+    newPayload.businessPartner = JSON.parse(
+      JSON.stringify(OB.App.TerminalProperty.get('businessPartner'))
+    );
+    newPayload.terminal = OB.App.TerminalProperty.get('terminal');
+    newPayload.session = OB.App.TerminalProperty.get('session');
+    newPayload.orgUserId = OB.App.TerminalProperty.get('orgUserId');
+    newPayload.pricelist = OB.App.TerminalProperty.get('pricelist');
+    newPayload.contextUser = OB.App.TerminalProperty.get('context').user;
+
+    return newPayload;
+  };
 })();

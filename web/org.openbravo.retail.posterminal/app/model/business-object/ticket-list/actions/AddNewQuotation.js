@@ -32,21 +32,3 @@ OB.App.StateAPI.Global.registerAction('addNewQuotation', (state, payload) => {
   newState.Ticket = ticket;
   return newState;
 });
-
-OB.App.StateAPI.Global.addNewQuotation.addActionPreparation(
-  async (state, payload) => {
-    const newPayload = { ...payload };
-    newPayload.businessPartner = JSON.parse(
-      JSON.stringify(OB.MobileApp.model.get('businessPartner'))
-    );
-    newPayload.terminal = OB.MobileApp.model.get('terminal');
-    newPayload.session = OB.MobileApp.model.get('session');
-    newPayload.orgUserId = OB.MobileApp.model.get('orgUserId');
-    newPayload.pricelist = OB.MobileApp.model.get('pricelist');
-    newPayload.contextUser = OB.MobileApp.model.get('context').user;
-    newPayload.documentTypeForQuotations = OB.MobileApp.model.get(
-      'terminal'
-    ).terminalType.documentTypeForQuotations;
-    return newPayload;
-  }
-);

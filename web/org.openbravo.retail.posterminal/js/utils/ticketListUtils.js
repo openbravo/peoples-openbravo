@@ -995,9 +995,13 @@
     });
   };
 
-  OB.UTIL.TicketListUtils.addNewQuotation = function() {
+  OB.UTIL.TicketListUtils.addNewQuotation = function(
+    documentTypeForQuotations
+  ) {
     OB.MobileApp.model.receipt.trigger('updateView');
-    OB.App.State.Global.addNewQuotation();
+    const payload = OB.UTIL.TicketUtils.addTicketCreationDataToPayload({});
+    payload.documentTypeForQuotations = documentTypeForQuotations;
+    OB.App.State.Global.addNewQuotation(payload);
     loadCurrent();
   };
 

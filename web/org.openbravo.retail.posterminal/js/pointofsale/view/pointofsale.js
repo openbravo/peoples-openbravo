@@ -908,7 +908,9 @@ enyo.kind({
   },
   addNewOrder: function(inSender, inEvent) {
     this.$.receiptPropertiesDialog.resetProperties();
-    OB.App.State.Global.addNewTicket().then(() => {
+    OB.App.State.Global.addNewTicket(
+      OB.UTIL.TicketUtils.addTicketCreationDataToPayload({})
+    ).then(() => {
       OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
       OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(false);
       OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
@@ -1392,7 +1394,10 @@ enyo.kind({
     }
   },
   createQuotation: function() {
-    OB.UTIL.TicketListUtils.addNewQuotation();
+    OB.UTIL.TicketListUtils.addNewQuotation(
+      OB.App.TerminalProperty.get('terminal').terminalType
+        .documentTypeForQuotations
+    );
     return true;
   },
 
