@@ -22,6 +22,7 @@ require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 OB.App.StateAPI.registerModel('Ticket');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CompleteTicketUtils');
 
 // set Ticket model utility functions
 OB.App.State = { Ticket: { Utils: {} } };
