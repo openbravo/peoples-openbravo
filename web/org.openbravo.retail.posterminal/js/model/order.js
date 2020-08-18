@@ -589,6 +589,8 @@
                 )
               : undefined,
             payments: OB.MobileApp.model.get('payments'),
+            paymentnames: OB.App.TerminalProperty.get('paymentnames'),
+            paymentcash: OB.App.TerminalProperty.get('paymentcash'),
             deliveryPaymentMode: OB.MobileApp.model.get('deliveryPaymentMode'),
             session: OB.MobileApp.model.get('session'),
             orgUserId: OB.MobileApp.model.get('orgUserId'),

@@ -1151,7 +1151,9 @@ enyo.kind({
           warehouses: OB.App.TerminalProperty.get('warehouses'),
           deliveryPaymentMode: OB.App.TerminalProperty.get(
             'deliveryPaymentMode'
-          )
+          ),
+          paymentnames: OB.App.TerminalProperty.get('paymentnames'),
+          paymentcash: OB.App.TerminalProperty.get('paymentcash')
         };
 
         OB.App.State.Ticket.addProduct({

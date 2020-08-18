@@ -393,14 +393,14 @@
       }
     }
 
-    calculateTotals(settings) {
+    calculateTotals(payload) {
       this.calculateDiscountsAndTaxes(
-        settings.discountRules,
-        settings.bpSets,
-        settings.taxRules
+        payload.discountRules,
+        payload.bpSets,
+        payload.taxRules
       );
-      this.adjustPayment(settings.paymentNames, settings.paymentCash);
-      this.setTotalQuantity(settings.qtyScale);
+      this.adjustPayment(payload.paymentnames, payload.paymentcash);
+      this.setTotalQuantity(payload.qtyScale);
     }
 
     calculateDiscountsAndTaxes(discountRules, bpSets, taxRules) {
@@ -742,7 +742,7 @@
      * Computes the totals of a given ticket which include: discounts, taxes and other calculated fields.
      *
      * @param {object} ticket - The ticket whose totals will be calculated
-     * @param {object} settings - The calculation settings, which include:
+     * @param {object} payload - The calculation payload, which include:
      *             * discountRules - The discount rules to be considered
      *             * taxRules - The tax rules to be considered
      *             * bpSets - The businessPartner sets
@@ -751,9 +751,9 @@
      *             * paymentCash - Default cash payment
      * @returns The ticket with the result of the totals calculation
      */
-    calculateTotals(ticket, settings) {
+    calculateTotals(ticket, payload) {
       const handler = new TicketHandler(ticket);
-      handler.calculateTotals(settings);
+      handler.calculateTotals(payload);
       return handler.getTicket();
     },
 

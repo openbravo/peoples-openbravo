@@ -274,7 +274,9 @@
         discountRules: extraData.discountRules,
         taxRules: extraData.taxRules,
         bpSets: extraData.bpSets,
-        qtyScale: extraData.qtyScale
+        qtyScale: extraData.qtyScale,
+        paymentnames: extraData.paymentnames,
+        paymentcash: extraData.paymentcash
       });
 
       newTicket.lines = newTicket.lines.map(l => {
