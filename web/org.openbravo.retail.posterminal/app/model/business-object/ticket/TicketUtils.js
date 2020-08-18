@@ -763,7 +763,7 @@
      * @param {object} payload - The calculation payload, which include:
      *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
      *
-     * @returns {boolean} true in case the ticket is a return, false in case it is a sale.
+     * @returns {boolean} true in case the ticket is a sale, false in case it is a return.
      */
     isSale(
       ticket,
