@@ -828,13 +828,13 @@
      *                              * warehouses: warehouse information
      *                              * deliveryPaymentMode: delivery payment mode
      * @returns {object} - An object with the following properties:
-     *                   * newTicket: a new ticket result of adding the new line into the provided ticket
-     *                   * newLine: the newly created line
+     *                   * ticket: a new ticket result of adding the new line into the provided ticket
+     *                   * line: the newly created line
      */
     createLine(ticket, payload) {
       const handler = new TicketHandler(ticket);
-      const newLine = handler.createLine(payload);
-      return { newTicket: handler.getTicket(), newLine };
+      const line = handler.createLine(payload);
+      return { ticket: handler.getTicket(), line };
     },
 
     /**

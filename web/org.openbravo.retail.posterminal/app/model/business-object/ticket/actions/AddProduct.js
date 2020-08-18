@@ -151,17 +151,17 @@
         ? attrs.relatedLines[0].qty
         : qty;
 
-    const { newTicket, newLine } = OB.App.State.Ticket.Utils.createLine(
-      ticket,
-      {
-        product,
-        qty: lineQty,
-        terminal: extraData.terminal,
-        store: extraData.store,
-        warehouses: extraData.warehouses,
-        deliveryPaymentMode: extraData.deliveryPaymentMode
-      }
-    );
+    const createdData = OB.App.State.Ticket.Utils.createLine(ticket, {
+      product,
+      qty: lineQty,
+      terminal: extraData.terminal,
+      store: extraData.store,
+      warehouses: extraData.warehouses,
+      deliveryPaymentMode: extraData.deliveryPaymentMode
+    });
+
+    const newTicket = createdData.ticket;
+    const newLine = createdData.line;
 
     if (attrs.organization) {
       newLine.organization = {

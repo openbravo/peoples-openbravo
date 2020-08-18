@@ -25,7 +25,7 @@ describe('TicketUtils', () => {
     const ticket = {
       lines: [{ product: productA, qty: 1 }]
     };
-    const { newTicket, newLine } = OB.App.State.Ticket.Utils.createLine(
+    const createdData = OB.App.State.Ticket.Utils.createLine(
       deepfreeze(ticket),
       {
         product: productB,
@@ -45,6 +45,8 @@ describe('TicketUtils', () => {
         ]
       }
     );
+    const newTicket = createdData.ticket;
+    const newLine = createdData.line;
     expect(newLine).toMatchObject({ product: productB, qty: 23 });
     expect(newTicket.lines).toMatchObject([
       { product: productA, qty: 1 },
