@@ -107,13 +107,18 @@
         // Ticket print message
         newMessages = [
           ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(newMultiTicket)
+          OB.App.State.Messages.Utils.createPrintTicketMessage(newMultiTicket, {
+            skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+          })
         ];
         if (newMultiTicket.calculatedInvoice) {
           newMessages = [
             ...newMessages,
             OB.App.State.Messages.Utils.createPrintTicketMessage(
-              newMultiTicket.calculatedInvoice
+              newMultiTicket.calculatedInvoice,
+              {
+                skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+              }
             )
           ];
         }
