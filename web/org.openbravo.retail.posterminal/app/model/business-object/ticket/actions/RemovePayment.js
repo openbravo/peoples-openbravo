@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/* global */
-
 (function RemovePaymentDefinition() {
   OB.App.StateAPI.Ticket.registerAction('removePayment', (ticket, payload) => {
     const newTicket = { ...ticket };
