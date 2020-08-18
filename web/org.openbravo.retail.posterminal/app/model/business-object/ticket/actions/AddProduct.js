@@ -77,18 +77,6 @@
           return { ...productInfo, qty, options, attrs };
         });
 
-      const { qtyEdition } = OB.Format.formats;
-      newPayload.extraData = {
-        discountRules: OB.Discounts.Pos.ruleImpls,
-        taxRules: OB.Taxes.Pos.ruleImpls,
-        bpSets: OB.Discounts.Pos.bpSets,
-        qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1,
-        terminal: OB.App.TerminalProperty.get('terminal'),
-        store: OB.App.TerminalProperty.get('store'),
-        warehouses: OB.App.TerminalProperty.get('warehouses'),
-        deliveryPaymentMode: OB.App.TerminalProperty.get('deliveryPaymentMode')
-      };
-
       newPayload = await processPacks(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
 

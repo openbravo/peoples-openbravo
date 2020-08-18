@@ -30,12 +30,6 @@ global.OB = {
     TerminalProperty: { get: jest.fn() },
     View: { DialogUIHandler: { inputData: jest.fn() } }
   },
-  Discounts: {
-    Pos: {
-      ruleImpls: [],
-      bpSets: []
-    }
-  },
   Format: {
     formats: { qtyEdition: '#0.###' }
   },
@@ -49,7 +43,6 @@ global.OB = {
   },
   Taxes: {
     Pos: {
-      ruleImpls: [],
       taxCategoryBOM: [{ id: 'FF80818123B7FC160123B804AB8C0019' }]
     }
   },
@@ -636,7 +629,8 @@ describe('addProduct preparation', () => {
         products: [
           { product: pack, qty: 1 },
           { product: Product.productA, qty: 2 }
-        ]
+        ],
+        extraData: { discountRules: [] }
       };
       const packContent = [
         {
@@ -683,7 +677,8 @@ describe('addProduct preparation', () => {
         productCategory: 'BE5D42E554644B6AA262CCB097753951'
       };
       const payload = {
-        products: [{ product: pack, qty: 1 }]
+        products: [{ product: pack, qty: 1 }],
+        extraData: { discountRules: [] }
       };
 
       OB.App.ProductPackProvider.getPack.mockReturnValueOnce({
@@ -708,7 +703,8 @@ describe('addProduct preparation', () => {
       };
       await expect(
         prepareAction({
-          products: [{ product: pack }, { product: pack }]
+          products: [{ product: pack }, { product: pack }],
+          extraData: { discountRules: [] }
         })
       ).rejects.toThrow('Cannot handle more than one pack');
     });
@@ -721,7 +717,8 @@ describe('addProduct preparation', () => {
       };
       await expect(
         prepareAction({
-          products: [{ product: pack, qty: 2 }]
+          products: [{ product: pack, qty: 2 }],
+          extraData: { discountRules: [] }
         })
       ).rejects.toThrow('Cannot handle more than unit of a pack');
     });
@@ -1433,7 +1430,8 @@ describe('addProduct preparation', () => {
       const payload = {
         products: [
           { product: crossStoreProduct, qty: 1, options: {}, attrs: {} }
-        ]
+        ],
+        extraData: { discountRules: [] }
       };
       const newPayload = await prepareAction(payload);
       expect(newPayload).toMatchObject(payload);

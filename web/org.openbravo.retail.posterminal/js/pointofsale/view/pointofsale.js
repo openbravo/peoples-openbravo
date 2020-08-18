@@ -1138,6 +1138,20 @@ enyo.kind({
 
         const beforeAddTicket = OB.App.State.getState().Ticket;
 
+        const { qtyEdition } = OB.Format.formats;
+        const extraData = {
+          discountRules: OB.Discounts.Pos.ruleImpls,
+          taxRules: OB.Taxes.Pos.ruleImpls,
+          bpSets: OB.Discounts.Pos.bpSets,
+          qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1,
+          terminal: OB.App.TerminalProperty.get('terminal'),
+          store: OB.App.TerminalProperty.get('store'),
+          warehouses: OB.App.TerminalProperty.get('warehouses'),
+          deliveryPaymentMode: OB.App.TerminalProperty.get(
+            'deliveryPaymentMode'
+          )
+        };
+
         OB.App.State.Ticket.addProduct({
           products: [
             {
@@ -1146,7 +1160,8 @@ enyo.kind({
               options,
               attrs
             }
-          ]
+          ],
+          extraData
         })
           .then(() => {
             currentReceipt.unset('preventServicesUpdate');
