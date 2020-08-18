@@ -9,7 +9,7 @@
 
 /* global global */
 
-OB = { App: { Class: {}, TerminalProperty: { get: jest.fn() } } };
+OB = { App: { Class: {} } };
 const deepfreeze = require('deepfreeze');
 global.lodash = require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const {
@@ -22,9 +22,6 @@ require('../../../../web/org.openbravo.retail.posterminal/app/model/business-obj
 
 describe('Bring Ticket To Session', () => {
   describe('Bring Ticket To Session action preparation', () => {
-    OB.App.TerminalProperty.get.mockImplementation(property =>
-      property === 'usermodel' ? { id: 'user1' } : undefined
-    );
     const prepareAction = async (ticketList, payload) => {
       const newPayload = await executeActionPreparations(
         OB.App.StateAPI.TicketList.bringTicketToSession,
@@ -40,7 +37,8 @@ describe('Bring Ticket To Session', () => {
       ];
       const newPayload = await prepareAction(ticketList, {
         ticketIds: ['A'],
-        session: '2'
+        session: '2',
+        userId: 'user1'
       });
       expect(newPayload).toEqual({
         ticketIds: ['A'],
@@ -55,7 +53,8 @@ describe('Bring Ticket To Session', () => {
       ];
       const newPayload = await prepareAction(ticketList, {
         ticketIds: 'A',
-        session: '2'
+        session: '2',
+        userId: 'user1'
       });
       expect(newPayload).toEqual({
         ticketIds: ['A'],
@@ -92,6 +91,22 @@ describe('Bring Ticket To Session', () => {
         error = e;
       }
       expect(error.message).toEqual('session parameter is mandatory');
+    });
+
+    it('userId mandatory parameter', async () => {
+      const ticketList = [
+        { id: 'A', session: '1', createdBy: 'user0', updatedBy: 'user0' }
+      ];
+      let error;
+      try {
+        await prepareAction(ticketList, {
+          ticketIds: ['A'],
+          session: '2'
+        });
+      } catch (e) {
+        error = e;
+      }
+      expect(error.message).toEqual('userId parameter is mandatory');
     });
   });
 

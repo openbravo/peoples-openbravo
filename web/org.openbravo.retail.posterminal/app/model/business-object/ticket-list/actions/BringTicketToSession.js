@@ -39,11 +39,13 @@ OB.App.StateAPI.TicketList.bringTicketToSession.addActionPreparation(
       throw new Error('ticketIds parameter is mandatory');
     }
 
+    if (!newPayload.userId) {
+      throw new Error('userId parameter is mandatory');
+    }
+
     if (!(newPayload.ticketIds instanceof Array)) {
       newPayload.ticketIds = [newPayload.ticketIds];
     }
-
-    newPayload.userId = OB.App.TerminalProperty.get('usermodel').id;
 
     return newPayload;
   }

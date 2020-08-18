@@ -193,7 +193,8 @@ enyo.kind({
           action: function() {
             OB.App.State.TicketList.bringTicketToSession({
               ticketIds: [me.model.id],
-              session: OB.MobileApp.model.get('session')
+              session: OB.MobileApp.model.get('session'),
+              userId: OB.MobileApp.model.get('usermodel').id
             }).then(() =>
               me.model.set('session', OB.MobileApp.model.get('session'))
             );
@@ -365,7 +366,8 @@ enyo.kind({
           action: function() {
             OB.App.State.TicketList.bringTicketToSession({
               ticketIds: me.collection.models.map(m => m.id),
-              session: OB.MobileApp.model.get('session')
+              session: OB.MobileApp.model.get('session'),
+              userId: OB.MobileApp.model.get('usermodel').id
             }).then(() => {
               me.collection.models.forEach(m =>
                 m.set('session', OB.MobileApp.model.get('session'))
