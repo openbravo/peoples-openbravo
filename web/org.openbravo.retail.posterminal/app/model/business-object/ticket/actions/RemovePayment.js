@@ -7,6 +7,11 @@
  ************************************************************************************
  */
 
+/**
+ * @fileoverview defines the action to remove a payment from the ticket
+ * @author Antonio Moreno <antonio.moreno@openbravo.com>
+ */
+
 (function RemovePaymentDefinition() {
   OB.App.StateAPI.Ticket.registerAction('removePayment', (ticket, payload) => {
     const newTicket = { ...ticket };
