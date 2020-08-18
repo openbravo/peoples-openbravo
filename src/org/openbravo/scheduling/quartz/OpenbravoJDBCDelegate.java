@@ -10,8 +10,8 @@
  * License for the specific  language  governing  rights  and  limitations
  * under the License.
  * The Original Code is Openbravo ERP.
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,103 +19,50 @@
 package org.openbravo.scheduling.quartz;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.quartz.impl.jdbcjobstore.CronTriggerPersistenceDelegate;
-import org.quartz.impl.jdbcjobstore.PostgreSQLDelegate;
-import org.quartz.impl.jdbcjobstore.SimpleTriggerPersistenceDelegate;
+import static org.quartz.impl.jdbcjobstore.Constants.COL_INSTANCE_NAME;
+import static org.quartz.impl.jdbcjobstore.Constants.COL_LAST_CHECKIN_TIME;
+import static org.quartz.impl.jdbcjobstore.Constants.COL_SCHEDULER_NAME;
+import static org.quartz.impl.jdbcjobstore.Constants.TABLE_SCHEDULER_STATE;
+import static org.quartz.impl.jdbcjobstore.StdJDBCConstants.SCHED_NAME_SUBST;
+import static org.quartz.impl.jdbcjobstore.StdJDBCConstants.TABLE_PREFIX_SUBST;
 
-import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.getBooleanValue;
-import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.setBooleanValue;
+/**
+ * Interface for Openbravo quartz JDBCDelegates
+ */
+public interface OpenbravoJDBCDelegate {
 
-public class OpenbravoJDBCDelegate extends PostgreSQLDelegate {
+  String COL_SCHEDULER_STATUS = "STATUS";
 
-  private static final String COL_SCHEDULER_STATUS = "STATUS";
+  String SCHEDULER_STATUS_STANDBY = "STANDBY";
+  String SCHEDULER_STATUS_STARTED = "STARTED";
 
-  static final String SCHEDULER_STATUS_STANDBY = "STANDBY";
-  static final String SCHEDULER_STATUS_STARTED = "STARTED";
+  String UPDATE_SCHEDULER_STATE_EXTENDED = "UPDATE " + TABLE_PREFIX_SUBST
+    + TABLE_SCHEDULER_STATE + " SET " + COL_LAST_CHECKIN_TIME + " = ?, " + COL_SCHEDULER_STATUS
+    + " = ? " + " WHERE " + COL_SCHEDULER_NAME + " = " + SCHED_NAME_SUBST + " AND "
+    + COL_INSTANCE_NAME + " = ?";
 
-  static final String UPDATE_SCHEDULER_STATE_EXTENDED = "UPDATE " + TABLE_PREFIX_SUBST
-      + TABLE_SCHEDULER_STATE + " SET " + COL_LAST_CHECKIN_TIME + " = ?, " + COL_SCHEDULER_STATUS
-      + " = ? " + " WHERE " + COL_SCHEDULER_NAME + " = " + SCHED_NAME_SUBST + " AND "
-      + COL_INSTANCE_NAME + " = ?";
-
-  static final String COUNT_STARTED_SCHEDULER_INSTANCES = "SELECT count(*) " + " FROM "
-      + TABLE_PREFIX_SUBST + TABLE_SCHEDULER_STATE + " WHERE " + COL_SCHEDULER_NAME + " = "
-      + SCHED_NAME_SUBST + " AND " + COL_SCHEDULER_STATUS + " = ?";
-
-  @Override
-  protected void addDefaultTriggerPersistenceDelegates() {
-    addTriggerPersistenceDelegate(new SimpleTriggerPersistenceDelegate());
-    addTriggerPersistenceDelegate(new CronTriggerPersistenceDelegate());
-    // Handling of Bool fields is not extensible in TriggerPersistenceDelegates that use
-    // extended properties so those classes are replaced with Openbravo specific ones
-    addTriggerPersistenceDelegate(new OpenbravoDailyTimeIntervalTriggerPersistenceDelegate());
-    addTriggerPersistenceDelegate(new OpenbravoCalendarIntervalTriggerPersistenceDelegate());
-  }
-
-  public int updateSchedulerStatus(Connection conn, String theInstanceId, long checkInTime,
-      String status) throws SQLException {
-    PreparedStatement ps = null;
-    try {
-      ps = conn.prepareStatement(rtp(UPDATE_SCHEDULER_STATE_EXTENDED));
-      ps.setLong(1, checkInTime);
-      ps.setString(2, status);
-      ps.setString(3, theInstanceId);
-
-      return ps.executeUpdate();
-    } finally {
-      closeStatement(ps);
-    }
-  }
-
-  public boolean schedulersStarted(Connection conn) throws SQLException {
-    PreparedStatement ps = null;
-    ResultSet rs = null;
-
-    try {
-      ps = conn.prepareStatement(rtp(COUNT_STARTED_SCHEDULER_INSTANCES));
-      ps.setString(1, SCHEDULER_STATUS_STARTED);
-      rs = ps.executeQuery();
-
-      if (rs.next()) {
-        return rs.getInt(1) > 0;
-      }
-
-      throw new SQLException("No started instances count returned.");
-    } finally {
-      closeResultSet(rs);
-      closeStatement(ps);
-    }
-  }
+  String COUNT_STARTED_SCHEDULER_INSTANCES = "SELECT count(*) " + " FROM "
+    + TABLE_PREFIX_SUBST + TABLE_SCHEDULER_STATE + " WHERE " + COL_SCHEDULER_NAME + " = "
+    + SCHED_NAME_SUBST + " AND " + COL_SCHEDULER_STATUS + " = ?";
 
   /**
-   * Use 'Y' and 'N' Varchar fields instead of Bool to be consistent with Openbravo standards and to
-   * allow DBSourceManager to manage the data structures
+   * Updates scheduler status to provided status
+   * @param conn Connection to DB
+   * @param theInstanceId Instance id of the scheduler
+   * @param checkInTime Time stamp when status has been updated
+   * @param status Target status
+   * @return Number of columns updated in DB (>0, scheduler status updated)
+   * @throws SQLException In case of SQL error
    */
-  @Override
-  protected void setBoolean(PreparedStatement ps, int index, boolean val) throws SQLException {
-    setBooleanValue(ps, index, val);
-  }
+  int updateSchedulerStatus(Connection conn, String theInstanceId, long checkInTime, String status) throws SQLException;
 
   /**
-   * Use 'Y' and 'N' Varchar fields instead of Bool to be consistent with Openbravo standards and to
-   * allow DBSourceManager to manage the data structures
+   * Gets if scheduler has been started in the cluster
+   * @param conn Connection to DB
+   * @return true if scheduler has been started, false otherwise
+   * @throws SQLException In case of SQL error
    */
-  @Override
-  protected boolean getBoolean(ResultSet rs, String columnName) throws SQLException {
-    return getBooleanValue(rs, columnName);
-  }
-
-  /**
-   * Use 'Y' and 'N' Varchar fields instead of Bool to be consistent with Openbravo standards and to
-   * allow DBSourceManager to manage the data structures
-   */
-  @Override
-  protected boolean getBoolean(ResultSet rs, int columnIndex) throws SQLException {
-    return getBooleanValue(rs, columnIndex);
-  }
-
+  boolean schedulersStarted(Connection conn) throws SQLException;
 }
