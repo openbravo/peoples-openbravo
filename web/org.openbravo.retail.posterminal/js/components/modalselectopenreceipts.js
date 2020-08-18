@@ -214,12 +214,14 @@ enyo.kind({
               ).toStateObject(orderModel)
             );
           }
-          orderModel.set('bp', OB.MobileApp.model.receipt.get('bp'));
+          const bpClone = new OB.Model.BusinessPartner();
+          OB.UTIL.clone(OB.MobileApp.model.receipt.get('bp'), bpClone);
           const current = OB.MobileApp.model.receipt;
           // Change the UI receipt to add the product on the newly created ticket
           await me.owner.owner.doChangeCurrentOrder({
             newCurrentOrder: orderModel,
             callback: function() {
+              current.set('bp', bpClone);
               me.owner.owner.doAddProduct({
                 targetOrder: orderModel,
                 product: product,
