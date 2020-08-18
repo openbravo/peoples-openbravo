@@ -542,14 +542,16 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if no processed payments exists for given ticket.
    */
   async checkUnprocessedPayments(ticket, payload) {
+    const terminal = OB.App.TerminalProperty.get('terminal');
     const payment = ticket.payments.find(p => !p.isPrePayment);
     if (payment) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_C&RDeletePaymentsBody',
         messageParams: [
-          `${payment.name} (${OB.App.Locale.toStringWithCurrencySymbol(
-            payment.amount
-          )})`
+          `${payment.name} (${OB.App.Locale.formatAmount(payment.amount, {
+            currencySymbol: terminal.symbol,
+            currencySymbolAtTheRight: terminal.currencySymbolAtTheRight
+          })})`
         ]
       });
     }
@@ -666,6 +668,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if overpayment exists for given ticket.
    */
   async checkOverPayments(ticket, payload) {
+    const terminal = OB.App.TerminalProperty.get('terminal');
     const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
       ticket,
       payload
@@ -676,7 +679,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         title: 'OBPOS_OverpaymentWarningTitle',
         message: 'OBPOS_OverpaymentWarningBody',
         messageParams: [
-          OB.App.Locale.toStringWithCurrencySymbol(paymentStatus.overpayment)
+          OB.App.Locale.formatAmount(paymentStatus.overpayment, {
+            currencySymbol: terminal.symbol,
+            currencySymbolAtTheRight: terminal.currencySymbolAtTheRight
+          })
         ]
       });
     } else if (
@@ -686,7 +692,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       !ticket.payOnCredit &&
       OB.DEC.abs(ticket.obposPrepaymentamt) ===
         OB.DEC.abs(ticket.grossAmount) &&
-      !OB.App.TerminalProperty.get('terminal').terminalType.calculateprepayments
+      !terminal.terminalType.calculateprepayments
     ) {
       await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
         title: 'OBPOS_PaymentAmountDistinctThanReceiptAmountTitle',

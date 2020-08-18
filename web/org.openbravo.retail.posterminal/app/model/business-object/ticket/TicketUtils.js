@@ -1114,13 +1114,11 @@
       if (payload.multiTicketList) {
         const { total, payment } = ticket;
         return {
-          total: OB.App.Locale.toStringWithoutCurrencySymbol(total),
+          total: OB.App.Locale.formatAmount(total),
           pending:
             OB.DEC.compare(OB.DEC.sub(payment, total)) >= 0
-              ? OB.App.Locale.toStringWithoutCurrencySymbol(OB.DEC.Zero)
-              : OB.App.Locale.toStringWithoutCurrencySymbol(
-                  OB.DEC.sub(total, payment)
-                ),
+              ? OB.App.Locale.formatAmount(OB.DEC.Zero)
+              : OB.App.Locale.formatAmount(OB.DEC.sub(total, payment)),
           overpayment:
             OB.DEC.compare(OB.DEC.sub(payment, total)) > 0
               ? OB.DEC.sub(payment, total)
