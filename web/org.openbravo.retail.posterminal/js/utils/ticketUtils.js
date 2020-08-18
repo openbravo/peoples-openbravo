@@ -43,7 +43,33 @@
     newPayload.orgUserId = OB.App.TerminalProperty.get('orgUserId');
     newPayload.pricelist = OB.App.TerminalProperty.get('pricelist');
     newPayload.contextUser = OB.App.TerminalProperty.get('context').user;
+    newPayload.ticketExtraProperties = OB.UTIL.TicketUtils.getTicketExtraProperties();
 
     return newPayload;
+  };
+
+  OB.UTIL.TicketUtils.getTicketExtraProperties = function() {
+    const window = OB.MobileApp.view.$.containerWindow;
+    if (
+      window &&
+      window.getRoot() &&
+      window.getRoot().$.receiptPropertiesDialog
+    ) {
+      const properties = window.getRoot().$.receiptPropertiesDialog
+        .newAttributes;
+      return properties.reduce((o, p) => {
+        if (p.modelProperty) {
+          return { ...o, [p.modelProperty]: p.defaultValue || '' };
+        }
+        if (p.extraProperties) {
+          const extraProperties = p.extraProperties.reduce((oep, ep) => {
+            return { ...oep, [ep]: '' };
+          }, {});
+          return { ...o, ...extraProperties };
+        }
+        return o;
+      }, {});
+    }
+    return {};
   };
 })();

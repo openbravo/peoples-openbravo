@@ -949,8 +949,7 @@
 
     newTicket(payload) {
       let ticket = {
-        // ticket extra properties
-        ...OB.App.TicketExtraProperties.getAll(),
+        ...payload.ticketExtraProperties,
         // ticket default properties
         id: OB.App.UUID.generate(),
         orderType: 0, // 0: Sales order, 1: Return order

@@ -621,7 +621,8 @@
             taxRules: OB.Taxes.Pos.ruleImpls,
             multiTickets: OB.MobileApp.model.multiOrders
               ? JSON.parse(JSON.stringify(OB.MobileApp.model.multiOrders))
-              : undefined
+              : undefined,
+            ticketExtraProperties: OB.UTIL.TicketUtils.getTicketExtraProperties()
           });
 
           if (!isDeleteTicket) {
