@@ -20,7 +20,7 @@ OB.App.StateAPI.Ticket.addModelHook({
       taxRules: OB.Taxes.Pos.ruleImpls,
       bpSets: OB.Discounts.Pos.bpSets,
       qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1,
-      paymentnames: OB.App.TerminalProperty.get('paymentnames'),
+      payments: OB.App.TerminalProperty.get('payments'),
       paymentcash: OB.App.TerminalProperty.get('paymentcash')
     };
   },

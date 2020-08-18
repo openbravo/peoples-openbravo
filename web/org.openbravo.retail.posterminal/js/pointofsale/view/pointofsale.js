@@ -1146,14 +1146,12 @@ enyo.kind({
           taxRules: OB.Taxes.Pos.ruleImpls,
           bpSets: OB.Discounts.Pos.bpSets,
           qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1,
-          terminal: OB.App.TerminalProperty.get('terminal'),
-          store: OB.App.TerminalProperty.get('store'),
-          warehouses: OB.App.TerminalProperty.get('warehouses'),
-          deliveryPaymentMode: OB.App.TerminalProperty.get(
-            'deliveryPaymentMode'
-          ),
-          paymentnames: OB.App.TerminalProperty.get('paymentnames'),
-          paymentcash: OB.App.TerminalProperty.get('paymentcash')
+          terminal: OB.MobileApp.model.get('terminal'),
+          store: OB.MobileApp.model.get('store'),
+          warehouses: OB.MobileApp.model.get('warehouses'),
+          deliveryPaymentMode: OB.MobileApp.model.get('deliveryPaymentMode'),
+          payments: OB.MobileApp.model.get('payments'),
+          paymentcash: OB.MobileApp.model.get('paymentcash')
         };
 
         OB.App.State.Ticket.addProduct({

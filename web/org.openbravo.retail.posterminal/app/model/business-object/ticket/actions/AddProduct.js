@@ -275,7 +275,7 @@
         taxRules: extraData.taxRules,
         bpSets: extraData.bpSets,
         qtyScale: extraData.qtyScale,
-        paymentnames: extraData.paymentnames,
+        payments: extraData.payments,
         paymentcash: extraData.paymentcash
       });
 

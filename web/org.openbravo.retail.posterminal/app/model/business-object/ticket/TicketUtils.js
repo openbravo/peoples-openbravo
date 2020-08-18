@@ -13,18 +13,21 @@
 
 (function TicketUtilsDefinition() {
   // checks if the type of payment is cash
-  const isCash = (paymentType, paymentNames) => {
-    if (!paymentNames[paymentType]) {
+  const isCash = (paymentType, paymentTypes) => {
+    const payment = paymentTypes.find(p => p.payment.searchKey === paymentType);
+    if (!payment) {
       return false;
     }
-    return paymentNames[paymentType].paymentMethod.iscash;
+    return payment.paymentMethod.iscash;
   };
 
   // gets the precision of a given payment
-  const getPrecision = (payment, paymentNames) => {
-    const terminalpayment = paymentNames[payment.kind];
-    return terminalpayment
-      ? terminalpayment.obposPosprecision
+  const getPrecision = (payment, paymentTypes) => {
+    const terminalPayment = paymentTypes.find(
+      p => p.payment.searchKey === payment.kind
+    );
+    return terminalPayment
+      ? terminalPayment.obposPosprecision
       : OB.DEC.getScale();
   };
 
@@ -399,7 +402,7 @@
         payload.bpSets,
         payload.taxRules
       );
-      this.adjustPayment(payload.paymentnames, payload.paymentcash);
+      this.adjustPayment(payload.payments, payload.paymentcash);
       this.setTotalQuantity(payload.qtyScale);
     }
 
@@ -490,12 +493,12 @@
         );
     }
 
-    adjustPayment(paymentNames, paymentCash) {
+    adjustPayment(paymentTypes, paymentCash) {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
 
       // set the payments origAmount property
       this.ticket.payments = this.ticket.payments.map(p => {
-        const newPayment = this.calculateOrigAmount(p, paymentNames);
+        const newPayment = this.calculateOrigAmount(p, paymentTypes);
         if (
           !p.isPrePayment &&
           this.ticket.isNegative &&
@@ -515,7 +518,7 @@
       const processedPaymentsAmount = this.ticket.payments
         .filter(p => p.isPrePayment)
         .reduce(
-          (t, p) => OB.DEC.add(t, p.origAmount, getPrecision(p, paymentNames)),
+          (t, p) => OB.DEC.add(t, p.origAmount, getPrecision(p, paymentTypes)),
           this.ticket.nettingPayment || OB.DEC.Zero
         );
 
@@ -531,7 +534,7 @@
 
       // get cash info
       const { defaultCash, nonDefaultCash, noCash } = this.getCashInfo(
-        paymentNames,
+        paymentTypes,
         paymentCash
       );
 
@@ -556,12 +559,12 @@
         ? this.ticket.obposPrepaymentamt
         : grossAmount;
       const cashPayment = this.ticket.payments.find(
-        p => p.kind === paymentCash || isCash(p.kind, paymentNames)
+        p => p.kind === paymentCash || isCash(p.kind, paymentTypes)
       );
       let cashPaid;
       if (cashPayment) {
         let payment;
-        const precision = getPrecision(cashPayment, paymentNames);
+        const precision = getPrecision(cashPayment, paymentTypes);
         if (this.ticket.isNegative) {
           if (OB.DEC.add(notModifiableAmount, noCash, precision) < total) {
             payment = OB.DEC.add(notModifiableAmount, noCash, precision);
@@ -629,8 +632,8 @@
       }
     }
 
-    calculateOrigAmount(payment, paymentNames) {
-      const precision = getPrecision(payment, paymentNames);
+    calculateOrigAmount(payment, paymentTypes) {
+      const precision = getPrecision(payment, paymentTypes);
       let origAmount;
       if (payment.rate && payment.rate !== '1') {
         origAmount = OB.DEC.div(payment.amount, payment.mulrate);
@@ -644,7 +647,7 @@
         if (
           OB.DEC.compare(
             OB.DEC.sub(
-              this.getDifferenceRemovingSpecificPayment(payment, paymentNames),
+              this.getDifferenceRemovingSpecificPayment(payment, paymentTypes),
               OB.DEC.abs(payment.amount, precision),
               precision
             )
@@ -669,8 +672,8 @@
     }
 
     // Returns the difference (abs) between total to pay and payments without take into account the provided payment
-    getDifferenceRemovingSpecificPayment(payment, paymentNames) {
-      const precision = getPrecision(payment, paymentNames);
+    getDifferenceRemovingSpecificPayment(payment, paymentTypes) {
+      const precision = getPrecision(payment, paymentTypes);
       const differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(
         payment
       );
@@ -705,7 +708,7 @@
         .reduce((t, p) => OB.DEC.add(t, p.origAmount), OB.DEC.Zero);
     }
 
-    getCashInfo(paymentNames, paymentCash) {
+    getCashInfo(paymentTypes, paymentCash) {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
       return this.ticket.payments
         .filter(p => !p.isPrePayment)
@@ -715,7 +718,7 @@
             if (p.kind === paymentCash) {
               // the default cash method
               property = 'defaultCash';
-            } else if (isCash(p.kind, paymentNames)) {
+            } else if (isCash(p.kind, paymentTypes)) {
               // another cash method
               property = 'nonDefaultCash';
             } else {
@@ -747,8 +750,8 @@
      *             * taxRules - The tax rules to be considered
      *             * bpSets - The businessPartner sets
      *             * qtyScale - The scale of the ticket quantity (qty)
-     *             * paymentNames - The avaialable payment names
-     *             * paymentCash - Default cash payment
+     *             * payments - The available payment types
+     *             * paymentcash - Default cash payment
      * @returns The ticket with the result of the totals calculation
      */
     calculateTotals(ticket, payload) {
