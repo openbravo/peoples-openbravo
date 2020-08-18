@@ -1150,25 +1150,24 @@
      * @returns {object} Ticket payment status.
      */
     getPaymentStatus(ticket, payload) {
-      if (payload.multiTicketList) {
-        const { total, payment } = ticket;
+      if (payload && payload.multiTicketList) {
         return {
-          total: OB.App.Locale.formatAmount(total),
+          total: ticket.total,
           pending:
-            OB.DEC.compare(OB.DEC.sub(payment, total)) >= 0
-              ? OB.App.Locale.formatAmount(OB.DEC.Zero)
-              : OB.App.Locale.formatAmount(OB.DEC.sub(total, payment)),
+            OB.DEC.compare(OB.DEC.sub(ticket.payment, ticket.total)) >= 0
+              ? OB.DEC.Zero
+              : OB.DEC.sub(ticket.total, ticket.payment),
           overpayment:
-            OB.DEC.compare(OB.DEC.sub(payment, total)) > 0
-              ? OB.DEC.sub(payment, total)
-              : null,
+            OB.DEC.compare(OB.DEC.sub(ticket.payment, ticket.total)) > 0
+              ? OB.DEC.sub(ticket.payment, ticket.total)
+              : OB.DEC.Zero,
           isReturn: ticket.gross < 0,
           isNegative: ticket.gross < 0,
-          totalAmt: total,
+          totalAmt: ticket.total,
           pendingAmt:
-            OB.DEC.compare(OB.DEC.sub(payment, total)) >= 0
+            OB.DEC.compare(OB.DEC.sub(ticket.payment, ticket.total)) >= 0
               ? OB.DEC.Zero
-              : OB.DEC.sub(total, payment),
+              : OB.DEC.sub(ticket.total, ticket.payment),
           payments: ticket.payments
         };
       }
