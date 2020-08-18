@@ -55,7 +55,10 @@
     // delete the lines resulting with quantity zero
     ticket.lines = ticket.lines.filter(l => l.qty !== 0);
 
-    ticket = OB.App.State.Ticket.Utils.updateServicesInformation(ticket);
+    ticket = OB.App.State.Ticket.Utils.updateServicesInformation(
+      ticket,
+      extraData
+    );
 
     return ticket;
   });

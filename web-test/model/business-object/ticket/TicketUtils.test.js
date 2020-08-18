@@ -27,9 +27,9 @@ describe('TicketUtils', () => {
     };
     const { newTicket, newLine } = OB.App.State.Ticket.Utils.createLine(
       deepfreeze(ticket),
-      productB,
-      23,
       {
+        product: productB,
+        qty: 23,
         terminal: {
           organization: 'D270A5AC50874F8BA67A88EE977F8E3B',
           organization$_identifier: 'Vall Blanca Store',

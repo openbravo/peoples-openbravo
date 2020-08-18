@@ -50,7 +50,7 @@
     }
 
     createLine(payload) {
-      const product = { payload };
+      const { product } = payload;
       const newLine = {
         id: OB.App.UUID.generate(),
         product,
@@ -233,9 +233,9 @@
               newqtyplus += qty;
             }
             const newLine = this.createLine({
+              ...payload,
               product: service,
-              qty: newqtyminus,
-              ...payload
+              qty: newqtyminus
             });
             newLine.relatedLines = rln;
             newLine.groupService = newLine.product.groupProduct;
@@ -245,19 +245,19 @@
             if (deferredLines.length > 0) {
               const qty = service.quantityRule === 'PP' ? deferredQty : 1;
               const newLine = this.createLine({
+                ...payload,
                 product: service,
-                qty,
-                ...payload
+                qty
               });
               newLine.relatedLines = deferredLines;
               newLine.qty = qty;
             }
             serviceLine.relatedLines = rln;
-            newqtyminus = this.adjustNotGroupedServices({
-              product: serviceLine,
-              qty: newqtyminus,
-              ...payload
-            });
+            newqtyminus = this.adjustNotGroupedServices(
+              serviceLine,
+              newqtyminus,
+              payload
+            );
             serviceLine.qty = newqtyminus;
           } else if (newqtyplus) {
             serviceLine.relatedLines = OB.App.ArrayUtils.union(
@@ -268,11 +268,11 @@
               if (serviceLine.groupService) {
                 newqtyplus += deferredQty;
               } else {
-                newqtyplus = this.adjustNotGroupedServices({
-                  product: serviceLine,
-                  qty: newqtyplus,
-                  ...payload
-                });
+                newqtyplus = this.adjustNotGroupedServices(
+                  serviceLine,
+                  newqtyplus,
+                  payload
+                );
               }
             }
             serviceLine.qty = newqtyplus;
@@ -288,28 +288,28 @@
           }
         } else if (newqtyminus && newqtyplus) {
           const newLine = this.createLine({
+            ...payload,
             product: service,
-            qty: newqtyplus,
-            ...payload
+            qty: newqtyplus
           });
           newLine.relatedLines = rlp;
           serviceLine.relatedLines = rln;
           serviceLine.qty = newqtyminus;
         } else if (newqtyplus) {
           serviceLine.relatedLines = rlp;
-          newqtyplus = this.adjustNotGroupedServices({
-            product: serviceLine,
-            qty: newqtyplus,
-            ...payload
-          });
+          newqtyplus = this.adjustNotGroupedServices(
+            serviceLine,
+            newqtyplus,
+            payload
+          );
           serviceLine.qty = newqtyplus;
         } else if (newqtyminus) {
           serviceLine.relatedLines = rln;
-          newqtyminus = this.adjustNotGroupedServices({
-            product: serviceLine,
-            qty: newqtyminus,
-            ...payload
-          });
+          newqtyminus = this.adjustNotGroupedServices(
+            serviceLine,
+            newqtyminus,
+            payload
+          );
           serviceLine.qty = newqtyminus;
         } else if (deferredLines.length === 0 && !serviceLine.obposIsDeleted) {
           this.deleteLine(serviceLine.id);
@@ -351,9 +351,9 @@
           ) {
             const notGroupedProduct = { ...line.product, groupProduct: false };
             const newLine = this.createLine({
+              ...payload,
               product: notGroupedProduct,
-              qty: qtyLineServ,
-              ...payload
+              qty: qtyLineServ
             });
             newLine.relatedLines = siblingServicesLines[0].relatedLines;
             newLine.groupService = false;
@@ -382,9 +382,9 @@
             l => l.id === rl.orderlineId
           );
           const newLine = this.createLine({
+            ...payload,
             product: serviceLine.product,
-            qty: ticketLine.qty,
-            ...payload
+            qty: ticketLine.qty
           });
           newLine.relatedLines = [rl];
           newLine.groupService = false;
