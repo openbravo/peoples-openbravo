@@ -10,7 +10,7 @@
 require('./SetupDocumentSequenceAndTicket');
 const deepfreeze = require('deepfreeze');
 
-describe('Document Sequence Utils generateDocumentNumber method', () => {
+describe('Document Sequence Utils generateDocumentNumber function', () => {
   it('should not generate new document number if ticket already has document number', () => {
     const ticket = deepfreeze({ documentNo: 'OS/00000' });
     const newTicketAndDocumentSequence = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(

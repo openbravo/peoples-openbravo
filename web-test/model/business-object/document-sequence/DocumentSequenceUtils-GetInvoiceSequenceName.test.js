@@ -10,7 +10,7 @@
 require('./SetupDocumentSequenceAndTicket');
 const deepfreeze = require('deepfreeze');
 
-describe('Document Sequence Utils getInvoiceSequenceName method', () => {
+describe('Document Sequence Utils getInvoiceSequenceName function', () => {
   it('should generate simplified invoice sequence name for empty invoice', () => {
     const ticket = deepfreeze({});
     const sequenceName = OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(

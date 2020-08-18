@@ -10,7 +10,7 @@
 require('./SetupDocumentSequenceAndTicket');
 const deepfreeze = require('deepfreeze');
 
-describe('Document Sequence Utils getOrderSequenceName method', () => {
+describe('Document Sequence Utils getOrderSequenceName function', () => {
   it('should generate order sequence name for empty order', () => {
     const ticket = deepfreeze({});
     const sequenceName = OB.App.State.DocumentSequence.Utils.getOrderSequenceName(

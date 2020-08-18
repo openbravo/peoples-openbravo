@@ -10,7 +10,7 @@
 require('./SetupDocumentSequence');
 require('./SetupDocumentSequenceUtils');
 
-describe('Document Sequence Utils calculateDocumentNumber method', () => {
+describe('Document Sequence Utils calculateDocumentNumber function', () => {
   it('should generate correct documentNo for 0 sequenceNumber', () => {
     const documentNumber = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
       {
