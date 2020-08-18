@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,35 +18,13 @@ enyo.kind({
   },
   executeOnShow: function() {
     if (this.currentLine || this.args.forceLoad) {
-      var diff = this.propertycomponents;
-      var att,
-        receiptLineDescription,
-        receiptLineDescriptionControl,
-        receiptLineDescriptionCoreElement;
+      let att,
+        diff = this.propertycomponents;
       for (att in diff) {
         if (diff.hasOwnProperty(att)) {
           this.loadValue(att, diff[att]);
-          if (diff[att].owner.$.receiptLineDescription) {
-            receiptLineDescription = diff[att].owner.$.receiptLineDescription;
-            receiptLineDescriptionControl = diff[att].owner.owner.$.control.id;
-            receiptLineDescriptionCoreElement =
-              diff[att].owner.owner.$.coreElementContainer.id;
-          }
         }
       }
-      setTimeout(function() {
-        receiptLineDescription.focus();
-        document
-          .getElementById(receiptLineDescriptionControl)
-          .classList.add(
-            'obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-control'
-          );
-        document
-          .getElementById(receiptLineDescriptionCoreElement)
-          .classList.add(
-            'obUiModalReceiptLinesPropertiesImpl-receiptLineDescription-coreElement'
-          );
-      }, 200);
     }
     this.autoDismiss = true;
     if (this && this.args && this.args.autoDismiss === false) {
@@ -117,11 +95,15 @@ enyo.kind({
       component.showProperty(
         this.currentLine,
         function(value) {
+          component.setShowing(value);
           component.owner.owner.setShowing(value);
         },
         this.args
       );
-    } // else make it visible...
+    } else {
+      component.setShowing(true);
+      component.owner.owner.setShowing(true);
+    }
   },
   applyChanges: function(inSender, inEvent) {
     var diff,
