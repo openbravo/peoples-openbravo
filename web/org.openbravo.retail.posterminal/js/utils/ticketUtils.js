@@ -50,7 +50,7 @@
     newPayload.session = OB.MobileApp.model.get('session');
     newPayload.orgUserId = OB.MobileApp.model.get('orgUserId');
     newPayload.pricelist = OB.MobileApp.model.get('pricelist');
-    newPayload.contextUser = OB.MobileApp.model.get('context').user;
+    newPayload.context = OB.MobileApp.model.get('context');
     newPayload.documentNumberSeparator = OB.Model.Order.prototype
       .includeDocNoSeperator
       ? '/'

@@ -981,12 +981,12 @@
           `currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
         ];
       ticket.warehouse = payload.terminal.warehouse;
-      if (payload.contextUser.isSalesRepresentative) {
-        ticket.salesRepresentative = payload.contextUser.id;
+      if (payload.context.user.isSalesRepresentative) {
+        ticket.salesRepresentative = payload.context.user.id;
         ticket[
           `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
           // eslint-disable-next-line no-underscore-dangle
-        ] = payload.contextUser._identifier;
+        ] = payload.context.user._identifier;
       } else {
         ticket.salesRepresentative = null;
         ticket[

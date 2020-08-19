@@ -54,7 +54,7 @@ describe('Ticket Utils generateDelivery function', () => {
       terminal: { id: '0', terminalType: { documentType: 'Sale' } },
       businessPartner: 'BP',
       pricelist: {},
-      contextUser: {},
+      context: { user: {} },
       preferences: {}
     });
 
