@@ -78,5 +78,9 @@
         <index-column name="IMPORTSTATUS"/>
         <index-column name="CREATED"/>
       </index>
+      <index name="C_IMPORT_ENTRY_TYPE_STATUS_IDX" unique="false">
+        <index-column name="TYPEOFDATA"/>
+        <index-column name="IMPORTSTATUS"/>
+      </index>
     </table>
   </database>
