@@ -999,7 +999,7 @@
     documentTypeForQuotations
   ) {
     OB.MobileApp.model.receipt.trigger('updateView');
-    const payload = OB.UTIL.TicketUtils.addTicketCreationDataToPayload({});
+    const payload = OB.UTIL.TicketUtils.addTicketCreationDataToPayload();
     payload.documentTypeForQuotations = documentTypeForQuotations;
     OB.App.State.Global.addNewQuotation(payload);
     loadCurrent();

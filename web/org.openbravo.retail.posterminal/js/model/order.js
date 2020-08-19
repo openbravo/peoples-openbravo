@@ -579,52 +579,9 @@
           ).resetStateFromBackbone();
 
           // Complete Ticket action
-          await completeTicketAction({
-            terminal: OB.MobileApp.model.get('terminal'),
-            store: OB.MobileApp.model.get('store'),
-            warehouses: OB.MobileApp.model.get('warehouses'),
-            businessPartner: OB.MobileApp.model.get('businessPartner')
-              ? JSON.parse(
-                  JSON.stringify(OB.MobileApp.model.get('businessPartner'))
-                )
-              : undefined,
-            payments: OB.MobileApp.model.get('payments'),
-            paymentcash: OB.MobileApp.model.get('paymentcash'),
-            deliveryPaymentMode: OB.MobileApp.model.get('deliveryPaymentMode'),
-            session: OB.MobileApp.model.get('session'),
-            orgUserId: OB.MobileApp.model.get('orgUserId'),
-            pricelist: OB.MobileApp.model.get('pricelist'),
-            contextUser: OB.MobileApp.model.get('context').user,
-            documentNumberSeparator: OB.Model.Order.prototype
-              .includeDocNoSeperator
-              ? '/'
-              : '',
-            preferences: {
-              salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
-                'OBPOS_SalesWithOneLineNegativeAsReturns',
-                true
-              ),
-              splitChange: OB.MobileApp.model.hasPermission(
-                'OBPOS_SplitChange',
-                true
-              ),
-              removeTicket: OB.MobileApp.model.hasPermission(
-                'OBPOS_remove_ticket',
-                true
-              ),
-              alwaysCreateNewReceiptAfterPayReceipt: OB.MobileApp.model.hasPermission(
-                'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
-                true
-              )
-            },
-            discountRules: OB.Discounts.Pos.ruleImpls,
-            bpSets: OB.Discounts.Pos.bpSets,
-            taxRules: OB.Taxes.Pos.ruleImpls,
-            multiTickets: OB.MobileApp.model.multiOrders
-              ? JSON.parse(JSON.stringify(OB.MobileApp.model.multiOrders))
-              : undefined,
-            ticketExtraProperties: OB.UTIL.TicketUtils.getTicketExtraProperties()
-          });
+          await completeTicketAction(
+            OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
+          );
 
           if (!isDeleteTicket) {
             // Open drawer

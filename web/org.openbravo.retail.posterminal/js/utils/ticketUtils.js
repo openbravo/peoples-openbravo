@@ -33,17 +33,58 @@
     }
   };
 
-  OB.UTIL.TicketUtils.addTicketCreationDataToPayload = function(payload) {
+  OB.UTIL.TicketUtils.addTicketCreationDataToPayload = function(payload = {}) {
     const newPayload = { ...payload };
-    newPayload.businessPartner = JSON.parse(
-      JSON.stringify(OB.App.TerminalProperty.get('businessPartner'))
+
+    newPayload.terminal = OB.MobileApp.model.get('terminal');
+    newPayload.store = OB.MobileApp.model.get('store');
+    newPayload.warehouses = OB.MobileApp.model.get('warehouses');
+    newPayload.businessPartner = OB.MobileApp.model.get('businessPartner')
+      ? JSON.parse(JSON.stringify(OB.MobileApp.model.get('businessPartner')))
+      : undefined;
+    newPayload.payments = OB.MobileApp.model.get('payments');
+    newPayload.paymentcash = OB.MobileApp.model.get('paymentcash');
+    newPayload.deliveryPaymentMode = OB.MobileApp.model.get(
+      'deliveryPaymentMode'
     );
-    newPayload.terminal = OB.App.TerminalProperty.get('terminal');
-    newPayload.session = OB.App.TerminalProperty.get('session');
-    newPayload.orgUserId = OB.App.TerminalProperty.get('orgUserId');
-    newPayload.pricelist = OB.App.TerminalProperty.get('pricelist');
-    newPayload.contextUser = OB.App.TerminalProperty.get('context').user;
+    newPayload.session = OB.MobileApp.model.get('session');
+    newPayload.orgUserId = OB.MobileApp.model.get('orgUserId');
+    newPayload.pricelist = OB.MobileApp.model.get('pricelist');
+    newPayload.contextUser = OB.MobileApp.model.get('context').user;
+    newPayload.documentNumberSeparator = OB.Model.Order.prototype
+      .includeDocNoSeperator
+      ? '/'
+      : '';
+    newPayload.multiTickets = OB.MobileApp.model.multiOrders
+      ? JSON.parse(JSON.stringify(OB.MobileApp.model.multiOrders))
+      : undefined;
     newPayload.ticketExtraProperties = OB.UTIL.TicketUtils.getTicketExtraProperties();
+    newPayload.discountRules = OB.Discounts.Pos.ruleImpls;
+    newPayload.bpSets = OB.Discounts.Pos.bpSets;
+    newPayload.taxRules = OB.Taxes.Pos.ruleImpls;
+    newPayload.preferences = {
+      salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
+        'OBPOS_SalesWithOneLineNegativeAsReturns',
+        true
+      ),
+      splitChange: OB.MobileApp.model.hasPermission('OBPOS_SplitChange', true),
+      removeTicket: OB.MobileApp.model.hasPermission(
+        'OBPOS_remove_ticket',
+        true
+      ),
+      alwaysCreateNewReceiptAfterPayReceipt: OB.MobileApp.model.hasPermission(
+        'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
+        true
+      ),
+      enableMultiPriceList: OB.MobileApp.model.hasPermission(
+        'EnableMultiPriceList',
+        true
+      ),
+      enableDeliveryModes: OB.MobileApp.model.hasPermission(
+        'OBRDM_EnableDeliveryModes',
+        true
+      )
+    };
 
     return newPayload;
   };

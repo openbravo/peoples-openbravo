@@ -48,7 +48,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               if (!args.ordersNotPaid || args.ordersNotPaid.length === 0) {
                 // If there are no pending orders, add an initial empty order
                 OB.App.State.Global.createEmptyTicket(
-                  OB.UTIL.TicketUtils.addTicketCreationDataToPayload({})
+                  OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
                 ).then(() => {
                   OB.MobileApp.model.receipt.setIsCalculateGrossLockState(
                     false

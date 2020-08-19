@@ -961,7 +961,7 @@
       ticket.cashVAT = payload.terminal.cashVat;
       ticket.businessPartner = payload.businessPartner;
       ticket.invoiceTerms = payload.businessPartner.invoiceTerms;
-      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+      if (payload.preferences.enableMultiPriceList) {
         // Set price list for order
         ticket.priceList = payload.businessPartner.priceList;
         let { priceIncludesTax } = payload.businessPartner;
@@ -999,7 +999,7 @@
         // eslint-disable-next-line no-underscore-dangle
       ] = payload.terminal._identifier;
 
-      if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+      if (payload.preferences.enableDeliveryModes) {
         ticket.obrdmDeliveryModeProperty = 'PickAndCarry';
       }
 

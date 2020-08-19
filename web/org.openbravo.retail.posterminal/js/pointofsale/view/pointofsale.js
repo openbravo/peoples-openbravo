@@ -909,7 +909,7 @@ enyo.kind({
   addNewOrder: function(inSender, inEvent) {
     this.$.receiptPropertiesDialog.resetProperties();
     OB.App.State.Global.addNewTicket(
-      OB.UTIL.TicketUtils.addTicketCreationDataToPayload({})
+      OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
     ).then(() => {
       OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
       OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(false);
