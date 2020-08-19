@@ -905,53 +905,8 @@
       );
     },
 
-    setFullInvoice(
-      ticket,
-      terminal,
-      active,
-      applyDefaultConfiguration = false,
-      showError = false
-    ) {
-      const newTicket = { ...ticket };
-
-      const checkFullInvoice = () => {
-        if (showError) {
-          if (!terminal.fullInvoiceDocNoPrefix) {
-            OB.UTIL.showError(
-              OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
-            );
-          } else if (!newTicket.businessPartner.taxID) {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
-          }
-        }
-
-        return (
-          OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
-          terminal.fullInvoiceDocNoPrefix &&
-          newTicket.businessPartner.taxID
-        );
-      };
-
-      const fullInvoice =
-        (active ||
-          (applyDefaultConfiguration
-            ? newTicket.invoiceTerms === 'D' || newTicket.invoiceTerms === 'O'
-            : active)) &&
-        checkFullInvoice();
-      const generateInvoice =
-        fullInvoice ||
-        (applyDefaultConfiguration
-          ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
-          : fullInvoice);
-
-      newTicket.fullInvoice = fullInvoice;
-      newTicket.generateInvoice = generateInvoice;
-
-      return newTicket;
-    },
-
     newTicket(payload) {
-      let ticket = {
+      const ticket = {
         ...payload.ticketExtraProperties,
         // ticket default properties
         id: OB.App.UUID.generate(),
@@ -998,13 +953,7 @@
       ticket.updatedBy = payload.orgUserId;
       ticket.documentType = payload.terminal.terminalType.documentType;
       ticket.orderType = payload.terminal.terminalType.layawayorder ? 2 : 0; // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-
-      ticket = OB.App.State.Ticket.Utils.setFullInvoice(
-        ticket,
-        payload.terminal,
-        false,
-        true
-      );
+      ticket.generateInvoice = payload.terminal.terminalType.generateInvoice;
 
       ticket.isQuotation = false;
       ticket.oldId = null;
