@@ -2197,9 +2197,7 @@ enyo.kind({
       if (inEvent && inEvent.order) {
         if (inEvent.order.get('loadedFromServer')) {
           me.model.get('orderList').remove(inEvent.order);
-          await OB.App.State.Global.removeTicket({
-            id: inEvent.order.get('id')
-          });
+          inEvent.order.deleteOrder();
         } else {
           await OB.App.State.Global.checkTicketForPayOpenTickets({
             ticketId: inEvent.order.get('id'),
