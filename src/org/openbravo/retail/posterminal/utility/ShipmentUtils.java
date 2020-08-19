@@ -65,9 +65,10 @@ import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook;
 import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook.OrderLoaderPreAddShipmentLineHook_Actions;
 import org.openbravo.retail.posterminal.OrderLoaderPreAddShipmentLineHook_Response;
 import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.TicketPropertyMapping;
 import org.openbravo.service.db.DalConnectionProvider;
 
-public class ShipmentUtils {
+public class ShipmentUtils implements TicketPropertyMapping {
 
   private final Logger log = Logger.getLogger(ShipmentUtils.class);
 
@@ -174,7 +175,7 @@ public class ShipmentUtils {
     }
 
     shipment.setPartnerAddress(OBDal.getInstance()
-        .getProxy(Location.class, jsonorder.getJSONObject("bp").getString("shipLocId")));
+        .getProxy(Location.class, getBusinessPartner(jsonorder).getString("shipLocId")));
     shipment.setSalesTransaction(true);
     shipment.setDocumentStatus("CO");
     shipment.setDocumentAction("--");

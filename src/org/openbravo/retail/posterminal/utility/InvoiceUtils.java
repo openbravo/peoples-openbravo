@@ -57,9 +57,10 @@ import org.openbravo.model.financialmgmt.payment.PaymentTermLine;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.retail.posterminal.POSUtils;
+import org.openbravo.retail.posterminal.TicketPropertyMapping;
 import org.openbravo.service.db.CallStoredProcedure;
 
-public class InvoiceUtils {
+public class InvoiceUtils implements TicketPropertyMapping {
 
   HashMap<String, DocumentType> paymentDocTypes = new HashMap<>();
   HashMap<String, DocumentType> shipmentDocTypes = new HashMap<>();
@@ -134,9 +135,8 @@ public class InvoiceUtils {
     final OrderLine orderLine = lineReferences.get(numIter);
     final JSONObject jsonInvoiceLine = invoicelines.getJSONObject(numIter);
     final BigDecimal qtyToInvoice = BigDecimal.valueOf(jsonInvoiceLine.getDouble("qty"));
-    final BigDecimal lineGrossAmount = BigDecimal
-        .valueOf(jsonInvoiceLine.getDouble("lineGrossAmount"));
-    final BigDecimal lineNetAmount = BigDecimal.valueOf(jsonInvoiceLine.getDouble("net"));
+    BigDecimal lineGrossAmount = getGrossUnitAmount(jsonInvoiceLine);
+    BigDecimal lineNetAmount = getNetUnitAmount(jsonInvoiceLine);
 
     if (orderLine.getObposQtyDeleted() != null
         && orderLine.getObposQtyDeleted().compareTo(BigDecimal.ZERO) != 0) {
@@ -184,11 +184,8 @@ public class InvoiceUtils {
       // if there are several shipments line to the same orderline, in the last line of the invoice
       // of this sales order line, the line net amt will be the pending line net amount
       if (numLines > actualLine || (numLines == actualLine && !deliveredQtyEqualsToMovementQty)) {
-        invoiceLine.setLineNetAmount(
-            orderLine.getUnitPrice().multiply(qty).setScale(pricePrecision, RoundingMode.HALF_UP));
-        invoiceLine.setGrossAmount(orderLine.getGrossUnitPrice()
-            .multiply(qty)
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
+        lineNetAmount = orderLine.getUnitPrice().multiply(qty);
+        lineGrossAmount = orderLine.getGrossUnitPrice().multiply(qty);
       } else {
         BigDecimal partialGrossAmount = BigDecimal.ZERO;
         BigDecimal partialLineNetAmount = BigDecimal.ZERO;
@@ -199,15 +196,29 @@ public class InvoiceUtils {
             partialLineNetAmount = partialLineNetAmount.add(il.getLineNetAmount());
           }
         }
-        invoiceLine.setLineNetAmount(lineNetAmount.subtract(partialLineNetAmount)
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
-        invoiceLine.setGrossAmount(lineGrossAmount.subtract(partialGrossAmount)
-            .setScale(pricePrecision, RoundingMode.HALF_UP));
+        lineNetAmount = lineNetAmount.subtract(partialLineNetAmount);
+        lineGrossAmount = lineGrossAmount.subtract(partialGrossAmount);
       }
-    } else {
-      invoiceLine.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
-      invoiceLine.setGrossAmount(lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
     }
+
+    invoiceLine.setGrossListPrice(
+        getGrossListPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setListPrice(
+        getNetListPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setBaseGrossUnitPrice(
+        getBaseGrossUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setStandardPrice(
+        getBaseNetUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setGrossUnitPrice(jsoninvoice.getBoolean("priceIncludesTax")
+        ? getGrossUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP)
+        : BigDecimal.ZERO);
+    invoiceLine.setUnitPrice(
+        getNetUnitPrice(jsonInvoiceLine).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoiceLine.setGrossAmount(jsoninvoice.getBoolean("priceIncludesTax")
+        ? lineGrossAmount.setScale(pricePrecision, RoundingMode.HALF_UP)
+        : BigDecimal.ZERO);
+    invoiceLine.setLineNetAmount(lineNetAmount.setScale(pricePrecision, RoundingMode.HALF_UP));
+
     invoiceLine.setInvoicedQuantity(qty);
     orderLine.setInvoicedQuantity(
         (orderLine.getInvoicedQuantity() != null ? orderLine.getInvoicedQuantity().add(qty) : qty));
@@ -218,7 +229,7 @@ public class InvoiceUtils {
     invoice.getInvoiceLineList().add(invoiceLine);
     OBDal.getInstance().save(invoiceLine);
 
-    JSONObject taxes = jsonInvoiceLine.getJSONObject("taxLines");
+    JSONObject taxes = getTaxes(jsonInvoiceLine);
     @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();
     BigDecimal totalTaxAmount = BigDecimal.ZERO;
@@ -419,23 +430,23 @@ public class InvoiceUtils {
     invoice.setAPRMProcessinvoice("RE");
     invoice.setSalesOrder(order);
     invoice.setPartnerAddress(OBDal.getInstance()
-        .getProxy(Location.class, jsoninvoice.getJSONObject("bp").getString("locId")));
+        .getProxy(Location.class, getBusinessPartner(jsoninvoice).getString("locId")));
     invoice.setProcessed(true);
     invoice.setPaymentMethod(order.getPaymentMethod());
     invoice.setPaymentTerms(order.getPaymentTerms());
-    invoice.setGrandTotalAmount(BigDecimal.valueOf(jsoninvoice.getDouble("gross"))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoice.setSummedLineAmount(BigDecimal.valueOf(jsoninvoice.getDouble("net"))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice.setGrandTotalAmount(
+        getGrossAmount(jsoninvoice).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice.setSummedLineAmount(
+        getNetAmount(jsoninvoice).setScale(pricePrecision, RoundingMode.HALF_UP));
     invoice.setTotalPaid(BigDecimal.ZERO);
-    invoice.setOutstandingAmount((BigDecimal.valueOf(jsoninvoice.getDouble("gross")))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
-    invoice.setDueAmount((BigDecimal.valueOf(jsoninvoice.getDouble("gross")))
-        .setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice.setOutstandingAmount(
+        (getGrossAmount(jsoninvoice)).setScale(pricePrecision, RoundingMode.HALF_UP));
+    invoice
+        .setDueAmount((getGrossAmount(jsoninvoice)).setScale(pricePrecision, RoundingMode.HALF_UP));
     invoice.setUserContact(order.getUserContact());
 
     // Create invoice tax lines
-    JSONObject taxes = jsoninvoice.getJSONObject("taxes");
+    JSONObject taxes = getTaxes(jsoninvoice);
     @SuppressWarnings("unchecked")
     Iterator<String> itKeys = taxes.keys();
     int i = 0;

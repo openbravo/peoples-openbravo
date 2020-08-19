@@ -19,10 +19,25 @@
         return l;
       }
 
+      const listPrice = newTicket.priceIncludesTax
+        ? l.grossListPrice
+        : l.netListPrice;
       const newLine = {
         ...l,
         baseGrossUnitPrice: newTicket.priceIncludesTax ? price : undefined,
-        baseNetUnitPrice: newTicket.priceIncludesTax ? undefined : price
+        baseNetUnitPrice: newTicket.priceIncludesTax ? undefined : price,
+        discountPercentage: listPrice
+          ? OB.DEC.toNumber(
+              OB.DEC.toBigDecimal(listPrice)
+                .subtract(new BigDecimal(price.toString()))
+                .multiply(new BigDecimal('100'))
+                .divide(
+                  OB.DEC.toBigDecimal(listPrice),
+                  2,
+                  BigDecimal.prototype.ROUND_HALF_UP
+                )
+            )
+          : OB.DEC.Zero
       };
 
       if (

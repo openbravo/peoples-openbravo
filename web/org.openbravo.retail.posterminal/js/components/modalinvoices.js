@@ -416,43 +416,43 @@ enyo.kind({
               finishPrintInvoices();
               printInvoice(++indx);
             } else {
-              me.owner.model
-                .get('orderList')
-                .newPaidReceipt(data[indx], function(invoice) {
-                  invoice.set('loadedFromServer', true);
-                  invoice.set('checked', true);
-                  invoice.set('belongsToMultiOrder', true);
-                  invoice.set('isInvoice', true);
-                  invoice.calculateGrossAndSave(false, function() {
-                    try {
-                      OB.UTIL.HookManager.executeHooks(
-                        'OBPOS_PrePrintPaidReceipt',
-                        {
-                          context: this.model,
-                          receipt: invoice
-                        },
-                        function(args) {
-                          if (
-                            args &&
-                            args.cancelOperation &&
-                            args.cancelOperation === true
-                          ) {
-                            finishPrintInvoices();
-                            printInvoice(++indx);
-                            return;
-                          }
-                          me.model.printReceipt.print(invoice);
+              OB.UTIL.TicketListUtils.newPaidReceipt(data[indx], function(
+                invoice
+              ) {
+                invoice.set('loadedFromServer', true);
+                invoice.set('checked', true);
+                invoice.set('belongsToMultiOrder', true);
+                invoice.set('isInvoice', true);
+                invoice.calculateGrossAndSave(false, function() {
+                  try {
+                    OB.UTIL.HookManager.executeHooks(
+                      'OBPOS_PrePrintPaidReceipt',
+                      {
+                        context: this.model,
+                        receipt: invoice
+                      },
+                      function(args) {
+                        if (
+                          args &&
+                          args.cancelOperation &&
+                          args.cancelOperation === true
+                        ) {
                           finishPrintInvoices();
                           printInvoice(++indx);
+                          return;
                         }
-                      );
-                    } catch (e) {
-                      OB.error('Error printing the receipt:' + e);
-                      finishPrintInvoices();
-                      printInvoice(++indx);
-                    }
-                  });
+                        me.model.printReceipt.print(invoice);
+                        finishPrintInvoices();
+                        printInvoice(++indx);
+                      }
+                    );
+                  } catch (e) {
+                    OB.error('Error printing the receipt:' + e);
+                    finishPrintInvoices();
+                    printInvoice(++indx);
+                  }
                 });
+              });
             }
           };
 

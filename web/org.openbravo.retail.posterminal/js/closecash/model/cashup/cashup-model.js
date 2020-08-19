@@ -15,7 +15,7 @@ OB.OBPOSCashUp.UI = OB.OBPOSCashUp.UI || {};
 
 //Window model
 OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
-  models: [OB.Model.Order],
+  models: [],
   stepsDefinition: [
     {
       name: 'OB.CashUp.StepPendingOrders',
@@ -96,7 +96,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       this.stepIndex('OB.CloseCash.PaymentMethods')
     ].loaded = false;
 
-    this.set('orderlist', new OB.Collection.OrderList());
+    this.set('orderlist', new Backbone.Collection());
     this.set('paymentList', new Backbone.Collection());
     const payMthds = new Backbone.Collection(
       OB.App.State.getState().Cashup.cashPaymentMethodInfo
@@ -552,29 +552,29 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       }
     });
 
-    OB.Dal.find(
-      OB.Model.Order,
-      {
-        hasbeenpaid: 'N'
-      },
-      pendingOrderList => {
-        pendingOrderList.models.forEach(order => {
-          order.set('ignoreCheckIfIsActiveOrder', true);
-        });
-        this.get('orderlist').reset(pendingOrderList.models);
-        const indexStepPendingOrders = this.stepIndex(
-          'OB.CashUp.StepPendingOrders'
+    const pendingTickets = OB.App.State.TicketList.Utils.getAllTickets().filter(
+      ticket => ticket.hasbeenpaid === 'N' && ticket.lines.length > 0
+    );
+
+    OB.App.State.Global.markIgnoreCheckIfIsActiveOrderToPendingTickets({
+      session: OB.MobileApp.model.get('session')
+    })
+      .then(() => {
+        const orderList = pendingTickets.map(ticket =>
+          OB.App.StateBackwardCompatibility.getInstance(
+            'Ticket'
+          ).toBackboneObject(ticket)
         );
-        this.stepsDefinition[indexStepPendingOrders].active =
-          pendingOrderList.length > 0;
-        this.stepsDefinition[indexStepPendingOrders].loaded = true;
+        this.get('orderlist').reset(orderList);
+        const stepDefinition = this.stepsDefinition[
+          this.stepIndex('OB.CashUp.StepPendingOrders')
+        ];
+        stepDefinition.active = pendingTickets.length > 0;
+        stepDefinition.loaded = true;
         synch3 = true;
         finish();
-      },
-      (tx, error) => {
-        OB.UTIL.showError(error);
-      }
-    );
+      })
+      .catch(OB.UTIL.showError);
   },
   isFinishedWizard: function(step) {
     // Adjust step to array index

@@ -123,17 +123,27 @@ enyo.kind({
       orderDate,
       me = this;
 
-    totalData = totalData.concat(this.model.get('orderList').models);
+    totalData = totalData.concat(OB.App.State.TicketList.Utils.getAllTickets());
+
     totalData.forEach(function(order) {
       if (
-        order.attributes.lines.length === 0 ||
-        order.attributes.gross < 0 ||
-        order.get('isPaid') ||
-        order.get('isQuotation') ||
-        order.getOrderType() === 3
+        order.lines.length === 0 ||
+        order.grossAmount < 0 ||
+        order.isPaid ||
+        order.isQuotation ||
+        order.orderType === 3
       ) {
         popedElements.push(order);
       } else {
+        if (
+          !OB.MobileApp.model.get('connectedToERP') ||
+          OB.MobileApp.model.hasPermission(
+            'OBPOS_SelectCurrentTicketsOnPaidOpen',
+            true
+          )
+        ) {
+          order.receiptSelected = true;
+        }
         popedElements.push(order);
         openedOrders.push(me.createOpenedOrder(order));
       }
@@ -258,40 +268,39 @@ enyo.kind({
   },
   createOpenedOrder: function(order) {
     return new Backbone.Model({
-      id: order.get('id'),
-      documentTypeId: order.get('documentType'),
+      id: order.id,
+      documentTypeId: order.documentType,
       documentStatus: 'DR',
-      orderDate: order.get('orderDate'),
-      creationDate: order.get('orderDate'),
-      totalamount: order.get('gross'),
-      businessPartnerName: order.get('bp').get('name'),
-      organization: order.get('organization'),
-      documentNo: order.get('documentNo'),
-      businessPartner: order.get('bp').get('id'),
-      externalBusinessPartner: order.get('externalBusinessPartner')
-        ? order.get('externalBusinessPartner')
+      orderDate: order.orderDate,
+      creationDate: order.orderDate,
+      totalamount: order.grossAmount || order.gross,
+      businessPartnerName: order.businessPartner
+        ? order.businessPartner.name
+        : order.bp.name,
+      organization: order.organization,
+      documentNo: order.documentNo,
+      businessPartner: order.businessPartner
+        ? order.businessPartner.id
+        : order.bp.id,
+      externalBusinessPartner: order.externalBusinessPartner
+        ? order.externalBusinessPartner
         : null,
-      externalBusinessPartnerReference: order.get(
-        'externalBusinessPartnerReference'
-      )
-        ? order.get('externalBusinessPartnerReference')
+      externalBusinessPartnerReference: order.externalBusinessPartnerReference
+        ? order.externalBusinessPartnerReference
         : null,
-      orderDateFrom: order.get('orderDate'),
-      orderDateTo: order.get('orderDate'),
-      totalamountFrom: order.get('gross'),
-      totalamountTo: order.get('gross'),
-      orderType: order.get('isLayaway') ? 'LAY' : 'DR',
+      orderDateFrom: order.orderDate,
+      orderDateTo: order.orderDate,
+      totalamountFrom: order.grossAmount || order.gross,
+      totalamountTo: order.grossAmount || order.gross,
+      orderType: order.isLayaway ? 'LAY' : 'DR',
       iscancelled: false,
       store:
-        order.get('organization') ===
-        OB.MobileApp.model.get('terminal').organization
+        order.organization === OB.MobileApp.model.get('terminal').organization
           ? OB.I18N.getLabel('OBPOS_LblThisStore', [
               OB.MobileApp.model.get('terminal').organization$_identifier
             ])
           : OB.MobileApp.model.get('terminal').organization$_identifier,
-      receiptSelected: order.has('receiptSelected')
-        ? order.get('receiptSelected')
-        : false,
+      receiptSelected: order.receiptSelected ? order.receiptSelected : false,
       multiselect: true
     });
   }
@@ -401,7 +410,7 @@ enyo.kind({
       j,
       wrongOrder,
       firstCheck = true,
-      cancellingOrdersToCheck = me.owner.owner.model.get('orderList').models,
+      cancellingOrdersToCheck = OB.App.State.TicketList.Utils.getAllTickets(),
       showSomeOrderIsPaidPopup;
 
     if (checkedMultiOrders.length === 0) {
@@ -494,7 +503,7 @@ enyo.kind({
       var iter = checkedMultiOrders[i];
       iter.set('checked', true, { silent: true });
       if (
-        _.indexOf(this.owner.owner.model.get('orderList').models, iter) !== -1
+        _.indexOf(OB.App.State.TicketList.Utils.getAllTickets(), iter) !== -1
       ) {
         // Check if there's an order with a reverse payment
         if (iter.isNewReversed()) {
@@ -510,8 +519,8 @@ enyo.kind({
         for (j = 0; j < cancellingOrdersToCheck.length; j++) {
           var order = cancellingOrdersToCheck[j];
           if (firstCheck) {
-            if (order.get('canceledorder')) {
-              if (order.get('canceledorder').id === iter.id) {
+            if (order.canceledorder) {
+              if (order.canceledorder.id === iter.id) {
                 wrongOrder = {
                   docNo: iter.get('documentNo'),
                   error: 'cancellingOrder'
@@ -521,7 +530,7 @@ enyo.kind({
               cancellingOrders.push(order);
             }
           } else {
-            if (order.get('canceledorder').id === iter.id) {
+            if (order.canceledorder.id === iter.id) {
               wrongOrder = {
                 docNo: iter.get('documentNo'),
                 error: 'cancellingOrder'
@@ -556,18 +565,25 @@ enyo.kind({
       return;
     }
     this.owner.owner.model.deleteMultiOrderList();
-    _.each(checkedMultiOrders, function(iter) {
-      var idx = me.owner.owner.model
-        .get('orderList')
+    _.each(checkedMultiOrders, async function(iter) {
+      var idx = OB.App.State.TicketList.Utils.getAllTickets()
         .map(function(order) {
           return order.id;
         })
         .indexOf(iter.id);
       if (idx !== -1) {
-        var order = me.owner.owner.model.get('orderList').at(idx);
+        var orderState = OB.App.State.TicketList.Utils.getAllTickets()[idx];
+        var order = OB.App.StateBackwardCompatibility.getInstance(
+          'Ticket'
+        ).toBackboneObject(orderState);
+
         order.set('checked', true);
-        order.save();
-        selectedMultiOrders.push(order);
+        await OB.App.State.Global.checkTicketForPayOpenTickets({
+          ticketId: orderState.id,
+          checked: true
+        });
+        // order.save();
+        selectedMultiOrders.unshift(order);
         addOrdersToOrderList();
       } else {
         process.exec(
@@ -600,33 +616,30 @@ enyo.kind({
                 );
                 return;
               }
-              me.owner.owner.model
-                .get('orderList')
-                .newPaidReceipt(data[0], function(order) {
-                  if (
-                    (order.get('isPaid') || order.get('isLayaway')) &&
-                    order.getPayment() >= order.getGross()
-                  ) {
-                    OB.Dal.remove(order);
-                    alreadyPaidOrders.push(order);
-                    alreadyPaidOrdersDocNo = alreadyPaidOrdersDocNo.concat(
-                      ' ' + order.get('documentNo')
-                    );
+              OB.UTIL.TicketListUtils.newPaidReceipt(data[0], async function(
+                order
+              ) {
+                if (
+                  (order.get('isPaid') || order.get('isLayaway')) &&
+                  order.getPayment() >= order.getGross()
+                ) {
+                  alreadyPaidOrders.push(order);
+                  alreadyPaidOrdersDocNo = alreadyPaidOrdersDocNo.concat(
+                    ' ' + order.get('documentNo')
+                  );
+                  addOrdersToOrderList();
+                } else {
+                  order.set('loadedFromServer', true);
+                  order.set('checked', iter.get('checked'));
+                  await OB.UTIL.TicketListUtils.addPaidReceipt(order);
+                  OB.DATA.OrderTaxes(order);
+                  order.set('belongsToMultiOrder', true);
+                  order.calculateReceipt(function() {
+                    selectedMultiOrders.unshift(order);
                     addOrdersToOrderList();
-                  } else {
-                    order.set('loadedFromServer', true);
-                    me.owner.owner.model
-                      .get('orderList')
-                      .addMultiReceipt(order);
-                    order.set('checked', iter.get('checked'));
-                    OB.DATA.OrderTaxes(order);
-                    order.set('belongsToMultiOrder', true);
-                    order.calculateReceipt(function() {
-                      selectedMultiOrders.push(order);
-                      addOrdersToOrderList();
-                    });
-                  }
-                });
+                  });
+                }
+              });
             } else {
               OB.UTIL.ProcessController.finish(
                 'payOpenTicketsValidation',
@@ -737,7 +750,7 @@ enyo.kind({
             if (!_.isNull(iter.id) && !_.isUndefined(iter.id)) {
               iter.set('receiptSelected', true);
               openOrder = me.$.body.$.receiptsForPayOpenTicketsList.createOpenedOrder(
-                iter
+                JSON.parse(JSON.stringify(iter))
               );
               me.$.body.$.receiptsForPayOpenTicketsList.receiptList.add(
                 openOrder

@@ -6,6 +6,9 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+
+/* global lodash */
+
 /**
  * @fileoverview Define utility functions for the Cashup Model
  */
@@ -193,7 +196,6 @@
 
       const { orderType } = ticket;
 
-      let gross;
       let taxOrderType;
       let taxAmount;
       let amount;
@@ -217,27 +219,28 @@
             (ticket.payOnCredit || ticket.completeTicket)))
       ) {
         ticket.lines.forEach(line => {
-          gross = line.grossUnitAmount;
+          const gross = line.grossUnitAmount;
+          const net = line.netUnitAmount;
           if (ticket.doCancelAndReplace) {
             if (!line.replacedorderline) {
-              netSales = OB.DEC.add(netSales, line.baseNetUnitAmount);
+              netSales = OB.DEC.add(netSales, net);
               grossSales = OB.DEC.add(grossSales, gross);
             }
           } else if (ticket.cancelLayaway) {
             // Cancel Layaway
-            netSales = OB.DEC.add(netSales, line.baseNetUnitAmount);
+            netSales = OB.DEC.add(netSales, net);
             grossSales = OB.DEC.add(grossSales, gross);
           } else if (ticket.voidLayaway) {
             // Void Layaway
-            netSales = OB.DEC.add(netSales, -line.baseNetUnitAmount);
+            netSales = OB.DEC.add(netSales, -net);
             grossSales = OB.DEC.add(grossSales, -gross);
           } else if (line.qty > 0) {
             // Sales order: Positive line
-            netSales = OB.DEC.add(netSales, line.baseNetUnitAmount);
+            netSales = OB.DEC.add(netSales, net);
             grossSales = OB.DEC.add(grossSales, gross);
           } else if (line.qty < 0) {
             // Return from customer or Sales with return: Negative line
-            netReturns = OB.DEC.add(netReturns, -line.baseNetUnitAmount);
+            netReturns = OB.DEC.add(netReturns, -net);
             grossReturns = OB.DEC.add(grossReturns, -gross);
           }
         });
@@ -367,7 +370,7 @@
           paymentType =>
             paymentType.payment.searchKey === cashupPayment.searchKey
         ).obposPosprecision;
-        amount = orderPayment.amountRounded
+        amount = lodash.isNumber(orderPayment.amountRounded)
           ? orderPayment.amountRounded
           : orderPayment.amount;
         if (
@@ -399,7 +402,7 @@
         cashup,
         ticket,
         payload.terminal.countLayawayAsSales,
-        payload.terminal.paymentTypes
+        payload.payments
       );
 
       // insert cashup in the ticket
@@ -409,7 +412,7 @@
         cashUpReportInformation: OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
           {
             cashup: newCashup,
-            terminalPayments: payload.terminal.paymentTypes
+            terminalPayments: payload.payments
           }
         )
       };

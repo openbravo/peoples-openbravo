@@ -37,21 +37,21 @@ describe('Ticket.setPrice action', () => {
         id: '1',
         qty: 1,
         baseGrossUnitPrice: 10,
-        priceList: 10,
+        grossListPrice: 10,
         product: { listPrice: 10 }
       },
       {
         id: '2',
         qty: 1,
         baseGrossUnitPrice: 20,
-        priceList: 20,
+        grossListPrice: 20,
         product: { listPrice: 20 }
       },
       {
         id: '3',
         qty: 1,
         baseGrossUnitPrice: 30,
-        priceList: 30,
+        grossListPrice: 30,
         product: { listPrice: 30 }
       }
     ]
@@ -68,7 +68,8 @@ describe('Ticket.setPrice action', () => {
       id: '1',
       qty: 1,
       baseGrossUnitPrice: 5,
-      priceList: 10,
+      grossListPrice: 10,
+      discountPercentage: 50,
       product: { listPrice: 10 }
     });
   });
@@ -86,14 +87,16 @@ describe('Ticket.setPrice action', () => {
         id: '1',
         qty: 1,
         baseGrossUnitPrice: 5,
-        priceList: 10,
+        grossListPrice: 10,
+        discountPercentage: 50,
         product: { listPrice: 10 }
       },
       {
         id: '2',
         qty: 1,
         baseGrossUnitPrice: 5,
-        priceList: 20,
+        grossListPrice: 20,
+        discountPercentage: 75,
         product: { listPrice: 20 }
       }
     ]);
@@ -151,7 +154,18 @@ describe('Ticket.setPrice action', () => {
 
   it('sets prices with not included taxes', () => {
     const newTicket = OB.App.StateAPI.Ticket.setLinePrice(
-      { ...basicTicket, priceIncludesTax: false },
+      {
+        ...basicTicket,
+        priceIncludesTax: false,
+        lines: basicTicket.lines.map(line => {
+          const newLine = { ...line };
+          newLine.baseNetUnitPrice = newLine.baseGrossUnitPrice;
+          newLine.netListPrice = newLine.grossListPrice;
+          delete newLine.baseGrossUnitPrice;
+          delete newLine.grossListPrice;
+          return newLine;
+        })
+      },
       {
         lineIds: ['1'],
         price: 5
@@ -160,7 +174,8 @@ describe('Ticket.setPrice action', () => {
 
     expect(newTicket.lines[0]).toMatchObject({
       id: '1',
-      baseNetUnitPrice: 5
+      baseNetUnitPrice: 5,
+      discountPercentage: 50
     });
   });
 

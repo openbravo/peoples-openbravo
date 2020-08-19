@@ -13,6 +13,7 @@ global.OB = { App: { Class: {} } };
 global.lodash = require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/document-sequence/DocumentSequence');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/document-sequence/DocumentSequenceUtils');
 
 // eslint-disable-next-line no-undef
 module.exports = OB;

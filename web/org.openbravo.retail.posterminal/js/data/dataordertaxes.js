@@ -24,28 +24,39 @@
 
   const regenerateTaxes = function(receipt) {
     const value = _.map(receipt.get('lines').models, function(line) {
-      const taxes = {};
-      _.forEach(line.get('taxes'), function(tax) {
-        taxes[tax.taxId] = {
-          amount: tax.taxAmount,
-          name: tax.identifier,
-          net: tax.taxableAmount,
-          rate: tax.taxRate
-        };
-      });
+      const taxes = Array.isArray(line.get('taxes'))
+        ? line.get('taxes').reduce((obj, item) => {
+            const newObj = { ...obj };
+            newObj[item.taxId] = {
+              amount: item.taxAmount,
+              name: item.identifier,
+              net: item.taxableAmount,
+              rate: item.taxRate
+            };
+            return newObj;
+          }, {})
+        : line.get('taxes');
 
       const taxAmount = getTaxAmount(taxes);
       setLineTaxes(receipt, line, {
-        grossUnitAmount: OB.DEC.mul(
-          line.get('grossUnitPrice'),
-          line.get('qty')
-        ),
-        netUnitAmount: OB.DEC.sub(
-          OB.DEC.mul(line.get('grossUnitPrice'), line.get('qty')),
-          taxAmount
-        ),
-        grossUnitPrice: line.get('grossUnitPrice'),
-        netUnitPrice: OB.DEC.sub(line.get('grossUnitPrice'), taxAmount),
+        // FIXME: Do not save grossUnitAmount/grossUnitPrice as zero in price excluding taxes
+        grossUnitAmount: receipt.get('priceIncludesTax')
+          ? OB.DEC.mul(line.get('grossUnitPrice'), line.get('qty'))
+          : OB.DEC.add(
+              OB.DEC.mul(line.get('unitPrice'), line.get('qty')),
+              taxAmount
+            ),
+        netUnitAmount: OB.DEC.mul(line.get('unitPrice'), line.get('qty')),
+        grossUnitPrice: receipt.get('priceIncludesTax')
+          ? line.get('grossUnitPrice')
+          : OB.DEC.div(
+              OB.DEC.add(
+                OB.DEC.mul(line.get('unitPrice'), line.get('qty')),
+                taxAmount
+              ),
+              line.get('qty')
+            ),
+        netUnitPrice: line.get('unitPrice'),
         taxes,
         taxAmount
       });
@@ -73,7 +84,9 @@
 
     receipt.set(
       {
-        gross: receipt.get('gross'),
+        gross: receipt.get('lines').reduce(function(memo, line) {
+          return OB.DEC.add(memo, line.get('grossUnitAmount'));
+        }, 0),
         net: receipt.get('lines').reduce(function(memo, line) {
           return OB.DEC.add(memo, line.get('netUnitAmount'));
         }, 0),
@@ -127,12 +140,9 @@
         netUnitAmount: values.netUnitAmount,
         grossUnitPrice: values.grossUnitPrice,
         unitPrice: values.netUnitPrice,
-        listPrice: receipt.get('priceIncludesTax')
-          ? 0
-          : line.get('priceList') || line.get('listPrice'),
         lineRate: values.taxRate ? values.taxRate : line.get('lineRate'),
         tax: values.tax ? values.tax : line.get('tax'),
-        taxLines: values.taxes
+        taxes: values.taxes
       },
       {
         silent: true

@@ -26,6 +26,7 @@ if (!OB.App.StateBackwardCompatibility) {
       bp: 'businessPartner',
       gross: 'grossAmount',
       net: 'netAmount',
+      'calculatedInvoice.bp': 'businessPartner',
       'lines[*].gross': 'baseGrossUnitAmount',
       'lines[*].net': 'baseNetUnitAmount',
       'lines[*].unitPrice': 'netUnitPrice',
@@ -36,8 +37,7 @@ if (!OB.App.StateBackwardCompatibility) {
           : 'baseNetUnitPrice',
       'lines[*].pricenet': bbTicket =>
         bbTicket.get('priceIncludesTax') ? 'baseNetUnitPrice' : undefined,
-      'lines[*].lineRate': 'taxRate',
-      'lines[*].taxLines': 'taxes'
+      'lines[*].lineRate': 'taxRate'
     },
     mapStateBackboneProperties: {
       'lines[*].baseGrossUnitPrice': ticket =>
@@ -52,22 +52,5 @@ if (!OB.App.StateBackwardCompatibility) {
     'OB.Model.Order',
     initialState,
     options
-  );
-
-  OB.UTIL.HookManager.registerHook(
-    'ModelReady:pointOfSale',
-    (args, callbacks) => {
-      const backboneCurrentTicket = OB.MobileApp.model.receipt;
-
-      // Associate backbone current ticket model with BackwardCompatDemoTicket Sate model
-      // So that changes in one are reflected in the other
-      OB.App.StateBackwardCompatibility.bind(
-        OB.App.State.Ticket,
-        backboneCurrentTicket
-      );
-      backboneCurrentTicket.trigger('change'); // forces backbone -> state propagation
-
-      OB.UTIL.HookManager.callbackExecutor(args, callbacks);
-    }
   );
 }

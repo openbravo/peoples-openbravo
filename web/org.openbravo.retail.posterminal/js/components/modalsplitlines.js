@@ -363,7 +363,7 @@ enyo.kind({
     'splitline', //
     'tax',
     'taxAmount',
-    'taxLines',
+    'taxes',
     'uOM',
     'warehouse',
     'deliveredQuantity',

@@ -13,7 +13,6 @@ global.OB = {
   App: {
     Class: {},
     StateBackwardCompatibility: { setProperties: jest.fn() },
-    TerminalProperty: { get: jest.fn() },
     UUID: { generate: jest.fn() }
   },
   MobileApp: { model: { get: jest.fn(() => jest.fn()) } },
@@ -38,26 +37,6 @@ OB.App.State = { Ticket: { Utils: {} } };
 OB.App.StateAPI.Ticket.utilities.forEach(
   util => (OB.App.State.Ticket.Utils[util.functionName] = util.implementation)
 );
-
-OB.App.TerminalProperty.get.mockImplementation(property => {
-  if (property === 'warehouses') {
-    return [
-      {
-        priority: 10,
-        warehouseid: 'A154EC30A296479BB078B0AFFD74CA22',
-        warehousename: 'Vall Blanca Store Warehouse'
-      }
-    ];
-  } else if (property === 'terminal') {
-    return {
-      organization: 'D270A5AC50874F8BA67A88EE977F8E3B',
-      organization$_identifier: 'Vall Blanca Store',
-      country: '106',
-      region: 'AF310D01B53B461283EB40DB21DCA6B5'
-    };
-  }
-  return {};
-});
 
 const emptyTicket = {
   priceIncludesTax: true,
@@ -118,7 +97,24 @@ const products = [
 ];
 
 const addProduct = (ticket, payload) => {
-  const preparedPayload = { ...payload, extraData: {} };
+  const preparedPayload = {
+    ...payload,
+    extraData: {
+      terminal: {
+        organization: 'D270A5AC50874F8BA67A88EE977F8E3B',
+        organization$_identifier: 'Vall Blanca Store',
+        country: '106',
+        region: 'AF310D01B53B461283EB40DB21DCA6B5'
+      },
+      warehouses: [
+        {
+          priority: 10,
+          warehouseid: 'A154EC30A296479BB078B0AFFD74CA22',
+          warehousename: 'Vall Blanca Store Warehouse'
+        }
+      ]
+    }
+  };
   preparedPayload.products = preparedPayload.products.map(pi => {
     const options = pi.options || {};
     const attrs = pi.attrs || {};

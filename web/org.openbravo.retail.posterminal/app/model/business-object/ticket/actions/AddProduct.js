@@ -55,7 +55,10 @@
     // delete the lines resulting with quantity zero
     ticket.lines = ticket.lines.filter(l => l.qty !== 0);
 
-    ticket = OB.App.State.Ticket.Utils.updateServicesInformation(ticket);
+    ticket = OB.App.State.Ticket.Utils.updateServicesInformation(
+      ticket,
+      extraData
+    );
 
     return ticket;
   });
@@ -73,14 +76,6 @@
           const attrs = productInfo.attrs || {};
           return { ...productInfo, qty, options, attrs };
         });
-
-      const { qtyEdition } = OB.Format.formats;
-      newPayload.extraData = {
-        discountRules: OB.Discounts.Pos.ruleImpls,
-        taxRules: OB.Taxes.Pos.ruleImpls,
-        bpSets: OB.Discounts.Pos.bpSets,
-        qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1
-      };
 
       newPayload = await processPacks(newPayload);
       newPayload = await prepareProductAttributes(ticket, newPayload);
@@ -156,11 +151,17 @@
         ? attrs.relatedLines[0].qty
         : qty;
 
-    const { newTicket, newLine } = OB.App.State.Ticket.Utils.createLine(
-      ticket,
+    const createdData = OB.App.State.Ticket.Utils.createLine(ticket, {
       product,
-      lineQty
-    );
+      qty: lineQty,
+      terminal: extraData.terminal,
+      store: extraData.store,
+      warehouses: extraData.warehouses,
+      deliveryPaymentMode: extraData.deliveryPaymentMode
+    });
+
+    const newTicket = createdData.ticket;
+    const newLine = createdData.line;
 
     if (attrs.organization) {
       newLine.organization = {
@@ -273,7 +274,9 @@
         discountRules: extraData.discountRules,
         taxRules: extraData.taxRules,
         bpSets: extraData.bpSets,
-        qtyScale: extraData.qtyScale
+        qtyScale: extraData.qtyScale,
+        payments: extraData.payments,
+        paymentcash: extraData.paymentcash
       });
 
       newTicket.lines = newTicket.lines.map(l => {

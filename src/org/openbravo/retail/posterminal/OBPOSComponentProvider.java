@@ -73,7 +73,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     final String prefix = "web/" + POSUtils.MODULE_JAVA_PACKAGE;
 
     final String[] resourceDependency = { "main", "model/order", "model/cashup",
-        "model/cashmanagement", "model/cancelLayaway", "login/model/login-model",
+        "model/cashmanagement", "login/model/login-model",
         // Common components
         "datasource",
         // "data/dal",
@@ -113,20 +113,21 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
-        "utils/cashManagementUtils", "utils/ticketCloseUtils", "utils/prepaymentUtils",
-        "utils/servicesUtils", "utils/remoteUtils", "components/keypadcoins", "data/dataordersave",
-        "data/dataordertaxes", "data/datacustomersave", "data/datacustomeraddrsave",
-        "components/modalreceipts", "components/modalorderselector",
-        "components/modalcrossstoreselector", "components/storeinformation",
-        "components/modalmultiorderslayaway", "components/modalcategorytree",
-        "components/rendercategory", "components/renderproduct", "components/renderproductch",
-        "components/modalpayment", "components/modalprovidergroup", "components/standardprovider",
-        "components/mockprovider", "components/modalprovidergroupvoid",
-        "components/standardprovidervoid", "components/mockprovidervoid",
-        "components/renderorderline", "components/rendermultiorderline", "components/order",
-        "components/orderdetails", "components/businesspartner",
-        "components/businesspartner_selector", "components/bplocation", // Button for selecting
-                                                                        // customer address
+        "utils/cashManagementUtils", "utils/ticketUtils", "utils/ticketCloseUtils",
+        "utils/prepaymentUtils", "utils/servicesUtils", "utils/remoteUtils",
+        "components/keypadcoins", "data/dataordersave", "data/dataordertaxes",
+        "data/datacustomersave", "data/datacustomeraddrsave", "components/modalreceipts",
+        "components/modalorderselector", "components/modalcrossstoreselector",
+        "components/storeinformation", "components/modalmultiorderslayaway",
+        "components/modalcategorytree", "components/rendercategory", "components/renderproduct",
+        "components/renderproductch", "components/modalpayment", "components/modalprovidergroup",
+        "components/standardprovider", "components/mockprovider",
+        "components/modalprovidergroupvoid", "components/standardprovidervoid",
+        "components/mockprovidervoid", "components/renderorderline",
+        "components/rendermultiorderline", "components/order", "components/orderdetails",
+        "components/businesspartner", "components/businesspartner_selector",
+        "components/bplocation", // Button for selecting
+                                 // customer address
         "components/bplocationship", "components/customershipbill",
         "components/listreceiptscounter", "components/menu", "components/salesrepresentative",
         "components/modalselectterminal", "components/popupdraweropened",
@@ -189,8 +190,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/modals/modalstockinotherstore", "pointofsale/view/modals/modalpayments",
         "pointofsale/view/modals/modalproductcannotbegroup",
         "pointofsale/view/modals/modalwarehousesrequired",
-        "pointofsale/view/modals/modalcreditsales", "pointofsale/view/modals/modaldiscountneedqty",
-        "pointofsale/view/modals/modalmessage", "pointofsale/view/modals/modalDeleteDiscounts",
+        "pointofsale/view/modals/modaldiscountneedqty", "pointofsale/view/modals/modalmessage",
+        "pointofsale/view/modals/modalDeleteDiscounts",
         "pointofsale/view/modals/modalproductattribute",
         "pointofsale/view/modals/modalquotationproductattribute",
         "pointofsale/view/modals/modalChange", "pointofsale/view/modals/modalChangeLine",
@@ -256,10 +257,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/productStatusUtils",
 
         // Delivery Mode
-        "utils/deliveryModeUtils", "hookPreOrderSave", "hookPreDeleteLine",
-        "hookPostUndo_DeleteLine", "receiptEdit", "receiptMultiLineEdit", "hookRenderOrderLine",
-        "hookPrePayment", "hookPreSetPaymentsToReceipt", "components/menuissue",
-        "model/dmorderfilter", "utils/utils",
+        "utils/deliveryModeUtils", "hookPreDeleteLine", "hookPostUndo_DeleteLine", "receiptEdit",
+        "receiptMultiLineEdit", "hookRenderOrderLine", "hookPrePayment",
+        "hookPreSetPaymentsToReceipt", "components/menuissue", "model/dmorderfilter", "utils/utils",
 
         "model/ordertoselectorissue", "components/orderselector",
         "components/modalwarehouseselector", "components/orderlineinfopopup",
@@ -269,7 +269,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "taxesengine/pos/pos-taxes",
 
         // Discounts
-        "discountsengine/pos/pos-discounts" };
+        "discountsengine/pos/pos-discounts",
+
+        // Ticket List
+        "utils/ticketListUtils" };
 
     // Unlink onLoad in the ERP
     globalResources.add(createComponentResource(ComponentResourceType.Static,
@@ -344,9 +347,22 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     // ticket model
     appDependency.add("model/business-object/ticket/Ticket");
     appDependency.add("model/business-object/ticket/TicketUtils");
+    appDependency.add("model/business-object/ticket/CompleteTicketUtils");
+    appDependency.add("model/business-object/ticket/actions/CompleteTicket");
+    appDependency.add("model/business-object/ticket/actions/CompleteCreditTicket");
+    appDependency.add("model/business-object/ticket/actions/CancelTicket");
+    appDependency.add("model/business-object/ticket/actions/ReplaceTicket");
+    appDependency.add("model/business-object/ticket/actions/CompleteQuotation");
+    appDependency.add("model/business-object/ticket/actions/CompleteLayaway");
+    appDependency.add("model/business-object/ticket/actions/VoidLayaway");
+    appDependency.add("model/business-object/ticket/actions/DeleteTicket");
+    appDependency.add("model/business-object/ticket/actions/CompleteMultiTicket");
+    appDependency.add("model/business-object/ticket/actions/CompleteMultiCreditTicket");
+    appDependency.add("model/business-object/ticket/CompleteMultiTicketUtils");
     appDependency.add("model/business-object/ticket/AddApprovalsModelHook");
     appDependency.add("model/business-object/ticket/CalculateTotalsModelHook");
     appDependency.add("model/business-object/ticket/actions/AddProduct");
+    appDependency.add("model/business-object/ticket/actions/CreateEmptyTicket");
     appDependency.add("model/business-object/ticket/actions/DisplayTotal");
     appDependency.add("model/business-object/ticket/actions/SplitLine");
     appDependency.add("model/business-object/ticket/actions/SetLinePrice");
@@ -354,6 +370,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/actions/RemovePromotion");
     appDependency.add("model/business-object/ticket/actions/ReactivateQuotation");
     appDependency.add("model/business-object/ticket/actions/RejectQuotation");
+    appDependency.add("model/business-object/ticket/actions/SyncTickets"); // TODO: Remove when
+                                                                           // close ticket actions
+                                                                           // are available
+    appDependency.add("model/business-object/ticket/actions/CheckTicketForPayOpenTickets");
     appDependency.add("model/business-object/ticket/actions/RemovePayment");
 
     // Cashup
@@ -367,6 +387,18 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/cashup/actions/InitCashup");
     appDependency.add("model/business-object/cashup/actions/ProcessCashManagements");
     appDependency.add("model/business-object/cashup/actions/UpdateCashup");
+
+    // ticket list model
+    appDependency.add("model/business-object/ticket-list/TicketList");
+    appDependency.add("model/business-object/ticket-list/TicketListUtils");
+    appDependency.add("model/business-object/ticket-list/actions/AddNewTicket");
+    appDependency.add("model/business-object/ticket-list/actions/AddNewQuotation");
+    appDependency.add("model/business-object/ticket-list/actions/BringTicketToSession");
+    appDependency.add("model/business-object/ticket-list/actions/LoadTicket");
+    appDependency
+        .add("model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets");
+    appDependency.add("model/business-object/ticket-list/actions/UpdateBPInAllTickets");
+    appDependency.add("model/business-object/ticket-list/actions/SaveTicket");
 
     // Synchronization Buffer
     appDependency.add("model/synchronization-buffer/HardwareManagerEndpoint");

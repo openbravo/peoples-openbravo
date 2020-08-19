@@ -13,31 +13,22 @@
 
 (function TicketUtilsDefinition() {
   // checks if the type of payment is cash
-  const isCash = paymentType => {
-    const paymentNames = OB.App.TerminalProperty.get('paymentnames');
-    if (!paymentNames[paymentType]) {
+  const isCash = (paymentType, paymentTypes) => {
+    const payment = paymentTypes.find(p => p.payment.searchKey === paymentType);
+    if (!payment) {
       return false;
     }
-    return paymentNames[paymentType].paymentMethod.iscash;
+    return payment.paymentMethod.iscash;
   };
 
   // gets the precision of a given payment
-  const getPrecision = payment => {
-    const terminalpayment = OB.App.TerminalProperty.get('paymentnames')[
-      payment.kind
-    ];
-    return terminalpayment
-      ? terminalpayment.obposPosprecision
+  const getPrecision = (payment, paymentTypes) => {
+    const terminalPayment = paymentTypes.find(
+      p => p.payment.searchKey === payment.kind
+    );
+    return terminalPayment
+      ? terminalPayment.obposPosprecision
       : OB.DEC.getScale();
-  };
-
-  // gets the information of the main warehouse of the terminal
-  const getTerminalWarehouse = () => {
-    const warehouses = OB.App.TerminalProperty.get('warehouses');
-    return {
-      id: warehouses[0].warehouseid,
-      warehousename: warehouses[0].warehousename
-    };
   };
 
   // checks if a ticket line includes service information
@@ -61,33 +52,52 @@
       return this.ticket;
     }
 
-    createLine(product, qty) {
+    createLine(payload) {
+      const { product } = payload;
       const newLine = {
         id: OB.App.UUID.generate(),
         product,
-        organization: this.getLineOrganization(product),
-        warehouse: getTerminalWarehouse(),
+        organization: this.getLineOrganization(payload),
+        warehouse: {
+          id: payload.warehouses[0].warehouseid,
+          warehousename: payload.warehouses[0].warehousename
+        },
         uOM: product.uOM,
-        qty: OB.DEC.number(qty, product.uOMstandardPrecision),
+        qty: OB.DEC.number(payload.qty, product.uOMstandardPrecision),
         priceIncludesTax: this.ticket.priceIncludesTax,
         isEditable: true,
         isDeletable: true
       };
+
+      const isDeliveryService =
+        newLine.product.obrdmIsdeliveryservice &&
+        payload.deliveryPaymentMode === 'PD';
+      if (isDeliveryService) {
+        newLine.obrdmAmttopayindelivery = OB.DEC.mul(
+          product.listPrice,
+          newLine.qty
+        );
+      }
+
       if (newLine.priceIncludesTax) {
         newLine.grossListPrice = OB.DEC.number(product.listPrice);
-        newLine.baseGrossUnitPrice = OB.DEC.number(product.standardPrice);
+        newLine.baseGrossUnitPrice = isDeliveryService
+          ? OB.DEC.Zero
+          : OB.DEC.number(product.standardPrice);
       } else {
         newLine.netListPrice = OB.DEC.number(product.listPrice);
-        newLine.baseNetUnitPrice = OB.DEC.number(product.standardPrice);
+        newLine.baseNetUnitPrice = isDeliveryService
+          ? OB.DEC.Zero
+          : OB.DEC.number(product.standardPrice);
       }
       this.setDeliveryMode(newLine);
       this.ticket.lines = this.ticket.lines.concat(newLine);
       return newLine;
     }
 
-    getLineOrganization(product) {
-      if (product.crossStore) {
-        const store = OB.App.TerminalProperty.get('store').find(
+    getLineOrganization(payload) {
+      if (payload.product.crossStore) {
+        const store = payload.store.find(
           s => s.id === this.ticket.organization
         );
         return {
@@ -97,7 +107,7 @@
           region: store.region
         };
       }
-      const terminal = OB.App.TerminalProperty.get('terminal');
+      const { terminal } = payload;
       return {
         id: terminal.organization,
         orgName: terminal.organization$_identifier,
@@ -179,7 +189,7 @@
       this.ticket.lines = this.ticket.lines.filter(l => l.id !== lineId);
     }
 
-    updateServicesInformation() {
+    updateServicesInformation(payload) {
       if (!this.shouldUpdateServices()) {
         return;
       }
@@ -225,7 +235,11 @@
               const qty = service.quantityRule === 'PP' ? deferredQty : 0;
               newqtyplus += qty;
             }
-            const newLine = this.createLine(service, newqtyminus);
+            const newLine = this.createLine({
+              ...payload,
+              product: service,
+              qty: newqtyminus
+            });
             newLine.relatedLines = rln;
             newLine.groupService = newLine.product.groupProduct;
             serviceLine.relatedLines = newRlp;
@@ -233,14 +247,19 @@
           } else if (newqtyminus) {
             if (deferredLines.length > 0) {
               const qty = service.quantityRule === 'PP' ? deferredQty : 1;
-              const newLine = this.createLine(service, qty);
+              const newLine = this.createLine({
+                ...payload,
+                product: service,
+                qty
+              });
               newLine.relatedLines = deferredLines;
               newLine.qty = qty;
             }
             serviceLine.relatedLines = rln;
             newqtyminus = this.adjustNotGroupedServices(
               serviceLine,
-              newqtyminus
+              newqtyminus,
+              payload
             );
             serviceLine.qty = newqtyminus;
           } else if (newqtyplus) {
@@ -254,7 +273,8 @@
               } else {
                 newqtyplus = this.adjustNotGroupedServices(
                   serviceLine,
-                  newqtyplus
+                  newqtyplus,
+                  payload
                 );
               }
             }
@@ -270,22 +290,34 @@
             serviceLine.qty = qty;
           }
         } else if (newqtyminus && newqtyplus) {
-          const newLine = this.createLine(service, newqtyplus);
+          const newLine = this.createLine({
+            ...payload,
+            product: service,
+            qty: newqtyplus
+          });
           newLine.relatedLines = rlp;
           serviceLine.relatedLines = rln;
           serviceLine.qty = newqtyminus;
         } else if (newqtyplus) {
           serviceLine.relatedLines = rlp;
-          newqtyplus = this.adjustNotGroupedServices(serviceLine, newqtyplus);
+          newqtyplus = this.adjustNotGroupedServices(
+            serviceLine,
+            newqtyplus,
+            payload
+          );
           serviceLine.qty = newqtyplus;
         } else if (newqtyminus) {
           serviceLine.relatedLines = rln;
-          newqtyminus = this.adjustNotGroupedServices(serviceLine, newqtyminus);
+          newqtyminus = this.adjustNotGroupedServices(
+            serviceLine,
+            newqtyminus,
+            payload
+          );
           serviceLine.qty = newqtyminus;
         } else if (deferredLines.length === 0 && !serviceLine.obposIsDeleted) {
           this.deleteLine(serviceLine.id);
         }
-        this.adjustNotDeferredRelatedLines(serviceLine);
+        this.adjustNotDeferredRelatedLines(serviceLine, payload);
       }
     }
 
@@ -304,7 +336,7 @@
       );
     }
 
-    adjustNotGroupedServices(line, qty) {
+    adjustNotGroupedServices(line, qty, payload) {
       if (line.product.quantityRule === 'PP' && !line.groupService) {
         const qtyService = OB.DEC.abs(qty);
         const qtyLineServ = qty > 0 ? 1 : -1;
@@ -321,7 +353,11 @@
             i += 1
           ) {
             const notGroupedProduct = { ...line.product, groupProduct: false };
-            const newLine = this.createLine(notGroupedProduct, qtyLineServ);
+            const newLine = this.createLine({
+              ...payload,
+              product: notGroupedProduct,
+              qty: qtyLineServ
+            });
             newLine.relatedLines = siblingServicesLines[0].relatedLines;
             newLine.groupService = false;
           }
@@ -339,7 +375,7 @@
       return qty;
     }
 
-    adjustNotDeferredRelatedLines(serviceLine) {
+    adjustNotDeferredRelatedLines(serviceLine, payload) {
       const notDeferredLines = serviceLine.relatedLines.filter(
         rl => rl.deferred === false
       );
@@ -348,7 +384,11 @@
           const ticketLine = this.ticket.lines.find(
             l => l.id === rl.orderlineId
           );
-          const newLine = this.createLine(serviceLine.product, ticketLine.qty);
+          const newLine = this.createLine({
+            ...payload,
+            product: serviceLine.product,
+            qty: ticketLine.qty
+          });
           newLine.relatedLines = [rl];
           newLine.groupService = false;
         });
@@ -356,14 +396,14 @@
       }
     }
 
-    calculateTotals(settings) {
+    calculateTotals(payload) {
       this.calculateDiscountsAndTaxes(
-        settings.discountRules,
-        settings.bpSets,
-        settings.taxRules
+        payload.discountRules,
+        payload.bpSets,
+        payload.taxRules
       );
-      this.adjustPayment();
-      this.setTotalQuantity(settings.qtyScale);
+      this.adjustPayment(payload.payments, payload.paymentcash);
+      this.setTotalQuantity(payload.qtyScale);
     }
 
     calculateDiscountsAndTaxes(discountRules, bpSets, taxRules) {
@@ -453,12 +493,12 @@
         );
     }
 
-    adjustPayment() {
+    adjustPayment(paymentTypes, paymentCash) {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
 
       // set the payments origAmount property
       this.ticket.payments = this.ticket.payments.map(p => {
-        const newPayment = this.calculateOrigAmount(p);
+        const newPayment = this.calculateOrigAmount(p, paymentTypes);
         if (
           !p.isPrePayment &&
           this.ticket.isNegative &&
@@ -478,7 +518,7 @@
       const processedPaymentsAmount = this.ticket.payments
         .filter(p => p.isPrePayment)
         .reduce(
-          (t, p) => OB.DEC.add(t, p.origAmount, getPrecision(p)),
+          (t, p) => OB.DEC.add(t, p.origAmount, getPrecision(p, paymentTypes)),
           this.ticket.nettingPayment || OB.DEC.Zero
         );
 
@@ -493,7 +533,10 @@
       }
 
       // get cash info
-      const { defaultCash, nonDefaultCash, noCash } = this.getCashInfo();
+      const { defaultCash, nonDefaultCash, noCash } = this.getCashInfo(
+        paymentTypes,
+        paymentCash
+      );
 
       // calculate the reversed payments amount
       const reversedPaymentsAmount = this.ticket.payments
@@ -516,14 +559,12 @@
         ? this.ticket.obposPrepaymentamt
         : grossAmount;
       const cashPayment = this.ticket.payments.find(
-        p =>
-          p.kind === OB.App.TerminalProperty.get('paymentcash') ||
-          isCash(p.kind)
+        p => p.kind === paymentCash || isCash(p.kind, paymentTypes)
       );
       let cashPaid;
       if (cashPayment) {
         let payment;
-        const precision = getPrecision(cashPayment);
+        const precision = getPrecision(cashPayment, paymentTypes);
         if (this.ticket.isNegative) {
           if (OB.DEC.add(notModifiableAmount, noCash, precision) < total) {
             payment = OB.DEC.add(notModifiableAmount, noCash, precision);
@@ -591,8 +632,8 @@
       }
     }
 
-    calculateOrigAmount(payment) {
-      const precision = getPrecision(payment);
+    calculateOrigAmount(payment, paymentTypes) {
+      const precision = getPrecision(payment, paymentTypes);
       let origAmount;
       if (payment.rate && payment.rate !== '1') {
         origAmount = OB.DEC.div(payment.amount, payment.mulrate);
@@ -606,7 +647,7 @@
         if (
           OB.DEC.compare(
             OB.DEC.sub(
-              this.getDifferenceRemovingSpecificPayment(payment),
+              this.getDifferenceRemovingSpecificPayment(payment, paymentTypes),
               OB.DEC.abs(payment.amount, precision),
               precision
             )
@@ -631,8 +672,8 @@
     }
 
     // Returns the difference (abs) between total to pay and payments without take into account the provided payment
-    getDifferenceRemovingSpecificPayment(payment) {
-      const precision = getPrecision(payment);
+    getDifferenceRemovingSpecificPayment(payment, paymentTypes) {
+      const precision = getPrecision(payment, paymentTypes);
       const differenceInDefaultCurrency = this.getDifferenceBetweenPaymentsAndTotal(
         payment
       );
@@ -667,17 +708,17 @@
         .reduce((t, p) => OB.DEC.add(t, p.origAmount), OB.DEC.Zero);
     }
 
-    getCashInfo() {
+    getCashInfo(paymentTypes, paymentCash) {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
       return this.ticket.payments
         .filter(p => !p.isPrePayment)
         .reduce(
           (c, p) => {
             let property;
-            if (p.kind === OB.App.TerminalProperty.get('paymentcash')) {
+            if (p.kind === paymentCash) {
               // the default cash method
               property = 'defaultCash';
-            } else if (isCash(p.kind)) {
+            } else if (isCash(p.kind, paymentTypes)) {
               // another cash method
               property = 'nonDefaultCash';
             } else {
@@ -704,16 +745,18 @@
      * Computes the totals of a given ticket which include: discounts, taxes and other calculated fields.
      *
      * @param {object} ticket - The ticket whose totals will be calculated
-     * @param {object} settings - The calculation settings, which include:
+     * @param {object} payload - The calculation payload, which include:
      *             * discountRules - The discount rules to be considered
      *             * taxRules - The tax rules to be considered
      *             * bpSets - The businessPartner sets
      *             * qtyScale - The scale of the ticket quantity (qty)
+     *             * payments - The available payment types
+     *             * paymentcash - Default cash payment
      * @returns The ticket with the result of the totals calculation
      */
-    calculateTotals(ticket, settings) {
+    calculateTotals(ticket, payload) {
       const handler = new TicketHandler(ticket);
-      handler.calculateTotals(settings);
+      handler.calculateTotals(payload);
       return handler.getTicket();
     },
 
@@ -742,6 +785,31 @@
     },
 
     /**
+     * Checks whether a ticket is a sale or a return based on ticket lines.
+     *
+     * @param {object} ticket - The ticket to check
+     * @param {object} payload - The calculation payload, which include:
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
+     *
+     * @returns {boolean} true in case the ticket is a sale, false in case it is a return.
+     */
+    isSale(ticket, payload) {
+      if (!ticket.lines || !ticket.lines.length) {
+        return true;
+      }
+
+      const existsPositiveLines = ticket.lines.some(line => line.qty >= 0);
+      const existsNegativeLines = ticket.lines.some(line => line.qty < 0);
+      return (
+        !existsNegativeLines ||
+        (existsPositiveLines &&
+          (!payload ||
+            !payload.preferences ||
+            !payload.preferences.salesWithOneLineNegativeAsReturns))
+      );
+    },
+
+    /**
      * Checks if a ticket is a quotation
      *
      * @param {object} ticket - The ticket to check
@@ -755,16 +823,21 @@
      * Generates a new ticket resulting of adding a new line into the provided ticket
      *
      * @param {object} ticket - The ticket which we want to add a line
-     * @param {object} product - The product of the new line
-     * @param {number} qty - The quantity of the new line
+     * @param {object} payload - The information required to create the new line:
+     *                              * product - The product of the new line
+     *                              * qty - The quantity of the new line
+     *                              * terminal: terminal information
+     *                              * store: store information
+     *                              * warehouses: warehouse information
+     *                              * deliveryPaymentMode: delivery payment mode
      * @returns {object} - An object with the following properties:
-     *                   * newTicket: a new ticket result of adding the new line into the provided ticket
-     *                   * newLine: the newly created line
+     *                   * ticket: a new ticket result of adding the new line into the provided ticket
+     *                   * line: the newly created line
      */
-    createLine(ticket, product, qty) {
+    createLine(ticket, payload) {
       const handler = new TicketHandler(ticket);
-      const newLine = handler.createLine(product, qty);
-      return { newTicket: handler.getTicket(), newLine };
+      const line = handler.createLine(payload);
+      return { ticket: handler.getTicket(), line };
     },
 
     /**
@@ -784,11 +857,16 @@
      * Updates information regarding services of a ticket by handling its lines with services and their related lines
      *
      * @param {object} ticket - The ticket whose information about services should be updated
+     * @param {settings} payload - Additional information which contains:
+     *                              * terminal: terminal information
+     *                              * store: store information
+     *                              * warehouses: warehouse information
+     *                              * deliveryPaymentMode: delivery payment mode
      * @returns {object} - A new ticket with the services information properly updated
      */
-    updateServicesInformation(ticket) {
+    updateServicesInformation(ticket, payload) {
       const handler = new TicketHandler(ticket);
-      handler.updateServicesInformation();
+      handler.updateServicesInformation(payload);
       return handler.getTicket();
     },
 
@@ -825,6 +903,165 @@
           (l.qty > 0 || !l.replacedorderline) &&
           (qty !== 1 || l.qty !== -1 || serviceProduct)
       );
+    },
+
+    setFullInvoice(
+      ticket,
+      terminal,
+      active,
+      applyDefaultConfiguration = false,
+      showError = false
+    ) {
+      const newTicket = { ...ticket };
+
+      const checkFullInvoice = () => {
+        if (showError) {
+          if (!terminal.fullInvoiceDocNoPrefix) {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
+            );
+          } else if (!newTicket.businessPartner.taxID) {
+            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+          }
+        }
+
+        return (
+          OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
+          terminal.fullInvoiceDocNoPrefix &&
+          newTicket.businessPartner.taxID
+        );
+      };
+
+      const fullInvoice =
+        (active ||
+          (applyDefaultConfiguration
+            ? newTicket.invoiceTerms === 'D' || newTicket.invoiceTerms === 'O'
+            : active)) &&
+        checkFullInvoice();
+      const generateInvoice =
+        fullInvoice ||
+        (applyDefaultConfiguration
+          ? OB.MobileApp.model.get('terminal').terminalType.generateInvoice
+          : fullInvoice);
+
+      newTicket.fullInvoice = fullInvoice;
+      newTicket.generateInvoice = generateInvoice;
+
+      return newTicket;
+    },
+
+    newTicket(payload) {
+      let ticket = {
+        ...payload.ticketExtraProperties,
+        // ticket default properties
+        id: OB.App.UUID.generate(),
+        orderType: 0, // 0: Sales order, 1: Return order
+        orderDate: new Date().toISOString(),
+        creationDate: new Date().toISOString(),
+        documentNo: '',
+        lines: [],
+        orderManualPromotions: [],
+        payments: [],
+        payment: OB.DEC.Zero,
+        paymentWithSign: OB.DEC.Zero,
+        nettingPayment: OB.DEC.Zero,
+        change: OB.DEC.Zero,
+        qty: OB.DEC.Zero,
+        grossAmount: OB.DEC.Zero,
+        netAmount: OB.DEC.Zero,
+        taxes: {},
+        hasbeenpaid: 'N',
+        isbeingprocessed: 'N',
+        description: '',
+        print: true,
+        sendEmail: false,
+        isPaid: false,
+        creditAmount: OB.DEC.Zero,
+        paidPartiallyOnCredit: false,
+        paidOnCredit: false,
+        isLayaway: false,
+        isPartiallyDelivered: false,
+        isEditable: true,
+        openDrawer: false,
+        approvals: [],
+        obposPrepaymentamt: OB.DEC.Zero,
+        obposPrepaymentlimitamt: OB.DEC.Zero,
+        obposPrepaymentlaylimitamt: OB.DEC.Zero
+      };
+
+      ticket.client = payload.terminal.client;
+      ticket.organization = payload.terminal.organization;
+      ticket.organizationAddressIdentifier =
+        payload.terminal.organizationAddressIdentifier;
+      ticket.trxOrganization = payload.terminal.organization;
+      ticket.createdBy = payload.orgUserId;
+      ticket.updatedBy = payload.orgUserId;
+      ticket.documentType = payload.terminal.terminalType.documentType;
+      ticket.orderType = payload.terminal.terminalType.layawayorder ? 2 : 0; // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
+
+      ticket = OB.App.State.Ticket.Utils.setFullInvoice(
+        ticket,
+        payload.terminal,
+        false,
+        true
+      );
+
+      ticket.isQuotation = false;
+      ticket.oldId = null;
+      ticket.session = payload.session;
+      ticket.cashVAT = payload.terminal.cashVat;
+      ticket.businessPartner = payload.businessPartner;
+      ticket.invoiceTerms = payload.businessPartner.invoiceTerms;
+      if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
+        // Set price list for order
+        ticket.priceList = payload.businessPartner.priceList;
+        let { priceIncludesTax } = payload.businessPartner;
+        if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
+          priceIncludesTax = payload.pricelist.priceIncludesTax;
+        }
+        ticket.priceIncludesTax = priceIncludesTax;
+      } else {
+        ticket.priceList = payload.terminal.priceList;
+        ticket.priceIncludesTax = payload.pricelist.priceIncludesTax;
+      }
+      ticket.currency = payload.terminal.currency;
+      ticket[
+        `currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+      ] =
+        payload.terminal[
+          `currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+        ];
+      ticket.warehouse = payload.terminal.warehouse;
+      if (payload.contextUser.isSalesRepresentative) {
+        ticket.salesRepresentative = payload.contextUser.id;
+        ticket[
+          `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+          // eslint-disable-next-line no-underscore-dangle
+        ] = payload.contextUser._identifier;
+      } else {
+        ticket.salesRepresentative = null;
+        ticket[
+          `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+        ] = null;
+      }
+      ticket.posTerminal = payload.terminal.id;
+      ticket[
+        `posTerminal${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+        // eslint-disable-next-line no-underscore-dangle
+      ] = payload.terminal._identifier;
+
+      if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+        ticket.obrdmDeliveryModeProperty = 'PickAndCarry';
+      }
+
+      return ticket;
+    },
+
+    checkTicketPayments(ticket) {
+      if (!ticket.receiptPayments) {
+        return ticket.payments && ticket.payments.length > 0;
+      }
+      return ticket.payments.length > ticket.receiptPayments.length;
     },
 
     getCurrentDiscountedLinePrice(line, ignoreExecutedAtTheEndPromo) {
@@ -870,6 +1107,286 @@
         );
       }
       return newLine;
+    },
+
+    /**
+     * Checks whether a ticket belongs to a different store.
+     *
+     * @param {object} ticket - The ticket to check
+     * @param {object} payload - The calculation payload, which include:
+     *             * terminal.organization - Organization of the current terminal
+     *
+     * @returns {boolean} true in case the ticket is cross store, false otherwise.
+     */
+    isCrossStore(ticket, payload) {
+      if (
+        !ticket.organization ||
+        !payload ||
+        !payload.terminal ||
+        !payload.terminal.organization
+      ) {
+        return false;
+      }
+
+      return ticket.organization !== payload.terminal.organization;
+    },
+
+    /**
+     * Checks whether a ticket is fully paid.
+     *
+     * @param {object} ticket - The ticket whose payment will be checked
+     *
+     * @returns {boolean} true in case the ticket is fully paid, false in case it is not paid or it is partially paid.
+     */
+    isFullyPaid(ticket) {
+      return ticket.payment >= OB.DEC.abs(ticket.grossAmount);
+    },
+
+    /**
+     * Returns ticket payment status.
+     *
+     * @param {object} ticket - The ticket whose payment status will be retrieved
+     * @param {object} payload - The calculation payload, which include:
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
+     *
+     * @returns {object} Ticket payment status.
+     */
+    getPaymentStatus(ticket, payload) {
+      if (payload && payload.multiTicketList) {
+        return {
+          total: ticket.total,
+          pending:
+            OB.DEC.compare(OB.DEC.sub(ticket.payment, ticket.total)) >= 0
+              ? OB.DEC.Zero
+              : OB.DEC.sub(ticket.total, ticket.payment),
+          overpayment:
+            OB.DEC.compare(OB.DEC.sub(ticket.payment, ticket.total)) > 0
+              ? OB.DEC.sub(ticket.payment, ticket.total)
+              : OB.DEC.Zero,
+          isReturn: ticket.gross < 0,
+          isNegative: ticket.gross < 0,
+          totalAmt: ticket.total,
+          pendingAmt:
+            OB.DEC.compare(OB.DEC.sub(ticket.payment, ticket.total)) >= 0
+              ? OB.DEC.Zero
+              : OB.DEC.sub(ticket.total, ticket.payment),
+          payments: ticket.payments
+        };
+      }
+
+      const isSale = OB.App.State.Ticket.Utils.isSale(ticket, payload);
+      const isReversal = ticket.payments.some(
+        payment => payment.reversedPaymentId
+      );
+      const paymentsAmount = ticket.payments.reduce((total, payment) => {
+        if (
+          payment.isPrePayment ||
+          ticket.isLayaway ||
+          ticket.isPaid ||
+          !ticket.isNegative ||
+          payment.isReversePayment
+        ) {
+          return OB.DEC.add(total, payment.origAmount);
+        }
+        return OB.DEC.sub(total, payment.origAmount);
+      }, OB.DEC.Zero);
+      const remainingToPay = OB.DEC.sub(
+        ticket.grossAmount,
+        OB.DEC.add(paymentsAmount, ticket.nettingPayment || OB.DEC.Zero)
+      );
+
+      if (ticket.isNegative) {
+        return {
+          done:
+            OB.DEC.compare(ticket.lines.length) === 1 &&
+            OB.DEC.compare(remainingToPay) !== -1,
+          total: ticket.grossAmount,
+          pending:
+            OB.DEC.compare(remainingToPay) === -1
+              ? OB.DEC.mul(remainingToPay, -1)
+              : OB.DEC.Zero,
+          overpayment:
+            OB.DEC.compare(remainingToPay) === 1
+              ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
+              : OB.DEC.Zero,
+          isReturn: !isSale,
+          isNegative: ticket.isNegative,
+          totalAmt: ticket.grossAmount,
+          pendingAmt:
+            OB.DEC.compare(remainingToPay) === -1
+              ? OB.DEC.mul(remainingToPay, -1)
+              : OB.DEC.Zero,
+          payments: ticket.payments,
+          isReversal
+        };
+      }
+
+      return {
+        done:
+          OB.DEC.compare(ticket.lines.length) === 1 &&
+          OB.DEC.compare(remainingToPay) !== 1,
+        total: ticket.grossAmount,
+        pending:
+          OB.DEC.compare(remainingToPay) === 1 ? remainingToPay : OB.DEC.Zero,
+        overpayment:
+          OB.DEC.compare(remainingToPay) === -1
+            ? OB.DEC.sub(OB.DEC.abs(remainingToPay), ticket.change)
+            : OB.DEC.Zero,
+        isReturn: !isSale,
+        isNegative: ticket.isNegative,
+        totalAmt: ticket.grossAmount,
+        pendingAmt:
+          OB.DEC.compare(remainingToPay) === 1 ? remainingToPay : OB.DEC.Zero,
+        payments: ticket.payments,
+        isReversal
+      };
+    },
+
+    /**
+     * Updates the type of the given ticket.
+     *
+     * @param {object} ticket - The ticket whose type will be updated
+     * @param {object} payload - The calculation payload, which include:
+     *             * terminal.terminalType.documentType - Terminal document type for sales
+     *             * terminal.terminalType.documentTypeForReturns - Terminal document type for returns
+     *             * terminal.organization - Organization of the current terminal
+     *             * preferences.salesWithOneLineNegativeAsReturns - OBPOS_SalesWithOneLineNegativeAsReturns preference value
+     *
+     * @returns {object} The new state of Ticket after type update.
+     */
+    updateTicketType(ticket, payload) {
+      const isCrossStore = OB.App.State.Ticket.Utils.isCrossStore(
+        ticket,
+        payload
+      );
+      if (isCrossStore) {
+        return ticket;
+      }
+
+      const newTicket = { ...ticket };
+      const isSale = OB.App.State.Ticket.Utils.isSale(ticket, payload);
+      newTicket.orderType = isSale ? 0 : 1;
+      newTicket.documentType = isSale
+        ? payload.terminal.terminalType.documentType
+        : payload.terminal.terminalType.documentTypeForReturns;
+
+      return newTicket;
+    },
+
+    /**
+     * Generates the corresponding payment for the given ticket.
+     *
+     * @param {object} ticket - The ticket where payment will be added
+     * @param {object} payload - The calculation payload, which include:
+     *             * payment - The payment that will be added to the ticket
+     *             * terminal.id - Terminal id
+     *             * payments - Terminal payment types
+     *
+     * @returns {Ticket} The new state of Ticket after payment generation.
+     */
+    addPayment(ticket, payload) {
+      const newTicket = { ...ticket };
+
+      const terminalPayment = payload.payments.find(
+        paymentType => paymentType.payment.searchKey === payload.payment.kind
+      );
+      const precision = terminalPayment
+        ? terminalPayment.obposPosprecision
+        : OB.DEC.getScale();
+
+      const paymentIndex = newTicket.payments.findIndex(
+        payment =>
+          payment.kind === payload.payment.kind &&
+          !payment.isPrePayment &&
+          !payment.reversedPaymentId &&
+          !payload.payment.reversedPaymentId &&
+          (!payload.payment.paymentData ||
+            payload.payment.paymentData.mergeable ||
+            (payment.paymentData &&
+              payload.payment.paymentData &&
+              payment.paymentData.groupingCriteria &&
+              payload.payment.paymentData.groupingCriteria &&
+              payment.paymentData.groupingCriteria ===
+                payload.payment.paymentData.groupingCriteria))
+      );
+
+      if (paymentIndex >= 0) {
+        newTicket.payments = newTicket.payments.map((payment, index) => {
+          if (index !== paymentIndex) {
+            return payment;
+          }
+
+          const newPayment = { ...payment };
+          newPayment.oBPOSPOSTerminal = payload.terminal.id;
+          const newAmount = OB.DEC.add(
+            OB.DEC.mul(
+              payload.payment.amount,
+              newPayment.signChanged && newPayment.amount < 0 ? -1 : 1,
+              precision
+            ),
+            newPayment.amount,
+            precision
+          );
+          newPayment.amount = newAmount;
+          newPayment.origAmount =
+            newPayment.rate && newPayment.rate !== '1'
+              ? OB.DEC.div(newAmount, newPayment.mulrate)
+              : newAmount;
+          newPayment.paid = newPayment.origAmount;
+          newPayment.precision = precision;
+          newPayment.paymentRoundingLine = payload.payment.paymentRoundingLine
+            ? {
+                ...payload.payment.paymentRoundingLine,
+                roundedPaymentId: newPayment.id
+              }
+            : undefined;
+
+          return newPayment;
+        });
+      } else {
+        const newPayment = { ...payload.payment };
+        newPayment.date = new Date();
+        newPayment.id = OB.App.UUID.generate();
+        newPayment.oBPOSPOSTerminal = payload.terminal.id;
+        newPayment.orderGross = newTicket.grossAmount;
+        newPayment.isPaid = newTicket.isPaid;
+        newPayment.isReturnOrder = newTicket.isNegative;
+        newPayment.paid = newPayment.origAmount;
+        newPayment.precision = precision;
+        newPayment.cancelAndReplace =
+          (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
+          newTicket.cancelAndReplaceChangePending;
+        if (newPayment.reversedPayment) {
+          newPayment.reversedPayment.isReversed = true;
+        }
+        if (newPayment.paymentRoundingLine) {
+          newPayment.paymentRoundingLine.roundedPaymentId = newPayment.id;
+        }
+        if (
+          newPayment.openDrawer &&
+          (newPayment.allowOpenDrawer || newPayment.isCash)
+        ) {
+          newTicket.openDrawer = newPayment.openDrawer;
+        }
+        newTicket.payments = [...newTicket.payments, newPayment];
+      }
+
+      const paidAmt = newTicket.payments.reduce((total, p) => {
+        if (p.isPrePayment || p.isReversePayment || !newTicket.isNegative) {
+          return OB.DEC.add(total, p.origAmount);
+        }
+        return OB.DEC.sub(total, p.origAmount);
+      }, OB.DEC.Zero);
+      newTicket.payment = OB.DEC.abs(paidAmt);
+      newTicket.paymentWithSign = paidAmt;
+      if (newTicket.amountToLayaway != null) {
+        newTicket.amountToLayaway = OB.DEC.sub(
+          newTicket.amountToLayaway,
+          payload.payment.origAmount
+        );
+      }
+
+      return newTicket;
     }
   });
 })();

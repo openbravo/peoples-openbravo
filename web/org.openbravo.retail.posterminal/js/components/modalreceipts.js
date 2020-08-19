@@ -24,6 +24,18 @@ enyo.kind({
   },
   receiptsListChanged: function(oldValue) {
     this.$.body.$.listreceipts.setReceiptsList(this.receiptsList);
+  },
+  executeOnShow: function() {
+    const session = OB.MobileApp.model.get('session');
+    this.$.body.$.listreceipts.setReceiptsList(
+      new Backbone.Collection(
+        OB.App.State.TicketList.Utils.getSessionTickets(session).map(ticket => {
+          return OB.App.StateBackwardCompatibility.getInstance(
+            'Ticket'
+          ).toBackboneObject(ticket);
+        })
+      )
+    );
   }
 });
 
@@ -65,9 +77,11 @@ enyo.kind({
     this.inherited(arguments);
     this.doHideThisPopup();
     this.doChangeCurrentOrder({
-      newCurrentOrder: this.model
+      newCurrentOrder: this.model,
+      callback: function() {
+        OB.UTIL.ProcessController.finish('changeCurrentOrder', execution);
+      }
     });
-    OB.UTIL.ProcessController.finish('changeCurrentOrder', execution);
   },
   components: [
     {
@@ -146,7 +160,7 @@ enyo.kind({
     } else {
       this.$.bp.setContent(this.model.get('bp').get('_identifier'));
     }
-    this.$.total.setContent(this.model.printTotal());
+    this.$.total.setContent(OB.I18N.formatCurrency(this.model.printTotal()));
     OB.UTIL.HookManager.executeHooks('OBPOS_RenderListReceiptLine', {
       listReceiptLine: this
     });

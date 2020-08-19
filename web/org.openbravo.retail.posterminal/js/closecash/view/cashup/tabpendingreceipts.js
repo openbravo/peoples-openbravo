@@ -182,8 +182,7 @@ enyo.kind({
     );
   },
   bringOrder: function(inSender, inEvent) {
-    var me = this,
-      jsonOrder;
+    var me = this;
     OB.UTIL.showConfirmation.display(
       OB.I18N.getLabel('OBPOS_ConfirmBringOrder'),
       OB.I18N.getLabel('OBPOS_MsgConfirmBringOrder'),
@@ -192,13 +191,13 @@ enyo.kind({
           label: OB.I18N.getLabel('OBPOS_LblYesBring'),
           isConfirmButton: true,
           action: function() {
-            jsonOrder = JSON.parse(me.model.get('json'));
-            jsonOrder.session = OB.MobileApp.model.get('session');
-            jsonOrder.createdBy = OB.MobileApp.model.usermodel.id;
-            jsonOrder.updatedBy = OB.MobileApp.model.usermodel.id;
-            me.model.set('json', JSON.stringify(jsonOrder));
-            me.model.set('session', OB.MobileApp.model.get('session'));
-            OB.Dal.save(me.model, null, null, false);
+            OB.App.State.TicketList.bringTicketToSession({
+              ticketIds: [me.model.id],
+              session: OB.MobileApp.model.get('session'),
+              userId: OB.MobileApp.model.get('orgUserId')
+            }).then(() =>
+              me.model.set('session', OB.MobileApp.model.get('session'))
+            );
           }
         },
         {
@@ -326,10 +325,10 @@ enyo.kind({
       function(approved, supervisor, approvalType) {
         if (approved) {
           // approved so remove the entry
-          var callback = function() {
+          model.deleteOrder(me, () => {
             me.collection.remove(model);
-          };
-          model.deleteOrder(me, callback);
+            me.parent.parent.parent.parent.parent.refreshButtons();
+          });
         }
       }
     );
@@ -356,8 +355,7 @@ enyo.kind({
     );
   },
   bringAllPendingReceipts: function(inSender, inEvent) {
-    var me = this,
-      jsonOrder;
+    var me = this;
     OB.UTIL.showConfirmation.display(
       OB.I18N.getLabel('OBPOS_ConfirmBringOrder'),
       OB.I18N.getLabel('OBPOS_cannotBeUndone'),
@@ -366,18 +364,16 @@ enyo.kind({
           label: OB.I18N.getLabel('OBPOS_LblYesBring'),
           isConfirmButton: true,
           action: function() {
-            _.each(me.collection.models, function(model) {
-              if (model.get('session') !== OB.MobileApp.model.get('session')) {
-                jsonOrder = JSON.parse(model.get('json'));
-                jsonOrder.session = OB.MobileApp.model.get('session');
-                jsonOrder.createdBy = OB.MobileApp.model.usermodel.id;
-                jsonOrder.updatedBy = OB.MobileApp.model.usermodel.id;
-                model.set('json', JSON.stringify(jsonOrder));
-                model.set('session', OB.MobileApp.model.get('session'));
-                OB.Dal.save(model, null, null, false);
-              }
+            OB.App.State.TicketList.bringTicketToSession({
+              ticketIds: me.collection.models.map(m => m.id),
+              session: OB.MobileApp.model.get('session'),
+              userId: OB.MobileApp.model.get('orgUserId')
+            }).then(() => {
+              me.collection.models.forEach(m =>
+                m.set('session', OB.MobileApp.model.get('session'))
+              );
+              me.$.btnBringAll.hide();
             });
-            me.$.btnBringAll.hide();
           }
         },
         {
@@ -388,26 +384,18 @@ enyo.kind({
   },
   voidAllOrders: function(inSender, inEvent) {
     var me = this;
-
     if (OB.MobileApp.model.get('isMultiOrderState')) {
       if (OB.MobileApp.model.multiOrders.checkMultiOrderPayment()) {
         return;
       }
     }
 
-    if (this.collection.checkOrderListPayment()) {
-      return false;
-    }
-
-    function removeOneModel(model, collection) {
-      if (collection.length === 0) {
-        return;
-      }
-      var callback = function() {
-        collection.remove(model);
-        removeOneModel(collection.at(0), collection);
-      };
-      model.deleteOrder(me, callback);
+    if (OB.UTIL.TicketListUtils.checkOrderListPayment()) {
+      OB.UTIL.showConfirmation.display(
+        '',
+        OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment')
+      );
+      return;
     }
 
     OB.UTIL.Approval.requestApproval(
@@ -415,7 +403,12 @@ enyo.kind({
       'OBPOS_approval.cashupremovereceipts',
       function(approved, supervisor, approvalType) {
         if (approved) {
-          removeOneModel(me.collection.at(0), me.collection);
+          me.collection.forEach(model => {
+            model.deleteOrder(me, () => {
+              me.collection.remove(model);
+              me.parent.parent.parent.parent.parent.refreshButtons();
+            });
+          });
         }
       }
     );

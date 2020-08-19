@@ -15,17 +15,12 @@
   OB.App.StateAPI.DocumentSequence.registerAction(
     'increaseSequence',
     (documentSequence, payload) => {
-      const newDocumentSequence = { ...documentSequence };
       const { sequenceName } = payload;
 
-      if (newDocumentSequence[sequenceName]) {
-        const newStateSequence = { ...newDocumentSequence[sequenceName] };
-        newStateSequence.sequenceNumber =
-          newDocumentSequence[sequenceName].sequenceNumber + 1;
-        newDocumentSequence[sequenceName] = newStateSequence;
-      }
-
-      return newDocumentSequence;
+      return OB.App.State.DocumentSequence.Utils.increaseSequence(
+        documentSequence,
+        { sequenceName }
+      );
     }
   );
 })();

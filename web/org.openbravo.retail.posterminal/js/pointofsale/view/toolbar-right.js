@@ -235,7 +235,7 @@ enyo.kind({
       newTotal: this.receipt.getTotal()
     });
     this.receipt.on(
-      'change:gross',
+      'change:gross forceChangeTotal',
       function(model) {
         this.bubble('onChangeTotal', {
           newTotal: this.receipt.getTotal(),

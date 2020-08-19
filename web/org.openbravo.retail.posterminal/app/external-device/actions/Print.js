@@ -14,16 +14,10 @@
 
 OB.App.StateAPI.Global.registerAction('printTicket', (state, payload) => {
   const newState = { ...state };
-  const data = {
-    ticket: payload.ticket || { ...newState.Ticket },
-    printSettings: payload.printSettings
-  };
 
-  const printTicketMsg = OB.App.State.Messages.Utils.createNewMessage(
-    '',
-    '',
-    data,
-    { type: 'printTicket', consumeOffline: true }
+  const printTicketMsg = OB.App.State.Messages.Utils.createPrintTicketMessage(
+    payload.ticket || { ...newState.Ticket },
+    payload.printSettings
   );
 
   newState.Messages = [...newState.Messages, printTicketMsg];

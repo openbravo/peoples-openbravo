@@ -463,6 +463,7 @@ enyo.kind({
       // All requirements are met
       return true;
     }
+
     var newIsDisabledState;
     // [TODO] Must discuss if there is a better way to show discretionary discount pane
     var discountEdit = this.owner.owner.owner.owner.$.rightPanel.$.toolbarpane
@@ -544,55 +545,10 @@ enyo.kind({
       roundedPayment,
       paymentStatus;
     if (receipt.get('isQuotation')) {
-      var execution = OB.UTIL.ProcessController.start('completeQuotation');
-      if (receipt.get('hasbeenpaid') !== 'Y') {
-        receipt.set('isEditable', false);
-        var cbk = function() {
-          receipt.prepareToSend(function() {
-            receipt.trigger('closed', {
-              callback: function(args) {
-                //In case the processed document is a quotation, we remove its id so it can be reactivated
-                if (args && !args.isCancelled) {
-                  if (receipt.get('isQuotation')) {
-                    if (
-                      !(receipt.get('oldId') && receipt.get('oldId').length > 0)
-                    ) {
-                      receipt.set('oldId', receipt.get('id'));
-                    }
-                    receipt.set('isbeingprocessed', 'N');
-                  }
-                  if (
-                    OB.MobileApp.model.get('permissions')[
-                      'OBPOS_print.quotation'
-                    ]
-                  ) {
-                    receipt.trigger('print');
-                  }
-                }
-                receipt.trigger('scan');
-                OB.UTIL.ProcessController.finish(
-                  'completeQuotation',
-                  execution
-                );
-                OB.MobileApp.model.orderList.synchronizeCurrentOrder();
-              }
-            });
-          });
-        };
-        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          OB.MobileApp.model.setSynchronizedCheckpoint(function() {
-            cbk();
-          });
-        } else {
-          cbk();
-        }
-      } else {
-        receipt.prepareToSend(function() {
-          receipt.trigger('scan');
-          OB.UTIL.ProcessController.finish('completeQuotation', execution);
-          OB.UTIL.showError(OB.I18N.getLabel('OBPOS_QuotationClosed'));
-        });
-      }
+      OB.MobileApp.model.receipt.runCompleteTicket(
+        OB.App.State.Global.completeQuotation,
+        'completeQuotation'
+      );
       return;
     }
     if (
@@ -790,6 +746,7 @@ enyo.kind({
             me.doClearUserInput();
           }
         }
+
         function errorCallback(trx, error) {
           completePayment();
           me.doClearUserInput();

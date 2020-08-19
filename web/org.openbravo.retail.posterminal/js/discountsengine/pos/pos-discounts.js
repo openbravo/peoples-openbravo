@@ -47,18 +47,9 @@
         rules: [...OB.Discounts.Pos.ruleImpls]
       },
       args => {
-        const ticket = {
-          ...receipt.toJSON(),
-          businessPartner: receipt.get('bp').toJSON(),
-          lines: receipt.get('lines').map(line => {
-            return {
-              ...line.toJSON(),
-              product: line.get('product').toJSON(),
-              baseGrossUnitPrice: line.get('price'),
-              baseNetUnitPrice: line.get('price')
-            };
-          })
-        };
+        const ticket = OB.App.StateBackwardCompatibility.getInstance(
+          'Ticket'
+        ).toStateObject(receipt);
         const result = OB.Discounts.Pos.applyDiscounts(
           ticket,
           args.rules,

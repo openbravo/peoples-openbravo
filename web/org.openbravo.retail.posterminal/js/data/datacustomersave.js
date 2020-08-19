@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _ */
+/*global OB */
 
 (function() {
   OB.DATA = window.OB.DATA || {};
@@ -26,10 +26,9 @@
     );
 
     OB.DATA.executeCustomerSave = async function(customer, callback) {
-      let customerId = customer.get('id'),
-        isNew = false,
-        finalCallback;
-      finalCallback = function(result) {
+      const customerId = customer.get('id');
+      let isNew = false;
+      const finalCallback = function(result) {
         if (callback) {
           callback(result);
         }
@@ -44,6 +43,7 @@
           }
         );
       };
+
       function sleep(x) {
         return new Promise(resolve => {
           setTimeout(() => {
@@ -120,10 +120,9 @@
       let updateLocally =
         !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) ||
         (!isNew &&
-          OB.MobileApp.model.orderList &&
-          _.filter(OB.MobileApp.model.orderList.models, function(order) {
-            return order.get('bp').get('id') === customerId;
-          }).length > 0);
+          OB.App.State.TicketList.Utils.getAllTickets().filter(
+            ticket => ticket.businessPartner.id === customerId
+          ).length > 0);
 
       //save that the customer is being processed by server
       if (updateLocally) {
@@ -131,7 +130,7 @@
       }
       try {
         await OB.App.State.Global.synchronizeBusinessPartner(
-          customer.attributes
+          customer.serializeToJSON()
         );
         await sleep(100);
         if (isNew) {
@@ -152,50 +151,53 @@
             customer: customer
           },
           function(args) {
+            const currentReceipt = OB.MobileApp.model.receipt;
+            const updateCustomerLocations = () => {
+              const clonedBP = new OB.Model.BusinessPartner();
+              OB.UTIL.clone(customer, clonedBP);
+              const bp = currentReceipt.get('bp');
+              if (bp.get('locId') !== customer.get('locId')) {
+                // if the order has a different address but same BP than the bp
+                // then copy over the address data
+                clonedBP.set('locId', bp.get('locId'));
+                clonedBP.set('locName', bp.get('locName'));
+                clonedBP.set('postalCode', bp.get('postalCode'));
+                clonedBP.set('cityName', bp.get('cityName'));
+                clonedBP.set('countryName', bp.get('countryName'));
+                clonedBP.set('locationModel', bp.get('locationModel'));
+              }
+              if (bp.get('shipLocId') !== customer.get('shipLocId')) {
+                clonedBP.set('shipLocId', bp.get('shipLocId'));
+                clonedBP.set('shipLocName', bp.get('shipLocName'));
+                clonedBP.set('shipPostalCode', bp.get('shipPostalCode'));
+                clonedBP.set('shipCityName', bp.get('shipCityName'));
+                clonedBP.set('shipCountryName', bp.get('shipCountryName'));
+              }
+              return clonedBP;
+            };
             // update each order also so that new name is shown and the bp
             // in the order is the same as what got saved
-            if (OB.MobileApp.model.orderList) {
-              for (const order of OB.MobileApp.model.orderList.models) {
-                if (order.get('bp').get('id') === customerId) {
-                  var clonedBP = new OB.Model.BusinessPartner();
-                  OB.UTIL.clone(customer, clonedBP);
-                  var bp = order.get('bp');
-                  if (order.get('bp').get('locId') !== customer.get('locId')) {
-                    // if the order has a different address but same BP than the bp
-                    // then copy over the address data
-                    clonedBP.set('locId', bp.get('locId'));
-                    clonedBP.set('locName', bp.get('locName'));
-                    clonedBP.set('postalCode', bp.get('postalCode'));
-                    clonedBP.set('cityName', bp.get('cityName'));
-                    clonedBP.set('countryName', bp.get('countryName'));
-                    clonedBP.set('locationModel', bp.get('locationModel'));
-                  }
-                  if (
-                    order.get('bp').get('shipLocId') !==
-                    customer.get('shipLocId')
-                  ) {
-                    clonedBP.set('shipLocId', bp.get('shipLocId'));
-                    clonedBP.set('shipLocName', bp.get('shipLocName'));
-                    clonedBP.set('shipPostalCode', bp.get('shipPostalCode'));
-                    clonedBP.set('shipCityName', bp.get('shipCityName'));
-                    clonedBP.set('shipCountryName', bp.get('shipCountryName'));
-                  }
-                  order.set('bp', clonedBP);
-                  order.save();
-                  if (
-                    OB.MobileApp.model.orderList.modelorder &&
-                    OB.MobileApp.model.orderList.modelorder.get('id') ===
-                      order.get('id')
-                  ) {
-                    OB.MobileApp.model.orderList.modelorder.set('isNew', false);
-                    OB.MobileApp.model.orderList.modelorder.setBPandBPLoc(
-                      clonedBP,
-                      false,
-                      true
-                    );
-                  }
+            if (
+              currentReceipt.get('isEditable') &&
+              currentReceipt.get('bp').get('id') === customerId
+            ) {
+              const updatedCustomer = updateCustomerLocations();
+              OB.MobileApp.model.receipt.setBPandBPLoc(
+                updatedCustomer,
+                false,
+                true,
+                // note that we are calling updateBpInAllTickets action in the setBPandBPLoc callback
+                // instead of this, the logic in setBPandBPLoc should be refactored into a new action
+                () => {
+                  OB.App.State.Global.updateBpInAllTickets({
+                    customer: JSON.parse(JSON.stringify(customer.toJSON()))
+                  });
                 }
-              }
+              );
+            } else {
+              OB.App.State.Global.updateBpInAllTickets({
+                customer: JSON.parse(JSON.stringify(customer.toJSON()))
+              });
             }
           }
         );

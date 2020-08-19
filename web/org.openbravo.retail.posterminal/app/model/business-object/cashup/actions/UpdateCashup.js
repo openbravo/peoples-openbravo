@@ -90,7 +90,7 @@
         // group and sum the taxes
         const newCashupTaxes = [];
         ticket.get('lines').each(function perLine(line) {
-          const taxLines = line.get('taxLines');
+          const taxes = line.get('taxes');
           if (
             orderType === 1 ||
             (line.get('qty') < 0 &&
@@ -102,24 +102,24 @@
             taxOrderType = '0';
           }
 
-          Object.values(taxLines).forEach(taxLine => {
+          Object.values(taxes).forEach(tax => {
             if (!(ticket.has('isQuotation') && ticket.get('isQuotation'))) {
               if (
                 ticket.get('cancelLayaway') ||
                 (line.get('qty') > 0 && !ticket.get('isLayaway'))
               ) {
-                taxAmount = taxLine.amount;
+                taxAmount = tax.amount;
               } else if (
                 ticket.get('voidLayaway') ||
                 (line.get('qty') < 0 && !ticket.get('isLayaway'))
               ) {
-                taxAmount = -taxLine.amount;
+                taxAmount = -tax.amount;
               }
             }
 
             if (taxAmount != null) {
               newCashupTaxes.push({
-                taxName: taxLine.name,
+                taxName: tax.name,
                 taxAmount,
                 taxOrderType
               });

@@ -183,16 +183,6 @@
           }
           receipt.set('isBeingClosed', false);
 
-          _.each(
-            orderList.models,
-            function(ol) {
-              if (ol.get('id') === receipt.get('id')) {
-                ol.set('isBeingClosed', false);
-                return true;
-              }
-            },
-            this
-          );
           OB.UTIL.setScanningFocus(true);
           OB.UTIL.Debug.execute(function() {
             if (!args.frozenReceipt) {
@@ -311,20 +301,13 @@
               );
             }
 
-            if (
-              OB.MobileApp.model.hasPermission(
-                'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
-                true
-              )
-            ) {
-              orderList.deleteCurrent(true);
-            } else {
-              orderList.deleteCurrent();
-            }
             receipt.setIsCalculateReceiptLockState(false);
             receipt.setIsCalculateGrossLockState(false);
-
-            orderList.synchronizeCurrentOrder();
+            OB.UTIL.ProcessController.finish('completeReceipt', execution);
+            if (triggerClosedCallback instanceof Function) {
+              triggerClosedCallback();
+            }
+            return;
           }
           OB.UTIL.ProcessController.finish('completeReceipt', execution);
           if (triggerClosedCallback instanceof Function) {

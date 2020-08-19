@@ -52,7 +52,6 @@
       recursiveCallback,
       recursiveIdx,
       currentModel,
-      currentOrderList,
       currentContext,
       currentOriginServer;
 
@@ -128,8 +127,8 @@
               errorCallback();
               return;
             }
-            currentOrderList.newPaidReceipt(data[0], function(newOrder) {
-              currentOrderList.addPaidReceipt(
+            OB.UTIL.TicketListUtils.newPaidReceipt(data[0], function(newOrder) {
+              OB.UTIL.TicketListUtils.addPaidReceipt(
                 newOrder,
                 continueAfterPaidReceipt
               );
@@ -244,13 +243,12 @@
       calledFrom
     ) {
       currentModel = model;
-      currentOrderList = orderList;
       currentContext = context;
       currentOriginServer = originServer;
       me.listOfExecution.push(
         OB.UTIL.ProcessController.start('loadPaidReceipts')
       );
-      orderList.checkForDuplicateReceipts(
+      OB.UTIL.TicketListUtils.checkForDuplicateReceipts(
         model,
         function(order) {
           if (
@@ -291,7 +289,7 @@
                       } else {
                         newOrder = data[idx];
                         newModel = new Backbone.Model(newOrder);
-                        currentOrderList.checkForDuplicateReceipts(
+                        OB.UTIL.TicketListUtils.checkForDuplicateReceipts(
                           newModel,
                           function(checkedOrder) {
                             models.push(checkedOrder);
@@ -338,12 +336,11 @@
     me.loadingReceipt = true;
     if (calledFrom === 'return') {
       currentModel = model;
-      currentOrderList = orderList;
       currentContext = context;
       currentOriginServer = originServer;
       orderLoaded([model]);
     } else {
-      loadOrdersProcess(model, orderList, context, originServer, calledFrom);
+      loadOrdersProcess(model, null, context, originServer, calledFrom);
     }
   };
 })();

@@ -11,7 +11,8 @@
 
 global.OB = {
   App: {
-    Class: {}
+    Class: {},
+    TerminalProperty: { get: jest.fn() }
   },
   Discounts: {
     Pos: {

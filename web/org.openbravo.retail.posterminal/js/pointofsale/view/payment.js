@@ -2478,9 +2478,7 @@ enyo.kind({
     var myModel = this.owner.model,
       me = this,
       payments,
-      isMultiOrder = myModel.get('leftColumnViewManager').isOrder()
-        ? false
-        : true,
+      isMultiOrder = !myModel.get('leftColumnViewManager').isOrder(),
       avoidPayment = false,
       orderDesc = '',
       execution;
@@ -2520,6 +2518,41 @@ enyo.kind({
 
     if (this.disabled) {
       return true;
+    }
+
+    // Fixme: remove this if and the rest of the code of this function
+    // Mantained for easy switch to debug old and new code
+    const newCode = true;
+    if (newCode) {
+      if (isMultiOrder) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.completeMultiTicket,
+          'completeReceipt'
+        );
+        return;
+      }
+
+      if (OB.MobileApp.model.receipt.get('cancelLayaway')) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.cancelTicket,
+          'cancelLayaway'
+        );
+        return;
+      }
+
+      if (OB.MobileApp.model.receipt.get('doCancelAndReplace')) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.replaceTicket,
+          'completeReceipt'
+        );
+        return;
+      }
+
+      OB.MobileApp.model.receipt.runCompleteTicket(
+        OB.App.State.Global.completeTicket,
+        'completeReceipt'
+      );
+      return;
     }
 
     execution = OB.UTIL.ProcessController.start('tapDoneButton');
@@ -2585,8 +2618,7 @@ enyo.kind({
         ),
         isReturnOrder = isMultiOrder ? false : this.owner.receipt.isNegative(),
         paymentsMultiOrders,
-        paymentsOrder,
-        checkPrepaymentUnderTheLimit;
+        paymentsOrder;
 
       if (isMultiOrder) {
         var receipts = this.owner.model
@@ -2663,7 +2695,7 @@ enyo.kind({
         }
       });
 
-      checkPrepaymentUnderTheLimit = function(callback) {
+      const checkPrepaymentUnderTheLimit = function(callback) {
         var paymentStatus,
           prepaymentLimitAmount,
           pendingPrepayment,
@@ -3387,142 +3419,18 @@ enyo.kind({
     if (this.disabled) {
       return true;
     }
-    var execution = OB.UTIL.ProcessController.start('payOnCredit');
 
-    OB.UTIL.ProcessController.finish('payOnCredit', execution);
-    if (
-      !_.isNull(this.model.get('order').get('bp')) &&
-      _.isNull(
-        this.model
-          .get('order')
-          .get('bp')
-          .get('locId')
-      )
-    ) {
-      OB.UTIL.ProcessController.finish('payOnCredit', execution);
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_InformationTitle'),
-        OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'),
-        [
-          {
-            label: OB.I18N.getLabel('OBPOS_LblOk')
-          }
-        ]
+    const isMultiOrder = !this.model.get('leftColumnViewManager').isOrder();
+    if (isMultiOrder) {
+      OB.MobileApp.model.receipt.runCompleteTicket(
+        OB.App.State.Global.completeMultiCreditTicket,
+        'completeReceipt'
       );
-      return true;
-    }
-    // Checking blind returned lines
-    if (!OB.MobileApp.model.get('terminal').returns_anonymouscustomer) {
-      if (this.model.get('leftColumnViewManager').isOrder()) {
-        if (this.owner.receipt.isAnonymousBlindReturn()) {
-          OB.UTIL.ProcessController.finish('payOnCredit', execution);
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_returnServicesWithAnonimousCust')
-          );
-          return;
-        }
-      } else {
-        var orderList = this.model.get('multiOrders').get('multiOrdersList');
-        orderList.forEach(function(receipt) {
-          if (receipt.isAnonymousBlindReturn()) {
-            OB.UTIL.ProcessController.finish('payOnCredit', execution);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBMOBC_Error'),
-              OB.I18N.getLabel('OBPOS_returnServicesWithAnonimousCust')
-            );
-            return;
-          }
-        });
-      }
-    }
-    var me = this,
-      paymentstatus = this.model.get('order').getPaymentStatus(),
-      process = new OB.DS.Process(
-        'org.openbravo.retail.posterminal.CheckBusinessPartnerCredit'
-      );
-    if (!paymentstatus.isReturn) {
-      //this.setContent(OB.I18N.getLabel('OBPOS_LblLoading'));
-      process.exec(
-        {
-          businessPartnerId: this.model
-            .get('order')
-            .get('bp')
-            .get('id'),
-          totalPending: paymentstatus.pendingAmt
-        },
-        function(data) {
-          if (data) {
-            if (data.enoughCredit) {
-              OB.UTIL.ProcessController.finish('payOnCredit', execution);
-              me.doShowPopup({
-                popup: 'modalEnoughCredit',
-                args: {
-                  order: me.model.get('order')
-                }
-              });
-              //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
-            } else {
-              var bpName = data.bpName;
-              var actualCredit = data.actualCredit;
-              OB.UTIL.ProcessController.finish('payOnCredit', execution);
-              me.doShowPopup({
-                popup: 'modalNotEnoughCredit',
-                args: {
-                  bpName: bpName,
-                  actualCredit: actualCredit
-                }
-              });
-              //this.setContent(OB.I18N.getLabel('OBPOS_LblCreditSales'));
-              //OB.UI.UTILS.domIdEnyoReference['modalNotEnoughCredit'].$.bodyContent.children[0].setContent();
-            }
-          } else {
-            OB.UTIL.showError(OB.I18N.getLabel('OBPOS_MsgErrorCreditSales'));
-            OB.UTIL.ProcessController.finish('payOnCredit', execution);
-          }
-          me.setDisabled(false);
-        },
-        function() {
-          if (
-            OB.MobileApp.model.hasPermission(
-              'OBPOS_AllowSellOnCreditWhileOffline',
-              true
-            )
-          ) {
-            OB.UTIL.ProcessController.finish('payOnCredit', execution);
-            me.doShowPopup({
-              popup: 'modalEnoughCredit',
-              args: {
-                order: me.model.get('order'),
-                message: 'OBPOS_Unabletocheckcredit'
-              }
-            });
-          } else {
-            OB.UTIL.ProcessController.finish('payOnCredit', execution);
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_SellingOnCreditHeader'),
-              OB.I18N.getLabel('OBPOS_UnabletoSellOncredit'),
-              [
-                {
-                  isConfirmButton: true,
-                  label: OB.I18N.getLabel('OBMOBC_LblOk')
-                }
-              ]
-            );
-          }
-        }
-      );
-      //    } else if (this.model.get('order').get('orderType') === 1) {
-    } else if (paymentstatus.isReturn) {
-      OB.UTIL.ProcessController.finish('payOnCredit', execution);
-      this.doShowPopup({
-        popup: 'modalEnoughCredit',
-        args: {
-          order: this.model.get('order')
-        }
-      });
     } else {
-      OB.UTIL.ProcessController.finish('payOnCredit', execution);
+      OB.MobileApp.model.receipt.runCompleteTicket(
+        OB.App.State.Global.completeCreditTicket,
+        'completeReceipt'
+      );
     }
   }
 });
@@ -3559,209 +3467,15 @@ enyo.kind({
     this.setContent(OB.I18N.getLabel('OBPOS_LblLayaway'));
   },
   tap: function() {
-    var receipt = this.owner.receipt,
-      negativeLines,
-      me = this,
-      myModel = this.owner.model,
-      paymentStatus,
-      prepaymentLayawayLimitAmount,
-      receiptHasPrepaymentAmount,
-      pendingPrepayment,
-      hasPayments,
-      allowApproval;
-    var continueExecuting = function(
-      receipt,
-      negativeLines,
-      me,
-      myModel,
-      payments
-    ) {
-      if (
-        !_.isNull(receipt.get('bp')) &&
-        _.isNull(
-          myModel
-            .get('order')
-            .get('bp')
-            .get('locId')
-        )
-      ) {
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBPOS_InformationTitle'),
-          OB.I18N.getLabel('OBPOS_EmptyAddrBillToText'),
-          [
-            {
-              label: OB.I18N.getLabel('OBPOS_LblOk')
-            }
-          ]
-        );
-        return;
-      }
-
-      me.allowOpenDrawer = false;
-
-      if (
-        receipt.get('bp').id ===
-          OB.MobileApp.model.get('terminal').businessPartner &&
-        !OB.MobileApp.model.get('terminal').layaway_anonymouscustomer
-      ) {
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBMOBC_Error'),
-          OB.I18N.getLabel('OBPOS_layawaysOrdersWithAnonimousCust')
-        );
-        return;
-      }
-
-      if (!me.showing || me.disabled) {
-        return true;
-      }
-
-      if (receipt.get('lines').length === 0) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_AvoidLayawayWithoutLines'));
-        return;
-      }
-
-      if (myModel.get('leftColumnViewManager').isOrder()) {
-        payments = receipt.get('payments');
-      } else {
-        payments = myModel.get('multiOrders').get('payments');
-      }
-
-      payments.each(function(payment) {
-        if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
-          me.allowOpenDrawer = true;
-        }
-      });
-      if (receipt) {
-        negativeLines = _.find(receipt.get('lines').models, function(line) {
-          return line.get('qty') < 0;
-        });
-        if (negativeLines) {
-          if (
-            !OB.MobileApp.model.hasPermission(
-              'OBPOS_AllowLayawaysNegativeLines',
-              true
-            )
-          ) {
-            OB.UTIL.showWarning(
-              OB.I18N.getLabel('OBPOS_layawaysOrdersWithReturnsNotAllowed')
-            );
-            return true;
-          } else if (receipt.get('payment') > 0) {
-            OB.UTIL.showWarning(
-              OB.I18N.getLabel('OBPOS_partiallyLayawaysWithNegLinesNotAllowed')
-            );
-            return true;
-          }
-        }
-        if (receipt.get('generateInvoice')) {
-          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_noInvoiceIfLayaway'));
-          receipt.setFullInvoice(false, false);
-        }
-      }
-      receipt.trigger('paymentDone', me.allowOpenDrawer);
-    };
-
-    paymentStatus = receipt.getPaymentStatus();
-    prepaymentLayawayLimitAmount = receipt.get('obposPrepaymentlaylimitamt');
-    receiptHasPrepaymentAmount = prepaymentLayawayLimitAmount !== 0;
-    hasPayments = paymentStatus.payments.length > 0;
-    allowApproval = OB.MobileApp.model.hasPermission(
-      'OBPOS_AllowPrepaymentUnderLimitLayaway',
-      true
-    );
-    pendingPrepayment = OB.DEC.sub(
-      OB.DEC.add(prepaymentLayawayLimitAmount, paymentStatus.pendingAmt),
-      paymentStatus.totalAmt
-    );
-    if (
-      OB.MobileApp.model.get('terminal').terminalType.calculateprepayments &&
-      receiptHasPrepaymentAmount &&
-      paymentStatus.totalAmt > 0 &&
-      pendingPrepayment > 0 &&
-      hasPayments &&
-      allowApproval
-    ) {
-      OB.UTIL.Approval.requestApproval(
-        this.model,
-        [
-          {
-            approval: 'OBPOS_approval.prepaymentUnderLimitLayaway',
-            message: 'OBPOS_approval.prepaymentUnderLimit'
-          }
-        ],
-        function(approved, supervisor, approvalType) {
-          if (approved) {
-            if (
-              OB.MobileApp.model.get('context').user.id === supervisor.get('id')
-            ) {
-              OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBPOS_UnderpaymentWarningTitle'),
-                OB.I18N.getLabel('OBPOS_UnderpaymentWarningBody'),
-                [
-                  {
-                    label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                    isConfirmButton: true,
-                    action: function(popup) {
-                      var approvals = me.owner.receipt.get('approvals') || [],
-                        approval = {
-                          approvalType: {
-                            approval:
-                              'OBPOS_approval.prepaymentUnderLimitLayaway',
-                            message: 'OBPOS_approval.prepaymentUnderLimit'
-                          },
-                          userContact: supervisor.get('id'),
-                          created: new Date().getTime()
-                        };
-                      approvals.push(approval);
-                      me.owner.receipt.set('approvals', approvals);
-                      popup.doHideThisPopup();
-                      continueExecuting(
-                        receipt,
-                        negativeLines,
-                        me,
-                        myModel,
-                        paymentStatus.payments
-                      );
-                    }
-                  },
-                  {
-                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                  }
-                ]
-              );
-            } else {
-              continueExecuting(
-                receipt,
-                negativeLines,
-                me,
-                myModel,
-                paymentStatus.payments
-              );
-            }
-          }
-        }
-      );
-    } else {
-      if (
-        !allowApproval &&
-        prepaymentLayawayLimitAmount > receipt.getPayment()
-      ) {
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBMOBC_Error'),
-          OB.I18N.getLabel('OBPOS_PrepaymentUnderLimit_NotAllowed', [
-            prepaymentLayawayLimitAmount
-          ])
-        );
-      } else {
-        continueExecuting(
-          receipt,
-          negativeLines,
-          me,
-          myModel,
-          paymentStatus.payments
-        );
-      }
+    if (!this.showing || this.disabled) {
+      return true;
     }
+
+    OB.MobileApp.model.receipt.runCompleteTicket(
+      OB.App.State.Global.completeLayaway,
+      'completeReceipt'
+    );
+    return;
   }
 });
 

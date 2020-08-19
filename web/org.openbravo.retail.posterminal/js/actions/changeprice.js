@@ -71,6 +71,8 @@
             reason: options.reason
           })
             .then(() => {
+              OB.UTIL.handlePriceRuleBasedServices(receipt);
+              receipt.trigger('paintTaxes'); // refresh the Tax breakdown
               receipt.trigger('scan');
             })
             .catch(OB.App.View.ActionCanceledUIHandler.handle);

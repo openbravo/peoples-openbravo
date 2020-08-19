@@ -328,9 +328,6 @@
                   });
 
                   OB.Dal.transaction(function(tx) {
-                    if (OB.MobileApp.model.orderList) {
-                      OB.MobileApp.model.orderList.synchronizeCurrentOrder();
-                    }
                     OB.UTIL.HookManager.executeHooks(
                       'OBPOS_PostDocumentSequenceUpdated',
                       {
@@ -487,30 +484,6 @@
           }
           loadTerminalModel();
         }
-      });
-
-      this.get('dataSyncModels').push({
-        name: 'Order',
-        model: OB.Model.Order,
-        modelFunc: 'OB.Model.Order',
-        className: 'org.openbravo.retail.posterminal.OrderLoader',
-        timeout: 20000,
-        timePerRecord: 1000,
-        criteria: {
-          hasbeenpaid: 'Y'
-        },
-        getIdentifier: function(model) {
-          return model.documentNo;
-        }
-      });
-
-      this.get('dataSyncModels').push({
-        name: 'Cancel Layaway',
-        model: OB.Model.CancelLayaway,
-        modelFunc: 'OB.Model.CancelLayaway',
-        className: 'org.openbravo.retail.posterminal.CancelLayawayLoader',
-        criteria: {},
-        isPersistent: false
       });
 
       this.on('ready', function() {
@@ -730,6 +703,7 @@
           );
         });
       }
+
       if (OB.UTIL.localStorage.getItem('terminalAuthentication') === 'Y') {
         var process = new OB.DS.Process(
           'org.openbravo.retail.posterminal.CheckTerminalAuth'
@@ -1226,39 +1200,31 @@
     },
 
     preLogoutActions: function(finalCallback) {
-      var criteria = {};
       var me = this;
 
-      function removeOneModel(model, collection, callback) {
-        if (collection.length === 0) {
-          if (callback && callback instanceof Function) {
-            me.cleanSessionInfo().then(() => callback());
-          }
-          return;
+      function callback() {
+        if (finalCallback && finalCallback instanceof Function) {
+          me.cleanSessionInfo().then(() => finalCallback());
         }
-
-        model.deleteOrder(me, function() {
-          collection.remove(model);
-          removeOneModel(collection.at(0), collection, callback);
-        });
       }
 
-      function success(collection) {
+      async function success(collection) {
         if (collection.length > 0) {
-          _.each(collection.models, function(model) {
-            model.set('ignoreCheckIfIsActiveOrder', true);
-          });
-          removeOneModel(collection.at(0), collection, finalCallback);
-        } else {
-          if (finalCallback && finalCallback instanceof Function) {
-            me.cleanSessionInfo().then(() => finalCallback());
+          await OB.App.State.Global.markIgnoreCheckIfIsActiveOrderToPendingTickets(
+            {
+              session: OB.MobileApp.model.get('session')
+            }
+          );
+          for (let i = 0; i < collection.length; i++) {
+            const model = OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(collection[i]);
+            await model.deleteOrder();
           }
+          callback();
+        } else {
+          callback();
         }
-      }
-
-      function error() {
-        OB.error('postCloseSession', arguments);
-        OB.MobileApp.model.triggerLogout();
       }
 
       if (OB.MobileApp.model.get('isMultiOrderState')) {
@@ -1266,20 +1232,13 @@
           return;
         }
       }
-      if (
-        OB.MobileApp.model.orderList &&
-        OB.MobileApp.model.orderList.length > 1
-      ) {
-        if (OB.MobileApp.model.orderList.checkOrderListPayment()) {
-          return;
-        }
-      } else if (
-        OB.MobileApp.model.receipt &&
-        OB.MobileApp.model.receipt.get('lines').length > 0
-      ) {
-        if (OB.MobileApp.model.receipt.checkOrderPayment()) {
-          return;
-        }
+
+      if (OB.UTIL.TicketListUtils.checkOrderListPayment()) {
+        OB.UTIL.showConfirmation.display(
+          '',
+          OB.I18N.getLabel('OBPOS_RemoveReceiptWithPayment')
+        );
+        return;
       }
 
       OB.UTIL.Approval.requestApproval(
@@ -1287,10 +1246,9 @@
         'OBPOS_approval.removereceipts',
         function(approved, supervisor, approvalType) {
           if (approved) {
-            //All pending to be paid orders will be removed on logout
-            criteria.session = OB.MobileApp.model.get('session');
-            criteria.hasbeenpaid = 'N';
-            OB.Dal.find(OB.Model.Order, criteria, success, error);
+            // On logout remove pending orders and close opened paid orders
+            const session = OB.MobileApp.model.get('session');
+            success(OB.App.State.TicketList.Utils.getSessionTickets(session));
           }
         }
       );
@@ -1347,45 +1305,35 @@
     },
 
     getDocumentSequenceName: function(document) {
+      const settings = {
+        terminal: {
+          returnDocNoPrefix: OB.MobileApp.model.get('terminal')
+            .returnDocNoPrefix,
+          quotationDocNoPrefix: OB.MobileApp.model.get('terminal')
+            .quotationDocNoPrefix,
+          fullReturnInvoiceDocNoPrefix: OB.MobileApp.model.get('terminal')
+            .fullReturnInvoiceDocNoPrefix,
+          simplifiedReturnInvoiceDocNoPrefix: OB.MobileApp.model.get('terminal')
+            .simplifiedReturnInvoiceDocNoPrefix
+        },
+        preferences: {
+          salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
+            'OBPOS_SalesWithOneLineNegativeAsReturns',
+            true
+          )
+        }
+      };
+
       if (document.get('isInvoice')) {
-        return this.getInvoiceSequenceName(document);
-      } else {
-        return this.getOrderSequenceName(document);
+        return OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
+          document.toJSON(),
+          settings
+        );
       }
-    },
-
-    getOrderSequenceName: function(order) {
-      if (
-        order.get('isQuotation') &&
-        OB.MobileApp.model.get('terminal').quotationDocNoPrefix
-      ) {
-        return 'quotationslastassignednum';
-      } else if (
-        this.isReturn(order) &&
-        OB.MobileApp.model.get('terminal').returnDocNoPrefix
-      ) {
-        return 'returnslastassignednum';
-      }
-      return 'lastassignednum';
-    },
-
-    getInvoiceSequenceName: function(invoice) {
-      if (
-        !invoice.get('fullInvoice') &&
-        this.isReturn(invoice) &&
-        OB.MobileApp.model.get('terminal').simplifiedReturnInvoiceDocNoPrefix
-      ) {
-        return 'simplifiedreturninvoiceslastassignednum';
-      } else if (
-        invoice.get('fullInvoice') &&
-        this.isReturn(invoice) &&
-        OB.MobileApp.model.get('terminal').fullReturnInvoiceDocNoPrefix
-      ) {
-        return 'fullreturninvoiceslastassignednum';
-      } else if (!invoice.get('fullInvoice')) {
-        return 'simplifiedinvoiceslastassignednum';
-      }
-      return 'fullinvoiceslastassignednum';
+      return OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
+        document.toJSON(),
+        settings
+      );
     },
 
     getDocumentNo: async function(sequenceName) {
@@ -1398,10 +1346,15 @@
       const documentNumberPadding = OB.MobileApp.model.get('terminal')
         .documentnoPadding;
       const documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-        sequencePrefix,
-        OB.Model.Order.prototype.includeDocNoSeperator,
-        documentNumberPadding,
-        sequenceNumber
+        {
+          sequencePrefix,
+          documentNumberSeparator: OB.Model.Order.prototype
+            .includeDocNoSeperator
+            ? '/'
+            : '',
+          documentNumberPadding,
+          sequenceNumber
+        }
       );
 
       // FIXME: remove once completeTicket action is migrated to state.
@@ -1415,18 +1368,6 @@
         sequenceNumber: sequenceNumber,
         documentNo: documentNo
       };
-    },
-
-    isReturn: function(document) {
-      const negativeLines = document
-        .get('lines')
-        .filter(line => line.get('qty') < 0).length;
-      return (
-        negativeLines === document.get('lines').length ||
-        (negativeLines > 0 &&
-          OB.MobileApp.model.get('permissions')
-            .OBPOS_SalesWithOneLineNegativeAsReturns)
-      );
     },
 
     getPaymentName: function(key) {

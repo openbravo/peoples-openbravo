@@ -26,6 +26,9 @@ enyo.kind({
   events: {
     onSetReceiptsList: ''
   },
+  initComponents: function() {
+    this.inherited(arguments);
+  },
   renderNrItems: function(nrItems) {
     var receiptLabels;
     try {
@@ -67,21 +70,10 @@ enyo.kind({
     }
   },
   orderListChanged: function(oldValue) {
-    var me = this;
     this.doSetReceiptsList({
       orderList: this.orderList
     });
     this.renderNrItems(this.orderList.length);
-    this.orderList.on(
-      'add remove reset',
-      function() {
-        me.renderNrItems(me.orderList.length);
-      },
-      this
-    );
-  },
-  initComponents: function() {
-    this.inherited(arguments);
   }
 });
 

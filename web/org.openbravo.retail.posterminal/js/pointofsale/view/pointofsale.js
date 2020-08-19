@@ -520,18 +520,6 @@ enyo.kind({
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalStockInOtherStores'
         },
         {
-          kind: 'OB.OBPOSPointOfSale.UI.Modals.modalEnoughCredit',
-          name: 'modalEnoughCredit',
-          classes:
-            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalEnoughCredit'
-        },
-        {
-          kind: 'OB.OBPOSPointOfSale.UI.Modals.modalNotEnoughCredit',
-          name: 'modalNotEnoughCredit',
-          classes:
-            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-modalNotEnoughCredit'
-        },
-        {
           kind: 'OB.UI.ValidateAction',
           name: 'modalValidateAction',
           classes:
@@ -920,7 +908,17 @@ enyo.kind({
   },
   addNewOrder: function(inSender, inEvent) {
     this.$.receiptPropertiesDialog.resetProperties();
-    this.model.get('orderList').addNewOrder();
+    OB.App.State.Global.addNewTicket(
+      OB.UTIL.TicketUtils.addTicketCreationDataToPayload({})
+    ).then(() => {
+      OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
+      OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(false);
+      OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
+
+      OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
+        newOrder: this.model.get('order')
+      });
+    });
     return true;
   },
   deleteCurrentOrder: function(inSender, inEvent) {
@@ -1137,10 +1135,24 @@ enyo.kind({
           'terminal'
         ).businessPartner;
 
-        const preventServicesUpdate = args.receipt.get('preventServicesUpdate');
-        args.receipt.set('preventServicesUpdate', true);
+        const currentReceipt = OB.MobileApp.model.receipt;
+        currentReceipt.set('preventServicesUpdate', true);
 
         const beforeAddTicket = OB.App.State.getState().Ticket;
+
+        const { qtyEdition } = OB.Format.formats;
+        const extraData = {
+          discountRules: OB.Discounts.Pos.ruleImpls,
+          taxRules: OB.Taxes.Pos.ruleImpls,
+          bpSets: OB.Discounts.Pos.bpSets,
+          qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1,
+          terminal: OB.MobileApp.model.get('terminal'),
+          store: OB.MobileApp.model.get('store'),
+          warehouses: OB.MobileApp.model.get('warehouses'),
+          deliveryPaymentMode: OB.MobileApp.model.get('deliveryPaymentMode'),
+          payments: OB.MobileApp.model.get('payments'),
+          paymentcash: OB.MobileApp.model.get('paymentcash')
+        };
 
         OB.App.State.Ticket.addProduct({
           products: [
@@ -1150,9 +1162,14 @@ enyo.kind({
               options,
               attrs
             }
-          ]
+          ],
+          extraData
         })
           .then(() => {
+            currentReceipt.unset('preventServicesUpdate');
+            OB.UTIL.handlePriceRuleBasedServices(currentReceipt);
+            currentReceipt.trigger('paintTaxes'); // refresh the Tax breakdown
+
             if (OB.UI.MultiColumn.isSingleColumn()) {
               OB.UTIL.showSuccess(
                 OB.I18N.getLabel('OBPOS_AddLine', [
@@ -1175,18 +1192,31 @@ enyo.kind({
               !newLine.splitline &&
               newLine.product.productType !== 'S'
             ) {
-              args.receipt.trigger(
+              currentReceipt.trigger(
                 'showProductList',
-                args.receipt.get('lines').get(newLine.id),
+                currentReceipt.get('lines').get(newLine.id),
                 'mandatory'
               );
             }
 
+            if (newLine) {
+              // force trigger updateView to execute OBPOS_RenderOrderLine hooks
+              currentReceipt
+                .get('lines')
+                .get(newLine.id)
+                .trigger('updateView');
+              if (afterAddTicket.grossAmount === beforeAddTicket.grossAmount) {
+                // a new line has been added with total 0, the 'onChangeTotal' event is not being fired in this case
+                // trigger the 'forceChangeTotal' to force the 'checkout' button to be enabled
+                currentReceipt.trigger('forceChangeTotal');
+              }
+            }
+            currentReceipt.trigger('updatePending');
             finalCallback(true);
           })
           .catch(OB.App.View.ActionCanceledUIHandler.handle)
           .finally(() => {
-            args.receipt.set('preventServicesUpdate', preventServicesUpdate);
+            currentReceipt.unset('preventServicesUpdate');
           });
       }
     );
@@ -1342,7 +1372,7 @@ enyo.kind({
             return true;
           }
           component.model.get('order').setBPandBPLoc(eventBP, false, true);
-          component.model.get('orderList').saveCurrent();
+          component.model.get('order').trigger('updateView');
         } else {
           component.waterfall('onChangeBPartner', inEvent);
         }
@@ -1364,7 +1394,10 @@ enyo.kind({
     }
   },
   createQuotation: function() {
-    this.model.get('orderList').addNewQuotation();
+    OB.UTIL.TicketListUtils.addNewQuotation(
+      OB.App.TerminalProperty.get('terminal').terminalType
+        .documentTypeForQuotations
+    );
     return true;
   },
 
@@ -1372,7 +1405,7 @@ enyo.kind({
     var me = this;
     this.model.get('order').createOrderFromQuotation(false, function(success) {
       if (success) {
-        me.model.get('orderList').saveCurrent();
+        me.model.get('order').trigger('updateView');
       }
     });
     return true;
@@ -1391,21 +1424,20 @@ enyo.kind({
   },
 
   reactivateQuotation: function() {
-    var me = this;
     this.model
       .get('order')
       .reactivateQuotation()
       .then(() => {
-        me.model.get('orderList').saveCurrent();
+        this.model.get('order').trigger('updateView');
         if (
-          me.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$
-            .actionButtonsContainer.$.descriptionButton
+          this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent
+            .$.actionButtonsContainer.$.descriptionButton
         ) {
           if (
-            me.model.get('order').get('isEditable') &&
-            me.model.get('order').get('isQuotation')
+            this.model.get('order').get('isEditable') &&
+            this.model.get('order').get('isQuotation')
           ) {
-            me.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
+            this.$.multiColumn.$.rightPanel.$.toolbarpane.$.edit.$.editTabContent.$.actionButtonsContainer.$.descriptionButton.show();
           }
         }
       });
@@ -1433,7 +1465,7 @@ enyo.kind({
       .setOrderType(inEvent.permission, inEvent.orderType, {
         applyPromotions: false
       });
-    this.model.get('orderList').saveCurrent();
+    this.model.get('order').trigger('updateView');
     return true;
   },
 
@@ -1764,7 +1796,14 @@ enyo.kind({
     );
   },
   changeCurrentOrder: function(inSender, inEvent) {
-    this.model.get('orderList').load(inEvent.newCurrentOrder);
+    OB.MobileApp.model.receipt.set('preventServicesUpdate', true);
+    OB.UTIL.TicketListUtils.loadTicket(inEvent.newCurrentOrder)
+      .then(() => {
+        if (inEvent.callback) {
+          inEvent.callback();
+        }
+      })
+      .finally(() => OB.MobileApp.model.receipt.unset('preventServicesUpdate'));
     return true;
   },
   removePayment: function(inSender, inEvent) {
@@ -2014,7 +2053,7 @@ enyo.kind({
       }
     }
     this.model.get('order').setProperty(inEvent.property, inEvent.value);
-    this.model.get('orderList').saveCurrent();
+    this.model.get('order').trigger('updateView');
     return true;
   },
   setLineProperty: function(inSender, inEvent) {
@@ -2029,7 +2068,7 @@ enyo.kind({
     if (line && receipt) {
       receipt.setLineProperty(line, inEvent.property, inEvent.value);
     }
-    this.model.get('orderList').saveCurrent();
+    this.model.get('order').trigger('updateView');
     return true;
   },
   statusChanged: function(inSender, inEvent) {
@@ -2070,7 +2109,7 @@ enyo.kind({
         'salesRepresentative$_identifier',
         inEvent.salesRepresentative.get('_identifier')
       );
-    this.model.get('orderList').saveCurrent();
+    this.model.get('order').trigger('updateView');
     return true;
   },
   selectCharacteristicValue: function(inSender, inEvent) {
@@ -2139,7 +2178,7 @@ enyo.kind({
       originator.addClass('btn-icon-clearPayment');
     }
   },
-  removeMultiOrders: function(inSender, inEvent) {
+  removeMultiOrders: async function(inSender, inEvent) {
     var me = this,
       originator = inEvent.originator;
     if (me.model.get('multiOrders').checkMultiOrderPayment()) {
@@ -2155,10 +2194,16 @@ enyo.kind({
         .get('multiOrders')
         .get('multiOrdersList')
         .remove(inEvent.order);
-      if (inEvent && inEvent.order && inEvent.order.get('loadedFromServer')) {
-        me.model.get('orderList').current = inEvent.order;
-        me.model.get('orderList').deleteCurrent();
-        me.model.get('orderList').deleteCurrentFromDatabase(inEvent.order);
+      if (inEvent && inEvent.order) {
+        if (inEvent.order.get('loadedFromServer')) {
+          me.model.get('orderList').remove(inEvent.order);
+          inEvent.order.deleteOrder();
+        } else {
+          await OB.App.State.Global.checkTicketForPayOpenTickets({
+            ticketId: inEvent.order.get('id'),
+            checked: false
+          });
+        }
       }
       return true;
     } else {
@@ -2289,13 +2334,43 @@ enyo.kind({
     var receipt, receiptList, LeftColumnCurrentView;
     this.inherited(arguments);
     receipt = this.model.get('order');
-    receiptList = this.model.get('orderList');
+    const session = OB.MobileApp.model.get('session');
+    receiptList = new Backbone.Collection(
+      OB.App.State.TicketList.Utils.getSessionTickets(session).map(ticket => {
+        return OB.App.StateBackwardCompatibility.getInstance(
+          'Ticket'
+        ).toBackboneObject(ticket);
+      })
+    );
+
     OB.MobileApp.view.scanningFocus(true);
 
     this.waterfall('onPointOfSaleLoad');
 
     // Try to print the pending receipts.
     OB.OBPOSPointOfSale.OfflinePrinter.printPendingJobs();
+
+    OB.App.PersistenceChangeListenerManager.addListener(
+      state => {
+        const session = OB.MobileApp.model.get('session');
+        const ticketList = new Backbone.Collection(
+          OB.App.State.TicketList.Utils.getSessionTickets(session).map(
+            ticket => {
+              return OB.App.StateBackwardCompatibility.getInstance(
+                'Ticket'
+              ).toBackboneObject(ticket);
+            }
+          )
+        );
+
+        if (this.$.multiColumn) {
+          this.$.multiColumn.$.leftPanel.$.receiptview.setOrderList(ticketList);
+        }
+
+        OB.MobileApp.model.orderList.reset(ticketList.models);
+      },
+      ['TicketList']
+    );
 
     this.model.get('leftColumnViewManager').on(
       'change:currentView',

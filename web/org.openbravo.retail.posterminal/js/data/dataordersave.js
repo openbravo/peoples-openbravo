@@ -110,38 +110,34 @@
       OB.UTIL.clone(receipt, diffReceipt);
       if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
         // rollback other changes
-        OB.Dal.get(OB.Model.Order, receipt.get('id'), function(loadedReceipt) {
-          receipt.clearWith(loadedReceipt);
-          //We need to restore the payment tab, as that's what the user should see if synchronization fails
-          OB.MobileApp.view.waterfall('onTabChange', {
-            tabPanel: 'payment',
-            keyboard: 'toolbarpayment',
-            edit: false
-          });
-          receipt.set('hasbeenpaid', 'N');
-          diffReceipt.set('hasbeenpaid', 'N');
-          frozenReceipt.set('hasbeenpaid', 'N');
-          receipt.unset('completeTicket');
-          diffReceipt.unset('completeTicket');
-          frozenReceipt.unset('completeTicket');
-          OB.Dal.save(
-            receipt,
-            function() {
-              if (eventParams && eventParams.callback) {
-                eventParams.callback({
-                  frozenReceipt: frozenReceipt,
-                  diffReceipt: diffReceipt,
-                  isCancelled: true
-                });
-                receipt.setIsCalculateReceiptLockState(false);
-                receipt.setIsCalculateGrossLockState(false);
-                receipt.trigger('paymentCancel');
-              }
-            },
-            null,
-            false
-          );
+        const ticketObj = OB.App.State.TicketList.Utils.getAllTickets().find(
+          ticket => ticket.id === receipt.get('id')
+        );
+        receipt.clearWith(new Backbone.Model(ticketObj));
+
+        //We need to restore the payment tab, as that's what the user should see if synchronization fails
+        OB.MobileApp.view.waterfall('onTabChange', {
+          tabPanel: 'payment',
+          keyboard: 'toolbarpayment',
+          edit: false
         });
+        receipt.set('hasbeenpaid', 'N');
+        diffReceipt.set('hasbeenpaid', 'N');
+        frozenReceipt.set('hasbeenpaid', 'N');
+        receipt.unset('completeTicket');
+        diffReceipt.unset('completeTicket');
+        frozenReceipt.unset('completeTicket');
+
+        if (eventParams && eventParams.callback) {
+          eventParams.callback({
+            frozenReceipt: frozenReceipt,
+            diffReceipt: diffReceipt,
+            isCancelled: true
+          });
+          receipt.setIsCalculateReceiptLockState(false);
+          receipt.setIsCalculateGrossLockState(false);
+          receipt.trigger('paymentCancel');
+        }
       } else if (eventParams && eventParams.callback) {
         eventParams.callback({
           frozenReceipt: frozenReceipt,
@@ -457,34 +453,36 @@
                     }
 
                     OB.trace('Execution Sync process.');
-                    OB.MobileApp.model.runSyncProcess(
-                      function() {
-                        // in synchronized mode do the doc sequence update in the success
-                        if (
-                          OB.MobileApp.model.hasPermission(
-                            'OBMOBC_SynchronizedMode',
-                            true
-                          )
-                        ) {
-                          OB.Dal.transaction(function(tx) {
-                            // the trigger is fired on the receipt object, as there is only 1 that is being updated
-                            receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
+                    OB.App.State.Global.syncTickets().then(() => {
+                      OB.MobileApp.model.runSyncProcess(
+                        function() {
+                          // in synchronized mode do the doc sequence update in the success
+                          if (
+                            OB.MobileApp.model.hasPermission(
+                              'OBMOBC_SynchronizedMode',
+                              true
+                            )
+                          ) {
+                            OB.Dal.transaction(function(tx) {
+                              // the trigger is fired on the receipt object, as there is only 1 that is being updated
+                              receipt.trigger('integrityOk', frozenReceipt); // Is important for module print last receipt. This module listen trigger.
+                              syncSuccessCallback(function() {
+                                serverMessageForQuotation(frozenReceipt);
+                                closeParamCallback();
+                              }, eventParams);
+                            });
+                          } else {
                             syncSuccessCallback(function() {
                               serverMessageForQuotation(frozenReceipt);
-                              closeParamCallback();
                             }, eventParams);
-                          });
-                        } else {
-                          syncSuccessCallback(function() {
-                            serverMessageForQuotation(frozenReceipt);
-                          }, eventParams);
+                          }
+                          OB.debug('Ticket closed: runSyncProcess executed');
+                        },
+                        function() {
+                          syncErrorCallback();
                         }
-                        OB.debug('Ticket closed: runSyncProcess executed');
-                      },
-                      function() {
-                        syncErrorCallback();
-                      }
-                    );
+                      );
+                    });
                   };
 
                   var executePreSyncReceipt = function(tx) {
@@ -492,8 +490,7 @@
                       'OBPOS_PreSyncReceipt',
                       {
                         receipt: frozenReceipt,
-                        model: model,
-                        tx: tx
+                        model: model
                       },
                       function(args) {
                         frozenReceipt.set(
@@ -504,9 +501,8 @@
                         // Important: at this point, the frozenReceipt is considered final. Nothing must alter it
                         // when all the properties of the frozenReceipt have been set, keep a copy
                         OB.UTIL.clone(receipt, diffReceipt);
-                        OB.Dal.saveInTransaction(tx, frozenReceipt, function() {
-                          successCallback();
-                        });
+                        OB.MobileApp.model.receipt.clearWith(frozenReceipt);
+                        successCallback();
                       }
                     );
                   };
@@ -544,29 +540,7 @@
                             JSON.stringify(frozenReceipt.serializeToJSON())
                           );
                           OB.UTIL.setScanningFocus(true);
-                          if (
-                            OB.MobileApp.model.hasPermission(
-                              'OBMOBC_SynchronizedMode',
-                              true
-                            )
-                          ) {
-                            OB.Dal.saveInTransaction(
-                              tx,
-                              frozenReceipt,
-                              function() {
-                                executePreSyncReceipt(tx);
-                              }
-                            );
-                          } else {
-                            OB.trace('Saving receipt.');
-                            OB.Dal.saveInTransaction(
-                              tx,
-                              frozenReceipt,
-                              function() {
-                                executePreSyncReceipt(tx);
-                              }
-                            );
-                          }
+                          executePreSyncReceipt();
                         };
 
                         OB.App.State.Cashup.updateCashup({
@@ -749,52 +723,27 @@
                 );
                 OB.UTIL.setScanningFocus(true);
                 currentReceipt.set('hasbeenpaid', 'Y');
-                OB.Dal.saveInTransaction(
-                  tx,
-                  currentReceipt,
-                  function() {
-                    OB.info(
-                      'Multiorders ticket closed',
-                      currentReceipt
-                        .get('json')
-                        .replace(/logclientErrors/g, 'logErrors'),
-                      'caller: ' +
-                        OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
-                    );
-
-                    _.each(
-                      me.context.get('orderList').models,
-                      function(mdl) {
-                        if (mdl.get('id') === currentReceipt.get('id')) {
-                          mdl.set('hasbeenpaid', 'Y');
-                          return true;
-                        }
-                      },
-                      this
-                    );
-
-                    OB.Dal.getInTransaction(
-                      tx,
-                      OB.Model.Order,
-                      me.receipt.get('id'),
-                      function(savedReceipt) {
-                        if (
-                          !OB.UTIL.isNullOrUndefined(
-                            savedReceipt.get('amountToLayaway')
-                          ) &&
-                          savedReceipt.get('generateInvoice')
-                        ) {
-                          me.hasInvLayaways = true;
-                        }
-                        recursiveSaveFn(receiptIndex + 1);
-                      },
-                      null
-                    );
-                  },
-                  function() {
-                    recursiveSaveFn(receiptIndex + 1);
-                  }
+                OB.MobileApp.model.receipt.clearWith(currentReceipt);
+                OB.info(
+                  'Multiorders ticket closed',
+                  currentReceipt
+                    .get('json')
+                    .replace(/logclientErrors/g, 'logErrors'),
+                  'caller: ' +
+                    OB.UTIL.getStackTrace('Backbone.Events.trigger', true)
                 );
+
+                const savedReceipt = OB.App.State.TicketList.Utils.getAllTickets().find(
+                  ticket => ticket.id === me.receipt.get('id')
+                );
+
+                if (
+                  !OB.UTIL.isNullOrUndefined(savedReceipt.amountToLayaway) &&
+                  savedReceipt.generateInvoice
+                ) {
+                  me.hasInvLayaways = true;
+                }
+                recursiveSaveFn(receiptIndex + 1);
               }
             );
           };
@@ -855,8 +804,6 @@
                         me.context
                           .get('multiOrders')
                           .trigger('integrityOk', theReceipt);
-                        me.context.get('orderList').current = theReceipt;
-                        me.context.get('orderList').deleteCurrent();
                       }
                     );
 
@@ -922,208 +869,204 @@
     this.context.get('multiOrders').on(
       'closed',
       function(receipt, closedCallback) {
-        var me = this,
-          hasError = false;
-        OB.Dal.find(OB.Model.Order, {}, function(orderList) {
-          var multiOrderList = me.context
-              .get('multiOrders')
-              .get('multiOrdersList').models,
-            closedReceipts = [],
-            validateMultiOrder,
-            completeMultiOrder;
+        let hasError = false;
+        const session = OB.MobileApp.model.get('session');
+        let orderList = OB.App.State.TicketList.Utils.getSessionTickets(
+          session
+        );
 
-          _.forEach(orderList.models, function(sortedOrder) {
-            _.forEach(multiOrderList, function(multiOrder) {
-              if (multiOrder.get('id') === sortedOrder.get('id')) {
-                closedReceipts.push(multiOrder);
-              }
-            });
-          });
+        let multiOrderList = this.context
+            .get('multiOrders')
+            .get('multiOrdersList').models,
+          closedReceipts = [],
+          validateMultiOrder,
+          completeMultiOrder;
 
-          completeMultiOrder = _.after(closedReceipts.length, function() {
-            if (hasError) {
-              restoreMultiOrderOnError(function() {
-                if (closedCallback instanceof Function) {
-                  closedCallback(false);
-                }
-              });
-            } else {
-              OB.Dal.transaction(function(tx) {
-                saveAndSyncMultiOrder(me, closedReceipts, tx, function() {
-                  if (closedCallback instanceof Function) {
-                    closedCallback();
-                  }
-                });
-              });
+        orderList.forEach(ticket => {
+          _.forEach(multiOrderList, function(multiOrder) {
+            if (multiOrder.get('id') === ticket.id) {
+              closedReceipts.push(multiOrder);
             }
           });
-          validateMultiOrder = function() {
-            _.each(closedReceipts, function(receipt) {
-              if (OB.UTIL.isNullOrUndefined(receipt.get('amountToLayaway'))) {
-                receipt.set('completeTicket', true);
+        });
+
+        completeMultiOrder = _.after(closedReceipts.length, function() {
+          if (hasError) {
+            restoreMultiOrderOnError(function() {
+              if (closedCallback instanceof Function) {
+                closedCallback(false);
               }
-              OB.UTIL.HookManager.executeHooks(
-                'OBPOS_PreOrderSave',
-                {
-                  context: me,
-                  model: model,
-                  receipt: receipt
-                },
-                function(args) {
-                  OB.trace('Execution of pre order save hook OK.');
+            });
+          } else {
+            OB.Dal.transaction(function(tx) {
+              saveAndSyncMultiOrder(this, closedReceipts, tx, function() {
+                if (closedCallback instanceof Function) {
+                  closedCallback();
+                }
+              });
+            });
+          }
+        });
+        validateMultiOrder = function() {
+          _.each(closedReceipts, function(receipt) {
+            if (OB.UTIL.isNullOrUndefined(receipt.get('amountToLayaway'))) {
+              receipt.set('completeTicket', true);
+            }
+            OB.UTIL.HookManager.executeHooks(
+              'OBPOS_PreOrderSave',
+              {
+                context: this,
+                model: model,
+                receipt: receipt
+              },
+              function(args) {
+                OB.trace('Execution of pre order save hook OK.');
 
-                  var handleError = function() {
-                    hasError = true;
-                    completeMultiOrder();
-                  };
+                var handleError = function() {
+                  hasError = true;
+                  completeMultiOrder();
+                };
 
-                  if (args && args.cancellation && args.cancellation === true) {
-                    handleError();
-                    return true;
-                  }
+                if (args && args.cancellation && args.cancellation === true) {
+                  handleError();
+                  return true;
+                }
 
-                  OB.UTIL.TicketCloseUtils.checkOrdersUpdated(
-                    receipt,
-                    function() {
-                      OB.UTIL.TicketCloseUtils.processChangePayments(
-                        args.receipt,
-                        function() {
-                          var currentReceipt = args.receipt;
-                          currentReceipt.prepareToSend(function() {
+                OB.UTIL.TicketCloseUtils.checkOrdersUpdated(
+                  receipt,
+                  function() {
+                    OB.UTIL.TicketCloseUtils.processChangePayments(
+                      args.receipt,
+                      function() {
+                        var currentReceipt = args.receipt;
+                        currentReceipt.prepareToSend(function() {
+                          if (
+                            currentReceipt.get('orderType') !== 2 &&
+                            currentReceipt.get('orderType') !== 3
+                          ) {
+                            var negativeLines = _.filter(
+                              currentReceipt.get('lines').models,
+                              function(line) {
+                                return line.get('qty') < 0;
+                              }
+                            ).length;
                             if (
-                              currentReceipt.get('orderType') !== 2 &&
-                              currentReceipt.get('orderType') !== 3
+                              negativeLines ===
+                                currentReceipt.get('lines').models.length ||
+                              (negativeLines > 0 &&
+                                OB.MobileApp.model.get('permissions')
+                                  .OBPOS_SalesWithOneLineNegativeAsReturns)
                             ) {
-                              var negativeLines = _.filter(
-                                currentReceipt.get('lines').models,
-                                function(line) {
-                                  return line.get('qty') < 0;
-                                }
-                              ).length;
-                              if (
-                                negativeLines ===
-                                  currentReceipt.get('lines').models.length ||
-                                (negativeLines > 0 &&
-                                  OB.MobileApp.model.get('permissions')
-                                    .OBPOS_SalesWithOneLineNegativeAsReturns)
-                              ) {
-                                currentReceipt.setOrderType(
-                                  'OBPOS_receipt.return',
-                                  OB.DEC.One,
-                                  {
-                                    applyPromotions: false,
-                                    saveOrder: false
-                                  }
-                                );
-                              } else {
-                                currentReceipt.setOrderType('', OB.DEC.Zero, {
+                              currentReceipt.setOrderType(
+                                'OBPOS_receipt.return',
+                                OB.DEC.One,
+                                {
                                   applyPromotions: false,
                                   saveOrder: false
-                                });
-                              }
-                            }
-                            currentReceipt.set('orderDate', new Date());
-
-                            var creationDate,
-                              normalizedCreationDate = OB.I18N.normalizeDate(
-                                currentReceipt.get('creationDate')
-                              );
-                            if (normalizedCreationDate === null) {
-                              creationDate = new Date();
-                              normalizedCreationDate = OB.I18N.normalizeDate(
-                                creationDate
+                                }
                               );
                             } else {
-                              creationDate = new Date(normalizedCreationDate);
-                            }
-                            currentReceipt.set(
-                              'creationDate',
-                              normalizedCreationDate
-                            );
-                            currentReceipt.set(
-                              'movementDate',
-                              OB.I18N.normalizeDate(new Date())
-                            );
-                            currentReceipt.set(
-                              'accountingDate',
-                              OB.I18N.normalizeDate(new Date())
-                            );
-
-                            delete currentReceipt.attributes.json;
-                            currentReceipt.set(
-                              'timezoneOffset',
-                              creationDate.getTimezoneOffset()
-                            );
-                            currentReceipt.set(
-                              'created',
-                              creationDate.getTime()
-                            );
-                            currentReceipt.set(
-                              'obposCreatedabsolute',
-                              OB.I18N.formatDateISO(creationDate)
-                            ); // Absolute date in ISO format
-                            currentReceipt.set(
-                              'obposAppCashup',
-                              OB.App.State.getState().Cashup.id
-                            );
-                            if (
-                              OB.UTIL.isNullOrUndefined(
-                                currentReceipt.get('amountToLayaway')
-                              )
-                            ) {
-                              currentReceipt.set('completeTicket', true);
-                            }
-                            // multiterminal support
-                            // be sure that the active terminal is the one set as the order proprietary
-                            currentReceipt.set(
-                              'posTerminal',
-                              OB.MobileApp.model.get('terminal').id
-                            );
-                            currentReceipt.set(
-                              'posTerminal' +
-                                OB.Constants.FIELDSEPARATOR +
-                                OB.Constants.IDENTIFIER,
-                              OB.MobileApp.model.get('terminal')._identifier
-                            );
-
-                            // Set the quantities to deliver
-                            currentReceipt.setQuantitiesToDeliver();
-
-                            currentReceipt
-                              .get('approvals')
-                              .forEach(function(approval) {
-                                if (typeof approval.approvalType === 'object') {
-                                  approval.approvalMessage = OB.I18N.getLabel(
-                                    approval.approvalType.message,
-                                    approval.approvalType.params
-                                  );
-                                  approval.approvalType =
-                                    approval.approvalType.approval;
-                                }
+                              currentReceipt.setOrderType('', OB.DEC.Zero, {
+                                applyPromotions: false,
+                                saveOrder: false
                               });
+                            }
+                          }
+                          currentReceipt.set('orderDate', new Date());
 
-                            currentReceipt.generateInvoice(function(invoice) {
-                              if (invoice) {
-                                currentReceipt.set(
-                                  'calculatedInvoice',
-                                  invoice
+                          var creationDate,
+                            normalizedCreationDate = OB.I18N.normalizeDate(
+                              currentReceipt.get('creationDate')
+                            );
+                          if (normalizedCreationDate === null) {
+                            creationDate = new Date();
+                            normalizedCreationDate = OB.I18N.normalizeDate(
+                              creationDate
+                            );
+                          } else {
+                            creationDate = new Date(normalizedCreationDate);
+                          }
+                          currentReceipt.set(
+                            'creationDate',
+                            normalizedCreationDate
+                          );
+                          currentReceipt.set(
+                            'movementDate',
+                            OB.I18N.normalizeDate(new Date())
+                          );
+                          currentReceipt.set(
+                            'accountingDate',
+                            OB.I18N.normalizeDate(new Date())
+                          );
+
+                          delete currentReceipt.attributes.json;
+                          currentReceipt.set(
+                            'timezoneOffset',
+                            creationDate.getTimezoneOffset()
+                          );
+                          currentReceipt.set('created', creationDate.getTime());
+                          currentReceipt.set(
+                            'obposCreatedabsolute',
+                            OB.I18N.formatDateISO(creationDate)
+                          ); // Absolute date in ISO format
+                          currentReceipt.set(
+                            'obposAppCashup',
+                            OB.MobileApp.model.get('terminal').cashUpId
+                          );
+                          if (
+                            OB.UTIL.isNullOrUndefined(
+                              currentReceipt.get('amountToLayaway')
+                            )
+                          ) {
+                            currentReceipt.set('completeTicket', true);
+                          }
+                          // multiterminal support
+                          // be sure that the active terminal is the one set as the order proprietary
+                          currentReceipt.set(
+                            'posTerminal',
+                            OB.MobileApp.model.get('terminal').id
+                          );
+                          currentReceipt.set(
+                            'posTerminal' +
+                              OB.Constants.FIELDSEPARATOR +
+                              OB.Constants.IDENTIFIER,
+                            OB.MobileApp.model.get('terminal')._identifier
+                          );
+
+                          // Set the quantities to deliver
+                          currentReceipt.setQuantitiesToDeliver();
+
+                          currentReceipt
+                            .get('approvals')
+                            .forEach(function(approval) {
+                              if (typeof approval.approvalType === 'object') {
+                                approval.approvalMessage = OB.I18N.getLabel(
+                                  approval.approvalType.message,
+                                  approval.approvalType.params
                                 );
+                                approval.approvalType =
+                                  approval.approvalType.approval;
                               }
-                              completeMultiOrder();
                             });
-                          });
-                        }
-                      );
-                    },
-                    handleError
-                  );
-                }
-              );
-            });
-          };
 
-          validateMultiOrder();
-        });
+                          currentReceipt.generateInvoice(function(invoice) {
+                            if (invoice) {
+                              currentReceipt.set('calculatedInvoice', invoice);
+                            }
+                            completeMultiOrder();
+                          });
+                        });
+                      }
+                    );
+                  },
+                  handleError
+                );
+              }
+            );
+          });
+        };
+
+        validateMultiOrder();
       },
       this
     );

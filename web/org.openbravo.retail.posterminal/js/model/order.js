@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, moment, Backbone, enyo, BigDecimal*/
+/*global OB, _, Backbone, enyo, BigDecimal*/
 
 (function() {
   // Sales.OrderLine Model
@@ -418,6 +418,7 @@
     insertStatement:
       'INSERT INTO c_order(c_order_id, json, ad_session_id, hasbeenpaid, isbeingprocessed) VALUES (?,?,?,?,?)',
     local: true,
+    legacyModel: true,
     _id: 'modelorder',
     initialize: function(attributes) {
       var orderId;
@@ -565,6 +566,169 @@
       }
     },
 
+    runCompleteTicket: async function(completeTicketAction, actionName) {
+      const isMultiTicket =
+        completeTicketAction === OB.App.State.Global.completeMultiTicket ||
+        completeTicketAction === OB.App.State.Global.completeMultiCreditTicket;
+      const isDeleteTicket =
+        completeTicketAction === OB.App.State.Global.deleteTicket;
+      const runCompleteTicketAction = async receipt => {
+        try {
+          OB.App.StateBackwardCompatibility.getInstance(
+            'Ticket'
+          ).resetStateFromBackbone();
+
+          // Complete Ticket action
+          await completeTicketAction({
+            terminal: OB.MobileApp.model.get('terminal'),
+            store: OB.MobileApp.model.get('store'),
+            warehouses: OB.MobileApp.model.get('warehouses'),
+            businessPartner: OB.MobileApp.model.get('businessPartner')
+              ? JSON.parse(
+                  JSON.stringify(OB.MobileApp.model.get('businessPartner'))
+                )
+              : undefined,
+            payments: OB.MobileApp.model.get('payments'),
+            paymentcash: OB.MobileApp.model.get('paymentcash'),
+            deliveryPaymentMode: OB.MobileApp.model.get('deliveryPaymentMode'),
+            session: OB.MobileApp.model.get('session'),
+            orgUserId: OB.MobileApp.model.get('orgUserId'),
+            pricelist: OB.MobileApp.model.get('pricelist'),
+            contextUser: OB.MobileApp.model.get('context').user,
+            documentNumberSeparator: OB.Model.Order.prototype
+              .includeDocNoSeperator
+              ? '/'
+              : '',
+            preferences: {
+              salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
+                'OBPOS_SalesWithOneLineNegativeAsReturns',
+                true
+              ),
+              splitChange: OB.MobileApp.model.hasPermission(
+                'OBPOS_SplitChange',
+                true
+              ),
+              removeTicket: OB.MobileApp.model.hasPermission(
+                'OBPOS_remove_ticket',
+                true
+              ),
+              alwaysCreateNewReceiptAfterPayReceipt: OB.MobileApp.model.hasPermission(
+                'OBPOS_alwaysCreateNewReceiptAfterPayReceipt',
+                true
+              )
+            },
+            discountRules: OB.Discounts.Pos.ruleImpls,
+            bpSets: OB.Discounts.Pos.bpSets,
+            taxRules: OB.Taxes.Pos.ruleImpls,
+            multiTickets: OB.MobileApp.model.multiOrders
+              ? JSON.parse(JSON.stringify(OB.MobileApp.model.multiOrders))
+              : undefined,
+            ticketExtraProperties: OB.UTIL.TicketUtils.getTicketExtraProperties()
+          });
+
+          if (!isDeleteTicket) {
+            // Open drawer
+            receipt.trigger('checkOpenDrawer');
+
+            // RFID
+            if (OB.UTIL.RfidController.isRfidConfigured()) {
+              OB.UTIL.RfidController.processRemainingCodes(receipt);
+              OB.UTIL.RfidController.updateEpcBuffers();
+            }
+
+            // Multi ticket
+            if (isMultiTicket) {
+              OB.MobileApp.model.multiOrders.resetValues();
+              OB.MobileApp.view.$.containerWindow
+                .getRoot()
+                .$.multiColumn.$.leftPanel.$.receiptview.model.get(
+                  'leftColumnViewManager'
+                )
+                .setOrderMode();
+            }
+            // Focus on scanning window
+            OB.UTIL.setScanningFocus(true);
+          }
+
+          // Trigger some UI events
+          OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
+
+          // Run terminal authentication validation
+          OB.MobileApp.model.runSyncProcess();
+
+          // Check if masterdata needs to be refreshed
+          OB.UTIL.checkRefreshMasterData();
+        } catch (error) {
+          OB.App.View.ActionCanceledUIHandler.handle(error);
+        }
+      };
+
+      const me = this;
+      const completeTicketExecution = OB.UTIL.ProcessController.start(
+        actionName
+      );
+      if (isDeleteTicket) {
+        me.set('preventServicesUpdate', true);
+        const receipt = OB.UTIL.clone(me);
+        await runCompleteTicketAction(receipt);
+        me.unset('preventServicesUpdate');
+        OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
+        return;
+      }
+
+      const receiptsForPreOrderSave = isMultiTicket
+        ? OB.MobileApp.model.multiOrders.get('multiOrdersList').models
+        : [me];
+
+      const afterPreOrderSave = _.after(
+        receiptsForPreOrderSave.length,
+        async function() {
+          const receipt = OB.UTIL.clone(me);
+          await runCompleteTicketAction(receipt);
+
+          OB.UTIL.HookManager.executeHooks(
+            isMultiTicket
+              ? 'OBPOS_PostSyncMultiReceipt'
+              : 'OBPOS_PostSyncReceipt',
+            isMultiTicket
+              ? {
+                  receipts: OB.MobileApp.model.multiOrders.get(
+                    'multiOrdersList'
+                  ).models,
+                  syncSuccess: true
+                }
+              : { receipt, syncSuccess: true },
+            function(args) {
+              OB.UTIL.ProcessController.finish(
+                actionName,
+                completeTicketExecution
+              );
+              return;
+            }
+          );
+        }
+      );
+
+      for (const receiptForPreOrderSave of receiptsForPreOrderSave) {
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_PreOrderSave',
+          {
+            receipt: receiptForPreOrderSave
+          },
+          function(args) {
+            if (args && args.cancellation) {
+              OB.UTIL.ProcessController.finish(
+                actionName,
+                completeTicketExecution
+              );
+              return;
+            }
+            afterPreOrderSave();
+          }
+        );
+      }
+    },
+
     preventOrderSave: function(value) {
       if (value) {
         if (this.has('preventOrderSave')) {
@@ -599,9 +763,7 @@
         !this.get('preventOrderSave') &&
         !this.pendingCalculateReceipt
       ) {
-        var undoCopy = this.get('undo'),
-          me = this,
-          forceInsert = false;
+        var undoCopy = this.get('undo');
 
         if (this.get('isBeingClosed')) {
           var diffReceipt = OB.UTIL.diffJson(
@@ -623,10 +785,8 @@
           this.set('id', uuid);
           OB.info('[NewOrder] New order set with id ' + uuid);
           this.id = uuid;
-          forceInsert = true;
         } else if (this.get('isNew')) {
           this.set('isNew', false);
-          forceInsert = true;
         }
 
         this.set('json', JSON.stringify(this.serializeToJSON()));
@@ -634,32 +794,8 @@
           callback = function() {};
         }
 
-        if (
-          (this.get('isQuotation') && !this.get('isEditable')) ||
-          this.get('isCancelling')
-        ) {
-          if (callback) {
-            callback();
-          }
-        } else {
-          OB.Dal.save(
-            this,
-            function() {
-              OB.info(
-                '[NewOrder] Order (' +
-                  (forceInsert ? 'insert' : 'update') +
-                  ') saved in DB with id ' +
-                  me.id
-              );
-              if (callback) {
-                callback();
-              }
-            },
-            function() {
-              OB.error(arguments);
-            },
-            forceInsert
-          );
+        if (callback) {
+          callback();
         }
 
         this.setUndo('SaveOrder', undoCopy);
@@ -686,37 +822,8 @@
       // Apply calculated discounts and promotions to price and gross prices
       // so ERP saves them in the proper place
       this.get('lines').each(function(line) {
-        // Calculate inline discount: discount applied before promotions
-        const listPrice = line.get('grossListPrice') || line.get('listPrice');
-        let discountPercentage;
-        if (
-          line.get('product').get('standardPrice') !== line.get('price') ||
-          line.get('grossListPrice') !== line.get('grossUnitPrice')
-        ) {
-          if (OB.DEC.compare(listPrice) === 0) {
-            discountPercentage = OB.DEC.Zero;
-          } else {
-            discountPercentage = OB.DEC.toBigDecimal(listPrice)
-              .subtract(new BigDecimal(line.get('price').toString()))
-              .multiply(new BigDecimal('100'))
-              .divide(
-                OB.DEC.toBigDecimal(listPrice),
-                2,
-                BigDecimal.prototype.ROUND_HALF_UP
-              );
-            discountPercentage = parseFloat(
-              discountPercentage
-                .setScale(2, BigDecimal.prototype.ROUND_HALF_UP)
-                .toString(),
-              10
-            );
-          }
-        } else {
-          discountPercentage = line.get('discountPercentage') || OB.DEC.Zero;
-        }
         line.set(
           {
-            discountPercentage: discountPercentage,
             gross: this.get('priceIncludesTax')
               ? line.get('grossUnitAmount')
               : OB.DEC.Zero,
@@ -738,29 +845,11 @@
               : OB.DEC.Zero,
             listPrice: this.get('priceIncludesTax')
               ? OB.DEC.Zero
-              : line.get('listPrice')
+              : line.get('priceList')
           },
           {
             silent: true
           }
-        );
-
-        // Calculate prices after promotions
-        let base = line.get('price');
-        let totalDiscount = OB.DEC.Zero;
-        _.forEach(
-          line.get('promotions') || [],
-          function(discount) {
-            var discountAmt = discount.actualAmt || discount.amt || 0;
-            discount.basePrice = base;
-            discount.unitDiscount = OB.DEC.div(
-              discountAmt,
-              discount.obdiscQtyoffer || line.get('qty')
-            );
-            totalDiscount = OB.DEC.add(totalDiscount, discountAmt);
-            base = OB.DEC.sub(base, discount.unitDiscount);
-          },
-          this
         );
       }, this);
     },
@@ -785,9 +874,9 @@
       return affectedLines ? affectedLines : null;
     },
 
-    isCalculateGrossLocked: null,
+    isCalculateGrossLocked: false,
 
-    isCalculateReceiptLocked: null,
+    isCalculateReceiptLocked: false,
 
     setIsCalculateGrossLockState: function(state) {
       this.isCalculateGrossLocked = state;
@@ -889,7 +978,7 @@
               return;
             }
             me.trigger('calculategross');
-            me.trigger('saveCurrent');
+            me.trigger('updateView');
             if (callback) {
               callback();
             }
@@ -962,7 +1051,7 @@
 
     // This function calculate the promotions, taxes and gross of all the receipt
     calculateReceipt: function(callback, line, forceCalculateReceipt) {
-      if (this.propagatingBackboneToState) {
+      if (this.propagatingStateToBackbone) {
         // calculateReceipt was invoked by a backbone trigger while propagating a change from
         // state to backbone model: it is not necessary to calculate anything here as it will
         // be calculated by state ticket hook.
@@ -1218,7 +1307,7 @@
         me.set('obposPrepaymentamt', prepaymentAmount);
         me.set('obposPrepaymentlimitamt', prepaymentLimitAmount);
         me.set('obposPrepaymentlaylimitamt', prepaymentLayawayLimitAmount);
-        me.trigger('saveCurrent');
+        me.trigger('updateView');
         if (callback instanceof Function) {
           callback();
         }
@@ -1831,9 +1920,9 @@
       // TODO: remove this method
       OB.warn('setPrice should not be invoked in old order model!');
       const lineIds = [line.get('id')];
-      OB.App.State.Ticket.setLinePrice({ lineIds, price }).catch(
-        OB.App.View.ActionCanceledUIHandler.handle
-      );
+      OB.App.State.Ticket.setLinePrice({ lineIds, price })
+        .then(() => OB.UTIL.handlePriceRuleBasedServices(this))
+        .catch(OB.App.View.ActionCanceledUIHandler.handle);
     },
 
     setLineProperty: function(line, property, value) {
@@ -2029,13 +2118,11 @@
         if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
           me.calculateReceipt(
             function() {
-              if (!me.get('deletedLines')) {
-                me.set('deletedLines', []);
-              }
               _.each(linesToDelete, function(line) {
                 // Move to deleted lines
-                var deletedLine = new OrderLine(line.attributes);
-                me.get('deletedLines').push(deletedLine);
+                var deletedLines = me.get('deletedLines') || [];
+                deletedLines.push(new OrderLine(line.attributes));
+                me.set('deletedLines', deletedLines);
               });
               me.get('lines').remove(linesToDelete);
               cleanReceipt();
@@ -3924,6 +4011,7 @@
           }
         }
       }
+
       function errorCallback() {
         OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
         OB.UTIL.ProcessController.finish('addProduct', execution);
@@ -5415,7 +5503,7 @@
               bp ? bp.getPlainObject() : null
             );
             order.save(function() {
-              OB.MobileApp.model.orderList.saveCurrent();
+              OB.MobileApp.model.receipt.trigger('updateView');
               OB.UTIL.ProcessController.finish(
                 'setExternalBusinessPartner',
                 execution
@@ -5459,7 +5547,7 @@
           me.trigger('change:bp', me);
         }
         me.save(function() {
-          OB.MobileApp.model.orderList.saveCurrent();
+          OB.MobileApp.model.receipt.trigger('updateView');
           if (saveBPCallback) {
             saveBPCallback();
           }
@@ -5974,6 +6062,7 @@
         me.unset('preventServicesUpdate');
         finishSetOrderType();
       }
+
       if (orderType === OB.DEC.One) {
         this.set(
           'documentType',
@@ -6072,12 +6161,12 @@
           }
         }
 
-        return (
-          OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
+        return OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
           OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix &&
-          (this.get('bp').has('taxID') ||
+          (this.get('bp').get('taxID') ||
             this.get('externalBusinessPartnerReference'))
-        );
+          ? true
+          : false;
       };
       const fullInvoice =
         (active ||
@@ -6100,7 +6189,7 @@
       var me = this;
       this.setFullInvoice(true, true, true);
       this.save(function() {
-        me.trigger('saveCurrent');
+        me.trigger('updateView');
       });
     },
 
@@ -6108,7 +6197,7 @@
       var me = this;
       this.setFullInvoice(false, true, true);
       this.save(function() {
-        me.trigger('saveCurrent');
+        me.trigger('updateView');
       });
     },
 
@@ -6146,7 +6235,10 @@
                   setUndo: false
                 })
               })
-                .then(() => newAllLinesCalculated())
+                .then(() => {
+                  OB.UTIL.handlePriceRuleBasedServices(order);
+                  newAllLinesCalculated();
+                })
                 .catch(OB.App.View.ActionCanceledUIHandler.handle);
             } else {
               dataPrices.each(function(price) {
@@ -6156,7 +6248,10 @@
                     setUndo: false
                   })
                 })
-                  .then(() => newAllLinesCalculated())
+                  .then(() => {
+                    OB.UTIL.handlePriceRuleBasedServices(order);
+                    newAllLinesCalculated();
+                  })
                   .catch(OB.App.View.ActionCanceledUIHandler.handle);
               });
             }
@@ -6414,217 +6509,200 @@
       var clonedreceipt = new OB.Model.Order();
       OB.UTIL.clone(me, clonedreceipt);
 
-      OB.Dal.remove(
-        this,
-        function() {
-          OB.MobileApp.model.orderList.remove(me, {
-            silent: true
-          });
-          var deliveredLine,
-            linesWithDeferred = [];
+      var deliveredLine,
+        linesWithDeferred = [];
 
-          me.preventOrderSave(true);
-          me.set('preventServicesUpdate', true);
-          me.unset('orderid');
+      me.preventOrderSave(true);
+      me.set('preventServicesUpdate', true);
+      me.unset('orderid');
 
-          if (me.get('paidOnCredit')) {
-            me.set('paidOnCredit', false);
-            me.set('paidPartiallyOnCredit', false);
-            me.set('creditAmount', OB.DEC.Zero);
-          }
+      if (me.get('paidOnCredit')) {
+        me.set('paidOnCredit', false);
+        me.set('paidPartiallyOnCredit', false);
+        me.set('creditAmount', OB.DEC.Zero);
+      }
 
-          me.set('canceledorder', clonedreceipt);
-          me.set('doCancelAndReplace', true);
+      me.set('canceledorder', clonedreceipt);
+      me.set('doCancelAndReplace', true);
 
-          me.set('hasbeenpaid', 'N');
-          me.set('isPaid', false);
-          me.set('isEditable', true);
+      me.set('hasbeenpaid', 'N');
+      me.set('isPaid', false);
+      me.set('isEditable', true);
 
-          deliveredLine = _.find(me.get('lines').models, function(line) {
-            return (
-              line.get('deliveredQuantity') &&
-              OB.DEC.compare(line.get('deliveredQuantity')) === 1
-            );
-          });
-          if (
-            me.get('isLayaway') ||
-            (OB.MobileApp.model.get('terminal').terminalType.layawayorder &&
-              !deliveredLine)
-          ) {
-            OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
-              permission: null,
-              orderType: 2
-            });
-          }
-          me.set('isLayaway', false);
+      deliveredLine = _.find(me.get('lines').models, function(line) {
+        return (
+          line.get('deliveredQuantity') &&
+          OB.DEC.compare(line.get('deliveredQuantity')) === 1
+        );
+      });
+      if (
+        me.get('isLayaway') ||
+        (OB.MobileApp.model.get('terminal').terminalType.layawayorder &&
+          !deliveredLine)
+      ) {
+        OB.MobileApp.view.$.containerWindow.getRoot().showDivText(null, {
+          permission: null,
+          orderType: 2
+        });
+      }
+      me.set('isLayaway', false);
 
-          me.get('lines').each(function(line) {
-            idMap[line.get('id')] = OB.UTIL.get_UUID();
-            line.set('replacedorderline', line.get('id'));
-            line.set('id', idMap[line.get('id')]);
-            line.unset('invoicedQuantity');
-            line.unset('grossUnitPrice');
-            line.unset('lineGrossAmount');
-            if (
-              !line.get('obposCanbedelivered') &&
-              line.get('deliveredQuantity') === line.get('qty')
-            ) {
-              line.set('obposCanbedelivered', true);
-            }
-            line.set('obposIspaid', false);
-            line.set('documentType', me.get('documentType'));
-          });
+      me.get('lines').each(function(line) {
+        idMap[line.get('id')] = OB.UTIL.get_UUID();
+        line.set('replacedorderline', line.get('id'));
+        line.set('id', idMap[line.get('id')]);
+        line.unset('invoicedQuantity');
+        line.unset('grossUnitPrice');
+        line.unset('lineGrossAmount');
+        if (
+          !line.get('obposCanbedelivered') &&
+          line.get('deliveredQuantity') === line.get('qty')
+        ) {
+          line.set('obposCanbedelivered', true);
+        }
+        line.set('obposIspaid', false);
+        line.set('documentType', me.get('documentType'));
+      });
 
-          // The lines must be iterated a second time after finishing the first loop, to ensure that
-          // all lines are included in the idMap map when updating the service relations
-          if (me.get('hasServices')) {
-            me.get('lines').each(function(line) {
-              if (line.get('relatedLines')) {
-                line.get('relatedLines').forEach(function(rl) {
-                  rl.orderId = me.get('id');
-                  if (idMap[rl.orderlineId]) {
-                    rl.orderlineId = idMap[rl.orderlineId];
-                  }
-                });
+      // The lines must be iterated a second time after finishing the first loop, to ensure that
+      // all lines are included in the idMap map when updating the service relations
+      if (me.get('hasServices')) {
+        me.get('lines').each(function(line) {
+          if (line.get('relatedLines')) {
+            line.get('relatedLines').forEach(function(rl) {
+              rl.orderId = me.get('id');
+              if (idMap[rl.orderlineId]) {
+                rl.orderlineId = idMap[rl.orderlineId];
               }
             });
           }
+        });
+      }
 
-          me.set('replacedorder_documentNo', me.get('documentNo'));
-          me.set('replacedorder', me.get('id'));
-          me.unset('id');
-          me.set('session', OB.MobileApp.model.get('session'));
+      me.set('replacedorder_documentNo', me.get('documentNo'));
+      me.set('replacedorder', me.get('id'));
+      me.set('id', OB.App.UUID.generate());
+      me.set('session', OB.MobileApp.model.get('session'));
 
-          me.unset('invoiceCreated');
+      me.unset('invoiceCreated');
+      me.set(
+        'documentType',
+        OB.MobileApp.model.get('terminal').terminalType.documentType
+      );
+
+      me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
+      me.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
+      if (!me.get('salesRepresentative')) {
+        if (OB.MobileApp.model.get('context').isSalesRepresentative) {
           me.set(
-            'documentType',
-            OB.MobileApp.model.get('terminal').terminalType.documentType
+            'salesRepresentative',
+            OB.MobileApp.model.get('context').user.id
           );
+        } else {
+          me.unset('salesRepresentative');
+        }
+      }
 
-          me.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-          me.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
-          if (!me.get('salesRepresentative')) {
-            if (OB.MobileApp.model.get('context').isSalesRepresentative) {
-              me.set(
-                'salesRepresentative',
-                OB.MobileApp.model.get('context').user.id
-              );
-            } else {
-              me.unset('salesRepresentative');
-            }
-          }
+      if (deferredLines.length) {
+        linesWithDeferred.push(
+          OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBody')
+        );
+      }
+      //Set to not editable and not deletable to all deferred lines or lines that have deferred services
+      _.each(deferredLines, function(deferredLine) {
+        var deffLine = _.find(me.get('lines').models, function(line) {
+          return (
+            deferredLine === OB.DEC.mul(OB.DEC.add(line.get('linepos'), 1), 10)
+          );
+        });
+        deffLine.set('isEditable', false);
+        deffLine.set('isDeletable', false);
+        linesWithDeferred.push(
+          OB.I18N.getLabel('OBMOBC_Character')[1] +
+            ' ' +
+            deffLine.get('product').get('_identifier') +
+            ' (' +
+            OB.I18N.getLabel('OBPOS_LineQuantity') +
+            ': ' +
+            deffLine.get('qty') +
+            ')'
+        );
+      });
+      if (deferredLines.length) {
+        linesWithDeferred.push(
+          OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter')
+        );
+        linesWithDeferred.push(
+          OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter2')
+        );
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_NotModifiableLines'),
+          linesWithDeferred
+        );
+      }
 
-          if (deferredLines.length) {
-            linesWithDeferred.push(
-              OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBody')
-            );
-          }
-          //Set to not editable and not deletable to all deferred lines or lines that have deferred services
-          _.each(deferredLines, function(deferredLine) {
-            var deffLine = _.find(me.get('lines').models, function(line) {
-              return (
-                deferredLine ===
-                OB.DEC.mul(OB.DEC.add(line.get('linepos'), 1), 10)
-              );
-            });
-            deffLine.set('isEditable', false);
-            deffLine.set('isDeletable', false);
-            linesWithDeferred.push(
-              OB.I18N.getLabel('OBMOBC_Character')[1] +
-                ' ' +
-                deffLine.get('product').get('_identifier') +
-                ' (' +
-                OB.I18N.getLabel('OBPOS_LineQuantity') +
-                ': ' +
-                deffLine.get('qty') +
-                ')'
-            );
-          });
-          if (deferredLines.length) {
-            linesWithDeferred.push(
-              OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter')
-            );
-            linesWithDeferred.push(
-              OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter2')
-            );
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_NotModifiableLines'),
-              linesWithDeferred
-            );
-          }
+      me.set('orderDate', new Date());
+      me.set('creationDate', null);
 
-          me.set('orderDate', new Date());
-          me.set('creationDate', null);
-
-          me.set('negativeDocNo', me.get('documentNo') + '*R*');
-          newDocNo = '';
-          terminalDocNoPrefix =
-            OB.MobileApp.model.attributes.terminal.docNoPrefix;
-          splittedDocNo = me
+      me.set('negativeDocNo', me.get('documentNo') + '*R*');
+      newDocNo = '';
+      terminalDocNoPrefix = OB.MobileApp.model.attributes.terminal.docNoPrefix;
+      splittedDocNo = me
+        .get('documentNo')
+        .substring(
+          terminalDocNoPrefix.length +
+            (OB.Model.Order.prototype.includeDocNoSeperator ? 1 : 0),
+          me.get('documentNo').length
+        )
+        .split(cancelAndReplaceSeparator);
+      if (splittedDocNo.length > 1) {
+        var nextNumber =
+          parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
+        newDocNo =
+          me
             .get('documentNo')
             .substring(
-              terminalDocNoPrefix.length +
-                (OB.Model.Order.prototype.includeDocNoSeperator ? 1 : 0),
-              me.get('documentNo').length
-            )
-            .split(cancelAndReplaceSeparator);
-          if (splittedDocNo.length > 1) {
-            var nextNumber =
-              parseInt(splittedDocNo[splittedDocNo.length - 1], 10) + 1;
-            newDocNo =
-              me
-                .get('documentNo')
-                .substring(
-                  0,
-                  me.get('documentNo').lastIndexOf(cancelAndReplaceSeparator)
-                ) +
-              cancelAndReplaceSeparator +
-              nextNumber;
-          } else {
-            newDocNo = me.get('documentNo') + cancelAndReplaceSeparator + '1';
-          }
-          me.set('documentNo', newDocNo);
-          me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
+              0,
+              me.get('documentNo').lastIndexOf(cancelAndReplaceSeparator)
+            ) +
+          cancelAndReplaceSeparator +
+          nextNumber;
+      } else {
+        newDocNo = me.get('documentNo') + cancelAndReplaceSeparator + '1';
+      }
+      me.set('documentNo', newDocNo);
+      me.set('posTerminal', OB.MobileApp.model.get('terminal').id);
 
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PostCancelAndReplace',
-            {
-              context: context,
-              receipt: me
-            },
-            function(args) {
-              OB.UTIL.showSuccess(
-                OB.I18N.getLabel('OBPOS_OrderReplaced', [
-                  me.get('replacedorder_documentNo'),
-                  me.get('documentNo')
-                ])
-              );
-              me.calculateReceipt(function() {
-                me.unset('skipApplyPromotions');
-                me.unset('preventServicesUpdate');
-                me.preventOrderSave(false);
-                me.save();
-                OB.MobileApp.model.orderList.unshift(me, {
-                  silent: true
-                });
-              });
-            }
-          );
-          // Set the last line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
-          // isDeletable status for the lines (to hide or show the buttons)
-          if (deferredLines.length) {
-            me.get('lines')
-              .at(me.get('lines').models.length - 1)
-              .trigger(
-                'selected',
-                me.get('lines').at(me.get('lines').models.length - 1)
-              );
-          }
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PostCancelAndReplace',
+        {
+          context: context,
+          receipt: me
         },
-        function() {
-          OB.UTIL.showError('Error removing');
+        function(args) {
+          OB.UTIL.showSuccess(
+            OB.I18N.getLabel('OBPOS_OrderReplaced', [
+              me.get('replacedorder_documentNo'),
+              me.get('documentNo')
+            ])
+          );
+          me.calculateReceipt(function() {
+            me.unset('skipApplyPromotions');
+            me.unset('preventServicesUpdate');
+            me.preventOrderSave(false);
+          });
         }
       );
+      // Set the last line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
+      // isDeletable status for the lines (to hide or show the buttons)
+      if (deferredLines.length) {
+        me.get('lines')
+          .at(me.get('lines').models.length - 1)
+          .trigger(
+            'selected',
+            me.get('lines').at(me.get('lines').models.length - 1)
+          );
+      }
     },
 
     checkNotProcessedPayments: function(callback) {
@@ -6732,157 +6810,134 @@
                     //Cloning order to be canceled
                     var clonedReceipt = new OB.Model.Order();
                     OB.UTIL.clone(me, clonedReceipt);
-                    OB.Dal.remove(me, function() {
-                      OB.MobileApp.model.orderList.remove(me, {
-                        silent: true
-                      });
-                      var idMap = {};
-                      me.set('skipCalculateReceipt', true);
-                      me.preventOrderSave(true);
-                      me.set('preventServicesUpdate', true);
-                      me.set('isEditable', true);
-                      me.set('cancelLayaway', true);
-                      me.set('fromLayaway', me.get('isLayaway'));
-                      me.set('isLayaway', false);
-                      me.set('isPaid', false);
-                      // Set the order type
-                      context.doShowDivText({
-                        permission: context.permission,
-                        orderType: 3
-                      });
-                      me.set(
-                        'posTerminal',
-                        OB.MobileApp.model.get('terminal').id
-                      );
-                      me.set(
-                        'obposAppCashup',
-                        OB.App.State.getState().Cashup.id
-                      );
-                      me.set('timezoneOffset', new Date().getTimezoneOffset());
-                      var linesToDelete = [];
-                      _.each(me.get('lines').models, function(line) {
-                        if (
-                          OB.DEC.compare(line.getQty()) === 1 &&
-                          line.getDeliveredQuantity() !== line.getQty()
-                        ) {
-                          var canceledQty =
-                            line.getDeliveredQuantity() - line.getQty();
-                          _.each(line.get('promotions'), function(promotion) {
-                            promotion.amt = OB.DEC.mul(
-                              OB.DEC.mul(
-                                promotion.amt,
-                                OB.DEC.div(
-                                  OB.DEC.abs(canceledQty),
-                                  line.getQty()
-                                )
-                              ),
-                              -1
-                            );
-                            promotion.actualAmt = OB.DEC.mul(
-                              OB.DEC.mul(
-                                promotion.actualAmt,
-                                OB.DEC.div(
-                                  OB.DEC.abs(canceledQty),
-                                  line.getQty()
-                                )
-                              ),
-                              -1
-                            );
-                            promotion.displayedTotalAmount = OB.DEC.mul(
-                              OB.DEC.mul(
-                                promotion.displayedTotalAmount,
-                                OB.DEC.div(
-                                  OB.DEC.abs(canceledQty),
-                                  line.getQty()
-                                )
-                              ),
-                              -1
-                            );
-                          });
-                          line.set('canceledLine', line.get('id'));
-                          var newId = OB.UTIL.get_UUID();
-                          idMap[line.get('id')] = newId;
-                          line.set('id', newId);
-                          line.set('qty', canceledQty);
-                          line.unset('deliveredQuantity');
-                          line.unset('invoicedQuantity');
-                          line.set('obposCanbedelivered', true);
-                          line.set('obposIspaid', false);
-                        } else {
-                          linesToDelete.push(line);
-                        }
-                      });
-                      if (linesToDelete.length) {
-                        me.get('lines').remove(linesToDelete);
+
+                    var idMap = {};
+                    me.set('skipCalculateReceipt', true);
+                    me.preventOrderSave(true);
+                    me.set('preventServicesUpdate', true);
+                    me.set('isEditable', true);
+                    me.set('cancelLayaway', true);
+                    me.set('fromLayaway', me.get('isLayaway'));
+                    me.set('isLayaway', false);
+                    me.set('isPaid', false);
+                    // Set the order type
+                    context.doShowDivText({
+                      permission: context.permission,
+                      orderType: 3
+                    });
+                    me.set(
+                      'posTerminal',
+                      OB.MobileApp.model.get('terminal').id
+                    );
+                    me.set('obposAppCashup', OB.App.State.getState().Cashup.id);
+                    me.set('timezoneOffset', new Date().getTimezoneOffset());
+                    var linesToDelete = [];
+                    _.each(me.get('lines').models, function(line) {
+                      if (
+                        OB.DEC.compare(line.getQty()) === 1 &&
+                        line.getDeliveredQuantity() !== line.getQty()
+                      ) {
+                        var canceledQty =
+                          line.getDeliveredQuantity() - line.getQty();
+                        _.each(line.get('promotions'), function(promotion) {
+                          promotion.amt = OB.DEC.mul(
+                            OB.DEC.mul(
+                              promotion.amt,
+                              OB.DEC.div(OB.DEC.abs(canceledQty), line.getQty())
+                            ),
+                            -1
+                          );
+                          promotion.actualAmt = OB.DEC.mul(
+                            OB.DEC.mul(
+                              promotion.actualAmt,
+                              OB.DEC.div(OB.DEC.abs(canceledQty), line.getQty())
+                            ),
+                            -1
+                          );
+                          promotion.displayedTotalAmount = OB.DEC.mul(
+                            OB.DEC.mul(
+                              promotion.displayedTotalAmount,
+                              OB.DEC.div(OB.DEC.abs(canceledQty), line.getQty())
+                            ),
+                            -1
+                          );
+                        });
+                        line.set('canceledLine', line.get('id'));
+                        var newId = OB.UTIL.get_UUID();
+                        idMap[line.get('id')] = newId;
+                        line.set('id', newId);
+                        line.set('qty', canceledQty);
+                        line.unset('deliveredQuantity');
+                        line.unset('invoicedQuantity');
+                        line.set('obposCanbedelivered', true);
+                        line.set('obposIspaid', false);
+                      } else {
+                        linesToDelete.push(line);
                       }
-                      // Remove or update the related lines id
-                      _.each(me.get('lines').models, function(line) {
-                        if (
-                          line.get('product').get('productType') === 'S' &&
-                          line.get('product').get('isLinkedToProduct')
-                        ) {
-                          var relationsToRemove = [];
-                          _.each(line.get('relatedLines'), function(
-                            relatedLine
-                          ) {
-                            if (idMap[relatedLine.orderlineId]) {
-                              relatedLine.orderlineId =
-                                idMap[relatedLine.orderlineId];
-                            } else if (!relatedLine.deferred) {
-                              relationsToRemove.push(relatedLine);
-                            }
-                          });
-                          // Remove the lines that have been deleted from the inverse ticket
-                          if (relationsToRemove.length) {
-                            _.each(relationsToRemove, function(
-                              relationToRemove
-                            ) {
-                              var idx = line
-                                .get('relatedLines')
-                                .map(function(l) {
-                                  return l.orderlineId;
-                                })
-                                .indexOf(relationToRemove.orderlineId);
-                              line.get('relatedLines').splice(idx, 1);
-                            });
+                    });
+                    if (linesToDelete.length) {
+                      me.get('lines').remove(linesToDelete);
+                    }
+                    // Remove or update the related lines id
+                    _.each(me.get('lines').models, function(line) {
+                      if (
+                        line.get('product').get('productType') === 'S' &&
+                        line.get('product').get('isLinkedToProduct')
+                      ) {
+                        var relationsToRemove = [];
+                        _.each(line.get('relatedLines'), function(relatedLine) {
+                          if (idMap[relatedLine.orderlineId]) {
+                            relatedLine.orderlineId =
+                              idMap[relatedLine.orderlineId];
+                          } else if (!relatedLine.deferred) {
+                            relationsToRemove.push(relatedLine);
                           }
+                        });
+                        // Remove the lines that have been deleted from the inverse ticket
+                        if (relationsToRemove.length) {
+                          _.each(relationsToRemove, function(relationToRemove) {
+                            var idx = line
+                              .get('relatedLines')
+                              .map(function(l) {
+                                return l.orderlineId;
+                              })
+                              .indexOf(relationToRemove.orderlineId);
+                            line.get('relatedLines').splice(idx, 1);
+                          });
                         }
-                      });
-                      if (me.get('paidOnCredit')) {
-                        me.set('paidOnCredit', false);
-                        me.set('paidPartiallyOnCredit', false);
-                        me.set('creditAmount', OB.DEC.Zero);
                       }
-                      me.set('canceledorder', clonedReceipt);
-                      me.set('orderDate', new Date());
-                      me.set('documentNo', me.get('documentNo') + '*R*');
-                      me.set(
-                        'nettingPayment',
-                        OB.DEC.sub(me.getPayment(), me.getGross())
-                      );
-                      me.get('payments').reset();
-                      me.set('forceCalculateTaxes', true);
-                      me.unset('id');
-                      me.unset('skipCalculateReceipt');
-                      me.calculateReceipt(function() {
-                        me.getPrepaymentAmount(function() {
-                          me.set('isEditable', false);
-                          me.unset('preventServicesUpdate');
-                          me.preventOrderSave(false);
-                          me.save();
-                          OB.MobileApp.model.orderList.unshift(me, {
-                            silent: true
-                          });
-                          OB.MobileApp.model.orderList.saveCurrent();
-                          me.trigger('updatePending', true);
-                          // Finally change to the payments tab
-                          context.doTabChange({
-                            tabPanel: 'payment',
-                            keyboard: 'toolbarpayment',
-                            edit: false
-                          });
-                        }, true);
-                      });
+                    });
+                    if (me.get('paidOnCredit')) {
+                      me.set('paidOnCredit', false);
+                      me.set('paidPartiallyOnCredit', false);
+                      me.set('creditAmount', OB.DEC.Zero);
+                    }
+                    me.set('canceledorder', clonedReceipt);
+                    me.set('orderDate', new Date());
+                    me.set('documentNo', me.get('documentNo') + '*R*');
+                    me.set(
+                      'nettingPayment',
+                      OB.DEC.sub(me.getPayment(), me.getGross())
+                    );
+                    me.get('payments').reset();
+                    me.set('forceCalculateTaxes', true);
+                    me.unset('id');
+                    me.unset('skipCalculateReceipt');
+                    me.calculateReceipt(function() {
+                      me.getPrepaymentAmount(function() {
+                        me.set('isEditable', false);
+                        me.unset('preventServicesUpdate');
+                        me.preventOrderSave(false);
+                        me.save();
+                        OB.MobileApp.model.receipt.trigger('updateView');
+                        me.trigger('updatePending', true);
+                        // Finally change to the payments tab
+                        context.doTabChange({
+                          tabPanel: 'payment',
+                          keyboard: 'toolbarpayment',
+                          edit: false
+                        });
+                      }, true);
                     });
                   }
                 );
@@ -7015,7 +7070,7 @@
               }, args.order);
 
               args.order.set('oldId', args.order.get('id'));
-              args.order.set('id', null);
+              args.order.set('id', OB.UTIL.get_UUID());
               args.order.set('documentNo', '');
               args.order.set('isQuotation', false);
               args.order.set(
@@ -7135,8 +7190,6 @@
         user: OB.MobileApp.model.get('orgUserId'),
         session: OB.MobileApp.model.get('session'),
         date: OB.I18N.normalizeDate(new Date())
-      }).then(() => {
-        OB.Dal.save(OB.MobileApp.model.receipt, null, null, true);
       });
     },
     rejectQuotation: function(rejectReasonId, scope, callback) {
@@ -7572,7 +7625,7 @@
                         );
                         finalCallback();
                       });
-                      order.trigger('saveCurrent');
+                      order.trigger('updateView');
                     } else {
                       OB.UTIL.ProcessController.finish('addPayment', execution);
                       finalCallback();
@@ -9306,291 +9359,20 @@
       });
       return index;
     },
-    deleteOrder: function(context, callback) {
-      var i;
-
-      function finalCallback() {
-        if (callback && callback instanceof Function) {
-          callback();
-        }
-      }
-
-      function removePayments(receipt, paymentCallback) {
-        var payments = receipt.get('payments');
-        if (receipt.get('isEditable') && payments && payments.length > 0) {
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_preRemovePayment',
-            {
-              paymentToRem: payments.at(0),
-              payments: payments,
-              receipt: receipt
-            },
-            function(args) {
-              if (args.cancellation) {
-                paymentCallback(false);
-              } else {
-                payments.remove(payments.at(0));
-                removePayments(receipt, function(success) {
-                  paymentCallback(success);
-                });
-              }
-            }
-          );
-        } else {
-          paymentCallback(true);
-        }
-      }
-
-      function removeReceiptFromDatabase(receipt) {
-        var model,
-          orderList = OB.MobileApp.model.orderList;
-        if (
-          orderList &&
-          receipt &&
-          receipt.get('session') === OB.MobileApp.model.get('session')
-        ) {
-          model = _.find(orderList.models, function(model) {
-            return model.get('id') === receipt.get('id');
-          });
-          if (model) {
-            orderList.saveCurrent();
-            orderList.load(model);
-            if (model.get('id')) {
-              OB.Dal.remove(model);
-            }
-          }
-          orderList.deleteCurrent();
-        } else if (receipt && receipt.get('id')) {
-          OB.Dal.remove(receipt);
-        }
-        finalCallback();
-      }
-
-      function markOrderAsDeleted(model, orderList) {
-        let frozenReceipt = new OB.Model.Order();
-        OB.UTIL.clone(model, frozenReceipt);
-
-        var creationDate;
-        if (frozenReceipt.get('creationDate')) {
-          creationDate = new Date(frozenReceipt.get('creationDate'));
-        } else {
-          creationDate = new Date();
-        }
-        frozenReceipt.setIsCalculateGrossLockState(true);
-        frozenReceipt.set('creationDate', creationDate);
-        frozenReceipt.set('timezoneOffset', creationDate.getTimezoneOffset());
-        frozenReceipt.set('created', creationDate.getTime());
-        frozenReceipt.set(
-          'obposCreatedabsolute',
-          OB.I18N.formatDateISO(creationDate)
-        );
-        frozenReceipt.set('obposIsDeleted', true);
-        OB.info(
-          'markOrderAsDeleted has set order with documentNo ' +
-            frozenReceipt.get('documentNo') +
-            ' and id ' +
-            frozenReceipt.get('id') +
-            ' as obposIsDeleted to true'
-        );
-        frozenReceipt.set('obposAppCashup', OB.App.State.getState().Cashup.id);
-        for (i = 0; i < frozenReceipt.get('lines').length; i++) {
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('obposIsDeleted', true);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('grossUnitPrice', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('pricenet', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('price', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('standardPrice', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('lineGrossAmount', 0);
-          frozenReceipt
-            .get('lines')
-            .at(i)
-            .set('lineNetAmount', 0);
-        }
-        frozenReceipt.get('approvals').forEach(function(approval) {
-          if (typeof approval.approvalType === 'object') {
-            approval.approvalMessage = OB.I18N.getLabel(
-              approval.approvalType.message,
-              approval.approvalType.params
-            );
-            approval.approvalType = approval.approvalType.approval;
-          }
-        });
-        OB.Dal.transaction(async function(tx) {
-          await OB.MobileApp.model.setTicketDocumentNo(frozenReceipt);
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PreSyncReceipt',
-            {
-              receipt: frozenReceipt,
-              model: frozenReceipt,
-              tx: tx
-            },
-            function(args) {
-              frozenReceipt.set(
-                'json',
-                JSON.stringify(frozenReceipt.serializeToSaveJSON())
-              );
-              frozenReceipt.set('hasbeenpaid', 'Y');
-              OB.Dal.saveInTransaction(tx, frozenReceipt, function() {
-                if (
-                  orderList &&
-                  frozenReceipt.get('session') ===
-                    OB.MobileApp.model.get('session')
-                ) {
-                  var orderListModel = _.find(orderList.models, function(m) {
-                    return m.get('id') === frozenReceipt.get('id');
-                  });
-                  if (orderListModel) {
-                    orderList.saveCurrent();
-                    orderList.load(orderListModel);
-                  }
-                  orderList.deleteCurrent();
-                  orderList.synchronizeCurrentOrder();
-                }
-                frozenReceipt.setIsCalculateGrossLockState(false);
-                OB.MobileApp.model.runSyncProcess(finalCallback, finalCallback);
-              });
-            }
-          );
-        });
-      }
-
-      function removeOrder(receipt) {
-        var orderList = OB.MobileApp.model.orderList;
-        var isPaidQuotation =
-          receipt.has('isQuotation') &&
-          receipt.get('isQuotation') &&
-          receipt.has('hasbeenpaid') &&
-          receipt.get('hasbeenpaid') === 'Y';
-        if (OB.UTIL.RfidController.isRfidConfigured()) {
-          OB.UTIL.RfidController.eraseEpcOrder(receipt);
-        }
-
-        function finishRemoveOrder() {
-          if (
-            receipt.get('lines') &&
-            receipt.get('lines').length > 0 &&
-            receipt.get('isEditable')
-          ) {
-            if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-              receipt.prepareToSend(function() {
-                receipt.set('skipApplyPromotions', true);
-                receipt.set('skipCalculateReceipt', true);
-                receipt.set('preventServicesUpdate', true);
-                _.each(receipt.get('lines').models, function(line) {
-                  line.set('obposQtyDeleted', line.get('qty'));
-                  line.set('obposIsDeleted', true);
-                  line.set('qty', 0, {
-                    silent: true
-                  });
-                });
-                if (receipt.get('hasServices')) {
-                  receipt.unset('hasServices');
-                }
-                receipt.unset('preventServicesUpdate');
-                receipt.set('skipCalculateReceipt', false);
-                // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
-                // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
-                // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
-                receipt.setIsCalculateReceiptLockState(false);
-                receipt.setIsCalculateGrossLockState(false);
-                receipt.calculateReceipt(function() {
-                  markOrderAsDeleted(receipt, orderList);
-                });
-              });
-            } else {
-              removeReceiptFromDatabase(receipt);
-            }
-          } else if (
-            receipt.has('deletedLines') &&
-            !receipt.get('isQuotation')
-          ) {
-            if (OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true)) {
-              receipt.set('skipCalculateReceipt', false);
-              // These setIsCalculateReceiptLockState and setIsCalculateGrossLockState calls must be done because this function
-              // may be called out of the pointofsale window, and in order to call the calculateReceipt function, the
-              // isCalculateReceiptLockState and isCalculateGrossLockState properties must be initialized
-              receipt.setIsCalculateReceiptLockState(false);
-              receipt.setIsCalculateGrossLockState(false);
-              markOrderAsDeleted(receipt, orderList);
-            } else {
-              removeReceiptFromDatabase(receipt);
-            }
-          } else if (
-            receipt.has('lines') &&
-            receipt.get('lines').length === 0 &&
-            receipt.get('isEditable') &&
-            !receipt.get('isQuotation')
-          ) {
-            if (
-              OB.MobileApp.model.hasPermission('OBPOS_remove_ticket', true) &&
-              receipt.get('id') !== null &&
-              receipt.get('isNew') === false
-            ) {
-              receipt.setIsCalculateReceiptLockState(true);
-              receipt.setIsCalculateGrossLockState(true);
-              markOrderAsDeleted(receipt, orderList);
-            } else {
-              removeReceiptFromDatabase(receipt);
-            }
-          } else {
-            removeReceiptFromDatabase(receipt);
-          }
-        }
-
-        function validateRemoveOrder() {
-          if (receipt.get('id') && !isPaidQuotation) {
-            removePayments(receipt, function(success) {
-              if (success) {
-                finishRemoveOrder();
-              } else {
-                OB.MobileApp.view.scanningFocus(true);
-              }
-            });
-          } else {
-            finishRemoveOrder();
-          }
-        }
-
-        validateRemoveOrder();
-      }
-
+    deleteOrder: async function(context, callback) {
       OB.MobileApp.view.setOriginalScanMode(OB.MobileApp.view.scanMode);
       OB.MobileApp.view.scanningFocus(false);
-      if (this.get('isEditable') === true) {
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_PreDeleteCurrentOrder',
-          {
-            context: context,
-            receipt: this
-          },
-          function(args) {
-            if (args && args.cancelOperation && args.cancelOperation === true) {
-              OB.MobileApp.view.scanningFocus(true);
-              finalCallback();
-              return;
-            }
-            removeOrder(args.receipt);
-          }
-        );
-      } else {
-        removeOrder(this);
+      if (OB.UTIL.RfidController.isRfidConfigured()) {
+        OB.UTIL.RfidController.eraseEpcOrder(this);
+      }
+
+      await this.runCompleteTicket(
+        OB.App.State.Global.deleteTicket,
+        'deleteCurrentOrder'
+      );
+
+      if (callback && callback instanceof Function) {
+        callback();
       }
 
       return true;
@@ -9881,1413 +9663,6 @@
       }
     }
   });
-
-  var OrderList = Backbone.Collection.extend(
-    {
-      model: Order,
-
-      constructor: function(modelOrder) {
-        if (modelOrder) {
-          //this._id = 'modelorderlist';
-          this.modelorder = modelOrder;
-        }
-        Backbone.Collection.prototype.constructor.call(this);
-      },
-
-      initialize: function() {
-        var me = this;
-        this.current = null;
-        if (this.modelorder) {
-          this.modelorder.on('saveCurrent', function() {
-            me.saveCurrent();
-          });
-        }
-      },
-
-      newOrder: function(bp) {
-        var i,
-          p,
-          receiptProperties,
-          propertiesToReset = [];
-        // reset in new order properties defined in Receipt Properties dialog
-        if (
-          OB.MobileApp.view.$.containerWindow &&
-          OB.MobileApp.view.$.containerWindow.getRoot() &&
-          OB.MobileApp.view.$.containerWindow.getRoot().$
-            .receiptPropertiesDialog
-        ) {
-          receiptProperties = OB.MobileApp.view.$.containerWindow.getRoot().$
-            .receiptPropertiesDialog.newAttributes;
-          for (i = 0; i < receiptProperties.length; i++) {
-            if (receiptProperties[i].modelProperty) {
-              var properties = {
-                propertyName: receiptProperties[i].modelProperty
-              };
-              if (
-                !OB.UTIL.isNullOrUndefined(receiptProperties[i].defaultValue)
-              ) {
-                properties.defaultValue = receiptProperties[i].defaultValue;
-              }
-              propertiesToReset.push(properties);
-            }
-            if (receiptProperties[i].extraProperties) {
-              for (
-                p = 0;
-                p < receiptProperties[i].extraProperties.length;
-                p++
-              ) {
-                propertiesToReset.push({
-                  propertyName: receiptProperties[i].extraProperties[p]
-                });
-              }
-            }
-          }
-        }
-        return OB.Collection.OrderList.newOrder(bp, propertiesToReset);
-      },
-      loadExternalCustomer: function(externalBpReference, callback) {
-        OB.App.ExternalBusinessPartnerAPI.getBusinessPartner(
-          externalBpReference
-        ).then(bp => {
-          callback(bp);
-        });
-      },
-      loadCustomer: async function(model, callback) {
-        var bpId,
-          bpLocId,
-          bpBillLocId,
-          bpLoc,
-          bpBillLoc,
-          loadBusinesPartner,
-          loadLocations,
-          finalCallback,
-          isLoadedPartiallyFromBackend = false;
-
-        bpId = model.bpId;
-        bpLocId = model.bpLocId;
-        bpBillLocId = model.bpBillLocId || model.bpLocId;
-
-        finalCallback = function(bp, bpLoc, bpBillLoc) {
-          bp.set('locations', bp.get('locations') || []);
-          bp.set('shipLocId', bpLoc.get('id'));
-          bp.set('shipLocName', bpLoc.get('name'));
-          bp.set('shipPostalCode', bpLoc.get('postalCode'));
-          bp.set('shipCityName', bpLoc.get('cityName'));
-          bp.set('shipCountryId', bpLoc.get('countryId'));
-          bp.set('shipCountryName', bpLoc.get('countryName'));
-          bp.set('shipRegionId', bpLoc.get('regionId'));
-          bp.set('locId', (bpBillLoc || bpLoc).get('id'));
-          bp.set('locName', (bpBillLoc || bpLoc).get('name'));
-          bp.set('postalCode', (bpBillLoc || bpLoc).get('postalCode'));
-          bp.set('cityName', (bpBillLoc || bpLoc).get('cityName'));
-          bp.set('countryName', (bpBillLoc || bpLoc).get('countryName'));
-          bp.set('locationModel', bpLoc);
-          bp.get('locations').push(bpLoc);
-          if (bpBillLoc) {
-            bp.set('locationBillModel', bpBillLoc);
-            bp.get('locations').push(bpBillLoc);
-          }
-          callback(bp, bpLoc, bpBillLoc);
-        };
-
-        loadBusinesPartner = function(
-          bpartnerId,
-          bpLocationId,
-          bpBillLocationId,
-          callback
-        ) {
-          var loadCustomerParameters = {
-            bpartnerId: bpartnerId,
-            bpLocationId: bpLocationId
-          };
-          if (bpLocationId !== bpBillLocationId) {
-            loadCustomerParameters.bpBillLocationId = bpBillLocationId;
-          }
-          new OB.DS.Request(
-            'org.openbravo.retail.posterminal.master.LoadedCustomer'
-          ).exec(
-            loadCustomerParameters,
-            function(data) {
-              if (data.length >= 2) {
-                isLoadedPartiallyFromBackend = true;
-                callback({
-                  bpartner: OB.Dal.transform(OB.Model.BusinessPartner, data[0]),
-                  bpLoc: OB.Dal.transform(OB.Model.BPLocation, data[1]),
-                  bpBillLoc:
-                    bpLocationId !== bpBillLocationId
-                      ? OB.Dal.transform(OB.Model.BPLocation, data[2])
-                      : null
-                });
-              } else {
-                OB.UTIL.showConfirmation.display(
-                  OB.I18N.getLabel('OBPOS_InformationTitle'),
-                  OB.I18N.getLabel('OBPOS_NoCustomerForPaidReceipt'),
-                  [
-                    {
-                      label: OB.I18N.getLabel('OBPOS_LblOk'),
-                      isConfirmButton: true
-                    }
-                  ]
-                );
-              }
-            },
-            function() {
-              OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBPOS_InformationTitle'),
-                OB.I18N.getLabel('OBPOS_NoCustomerForPaidReceipt'),
-                [
-                  {
-                    label: OB.I18N.getLabel('OBPOS_LblOk'),
-                    isConfirmButton: true
-                  }
-                ]
-              );
-            }
-          );
-        };
-
-        loadLocations = async function(bp) {
-          if (bpLocId === bpBillLocId) {
-            if (isLoadedPartiallyFromBackend) {
-              finalCallback(bp, bpLoc, null);
-            } else {
-              if (
-                OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
-              ) {
-                OB.Dal.get(
-                  OB.Model.BPLocation,
-                  bpLocId,
-                  function(bpLoc) {
-                    finalCallback(bp, bpLoc, null);
-                  },
-                  function(tx, error) {
-                    OB.UTIL.showError(error);
-                  },
-                  function() {
-                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
-                      data
-                    ) {
-                      finalCallback(bp, data.bpLoc, null);
-                    });
-                  }
-                );
-              } else {
-                try {
-                  let bPLocation = await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
-                    bpLocId
-                  );
-                  if (bPLocation) {
-                    let bpLoc = OB.Dal.transform(
-                      OB.Model.BPLocation,
-                      bPLocation
-                    );
-                    finalCallback(bp, bpLoc, null);
-                  } else {
-                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
-                      data
-                    ) {
-                      finalCallback(bp, data.bpLoc, null);
-                    });
-                  }
-                } catch (error) {
-                  OB.error(error);
-                }
-              }
-            }
-          } else {
-            if (
-              isLoadedPartiallyFromBackend &&
-              !OB.UTIL.isNullOrUndefined(bpLoc) &&
-              !OB.UTIL.isNullOrUndefined(bpBillLoc)
-            ) {
-              finalCallback(bp, bpLoc, bpBillLoc);
-            } else {
-              var criteria;
-              if (
-                OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)
-              ) {
-                var remoteCriteria = [
-                  {
-                    columns: ['id'],
-                    operator: 'equals',
-                    value: [bpLocId, bpBillLocId]
-                  }
-                ];
-                criteria = {};
-                criteria.remoteFilters = remoteCriteria;
-                OB.Dal.find(
-                  OB.Model.BPLocation,
-                  criteria,
-                  function(locations) {
-                    if (locations.models.length === 2) {
-                      _.each(locations.models, function(l) {
-                        if (l.id === bpLocId) {
-                          bpLoc = l;
-                        } else if (l.id === bpBillLocId) {
-                          bpBillLoc = l;
-                        }
-                      });
-                      finalCallback(bp, bpLoc, bpBillLoc);
-                    } else {
-                      loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
-                        data
-                      ) {
-                        finalCallback(bp, data.bpLoc, data.bpBillLoc);
-                      });
-                    }
-                  },
-                  function(tx, error) {
-                    OB.UTIL.showError(error);
-                  },
-                  bpLoc
-                );
-              } else {
-                try {
-                  criteria = new OB.App.Class.Criteria();
-                  criteria.criterion('id', [bpLocId, bpBillLocId], 'in');
-                  let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
-                    criteria.build()
-                  );
-                  let locations = [];
-                  for (let i = 0; i < bPLocations.length; i++) {
-                    locations.push(
-                      OB.Dal.transform(OB.Model.BPLocation, bPLocations[i])
-                    );
-                  }
-                  if (locations.length === 2) {
-                    for (const l of locations) {
-                      if (l.id === bpLocId) {
-                        bpLoc = l;
-                      } else if (l.id === bpBillLocId) {
-                        bpBillLoc = l;
-                      }
-                    }
-                    finalCallback(bp, bpLoc, bpBillLoc);
-                  } else {
-                    loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(
-                      data
-                    ) {
-                      finalCallback(bp, data.bpLoc, data.bpBillLoc);
-                    });
-                  }
-                } catch (error) {
-                  OB.UTIL.showError(error);
-                }
-              }
-            }
-          }
-        };
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          OB.Dal.get(
-            OB.Model.BusinessPartner,
-            bpId,
-            function(bp) {
-              loadLocations(bp);
-            },
-            null,
-            function() {
-              //Empty
-              loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
-                bpLoc = data.bpLoc;
-                if (bpLocId !== bpBillLocId) {
-                  bpBillLoc = data.bpBillLoc;
-                }
-                loadLocations(data.bpartner);
-              });
-            }
-          );
-        } else {
-          try {
-            let bp = await OB.App.MasterdataModels.BusinessPartner.withId(bpId);
-            if (bp !== undefined) {
-              loadLocations(OB.Dal.transform(OB.Model.BusinessPartner, bp));
-            } else {
-              loadBusinesPartner(bpId, bpLocId, bpBillLocId, function(data) {
-                bpLoc = data.bpLoc;
-                if (bpLocId !== bpBillLocId) {
-                  bpBillLoc = data.bpBillLoc;
-                }
-                loadLocations(data.bpartner);
-              });
-            }
-          } catch (error) {
-            OB.error(error);
-          }
-        }
-      },
-
-      newPaidReceipt: async function(model, callback) {
-        var order = new Order(),
-          lines,
-          newline,
-          payments,
-          curPayment,
-          taxes,
-          numberOfLines = model.receiptLines.length,
-          orderQty = 0,
-          NoFoundProduct = true,
-          execution = OB.UTIL.ProcessController.start('newPaidReceipt');
-
-        // Each payment that has been reverted stores the id of the reversal payment
-        // Web POS, instead of that, need to have the information of the payment reverted on the reversal payment
-        // This loop switches the information between them
-        _.each(
-          _.filter(model.receiptPayments, function(payment) {
-            return payment.isReversed;
-          }),
-          function(payment) {
-            var reversalPayment = _.find(model.receiptPayments, function(
-              currentPayment
-            ) {
-              return currentPayment.paymentId === payment.reversedPaymentId;
-            });
-            reversalPayment.reversedPaymentId = payment.paymentId;
-            reversalPayment.isReversePayment = true;
-            delete payment.reversedPaymentId;
-          }
-        );
-
-        // Call orderLoader plugings to adjust remote model to local model first
-        // ej: sales on credit: Add a new payment if total payment < total receipt
-        // ej: gift cards: Add a new payment for each gift card discount
-        _.each(OB.Model.modelLoaders, function(f) {
-          f(model);
-        });
-
-        //model.set('id', null);
-        lines = new Backbone.Collection();
-
-        // set all properties coming from the model
-        order.set(model);
-
-        // setting specific properties
-        order.set('isbeingprocessed', 'N');
-        order.set('hasbeenpaid', 'N');
-        order.set('isEditable', false);
-        order.set('isModified', false);
-        order.set('checked', model.checked); //TODO: what is this for, where it comes from?
-        order.set('orderDate', OB.I18N.normalizeDate(model.orderDate));
-        order.set('creationDate', OB.I18N.normalizeDate(model.creationDate));
-        order.set('updatedBy', OB.MobileApp.model.usermodel.id);
-        order.set('paidPartiallyOnCredit', false);
-        order.set('paidOnCredit', false);
-        order.set('session', OB.MobileApp.model.get('session'));
-        order.set('skipApplyPromotions', true);
-        if (model.isQuotation) {
-          order.set('isQuotation', true);
-          order.set('oldId', model.orderid);
-          order.set('id', null);
-          order.set(
-            'documentType',
-            OB.MobileApp.model.get('terminal').terminalType
-              .documentTypeForQuotations
-          );
-          order.set('hasbeenpaid', 'Y');
-          // TODO: this commented lines are kept just in case this issue happens again
-          // Set creationDate milliseconds to 0, if the date is with milisecond, the date with miliseconds is rounded to seconds:
-          // so, the second can change, and the creationDate in quotation should not be changed when quotation is reactivated
-          // order.set('creationDate', moment(model.creationDate.toString(), "YYYY-MM-DD hh:m:ss").toDate());
-        }
-        if (model.isLayaway) {
-          order.set('isLayaway', true);
-          order.set('id', model.orderid);
-          order.set('isNew', false);
-          order.set('hasbeenpaid', 'N');
-        } else {
-          order.set('isPaid', true);
-          var paidByPayments = OB.DEC.Zero;
-          _.each(model.receiptPayments, function(receiptPayment) {
-            paidByPayments = OB.DEC.add(
-              paidByPayments,
-              OB.DEC.mul(receiptPayment.amount, receiptPayment.rate)
-            );
-          });
-
-          var creditAmount = OB.DEC.sub(model.totalamount, paidByPayments);
-          if (
-            OB.DEC.compare(model.totalamount) > 0 &&
-            OB.DEC.compare(creditAmount) > 0 &&
-            !model.isQuotation
-          ) {
-            order.set('creditAmount', creditAmount);
-            if (paidByPayments) {
-              order.set('paidPartiallyOnCredit', true);
-            }
-            order.set('paidOnCredit', true);
-          }
-          order.set('id', model.orderid);
-          order.set('isNew', false);
-          if (
-            order.get('documentType') ===
-            OB.MobileApp.model.get('terminal').terminalType
-              .documentTypeForReturns
-          ) {
-            //It's a return
-            order.set('orderType', 1);
-          }
-        }
-        let loadProducts = async function() {
-          var linepos = 0,
-            hasDeliveredProducts = false,
-            hasNotDeliveredProducts = false,
-            i,
-            sortedPayments = false;
-
-          function getReverserPayment(payment, Payments) {
-            return _.filter(model.receiptPayments, function(receiptPayment) {
-              return receiptPayment.paymentId === payment.reversedPaymentId;
-            })[0];
-          }
-          i = 0;
-          // Sort payments array, puting reverser payments inmediatly after their reversed payment
-          while (i < model.receiptPayments.length) {
-            var payment = model.receiptPayments[i];
-            if (payment.reversedPaymentId && !payment.isSorted) {
-              var reversed_index = model.receiptPayments.indexOf(
-                getReverserPayment(payment, model.receiptPayments)
-              );
-              payment.isSorted = true;
-              if (i < reversed_index) {
-                model.receiptPayments.splice(i, 1);
-                model.receiptPayments.splice(reversed_index, 0, payment);
-                sortedPayments = true;
-              } else if (i > reversed_index + 1) {
-                model.receiptPayments.splice(i, 1);
-                model.receiptPayments.splice(reversed_index + 1, 0, payment);
-                sortedPayments = true;
-              }
-            } else {
-              i++;
-            }
-          }
-          if (sortedPayments) {
-            model.receiptPayments.forEach(function(receitPayment) {
-              if (receitPayment.isSorted) {
-                delete receitPayment.isSorted;
-              }
-            });
-          }
-          //order.set('payments', model.receiptPayments);
-          payments = new PaymentLineList();
-          _.each(model.receiptPayments, function(iter) {
-            var paymentProp;
-            curPayment = new PaymentLine();
-            for (paymentProp in iter) {
-              if (iter.hasOwnProperty(paymentProp)) {
-                if (paymentProp === 'paymentDate') {
-                  if (
-                    !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
-                    moment(iter[paymentProp]).isValid()
-                  ) {
-                    curPayment.set(
-                      paymentProp,
-                      OB.I18N.normalizeDate(new Date(iter[paymentProp]))
-                    );
-                  } else {
-                    curPayment.set(paymentProp, null);
-                  }
-                } else {
-                  curPayment.set(paymentProp, iter[paymentProp]);
-                }
-              }
-            }
-            curPayment.set('orderGross', order.get('gross'));
-            curPayment.set('isPaid', order.get('isPaid'));
-            curPayment.set('date', new Date(iter.paymentDate));
-            payments.add(curPayment);
-          });
-          order.set('payments', payments);
-          order.adjustPayment();
-
-          taxes = {};
-          _.each(model.receiptTaxes, function(iter) {
-            var taxProp;
-            taxes[iter.taxid] = {};
-            for (taxProp in iter) {
-              if (iter.hasOwnProperty(taxProp)) {
-                taxes[iter.taxid][taxProp] = iter[taxProp];
-              }
-            }
-          });
-          order.set('taxes', taxes);
-
-          if (!model.isLayaway && !model.isQuotation) {
-            if (
-              model.totalamount > 0 &&
-              order.get('payment') < model.totalamount
-            ) {
-              order.set('paidOnCredit', true);
-            } else if (
-              model.totalamount < 0 &&
-              (order.get('payment') === 0 ||
-                OB.DEC.abs(model.totalamount) > order.get('payment'))
-            ) {
-              order.set('paidOnCredit', true);
-            }
-          }
-          if (model.receiptLines.length === 0) {
-            order.set('json', JSON.stringify(order.toJSON()));
-            callback(order);
-            OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
-          }
-
-          for (let i = 0; i < model.receiptLines.length; i++) {
-            let iter = model.receiptLines[i];
-            var price = OB.DEC.number(iter.unitPrice),
-              lineGross = order.get('priceIncludesTax')
-                ? OB.DEC.number(iter.lineGrossAmount)
-                : null,
-              lineNet = order.get('priceIncludesTax')
-                ? null
-                : OB.DEC.number(iter.lineGrossAmount || iter.lineNetAmount);
-            iter.linepos = linepos;
-            var addLineForProduct = async function(prod) {
-              // Set product services
-              await order._loadRelatedServices(
-                prod.get('productType'),
-                prod.get('id'),
-                prod.get('productCategory'),
-                async function(data) {
-                  let hasservices;
-                  if (
-                    !OB.UTIL.isNullOrUndefined(data) &&
-                    OB.DEC.number(iter.quantity) > 0
-                  ) {
-                    hasservices = data.hasservices;
-                  }
-
-                  for (let promotion of iter.promotions) {
-                    try {
-                      const discount = OB.Discounts.Pos.manualRuleImpls.find(
-                        discount => discount.id === promotion.ruleId
-                      );
-                      if (
-                        discount &&
-                        OB.Discounts.Pos.getManualPromotions().includes(
-                          discount.discountType
-                        )
-                      ) {
-                        var percentage;
-                        if (discount.obdiscPercentage) {
-                          percentage = OB.DEC.mul(
-                            OB.DEC.div(promotion.amt, iter.lineGrossAmount),
-                            new BigDecimal('100')
-                          );
-                        }
-                        promotion.userAmt = percentage
-                          ? percentage
-                          : promotion.amt;
-                        promotion.discountType = discount.discountType;
-                        promotion.manual = true;
-                      }
-                    } catch (error) {
-                      OB.UTIL.showError(error);
-                    }
-                  }
-
-                  if (
-                    OB.MobileApp.model.hasPermission(
-                      'OBPOS_EnableSupportForProductAttributes',
-                      true
-                    )
-                  ) {
-                    if (
-                      iter.attributeValue &&
-                      _.isString(iter.attributeValue)
-                    ) {
-                      var processedAttValues = OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson(
-                        iter.attributeValue
-                      );
-                      if (
-                        processedAttValues &&
-                        processedAttValues.keyValue &&
-                        _.isArray(processedAttValues.keyValue) &&
-                        processedAttValues.keyValue.length > 0
-                      ) {
-                        iter.attSetInstanceDesc =
-                          processedAttValues.description;
-                      }
-                    }
-                  }
-                  newline = new OrderLine({
-                    id: iter.lineId,
-                    product: prod,
-                    uOM: iter.uOM,
-                    qty: OB.DEC.number(
-                      iter.quantity,
-                      prod.get('uOMstandardPrecision')
-                    ),
-                    price: price,
-                    priceList:
-                      prod.get('listPrice') !== price
-                        ? price
-                        : prod.get('listPrice'),
-                    net: lineNet,
-                    gross: lineGross,
-                    promotions: iter.promotions,
-                    description: iter.description,
-                    priceIncludesTax: order.get('priceIncludesTax'),
-                    hasRelatedServices: hasservices,
-                    attributeValue: iter.attributeValue,
-                    warehouse: {
-                      id: iter.warehouse,
-                      warehousename: iter.warehousename
-                    },
-                    relatedLines: iter.relatedLines,
-                    groupService: prod.get('groupProduct'),
-                    isEditable: true,
-                    isDeletable: true,
-                    attSetInstanceDesc: iter.attSetInstanceDesc
-                      ? iter.attSetInstanceDesc
-                      : null,
-                    lineGrossAmount: iter.lineGrossAmount,
-                    country:
-                      iter.obrdmDeliveryMode === 'HomeDelivery'
-                        ? order.get('bp').get('shipLocId')
-                          ? order
-                              .get('bp')
-                              .get('locationModel')
-                              .get('countryId')
-                          : null
-                        : iter.organization
-                        ? iter.organization.country
-                        : OB.MobileApp.model.get('terminal')
-                            .organizationCountryId,
-                    region:
-                      iter.obrdmDeliveryMode === 'HomeDelivery'
-                        ? order.get('bp').get('shipLocId')
-                          ? order
-                              .get('bp')
-                              .get('locationModel')
-                              .get('regionId')
-                          : null
-                        : iter.organization
-                        ? iter.organization.region
-                        : OB.MobileApp.model.get('terminal')
-                            .organizationRegionId
-                  });
-
-                  // copy verbatim not owned properties -> modular properties.
-                  _.each(iter, function(value, key) {
-                    if (!newline.ownProperties[key]) {
-                      newline.set(key, value);
-                    }
-                  });
-
-                  // add the created line
-                  lines.add(newline, {
-                    at: iter.linepos
-                  });
-                  numberOfLines--;
-                  orderQty = OB.DEC.add(iter.quantity, orderQty);
-                  if (numberOfLines === 0) {
-                    lines.reset(
-                      lines.sortBy(function(line) {
-                        return line.get('linepos');
-                      })
-                    );
-                    order.set('lines', lines);
-                    order.set('qty', orderQty);
-                    order.set(
-                      'isPartiallyDelivered',
-                      hasDeliveredProducts && hasNotDeliveredProducts
-                        ? true
-                        : false
-                    );
-                    if (hasDeliveredProducts && !hasNotDeliveredProducts) {
-                      order.set('isFullyDelivered', true);
-                    }
-                    if (order.get('isPartiallyDelivered')) {
-                      var partiallyPaid = 0;
-                      _.each(
-                        _.filter(order.get('receiptLines'), function(
-                          reciptLine
-                        ) {
-                          return reciptLine.deliveredQuantity;
-                        }),
-                        function(deliveredLine) {
-                          partiallyPaid = OB.DEC.add(
-                            partiallyPaid,
-                            OB.DEC.mul(
-                              deliveredLine.deliveredQuantity,
-                              deliveredLine.grossUnitPrice
-                            )
-                          );
-                        }
-                      );
-                      order.set('deliveredQuantityAmount', partiallyPaid);
-                      if (
-                        order.get('deliveredQuantityAmount') &&
-                        order.get('deliveredQuantityAmount') >
-                          order.get('payment')
-                      ) {
-                        order.set('isDeliveredGreaterThanGross', true);
-                      }
-                    }
-                    order.set('json', JSON.stringify(order.toJSON()));
-                    callback(order);
-                    OB.UTIL.ProcessController.finish(
-                      'newPaidReceipt',
-                      execution
-                    );
-                  }
-                }
-              );
-            };
-
-            if (!iter.deliveredQuantity) {
-              hasNotDeliveredProducts = true;
-            } else {
-              hasDeliveredProducts = true;
-              if (iter.deliveredQuantity < iter.quantity) {
-                hasNotDeliveredProducts = true;
-              }
-            }
-
-            if (iter.relatedLines && !order.get('hasServices')) {
-              order.set('hasServices', true);
-            }
-            try {
-              const product = await OB.App.MasterdataModels.Product.withId(
-                iter.id
-              );
-              if (product) {
-                await addLineForProduct(
-                  OB.Dal.transform(OB.Model.Product, product)
-                );
-              } else {
-                //Empty
-                const body = {
-                  productId: iter.id,
-                  salesOrderLineId: iter.lineId
-                };
-                try {
-                  let data = await OB.App.Request.mobileServiceRequest(
-                    'org.openbravo.retail.posterminal.master.LoadedProduct',
-                    body
-                  );
-                  data = data.response.data;
-                  await addLineForProduct(
-                    OB.Dal.transform(OB.Model.Product, data[0])
-                  );
-                } catch (error) {
-                  if (NoFoundProduct) {
-                    NoFoundProduct = false;
-                    OB.UTIL.showConfirmation.display(
-                      OB.I18N.getLabel('OBPOS_InformationTitle'),
-                      OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
-                      [
-                        {
-                          label: OB.I18N.getLabel('OBPOS_LblOk'),
-                          isConfirmButton: true
-                        }
-                      ]
-                    );
-                  }
-                }
-              }
-            } catch (error) {
-              OB.error(error.message);
-            }
-            linepos++;
-          }
-        };
-
-        async function callToLoadCustomer() {
-          await this.loadCustomer(
-            {
-              bpId: model.bp,
-              bpLocId: model.bpLocId,
-              bpBillLocId: model.bpBillLocId || model.bpLocId
-            },
-            async function(bp, loc, billLoc) {
-              order.set({
-                bp: bp
-              });
-              order.set('gross', model.totalamount);
-              order.set('net', model.totalNetAmount);
-              order.trigger('change:bp', order);
-              await loadProducts();
-            }
-          );
-        }
-        if (OB.UTIL.isNotEmptyString(model.externalBusinessPartnerReference)) {
-          var me = this;
-          this.loadExternalCustomer(
-            model.externalBusinessPartnerReference,
-            function(extBp) {
-              order.set('externalBusinessPartner', extBp.getPlainObject());
-              order.set(
-                'externalBusinessPartnerReference',
-                model.externalBusinessPartnerReference
-              );
-              order.set(
-                'externalBusinessPartnerCategory',
-                new OB.App.Class.ExternalBusinessPartner(
-                  extBp.getPlainObject()
-                ).getCategoryKey()
-              );
-              callToLoadCustomer.call(me);
-            }
-          );
-        } else {
-          callToLoadCustomer.call(this);
-        }
-      },
-
-      newDynamicOrder: function(model, callback) {
-        var order = new OB.Model.Order(),
-          undf;
-        _.each(_.keys(model), function(key) {
-          if (model[key] !== undf) {
-            if (model[key] === null) {
-              order.set(key, null);
-            } else {
-              order.set(key, model[key]);
-            }
-          }
-        });
-        callback(order);
-      },
-
-      addNewOrder: function(isFirstOrder) {
-        this.saveCurrent();
-        this.current = this.newOrder();
-        this.unshift(this.current);
-        this.loadCurrent(true);
-      },
-
-      addThisOrder: function(model) {
-        this.saveCurrent();
-        this.current = model;
-        this.unshift(this.current);
-        this.loadCurrent();
-      },
-
-      addFirstOrder: function() {
-        this.addNewOrder(true);
-      },
-
-      addPaidReceipt: function(model, callback) {
-        var me = this,
-          execution = OB.UTIL.ProcessController.start('addPaidReceipt');
-
-        function executeFinalCallback() {
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PostAddPaidReceipt',
-            {
-              order: model
-            },
-            function(args) {
-              if (callback instanceof Function) {
-                callback(me.modelorder);
-              }
-              me.modelorder.trigger('loadedOrder');
-            }
-          );
-        }
-
-        this.saveCurrent();
-        this.current = model;
-        this.unshift(this.current);
-        this.loadCurrent(true);
-
-        if (!model.get('isQuotation')) {
-          // OB.Dal.save is done here because we want to force to save with the original id, only this time.
-          OB.Dal.save(
-            model,
-            function() {
-              OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
-              executeFinalCallback();
-            },
-            function() {
-              OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
-              OB.error(arguments);
-              executeFinalCallback();
-            },
-            true
-          );
-        } else {
-          OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
-          executeFinalCallback();
-        }
-      },
-
-      addMultiReceipt: function(model) {
-        OB.Dal.save(
-          model,
-          function() {},
-          function() {
-            OB.error(arguments);
-          },
-          model.get('loadedFromServer')
-        );
-      },
-
-      addNewQuotation: function() {
-        this.saveCurrent();
-        this.current = this.newOrder();
-        this.current.setQuotationProperties();
-        this.unshift(this.current);
-        this.loadCurrent();
-      },
-      deleteCurrentFromDatabase: function(orderToDelete) {
-        OB.Dal.remove(
-          orderToDelete,
-          function() {
-            return true;
-          },
-          function() {
-            OB.UTIL.showError('Error removing');
-          }
-        );
-      },
-      deleteCurrent: function(forceCreateNew) {
-        if (!this.current) {
-          return;
-        }
-
-        this.remove(this.current);
-        var createNew = forceCreateNew || this.length === 0;
-        if (createNew) {
-          var order = this.newOrder();
-
-          this.unshift(order);
-        }
-        this.current = this.at(0);
-        this.loadCurrent(createNew);
-
-        // Refresh Master Data
-        OB.UTIL.checkRefreshMasterData();
-      },
-
-      load: function(model) {
-        // Workaround to prevent the pending receipts moder window from remaining open
-        // when the current receipt is selected from the list
-        if (
-          model &&
-          this.current &&
-          model.get('id') === this.current.get('id')
-        ) {
-          return;
-        }
-        this.saveCurrent();
-        this.current = model;
-        this.loadCurrent();
-      },
-      loadById: function(id) {
-        var mdl = _.find(OB.MobileApp.model.orderList.models, function(model) {
-          return model.get('id') === id;
-        });
-        if (mdl) {
-          this.load(mdl);
-        }
-      },
-      saveCurrent: function() {
-        if (this.current) {
-          OB.UTIL.clone(this.modelorder, this.current);
-          this.current.trigger('updateView');
-        }
-      },
-      loadCurrent: function(isNew) {
-        OB.MobileApp.model.set('terminalLogContext', this.current.get('id'));
-        // Check if the current order to be loaded should be deleted
-        if (this.current.get('obposIsDeleted') && this.current.get('id')) {
-          var deletedOrderDocNo = this.current.get('documentNo');
-          this.current.set('ignoreCheckIfIsActiveOrder', true); // Ignore this receipt is not loaded in the UI
-          this.current.deleteOrder(this.current, function() {
-            OB.UTIL.showWarning(
-              OB.I18N.getLabel('OBPOS_OrderMarkedToBeDeleted', [
-                deletedOrderDocNo
-              ])
-            );
-          });
-          return;
-        }
-
-        if (this.current) {
-          if (isNew) {
-            //set values of new attrs in current,
-            //this values will be copied to modelOrder
-            //in the next instruction
-            this.modelorder.trigger('beforeChangeOrderForNewOne', this.current);
-            this.current.set('isNewReceipt', true);
-          }
-          this.modelorder.clearWith(this.current);
-          this.modelorder.set('isNewReceipt', false);
-          this.modelorder.trigger('paintTaxes');
-          this.modelorder.trigger('updatePending');
-          this.modelorder.setIsCalculateReceiptLockState(false);
-          this.modelorder.setIsCalculateGrossLockState(false);
-        }
-      },
-      checkOrderListPayment: function() {
-        var i;
-        for (i = 0; i < this.models.length; i++) {
-          if (this.models[i].checkOrderPayment()) {
-            return true;
-          }
-        }
-        return false;
-      },
-      synchronizeCurrentOrder: function() {
-        // NOTE: No need to execute any business logic here
-        // The new functionality of loading document no, makes this function obsolete.
-        // The function is not removed to avoid api changes
-      },
-      checkForDuplicateReceipts: function(
-        model,
-        callback,
-        errorCallback,
-        calledFrom
-      ) {
-        function openReceiptPermissionError(orderType) {
-          if (calledFrom === 'orderSelector' || calledFrom === 'return') {
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBMOBC_Error'),
-              OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType])
-            );
-          } else {
-            OB.UTIL.showError(
-              OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType])
-            );
-          }
-          if (errorCallback) {
-            errorCallback();
-          }
-        }
-
-        //Check Permissions
-        switch (model.get('orderType')) {
-          case 'QT':
-            if (!OB.MobileApp.model.hasPermission('OBPOS_retail.quotations')) {
-              openReceiptPermissionError(OB.I18N.getLabel('OBPOS_Quotations'));
-              return;
-            }
-            break;
-          case 'LAY':
-            if (!OB.MobileApp.model.hasPermission('OBPOS_retail.layaways')) {
-              openReceiptPermissionError(OB.I18N.getLabel('OBPOS_LblLayaways'));
-              return;
-            }
-            break;
-          default:
-            if (
-              !OB.MobileApp.model.hasPermission('OBPOS_retail.paidReceipts')
-            ) {
-              openReceiptPermissionError(
-                OB.I18N.getLabel('OBPOS_LblPaidReceipts')
-              );
-              return;
-            }
-            break;
-        }
-
-        var orderTypeMsg,
-          i,
-          showErrorMessage = function(errorMsg) {
-            if (calledFrom === 'orderSelector' || calledFrom === 'return') {
-              OB.POS.terminal.$.containerWindow.getRoot().doShowPopup({
-                popup: 'OB_UI_MessageDialog',
-                args: {
-                  message: errorMsg
-                }
-              });
-            } else {
-              OB.UTIL.showWarning(errorMsg);
-            }
-            if (errorCallback) {
-              errorCallback();
-            }
-          };
-
-        // Check in Current Session
-        for (i = 0; i < this.length; i++) {
-          if (
-            this.at(i).get('id') === model.get('id') ||
-            (!_.isNull(this.at(i).get('oldId')) &&
-              this.at(i).get('oldId') === model.get('id')) ||
-            (this.at(i).get('canceledorder') &&
-              this.at(i)
-                .get('canceledorder')
-                .get('id') === model.get('id'))
-          ) {
-            var errorMsg;
-            orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
-            errorMsg = enyo.format(
-              OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
-              orderTypeMsg,
-              this.at(i).get('documentNo')
-            );
-            if (this.at(i).get('isLayaway')) {
-              orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
-              errorMsg = enyo.format(
-                OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
-                orderTypeMsg,
-                this.at(i).get('documentNo')
-              );
-            } else if (
-              OB.MobileApp.model.orderList.models[i].get('isQuotation')
-            ) {
-              orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
-              errorMsg = enyo.format(
-                OB.I18N.getLabel('OBPOS_ticketAlreadyOpened'),
-                orderTypeMsg,
-                this.at(i).get('documentNo')
-              );
-            } else if (
-              !_.isNull(this.at(i).get('oldId')) &&
-              this.at(i).get('oldId') === model.get('id')
-            ) {
-              var SoFromQtDocNo = this.at(i).get('documentNo');
-              var QtDocumentNo = model.get('documentNo');
-              errorMsg = OB.I18N.getLabel(
-                'OBPOS_OrderAssociatedToQuotationInProgress',
-                [QtDocumentNo, SoFromQtDocNo, QtDocumentNo, SoFromQtDocNo]
-              );
-            }
-            showErrorMessage(errorMsg);
-            if (
-              OB.MobileApp.model.receipt.get('documentNo') !==
-              model.get('documentNo')
-            ) {
-              this.load(this.at(i));
-            }
-            if (model.get('searchSynchId')) {
-              model.unset('searchSynchId');
-            }
-            return true;
-          }
-        }
-
-        // Check in Other Session
-        OB.Dal.find(
-          OB.Model.Order,
-          {
-            hasbeenpaid: 'N'
-          },
-          function(ordersNotProcessed) {
-            if (ordersNotProcessed.length > 0) {
-              var existingOrder = _.find(ordersNotProcessed.models, function(
-                order
-              ) {
-                return (
-                  order.get('id') === model.get('id') ||
-                  order.get('oldId') === model.get('id') ||
-                  (order.get('canceledorder') &&
-                    order.get('canceledorder').get('id') === model.get('id'))
-                );
-              });
-              if (existingOrder) {
-                var orderTypeMsg = OB.I18N.getLabel('OBPOS_ticket');
-                if (existingOrder.get('isLayaway')) {
-                  orderTypeMsg = OB.I18N.getLabel('OBPOS_LblLayaway');
-                } else if (existingOrder.get('isQuotation')) {
-                  orderTypeMsg = OB.I18N.getLabel('OBPOS_Quotation');
-                }
-                // Getting Other Session User's username
-
-                OB.App.OfflineSession.sessionWithId(
-                  existingOrder.get('session')
-                )
-                  .then(session => {
-                    if (!session) {
-                      return null;
-                    }
-                    return OB.App.OfflineSession.withId(
-                      this.model.get('updatedBy')
-                    );
-                  })
-                  .then(user => {
-                    if (!user) {
-                      return;
-                    }
-                    OB.UTIL.showConfirmation.display(
-                      enyo.format(
-                        OB.I18N.getLabel('OBPOS_ticketAlreadyOpenedInSession'),
-                        orderTypeMsg,
-                        existingOrder.get('documentNo'),
-                        user.name
-                      ),
-                      enyo.format(
-                        OB.I18N.getLabel(
-                          'OBPOS_MsgConfirmSaveInCurrentSession'
-                        ),
-                        user.name
-                      ),
-                      [
-                        {
-                          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                          action: function() {
-                            OB.Dal.remove(
-                              existingOrder,
-                              function() {
-                                callback(model);
-                              },
-                              OB.UTIL.showError
-                            );
-                          }
-                        },
-                        {
-                          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                          action: function() {
-                            if (errorCallback) {
-                              errorCallback();
-                            }
-                          }
-                        }
-                      ],
-                      {
-                        onHideFunction: function(dialog) {
-                          return true;
-                        }
-                      }
-                    );
-                  });
-              } else {
-                return callback(model);
-              }
-            } else {
-              return callback(model);
-            }
-          }
-        );
-      }
-    },
-    {
-      newOrder: function(bp, propertiesToReset) {
-        var order = new Order(),
-          i;
-        bp = bp ? bp : OB.MobileApp.model.get('businessPartner');
-
-        if (propertiesToReset && _.isArray(propertiesToReset)) {
-          for (i = 0; i < propertiesToReset.length; i++) {
-            if (!OB.UTIL.isNullOrUndefined(propertiesToReset[i].defaultValue)) {
-              order.set(
-                propertiesToReset[i].propertyName,
-                propertiesToReset[i].defaultValue
-              );
-            } else {
-              order.set(propertiesToReset[i].propertyName, '');
-            }
-          }
-        }
-
-        order.set('client', OB.MobileApp.model.get('terminal').client);
-        order.set(
-          'organization',
-          OB.MobileApp.model.get('terminal').organization
-        );
-        order.set(
-          'organizationAddressIdentifier',
-          OB.MobileApp.model.get('terminal').organizationAddressIdentifier
-        );
-        order.set(
-          'trxOrganization',
-          OB.MobileApp.model.get('terminal').organization
-        );
-        order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-        order.set('updatedBy', OB.MobileApp.model.get('orgUserId'));
-        order.set(
-          'documentType',
-          OB.MobileApp.model.get('terminal').terminalType.documentType
-        );
-        order.set(
-          'orderType',
-          OB.MobileApp.model.get('terminal').terminalType.layawayorder ? 2 : 0
-        ); // 0: Sales order, 1: Return order, 2: Layaway, 3: Void Layaway
-        order.setFullInvoice(false);
-        order.set('isQuotation', false);
-        order.set('oldId', null);
-        order.set('session', OB.MobileApp.model.get('session'));
-        order.set('cashVAT', OB.MobileApp.model.get('terminal').cashVat);
-        order.set('bp', bp);
-        order.set('externalBusinessPartner', null);
-        order.set('externalBusinessPartnerReference', null);
-        order.set('externalBusinessPartnerCategory', null);
-        order.set('invoiceTerms', bp.get('invoiceTerms'));
-        if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
-          // Set price list for order
-          order.set('priceList', bp.get('priceList'));
-          var priceIncludesTax = bp.get('priceIncludesTax');
-          if (OB.UTIL.isNullOrUndefined(priceIncludesTax)) {
-            priceIncludesTax = OB.MobileApp.model.get('pricelist')
-              .priceIncludesTax;
-          }
-          order.set('priceIncludesTax', priceIncludesTax);
-        } else {
-          order.set('priceList', OB.MobileApp.model.get('terminal').priceList);
-          order.set(
-            'priceIncludesTax',
-            OB.MobileApp.model.get('pricelist').priceIncludesTax
-          );
-        }
-        order.set('currency', OB.MobileApp.model.get('terminal').currency);
-        order.set(
-          'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
-          OB.MobileApp.model.get('terminal')[
-            'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
-          ]
-        );
-        order.set('warehouse', OB.MobileApp.model.get('terminal').warehouse);
-        if (OB.MobileApp.model.get('context').user.isSalesRepresentative) {
-          order.set(
-            'salesRepresentative',
-            OB.MobileApp.model.get('context').user.id
-          );
-          order.set(
-            'salesRepresentative' +
-              OB.Constants.FIELDSEPARATOR +
-              OB.Constants.IDENTIFIER,
-            OB.MobileApp.model.get('context').user._identifier
-          );
-        } else {
-          order.set('salesRepresentative', null);
-          order.set(
-            'salesRepresentative' +
-              OB.Constants.FIELDSEPARATOR +
-              OB.Constants.IDENTIFIER,
-            null
-          );
-        }
-        order.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-        order.set(
-          'posTerminal' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER,
-          OB.MobileApp.model.get('terminal')._identifier
-        );
-        order.set(
-          'deliveryPaymentMode',
-          OB.MobileApp.model.get('deliveryPaymentMode')
-        );
-        order.set('orderDate', OB.I18N.normalizeDate(new Date()));
-        order.set('creationDate', null);
-        order.set('isPaid', false);
-        order.set('creditAmount', OB.DEC.Zero);
-        order.set('paidPartiallyOnCredit', false);
-        order.set('paidOnCredit', false);
-        order.set('isLayaway', false);
-        order.set('isPartiallyDelivered', false);
-        order.set('taxes', {});
-        order.set('print', true);
-        order.set('sendEmail', false);
-        order.set('openDrawer', false);
-        order.set(
-          'orderManualPromotions',
-          new OB.Collection.OrderManualPromotionsList()
-        );
-        if (
-          OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)
-        ) {
-          order.set('obrdmDeliveryModeProperty', 'PickAndCarry');
-        }
-
-        OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
-          newOrder: order
-        });
-        return order;
-      }
-    }
-  );
 
   var MultiOrders = Backbone.Model.extend({
     modelName: 'MultiOrders',
@@ -11943,7 +10318,6 @@
   // order model is not registered using standard Registry method because list is
   // because collection is specific
   window.OB.Model.Order = Order;
-  window.OB.Collection.OrderList = OrderList;
   window.OB.Model.TaxLine = TaxLine;
   window.OB.Model.MultiOrders = MultiOrders;
 

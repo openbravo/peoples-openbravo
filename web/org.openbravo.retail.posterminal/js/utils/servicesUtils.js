@@ -121,3 +121,10 @@ OB.UTIL.servicesFilter = async function(
   criteria.innerCriteria(relatedServicesProductCategoryCriteria);
   return criteria;
 };
+
+OB.UTIL.handlePriceRuleBasedServices = function(order) {
+  OB.MobileApp.view.$.containerWindow
+    .getRoot()
+    .$.multiColumn.$.leftPanel.$.receiptview.$.orderview.checkServicesToDelete();
+  order.trigger('updateServicePrices');
+};

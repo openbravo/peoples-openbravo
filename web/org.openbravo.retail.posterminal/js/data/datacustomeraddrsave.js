@@ -100,10 +100,9 @@
       let updateLocally =
         !OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) ||
         (!isNew &&
-          OB.MobileApp.model.orderList &&
-          _.filter(OB.MobileApp.model.orderList.models, function(order) {
-            return order.get('bp').get('locId') === customerAddr.get('id');
-          }).length > 0);
+          OB.App.State.TicketList.Utils.getAllTickets().filter(
+            ticket => ticket.businessPartner.id === customerAddr.get('id')
+          ).length > 0);
 
       //save that the customer address is being processed by server
       if (updateLocally) {

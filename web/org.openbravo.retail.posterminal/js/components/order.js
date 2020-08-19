@@ -662,7 +662,7 @@ enyo.kind({
   },
   processesToListen: ['calculateReceipt'],
   processStarted: function() {},
-  processFinished: function(process, execution, processesInExec) {
+  checkServicesToDelete: function() {
     var removedServices = [],
       servicesToBeDeleted = [];
     removedServices.push(OB.I18N.getLabel('OBPOS_ServiceRemoved'));
@@ -735,6 +735,9 @@ enyo.kind({
         removedServices
       );
     }
+  },
+  processFinished: function(process, execution, processesInExec) {
+    this.checkServicesToDelete();
   },
   components: [
     {
@@ -923,8 +926,8 @@ enyo.kind({
         remainingTaxesIds = [];
 
       _.each(this.order.get('lines').models, function(line) {
-        if (!line.get('obposIsDeleted') && line.get('taxLines')) {
-          remainingTaxesIds.push(...Object.keys(line.get('taxLines')));
+        if (!line.get('obposIsDeleted') && line.get('taxes')) {
+          remainingTaxesIds.push(...Object.keys(line.get('taxes')));
         }
       });
       Object.keys(taxes).forEach(function(id) {
@@ -1697,8 +1700,6 @@ enyo.kind({
               setPriceCallback,
               handleError
             );
-          } else {
-            setPriceCallback(line, line.get('price'));
           }
         }
       },
@@ -1829,7 +1830,7 @@ enyo.kind({
             me.multiOrders.set('amountToLayaway', me.amountToLayaway);
             me.multiOrders.set('existingPayment', me.existingPayment);
             me.$.totalMultiReceiptLine.renderTotal(me.total);
-            me.listMultiOrders.reset(me.orderList.models);
+            me.listMultiOrders.reset(me.orderList.models); // Multiorder list, not to remove yet
             if (model.get('leftColumnViewManager').isMultiOrder()) {
               me.doChangeTotal({
                 newTotal: me.total
@@ -1842,6 +1843,12 @@ enyo.kind({
             return;
           }
           var order = me.orderList.at(idx);
+          if (
+            !order.attributes ||
+            (order.attributes && order.attributes.length === 0)
+          ) {
+            order = new OB.Model.Order(order);
+          }
           order.getPrepaymentAmount(function() {
             if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
               total = OB.DEC.add(total, order.getPending());
@@ -1915,9 +1922,6 @@ enyo.kind({
     if (this.multiOrders) {
       this.multiOrders.off('change:additionalInfo', null, this);
       this.multiOrders.off('change:total', null, this);
-    }
-    if (this.orderList) {
-      this.orderList.off('reset add remove amountToLayaway', null, this);
     }
     if (this.orderListPayment) {
       this.orderListPayment.off('add remove', null, this);

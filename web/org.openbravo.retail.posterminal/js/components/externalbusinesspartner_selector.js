@@ -233,7 +233,7 @@ enyo.kind({
     return true;
   },
   externalBpSelected: function(inSender, inEvent) {
-    const order = OB.MobileApp.model.orderList.modelorder;
+    const order = OB.MobileApp.model.receipt;
     if (this.target && this.target !== 'order') {
       if (this.args.targetCallback) {
         this.args.targetCallback(inEvent.bp);
@@ -441,6 +441,7 @@ enyo.kind({
     this.bpsList.reset();
     return true;
   },
+
   searchAction: function(inSender, inEvent) {
     this.$.stBPAssignToReceipt.renderLineParams = { dialog: this.dialog };
     this.dialog.externalBPListViewData
