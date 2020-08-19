@@ -7,12 +7,9 @@
  ************************************************************************************
  */
 
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/CashupUtils');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/PaymentMethodUtils');
-
 OB.App.State = OB.App.State || {};
-OB.App.State.Cashup = { Utils: {} };
+OB.App.State.TicketList = { Utils: {} };
 
-OB.App.StateAPI.Cashup.utilities.forEach(util => {
-  OB.App.State.Cashup.Utils[util.functionName] = util.implementation;
+OB.App.StateAPI.TicketList.utilities.forEach(util => {
+  OB.App.State.TicketList.Utils[util.functionName] = util.implementation;
 });

@@ -7,12 +7,8 @@
  ************************************************************************************
  */
 
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/document-sequence/DocumentSequenceUtils');
-
 OB.App.State = OB.App.State || {};
-OB.App.State.DocumentSequence = {
-  Utils: {}
-};
+OB.App.State.DocumentSequence = { Utils: {} };
 
 OB.App.StateAPI.DocumentSequence.utilities.forEach(util => {
   OB.App.State.DocumentSequence.Utils[util.functionName] = util.implementation;

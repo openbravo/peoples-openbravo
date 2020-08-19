@@ -7,6 +7,7 @@
  ************************************************************************************
  */
 
+require('./SetupTicket');
 require('./SetupTicketUtils');
 const deepfreeze = require('deepfreeze');
 

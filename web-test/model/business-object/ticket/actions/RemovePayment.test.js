@@ -9,25 +9,10 @@
 
 /* global global */
 
-global.OB = {
-  App: {
-    StateBackwardCompatibility: { setProperties: jest.fn() },
-    Class: {},
-    UUID: { generate: jest.fn() }
-  },
-  UTIL: { HookManager: { registerHook: jest.fn() } }
-};
-
-global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
-const deepfreeze = require('deepfreeze');
-
-require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
+require('../SetupTicket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/RemovePayment');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
-require('./SetupTicketUtils');
+require('../SetupTicketUtils');
+const deepfreeze = require('deepfreeze');
 
 const basicTicket = deepfreeze({
   lines: [

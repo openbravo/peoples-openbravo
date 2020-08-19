@@ -7,14 +7,8 @@
  ************************************************************************************
  */
 
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
-
-OB.App.State = {
-  Ticket: {
-    Utils: {}
-  }
-};
-
-OB.App.StateAPI.Ticket.utilities.forEach(util => {
-  OB.App.State.Ticket.Utils[util.functionName] = util.implementation;
-});
+require('../ticket/SetupTicketUtils');
+require('../ticket-list/SetupTicketListUtils');
+require('../document-sequence/SetupDocumentSequenceUtils');
+require('../cashup/SetupCashupUtils');
+require('../../../../../org.openbravo.mobile.core/web-test/model/business-object/messages/SetupMessagesUtils');

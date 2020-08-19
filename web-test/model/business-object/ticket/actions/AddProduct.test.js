@@ -7,36 +7,10 @@
  ************************************************************************************
  */
 
-/* global global */
-
-global.OB = {
-  App: {
-    Class: {},
-    StateBackwardCompatibility: { setProperties: jest.fn() },
-    UUID: { generate: jest.fn() }
-  },
-  MobileApp: { model: { get: jest.fn(() => jest.fn()) } },
-  Taxes: { Pos: { applyTaxes: jest.fn() } },
-  TerminalProperty: { get: jest.fn() },
-  UTIL: { HookManager: { registerHook: jest.fn() } }
-};
-
-global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
-const deepfreeze = require('deepfreeze');
-require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
-
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/ArrayUtils');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
+require('../SetupTicket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddProduct');
-
-// set Ticket model utility functions
-OB.App.State = { Ticket: { Utils: {} } };
-OB.App.StateAPI.Ticket.utilities.forEach(
-  util => (OB.App.State.Ticket.Utils[util.functionName] = util.implementation)
-);
+require('../SetupTicketUtils');
+const deepfreeze = require('deepfreeze');
 
 const emptyTicket = {
   priceIncludesTax: true,
