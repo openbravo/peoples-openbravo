@@ -443,17 +443,20 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             amount: OB.DEC.sub(
               OB.DEC.Zero,
               changePayment.amount,
-              terminalPayment.obposPosprecision
+              terminalPayment.obposPosprecision || OB.DEC.getScale()
             ),
             amountRounded: OB.DEC.sub(
               OB.DEC.Zero,
-              changePayment.amountRounded,
-              terminalPayment.obposPosprecision
+              changePayment.amountRounded || OB.DEC.Zero,
+              terminalPayment.obposPosprecision || OB.DEC.getScale()
             ),
             origAmount: OB.DEC.sub(OB.DEC.Zero, changePayment.origAmount),
             origAmountRounded: OB.DEC.sub(
               OB.DEC.Zero,
-              OB.DEC.mul(changePayment.amountRounded, terminalPayment.rate)
+              OB.DEC.mul(
+                changePayment.amountRounded || OB.DEC.Zero,
+                terminalPayment.rate || OB.DEC.One
+              )
             ),
             rate: terminalPayment.rate,
             mulrate: terminalPayment.mulrate,
