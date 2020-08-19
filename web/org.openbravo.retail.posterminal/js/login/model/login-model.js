@@ -155,8 +155,7 @@
                   onShowFunction: function(popup) {
                     popup.$.headerCloseButton.hide();
                   },
-                  autoDismiss: false,
-                  showLoading: true
+                  autoDismiss: false
                 }
               );
             } else if (OB.MobileApp.model.get('isLoggingIn') === true) {
@@ -193,8 +192,7 @@
                         onShowFunction: function(popup) {
                           popup.$.headerCloseButton.hide();
                         },
-                        autoDismiss: false,
-                        showLoading: true
+                        autoDismiss: false
                       }
                     );
                   };
