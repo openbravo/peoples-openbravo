@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/* global global */
-
 require('../SetupTicket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/RemovePayment');
 require('../SetupTicketUtils');
