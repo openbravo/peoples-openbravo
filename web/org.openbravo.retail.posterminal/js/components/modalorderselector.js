@@ -241,7 +241,7 @@ enyo.kind({
     }
   },
   canHidePopup: function() {
-    return !this.model.get('multiselect');
+    return false;
   },
   create: function() {
     var orderDate,
@@ -379,6 +379,7 @@ enyo.kind({
   },
   events: {
     onShowPopup: '',
+    onHideThisPopup: '',
     onChangePaidReceipt: '',
     onChangeCurrentOrder: '',
     onHideSelector: '',
@@ -668,6 +669,7 @@ enyo.kind({
           me.execution = OB.UTIL.ProcessController.start('openVerifiedReturn');
 
           function executionCallback() {
+            me.doHideThisPopup();
             OB.UTIL.ProcessController.finish(
               'openVerifiedReturn',
               me.execution
@@ -739,6 +741,7 @@ enyo.kind({
             model.get('organization') &&
           OB.MobileApp.model.receipt.get('lines').length > 0
         ) {
+          me.doHideThisPopup();
           OB.UTIL.showConfirmation.display(
             OB.I18N.getLabel('OBPOS_LblCrossStoreReturn'),
             OB.I18N.getLabel('OBPOS_SameStoreReceipt'),
@@ -763,7 +766,9 @@ enyo.kind({
                   OB.UTIL.TicketListUtils.checkForDuplicateReceipts(
                     model,
                     loadOrder,
-                    undefined,
+                    function() {
+                      me.doHideThisPopup();
+                    },
                     undefined,
                     true
                   );
@@ -773,7 +778,7 @@ enyo.kind({
               {
                 label: OB.I18N.getLabel('OBMOBC_LblCancel'),
                 action: function() {
-                  OB.POS.navigate('retail.pointofsale');
+                  me.doHideThisPopup();
                 }
               }
             ]
@@ -789,7 +794,9 @@ enyo.kind({
           OB.UTIL.TicketListUtils.checkForDuplicateReceipts(
             model,
             loadOrder,
-            undefined,
+            function() {
+              me.doHideThisPopup();
+            },
             undefined,
             true
           );
@@ -842,7 +849,6 @@ enyo.kind({
       'click',
       function(model) {
         if (!this.$.openreceiptslistitemprinter.multiselect) {
-          me.doHideSelector();
           if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
             OB.UTIL.showConfirmation.display(
               OB.I18N.getLabel('OBPOS_LblCrossStorePayment'),
@@ -862,12 +868,18 @@ enyo.kind({
                       me.model.get('orderList'),
                       me,
                       undefined,
-                      'orderSelector'
+                      'orderSelector',
+                      function() {
+                        me.doHideThisPopup();
+                      }
                     );
                   }
                 },
                 {
-                  label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                  label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                  action: function() {
+                    me.doHideThisPopup();
+                  }
                 }
               ]
             );
@@ -877,7 +889,10 @@ enyo.kind({
               me.model.get('orderList'),
               me,
               undefined,
-              'orderSelector'
+              'orderSelector',
+              function() {
+                me.doHideThisPopup();
+              }
             );
           }
         } else {

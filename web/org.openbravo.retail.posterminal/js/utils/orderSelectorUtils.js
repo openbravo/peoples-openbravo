@@ -17,7 +17,8 @@
     orderList,
     context,
     originServer,
-    calledFrom
+    calledFrom,
+    callback
   ) {
     if (OB.UTIL.isNullOrUndefined(this.listOfReceipts)) {
       this.listOfReceipts = [];
@@ -28,7 +29,8 @@
         orderList: orderList,
         context: context,
         originServer: originServer,
-        calledFrom: calledFrom
+        calledFrom: calledFrom,
+        callback: callback
       };
       this.listOfReceipts.push(receipt);
     }
@@ -39,10 +41,25 @@
     orderList,
     context,
     originServer,
-    calledFrom
+    calledFrom,
+    orderCallback
   ) {
-    var me = this,
-      continueAfterPaidReceipt,
+    let me = this;
+    if (me.loadingReceipt) {
+      OB.UTIL.OrderSelectorUtils.addToListOfReceipts(
+        model,
+        orderList,
+        context,
+        originServer,
+        calledFrom,
+        orderCallback
+      );
+      return;
+    }
+    me.loadingReceipt = true;
+    me.listOfExecution = me.listOfExecution || [];
+
+    let continueAfterPaidReceipt,
       checkListCallback,
       errorCallback,
       orderLoaded,
@@ -53,9 +70,13 @@
       recursiveIdx,
       currentModel,
       currentContext,
-      currentOriginServer;
+      currentOriginServer,
+      currentCallback;
 
     checkListCallback = function() {
+      if (currentCallback && currentCallback instanceof Function) {
+        currentCallback();
+      }
       OB.UTIL.ProcessController.finish(
         'loadPaidReceipts',
         me.listOfExecution.shift()
@@ -67,7 +88,8 @@
           currentReceipt.orderList,
           currentReceipt.context,
           currentReceipt.originServer,
-          currentReceipt.calledFrom
+          currentReceipt.calledFrom,
+          currentReceipt.callback
         );
       } else {
         me.loadingReceipt = false;
@@ -240,11 +262,18 @@
       orderList,
       context,
       originServer,
-      calledFrom
+      calledFrom,
+      callback
     ) {
       currentModel = model;
       currentContext = context;
       currentOriginServer = originServer;
+      currentCallback = callback;
+
+      if (calledFrom === 'return') {
+        orderLoaded([model]);
+        return;
+      }
       me.listOfExecution.push(
         OB.UTIL.ProcessController.start('loadPaidReceipts')
       );
@@ -322,25 +351,13 @@
       );
     };
 
-    me.listOfExecution = me.listOfExecution || [];
-    if (me.loadingReceipt) {
-      OB.UTIL.OrderSelectorUtils.addToListOfReceipts(
-        model,
-        orderList,
-        context,
-        originServer,
-        calledFrom
-      );
-      return;
-    }
-    me.loadingReceipt = true;
-    if (calledFrom === 'return') {
-      currentModel = model;
-      currentContext = context;
-      currentOriginServer = originServer;
-      orderLoaded([model]);
-    } else {
-      loadOrdersProcess(model, null, context, originServer, calledFrom);
-    }
+    loadOrdersProcess(
+      model,
+      null,
+      context,
+      originServer,
+      calledFrom,
+      orderCallback
+    );
   };
 })();
