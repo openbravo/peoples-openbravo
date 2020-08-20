@@ -87,7 +87,7 @@
         globalState.Ticket,
         newPayload
       );
-      newPayload = await checkVoidLayaway(globalState.Ticket, newPayload);
+      newPayload = await checkVoidLayaway(newPayload);
       newPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
         globalState.Ticket,
         newPayload
@@ -97,7 +97,7 @@
     }
   );
 
-  const checkVoidLayaway = async (ticket, payload) => {
+  const checkVoidLayaway = async payload => {
     await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
       title: 'OBPOS_VoidLayawayLbl',
       message: 'OBPOS_VoidLayawayConfirmation'
