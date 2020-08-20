@@ -51,8 +51,14 @@ describe('Ticket Utils generateDelivery function', () => {
       Messages: messages
     });
     const payload = deepfreeze({
-      terminal: { id: '0', terminalType: { documentType: 'Sale' } },
+      completeTicket: true,
+      terminal: {
+        id: '0',
+        documentnoPadding: 5,
+        terminalType: { documentType: 'Sale' }
+      },
       businessPartner: 'BP',
+      documentNumberSeparator: '/',
       pricelist: {},
       context: { user: {} },
       preferences: {}
@@ -81,47 +87,38 @@ describe('Ticket Utils generateDelivery function', () => {
         grossReturns: 0,
         netReturns: 0
       },
-      Messages: [{}, {}, {}]
-      // Messages: [
-      //   {
-      //     modelName: 'Order',
-      //     service: 'org.openbravo.retail.posterminal.OrderLoader',
-      //     type: 'backend',
-      //     messageObj: {
-      //       data: [
-      //         {
-      //           completeTicket: true,
-      //           obposSequencename: 'lastassignednum',
-      //           obposSequencenumber: 1,
-      //           documentNo: 'O/00001',
-      //           ...ticket
-      //         }
-      //       ]
-      //     }
-      //   },
-      //   {
-      //     modelName: '',
-      //     service: '',
-      //     type: 'printTicket',
-      //     messageObj: {
-      //       data: [
-      //         {
-      //           completeTicket: true,
-      //           obposSequencename: 'lastassignednum',
-      //           obposSequencenumber: 1,
-      //           documentNo: 'O/00001',
-      //           ...ticket
-      //         }
-      //       ]
-      //     }
-      //   },
-      //   {
-      //     modelName: '',
-      //     service: '',
-      //     type: 'printWelcome',
-      //     messageObj: {}
-      //   }
-      // ]
+      Messages: [
+        {
+          modelName: 'Order',
+          service: 'org.openbravo.retail.posterminal.OrderLoader',
+          type: 'backend',
+          messageObj: {
+            data: [
+              {
+                completeTicket: true,
+                obposSequencename: 'lastassignednum',
+                obposSequencenumber: 1,
+                documentNo: 'O/00001',
+                ...ticket
+              }
+            ]
+          }
+        },
+        {
+          modelName: '',
+          service: '',
+          type: 'printTicket',
+          messageObj: {
+            data: {}
+          }
+        },
+        {
+          modelName: '',
+          service: '',
+          type: 'printWelcome',
+          messageObj: { data: {} }
+        }
+      ]
     });
   });
 });
