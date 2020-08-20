@@ -32,7 +32,7 @@
         ),
         Math.sign(newTicket.grossAmount)
       );
-      newTicket = OB.App.State.Ticket.Utils.completeTicket(newTicket, payload);
+      newTicket = OB.App.State.Ticket.Utils.processTicket(newTicket, payload);
 
       // FIXME: Move to calculateTotals?
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(

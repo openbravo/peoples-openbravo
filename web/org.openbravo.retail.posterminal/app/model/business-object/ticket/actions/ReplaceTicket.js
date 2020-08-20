@@ -26,7 +26,7 @@
 
       // Set complete ticket properties
       newTicket.completeTicket = true;
-      newTicket = OB.App.State.Ticket.Utils.completeTicket(newTicket, payload);
+      newTicket = OB.App.State.Ticket.Utils.processTicket(newTicket, payload);
 
       // FIXME: Move to calculateTotals?
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(

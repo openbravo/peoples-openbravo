@@ -14,14 +14,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   /**
    * Set needed properties when completing a ticket.
    *
-   * @param {object} ticket - The ticket being completed
+   * @param {object} ticket - The ticket being processed
    * @param {object} payload - The calculation payload, which include:
    *             * terminal.id - Terminal id
    *             * approvals - Approvals to add to the ticket
    *
-   * @returns {object} The new state of Ticket after being completed.
+   * @returns {object} The new state of Ticket after being processed.
    */
-  completeTicket(ticket, payload) {
+  processTicket(ticket, payload) {
     const newTicket = { ...ticket };
     const currentDate = new Date();
     const creationDate = newTicket.creationDate

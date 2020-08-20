@@ -25,7 +25,7 @@
       let newMessages = [...newGlobalState.Messages];
 
       // Set complete ticket properties
-      newTicket = OB.App.State.Ticket.Utils.completeTicket(newTicket, payload);
+      newTicket = OB.App.State.Ticket.Utils.processTicket(newTicket, payload);
 
       // Document number generation
       ({

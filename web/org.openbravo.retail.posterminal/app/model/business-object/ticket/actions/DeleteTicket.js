@@ -53,10 +53,7 @@
             }, {})
           };
         });
-        newTicket = OB.App.State.Ticket.Utils.completeTicket(
-          newTicket,
-          payload
-        );
+        newTicket = OB.App.State.Ticket.Utils.processTicket(newTicket, payload);
 
         // Document number generation
         ({

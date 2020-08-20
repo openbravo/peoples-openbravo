@@ -13,8 +13,8 @@ require('../../global/SetupGlobalUtils');
 const deepfreeze = require('deepfreeze');
 OB.Constants = {};
 
-describe('Ticket Utils generateDelivery function', () => {
-  it('should generate delivery when completing a ticket with item product', () => {
+describe('Complete ticket action', () => {
+  it('should complete ticket, print it and synchronize it', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
       grossAmount: 100,

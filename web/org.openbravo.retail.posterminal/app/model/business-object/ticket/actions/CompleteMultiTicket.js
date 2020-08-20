@@ -32,7 +32,7 @@
 
         // Set complete ticket properties
         newMultiTicket.completeTicket = newMultiTicket.amountToLayaway == null;
-        newMultiTicket = OB.App.State.Ticket.Utils.completeTicket(
+        newMultiTicket = OB.App.State.Ticket.Utils.processTicket(
           newMultiTicket,
           payload
         );

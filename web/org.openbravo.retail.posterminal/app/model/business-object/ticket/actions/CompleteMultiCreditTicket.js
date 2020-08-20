@@ -36,7 +36,7 @@
           ),
           Math.sign(newMultiTicket.grossAmount)
         );
-        newMultiTicket = OB.App.State.Ticket.Utils.completeTicket(
+        newMultiTicket = OB.App.State.Ticket.Utils.processTicket(
           newMultiTicket,
           payload
         );
