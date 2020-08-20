@@ -1110,7 +1110,9 @@
             me.trigger('calculatedReceipt');
             me.pendingCalculateReceipt = false;
             me.calculatingReceipt = false;
-            me.calculateReceipt();
+            me.calculateReceipt(function() {
+              finalCallbacksAndFinish();
+            });
             return;
           } else {
             finalCallbacksAndFinish();
