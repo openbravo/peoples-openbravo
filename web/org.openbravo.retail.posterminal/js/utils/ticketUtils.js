@@ -86,7 +86,6 @@
       )
     };
     newPayload.constants = {
-      zero: OB.DEC.Zero,
       fieldSeparator: OB.Constants.FIELDSEPARATOR,
       identifierSuffix: OB.Constants.IDENTIFIER
     };

@@ -933,13 +933,13 @@
         lines: [],
         orderManualPromotions: [],
         payments: [],
-        payment: payload.constants.zero,
-        paymentWithSign: payload.constants.zero,
-        nettingPayment: payload.constants.zero,
-        change: payload.constants.zero,
-        qty: payload.constants.zero,
-        grossAmount: payload.constants.zero,
-        netAmount: payload.constants.zero,
+        payment: OB.DEC.Zero,
+        paymentWithSign: OB.DEC.Zero,
+        nettingPayment: OB.DEC.Zero,
+        change: OB.DEC.Zero,
+        qty: OB.DEC.Zero,
+        grossAmount: OB.DEC.Zero,
+        netAmount: OB.DEC.Zero,
         taxes: {},
         hasbeenpaid: 'N',
         isbeingprocessed: 'N',
@@ -947,7 +947,7 @@
         print: true,
         sendEmail: false,
         isPaid: false,
-        creditAmount: payload.constants.zero,
+        creditAmount: OB.DEC.Zero,
         paidPartiallyOnCredit: false,
         paidOnCredit: false,
         isLayaway: false,
@@ -955,9 +955,9 @@
         isEditable: true,
         openDrawer: false,
         approvals: [],
-        obposPrepaymentamt: payload.constants.zero,
-        obposPrepaymentlimitamt: payload.constants.zero,
-        obposPrepaymentlaylimitamt: payload.constants.zero
+        obposPrepaymentamt: OB.DEC.Zero,
+        obposPrepaymentlimitamt: OB.DEC.Zero,
+        obposPrepaymentlaylimitamt: OB.DEC.Zero
       };
 
       ticket.client = payload.terminal.client;

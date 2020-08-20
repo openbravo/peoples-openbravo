@@ -11,7 +11,6 @@ require('../../global/SetupGlobal');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/CompleteTicket');
 require('../../global/SetupGlobalUtils');
 const deepfreeze = require('deepfreeze');
-OB.Constants = {};
 
 describe('Complete ticket action', () => {
   it('should complete ticket, print it and synchronize it', () => {
@@ -63,7 +62,6 @@ describe('Complete ticket action', () => {
       context: { user: {} },
       preferences: {},
       constants: {
-        zero: 0,
         fieldSeparator: '-',
         identifierSuffix: '_id'
       }
