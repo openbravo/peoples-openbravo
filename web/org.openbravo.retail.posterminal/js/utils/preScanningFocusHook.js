@@ -15,7 +15,12 @@ OB.UTIL.HookManager.registerHook('OBMOBC_PreScanningFocus', function(
     OB.UTIL.RfidController.isRfidConfigured() &&
     OB.UTIL.RfidController.get('rfidWebsocket')
   ) {
-    if (
+    const window = _.find(OB.MobileApp.model.windows.models, function(window) {
+      return window.get('route') === OB.MobileApp.view.currentWindow;
+    });
+    if (window && window.get('rfidState') === false) {
+      OB.UTIL.RfidController.disconnectRFIDDevice();
+    } else if (
       (OB.UTIL.isNullOrUndefined(args.scanMode) || args.scanMode === true) &&
       !OB.UTIL.RfidController.get('isRFIDEnabled') &&
       OB.UTIL.RfidController.get('reconnectOnScanningFocus') &&

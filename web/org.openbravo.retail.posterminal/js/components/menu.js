@@ -809,6 +809,9 @@ enyo.kind({
     if (!OB.UTIL.RfidController.isRfidConfigured()) {
       this.hide();
     }
+    OB.UTIL.RfidController.off('change:connected change:connectionLost');
+  },
+  pointOfSaleLoad: function(inSender, inEvent) {
     OB.UTIL.RfidController.on(
       'change:connected change:connectionLost',
       function(model) {
@@ -835,8 +838,7 @@ enyo.kind({
       },
       this
     );
-  },
-  pointOfSaleLoad: function(inSender, inEvent) {
+
     if (OB.UTIL.RfidController.isRfidConfigured()) {
       if (
         OB.UTIL.RfidController.get('connectionLost') ||

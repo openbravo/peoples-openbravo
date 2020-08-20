@@ -16,9 +16,9 @@ OB.UTIL.RfidController = new Backbone.Model({
 OB.UTIL.RfidController.isRfidConfigured = function() {
   if (
     OB.POS.hwserver &&
-    OB.POS.modelterminal.get('terminal') &&
+    OB.MobileApp.model.get('terminal') &&
     OB.POS.hwserver.url &&
-    OB.POS.modelterminal.get('terminal').terminalType.useRfid
+    OB.MobileApp.model.get('terminal').terminalType.useRfid
   ) {
     if (OB.UTIL.isHTTPSAvailable()) {
       return OB.POS.hwserver.url.split('/')[0] === 'http:'
@@ -57,7 +57,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(
       OB.UTIL.showSuccess(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
       OB.debug(OB.I18N.getLabel('OBPOS_ConnectedWithRFID'));
     }
-    if (OB.POS.modelterminal.get('terminal').terminalType.rfidTimeout) {
+    if (OB.MobileApp.model.get('terminal').terminalType.rfidTimeout) {
       if (OB.UTIL.RfidController.get('rfidTimeout')) {
         clearTimeout(OB.UTIL.RfidController.get('rfidTimeout'));
       }
@@ -67,7 +67,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(
           OB.UTIL.RfidController.unset('rfidTimeout');
           OB.UTIL.RfidController.set('reconnectOnScanningFocus', false);
           OB.UTIL.RfidController.disconnectRFIDDevice();
-        }, OB.POS.modelterminal.get('terminal').terminalType.rfidTimeout *
+        }, OB.MobileApp.model.get('terminal').terminalType.rfidTimeout *
           1000 *
           60)
       );
@@ -116,7 +116,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(
       return;
     }
     data = JSON.parse(event.data);
-    if (OB.POS.modelterminal.get('terminal').terminalType.rfidTimeout) {
+    if (OB.MobileApp.model.get('terminal').terminalType.rfidTimeout) {
       if (OB.UTIL.RfidController.get('rfidTimeout')) {
         clearTimeout(OB.UTIL.RfidController.get('rfidTimeout'));
       }
@@ -126,7 +126,7 @@ OB.UTIL.RfidController.startRfidWebsocket = function startRfidWebsocket(
           OB.UTIL.RfidController.unset('rfidTimeout');
           OB.UTIL.RfidController.set('reconnectOnScanningFocus', false);
           OB.UTIL.RfidController.disconnectRFIDDevice();
-        }, OB.POS.modelterminal.get('terminal').terminalType.rfidTimeout *
+        }, OB.MobileApp.model.get('terminal').terminalType.rfidTimeout *
           1000 *
           60)
       );
@@ -446,7 +446,7 @@ OB.UTIL.RfidController.processRemainingCodes = function(
     );
   }
   //Only if useSecurityGate check is enabled
-  if (OB.POS.modelterminal.get('terminal').terminalType.useSecurityGate) {
+  if (OB.MobileApp.model.get('terminal').terminalType.useSecurityGate) {
     OB.UTIL.RfidController.waitForAck(
       function(uuid) {
         OB.UTIL.RfidController.get('rfidWebsocket').send(

@@ -200,16 +200,7 @@ OB.POS.registerWindow({
       );
       return;
     }
-    // in case of synchronized mode reload the cashup from the server
-    // this is needed because there is a slight change that the cashup on the client
-    // is out of date
-    if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-      OB.UTIL.rebuildCashupFromServer(function() {
-        successCallback(args.route);
-      });
-    } else {
-      successCallback(args.route);
-    }
+    successCallback(args.route);
   },
   menuItemDisplayLogic: function() {
     // Update here the label of CashUp in case Safe Box configuration is active
