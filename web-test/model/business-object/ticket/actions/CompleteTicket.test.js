@@ -61,7 +61,12 @@ describe('Complete ticket action', () => {
       documentNumberSeparator: '/',
       pricelist: {},
       context: { user: {} },
-      preferences: {}
+      preferences: {},
+      constants: {
+        zero: 0,
+        fieldSeparator: '-',
+        identifierSuffix: '_id'
+      }
     });
 
     const newState = OB.App.StateAPI.Global.completeTicket(state, payload);

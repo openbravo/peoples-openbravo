@@ -905,6 +905,22 @@
       );
     },
 
+    /**
+     * Creates a new Ticket object with preset data using the information given in the payload object
+     *
+     * @param {{
+     *   terminal: Object,
+     *   businessPartner: Object,
+     *   session: string,
+     *   orgUserId: string,
+     *   pricelist: Object,
+     *   ticketExtraProperties: Object,
+     *   context: Object,
+     *   preferences: Object,
+     *   constants: Object }
+     * } payload - The payload object with all data required to create the ticket object. See OB.UTIL.TicketUtils.addTicketCreationDataToPayload for a full initialization of this payload object
+     * @return {Object} - The new Ticket object
+     */
     newTicket(payload) {
       const ticket = {
         ...payload.ticketExtraProperties,
@@ -917,13 +933,13 @@
         lines: [],
         orderManualPromotions: [],
         payments: [],
-        payment: OB.DEC.Zero,
-        paymentWithSign: OB.DEC.Zero,
-        nettingPayment: OB.DEC.Zero,
-        change: OB.DEC.Zero,
-        qty: OB.DEC.Zero,
-        grossAmount: OB.DEC.Zero,
-        netAmount: OB.DEC.Zero,
+        payment: payload.constants.zero,
+        paymentWithSign: payload.constants.zero,
+        nettingPayment: payload.constants.zero,
+        change: payload.constants.zero,
+        qty: payload.constants.zero,
+        grossAmount: payload.constants.zero,
+        netAmount: payload.constants.zero,
         taxes: {},
         hasbeenpaid: 'N',
         isbeingprocessed: 'N',
@@ -931,7 +947,7 @@
         print: true,
         sendEmail: false,
         isPaid: false,
-        creditAmount: OB.DEC.Zero,
+        creditAmount: payload.constants.zero,
         paidPartiallyOnCredit: false,
         paidOnCredit: false,
         isLayaway: false,
@@ -939,9 +955,9 @@
         isEditable: true,
         openDrawer: false,
         approvals: [],
-        obposPrepaymentamt: OB.DEC.Zero,
-        obposPrepaymentlimitamt: OB.DEC.Zero,
-        obposPrepaymentlaylimitamt: OB.DEC.Zero
+        obposPrepaymentamt: payload.constants.zero,
+        obposPrepaymentlimitamt: payload.constants.zero,
+        obposPrepaymentlaylimitamt: payload.constants.zero
       };
 
       ticket.client = payload.terminal.client;
@@ -975,27 +991,27 @@
       }
       ticket.currency = payload.terminal.currency;
       ticket[
-        `currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+        `currency${payload.constants.fieldSeparator}${payload.constants.identifierSuffix}`
       ] =
         payload.terminal[
-          `currency${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+          `currency${payload.constants.fieldSeparator}${payload.constants.identifierSuffix}`
         ];
       ticket.warehouse = payload.terminal.warehouse;
       if (payload.context.user.isSalesRepresentative) {
         ticket.salesRepresentative = payload.context.user.id;
         ticket[
-          `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+          `salesRepresentative${payload.constants.fieldSeparator}${payload.constants.identifierSuffix}`
           // eslint-disable-next-line no-underscore-dangle
         ] = payload.context.user._identifier;
       } else {
         ticket.salesRepresentative = null;
         ticket[
-          `salesRepresentative${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+          `salesRepresentative${payload.constants.fieldSeparator}${payload.constants.identifierSuffix}`
         ] = null;
       }
       ticket.posTerminal = payload.terminal.id;
       ticket[
-        `posTerminal${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`
+        `posTerminal${payload.constants.fieldSeparator}${payload.constants.identifierSuffix}`
         // eslint-disable-next-line no-underscore-dangle
       ] = payload.terminal._identifier;
 
