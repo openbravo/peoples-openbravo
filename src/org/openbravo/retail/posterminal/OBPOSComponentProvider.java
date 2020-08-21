@@ -113,9 +113,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
-        "utils/cashManagementUtils", "utils/ticketUtils", "utils/ticketCloseUtils",
-        "utils/prepaymentUtils", "utils/servicesUtils", "utils/remoteUtils",
-        "components/keypadcoins", "data/dataordersave", "data/dataordertaxes",
+        "utils/cashManagementUtils", "utils/ticketUtils", "utils/prepaymentUtils",
+        "utils/servicesUtils", "utils/remoteUtils", "components/keypadcoins", "data/dataordertaxes",
         "data/datacustomersave", "data/datacustomeraddrsave", "components/modalreceipts",
         "components/modalorderselector", "components/modalcrossstoreselector",
         "components/storeinformation", "components/modalmultiorderslayaway",
@@ -370,9 +369,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/ticket/actions/RemovePromotion");
     appDependency.add("model/business-object/ticket/actions/ReactivateQuotation");
     appDependency.add("model/business-object/ticket/actions/RejectQuotation");
-    appDependency.add("model/business-object/ticket/actions/SyncTickets"); // TODO: Remove when
-                                                                           // close ticket actions
-                                                                           // are available
     appDependency.add("model/business-object/ticket/actions/CheckTicketForPayOpenTickets");
     appDependency.add("model/business-object/ticket/actions/RemovePayment");
 

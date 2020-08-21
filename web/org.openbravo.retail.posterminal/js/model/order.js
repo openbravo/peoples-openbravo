@@ -566,7 +566,11 @@
       }
     },
 
-    runCompleteTicket: async function(completeTicketAction, actionName) {
+    runCompleteTicket: async function(
+      completeTicketAction,
+      actionName,
+      callback
+    ) {
       const isMultiTicket =
         completeTicketAction === OB.App.State.Global.completeMultiTicket ||
         completeTicketAction === OB.App.State.Global.completeMultiCreditTicket;
@@ -660,7 +664,9 @@
                 actionName,
                 completeTicketExecution
               );
-              return;
+              if (callback) {
+                callback();
+              }
             }
           );
         }

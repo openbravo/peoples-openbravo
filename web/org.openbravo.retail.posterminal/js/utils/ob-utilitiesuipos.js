@@ -1725,3 +1725,30 @@ OB.UTIL.isCrossStoreLine = function(line) {
 OB.UTIL.isCrossStoreOrganization = function(organization) {
   return organization.id !== OB.MobileApp.model.get('terminal').organization;
 };
+
+OB.UTIL.getChangeLabelFromReceipt = function(receipt) {
+  const getChangeLabelFromChangePayments = changePayments => {
+    return changePayments
+      .map(function(item) {
+        return item.label;
+      })
+      .join(' + ');
+  };
+
+  const getChangeLabelFromPayments = payments => {
+    return payments
+      .filter(function(payment) {
+        return payment.get('paymentData') && payment.get('paymentData').label;
+      })
+      .map(function(payment) {
+        return payment.get('paymentData').label;
+      })
+      .join(' + ');
+  };
+
+  if (receipt.get('changePayments')) {
+    return getChangeLabelFromChangePayments(receipt.get('changePayments'));
+  } else {
+    return getChangeLabelFromPayments(receipt.get('payments'));
+  }
+};

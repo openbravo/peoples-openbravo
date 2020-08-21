@@ -207,6 +207,7 @@
     });
   };
 
+  OB.DATA = window.OB.DATA || {};
   OB.DATA.OrderTaxes = function(modelOfAnOrder) {
     modelOfAnOrder.calculateTaxes = function(callback) {
       calculateTaxes(this);
