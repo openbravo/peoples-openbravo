@@ -65,6 +65,67 @@
         errorConfirmation: 'OBPOS_CancelReplaceDeleteLine'
       });
     }
+
+    validateServices(ticket);
+  }
+
+  function validateServices(ticket) {
+    if (!ticket.hasServices) {
+      return;
+    }
+
+    const unGroupedServiceLines = ticket.lines.filter(
+      l =>
+        l.product.productType === 'S' &&
+        l.product.quantityRule === 'PP' &&
+        !l.groupService &&
+        l.relatedLines &&
+        l.relatedLines.length > 0 &&
+        l.isEditable
+    );
+
+    if (unGroupedServiceLines.length === 0) {
+      return;
+    }
+
+    const uniqueServices = unGroupedServiceLines.reduce(
+      (unique, item) =>
+        unique.some(
+          ul =>
+            ul.product.id + ul.relatedLines[0].orderlineId ===
+            item.product.id + item.relatedLines[0].orderlineId
+        )
+          ? unique
+          : [...unique, item],
+      []
+    );
+
+    const getServiceQty = service => {
+      return unGroupedServiceLines.filter(
+        l =>
+          l.product.id === service.product.id &&
+          l.relatedLines[0].orderlineId === service.relatedLines[0].orderlineId
+      ).length;
+    };
+
+    const getProductQty = service => {
+      const relatedLinesIds = service.relatedLines.map(rl => rl.orderlineId);
+      const product = ticket.lines.find(l => relatedLinesIds.includes(l));
+      return product ? product.qty : undefined;
+    };
+
+    const canNotDelete = uniqueServices.some(us => {
+      const serviceQty = getServiceQty(us);
+      const productQty = getProductQty(us);
+      return productQty && productQty !== serviceQty;
+    });
+
+    if (canNotDelete) {
+      throw new OB.App.Class.ActionCanceled({
+        title: 'OBPOS_LineCanNotBeDeleted',
+        errorConfirmation: 'OBPOS_AllServiceLineMustSelectToDelete'
+      });
+    }
   }
 
   function getRelatedServices(ticket, lineIds) {
