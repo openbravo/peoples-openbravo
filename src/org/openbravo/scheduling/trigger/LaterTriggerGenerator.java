@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,7 +38,7 @@ class LaterTriggerGenerator extends TriggerGenerator {
   }
 
   private Date getStartDate(TriggerData data) throws ParseException {
-    String dateTime = data.startDate + " " + data.startTime;
+    String dateTime = SchedulerTimeUtils.getCurrentDateTime(data.startDate, data.startTime);
     return SchedulerTimeUtils.timestamp(dateTime);
   }
 
