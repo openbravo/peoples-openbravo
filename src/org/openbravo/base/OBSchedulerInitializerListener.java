@@ -12,7 +12,6 @@ import static org.quartz.ee.servlet.QuartzInitializerListener.QUARTZ_FACTORY_KEY
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
