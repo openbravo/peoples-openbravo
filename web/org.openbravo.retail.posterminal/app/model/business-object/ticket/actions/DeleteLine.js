@@ -54,19 +54,25 @@
   }
 
   function checkRestrictions(ticket) {
+    checkIsEditable(ticket);
+    checkDeliveryQtyInCancelAndReplace(ticket);
+    validateServices(ticket);
+  }
+
+  function checkIsEditable(ticket) {
     if (ticket.isEditable === false) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_modalNoEditableBody'
       });
     }
+  }
 
+  function checkDeliveryQtyInCancelAndReplace(ticket) {
     if (ticket.replacedorder && ticket.lines.some(l => l.deliveredQuantity)) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_CancelReplaceDeleteLine'
       });
     }
-
-    validateServices(ticket);
   }
 
   function validateServices(ticket) {
