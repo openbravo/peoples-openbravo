@@ -33,7 +33,10 @@
       });
     },
     displayLogic: function() {
-      if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
+      if (
+        OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true) &&
+        OB.MobileApp.model.hasPermission('OBRDM_IssueSalesOrder', true)
+      ) {
         this.show();
       } else {
         this.hide();
