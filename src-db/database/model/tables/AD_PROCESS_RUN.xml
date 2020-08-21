@@ -99,5 +99,9 @@
       <index name="AD_PROCESS_RUN_STATUS" unique="false">
         <index-column name="STATUS"/>
       </index>
+      <index name="AD_PROCESS_RUN_SHOULD_BE_KILLED" unique="false">
+        <index-column name="SHOULD_BE_KILLED"/>
+        <whereClause><![CDATA[SHOULD_BE_KILLED='Y']]></whereClause>
+      </index>
     </table>
   </database>
