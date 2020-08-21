@@ -7488,13 +7488,8 @@
       var execution = OB.UTIL.ProcessController.start('addPayment');
       var me = this,
         payments,
-        i,
-        max,
-        p,
         order,
-        paymentSign,
-        finalCallback,
-        precision;
+        finalCallback;
 
       if (
         this.get('isPaid') &&
@@ -7544,8 +7539,10 @@
       };
 
       payments = this.get('payments');
-      precision = this.getPrecision(payment);
-      payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
+      payment.set(
+        'amount',
+        OB.DEC.toNumber(payment.get('amount'), this.getPrecision(payment))
+      );
       this.addPaymentRounding(
         payment,
         OB.MobileApp.model.paymentnames[payment.get('kind')]
@@ -7567,7 +7564,7 @@
               payments: payments,
               receipt: me
             },
-            function(args) {
+            async function(args) {
               var executeFinalCallback = function(saveChanges) {
                 if (saveChanges && !payment.get('changePayment')) {
                   order.adjustPayment();
@@ -7607,139 +7604,13 @@
                 executeFinalCallback(false);
                 return;
               }
-              // search for an existing payment only if is not a reverser payment.
-              if (!payment.get('reversedPaymentId')) {
-                if (
-                  !payment.get('paymentData') ||
-                  payment.get('paymentData').mergeable
-                ) {
-                  // search for an existing payment only if there is not paymentData info or if there is, when there is any other paymentData with same groupingCriteria.
-                  // this avoids to merge for example card payments of different cards.
-                  for (i = 0, max = payments.length; i < max; i++) {
-                    p = payments.at(i);
-                    if (
-                      p.get('kind') === payment.get('kind') &&
-                      !p.get('isPrePayment') &&
-                      !p.get('reversedPaymentId')
-                    ) {
-                      paymentSign =
-                        p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
-                      p.set(
-                        'amount',
-                        OB.DEC.add(
-                          OB.DEC.mul(
-                            payment.get('amount'),
-                            paymentSign,
-                            precision
-                          ),
-                          p.get('amount'),
-                          precision
-                        )
-                      );
-                      if (p.get('rate') && p.get('rate') !== '1') {
-                        p.set(
-                          'origAmount',
-                          OB.DEC.div(p.get('amount'), p.get('mulrate'))
-                        );
-                      } else {
-                        p.set('origAmount', p.get('amount'));
-                      }
-                      if (payment.has('paymentRoundingLine')) {
-                        p.set(
-                          'paymentRoundingLine',
-                          payment.get('paymentRoundingLine')
-                        );
-                        p.get('paymentRoundingLine').set(
-                          'roundedPaymentId',
-                          p.get('id')
-                        );
-                      }
-                      payment.set('date', new Date());
-                      executeFinalCallback(true);
-                      return;
-                    }
-                  }
-                } else {
-                  for (i = 0, max = payments.length; i < max; i++) {
-                    p = payments.at(i);
-                    if (
-                      p.get('kind') === payment.get('kind') &&
-                      p.get('paymentData') &&
-                      payment.get('paymentData') &&
-                      p.get('paymentData').groupingCriteria &&
-                      payment.get('paymentData').groupingCriteria &&
-                      p.get('paymentData').groupingCriteria ===
-                        payment.get('paymentData').groupingCriteria &&
-                      !p.get('reversedPaymentId') &&
-                      !p.get('isPrePayment')
-                    ) {
-                      paymentSign =
-                        p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
-                      p.set(
-                        'amount',
-                        OB.DEC.add(
-                          OB.DEC.mul(
-                            payment.get('amount'),
-                            paymentSign,
-                            precision
-                          ),
-                          p.get('amount'),
-                          precision
-                        )
-                      );
-                      if (p.get('rate') && p.get('rate') !== '1') {
-                        p.set(
-                          'origAmount',
-                          OB.DEC.div(p.get('amount'), p.get('mulrate'))
-                        );
-                      }
-                      payment.set('date', new Date());
-                      executeFinalCallback(true);
-                      return;
-                    }
-                  }
-                }
-              }
-              if (
-                payment.get('openDrawer') &&
-                (payment.get('allowOpenDrawer') || payment.get('isCash'))
-              ) {
-                order.set('openDrawer', payment.get('openDrawer'));
-              }
-              payment.set('date', new Date());
-              payment.set('id', OB.UTIL.get_UUID());
-              payment.set(
-                'oBPOSPOSTerminal',
-                OB.MobileApp.model.get('terminal').id
-              );
-              payment.set('orderGross', order.getGross());
-              payment.set('isPaid', order.get('isPaid'));
-              payment.set('isReturnOrder', order.getPaymentStatus().isNegative);
-              if (
-                order.get('doCancelAndReplace') &&
-                order.get('replacedorder')
-              ) {
-                // Added properties to payment related with cancel an replace order
-                payment.set(
-                  'cancelAndReplace',
-                  order.get('doCancelAndReplace')
-                );
-              } else if (order.get('cancelAndReplaceChangePending')) {
-                payment.set('cancelAndReplace', true);
-              }
 
-              payments.add(payment, {
-                at: payment.get('index')
+              await OB.App.State.Ticket.addPayment({
+                payments: OB.MobileApp.model.get('payments'),
+                terminal: OB.MobileApp.model.get('terminal'),
+                payment: JSON.parse(JSON.stringify(payment))
               });
-              // If there is a reversed payment set isReversed properties
-              if (payment.get('reversedPayment')) {
-                payment.get('reversedPayment').set('isReversed', true);
-              }
-              if (payment.has('paymentRoundingLine')) {
-                payment
-                  .get('paymentRoundingLine')
-                  .set('roundedPaymentId', payment.get('id'));
-              }
+
               executeFinalCallback(true);
               return;
             }
