@@ -1933,6 +1933,21 @@
     },
 
     deleteLinesFromOrder: function(selectedModels, callback) {
+      if (window.newDeleteLine) {
+        const lineIds = selectedModels.map(m => m.id);
+        OB.App.State.Ticket.deleteLine({ lineIds })
+          .catch(OB.App.View.ActionCanceledUIHandler.handle)
+          .then(() => {
+            if (callback) {
+              callback();
+            }
+          });
+        return;
+      }
+      var me = this,
+        pointofsale = OB.MobileApp.view.$.containerWindow.getRoot(),
+        i,
+        execution;
       var me = this,
         pointofsale = OB.MobileApp.view.$.containerWindow.getRoot(),
         i,

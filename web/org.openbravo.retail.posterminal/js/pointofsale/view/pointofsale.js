@@ -1673,15 +1673,8 @@ enyo.kind({
   },
   deleteLine: function(inSender, inEvent) {
     const selectedModels = inEvent.selectedReceiptLines;
-    if (window.newDeleteLine) {
-      const lineIds = selectedModels.map(m => m.id);
-      OB.App.State.Ticket.deleteLine({ lineIds }).catch(
-        OB.App.View.ActionCanceledUIHandler.handle
-      );
-    } else {
-      const receipt = this.model.get('order');
-      receipt.deleteLinesFromOrder(selectedModels, inEvent.callback);
-    }
+    const receipt = this.model.get('order');
+    receipt.deleteLinesFromOrder(selectedModels, inEvent.callback);
   },
   editLine: function(inSender, inEvent) {
     var receipt = this.model.get('order');
