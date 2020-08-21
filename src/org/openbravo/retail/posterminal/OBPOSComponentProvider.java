@@ -338,8 +338,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
     appDependency.add("model/business-object/document-sequence/actions/IncreaseSequence");
     appDependency.add("model/business-object/document-sequence/actions/DecreaseSequence");
 
-    appDependency.add("model/business-object/business-partner/SynchronizeBusinessPartner");
-    appDependency.add("model/business-object/business-partner/SynchronizeBusinessPartnerLocation");
+    appDependency.add("model/business-object/business-partner/actions/SynchronizeBusinessPartner");
+    appDependency.add("model/business-object/business-partner/actions/SynchronizeBusinessPartnerLocation");
 
     appDependency.add("model/business-object/safebox/SynchronizeCountSafeBox");
 
