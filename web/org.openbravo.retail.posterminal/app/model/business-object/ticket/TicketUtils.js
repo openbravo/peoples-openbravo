@@ -1022,6 +1022,12 @@
       return ticket;
     },
 
+    /**
+     * Given a ticket, returns true if there is at least one payment created in this session (so not coming from the backend)
+     *
+     * @param {object} ticket - A ticket
+     * @returns {object} - true if there is at least one payment created in the current session
+     */
     checkTicketPayments(ticket) {
       if (!ticket.receiptPayments) {
         return ticket.payments && ticket.payments.length > 0;
@@ -1029,6 +1035,13 @@
       return ticket.payments.length > ticket.receiptPayments.length;
     },
 
+    /**
+     * Given a ticket line, returns the discounted line price (so the price resulting from applying all current discounts)
+     *
+     * @param {object} line - A ticket line
+     * @param {ignoreExecutedAtTheEndPromo} boolean - if true, discounts executed at the end of the process are not considered for the calculation
+     * @returns {object} - The discounted line price
+     */
     getCurrentDiscountedLinePrice(line, ignoreExecutedAtTheEndPromo) {
       let currentDiscountedLinePrice;
       let allDiscountedAmt = OB.DEC.Zero;
@@ -1061,6 +1074,12 @@
       return currentDiscountedLinePrice;
     },
 
+    /**
+     * Given a ticket line, returns a new line with the discounted price correctly calculated
+     *
+     * @param {object} line - A ticket line
+     * @returns {object} - A new line with the discounted price correctly calculated
+     */
     calculateDiscountedLinePrice(line) {
       const newLine = { ...line };
       if (line.qty === 0) {
