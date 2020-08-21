@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,10 @@ public class SchedulerTimeUtils {
   private static final Logger log = LogManager.getLogger();
   private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter
       .ofPattern("dd-MM-yyyy HH:mm:ss");
+  private static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter
+      .ofPattern("dd-MM-yyyy");
+  private static final DateTimeFormatter DEFAULT_TIME_FORMATTER = DateTimeFormatter
+      .ofPattern("HH:mm:ss");
 
   private SchedulerTimeUtils() {
   }
@@ -44,7 +48,8 @@ public class SchedulerTimeUtils {
    * Utility method to parse a date with time String into a {@link Date}.
    * 
    * @param dateTime
-   *          A date with time as a String. Expected format: 'dd-MM-yyyy HH:mm:ss'
+   *          A date with time as a String. Expected format: 'dd-MM-yyyy HH:mm:ss' If missing,
+   *          current date and time is returned.
    * 
    * @return a {@link Date} with the provided date and time.
    * 
@@ -52,7 +57,12 @@ public class SchedulerTimeUtils {
    *           if the provided date and time can not be parsed to create the {@link Date} instance.
    */
   public static Date timestamp(String dateTime) throws ParseException {
-    LocalDateTime localDateTime = parse(dateTime);
+    LocalDateTime localDateTime;
+    if (dateTime.isEmpty()) {
+      localDateTime = LocalDateTime.now();
+    } else {
+      localDateTime = parse(dateTime);
+    }
     try {
       return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     } catch (Exception ex) {
@@ -80,6 +90,31 @@ public class SchedulerTimeUtils {
       log.error("Could not parse date {}", dateTime, ex);
       throw new ParseException("Could not parse date " + dateTime, -1);
     }
+  }
+
+  /**
+   * Returns current DateTime as formatted String to be used in the parse/timestamp method If date
+   * or time is missing, it will assume now for that part, if both are present it will keep them
+   * 
+   * @param date
+   *          Date in format dd-MM-yyyy
+   * @param time
+   *          Time in format HH:mm:ss
+   * @return Current DateTime as String formatted as "dd-MM-yyyy HH:mm:ss", if any parameter
+   *         missing, it will assume current
+   */
+  public static String getCurrentDateTime(String date, String time) {
+    String resultDate = date;
+    if (resultDate.isEmpty()) {
+      resultDate = LocalDateTime.now().format(DEFAULT_DATE_FORMATTER);
+    }
+
+    String resultTime = time;
+    if (resultTime.isEmpty()) {
+      resultTime = LocalDateTime.now().format(DEFAULT_TIME_FORMATTER);
+    }
+
+    return resultDate + " " + resultTime;
   }
 
   /**
