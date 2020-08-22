@@ -33,6 +33,7 @@
     return newTicket;
   });
 
+  // prepares the initial payload information and checks the restrictions
   OB.App.StateAPI.Ticket.deleteLine.addActionPreparation(
     async (ticket, payload) => {
       let newPayload = { ...payload };
@@ -40,7 +41,20 @@
       newPayload = prepareConfiguration(newPayload);
       checkRestrictions(ticket, newPayload);
       return newPayload;
-    }
+    },
+    async (ticket, payload) => payload,
+    100
+  );
+
+  // check the approvals
+  OB.App.StateAPI.Ticket.deleteLine.addActionPreparation(
+    async (ticket, payload) => {
+      const newPayload = { ...payload };
+      const payloadWithApprovals = await checkApprovals(ticket, newPayload);
+      return payloadWithApprovals;
+    },
+    async (ticket, payload) => payload,
+    200
   );
 
   function prepareConfiguration(payload) {
@@ -53,8 +67,9 @@
     return newPayload;
   }
 
-  function checkRestrictions(ticket) {
+  function checkRestrictions(ticket, payload) {
     checkIsEditable(ticket);
+    checkNonDeletableLines(ticket, payload);
     checkDeliveryQtyInCancelAndReplace(ticket);
     validateServices(ticket);
   }
@@ -63,6 +78,20 @@
     if (ticket.isEditable === false) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_modalNoEditableBody'
+      });
+    }
+  }
+
+  function checkNonDeletableLines(ticket, payload) {
+    const { lineIds } = payload;
+    const nonDeletableLine = ticket.lines.find(
+      l => !l.isDeletable && lineIds.includes(l.id)
+    );
+    if (nonDeletableLine) {
+      throw new OB.App.Class.ActionCanceled({
+        warningMsg: 'OBPOS_NotDeletableLine',
+        // eslint-disable-next-line no-underscore-dangle
+        messageParams: [nonDeletableLine.product._identifier]
       });
     }
   }
@@ -132,6 +161,23 @@
         errorConfirmation: 'OBPOS_AllServiceLineMustSelectToDelete'
       });
     }
+  }
+
+  async function checkApprovals(ticket, payload) {
+    const { lineIds } = payload;
+    let newPayload = { ...payload };
+
+    const approvalNeeded = ticket.lines.some(
+      l => !l.forceDeleteLine && lineIds.includes(l.id)
+    );
+
+    if (approvalNeeded) {
+      newPayload = await OB.App.Security.requestApprovalForAction(
+        'OBPOS_approval.deleteLine',
+        newPayload
+      );
+    }
+    return newPayload;
   }
 
   function getRelatedServices(ticket, lineIds) {
