@@ -217,8 +217,10 @@
           ...l,
           obposQtyDeleted: l.qty,
           qty: 0,
-          grossAmount: 0,
-          netAmount: 0,
+          netUnitPrice: 0,
+          grossUnitPrice: 0,
+          netUnitAmount: 0,
+          grossUnitAmount: 0,
           taxes: { ...l.taxes },
           promotions: []
         };
