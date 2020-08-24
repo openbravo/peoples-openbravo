@@ -537,7 +537,6 @@
         paymentTypes,
         paymentCash
       );
-
       // calculate the reversed payments amount
       const reversedPaymentsAmount = this.ticket.payments
         .filter(p => !p.isPrePayment && p.isReversePayment)
@@ -622,7 +621,7 @@
         this.ticket.change = OB.DEC.Zero;
       }
 
-      if (cashPaid && cashPayment) {
+      if (cashPaid != null && cashPayment) {
         this.ticket.payments = this.ticket.payments.map(p => {
           if (p.kind !== cashPayment.kind) {
             return p;
@@ -711,7 +710,7 @@
     getCashInfo(paymentTypes, paymentCash) {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
       return this.ticket.payments
-        .filter(p => !p.isPrePayment)
+        .filter(p => !p.isPrePayment && !p.isReversePayment)
         .reduce(
           (c, p) => {
             let property;
@@ -1342,6 +1341,9 @@
           newTicket.cancelAndReplaceChangePending;
         if (newPayment.reversedPayment) {
           newPayment.reversedPayment.isReversed = true;
+          newTicket.payments.find(
+            p => p.paymentId === newPayment.reversedPayment.paymentId
+          ).isReversed = true;
         }
         if (newPayment.paymentRoundingLine) {
           newPayment.paymentRoundingLine.roundedPaymentId = newPayment.id;

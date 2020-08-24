@@ -7548,10 +7548,6 @@
         OB.MobileApp.model.paymentnames[payment.get('kind')]
       );
 
-      if (this.get('prepaymentChangeMode')) {
-        this.unset('prepaymentChangeMode');
-        this.adjustPayment();
-      }
       OB.UTIL.PrepaymentUtils.managePrepaymentChange(
         this,
         payment,
@@ -7567,7 +7563,7 @@
             async function(args) {
               var executeFinalCallback = function(saveChanges) {
                 if (saveChanges && !payment.get('changePayment')) {
-                  order.adjustPayment();
+                  order.trigger('updatePending');
                   order.trigger('displayTotal');
                 }
                 OB.UTIL.HookManager.executeHooks(
