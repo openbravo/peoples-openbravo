@@ -4143,315 +4143,46 @@
       callback,
       cancelCallback
     ) {
-      var executeAddProduct,
-        addProdCharsToProduct,
-        finalCallback,
-        me = this,
-        attributeSearchAllowed = OB.MobileApp.model.hasPermission(
-          'OBPOS_EnableSupportForProductAttributes',
-          true
-        );
-      finalCallback = function(success, orderline) {
-        if (callback) {
-          callback(success, orderline);
-        }
+      const currentReceipt = OB.MobileApp.model.receipt;
+      const beforeAddTicket = OB.App.State.getState().Ticket;
+      const { qtyEdition } = OB.Format.formats;
+      const extraData = {
+        discountRules: OB.Discounts.Pos.ruleImpls,
+        taxRules: OB.Taxes.Pos.ruleImpls,
+        bpSets: OB.Discounts.Pos.bpSets,
+        qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1,
+        terminal: OB.MobileApp.model.get('terminal'),
+        store: OB.MobileApp.model.get('store'),
+        warehouses: OB.MobileApp.model.get('warehouses'),
+        deliveryPaymentMode: OB.MobileApp.model.get('deliveryPaymentMode'),
+        payments: OB.MobileApp.model.get('payments'),
+        paymentcash: OB.MobileApp.model.get('paymentcash')
       };
 
-      // do not allow generic products to be added to the receipt
-      if (p && p.get('isGeneric')) {
-        OB.UTIL.showI18NWarning('OBPOS_GenericNotAllowed');
-        finalCallback(false, null);
-        return;
-      }
-      if (
-        options &&
-        options.line &&
-        options.line.get('replacedorderline') &&
-        options.line.get('qty') < 0
-      ) {
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBMOBC_Error'),
-          OB.I18N.getLabel('OBPOS_CancelReplaceQtyEditReturn')
-        );
-        finalCallback(false, null);
-        return;
-      }
-      if (
-        OB.MobileApp.model.get('terminal').businessPartner ===
-          me.get('bp').get('id') &&
-        p &&
-        p.has('oBPOSAllowAnonymousSale') &&
-        !p.get('oBPOSAllowAnonymousSale')
-      ) {
-        if (me && me.get('deferredOrder')) {
-          me.unset('deferredOrder', {
-            silent: true
-          });
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowedDeferredSale')
-          );
-        } else {
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_AnonymousSaleNotAllowed')
-          );
-        }
-        finalCallback(false, null);
-        return;
-      }
-
-      const addProductBOMToProduct = async function() {
-        const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
-          new OB.App.Class.Criteria().criterion('product', p.id).build()
-        );
-
-        if (productBOM.length === 0) {
-          return;
-        }
-
-        if (productBOM.find(bomLine => !bomLine.bomprice)) {
-          const title = OB.I18N.getLabel('OBPOS_TaxNotFound_Header');
-          const error = OB.I18N.getLabel('OBPOS_BOM_NoPrice');
-          OB.error(title + ':' + error);
-          OB.MobileApp.view.$.containerWindow.getRoot().doShowPopup({
-            popup: 'OB_UI_MessageDialog',
-            args: {
-              header: title,
-              message: error
-            }
-          });
-          finalCallback(false, null);
-          throw error;
-        }
-
-        p.set(
-          'productBOM',
-          productBOM.map(bomLine => {
-            return {
-              grossUnitAmount: me.get('priceIncludesTax')
-                ? OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity)
-                : undefined,
-              netUnitAmount: me.get('priceIncludesTax')
-                ? undefined
-                : OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
-              qty: bomLine.bomquantity,
-              product: {
-                id: bomLine.bomproduct,
-                taxCategory: bomLine.bomtaxcategory
-              }
-            };
-          })
-        );
-      };
-
-      const addProductServiceLinkedToProduct = async function() {
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          const promise = new Promise((resolve, reject) => {
-            OB.Dal.find(
-              OB.Model.ProductServiceLinked,
-              {
-                product: p.id,
-                remoteFilters: [
-                  {
-                    columns: ['product'],
-                    operator: 'equals',
-                    value: p.id
-                  }
-                ]
-              },
-              resolve
-            );
-          });
-          const productServiceLinked = await promise;
-          if (productServiceLinked.length > 0) {
-            p.set('productServiceLinked', productServiceLinked.models);
-          }
-        } else {
-          const productServiceLinked = await OB.App.MasterdataModels.ProductServiceLinked.find(
-            new OB.App.Class.Criteria().criterion('product', p.id).build()
-          );
-          if (productServiceLinked.length > 0) {
-            p.set(
-              'productServiceLinked',
-              productServiceLinked.map(productServiceLink =>
-                OB.Dal.transform(
-                  OB.Model.ProductServiceLinked,
-                  productServiceLink
-                )
-              )
-            );
-          }
-        }
-      };
-
-      addProdCharsToProduct = async function(
-        productWithChars,
-        addProdCharCallback
-      ) {
-        //Add prod char information to product object
-        if (
-          !productWithChars.get('productCharacteristics') &&
-          productWithChars.get('characteristicDescription') &&
-          !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
-        ) {
-          const criteria = new OB.App.Class.Criteria()
-            .criterion('product', productWithChars.get('id'))
-            .build();
-          try {
-            const productCharacteristics = await OB.App.MasterdataModels.ProductCharacteristicValue.find(
-              criteria
-            );
-            productWithChars.set(
-              'productCharacteristics',
-              productCharacteristics
-            );
-            addProdCharCallback();
-          } catch (error) {
-            OB.UTIL.showError(error);
-          }
-        } else {
-          addProdCharCallback();
-        }
-      };
-
-      var context = this;
-
-      // In case product is BOM and it doesn't have BOM information yet, add it
-      if (
-        OB.Taxes.Pos.taxCategoryBOM.find(
-          taxCategory => taxCategory.id === p.get('taxCategory')
-        ) &&
-        !p.has('productBOM')
-      ) {
-        await addProductBOMToProduct();
-      }
-
-      // In case product is Service with modify tax enabled and it doesn't have ProductServiceLinked information yet, add it
-      if (p.get('modifyTax') && !p.has('productServiceLinked')) {
-        await addProductServiceLinkedToProduct();
-      }
-
-      var productWithChars = OB.UTIL.clone(p);
-      addProdCharsToProduct(productWithChars, function() {
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_AddProductToOrder',
+      OB.App.State.Ticket.addProduct({
+        products: [
           {
-            receipt: context,
-            productToAdd: productWithChars,
-            qtyToAdd: qty,
-            options: options,
-            attrs: attrs
-          },
-          function(args) {
-            if (args && args.receipt && args.receipt.get('deferredOrder')) {
-              args.receipt.unset('deferredOrder', {
-                silent: true
-              });
-            }
-            if (args && args.useLines) {
-              me._drawLinesDistribution(args);
-              finalCallback(false, null);
-              return;
-            }
-            if (OB.UTIL.isNullOrUndefined(args.attrs)) {
-              args.attrs = {};
-            }
-            args.attrs.hasMandatoryServices = false;
-            args.attrs.hasRelatedServices = false;
-            executeAddProduct = function() {
-              var isQuotationAndAttributeAllowed =
-                args.receipt.get('isQuotation') &&
-                OB.MobileApp.model.hasPermission(
-                  'OBPOS_AskForAttributesWhenCreatingQuotation',
-                  true
-                );
-              if (
-                (!args || !args.options || !args.options.line) &&
-                attributeSearchAllowed &&
-                productWithChars.get('hasAttributes') &&
-                qty >= 1 &&
-                (!args.receipt.get('isQuotation') ||
-                  isQuotationAndAttributeAllowed)
-              ) {
-                OB.MobileApp.view.waterfall('onShowPopup', {
-                  popup: 'modalProductAttribute',
-                  args: {
-                    callback: function(attributeValue) {
-                      if (!OB.UTIL.isNullOrUndefined(attributeValue)) {
-                        if (_.isEmpty(attributeValue)) {
-                          // the attributes for layaways accepts empty values, but for manage later easy to be null instead ""
-                          attributeValue = null;
-                        }
-                        attrs.attributeValue = attributeValue;
-                        me._addProduct(
-                          productWithChars,
-                          qty,
-                          options,
-                          attrs,
-                          function(success, orderline) {
-                            finalCallback(success, orderline);
-                          }
-                        );
-                      } else {
-                        finalCallback(false, null);
-                      }
-                    },
-                    options: options
-                  }
-                });
-              } else {
-                me._addProduct(productWithChars, qty, options, attrs, function(
-                  success,
-                  orderline
-                ) {
-                  finalCallback(success, orderline);
-                });
-              }
-            };
-
-            if (
-              (!args.options || !args.options.isSilentAddProduct) &&
-              args.productToAdd.get('productType') !== 'S' &&
-              (!args.attrs || !args.attrs.originalOrderLineId)
-            ) {
-              var productId =
-                args.productToAdd.get('isNew') &&
-                OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
-                  ? null
-                  : args.productToAdd.get('forceFilterId')
-                  ? args.productToAdd.get('forceFilterId')
-                  : args.productToAdd.id;
-              args.receipt._loadRelatedServices(
-                args.productToAdd.get('productType'),
-                productId,
-                args.productToAdd.get('productCategory'),
-                function(data) {
-                  if (data) {
-                    if (data.hasservices) {
-                      args.attrs.hasRelatedServices = true;
-                    }
-                    if (data.hasmandatoryservices) {
-                      args.attrs.hasMandatoryServices = true;
-                    }
-                  }
-                  executeAddProduct();
-                  if (
-                    !OB.UTIL.isNullOrUndefined(args.attrs) &&
-                    args.attrs.cancelOperation
-                  ) {
-                    if (cancelCallback instanceof Function) {
-                      cancelCallback();
-                    }
-                  }
-                }
-              );
-            } else {
-              executeAddProduct();
-            }
+            product: p.toJSON(),
+            qty: qty,
+            options,
+            attrs
           }
-        );
-      });
+        ],
+        extraData
+      })
+        .then(() => {
+          if (callback) {
+            const afterAddTicket = OB.App.State.getState().Ticket;
+            const newLine = afterAddTicket.lines.find(
+              nl => !beforeAddTicket.lines.some(l => l.id === nl.id)
+            );
+            callback(true, currentReceipt.get('lines').get(newLine.id));
+          }
+        })
+        .catch(error => {
+          OB.App.View.ActionCanceledUIHandler.handle(error);
+          cancelCallback();
+        });
     },
 
     /**
