@@ -26,6 +26,11 @@
     getName() {
       return 'BusinessPartner';
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    isRemote() {
+      return OB.App.Security.hasPermission('OBPOS_remote.customer');
+    }
   }
   OB.App.MasterdataController.registerModel(BusinessPartner);
 })();

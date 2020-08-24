@@ -22,6 +22,11 @@
     getName() {
       return 'ServiceProductCategory';
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    isRemote() {
+      return OB.App.Security.hasPermission('OBPOS_remote.product');
+    }
   }
   OB.App.MasterdataController.registerModel(ServiceProductCategory);
 })();

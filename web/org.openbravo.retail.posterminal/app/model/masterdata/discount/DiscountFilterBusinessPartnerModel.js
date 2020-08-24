@@ -28,6 +28,11 @@
     getName() {
       return 'DiscountFilterBusinessPartner';
     }
+
+    // eslint-disable-next-line class-methods-use-this
+    isRemote() {
+      return OB.App.Security.hasPermission('OBPOS_remote.discount.bp');
+    }
   }
 
   OB.App.MasterdataController.registerModel(DiscountFilterBusinessPartner);
