@@ -1948,10 +1948,6 @@
         pointofsale = OB.MobileApp.view.$.containerWindow.getRoot(),
         i,
         execution;
-      var me = this,
-        pointofsale = OB.MobileApp.view.$.containerWindow.getRoot(),
-        i,
-        execution;
 
       function postDeleteLine() {
         var cleanReceipt,
