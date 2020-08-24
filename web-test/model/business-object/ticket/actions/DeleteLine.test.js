@@ -66,12 +66,28 @@ Ticket = deepfreeze({
     ...Ticket.empty,
     hasServices: true,
     lines: [
-      { id: 'l1' },
-      { id: 's1', relatedLines: [{ orderlineId: 'l1' }] },
-      { id: 'l2' },
-      { id: 's2', relatedLines: [{ orderlineId: 'l2' }] },
-      { id: 's2.1', relatedLines: [{ orderlineId: 's2' }] },
-      { id: 's2.1.1', relatedLines: [{ orderlineId: 's2.1' }] }
+      { id: 'l1', product: { id: 'p1' } },
+      {
+        id: 's1',
+        product: { id: 'sp1' },
+        relatedLines: [{ orderlineId: 'l1' }]
+      },
+      { id: 'l2', product: { id: 'p2' } },
+      {
+        id: 's2',
+        product: { id: 'sp2' },
+        relatedLines: [{ orderlineId: 'l2' }]
+      },
+      {
+        id: 's2.1',
+        product: { id: 'sp3' },
+        relatedLines: [{ orderlineId: 's2' }]
+      },
+      {
+        id: 's2.1.1',
+        product: { id: 'sp4' },
+        relatedLines: [{ orderlineId: 's2.1' }]
+      }
     ]
   }
 });
@@ -110,8 +126,10 @@ describe('Ticket.deleteLine action', () => {
         {
           obposQtyDeleted: 2,
           qty: 0,
-          grossAmount: 0,
-          netAmount: 0,
+          netUnitPrice: 0,
+          grossUnitPrice: 0,
+          netUnitAmount: 0,
+          grossUnitAmount: 0,
           product: { id: 'p2' },
           taxes: { t1: { net: 0, amount: 0, rate: 10 } },
           promotions: []

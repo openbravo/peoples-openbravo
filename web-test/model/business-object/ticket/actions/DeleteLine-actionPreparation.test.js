@@ -53,6 +53,7 @@ const {
   executeActionPreparations
 } = require('../../../../../../org.openbravo.mobile.core/web-test/base/state-utils');
 
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/exception/TranslatableError');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionSilentlyCanceled');
 
@@ -72,13 +73,23 @@ Ticket = {
 
   simple: {
     ...Ticket.empty,
-    lines: [{ id: 'l1' }]
+    lines: [
+      { id: 'l1', product: { id: 'p1', _identifier: 'P1' }, isDeletable: true }
+    ]
   },
 
   cancelAndReplace: {
     ...Ticket.empty,
     replacedorder: true,
-    lines: [{ id: 'l1', qty: 10, deliveredQuantity: 5 }]
+    lines: [
+      {
+        id: 'l1',
+        product: { id: 'p1', _identifier: 'P1' },
+        qty: 10,
+        deliveredQuantity: 5,
+        isDeletable: true
+      }
+    ]
   }
 };
 
@@ -116,6 +127,9 @@ describe('deleteLine preparation', () => {
         OB.App.Security.hasPermission.mockImplementation(p =>
           p === preference ? set : undefined
         );
+        OB.App.Security.requestApprovalForAction.mockImplementation(
+          (property, payload) => payload
+        );
 
         const payload = await prepareAction({
           lineIds: ['l1']
@@ -138,6 +152,7 @@ describe('deleteLine preparation', () => {
             { ...Ticket.simple, isEditable: false }
           ),
         {
+          title: 'OBPOS_modalNoEditableHeader',
           errorConfirmation: 'OBPOS_modalNoEditableBody'
         }
       );
