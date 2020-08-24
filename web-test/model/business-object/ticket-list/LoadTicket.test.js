@@ -6,8 +6,9 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+/* global global */
 
-OB = { App: { Class: {} } };
+global.OB = { App: { Class: {} } };
 const deepfreeze = require('deepfreeze');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');

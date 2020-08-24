@@ -8,7 +8,7 @@
  */
 /*global global*/
 
-OB = { App: { Class: {} } };
+global.OB = { App: { Class: {} } };
 
 global.lodash = require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const deepfreeze = require('deepfreeze');
