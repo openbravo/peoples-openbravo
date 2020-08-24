@@ -1939,7 +1939,7 @@
           .catch(OB.App.View.ActionCanceledUIHandler.handle)
           .then(() => {
             if (callback) {
-              callback();
+              callback(true);
             }
           });
         return;
