@@ -112,33 +112,38 @@ enyo.kind({
               kind: 'OB.UI.Button',
               i18nContent: 'OBMOBC_LblUndo',
               classes: 'obObposPointOfSaleUiScan-msgaction-undobutton',
-              tap: function() {
-                var me = this,
-                  undoaction = this.undoaction;
-                this.setDisabled(true);
-                OB.UTIL.HookManager.executeHooks(
-                  'OBPOS_PreUndo_' + undoaction,
-                  {
-                    undoBtn: me,
-                    order: OB.MobileApp.model.receipt,
-                    selectedLines: OB.MobileApp.model.receipt.get('undo').lines
-                  },
-                  function(args) {
-                    if (!args.cancellation && me.undoclick) {
-                      me.undoclick();
-                    } else {
-                      me.setDisabled(false);
-                    }
-                    OB.UTIL.HookManager.executeHooks(
-                      'OBPOS_PostUndo_' + undoaction,
-                      {
-                        undoBtn: me,
-                        order: OB.MobileApp.model.receipt,
-                        selectedLines: args.selectedLines
+              tap: async function() {
+                if (OB.App.State.Ticket.isUndoAvailable()) {
+                  await OB.App.State.Ticket.undo();
+                } else {
+                  var me = this,
+                    undoaction = this.undoaction;
+                  this.setDisabled(true);
+                  OB.UTIL.HookManager.executeHooks(
+                    'OBPOS_PreUndo_' + undoaction,
+                    {
+                      undoBtn: me,
+                      order: OB.MobileApp.model.receipt,
+                      selectedLines: OB.MobileApp.model.receipt.get('undo')
+                        .lines
+                    },
+                    function(args) {
+                      if (!args.cancellation && me.undoclick) {
+                        me.undoclick();
+                      } else {
+                        me.setDisabled(false);
                       }
-                    );
-                  }
-                );
+                      OB.UTIL.HookManager.executeHooks(
+                        'OBPOS_PostUndo_' + undoaction,
+                        {
+                          undoBtn: me,
+                          order: OB.MobileApp.model.receipt,
+                          selectedLines: args.selectedLines
+                        }
+                      );
+                    }
+                  );
+                }
               },
               init: function(model) {
                 this.model = model;
@@ -170,12 +175,15 @@ enyo.kind({
   manageUndo: function() {
     var undoaction = this.receipt.get('undo');
 
-    if (undoaction) {
+    if (undoaction || OB.App.State.Ticket.isUndoAvailable()) {
       this.$.msgwelcome.hide();
       this.$.msgaction.show();
-      this.$.txtaction.setContent(undoaction.text);
-      this.$.undobutton.undoaction = undoaction.action;
-      this.$.undobutton.undoclick = undoaction.undo;
+      if (undoaction) {
+        this.$.txtaction.setContent(undoaction.text);
+        // TODO: Add undo action here
+        this.$.undobutton.undoaction = undoaction.action;
+        this.$.undobutton.undoclick = undoaction.undo;
+      }
       this.$.undobutton.setDisabled(false);
     } else {
       this.$.msgaction.hide();
