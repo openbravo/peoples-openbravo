@@ -77,6 +77,7 @@
   function checkIsEditable(ticket) {
     if (ticket.isEditable === false) {
       throw new OB.App.Class.ActionCanceled({
+        title: 'OBPOS_modalNoEditableHeader',
         errorConfirmation: 'OBPOS_modalNoEditableBody'
       });
     }
