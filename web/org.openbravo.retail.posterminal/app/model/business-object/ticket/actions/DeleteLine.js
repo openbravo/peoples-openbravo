@@ -14,13 +14,15 @@
 
   OB.App.StateAPI.Ticket.registerAction('deleteLine', (ticket, payload) => {
     const { lineIds } = payload;
+    const newTicket = { ...ticket };
+
+    // Check if it is necessary to restore the tax category of related products
+    newTicket.lines = restoreTaxCategoryOfRelatedProducts(newTicket, lineIds);
 
     const linesToDelete = [...lineIds, ...getRelatedServices(ticket, lineIds)];
-
-    const newTicket = {
-      ...ticket,
-      lines: ticket.lines.filter(l => !linesToDelete.includes(l.id))
-    };
+    newTicket.lines = newTicket.lines.filter(
+      l => !linesToDelete.includes(l.id)
+    );
 
     const conf = payload.config || {};
 
@@ -189,8 +191,6 @@
       return [];
     }
 
-    // TODO: Check if it is necessary to restore the tax category of related products
-
     let relatedLinesToRemove = ticket.lines
       .filter(
         l =>
@@ -237,5 +237,41 @@
         });
         return deletedLine;
       });
+  }
+
+  function restoreTaxCategoryOfRelatedProducts(ticket, lineIds) {
+    if (!ticket.hasServices) {
+      return ticket.lines;
+    }
+
+    const relatedLinesOfDeletedLines = ticket.lines
+      .filter(l => lineIds.includes(l.id) && l.product.productServiceLinked)
+      .map(l => l.relatedLines)
+      .flat();
+
+    if (relatedLinesOfDeletedLines.length === 0) {
+      return ticket.lines;
+    }
+
+    return ticket.lines.map(l => {
+      const relatedLine = relatedLinesOfDeletedLines.some(
+        rl => l.id === rl.orderlineId
+      );
+      const price = l.previousPrice || l.previousBaseGrossUnitPrice;
+      const { previousTaxCategory } = l.product;
+      if (relatedLine && price && previousTaxCategory) {
+        return {
+          ...l,
+          baseGrossUnitPrice: price,
+          previousBaseGrossUnitPrice: null,
+          product: {
+            ...l.product,
+            taxCategory: previousTaxCategory,
+            previousTaxCategory: null
+          }
+        };
+      }
+      return l;
+    });
   }
 })();
