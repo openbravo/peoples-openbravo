@@ -217,6 +217,14 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     try {
       log.debug("Misfired process {}, start time {}.",
           trigger.getJobDataMap().getString(Process.PROCESS_NAME), trigger.getStartTime());
+
+      final String executionId = SequenceIdData.getUUID();
+      ProcessBundle bundle = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
+      ProcessContext ctx = bundle.getContext();
+
+      ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
+          ctx.getUser(), executionId, Process.MISFIRED, null, null, bundle.getProcessRequestId(),
+          null);
     } catch (Exception e) {
       // ignore: exception while trying to log
     }

@@ -20,6 +20,7 @@ package org.openbravo.scheduling;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -94,6 +95,8 @@ public class ProcessBundle implements Serializable {
   private Channel channel;
 
   private GroupInfo groupInfo;
+
+  private List<String> bannedClusterInstanceNames;
 
   static Logger log = LogManager.getLogger();
 
@@ -275,6 +278,10 @@ public class ProcessBundle implements Serializable {
     return this.groupInfo;
   }
 
+  public List<String> getBannedClusterInstanceNames() {
+    return bannedClusterInstanceNames;
+  }
+
   public void setProcessRunId(String strProcessRunId) {
     this.processRunId = strProcessRunId;
   }
@@ -386,7 +393,14 @@ public class ProcessBundle implements Serializable {
     setConnection(conn);
     setLog(new ProcessLogger(conn));
 
+    setBannedClusterInstances();
+
     return this;
+  }
+
+  private void setBannedClusterInstances() {
+    ClusterInstanceProcessAccess clusterAccess = new ClusterInstanceProcessAccess();
+    bannedClusterInstanceNames = clusterAccess.getBannedClusterInstanceNames(processId);
   }
 
   /**

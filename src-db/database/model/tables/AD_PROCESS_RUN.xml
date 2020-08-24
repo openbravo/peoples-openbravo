@@ -96,12 +96,12 @@
         <index-column name="AD_PROCESS_RUN_GROUP_ID"/>
         <whereClause><![CDATA[AD_PROCESS_RUN_GROUP_ID IS NOT NULL]]></whereClause>
       </index>
-      <index name="AD_PROCESS_RUN_STATUS" unique="false">
-        <index-column name="STATUS"/>
-      </index>
-      <index name="AD_PROCESS_RUN_SHOULD_BE_KILLED" unique="false">
+      <index name="AD_PROCESS_RUN_OULD_BE_KILLED" unique="false">
         <index-column name="SHOULD_BE_KILLED"/>
         <whereClause><![CDATA[SHOULD_BE_KILLED='Y']]></whereClause>
+      </index>
+      <index name="AD_PROCESS_RUN_STATUS" unique="false">
+        <index-column name="STATUS"/>
       </index>
     </table>
   </database>

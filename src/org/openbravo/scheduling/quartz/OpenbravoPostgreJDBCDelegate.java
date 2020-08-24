@@ -25,7 +25,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
+import org.openbravo.scheduling.ClusterInstanceProcessAccess;
+import org.quartz.TriggerKey;
 import org.quartz.impl.jdbcjobstore.CronTriggerPersistenceDelegate;
 import org.quartz.impl.jdbcjobstore.PostgreSQLDelegate;
 import org.quartz.impl.jdbcjobstore.SimpleTriggerPersistenceDelegate;
@@ -103,4 +106,15 @@ public class OpenbravoPostgreJDBCDelegate extends PostgreSQLDelegate
       closeResultSet(rs);
     }
   }
+
+  @Override
+  public List<TriggerKey> selectTriggerToAcquire(Connection conn, long noLaterThan,
+      long noEarlierThan, int maxCount) throws SQLException {
+    List<TriggerKey> triggerKeys = super.selectTriggerToAcquire(conn, noLaterThan, noEarlierThan,
+        maxCount);
+    ClusterInstanceProcessAccess instanceProcessAccess = new ClusterInstanceProcessAccess();
+    return instanceProcessAccess.removeProcessesBannedFromCurrentClusterInstance(this, conn,
+        triggerKeys);
+  }
+
 }
