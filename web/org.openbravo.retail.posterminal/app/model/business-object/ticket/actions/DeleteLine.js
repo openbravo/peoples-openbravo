@@ -71,7 +71,7 @@
     checkIsEditable(ticket);
     checkNonDeletableLines(ticket, payload);
     checkDeliveryQtyInCancelAndReplace(ticket);
-    validateServices(ticket);
+    validateServices(ticket, payload);
   }
 
   function checkIsEditable(ticket) {
@@ -104,13 +104,15 @@
     }
   }
 
-  function validateServices(ticket) {
+  function validateServices(ticket, payload) {
     if (!ticket.hasServices) {
       return;
     }
 
+    const { lineIds } = payload;
     const unGroupedServiceLines = ticket.lines.filter(
       l =>
+        lineIds.includes(l.id) &&
         l.product.productType === 'S' &&
         l.product.quantityRule === 'PP' &&
         !l.groupService &&
@@ -145,7 +147,7 @@
 
     const getProductQty = service => {
       const relatedLinesIds = service.relatedLines.map(rl => rl.orderlineId);
-      const product = ticket.lines.find(l => relatedLinesIds.includes(l));
+      const product = ticket.lines.find(l => relatedLinesIds.includes(l.id));
       return product ? product.qty : undefined;
     };
 
