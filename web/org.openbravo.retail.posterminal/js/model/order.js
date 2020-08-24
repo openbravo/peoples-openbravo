@@ -1934,10 +1934,12 @@
 
     deleteLinesFromOrder: function(selectedModels, callback) {
       if (window.newDeleteLine) {
+        const currentReceipt = OB.MobileApp.model.receipt;
         const lineIds = selectedModels.map(m => m.id);
         OB.App.State.Ticket.deleteLine({ lineIds })
           .catch(OB.App.View.ActionCanceledUIHandler.handle)
           .then(() => {
+            currentReceipt.trigger('paintTaxes'); // refresh the Tax breakdown
             if (callback) {
               callback(true);
             }
