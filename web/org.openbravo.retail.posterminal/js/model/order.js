@@ -1940,6 +1940,7 @@
           .catch(OB.App.View.ActionCanceledUIHandler.handle)
           .then(() => {
             currentReceipt.trigger('paintTaxes'); // refresh the Tax breakdown
+            currentReceipt.trigger('scan');
             if (callback) {
               callback(true);
             }
