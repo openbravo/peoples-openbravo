@@ -4140,18 +4140,18 @@
     addProductToOrder: async function(
       p,
       qty,
-      theOptions,
-      theAttrs,
+      opts,
+      attrs,
       callback,
       cancelCallback
     ) {
-      const options = theOptions ? { ...theOptions } : {};
+      const options = opts ? { ...opts } : {};
       if (options.line) {
         options.line = options.line.id;
       }
-      const attrs = theAttrs ? { ...theAttrs } : {};
-      if (attrs.originalLine) {
-        attrs.originalLine = attrs.originalLine.id;
+      const lineAttributes = attrs ? { ...attrs } : {};
+      if (lineAttributes.originalLine) {
+        lineAttributes.originalLine = lineAttributes.originalLine.id;
       }
       options.businessPartner = OB.MobileApp.model.get(
         'terminal'
@@ -4182,7 +4182,7 @@
             product: p.toJSON(),
             qty,
             options,
-            attrs
+            attrs: lineAttributes
           }
         ],
         extraData
@@ -4234,7 +4234,7 @@
           }
         })
         .catch(error => {
-          const epcCode = attrs.obposEpccode;
+          const epcCode = lineAttributes.obposEpccode;
           if (OB.UTIL.RfidController.isRfidConfigured() && epcCode) {
             OB.UTIL.RfidController.removeEpc(epcCode);
           }
