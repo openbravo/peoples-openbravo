@@ -1123,107 +1123,13 @@ enyo.kind({
           finalCallback(false);
           return true;
         }
-        const options = args.options ? { ...args.options } : {};
-        if (options.line) {
-          options.line = args.options.line.id;
-        }
-        const attrs = args.attrs ? { ...args.attrs } : {};
-        if (attrs.originalLine) {
-          attrs.originalLine = attrs.originalLine.id;
-        }
-        options.businessPartner = OB.MobileApp.model.get(
-          'terminal'
-        ).businessPartner;
-
-        const currentReceipt = OB.MobileApp.model.receipt;
-        currentReceipt.set('preventServicesUpdate', true);
-
-        const beforeAddTicket = OB.App.State.getState().Ticket;
-
-        const { qtyEdition } = OB.Format.formats;
-        const extraData = {
-          discountRules: OB.Discounts.Pos.ruleImpls,
-          taxRules: OB.Taxes.Pos.ruleImpls,
-          bpSets: OB.Discounts.Pos.bpSets,
-          qtyScale: qtyEdition.length - qtyEdition.indexOf('.') - 1,
-          terminal: OB.MobileApp.model.get('terminal'),
-          store: OB.MobileApp.model.get('store'),
-          warehouses: OB.MobileApp.model.get('warehouses'),
-          deliveryPaymentMode: OB.MobileApp.model.get('deliveryPaymentMode'),
-          payments: OB.MobileApp.model.get('payments'),
-          paymentcash: OB.MobileApp.model.get('paymentcash')
-        };
-
-        OB.App.State.Ticket.addProduct({
-          products: [
-            {
-              product: args.productToAdd.toJSON(),
-              qty: args.qtyToAdd,
-              options,
-              attrs
-            }
-          ],
-          extraData
-        })
-          .then(() => {
-            currentReceipt.unset('preventServicesUpdate');
-            OB.UTIL.handlePriceRuleBasedServices(currentReceipt);
-            currentReceipt.trigger('paintTaxes'); // refresh the Tax breakdown
-
-            if (OB.UI.MultiColumn.isSingleColumn()) {
-              OB.UTIL.showSuccess(
-                OB.I18N.getLabel('OBPOS_AddLine', [
-                  args.qtyToAdd,
-                  args.productToAdd.toJSON()._identifier
-                ])
-              );
-            }
-
-            const afterAddTicket = OB.App.State.getState().Ticket;
-
-            const newLine = afterAddTicket.lines.find(
-              nl => !beforeAddTicket.lines.some(l => l.id === nl.id)
-            );
-
-            if (
-              !options.isSilentAddProduct &&
-              newLine &&
-              newLine.hasMandatoryServices &&
-              !newLine.splitline &&
-              newLine.product.productType !== 'S'
-            ) {
-              currentReceipt.trigger(
-                'showProductList',
-                currentReceipt.get('lines').get(newLine.id),
-                'mandatory'
-              );
-            }
-
-            if (newLine) {
-              // force trigger updateView to execute OBPOS_RenderOrderLine hooks
-              currentReceipt
-                .get('lines')
-                .get(newLine.id)
-                .trigger('updateView');
-              if (afterAddTicket.grossAmount === beforeAddTicket.grossAmount) {
-                // a new line has been added with total 0, the 'onChangeTotal' event is not being fired in this case
-                // trigger the 'forceChangeTotal' to force the 'checkout' button to be enabled
-                currentReceipt.trigger('forceChangeTotal');
-              }
-            }
-            currentReceipt.trigger('updatePending');
-            finalCallback(true);
-          })
-          .catch(error => {
-            const epcCode = attrs.obposEpccode;
-            if (OB.UTIL.RfidController.isRfidConfigured() && epcCode) {
-              OB.UTIL.RfidController.removeEpc(epcCode);
-            }
-            OB.App.View.ActionCanceledUIHandler.handle(error);
-          })
-          .finally(() => {
-            currentReceipt.unset('preventServicesUpdate');
-          });
+        args.receipt.addProductToOrder(
+          args.productToAdd,
+          args.qtyToAdd,
+          args.options,
+          args.attrs,
+          finalCallback
+        );
       }
     );
     return true;

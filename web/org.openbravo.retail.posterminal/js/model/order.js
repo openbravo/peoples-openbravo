@@ -4140,13 +4140,28 @@
     addProductToOrder: async function(
       p,
       qty,
-      options,
-      attrs,
+      theOptions,
+      theAttrs,
       callback,
       cancelCallback
     ) {
+      const options = theOptions ? { ...theOptions } : {};
+      if (options.line) {
+        options.line = options.line.id;
+      }
+      const attrs = theAttrs ? { ...theAttrs } : {};
+      if (attrs.originalLine) {
+        attrs.originalLine = attrs.originalLine.id;
+      }
+      options.businessPartner = OB.MobileApp.model.get(
+        'terminal'
+      ).businessPartner;
+
       const currentReceipt = OB.MobileApp.model.receipt;
+      currentReceipt.set('preventServicesUpdate', true);
+
       const beforeAddTicket = OB.App.State.getState().Ticket;
+
       const { qtyEdition } = OB.Format.formats;
       const extraData = {
         discountRules: OB.Discounts.Pos.ruleImpls,
@@ -4165,7 +4180,7 @@
         products: [
           {
             product: p.toJSON(),
-            qty: qty,
+            qty,
             options,
             attrs
           }
@@ -4173,17 +4188,61 @@
         extraData
       })
         .then(() => {
-          if (callback) {
-            const afterAddTicket = OB.App.State.getState().Ticket;
-            const newLine = afterAddTicket.lines.find(
-              nl => !beforeAddTicket.lines.some(l => l.id === nl.id)
+          currentReceipt.unset('preventServicesUpdate');
+          OB.UTIL.handlePriceRuleBasedServices(currentReceipt);
+          currentReceipt.trigger('paintTaxes'); // refresh the Tax breakdown
+
+          if (OB.UI.MultiColumn.isSingleColumn()) {
+            OB.UTIL.showSuccess(
+              OB.I18N.getLabel('OBPOS_AddLine', [qty, p.toJSON()._identifier])
             );
-            callback(true, currentReceipt.get('lines').get(newLine.id));
           }
+
+          const afterAddTicket = OB.App.State.getState().Ticket;
+
+          const newLine = afterAddTicket.lines.find(
+            nl => !beforeAddTicket.lines.some(l => l.id === nl.id)
+          );
+
+          if (
+            !options.isSilentAddProduct &&
+            newLine &&
+            newLine.hasMandatoryServices &&
+            !newLine.splitline &&
+            newLine.product.productType !== 'S'
+          ) {
+            currentReceipt.trigger(
+              'showProductList',
+              currentReceipt.get('lines').get(newLine.id),
+              'mandatory'
+            );
+          }
+
+          const receiptLines = currentReceipt.get('lines');
+          if (newLine) {
+            // force trigger updateView to execute OBPOS_RenderOrderLine hooks
+            receiptLines.get(newLine.id).trigger('updateView');
+            if (afterAddTicket.grossAmount === beforeAddTicket.grossAmount) {
+              // a new line has been added with total 0, the 'onChangeTotal' event is not being fired in this case
+              // trigger the 'forceChangeTotal' to force the 'checkout' button to be enabled
+              currentReceipt.trigger('forceChangeTotal');
+            }
+          }
+          currentReceipt.trigger('updatePending');
+          callback(true, newLine ? receiptLines.get(newLine.id) : undefined);
         })
         .catch(error => {
+          const epcCode = attrs.obposEpccode;
+          if (OB.UTIL.RfidController.isRfidConfigured() && epcCode) {
+            OB.UTIL.RfidController.removeEpc(epcCode);
+          }
           OB.App.View.ActionCanceledUIHandler.handle(error);
-          cancelCallback();
+          if (cancelCallback) {
+            cancelCallback();
+          }
+        })
+        .finally(() => {
+          currentReceipt.unset('preventServicesUpdate');
         });
     },
 
