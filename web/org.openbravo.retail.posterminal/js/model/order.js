@@ -4229,7 +4229,9 @@
             }
           }
           currentReceipt.trigger('updatePending');
-          callback(true, newLine ? receiptLines.get(newLine.id) : undefined);
+          if (callback) {
+            callback(true, newLine ? receiptLines.get(newLine.id) : undefined);
+          }
         })
         .catch(error => {
           const epcCode = attrs.obposEpccode;
