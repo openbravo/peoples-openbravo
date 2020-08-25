@@ -418,8 +418,18 @@
       // sets line amounts and prices and applies the discount calculation result into the ticket
       this.ticket.lines = this.ticket.lines.map(line => {
         const hasDiscounts = line.promotions && line.promotions.length > 0;
+        const { baseGrossUnitPrice, baseNetUnitPrice, qty } = line;
         if (line.skipApplyPromotions && hasDiscounts) {
-          return line;
+          if (priceIncludesTax) {
+            return {
+              ...line,
+              grossUnitAmount: OB.DEC.mul(qty, baseGrossUnitPrice)
+            };
+          }
+          return {
+            ...line,
+            netUnitAmount: OB.DEC.mul(qty, baseNetUnitPrice)
+          };
         }
         const discounts = line.skipApplyPromotions
           ? undefined
@@ -428,7 +438,6 @@
           ...line,
           promotions: discounts ? discounts.discounts : []
         };
-        const { baseGrossUnitPrice, baseNetUnitPrice, qty } = line;
         if (priceIncludesTax) {
           newLine.baseGrossUnitAmount = OB.DEC.mul(baseGrossUnitPrice, qty);
           newLine.baseNetUnitAmount = 0;
