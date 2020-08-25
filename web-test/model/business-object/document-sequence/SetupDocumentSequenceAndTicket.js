@@ -8,7 +8,7 @@
  */
 /* global global */
 
-global.OB = {
+OB = {
   App: {
     Class: {}
   },
