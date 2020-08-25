@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,15 +23,27 @@ import java.sql.SQLException;
 
 import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.exception.NoConnectionAvailableException;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.quartz.utils.ConnectionProvider;
 
+/**
+ * ConnectionProvider for quartz to allow Quartz to use Openbravo managed Database connections
+ */
 public class QuartzConnectionProvider implements ConnectionProvider {
 
   @Override
   public Connection getConnection() throws SQLException {
     Connection connection;
     try {
-      connection = ConnectionProviderContextListener.getPool().getConnection();
+      // By default use context connection provider
+      org.openbravo.database.ConnectionProvider pool = ConnectionProviderContextListener.getPool();
+      if (pool != null) {
+        connection = pool.getTransactionConnection();
+      } else {
+        // In case Tomcat has not been initialized, use DalConnectionProvider, e.g. For unit-testing
+        connection = new DalConnectionProvider().getTransactionConnection();
+      }
+      connection.setAutoCommit(false);
     } catch (NoConnectionAvailableException ex) {
       throw new SQLException(ex);
     }
