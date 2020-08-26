@@ -59,6 +59,96 @@
     200
   );
 
+  function restoreTaxCategoryOfRelatedProducts(ticket, lineIds) {
+    if (!ticket.hasServices) {
+      return ticket.lines;
+    }
+
+    const relatedLinesOfDeletedLines = ticket.lines
+      .filter(l => lineIds.includes(l.id) && l.product.productServiceLinked)
+      .map(l => l.relatedLines)
+      .flat();
+
+    if (relatedLinesOfDeletedLines.length === 0) {
+      return ticket.lines;
+    }
+
+    return ticket.lines.map(l => {
+      const relatedLine = relatedLinesOfDeletedLines.some(
+        rl => l.id === rl.orderlineId
+      );
+      const price = l.previousPrice || l.previousBaseGrossUnitPrice;
+      const { previousTaxCategory } = l.product;
+      if (relatedLine && price && previousTaxCategory) {
+        return {
+          ...l,
+          baseGrossUnitPrice: price,
+          previousBaseGrossUnitPrice: null,
+          product: {
+            ...l.product,
+            taxCategory: previousTaxCategory,
+            previousTaxCategory: null
+          }
+        };
+      }
+      return l;
+    });
+  }
+
+  function getRelatedServices(ticket, lineIds) {
+    if (!ticket.hasServices) {
+      // TODO: is this check necessary?
+      return [];
+    }
+
+    let relatedLinesToRemove = ticket.lines
+      .filter(
+        l =>
+          l.relatedLines &&
+          !lineIds.includes(l.id) &&
+          l.relatedLines.some(rl => lineIds.includes(rl.orderlineId))
+      )
+      .map(l => l.id);
+
+    if (relatedLinesToRemove.length > 0) {
+      // check again for related lines of the related just added
+      relatedLinesToRemove = relatedLinesToRemove.concat(
+        getRelatedServices(ticket, [...lineIds, ...relatedLinesToRemove])
+      );
+    }
+    // TODO: handle lines related to serveral
+
+    return relatedLinesToRemove;
+  }
+
+  function getDeletedLinesToSave(ticket, removedLineIds) {
+    return ticket.lines
+      .filter(l => removedLineIds.includes(l.id))
+      .map(l => {
+        // TODO: check the correct properties to reset
+        const deletedLine = {
+          ...l,
+          obposQtyDeleted: l.qty,
+          qty: 0,
+          netUnitPrice: 0,
+          grossUnitPrice: 0,
+          netUnitAmount: 0,
+          grossUnitAmount: 0,
+          taxes: { ...l.taxes },
+          promotions: []
+        };
+
+        Object.keys(deletedLine.taxes).forEach(k => {
+          deletedLine.taxes[k] = {
+            ...deletedLine.taxes[k],
+            amount: 0,
+            net: 0
+          };
+        });
+        return deletedLine;
+      });
+  }
+
   function prepareConfiguration(payload) {
     const newPayload = {
       ...payload,
@@ -183,95 +273,5 @@
       );
     }
     return newPayload;
-  }
-
-  function getRelatedServices(ticket, lineIds) {
-    if (!ticket.hasServices) {
-      // TODO: is this check necessary?
-      return [];
-    }
-
-    let relatedLinesToRemove = ticket.lines
-      .filter(
-        l =>
-          l.relatedLines &&
-          !lineIds.includes(l.id) &&
-          l.relatedLines.some(rl => lineIds.includes(rl.orderlineId))
-      )
-      .map(l => l.id);
-
-    if (relatedLinesToRemove.length > 0) {
-      // check again for related lines of the related just added
-      relatedLinesToRemove = relatedLinesToRemove.concat(
-        getRelatedServices(ticket, [...lineIds, ...relatedLinesToRemove])
-      );
-    }
-    // TODO: handle lines related to serveral
-
-    return relatedLinesToRemove;
-  }
-
-  function getDeletedLinesToSave(ticket, removedLineIds) {
-    return ticket.lines
-      .filter(l => removedLineIds.includes(l.id))
-      .map(l => {
-        // TODO: check the correct properties to reset
-        const deletedLine = {
-          ...l,
-          obposQtyDeleted: l.qty,
-          qty: 0,
-          netUnitPrice: 0,
-          grossUnitPrice: 0,
-          netUnitAmount: 0,
-          grossUnitAmount: 0,
-          taxes: { ...l.taxes },
-          promotions: []
-        };
-
-        Object.keys(deletedLine.taxes).forEach(k => {
-          deletedLine.taxes[k] = {
-            ...deletedLine.taxes[k],
-            amount: 0,
-            net: 0
-          };
-        });
-        return deletedLine;
-      });
-  }
-
-  function restoreTaxCategoryOfRelatedProducts(ticket, lineIds) {
-    if (!ticket.hasServices) {
-      return ticket.lines;
-    }
-
-    const relatedLinesOfDeletedLines = ticket.lines
-      .filter(l => lineIds.includes(l.id) && l.product.productServiceLinked)
-      .map(l => l.relatedLines)
-      .flat();
-
-    if (relatedLinesOfDeletedLines.length === 0) {
-      return ticket.lines;
-    }
-
-    return ticket.lines.map(l => {
-      const relatedLine = relatedLinesOfDeletedLines.some(
-        rl => l.id === rl.orderlineId
-      );
-      const price = l.previousPrice || l.previousBaseGrossUnitPrice;
-      const { previousTaxCategory } = l.product;
-      if (relatedLine && price && previousTaxCategory) {
-        return {
-          ...l,
-          baseGrossUnitPrice: price,
-          previousBaseGrossUnitPrice: null,
-          product: {
-            ...l.product,
-            taxCategory: previousTaxCategory,
-            previousTaxCategory: null
-          }
-        };
-      }
-      return l;
-    });
   }
 })();
