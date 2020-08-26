@@ -7491,46 +7491,7 @@
         order,
         finalCallback;
 
-      if (
-        this.get('isPaid') &&
-        !payment.get('isReversePayment') &&
-        OB.DEC.abs(this.getPrePaymentQty()) >= OB.DEC.abs(this.getTotal()) &&
-        !this.isNewReversed()
-      ) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
-
-      if (!OB.DEC.isNumber(payment.get('amount'))) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
-      if (this.stopAddingPayments) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
-      if (
-        !payment.get('isReversePayment') &&
-        this.getPending() <= 0 &&
-        payment.get('amount') > 0 &&
-        !payment.get('forceAddPayment')
-      ) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
-
       order = this;
-      if (order.get('orderType') === 3 && order.getGross() === 0) {
-        OB.UTIL.showWarning(
-          OB.I18N.getLabel('OBPOS_MsgVoidLayawayPaymentError')
-        );
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
 
       finalCallback = function() {
         if (callback instanceof Function) {
@@ -7539,80 +7500,73 @@
       };
 
       payments = this.get('payments');
-      payment.set(
-        'amount',
-        OB.DEC.toNumber(payment.get('amount'), this.getPrecision(payment))
-      );
+
       this.addPaymentRounding(
         payment,
         OB.MobileApp.model.paymentnames[payment.get('kind')]
       );
 
-      OB.UTIL.PrepaymentUtils.managePrepaymentChange(
-        this,
-        payment,
-        payments,
-        function() {
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_preAddPayment',
-            {
-              paymentToAdd: payment,
-              payments: payments,
-              receipt: me
-            },
-            async function(args) {
-              var executeFinalCallback = function(saveChanges) {
-                if (saveChanges && !payment.get('changePayment')) {
-                  order.trigger('updatePending');
-                  order.trigger('displayTotal');
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_preAddPayment',
+        {
+          paymentToAdd: payment,
+          payments: payments,
+          receipt: me
+        },
+        async function(args) {
+          var executeFinalCallback = function(saveChanges) {
+            if (saveChanges && !payment.get('changePayment')) {
+              order.trigger('updatePending');
+              order.trigger('displayTotal');
+            }
+            OB.UTIL.HookManager.executeHooks(
+              'OBPOS_postAddPayment',
+              {
+                paymentAdded: payment,
+                payments: payments,
+                receipt: order,
+                saveChanges: saveChanges
+              },
+              function(args2) {
+                if (args2.saveChanges && !payment.get('changePayment')) {
+                  order.save(function() {
+                    OB.UTIL.ProcessController.finish('addPayment', execution);
+                    finalCallback();
+                  });
+                  order.trigger('updateView');
+                } else {
+                  OB.UTIL.ProcessController.finish('addPayment', execution);
+                  finalCallback();
                 }
-                OB.UTIL.HookManager.executeHooks(
-                  'OBPOS_postAddPayment',
-                  {
-                    paymentAdded: payment,
-                    payments: payments,
-                    receipt: order,
-                    saveChanges: saveChanges
-                  },
-                  function(args2) {
-                    if (args2.saveChanges && !payment.get('changePayment')) {
-                      order.save(function() {
-                        OB.UTIL.ProcessController.finish(
-                          'addPayment',
-                          execution
-                        );
-                        finalCallback();
-                      });
-                      order.trigger('updateView');
-                    } else {
-                      OB.UTIL.ProcessController.finish('addPayment', execution);
-                      finalCallback();
-                    }
-                  }
-                );
-              };
-
-              if (args && args.cancellation) {
-                if (payment.get('reverseCallback')) {
-                  var reverseCallback = payment.get('reverseCallback');
-                  reverseCallback();
-                }
-                executeFinalCallback(false);
-                return;
               }
+            );
+          };
 
-              await OB.App.State.Ticket.addPayment({
-                payments: OB.MobileApp.model.get('payments'),
-                terminal: OB.MobileApp.model.get('terminal'),
-                payment: JSON.parse(JSON.stringify(payment))
-              });
+          if (args && args.cancellation) {
+            if (payment.get('reverseCallback')) {
+              var reverseCallback = payment.get('reverseCallback');
+              reverseCallback();
+            }
+            executeFinalCallback(false);
+            return;
+          }
 
+          await OB.App.State.Ticket.addPayment({
+            payments: OB.MobileApp.model.get('payments'),
+            terminal: OB.MobileApp.model.get('terminal'),
+            payment: JSON.parse(JSON.stringify(payment))
+          })
+            .then(() => {
               executeFinalCallback(true);
               return;
-            }
-          ); // call with callback, no args
+            })
+            .catch(function(error) {
+              OB.App.View.ActionCanceledUIHandler.handle(error);
+              OB.UTIL.ProcessController.finish('addPayment', execution);
+              payments.forEach(p => p.trigger('updateView'));
+            });
         }
-      );
+      ); // call with callback, no args
     },
     //Add a payment rounding line related to the payment if it's needed
     addPaymentRounding: function(payment, terminalPayment) {

@@ -17,16 +17,23 @@ enyo.kind({
   events: {},
   tap: function() {
     var popup = this.owner.owner;
-    popup.args.receipt.set(
-      'prepaymentChangeMode',
-      popup.$.body.$.paymentOptions.active.setPrepaymentChange
-    );
-    popup.args.receipt.set('prepaymentChangeAmt', popup.args.deliveryChange);
-    if (popup.args.receipt.get('prepaymentChangeMode')) {
-      popup.args.receipt.trigger('updatePending');
+    if (popup.args.payload) {
+      popup.args.payload.prepaymentChangeMode =
+        popup.$.body.$.paymentOptions.active.setPrepaymentChange;
+      popup.args.payload.prepaymentChangeAmt = popup.args.deliveryChange;
+    } else {
+      popup.args.receipt.set(
+        'prepaymentChangeMode',
+        popup.$.body.$.paymentOptions.active.setPrepaymentChange
+      );
+      popup.args.receipt.set('prepaymentChangeAmt', popup.args.deliveryChange);
+      if (popup.args.receipt.get('prepaymentChangeMode')) {
+        popup.args.receipt.trigger('updatePending');
+      }
     }
+
     if (popup.args.callback) {
-      popup.args.callback();
+      popup.args.callback(popup.args);
     }
     this.doHideThisPopup();
   }
