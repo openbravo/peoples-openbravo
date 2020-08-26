@@ -26,9 +26,9 @@ import java.util.Map;
 import org.openbravo.scheduling.KillableProcessHandler;
 import org.quartz.JobPersistenceException;
 import org.quartz.SchedulerException;
-import org.quartz.impl.jdbcjobstore.JobStoreTX;
+import org.quartz.impl.jdbcjobstore.JobStoreSupport;
 
-public class OpenbravoPersistentJobStore extends JobStoreTX {
+public class OpenbravoPersistentJobStore extends JobStoreSupport {
 
   private static Map<String, OpenbravoPersistentJobStore> clusterJobStores = new HashMap<>();
   private KillableProcessHandler killableProcessHandler = null;
@@ -119,16 +119,6 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
     return false;
   }
 
-  /*
-   * This method overridden only to suppress the warnings produced by TxJobStore in the Quartz
-   * library
-   */
-  @Override
-  protected Object executeInLock(String lockName,
-      @SuppressWarnings("rawtypes") TransactionCallback txCallback) throws JobPersistenceException {
-    return super.executeInLock(lockName, txCallback);
-  }
-
   public static boolean isSchedulingAllowedInCluster(String instanceName) {
     OpenbravoPersistentJobStore jobStore = clusterJobStores.get(instanceName);
     if (jobStore == null) {
@@ -137,4 +127,18 @@ public class OpenbravoPersistentJobStore extends JobStoreTX {
     return jobStore.isSchedulingAllowed();
   }
 
+  @Override
+  protected Connection getNonManagedTXConnection() throws JobPersistenceException {
+    return getConnection();
+  }
+
+  /*
+   * This method overridden only to suppress the warnings produced by TxJobStore in the Quartz
+   * library
+   */
+  @Override
+  protected <T> T executeInLock(String lockName, TransactionCallback<T> txCallback)
+      throws JobPersistenceException {
+    return executeInNonManagedTXLock(lockName, txCallback, null);
+  }
 }
