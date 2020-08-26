@@ -26,6 +26,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.process.ClusterInstance;
+import org.openbravo.model.ad.ui.Process;
 import org.quartz.JobDataMap;
 import org.quartz.TriggerKey;
 import org.quartz.impl.jdbcjobstore.DriverDelegate;
@@ -69,8 +70,7 @@ public class ClusterInstanceProcessAccess {
   public List<String> getBannedClusterInstanceNames(String processId) {
     try {
       OBContext.setAdminMode(true);
-      org.openbravo.model.ad.ui.Process process = OBDal.getInstance()
-          .get(org.openbravo.model.ad.ui.Process.class, processId);
+      Process process = OBDal.getInstance().get(Process.class, processId);
       String clusterInstanceSelection = process.getClusterInstanceSelection();
       List<String> definedClusterInstancesForProcess = getDefinedClusterInstancesForProcess(
           process);
