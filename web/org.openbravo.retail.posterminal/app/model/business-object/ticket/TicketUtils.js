@@ -464,17 +464,24 @@
       try {
         taxesResult = OB.Taxes.Pos.applyTaxes(this.ticket, taxRules);
       } catch (error) {
-        const lineIdWithError = error.message.substring(
-          error.message.length - 32
-        );
-        const line =
-          this.ticket.lines.find(l => l.id === lineIdWithError) ||
-          this.ticket.lines[this.ticket.lines.length - 1];
-        throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBPOS_CannotCalculateTaxes',
-          // eslint-disable-next-line no-underscore-dangle
-          messageParams: [line.qty, line.product._identifier]
-        });
+        if (error instanceof OB.App.Class.TaxEngineError) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: error.data.message,
+            messageParams: error.data.messageParams
+          });
+        } else {
+          const lineIdWithError = error.message.substring(
+            error.message.length - 32
+          );
+          const line =
+            this.ticket.lines.find(l => l.id === lineIdWithError) ||
+            this.ticket.lines[this.ticket.lines.length - 1];
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_CannotCalculateTaxes',
+            // eslint-disable-next-line no-underscore-dangle
+            messageParams: [line.qty, line.product._identifier]
+          });
+        }
       }
 
       // set the tax calculation result into the ticket

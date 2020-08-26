@@ -54,7 +54,10 @@
       );
 
       if (rulesFilteredByLine.length === 0) {
-        throw new Error(`No tax found for line: ${line.id}`);
+        throw new OB.App.Class.TaxEngineError('OBPOS_NoTaxFoundForProduct', [
+          // eslint-disable-next-line no-underscore-dangle
+          line.product._identifier
+        ]);
       }
 
       return this.getLineTaxes(line, rulesFilteredByLine);
@@ -147,14 +150,14 @@
 
     // eslint-disable-next-line no-unused-vars
     getLineTaxes(line, rules) {
-      throw new Error(
+      throw new OB.App.Class.TaxEngineError(
         `${this.constructor.name} does not implement getLineTaxes()`
       );
     }
 
     // eslint-disable-next-line no-unused-vars
     getHeaderTaxes(lines) {
-      throw new Error(
+      throw new OB.App.Class.TaxEngineError(
         `${this.constructor.name} does not implement getHeaderTaxes()`
       );
     }

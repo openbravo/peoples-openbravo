@@ -43,6 +43,7 @@ public class TaxesEngineAppComponentProvider extends BaseComponentProvider {
     List<String> commonDependencies = Arrays.asList( //
         JS_BASE + "interface/tax-posinterface", //
         JS_BASE + "engine/tax-engine", //
+        JS_BASE + "engine/tax-error", //
         JS_BASE + "engine/tax-rules", //
         JS_BASE + "engine/rules/priceincluding-tax", //
         JS_BASE + "engine/rules/priceexcluding-tax");
