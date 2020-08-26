@@ -1939,6 +1939,11 @@
         OB.App.State.Ticket.deleteLine({ lineIds })
           .catch(OB.App.View.ActionCanceledUIHandler.handle)
           .then(() => {
+            if (OB.UTIL.RfidController.isRfidConfigured()) {
+              selectedModels
+                .filter(m => m.get('obposEpccode'))
+                .forEach(m => OB.UTIL.RfidController.removeEpcLine(m));
+            }
             currentReceipt.trigger('paintTaxes'); // refresh the Tax breakdown
             currentReceipt.trigger('scan');
             if (callback) {
