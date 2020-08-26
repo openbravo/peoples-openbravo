@@ -147,6 +147,23 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
                 OB.I18N.getLabel('OBPOS_MsgCloseOrDoneCashManagement')
               );
             }
+
+            const auxPay = OB.MobileApp.model.get('payments').filter(pymt => {
+              return pymt.payment.id === p.id;
+            });
+            if (
+              auxPay &&
+              auxPay[0] &&
+              auxPay[0].paymentMethod.iscash &&
+              auxPay[0].paymentMethod.allowopendrawer
+            ) {
+              OB.POS.hwserver.openDrawer(
+                false,
+                OB.MobileApp.model.get('permissions')
+                  .OBPOS_timeAllowedDrawerCount
+              );
+            }
+
             OB.UTIL.ProcessController.finish('cashMngPaymentDone', execution);
             if (callback) {
               callback();
