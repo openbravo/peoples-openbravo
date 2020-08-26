@@ -169,6 +169,10 @@ enyo.kind({
       this
     );
 
+    OB.App.State.Ticket.addUndoListener(() => {
+      this.manageUndo();
+    });
+
     this.manageUndo();
   },
 
@@ -180,9 +184,10 @@ enyo.kind({
       this.$.msgaction.show();
       if (undoaction) {
         this.$.txtaction.setContent(undoaction.text);
-        // TODO: Add undo action here
         this.$.undobutton.undoaction = undoaction.action;
         this.$.undobutton.undoclick = undoaction.undo;
+      } else {
+        this.$.txtaction.setContent('');
       }
       this.$.undobutton.setDisabled(false);
     } else {
