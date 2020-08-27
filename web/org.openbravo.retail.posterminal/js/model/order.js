@@ -4981,19 +4981,32 @@
         if (OB.UTIL.isCrossStoreProduct(lines[index].get('product'))) {
           success(lines[index].get('product'));
         } else {
-          try {
-            const product = await OB.App.MasterdataModels.Product.withId(
-              lines[index].get('product').id
+          const productNotExist = function() {
+            // Product doesn't exists, execute the same code as it was not included in pricelist
+            lines.splice(index, 1);
+            addProductsOfLines(receipt, lines, index, callback);
+          };
+          if (OB.App.Security.hasPermission('OBPOS_remote.product')) {
+            OB.Dal.get(
+              OB.Model.Product,
+              lines[index].get('product').id,
+              success,
+              null,
+              productNotExist
             );
-            if (product) {
-              success(OB.Dal.transform(OB.Model.Product, product));
-            } else {
-              // Product doesn't exists, execute the same code as it was not included in pricelist
-              lines.splice(index, 1);
-              addProductsOfLines(receipt, lines, index, callback);
+          } else {
+            try {
+              const product = await OB.App.MasterdataModels.Product.withId(
+                lines[index].get('product').id
+              );
+              if (product) {
+                success(OB.Dal.transform(OB.Model.Product, product));
+              } else {
+                productNotExist();
+              }
+            } catch (error) {
+              OB.error(error.message);
             }
-          } catch (error) {
-            OB.error(error.message);
           }
         }
       };
