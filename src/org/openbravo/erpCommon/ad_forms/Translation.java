@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -49,6 +50,8 @@ public class Translation extends HttpSecureAppServlet {
     } else if (vars.commandIn("EXPORT")) {
 
       final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
+      final boolean isReducedVersion = StringUtils
+          .equals(vars.getStringParameter("inpReduced", "N"), "Y");
       // import/export translation is currently always on system level
       final String strClient = "0";
       if (log4j.isDebugEnabled()) {
@@ -57,7 +60,7 @@ public class Translation extends HttpSecureAppServlet {
 
       // New message system
       final OBError myMessage = TranslationManager.exportTrl(this, globalParameters.strFTPDirectory,
-          strLang, strClient, vars.getLanguage());
+          strLang, strClient, vars.getLanguage(), isReducedVersion);
 
       if (log4j.isDebugEnabled()) {
         log4j.debug("message:" + myMessage.getMessage());

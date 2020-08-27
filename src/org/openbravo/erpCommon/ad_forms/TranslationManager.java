@@ -109,6 +109,32 @@ public class TranslationManager {
    */
   public static OBError exportTrl(ConnectionProvider conn, String exportDirectory, String strLang,
       String strClient, String uiLanguage) {
+    return exportTrl(conn, exportDirectory, strLang, strClient, uiLanguage, false);
+  }
+
+  /**
+   * Export all the trl tables that refers to tables with ad_module_id column or trl tables that
+   * refers to tables with a parent table with ad_module_id column
+   * 
+   * For example: If a record from ad_process is in module "core", the records from ad_process_trl
+   * and ad_process_para_trl are exported in "core" module
+   * 
+   * @param exportDirectory
+   *          Directory for trl's xml files
+   * @param strLang
+   *          Language to export.
+   * @param strClient
+   *          Client to export.
+   * @param uiLanguage
+   *          Language to be used for translating error messages
+   * @param isReducedVersion
+   *          If true then the export will only take into account elements that are related with a
+   *          Menu entry that is checked to be translated. If false, everything will be exported to
+   *          the translation
+   * @return Message with the error or with the success
+   */
+  public static OBError exportTrl(ConnectionProvider conn, String exportDirectory, String strLang,
+      String strClient, String uiLanguage, boolean isReducedVersion) {
     final String AD_Language = strLang;
     OBError myMessage = null;
 
@@ -143,11 +169,12 @@ public class TranslationManager {
       final TranslationData[] modulesTables = TranslationData.trlModulesTables(conn);
 
       for (int i = 0; i < modulesTables.length; i++) {
-        exportModulesTrl(conn, rootDirectory, AD_Client_ID, AD_Language, modulesTables[i].c);
+        exportModulesTrl(conn, rootDirectory, AD_Client_ID, AD_Language, modulesTables[i].c,
+            isReducedVersion);
       }
       // We need to also export translations for some tables which are considered reference data
       // and are imported using datasets (such as Masterdata: UOMs, Currencies, ...)
-      exportReferenceData(conn, rootDirectory, AD_Language);
+      exportReferenceData(conn, rootDirectory, AD_Language, isReducedVersion);
 
       exportContibutors(conn, directory, AD_Language);
     } catch (final Exception e) {
@@ -273,7 +300,7 @@ public class TranslationManager {
   }
 
   private static void exportReferenceData(ConnectionProvider conn, String rootDirectory,
-      String AD_Language) {
+      String AD_Language, final boolean isReducedVersion) {
     try {
       // Export translations for reference data (do not take into account
       // client data, only system)
@@ -281,7 +308,7 @@ public class TranslationManager {
       for (final TranslationData refTrl : referenceTrlData) {
         exportTable(conn, AD_Language, true, refTrl.isindevelopment.equals("Y"),
             refTrl.tablename.toUpperCase(), refTrl.adTableId, rootDirectory, refTrl.adModuleId,
-            refTrl.adLanguage, refTrl.value, true);
+            refTrl.adLanguage, refTrl.value, true, isReducedVersion);
       }
     } catch (final Exception e) {
       e.printStackTrace();
@@ -289,7 +316,7 @@ public class TranslationManager {
   }
 
   private static String exportModulesTrl(ConnectionProvider conn, String rootDirectory,
-      String AD_Client_ID, String AD_Language, String Trl_Table) {
+      String AD_Client_ID, String AD_Language, String Trl_Table, final boolean isReducedVersion) {
     try {
       final TranslationData[] modules = TranslationData.modules(conn);
       for (int mod = 0; mod < modules.length; mod++) {
@@ -312,7 +339,7 @@ public class TranslationManager {
             trl = false;
           }
           exportTable(conn, AD_Language, false, false, Base_Table, "0", rootDirectory,
-              modules[mod].adModuleId, moduleLanguage, modules[mod].value, trl);
+              modules[mod].adModuleId, moduleLanguage, modules[mod].value, trl, isReducedVersion);
 
         } // translate or not (if)
       }
@@ -346,8 +373,8 @@ public class TranslationManager {
    */
   private static void exportTable(ConnectionProvider cp, String AD_Language,
       boolean exportReferenceData, boolean exportAll, String table, String tableID,
-      String rootDirectory, String moduleId, String moduleLanguage, String javaPackage,
-      boolean trl) {
+      String rootDirectory, String moduleId, String moduleLanguage, String javaPackage, boolean trl,
+      final boolean isReducedVersion) {
 
     PreparedStatement st = null;
     String sql = null;
@@ -401,6 +428,7 @@ public class TranslationManager {
       if (m_IsCentrallyMaintained) {
         sql += " and o.IsCentrallyMaintained='N'";
       }
+
       // AdClient !=0 not supported
       sql += " and o.AD_Client_ID='0' ";
 
@@ -451,6 +479,23 @@ public class TranslationManager {
         //@formatter:on
         parameters.add(tableID);
         parameters.add(moduleId);
+      }
+
+      // Skip translation table records with isActive = No
+      sql += " and o.IsActive='Y'";
+      // Skip parent table records with isActive = No
+      sql += " and t.IsActive='Y'";
+      // Special case to skip AD_TEXTINTERFACES related to jrxml files
+      if (isReducedVersion && StringUtils.equals(table, "AD_TEXTINTERFACES")) {
+        sql += " and (o.FILENAME IS NULL OR o.FILENAME NOT LIKE '%jrxml%')";
+      }
+      // Special case to skip AD_Reference if isReducedVersion
+      if (isReducedVersion && StringUtils.equals(table, "AD_REFERENCE")) {
+        sql += " and 1=2";
+      }
+
+      if (isReducedVersion) {
+        sql += getIsAvailableForTranslationClause(table);
       }
 
       sql += " order by t." + keyColumn;
@@ -654,6 +699,164 @@ public class TranslationManager {
       log4j.error("getTrlColumns", e);
     }
     return list;
+  }
+
+  private static String getIsAvailableForTranslationClause(final String table) {
+    switch (table) {
+      case "AD_ELEMENT":
+      //@formatter:off
+        return " AND (EXISTS (SELECT 1 "
+             + "            FROM AD_COLUMN c, "
+             + "                 AD_FIELD f, "
+             + "                 AD_TAB t "
+             + "            WHERE c.AD_ELEMENT_ID = o.AD_ELEMENT_ID "
+             + "            AND c.AD_COLUMN_ID = f.AD_COLUMN_ID "
+             + "            AND f.AD_TAB_ID = t.AD_TAB_ID "
+             + "            AND "+getWhereClause("t") +" ) "
+             + "    OR EXISTS (SELECT 1 "
+             + "               FROM OBUIAPP_PARAMETER pp, "
+             + "                    OBUIAPP_PROCESS pr "
+             + "               WHERE pp.AD_ELEMENT_ID =  o.AD_ELEMENT_ID "
+             + "               AND pp.OBUIAPP_PROCESS_ID = pr.OBUIAPP_PROCESS_ID "
+             + "               AND EXISTS (SELECT 1 "
+             + "                           FROM AD_MENU m "
+             + "                           WHERE m.EM_OBUIAPP_PROCESS_ID = pr.OBUIAPP_PROCESS_ID "
+             + "                           AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y')) "
+             + "    OR EXISTS (SELECT 1 "
+             + "               FROM AD_PROCESS_PARA pp, "
+             + "                    AD_PROCESS pr "
+             + "               WHERE pp.AD_ELEMENT_ID = o.AD_ELEMENT_ID "
+             + "               AND pp.AD_PROCESS_ID = pr.AD_PROCESS_ID "
+             + "               AND EXISTS (SELECT 1 "
+             + "                           FROM AD_MENU m "
+             + "                           WHERE m.AD_PROCESS_ID = pr.AD_PROCESS_ID "
+             + "                           AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y')) "
+             + " )";
+      //@formatter:on
+      case "AD_FIELD":
+      //@formatter:off
+        return " AND EXISTS (SELECT 1 "
+             + "                    FROM AD_TAB t "
+             + "                    WHERE t.AD_TAB_ID = o.AD_TAB_ID "
+             + "                    AND "+getWhereClause("t") +")";
+      //@formatter:on
+      case "AD_PROCESS":
+      //@formatter:off
+        return " AND EXISTS (SELECT 1 "
+             + "                FROM AD_MENU m "
+             + "                WHERE o.AD_Process_ID = m.AD_Process_ID "
+             + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') ";
+      //@formatter:on
+      case "AD_PROCESS_PARA":
+      //@formatter:off
+        return " AND EXISTS (SELECT 1 "
+             + "                FROM AD_Process p, "
+             + "                     AD_MENU m "
+             + "                WHERE p.AD_Process_ID = o.AD_Process_ID "
+             + "                AND p.AD_Process_ID = m.AD_Process_ID "
+             + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') "; 
+      //@formatter:on
+      case "OBUIAPP_PARAMETER":
+      //@formatter:off
+        return " AND EXISTS (SELECT 1 "
+             + "                FROM OBUIAPP_PROCESS p, "
+             + "                     AD_MENU m "
+             + "                WHERE p.OBUIAPP_PROCESS_ID = o.OBUIAPP_PROCESS_ID "
+             + "                AND p.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
+             + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') ";
+      //@formatter:on
+      case "AD_MENU":
+      //@formatter:off
+        return " AND o.IS_AVAILABLE_FOR_TRANSLATION = 'Y'";
+      //@formatter:on
+      case "AD_WINDOW":
+      //@formatter:off
+        return " AND "+getWhereClause("o");
+      //@formatter:on
+      case "AD_TAB":
+      //@formatter:off
+        return " AND "+getWhereClause("o");
+      //@formatter:on
+      case "AD_FIELDGROUP":
+      //@formatter:off
+        return " AND (EXISTS (SELECT 1 "
+            + "               FROM AD_FIELD f "
+            + "               JOIN AD_TAB t ON (t.ad_tab_id = f.ad_tab_id) "
+            + "               WHERE f.ad_fieldgroup_id = o.ad_fieldgroup_id "
+            + "               AND "+getWhereClause("t") +" ) "
+            + "       OR EXISTS (SELECT 1 "
+            + "                  FROM OBUIAPP_PARAMETER p "
+            + "                  JOIN OBUIAPP_PROCESS pr ON (pr.obuiapp_process_id = p.obuiapp_process_id) "
+            + "                  JOIN AD_MENU m on m.em_obuiapp_process_id = pr.obuiapp_process_id "
+            + "                  WHERE p.ad_fieldgroup_id = o.ad_fieldgroup_id "
+            + "                  AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y' )"
+            + "       )";
+      //@formatter:on
+      case "AD_REF_LIST":
+      //@formatter:off
+        return " AND ( EXISTS (SELECT 1 "
+             + "               FROM AD_COLUMN c, "
+             + "                    AD_FIELD f, "
+             + "                    AD_TAB t "
+             + "             WHERE c.AD_REFERENCE_VALUE_ID = o.AD_REFERENCE_ID "
+             + "             AND c.AD_REFERENCE_ID = '17' "
+             + "             AND c.AD_COLUMN_ID = f.AD_COLUMN_ID "
+             + "             AND f.AD_TAB_ID = t.AD_TAB_ID "
+             + "             AND "+getWhereClause("t")+" ) "
+             + "       OR EXISTS (SELECT 1 "
+             + "                  FROM OBUIAPP_PARAMETER pp "
+             + "                  WHERE pp.AD_REFERENCE_VALUE_ID = o.AD_REFERENCE_ID "
+             + "                  AND (EXISTS (SELECT 1 "
+             + "                              FROM OBUIAPP_PROCESS p, "
+             + "                                   AD_MENU m "
+             + "                              WHERE p.OBUIAPP_PROCESS_ID = pp.OBUIAPP_PROCESS_ID "
+             + "                              AND p.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
+             + "                              AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y')"
+             + "                       OR NOT EXISTS (SELECT 1 "
+             + "                                       FROM OBUIAPP_PROCESS p, " 
+             + "                                            AD_MENU m "
+             + "                                       WHERE p.OBUIAPP_PROCESS_ID = pp.OBUIAPP_PROCESS_ID " 
+             + "                                       AND p.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID))) "
+             + "      ) ";
+
+      default:
+        return "";
+    }
+  }
+    private static String getWhereClause(final String tableAlias) {
+      //@formatter:off
+      return "  ( EXISTS (SELECT 1 "
+           + "                FROM AD_MENU m "
+           + "                WHERE m.AD_WINDOW_ID = "+tableAlias+".AD_WINDOW_ID "
+           + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') "
+           + "        OR EXISTS (SELECT 1 "
+           + "                   FROM OBUIAPP_Ref_Window rw, " 
+           + "                        OBUIAPP_PARAMETER pp, " 
+           + "                        OBUIAPP_Process pr, " 
+           + "                        AD_COLUMN rwc, " 
+           + "                        AD_FIELD rwf, " 
+           + "                        AD_TAB rwt, " 
+           + "                        AD_WINDOW rww " 
+           + "                    WHERE rw.AD_WINDOW_ID = "+tableAlias+".AD_WINDOW_ID "
+           + "                      AND rw.AD_REFERENCE_ID = pp.AD_REFERENCE_VALUE_ID " 
+           + "                      AND pp.OBUIAPP_Process_ID = pr.OBUIAPP_Process_ID " 
+           + "                      AND pr.OBUIAPP_Process_ID = rwc.EM_OBUIAPP_Process_ID " 
+           + "                      AND rwc.AD_COLUMN_ID = rwf.AD_COLUMN_ID " 
+           + "                      AND rwf.AD_TAB_ID = rwt.AD_TAB_ID "
+           + "                      AND rwt.AD_WINDOW_ID = rww.AD_WINDOW_ID " 
+           + "                      AND EXISTS " 
+           + "                        (SELECT 1 " 
+           + "                         FROM AD_MENU m " 
+           + "                         WHERE m.AD_WINDOW_ID = rww.AD_WINDOW_ID " 
+           + "                           AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y')) "
+           + "        OR (NOT EXISTS (SELECT 1 "
+           + "                        FROM AD_MENU m "
+           + "                        WHERE "+tableAlias+".AD_WINDOW_ID = m.AD_WINDOW_ID)"
+           + "            AND NOT EXISTS (SELECT 1 "
+           + "                            FROM OBUIAPP_REF_WINDOW rw "
+           + "                            WHERE rw.AD_WINDOW_ID = "+tableAlias+".AD_WINDOW_ID)) "
+           + "        ) ";
+      //@formatter:on
   }
 
 }

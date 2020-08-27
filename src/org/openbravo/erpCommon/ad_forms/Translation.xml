@@ -34,6 +34,8 @@
   <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
   <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
   <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
+  <PARAMETER id="paramReducedVersion" name="reducedVersion" default="Y"/>
+  <PARAMETER id="paramReduced" name="inpReduced" boolean="checked" withId="paramReducedVersion"/>
 
 <structure name="structure1">
 <FIELD id="fieldClaveLanguage" attribute="value" boolean="selected" withId="paramSelLanguage">adLanguage</FIELD>
