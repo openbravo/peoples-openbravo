@@ -85,9 +85,12 @@ public class KillableProcessHandler extends Thread {
 
   @Override
   public void run() {
+    // Only run if OBScheduler has been initialized
+    if (OBScheduler.getInstance().getScheduler() == null) {
+      return;
+    }
     while (!shutdown) {
       long startTime = System.currentTimeMillis();
-
       try {
         // Only check if there's some KillableProcess on this instance
         List<JobExecutionContext> killableJobsInInstance = getKillableProcessJobs();
