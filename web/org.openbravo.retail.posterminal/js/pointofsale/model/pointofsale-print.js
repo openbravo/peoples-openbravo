@@ -282,7 +282,7 @@
           }
 
           if (args.cancelOperation && args.cancelOperation === true) {
-            resolve();
+            return resolve();
           }
 
           if (!(receipt.get('orderDate') instanceof Date)) {
