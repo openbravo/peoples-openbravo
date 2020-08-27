@@ -90,6 +90,26 @@ Ticket = {
         isDeletable: true
       }
     ]
+  },
+  services: {
+    ...Ticket.empty,
+    hasServices: true,
+    lines: [
+      {
+        id: 'l1',
+        product: {
+          id: 'p1',
+          _identifier: 'P1',
+          productType: 'S',
+          quantityRule: 'PP'
+        },
+        isDeletable: true,
+        isEditable: true,
+        groupService: false,
+        relatedLines: [{ orderlineId: 'l2' }]
+      },
+      { id: 'l2', qty: 2 }
+    ]
   }
 };
 
@@ -163,6 +183,15 @@ describe('deleteLine preparation', () => {
         () => prepareAction({ lineIds: ['l1'] }, Ticket.cancelAndReplace),
         {
           errorConfirmation: 'OBPOS_CancelReplaceDeleteLine'
+        }
+      );
+    });
+
+    it('validate services', async () => {
+      await expectError(
+        () => prepareAction({ lineIds: ['l1'] }, Ticket.services),
+        {
+          errorConfirmation: 'OBPOS_AllServiceLineMustSelectToDelete'
         }
       );
     });
