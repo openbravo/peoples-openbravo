@@ -756,15 +756,22 @@ public class TranslationManager {
              + "                AND p.AD_Process_ID = m.AD_Process_ID "
              + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') "; 
       //@formatter:on
-      case "OBUIAPP_PARAMETER":
+      case "OBUIAPP_PROCESS":
       //@formatter:off
         return " AND EXISTS (SELECT 1 "
-             + "                FROM OBUIAPP_PROCESS p, "
-             + "                     AD_MENU m "
-             + "                WHERE p.OBUIAPP_PROCESS_ID = o.OBUIAPP_PROCESS_ID "
-             + "                AND p.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
+             + "                FROM AD_MENU m "
+             + "                WHERE o.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
              + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') ";
       //@formatter:on
+      case "OBUIAPP_PARAMETER":
+      //@formatter:off
+          return " AND EXISTS (SELECT 1 "
+               + "                FROM OBUIAPP_PROCESS p, "
+               + "                     AD_MENU m "
+               + "                WHERE p.OBUIAPP_PROCESS_ID = o.OBUIAPP_PROCESS_ID "
+               + "                AND p.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
+               + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') ";
+        //@formatter:on
       case "AD_MENU":
       //@formatter:off
         return " AND o.IS_AVAILABLE_FOR_TRANSLATION = 'Y'";
