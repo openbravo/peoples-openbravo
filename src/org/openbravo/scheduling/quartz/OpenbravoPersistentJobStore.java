@@ -27,11 +27,14 @@ import org.openbravo.scheduling.KillableProcessHandler;
 import org.quartz.JobPersistenceException;
 import org.quartz.SchedulerException;
 import org.quartz.impl.jdbcjobstore.JobStoreSupport;
+import org.quartz.spi.OperableTrigger;
 
 public class OpenbravoPersistentJobStore extends JobStoreSupport {
 
   private static Map<String, OpenbravoPersistentJobStore> clusterJobStores = new HashMap<>();
   private KillableProcessHandler killableProcessHandler = null;
+
+  private boolean shutdown = false;
 
   @Override
   public void setInstanceName(String instanceName) {
@@ -56,6 +59,7 @@ public class OpenbravoPersistentJobStore extends JobStoreSupport {
       killableProcessHandler = new KillableProcessHandler();
       killableProcessHandler.initialize(this.getThreadExecutor());
       updateSchedulerStatus(OpenbravoJDBCDelegate.SCHEDULER_STATUS_STARTED);
+      shutdown = false;
     } catch (SchedulerException | SQLException e) {
       getLog().error("Scheduler state could not be updated(started). {}", e.getMessage());
     }
@@ -88,6 +92,7 @@ public class OpenbravoPersistentJobStore extends JobStoreSupport {
         killableProcessHandler.interrupt();
       }
     }
+    shutdown = true;
     super.shutdown();
   }
 
@@ -140,5 +145,13 @@ public class OpenbravoPersistentJobStore extends JobStoreSupport {
   protected <T> T executeInLock(String lockName, TransactionCallback<T> txCallback)
       throws JobPersistenceException {
     return executeInNonManagedTXLock(lockName, txCallback, null);
+  }
+
+  @Override
+  public void releaseAcquiredTrigger(OperableTrigger trigger) {
+    if (shutdown) {
+      return;
+    }
+    super.releaseAcquiredTrigger(trigger);
   }
 }
