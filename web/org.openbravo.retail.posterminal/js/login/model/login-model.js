@@ -246,18 +246,6 @@
                     terminalName: terminalModel.get('terminalName')
                   };
 
-                  // FIXME: remove once completeTicket action is migrated to state.
-                  const documentSequence = JSON.parse(
-                    OB.UTIL.localStorage.getItem('DocumentSequence')
-                  );
-                  if (documentSequence) {
-                    await OB.App.State.DocumentSequence.initializeSequence({
-                      sequences: Object.keys(documentSequence).map(key => {
-                        return { sequenceName: key, ...documentSequence[key] };
-                      })
-                    });
-                  }
-
                   // Save in state Document Sequence values read from backend
                   await OB.App.State.DocumentSequence.initializeSequence({
                     sequences: [
@@ -1276,103 +1264,6 @@
       } else {
         callback();
       }
-    },
-
-    // FIXME: this method should be moved to completeTicket global action.
-    // This global action will increase sequence in DocumentSequence model
-    // and set documentno in Ticket model based on the increased sequence
-    setTicketDocumentNo: async function(ticket) {
-      await this.setDocumentNo(ticket);
-      if (ticket.has('calculatedInvoice')) {
-        await this.setDocumentNo(ticket.get('calculatedInvoice'));
-        ticket
-          .get('calculatedInvoice')
-          .set('orderDocumentNo', ticket.get('documentNo'));
-      }
-    },
-
-    setDocumentNo: async function(document) {
-      if (document.get('documentNo')) {
-        return;
-      }
-
-      const {
-        sequenceName,
-        sequenceNumber,
-        documentNo
-      } = await this.getDocumentNo(this.getDocumentSequenceName(document));
-
-      document.set({
-        obposSequencename: sequenceName,
-        obposSequencenumber: sequenceNumber,
-        documentNo: documentNo
-      });
-    },
-
-    getDocumentSequenceName: function(document) {
-      const settings = {
-        terminal: {
-          returnDocNoPrefix: OB.MobileApp.model.get('terminal')
-            .returnDocNoPrefix,
-          quotationDocNoPrefix: OB.MobileApp.model.get('terminal')
-            .quotationDocNoPrefix,
-          fullReturnInvoiceDocNoPrefix: OB.MobileApp.model.get('terminal')
-            .fullReturnInvoiceDocNoPrefix,
-          simplifiedReturnInvoiceDocNoPrefix: OB.MobileApp.model.get('terminal')
-            .simplifiedReturnInvoiceDocNoPrefix
-        },
-        preferences: {
-          salesWithOneLineNegativeAsReturns: OB.MobileApp.model.hasPermission(
-            'OBPOS_SalesWithOneLineNegativeAsReturns',
-            true
-          )
-        }
-      };
-
-      if (document.get('isInvoice')) {
-        return OB.App.State.DocumentSequence.Utils.getInvoiceSequenceName(
-          document.toJSON(),
-          settings
-        );
-      }
-      return OB.App.State.DocumentSequence.Utils.getOrderSequenceName(
-        document.toJSON(),
-        settings
-      );
-    },
-
-    getDocumentNo: async function(sequenceName) {
-      await OB.App.State.DocumentSequence.increaseSequence({
-        sequenceName: sequenceName
-      });
-
-      const documentSequence = OB.App.State.getState().DocumentSequence;
-      const { sequencePrefix, sequenceNumber } = documentSequence[sequenceName];
-      const documentNumberPadding = OB.MobileApp.model.get('terminal')
-        .documentnoPadding;
-      const documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-        {
-          sequencePrefix,
-          documentNumberSeparator: OB.Model.Order.prototype
-            .includeDocNoSeperator
-            ? '/'
-            : '',
-          documentNumberPadding,
-          sequenceNumber
-        }
-      );
-
-      // FIXME: remove once completeTicket action is migrated to state.
-      OB.UTIL.localStorage.setItem(
-        'DocumentSequence',
-        JSON.stringify(documentSequence)
-      );
-
-      return {
-        sequenceName: sequenceName,
-        sequenceNumber: sequenceNumber,
-        documentNo: documentNo
-      };
     },
 
     getPaymentName: function(key) {
