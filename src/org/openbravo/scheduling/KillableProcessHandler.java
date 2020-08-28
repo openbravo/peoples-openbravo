@@ -123,6 +123,8 @@ public class KillableProcessHandler extends Thread {
         timeToSleep = 1000;
       }
       try {
+        // because this runs in a separate thread, we need to make sure transaction is not left open
+        OBDal.getInstance().commitAndClose();
         Thread.sleep(timeToSleep);
       } catch (Exception e) {
         // Exception is ignored
