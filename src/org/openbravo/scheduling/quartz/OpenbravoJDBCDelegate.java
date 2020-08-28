@@ -57,7 +57,7 @@ public interface OpenbravoJDBCDelegate {
    *          Time stamp when status has been updated
    * @param status
    *          Target status
-   * @return Number of columns updated in DB (>0, scheduler status updated)
+   * @return Number of columns updated in DB (more than 0, scheduler status updated)
    * @throws SQLException
    *           In case of SQL error
    */
