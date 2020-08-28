@@ -204,15 +204,19 @@ enyo.kind({
           ) {
             // 'Create New One' case
             OB.MobileApp.model.receipt.trigger('updateView');
-            orderModel = OB.UTIL.TicketListUtils.newOrder(
-              OB.MobileApp.model.receipt.get('bp')
+            const payload = OB.UTIL.TicketUtils.addTicketCreationDataToPayload();
+            payload.ticketExtraProperties.deferredOrder = true;
+            payload.businessPartner = JSON.parse(
+              JSON.stringify(OB.MobileApp.model.receipt.get('bp'))
             );
-            orderModel.set('deferredOrder', true);
-            await OB.App.State.TicketList.saveTicket(
-              OB.App.StateBackwardCompatibility.getInstance(
-                'Ticket'
-              ).toStateObject(orderModel)
+
+            const newDeferredTicket = OB.App.State.Ticket.Utils.newTicket(
+              payload
             );
+            await OB.App.State.TicketList.saveTicket(newDeferredTicket);
+            orderModel = OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(newDeferredTicket);
           }
           const bpClone = new OB.Model.BusinessPartner();
           OB.UTIL.clone(OB.MobileApp.model.receipt.get('bp'), bpClone);
