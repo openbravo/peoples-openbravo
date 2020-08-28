@@ -48,7 +48,7 @@
             qty: 0,
             taxes: Object.keys(line.taxes).reduce((taxes, tax) => {
               const result = { ...taxes };
-              result[tax] = { ...newTicket.taxes[tax], net: 0, amount: 0 };
+              result[tax] = { ...line.taxes[tax], net: 0, amount: 0 };
               return result;
             }, {})
           };
