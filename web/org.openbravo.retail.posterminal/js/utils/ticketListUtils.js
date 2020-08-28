@@ -733,29 +733,45 @@
               productId: iter.id,
               salesOrderLineId: iter.lineId
             };
-            try {
-              let data = await OB.App.Request.mobileServiceRequest(
-                'org.openbravo.retail.posterminal.master.LoadedProduct',
-                body
-              );
-              data = data.response.data;
-              await addLineForProduct(
-                OB.Dal.transform(OB.Model.Product, data[0])
-              );
-            } catch (error) {
-              if (NoFoundProduct) {
-                NoFoundProduct = false;
-                OB.UTIL.showConfirmation.display(
-                  OB.I18N.getLabel('OBPOS_InformationTitle'),
-                  OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
-                  [
-                    {
-                      label: OB.I18N.getLabel('OBPOS_LblOk'),
-                      isConfirmButton: true
-                    }
-                  ]
+
+            const callLoadedProduct = async function() {
+              try {
+                let data = await OB.App.Request.mobileServiceRequest(
+                  'org.openbravo.retail.posterminal.master.LoadedProduct',
+                  body
                 );
+                data = data.response.data;
+                await addLineForProduct(
+                  OB.Dal.transform(OB.Model.Product, data[0])
+                );
+              } catch (error) {
+                if (NoFoundProduct) {
+                  NoFoundProduct = false;
+                  OB.UTIL.showConfirmation.display(
+                    OB.I18N.getLabel('OBPOS_InformationTitle'),
+                    OB.I18N.getLabel('OBPOS_NoReceiptLoadedText'),
+                    [
+                      {
+                        label: OB.I18N.getLabel('OBPOS_LblOk'),
+                        isConfirmButton: true
+                      }
+                    ]
+                  );
+                }
               }
+            };
+            if (OB.App.Security.hasPermission('OBPOS_remote.product')) {
+              OB.Dal.get(
+                OB.Model.Product,
+                iter.id,
+                function(product) {
+                  addLineForProduct(product);
+                },
+                null,
+                callLoadedProduct
+              );
+            } else {
+              callLoadedProduct();
             }
           }
         } catch (error) {
