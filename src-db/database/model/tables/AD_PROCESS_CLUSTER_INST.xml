@@ -53,6 +53,9 @@
       <foreign-key foreignTable="AD_PROCESS" name="AD_PROCESS_CLSTR_INST_PRC">
         <reference local="AD_PROCESS_ID" foreign="AD_PROCESS_ID"/>
       </foreign-key>
+      <index name="AD_PROC_CLUST_INST_PROC_IDX" unique="false">
+        <index-column name="AD_PROCESS_ID"/>
+      </index>
       <check name="AD_PROCESS_CLSTR_INST_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
