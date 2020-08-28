@@ -169,15 +169,11 @@ enyo.kind({
       this
     );
 
-    OB.App.State.Ticket.addUndoListener(() => {
-      this.manageUndo();
-    });
-
     this.manageUndo();
   },
 
   manageUndo: function() {
-    var undoaction = this.receipt.get('undo');
+    var undoaction = this.receipt && this.receipt.get('undo');
 
     if (undoaction || OB.App.State.Ticket.isUndoAvailable()) {
       this.$.msgwelcome.hide();
@@ -190,7 +186,7 @@ enyo.kind({
         this.$.txtaction.setContent('');
       }
       this.$.undobutton.setDisabled(false);
-    } else {
+    } else if (Object.keys(this.$).length !== 0) {
       this.$.msgaction.hide();
       this.$.msgwelcome.show();
       this.$.undobutton.undoaction = null;
@@ -204,5 +200,13 @@ enyo.kind({
       self.$.mainPanel.createComponent(component);
     });
     this.$.msgwelcomeLbl.setContent(OB.I18N.getLabel('OBPOS_WelcomeMessage'));
+
+    this.undoListener = OB.App.State.Ticket.addUndoListener(() => {
+      this.manageUndo();
+    });
+  },
+  destroy: function() {
+    this.inherited(arguments);
+    this.undoListener.removeListener();
   }
 });
