@@ -19,6 +19,7 @@
 package org.openbravo.scheduling;
 
 import java.sql.Connection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,6 +72,11 @@ public class ClusterInstanceProcessAccess {
     try {
       OBContext.setAdminMode(true);
       Process process = OBDal.getInstance().get(Process.class, processId);
+      if (process == null) {
+        // if there is no process, there is no need to check banned cluster instances, because they
+        // cannot be configured
+        return Collections.emptyList();
+      }
       String clusterInstanceSelection = process.getClusterInstanceSelection();
       List<String> definedClusterInstancesForProcess = getDefinedClusterInstancesForProcess(
           process);
