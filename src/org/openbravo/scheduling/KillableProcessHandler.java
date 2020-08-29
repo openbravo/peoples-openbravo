@@ -38,6 +38,9 @@ import org.quartz.spi.ThreadExecutor;
 
 /**
  * Checks and handles KillableProcess regularly, killing them if are marked as should_be_killed
+ * 
+ * It only runs if the scheduler is configured to use the OpenbravoPersistentJobStore
+ * 
  */
 public class KillableProcessHandler extends Thread {
   private static final Logger logger = LogManager.getLogger();
