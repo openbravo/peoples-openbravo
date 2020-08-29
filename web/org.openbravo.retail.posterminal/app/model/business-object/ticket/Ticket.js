@@ -11,7 +11,7 @@ if (!OB.App.StateBackwardCompatibility) {
   // StateBackwardCompatibility is not currenlty deployed. This can occur in case only business logic
   // is deployed without BackBone modelds. Let's regitser the ticket as a standard state model without
   // backbone compatibility.
-  OB.App.StateAPI.registerModel('Ticket');
+  OB.App.StateAPI.registerModel('Ticket', {}, { isUndoable: true });
 } else {
   const initialState = {};
   const options = {
@@ -51,6 +51,7 @@ if (!OB.App.StateBackwardCompatibility) {
     'Ticket',
     'OB.Model.Order',
     initialState,
-    options
+    options,
+    { isUndoable: true }
   );
 }
