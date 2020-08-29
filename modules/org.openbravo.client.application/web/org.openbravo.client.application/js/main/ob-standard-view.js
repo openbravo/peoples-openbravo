@@ -1355,6 +1355,14 @@ isc.OBStandardView.addProperties({
       return;
     }
 
+    if (this.viewGrid.lazyFiltering && !forceRefresh) {
+      this.viewGrid.filterHasChanged = true;
+      this.viewGrid.sorter.enable();
+      this.viewGrid.setData([]);
+      this.viewGrid.resetEmptyMessage();
+      return;
+    }
+
     // can be used by others to see that we are refreshing content
     this.refreshContents = true;
 

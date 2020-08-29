@@ -2947,6 +2947,13 @@ isc.OBViewGrid.addProperties({
           '">' +
           OB.I18N.getLabel('OBUIAPP_MultipleParentsSelected') +
           '</span>';
+      } else if (this.lazyFiltering && !isc.isA.ResultSet(this.data)) {
+        this.emptyMessage =
+          '<span class="' +
+          this.emptyMessageStyle +
+          '">' +
+          OB.I18N.getLabel('OBUIAPP_LazyFilteringNoFetch') +
+          '</span>';
       } else {
         this.emptyMessage = this.noDataEmptyMessage;
       }
