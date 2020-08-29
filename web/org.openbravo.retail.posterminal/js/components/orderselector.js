@@ -896,14 +896,29 @@ enyo.kind({
                   .filter(l => l.order === key)
                   .flatMap(l => l.lines);
                 if (isInvoiceCreated(order, orderLines)) {
-                  const {
-                    sequenceName,
-                    sequenceNumber,
-                    documentNo
-                  } = await OB.MobileApp.model.getDocumentNo(
+                  await OB.App.State.DocumentSequence.increaseSequence({
+                    sequenceName: 'fullinvoiceslastassignednum'
+                  });
+                  const documentSequence = OB.App.State.getState()
+                    .DocumentSequence;
+                  const { sequencePrefix, sequenceNumber } = documentSequence[
                     'fullinvoiceslastassignednum'
+                  ];
+                  const documentNumberPadding = OB.MobileApp.model.get(
+                    'terminal'
+                  ).documentnoPadding;
+                  const documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
+                    {
+                      sequencePrefix,
+                      documentNumberSeparator: OB.Model.Order.prototype
+                        .includeDocNoSeperator
+                        ? '/'
+                        : '',
+                      documentNumberPadding,
+                      sequenceNumber
+                    }
                   );
-                  order.invoiceSequenceName = sequenceName;
+                  order.invoiceSequenceName = 'fullinvoiceslastassignednum';
                   order.invoiceSequenceNumber = sequenceNumber;
                   order.invoiceDocumentNo = documentNo;
                 }
