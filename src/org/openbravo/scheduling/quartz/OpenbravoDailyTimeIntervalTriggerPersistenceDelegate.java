@@ -11,12 +11,15 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU
+ * All portions are Copyright (C) 2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.scheduling.quartz;
+
+import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.getBooleanValue;
+import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.setBooleanValue;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -30,9 +33,6 @@ import org.quartz.impl.jdbcjobstore.DailyTimeIntervalTriggerPersistenceDelegate;
 import org.quartz.impl.jdbcjobstore.SimplePropertiesTriggerProperties;
 import org.quartz.impl.jdbcjobstore.Util;
 import org.quartz.spi.OperableTrigger;
-
-import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.setBooleanValue;
-import static org.openbravo.scheduling.quartz.OpenbravoJDBCPersistenceSupport.getBooleanValue;
 
 public class OpenbravoDailyTimeIntervalTriggerPersistenceDelegate
     extends DailyTimeIntervalTriggerPersistenceDelegate {
