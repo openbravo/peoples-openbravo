@@ -28,6 +28,6 @@ public class OpenbravoInstanceIdGenerator implements InstanceIdGenerator {
 
   @Override
   public String generateInstanceId() {
-      return ConfigParameters.getMachineName();
+    return ConfigParameters.getMachineName();
   }
 }

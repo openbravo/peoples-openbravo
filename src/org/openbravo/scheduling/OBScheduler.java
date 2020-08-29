@@ -175,10 +175,9 @@ public class OBScheduler implements OBSchedulerMBean {
   }
 
   /**
-   * Returns if scheduling is allowed in the current instance
-   * It is allowed when there's any scheduler active in one of the instances
-   * of the cluster. An active scheduler means that it's policy is not no-execute
-   * and it is allowed to schedule new jobs.
+   * Returns if scheduling is allowed in the current instance It is allowed when there's any
+   * scheduler active in one of the instances of the cluster. An active scheduler means that it's
+   * policy is not no-execute and it is allowed to schedule new jobs.
    *
    * @return true if allowed to schedule, false otherwise
    * @throws SchedulerException
@@ -268,7 +267,8 @@ public class OBScheduler implements OBSchedulerMBean {
           // Tomcat stopped
           ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, vars.getUser(),
               requestId);
-          log.debug("{} run of process id {} was scheduled, marked as 'System Restart'", request.channel, request.processId);
+          log.debug("{} run of process id {} was scheduled, marked as 'System Restart'",
+              request.channel, request.processId);
           continue;
         }
 
