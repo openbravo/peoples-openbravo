@@ -34,6 +34,10 @@ import org.quartz.impl.jdbcjobstore.SimplePropertiesTriggerProperties;
 import org.quartz.impl.jdbcjobstore.Util;
 import org.quartz.spi.OperableTrigger;
 
+/**
+ * Extends DailyTimeIntervalTriggerPersistenceDelegate because handling of Bool fields is not
+ * extensible in TriggerPersistenceDelegates that use extended properties
+ */
 public class OpenbravoDailyTimeIntervalTriggerPersistenceDelegate
     extends DailyTimeIntervalTriggerPersistenceDelegate {
 
