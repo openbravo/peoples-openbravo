@@ -28,6 +28,9 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.listeners.JobListenerSupport;
 
+/**
+ * Makes sure ProcessBuindles have a connection, as it can be lost if the bundle has been serialized
+ */
 public class JobInitializationListener extends JobListenerSupport {
 
   private static final String LISTENER_NAME = "OBScheduler.JobInitializationListener";
