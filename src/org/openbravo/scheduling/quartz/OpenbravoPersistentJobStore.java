@@ -29,6 +29,11 @@ import org.quartz.SchedulerException;
 import org.quartz.impl.jdbcjobstore.JobStoreSupport;
 import org.quartz.spi.OperableTrigger;
 
+/**
+ * Handles persistence of quartz jobs and scheduler status in Database
+ * 
+ * @see JobStoreSupport
+ */
 public class OpenbravoPersistentJobStore extends JobStoreSupport {
 
   private static Map<String, OpenbravoPersistentJobStore> clusterJobStores = new HashMap<>();
