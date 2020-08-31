@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2019 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.ConnectionProviderContextListener;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.service.OBCriteria;
@@ -41,7 +42,7 @@ import org.openbravo.scheduling.ProcessBundle;
 
 /**
  * Schedules a background process
- * 
+ *
  * @author awolski
  */
 public class ScheduleProcess extends HttpSecureAppServlet {
@@ -56,19 +57,27 @@ public class ScheduleProcess extends HttpSecureAppServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    if (OBScheduler.isNoExecuteBackgroundPolicy()) {
-      log.info("Not scheduling process because current context background policy is 'no-execute'");
-      advisePopUp(request, response, "ERROR",
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
-          OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
-      return;
-    }
-
-    VariablesSecureApp vars = new VariablesSecureApp(request);
-    String requestId = getRequestId(vars);
-    String group = vars.getStringParameter("inpisgroup");
+    final VariablesSecureApp vars = new VariablesSecureApp(request);
+    final String requestId = getRequestId(vars);
+    final String group = vars.getStringParameter("inpisgroup");
 
     try {
+      if (!OBScheduler.getInstance().isSchedulingAllowed()) {
+        if (OBScheduler.getInstance().getScheduler().getMetaData().isJobStoreClustered()) {
+          log.info("Not scheduling process because current there is no scheduler instance active");
+          advisePopUp(request, response, "ERROR",
+              OBMessageUtils.messageBD("NoSchedulerInstanceActiveTitle"),
+              OBMessageUtils.messageBD("NoSchedulerInstanceActiveMsg"));
+        } else {
+          log.info(
+              "Not scheduling process because current context background policy is 'no-execute'");
+          advisePopUp(request, response, "ERROR",
+              OBMessageUtils.messageBD("BackgroundPolicyNoExecuteTitle"),
+              OBMessageUtils.messageBD("BackgroundPolicyNoExecuteMsg"));
+        }
+        return;
+      }
+
       // Avoid launch empty groups
       if (group.equals("Y") && isEmptyProcessGroup(requestId)) {
         advisePopUp(request, response, "ERROR", OBMessageUtils.getI18NMessage("Error", null),
@@ -76,8 +85,10 @@ public class ScheduleProcess extends HttpSecureAppServlet {
                 new String[] { getProcessGroup(requestId).getName() }));
         return;
       }
-
-      ProcessBundle bundle = ProcessBundle.request(requestId, vars, this);
+      // This class extends non serializable classes and is added to the data map
+      // using the ConnectionProvider available in the context listener instead.
+      final ProcessBundle bundle = ProcessBundle.request(requestId, vars,
+          ConnectionProviderContextListener.getPool());
       OBScheduler.getInstance().schedule(requestId, bundle);
 
     } catch (final Exception e) {

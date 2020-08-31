@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,7 +56,7 @@ import org.quartz.TriggerListener;
 /**
  * Listens to Scheduler events and JobDetail and Trigger executions in order to set context and
  * process run information for the application. It also manages the execution of process groups.
- * 
+ *
  * @author awolski
  */
 class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener {
@@ -135,15 +135,15 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     final String executionId = SequenceIdData.getUUID();
     try {
       ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
-          ctx.getUser(), executionId, PROCESSING, null, null,
-          jec.getJobDetail().getKey().getName());
+          ctx.getUser(), executionId, PROCESSING, null, null, jec.getJobDetail().getKey().getName(),
+          jec.getScheduler().getSchedulerInstanceId());
 
       bundle.setProcessRunId(executionId);
       jec.put(EXECUTION_ID, executionId);
       jec.put(ProcessBundle.CONNECTION, getConnection());
       jec.put(ProcessBundle.CONFIG_PARAMS, getConfigParameters());
 
-    } catch (final ServletException e) {
+    } catch (final ServletException | SchedulerException e) {
       log.error(e.getMessage(), e);
     }
     // no need to return the connection because it will be done after the process is executed
@@ -217,6 +217,14 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
     try {
       log.debug("Misfired process {}, start time {}.",
           trigger.getJobDataMap().getString(Process.PROCESS_NAME), trigger.getStartTime());
+
+      final String executionId = SequenceIdData.getUUID();
+      ProcessBundle bundle = (ProcessBundle) trigger.getJobDataMap().get(ProcessBundle.KEY);
+      ProcessContext ctx = bundle.getContext();
+
+      ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(), ctx.getUser(),
+          ctx.getUser(), executionId, Process.MISFIRED, null, null, bundle.getProcessRequestId(),
+          null);
     } catch (Exception e) {
       // ignore: exception while trying to log
     }
@@ -265,7 +273,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
             continue;
           }
 
-          log.info("There's another instance running, so leaving" + processName);
+          log.info("There's another instance running, so leaving {}", processName);
           stopConcurrency(trigger, jec, processName);
           return true;
         }
@@ -279,7 +287,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
         String concurrent = ProcessRunData.selectConcurrent(getConnection(),
             newJob.getProcessRequestId());
         if (!concurrent.equals("0")) {
-          log.info("There's another instance running, so leaving" + processName);
+          log.info("There's another instance running, so leaving {}", processName);
           stopConcurrency(trigger, jec, processName);
           return true;
         }
@@ -403,7 +411,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
         final String executionId = SequenceIdData.getUUID();
         ProcessRunData.insert(getConnection(), ctx.getOrganization(), ctx.getClient(),
             ctx.getUser(), ctx.getUser(), executionId, PROCESSING, null, null,
-            trigger.getKey().getName());
+            trigger.getKey().getName(), jec.getScheduler().getSchedulerInstanceId());
         ProcessRunData.update(getConnection(), ctx.getUser(), ERROR, getDuration(0),
             "Concurrent attempt to execute", executionId);
 
@@ -414,8 +422,8 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       }
 
     } catch (Exception e) {
-      log.error("Error updating context for non executed process due to concurrency " + processName,
-          e);
+      log.error("Error updating context for non executed process due to concurrency {}",
+          processName, e);
     } finally {
       // return connection to pool and remove it from current thread only in case the process is
       // not going to be executed because of concurrency, other case leave the connection to be

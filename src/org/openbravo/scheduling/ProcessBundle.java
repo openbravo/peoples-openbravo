@@ -18,7 +18,9 @@
  */
 package org.openbravo.scheduling;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -42,7 +44,9 @@ import org.openbravo.erpCommon.ad_process.PinstanceProcedure;
  * @author awolski
  * 
  */
-public class ProcessBundle {
+public class ProcessBundle implements Serializable {
+
+  static final long serialVersionUID = 1L;
 
   /**
    * String constant to retrieve the ProcessBundle from the Quartz JobExecutionContext
@@ -80,17 +84,19 @@ public class ProcessBundle {
 
   private ProcessContext context;
 
-  private ConnectionProvider connection;
+  private transient ConnectionProvider connection;
 
   private ConfigParameters config;
 
-  private ProcessLogger logger;
+  private transient ProcessLogger logger;
 
   private Object result;
 
   private Channel channel;
 
   private GroupInfo groupInfo;
+
+  private List<String> bannedClusterInstanceNames;
 
   static Logger log = LogManager.getLogger();
 
@@ -272,6 +278,10 @@ public class ProcessBundle {
     return this.groupInfo;
   }
 
+  public List<String> getBannedClusterInstanceNames() {
+    return bannedClusterInstanceNames;
+  }
+
   public void setProcessRunId(String strProcessRunId) {
     this.processRunId = strProcessRunId;
   }
@@ -383,7 +393,14 @@ public class ProcessBundle {
     setConnection(conn);
     setLog(new ProcessLogger(conn));
 
+    setBannedClusterInstances();
+
     return this;
+  }
+
+  private void setBannedClusterInstances() {
+    ClusterInstanceProcessAccess clusterAccess = new ClusterInstanceProcessAccess();
+    bannedClusterInstanceNames = clusterAccess.getBannedClusterInstanceNames(processId);
   }
 
   /**

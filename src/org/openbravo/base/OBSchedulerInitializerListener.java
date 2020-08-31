@@ -11,7 +11,7 @@ import static org.openbravo.base.ConnectionProviderContextListener.POOL_ATTRIBUT
 import static org.quartz.ee.servlet.QuartzInitializerListener.QUARTZ_FACTORY_KEY;
 
 import java.sql.Connection;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -86,9 +86,15 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
 
       /*
        * If the "start-scheduler-on-load" init-parameter is not specified, the scheduler will be
-       * started. This is to maintain backwards compatability.
+       * started. This is to maintain backwards compatibility.
+       * start-scheduler-on-load controls the starting of the scheduler across all the nodes in
+       * the cluster. The configuration parameter background.policy controls the starting of the
+       * scheduler in a specific instance of the cluster.
+       * Even if the instance is not started on application startup, it can be started later by
+       * using the JMX OBScheduler MBean.
        */
-      if (startOnLoad == null || (Boolean.valueOf(startOnLoad).booleanValue())) {
+      if ((startOnLoad == null || (Boolean.parseBoolean(startOnLoad)))
+          && !OBScheduler.isNoExecuteBackgroundPolicy()) {
         if (startDelay <= 0) {
           // Start now
           scheduler.start();
@@ -99,7 +105,7 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
           log.info("Scheduler will start in " + startDelay + " seconds.");
         }
       } else {
-        log.info("Scheduler has not been started. Use scheduler.start()");
+        log.info("Scheduler has not been started. Start the scheduler calling start() on the OBScheduler MBean");
       }
 
       String factoryKey = servletContext.getInitParameter("servlet-context-factory-key");
@@ -120,21 +126,29 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
       OBScheduler.getInstance().initialize(scheduler);
 
       // Update Interrupted Process Instance's End time with current time.
-      try {
-        Connection connection = OBDal.getInstance().getConnection();
+      try (Connection connection = OBDal.getInstance().getConnection()) {
         if (connection != null) {
-          Statement s = null;
+          PreparedStatement ps = null;
           try {
-            s = connection.createStatement();
-            String query = "UPDATE AD_PROCESS_RUN SET END_TIME=NOW(),STATUS='SYR' WHERE STATUS='PRC' AND END_TIME IS NULL";
-            int n = s.executeUpdate(query);
+            final String schedulerInstanceId = scheduler.getSchedulerInstanceId();
+            //@formatter:off
+            String query = ""
+              + "update ad_process_run"
+              + "  set end_time=NOW(), status='SYR'"
+              + " where status='PRC'"
+              + "   and end_time is null"
+              + "   and scheduler_instance=?";
+            //@formatter:on
+            ps = connection.prepareStatement(query);
+            ps.setString(1, schedulerInstanceId);
+            int n = ps.executeUpdate();
             if (n > 0) {
               log.info(n
                   + " background processes were in execution before Tomcat start, they have been marked as 'System Restarted' ");
             }
           } finally {
-            if (s != null && !s.isClosed()) {
-              s.close();
+            if (ps != null && !ps.isClosed()) {
+              ps.close();
             }
             OBDal.getInstance().flush();
             OBDal.getInstance().commitAndClose();

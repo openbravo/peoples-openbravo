@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -29,11 +32,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.scheduling.Frequency;
 import org.openbravo.scheduling.JobDetailProvider;
@@ -68,6 +73,8 @@ public class MisfirePolicyTest extends OBBaseTest {
   private Scheduler scheduler;
   private TestProcessMonitor monitor;
 
+  private static Integer misfireThreshold;
+
   @Before
   public void startScheduler() throws SchedulerException {
     scheduler = new StdSchedulerFactory().getScheduler();
@@ -78,6 +85,7 @@ public class MisfirePolicyTest extends OBBaseTest {
 
   @After
   public void stopScheduler() throws SchedulerException {
+    scheduler.clear();
     scheduler.shutdown();
   }
 
@@ -132,7 +140,7 @@ public class MisfirePolicyTest extends OBBaseTest {
     scheduleJob(name, data);
 
     // wait for the job executions
-    Thread.sleep(2100);
+    Thread.sleep(getMisfireThreshold() + 3000L);
 
     assertThat("Expected number of job executions", monitor.getJobExecutions(name), equalTo(2));
   }
@@ -234,5 +242,32 @@ public class MisfirePolicyTest extends OBBaseTest {
     protected void doExecute(ProcessBundle bundle) throws Exception {
       // Do nothing
     }
+  }
+
+  /**
+   * Returns org.quartz.jobStore.misfireThreshold property to allow jobs to wait certain time before
+   * misfire happens
+   * 
+   * @return misfireThreshold property from config/quartz.properties file
+   */
+  private static Integer getMisfireThreshold() {
+    if (misfireThreshold != null) {
+      return misfireThreshold;
+    }
+    String pathToConfig = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("source.path") + File.separator + "config" + File.separator
+        + "quartz.properties";
+    try (FileInputStream file = new FileInputStream(pathToConfig)) {
+      Properties p = new Properties();
+      p.load(file);
+      String misfireProperty = p.getProperty("org.quartz.jobStore.misfireThreshold");
+      misfireThreshold = Integer.parseInt(misfireProperty);
+      return misfireThreshold;
+    } catch (IOException e) {
+      // File has not been found, return default MisfireThreshold of 60 seconds
+      return 60000;
+    }
+
   }
 }

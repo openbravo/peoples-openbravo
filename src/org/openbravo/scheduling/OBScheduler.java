@@ -29,10 +29,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.jmx.MBeanRegistry;
+import org.openbravo.scheduling.quartz.JobInitializationListener;
+import org.openbravo.scheduling.quartz.OpenbravoPersistentJobStore;
 import org.openbravo.scheduling.trigger.TriggerProvider;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -42,10 +46,10 @@ import org.quartz.Trigger;
 
 /**
  * Provides the ability of schedule and unschedule background processes.
- * 
+ *
  * @author awolski
  */
-public class OBScheduler {
+public class OBScheduler implements OBSchedulerMBean {
   private static final OBScheduler INSTANCE = new OBScheduler();
 
   private static final Logger log = LogManager.getLogger();
@@ -60,10 +64,13 @@ public class OBScheduler {
 
   private String sqlDateTimeFormat;
 
+  private boolean initializing = true;
+
   private static final String BACKGROUND_POLICY = "background.policy";
   private static final String NO_EXECUTE_POLICY = "no-execute";
 
   private OBScheduler() {
+    MBeanRegistry.registerMBean("OBScheduler", this);
   }
 
   /**
@@ -82,7 +89,7 @@ public class OBScheduler {
 
   /**
    * Retrieves the Openbravo ConnectionProvider from the Scheduler Context.
-   * 
+   *
    * @return A ConnectionProvider
    */
   public ConnectionProvider getConnection() {
@@ -91,7 +98,7 @@ public class OBScheduler {
 
   /**
    * Retrieves the Openbravo ConfigParameters from the Scheduler context.
-   * 
+   *
    * @return Openbravo ConfigParameters
    */
   public ConfigParameters getConfigParameters() {
@@ -108,10 +115,10 @@ public class OBScheduler {
   /**
    * Schedule a new process (bundle) to run immediately in the background, using a random name for
    * the Quartz's JobDetail.
-   * 
+   *
    * This will create a new record in AD_PROCESS_REQUEST. This method throws a
    * {@link ServletException} if there is an error creating the AD_PROCESS_REQUEST information.
-   * 
+   *
    * @see #schedule(String, ProcessBundle)
    */
   public void schedule(ProcessBundle bundle) throws SchedulerException, ServletException {
@@ -140,18 +147,18 @@ public class OBScheduler {
    * Schedule a process (bundle) with the specified request id. The request id is used in Quartz as
    * the JobDetail's name. The details must be saved to AD_PROCESS_REQUEST before reaching this
    * method.
-   * 
+   *
    * @param requestId
    *          the id of the process request used as the Quartz jobDetail name
    * @param bundle
    *          The bundle with all of the process' details
-   * 
+   *
    * @throws SchedulerException
    *           If something goes wrong with the trigger creation or with the process scheduling.
    */
   public void schedule(String requestId, ProcessBundle bundle) throws SchedulerException {
-    if (isNoExecuteBackgroundPolicy()) {
-      log.info("Not scheduling process because current context background policy is 'no-execute'");
+    if (!initializing && !isSchedulingAllowed()) {
+      log.info("Not scheduling process because no scheduler instances are active");
       return;
     }
     if (requestId == null) {
@@ -168,8 +175,22 @@ public class OBScheduler {
   }
 
   /**
-   * Returns whether current node is set with no-execute background policy, which should prevent any
-   * process scheduling.
+   * Returns if scheduling is allowed in the current instance It is allowed when there's any
+   * scheduler active in one of the instances of the cluster. An active scheduler means that it's
+   * policy is not no-execute and it is allowed to schedule new jobs.
+   *
+   * @return true if allowed to schedule, false otherwise
+   * @throws SchedulerException
+   */
+  public boolean isSchedulingAllowed() throws SchedulerException {
+    return !sched.isInStandbyMode() || (sched.getMetaData().isJobStoreClustered()
+        && OpenbravoPersistentJobStore.isSchedulingAllowedInCluster(sched.getSchedulerName()));
+  }
+
+  /**
+   * Returns whether current node is set with no-execute background policy, which should prevent the
+   * scheduler instance from being started. If this instance is not started later and no other
+   * scheduler instances are active, then it should also prevent scheduling processes.
    */
   public static boolean isNoExecuteBackgroundPolicy() {
     String policy = OBPropertiesProvider.getInstance()
@@ -189,7 +210,7 @@ public class OBScheduler {
       sched.deleteJob(jobKey(requestId, OB_GROUP));
 
     } catch (final SchedulerException e) {
-      log.error("An error occurred rescheduling process " + bundle.toString(), e);
+      log.error("An error occurred rescheduling process {}.", bundle, e);
     }
     schedule(requestId, bundle);
   }
@@ -201,7 +222,7 @@ public class OBScheduler {
       ProcessRequestData.update(getConnection(), UNSCHEDULED, null, sqlDateTimeFormat,
           getCurrentDate(), context.getUser(), requestId);
     } catch (final Exception e) {
-      log.error("An error occurred unscheduling process " + requestId, e);
+      log.error("An error occurred unscheduling process {}", requestId, e);
     }
   }
 
@@ -222,10 +243,13 @@ public class OBScheduler {
     this.ctx = schdlr.getContext();
     this.sched = schdlr;
 
-    ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP, this.ctx);
+    final ProcessMonitor monitor = new ProcessMonitor("Monitor." + OB_GROUP, this.ctx);
     schdlr.getListenerManager().addSchedulerListener(monitor);
     schdlr.getListenerManager().addJobListener(monitor);
     schdlr.getListenerManager().addTriggerListener(monitor);
+
+    // Add the listener in charge of initializing transient fields after deserialization
+    schdlr.getListenerManager().addJobListener(new JobInitializationListener());
 
     sqlDateTimeFormat = getConfigParameters().getSqlDateTimeFormat();
 
@@ -243,15 +267,23 @@ public class OBScheduler {
           // Tomcat stopped
           ProcessRequestData.update(getConnection(), Process.SYSTEM_RESTART, vars.getUser(),
               requestId);
-          log.debug(request.channel + " run of process id " + request.processId
-              + " was scheduled, marked as 'System Restart'");
+          log.debug("{} run of process id {} was scheduled, marked as 'System Restart'",
+              request.channel, request.processId);
           continue;
         }
 
-        scheduleProcess(requestId, vars);
+        // processes will be scheduled on initialization only when the Quartz JobStore
+        // in usage does not support persistence and when, even with persistence, the
+        // job is not in Quartz structures. This can happen if the database recreated
+        // or the JobStore has been changed from a non-persistent one.
+        if (!schdlr.getMetaData().isJobStoreSupportsPersistence()
+            || !sched.checkExists(jobKey(requestId, OB_GROUP))) {
+          scheduleProcess(requestId, vars);
+        }
       }
+      initializing = false;
     } catch (final ServletException e) {
-      log.error("An error occurred retrieving scheduled process data: " + e.getMessage(), e);
+      log.error("An error occurred retrieving scheduled process data: {}", e.getMessage(), e);
     }
   }
 
@@ -261,7 +293,55 @@ public class OBScheduler {
       final ProcessBundle bundle = ProcessBundle.request(requestId, vars, getConnection());
       schedule(requestId, bundle);
     } catch (final ServletException | ParameterSerializationException e) {
-      log.error("Error scheduling process request: " + requestId, e);
+      log.error("Error scheduling process request: {}", requestId, e);
     }
   }
+
+  /*
+   * Implementation of the MBean interface
+   */
+
+  @Override
+  public boolean isStarted() {
+    boolean started;
+    try {
+      started = sched != null && sched.isStarted() && !sched.isInStandbyMode();
+    } catch (SchedulerException ex) {
+      throw new OBException(ex);
+    }
+    return started;
+  }
+
+  @Override
+  public void start() {
+    try {
+      if (sched == null) {
+        throw new OBException(
+            "The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
+      }
+      if (sched.isStarted() && !sched.isInStandbyMode()) {
+        throw new OBException("The scheduler is already started");
+      }
+      sched.start();
+    } catch (SchedulerException ex) {
+      throw new OBException(ex);
+    }
+  }
+
+  @Override
+  public void standby() {
+    try {
+      if (sched == null) {
+        throw new OBException(
+            "The scheduler was incorrectly initialized, the internal Quartz Scheduler is null");
+      }
+      if (sched.isInStandbyMode()) {
+        throw new OBException("The scheduler is already in standby mode");
+      }
+      sched.standby();
+    } catch (SchedulerException ex) {
+      throw new OBException(ex);
+    }
+  }
+
 }
