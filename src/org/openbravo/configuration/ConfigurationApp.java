@@ -62,6 +62,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private final static String LOG4J2_XML = BASEDIR_CONFIG + "log4j2.xml";
   private final static String LOG4J2TEST_XML = BASEDIR_TEST_SRC + "log4j2-test.xml";
   private final static String LOG4J2WEB_XML = BASEDIR_CONFIG + "log4j2-web.xml";
+  private final static String QUARTZ_XML = BASEDIR_CONFIG + "quartz.properties";
   private final static String COMMON_COMPONENT = ".settings/org.eclipse.wst.common.component";
   private final static String CLASSPATH = ".classpath";
   private final static String OPENBRAVO_LICENSE = BASEDIR + "/legal/Licensing.txt";
@@ -785,6 +786,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
     fileCopyTemplate(CLASSPATH + ".template", CLASSPATH, p);
     fileCopyTemplate(BASEDIR_TEST + CLASSPATH + ".template", BASEDIR_TEST + CLASSPATH, p);
     fileCopyTemplate(LOG4J2TEST_XML + ".template", LOG4J2TEST_XML, p);
+    fileCopyTemplate(QUARTZ_XML + ".template", QUARTZ_XML, p);
   }
 
   /**

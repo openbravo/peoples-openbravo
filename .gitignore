@@ -16,6 +16,7 @@ WebContent
 .ant-targets-build.xml
 
 config/Openbravo.properties
+config/quartz.properties
 config/Format.xml
 config/log4j.lcf
 config/userconfig.xml
