@@ -403,7 +403,16 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       ) {
         newTicket.openDrawer = newPayment.openDrawer;
       }
-      newTicket.payments = [...newTicket.payments, newPayment];
+      // if new payment is a reverse payment, add it after reversed payment. If not, add it at the end of the array
+      const index = newPayment.isReversePayment
+        ? newTicket.payments.indexOf(
+            newTicket.payments.find(
+              p => p.paymentId === newPayment.reversedPaymentId
+            )
+          ) + 1
+        : newTicket.payments.length;
+      newTicket.payments.splice(index, 0, newPayment);
+      newTicket.payments = [...newTicket.payments];
     }
 
     const paidAmt = newTicket.payments.reduce((total, p) => {
