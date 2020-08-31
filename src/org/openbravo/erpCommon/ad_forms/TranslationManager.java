@@ -384,7 +384,7 @@ public class TranslationManager {
       if (trl && !table.endsWith("_TRL")) {
         trlTable = table + "_TRL";
       }
-      final TranslationData[] trlColumns = getTrlColumns(cp, table);
+      final TranslationData[] trlColumns = getTrlColumns(cp, table, isReducedVersion);
       final String keyColumn = table + "_ID";
 
       boolean m_IsCentrallyMaintained = false;
@@ -689,12 +689,14 @@ public class TranslationManager {
     }
   }
 
-  private static TranslationData[] getTrlColumns(ConnectionProvider cp, String Base_Table) {
+  private static TranslationData[] getTrlColumns(ConnectionProvider cp, String Base_Table,
+      boolean isReducedVersion) {
 
     TranslationData[] list = null;
 
     try {
-      list = TranslationData.trlColumns(cp, Base_Table + "_TRL");
+      list = TranslationData.trlColumns(cp, Base_Table + "_TRL",
+          isReducedVersion ? "isReducedVersion" : "");
     } catch (final Exception e) {
       log4j.error("getTrlColumns", e);
     }
