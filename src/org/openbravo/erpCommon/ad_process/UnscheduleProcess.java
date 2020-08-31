@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,7 +33,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.scheduling.OBScheduler;
 import org.openbravo.scheduling.ProcessContext;
-import org.quartz.SchedulerException;
 
 public class UnscheduleProcess extends HttpSecureAppServlet {
 
@@ -60,16 +59,8 @@ public class UnscheduleProcess extends HttpSecureAppServlet {
 
     final String windowId = vars.getStringParameter("inpwindowId");
     final String requestId = vars.getSessionValue(windowId + "|" + PROCESS_REQUEST_ID);
-    String message;
-    try {
-      OBScheduler.getInstance().unschedule(requestId, new ProcessContext(vars));
-
-    } catch (final SchedulerException e) {
-      message = Utility.messageBD(this, "UNSCHED_ERROR", vars.getLanguage());
-      String processErrorTit = Utility.messageBD(this, "Error", vars.getLanguage());
-      advisePopUp(request, response, "ERROR", processErrorTit, message + " " + e.getMessage());
-    }
-    message = Utility.messageBD(this, "UNSCHED_SUCCESS", vars.getLanguage());
+    OBScheduler.getInstance().unschedule(requestId, new ProcessContext(vars));
+    String message = Utility.messageBD(this, "UNSCHED_SUCCESS", vars.getLanguage());
     String processTitle = Utility.messageBD(this, "Success", vars.getLanguage());
     advisePopUpRefresh(request, response, "SUCCESS", processTitle, message);
   }

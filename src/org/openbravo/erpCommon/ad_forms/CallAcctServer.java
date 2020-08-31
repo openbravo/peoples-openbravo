@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,7 +41,6 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.scheduling.ProcessRunner;
 import org.openbravo.xmlEngine.XmlDocument;
-import org.quartz.SchedulerException;
 
 public class CallAcctServer extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -67,11 +66,7 @@ public class CallAcctServer extends HttpSecureAppServlet {
       String strDateFrom = vars.getStringParameter("inpDateFrom");
       String strDateTo = vars.getStringParameter("inpDateTo");
       if (data.length > 0 && data[0].status.equals(org.openbravo.scheduling.Process.SCHEDULED)) {
-        try {
-          OBScheduler.getInstance().unschedule(data[0].id, new ProcessContext(vars));
-        } catch (SchedulerException e) {
-          throw new ServletException(e.getMessage(), e);
-        }
+        OBScheduler.getInstance().unschedule(data[0].id, new ProcessContext(vars));
       }
       // acctServer.cancelDirectProcess();
       printPage(response, vars, strTableId, strAdOrgId, "", strDateFrom, strDateTo);

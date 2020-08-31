@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -182,10 +182,8 @@ public class OBScheduler {
    * @param requestId
    * @param bundle
    * @throws SchedulerException
-   * @throws ServletException
    */
-  public void reschedule(String requestId, ProcessBundle bundle)
-      throws SchedulerException, ServletException {
+  public void reschedule(String requestId, ProcessBundle bundle) throws SchedulerException {
     try {
       sched.unscheduleJob(triggerKey(requestId, OB_GROUP));
       sched.deleteJob(jobKey(requestId, OB_GROUP));
@@ -196,7 +194,7 @@ public class OBScheduler {
     schedule(requestId, bundle);
   }
 
-  public void unschedule(String requestId, ProcessContext context) throws SchedulerException {
+  public void unschedule(String requestId, ProcessContext context) {
     try {
       sched.unscheduleJob(triggerKey(requestId, OB_GROUP));
       sched.deleteJob(jobKey(requestId, OB_GROUP));
