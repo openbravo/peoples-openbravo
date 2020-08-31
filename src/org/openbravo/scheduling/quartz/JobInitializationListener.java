@@ -29,7 +29,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.listeners.JobListenerSupport;
 
 /**
- * Makes sure ProcessBuindles have a connection, as it can be lost if the bundle has been serialized
+ * Makes sure ProcessBundles have a connection, as it can be lost if the bundle has been serialized
  */
 public class JobInitializationListener extends JobListenerSupport {
 
