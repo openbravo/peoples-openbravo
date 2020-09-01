@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Copyright (C) 2001-2020 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -70,7 +70,6 @@ public class VariablesBase {
    * @param request
    *          HttpServletRequest object originating from the user request.
    */
-  @SuppressWarnings("unchecked")
   public VariablesBase(HttpServletRequest request) {
     if (request == null) {
       // logging exception to obtain stack trace to pinpoint the cause
@@ -83,14 +82,11 @@ public class VariablesBase {
       this.isMultipart = ServletFileUpload.isMultipartContent(new ServletRequestContext(request));
       if (isMultipart) {
         DiskFileItemFactory factory = new DiskFileItemFactory();
-        // factory.setSizeThreshold(yourMaxMemorySize);
-        // factory.setRepositoryPath(yourTempDirectory);
         ServletFileUpload upload = new ServletFileUpload(factory);
-        // upload.setSizeMax(yourMaxRequestSize);
         try {
           items = upload.parseRequest(request);
         } catch (Exception ex) {
-          ex.printStackTrace();
+          log4j.error("Error parsing multipart request", ex);
         }
       }
     }
