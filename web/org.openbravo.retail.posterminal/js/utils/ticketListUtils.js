@@ -531,7 +531,7 @@
             ? null
             : OB.DEC.number(iter.lineNetAmount);
         iter.linepos = linepos;
-        var addLineForProduct = async function(prod) {
+        var addLineForProduct = async function(prod, iter) {
           // Set product services
           await order._loadRelatedServices(
             prod.get('productType'),
@@ -725,7 +725,8 @@
           const product = await OB.App.MasterdataModels.Product.withId(iter.id);
           if (product) {
             await addLineForProduct(
-              OB.Dal.transform(OB.Model.Product, product)
+              OB.Dal.transform(OB.Model.Product, product),
+              iter
             );
           } else {
             //Empty
@@ -742,7 +743,8 @@
                 );
                 data = data.response.data;
                 await addLineForProduct(
-                  OB.Dal.transform(OB.Model.Product, data[0])
+                  OB.Dal.transform(OB.Model.Product, data[0]),
+                  iter
                 );
               } catch (error) {
                 if (NoFoundProduct) {
@@ -760,16 +762,22 @@
                 }
               }
             };
-            if (OB.App.Security.hasPermission('OBPOS_remote.product')) {
+            const callObDalGet = function(iter) {
+              // created function to avoid overwrite of iter shared variable between each for loop,
+              // in the call to addLineForProduct in the success callback of the ob.dal.get
               OB.Dal.get(
                 OB.Model.Product,
                 iter.id,
                 function(product) {
-                  addLineForProduct(product);
+                  addLineForProduct(product, iter);
                 },
                 null,
                 callLoadedProduct
               );
+            };
+
+            if (OB.App.Security.hasPermission('OBPOS_remote.product')) {
+              callObDalGet(iter);
             } else {
               callLoadedProduct();
             }
