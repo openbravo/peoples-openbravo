@@ -38,7 +38,6 @@ import org.quartz.impl.triggers.AbstractTrigger;
  * request
  */
 public class ClusterInstanceProcessAccess {
-  private static final String ALL_EXCLUDING_DEFINED = "Y";
 
   /**
    * Given a list of triggerKeys, returns only those that can be executed on the current instance
@@ -77,12 +76,13 @@ public class ClusterInstanceProcessAccess {
         // cannot be configured
         return Collections.emptyList();
       }
-      String clusterInstanceSelection = process.getClusterInstanceSelection();
       List<String> definedClusterInstancesForProcess = getDefinedClusterInstancesForProcess(
           process);
-      if (ALL_EXCLUDING_DEFINED.equals(clusterInstanceSelection)) {
+      if (definedClusterInstancesForProcess.isEmpty()) {
+        // All cluster instances can run these process
         return definedClusterInstancesForProcess;
       } else { // ONLY_THOSE_DEFINED
+        // All the rest of the instances are banned from executing these process
         List<String> allClusterInstances = getAllClusterInstances();
         return allClusterInstances.stream()
             .filter(clusterInstance -> !definedClusterInstancesForProcess.contains(clusterInstance))
