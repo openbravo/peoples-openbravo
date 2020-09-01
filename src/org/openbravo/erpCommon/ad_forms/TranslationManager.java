@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -370,6 +371,10 @@ public class TranslationManager {
    *          Base language for the module
    * @param javaPackage
    *          Java package for the module
+   * @param isReducedVersion
+   *          If true then the export will only take into account elements that are related with a
+   *          Menu entry that is checked to be translated. If false, everything will be exported to
+   *          the translation
    */
   private static void exportTable(ConnectionProvider cp, String AD_Language,
       boolean exportReferenceData, boolean exportAll, String table, String tableID,
@@ -481,21 +486,8 @@ public class TranslationManager {
         parameters.add(moduleId);
       }
 
-      // Skip translation table records with isActive = No
-      sql += " and o.IsActive='Y'";
-      // Skip parent table records with isActive = No
-      sql += " and t.IsActive='Y'";
-      // Special case to skip AD_TEXTINTERFACES related to jrxml files
-      if (isReducedVersion && StringUtils.equals(table, "AD_TEXTINTERFACES")) {
-        sql += " and (o.FILENAME IS NULL OR o.FILENAME NOT LIKE '%jrxml%')";
-      }
-      // Special case to skip AD_Reference if isReducedVersion
-      if (isReducedVersion && StringUtils.equals(table, "AD_REFERENCE")) {
-        sql += " and 1=2";
-      }
-
       if (isReducedVersion) {
-        sql += getIsAvailableForTranslationClause(table);
+        sql += getReducedTranslationClause(table);
       }
 
       sql += " order by t." + keyColumn;
@@ -703,141 +695,104 @@ public class TranslationManager {
     return list;
   }
 
-  private static String getIsAvailableForTranslationClause(final String table) {
+  private static String getReducedTranslationClause(final String table) {
+    // Skip translation table records with isActive = No
+    String sql = " and o.IsActive='Y'";
+    // Skip parent table records with isActive = No
+    sql += " and t.IsActive='Y'";
+
+    //@formatter:off
     switch (table) {
+      case "AD_TEXTINTERFACES":
+        sql += " and (o.FILENAME IS NULL OR o.FILENAME NOT LIKE '%jrxml%')";
+        break;
       case "AD_ELEMENT":
-      //@formatter:off
-        return " AND (EXISTS (SELECT 1 "
-             + "            FROM AD_COLUMN c, "
-             + "                 AD_FIELD f, "
-             + "                 AD_TAB t "
-             + "            WHERE c.AD_ELEMENT_ID = o.AD_ELEMENT_ID "
-             + "            AND c.AD_COLUMN_ID = f.AD_COLUMN_ID "
-             + "            AND f.AD_TAB_ID = t.AD_TAB_ID "
-             + "            AND "+getWhereClause("t") +" ) "
-             + "    OR EXISTS (SELECT 1 "
-             + "               FROM OBUIAPP_PARAMETER pp, "
-             + "                    OBUIAPP_PROCESS pr "
-             + "               WHERE pp.AD_ELEMENT_ID =  o.AD_ELEMENT_ID "
-             + "               AND pp.OBUIAPP_PROCESS_ID = pr.OBUIAPP_PROCESS_ID "
-             + "               AND EXISTS (SELECT 1 "
-             + "                           FROM AD_MENU m "
-             + "                           WHERE m.EM_OBUIAPP_PROCESS_ID = pr.OBUIAPP_PROCESS_ID "
-             + "                           AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y')) "
-             + "    OR EXISTS (SELECT 1 "
-             + "               FROM AD_PROCESS_PARA pp, "
-             + "                    AD_PROCESS pr "
-             + "               WHERE pp.AD_ELEMENT_ID = o.AD_ELEMENT_ID "
-             + "               AND pp.AD_PROCESS_ID = pr.AD_PROCESS_ID "
-             + "               AND EXISTS (SELECT 1 "
-             + "                           FROM AD_MENU m "
-             + "                           WHERE m.AD_PROCESS_ID = pr.AD_PROCESS_ID "
-             + "                           AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y')) "
+               // Window directly or indirectly linked to menu entry with ad_element
+        sql += " AND (EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_ELEMENT_ID", "AD_ELEMENT_ID", Optional.empty())
+               // Process Definition Param with an ad_element
+             + "    OR EXISTS " + getLinkToProcessesAvailableForReducedTranslationFromProcessParam(ProcessParamType.OBUIAPP_PARAMETER, "o.AD_ELEMENT_ID", "AD_ELEMENT_ID")
+               // Process Param with an ad_element
+             + "    OR EXISTS " + getLinkToProcessesAvailableForReducedTranslationFromProcessParam(ProcessParamType.AD_PROCESS_PARA, "o.AD_ELEMENT_ID", "AD_ELEMENT_ID")
              + " )";
-      //@formatter:on
+        break;
       case "AD_FIELD":
-      //@formatter:off
-        return " AND EXISTS (SELECT 1 "
-             + "                    FROM AD_TAB t "
-             + "                    WHERE t.AD_TAB_ID = o.AD_TAB_ID "
-             + "                    AND "+getWhereClause("t") +")";
-      //@formatter:on
+               // Window directly or indirectly linked to menu entry with ad_field
+        sql += " AND EXISTS (SELECT 1 "
+             + "             FROM AD_TAB t "
+             + "             WHERE t.AD_TAB_ID = o.AD_TAB_ID "
+             + "             AND "+getRecordsInWindowsAvailableForReducedTranslation("t") +")";
+        break;
       case "AD_PROCESS":
-      //@formatter:off
-        return " AND EXISTS (SELECT 1 "
+      case "AD_PROCESS_PARA":
+               // Direct menu entry
+        sql += " AND ( EXISTS (SELECT 1 "
              + "                FROM AD_MENU m "
              + "                WHERE o.AD_Process_ID = m.AD_Process_ID "
-             + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') ";
-      //@formatter:on
-      case "AD_PROCESS_PARA":
-      //@formatter:off
-        return " AND EXISTS (SELECT 1 "
-             + "                FROM AD_Process p, "
-             + "                     AD_MENU m "
-             + "                WHERE p.AD_Process_ID = o.AD_Process_ID "
-             + "                AND p.AD_Process_ID = m.AD_Process_ID "
-             + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') "; 
-      //@formatter:on
+             + "                AND m.IS_FOR_REDUCED_TRANSLATION = 'Y') "
+                // Indirect menu entry through a process in another window
+             + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_Process_ID", "AD_Process_ID", Optional.empty())
+             + "     ) ";
+        break;
       case "OBUIAPP_PROCESS":
-      //@formatter:off
-        return " AND EXISTS (SELECT 1 "
+      case "OBUIAPP_PARAMETER":
+               // Direct menu entry
+        sql += " AND ( EXISTS (SELECT 1 "
              + "                FROM AD_MENU m "
              + "                WHERE o.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
-             + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') ";
-      //@formatter:on
-      case "OBUIAPP_PARAMETER":
-      //@formatter:off
-          return " AND EXISTS (SELECT 1 "
-               + "                FROM OBUIAPP_PROCESS p, "
-               + "                     AD_MENU m "
-               + "                WHERE p.OBUIAPP_PROCESS_ID = o.OBUIAPP_PROCESS_ID "
-               + "                AND p.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
-               + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') ";
-        //@formatter:on
+             + "                AND m.IS_FOR_REDUCED_TRANSLATION = 'Y') "
+             // Indirect menu entry through a process definition in another window
+             + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.OBUIAPP_PROCESS_ID", "EM_OBUIAPP_PROCESS_ID", Optional.empty())
+             + "     ) ";
+        break;
       case "AD_MENU":
-      //@formatter:off
-        return " AND o.IS_AVAILABLE_FOR_TRANSLATION = 'Y'";
-      //@formatter:on
+        sql += " AND o.IS_FOR_REDUCED_TRANSLATION = 'Y'";
+        break;
       case "AD_WINDOW":
-      //@formatter:off
-        return " AND "+getWhereClause("o");
-      //@formatter:on
       case "AD_TAB":
-      //@formatter:off
-        return " AND "+getWhereClause("o");
-      //@formatter:on
+        sql += " AND " + getRecordsInWindowsAvailableForReducedTranslation("o");
+        break;
       case "AD_FIELDGROUP":
-      //@formatter:off
-        return " AND (EXISTS (SELECT 1 "
+                      // In Windows
+        sql += " AND (EXISTS (SELECT 1 "
             + "               FROM AD_FIELD f "
             + "               JOIN AD_TAB t ON (t.ad_tab_id = f.ad_tab_id) "
             + "               WHERE f.ad_fieldgroup_id = o.ad_fieldgroup_id "
-            + "               AND "+getWhereClause("t") +" ) "
-            + "       OR EXISTS (SELECT 1 "
-            + "                  FROM OBUIAPP_PARAMETER p "
-            + "                  JOIN OBUIAPP_PROCESS pr ON (pr.obuiapp_process_id = p.obuiapp_process_id) "
-            + "                  JOIN AD_MENU m on m.em_obuiapp_process_id = pr.obuiapp_process_id "
-            + "                  WHERE p.ad_fieldgroup_id = o.ad_fieldgroup_id "
-            + "                  AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y' )"
+            + "               AND "+ getRecordsInWindowsAvailableForReducedTranslation("t") +" ) "
+                      // In Process Definitions
+            + "    OR EXISTS " + getLinkToProcessesAvailableForReducedTranslationFromProcessParam(ProcessParamType.OBUIAPP_PARAMETER, "o.AD_FIELDGROUP_ID", "AD_FIELDGROUP_ID")
             + "       )";
-      //@formatter:on
+        break;
       case "AD_REF_LIST":
-      //@formatter:off
-        return " AND ( EXISTS (SELECT 1 "
-             + "               FROM AD_COLUMN c, "
-             + "                    AD_FIELD f, "
-             + "                    AD_TAB t "
-             + "             WHERE c.AD_REFERENCE_VALUE_ID = o.AD_REFERENCE_ID "
-             + "             AND c.AD_REFERENCE_ID = '17' "
-             + "             AND c.AD_COLUMN_ID = f.AD_COLUMN_ID "
-             + "             AND f.AD_TAB_ID = t.AD_TAB_ID "
-             + "             AND "+getWhereClause("t")+" ) "
-             + "       OR EXISTS (SELECT 1 "
-             + "                  FROM OBUIAPP_PARAMETER pp "
-             + "                  WHERE pp.AD_REFERENCE_VALUE_ID = o.AD_REFERENCE_ID "
-             + "                  AND (EXISTS (SELECT 1 "
-             + "                              FROM OBUIAPP_PROCESS p, "
-             + "                                   AD_MENU m "
-             + "                              WHERE p.OBUIAPP_PROCESS_ID = pp.OBUIAPP_PROCESS_ID "
-             + "                              AND p.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
-             + "                              AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y')"
-             + "                       OR NOT EXISTS (SELECT 1 "
-             + "                                       FROM OBUIAPP_PROCESS p, " 
-             + "                                            AD_MENU m "
-             + "                                       WHERE p.OBUIAPP_PROCESS_ID = pp.OBUIAPP_PROCESS_ID " 
-             + "                                       AND p.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID))) "
-             + "      ) ";
-
+                       // In Windows
+        sql += " AND ( EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_REFERENCE_ID", "AD_REFERENCE_VALUE_ID", Optional.of("AND c.AD_REFERENCE_ID = '17'"))
+                       // In Process Definition Param
+             + "       OR EXISTS " + getLinkToProcessesAvailableForReducedTranslationFromProcessParam(ProcessParamType.OBUIAPP_PARAMETER, "o.AD_REFERENCE_ID", "AD_REFERENCE_VALUE_ID")
+                       // In Process Param
+             + "       OR EXISTS " + getLinkToProcessesAvailableForReducedTranslationFromProcessParam(ProcessParamType.AD_PROCESS_PARA, "o.AD_REFERENCE_ID", "AD_REFERENCE_VALUE_ID")
+             + "     ) ";
+        break;
+      // Exclude these tables completely as they don't add useful translation for end user
+      case "AD_REFERENCE":
+      case "OBUISEL_SELECTOR":
+        sql += " and 1=2 ";
+        break;
       default:
-        return "";
+        sql += "";
+      //@formatter:on
     }
+    return sql;
   }
-    private static String getWhereClause(final String tableAlias) {
-      //@formatter:off
-      return "  ( EXISTS (SELECT 1 "
+
+  /*
+   * "Windows with direct entry in Menu" or "Process Definition Windows indirectly linked to a
+   * window which is directly linked in Menu"
+   */
+  private static String getRecordsInWindowsAvailableForReducedTranslation(final String tableAlias) {
+    //@formatter:off
+    return   "  ( EXISTS (SELECT 1 " 
            + "                FROM AD_MENU m "
            + "                WHERE m.AD_WINDOW_ID = "+tableAlias+".AD_WINDOW_ID "
-           + "                AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y') "
+           + "                AND m.IS_FOR_REDUCED_TRANSLATION = 'Y') "
            + "        OR EXISTS (SELECT 1 "
            + "                   FROM OBUIAPP_Ref_Window rw, " 
            + "                        OBUIAPP_PARAMETER pp, " 
@@ -845,27 +800,68 @@ public class TranslationManager {
            + "                        AD_COLUMN rwc, " 
            + "                        AD_FIELD rwf, " 
            + "                        AD_TAB rwt, " 
-           + "                        AD_WINDOW rww " 
+           + "                        AD_WINDOW rww, "
+           + "                        AD_MENU m "
            + "                    WHERE rw.AD_WINDOW_ID = "+tableAlias+".AD_WINDOW_ID "
            + "                      AND rw.AD_REFERENCE_ID = pp.AD_REFERENCE_VALUE_ID " 
            + "                      AND pp.OBUIAPP_Process_ID = pr.OBUIAPP_Process_ID " 
            + "                      AND pr.OBUIAPP_Process_ID = rwc.EM_OBUIAPP_Process_ID " 
            + "                      AND rwc.AD_COLUMN_ID = rwf.AD_COLUMN_ID " 
            + "                      AND rwf.AD_TAB_ID = rwt.AD_TAB_ID "
-           + "                      AND rwt.AD_WINDOW_ID = rww.AD_WINDOW_ID " 
-           + "                      AND EXISTS " 
-           + "                        (SELECT 1 " 
-           + "                         FROM AD_MENU m " 
-           + "                         WHERE m.AD_WINDOW_ID = rww.AD_WINDOW_ID " 
-           + "                           AND m.IS_AVAILABLE_FOR_TRANSLATION = 'Y')) "
-           + "        OR (NOT EXISTS (SELECT 1 "
-           + "                        FROM AD_MENU m "
-           + "                        WHERE "+tableAlias+".AD_WINDOW_ID = m.AD_WINDOW_ID)"
-           + "            AND NOT EXISTS (SELECT 1 "
-           + "                            FROM OBUIAPP_REF_WINDOW rw "
-           + "                            WHERE rw.AD_WINDOW_ID = "+tableAlias+".AD_WINDOW_ID)) "
-           + "        ) ";
-      //@formatter:on
+           + "                      AND rwt.AD_WINDOW_ID = rww.AD_WINDOW_ID "
+           + "                      AND m.AD_WINDOW_ID = rww.AD_WINDOW_ID " 
+           + "                      AND m.IS_FOR_REDUCED_TRANSLATION = 'Y') "
+           + "   ) ";
+    //@formatter:on
+  }
+
+  private static String getLinkToWindowsAvailableForReducedTranslationFromADColumn(
+      final String referencedColumnToExternalQuery, final String linkThroughADColumn,
+      final Optional<String> extraWhereClause) {
+    //@formatter:off
+    return " (SELECT 1 "
+         + "  FROM AD_COLUMN c, "
+         + "  AD_FIELD f, "
+         + "  AD_TAB t "
+         + "  WHERE c.AD_COLUMN_ID = f.AD_COLUMN_ID "
+         + "  AND f.AD_TAB_ID = t.AD_TAB_ID "
+         + "  AND " + referencedColumnToExternalQuery + " = c." + linkThroughADColumn 
+         + "  AND " + getRecordsInWindowsAvailableForReducedTranslation("t") + " "
+         + (  extraWhereClause.isEmpty()? "" : extraWhereClause.get())
+         + " ) ";
+    //@formatter:on
+  }
+
+  private enum ProcessParamType {
+    AD_PROCESS_PARA("AD_PROCESS_ID", "AD_PROCESS_ID"),
+    OBUIAPP_PARAMETER("EM_OBUIAPP_PROCESS_ID", "OBUIAPP_PROCESS_ID");
+
+    ProcessParamType(String linkToMenuColum, String processPrimaryKeyColumn) {
+      this.linkToMenuColum = linkToMenuColum;
+      this.processPrimaryKeyColumn = processPrimaryKeyColumn;
+    }
+
+    final String linkToMenuColum;
+    final String processPrimaryKeyColumn;
+  }
+
+  private static String getLinkToProcessesAvailableForReducedTranslationFromProcessParam(
+      final ProcessParamType processParamType, final String referencedColumnToExternalQuery,
+      final String linkThroughProcessParameterTable) {
+    //@formatter:off
+    return " (SELECT 1 "
+         + "  FROM " + processParamType + " pp "
+         + "  WHERE pp." + linkThroughProcessParameterTable + " = " + referencedColumnToExternalQuery
+                   // ...directly linked to menu entry
+         + "  AND (   EXISTS (SELECT 1 "
+         + "                  FROM AD_MENU m "
+         + "                  WHERE m." + processParamType.linkToMenuColum + " = pp." + processParamType.processPrimaryKeyColumn
+         + "                  AND  m.IS_FOR_REDUCED_TRANSLATION = 'Y') "               
+                   // ...indirectly linked to a window menu entry
+         + "       OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("pp." + processParamType.processPrimaryKeyColumn, processParamType.linkToMenuColum, Optional.empty())
+         + "      ) "
+         + " ) ";
+    //@formatter:on
   }
 
 }

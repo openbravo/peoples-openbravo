@@ -63,7 +63,7 @@ class ADMenuEventHandler extends EntityPersistenceEventObserver {
     String menuId = (String) event.getTargetInstance().getId();
     final Entity menuEntity = ModelProvider.getInstance().getEntity(Menu.ENTITY_NAME);
     final Property availableForTrlProperty = menuEntity
-        .getProperty(Menu.PROPERTY_AVAILABLEFORTRANSLATION);
+        .getProperty(Menu.PROPERTY_FORREDUCEDTRANSLATION);
     final Boolean currentValueAvailableForTrl = (Boolean) event
         .getCurrentState(availableForTrlProperty);
     final Boolean previousValueAvailableForTrl = (Boolean) event
@@ -75,7 +75,7 @@ class ADMenuEventHandler extends EntityPersistenceEventObserver {
         for (int i = 0; i < data.length; i++) {
           if (!StringUtils.equals(menuId, data[i].id)) {
             final Menu menu = OBDal.getInstance().get(Menu.class, data[i].id);
-            menu.setAvailableForTranslation(currentValueAvailableForTrl);
+            menu.setForReducedTranslation(currentValueAvailableForTrl);
           }
         }
       } catch (ServletException e) {

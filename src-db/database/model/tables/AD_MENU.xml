@@ -73,7 +73,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="IS_AVAILABLE_FOR_TRANSLATION" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+      <column name="IS_FOR_REDUCED_TRANSLATION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
@@ -96,6 +96,7 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="AD_MENU_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_MENU_ISREDTRL_CHK"><![CDATA[IS_FOR_REDUCED_TRANSLATION IN ('Y', 'N')]]></check>
       <check name="AD_MENU_OPENLINK_CHK"><![CDATA[OPENLINKINBROWSER IN ('Y', 'N')]]></check>
     </table>
   </database>
