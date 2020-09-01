@@ -29,7 +29,7 @@
         !paymentIds.find(pId => payment.id === pId || payment.paymentId === pId)
     );
 
-    const removedPayments = ticket.payments.filter(
+    let removedPayments = ticket.payments.filter(
       payment => !newTicket.payments.includes(payment)
     );
 
@@ -38,11 +38,12 @@
       payment =>
         !removedPayments.find(
           removedPayment =>
-            (removedPayment.paymentRoundingLine === payment.id && payment.id) ||
-            (removedPayment.paymentRoundingLine === payment.paymentId &&
-              payment.paymentId)
-          // sometimes payment.id is null, payment should be ignored in this case
+            removedPayment.id === payment.roundedPaymentId &&
+            payment.roundedPaymentId
         )
+    );
+    removedPayments = ticket.payments.filter(
+      payment => !newTicket.payments.includes(payment)
     );
 
     // We add the deleted payments to the deletedPayments array if it exists

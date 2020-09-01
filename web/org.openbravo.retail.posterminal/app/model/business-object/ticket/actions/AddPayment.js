@@ -16,7 +16,10 @@
   OB.App.StateAPI.Ticket.registerAction('addPayment', (ticket, payload) => {
     let newTicket = { ...ticket };
 
-    // newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, payload);
+    newTicket = OB.App.State.Ticket.Utils.addPaymentRounding(
+      newTicket,
+      payload
+    );
     // if modalDeliveryChange has been shown
     if (
       Object.prototype.hasOwnProperty.call(payload, 'prepaymentChangeMode') &&

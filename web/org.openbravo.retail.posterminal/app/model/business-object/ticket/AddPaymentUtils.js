@@ -160,6 +160,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     return newPayload;
   },
+  getPrecision(payment, paymentTypes) {
+    const terminalPayment = paymentTypes.find(
+      p => p.payment.searchKey === payment.kind
+    );
+    return terminalPayment
+      ? terminalPayment.obposPosprecision
+      : OB.DEC.getScale();
+  },
   /**
    * Generates the corresponding payment for the given ticket.
    *
@@ -174,19 +182,23 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   addPaymentRounding(ticket, payload) {
     const newTicket = { ...ticket };
     const { payments, payment } = payload;
-    const terminalPayment = payments.find(p => p.paymentRounding);
+    const terminalPayment = payments.find(
+      p => p.paymentRounding && p.payment.searchKey === payment.kind
+    );
+
     if (terminalPayment !== undefined && !payment.isReversePayment) {
       const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
         newTicket,
         payload
       );
       let roundingAmount = OB.DEC.sub(paymentStatus.pendingAmt, payment.amount);
-      const terminalPaymentRounding =
-        OB.MobileApp.model.paymentnames[
+      const terminalPaymentRounding = payments.find(
+        p =>
+          p.payment.searchKey ===
           terminalPayment.paymentRounding.paymentRoundingType
-        ];
+      );
       let amountDifference = null;
-      const precision = this.getPrecision(payment);
+      const precision = this.getPrecision(payment, payments);
       const multiplyBy = paymentStatus.isReturn
         ? terminalPayment.paymentRounding.returnRoundingMultiple
         : terminalPayment.paymentRounding.saleRoundingMultiple;
@@ -214,7 +226,6 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       // (the paid amount is less than rounding multiple in Sales/Return with a rounding difference) ||
       // (the payment totally paid the receipt or create an overpayment with a rounding difference))
       if (
-        OB.DEC.abs(paymentStatus.totalAmt) <= multiplyBy &&
         roundingEnabled &&
         ((roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
           (payment.paid !== 0 &&
@@ -239,10 +250,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             }
           }
           if (payment.amount <= paymentStatus.pendingAmt) {
-            payment.amount = OB.DEC.add(
-              payment.get('amount'),
-              amountDifference
-            );
+            payment.amount = OB.DEC.add(payment.amount, amountDifference);
           }
         } else if (
           paymentDifference !== 0 &&
@@ -255,14 +263,18 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           }
         }
 
-        payment.index = this.get('payments').length;
+        payment.index = payments.length;
         // Create the rounding payment line
 
-        let newPayment;
+        const newPayment = {};
 
         newPayment.kind = terminalPayment.paymentRounding.paymentRoundingType;
         newPayment.name = terminalPaymentRounding.payment.commercialName;
         newPayment.amount = roundingAmount;
+        newPayment.origAmount = OB.DEC.div(
+          newPayment.amount,
+          terminalPaymentRounding.mulrate
+        );
         newPayment.rate = terminalPaymentRounding.rate;
         newPayment.mulrate = terminalPaymentRounding.mulrate;
         newPayment.mulrate = terminalPaymentRounding.mulrate;
@@ -281,26 +293,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         newPayment.isPaid = newTicket.isPaid;
         newPayment.isReturnOrder = newTicket.isNegative;
         newPayment.paymentRounding = true;
-        newPayment.paymentRoundingLine = newPayment;
-
+        newPayment.roundedPaymentId = payment.id;
         newPayment.paid = newPayment.origAmount;
         newPayment.precision = precision;
 
         newTicket.payments = [...newTicket.payments, newPayment];
-
-        // });
-
-        // payment.set('paymentRoundingLine', paymentLine);
-        // this.get('payments').add(paymentLine);
-
-        // if (
-        //   paymentStatus.pendingAmt === 0 ||
-        //   paymentStatus.pendingAmt < multiplyBy
-        // ) {
-        //   if (payment.has('id')) {
-        //     paymentLine.set('roundedPaymentId', payment.get('id'));
-        //   }
-        // }
       }
     }
     return newTicket;
@@ -344,6 +341,15 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     if (paymentIndex >= 0) {
       newTicket.payments = newTicket.payments.map((payment, index) => {
+        // In rounding payments, we need to save the id of the payment we are rounding
+        const roundingPayment = newTicket.payments.find(
+          p => p.paymentRounding && !p.roundedPaymentId
+        );
+        if (newTicket.payments.indexOf(roundingPayment) === index) {
+          const newPayment = { ...payment };
+          newPayment.roundedPaymentId = newTicket.payments[paymentIndex].id;
+          return newPayment;
+        }
         if (index !== paymentIndex) {
           return payment;
         }
@@ -366,12 +372,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             : newAmount;
         newPayment.paid = newPayment.origAmount;
         newPayment.precision = precision;
-        newPayment.paymentRoundingLine = payload.payment.paymentRoundingLine
-          ? {
-              ...payload.payment.paymentRoundingLine,
-              roundedPaymentId: newPayment.id
-            }
-          : undefined;
+        // Save the payment which is rounding current payment
+        if (roundingPayment) {
+          newPayment.paymentRoundingLine = roundingPayment;
+        }
 
         return newPayment;
       });
@@ -403,16 +407,31 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       ) {
         newTicket.openDrawer = newPayment.openDrawer;
       }
+
       // if new payment is a reverse payment, add it after reversed payment. If not, add it at the end of the array
-      const index = newPayment.isReversePayment
+      let index = newPayment.isReversePayment
         ? newTicket.payments.indexOf(
             newTicket.payments.find(
               p => p.paymentId === newPayment.reversedPaymentId
             )
           ) + 1
         : newTicket.payments.length;
-      newTicket.payments.splice(index, 0, newPayment);
       newTicket.payments = [...newTicket.payments];
+      const roundingPayment = newTicket.payments.find(
+        p => p.paymentRounding && !p.roundedPaymentId
+      );
+      if (roundingPayment) {
+        // if new payment has a rounding payment, add new payment before rounding payment. If not, add it at the end of the array
+        index = roundingPayment
+          ? newTicket.payments.indexOf(roundingPayment)
+          : index;
+        // In rounding payments, we need to save the id of the payment we are rounding
+        roundingPayment.roundedPaymentId = newPayment.id;
+        // Save the payment which is rounding current payment
+        newPayment.paymentRoundingLine = roundingPayment;
+      }
+
+      newTicket.payments.splice(index, 0, newPayment);
     }
 
     const paidAmt = newTicket.payments.reduce((total, p) => {

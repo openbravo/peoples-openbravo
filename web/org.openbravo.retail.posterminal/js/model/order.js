@@ -7501,11 +7501,6 @@
 
       payments = this.get('payments');
 
-      this.addPaymentRounding(
-        payment,
-        OB.MobileApp.model.paymentnames[payment.get('kind')]
-      );
-
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_preAddPayment',
         {
@@ -7567,138 +7562,6 @@
             });
         }
       ); // call with callback, no args
-    },
-    //Add a payment rounding line related to the payment if it's needed
-    addPaymentRounding: function(payment, terminalPayment) {
-      if (
-        OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding &&
-        !payment.get('isReversePayment')
-      ) {
-        var paymentStatus = this.getPaymentStatus(),
-          roundingAmount = OB.DEC.sub(
-            paymentStatus.pendingAmt,
-            payment.get('amount')
-          ),
-          terminalPaymentRounding =
-            OB.MobileApp.model.paymentnames[
-              terminalPayment.paymentRounding.paymentRoundingType
-            ],
-          amountDifference = null,
-          paymentLine = null,
-          precision = this.getPrecision(payment),
-          multiplyBy = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnRoundingMultiple
-            : terminalPayment.paymentRounding.saleRoundingMultiple,
-          rounding = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnRoundingMode
-            : terminalPayment.paymentRounding.saleRoundingMode,
-          roundingEnabled = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnRounding
-            : terminalPayment.paymentRounding.saleRounding,
-          pow = Math.pow(10, precision),
-          paymentDifference =
-            OB.DEC.mul(paymentStatus.pendingAmt, pow) %
-            OB.DEC.mul(multiplyBy, pow);
-
-        //If receipt total amount is less than equal rounding multiple in Sales/Return
-        //no rounding payment line is created
-        if (OB.DEC.abs(paymentStatus.totalAmt) <= multiplyBy) {
-          return;
-        }
-        //If receipt is totally paid the last payment paid amount is used to compute the
-        //rounding amount
-        if (paymentStatus.pendingAmt === 0) {
-          paymentDifference =
-            OB.DEC.mul(payment.get('paid'), pow) % OB.DEC.mul(multiplyBy, pow);
-        }
-        //(Rounding enabled for Sales/Returns) &&
-        //((the remaining to paid is less than rounding multiple in Sales/Return) ||
-        // (the paid amount is less than rounding multiple in Sales/Return with a rounding difference) ||
-        // (the payment totally paid the receipt or create an overpayment with a rounding difference))
-        if (
-          roundingEnabled &&
-          ((roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
-            (payment.get('paid') !== 0 &&
-              paymentDifference !== 0 &&
-              paymentStatus.pendingAmt < multiplyBy) ||
-            (payment.get('paid') === 0 &&
-              paymentDifference !== 0 &&
-              payment.get('amount') >= paymentStatus.pendingAmt))
-        ) {
-          if (rounding === 'UR') {
-            if (paymentDifference !== 0) {
-              amountDifference = OB.DEC.sub(
-                multiplyBy,
-                OB.DEC.div(paymentDifference, pow)
-              );
-              roundingAmount = OB.DEC.mul(amountDifference, -1);
-              if (payment.get('amount') < paymentStatus.pendingAmt) {
-                amountDifference = OB.DEC.add(
-                  amountDifference,
-                  OB.DEC.div(paymentDifference, pow)
-                );
-              }
-            }
-            if (payment.get('amount') <= paymentStatus.pendingAmt) {
-              payment.set(
-                'amount',
-                OB.DEC.add(payment.get('amount'), amountDifference)
-              );
-            }
-          } else if (
-            paymentDifference !== 0 &&
-            payment.get('amount') >= paymentStatus.pendingAmt
-          ) {
-            roundingAmount = OB.DEC.div(paymentDifference, pow);
-            //Substract the rounding amount when the payment totally paid the receipt
-            if (payment.get('amount') === paymentStatus.pendingAmt) {
-              payment.set(
-                'amount',
-                OB.DEC.sub(payment.get('amount'), roundingAmount)
-              );
-            }
-          }
-
-          payment.set('index', this.get('payments').length);
-          //Create the rounding payment line
-          paymentLine = new OB.Model.PaymentLine({
-            kind: terminalPayment.paymentRounding.paymentRoundingType,
-            name: OB.MobileApp.model.getPaymentName(
-              terminalPayment.paymentRounding.paymentRoundingType
-            ),
-            amount: roundingAmount,
-            rate: terminalPaymentRounding.rate,
-            mulrate: terminalPaymentRounding.mulrate,
-            isocode: terminalPaymentRounding.isocode,
-            isCash: terminalPaymentRounding.paymentMethod.iscash,
-            allowOpenDrawer:
-              terminalPaymentRounding.paymentMethod.allowopendrawer,
-            openDrawer: terminalPaymentRounding.paymentMethod.openDrawer,
-            printtwice: terminalPaymentRounding.paymentMethod.printtwice,
-            date: new Date(),
-            id: OB.UTIL.get_UUID(),
-            oBPOSPOSTerminal: OB.MobileApp.model.get('terminal').id,
-            orderGross: this.getGross(),
-            isPaid: false,
-            isReturnOrder: paymentStatus.isNegative
-          });
-          paymentLine.set('paymentRounding', true);
-          payment.set('paymentRoundingLine', paymentLine);
-          this.get('payments').add(paymentLine);
-
-          if (
-            paymentStatus.pendingAmt === 0 ||
-            paymentStatus.pendingAmt < multiplyBy
-          ) {
-            if (payment.has('id')) {
-              paymentLine.set('roundedPaymentId', payment.get('id'));
-            }
-            //When exists a rounding payment line and the receipt total amount change it's necessary
-            //to calculate the receipt to properly set the receipt payment status
-            this.calculateReceipt();
-          }
-        }
-      }
     },
 
     overpaymentExists: function() {
@@ -7841,7 +7704,11 @@
 
             reversalPayment = createReversePayment(payment);
             if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
-              reversalPaymentRounding = createReversePayment(paymentRounding);
+              reversalPaymentRounding = createReversePayment(
+                !paymentRounding.get
+                  ? new OB.Model.PaymentLine(paymentRounding)
+                  : paymentRounding
+              );
             }
 
             OB.UTIL.HookManager.executeHooks(
@@ -7914,16 +7781,32 @@
                     reversalPaymentLine = new OB.Model.PaymentLine(
                       reversalPayment.attributes
                     );
-                    me.addPayment(reversalPaymentLine);
                     if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
                       reversalPaymentRoundingLine = new OB.Model.PaymentLine(
                         reversalPaymentRounding.attributes
                       );
+                      // Save the payment which is rounding current payment
                       reversalPaymentLine.set(
                         'paymentRoundingLine',
                         reversalPaymentRoundingLine
                       );
-                      me.addPayment(reversalPaymentRoundingLine);
+                      me.addPayment(reversalPaymentLine, function() {
+                        const reversalPaymentId = me
+                          .get('payments')
+                          .models.find(
+                            p =>
+                              p.get('isReversePayment') &&
+                              p.get('kind') === reversalPaymentLine.get('kind')
+                          ).id;
+                        // In rounding payments, we need to save the id of the payment we are rounding
+                        reversalPaymentRoundingLine.set(
+                          'roundedPaymentId',
+                          reversalPaymentId
+                        );
+                        me.addPayment(reversalPaymentRoundingLine);
+                      });
+                    } else {
+                      me.addPayment(reversalPaymentLine);
                     }
                   }
                 }
