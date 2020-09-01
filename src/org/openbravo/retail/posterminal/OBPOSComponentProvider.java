@@ -344,7 +344,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/document-sequence/actions/IncreaseSequence"), //
         businesslogic("app/model/business-object/document-sequence/actions/DecreaseSequence"), //
 
-        businesslogic("app/model/business-object/business-partner/actions/SynchronizeBusinessPartner"), //
+        businesslogic(
+            "app/model/business-object/business-partner/actions/SynchronizeBusinessPartner"), //
         businesslogic(
             "app/model/business-object/business-partner/actions/SynchronizeBusinessPartnerLocation"), //
 
@@ -400,19 +401,20 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/ticket-list/TicketList"), //
         businesslogic("app/model/business-object/ticket-list/TicketListUtils"), //
         businesslogic("app/model/business-object/ticket-list/actions/AddNewTicket"), //
-        businesslogic("app/model/business-object/ticket-list/actions/AddNewQuotation");
+        businesslogic("app/model/business-object/ticket-list/actions/AddNewQuotation"), //
         businesslogic("app/model/business-object/ticket-list/actions/BringTicketToSession"), //
         businesslogic("app/model/business-object/ticket-list/actions/LoadTicket"), //
-        businesslogic("app/model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets"), //
+        businesslogic(
+            "app/model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets"), //
         businesslogic("app/model/business-object/ticket-list/actions/UpdateBPInAllTickets"), //
         businesslogic("app/model/business-object/ticket-list/actions/SaveTicket"), //
-        
+
         // Synchronization Buffer
         businesslogic("app/model/synchronization-buffer/HardwareManagerEndpoint"), //
-    
+
         // External Device
         businesslogic("app/external-device/actions/Print"), //
-        businesslogic("app/external-device/actions/PrintLine"), // 
+        businesslogic("app/external-device/actions/PrintLine"), //
         businesslogic("app/external-device/actions/PrintWelcome")));
 
     for (final String resource : resourceDependency) {
