@@ -233,8 +233,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     final ScrollableResults trxs = getRelatedTransactions();
     String strCurrentCurId = strCostCurrencyId;
+    boolean forceExit = false;
     try {
-      while (trxs.next()) {
+      while (trxs.next() && !forceExit) {
         final MaterialTransaction trx = (MaterialTransaction) trxs.get()[0];
         log.debug("Process related transaction {}", trx.getIdentifier());
         final BigDecimal trxSignMultiplier = new BigDecimal(trx.getMovementQuantity().signum());
@@ -412,7 +413,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
             // If bdCosting is not empty it is needed to loop through the next related transaction
             // to set the new time ringe of the costing.
             log.debug("New cost matches existing cost. Adjustment finished.");
-            return;
+            forceExit = true;
           } else {
             updateCosting(curCosting, cost, trxPrice);
           }
