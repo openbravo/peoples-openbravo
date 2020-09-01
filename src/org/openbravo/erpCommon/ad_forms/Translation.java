@@ -51,7 +51,8 @@ public class Translation extends HttpSecureAppServlet {
 
       final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
       final boolean isReducedVersion = StringUtils
-          .equals(vars.getStringParameter("inpReduced", "N"), "Y");
+          .equals(vars.getRequestGlobalVariable("inpReduced", "translation.reduced"), "Y");
+
       // import/export translation is currently always on system level
       final String strClient = "0";
       if (log4j.isDebugEnabled()) {
@@ -165,6 +166,7 @@ public class Translation extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("paramSelLanguage", vars.getSessionValue("translation.lang"));
       xmlDocument.setData("structure1", LanguageComboData.select(this));
+      xmlDocument.setParameter("inpReduced", vars.getSessionValue("translation.reduced"));
 
       out.println(xmlDocument.print());
       out.close();
