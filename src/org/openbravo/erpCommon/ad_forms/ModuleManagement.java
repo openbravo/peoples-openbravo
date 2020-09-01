@@ -769,6 +769,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
    * 
    * b. The .obx file is okay -> redirect to the moduleInstall1 pop-up.
    */
+  @SuppressWarnings("deprecation")
   private void printPageInstallFile(HttpServletResponse response, HttpServletRequest request,
       VariablesSecureApp vars) throws ServletException, IOException {
     final FileItem fi = vars.getMultiFile("inpFile");
@@ -786,6 +787,8 @@ public class ModuleManagement extends HttpSecureAppServlet {
       ImportModule im = new ImportModule(this, vars.getSessionValue("#sourcePath"), vars);
       try {
         if (im.isModuleUpdate(fi.getInputStream())) {
+          // Note that after setting a FileItem object into the session, the session is no longer
+          // serializable. This is because FileItem class is not serializable.
           vars.setSessionObject("ModuleManagementInstall|File", vars.getMultiFile("inpFile"));
           printPageInstall1(response, request, vars, null, true, fi.getInputStream(), new String[0],
               null, null);
