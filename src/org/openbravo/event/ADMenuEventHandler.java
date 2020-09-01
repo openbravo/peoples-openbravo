@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
@@ -37,35 +36,29 @@ import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
- * Event Handler for AD_MENU
+ * Event Handler for AD_MENU.
  * 
- * @author AGA
- * 
+ * It updates the "Included In Reduced Translation" flag for any child menu entry.
  */
 class ADMenuEventHandler extends EntityPersistenceEventObserver {
-
   private static final Logger log = LogManager.getLogger();
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(Menu.ENTITY_NAME) };
+  private static final Entity[] ENTITIES = {
+      ModelProvider.getInstance().getEntity(Menu.ENTITY_NAME) };
+  private static final String MENU_TREE_ID = "10";
 
   @Override
   protected Entity[] getObservedEntities() {
-    return entities;
-  }
-
-  public void onSave(@Observes EntityNewEvent event) {
-    if (!isValidEvent(event)) {
-      return;
-    }
+    return ENTITIES;
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    updateAvailableForTranslation(event);
+    updateIncludedInReducedTranslationFlagForChildEntries(event);
   }
 
-  private void updateAvailableForTranslation(EntityUpdateEvent event) {
+  private void updateIncludedInReducedTranslationFlagForChildEntries(EntityUpdateEvent event) {
     ConnectionProvider conn = new DalConnectionProvider(false);
     String menuId = (String) event.getTargetInstance().getId();
     final Entity menuEntity = ModelProvider.getInstance().getEntity(Menu.ENTITY_NAME);
@@ -78,12 +71,11 @@ class ADMenuEventHandler extends EntityPersistenceEventObserver {
     if (previousValueAvailableForTrl != null && currentValueAvailableForTrl != null
         && !previousValueAvailableForTrl.equals(currentValueAvailableForTrl)) {
       try {
-        TreeData[] data = TreeData.select(conn, "10", menuId);
+        TreeData[] data = TreeData.select(conn, MENU_TREE_ID, menuId);
         for (int i = 0; i < data.length; i++) {
           if (!StringUtils.equals(menuId, data[i].id)) {
-            Menu menu = OBDal.getInstance().get(Menu.class, data[i].id);
+            final Menu menu = OBDal.getInstance().get(Menu.class, data[i].id);
             menu.setAvailableForTranslation(currentValueAvailableForTrl);
-            OBDal.getInstance().save(menu);
           }
         }
       } catch (ServletException e) {
