@@ -20,13 +20,9 @@
       newTicket,
       payload
     );
-    // if modalDeliveryChange has been shown
-    if (
-      Object.prototype.hasOwnProperty.call(payload, 'prepaymentChangeMode') &&
-      Object.prototype.hasOwnProperty.call(payload, 'prepaymentChangeAmt')
-    ) {
-      newTicket.prepaymentChangeMode = payload.prepaymentChangeMode;
-      newTicket.prepaymentChangeAmt = payload.prepaymentChangeAmt;
+    // Set values defined in actionPreparations
+    if (payload.extraInfo) {
+      newTicket = { ...newTicket, ...payload.extraInfo.ticket };
     }
 
     newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, payload);

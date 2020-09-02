@@ -18,9 +18,13 @@ enyo.kind({
   tap: function() {
     var popup = this.owner.owner;
     if (popup.args.payload) {
-      popup.args.payload.prepaymentChangeMode =
+      popup.args.payload.extraInfo = popup.args.payload.extraInfo || {};
+      popup.args.payload.extraInfo.ticket =
+        popup.args.payload.extraInfo.ticket || {};
+      popup.args.payload.extraInfo.ticket.prepaymentChangeMode =
         popup.$.body.$.paymentOptions.active.setPrepaymentChange;
-      popup.args.payload.prepaymentChangeAmt = popup.args.deliveryChange;
+      popup.args.payload.extraInfo.ticket.prepaymentChangeAmt =
+        popup.args.deliveryChange;
     } else {
       popup.args.receipt.set(
         'prepaymentChangeMode',
