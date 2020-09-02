@@ -4461,18 +4461,14 @@
       });
     },
 
-    addProductToOrder: async function(
-      p,
-      qty,
-      opts,
-      attrs,
-      callback,
-      cancelCallback
-    ) {
+    addProductToOrder: function(p, qty, opts, attrs, callback, cancelCallback) {
       // Use legacyAddProductToOrder in actions not refactored to the new
       // StateController and performs the action on a ticket different the
       // current one.
-      if (this !== OB.MobileApp.model.receipt) {
+      if (
+        this.id !== OB.MobileApp.model.receipt.id ||
+        this !== OB.MobileApp.model.receipt
+      ) {
         this.legacyAddProductToOrder(
           p,
           qty,
