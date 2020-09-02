@@ -521,15 +521,6 @@
 
       for (let i = 0; i < model.receiptLines.length; i++) {
         let iter = model.receiptLines[i];
-        var price = order.get('priceIncludesTax')
-            ? OB.DEC.number(iter.baseGrossUnitPrice)
-            : OB.DEC.number(iter.baseNetUnitPrice),
-          lineGross = order.get('priceIncludesTax')
-            ? OB.DEC.number(iter.lineGrossAmount)
-            : null,
-          lineNet = order.get('priceIncludesTax')
-            ? null
-            : OB.DEC.number(iter.lineNetAmount);
         iter.linepos = linepos;
         var addLineForProduct = async function(prod, iter) {
           // Set product services
@@ -593,6 +584,7 @@
                   }
                 }
               }
+
               newline = new OB.Model.OrderLine({
                 id: iter.lineId,
                 product: prod,
@@ -601,13 +593,19 @@
                   iter.quantity,
                   prod.get('uOMstandardPrecision')
                 ),
-                price: price,
+                price: order.get('priceIncludesTax')
+                  ? OB.DEC.number(iter.baseGrossUnitPrice)
+                  : OB.DEC.number(iter.baseNetUnitPrice),
                 unitPrice: iter.unitPrice,
                 priceList: order.get('priceIncludesTax')
                   ? OB.DEC.number(iter.grossListPrice)
                   : OB.DEC.number(iter.listPrice),
-                net: lineNet,
-                gross: lineGross,
+                net: order.get('priceIncludesTax')
+                  ? null
+                  : OB.DEC.number(iter.lineNetAmount),
+                gross: order.get('priceIncludesTax')
+                  ? OB.DEC.number(iter.lineGrossAmount)
+                  : null,
                 promotions: iter.promotions,
                 description: iter.description,
                 priceIncludesTax: order.get('priceIncludesTax'),
