@@ -337,8 +337,8 @@ public class ReportParetoProduct extends HttpSecureAppServlet {
       String strAD_Org_ID, String strAD_Client_ID) throws IOException, ServletException {
     String pinstance = SequenceIdData.getUUID();
 
-    PInstanceProcessData.insertPInstance(this, pinstance, "1000500001", "0", "N", vars.getUser(),
-        vars.getClient(), vars.getOrg());
+    PInstanceProcessData.insertPInstance(this, pinstance, "9CD67D41E43242CDA034FB994B75812A", "0",
+        "N", vars.getUser(), vars.getClient(), vars.getOrg());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "1", "m_warehouse_id", strWarehouse,
         vars.getClient(), vars.getOrg(), vars.getUser());
     PInstanceProcessData.insertPInstanceParam(this, pinstance, "2", "ad_org_id", strAD_Org_ID,
