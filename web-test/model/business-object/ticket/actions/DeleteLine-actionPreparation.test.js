@@ -10,7 +10,7 @@
 /* global global */
 /* eslint-disable jest/expect-expect */
 
-OB = {
+global.OB = {
   App: {
     Class: {},
     DAL: { find: jest.fn() },
@@ -110,6 +110,12 @@ Ticket = {
       },
       { id: 'l2', qty: 2 }
     ]
+  },
+  nonDeletable: {
+    ...Ticket.empty,
+    lines: [
+      { id: 'l1', product: { id: 'p1', _identifier: 'P1' }, isDeletable: false }
+    ]
   }
 };
 
@@ -194,6 +200,31 @@ describe('deleteLine preparation', () => {
           errorConfirmation: 'OBPOS_AllServiceLineMustSelectToDelete'
         }
       );
+    });
+
+    it('prevents non deleteable line', async () => {
+      await expectError(
+        () => prepareAction({ lineIds: ['l1'] }, { ...Ticket.nonDeletable }),
+        {
+          warningMsg: 'OBPOS_NotDeletableLine'
+        }
+      );
+    });
+  });
+  describe('approvals', () => {
+    it('check approvals', async () => {
+      const payloadWithApproval = {
+        ticket: [{ ticket: Ticket.simple }],
+        approvals: ['OBPOS_approval.deleteLine']
+      };
+      OB.App.Security.requestApprovalForAction.mockResolvedValue(
+        payloadWithApproval
+      );
+      const newPayload = await prepareAction(
+        { lineIds: ['l1'] },
+        Ticket.simple
+      );
+      expect(newPayload).toEqual(payloadWithApproval);
     });
   });
 });
