@@ -4465,7 +4465,10 @@
       // Use legacyAddProductToOrder in actions not refactored to the new
       // StateController and performs the action on a ticket different the
       // current one.
-      if (this.id !== OB.MobileApp.model.receipt.id) {
+      if (
+        this.id !== OB.MobileApp.model.receipt.id &&
+        this !== OB.MobileApp.model.receipt
+      ) {
         this.legacyAddProductToOrder(
           p,
           qty,
