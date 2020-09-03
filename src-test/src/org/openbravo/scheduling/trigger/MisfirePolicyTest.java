@@ -22,23 +22,23 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.openbravo.base.secureApp.VariablesSecureApp;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.scheduling.Frequency;
 import org.openbravo.scheduling.JobDetailProvider;
@@ -66,6 +66,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * Test cases to cover the expected behavior of the misfire policy applied to the background
  * processes.
  */
+@RunWith(Parameterized.class)
 public class MisfirePolicyTest extends OBBaseTest {
   private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter
       .ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -73,11 +74,63 @@ public class MisfirePolicyTest extends OBBaseTest {
   private Scheduler scheduler;
   private TestProcessMonitor monitor;
 
-  private static Integer misfireThreshold;
+  private Properties properties;
+
+  @Parameterized.Parameters(name = "{0}")
+  public static List<String> configOptions() {
+    return Arrays.asList("non-clustered", "clustered");
+  }
+
+  /**
+   * Constructor that will set the necessary config for clustered or non-clustered execution
+   * 
+   * @param configOption
+   *          clustered or non-clustered
+   */
+  public MisfirePolicyTest(String configOption) {
+    // Initialize properties
+    properties = new Properties();
+
+    // Set common properties
+    properties.setProperty("org.quartz.scheduler.instanceName", "DefaultQuartzScheduler");
+    properties.setProperty("org.quartz.scheduler.instanceId", "AUTO");
+    properties.setProperty("org.quartz.scheduler.instanceIdGenerator.class",
+        "org.openbravo.scheduling.quartz.OpenbravoInstanceIdGenerator");
+    properties.setProperty("org.quartz.scheduler.rmi.export", "false");
+    properties.setProperty("org.quartz.scheduler.rmi.proxy", "false");
+    properties.setProperty("org.quartz.scheduler.wrapJobExecutionInUserTransaction", "false");
+    properties.setProperty("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");
+    properties.setProperty("org.quartz.threadPool.threadCount", "10");
+    properties.setProperty("org.quartz.threadPool.threadPriority", "5");
+    properties.setProperty(
+        "org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread", "true");
+    properties.setProperty("org.quartz.jobStore.misfireThreshold", "1000");
+
+    // Set different properties for clustered and non-clustered execution
+    if ("non-clustered".equals(configOption)) {
+      properties.setProperty("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore");
+    } else if ("clustered".equals(configOption)) {
+      properties.setProperty("org.quartz.jobStore.class",
+          "org.openbravo.scheduling.quartz.OpenbravoPersistentJobStore");
+      properties.setProperty("org.quartz.jobStore.driverDelegateClass",
+          "org.openbravo.scheduling.quartz.OpenbravoDriverDelegate");
+      properties.setProperty("org.quartz.jobStore.useProperties", "false");
+      properties.setProperty("org.quartz.jobStore.dataSource", "quartzDS");
+      properties.setProperty("org.quartz.jobStore.tablePrefix", "OBSCHED_");
+      properties.setProperty("org.quartz.jobStore.isClustered", "true");
+      properties.setProperty("org.quartz.jobStore.acquireTriggersWithinLock", "true");
+      properties.setProperty("org.quartz.jobStore.clusterCheckinInterval", "10000");
+      properties.setProperty("org.quartz.dataSource.quartzDS.connectionProvider.class",
+          "org.openbravo.scheduling.quartz.QuartzConnectionProvider");
+      properties.setProperty("org.quartz.plugin.shutdownhook.class",
+          "org.quartz.plugins.management.ShutdownHookPlugin");
+      properties.setProperty("org.quartz.plugin.shutdownhook.cleanShutdown", "false");
+    }
+  }
 
   @Before
   public void startScheduler() throws SchedulerException {
-    scheduler = new StdSchedulerFactory().getScheduler();
+    scheduler = new StdSchedulerFactory(properties).getScheduler();
     monitor = new TestProcessMonitor();
     scheduler.getListenerManager().addJobListener(monitor);
     scheduler.start();
@@ -140,7 +193,7 @@ public class MisfirePolicyTest extends OBBaseTest {
     scheduleJob(name, data);
 
     // wait for the job executions
-    Thread.sleep(getMisfireThreshold() + 3000L);
+    Thread.sleep(2100L);
 
     assertThat("Expected number of job executions", monitor.getJobExecutions(name), equalTo(2));
   }
@@ -242,32 +295,5 @@ public class MisfirePolicyTest extends OBBaseTest {
     protected void doExecute(ProcessBundle bundle) throws Exception {
       // Do nothing
     }
-  }
-
-  /**
-   * Returns org.quartz.jobStore.misfireThreshold property to allow jobs to wait certain time before
-   * misfire happens
-   * 
-   * @return misfireThreshold property from config/quartz.properties file
-   */
-  private static Integer getMisfireThreshold() {
-    if (misfireThreshold != null) {
-      return misfireThreshold;
-    }
-    String pathToConfig = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("source.path") + File.separator + "config" + File.separator
-        + "quartz.properties";
-    try (FileInputStream file = new FileInputStream(pathToConfig)) {
-      Properties p = new Properties();
-      p.load(file);
-      String misfireProperty = p.getProperty("org.quartz.jobStore.misfireThreshold");
-      misfireThreshold = Integer.parseInt(misfireProperty);
-      return misfireThreshold;
-    } catch (IOException e) {
-      // File has not been found, return default MisfireThreshold of 60 seconds
-      return 60000;
-    }
-
   }
 }
