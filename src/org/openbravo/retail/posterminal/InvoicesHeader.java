@@ -35,7 +35,7 @@ public class InvoicesHeader extends ProcessHQLQuery {
   @Override
   protected List<String> getQuery(JSONObject jsonsent) throws JSONException {
 
-    String hqlInvoices = "select i.id as id, i.documentNo as documentNo, i.invoiceDate as orderDate, "
+    String hqlInvoices = "select i.id as id, i.documentNo as documentNo, i.creationDate as creationDate, i.invoiceDate as orderDate, "
         + " i.businessPartner.name as businessPartner, i.grandTotalAmount as totalamount "
         + " from InvoiceLine il join il.salesOrderLine ol join ol.salesOrder ord  join il.invoice i  "
         + " where ord.client.id=:client and ord.id =:orderId and i.salesOrder.id = :orderId"
