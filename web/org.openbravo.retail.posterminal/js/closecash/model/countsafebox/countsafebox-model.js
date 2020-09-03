@@ -419,183 +419,179 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
     processAndFinish: function() {
       OB.UTIL.showLoading(true);
 
-      OB.Dal.transaction(tx => {
-        const currentSafeBox = JSON.parse(
-            OB.UTIL.localStorage.getItem('currentSafeBox')
-          ),
-          now = new Date();
-        let countSafeBox = {};
-        // objToSend initialization
-        let objToSend = new Backbone.Model({
-          safeBox: currentSafeBox.searchKey,
-          isprocessed: 'Y',
-          isbeingprocessed: 'Y',
-          countSafeBoxInfo: [],
-          creationDate: now.toISOString(),
-          countSafeBoxDate: OB.I18N.normalizeDate(now),
-          lastCountSafeBoxDate: OB.I18N.normalizeDate(now),
-          timezoneOffset: now.getTimezoneOffset(),
-          approvals: this.get('approvals'),
-          userId: OB.MobileApp.model.get('context').user.id
-        });
+      const currentSafeBox = JSON.parse(
+          OB.UTIL.localStorage.getItem('currentSafeBox')
+        ),
+        now = new Date();
+      let countSafeBox = {};
+      // objToSend initialization
+      let objToSend = new Backbone.Model({
+        safeBox: currentSafeBox.searchKey,
+        isprocessed: 'Y',
+        isbeingprocessed: 'Y',
+        countSafeBoxInfo: [],
+        creationDate: now.toISOString(),
+        countSafeBoxDate: OB.I18N.normalizeDate(now),
+        lastCountSafeBoxDate: OB.I18N.normalizeDate(now),
+        timezoneOffset: now.getTimezoneOffset(),
+        approvals: this.get('approvals'),
+        userId: OB.MobileApp.model.get('context').user.id
+      });
 
-        let countSafeBoxArray = [];
-        objToSend.set('countSafeBoxInfo', countSafeBoxArray);
-        this.get('paymentList').models.forEach(curModel => {
-          let paymentMethodInfo,
-            countSafeBoxInfo = {
-              expected: 0,
-              difference: 0,
-              paymentTypeId: 0,
-              paymentMethod: {}
-            };
-          // Set cashclose info
-          countSafeBoxInfo.id = OB.UTIL.get_UUID();
-          countSafeBoxInfo.paymentTypeId = curModel.get('id');
-          countSafeBoxInfo.difference = curModel.get('difference');
-          countSafeBoxInfo.foreignDifference = curModel.get(
-            'foreignDifference'
-          );
-          countSafeBoxInfo.expected = curModel.get('expected');
-          countSafeBoxInfo.foreignExpected = curModel.get('foreignExpected');
-          paymentMethodInfo = curModel.get('paymentMethod');
-          paymentMethodInfo.amountToKeep = curModel.get('qtyToKeep');
-          countSafeBoxInfo.paymentMethod = paymentMethodInfo;
-          objToSend.get('countSafeBoxInfo').push(countSafeBoxInfo);
-        });
+      let countSafeBoxArray = [];
+      objToSend.set('countSafeBoxInfo', countSafeBoxArray);
+      this.get('paymentList').models.forEach(curModel => {
+        let paymentMethodInfo,
+          countSafeBoxInfo = {
+            expected: 0,
+            difference: 0,
+            paymentTypeId: 0,
+            paymentMethod: {}
+          };
+        // Set cashclose info
+        countSafeBoxInfo.id = OB.UTIL.get_UUID();
+        countSafeBoxInfo.paymentTypeId = curModel.get('id');
+        countSafeBoxInfo.difference = curModel.get('difference');
+        countSafeBoxInfo.foreignDifference = curModel.get('foreignDifference');
+        countSafeBoxInfo.expected = curModel.get('expected');
+        countSafeBoxInfo.foreignExpected = curModel.get('foreignExpected');
+        paymentMethodInfo = curModel.get('paymentMethod');
+        paymentMethodInfo.amountToKeep = curModel.get('qtyToKeep');
+        countSafeBoxInfo.paymentMethod = paymentMethodInfo;
+        objToSend.get('countSafeBoxInfo').push(countSafeBoxInfo);
+      });
 
-        countSafeBox.isbeingprocessed = 'Y';
-        countSafeBox.creationDate = now;
-        countSafeBox.safebox = currentSafeBox.searchKey;
-        countSafeBox.userId = OB.MobileApp.model.get('context').user.id;
-        countSafeBox.objToSend = JSON.stringify(objToSend);
-        countSafeBox.isprocessed = 'Y';
+      countSafeBox.isbeingprocessed = 'Y';
+      countSafeBox.creationDate = now;
+      countSafeBox.safebox = currentSafeBox.searchKey;
+      countSafeBox.userId = OB.MobileApp.model.get('context').user.id;
+      countSafeBox.objToSend = JSON.stringify(objToSend);
+      countSafeBox.isprocessed = 'Y';
 
-        OB.App.State.Global.synchronizeCountSafeBox(countSafeBox)
-          .then(sync => {
-            const callbackFinishedSuccess = () => {
-              OB.UTIL.showLoading(true);
-              this.set('finished', true);
-              if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
-                var cashUpReport = new OB.Model.CashUp(),
-                  countCashSummary = this.getCountCashSummary();
-                OB.UTIL.clone(this.get('closeCashReport').at(0), cashUpReport);
-                if (
-                  OB.MobileApp.model.hasPermission(
-                    'OBPOS_retail.cashupRemoveUnusedPayment',
-                    true
-                  )
-                ) {
-                  var paymentWithMovement = [];
-                  OB.UTIL.closeCashAddPaymentWithSummaryMovement(
-                    paymentWithMovement,
-                    countCashSummary.expectedSummary
-                  );
-                  OB.UTIL.closeCashAddPaymentWithMovement(
+      OB.App.State.Global.synchronizeCountSafeBox(countSafeBox)
+        .then(sync => {
+          const callbackFinishedSuccess = () => {
+            OB.UTIL.showLoading(true);
+            this.set('finished', true);
+            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+              var cashUpReport = new OB.Model.CashUp(),
+                countCashSummary = this.getCountCashSummary();
+              OB.UTIL.clone(this.get('closeCashReport').at(0), cashUpReport);
+              if (
+                OB.MobileApp.model.hasPermission(
+                  'OBPOS_retail.cashupRemoveUnusedPayment',
+                  true
+                )
+              ) {
+                var paymentWithMovement = [];
+                OB.UTIL.closeCashAddPaymentWithSummaryMovement(
+                  paymentWithMovement,
+                  countCashSummary.expectedSummary
+                );
+                OB.UTIL.closeCashAddPaymentWithMovement(
+                  paymentWithMovement,
+                  cashUpReport.get('startings')
+                );
+                OB.UTIL.closeCashAddPaymentWithMovement(
+                  paymentWithMovement,
+                  cashUpReport.get('drops')
+                );
+                OB.UTIL.closeCashAddPaymentWithMovement(
+                  paymentWithMovement,
+                  cashUpReport.get('deposits')
+                );
+                countCashSummary.expectedSummary = OB.UTIL.closeCashGetPaymentWithMovement(
+                  paymentWithMovement,
+                  countCashSummary.expectedSummary
+                );
+                cashUpReport.set(
+                  'startings',
+                  OB.UTIL.closeCashGetPaymentWithMovement(
                     paymentWithMovement,
                     cashUpReport.get('startings')
-                  );
-                  OB.UTIL.closeCashAddPaymentWithMovement(
+                  )
+                );
+                cashUpReport.set(
+                  'drops',
+                  OB.UTIL.closeCashGetPaymentWithMovement(
                     paymentWithMovement,
                     cashUpReport.get('drops')
-                  );
-                  OB.UTIL.closeCashAddPaymentWithMovement(
+                  )
+                );
+                cashUpReport.set(
+                  'deposits',
+                  OB.UTIL.closeCashGetPaymentWithMovement(
                     paymentWithMovement,
                     cashUpReport.get('deposits')
-                  );
-                  countCashSummary.expectedSummary = OB.UTIL.closeCashGetPaymentWithMovement(
-                    paymentWithMovement,
-                    countCashSummary.expectedSummary
-                  );
-                  cashUpReport.set(
-                    'startings',
-                    OB.UTIL.closeCashGetPaymentWithMovement(
-                      paymentWithMovement,
-                      cashUpReport.get('startings')
-                    )
-                  );
-                  cashUpReport.set(
-                    'drops',
-                    OB.UTIL.closeCashGetPaymentWithMovement(
-                      paymentWithMovement,
-                      cashUpReport.get('drops')
-                    )
-                  );
-                  cashUpReport.set(
-                    'deposits',
-                    OB.UTIL.closeCashGetPaymentWithMovement(
-                      paymentWithMovement,
-                      cashUpReport.get('deposits')
-                    )
-                  );
-                  countCashSummary.countedSummary = OB.UTIL.closeCashGetPaymentWithMovement(
-                    paymentWithMovement,
-                    countCashSummary.countedSummary
-                  );
-                  countCashSummary.differenceSummary = OB.UTIL.closeCashGetPaymentWithMovement(
-                    paymentWithMovement,
-                    countCashSummary.differenceSummary
-                  );
-                  countCashSummary.qtyToKeepSummary = OB.UTIL.closeCashGetPaymentWithMovement(
-                    paymentWithMovement,
-                    countCashSummary.qtyToKeepSummary
-                  );
-                  countCashSummary.qtyToDepoSummary = OB.UTIL.closeCashGetPaymentWithMovement(
-                    paymentWithMovement,
-                    countCashSummary.qtyToDepoSummary
-                  );
-                }
-
-                this.printCloseCash.print(cashUpReport, countCashSummary, true);
+                  )
+                );
+                countCashSummary.countedSummary = OB.UTIL.closeCashGetPaymentWithMovement(
+                  paymentWithMovement,
+                  countCashSummary.countedSummary
+                );
+                countCashSummary.differenceSummary = OB.UTIL.closeCashGetPaymentWithMovement(
+                  paymentWithMovement,
+                  countCashSummary.differenceSummary
+                );
+                countCashSummary.qtyToKeepSummary = OB.UTIL.closeCashGetPaymentWithMovement(
+                  paymentWithMovement,
+                  countCashSummary.qtyToKeepSummary
+                );
+                countCashSummary.qtyToDepoSummary = OB.UTIL.closeCashGetPaymentWithMovement(
+                  paymentWithMovement,
+                  countCashSummary.qtyToDepoSummary
+                );
               }
-              // Remove current safe box at the end of cashup
-              OB.UTIL.localStorage.removeItem('currentSafeBox');
-            };
 
-            const callbackFinishedWrongly = () => {
-              // reset to N
-              countSafeBox.isprocessed = 'N';
+              this.printCloseCash.print(cashUpReport, countCashSummary, true);
+            }
+            // Remove current safe box at the end of cashup
+            OB.UTIL.localStorage.removeItem('currentSafeBox');
+          };
 
-              OB.App.State.Global.synchronizeCountSafeBox(countSafeBox)
-                .then(sync => {
-                  this.set('finishedWrongly', true);
-                })
-                .catch(error => OB.error(error));
-            };
+          const callbackFinishedWrongly = () => {
+            // reset to N
+            countSafeBox.isprocessed = 'N';
 
-            const callbackFunc = () => {
-              var synchronizedPreferenceValue;
-              // prevent synchronized mode for cashups
-              synchronizedPreferenceValue = OB.MobileApp.model.setSynchronizedPreference(
-                false
-              );
-              OB.UTIL.HookManager.executeHooks(
-                'OBPOS_PrePrintCashupHook',
-                {
-                  cashupModel: this
-                },
-                function(args) {
-                  OB.MobileApp.model.runSyncProcess(
-                    function() {
-                      OB.MobileApp.model.setSynchronizedPreference(
-                        synchronizedPreferenceValue
-                      );
-                      callbackFinishedSuccess();
-                    },
-                    function() {
-                      OB.MobileApp.model.setSynchronizedPreference(
-                        synchronizedPreferenceValue
-                      );
-                      callbackFinishedWrongly();
-                    }
-                  );
-                }
-              );
-            };
-            callbackFunc();
-          })
-          .catch(error => OB.error(error));
-      });
+            OB.App.State.Global.synchronizeCountSafeBox(countSafeBox)
+              .then(sync => {
+                this.set('finishedWrongly', true);
+              })
+              .catch(error => OB.error(error));
+          };
+
+          const callbackFunc = () => {
+            var synchronizedPreferenceValue;
+            // prevent synchronized mode for cashups
+            synchronizedPreferenceValue = OB.MobileApp.model.setSynchronizedPreference(
+              false
+            );
+            OB.UTIL.HookManager.executeHooks(
+              'OBPOS_PrePrintCashupHook',
+              {
+                cashupModel: this
+              },
+              function(args) {
+                OB.MobileApp.model.runSyncProcess(
+                  function() {
+                    OB.MobileApp.model.setSynchronizedPreference(
+                      synchronizedPreferenceValue
+                    );
+                    callbackFinishedSuccess();
+                  },
+                  function() {
+                    OB.MobileApp.model.setSynchronizedPreference(
+                      synchronizedPreferenceValue
+                    );
+                    callbackFinishedWrongly();
+                  }
+                );
+              }
+            );
+          };
+          callbackFunc();
+        })
+        .catch(error => OB.error(error));
     }
   }
 );

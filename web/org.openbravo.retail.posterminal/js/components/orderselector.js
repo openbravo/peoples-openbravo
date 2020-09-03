@@ -928,8 +928,7 @@ enyo.kind({
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_PreIssueSalesOrder',
                   {
-                    orders: groupedLinesToPrepare,
-                    tx: tx
+                    orders: groupedLinesToPrepare
                   },
                   function() {
                     var process = new OB.DS.Process(

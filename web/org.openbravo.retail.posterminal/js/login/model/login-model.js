@@ -315,110 +315,106 @@
                     ]
                   });
 
-                  OB.Dal.transaction(function(tx) {
-                    OB.UTIL.HookManager.executeHooks(
-                      'OBPOS_PostDocumentSequenceUpdated',
-                      {
-                        tx: tx
-                      },
-                      function(args) {
-                        if (args && args.cancelOperation) {
-                          return;
-                        }
-                        OB.UTIL.localStorage.setItem(
-                          'terminalId',
-                          data[0].terminal.id
-                        );
-                        terminalModel.set(
-                          'useBarcode',
-                          terminalModel.get('terminal').terminalType
-                            .usebarcodescanner
-                        );
-                        terminalModel.set(
-                          'useEmbededBarcode',
-                          terminalModel.get('terminal').terminalType
-                            .useembededbarcodescanner
-                        );
-                        //Set document types from organization to terminaltype object
-                        terminalModel.get(
-                          'terminal'
-                        ).terminalType.documentType = OB.MobileApp.model.get(
-                          'context'
-                        ).organization.obposCDoctype;
-                        terminalModel.get(
-                          'terminal'
-                        ).terminalType.documentTypeForReturns = OB.MobileApp.model.get(
-                          'context'
-                        ).organization.obposCDoctyperet;
-                        terminalModel.get(
-                          'terminal'
-                        ).terminalType.documentTypeForReconciliations = OB.MobileApp.model.get(
-                          'context'
-                        ).organization.obposCDoctyperecon;
-                        terminalModel.get(
-                          'terminal'
-                        ).terminalType.documentTypeForQuotations = OB.MobileApp.model.get(
-                          'context'
-                        ).organization.obposCDoctypequot;
+                  OB.UTIL.HookManager.executeHooks(
+                    'OBPOS_PostDocumentSequenceUpdated',
+                    {},
+                    function(args) {
+                      if (args && args.cancelOperation) {
+                        return;
+                      }
+                      OB.UTIL.localStorage.setItem(
+                        'terminalId',
+                        data[0].terminal.id
+                      );
+                      terminalModel.set(
+                        'useBarcode',
+                        terminalModel.get('terminal').terminalType
+                          .usebarcodescanner
+                      );
+                      terminalModel.set(
+                        'useEmbededBarcode',
+                        terminalModel.get('terminal').terminalType
+                          .useembededbarcodescanner
+                      );
+                      //Set document types from organization to terminaltype object
+                      terminalModel.get(
+                        'terminal'
+                      ).terminalType.documentType = OB.MobileApp.model.get(
+                        'context'
+                      ).organization.obposCDoctype;
+                      terminalModel.get(
+                        'terminal'
+                      ).terminalType.documentTypeForReturns = OB.MobileApp.model.get(
+                        'context'
+                      ).organization.obposCDoctyperet;
+                      terminalModel.get(
+                        'terminal'
+                      ).terminalType.documentTypeForReconciliations = OB.MobileApp.model.get(
+                        'context'
+                      ).organization.obposCDoctyperecon;
+                      terminalModel.get(
+                        'terminal'
+                      ).terminalType.documentTypeForQuotations = OB.MobileApp.model.get(
+                        'context'
+                      ).organization.obposCDoctypequot;
 
-                        if (!terminalModel.usermodel) {
-                          OB.MobileApp.model.loadingErrorsActions(
-                            'The terminal.usermodel should be loaded at this point'
-                          );
-                        } else if (
-                          OB.MobileApp.model.attributes.loadManifeststatus &&
-                          OB.MobileApp.model.attributes.loadManifeststatus
-                            .type === 'error' &&
-                          !OB.RR.RequestRouter.ignoreManifestLoadError()
-                        ) {
-                          var error =
-                            OB.MobileApp.model.attributes.loadManifeststatus;
-                          OB.debug(
-                            error.reason + ' failed to load: ' + error.url
-                          );
-                          OB.UTIL.showConfirmation.display(
-                            OB.I18N.getLabel('OBPOS_TitleFailedAppCache'),
-                            enyo.format(
-                              '%s %s: %s',
-                              OB.I18N.getLabel('OBPOS_FailedAppCache'),
-                              error.type,
-                              error.message
-                            ),
-                            [
-                              {
-                                label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                                isConfirmButton: true
-                              }
-                            ],
+                      if (!terminalModel.usermodel) {
+                        OB.MobileApp.model.loadingErrorsActions(
+                          'The terminal.usermodel should be loaded at this point'
+                        );
+                      } else if (
+                        OB.MobileApp.model.attributes.loadManifeststatus &&
+                        OB.MobileApp.model.attributes.loadManifeststatus
+                          .type === 'error' &&
+                        !OB.RR.RequestRouter.ignoreManifestLoadError()
+                      ) {
+                        var error =
+                          OB.MobileApp.model.attributes.loadManifeststatus;
+                        OB.debug(
+                          error.reason + ' failed to load: ' + error.url
+                        );
+                        OB.UTIL.showConfirmation.display(
+                          OB.I18N.getLabel('OBPOS_TitleFailedAppCache'),
+                          enyo.format(
+                            '%s %s: %s',
+                            OB.I18N.getLabel('OBPOS_FailedAppCache'),
+                            error.type,
+                            error.message
+                          ),
+                          [
                             {
-                              autoDismiss: false,
-                              showLoading: true,
-                              onHideFunction: function(popup) {
-                                OB.UTIL.showLoading(true);
-                                terminalModel.set(
-                                  'terminalCorrectlyLoadedFromBackend',
-                                  true
-                                );
-                                terminalModel.propertiesReady(me.properties);
-                              }
+                              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                              isConfirmButton: true
                             }
-                          );
-                        } else {
-                          terminalModel.set(
-                            'terminalCorrectlyLoadedFromBackend',
-                            true
-                          );
-                          terminalModel.propertiesReady(me.properties);
-                        }
-                        OB.UTIL.HookManager.executeHooks(
-                          'OBPOS_TerminalLoadedFromBackend',
+                          ],
                           {
-                            data: data[0].terminal.id
+                            autoDismiss: false,
+                            showLoading: true,
+                            onHideFunction: function(popup) {
+                              OB.UTIL.showLoading(true);
+                              terminalModel.set(
+                                'terminalCorrectlyLoadedFromBackend',
+                                true
+                              );
+                              terminalModel.propertiesReady(me.properties);
+                            }
                           }
                         );
+                      } else {
+                        terminalModel.set(
+                          'terminalCorrectlyLoadedFromBackend',
+                          true
+                        );
+                        terminalModel.propertiesReady(me.properties);
                       }
-                    );
-                  });
+                      OB.UTIL.HookManager.executeHooks(
+                        'OBPOS_TerminalLoadedFromBackend',
+                        {
+                          data: data[0].terminal.id
+                        }
+                      );
+                    }
+                  );
                 } else {
                   OB.UTIL.showError(
                     'Terminal does not exists: ' + 'params.terminal'
