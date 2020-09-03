@@ -178,10 +178,12 @@
       const originalLine = newTicket.lines.find(
         l => l.id === attrs.originalLine
       );
-      newLine.warehouse = {
-        id: originalLine.warehouse.id,
-        warehousename: originalLine.warehouse.warehousename
-      };
+      if (originalLine) {
+        newLine.warehouse = {
+          id: originalLine.warehouse.id,
+          warehousename: originalLine.warehouse.warehousename
+        };
+      }
     }
 
     if (lodash.has(options, 'isEditable')) {
