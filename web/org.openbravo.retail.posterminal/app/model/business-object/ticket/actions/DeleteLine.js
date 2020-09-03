@@ -10,8 +10,6 @@
 /* eslint-disable no-use-before-define */
 
 (function DeleteLineDefinition() {
-  window.newDeleteLine = true; // TODO: remove this testing code
-
   OB.App.StateAPI.Ticket.registerAction('deleteLine', (ticket, payload) => {
     const { lineIds } = payload;
     const newTicket = { ...ticket };
@@ -97,7 +95,6 @@
 
   function getRelatedServices(ticket, lineIds) {
     if (!ticket.hasServices) {
-      // TODO: is this check necessary?
       return [];
     }
 
@@ -116,7 +113,6 @@
         getRelatedServices(ticket, [...lineIds, ...relatedLinesToRemove])
       );
     }
-    // TODO: handle lines related to serveral
 
     return relatedLinesToRemove;
   }
@@ -125,7 +121,6 @@
     return ticket.lines
       .filter(l => removedLineIds.includes(l.id))
       .map(l => {
-        // TODO: check the correct properties to reset
         const deletedLine = {
           ...l,
           obposQtyDeleted: l.qty,
