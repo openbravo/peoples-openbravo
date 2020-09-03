@@ -207,6 +207,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
       initializeVariables(jsonorder);
       Order order = null;
+      Order canceledOrder = null;
+      Order inverseOrder = null;
       OrderLine orderLine = null;
       ShipmentInOut shipment = null;
       Invoice invoice = null;
@@ -251,11 +253,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
       }
 
-      if (!isDeleted && doCancelAndReplace) {
+      if (!isDeleted && (doCancelAndReplace || doCancelLayaway)) {
         // Do not allow to do a C&R in the case that the order was not updated
         final JSONObject canceledOrderJSON = jsonorder.getJSONObject("canceledorder");
-        final Order canceledOrder = OBDal.getInstance()
-            .get(Order.class, canceledOrderJSON.getString("id"));
+        canceledOrder = OBDal.getInstance().get(Order.class, canceledOrderJSON.getString("id"));
         String canceledLoaded = canceledOrderJSON.optString("loaded"), canceledUpdated = OBMOBCUtils
             .convertToUTCDateComingFromServer(canceledOrder.getUpdated());
         if (canceledLoaded == null || canceledLoaded.compareTo(canceledUpdated) != 0) {
@@ -279,15 +280,17 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
       }
 
-      if (!isQuotation && !jsonorder.getBoolean("isLayaway")) {
+      if (!isQuotation && !jsonorder.getBoolean("isLayaway") && !doCancelLayaway) {
         verifyCashupStatus(jsonorder);
       }
 
-      if (!isModified) {
-        DeferredServiceDelivery.calculateQtyToDeliver(jsonorder);
-        executeOrderLoaderPreProcessHook(orderPreProcesses, jsonorder);
-      } else {
-        executeOrderLoaderModifiedPreProcessHook(orderModifiedPreProcesses, jsonorder);
+      if (!doCancelLayaway) {
+        if (!isModified) {
+          DeferredServiceDelivery.calculateQtyToDeliver(jsonorder);
+          executeOrderLoaderPreProcessHook(orderPreProcesses, jsonorder);
+        } else {
+          executeOrderLoaderModifiedPreProcessHook(orderModifiedPreProcesses, jsonorder);
+        }
       }
 
       // Set the 'deliver' and 'createShipment' properties again because it can be changed during
@@ -320,7 +323,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
           t111 = System.currentTimeMillis();
         }
 
-        if (isNewReceipt || isModified) {
+        if ((isNewReceipt || isModified) && !doCancelLayaway) {
           verifyOrderLineTax(jsonorder);
           if (isModified) {
             order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
@@ -336,6 +339,30 @@ public class OrderLoader extends POSDataSynchronizationProcess
           }
           lineReferences = new ArrayList<OrderLine>();
           createOrderAndLines(jsonorder, order, orderlines, lineReferences);
+        } else if (doCancelLayaway) {
+          inverseOrder = OBProvider.getInstance().get(Order.class);
+          createOrderAndLines(jsonorder, inverseOrder, orderlines, lineReferences);
+
+          for (final OrderLine inverseOrderLine : inverseOrder.getOrderLineList()) {
+            inverseOrderLine.setObposIspaid(true);
+            OBDal.getInstance().save(inverseOrderLine);
+          }
+
+          inverseOrder.setCancelledorder(canceledOrder);
+
+          final OBCriteria<OrderLine> orderLineCriteria = OBDal.getInstance()
+              .createCriteria(OrderLine.class);
+          orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, canceledOrder));
+          orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_OBPOSISDELETED, false));
+          for (final OrderLine cancelledOrderLine : orderLineCriteria.list()) {
+            cancelledOrderLine.setObposIspaid(true);
+            cancelledOrderLine.setDeliveredQuantity(cancelledOrderLine.getOrderedQuantity());
+            OBDal.getInstance().save(cancelledOrderLine);
+          }
+
+          OBDal.getInstance().save(canceledOrder);
+
+          OBDal.getInstance().flush();
         } else {
           order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           order.setDelivered(deliver);
@@ -375,13 +402,17 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
         // 37240: done outside of createOrderLines, since needs to be done in all order loaders, not
         // only in new ones
-        updateLinesWithAttributes(order, orderlines, lineReferences);
+        if (order != null) {
+          updateLinesWithAttributes(order, orderlines, lineReferences);
+        }
 
         if (log.isDebugEnabled()) {
           t112 = System.currentTimeMillis();
         }
 
-        order.setObposIslayaway(!isQuotation && !isDeleted && !completeTicket && !payOnCredit);
+        if (order != null) {
+          order.setObposIslayaway(!isQuotation && !isDeleted && !completeTicket && !payOnCredit);
+        }
 
         // Order lines
         if (!isDeleted && jsonorder.has("oldId") && !jsonorder.getString("oldId").equals("null")
@@ -408,7 +439,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
           t115 = System.currentTimeMillis();
         }
 
-        createApprovals(order, jsonorder);
+        if (order != null) {
+          createApprovals(order, jsonorder);
+        }
 
         if (log.isDebugEnabled()) {
           t11 = System.currentTimeMillis();
@@ -423,17 +456,19 @@ public class OrderLoader extends POSDataSynchronizationProcess
           t116 = System.currentTimeMillis();
         }
 
-        createInvoice = createInvoice && !order.isOBPOSNotInvoiceOnCashUp();
-        if (createInvoice) {
-          // Create the invoice for the lines to invoice
-          if (jsonorder.has("calculatedInvoice")) {
-            jsoninvoice = jsonorder.getJSONObject("calculatedInvoice");
-          } else {
-            jsoninvoice = jsonorder;
-          }
+        if (order != null) {
+          createInvoice = createInvoice && !order.isOBPOSNotInvoiceOnCashUp();
+          if (createInvoice) {
+            // Create the invoice for the lines to invoice
+            if (jsonorder.has("calculatedInvoice")) {
+              jsoninvoice = jsonorder.getJSONObject("calculatedInvoice");
+            } else {
+              jsoninvoice = jsonorder;
+            }
 
-          invoice = iu.createNewInvoice(jsoninvoice, order);
-          updateTerminalDocumentSequence(order.getObposApplications(), jsoninvoice);
+            invoice = iu.createNewInvoice(jsoninvoice, order);
+            updateTerminalDocumentSequence(order.getObposApplications(), jsoninvoice);
+          }
         }
 
         if (log.isDebugEnabled()) {
@@ -461,14 +496,15 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
       if (!isQuotation && !isDeleted) {
         // Payment
-        paymentResponse = handlePayments(jsonorder, order, invoice);
+        paymentResponse = handlePayments(jsonorder, (doCancelLayaway ? inverseOrder : order),
+            invoice);
         if (paymentResponse
             .getInt(JsonConstants.RESPONSE_STATUS) == JsonConstants.RPCREQUEST_STATUS_FAILURE) {
           return paymentResponse;
         }
       }
 
-      if (createShipment || createInvoice || (!isQuotation && !isDeleted)) {
+      if (createShipment || createInvoice || doCancelLayaway || (!isQuotation && !isDeleted)) {
         // do the docnumbers at the end
         OBContext.setAdminMode(false);
         TriggerHandler.getInstance().disable();
@@ -491,7 +527,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
 
       if (!isQuotation && !isDeleted) {
-        if (doCancelAndReplace && order.getReplacedorder() != null) {
+        if (doCancelAndReplace && order != null && order.getReplacedorder() != null) {
           OBContext.setCrossOrgReferenceAdminMode();
           TriggerHandler.getInstance().disable();
           try {
@@ -509,9 +545,29 @@ public class OrderLoader extends POSDataSynchronizationProcess
             TriggerHandler.getInstance().enable();
             OBContext.restorePreviousCrossOrgReferenceMode();
           }
+        } else if (doCancelLayaway) {
+          try {
+            POSUtils.setDefaultPaymentType(jsonorder, inverseOrder);
+            OBContext.setCrossOrgReferenceAdminMode();
+            TriggerHandler.getInstance().disable();
+            final Organization paymentOrganization = getPaymentOrganization(
+                inverseOrder.getObposApplications(),
+                POSUtils.isCrossStore(canceledOrder, inverseOrder.getObposApplications()));
+            CancelAndReplaceUtils.cancelOrder(jsonorder.getString("orderid"),
+                paymentOrganization.getId(), jsonorder, false);
+          } catch (Exception ex) {
+            OBDal.getInstance().rollbackAndClose();
+            throw new OBException("Error in OrderLoader : " + ex.getMessage(), ex);
+          } finally {
+            TriggerHandler.getInstance().enable();
+            OBContext.restorePreviousCrossOrgReferenceMode();
+          }
         }
 
-        DeferredServiceDelivery.createShipmentLinesForDeferredServices(jsonorder, order, shipment);
+        if (order != null) {
+          DeferredServiceDelivery.createShipmentLinesForDeferredServices(jsonorder, order,
+              shipment);
+        }
 
         for (OrderLoaderHook hook : orderProcesses) {
           if (hook instanceof OrderLoaderPaymentHook) {
@@ -527,10 +583,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
         }
 
         // Call all OrderProcess injected.
-        if (!isModified) {
-          executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
-        } else {
-          executeModifiedHooks(orderModifiedProcesses, jsonorder, order, shipment, invoice);
+        if (order != null) {
+          if (!isModified) {
+            executeHooks(orderProcesses, jsonorder, order, shipment, invoice);
+          } else {
+            executeModifiedHooks(orderModifiedProcesses, jsonorder, order, shipment, invoice);
+          }
         }
       } else {
         // Call all OrderProcess injected when order is a quotation
@@ -542,7 +600,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       }
 
       // Save the last order synchronized in obposApplication object
-      if (posTerminal != null) {
+      if (posTerminal != null && order != null) {
         posTerminal.setTerminalLastordersinchronized(order.getUpdated());
       }
 
