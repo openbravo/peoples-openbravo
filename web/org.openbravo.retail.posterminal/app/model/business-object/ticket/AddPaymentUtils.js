@@ -354,7 +354,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           return payment;
         }
 
-        const newPayment = { ...payment };
+        let newPayment = { ...payment };
+        // Set values defined in actionPreparations
+        if (payload.payment.extraInfo) {
+          newPayment = { ...newPayment, ...payload.payment.extraInfo };
+        }
         newPayment.oBPOSPOSTerminal = payload.terminal.id;
         const newAmount = OB.DEC.add(
           OB.DEC.mul(
@@ -380,7 +384,12 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         return newPayment;
       });
     } else {
-      const newPayment = { ...payload.payment };
+      let newPayment = { ...payload.payment };
+      // Set values defined in actionPreparations
+      if (payload.payment.extraInfo) {
+        newPayment = { ...newPayment, ...payload.payment.extraInfo };
+        delete newPayment.extraInfo;
+      }
       newPayment.date = new Date();
       newPayment.id = OB.App.UUID.generate();
       newPayment.oBPOSPOSTerminal = payload.terminal.id;
