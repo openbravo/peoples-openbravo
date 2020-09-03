@@ -64,6 +64,7 @@ public class POSUtils {
   public static final Logger log = LogManager.getLogger();
   public static final String MODULE_JAVA_PACKAGE = "org.openbravo.retail.posterminal";
   public static final String APP_NAME = "WebPOS";
+  public static final String BUSINESSLOGIC_NAME = "WebPOS_BusinessLogic";
   public static final String WEB_POS_FORM_ID = "B7B7675269CD4D44B628A2C6CF01244F";
   public static final DateFormat dateFormatUTC = new SimpleDateFormat(
       "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
