@@ -42,9 +42,14 @@ const ticketWithRounding = deepfreeze({
       id: '1',
       amount: 200,
       kind: 'OBPOS_payment.cash',
-      paymentRoundingLine: '2'
+      paymentRoundingLine: {
+        id: '2',
+        amount: 800,
+        kind: 'OBPOS_payment.card',
+        roundedPaymentId: '1'
+      }
     },
-    { id: '2', amount: 800, kind: 'OBPOS_payment.card' }
+    { id: '2', amount: 800, kind: 'OBPOS_payment.card', roundedPaymentId: '1' }
   ]
 });
 

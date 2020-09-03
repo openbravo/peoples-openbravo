@@ -8,7 +8,6 @@
  */
 
 require('../SetupTicket');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/AddPaymentUtils');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddPayment');
 require('../SetupTicketUtils');
 const deepfreeze = require('deepfreeze');
