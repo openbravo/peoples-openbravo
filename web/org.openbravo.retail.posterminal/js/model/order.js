@@ -7488,54 +7488,10 @@
       var execution = OB.UTIL.ProcessController.start('addPayment');
       var me = this,
         payments,
-        i,
-        max,
-        p,
         order,
-        paymentSign,
-        finalCallback,
-        precision;
-
-      if (
-        this.get('isPaid') &&
-        !payment.get('isReversePayment') &&
-        OB.DEC.abs(this.getPrePaymentQty()) >= OB.DEC.abs(this.getTotal()) &&
-        !this.isNewReversed()
-      ) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotIntroducePayment'));
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
-
-      if (!OB.DEC.isNumber(payment.get('amount'))) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
-      if (this.stopAddingPayments) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
-      if (
-        !payment.get('isReversePayment') &&
-        this.getPending() <= 0 &&
-        payment.get('amount') > 0 &&
-        !payment.get('forceAddPayment')
-      ) {
-        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
+        finalCallback;
 
       order = this;
-      if (order.get('orderType') === 3 && order.getGross() === 0) {
-        OB.UTIL.showWarning(
-          OB.I18N.getLabel('OBPOS_MsgVoidLayawayPaymentError')
-        );
-        OB.UTIL.ProcessController.finish('addPayment', execution);
-        return;
-      }
 
       finalCallback = function() {
         if (callback instanceof Function) {
@@ -7544,340 +7500,68 @@
       };
 
       payments = this.get('payments');
-      precision = this.getPrecision(payment);
-      payment.set('amount', OB.DEC.toNumber(payment.get('amount'), precision));
-      this.addPaymentRounding(
-        payment,
-        OB.MobileApp.model.paymentnames[payment.get('kind')]
-      );
 
-      if (this.get('prepaymentChangeMode')) {
-        this.unset('prepaymentChangeMode');
-        this.adjustPayment();
-      }
-      OB.UTIL.PrepaymentUtils.managePrepaymentChange(
-        this,
-        payment,
-        payments,
-        function() {
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_preAddPayment',
-            {
-              paymentToAdd: payment,
-              payments: payments,
-              receipt: me
-            },
-            function(args) {
-              var executeFinalCallback = function(saveChanges) {
-                if (saveChanges && !payment.get('changePayment')) {
-                  order.adjustPayment();
-                  order.trigger('displayTotal');
-                }
-                OB.UTIL.HookManager.executeHooks(
-                  'OBPOS_postAddPayment',
-                  {
-                    paymentAdded: payment,
-                    payments: payments,
-                    receipt: order,
-                    saveChanges: saveChanges
-                  },
-                  function(args2) {
-                    if (args2.saveChanges && !payment.get('changePayment')) {
-                      order.save(function() {
-                        OB.UTIL.ProcessController.finish(
-                          'addPayment',
-                          execution
-                        );
-                        finalCallback();
-                      });
-                      order.trigger('updateView');
-                    } else {
-                      OB.UTIL.ProcessController.finish('addPayment', execution);
-                      finalCallback();
-                    }
-                  }
-                );
-              };
-
-              if (args && args.cancellation) {
-                if (payment.get('reverseCallback')) {
-                  var reverseCallback = payment.get('reverseCallback');
-                  reverseCallback();
-                }
-                executeFinalCallback(false);
-                return;
-              }
-              // search for an existing payment only if is not a reverser payment.
-              if (!payment.get('reversedPaymentId')) {
-                if (
-                  !payment.get('paymentData') ||
-                  payment.get('paymentData').mergeable
-                ) {
-                  // search for an existing payment only if there is not paymentData info or if there is, when there is any other paymentData with same groupingCriteria.
-                  // this avoids to merge for example card payments of different cards.
-                  for (i = 0, max = payments.length; i < max; i++) {
-                    p = payments.at(i);
-                    if (
-                      p.get('kind') === payment.get('kind') &&
-                      !p.get('isPrePayment') &&
-                      !p.get('reversedPaymentId')
-                    ) {
-                      paymentSign =
-                        p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
-                      p.set(
-                        'amount',
-                        OB.DEC.add(
-                          OB.DEC.mul(
-                            payment.get('amount'),
-                            paymentSign,
-                            precision
-                          ),
-                          p.get('amount'),
-                          precision
-                        )
-                      );
-                      if (p.get('rate') && p.get('rate') !== '1') {
-                        p.set(
-                          'origAmount',
-                          OB.DEC.div(p.get('amount'), p.get('mulrate'))
-                        );
-                      } else {
-                        p.set('origAmount', p.get('amount'));
-                      }
-                      if (payment.has('paymentRoundingLine')) {
-                        p.set(
-                          'paymentRoundingLine',
-                          payment.get('paymentRoundingLine')
-                        );
-                        p.get('paymentRoundingLine').set(
-                          'roundedPaymentId',
-                          p.get('id')
-                        );
-                      }
-                      payment.set('date', new Date());
-                      executeFinalCallback(true);
-                      return;
-                    }
-                  }
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_preAddPayment',
+        {
+          paymentToAdd: payment,
+          payments: payments,
+          receipt: me
+        },
+        async function(args) {
+          var executeFinalCallback = function(saveChanges) {
+            if (saveChanges && !payment.get('changePayment')) {
+              order.trigger('updatePending');
+              order.trigger('displayTotal');
+            }
+            OB.UTIL.HookManager.executeHooks(
+              'OBPOS_postAddPayment',
+              {
+                paymentAdded: payment,
+                payments: payments,
+                receipt: order,
+                saveChanges: saveChanges
+              },
+              function(args2) {
+                if (args2.saveChanges && !payment.get('changePayment')) {
+                  order.save(function() {
+                    OB.UTIL.ProcessController.finish('addPayment', execution);
+                    finalCallback();
+                  });
+                  order.trigger('updateView');
                 } else {
-                  for (i = 0, max = payments.length; i < max; i++) {
-                    p = payments.at(i);
-                    if (
-                      p.get('kind') === payment.get('kind') &&
-                      p.get('paymentData') &&
-                      payment.get('paymentData') &&
-                      p.get('paymentData').groupingCriteria &&
-                      payment.get('paymentData').groupingCriteria &&
-                      p.get('paymentData').groupingCriteria ===
-                        payment.get('paymentData').groupingCriteria &&
-                      !p.get('reversedPaymentId') &&
-                      !p.get('isPrePayment')
-                    ) {
-                      paymentSign =
-                        p.get('signChanged') && p.get('amount') < 0 ? -1 : 1;
-                      p.set(
-                        'amount',
-                        OB.DEC.add(
-                          OB.DEC.mul(
-                            payment.get('amount'),
-                            paymentSign,
-                            precision
-                          ),
-                          p.get('amount'),
-                          precision
-                        )
-                      );
-                      if (p.get('rate') && p.get('rate') !== '1') {
-                        p.set(
-                          'origAmount',
-                          OB.DEC.div(p.get('amount'), p.get('mulrate'))
-                        );
-                      }
-                      payment.set('date', new Date());
-                      executeFinalCallback(true);
-                      return;
-                    }
-                  }
+                  OB.UTIL.ProcessController.finish('addPayment', execution);
+                  finalCallback();
                 }
               }
-              if (
-                payment.get('openDrawer') &&
-                (payment.get('allowOpenDrawer') || payment.get('isCash'))
-              ) {
-                order.set('openDrawer', payment.get('openDrawer'));
-              }
-              payment.set('date', new Date());
-              payment.set('id', OB.UTIL.get_UUID());
-              payment.set(
-                'oBPOSPOSTerminal',
-                OB.MobileApp.model.get('terminal').id
-              );
-              payment.set('orderGross', order.getGross());
-              payment.set('isPaid', order.get('isPaid'));
-              payment.set('isReturnOrder', order.getPaymentStatus().isNegative);
-              if (
-                order.get('doCancelAndReplace') &&
-                order.get('replacedorder')
-              ) {
-                // Added properties to payment related with cancel an replace order
-                payment.set(
-                  'cancelAndReplace',
-                  order.get('doCancelAndReplace')
-                );
-              } else if (order.get('cancelAndReplaceChangePending')) {
-                payment.set('cancelAndReplace', true);
-              }
+            );
+          };
 
-              payments.add(payment, {
-                at: payment.get('index')
-              });
-              // If there is a reversed payment set isReversed properties
-              if (payment.get('reversedPayment')) {
-                payment.get('reversedPayment').set('isReversed', true);
-              }
-              if (payment.has('paymentRoundingLine')) {
-                payment
-                  .get('paymentRoundingLine')
-                  .set('roundedPaymentId', payment.get('id'));
-              }
+          if (args && args.cancellation) {
+            if (payment.get('reverseCallback')) {
+              var reverseCallback = payment.get('reverseCallback');
+              reverseCallback();
+            }
+            executeFinalCallback(false);
+            return;
+          }
+
+          await OB.App.State.Ticket.addPayment({
+            payments: OB.MobileApp.model.get('payments'),
+            terminal: OB.MobileApp.model.get('terminal'),
+            payment: JSON.parse(JSON.stringify(payment))
+          })
+            .then(() => {
               executeFinalCallback(true);
               return;
-            }
-          ); // call with callback, no args
+            })
+            .catch(function(error) {
+              OB.App.View.ActionCanceledUIHandler.handle(error);
+              OB.UTIL.ProcessController.finish('addPayment', execution);
+              payments.forEach(p => p.trigger('updateView'));
+            });
         }
-      );
-    },
-    //Add a payment rounding line related to the payment if it's needed
-    addPaymentRounding: function(payment, terminalPayment) {
-      if (
-        OB.MobileApp.model.paymentnames[payment.get('kind')].paymentRounding &&
-        !payment.get('isReversePayment')
-      ) {
-        var paymentStatus = this.getPaymentStatus(),
-          roundingAmount = OB.DEC.sub(
-            paymentStatus.pendingAmt,
-            payment.get('amount')
-          ),
-          terminalPaymentRounding =
-            OB.MobileApp.model.paymentnames[
-              terminalPayment.paymentRounding.paymentRoundingType
-            ],
-          amountDifference = null,
-          paymentLine = null,
-          precision = this.getPrecision(payment),
-          multiplyBy = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnRoundingMultiple
-            : terminalPayment.paymentRounding.saleRoundingMultiple,
-          rounding = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnRoundingMode
-            : terminalPayment.paymentRounding.saleRoundingMode,
-          roundingEnabled = paymentStatus.isReturn
-            ? terminalPayment.paymentRounding.returnRounding
-            : terminalPayment.paymentRounding.saleRounding,
-          pow = Math.pow(10, precision),
-          paymentDifference =
-            OB.DEC.mul(paymentStatus.pendingAmt, pow) %
-            OB.DEC.mul(multiplyBy, pow);
-
-        //If receipt total amount is less than equal rounding multiple in Sales/Return
-        //no rounding payment line is created
-        if (OB.DEC.abs(paymentStatus.totalAmt) <= multiplyBy) {
-          return;
-        }
-        //If receipt is totally paid the last payment paid amount is used to compute the
-        //rounding amount
-        if (paymentStatus.pendingAmt === 0) {
-          paymentDifference =
-            OB.DEC.mul(payment.get('paid'), pow) % OB.DEC.mul(multiplyBy, pow);
-        }
-        //(Rounding enabled for Sales/Returns) &&
-        //((the remaining to paid is less than rounding multiple in Sales/Return) ||
-        // (the paid amount is less than rounding multiple in Sales/Return with a rounding difference) ||
-        // (the payment totally paid the receipt or create an overpayment with a rounding difference))
-        if (
-          roundingEnabled &&
-          ((roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
-            (payment.get('paid') !== 0 &&
-              paymentDifference !== 0 &&
-              paymentStatus.pendingAmt < multiplyBy) ||
-            (payment.get('paid') === 0 &&
-              paymentDifference !== 0 &&
-              payment.get('amount') >= paymentStatus.pendingAmt))
-        ) {
-          if (rounding === 'UR') {
-            if (paymentDifference !== 0) {
-              amountDifference = OB.DEC.sub(
-                multiplyBy,
-                OB.DEC.div(paymentDifference, pow)
-              );
-              roundingAmount = OB.DEC.mul(amountDifference, -1);
-              if (payment.get('amount') < paymentStatus.pendingAmt) {
-                amountDifference = OB.DEC.add(
-                  amountDifference,
-                  OB.DEC.div(paymentDifference, pow)
-                );
-              }
-            }
-            if (payment.get('amount') <= paymentStatus.pendingAmt) {
-              payment.set(
-                'amount',
-                OB.DEC.add(payment.get('amount'), amountDifference)
-              );
-            }
-          } else if (
-            paymentDifference !== 0 &&
-            payment.get('amount') >= paymentStatus.pendingAmt
-          ) {
-            roundingAmount = OB.DEC.div(paymentDifference, pow);
-            //Substract the rounding amount when the payment totally paid the receipt
-            if (payment.get('amount') === paymentStatus.pendingAmt) {
-              payment.set(
-                'amount',
-                OB.DEC.sub(payment.get('amount'), roundingAmount)
-              );
-            }
-          }
-
-          payment.set('index', this.get('payments').length);
-          //Create the rounding payment line
-          paymentLine = new OB.Model.PaymentLine({
-            kind: terminalPayment.paymentRounding.paymentRoundingType,
-            name: OB.MobileApp.model.getPaymentName(
-              terminalPayment.paymentRounding.paymentRoundingType
-            ),
-            amount: roundingAmount,
-            rate: terminalPaymentRounding.rate,
-            mulrate: terminalPaymentRounding.mulrate,
-            isocode: terminalPaymentRounding.isocode,
-            isCash: terminalPaymentRounding.paymentMethod.iscash,
-            allowOpenDrawer:
-              terminalPaymentRounding.paymentMethod.allowopendrawer,
-            openDrawer: terminalPaymentRounding.paymentMethod.openDrawer,
-            printtwice: terminalPaymentRounding.paymentMethod.printtwice,
-            date: new Date(),
-            id: OB.UTIL.get_UUID(),
-            oBPOSPOSTerminal: OB.MobileApp.model.get('terminal').id,
-            orderGross: this.getGross(),
-            isPaid: false,
-            isReturnOrder: paymentStatus.isNegative
-          });
-          paymentLine.set('paymentRounding', true);
-          payment.set('paymentRoundingLine', paymentLine);
-          this.get('payments').add(paymentLine);
-
-          if (
-            paymentStatus.pendingAmt === 0 ||
-            paymentStatus.pendingAmt < multiplyBy
-          ) {
-            if (payment.has('id')) {
-              paymentLine.set('roundedPaymentId', payment.get('id'));
-            }
-            //When exists a rounding payment line and the receipt total amount change it's necessary
-            //to calculate the receipt to properly set the receipt payment status
-            this.calculateReceipt();
-          }
-        }
-      }
+      ); // call with callback, no args
     },
 
     overpaymentExists: function() {
@@ -8020,7 +7704,11 @@
 
             reversalPayment = createReversePayment(payment);
             if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
-              reversalPaymentRounding = createReversePayment(paymentRounding);
+              reversalPaymentRounding = createReversePayment(
+                !paymentRounding.get
+                  ? new OB.Model.PaymentLine(paymentRounding)
+                  : paymentRounding
+              );
             }
 
             OB.UTIL.HookManager.executeHooks(
@@ -8093,16 +7781,32 @@
                     reversalPaymentLine = new OB.Model.PaymentLine(
                       reversalPayment.attributes
                     );
-                    me.addPayment(reversalPaymentLine);
                     if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
                       reversalPaymentRoundingLine = new OB.Model.PaymentLine(
                         reversalPaymentRounding.attributes
                       );
+                      // Save the payment which is rounding current payment
                       reversalPaymentLine.set(
                         'paymentRoundingLine',
                         reversalPaymentRoundingLine
                       );
-                      me.addPayment(reversalPaymentRoundingLine);
+                      me.addPayment(reversalPaymentLine, function() {
+                        const reversalPaymentId = me
+                          .get('payments')
+                          .models.find(
+                            p =>
+                              p.get('isReversePayment') &&
+                              p.get('kind') === reversalPaymentLine.get('kind')
+                          ).id;
+                        // In rounding payments, we need to save the id of the payment we are rounding
+                        reversalPaymentRoundingLine.set(
+                          'roundedPaymentId',
+                          reversalPaymentId
+                        );
+                        me.addPayment(reversalPaymentRoundingLine);
+                      });
+                    } else {
+                      me.addPayment(reversalPaymentLine);
                     }
                   }
                 }

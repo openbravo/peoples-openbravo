@@ -607,13 +607,21 @@ enyo.kind({
         paymentStatus = receipt.getPaymentStatus();
         if (paymentStatus.pendingAmt > 0 || receipt.get('change') !== 0) {
           if (roundedPayment.has('paymentRoundingLine')) {
-            receipt.removePayment(roundedPayment.get('paymentRoundingLine'));
+            receipt.removePayment(
+              new OB.Model.PaymentLine(
+                roundedPayment.get('paymentRoundingLine')
+              ),
+              null,
+              async function() {
+                roundedPayment.set('paymentRoundingLine', null);
+                await OB.App.State.Ticket.addPaymentRounding({
+                  payments: OB.MobileApp.model.get('payments'),
+                  terminal: OB.MobileApp.model.get('terminal'),
+                  payment: JSON.parse(JSON.stringify(roundedPayment))
+                });
+              }
+            );
           }
-          roundedPayment.set('paymentRoundingLine', null);
-          receipt.addPaymentRounding(
-            roundedPayment,
-            OB.MobileApp.model.paymentnames[roundedPayment.get('kind')]
-          );
         }
       }
     }

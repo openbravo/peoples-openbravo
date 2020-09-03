@@ -537,7 +537,6 @@
         paymentTypes,
         paymentCash
       );
-
       // calculate the reversed payments amount
       const reversedPaymentsAmount = this.ticket.payments
         .filter(p => !p.isPrePayment && p.isReversePayment)
@@ -622,7 +621,7 @@
         this.ticket.change = OB.DEC.Zero;
       }
 
-      if (cashPaid && cashPayment) {
+      if (cashPaid != null && cashPayment) {
         this.ticket.payments = this.ticket.payments.map(p => {
           if (p.kind !== cashPayment.kind) {
             return p;
@@ -711,7 +710,7 @@
     getCashInfo(paymentTypes, paymentCash) {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
       return this.ticket.payments
-        .filter(p => !p.isPrePayment)
+        .filter(p => !p.isPrePayment && !p.isReversePayment)
         .reduce(
           (c, p) => {
             let property;
@@ -1253,122 +1252,6 @@
       newTicket.documentType = isSale
         ? payload.terminal.terminalType.documentType
         : payload.terminal.terminalType.documentTypeForReturns;
-
-      return newTicket;
-    },
-
-    /**
-     * Generates the corresponding payment for the given ticket.
-     *
-     * @param {object} ticket - The ticket where payment will be added
-     * @param {object} payload - The calculation payload, which include:
-     *             * payment - The payment that will be added to the ticket
-     *             * terminal.id - Terminal id
-     *             * payments - Terminal payment types
-     *
-     * @returns {Ticket} The new state of Ticket after payment generation.
-     */
-    addPayment(ticket, payload) {
-      const newTicket = { ...ticket };
-
-      const terminalPayment = payload.payments.find(
-        paymentType => paymentType.payment.searchKey === payload.payment.kind
-      );
-      const precision = terminalPayment
-        ? terminalPayment.obposPosprecision
-        : OB.DEC.getScale();
-
-      const paymentIndex = newTicket.payments.findIndex(
-        payment =>
-          payment.kind === payload.payment.kind &&
-          !payment.isPrePayment &&
-          !payment.reversedPaymentId &&
-          !payload.payment.reversedPaymentId &&
-          (!payload.payment.paymentData ||
-            payload.payment.paymentData.mergeable ||
-            (payment.paymentData &&
-              payload.payment.paymentData &&
-              payment.paymentData.groupingCriteria &&
-              payload.payment.paymentData.groupingCriteria &&
-              payment.paymentData.groupingCriteria ===
-                payload.payment.paymentData.groupingCriteria))
-      );
-
-      if (paymentIndex >= 0) {
-        newTicket.payments = newTicket.payments.map((payment, index) => {
-          if (index !== paymentIndex) {
-            return payment;
-          }
-
-          const newPayment = { ...payment };
-          newPayment.oBPOSPOSTerminal = payload.terminal.id;
-          const newAmount = OB.DEC.add(
-            OB.DEC.mul(
-              payload.payment.amount,
-              newPayment.signChanged && newPayment.amount < 0 ? -1 : 1,
-              precision
-            ),
-            newPayment.amount,
-            precision
-          );
-          newPayment.amount = newAmount;
-          newPayment.origAmount =
-            newPayment.rate && newPayment.rate !== '1'
-              ? OB.DEC.div(newAmount, newPayment.mulrate)
-              : newAmount;
-          newPayment.paid = newPayment.origAmount;
-          newPayment.precision = precision;
-          newPayment.paymentRoundingLine = payload.payment.paymentRoundingLine
-            ? {
-                ...payload.payment.paymentRoundingLine,
-                roundedPaymentId: newPayment.id
-              }
-            : undefined;
-
-          return newPayment;
-        });
-      } else {
-        const newPayment = { ...payload.payment };
-        newPayment.date = new Date();
-        newPayment.id = OB.App.UUID.generate();
-        newPayment.oBPOSPOSTerminal = payload.terminal.id;
-        newPayment.orderGross = newTicket.grossAmount;
-        newPayment.isPaid = newTicket.isPaid;
-        newPayment.isReturnOrder = newTicket.isNegative;
-        newPayment.paid = newPayment.origAmount;
-        newPayment.precision = precision;
-        newPayment.cancelAndReplace =
-          (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
-          newTicket.cancelAndReplaceChangePending;
-        if (newPayment.reversedPayment) {
-          newPayment.reversedPayment.isReversed = true;
-        }
-        if (newPayment.paymentRoundingLine) {
-          newPayment.paymentRoundingLine.roundedPaymentId = newPayment.id;
-        }
-        if (
-          newPayment.openDrawer &&
-          (newPayment.allowOpenDrawer || newPayment.isCash)
-        ) {
-          newTicket.openDrawer = newPayment.openDrawer;
-        }
-        newTicket.payments = [...newTicket.payments, newPayment];
-      }
-
-      const paidAmt = newTicket.payments.reduce((total, p) => {
-        if (p.isPrePayment || p.isReversePayment || !newTicket.isNegative) {
-          return OB.DEC.add(total, p.origAmount);
-        }
-        return OB.DEC.sub(total, p.origAmount);
-      }, OB.DEC.Zero);
-      newTicket.payment = OB.DEC.abs(paidAmt);
-      newTicket.paymentWithSign = paidAmt;
-      if (newTicket.amountToLayaway != null) {
-        newTicket.amountToLayaway = OB.DEC.sub(
-          newTicket.amountToLayaway,
-          payload.payment.origAmount
-        );
-      }
 
       return newTicket;
     }
