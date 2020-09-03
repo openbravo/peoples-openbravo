@@ -378,7 +378,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/ticket/actions/ReactivateQuotation"), //
         businesslogic("app/model/business-object/ticket/actions/RejectQuotation"), //
         businesslogic("app/model/business-object/ticket/actions/DeleteLine"), //
-        
+
         businesslogic("app/model/business-object/ticket/actions/CheckTicketForPayOpenTickets"), //
         businesslogic("app/model/business-object/ticket/actions/RemovePayment"), //
         businesslogic("app/model/business-object/ticket/AddPaymentUtils"), //
