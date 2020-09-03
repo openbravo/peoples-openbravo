@@ -22,9 +22,17 @@
       this.checkIsExpired(discount);
 
       const productRetrievals = discount.products.map(async discountProduct => {
-        const product = await OB.App.MasterdataModels.Product.withId(
-          discountProduct.product.id
-        );
+        let product;
+        if (OB.App.Security.hasPermission('OBPOS_remote.product')) {
+          product = await OB.App.DAL.remoteGet(
+            'Product',
+            discountProduct.product.id
+          );
+        } else {
+          product = await OB.App.MasterdataModels.Product.withId(
+            discountProduct.product.id
+          );
+        }
         return {
           product,
           qty: discountProduct.obdiscQty,

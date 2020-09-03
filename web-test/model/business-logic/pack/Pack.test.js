@@ -115,10 +115,17 @@ describe('product pack infrastructure', () => {
         options: {},
         attrs: {}
       };
+
+      // set product to not be remote
+      OB.App.Security = {
+        hasPermission: jest.fn().mockReturnValue(false)
+      };
+
       const pack = OB.App.ProductPackProvider.getPack(
         productInfo,
         discountRules
       );
+
       const packProducts = await pack.process();
       expect(packProducts).toEqual([
         {
