@@ -102,6 +102,8 @@ import org.openbravo.test.preference.PreferenceTest;
 import org.openbravo.test.pricelist.PriceListTest;
 import org.openbravo.test.process.order.OrderProcessTest;
 import org.openbravo.test.productStatus.ProductStatusTest;
+import org.openbravo.test.reducedtranslation.ReducedTranslationExportTests;
+import org.openbravo.test.reducedtranslation.ReducedTranslationMenuEventObserverTest;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
 import org.openbravo.test.reporting.CompiledReportsCacheTest;
@@ -360,6 +362,10 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // C_Order_Post
     OrderProcessTest.class,
+
+    // Reduced Translation
+    ReducedTranslationExportTests.class, //
+    ReducedTranslationMenuEventObserverTest.class
 
 })
 public class AllAntTaskTests {
