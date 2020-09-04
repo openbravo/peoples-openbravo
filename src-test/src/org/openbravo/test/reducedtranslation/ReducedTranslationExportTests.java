@@ -28,7 +28,6 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
@@ -41,7 +40,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.TranslationManager;
 import org.openbravo.model.ad.system.Language;
-import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
 
@@ -71,8 +70,7 @@ public class ReducedTranslationExportTests extends OBBaseTest {
       final Language esESLang = OBDal.getInstance().get(Language.class, ES_ES_LANG_ID);
       if (!esESLang.isSystemLanguage()) {
         esESLang.setSystemLanguage(true);
-        CallStoredProcedure.getInstance()
-            .call("AD_Language_Create", Arrays.asList((Object) null), null, true);
+        CallProcess.getInstance().call("AD_Language_Create", null, null);
       }
     } finally {
       OBContext.restorePreviousMode();

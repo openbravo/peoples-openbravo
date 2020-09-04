@@ -168,7 +168,7 @@ class ReducedTranslationHelper {
          + "  AND f.AD_TAB_ID = t.AD_TAB_ID "
          + "  AND " + referencedColumnToExternalQuery + " = c." + linkThroughADColumn 
          + "  AND " + getRecordsInWindowsAvailableForReducedTranslation("t") + " "
-         + (  extraWhereClause.isEmpty()? "" : extraWhereClause.get())
+         + (  extraWhereClause.isPresent()? extraWhereClause.get() : "")
          + " ) ";
     //@formatter:on
   }
