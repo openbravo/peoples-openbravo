@@ -7268,7 +7268,7 @@
         return;
       }
 
-      OB.App.State.Ticket.removePayment({
+      OB.App.State.Ticket.deletePayment({
         paymentIds: [payment.get('id') || payment.get('paymentId')]
       })
         .then(() => {

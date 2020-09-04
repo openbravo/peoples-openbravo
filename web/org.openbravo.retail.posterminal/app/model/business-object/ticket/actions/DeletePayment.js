@@ -12,8 +12,8 @@
  * @author Antonio Moreno <antonio.moreno@openbravo.com>
  */
 
-(function RemovePaymentDefinition() {
-  OB.App.StateAPI.Ticket.registerAction('removePayment', (ticket, payload) => {
+(function DeletePaymentDefinition() {
+  OB.App.StateAPI.Ticket.registerAction('deletePayment', (ticket, payload) => {
     const newTicket = { ...ticket };
     const { paymentIds } = payload;
 

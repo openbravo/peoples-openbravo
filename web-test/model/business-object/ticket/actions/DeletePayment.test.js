@@ -8,7 +8,7 @@
  */
 
 require('../SetupTicket');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/RemovePayment');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/DeletePayment');
 require('../SetupTicketUtils');
 const deepfreeze = require('deepfreeze');
 
@@ -89,21 +89,21 @@ const ticketWithNullPaymentId = deepfreeze({
   deletedPayments: [{ id: '3', amount: 800, kind: 'OBPOS_payment.card' }]
 });
 
-describe('Ticket.removePayment action', () => {
+describe('Ticket.deletePayment action', () => {
   it('remove simple payment', () => {
-    const { payments } = OB.App.StateAPI.Ticket.removePayment(basicTicket, {
+    const { payments } = OB.App.StateAPI.Ticket.deletePayment(basicTicket, {
       paymentIds: ['1']
     });
     expect(payments).toHaveLength(1);
   });
   it('remove two payments', () => {
-    const { payments } = OB.App.StateAPI.Ticket.removePayment(basicTicket, {
+    const { payments } = OB.App.StateAPI.Ticket.deletePayment(basicTicket, {
       paymentIds: ['1', '2']
     });
     expect(payments).toHaveLength(0);
   });
   it('remove payment with rounding line', () => {
-    const { payments } = OB.App.StateAPI.Ticket.removePayment(
+    const { payments } = OB.App.StateAPI.Ticket.deletePayment(
       ticketWithRounding,
       {
         paymentIds: ['1']
@@ -112,7 +112,7 @@ describe('Ticket.removePayment action', () => {
     expect(payments).toHaveLength(0);
   });
   it('remove payment associated with a reversed payment', () => {
-    const { payments } = OB.App.StateAPI.Ticket.removePayment(
+    const { payments } = OB.App.StateAPI.Ticket.deletePayment(
       ticketWithReversedPayment,
       {
         paymentIds: ['1']
@@ -122,7 +122,7 @@ describe('Ticket.removePayment action', () => {
     expect(payments[0].isReversed).toBe(false);
   });
   it('removedPayments array', () => {
-    const { deletedPayments } = OB.App.StateAPI.Ticket.removePayment(
+    const { deletedPayments } = OB.App.StateAPI.Ticket.deletePayment(
       basicTicket,
       {
         paymentIds: ['1']
@@ -132,7 +132,7 @@ describe('Ticket.removePayment action', () => {
   });
 
   it('remove simple payment in ticket with null id', () => {
-    const { payments } = OB.App.StateAPI.Ticket.removePayment(
+    const { payments } = OB.App.StateAPI.Ticket.deletePayment(
       ticketWithNullPaymentId,
       {
         paymentIds: ['1']
