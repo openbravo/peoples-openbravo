@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1136,7 +1136,10 @@ isc.OBViewGrid.addProperties({
     delete this._savedEditValues;
     delete this._hidingField;
     this.view.standardWindow.storeViewState();
-    this.refreshContents();
+    // Only refresh grid content when lazyFiltering is not on
+    if (!this.lazyFiltering) {
+      this.refreshContents();
+    }
     return res;
   },
 
@@ -1159,7 +1162,10 @@ isc.OBViewGrid.addProperties({
     delete this._showingField;
     this.view.standardWindow.storeViewState();
     this.invalidateCache();
-    this.refreshContents();
+    // Only refresh grid content when lazyFiltering is not on
+    if (!this.lazyFiltering) {
+      this.refreshContents();
+    }
     return res;
   },
 
