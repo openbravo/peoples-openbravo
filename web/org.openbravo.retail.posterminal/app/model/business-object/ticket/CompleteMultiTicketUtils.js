@@ -48,6 +48,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
         if (payment.origAmount) {
           if (newTicketList.indexOf(ticket) === newTicketList.length - 1) {
+            // Set isMultiTicketPayment for changePayments
+            for (let i = 0; i < changePayments.length; i += 1) {
+              const change = changePayments[i];
+              change.isMultiTicketPayment = true;
+            }
             // Transfer everything
             newTicket.changePayments = changePayments;
             if (index < payments.length) {

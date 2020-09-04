@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _ */
+/*global OB, _, lodash */
 
 (function() {
   function dumyFunction() {}
@@ -195,6 +195,70 @@
       ).toStateObject(receipt);
     }
     OB.App.State.Global.printTicket(payload);
+  };
+
+  // Include over-payment amount to total paid amount from change amount
+  var includeOverPaymentAmt = function(tkt) {
+    const ticketToPrint = lodash.cloneDeep(tkt);
+    const paymentList = ticketToPrint.get('payments');
+    const changedPaymntList = ticketToPrint.get('changePayments');
+    const isCancelAndReplace = ticketToPrint.get('doCancelAndReplace');
+    const isNegativeReceipt = ticketToPrint.get('isNegative');
+
+    for (let i = 0; i < paymentList.length; i += 1) {
+      const payment = paymentList.models[i];
+      let paymntData = payment.get('paymentData');
+      let paymentAmt = payment.get('amount');
+      let paymentOrigAmt = payment.get('origAmount');
+      let changeAmount, changeOrigAmount, overPaymentAmt, overPaymentOrigAmt;
+
+      if (paymntData) {
+        if (typeof paymntData !== 'object') {
+          paymntData = JSON.parse(paymntData);
+        }
+
+        // Do not print over-payment amount for CancelAndReplace's old-payment and MultiTicket payments
+        if (!isCancelAndReplace && !paymntData.isMultiTicketPayment) {
+          changeAmount = paymntData.amount;
+          changeOrigAmount = paymntData.origAmount;
+          if (!Number.isNaN(Number(changeAmount))) {
+            overPaymentAmt =
+              paymentAmt + (isNegativeReceipt ? -changeAmount : changeAmount);
+            payment.set('amount', overPaymentAmt);
+          }
+          if (!Number.isNaN(Number(changeOrigAmount))) {
+            overPaymentOrigAmt =
+              paymentOrigAmt +
+              (isNegativeReceipt ? -changeOrigAmount : changeOrigAmount);
+            payment.set('origAmount', overPaymentOrigAmt);
+          }
+        }
+      } else if (changedPaymntList) {
+        const chngpayments = changedPaymntList.filter(
+          chngpayment => chngpayment.key === payment.get('kind')
+        );
+
+        chngpayments.forEach(chngpayment => {
+          // Do not print over-payment amount for MultiTicket payments
+          if (!chngpayment.isMultiTicketPayment) {
+            changeAmount = chngpayment.amount;
+            changeOrigAmount = chngpayment.origAmount;
+            if (!Number.isNaN(Number(changeAmount))) {
+              overPaymentAmt =
+                paymentAmt + (isNegativeReceipt ? -changeAmount : changeAmount);
+              payment.set('amount', overPaymentAmt);
+            }
+            if (!Number.isNaN(Number(changeOrigAmount))) {
+              overPaymentOrigAmt =
+                paymentOrigAmt +
+                (isNegativeReceipt ? -changeOrigAmount : changeOrigAmount);
+              payment.set('origAmount', overPaymentOrigAmt);
+            }
+          }
+        });
+      }
+    }
+    return ticketToPrint;
   };
 
   PrintReceipt.prototype.doPrint = function(receipt, printargs) {
@@ -593,7 +657,7 @@
       );
     };
     return new Promise(resolve => {
-      internalPrint(receipt, printargs, resolve);
+      internalPrint(includeOverPaymentAmt(receipt), printargs, resolve);
     });
   };
 
