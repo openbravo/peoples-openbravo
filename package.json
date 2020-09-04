@@ -36,7 +36,7 @@
   "jest": {
     "testMatch": [
       "**/web-test/**/?(*.)+(test).[jt]s?(x)",
-      "**/web-react/**/?(*.)+(test).[jt]s?(x)"
+      "**/web-jspack/**/?(*.)+(test).[jt]s?(x)"
     ],
     "moduleNameMapper": {
       "\\.css$": "identity-obj-proxy"
