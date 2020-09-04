@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -167,7 +167,7 @@ public class Menu extends HttpSecureAppServlet {
   private String getTargetMenu(VariablesSecureApp vars, String queryString)
       throws ServletException {
 
-    final String[] allowedCommands = { "", "DEFAULT", "NEW", "EDIT", "GRID", "DIRECT" };
+    final String[] allowedCommands = { "", "DEFAULT", "NEW", "EDIT", "GRID", "DIRECT", "DIRECT2" };
     final ValueListFilter listFilter = new ValueListFilter(allowedCommands);
     final String command = vars.getStringParameter("Command", listFilter);
     final String url = vars.getStringParameter("url");
