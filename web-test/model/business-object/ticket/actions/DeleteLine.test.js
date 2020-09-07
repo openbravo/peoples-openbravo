@@ -125,6 +125,7 @@ describe('Ticket.deleteLine action', () => {
       expect(newTicket.deletedLines).toMatchObject([
         {
           obposQtyDeleted: 2,
+          obposIsDeleted: true,
           qty: 0,
           netUnitPrice: 0,
           grossUnitPrice: 0,

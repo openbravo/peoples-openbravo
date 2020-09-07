@@ -124,6 +124,7 @@
         const deletedLine = {
           ...l,
           obposQtyDeleted: l.qty,
+          obposIsDeleted: true,
           qty: 0,
           netUnitPrice: 0,
           grossUnitPrice: 0,
