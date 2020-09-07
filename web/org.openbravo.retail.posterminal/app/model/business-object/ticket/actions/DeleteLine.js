@@ -158,7 +158,7 @@
   function checkRestrictions(ticket, payload) {
     checkIsEditable(ticket);
     checkNonDeletableLines(ticket, payload);
-    checkDeliveryQtyInCancelAndReplace(ticket);
+    checkDeliveryQtyInCancelAndReplace(ticket, payload);
     validateServices(ticket, payload);
   }
 
@@ -185,8 +185,12 @@
     }
   }
 
-  function checkDeliveryQtyInCancelAndReplace(ticket) {
-    if (ticket.replacedorder && ticket.lines.some(l => l.deliveredQuantity)) {
+  function checkDeliveryQtyInCancelAndReplace(ticket, payload) {
+    const { lineIds } = payload;
+    const deliveredQuantity = ticket.lines.find(
+      l => l.deliveredQuantity && lineIds.includes(l.id)
+    );
+    if (ticket.replacedorder && deliveredQuantity) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_CancelReplaceDeleteLine'
       });
