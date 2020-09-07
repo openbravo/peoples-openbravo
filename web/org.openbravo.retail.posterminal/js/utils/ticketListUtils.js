@@ -1078,6 +1078,7 @@
       OB.MobileApp.model.receipt.trigger('change');
       OB.MobileApp.model.receipt.trigger('clear');
       OB.MobileApp.model.receipt.trigger('paintTaxes');
+      OB.MobileApp.model.receipt.trigger('loadedOrder');
       OB.MobileApp.model.receipt.trigger('updatePending');
       OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
     }
