@@ -97,12 +97,6 @@
 	  activeElementFocus();
 	}
 
-
-	function calloutSL_CreateLines_Conversion_UOM(varId) {
-	  submitCommandFormParameter('DEFAULT', frmMain.inpOrderlineId, varId, false, null, '../ad_callouts/SL_CreateLines_Conversion_UOM.html', 'frameOcultoButton',false,false,true);
-	  return true;
-	}
-
 	function updateData(clave, marcar) {
 	  if (marcar==null) marcar=false;
 	  var frm = document.frmMain;
@@ -579,13 +573,13 @@
 							required="false" value="" maxlength="10"
 							name="inpquantityorderxx" disabled="true" onkeyup=""
 							onkeypress="changeToEditingMode();"
-							onchange="logChanges(this);calloutSL_CreateLines_Conversion_UOM('ff');return true;"></input>
+							onchange="logChanges(this);return true;"></input>
 						</td>
 						<td class="DataGrid_Body_Cell" id="showFieldSecUom"
 							style="display: xx;"><select class="DataGrid_Body_Cell"
 							style="display: yyy;" name="inpmProductUomIdxx"
 							id="fieldSecUom" disabled="true"
-							onchange="logChanges(this);calloutSL_CreateLines_Conversion_UOM('ff');return true;"><div
+							onchange="logChanges(this);return true;"><div
 									id="reportM_Product_Uom_To_ID"></div></select></td>
 						<td class="DataGrid_Body_Cell" onmouseover="HoverCell(this);"
 							onmouseout="unHoverCell(this);" id="fieldMproductid">xxProduct</td>
