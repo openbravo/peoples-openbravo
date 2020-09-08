@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2019 Openbravo SLU
+ * All portions are Copyright (C) 2017-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -318,7 +318,7 @@ public class ClusterServiceManager {
           log.info("Node {} in charge of service {} should be replaced", getNodeIdentifier(service),
               serviceName);
           clusterService.prepareForNewNodeInCharge();
-          updateNodeOfService(service.getNodeID(), serviceName, now);
+          updateNodeOfService(service, serviceName, now);
         } else {
           log.debug("Node {} still in charge of service {}", getNodeIdentifier(service),
               serviceName);
@@ -358,7 +358,9 @@ public class ClusterServiceManager {
       return leaderLostTime < now;
     }
 
-    private void updateNodeOfService(String formerNodeId, String serviceName, Date now) {
+    private void updateNodeOfService(ADClusterService service, String serviceName, Date now) {
+      String formerNodeId = service.getNodeID();
+      Date formerUpdated = service.getUpdated();
       //@formatter:off
       String hql = 
               "update ADClusterService " +
@@ -366,20 +368,22 @@ public class ClusterServiceManager {
               "      nodeName = :newNodeName," +
               "      updated = :updated " +
               " where service = :service " +
-              "   and nodeID = :formerNodeId";
+              "   and nodeID = :formerNodeId"+
+              "   and updated = :formerUpdate";
       //@formatter:on
       int rowCount = OBDal.getInstance()
           .getSession()
-          .createQuery(hql) //
-          .setParameter("newNodeId", manager.nodeId) //
-          .setParameter("newNodeName", manager.nodeName) //
-          .setParameter("updated", now) //
-          .setParameter("service", serviceName) //
-          .setParameter("formerNodeId", formerNodeId) //
+          .createQuery(hql)
+          .setParameter("newNodeId", manager.nodeId)
+          .setParameter("newNodeName", manager.nodeName)
+          .setParameter("updated", now)
+          .setParameter("service", serviceName)
+          .setParameter("formerNodeId", formerNodeId)
+          .setParameter("formerUpdate", formerUpdated)
           .executeUpdate();
       if (rowCount == 1) {
-        String replaceMsg = "Replaced node {} with node {} in charge of service " + serviceName;
-        log.info(replaceMsg, formerNodeId, getNodeIdentifier());
+        log.info("Replaced node {} with node {} in charge of service {}", formerNodeId,
+            getNodeIdentifier(), serviceName);
       }
     }
 
