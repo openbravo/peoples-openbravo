@@ -44,7 +44,7 @@ public class CreateMissingQuartzProperties extends ModuleScript {
       copyFromTemplateFile(sourcePath + CONFIG_DIR + QUARTZ_CONF_FILE);
     } catch (IOException e) {
       logger.error("Couldn't copy config/quartz.properties.template to config/quartz.properties",
-          e);
+        e);
     }
   }
 
@@ -61,11 +61,19 @@ public class CreateMissingQuartzProperties extends ModuleScript {
    */
   private String getSourcePath() throws IOException {
     String userDir = System.getProperty("user.dir");
-    Path sourcePath = Paths.get(userDir, "/../..").normalize();
-
+    Path sourcePath;
+    // Check if config already exists at user.dir level. Relevant to CI
+    sourcePath = Paths.get(userDir).normalize();
     Path configDir = sourcePath.resolve("config");
     if (Files.exists(configDir)) {
       return sourcePath.toString();
+    } else {
+      // Check two folders backward
+      sourcePath = Paths.get(userDir, "/../..").normalize();
+      configDir = sourcePath.resolve("config");
+      if (Files.exists(configDir)) {
+        return sourcePath.toString();
+      }
     }
     logger.warn("Config folder not found: {}", configDir);
     throw new NoSuchFileException(configDir.toString());
@@ -73,7 +81,7 @@ public class CreateMissingQuartzProperties extends ModuleScript {
 
   /**
    * Copies from template to target file, only when target files doesn't already exist.
-   * 
+   *
    * @param targetPath
    *          Target path, .template will be added at the end for source file
    * @throws IOException
