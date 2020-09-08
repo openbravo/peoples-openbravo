@@ -42,6 +42,9 @@
       "\\.(css|svg)$": "identity-obj-proxy"
     },
     "coverageDirectory": "./test-reports/coverage",
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ],
     "reporters": [
       "default",
       [
