@@ -7216,13 +7216,11 @@
               },
               function(args2) {
                 if (args2.saveChanges && !payment.get('changePayment')) {
-                  order.calculateReceipt(function() {
-                    order.save(function() {
-                      OB.UTIL.ProcessController.finish('addPayment', execution);
-                      finalCallback();
-                    });
-                    order.trigger('updateView');
+                  order.save(function() {
+                    OB.UTIL.ProcessController.finish('addPayment', execution);
+                    finalCallback();
                   });
+                  order.trigger('updateView');
                 } else {
                   OB.UTIL.ProcessController.finish('addPayment', execution);
                   finalCallback();
