@@ -421,19 +421,21 @@
         const {
           baseGrossUnitPrice,
           grossUnitPrice,
+          grossUnitAmount,
           baseNetUnitPrice,
           netUnitPrice,
+          netUnitAmount,
           qty
         } = line;
         if (line.skipApplyPromotions && hasDiscounts) {
           return {
             ...line,
             grossUnitAmount: priceIncludesTax
-              ? OB.DEC.mul(grossUnitPrice, qty)
+              ? grossUnitAmount || OB.DEC.mul(grossUnitPrice, qty)
               : undefined,
             netUnitAmount: priceIncludesTax
               ? undefined
-              : OB.DEC.mul(netUnitPrice, qty)
+              : netUnitAmount || OB.DEC.mul(netUnitPrice, qty)
           };
         }
         const discounts = line.skipApplyPromotions
