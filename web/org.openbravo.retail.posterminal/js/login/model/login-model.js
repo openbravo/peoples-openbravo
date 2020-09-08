@@ -523,7 +523,6 @@
               }
             ],
             {
-              showLoading: true,
               onHideFunction: function() {
                 OB.UTIL.showLoading(true);
                 me.logout();
