@@ -39,7 +39,7 @@
       "**/web-jspack/**/?(*.)+(test).[jt]s?(x)"
     ],
     "moduleNameMapper": {
-      "\\.css$": "identity-obj-proxy"
+      "\\.(css|svg)$": "identity-obj-proxy"
     },
     "coverageDirectory": "./test-reports/coverage",
     "reporters": [
