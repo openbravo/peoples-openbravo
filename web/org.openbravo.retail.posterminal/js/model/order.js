@@ -4059,6 +4059,9 @@
           paymentcash: OB.MobileApp.model.get('paymentcash')
         };
 
+        OB.App.StateBackwardCompatibility.getInstance(
+          'Ticket'
+        ).resetStateFromBackbone();
         OB.App.State.Ticket.addProduct({
           products: [
             {
