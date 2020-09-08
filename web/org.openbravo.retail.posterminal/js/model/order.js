@@ -64,7 +64,18 @@
         this.set('uOM', attributes.uOM);
         this.set('qty', attributes.qty);
         this.set('price', attributes.price);
-        this.set('priceList', attributes.priceList);
+        this.set(
+          'grossListPrice',
+          attributes.priceIncludesTax
+            ? attributes.priceList || attributes.grossListPrice
+            : OB.DEC.Zero
+        );
+        this.set(
+          'listPrice',
+          attributes.priceIncludesTax
+            ? OB.DEC.Zero
+            : attributes.priceList || attributes.listPrice
+        );
         this.set('gross', attributes.gross);
         this.set('lineGrossAmount', attributes.lineGrossAmount);
         this.set('net', attributes.net);
@@ -74,15 +85,6 @@
         this.set('attributeValue', attributes.attributeValue);
         this.set('obposCanbedelivered', attributes.obposCanbedelivered);
         this.set('loaded', attributes.loaded);
-        if (
-          !attributes.grossListPrice &&
-          attributes.product &&
-          _.isNumber(attributes.priceList)
-        ) {
-          this.set('grossListPrice', attributes.priceList);
-        } else {
-          this.set('grossListPrice', attributes.grossListPrice);
-        }
         if (attributes.relatedLines && _.isArray(attributes.relatedLines)) {
           this.set('relatedLines', attributes.relatedLines);
         }
