@@ -104,7 +104,7 @@ public class MisfirePolicyTest extends OBBaseTest {
     properties.setProperty("org.quartz.threadPool.threadPriority", "5");
     properties.setProperty(
         "org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread", "true");
-    properties.setProperty("org.quartz.jobStore.misfireThreshold", "1000");
+    properties.setProperty("org.quartz.jobStore.misfireThreshold", "500");
 
     // Set different properties for clustered and non-clustered execution
     if ("non-clustered".equals(configOption)) {
@@ -192,8 +192,8 @@ public class MisfirePolicyTest extends OBBaseTest {
     String name = SequenceIdData.getUUID();
     scheduleJob(name, data);
 
-    // wait for the job executions
-    Thread.sleep(2100L);
+    // wait for the job executions (1 second for MisfireHandler + 2 seconds for executions)
+    Thread.sleep(3000L);
 
     assertThat("Expected number of job executions", monitor.getJobExecutions(name), equalTo(2));
   }
