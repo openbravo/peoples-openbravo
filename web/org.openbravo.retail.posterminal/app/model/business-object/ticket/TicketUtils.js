@@ -418,17 +418,22 @@
       // sets line amounts and prices and applies the discount calculation result into the ticket
       this.ticket.lines = this.ticket.lines.map(line => {
         const hasDiscounts = line.promotions && line.promotions.length > 0;
-        const { baseGrossUnitPrice, baseNetUnitPrice, qty } = line;
+        const {
+          baseGrossUnitPrice,
+          grossUnitPrice,
+          baseNetUnitPrice,
+          netUnitPrice,
+          qty
+        } = line;
         if (line.skipApplyPromotions && hasDiscounts) {
-          if (priceIncludesTax) {
-            return {
-              ...line,
-              grossUnitAmount: OB.DEC.mul(qty, baseGrossUnitPrice)
-            };
-          }
           return {
             ...line,
-            netUnitAmount: OB.DEC.mul(qty, baseNetUnitPrice)
+            grossUnitAmount: priceIncludesTax
+              ? OB.DEC.mul(grossUnitPrice, qty)
+              : undefined,
+            netUnitAmount: priceIncludesTax
+              ? undefined
+              : OB.DEC.mul(netUnitPrice, qty)
           };
         }
         const discounts = line.skipApplyPromotions
@@ -440,22 +445,22 @@
         };
         if (priceIncludesTax) {
           newLine.baseGrossUnitAmount = OB.DEC.mul(baseGrossUnitPrice, qty);
-          newLine.baseNetUnitAmount = 0;
+          newLine.baseNetUnitAmount = OB.DEC.Zero;
           newLine.grossUnitPrice = discounts
             ? discounts.grossUnitPrice
             : baseGrossUnitPrice;
           newLine.grossUnitAmount = discounts
             ? discounts.grossUnitAmount
-            : OB.DEC.mul(qty, baseGrossUnitPrice);
+            : OB.DEC.mul(baseGrossUnitPrice, qty);
         } else {
-          newLine.baseGrossUnitAmount = 0;
+          newLine.baseGrossUnitAmount = OB.DEC.Zero;
           newLine.baseNetUnitAmount = OB.DEC.mul(baseNetUnitPrice, qty);
           newLine.netUnitPrice = discounts
             ? discounts.netUnitPrice
             : baseNetUnitPrice;
           newLine.netUnitAmount = discounts
             ? discounts.netUnitAmount
-            : OB.DEC.mul(qty, baseNetUnitPrice);
+            : OB.DEC.mul(baseNetUnitPrice, qty);
         }
         return newLine;
       });
