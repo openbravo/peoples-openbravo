@@ -90,7 +90,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       !payload.payment.isReversePayment &&
       pending <= 0 &&
       payload.payment.amount > 0 &&
-      payload.payment.forceAddPayment
+      !payload.payment.forceAddPayment
     ) {
       throw new OB.App.Class.ActionCanceled({
         warningMsg: 'OBPOS_PaymentsExact'
