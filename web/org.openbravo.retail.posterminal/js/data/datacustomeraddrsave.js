@@ -62,8 +62,7 @@
       callbackError
     ) {
       let customerAddrId = customerAddr.get('id'),
-        isNew = false,
-        me = this;
+        isNew = false;
       const finalCallback = function() {
         if (callback) {
           callback();
@@ -112,9 +111,6 @@
         var uuid = OB.UTIL.get_UUID();
         customerAddr.set('id', uuid);
         customerAddr.id = uuid;
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          me.receipt.get('bp').set('moreaddress', true); // For to show two address buttons in receipt
-        }
       }
       customerAddr.unset('creationDate');
       try {
