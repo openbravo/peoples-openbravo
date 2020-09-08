@@ -109,7 +109,7 @@ Copyright (c) 2007, Yahoo! Inc. All rights reserved. Code licensed under the BSD
 # servlet-api.jar 
 # tika-core-0.9.jar
 # wstx-asl-3.0.2.jar
-# xercesImpl.jar
+# xercesImpl-2.9.0-patched.jar
 
 All files under Apache Software License 2.0, available at
 http://www.apache.org/licenses/LICENSE-2.0
