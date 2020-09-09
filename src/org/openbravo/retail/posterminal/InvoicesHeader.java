@@ -39,7 +39,7 @@ public class InvoicesHeader extends ProcessHQLQuery {
         + " i.businessPartner.name as businessPartner, i.grandTotalAmount as totalamount "
         + " from InvoiceLine il join il.salesOrderLine ol join ol.salesOrder ord  join il.invoice i  "
         + " where ord.client.id=:client and ord.id =:orderId and i.salesOrder.id = :orderId"
-        + " group by i.id, i.documentNo, i.invoiceDate, i.businessPartner.name, i.grandTotalAmount "
+        + " group by i.id, i.documentNo, i.creationDate, i.invoiceDate, i.businessPartner.name, i.grandTotalAmount "
         + " order by i.documentNo asc";
 
     return Arrays.asList(hqlInvoices);
