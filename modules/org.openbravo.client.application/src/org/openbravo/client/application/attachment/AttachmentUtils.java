@@ -249,6 +249,7 @@ public class AttachmentUtils {
     }
   }
 
+  @SuppressWarnings("deprecation")
   private static String buildDescription(Attachment attachment, String strAttMethodId,
       String tabId) {
     StringBuilder description = new StringBuilder();

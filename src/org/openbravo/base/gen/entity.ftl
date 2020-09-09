@@ -42,10 +42,10 @@ ${i}
  * Help: ${entity.help}</#if>
  * <br>
  * NOTE: This class should not be instantiated directly. To instantiate this
- * class the {@link org.openbravo.base.provider.OBProvider} should be used.<#if util.shouldAddDeprecation() && util.isDeprecated(entity)>
+ * class the {@link org.openbravo.base.provider.OBProvider} should be used.<#if util.isDeprecated(entity)>
  * @deprecated Table entity has been marked as deprecated on Development Status field.</#if>
  */
-<#if util.shouldAddDeprecation() && util.isDeprecated(entity)>
+<#if util.isDeprecated(entity)>
 @Deprecated
 </#if>
 public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsStatement} {
@@ -264,13 +264,13 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     </#if>
 }
 <#macro addDeprecationMessageIfNeeded property>
-    <#if util.shouldAddDeprecation() && util.isDeprecated(property)>
+    <#if util.isDeprecated(property)>
 @deprecated ${util.getDeprecationMessage(property)}
     </#if>
 </#macro>
 
 <#macro addDeprecationTagIfNeeded property>
-    <#if util.shouldAddDeprecation() && util.isDeprecated(property)>
+    <#if util.isDeprecated(property)>
     @Deprecated
     </#if>
 </#macro>

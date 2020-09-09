@@ -1115,16 +1115,16 @@ public class ModelProvider implements OBSingleton {
   /**
    * Adds help comments and deprecation status to corresponding entities and properties in the model
    */
-  public void addHelpAndDeprecationToModel(boolean addDeprecation) {
-    addHelpAndDeprecationToEntities(addDeprecation);
-    addHelpAndDeprecationToProperties(addDeprecation);
+  public void addHelpAndDeprecationToModel() {
+    addHelpAndDeprecationToEntities();
+    addHelpAndDeprecationToProperties();
   }
 
   /**
    * Gets and maps and deprecation status to entities without using DAL as it has not been
    * initialized here yet
    */
-  private void addHelpAndDeprecationToEntities(boolean addDeprecation) {
+  private void addHelpAndDeprecationToEntities() {
     //@formatter:off
     String qry = "SELECT ad_table_id, help, developmentStatus "
                + "FROM AD_TABLE ";
@@ -1139,10 +1139,8 @@ public class ModelProvider implements OBSingleton {
           helpComment = null;
         }
         entity.setHelp(helpComment);
-        if (addDeprecation) {
-          String developmentStatus = UtilSql.getValue(resultSet, "developmentStatus");
-          entity.setDeprecated(DEPRECATED_STATUS.equals(developmentStatus));
-        }
+        String developmentStatus = UtilSql.getValue(resultSet, "developmentStatus");
+        entity.setDeprecated(DEPRECATED_STATUS.equals(developmentStatus));
       }
     } catch (Exception e) {
       log.error("Couldn't add help to entity. Failed database query.");
@@ -1154,7 +1152,7 @@ public class ModelProvider implements OBSingleton {
    * Gets and maps help and deprecation status to properties without using DAL as it has not been
    * initialized here yet
    */
-  private void addHelpAndDeprecationToProperties(boolean addDeprecation) {
+  private void addHelpAndDeprecationToProperties() {
     //@formatter:off
     String qry = "SELECT ad_table_id, columnname, help, developmentStatus " +
                  "FROM AD_COLUMN";
@@ -1173,10 +1171,8 @@ public class ModelProvider implements OBSingleton {
         if ("".equals(helpComment)) {
           helpComment = null;
         }
-        if (addDeprecation) {
-          String developmentStatus = UtilSql.getValue(resultSet, "developmentStatus");
-          property.setDeprecated(DEPRECATED_STATUS.equals(developmentStatus));
-        }
+        String developmentStatus = UtilSql.getValue(resultSet, "developmentStatus");
+        property.setDeprecated(DEPRECATED_STATUS.equals(developmentStatus));
         property.setHelp(helpComment);
       }
     } catch (Exception e) {

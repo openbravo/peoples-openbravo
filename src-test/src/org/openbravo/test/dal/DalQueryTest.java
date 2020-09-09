@@ -79,6 +79,7 @@ public class DalQueryTest extends OBBaseTest {
    * Tests a left join with {@link ModelImplementation} as the main class.
    */
   @Test
+  @SuppressWarnings("deprecation")
   public void testBDalExtraJoinWhereLeftJoinClause() {
     setSystemAdministratorContext();
     final String where = "as mom left join mom." + ModelImplementationMapping.PROPERTY_MODELOBJECT

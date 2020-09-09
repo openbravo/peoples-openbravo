@@ -59,7 +59,6 @@ public class GenerateEntitiesTask extends Task {
   private String srcGenPath;
   private String propertiesFile;
   boolean generateAllChildProperties;
-  boolean generateDeprecatedProperties;
 
   public static void main(String[] args) {
     final String srcPath = args[0];
@@ -128,9 +127,6 @@ public class GenerateEntitiesTask extends Task {
     generateAllChildProperties = OBPropertiesProvider.getInstance()
         .getBooleanProperty("hb.generate.all.parent.child.properties");
 
-    generateDeprecatedProperties = OBPropertiesProvider.getInstance()
-        .getBooleanProperty("hb.generate.deprecated.properties");
-
     // read and parse template
     String ftlFilename = "org/openbravo/base/gen/entity.ftl";
     File ftlFile = new File(getBasePath(), ftlFilename);
@@ -143,7 +139,7 @@ public class GenerateEntitiesTask extends Task {
 
     // process template & write file for each entity
     List<Entity> entities = ModelProvider.getInstance().getModel();
-    ModelProvider.getInstance().addHelpAndDeprecationToModel(generateDeprecatedProperties);
+    ModelProvider.getInstance().addHelpAndDeprecationToModel();
     for (Entity entity : entities) {
       // If the entity is associated with a datasource based table or based on an HQL query, do not
       // generate a Java file
@@ -215,17 +211,6 @@ public class GenerateEntitiesTask extends Task {
     log.info("Generated " + entities.size() + " entities");
   }
 
-  /**
-   * Checks if "hb.generate.deprecated.properties" or "hb.generate.all.parent.child.properties"
-   * properties from Openbravo.properties have been set to true. If so, then deprecation should be
-   * added.
-   * 
-   * @return True if deprecation should be added, depending on global properties found in
-   *         Openbravo.properties, else false.
-   */
-  public boolean shouldAddDeprecation() {
-    return generateDeprecatedProperties || generateAllChildProperties;
-  }
 
   /**
    * Checks if an entity is set as deprecated
