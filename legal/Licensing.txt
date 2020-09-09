@@ -280,12 +280,6 @@ A modified version of scopeleaks by Rui Lopes available from https://github.com/
 (The MIT License), Copyright © 2011 Rui Lopes
 The full license text is embedded within the scopeleaks.js file
 
-# benchmark.js
-Copyright 2010-2011 Mathias Bynens <http://mths.be/>
-Based on JSLitmus.js, copyright Robert Kieffer <http://broofa.com/>
-Modified by John-David Dalton <http://allyoucanleet.com/>
-Available under MIT license <http://mths.be/mit>
-
 # web/org.openbravo.client.kernel/docs
 Beautiful documentation, dynamically generated from source code in the browser.
 From the code-illuminated project at: http://code.google.com/p/code-illuminated/, under the MPL 1.1
