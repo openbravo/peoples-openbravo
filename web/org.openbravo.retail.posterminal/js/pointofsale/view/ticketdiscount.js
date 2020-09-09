@@ -344,18 +344,17 @@ enyo.kind({
                 ? 'Discount model'
                 : 'Discount Container')
           );
-        } else if (
-          !formElementDiscountsList.requiresQty &&
-          (OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.amt) ||
-            OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.units))
-        ) {
+        } else if (!formElementDiscountsList.requiresQty) {
           // Without this information, the discounts could not be applied
-          OB.UTIL.showWarning(
-            'Some discount information is missing, the promotion could not be applied: ' +
-              (args.formElementDiscountsList.amt
-                ? 'Discount units'
-                : 'Discount amount')
-          );
+          if (OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.amt)) {
+            OB.UTIL.showWarning(
+              OB.I18N.getLabel('OBPOS_DiscountAmountMissing')
+            );
+          } else if (
+            OB.UTIL.isNullOrUndefined(args.formElementDiscountsList.units)
+          ) {
+            OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_DiscountUnitsMissing'));
+          }
         }
         if (args.hideLineSelectionOptions) {
           args.context.$.formElementCheckSelectAll.hide();
