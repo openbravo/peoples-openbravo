@@ -101,8 +101,9 @@
     </line>   
       <%
         var payments = order.get('payments');
+        var isCancelled = order.get('iscancelled');
         for (var i = 0; i < payments.length; i++) {
-          var paymentDate;
+          var paymentDate, isCancelledPayment;
           var paymentName = payments.at(i).get('name');
           if(_.isUndefined(payments.at(i).get('paymentDate')) || _.isNull(payments.at(i).get('paymentDate'))){
               paymentDate = OB.I18N.formatDate(new Date());
@@ -112,6 +113,10 @@
           if (payments && payments.at(i) && payments.at(i).get('paymentData') && payments.at(i).get('paymentData').name && payments.at(i).get('paymentData').name.length > 0) {
             paymentName = paymentName + ' (' + payments.at(i).get('paymentData').name + ')';
           }
+          if(isCancelled && payments.at(i).get('paymentAmount') === 0){
+            isCancelledPayment = true;
+          }
+          
          if(payments.at(i).get('rate') && payments.at(i).get('rate')!=='1'){
       %>
         <line>
@@ -124,7 +129,15 @@
          }else {
      %>
         <line>
-          <text align="left" length="15"><%= paymentName %></text>
+          <%
+            if(isCancelledPayment){
+          %>
+            <text align="left" length="15"><%= OB.I18N.getLabel('OBPOS_Cancelled') %></text>
+          <%
+           } else {
+          %>
+            <text align="left" length="15"><%= paymentName %></text>
+          <% } %>
           <text align="left" length="10"><%= OB.I18N.formatDate(paymentDate) %></text>
           <text align="right" length="15"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
         </line>
