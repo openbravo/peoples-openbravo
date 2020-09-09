@@ -280,10 +280,6 @@ A modified version of scopeleaks by Rui Lopes available from https://github.com/
 (The MIT License), Copyright © 2011 Rui Lopes
 The full license text is embedded within the scopeleaks.js file
 
-# web/org.openbravo.client.kernel/docs
-Beautiful documentation, dynamically generated from source code in the browser.
-From the code-illuminated project at: http://code.google.com/p/code-illuminated/, under the MPL 1.1
-
 # jsbeautifier.py
 Under the MIT license (available at https://github.com/beautify-web/js-beautify/blob/master/LICENSE)
 

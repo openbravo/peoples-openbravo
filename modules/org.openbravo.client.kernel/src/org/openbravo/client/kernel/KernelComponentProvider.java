@@ -65,8 +65,6 @@ public class KernelComponentProvider extends BaseComponentProvider {
           SessionDynamicResourceComponent.class);
       sessionDynamicComponent.setParameters(parameters);
       return sessionDynamicComponent;
-    } else if (componentId.equals(KernelConstants.DOCUMENT_COMPONENT_ID)) {
-      return getComponent(DocumentationComponent.class);
     }
     throw new IllegalArgumentException("Component " + componentId + " not supported here");
   }

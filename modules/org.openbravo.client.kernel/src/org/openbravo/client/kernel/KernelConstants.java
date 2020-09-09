@@ -65,7 +65,6 @@ public class KernelConstants {
 
   public static final String STYLE_SHEET_COMPONENT_ID = "StyleSheetResources";
   public static final String RESOURCE_COMPONENT_ID = "StaticResources";
-  public static final String DOCUMENT_COMPONENT_ID = "DocumentResources";
   public static final String RESOURCE_CONTEXT_URL_PARAMETER = "#{contextUrl}";
 
   public static final String CONTEXT_URL = "_contextUrl";
