@@ -117,4 +117,16 @@
     }
     return {};
   };
+
+  OB.UTIL.TicketUtils.printTicketLine = function(receipt, lineIds) {
+    const receiptLines = receipt
+      .get('lines')
+      .filter(l => lineIds.includes(l.id))
+      .flat();
+    receiptLines.forEach(line => {
+      OB.App.State.Global.printTicketLine({
+        line: JSON.parse(JSON.stringify(line))
+      });
+    });
+  };
 })();

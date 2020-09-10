@@ -263,9 +263,10 @@ enyo.kind({
             );
 
             OB.App.State.Ticket.setLinePrice({ lineIds, price })
-              .then(() =>
-                OB.UTIL.handlePriceRuleBasedServices(keyboard.receipt)
-              )
+              .then(() => {
+                OB.UTIL.handlePriceRuleBasedServices(keyboard.receipt);
+                OB.UTIL.TicketUtils.printTicketLine(keyboard.receipt, lineIds);
+              })
               .catch(OB.App.View.ActionCanceledUIHandler.handle);
           });
         }

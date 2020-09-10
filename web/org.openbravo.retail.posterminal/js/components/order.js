@@ -1587,7 +1587,13 @@ enyo.kind({
             lineIds: [line.id],
             price,
             ignoreValidations: true
-          }).catch(OB.App.View.ActionCanceledUIHandler.handle);
+          })
+            .then(() => {
+              OB.App.State.Global.printTicketLine({
+                line: JSON.parse(JSON.stringify(line))
+              });
+            })
+            .catch(OB.App.View.ActionCanceledUIHandler.handle);
         };
 
         handleError = function(line, message) {

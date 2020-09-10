@@ -1888,7 +1888,10 @@
       OB.warn('setPrice should not be invoked in old order model!');
       const lineIds = [line.get('id')];
       OB.App.State.Ticket.setLinePrice({ lineIds, price })
-        .then(() => OB.UTIL.handlePriceRuleBasedServices(this))
+        .then(() => {
+          OB.UTIL.handlePriceRuleBasedServices(this);
+          OB.UTIL.TicketUtils.printTicketLine(this, lineIds);
+        })
         .catch(OB.App.View.ActionCanceledUIHandler.handle);
     },
 
@@ -3407,6 +3410,7 @@
             }
 
             const receiptLines = currentReceipt.get('lines');
+            let currentLine;
             if (newLine) {
               // force trigger updateView to execute OBPOS_RenderOrderLine hooks
               receiptLines.get(newLine.id).trigger('updateView');
@@ -3415,8 +3419,27 @@
                 // trigger the 'forceChangeTotal' to force the 'checkout' button to be enabled
                 currentReceipt.trigger('forceChangeTotal');
               }
+              currentLine = newLine;
+            } else {
+              const editLine = afterAddTicket.lines.find(nl =>
+                beforeAddTicket.lines.some(
+                  l =>
+                    l.id === nl.id && l.product.id === p.id && l.qty !== nl.qty
+                )
+              );
+              if (editLine) {
+                currentLine = editLine;
+              }
+            }
+            if (currentLine) {
+              OB.App.State.Global.printTicketLine({
+                line: JSON.parse(
+                  JSON.stringify(receiptLines.get(currentLine.id).toJSON())
+                )
+              });
             }
             currentReceipt.trigger('updatePending');
+
             if (callback) {
               callback(
                 true,
@@ -5199,6 +5222,7 @@
               })
                 .then(() => {
                   OB.UTIL.handlePriceRuleBasedServices(order);
+                  OB.UTIL.TicketUtils.printTicketLine(order, [line.id]);
                   newAllLinesCalculated();
                 })
                 .catch(OB.App.View.ActionCanceledUIHandler.handle);
@@ -5212,6 +5236,7 @@
                 })
                   .then(() => {
                     OB.UTIL.handlePriceRuleBasedServices(order);
+                    OB.UTIL.TicketUtils.printTicketLine(order, [line.id]);
                     newAllLinesCalculated();
                   })
                   .catch(OB.App.View.ActionCanceledUIHandler.handle);

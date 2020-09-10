@@ -637,7 +637,6 @@
         if (this.receipt.get('isPaid') === true) {
           return;
         }
-        line.on('change:gross', this.print, this);
       },
       this
     );

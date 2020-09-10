@@ -72,6 +72,7 @@
           })
             .then(() => {
               OB.UTIL.handlePriceRuleBasedServices(receipt);
+              OB.UTIL.TicketUtils.printTicketLine(receipt, lineIds);
               receipt.trigger('paintTaxes'); // refresh the Tax breakdown
               receipt.trigger('scan');
             })
