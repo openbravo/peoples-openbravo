@@ -230,16 +230,25 @@ public class Product extends MasterDataProcessHQLQuery {
       final boolean allowNoPriceInMainPriceList, final HQLPropertyList regularProductsHQLProperties)
       throws JSONException {
     final Long lastUpdated = getLastUpdated(jsonsent);
+    final boolean filterWithProductEntities = getPreference(
+        "OBPOS_FilterProductByEntitiesOnRefresh");
 
     String hql = "select" + regularProductsHQLProperties.getHqlSelect();
     hql += getRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
         allowNoPriceInMainPriceList);
     if (lastUpdated != null) {
-      hql += "AND ((product.$incrementalUpdateCriteria) OR (pli.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria))";
+      hql += "AND ((product.$incrementalUpdateCriteria)";
+      if (filterWithProductEntities) {
+        hql += " OR (pli.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)";
+      }
+      hql += ") ";
     } else {
-      hql += "AND ((product.$incrementalUpdateCriteria) AND (pli.$incrementalUpdateCriteria) AND (product.uOM.$incrementalUpdateCriteria) ";
-      if (!allowNoPriceInMainPriceList) {
-        hql += " AND (ppp.$incrementalUpdateCriteria)";
+      hql += "AND ((product.$incrementalUpdateCriteria)";
+      if (filterWithProductEntities) {
+        hql += " AND (pli.$incrementalUpdateCriteria) AND (product.uOM.$incrementalUpdateCriteria)";
+        if (!allowNoPriceInMainPriceList) {
+          hql += " AND (ppp.$incrementalUpdateCriteria)";
+        }
       }
       hql += ") ";
     }
