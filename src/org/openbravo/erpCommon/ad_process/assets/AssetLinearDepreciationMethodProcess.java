@@ -147,8 +147,7 @@ public class AssetLinearDepreciationMethodProcess extends DalBaseProcess {
           .get(Amortization.class, al.getAmortization().getId());
       if (StringUtils.equals(amortization.getProcessed(), "N")) {
         amortizationLineListToRemove.add(al);
-        amortization.getFinancialMgmtAmortizationLineList().clear();
-        OBDal.getInstance().remove(amortization);
+        amortization.getFinancialMgmtAmortizationLineList().remove(al);
       }
     }
     asset.getFinancialMgmtAmortizationLineList().removeAll(amortizationLineListToRemove);
