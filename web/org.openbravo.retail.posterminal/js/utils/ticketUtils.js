@@ -118,7 +118,7 @@
     return {};
   };
 
-  OB.UTIL.TicketUtils.printTicketLine = function(receipt, lineIds) {
+  OB.UTIL.TicketUtils.printLinesOfTicket = function(receipt, lineIds) {
     const receiptLines = receipt
       .get('lines')
       .filter(l => lineIds.includes(l.id))

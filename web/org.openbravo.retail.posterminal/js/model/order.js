@@ -1890,7 +1890,7 @@
       OB.App.State.Ticket.setLinePrice({ lineIds, price })
         .then(() => {
           OB.UTIL.handlePriceRuleBasedServices(this);
-          OB.UTIL.TicketUtils.printTicketLine(this, lineIds);
+          OB.UTIL.TicketUtils.printLinesOfTicket(this, lineIds);
         })
         .catch(OB.App.View.ActionCanceledUIHandler.handle);
     },
@@ -5222,7 +5222,7 @@
               })
                 .then(() => {
                   OB.UTIL.handlePriceRuleBasedServices(order);
-                  OB.UTIL.TicketUtils.printTicketLine(order, [line.id]);
+                  OB.UTIL.TicketUtils.printLinesOfTicket(order, [line.id]);
                   newAllLinesCalculated();
                 })
                 .catch(OB.App.View.ActionCanceledUIHandler.handle);
@@ -5236,7 +5236,7 @@
                 })
                   .then(() => {
                     OB.UTIL.handlePriceRuleBasedServices(order);
-                    OB.UTIL.TicketUtils.printTicketLine(order, [line.id]);
+                    OB.UTIL.TicketUtils.printLinesOfTicket(order, [line.id]);
                     newAllLinesCalculated();
                   })
                   .catch(OB.App.View.ActionCanceledUIHandler.handle);
