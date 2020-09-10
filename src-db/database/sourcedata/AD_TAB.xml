@@ -20160,6 +20160,8 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--D6A459F17B2C4A5B9EE941B782F82460-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D6A459F17B2C4A5B9EE941B782F82460-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D6A459F17B2C4A5B9EE941B782F82460-->  <NAME><![CDATA[Cluster Instance]]></NAME>
+<!--D6A459F17B2C4A5B9EE941B782F82460-->  <DESCRIPTION><![CDATA[Defines cluster instances where a background process is allowed to be scheduled and executed.]]></DESCRIPTION>
+<!--D6A459F17B2C4A5B9EE941B782F82460-->  <HELP><![CDATA[Defines cluster instances where a background process is allowed to be scheduled and executed. If empty, the process will be allowed in any cluster instance.]]></HELP>
 <!--D6A459F17B2C4A5B9EE941B782F82460-->  <AD_TABLE_ID><![CDATA[4006A51669DC48949C039422B8D4918A]]></AD_TABLE_ID>
 <!--D6A459F17B2C4A5B9EE941B782F82460-->  <AD_WINDOW_ID><![CDATA[165]]></AD_WINDOW_ID>
 <!--D6A459F17B2C4A5B9EE941B782F82460-->  <SEQNO><![CDATA[80]]></SEQNO>
