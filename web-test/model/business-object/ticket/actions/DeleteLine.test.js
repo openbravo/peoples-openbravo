@@ -89,6 +89,35 @@ Ticket = deepfreeze({
         relatedLines: [{ orderlineId: 's2.1' }]
       }
     ]
+  },
+
+  productServiceLinked: {
+    ...Ticket.empty,
+    hasServices: true,
+    lines: [
+      {
+        id: 'l1',
+        product: { id: 'p1', previousTaxCategory: '1' },
+        previousPrice: '1',
+        previousBaseGrossUnitPrice: '1'
+      },
+      {
+        id: 's1',
+        product: {
+          id: 'sp1',
+          productType: 'S',
+          productServiceLinked: [
+            {
+              id: 'spl1',
+              product: 'sp1',
+              productCategory: '1',
+              taxCategory: '2'
+            }
+          ]
+        },
+        relatedLines: [{ orderlineId: 'l1' }]
+      }
+    ]
   }
 });
 
@@ -187,6 +216,21 @@ describe('Ticket.deleteLine action', () => {
 
       expect(deletedLineIds(Ticket.services, newTicket)).toEqual(
         expect.arrayContaining(['l2', 's2', 's2.1', 's2.1.1'])
+      );
+    });
+  });
+
+  describe('restore TaxCategory Of RelatedProducts', () => {
+    it('deletes', () => {
+      const newTicket = OB.App.StateAPI.Ticket.deleteLine(
+        Ticket.productServiceLinked,
+        {
+          lineIds: ['l1', 's1']
+        }
+      );
+
+      expect(deletedLineIds(Ticket.productServiceLinked, newTicket)).toEqual(
+        expect.arrayContaining(['l1', 's1'])
       );
     });
   });
