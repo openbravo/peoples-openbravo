@@ -128,7 +128,6 @@ import org.openbravo.test.system.ImportEntryBuilderTest;
 import org.openbravo.test.system.ImportEntrySizeTest;
 import org.openbravo.test.system.Issue29934Test;
 import org.openbravo.test.system.JSONSerialization;
-import org.openbravo.test.system.OldCallouts;
 import org.openbravo.test.system.Sessions;
 import org.openbravo.test.system.SystemServiceTest;
 import org.openbravo.test.system.SystemValidatorTest;
@@ -235,7 +234,6 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
     CryptoUtilities.class, //
     Sessions.class, //
     OBContextTest.class, //
-    OldCallouts.class, //
     JSONSerialization.class, //
     PasswordHashing.class, //
 

@@ -22,9 +22,8 @@ import org.openbravo.client.application.window.FormInitializationComponent;
 
 /**
  * Defines constants used for manage Callouts. These constants are used in
- * {@link FormInitializationComponent}, {@link SimpleCalloutInformationProvider} and
- * {@link HttpServletCalloutInformationProvider} classes.
- * 
+ * {@link FormInitializationComponent} and {@link SimpleCalloutInformationProvider}
+ *
  * @author inigo.sanchez
  */
 public class CalloutConstants {

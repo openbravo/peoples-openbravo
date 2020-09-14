@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.application.window;
 
-import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -32,10 +31,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -52,7 +48,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.Note;
-import org.openbravo.client.application.window.servlet.CalloutHttpServletResponse;
 import org.openbravo.client.application.window.servlet.CalloutServletConfig;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.client.kernel.KernelUtils;
@@ -71,7 +66,6 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.ad_callouts.CalloutConstants;
 import org.openbravo.erpCommon.ad_callouts.CalloutInformationProvider;
-import org.openbravo.erpCommon.ad_callouts.HttpServletCalloutInformationProvider;
 import org.openbravo.erpCommon.ad_callouts.SimpleCallout;
 import org.openbravo.erpCommon.ad_callouts.SimpleCalloutInformationProvider;
 import org.openbravo.erpCommon.utility.Utility;
@@ -1469,18 +1463,16 @@ public class FormInitializationComponent extends BaseActionHandler {
         lastfieldChangedList.remove(lastFieldChanged);
 
         Object calloutObject;
-        boolean isCalloutInitialized = false;
         if (calloutInstances.get(calloutClassName) != null) {
           calloutObject = calloutInstances.get(calloutClassName);
-          isCalloutInitialized = true;
         } else {
           calloutObject = calloutClass.getDeclaredConstructor().newInstance();
           calloutInstances.put(calloutClassName, calloutObject);
         }
 
-        if (!(calloutObject instanceof HttpServlet) && !(calloutObject instanceof SimpleCallout)) {
+        if (!(calloutObject instanceof SimpleCallout)) {
           log.info(
-              "Callout {} only allows reference instances of type SimpleCallout and HttpServlet but the callout is an instance of {}",
+              "Callout {} only allows reference instances of type SimpleCallout the callout is an instance of {}",
               calloutClassName, calloutObject.getClass().getName());
           continue;
         }
@@ -1507,33 +1499,9 @@ public class FormInitializationComponent extends BaseActionHandler {
 
           calloutResponseManager = new SimpleCalloutInformationProvider(result);
         } else {
-          log.debug(
-              "Callout {} executed in tab {} does not implement SimpleCallout. This is deprecated, consider reimplementing it.",
+          log.error(
+              "Callout {} executed in tab {} does not implement SimpleCallout. This feature has been removed, it must be reimplemented with SimpleCallout.",
               calloutClassName, tab);
-          HttpServlet calloutInstance = (HttpServlet) calloutObject;
-          CalloutHttpServletResponse fakeResponse = new CalloutHttpServletResponse(
-              request.getResponse());
-
-          if (isCalloutInitialized) {
-            Method doPost = calloutClass.getMethod("doPost", HttpServletRequest.class,
-                HttpServletResponse.class);
-            doPost.invoke(calloutInstance, request.getRequest(), fakeResponse);
-          } else {
-            calloutInstance.init(config);
-            calloutInstance.service(request.getRequest(), fakeResponse);
-          }
-
-          String calloutResponse = fakeResponse.getOutputFromWriter();
-
-          HttpServletCalloutInformationProvider httpCalloutManager = new HttpServletCalloutInformationProvider(
-              calloutResponse);
-          httpCalloutManager.parseResponse();
-          String calloutNameJS = httpCalloutManager.getCalloutName();
-          if (StringUtils.isNotBlank(calloutClassName)) {
-            calledCallouts.add(calloutNameJS);
-          }
-
-          calloutResponseManager = httpCalloutManager;
         }
 
         manageUpdatedValuesForCallout(columnValues, tab, calloutsToCall, lastfieldChangedList,
