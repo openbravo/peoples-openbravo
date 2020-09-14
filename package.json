@@ -21,7 +21,7 @@
     "eslint-config-airbnb-base": "~14.0.0",
     "eslint-plugin-import": "~2.18.2",
     "eslint-plugin-prettier": "~3.1.1",
-    "jest": "~24.9.0",
+    "jest": "~26.4.2",
     "jest-html-reporters": "~1.2.0",
     "xmldom": "~0.1.27",
     "lerna": "~3.18.3"
