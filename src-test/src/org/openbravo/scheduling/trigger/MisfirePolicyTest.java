@@ -170,8 +170,8 @@ public class MisfirePolicyTest extends OBBaseTest {
     Trigger trigger = TriggerProvider.getInstance().createTrigger(name, bundle, data);
     scheduleJob(name, trigger, bundle);
 
-    // give some little time to ensure that job is not executed
-    Thread.sleep(500);
+    // give some little time to ensure that job is not executed (1 second for MisfireHandler)
+    Thread.sleep(1000);
 
     assertThat("Job not executed on misfire", monitor.getJobExecutions(name), equalTo(0));
     assertThat("Next regular execution time", trigger.getFireTimeAfter(startDate),
@@ -215,8 +215,8 @@ public class MisfirePolicyTest extends OBBaseTest {
     String name = SequenceIdData.getUUID();
     scheduleJob(name, data);
 
-    // give some little time to ensure that job is not executed
-    Thread.sleep(500);
+    // give some little time to ensure that job is not executed (1 second for MisfireHandler)
+    Thread.sleep(1000);
 
     assertThat("Job not executed on misfire", monitor.getJobExecutions(name), equalTo(0));
   }
