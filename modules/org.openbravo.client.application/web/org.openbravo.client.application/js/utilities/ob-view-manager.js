@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -499,6 +499,10 @@
         //
 
         function fetchViewCallback(response, data, request) {
+          // if response header contains window_error true, do not continue
+          if (response.httpHeaders.window_create_error) {
+            return;
+          }
           // if the window is in development it's name is always unique
           // and has changed
           if (vmgr.loadedWindowClassName) {

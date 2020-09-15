@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,9 +22,8 @@ import org.openbravo.client.application.window.FormInitializationComponent;
 
 /**
  * Defines constants used for manage Callouts. These constants are used in
- * {@link FormInitializationComponent}, {@link SimpleCalloutInformationProvider} and
- * {@link HttpServletCalloutInformationProvider} classes.
- * 
+ * {@link FormInitializationComponent} and {@link SimpleCalloutInformationProvider}
+ *
  * @author inigo.sanchez
  */
 public class CalloutConstants {

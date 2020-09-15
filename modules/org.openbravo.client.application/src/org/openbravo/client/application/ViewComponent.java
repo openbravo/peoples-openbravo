@@ -11,13 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
@@ -52,7 +54,9 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
+import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
@@ -97,6 +101,9 @@ public class ViewComponent extends BaseComponent {
         if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
           throw new OBUserException(featureRestriction.toString());
         }
+        // Verify if window is using an old callout
+        window.getADTabList()
+            .forEach(tab -> tab.getADFieldList().forEach(field -> verifyCallout(field)));
         return generateWindow(window);
       } else if (viewId.startsWith("processDefinition_")) {
         String processId = viewId.substring("processDefinition_".length());
@@ -119,6 +126,41 @@ public class ViewComponent extends BaseComponent {
 
       OBContext.restorePreviousMode();
       log.debug("View {} generated in {} ms", viewId, System.currentTimeMillis() - t);
+    }
+  }
+
+  /**
+   * Verifies if a field contains a callout based on HttpBaseServlet, and if so, throws an exception
+   *
+   * @param fld
+   *          Field to verify callout
+   */
+  private void verifyCallout(Field fld) {
+    if (fld.getColumn() != null && fld.getColumn().getCallout() != null) {
+      List<ModelImplementation> modelImplementations = fld.getColumn()
+          .getCallout()
+          .getADModelImplementationList();
+      if (!modelImplementations.isEmpty()) {
+        // Get first model implementation that will contain the callout class name
+        ModelImplementation mi = modelImplementations.get(0);
+        String calloutClassName = mi.getJavaClassName();
+        try {
+          if (Class.forName(calloutClassName)
+              .getDeclaredConstructor()
+              .newInstance() instanceof HttpBaseServlet) {
+            log.error(
+                "An old callout(based on HttpBaseServlet) {} is present in field {}. Extend SimpleCallout or remove it.",
+                calloutClassName, fld.getName());
+            throw new IllegalStateException("An old callout(based on HttpBaseServlet) " + calloutClassName
+                + " is present in this window. Fix or remove this callout.");
+          }
+        } catch (ClassNotFoundException e) {
+          log.warn("Class not found");
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+            | InvocationTargetException e) {
+          log.warn("Class {} could not be initialized.", calloutClassName);
+        }
+      }
     }
   }
 

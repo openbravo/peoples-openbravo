@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,6 +61,7 @@ public class KernelServlet extends BaseKernelServlet {
 
   private static final String REQUEST_HEADER_IFMODIFIEDSINCE = "If-Modified-Since";
   private static final String REQUEST_HEADER_IFNONEMATCH = "If-None-Match";
+  private static final String RESPONSE_HEADER_WINDOW_CREATE_ERROR = "window_create_error";
 
   private static final long serialVersionUID = 1L;
 
@@ -278,6 +279,7 @@ public class KernelServlet extends BaseKernelServlet {
         response.setContentType(KernelConstants.JAVASCRIPT_CONTENTTYPE);
         response.setHeader(RESPONSE_HEADER_CONTENTTYPE, KernelConstants.JAVASCRIPT_CONTENTTYPE);
         response.setHeader(RESPONSE_HEADER_CACHE_CONTROL, RESPONSE_NO_CACHE);
+        response.setHeader(RESPONSE_HEADER_WINDOW_CREATE_ERROR, "true");
         response.getWriter().write(KernelUtils.getInstance().createErrorJavaScript(e));
       }
     }
