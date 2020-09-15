@@ -254,6 +254,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
   @Override
   protected String getLanguage(HttpServletRequest request) {
+    if (!OBContext.getOBContext().getUser().getId().equals("0")) {
+      return null;
+    }
     final String terminalName = request.getParameter("terminalName");
     if (StringUtils.isBlank(terminalName)) {
       return null;
