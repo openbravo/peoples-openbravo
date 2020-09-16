@@ -115,7 +115,10 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
         final JSONArray data = content.getJSONArray("data");
         if (data.length() > 0 && data.get(0) instanceof JSONObject) {
           final JSONObject json = data.getJSONObject(0);
-          if (json.has("organization") && json.get("organization") instanceof String) {
+          if (json.has("trxOrganization") && json.get("trxOrganization") instanceof String) {
+            organization = OBDal.getInstance()
+                .getProxy(Organization.class, json.getString("trxOrganization"));
+          } else if (json.has("organization") && json.get("organization") instanceof String) {
             organization = OBDal.getInstance()
                 .getProxy(Organization.class, json.getString("organization"));
           }
