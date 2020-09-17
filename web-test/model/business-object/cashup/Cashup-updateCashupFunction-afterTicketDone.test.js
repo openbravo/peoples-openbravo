@@ -31,6 +31,9 @@ describe('Cashup - updateCashup function', () => {
       cashup: cashupAfterTicketDone
     };
     deepfreeze(expectedResult);
+    OB.App.UUID = {};
+    OB.App.UUID.generate = jest.fn();
+    OB.App.UUID.generate.mockReturnValue('395475F7955D35B24CFA07598DACB458');
     const result = OB.App.State.Cashup.Utils.updateCashupFromTicket(
       ticketBeforeUpdateCashup,
       cashupBeforeTicketDone,

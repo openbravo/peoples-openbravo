@@ -142,10 +142,6 @@
               paymentMethodCashUp
             );
             paymentMethods.push(paymentFromBackend);
-            currentCashupFromBackend.totalStartings = OB.DEC.add(
-              currentCashupFromBackend.totalStartings,
-              paymentFromBackend.startingCash
-            );
           }
         }
       );

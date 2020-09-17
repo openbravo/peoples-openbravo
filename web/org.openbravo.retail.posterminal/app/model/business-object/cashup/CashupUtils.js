@@ -320,6 +320,10 @@
         );
       }
 
+      if (newCashup.cashTaxInfo) {
+        newCashup.cashTaxInfo = [...newCashup.cashTaxInfo];
+      }
+
       // save the calculated taxes into the cashup
       newCashupTaxes.forEach(newCashupTax => {
         const cashupTax = newCashup.cashTaxInfo.filter(function filter(
@@ -331,10 +335,17 @@
           );
         })[0];
         if (cashupTax) {
-          cashupTax.amount = OB.DEC.add(
-            cashupTax.amount,
-            newCashupTax.taxAmount
-          );
+          newCashup.cashTaxInfo = newCashup.cashTaxInfo.map(cashupTaxMap => {
+            if (cashupTaxMap.id === cashupTax.id) {
+              const newCashupTaxMap = { ...cashupTaxMap };
+              newCashupTaxMap.amount = OB.DEC.add(
+                newCashupTaxMap.amount,
+                newCashupTax.taxAmount
+              );
+              return newCashupTaxMap;
+            }
+            return cashupTaxMap;
+          });
         } else {
           newCashup.cashTaxInfo.push({
             id: OB.App.UUID.generate(),

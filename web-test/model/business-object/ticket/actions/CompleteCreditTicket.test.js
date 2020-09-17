@@ -103,11 +103,15 @@ describe('Complete Credit ticket action', () => {
           messageObj: {
             data: [
               {
+                ...ticket,
                 payOnCredit: true,
                 obposSequencename: 'lastassignednum',
                 obposSequencenumber: 1,
                 documentNo: 'O/00001',
-                ...ticket
+                businessPartner: {
+                  creditUsed: 100,
+                  id: 'BP'
+                }
               }
             ]
           }

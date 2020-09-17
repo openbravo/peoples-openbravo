@@ -26,6 +26,7 @@
 
       // Set complete ticket properties
       newTicket.payOnCredit = true;
+      newTicket.businessPartner = { ...newTicket.businessPartner };
       newTicket.businessPartner.creditUsed += OB.DEC.mul(
         OB.DEC.abs(
           OB.DEC.sub(newTicket.grossAmount, newTicket.paymentWithSign)

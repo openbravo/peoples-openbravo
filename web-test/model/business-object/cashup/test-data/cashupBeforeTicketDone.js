@@ -21,14 +21,7 @@ module.exports = {
   userId: '3073EDF96A3C42CC86C7069E379522D2',
   posterminal: '9104513C2D0741D4850AE8493998A7C8',
   isprocessed: false,
-  cashTaxInfo: [
-    {
-      id: '395475F7955D35B24CFA07598DACB458',
-      name: 'Entregas IVA 21%',
-      amount: 26.12,
-      orderType: '0'
-    }
-  ],
+  cashTaxInfo: [],
   cashCloseInfo: [],
   cashPaymentMethodInfo: [
     {

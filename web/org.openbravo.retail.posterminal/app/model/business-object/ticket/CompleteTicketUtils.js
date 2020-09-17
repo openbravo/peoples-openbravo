@@ -291,6 +291,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       invoiceLine.id = OB.App.UUID.generate();
       invoiceLine.qty = qtyToInvoice;
       invoiceLine.orderLineId = line.id;
+      invoiceLine.product = { ...invoiceLine.product };
       invoiceLine.product.ignorePromotions = true;
       invoiceLine.product.img = undefined;
 

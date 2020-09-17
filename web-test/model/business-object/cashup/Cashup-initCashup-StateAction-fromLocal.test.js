@@ -56,25 +56,25 @@ describe('Cashup - init cashup State Action - from local', () => {
   it('initialize cashup from local - new Payment', () => {
     // remove payment card from the initial state
     const cashupWithoutCard = { ...cleanCashup };
-    deepfreeze(cashupWithoutCard);
     cashupWithoutCard.cashPaymentMethodInfo = cashupWithoutCard.cashPaymentMethodInfo.filter(
       payment => payment.name !== 'Card'
     );
+    deepfreeze(cashupWithoutCard);
     const initialState = { Cashup: cashupWithoutCard };
     deepfreeze(initialState);
 
     // readd the payment card in the expected state,
     // note: readding instead using the cleanState, because when added the new payment it is added at the end of the array.
     const cashupAddingCard = { ...cashupWithoutCard };
-    deepfreeze(cashupAddingCard);
     const cardPayment = cleanCashup.cashPaymentMethodInfo
       .filter(payment => payment.name === 'Card')
       .reduce((a, b) => a.concat(b));
     deepfreeze(cardPayment);
-    cashupAddingCard.cashPaymentMethodInfo = {
+    cashupAddingCard.cashPaymentMethodInfo = [
       ...cashupAddingCard.cashPaymentMethodInfo,
       cardPayment
-    };
+    ];
+    deepfreeze(cashupAddingCard);
     const expectedState = { Cashup: cashupAddingCard };
     deepfreeze(expectedState);
 
@@ -88,19 +88,21 @@ describe('Cashup - init cashup State Action - from local', () => {
   it('initialize cashup from local - payment name changed', () => {
     // change payment name in the payload
     const payloadPaymentNameChanged = { ...payloadInitFromLocal };
-    deepfreeze(payloadPaymentNameChanged);
     payloadPaymentNameChanged.terminalPayments = [
       ...payloadInitFromLocal.terminalPayments
     ];
+    payloadPaymentNameChanged.terminalPayments[0] = {
+      ...payloadPaymentNameChanged.terminalPayments[0]
+    };
     payloadPaymentNameChanged.terminalPayments[0].paymentMethod = {
       ...payloadPaymentNameChanged.terminalPayments[0].paymentMethod
     };
     payloadPaymentNameChanged.terminalPayments[0].paymentMethod._identifier =
       'Credit card - Modified';
+    deepfreeze(payloadPaymentNameChanged);
 
     // change payment name in the expected state
     const expectedCashupWithPaymentNameModified = { ...cleanCashup };
-    deepfreeze(expectedCashupWithPaymentNameModified);
     expectedCashupWithPaymentNameModified.cashPaymentMethodInfo = cleanCashup.cashPaymentMethodInfo.map(
       payment => {
         if (payment.name === 'Credit Card') {
@@ -110,6 +112,7 @@ describe('Cashup - init cashup State Action - from local', () => {
         }
       }
     );
+    deepfreeze(expectedCashupWithPaymentNameModified);
 
     const initialState = { Cashup: cleanCashup };
     deepfreeze(initialState);
