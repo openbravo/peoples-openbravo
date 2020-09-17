@@ -49,20 +49,6 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
         order.get('obrdmDeliveryModeProperty') ||
         deliveryDate)
     ) {
-      var currentDate, currentTime;
-
-      if (!deliveryDate) {
-        currentDate = new Date();
-        currentDate.setHours(0);
-        currentDate.setMinutes(0);
-        currentDate.setSeconds(0);
-      }
-
-      if (!deliveryTime) {
-        currentTime = new Date();
-        currentTime.setSeconds(0);
-      }
-
       args.orderline.createComponent({
         classes: 'obPosRenderOrderLine',
         components: [
@@ -80,9 +66,7 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
               ? '-- ' +
                 OB.I18N.getLabel('OBRDM_DeliveryDate') +
                 ': ' +
-                (deliveryDate
-                  ? OB.I18N.formatDate(deliveryDate)
-                  : OB.I18N.formatDate(currentDate))
+                (deliveryDate ? OB.I18N.formatDate(deliveryDate) : '--')
               : '',
             classes: 'obPosRenderOrderLine-element2'
           },
@@ -91,9 +75,7 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
               ? '-- ' +
                 OB.I18N.getLabel('OBRDM_DeliveryTime') +
                 ': ' +
-                (deliveryTime
-                  ? OB.I18N.formatHour(deliveryTime)
-                  : OB.I18N.formatHour(currentTime))
+                (deliveryTime ? OB.I18N.formatHour(deliveryTime) : '--')
               : '',
             classes: 'obPosRenderOrderLine-element3'
           }
