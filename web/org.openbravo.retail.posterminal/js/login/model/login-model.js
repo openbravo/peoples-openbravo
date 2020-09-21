@@ -490,10 +490,10 @@
                 if (args && args.cancellation && args.cancellation === true) {
                   return;
                 }
-                var nextWindow = OB.MobileApp.model.get('nextWindow');
+                var nextWindow = OB.UTIL.localStorage.getItem('nextWindow');
                 if (nextWindow) {
                   OB.POS.navigate(nextWindow);
-                  OB.MobileApp.model.unset('nextWindow');
+                  OB.UTIL.localStorage.removeItem('nextWindow');
                 } else {
                   OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
                 }
