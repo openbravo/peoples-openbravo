@@ -149,7 +149,7 @@
                        AND fpsd.isactive = 'Y'
                        AND fpsd.iscanceled = 'N'
                        AND (fpsd.fin_payment_schedule_invoice IS NULL
-                            OR i.DATEINVOICED >= TO_DATE(?))
+                            OR i.DATEINVOICED > TO_DATE(?))
                        AND fpsd.fin_payment_schedule_order IS NOT NULL
                 ) P 
                 LEFT JOIN 
