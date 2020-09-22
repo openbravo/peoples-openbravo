@@ -3,9 +3,17 @@
   "version": "1.0.0",
   "description": "This contains some utilities used to format and lint Javascript code",
   "private": true,
+  "config": {
+    "preinstall": "modules/org.openbravo.client.kernel/build-scripts/pre-install",
+    "postinstall": "modules/org.openbravo.client.kernel/build-scripts/post-install"
+  },
   "scripts": {
-    "preinstall": "node modules/org.openbravo.client.kernel/build-scripts/generate-package-json.js",
-    "postinstall": "lerna bootstrap --no-ci; modules/org.openbravo.client.kernel/eslint-airbnb/copy-config; node modules/org.openbravo.client.kernel/build-scripts/clean-package-lock.js",
+    "preinstall-prod": "NODE_ENV=production $npm_package_config_preinstall",
+    "install-prod": "npm install",
+    "postinstall-prod": "NODE_ENV=production $npm_package_config_postinstall",
+    "preinstall-dev": "NODE_ENV=development $npm_package_config_preinstall",
+    "install-dev": "npm install",
+    "postinstall-dev": "NODE_ENV=development $npm_package_config_postinstall",
     "test": "jest",
     "coverage": "jest --coverage",
     "jslint": "eslint --max-warnings 0",
