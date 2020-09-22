@@ -16,4 +16,7 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
-node modules/org.openbravo.client.kernel/build-scripts/generate-package-json.js
+CORE_2_SCRIPT_PATH=modules/org.openbravo.core2/build-scripts/generate-package-json.js
+if [ -f "$CORE_2_SCRIPT_PATH" ]; then
+  node $CORE_2_SCRIPT_PATH
+fi
