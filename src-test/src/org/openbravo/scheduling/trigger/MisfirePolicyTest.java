@@ -35,6 +35,7 @@ import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -148,6 +149,7 @@ public class MisfirePolicyTest extends OBBaseTest {
    */
   @Test
   @Issue("23767")
+  @Ignore("Ignore because of unstable behaviour when clustered")
   public void checkMisfirePolicy() throws SchedulerException, InterruptedException {
     TriggerData data = new TriggerData();
     data.timingOption = TimingOption.SCHEDULED.getLabel();
