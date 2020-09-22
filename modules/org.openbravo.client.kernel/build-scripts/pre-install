@@ -16,8 +16,4 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
-if [ "$NODE_ENV" = 'production' ]; then
-  :
-else 
-  node modules/org.openbravo.client.kernel/build-scripts/generate-package-json.js
-fi  
+node modules/org.openbravo.client.kernel/build-scripts/generate-package-json.js
