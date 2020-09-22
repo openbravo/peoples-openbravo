@@ -93,6 +93,7 @@ public class ExternalOrderLoader extends OrderLoader {
   public static final String CREATE = "create";
   public static final String PAY = "pay";
   public static final String SHIP = "ship";
+  public static final String CANCEL = "cancel";
   public static final String ALL = "all";
 
   private static ThreadLocal<JSONArray> processedOrders = new ThreadLocal<JSONArray>();
@@ -480,6 +481,26 @@ public class ExternalOrderLoader extends OrderLoader {
         if (!order.has("posTerminal")) {
           order.put("posTerminal", posTerminal.getId());
         }
+
+        // In case of cancel layaway, validate and transform canceledorder
+        if (CANCEL.equals(order.getString("step"))) {
+          if (order.has("canceledorder")) {
+            JSONObject cancelledOrder = order.getJSONObject("canceledorder");
+            validateCancelHeader(cancelledOrder);
+            final Order ord = OBDal.getInstance().get(Order.class, cancelledOrder.get("id"));
+            if (ord == null) {
+              throw new OBException(
+                  "Cancelled order with id " + cancelledOrder.get("id") + " does not exists");
+            }
+            cancelledOrder.put("isCanceledOrder", true);
+            cancelledOrder.put("posTerminal", order.getString("posTerminal"));
+            cancelledOrder.put("step", order.getString("step"));
+            transformOrder(cancelledOrder);
+          } else {
+            throw new OBException(
+                "Step " + order.getString("step") + " must have property canceledorder");
+          }
+        }
         transformOrder(data.getJSONObject(i));
       }
       if (log.isDebugEnabled()) {
@@ -568,7 +589,7 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(orderJson, "netAmount", "net");
 
     if (CREATE.equals(orderJson.getString("step")) || SHIP.equals(orderJson.getString("step"))
-        || ALL.equals(orderJson.getString("step"))) {
+        || ALL.equals(orderJson.getString("step")) || CANCEL.equals(orderJson.getString("step"))) {
       setBusinessPartnerInformation(orderJson);
       transformTaxes(orderJson.getJSONObject("taxes"));
       transformLines(orderJson);
@@ -619,6 +640,12 @@ public class ExternalOrderLoader extends OrderLoader {
       orderJson.put("generateShipment", true);
       orderJson.put("deliver", true);
       orderJson.put("isLayaway", true);
+    } else if (CANCEL.equals(step)) {
+      // In case of cancel, set gross amount as payment
+      if (orderJson.has("cancelLayaway") && orderJson.getBoolean("cancelLayaway")) {
+        orderJson.put("paymentWithSign", orderJson.getDouble("grossAmount"));
+        orderJson.put("payment", -orderJson.getDouble("grossAmount"));
+      }
     } else if (ALL.equals(step)) {
       copyPropertyValue(orderJson, "grossAmount", "payment");
       orderJson.put("generateExternalInvoice", true);
@@ -643,6 +670,16 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   protected void transformLine(JSONObject orderJson, JSONObject lineJson) throws JSONException {
+    // verify cancelled line exists in db
+    if (orderJson.has("isCanceledOrder") && orderJson.getBoolean("isCanceledOrder")) {
+      validateCancelLine(lineJson);
+      final OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, lineJson.get("id"));
+      if (orderLine == null) {
+        throw new OBException(
+            "Cancelled order line with id " + lineJson.get("id") + " does not exists");
+      }
+    }
+
     setProduct(lineJson);
 
     if (!lineJson.has("id")) {
@@ -755,10 +792,11 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(lineJson, "netListPrice", "listPrice");
     copyPropertyValue(lineJson, "grossListPrice", "priceList");
     copyPropertyValue(lineJson, "listPrice", "standardPrice");
-    copyPropertyValue(lineJson, "grossAmount", "lineGrossAmount");
     copyPropertyValue(lineJson, "netPrice", "unitPrice");
     copyPropertyValue(lineJson, "netAmount", "net");
     copyPropertyValue(lineJson, "grossAmount", "gross");
+    BigDecimal grossAmountAbs = BigDecimal.valueOf(lineJson.getDouble("grossAmount")).abs();
+    lineJson.put("lineGrossAmount", grossAmountAbs);
   }
 
   protected void transformPayments(JSONObject orderJson) throws JSONException {
@@ -810,31 +848,40 @@ public class ExternalOrderLoader extends OrderLoader {
           }
         }
       }
-      for (int i = 0; i < payments.length(); i++) {
-        final JSONObject payment = payments.getJSONObject(i);
 
-        BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
-            .setScale(pricePrecision, RoundingMode.HALF_UP);
-        BigDecimal origAmount = amount;
-        BigDecimal mulrate = new BigDecimal(1);
-        // FIXME: Coversion should be only in one direction: (USD-->EUR)
-        if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
-          mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
-          if (payment.has("amount")) {
-            origAmount = BigDecimal.valueOf(payment.getDouble("amount"))
-                .setScale(pricePrecision, RoundingMode.HALF_UP);
-          } else {
-            origAmount = amount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
+      // Skip new payment for cancelled order
+      if (!orderJson.has("isCanceledOrder") || !orderJson.getBoolean("isCanceledOrder")) {
+        for (int i = 0; i < payments.length(); i++) {
+          final JSONObject payment = payments.getJSONObject(i);
+
+          BigDecimal amount = BigDecimal.valueOf(payment.getDouble("origAmount"))
+              .setScale(pricePrecision, RoundingMode.HALF_UP);
+          BigDecimal origAmount = amount;
+          BigDecimal mulrate = new BigDecimal(1);
+          // FIXME: Coversion should be only in one direction: (USD-->EUR)
+          if (payment.has("mulrate") && payment.getDouble("mulrate") != 1) {
+            mulrate = BigDecimal.valueOf(payment.getDouble("mulrate"));
+            if (payment.has("amount")) {
+              origAmount = BigDecimal.valueOf(payment.getDouble("amount"))
+                  .setScale(pricePrecision, RoundingMode.HALF_UP);
+            } else {
+              origAmount = amount.multiply(mulrate).setScale(pricePrecision, RoundingMode.HALF_UP);
+            }
           }
+          paid = paid.add(origAmount);
         }
-        paid = paid.add(origAmount);
       }
       orderJson.put("payment", paid.doubleValue());
       BigDecimal gross = BigDecimal.valueOf(orderJson.getDouble("gross")).abs();
-      boolean fullyPaid = BigDecimal.ZERO.compareTo(gross) != 0
-          && gross.compareTo(BigDecimal.valueOf(orderJson.getDouble("payment")).abs()) != 1;
-      if (fullyPaid) {
-        orderJson.put("completeTicket", true);
+      BigDecimal paidAmt = BigDecimal.valueOf(orderJson.getDouble("payment")).abs();
+      // Add nettingPayment for cancelLayaway
+      if (orderJson.has("cancelLayaway") || orderJson.getBoolean("cancelLayaway")) {
+        orderJson.put("nettingPayment", (gross.subtract(paidAmt)).negate());
+      } else {
+        boolean fullyPaid = BigDecimal.ZERO.compareTo(gross) != 0 && gross.compareTo(paidAmt) != 1;
+        if (fullyPaid) {
+          orderJson.put("completeTicket", true);
+        }
       }
     } else {
       orderJson.put("completeTicket", true);
@@ -897,6 +944,23 @@ public class ExternalOrderLoader extends OrderLoader {
 
   protected void validateLine(JSONObject json) {
     final String msg = "Checking order line: ";
+    check(json, "qty", msg);
+    check(json, "product", msg);
+    check(json, "netAmount", msg);
+    check(json, "grossAmount", msg);
+  }
+
+  protected void validateCancelHeader(JSONObject json) {
+    final String msg = "Checking cancelled order header: ";
+    check(json, "id", msg);
+    check(json, "netAmount", msg);
+    check(json, "grossAmount", msg);
+    check(json, "currency", msg);
+  }
+
+  protected void validateCancelLine(JSONObject json) {
+    final String msg = "Checking cancelled order line: ";
+    check(json, "id", msg);
     check(json, "qty", msg);
     check(json, "product", msg);
     check(json, "netAmount", msg);
@@ -1042,6 +1106,8 @@ public class ExternalOrderLoader extends OrderLoader {
     } else if (orderJson.getBoolean("isLayaway")) {
       // orderJson.put("orderType", 2l);
       orderJson.put("orderType", 0l);
+    } else if (orderJson.getBoolean("cancelLayaway")) {
+      orderJson.put("orderType", 3l);
     } else {
       orderJson.put("orderType", 0l);
     }
@@ -1074,6 +1140,7 @@ public class ExternalOrderLoader extends OrderLoader {
     defaultJson.put("isQuotation", false);
     defaultJson.put("isLayaway", false);
     defaultJson.put("isReturn", false);
+    defaultJson.put("cancelLayaway", false);
     defaultJson.put("obposAppCashup", "-1");
     defaultJson.put("created", new Date().getTime());
     defaultJson.put("approvals", new JSONArray());
@@ -1094,31 +1161,47 @@ public class ExternalOrderLoader extends OrderLoader {
 
   protected void setDocumentNo(JSONObject orderJson) throws JSONException {
     if (!orderJson.has("documentNo")) {
-      OBPOSApplications posTerminal = getPOSTerminal(orderJson);
-      if (posTerminal != null) {
-        Long currentNo = (long) 0;
-        // The record will be locked to this process until it ends.
-        Query<OBPOSApplications> terminalQuery = OBDal.getInstance()
-            .getSession()
-            .createQuery("from OBPOS_Applications where id=:terminalId", OBPOSApplications.class);
-        terminalQuery.setParameter("terminalId", posTerminal.getId());
-        terminalQuery.setLockOptions(LockOptions.UPGRADE);
-        OBPOSApplications lockedTerminal = terminalQuery.uniqueResult();
-        OBDal.getInstance().getSession().evict(lockedTerminal);
-        lockedTerminal = OBDal.getInstance().get(OBPOSApplications.class, lockedTerminal.getId());
-        if (lockedTerminal.getLastassignednum() != null) {
-          currentNo = lockedTerminal.getLastassignednum() + 1;
+      if (orderJson.has("cancelLayaway") && orderJson.getBoolean("cancelLayaway")) {
+        // set documentNo from cancelledOrder
+        if (orderJson.has("orderid")) {
+          final Order order = OBDal.getInstance().get(Order.class, orderJson.get("orderid"));
+          if (order != null) {
+            orderJson.put("documentNo", order.getDocumentNo() + "*R*");
+          } else {
+            throw new OBException(
+                "orderid in cancelLayaway does not exists for order json " + orderJson);
+          }
         } else {
-          currentNo++;
+          throw new OBException(
+              "orderid attribute is missing for the cancelLayaway for order json " + orderJson);
         }
-        lockedTerminal.setLastassignednum(currentNo);
-        orderJson.put("documentNo",
-            lockedTerminal.getOrderdocnoPrefix() + "/" + String.format("%07d", currentNo));
       } else {
-        final String documentNo = getDocumentNo(
-            ModelProvider.getInstance().getEntity(Order.ENTITY_NAME), null,
-            OBDal.getInstance().get(DocumentType.class, orderJson.getString("documentType")));
-        orderJson.put("documentNo", documentNo);
+        OBPOSApplications posTerminal = getPOSTerminal(orderJson);
+        if (posTerminal != null) {
+          Long currentNo = (long) 0;
+          // The record will be locked to this process until it ends.
+          Query<OBPOSApplications> terminalQuery = OBDal.getInstance()
+              .getSession()
+              .createQuery("from OBPOS_Applications where id=:terminalId", OBPOSApplications.class);
+          terminalQuery.setParameter("terminalId", posTerminal.getId());
+          terminalQuery.setLockOptions(LockOptions.UPGRADE);
+          OBPOSApplications lockedTerminal = terminalQuery.uniqueResult();
+          OBDal.getInstance().getSession().evict(lockedTerminal);
+          lockedTerminal = OBDal.getInstance().get(OBPOSApplications.class, lockedTerminal.getId());
+          if (lockedTerminal.getLastassignednum() != null) {
+            currentNo = lockedTerminal.getLastassignednum() + 1;
+          } else {
+            currentNo++;
+          }
+          lockedTerminal.setLastassignednum(currentNo);
+          orderJson.put("documentNo",
+              lockedTerminal.getOrderdocnoPrefix() + "/" + String.format("%07d", currentNo));
+        } else {
+          final String documentNo = getDocumentNo(
+              ModelProvider.getInstance().getEntity(Order.ENTITY_NAME), null,
+              OBDal.getInstance().get(DocumentType.class, orderJson.getString("documentType")));
+          orderJson.put("documentNo", documentNo);
+        }
       }
     }
   }
