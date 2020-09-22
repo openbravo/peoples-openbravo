@@ -4683,11 +4683,22 @@
           if (
             OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
           ) {
-            OB.Discounts.Pos.manualRuleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
-              OB.Discounts.Pos.manualRuleImpls
+            const cbpartners = await OB.Discounts.Pos.getRemoteBusinessPartnersDiscounts(
+              businessPartner.id
             );
-            OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.addDiscountsByBusinessPartnerFilter(
-              OB.Discounts.Pos.ruleImpls
+
+            OB.Discounts.Pos.manualRuleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
+              OB.Discounts.Pos.manualRuleImpls,
+              'cbpartners',
+              'businessPartner',
+              cbpartners
+            );
+
+            OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
+              OB.Discounts.Pos.ruleImpls,
+              'cbpartners',
+              'businessPartner',
+              cbpartners
             );
           }
         }

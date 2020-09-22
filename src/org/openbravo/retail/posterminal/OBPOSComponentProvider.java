@@ -90,12 +90,12 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/order",
         // "model/terminal",
         // "model/user",
-        "utils/ob-utilitiesuipos", "utils/externalBpUtils", "model/bpartnerfilter",
-        "model/orderfilter", "model/crossstorefilter", "model/orders-for-verified-returns-filter",
-        "model/bplocation", // Model
-                            // for
-                            // Customer
-                            // Address
+        "model/promotions", "utils/ob-utilitiesuipos", "utils/externalBpUtils",
+        "model/bpartnerfilter", "model/orderfilter", "model/crossstorefilter",
+        "model/orders-for-verified-returns-filter", "model/bplocation", // Model
+                                                                        // for
+                                                                        // Customer
+                                                                        // Address
 
         "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter", "webprinter/escpos",
         "webprinter/standardprinters", "webprinter/typedarrays", "webprinter/testprinter",
@@ -261,9 +261,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/productStatusUtils",
 
         // Delivery Mode
-        "utils/deliveryModeUtils", "receiptEdit",
-        "receiptMultiLineEdit", "hookRenderOrderLine", "hookPrePayment",
-        "hookPreSetPaymentsToReceipt", "components/menuissue", "model/dmorderfilter", "utils/utils",
+        "utils/deliveryModeUtils", "receiptEdit", "receiptMultiLineEdit", "hookRenderOrderLine",
+        "hookPrePayment", "hookPreSetPaymentsToReceipt", "components/menuissue",
+        "model/dmorderfilter", "utils/utils",
 
         "model/ordertoselectorissue", "components/orderselector",
         "components/modalwarehouseselector", "components/orderlineinfopopup",
