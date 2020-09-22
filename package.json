@@ -4,10 +4,12 @@
   "description": "This contains some utilities used to format and lint Javascript code",
   "private": true,
   "config": {
+    "postinstall": "modules/org.openbravo.client.kernel/build-scripts/post-install",
     "test": "modules/org.openbravo.client.kernel/test-scripts/run-tests"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap --no-ci --hoist; modules/org.openbravo.client.kernel/eslint-airbnb/copy-config",
+    "install": "npx lerna bootstrap --no-ci --hoist",
+    "postinstall": "$npm_package_config_postinstall",
     "test": "$npm_package_config_test",
     "coverage": "$npm_package_config_test --coverage",
     "jslint": "eslint --max-warnings 0",
