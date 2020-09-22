@@ -483,7 +483,7 @@ public class ExternalOrderLoader extends OrderLoader {
         }
 
         // In case of cancel layaway, validate and transform canceledorder
-        if (CANCEL.equals(order.getString("step"))) {
+        if (order.has("step") && CANCEL.equals(order.getString("step"))) {
           if (order.has("canceledorder")) {
             JSONObject cancelledOrder = order.getJSONObject("canceledorder");
             validateCancelHeader(cancelledOrder);
