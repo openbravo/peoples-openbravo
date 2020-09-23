@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -408,7 +408,7 @@ isc.OBTabSetMain.addProperties({
 
     // Note: updateTab doesn't remove the previous loading tab
     // http://www.smartclient.com/docs/8.1/a/b/c/go.html#method..TabSet.updateTab
-    if (previousPane && previousPane.isLoadingTab) {
+    if (previousPane && (previousPane.isLoadingTab || pane.isLoadingTab)) {
       previousPane.destroy();
     }
 
