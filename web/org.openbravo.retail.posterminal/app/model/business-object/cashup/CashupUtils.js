@@ -80,6 +80,7 @@
       newCashup.creationDate = payload.payload.currentDate.toISOString();
       newCashup.userId = payload.payload.userId;
       newCashup.posterminal = payload.payload.posterminal;
+      newCashup.trxOrganization = payload.payload.organization;
       newCashup.isprocessed = false;
       newCashup.cashTaxInfo = [];
       newCashup.cashCloseInfo = [];
@@ -102,6 +103,7 @@
       newCashup.creationDate = currentCashupFromBackend.creationDate;
       newCashup.userId = currentCashupFromBackend.userId;
       newCashup.posterminal = currentCashupFromBackend.posterminal;
+      newCashup.trxOrganization = currentCashupFromBackend.organization;
       newCashup.isprocessed = currentCashupFromBackend.isprocessed;
       newCashup.cashTaxInfo = OB.App.State.Cashup.Utils.getTaxesFromBackendObject(
         currentCashupFromBackend.cashTaxInfo

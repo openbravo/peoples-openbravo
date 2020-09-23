@@ -71,13 +71,18 @@
         }
       } else if (initCashupFrom === 'scratch') {
         // init from scratch
-        const { currentDate, userId, terminalId } = payload;
+        const { currentDate, userId, organization, terminalId } = payload;
 
         OB.App.State.Cashup.Utils.resetStatistics();
 
         newCashup = OB.App.State.Cashup.Utils.createNewCashupFromScratch({
           cashup,
-          payload: { currentDate, userId, posterminal: terminalId }
+          payload: {
+            currentDate,
+            userId,
+            organization,
+            posterminal: terminalId
+          }
         });
 
         newCashup.cashPaymentMethodInfo = OB.App.State.Cashup.Utils.initializePaymentMethodCashup(

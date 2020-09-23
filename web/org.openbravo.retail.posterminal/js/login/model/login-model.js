@@ -534,11 +534,12 @@
         OB.App.State.Global.initCashup({
           currentDate: new Date(),
           userId: OB.MobileApp.model.get('context').user.id,
+          organization: OB.MobileApp.model.get('terminal').organization,
           terminalId: OB.MobileApp.model.get('terminal').id,
-          terminalIsSlave: OB.POS.modelterminal.get('terminal').isslave,
-          terminalIsMaster: OB.POS.modelterminal.get('terminal').ismaster,
+          terminalIsSlave: OB.MobileApp.model.get('terminal').isslave,
+          terminalIsMaster: OB.MobileApp.model.get('terminal').ismaster,
           terminalPayments: OB.MobileApp.model.get('payments'),
-          terminalName: OB.POS.modelterminal.get('terminal').searchKey,
+          terminalName: OB.MobileApp.model.get('terminal').searchKey,
           cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
         })
           .then(() => {

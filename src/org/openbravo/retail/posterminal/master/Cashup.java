@@ -110,7 +110,7 @@ public class Cashup extends JSONProcessSimple {
 
       String hqlCashup = "select c.id, c.netsales as netSales, c.grosssales as grossSales, "
           + "c.netreturns as netReturns, c.grossreturns as grossReturns, c.totalretailtransactions as totalRetailTransactions,"
-          + "c.creationDate as creationDate, c.createdBy.id as userId, c.isProcessed, c.pOSTerminal.id as posterminal "
+          + "c.creationDate as creationDate, c.createdBy.id as userId, c.isProcessed, c.pOSTerminal.id as posterminal, c.organization.id as organization "
           + "from OBPOS_App_Cashup c where c.isProcessed=:isprocessed and c.pOSTerminal.id= :terminal "
           + isprocessedbo + " order by c.creationDate desc";
 
@@ -148,6 +148,7 @@ public class Cashup extends JSONProcessSimple {
         cashupJSON.put("userId", cashup[7]);
         cashupJSON.put("isprocessed", ((Boolean) cashup[8]) ? "Y" : "N");
         cashupJSON.put("posterminal", cashup[9]);
+        cashupJSON.put("organization", cashup[10]);
 
         // Get Payments
         JSONArray cashPaymentMethodInfo = getPayments((String) cashup[0], converter);
