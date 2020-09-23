@@ -4678,30 +4678,33 @@
           OB.MobileApp.model.get('terminal').defaultbp_paymentterm
         );
       }
-      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-        if (oldbp.id !== businessPartner.id) {
-          if (
-            OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
-          ) {
-            const cbpartners = await OB.Discounts.Pos.getRemoteBusinessPartnersDiscounts(
-              businessPartner.id
-            );
-
-            OB.Discounts.Pos.manualRuleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
-              OB.Discounts.Pos.manualRuleImpls,
-              'cbpartners',
-              'businessPartner',
-              cbpartners
-            );
-
-            OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
-              OB.Discounts.Pos.ruleImpls,
-              'cbpartners',
-              'businessPartner',
-              cbpartners
-            );
-          }
+      if (
+        OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) &&
+        oldbp.id !== businessPartner.id &&
+        OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
+      ) {
+        let cbpartners;
+        if (OB.MobileApp.model.get('connectedToERP')) {
+          cbpartners = await OB.Discounts.Pos.getRemoteBusinessPartnersDiscounts(
+            businessPartner.id
+          );
+        } else {
+          cbpartners = [];
         }
+
+        OB.Discounts.Pos.manualRuleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
+          OB.Discounts.Pos.manualRuleImpls,
+          'cbpartners',
+          'businessPartner',
+          cbpartners
+        );
+
+        OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
+          OB.Discounts.Pos.ruleImpls,
+          'cbpartners',
+          'businessPartner',
+          cbpartners
+        );
       }
 
       var saveBP = function() {
