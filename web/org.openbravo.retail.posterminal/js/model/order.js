@@ -4679,16 +4679,17 @@
         );
       }
       if (
-        OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true) &&
+        OB.App.Security.hasPermission('OBPOS_remote.customer') &&
         oldbp.id !== businessPartner.id &&
-        OB.MobileApp.model.hasPermission('OBPOS_remote.discount.bp', true)
+        OB.App.Security.hasPermission('OBPOS_remote.discount.bp')
       ) {
         let cbpartners;
-        if (OB.MobileApp.model.get('connectedToERP')) {
+        try {
           cbpartners = await OB.Discounts.Pos.getRemoteBusinessPartnersDiscounts(
             businessPartner.id
           );
-        } else {
+        } catch (e) {
+          // if we have remote bp discounts and we are offline
           cbpartners = [];
         }
 
