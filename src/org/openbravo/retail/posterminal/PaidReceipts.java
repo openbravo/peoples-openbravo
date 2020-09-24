@@ -39,6 +39,7 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
@@ -51,6 +52,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.OrderLineOffer;
+import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.service.json.JsonConstants;
 
 public class PaidReceipts extends JSONProcessSimple {
@@ -376,6 +378,10 @@ public class PaidReceipts extends JSONProcessSimple {
             }
             paidReceiptLine.put("relatedLines", relatedLines);
           }
+
+          // Stock Reservation
+          paidReceiptLine.put("hasStockReservation",
+              checkStockReservationForLine(paidReceiptLine.getString("lineId")));
 
           listpaidReceiptsLines.put(paidReceiptLine);
         }
@@ -796,6 +802,21 @@ public class PaidReceipts extends JSONProcessSimple {
 
     } catch (final Exception e) {
       log.error("Error while checking order in ErrorEntry", e);
+    }
+    return hasRecord;
+  }
+
+  private boolean checkStockReservationForLine(String lineId) {
+    boolean hasRecord = false;
+    try {
+      String whereClause = " res where res.salesOrderLine.id = :lineId and res.rESStatus = 'CO'";
+      OBQuery<Reservation> query = OBDal.getInstance().createQuery(Reservation.class, whereClause);
+      query.setNamedParameter("lineId", lineId);
+      if (query.list().size() > 0) {
+        hasRecord = true;
+      }
+    } catch (final Exception e) {
+      log.error("Error while checking Stock Reservation", e);
     }
     return hasRecord;
   }

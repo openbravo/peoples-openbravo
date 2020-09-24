@@ -231,6 +231,19 @@ enyo.kind({
       );
       return;
     }
+    var reservationLines = _.find(
+      this.model.get('order').get('lines').models,
+      function(line) {
+        return line.get('hasStockReservation');
+      }
+    );
+    if (reservationLines) {
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_cannotCancelOrderHeader'),
+        OB.I18N.getLabel('OBPOS_cancelOrderWithReservation')
+      );
+      return;
+    }
 
     this.model.get('order').cancelLayaway(this);
   },
