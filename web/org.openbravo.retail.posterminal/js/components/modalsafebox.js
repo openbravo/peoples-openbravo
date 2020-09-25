@@ -107,6 +107,29 @@ enyo.kind({
         return;
       }
 
+      let paymentMethodCount = 0;
+      validSafeBox.paymentMethods.forEach(function(paymentMethod) {
+        for (let key in OB.MobileApp.model.paymentnames) {
+          const payment = OB.MobileApp.model.paymentnames[key];
+          if (
+            payment.paymentMethod.issafebox &&
+            payment.paymentMethod.paymentMethod ===
+              paymentMethod.paymentMethodId &&
+            payment.payment.financialAccount !==
+              paymentMethod.financialAccountId
+          ) {
+            paymentMethodCount++;
+          }
+        }
+      });
+      if (paymentMethodCount !== validSafeBox.paymentMethods.length) {
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBMOBC_Error'),
+          OB.I18N.getLabel('OBPOS_PaymentMethodSafeBoxNotConfigured')
+        );
+        return;
+      }
+
       // At this point everything is ok, continue flow
       OB.UTIL.localStorage.setItem(
         'currentSafeBox',

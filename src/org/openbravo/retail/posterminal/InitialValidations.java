@@ -268,6 +268,18 @@ public class InitialValidations {
       throw new OBException("OBPOS_CashupErrorsMsg");
     }
 
+    if (posTerminal.getObposTerminaltype().isSafebox()) {
+      String whereclause = " as e where e.obposApplications=:terminal and e.paymentMethod.issafebox = true "
+          + "and e.active = true and e.paymentMethod.active = true ";
+      OBQuery<OBPOSAppPayment> querySafeBox = OBDal.getInstance()
+          .createQuery(OBPOSAppPayment.class, whereclause);
+      querySafeBox.setMaxResult(1);
+      querySafeBox.setNamedParameter("terminal", posTerminal);
+      if (querySafeBox.count() == 0) {
+        throw new JSONException("OBPOS_PaymentMethodSafeBoxNotDefined");
+      }
+    }
+
     for (CustomInitialValidation customInitialValidation : getCustomInitialValidations()) {
       customInitialValidation.validation(posTerminal);
     }
