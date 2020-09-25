@@ -258,13 +258,18 @@ BEGIN
         AND EXISTS (SELECT 1 FROM fin_payment_scheduledetail WHERE fin_payment_schedule_order = ps.fin_payment_schedule_id);
 
       IF (v_difference <> 0) THEN
-        --Get fin_payment_scheduledetail not related to payments nor invoices.
-        SELECT fin_payment_scheduledetail_id, amount
-          INTO v_finpaymentscheduledetailid, v_psd_amt
-        FROM fin_payment_scheduledetail
-        WHERE fin_payment_schedule_order = v_finpaymentscheduleid
-          AND fin_payment_schedule_invoice IS NULL
-          AND fin_payment_detail_id IS NULL;
+        BEGIN
+            --Get fin_payment_scheduledetail not related to payments nor invoices.
+            SELECT fin_payment_scheduledetail_id, amount
+              INTO v_finpaymentscheduledetailid, v_psd_amt
+            FROM fin_payment_scheduledetail
+            WHERE fin_payment_schedule_order = v_finpaymentscheduleid
+              AND fin_payment_schedule_invoice IS NULL
+              AND fin_payment_detail_id IS NULL;
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+            v_finpaymentscheduledetailid := NULL;
+            v_psd_amt := 0;
+        END;
         IF (v_finpaymentscheduledetailid IS NOT NULL) THEN
           --If exists a psd not related to any invoice nor invoice update its amount with the difference.
           IF (v_psd_amt * -1 = v_difference) THEN
