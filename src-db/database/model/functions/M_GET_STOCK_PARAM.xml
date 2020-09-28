@@ -397,6 +397,26 @@ BEGIN
         p_AttributesetinstanceID, NULL, NULL, NULL, NULL, NULL, NULL);
       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Quantity',
         NULL, NULL, p_Quantity, NULL, NULL, NULL, NULL);
+      AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Priority_Warehouse_ID',
+        v_PriorityWarehouseID, NULL, NULL, NULL, NULL, NULL, NULL);
+      AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'M_Warehouse_Rule_ID',
+        v_warehouse_rule_id, NULL, NULL, NULL, NULL, NULL, NULL);
+	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'TableId',
+	    v_TableID, NULL, NULL, NULL, NULL, NULL);
+	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AuxID',
+	    v_AuxID, NULL, NULL, NULL, NULL, NULL);
+	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'LineNo',
+	    NULL, NULL, v_LineNo, NULL, NULL, NULL);
+	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'M_Reservation_ID',
+	    v_reservation_id, NULL, NULL, NULL, NULL, NULL);
+	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Available',
+	    v_avail, NULL, NULL, NULL, NULL, NULL);
+	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Nettable',
+	    v_nett, NULL, NULL, NULL, NULL, NULL);
+	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'OverIssue',
+	    v_overissue, NULL, NULL, NULL, NULL, NULL);
+      AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'ProcessID',
+        v_ProcessID, NULL, NULL, NULL, NULL, NULL, NULL);
       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
         NULL, NULL, NULL, NULL, NULL, NULL, v_Message);
       AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
