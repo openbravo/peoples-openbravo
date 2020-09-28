@@ -18,6 +18,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -28,6 +29,8 @@ import org.hibernate.query.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
 import org.openbravo.mobile.core.model.HQLPropertyList;
@@ -123,6 +126,8 @@ public class ProductCharacteristicValue extends MasterDataProcessHQLQuery {
   private String getProductCharacteristicValueHqlString(
       final HQLPropertyList regularProductsCharacteristicHQLProperties,
       final boolean filterProductList, final Long lastUpdated, final boolean isCrossStoreSearch) {
+    final boolean filterWithProductEntities = getPreference(
+        "OBPOS_FilterProductByEntitiesOnRefresh");
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(regularProductsCharacteristicHQLProperties.getHqlSelect());
@@ -151,14 +156,32 @@ public class ProductCharacteristicValue extends MasterDataProcessHQLQuery {
         query.append(" and pcv.$incrementalUpdateCriteria");
         query.append(" and characteristic.$incrementalUpdateCriteria");
         query.append(" and characteristicValue.$incrementalUpdateCriteria)");
-      } else {
+      } else if (filterWithProductEntities) {
         query.append(" and (opp.$incrementalUpdateCriteria");
         query.append(" or product.$incrementalUpdateCriteria)");
+      } else {
+        query.append(" and product.$incrementalUpdateCriteria");
       }
     }
     query.append(" and pcv.$paginationByIdCriteria ");
     query.append(" order by pcv.id");
     return query.toString();
+  }
+
+  private boolean getPreference(final String preference) {
+    OBContext.setAdminMode(false);
+    boolean value;
+    try {
+      value = StringUtils.equals(Preferences.getPreferenceValue(preference, true,
+          OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null), "Y");
+    } catch (PropertyException e) {
+      value = false;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    return value;
   }
 
   private Date getTerminalDate(final JSONObject jsonsent) throws JSONException {
