@@ -678,7 +678,8 @@
         OB.UTIL.HookManager.executeHooks(
           'OBPOS_PreOrderSave',
           {
-            receipt: receiptForPreOrderSave
+            receipt: receiptForPreOrderSave,
+            model: OB.MobileApp.model
           },
           function(args) {
             if (args && args.cancellation) {
