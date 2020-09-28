@@ -629,9 +629,6 @@
       }
 
       if (productBOM.find(bomLine => !bomLine.bomprice)) {
-        OB.error(
-          `A BOM product related with product ${productId} has no price`
-        );
         throw new OB.App.Class.ActionCanceled({
           errorConfirmation: 'OBPOS_BOM_NoPrice'
         });
@@ -899,7 +896,7 @@
         pi.product.productCategory
       );
       if (data.exception) {
-        OB.error('Error getting related services information');
+        // Error getting related services information
         return pi;
       }
 

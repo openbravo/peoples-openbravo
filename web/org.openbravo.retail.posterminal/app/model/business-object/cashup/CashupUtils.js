@@ -152,7 +152,7 @@
       });
 
       if (!converter.length === 0) {
-        OB.error(
+        throw new Error(
           `Currency converter not added: ${fromCurrencyId} -> ${defaultCurrencyId}`
         );
       }
@@ -185,7 +185,7 @@
       });
 
       if (!converter.length === 0) {
-        OB.error(
+        throw new Error(
           `Currency converter not added: ${toCurrencyId} -> ${defaultCurrencyId}`
         );
       }
