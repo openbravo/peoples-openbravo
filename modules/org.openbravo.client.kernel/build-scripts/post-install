@@ -16,7 +16,7 @@
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
-CORE_2_SCRIPT_PATH=modules/org.openbravo.core2/build-scripts/clean-package-lock.js
+CORE_2_SCRIPT_PATH=modules/org.openbravo.core2/web-jspack/org.openbravo.core2/src/build-scripts/PackageLockJsonCleanerLauncher.js
 if [ "$NODE_ENV" = 'production' ]; then
   lerna bootstrap --no-ci --hoist
 else 
