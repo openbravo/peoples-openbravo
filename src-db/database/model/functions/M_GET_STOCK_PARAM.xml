@@ -416,7 +416,7 @@ BEGIN
 	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'OverIssue',
 	    v_overissue, NULL, NULL, NULL, NULL, NULL);
       AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'ProcessID',
-        v_ProcessID, NULL, NULL, NULL, NULL, NULL, NULL);
+        v_ProcessID, NULL, NULL, NULL, NULL, NULL);
       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
         NULL, NULL, NULL, NULL, NULL, NULL, v_Message);
       AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
