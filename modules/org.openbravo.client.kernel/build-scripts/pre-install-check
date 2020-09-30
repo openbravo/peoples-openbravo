@@ -15,7 +15,6 @@
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
-if [[ "$NODE_ENV" != 'production' && "$NODE_ENV" != 'development' ]]; then
-  echo "Do not execute npm install, execute npm run install-prod or npm run install-dev instead"
-  exit 1
-fi
+echo "Do not execute npm install, execute npm run install-prod or npm run install-dev instead"
+exit 1
+

@@ -11,10 +11,10 @@
   "scripts": {
     "preinstall": "$npm_package_config_preinstallcheck",
     "preinstall-prod": "NODE_ENV=production $npm_package_config_preinstall",
-    "install-prod": "NODE_ENV=production npm install",
+    "install-prod": "npx lerna bootstrap --no-ci --hoist",
     "postinstall-prod": "NODE_ENV=production $npm_package_config_postinstall",
     "preinstall-dev": "NODE_ENV=development $npm_package_config_preinstall",
-    "install-dev": "NODE_ENV=development npm install",
+    "install-dev": "npx lerna bootstrap --no-ci",
     "postinstall-dev": "NODE_ENV=development $npm_package_config_postinstall",
     "test": "jest",
     "coverage": "jest --coverage",
