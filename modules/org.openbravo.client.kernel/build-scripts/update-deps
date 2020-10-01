@@ -34,7 +34,7 @@ if [ ! -d "modules/$npm_config_module/web-jspack/$npm_config_module/" ]; then
     exit 1
 fi
 echo "Creating package.log"
-node $CREATE_PACKAGE_JSON_SCRIPT_PATH --no-include-module-dependencies
+node $CREATE_PACKAGE_JSON_SCRIPT_PATH --skip-module-dependencies
 echo "Executing npm install"
 cd "modules/$npm_config_module/web-jspack/$npm_config_module/"
 npm install
