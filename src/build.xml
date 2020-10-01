@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2005-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2005-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -592,17 +592,11 @@ build.war: build a war file in the lib directory.
   <target name="compile" depends="wad,compileSqlc, postsrc, translate">
   </target>
 
-  <!-- Note (see issue 15709 for details):
-       orphan jarfiles are not deleted from the webapp as deployed in tomcat when
-       this rebuild is running inside the rebuild UI (started from MMC). See also the related
-       copy.files.jarsync(.do) task which does this deletion between tomcat stop & start
-   -->
-  <target name="copy.files" depends="copy.files.jarsync.notinrebuildui" if="mode.class">
+  <target name="copy.files" if="mode.class">
     <mkdir dir="${jakarta.base}/webapps/${context.name}" />
     <sync todir="${jakarta.base}/webapps/${context.name}">
       <preserveintarget>
         <include name="**/WEB-INF/classes/**"/>
-        <include name="**/WEB-INF/lib/**"/>
       </preserveintarget>
       <fileset dir="${base.context}" />
     </sync>
@@ -610,22 +604,8 @@ build.war: build a war file in the lib directory.
     <sync todir="${jakarta.base}/webapps/${context.name}/WEB-INF/classes">
       <fileset dir="${build}" />
     </sync>
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
-      <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8">
-    </copy>
-  </target>
-
-  <target name="copy.files.jarsync.notinrebuildui" unless="runningInRebuildUI">
-    <antcall target="copy.files.jarsync.do"/>
-  </target>
-
-  <!-- sync jar files from WebContent -> deployed webapp & delete orphan jars from webapp
-       as delete orphan is excluded from normal copy.files task -->
-  <target name="copy.files.jarsync.do" if="mode.class">
-    <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib"/>
-    <sync todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib">
-      <fileset dir="${base.context}/WEB-INF/lib" />
-    </sync>
+    
+  	<copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8"/>
   </target>
 
   <target name="compile.development" depends="generate.entities, compile, copy.files">

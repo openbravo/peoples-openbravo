@@ -413,13 +413,6 @@ export.database: exports database structure and data to xml files.
     <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8" />
   </target>
 
-  <!-- Only needed in special cases. See issue 15709 for details.
-       This task (if deploy.mode=class) does sync jar-files from WebContent -> deployed webapp (& delete orphan jars)
-  -->
-  <target name="copy.files.jarsync" depends="init" if="mode.class">
-    <ant dir="${base.src}" target="copy.files.jarsync.do" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="build.deploy.war" if="mode.war">
     <antcall target="war" />
   </target>
