@@ -86,7 +86,6 @@ public class TranslationManager {
   static final String XML_VALUE_ATTRIBUTE_ISTRL = "isTrl";
 
   public static final String CONTRIBUTORS_FILENAME = "CONTRIBUTORS";
-  public static final String BUILD_FILENAME = "buildStructureTrl";
   static final String XML_CONTRIB = "Contributors";
 
   private static final Logger log4j = LogManager.getLogger();
