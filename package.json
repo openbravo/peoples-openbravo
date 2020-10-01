@@ -4,18 +4,15 @@
   "description": "This contains some utilities used to format and lint Javascript code",
   "private": true,
   "config": {
-    "preinstallcheck": "modules/org.openbravo.client.kernel/build-scripts/pre-install-check",
     "preinstall": "modules/org.openbravo.client.kernel/build-scripts/pre-install",
-    "postinstall": "modules/org.openbravo.client.kernel/build-scripts/post-install"
+    "postinstall": "modules/org.openbravo.client.kernel/build-scripts/post-install",
+    "updatedeps": "modules/org.openbravo.client.kernel/build-scripts/update-deps"
   },
   "scripts": {
-    "preinstall": "$npm_package_config_preinstallcheck",
-    "preinstall-prod": "NODE_ENV=production $npm_package_config_preinstall",
-    "install-prod": "npx lerna bootstrap --no-ci --hoist",
-    "postinstall-prod": "NODE_ENV=production $npm_package_config_postinstall",
-    "preinstall-dev": "NODE_ENV=development $npm_package_config_preinstall",
-    "install-dev": "npx lerna bootstrap --no-ci",
-    "postinstall-dev": "NODE_ENV=development $npm_package_config_postinstall",
+    "preinstall": "$npm_package_config_preinstall",
+    "install": "npx lerna bootstrap --no-ci --hoist",
+    "postinstall": "$npm_package_config_postinstall",
+    "update-dependencies": "$npm_package_config_updatedeps",
     "test": "jest",
     "coverage": "jest --coverage",
     "jslint": "eslint --max-warnings 0",
