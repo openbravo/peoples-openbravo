@@ -459,5 +459,44 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     }
 
     return newTicket;
+  },
+
+  /**
+   * Fill all necessary payment properties
+   */
+  async fillPayment(ticket, payload) {
+    let newPayload = { ...payload };
+    let paymentInfo = newPayload.payments.find(
+      payments => payments.payment.searchKey === newPayload.payment.kind
+    );
+    let newPayment = { ...payload.payment };
+    newPayment.allowOpenDrawer = newPayment.allowOpenDrawer
+      ? newPayment.allowOpenDrawer
+      : paymentInfo.paymentMethod.allowopendrawer;
+    newPayment.date = newPayment.date ? newPayment.date : null;
+    newPayment.isCash = newPayment.isCash
+      ? newPayment.isCash
+      : paymentInfo.paymentMethod.iscash;
+    newPayment.isocode = newPayment.isocode
+      ? newPayment.isocode
+      : paymentInfo.isocode;
+    newPayment.mulrate = newPayment.mulrate
+      ? newPayment.mulrate
+      : paymentInfo.mulrate;
+    newPayment.name = newPayment.name
+      ? newPayment.name
+      : paymentInfo.paymentMethod._identifier;
+    newPayment.openDrawer = newPayment.openDrawer
+      ? newPayment.openDrawer
+      : paymentInfo.paymentMethod.openDrawer;
+    newPayment.origAmount = newPayment.origAmount ? newPayment.origAmount : 0;
+    newPayment.paid = newPayment.paid ? newPayment.paid : 0;
+    newPayment.printtwice = newPayment.printtwice
+      ? newPayment.printtwice
+      : paymentInfo.paymentMethod.printtwice;
+    newPayment.rate = newPayment.rate ? newPayment.rate : paymentInfo.rate;
+
+    newPayload.payment = newPayment;
+    return newPayload;
   }
 });

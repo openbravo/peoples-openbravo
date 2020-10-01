@@ -28,6 +28,19 @@
     newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, payload);
     return newTicket;
   });
+  OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
+    async (ticket, payload) => {
+      let newPayload = { ...payload };
+
+      newPayload = await OB.App.State.Ticket.Utils.fillPayment(
+        ticket,
+        newPayload
+      );
+      return newPayload;
+    },
+    async (ticket, payload) => payload,
+    0
+  );
 
   OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
     async (ticket, payload) => {
