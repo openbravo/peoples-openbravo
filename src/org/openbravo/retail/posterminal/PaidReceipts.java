@@ -812,6 +812,7 @@ public class PaidReceipts extends JSONProcessSimple {
       String whereClause = " res where res.salesOrderLine.id = :lineId and res.rESStatus = 'CO'";
       OBQuery<Reservation> query = OBDal.getInstance().createQuery(Reservation.class, whereClause);
       query.setNamedParameter("lineId", lineId);
+      query.setFilterOnReadableOrganization(false);
       if (query.list().size() > 0) {
         hasRecord = true;
       }
