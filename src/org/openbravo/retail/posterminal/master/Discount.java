@@ -90,7 +90,9 @@ public class Discount extends MasterDataProcessHQLQuery {
 
     String hql = "from PricingAdjustment p ";
     hql += "where client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
-    hql += "AND ((p.$incrementalUpdateCriteria)) ";
+    if (addIncrementalUpdateFilter) {
+      hql += "AND ((p.$incrementalUpdateCriteria)) ";
+    }
 
     boolean multiPrices = false;
     try {
