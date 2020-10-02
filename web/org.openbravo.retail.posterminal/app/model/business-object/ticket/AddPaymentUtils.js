@@ -465,11 +465,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Fill all necessary payment properties
    */
   async fillPayment(ticket, payload) {
-    let newPayload = { ...payload };
-    let paymentInfo = newPayload.payments.find(
+    const newPayload = { ...payload };
+    const paymentInfo = newPayload.payments.find(
       payments => payments.payment.searchKey === newPayload.payment.kind
     );
-    let newPayment = { ...payload.payment };
+    const newPayment = { ...payload.payment };
     newPayment.allowOpenDrawer = newPayment.allowOpenDrawer
       ? newPayment.allowOpenDrawer
       : paymentInfo.paymentMethod.allowopendrawer;
@@ -485,7 +485,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       : paymentInfo.mulrate;
     newPayment.name = newPayment.name
       ? newPayment.name
-      : paymentInfo.paymentMethod._identifier;
+      : // eslint-disable-next-line no-underscore-dangle
+        paymentInfo.paymentMethod._identifier;
     newPayment.openDrawer = newPayment.openDrawer
       ? newPayment.openDrawer
       : paymentInfo.paymentMethod.openDrawer;
