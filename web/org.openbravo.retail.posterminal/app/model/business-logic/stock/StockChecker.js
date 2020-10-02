@@ -25,6 +25,9 @@
      */
     // eslint-disable-next-line class-methods-use-this
     async hasStock(product, qty, settings = {}) {
+      if (!OB.OBPOSPointOfSale) {
+        return true;
+      }
       try {
         const hasStock = await OB.OBPOSPointOfSale.StockChecker.checkLineStock(
           product,
