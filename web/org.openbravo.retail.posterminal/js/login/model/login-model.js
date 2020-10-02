@@ -543,6 +543,7 @@
           cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
         })
           .then(() => {
+            OB.App.State.Cashup.Utils.createMissingStatisticsIncludedInCashup();
             onInitCashupSucess();
           })
           .catch(e => {

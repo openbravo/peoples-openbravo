@@ -775,7 +775,8 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
               closeCashupInfo: JSON.parse(cashUp.at(0).get('objToSend')),
               terminalName: OB.MobileApp.model.get('logConfiguration')
                 .deviceIdentifier,
-              cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId')
+              cacheSessionId: OB.UTIL.localStorage.getItem('cacheSessionId'),
+              statisticsToIncludeInCashup: OB.App.State.Cashup.Utils.getStatisticsToIncludeInCashup()
             },
             newCashupParams: {
               currentDate: new Date(),
@@ -787,6 +788,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
             }
           })
             .then(() => {
+              OB.App.State.Cashup.Utils.resetStatisticsIncludedInCashup();
               OB.MobileApp.model.setSynchronizedPreference(
                 synchronizedPreferenceValue
               );

@@ -29,7 +29,8 @@
       const {
         closeCashupInfo,
         terminalName,
-        cacheSessionId
+        cacheSessionId,
+        statisticsToIncludeInCashup
       } = payload.completedCashupParams;
 
       let newCashup = {};
@@ -54,7 +55,9 @@
         id: OB.App.UUID.generate(),
         terminal: terminalName,
         cacheSessionId,
-        data: [{ ...oldCashup, ...closeCashupInfo }]
+        data: [
+          { ...oldCashup, ...closeCashupInfo, ...statisticsToIncludeInCashup }
+        ]
       };
       const newMessage = OB.App.State.Messages.Utils.createNewMessage(
         'Cash Up',
@@ -64,8 +67,6 @@
       newState.Messages = [...newState.Messages, newMessage];
 
       // initialize the new cashup
-
-      OB.App.State.Cashup.Utils.resetStatistics();
 
       newCashup = OB.App.State.Cashup.Utils.createNewCashupFromScratch({
         newCashup,

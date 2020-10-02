@@ -50,8 +50,6 @@
         // init from backend
         const { currentCashupFromBackend } = payload;
 
-        OB.App.State.Cashup.Utils.resetStatistics();
-
         newCashup = OB.App.State.Cashup.Utils.createNewCashupFromBackend({
           cashup,
           currentCashupFromBackend
@@ -72,8 +70,6 @@
       } else if (initCashupFrom === 'scratch') {
         // init from scratch
         const { currentDate, userId, organization, terminalId } = payload;
-
-        OB.App.State.Cashup.Utils.resetStatistics();
 
         newCashup = OB.App.State.Cashup.Utils.createNewCashupFromScratch({
           cashup,

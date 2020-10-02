@@ -89,6 +89,7 @@
       fieldSeparator: OB.Constants.FIELDSEPARATOR,
       identifierSuffix: OB.Constants.IDENTIFIER
     };
+    newPayload.statisticsToIncludeInCashup = OB.App.State.Cashup.Utils.getStatisticsToIncludeInCashup();
 
     return newPayload;
   };

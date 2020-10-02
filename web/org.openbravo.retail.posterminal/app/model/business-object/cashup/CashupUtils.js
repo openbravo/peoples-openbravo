@@ -44,15 +44,6 @@
       return response.response;
     },
 
-    resetStatistics() {
-      // TODO: modify state instead run methods
-      // TODO !!!!!!!!!!!
-      // OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
-      // OB.UTIL.resetNetworkInformation();
-      // OB.UTIL.resetNumberOfLogClientErrors();
-      // TODO !!!!!!!!!!!
-    },
-
     getTaxesFromBackendObject(backendTaxes) {
       const taxes = [];
       backendTaxes.forEach(backendTax => {
@@ -113,10 +104,74 @@
       return newCashup;
     },
 
-    getCashupFilteredForSendToBackendInEachTicket(payload) {
-      const { terminalPayments, cashup } = payload;
+    resetStatisticsIncludedInCashup() {
+      OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
 
-      const cashupToSend = { ...cashup };
+      OB.UTIL.localStorage.setItem('logclientErrors', 0);
+
+      OB.UTIL.localStorage.setItem('totalLatencyTime', 0);
+      OB.UTIL.localStorage.setItem('totalLatencyMeasures', 0);
+      OB.UTIL.localStorage.setItem('totalUploadBandwidth', 0);
+      OB.UTIL.localStorage.setItem('totalUploadMeasures', 0);
+      OB.UTIL.localStorage.setItem('totalDownloadBandwidth', 0);
+      OB.UTIL.localStorage.setItem('totalDownloadMeasures', 0);
+    },
+
+    createMissingStatisticsIncludedInCashup() {
+      // when doing initCashup:
+      // - from local: it will do nothing
+      // - from backend: it will create the varaibles
+      // - from scratch: it will create the variables
+      if (!OB.UTIL.localStorage.getItem('transitionsToOnline')) {
+        OB.UTIL.localStorage.setItem('transitionsToOnline', 0);
+      }
+
+      if (!OB.UTIL.localStorage.getItem('logclientErrors')) {
+        OB.UTIL.localStorage.setItem('logclientErrors', 0);
+      }
+
+      if (!OB.UTIL.localStorage.getItem('totalLatencyTime')) {
+        OB.UTIL.localStorage.setItem('totalLatencyTime', 0);
+      }
+      if (!OB.UTIL.localStorage.getItem('totalLatencyMeasures')) {
+        OB.UTIL.localStorage.setItem('totalLatencyMeasures', 0);
+      }
+      if (!OB.UTIL.localStorage.getItem('totalUploadBandwidth')) {
+        OB.UTIL.localStorage.setItem('totalUploadBandwidth', 0);
+      }
+      if (!OB.UTIL.localStorage.getItem('totalUploadMeasures')) {
+        OB.UTIL.localStorage.setItem('totalUploadMeasures', 0);
+      }
+      if (!OB.UTIL.localStorage.getItem('totalDownloadBandwidth')) {
+        OB.UTIL.localStorage.setItem('totalDownloadBandwidth', 0);
+      }
+      if (!OB.UTIL.localStorage.getItem('totalDownloadMeasures')) {
+        OB.UTIL.localStorage.setItem('totalDownloadMeasures', 0);
+      }
+    },
+
+    getStatisticsToIncludeInCashup() {
+      return {
+        transitionsToOnline: OB.UTIL.localStorage.getItem(
+          'transitionsToOnline'
+        ),
+        logclientErrors: OB.UTIL.localStorage.getItem('logclientErrors'),
+        averageLatency:
+          parseInt(OB.UTIL.localStorage.getItem('totalLatencyTime'), 10) /
+          parseInt(OB.UTIL.localStorage.getItem('totalLatencyMeasures'), 10),
+        averageUploadBandwidth:
+          parseInt(OB.UTIL.localStorage.getItem('totalUploadBandwidth'), 10) /
+          parseInt(OB.UTIL.localStorage.getItem('totalUploadMeasures'), 10),
+        averageDownloadBandwidth:
+          parseInt(OB.UTIL.localStorage.getItem('totalDownloadBandwidth'), 10) /
+          parseInt(OB.UTIL.localStorage.getItem('totalDownloadMeasures'), 10)
+      };
+    },
+
+    getCashupFilteredForSendToBackendInEachTicket(payload) {
+      const { terminalPayments, cashup, statisticsToIncludeInCashup } = payload;
+
+      const cashupToSend = { ...cashup, ...statisticsToIncludeInCashup };
       const cashupPayments = cashupToSend.cashPaymentMethodInfo;
 
       cashupToSend.cashPaymentMethodInfo = OB.App.State.Cashup.Utils.getCashupPaymentsThatAreAlsoInTerminalPayments(
@@ -425,7 +480,8 @@
         cashUpReportInformation: OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
           {
             cashup: newCashup,
-            terminalPayments: payload.payments
+            terminalPayments: payload.payments,
+            statisticsToIncludeInCashup: payload.statisticsToIncludeInCashup
           }
         )
       };
