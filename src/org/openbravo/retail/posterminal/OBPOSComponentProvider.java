@@ -395,7 +395,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/cashup/actions/CreateCashManagement"), //
         businesslogic("app/model/business-object/cashup/actions/InitCashup"), //
         businesslogic("app/model/business-object/cashup/actions/ProcessCashManagements"), //
-        businesslogic("app/model/business-object/cashup/actions/UpdateCashup"), //
 
         // ticket list model
         businesslogic("app/model/business-object/ticket-list/TicketList"), //
