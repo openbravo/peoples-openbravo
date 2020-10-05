@@ -327,11 +327,14 @@ export.database: exports database structure and data to xml files.
   <target name="init">
     <fail if="root.user" message="Don't run ant tasks with the root user" />
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
-    <fail message="Unsupported Java version ${ant.java.version}. Minimum required is 8 (1.8).">
+    <fail message="Unsupported Java version ${ant.java.version}. Minimum required is 11.">
       <condition>
         <or>
           <equals arg1="${ant.java.version}" arg2="1.6"/>
           <equals arg1="${ant.java.version}" arg2="1.7"/>
+          <equals arg1="${ant.java.version}" arg2="1.8"/>
+          <equals arg1="${ant.java.version}" arg2="9"/>
+          <equals arg1="${ant.java.version}" arg2="10"/>
         </or>
       </condition>
     </fail>
