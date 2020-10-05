@@ -416,7 +416,7 @@ enyo.kind({
     function errorCallback(tx, error) {
       if (!OB.MobileApp.model.get('connectedToERP')) {
         OB.UTIL.showConfirmation.display(
-          'Error',
+          OB.I18N.getLabel('OBMOBC_Error'),
           OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable')
         );
         me.$.renderLoading.hide();

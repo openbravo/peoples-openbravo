@@ -139,7 +139,7 @@
               //Common error (not a random caught exception).
               // We might need to logout and login again to fix this.
               OB.UTIL.showConfirmation.display(
-                'Error',
+                OB.I18N.getLabel('OBMOBC_Error'),
                 OB.I18N.getLabel('OBPOS_errorLoadingTerminal') + ' ' + message,
                 [
                   {
@@ -174,7 +174,7 @@
                 } else if (data[0]) {
                   var showTerminalModalError = function(errorMessage) {
                     OB.UTIL.showConfirmation.display(
-                      'Error',
+                      OB.I18N.getLabel('OBMOBC_Error'),
                       OB.I18N.getLabel('OBPOS_errorLoadingTerminal') +
                         ' ' +
                         errorMessage,
@@ -1398,7 +1398,7 @@
               ? OB.I18N.getLabel(inResponse.exception)
               : inResponse.response.error.message;
             OB.UTIL.showConfirmation.display(
-              'Error',
+              OB.I18N.getLabel('OBMOBC_Error'),
               msg,
               [
                 {

@@ -967,7 +967,7 @@ enyo.kind({
         !OB.MobileApp.model.get('connectedToERP')
       ) {
         OB.UTIL.showConfirmation.display(
-          'Error',
+          OB.I18N.getLabel('OBMOBC_Error'),
           OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable')
         );
       } else {
@@ -1316,7 +1316,7 @@ enyo.kind({
         !OB.MobileApp.model.get('connectedToERP')
       ) {
         OB.UTIL.showConfirmation.display(
-          'Error',
+          OB.I18N.getLabel('OBMOBC_Error'),
           OB.I18N.getLabel('OBMOBC_MsgApplicationServerNotAvailable')
         );
       } else {
