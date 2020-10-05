@@ -15,16 +15,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery;
 import org.openbravo.mobile.core.master.MasterDataProcessHQLQuery.MasterDataModel;
+import org.openbravo.mobile.core.model.HQLPropertyList;
+import org.openbravo.mobile.core.model.ModelExtension;
+import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -35,6 +43,12 @@ import org.openbravo.service.json.JsonUtils;
 public class Discount extends MasterDataProcessHQLQuery {
 
   public static final Logger log = LogManager.getLogger();
+  public static final String discountPropertyExtension = "OBPOS_DiscountExtension";
+
+  @Inject
+  @Any
+  @Qualifier(discountPropertyExtension)
+  private Instance<ModelExtension> extensions;
 
   @Override
   protected boolean isAdminMode() {
@@ -89,7 +103,7 @@ public class Discount extends MasterDataProcessHQLQuery {
     }
 
     String hql = "from PricingAdjustment p ";
-    hql += "where client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
+    hql += "where p.client.id = '" + OBContext.getOBContext().getCurrentClient().getId() + "' ";
     if (addIncrementalUpdateFilter) {
       hql += "AND ((p.$incrementalUpdateCriteria)) ";
     }
@@ -151,19 +165,21 @@ public class Discount extends MasterDataProcessHQLQuery {
 
     // organization
     hql += " and p.$naturalOrgCriteria";
-    hql += " and ((includedOrganizations='Y' ";
-    hql += "  and not exists (select 1 ";
-    hql += "         from PricingAdjustmentOrganization o";
-    hql += "        where active = true";
-    hql += "          and o.priceAdjustment = p";
-    hql += "          and o.organization.id ='" + orgId + "')) ";
-    hql += "   or (includedOrganizations='N' ";
-    hql += "  and  exists (select 1 ";
-    hql += "         from PricingAdjustmentOrganization o";
-    hql += "        where active = true";
-    hql += "          and o.priceAdjustment = p";
-    hql += "          and o.organization.id ='" + orgId + "')) ";
-    hql += "    ) ";
+    if (addIncrementalUpdateFilter == false) {
+      hql += " and ((p.includedOrganizations='Y' ";
+      hql += "  and not exists (select 1 ";
+      hql += "         from PricingAdjustmentOrganization o";
+      hql += "        where active = true";
+      hql += "          and o.priceAdjustment = p";
+      hql += "          and o.organization.id ='" + orgId + "')) ";
+      hql += "   or (p.includedOrganizations='N' ";
+      hql += "  and  exists (select 1 ";
+      hql += "         from PricingAdjustmentOrganization o";
+      hql += "        where active = true";
+      hql += "          and o.priceAdjustment = p";
+      hql += "          and o.organization.id ='" + orgId + "')) ";
+      hql += "    ) ";
+    }
 
     // Rules with currency can be only applied if the price list has the same currency
     try {
@@ -212,7 +228,9 @@ public class Discount extends MasterDataProcessHQLQuery {
   }
 
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
-    return Arrays.asList(getPromotionsHQL(jsonsent, true) + "order by priority, id");
+    HQLPropertyList discountHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
+    return Arrays.asList("select" + discountHQLProperties.getHqlSelect()
+        + getPromotionsHQL(jsonsent, true) + "order by priority, id");
   }
 
   @Override
