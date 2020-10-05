@@ -21,10 +21,12 @@ package org.openbravo.scheduling.trigger;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -35,7 +37,6 @@ import java.util.Properties;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -61,6 +62,7 @@ import org.quartz.JobListener;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerListener;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
@@ -72,8 +74,11 @@ public class MisfirePolicyTest extends OBBaseTest {
   private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter
       .ofPattern("dd-MM-yyyy HH:mm:ss");
 
+  // Maximum wait time in milliseconds for a job to be scheduled and a trigger to be misfired
+  private static final Integer MAX_WAIT_MS = 10000;
   private Scheduler scheduler;
-  private TestProcessMonitor monitor;
+  private TestProcessMonitor processMonitor;
+  private TestTriggerMonitor triggerMonitor;
 
   private Properties properties;
 
@@ -132,8 +137,10 @@ public class MisfirePolicyTest extends OBBaseTest {
   @Before
   public void startScheduler() throws SchedulerException {
     scheduler = new StdSchedulerFactory(properties).getScheduler();
-    monitor = new TestProcessMonitor();
-    scheduler.getListenerManager().addJobListener(monitor);
+    processMonitor = new TestProcessMonitor();
+    triggerMonitor = new TestTriggerMonitor();
+    scheduler.getListenerManager().addJobListener(processMonitor);
+    scheduler.getListenerManager().addTriggerListener(triggerMonitor);
     scheduler.start();
   }
 
@@ -149,7 +156,6 @@ public class MisfirePolicyTest extends OBBaseTest {
    */
   @Test
   @Issue("23767")
-  @Ignore("Ignore because of unstable behaviour when clustered")
   public void checkMisfirePolicy() throws SchedulerException, InterruptedException {
     TriggerData data = new TriggerData();
     data.timingOption = TimingOption.SCHEDULED.getLabel();
@@ -172,17 +178,21 @@ public class MisfirePolicyTest extends OBBaseTest {
     Trigger trigger = TriggerProvider.getInstance().createTrigger(name, bundle, data);
     scheduleJob(name, trigger, bundle);
 
-    // give some little time to ensure that job is not executed (1 second for MisfireHandler)
-    Thread.sleep(1000);
+    // wait for the Misfire handler to detect a misfire
+    waitUntilMisfiredJob(name);
+    assertTrue("Trigger should have been misfired", triggerMonitor.hasMisfiredJob(name));
 
-    assertThat("Job not executed on misfire", monitor.getJobExecutions(name), equalTo(0));
+    // Wait to make sure job is not executed
+    Thread.sleep(500);
+    assertThat("Job should have been executed on misfire", processMonitor.getJobExecutions(name),
+        equalTo(0));
     assertThat("Next regular execution time", trigger.getFireTimeAfter(startDate),
         is(nextExecutionDate));
   }
 
   @Test
   public void checkMisfirePolicyWithSecondlySchedule()
-      throws SchedulerException, InterruptedException {
+      throws InterruptedException, SchedulerException {
     TriggerData data = new TriggerData();
     data.timingOption = TimingOption.SCHEDULED.getLabel();
     data.frequency = Frequency.SECONDLY.getLabel();
@@ -194,10 +204,13 @@ public class MisfirePolicyTest extends OBBaseTest {
     String name = SequenceIdData.getUUID();
     scheduleJob(name, data);
 
-    // wait for the job executions (1 second for MisfireHandler + 2 seconds for executions)
-    Thread.sleep(3000L);
+    waitUntilMisfiredJob(name);
+    assertTrue("Trigger should have been misfired", triggerMonitor.hasMisfiredJob(name));
 
-    assertThat("Expected number of job executions", monitor.getJobExecutions(name), equalTo(2));
+    // wait for the 2 job executions (2.5 seconds for executions)
+    Thread.sleep(2500);
+    assertThat("Expected number of job executions", processMonitor.getJobExecutions(name),
+        equalTo(2));
   }
 
   /**
@@ -217,22 +230,60 @@ public class MisfirePolicyTest extends OBBaseTest {
     String name = SequenceIdData.getUUID();
     scheduleJob(name, data);
 
-    // give some little time to ensure that job is not executed (1 second for MisfireHandler)
-    Thread.sleep(1000);
+    // wait until the job has misfired
+    waitUntilMisfiredJob(name);
+    assertTrue("Trigger should have been misfired", triggerMonitor.hasMisfiredJob(name));
 
-    assertThat("Job not executed on misfire", monitor.getJobExecutions(name), equalTo(0));
+    // Wait to make sure the job is not executed
+    Thread.sleep(500);
+
+    assertThat("Job should have been executed on misfire", processMonitor.getJobExecutions(name),
+        equalTo(0));
   }
 
-  private void scheduleJob(String name, TriggerData data) throws SchedulerException {
+  private void scheduleJob(String name, TriggerData data)
+      throws InterruptedException, SchedulerException {
     ProcessBundle bundle = getProcessBundle();
     Trigger trigger = TriggerProvider.getInstance().createTrigger(name, bundle, data);
     scheduleJob(name, trigger, bundle);
   }
 
+  /**
+   * Method that will schedule a Job, it will fail silently, retrying to schedule the job every
+   * second until MAX_WAIT_MS is surpassed, this is done because of concurrency, as if several
+   * clustered tests are run simultaneously, those will generate an exception on some trigger lock
+   * that is avoided here.
+   * 
+   * @param name
+   *          Name of the job to schedule (e.g. job UUID)
+   * @param trigger
+   *          Trigger that will be used to trigger the job
+   * @param bundle
+   *          ProcessBundle information containing job schedule
+   * @throws InterruptedException
+   *           When Thread.sleep is interrupted
+   */
   private void scheduleJob(String name, Trigger trigger, ProcessBundle bundle)
-      throws SchedulerException {
-    JobDetail jd = JobDetailProvider.getInstance().createJobDetail(name, bundle);
-    scheduler.scheduleJob(jd, trigger);
+      throws InterruptedException, SchedulerException {
+    int timeElapsed = 0;
+    boolean hasBeenScheduled = false;
+    SchedulerException lastThrownException = null;
+    while (timeElapsed < MAX_WAIT_MS && !hasBeenScheduled) {
+      try {
+        JobDetail jd = JobDetailProvider.getInstance().createJobDetail(name, bundle);
+        scheduler.scheduleJob(jd, trigger);
+        hasBeenScheduled = true;
+      } catch (SchedulerException e) {
+        lastThrownException = e;
+        // Wait a second and try to schedule the job again
+        Thread.sleep(1000);
+        timeElapsed += 1000;
+      }
+    }
+    if (!hasBeenScheduled) {
+      // The job couldn't be scheduled successfully, as such, an exception is thrown
+      throw new SchedulerException(lastThrownException);
+    }
   }
 
   private ProcessBundle getProcessBundle() {
@@ -247,6 +298,21 @@ public class MisfirePolicyTest extends OBBaseTest {
     bundle.setLog(new ProcessLogger(conn));
 
     return bundle;
+  }
+
+  /**
+   * Utility method that will wait until the job provided has correctly misfired or a maximum of
+   * MAX_WAIT_MS milliseconds
+   * 
+   * @param jobName
+   *          Name of the job to be checked for misfiring
+   */
+  private void waitUntilMisfiredJob(String jobName) throws InterruptedException {
+    int timeElapsed = 0;
+    while (!triggerMonitor.hasMisfiredJob(jobName) && timeElapsed < MAX_WAIT_MS) {
+      Thread.sleep(500);
+      timeElapsed += 500;
+    }
   }
 
   private Date dateOf(String executionDate) {
@@ -288,6 +354,46 @@ public class MisfirePolicyTest extends OBBaseTest {
 
     public int getJobExecutions(String name) {
       return jobExecutions.getOrDefault(name, 0);
+    }
+  }
+
+  private class TestTriggerMonitor implements TriggerListener {
+
+    private static final String NAME = "TestProcessMonitor";
+    private List<String> misfiredJobs;
+
+    public TestTriggerMonitor() {
+      misfiredJobs = new ArrayList<>();
+    }
+
+    @Override
+    public String getName() {
+      return NAME;
+    }
+
+    @Override
+    public void triggerFired(Trigger trigger, JobExecutionContext context) {
+      // NOOP
+    }
+
+    @Override
+    public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context) {
+      return false;
+    }
+
+    @Override
+    public void triggerMisfired(Trigger trigger) {
+      misfiredJobs.add(trigger.getJobKey().getName());
+    }
+
+    @Override
+    public void triggerComplete(Trigger trigger, JobExecutionContext context,
+        Trigger.CompletedExecutionInstruction triggerInstructionCode) {
+      // NOOP
+    }
+
+    public boolean hasMisfiredJob(String jobName) {
+      return misfiredJobs.contains(jobName);
     }
   }
 
