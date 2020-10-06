@@ -85,7 +85,6 @@ export.database: exports database structure and data to xml files.
   <property name="strict.template.application" value="false" />
   <property name="rd" value="false" />
   <property name="local" value="true" />
-  <property name="apply.modules.complete.compilation" value="false" />
   <property name="stopOnWadError" value="false"/>
   <property name="friendlyWarnings" value="false"/>
   <property name="checkTranslationConsistency" value="true"/>
@@ -664,24 +663,6 @@ export.database: exports database structure and data to xml files.
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
   </target>
-
-
-  <target name="apply.modules">
-
-    <condition property="apply.modules.complete.compilation.var">
-      <istrue value="${apply.modules.complete.compilation}"  />
-    </condition>
-    
-    <condition property="apply.modules.simple.compilation.var">
-      <isfalse value="${apply.modules.complete.compilation.var}" />
-    </condition>
-
-    <updatesystemstatus v="RB43"/>
-    <antcall target="apply.modules.compile"/>
-
-    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
-
-  </target>
   
   <target name="apply.module.forked">
     <!-- 
@@ -714,19 +695,6 @@ export.database: exports database structure and data to xml files.
       <classpath refid="apply.module.runtime.classpath" />
     </java>
    <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
-  </target>
-  
-  <target name="apply.modules.compile" depends="wad.lib">
-    <antcall target="apply.modules.compile.simple"/>
-    <antcall target="apply.modules.compile.complete"/>
-  </target>
-  
-  <target name="apply.modules.compile.simple" if="apply.modules.simple.compilation.var">
-    <antcall target="compile.deploy" />
-  </target>
-  
-  <target name="apply.modules.compile.complete" if="apply.modules.complete.compilation.var">
-     <antcall target="compile.complete.deploy" />
   </target>
   
   <target name="tomcat.list">
