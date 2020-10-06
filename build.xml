@@ -786,7 +786,26 @@ export.database: exports database structure and data to xml files.
   <target name="validate.wad">
     <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
   </target>
-  
+
+  <target name="UIrebuild">
+    <!-- UIrebuild task was used from MMC rebuild which is no longer supported since 21Q1. 
+         This task is kept to show an error message when updating from previous releases. -->
+    <updatesystemstatus v="RB70"/> 
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}"  autocommit="true">
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+          insert into ad_error_log
+             (ad_error_log_id,    ad_client_id,  ad_org_id,
+             createdby,           updatedby,     system_status,
+             error_level,         message,       line_number)
+          values 
+             (get_uuid(),         '0',           '0',
+             '0',                 '0',           'RB11',
+             'ERROR',             'UI rebuild is no longer supported',
+              (select coalesce(max(line_number), 0) + 1 from ad_error_log))
+       </sql>
+       <fail message="UI rebuild is no longer supported"/>
+  </target>
+
   <target name="check.module.consistency">
     <taskdef name="checkConsistency" classname="org.openbravo.erpCommon.modules.CheckLocalConsistency">
       <classpath refid="project.class.path" />
