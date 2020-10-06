@@ -101,7 +101,7 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
    * @throws NoSuchFileException
    *           when the source path directory is not valid
    */
-  private String getSourcePath() throws NoSuchFileException {
+  static String getSourcePath() throws NoSuchFileException {
     String userDir = System.getProperty("user.dir");
     Path sourcePath = Paths.get(userDir, "/../..").normalize();
 
