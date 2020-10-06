@@ -165,6 +165,8 @@ Under the BSD 3-Clause license (available at http://opensource.org/licenses/BSD-
 
 # js.jar
 # ob-rhino-1.6R7.jar
+# rhino-1.7.13.jar
+# rhino-engine-1.7.13.jar
 Under MPL/GPL License (available at https://developer.mozilla.org/en/Rhino_License)
 ob-rhino-1.6R7.jar is the same code as js.jar repackaged to be available under org.openbravo
 
