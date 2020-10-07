@@ -39,7 +39,7 @@ public class DatabaseVersionCheck extends BuildValidation {
   private final static String POSTGRES = "PostgreSQL";
   private final static String ORACLE = "Oracle";
   private final static String MIN_PG_VERSION = "10";
-  private final static String MIN_ORA_VERSION = "11.2";
+  private final static String MIN_ORA_VERSION = "19";
   private final static String[] WARNING_PG_VERSIONS = {};
   private final static String[] WARNING_ORA_VERSIONS = {};
 
