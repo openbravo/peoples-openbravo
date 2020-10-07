@@ -159,8 +159,8 @@
 									    	LEFT JOIN c_invoice i2 ON (fpsi2.c_invoice_id = i2.c_invoice_id)
  							WHERE  fpsd2.fin_payment_schedule_order = fpsd.fin_payment_schedule_order
 							       AND Trunc(fp3.paymentdate) <= TO_DATE(?)
-							       AND fp3.isreceipt = 'Y'
-							       AND 2=2
+							       AND fp3.isreceipt = ?
+							       AND 3=3
 							       AND fpsd2.isactive = 'Y'
 							       AND fpsd2.iscanceled = 'N'
 							       AND (fpsd2.fin_payment_schedule_invoice IS NULL
@@ -207,6 +207,9 @@
     <Parameter name="excludeReverseds" type="none" optional="true" after="AND 2=2" text=" AND (fp2.fin_rev_payment_id is null AND NOT EXISTS (SELECT 1 FROM fin_payment WHERE fin_rev_payment_id = fp2.fin_payment_id))"/>
     <Parameter name="asOfDate"/>
     <Parameter name="asOfDate"/>
+    <Parameter name="recOrPay"/>
+    <Parameter name="cbPartnerId" optional="true" type="argument" after="AND 3=3"><![CDATA[ AND fp3.C_BPARTNER_ID IN]]></Parameter>
+    <Parameter name="excludeReverseds" type="none" optional="true" after="AND 3=3" text=" AND (fp3.fin_rev_payment_id is null AND NOT EXISTS (SELECT 1 FROM fin_payment WHERE fin_rev_payment_id = fp3.fin_payment_id))"/>
     <Parameter name="asOfDate"/>
     <Parameter name="asOfDate"/>
     <Parameter name="paidStatus" type="replace" optional="true" after="OR ( fp1.status IN (" text="'1'"/>
