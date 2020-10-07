@@ -29,7 +29,7 @@ from an old release. See rebuilUI task in main build.xml.-->
         <errorMessage><![CDATA[
           <b>System rebuild from Module Manager Console is no longer supported</b><br/><br/>
           In order to complete the update, the system requires to be rebuilt from the command line. <br/> 
-          <a target="_blank" href="http://wiki.openbravo.com/wiki/Development_Build_Tasks">Learn how to do it</a>.
+          <a target="_blank" href="http://wiki.openbravo.com/wiki/Modules_Management#Rebuild">Learn how to do it</a>.
         ]]></errorMessage>
         <stepList/>
       </mainStep>
