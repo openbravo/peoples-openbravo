@@ -151,9 +151,6 @@ export.database: exports database structure and data to xml files.
       <isset property="env.CATALINA_BASE" />
     </and>
   </condition>
-  <property name="log.path" location="${jakarta.base}/logs" />
-  <property name="lib" location="${jakarta.home}/common" />
-  <property name="jakarta.context" location="${jakarta.base}/webapps/${context.name}" />
 
   <condition property="build.maxmemory" value="1024M" else="512M">
     <or>
