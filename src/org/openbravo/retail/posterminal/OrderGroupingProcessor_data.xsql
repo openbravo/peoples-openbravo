@@ -42,9 +42,8 @@
         and o.invoicerule = 'I'
         and o.em_obpos_app_cashup_id = ?
         and o.c_doctype_id in (org.em_obpos_c_doctype_id, org.em_obpos_c_doctyperet_id)
-        and not exists (select 1 from c_orderline ol2 where 
-        (ol2.qtyinvoiced <> 0 or (ol2.qtyordered = 0 and ol2.em_obpos_isdeleted = 'N')) 
-        and ol2.c_order_id = o.c_order_id)
+        and exists (select 1 from c_orderline ol2 where 
+        ol2.qtyinvoiced = 0 and ol2.em_obpos_isdeleted = 'N' and ol2.c_order_id = o.c_order_id)
         and o.em_obpos_notinvoiceoncashup = 'N'
         and (bp.c_paymentterm_id is null or bp.fin_paymentmethod_id is null)
         group by bp.c_bpartner_id, bp.c_paymentterm_id, bp.fin_paymentmethod_id order by bpname
@@ -77,7 +76,7 @@
         and o.c_doctype_id in (org.em_obpos_c_doctype_id, org.em_obpos_c_doctyperet_id)
         and o.em_obpos_islayaway = 'N'
         and o.invoicerule = 'I'
-        and not exists (select 1 from c_orderline ol2 where (ol2.qtyinvoiced <> 0 or (ol2.qtyordered = 0 and ol2.em_obpos_isdeleted = 'N')) and ol2.c_order_id = o.c_order_id)
+        and exists (select 1 from c_orderline ol2 where ol2.qtyinvoiced = 0 and ol2.em_obpos_isdeleted = 'N' and ol2.c_order_id = o.c_order_id)
         and o.em_obpos_notinvoiceoncashup = 'N'
         group by  o.ad_client_id, o.ad_org_id, o.ad_orgtrx_id, dt.c_doctypeaggrinvoice_id, dt.c_doctypeaggrinvoice_id,
         o.c_bpartner_id, coalesce(o.billto_id, o.c_bpartner_location_id), o.c_currency_id,
