@@ -254,11 +254,8 @@ Use Module Management to browse the currently installed modules, to check for up
 <h3><a name="history">Installation History</a></h3>
 <span>View the history of module installations/uninstallations and errors that may have occurred during these processes.</span>
 <h3><a name="history">System Rebuild</a></h3>
-<span>After installing or uninstalling a module, you must restart the application context for any changes to take effect.</span>
-<ul>
-<li><b><a name="restart">Restart server:</a></b> Restarts the application server and launches the login screen.</li>
-<li><b><a name="nothing">Take no action:</a></b> Select if you intend to restart the server or reload the application manually, later.</li>
-</ul></div>]]></HELP>
+<span>After installing or uninstalling a module, you must rebulid the application and restart the application context for any changes to take effect.</span>
+</div>]]></HELP>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.ModuleManagement]]></CLASSNAME>
 <!--25C886DA08E947F29AAC1D30D8B753A1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
