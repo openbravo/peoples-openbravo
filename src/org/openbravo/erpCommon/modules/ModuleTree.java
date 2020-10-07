@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2016 Openbravo SLU
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -159,8 +159,6 @@ public class ModuleTree extends GenericTree {
       return;
     }
 
-    String rebuildMsg = Utility.messageBD(conn, "RebuildRequired", lang);
-
     for (int i = 0; i < modules.length; i++) {
       if (!modules[i].updateAvailable.equals("")) {
         modules[i].linkname = Utility.messageBD(conn, "UpdateAvailable", lang);
@@ -168,6 +166,7 @@ public class ModuleTree extends GenericTree {
             + "'); return false;";
       }
       if (modules[i].status.equals("I") || modules[i].status.equals("P")) {
+        String rebuildMsg = Utility.messageBD(conn, "RebuildRequired", lang);
         String link = Utility.messageBD(conn, "ApplyModules", lang) + ", " + rebuildMsg;
         String click = "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 700, 900, null, null, null, null, true);return false;";
 
