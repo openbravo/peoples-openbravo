@@ -15,18 +15,16 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if we already paid the whole ticket
    */
   async checkAlreadyPaid(ticket, payload) {
-    const prePaymentAmount = _.reduce(
-      ticket.payments.filter(function prePaymentFilter(payment) {
+    const prePaymentAmount = ticket.payments
+      .filter(function prePaymentFilter(payment) {
         return payment.isPrePayment;
-      }),
-      function prePaymentReducer(memo, pymnt) {
+      })
+      .reduce((memo, pymnt) => {
         return OB.DEC.add(
           memo,
           OB.DEC.sub(pymnt.origAmount, pymnt.overpayment || 0)
         );
-      },
-      OB.DEC.Zero
-    );
+      }, OB.DEC.Zero);
     const isNewReversed =
       ticket.payments.find(function newReversedFind(payment) {
         return !payment.isPrePayment && payment.isReversePayment;
