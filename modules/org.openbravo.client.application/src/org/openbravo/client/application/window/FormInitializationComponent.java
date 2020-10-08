@@ -1470,9 +1470,11 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
 
         if (!(calloutObject instanceof SimpleCallout)) {
-          log.info(
-              "Callout {} only allows reference instances of type SimpleCallout the callout is an instance of {}",
-              calloutClassName, calloutObject.getClass().getName());
+          log.error(
+              "Callout {} in (Window, Tab, Field) ({}, {}, {}), only reference instances of type SimpleCallout are allowed."
+                  + " The callout is an instance of {} class.",
+              calloutClassName, tab.getWindow().getName(), tab.getName(), lastFieldChanged,
+              calloutObject.getClass().getName());
           continue;
         }
 

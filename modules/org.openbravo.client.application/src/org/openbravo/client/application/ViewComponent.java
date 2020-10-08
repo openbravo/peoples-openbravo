@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.application;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -37,7 +36,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
-import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.OBClassLoader;
 import org.openbravo.base.weld.WeldUtils;
@@ -52,6 +50,7 @@ import org.openbravo.client.kernel.OBUserException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.ad_callouts.SimpleCallout;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.domain.ModelImplementation;
@@ -130,36 +129,41 @@ public class ViewComponent extends BaseComponent {
   }
 
   /**
-   * Verifies if a field contains a callout based on HttpBaseServlet, and if so, throws an exception
+   * Verifies if a field contains a callout and if it is implemented using SimpleCallout class, if
+   * not, it throws an IllegalStateException an exception
    *
    * @param fld
-   *          Field to verify callout
+   *          Field to verify its callout
    */
   private void verifyCallout(Field fld) {
     if (fld.getColumn() != null && fld.getColumn().getCallout() != null) {
       List<ModelImplementation> modelImplementations = fld.getColumn()
           .getCallout()
           .getADModelImplementationList();
+      final String windowName = fld.getTab().getWindow().getName();
+      final String tabName = fld.getTab().getName();
+      final String fldName = fld.getName();
       if (!modelImplementations.isEmpty()) {
         // Get first model implementation that will contain the callout class name
         ModelImplementation mi = modelImplementations.get(0);
         String calloutClassName = mi.getJavaClassName();
         try {
-          if (Class.forName(calloutClassName)
-              .getDeclaredConstructor()
-              .newInstance() instanceof HttpBaseServlet) {
-            log.error(
-                "An old callout(based on HttpBaseServlet) {} is present in field {}. Extend SimpleCallout or remove it.",
-                calloutClassName, fld.getName());
-            throw new IllegalStateException("An old callout(based on HttpBaseServlet) " + calloutClassName
-                + " is present in this window. Fix or remove this callout.");
+          if (!SimpleCallout.class.isAssignableFrom(
+              Class.forName(calloutClassName, false, ViewComponent.class.getClassLoader()))) {
+            throw new IllegalStateException(String.format(
+                "A callout(not based on SimpleCallout) %s is present in (Window, Tab, Field) (%s, %s, %s). Fix or remove this callout.",
+                calloutClassName, windowName, tabName, fldName));
           }
         } catch (ClassNotFoundException e) {
-          log.warn("Class not found");
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-            | InvocationTargetException e) {
-          log.warn("Class {} could not be initialized.", calloutClassName);
+          throw new IllegalStateException(
+              String.format("Class %s not found for callout in (Window, Tab, Field) (%s, %s, %s).",
+                  calloutClassName, windowName, tabName, fldName),
+              e);
         }
+      } else {
+        throw new OBException(
+            String.format("Callout %s in (Window, Tab, Field) (%s, %s, %s), has no implementation.",
+                fld.getColumn().getCallout(), windowName, tabName, fldName));
       }
     }
   }
