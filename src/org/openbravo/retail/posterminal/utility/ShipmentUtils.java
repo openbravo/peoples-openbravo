@@ -108,7 +108,7 @@ public class ShipmentUtils implements TicketPropertyMapping {
         updateStockStatement.close();
       }
     } catch (Exception e) {
-      throw new OBException("Error when creating the shipment: " + e);
+      throw new OBException("Error when creating the shipment: ", e);
     }
     return shipment;
   }
