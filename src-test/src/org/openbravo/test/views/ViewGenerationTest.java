@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,15 +21,12 @@ package org.openbravo.test.views;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.junit.Before;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.ViewComponent;
-import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
 
 /**
@@ -53,14 +50,10 @@ public abstract class ViewGenerationTest extends WeldBaseTest {
    * 
    * @return a String containing the view definition
    */
-  protected Optional<String> generateView(String viewId) {
-    ActivationKey ak = ActivationKey.getInstance();
-    if (ak.hasLicenseAccess("MW", viewId) != FeatureRestriction.NO_RESTRICTION) {
-      return Optional.empty();
-    }
+  protected String generateView(String viewId) {
     Map<String, Object> p = new HashMap<>(1);
     p.put("viewId", viewId);
     vc.setParameters(p);
-    return Optional.of(vc.generate());
+    return vc.generate();
   }
 }

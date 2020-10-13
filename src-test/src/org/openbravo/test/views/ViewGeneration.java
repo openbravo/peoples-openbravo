@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,7 +27,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -77,13 +76,9 @@ public class ViewGeneration extends ViewGenerationTest {
         OBDal.getInstance().getSession().clear();
 
         long t = System.currentTimeMillis();
-        Optional<String> viewDef = generateView(viewId);
+        String viewDef = generateView(viewId);
 
-        if (!viewDef.isPresent()) {
-          continue;
-        }
-
-        Event e = new Event(viewId, System.currentTimeMillis() - t, viewDef.get().length());
+        Event e = new Event(viewId, System.currentTimeMillis() - t, viewDef.length());
         stats.add(e);
         // Files.write(Paths.get("/tmp", "view", viewId), viewDef.getBytes());
       } catch (Exception e) {
