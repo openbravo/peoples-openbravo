@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,9 +21,7 @@ package org.openbravo.erpCommon.obps;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -40,7 +38,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +54,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,7 +66,6 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -138,9 +133,6 @@ public class ActivationKey {
 
   private static final Logger log4j = LogManager.getLogger();
 
-  private static final String TIER_1_PREMIUM_FEATURE = "T1P";
-  private static final String TIER_2_PREMIUM_FEATURE = "T2P";
-  private static final String GOLDEN_EXCLUDED = "GOLDENEXCLUDED";
   private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private Lock deactivateSessionsLock = new ReentrantLock();
@@ -194,6 +186,7 @@ public class ActivationKey {
 
   public enum LicenseClass {
     COMMUNITY("C"), BASIC("B"), STD("STD");
+
     private String code;
 
     private LicenseClass(String code) {
@@ -207,6 +200,7 @@ public class ActivationKey {
 
   public enum LicenseType {
     CONCURRENT_USERS("USR");
+
     private String code;
 
     private LicenseType(String code) {
@@ -226,6 +220,7 @@ public class ActivationKey {
     EXPIRED("EXP"),
     NO_ACTIVE_YET("NAY"),
     INVALID("INV");
+
     private String code;
 
     private SubscriptionStatus(String code) {
@@ -344,7 +339,6 @@ public class ActivationKey {
       strPublicKey = sys.getInstanceKey();
       lastUpdateTimestamp = sys.getUpdated();
       loadInfo(sys.getActivationKey());
-      loadRestrictions();
     } finally {
       refreshLicenseLock.unlock();
     }
@@ -353,7 +347,6 @@ public class ActivationKey {
   public ActivationKey(String publicKey, String activationKey) {
     strPublicKey = publicKey;
     loadInfo(activationKey);
-    loadRestrictions();
   }
 
   private synchronized void loadInfo(String activationKey) {
@@ -623,65 +616,6 @@ public class ActivationKey {
       return false;
     }
     return true;
-  }
-
-  /**
-   * Loads information about the restricted artifacts due to license (Premium and Advance features).
-   */
-  @SuppressWarnings("unchecked")
-  private void loadRestrictions() {
-    DisabledModules.reload();
-    tier1Artifacts = new HashSet<>();
-    tier2Artifacts = new HashSet<>();
-    goldenExcludedArtifacts = new HashSet<>();
-
-    if (isActive() && licenseClass == LicenseClass.STD && !golden) {
-      // Don't read restrictions for Standard instances
-      return;
-    }
-
-    try {
-      // read restriction file from context directory
-      String restrictionsFilePath = null;
-      if (DalContextListener.getServletContext() != null) {
-        // Taking restrictions from Tomcat context
-        restrictionsFilePath = DalContextListener.getServletContext()
-            .getRealPath("/src-loc/design/org/openbravo/erpCommon/obps/licenseRestrictions");
-      } else {
-        // Not in Tomcat context, taking restrictions from sources
-        restrictionsFilePath = OBPropertiesProvider.getInstance()
-            .getOpenbravoProperties()
-            .getProperty("source.path") + "/src/org/openbravo/erpCommon/obps/licenseRestrictions";
-      }
-
-      File restrictionsFile = new File(restrictionsFilePath);
-      log4j.debug("Restrictions file: " + restrictionsFile.getAbsolutePath());
-
-      byte fileContent[] = FileUtils.readFileToByteArray(restrictionsFile);
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      decrypt(fileContent, getPublicKey(OB_PUBLIC_KEY), bos, OB_PUBLIC_KEY);
-      ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
-      HashMap<String, ArrayList<String>> m1 = (HashMap<String, ArrayList<String>>) ois.readObject();
-      ois.close();
-
-      if (!isActive()) {
-        // community instance, restrict both tiers
-        tier1Artifacts.addAll(m1.get(TIER_1_PREMIUM_FEATURE));
-        tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
-      } else if (licenseClass == LicenseClass.BASIC) {
-        // basic, restrict tier 2
-        tier2Artifacts.addAll(m1.get(TIER_2_PREMIUM_FEATURE));
-      }
-
-      if (isGolden()) {
-        goldenExcludedArtifacts.addAll(m1.get(GOLDEN_EXCLUDED));
-      }
-    } catch (Exception e) {
-      log4j.error("Error reading license restriction file", e);
-      tier1Artifacts = null;
-      tier2Artifacts = null;
-      goldenExcludedArtifacts = null;
-    }
   }
 
   public LicenseClass getLicenseClass() {
