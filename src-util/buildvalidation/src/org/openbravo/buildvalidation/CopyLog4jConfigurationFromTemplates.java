@@ -90,28 +90,6 @@ public class CopyLog4jConfigurationFromTemplates extends BuildValidation {
       System.out.println(targetPath
           + " is copied from template file. Please check this configuration is correct.");
     }
-  }
-
-  /**
-   * Get the source path using the user.dir System Property. Navigates two folders backwards and
-   * checks the config directory is available to ensure the directory is an Openbravo instance,
-   * throwing an exception otherwise
-   * 
-   * @return String the source path
-   * @throws NoSuchFileException
-   *           when the source path directory is not valid
-   */
-  static String getSourcePath() throws NoSuchFileException {
-    String userDir = System.getProperty("user.dir");
-    Path sourcePath = Paths.get(userDir, "/../..").normalize();
-
-    Path configDir = sourcePath.resolve("config");
-    if (Files.exists(configDir)) {
-      return sourcePath.toString();
-    }
-
-    System.out.println(String.format("Config folder not found: %s", configDir.toString()));
-    throw new NoSuchFileException(configDir.toString());
-  }
-
+  } 
 }
+

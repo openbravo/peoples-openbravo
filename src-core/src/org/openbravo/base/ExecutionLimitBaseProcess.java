@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2020 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -12,6 +12,10 @@
 package org.openbravo.base;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -149,5 +153,28 @@ public abstract class ExecutionLimitBaseProcess {
       log4j.error("Could not find Openbravo.properties");
     }
     return fProp;
+  }
+
+  /**
+   * Get the source path using the user.dir System Property. Navigates two folders backwards and
+   * checks the config directory is available to ensure the directory is an Openbravo instance,
+   * throwing an exception otherwise
+   * 
+   * @return String the source path
+   * @throws NoSuchFileException
+   *           when the source path directory is not valid
+   */
+  protected String getSourcePath() throws NoSuchFileException {
+    String userDir = System.getProperty("user.dir");
+    Path sourcePath = Paths.get(userDir, "/../..").normalize();
+
+    Path configDir = sourcePath.resolve("config");
+    if (Files.exists(configDir)) {
+      return sourcePath.toString();
+    }
+
+    // Using System.out as at this point log4j might not be configured yet
+    System.out.println(String.format("Config folder not found: %s", configDir.toString()));
+    throw new NoSuchFileException(configDir.toString());
   }
 }

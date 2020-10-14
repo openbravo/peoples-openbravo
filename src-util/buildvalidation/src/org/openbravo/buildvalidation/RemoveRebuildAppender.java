@@ -50,7 +50,7 @@ public class RemoveRebuildAppender extends BuildValidation {
   @Override
   public List<String> execute() {
     try {
-      Path log4jConf = Paths.get(CopyLog4jConfigurationFromTemplates.getSourcePath(), "config/log4j2.xml");
+      Path log4jConf = Paths.get(getSourcePath(), "config/log4j2.xml");
 
       if (!Files.exists(log4jConf)) {
         return Collections.emptyList();
