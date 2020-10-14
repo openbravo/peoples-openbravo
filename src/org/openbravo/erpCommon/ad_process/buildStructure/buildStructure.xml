@@ -20,7 +20,7 @@
 -->
 
 <!-- Keep a minimum build structure not to fail when displaying rebuild popup while updating
-from an old release. See rebuilUI task in main build.xml.-->
+from an old release. See UIrebuild task in main build.xml.-->
 
   <Build>
     <mainSteps>
