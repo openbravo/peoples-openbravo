@@ -910,10 +910,17 @@ enyo.kind({
     this.$.receiptPropertiesDialog.resetProperties();
     OB.App.State.Global.addNewTicket(
       OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
-    ).then(() => {
+    ).then(async () => {
       OB.MobileApp.model.receipt.setIsCalculateGrossLockState(false);
       OB.MobileApp.model.receipt.setIsCalculateReceiptLockState(false);
       OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
+      if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+        const bp = OB.MobileApp.model.receipt.get('bp');
+        await OB.App.State.Global.saveBusinessPartner(bp.serializeToJSON());
+        await OB.App.State.Global.saveBusinessPartnerLocation(
+          bp.get('locationModel').serializeToJSON()
+        );
+      }
 
       OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
         newOrder: this.model.get('order')

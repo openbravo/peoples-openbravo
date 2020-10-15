@@ -319,7 +319,8 @@
       let getLocation,
         errorCallback,
         checkInLocalDB = false,
-        criteria;
+        criteria,
+        me = this;
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         let filterBpartnerId = {
           columns: ['bpartner'],
@@ -395,7 +396,11 @@
             return;
           }
           checkInLocalDB = true;
-          delete criteria.remoteFilters;
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+            criteria = {
+              bpartner: bpId || me.get('id')
+            };
+          }
           getLocation(true);
         }
         if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {

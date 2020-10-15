@@ -636,6 +636,17 @@
         await runCompleteTicketAction(receipt);
         me.unset('preventServicesUpdate');
         OB.UTIL.ProcessController.finish(actionName, completeTicketExecution);
+        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+          await OB.App.State.Global.saveBusinessPartner(
+            receipt.get('bp').serializeToJSON()
+          );
+          await OB.App.State.Global.saveBusinessPartnerLocation(
+            receipt
+              .get('bp')
+              .get('locationModel')
+              .serializeToJSON()
+          );
+        }
         return;
       }
 
@@ -4681,32 +4692,36 @@
       }
       if (
         OB.App.Security.hasPermission('OBPOS_remote.customer') &&
-        oldbp.id !== businessPartner.id &&
-        OB.App.Security.hasPermission('OBPOS_remote.discount.bp')
+        oldbp.id !== businessPartner.id
       ) {
-        let cbpartners;
-        try {
-          cbpartners = await OB.Discounts.Pos.getRemoteBusinessPartnersDiscounts(
-            businessPartner.id
+        await OB.App.State.Global.saveBusinessPartner(
+          businessPartner.serializeToJSON()
+        );
+        if (OB.App.Security.hasPermission('OBPOS_remote.discount.bp')) {
+          let cbpartners;
+          try {
+            cbpartners = await OB.Discounts.Pos.getRemoteBusinessPartnersDiscounts(
+              businessPartner.id
+            );
+          } catch (e) {
+            // if we have remote bp discounts and we are offline
+            cbpartners = [];
+          }
+
+          OB.Discounts.Pos.manualRuleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
+            OB.Discounts.Pos.manualRuleImpls,
+            'cbpartners',
+            'businessPartner',
+            cbpartners
           );
-        } catch (e) {
-          // if we have remote bp discounts and we are offline
-          cbpartners = [];
+
+          OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
+            OB.Discounts.Pos.ruleImpls,
+            'cbpartners',
+            'businessPartner',
+            cbpartners
+          );
         }
-
-        OB.Discounts.Pos.manualRuleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
-          OB.Discounts.Pos.manualRuleImpls,
-          'cbpartners',
-          'businessPartner',
-          cbpartners
-        );
-
-        OB.Discounts.Pos.ruleImpls = await OB.Discounts.Pos.AddDiscountToTheCache(
-          OB.Discounts.Pos.ruleImpls,
-          'cbpartners',
-          'businessPartner',
-          cbpartners
-        );
       }
 
       var saveBP = function() {
@@ -4780,6 +4795,11 @@
 
       var saveLocModel = async function(locModel, lid, callback) {
         if (businessPartner.get(locModel)) {
+          if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+            await OB.App.State.Global.saveBusinessPartnerLocation(
+              businessPartner.get(locModel).serializeToJSON()
+            );
+          }
           if (callback) {
             callback();
           }
@@ -4788,8 +4808,11 @@
             OB.Dal.get(
               OB.Model.BPLocation,
               businessPartner.get(lid),
-              function(location) {
+              async function(location) {
                 businessPartner.set(locModel, location);
+                await OB.App.State.Global.saveBusinessPartnerLocation(
+                  location.serializeToJSON()
+                );
                 if (callback) {
                   callback();
                 }

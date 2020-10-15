@@ -27,3 +27,22 @@ OB.App.StateAPI.Global.registerAction(
     return newState;
   }
 );
+
+OB.App.StateAPI.Global.registerAction(
+  'saveBusinessPartnerLocation',
+  (state, payload) => {
+    const newState = { ...state };
+
+    // set the new object's ID property if not already present
+    const newObject = { id: OB.App.UUID.generate(), ...payload };
+    const localMsg = OB.App.State.Messages.Utils.createNewMessage(
+      'BusinessPartnerLocation',
+      '',
+      newObject,
+      { type: 'masterdata', forceLocalSave: true }
+    );
+
+    newState.Messages = [...newState.Messages, localMsg];
+    return newState;
+  }
+);

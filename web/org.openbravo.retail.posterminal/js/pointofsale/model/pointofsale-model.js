@@ -49,7 +49,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 // If there are no pending orders, add an initial empty order
                 OB.App.State.Global.createEmptyTicket(
                   OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
-                ).then(() => {
+                ).then(async () => {
                   OB.MobileApp.model.receipt.setIsCalculateGrossLockState(
                     false
                   );
@@ -60,6 +60,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                     me.loadCheckedMultiorders();
                   }
                   OB.UTIL.TicketUtils.loadAndSyncTicketFromState();
+                  if (
+                    OB.MobileApp.model.hasPermission(
+                      'OBPOS_remote.customer',
+                      true
+                    )
+                  ) {
+                    const bp = OB.MobileApp.model.receipt.get('bp');
+                    await OB.App.State.Global.saveBusinessPartner(
+                      bp.serializeToJSON()
+                    );
+                    await OB.App.State.Global.saveBusinessPartnerLocation(
+                      bp.get('locationModel').serializeToJSON()
+                    );
+                  }
 
                   OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
                     newOrder: OB.App.StateBackwardCompatibility.getInstance(

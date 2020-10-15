@@ -833,7 +833,7 @@
     OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
   };
 
-  OB.UTIL.TicketListUtils.addPaidReceipt = function(model, callback) {
+  OB.UTIL.TicketListUtils.addPaidReceipt = async function(model, callback) {
     let execution = OB.UTIL.ProcessController.start('addPaidReceipt');
 
     function executeFinalCallback() {
@@ -860,6 +860,17 @@
       OB.UTIL.ProcessController.finish('addPaidReceipt', execution);
       executeFinalCallback();
     });
+    if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
+      await OB.App.State.Global.saveBusinessPartner(
+        model.get('bp').serializeToJSON()
+      );
+      await OB.App.State.Global.saveBusinessPartnerLocation(
+        model
+          .get('bp')
+          .get('locationModel')
+          .serializeToJSON()
+      );
+    }
   };
 
   OB.UTIL.TicketListUtils.addNewQuotation = function(
