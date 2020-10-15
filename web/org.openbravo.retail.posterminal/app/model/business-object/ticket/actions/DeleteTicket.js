@@ -29,7 +29,6 @@
         globalState.Ticket.isEditable &&
         (globalState.Ticket.lines.length || !globalState.Ticket.isNew)
       ) {
-        // FIXME: Move to calculateTotals?
         newTicket = OB.App.State.Ticket.Utils.updateTicketType(
           newTicket,
           payload
