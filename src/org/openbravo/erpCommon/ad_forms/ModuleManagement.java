@@ -427,7 +427,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
       return false;
     }
 
-    boolean externalRebuild = false;
+    boolean externalRebuild = true;
     try {
       // ExternalRebuild Property needs to be configured at system level
       externalRebuild = Preferences.YES.equals(Preferences.getPreferenceValue("ExternalRebuild",
