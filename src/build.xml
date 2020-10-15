@@ -49,18 +49,6 @@ build.war: build a war file in the lib directory.
 
 <project name="openbravo sources" default="compile" basedir=".">
 
-  <taskdef name="yuicompress" classname="com.yahoo.platform.yui.compressor.YUICompressTask">
-    <classpath>
-      <pathelement location="${base.lib}/build/yuicompressor-2.4.2.jar" />
-      <pathelement location="${base.lib}/build/ob-rhino-1.6R7.jar" />
-      <pathelement location="${base.lib}/build/YUIAnt.jar" />
-    </classpath>
-  </taskdef>
-
-  <condition property="minimizeJSandCSSbool">
-    <istrue value="${minimizeJSandCSS}" />
-  </condition>
-
   <property name="webTab" value="all" />
   <property name="tab" value="%" />
 
@@ -464,8 +452,6 @@ build.war: build a war file in the lib directory.
     </condition>
     
     <antcall target="build.web.folder.skins"  inheritAll="true" inheritrefs="true" />
-    
-    <antcall target="minimizeJSandCSS" inheritAll="true" inheritrefs="true" />
   </target>
     
   
@@ -513,26 +499,6 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </java>
     
-  </target>
-
-  <target name="minimizeJSandCSS" description="minimize JS and CSS files" if="minimizeJSandCSSbool">
-    <yuicompress linebreak="300" warn="false" munge="yes" preserveallsemicolons="true" outputfolder="${base.context}/web" charset="UTF-8">
-      <fileset dir="${base.web}">
-        <include name="**/*.js" />
-        <include name="**/*.css" />
-        <!-- The following scripts break in minification process -->
-        <exclude name="**/js/dojo/src/docs.js" />
-        <exclude name="**/js/dojo/src/hostenv_jsc.js" />
-        <exclude name="**/js/jscalendar/lang/calendar-al.js" />
-        <exclude name="**/js/jscalendar/lang/calendar-he-utf8.js" />
-        <exclude name="**/js/jscalendar/lang/calendar-hr.js" />
-        <!-- dojotoolkit files are already compressd -->
-        <exclude name="**/dojotoolkit/**" />
-        <!-- from old dojo, only compress main file -->
-        <exclude name="**/dojo/**" />
-        <include name="js/dojo/dojo.js" />
-      </fileset>
-    </yuicompress>
   </target>
 
   <target name="postwad">

@@ -503,7 +503,6 @@ export.database: exports database structure and data to xml files.
       <excludepackage name="org.openbravo.erpWindows.*"/>
       <classpath>
         <path refid="project.class.path"/>
-        <pathelement path="lib/build/js.jar" />
         <fileset dir="${base.modules}">
           <include name="*/lib/test/*.jar" />
         </fileset>
