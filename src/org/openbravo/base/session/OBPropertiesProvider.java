@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,9 +38,6 @@ import org.openbravo.dal.xml.XMLUtil;
 /**
  * This class implements a central location where the Openbravo.properties are read and made
  * available for the rest of the application.
- * 
- * IMPORTANT NOTE: while properties are being set only DEBUG level messages can be logged to prevent
- * recursive invocations due to OBRebuildAppender. See issue #29608
  * 
  * @author mtaal
  */

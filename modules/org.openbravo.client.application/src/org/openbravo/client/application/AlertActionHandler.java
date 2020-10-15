@@ -104,12 +104,6 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
   }
 
   private long countActiveAlerts() throws ServletException {
-    final VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
-
-    if ("Y".equals(vars.getSessionValue("ApplyModules|BuildRunning"))) {
-      return 0L;
-    }
-
     // @formatter:off
     final String hql =
           "select distinct(e.alertRule)"
@@ -130,6 +124,8 @@ public class AlertActionHandler extends BaseActionHandler implements PortalAcces
         .setParameter("roleId", OBContext.getOBContext().getRole().getId())
         .setParameterList("clients", OBContext.getOBContext().getReadableClients())
         .setParameterList("orgs", OBContext.getOBContext().getReadableOrganizations());
+
+    final VariablesSecureApp vars = new VariablesSecureApp(RequestContext.get().getRequest());
 
     return qry.stream()
         .collect(groupingBy(rule -> Objects.toString(rule.getFilterClause(), ""))) // null can't be

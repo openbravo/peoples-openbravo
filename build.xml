@@ -85,7 +85,6 @@ export.database: exports database structure and data to xml files.
   <property name="strict.template.application" value="false" />
   <property name="rd" value="false" />
   <property name="local" value="true" />
-  <property name="apply.modules.complete.compilation" value="false" />
   <property name="stopOnWadError" value="false"/>
   <property name="friendlyWarnings" value="false"/>
   <property name="checkTranslationConsistency" value="true"/>
@@ -152,9 +151,6 @@ export.database: exports database structure and data to xml files.
       <isset property="env.CATALINA_BASE" />
     </and>
   </condition>
-  <property name="log.path" location="${jakarta.base}/logs" />
-  <property name="lib" location="${jakarta.home}/common" />
-  <property name="jakarta.context" location="${jakarta.base}/webapps/${context.name}" />
 
   <condition property="build.maxmemory" value="1024M" else="512M">
     <or>
@@ -311,7 +307,6 @@ export.database: exports database structure and data to xml files.
        <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
          <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
          <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
-                       DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)
          </transaction>
        </sql>
      </sequential>
@@ -324,7 +319,6 @@ export.database: exports database structure and data to xml files.
        <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
          <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
          <transaction> UPDATE ad_system_info SET system_status='@{v}' where system_status!='@{previous}' ;
-                       DELETE FROM ad_error_log where system_status=(select system_status from ad_system_info)
          </transaction>
        </sql>
      </sequential>
@@ -411,13 +405,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="copy.files" inheritAll="true" inheritRefs="true" />
     <mkdir dir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" />
     <copy todir="${jakarta.base}/webapps/${context.name}/WEB-INF/lib" file="${build.core.lib}/openbravo-core.jar" encoding="UTF-8" />
-  </target>
-
-  <!-- Only needed in special cases. See issue 15709 for details.
-       This task (if deploy.mode=class) does sync jar-files from WebContent -> deployed webapp (& delete orphan jars)
-  -->
-  <target name="copy.files.jarsync" depends="init" if="mode.class">
-    <ant dir="${base.src}" target="copy.files.jarsync.do" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="build.deploy.war" if="mode.war">
@@ -673,24 +660,6 @@ export.database: exports database structure and data to xml files.
     <antcall inheritall="true" inheritrefs="true" target="apply.module" />
     <antcall target="import.sample.data" />
   </target>
-
-
-  <target name="apply.modules">
-
-    <condition property="apply.modules.complete.compilation.var">
-      <istrue value="${apply.modules.complete.compilation}"  />
-    </condition>
-    
-    <condition property="apply.modules.simple.compilation.var">
-      <isfalse value="${apply.modules.complete.compilation.var}" />
-    </condition>
-
-    <updatesystemstatus v="RB43"/>
-    <antcall target="apply.modules.compile"/>
-
-    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
-
-  </target>
   
   <target name="apply.module.forked">
     <!-- 
@@ -725,66 +694,6 @@ export.database: exports database structure and data to xml files.
    <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
   </target>
   
-  <target name="apply.modules.compile" depends="wad.lib">
-    <antcall target="apply.modules.compile.simple"/>
-    <antcall target="apply.modules.compile.complete"/>
-  </target>
-  
-  <target name="apply.modules.compile.simple" if="apply.modules.simple.compilation.var">
-    <antcall target="compile.deploy" />
-  </target>
-  
-  <target name="apply.modules.compile.complete" if="apply.modules.complete.compilation.var">
-     <antcall target="compile.complete.deploy" />
-  </target>
-  
-  <!-- 
-		apparently this does not overwrite the default catalina_opts, only
-		if it is not set will it be set to the value below 
-	-->
-  <property name="env.CATALINA_OPTS" value="-XX:MaxPermSize=128M" />
-
-  <!-- 
-		This task is called from the Openbravo ui, it spawns a java call which again
-		calls the restart.tomcat.do task as a spawned task.
-	-->
-  <target name="tomcat.restart">
-    <echo message="Restarting tomcat..." />
-    <java classname="org.openbravo.service.system.RestartTomcat" spawn="true" fork="true" maxmemory="${build.maxmemory}">
-      <arg line="${base.src}" />
-      <classpath refid="project.class.path" />
-    </java>
-  </target>
-
-  <!--
-		Is called by the org.openbravo.service.system.RestartTomcat class.
-	-->
-  <target name="tomcat.restart.do">
-    <echo message="Restarting Tomcat at ${env.CATALINA_HOME}" />
-    <java classname="org.apache.catalina.startup.Bootstrap" fork="true">
-      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar:${env.CATALINA_HOME}/bin/tomcat-juli.jar" />
-      <jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
-      <jvmarg value="-Dcatalina.base=${env.CATALINA_BASE}" />
-      <arg line="stop" />
-    </java>
-    <sleep description="Wait to give tomcat time to stop" seconds="20" />
-
-    <!-- if deploy.mode=class this will sync (& delete orphan) jarfiles from WebContent -> tomcat-->
-    <antcall target="copy.files.jarsync"/>
-
-    <java classname="org.apache.catalina.startup.Bootstrap" fork="true" spawn="true">
-      <classpath path=":${env.CATALINA_HOME}/bin/bootstrap.jar:${env.CATALINA_HOME}/bin/commons-logging-api.jar:${env.CATALINA_HOME}/bin/tomcat-juli.jar" />
-      <!-- note because CATALINA_OPTS can be multi argument the line attribute has to be used! -->
-      <jvmarg line="${env.CATALINA_OPTS}" />
-      <jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager" />
-      <jvmarg value="-Djava.util.logging.config.file=${env.CATALINA_BASE}/conf/logging.properties" />
-      <jvmarg value="-Dcatalina.base=${env.CATALINA_BASE}" />
-      <jvmarg value="-Dcatalina.home=${env.CATALINA_HOME}" />
-      <jvmarg value="-Djava.io.tmpdir=${env.CATALINA_BASE}/temp" />
-      <arg line="start" />
-    </java>
-  </target>
-
   <target name="tomcat.list">
     <taskdef name="list" classname="org.apache.catalina.ant.ListTask">
       <classpath refid="project.class.path" />
@@ -874,28 +783,26 @@ export.database: exports database structure and data to xml files.
   <target name="validate.wad">
     <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
   </target>
-  
-  <target name="UIrebuild" depends="core.lib">
-    <java classname="org.openbravo.base.BuildTask" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
-      <arg line="'${base.config}/Openbravo.properties' ${logFileName}" />
-      <classpath>
-        <pathelement path="${base.config}"/>
-        <pathelement path="${build.core.lib}/openbravo-core.jar" />
-        <pathelement path="${base.lib}/runtime/log4j-1.2-api-2.11.1.jar" />
-        <pathelement path="${base.lib}/runtime/log4j-api-2.11.1.jar" />
-        <pathelement path="${base.lib}/runtime/log4j-core-2.11.1.jar" />
-        <pathelement path="${base.lib}/runtime/commons-pool-1.5.6.jar" />
-        <pathelement path="${base.lib}/runtime/commons-dbcp-1.4.jar" />
-        <pathelement path="${base.lib}/runtime/postgresql-42.2.16.jar" />
-        <pathelement path="${base.lib}/runtime/ojdbc8-19.3.0.0.jar" />
-        <pathelement path="${base.lib}/runtime/ant-1.9.2.jar" />
-        <pathelement path="${base.lib}/runtime/ant-launcher-1.9.2.jar" />
-        <pathelement path="${base.lib}/runtime/ant-apache-log4j-1.9.2.jar" />
-        <pathelement path="${base.lib}/runtime/ant-nodeps.jar" />
-      </classpath>
-    </java>
+
+  <target name="UIrebuild">
+    <!-- UIrebuild task was used from MMC rebuild which is no longer supported since 21Q1. 
+         This task is kept to show an error message when updating from previous releases. -->
+    <updatesystemstatus v="RB70"/> 
+       <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}"  autocommit="true">
+         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+          insert into ad_error_log
+             (ad_error_log_id,    ad_client_id,  ad_org_id,
+             createdby,           updatedby,     system_status,
+             error_level,         message,       line_number)
+          values 
+             (get_uuid(),         '0',           '0',
+             '0',                 '0',           'RB11',
+             'ERROR',             'UI rebuild is no longer supported',
+              (select coalesce(max(line_number), 0) + 1 from ad_error_log))
+       </sql>
+       <fail message="UI rebuild is no longer supported"/>
   </target>
-  
+
   <target name="check.module.consistency">
     <taskdef name="checkConsistency" classname="org.openbravo.erpCommon.modules.CheckLocalConsistency">
       <classpath refid="project.class.path" />

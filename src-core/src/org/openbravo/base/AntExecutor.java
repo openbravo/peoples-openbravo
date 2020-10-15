@@ -19,16 +19,11 @@
 package org.openbravo.base;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Vector;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 
@@ -42,8 +37,6 @@ public class AntExecutor {
 
   private Project project;
   private String baseDir;
-  private FileOutputStream logFile;
-  private PrintStream ps;
 
   /**
    * Initializes a newly created AntExecutor object assigning it the build.xml file to execute tasks
@@ -79,25 +72,6 @@ public class AntExecutor {
    */
   public AntExecutor(String buildDir) throws Exception {
     this(buildDir + "/build.xml", buildDir);
-  }
-
-  public void setLogFileAndListener(String filename) {
-    File logFolder = new File(baseDir, "log");
-    if (!logFolder.exists()) {
-      logFolder.mkdir();
-    }
-    File file = new File(baseDir + "/log", filename + "-apply.log");
-    final DefaultLogger logger1 = new DefaultLogger();
-    try {
-      logFile = new FileOutputStream(file);
-      ps = new PrintStream(logFile);
-      logger1.setOutputPrintStream(ps);
-      logger1.setErrorPrintStream(ps);
-      logger1.setMessageOutputLevel(Project.MSG_INFO);
-      project.addBuildListener(logger1);
-    } catch (FileNotFoundException e) {
-      logger.error("Error assigning rebuild log file.", e);
-    }
   }
 
   /**
@@ -151,16 +125,6 @@ public class AntExecutor {
       project.executeTargets(tasks);
     } catch (final BuildException e) {
       logger.error(e.getMessage(), e);
-    }
-  }
-
-  public void closeLogFile() {
-    try {
-      if (logFile != null) {
-        ps.flush();
-        logFile.close();
-      }
-    } catch (IOException e) {
     }
   }
 }

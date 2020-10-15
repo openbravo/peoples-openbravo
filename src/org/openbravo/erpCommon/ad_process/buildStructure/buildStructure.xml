@@ -1,24 +1,40 @@
 <?xml version='1.0' ?>
+
+<!--
+*************************************************************************
+* The contents of this file are subject to the Openbravo  Public  License
+* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+* Version 1.1  with a permitted attribution clause; you may not  use this
+* file except in compliance with the License. You  may  obtain  a copy of
+* the License at http://www.openbravo.com/legal/license.html
+* Software distributed under the License  is  distributed  on  an "AS IS"
+* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+* License for the specific  language  governing  rights  and  limitations
+* under the License.
+* The Original Code is Openbravo ERP.
+* The Initial Developer of the Original Code is Openbravo SLU
+* All portions are Copyright (C) 2010-2020 Openbravo SLU
+* All Rights Reserved.
+* Contributor(s):  ______________________________________.
+************************************************************************
+-->
+
+<!-- Keep a minimum build structure not to fail when displaying rebuild popup while updating
+from an old release. See UIrebuild task in main build.xml.-->
+
   <Build>
     <mainSteps>
       <mainStep code="RB11" errorCode="RB70">
         <name>Initial Build Validation</name>
-        <successMessage/>
-        <warningMessage/>
-        <errorMessage>Your system contains some data inconsistencies that must be resolved before applying this maintenance pack.
-The version you are installing introduces stronger consistency checking and that validation failed. The system hasn't been modified and it is still stable. You may continue using it in its current configuration. However, you must address the problems described in the validation messages below (either by uninstalling the affected modules, or by resolving the problems the validation found), before you can restart the installation process.</errorMessage>
+        <errorMessage><![CDATA[
+          <b>System rebuild from Module Manager Console is no longer supported</b><br/><br/>
+          In order to complete the update, the system requires to be rebuilt from the command line. <br/> 
+          <a target="_blank" href="http://wiki.openbravo.com/wiki/Modules_Management#Rebuild">Learn how to do it</a>.
+        ]]></errorMessage>
         <stepList/>
       </mainStep>
       <mainStep code="RB20" successCode="RB60" warningCode="RB60" errorCode="RB59">
-        <name>Build</name>
-        <successMessage>The build was successful</successMessage>
-        <warningMessage><![CDATA[There were warnings on the build. The application will run, but you should check them to see if there were important. Go to <a href="http://wiki.openbravo.com/wiki/Update_Tips" target="_blank" class="MessageBox_TextLink"> this link</a> for more information. <b>You must now restart the application container</b> to see the changes.]]></warningMessage>
-        <errorMessage><![CDATA[An error has occurred in the build. For a list of actions to take, go to <a href="http://wiki.openbravo.com/wiki/Update_Tips" target="_blank" class="MessageBox_TextLink">this link</a>]]></errorMessage>
-        <stepList>
-          <step code="RB12" name="Database update"/>
-          <step code="RB31" name="Reference data"/>
-          <step code="RB43" name="Compilation"/>
-        </stepList>
+        <!-- Keeping a 2nd step as ApplyModules code assumed at least 2 steps -->
       </mainStep>
     </mainSteps>
   </Build>

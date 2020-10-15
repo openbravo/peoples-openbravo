@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2012 Openbravo SLU
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -261,24 +261,7 @@ public class ModuleReferenceDataOrgTree extends ModuleTree {
     for (int i = 0; i < modules.length; i++) {
       if (modules[i].updateAvailable.equals("Y")) {
         modules[i].updatelabel = Utility.messageBD(conn, "UpdateAvailable", lang);
-        // modules[i].linkname = Utility.messageBD(conn, "UpdateAvailable", lang);
-        // modules[i].linkclick="submitCommandFormParameter('OK', frmMain.inpNodes,'"+
-        // modules[i].nodeId + "',false); return false;";
-        // String moduleId = modules[i].nodeId;
-        // modules[i].linkclick = "gt_submitUpdateData('OK','" + modules[i].nodeId
-        // + "'); return false;";
-        // modules[i].linkclick="gt_getUpdateDescription('"+modules[i].nodeId+"'); return false;";
       }
-      /*
-       * if (modules[i].status.equals("I")) { modules[i].linkname=Utility.messageBD(conn,
-       * "ApplyModules", lang)+", "+Utility.messageBD(conn, "RebuildNow", lang);
-       * modules[i].linkclick=
-       * "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 600, 900);return false;"
-       * ; } if (modules[i].status.equals("U")) { modules[i].linkname=Utility.messageBD(conn,
-       * "UninstalledModule", lang);modules[i].linkclick=
-       * "openServletNewWindow('DEFAULT', false, '../ad_process/ApplyModules.html', 'BUTTON', null, true, 600, 900);return false;"
-       * ; }
-       */
     }
   }
 
