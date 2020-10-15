@@ -88,7 +88,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2015-2018 Openbravo SLU
+* All portions are Copyright (C) 2015-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -401,22 +401,22 @@ BEGIN
         v_PriorityWarehouseID, NULL, NULL, NULL, NULL, NULL, NULL);
       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'M_Warehouse_Rule_ID',
         v_warehouse_rule_id, NULL, NULL, NULL, NULL, NULL, NULL);
-	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'TableId',
-	    v_TableID, NULL, NULL, NULL, NULL, NULL);
-	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AuxID',
-	    v_AuxID, NULL, NULL, NULL, NULL, NULL);
-	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'LineNo',
-	    NULL, NULL, v_LineNo, NULL, NULL, NULL);
-	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'M_Reservation_ID',
-	    v_reservation_id, NULL, NULL, NULL, NULL, NULL);
-	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Available',
-	    v_avail, NULL, NULL, NULL, NULL, NULL);
-	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Nettable',
-	    v_nett, NULL, NULL, NULL, NULL, NULL);
-	  AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'OverIssue',
-	    v_overissue, NULL, NULL, NULL, NULL, NULL);
-      AD_PINSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'ProcessID',
-        v_ProcessID, NULL, NULL, NULL, NULL, NULL);
+	  AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'TableId',
+	    v_TableID, NULL, NULL, NULL, NULL, NULL, NULL);
+	  AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'AuxID',
+	    v_AuxID, NULL, NULL, NULL, NULL, NULL, NULL);
+	  AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'LineNo',
+	    NULL, NULL, v_LineNo, NULL, NULL, NULL, NULL);
+	  AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'M_Reservation_ID',
+	    v_reservation_id, NULL, NULL, NULL, NULL, NULL, NULL);
+	  AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Available',
+	    v_avail, NULL, NULL, NULL, NULL, NULL, NULL);
+	  AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Nettable',
+	    v_nett, NULL, NULL, NULL, NULL, NULL, NULL);
+	  AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'OverIssue',
+	    v_overissue, NULL, NULL, NULL, NULL, NULL, NULL);
+      AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'ProcessID',
+        v_ProcessID, NULL, NULL, NULL, NULL, NULL, NULL);
       AD_EP_INSTANCE_PARA_INSERT(v_ep_instance, v_extension_point_id, 'Message',
         NULL, NULL, NULL, NULL, NULL, NULL, v_Message);
       AD_EXTENSION_POINT_HANDLER(v_ep_instance, v_extension_point_id);
