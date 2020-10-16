@@ -331,6 +331,7 @@ public class ActivationKey {
       strPublicKey = sys.getInstanceKey();
       lastUpdateTimestamp = sys.getUpdated();
       loadInfo(sys.getActivationKey());
+      DisabledModules.reload();
     } finally {
       refreshLicenseLock.unlock();
     }
@@ -339,6 +340,7 @@ public class ActivationKey {
   public ActivationKey(String publicKey, String activationKey) {
     strPublicKey = publicKey;
     loadInfo(activationKey);
+    DisabledModules.reload();
   }
 
   private synchronized void loadInfo(String activationKey) {
