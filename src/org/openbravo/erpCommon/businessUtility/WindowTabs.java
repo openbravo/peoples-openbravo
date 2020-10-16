@@ -25,8 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.Utility;
 
 /**
@@ -386,9 +384,7 @@ public class WindowTabs {
           } else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
               && data.istranslationtab.equals("Y")) {
             continue;
-          } else if (data.isactive.equals("N") || data.enabled.equals("N")
-              || ActivationKey.getInstance()
-                  .hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION) {
+          } else if (data.isactive.equals("N") || data.enabled.equals("N")) {
             continue;
           }
           if (!isFirstTab) {
@@ -510,9 +506,7 @@ public class WindowTabs {
         } else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
             && data.istranslationtab.equals("Y")) {
           continue;
-        } else if (data.isactive.equals("N") || data.enabled.equals("N")
-            || ActivationKey.getInstance()
-                .hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION) {
+        } else if (data.isactive.equals("N") || data.enabled.equals("N")) {
           continue;
         }
         if (!isFirstTab) {
@@ -583,9 +577,7 @@ public class WindowTabs {
       } else if (!data.adTabId.equals(this.TabID) && strShowTrl.equals("N")
           && data.istranslationtab.equals("Y")) {
         continue;
-      } else if (data.isactive.equals("N") || data.enabled.equals("N")
-          || ActivationKey.getInstance()
-              .hasLicencesTabAccess(data.adTabId) != FeatureRestriction.NO_RESTRICTION) {
+      } else if (data.isactive.equals("N") || data.enabled.equals("N")) {
         continue;
       }
       if (!isFirst) {

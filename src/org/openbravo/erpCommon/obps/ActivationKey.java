@@ -1287,40 +1287,28 @@ public class ActivationKey {
   public FeatureRestriction hasLicenseAccess(String type, String id) {
     String actualType = type;
 
-    if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()) {
+    if (!"W".equals(actualType) || id == null || id.isEmpty()) {
       return FeatureRestriction.NO_RESTRICTION;
     }
-    log4j.debug("Type: {} id:{}", actualType, id);
+    log4j.debug("Type: {} id: {}", actualType, id);
 
-    if ("W".equals(actualType)) {
-      // Access is granted to window, but permissions is checked for tabs
-      OBContext.setAdminMode();
-      try {
-        Tab tab = OBDal.getInstance().get(Tab.class, id);
-        if (tab == null) {
-          log4j.error("Could't find tab {} to check access. Access not allowed", id);
-          return FeatureRestriction.UNKNOWN_RESTRICTION;
-        }
-
-        // For windows check whether the window's module is disabled, and later whether the tab is
-        // disabled
-        if (!DisabledModules.isEnabled(Artifacts.MODULE, tab.getWindow().getModule().getId())) {
-          return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
-        }
-      } finally {
-        OBContext.restorePreviousMode();
+    // Access is granted to window, but permissions is checked for tabs
+    OBContext.setAdminMode();
+    try {
+      Tab tab = OBDal.getInstance().get(Tab.class, id);
+      if (tab == null) {
+        log4j.error("Could't find tab {} to check access. Access not allowed", id);
+        return FeatureRestriction.UNKNOWN_RESTRICTION;
       }
+
+      // For windows check whether the window's module is disabled, and later whether the tab is
+      // disabled
+      if (!DisabledModules.isEnabled(Artifacts.MODULE, tab.getWindow().getModule().getId())) {
+        return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
-
-    if ("W".equals(actualType)) {
-      // For windows, check also tab restrictions
-      return hasLicencesTabAccess(id);
-    }
-
-    return FeatureRestriction.NO_RESTRICTION;
-  }
-
-  public FeatureRestriction hasLicencesTabAccess(String tabId) {
 
     return FeatureRestriction.NO_RESTRICTION;
   }
