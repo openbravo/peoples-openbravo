@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,8 @@
 
 package org.openbravo.erpCommon.obps;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,13 +42,13 @@ import org.openbravo.model.ad.ui.Window;
 public class DisabledModules {
   enum Artifacts {
     MODULE, TAB, PROCESS, FORM, WINDOW
-  };
+  }
 
-  private static List<String> disabledModules = new ArrayList<String>();
-  private static List<String> disabledWindows = new ArrayList<String>();
-  private static List<String> disabledTabs = new ArrayList<String>();
-  private static List<String> disabledProcesses = new ArrayList<String>();
-  private static List<String> disabledForms = new ArrayList<String>();
+  private static Set<String> disabledModules = new HashSet<>();
+  private static Set<String> disabledWindows = new HashSet<>();
+  private static Set<String> disabledTabs = new HashSet<>();
+  private static Set<String> disabledProcesses = new HashSet<>();
+  private static Set<String> disabledForms = new HashSet<>();
 
   private static final Logger log4j = LogManager.getLogger();
 
@@ -57,11 +57,11 @@ public class DisabledModules {
    */
   public static synchronized void reload() {
     log4j.debug("Loading disabled modules...");
-    disabledModules = new ArrayList<String>();
-    disabledWindows = new ArrayList<String>();
-    disabledTabs = new ArrayList<String>();
-    disabledProcesses = new ArrayList<String>();
-    disabledForms = new ArrayList<String>();
+    disabledModules = new HashSet<>();
+    disabledWindows = new HashSet<>();
+    disabledTabs = new HashSet<>();
+    disabledProcesses = new HashSet<>();
+    disabledForms = new HashSet<>();
 
     OBContext.setAdminMode();
     try {
@@ -69,34 +69,34 @@ public class DisabledModules {
       qMods.add(Restrictions.eq(Module.PROPERTY_ENABLED, false));
       for (Module disabledModule : qMods.list()) {
         disabledModules.add(disabledModule.getId());
-        log4j.debug(disabledModule.getName() + " module is disabled");
+        log4j.debug("Disabled module: {}", disabledModule.getName());
 
         OBCriteria<Window> qWindows = OBDal.getInstance().createCriteria(Window.class);
         qWindows.add(Restrictions.eq(Window.PROPERTY_MODULE, disabledModule));
         for (Window window : qWindows.list()) {
           disabledTabs.add(window.getId());
-          log4j.debug("Disabled tab: " + window.getIdentifier());
+          log4j.debug("Disabled window: {}", window.getIdentifier());
         }
 
         OBCriteria<Tab> qTabs = OBDal.getInstance().createCriteria(Tab.class);
         qTabs.add(Restrictions.eq(Tab.PROPERTY_MODULE, disabledModule));
         for (Tab tab : qTabs.list()) {
           disabledTabs.add(tab.getId());
-          log4j.debug("Disabled tab: " + tab.getIdentifier());
+          log4j.debug("Disabled tab: {}", tab.getIdentifier());
         }
 
         OBCriteria<Process> qProcess = OBDal.getInstance().createCriteria(Process.class);
         qProcess.add(Restrictions.eq(Process.PROPERTY_MODULE, disabledModule));
         for (Process process : qProcess.list()) {
           disabledProcesses.add(process.getId());
-          log4j.debug("Disabled process: " + process.getIdentifier());
+          log4j.debug("Disabled process: {}", process.getIdentifier());
         }
 
         OBCriteria<Form> qForm = OBDal.getInstance().createCriteria(Form.class);
         qForm.add(Restrictions.eq(Form.PROPERTY_MODULE, disabledModule));
         for (Form form : qForm.list()) {
           disabledForms.add(form.getId());
-          log4j.debug("Disabled form: " + form.getIdentifier());
+          log4j.debug("Disabled form: {}", form.getIdentifier());
         }
       }
     } finally {
