@@ -1287,27 +1287,50 @@ public class ActivationKey {
   public FeatureRestriction hasLicenseAccess(String type, String id) {
     String actualType = type;
 
-    if (!"W".equals(actualType) || id == null || id.isEmpty()) {
+    if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()) {
       return FeatureRestriction.NO_RESTRICTION;
     }
     log4j.debug("Type: {} id: {}", actualType, id);
 
-    // Access is granted to window, but permissions is checked for tabs
-    OBContext.setAdminMode();
-    try {
-      Tab tab = OBDal.getInstance().get(Tab.class, id);
-      if (tab == null) {
-        log4j.error("Could't find tab {} to check access. Access not allowed", id);
-        return FeatureRestriction.UNKNOWN_RESTRICTION;
-      }
+    if ("W".equals(actualType)) {
+      // Access is granted to window, but permissions is checked for tabs
+      OBContext.setAdminMode();
+      try {
+        Tab tab = OBDal.getInstance().get(Tab.class, id);
+        if (tab == null) {
+          log4j.error("Could't find tab {} to check access. Access not allowed", id);
+          return FeatureRestriction.UNKNOWN_RESTRICTION;
+        }
 
-      // For windows check whether the window's module is disabled, and later whether the tab is
-      // disabled
-      if (!DisabledModules.isEnabled(Artifacts.MODULE, tab.getWindow().getModule().getId())) {
-        return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
+        // For windows check whether the window's module is disabled, and later whether the tab is
+        // disabled
+        if (!DisabledModules.isEnabled(Artifacts.MODULE, tab.getWindow().getModule().getId())) {
+          return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
+        }
+      } finally {
+        OBContext.restorePreviousMode();
       }
-    } finally {
-      OBContext.restorePreviousMode();
+    } else if ("MW".equals(actualType)) {
+      // Menu window, it receives window instead of tab
+      actualType = "W";
+    } else if ("R".equals(actualType)) {
+      actualType = "P";
+    }
+
+    // Check disabled modules restrictions
+    Artifacts artifactType;
+    if ("MW".equals(actualType)) {
+      artifactType = Artifacts.WINDOW;
+    } else if ("W".equals(actualType)) {
+      artifactType = Artifacts.TAB;
+    } else if ("X".equals(actualType)) {
+      artifactType = Artifacts.FORM;
+    } else {
+      artifactType = Artifacts.PROCESS;
+    }
+    // Use id instead of artifactId to keep tabs' ids
+    if (!DisabledModules.isEnabled(artifactType, id)) {
+      return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
     }
 
     return FeatureRestriction.NO_RESTRICTION;
