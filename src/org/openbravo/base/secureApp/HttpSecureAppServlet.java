@@ -897,41 +897,21 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     String titleText = getArtifactName(type, id, vars.getLanguage());
     String infoText = "";
 
-    String editionType = null;
     String completeWindowMsg = "";
-    String discard[] = { "" };
-    String msg;
+    String[] discard = { "" };
 
-    switch (featureRestriction) {
-      case TIER1_RESTRICTION:
-        editionType = "OBPSAnyEdition";
-        // do not break continue with next tier restriction
-      case TIER2_RESTRICTION:
-        if (editionType == null) {
-          editionType = "OBPSStandardEdition";
-        }
-        // <p> in java, to allow multi-paragraph text via the parameter
-        infoText = "<p>" + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
-            .replace("@ProfessionalEditionType@",
-                Utility.messageBD(this, editionType, vars.getLanguage()))
-            + "</p>";
-        completeWindowMsg = infoText + "\n"
-            + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage());
-        break;
-      case GOLDEN_RESTRICTION:
-        discard[0] = "links";
-        msg = Utility.messageBD(this, "OBPSGoldenKeyRestricted", vars.getLanguage());
-        infoText = msg;
-        completeWindowMsg = msg;
-        break;
-      case DISABLED_MODULE_RESTRICTION:
-        discard[0] = "links";
-        msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
-        infoText = msg;
-        completeWindowMsg = msg;
-        break;
-      default:
-        break;
+    if (featureRestriction == null) {
+      infoText = "<p>" + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
+          .replace("@ProfessionalEditionType@",
+              Utility.messageBD(this, "OBPSAnyEdition", vars.getLanguage()))
+          + "</p>";
+      completeWindowMsg = infoText + "\n"
+          + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage());
+    } else if (featureRestriction == FeatureRestriction.DISABLED_MODULE_RESTRICTION) {
+      discard[0] = "links";
+      String msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
+      infoText = msg;
+      completeWindowMsg = msg;
     }
 
     String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());

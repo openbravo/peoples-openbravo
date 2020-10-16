@@ -56,7 +56,6 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -118,8 +117,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
     // Prevent execution in Community instances
     if (!ActivationKey.getInstance().isActive()) {
-      licenseError(classInfo.type, classInfo.id, FeatureRestriction.TIER1_RESTRICTION, response,
-          request, vars, true);
+      licenseError(classInfo.type, classInfo.id, null, response, request, vars, true);
     }
 
     String accesTabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
@@ -709,8 +707,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       title = "Error";
       if (JsonUtils.isQueryTimeout(e)) {
         OBDal.getInstance().rollbackAndClose();
-        description = Utility.messageBD(new DalConnectionProvider(false),
-           "OBUIAPP_QueryTimeOut", vars.getLanguage());
+        description = Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_QueryTimeOut",
+            vars.getLanguage());
       } else {
         description = e.getMessage();
       }
@@ -1017,8 +1015,8 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
       title = "Error";
       if (JsonUtils.isQueryTimeout(e)) {
         OBDal.getInstance().rollbackAndClose();
-        description = Utility.messageBD(new DalConnectionProvider(false),
-           "OBUIAPP_QueryTimeOut", vars.getLanguage());
+        description = Utility.messageBD(new DalConnectionProvider(false), "OBUIAPP_QueryTimeOut",
+            vars.getLanguage());
       } else {
         description = e.getMessage();
       }

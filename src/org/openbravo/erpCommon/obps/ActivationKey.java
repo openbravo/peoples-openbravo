@@ -42,7 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -62,7 +61,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
@@ -110,9 +108,6 @@ public class ActivationKey {
   private boolean subscriptionActuallyConverted = false;
   private LicenseClass licenseClass;
   private LicenseType licenseType;
-  private Set<String> tier1Artifacts;
-  private Set<String> tier2Artifacts;
-  private Set<String> goldenExcludedArtifacts;
   private Date lastRefreshTime;
   private boolean trial = false;
   private boolean golden = false;
@@ -163,10 +158,7 @@ public class ActivationKey {
   public enum FeatureRestriction {
     NO_RESTRICTION(""),
     DISABLED_MODULE_RESTRICTION("FeatureInDisabledModule"),
-    TIER1_RESTRICTION("FEATURE_OBPS_ONLY"),
-    TIER2_RESTRICTION("FEATURE_OBPS_ONLY"),
-    UNKNOWN_RESTRICTION(""),
-    GOLDEN_RESTRICTION("RESTRICTED_TO_GOLDEN");
+    UNKNOWN_RESTRICTION("");
 
     private String msg;
 
@@ -529,9 +521,6 @@ public class ActivationKey {
     hasExpired = false;
     subscriptionConvertedProperty = false;
     subscriptionActuallyConverted = false;
-    tier1Artifacts = null;
-    tier2Artifacts = null;
-    goldenExcludedArtifacts = null;
     trial = false;
     golden = false;
     licenseClass = LicenseClass.COMMUNITY;
@@ -1301,25 +1290,17 @@ public class ActivationKey {
     if (actualType == null || actualType.isEmpty() || id == null || id.isEmpty()) {
       return FeatureRestriction.NO_RESTRICTION;
     }
-    log4j.debug("Type:" + actualType + " id:" + id);
-    if (tier1Artifacts == null || tier2Artifacts == null || goldenExcludedArtifacts == null) {
-      log4j.error("No restrictions set, do not allow access");
+    log4j.debug("Type: {} id:{}", actualType, id);
 
-      throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
-          "NoRestrictionsFile", OBContext.getOBContext().getLanguage().getLanguage()));
-    }
-
-    String artifactId = id;
     if ("W".equals(actualType)) {
       // Access is granted to window, but permissions is checked for tabs
       OBContext.setAdminMode();
       try {
         Tab tab = OBDal.getInstance().get(Tab.class, id);
         if (tab == null) {
-          log4j.error("Could't find tab " + id + " to check access. Access not allowed");
+          log4j.error("Could't find tab {} to check access. Access not allowed", id);
           return FeatureRestriction.UNKNOWN_RESTRICTION;
         }
-        artifactId = tab.getWindow().getId();
 
         // For windows check whether the window's module is disabled, and later whether the tab is
         // disabled
@@ -1329,42 +1310,6 @@ public class ActivationKey {
       } finally {
         OBContext.restorePreviousMode();
       }
-    } else if ("MW".equals(actualType)) {
-      // Menu window, it receives window instead of tab
-      actualType = "W";
-    } else if ("R".equals(actualType)) {
-      actualType = "P";
-    }
-
-    // Check disabled modules restrictions
-    Artifacts artifactType;
-    if ("MW".equals(actualType)) {
-      artifactType = Artifacts.WINDOW;
-    } else if ("W".equals(actualType)) {
-      artifactType = Artifacts.TAB;
-    } else if ("X".equals(actualType)) {
-      artifactType = Artifacts.FORM;
-    } else {
-      artifactType = Artifacts.PROCESS;
-    }
-    // Use id instead of artifactId to keep tabs' ids
-    if (!DisabledModules.isEnabled(artifactType, id)) {
-      return FeatureRestriction.DISABLED_MODULE_RESTRICTION;
-    }
-
-    // Check core premium features restrictions
-    if (licenseClass == LicenseClass.STD && !golden) {
-      return FeatureRestriction.NO_RESTRICTION;
-    }
-
-    if (tier1Artifacts.contains(actualType + artifactId)) {
-      return FeatureRestriction.TIER1_RESTRICTION;
-    }
-    if (tier2Artifacts.contains(actualType + artifactId)) {
-      return FeatureRestriction.TIER2_RESTRICTION;
-    }
-    if (goldenExcludedArtifacts.contains(actualType + artifactId)) {
-      return FeatureRestriction.GOLDEN_RESTRICTION;
     }
 
     if ("W".equals(actualType)) {
@@ -1376,12 +1321,7 @@ public class ActivationKey {
   }
 
   public FeatureRestriction hasLicencesTabAccess(String tabId) {
-    if (tier1Artifacts.contains("T" + tabId)) {
-      return FeatureRestriction.TIER1_RESTRICTION;
-    }
-    if (tier2Artifacts.contains("T" + tabId)) {
-      return FeatureRestriction.TIER2_RESTRICTION;
-    }
+
     return FeatureRestriction.NO_RESTRICTION;
   }
 
