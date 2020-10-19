@@ -759,11 +759,6 @@ export.database: exports database structure and data to xml files.
                    exportRD="${obx.export.RD}" 
                    addAllDependencies="${obx.export.allDeps}"/>
   </target>
-
-  <target name="diagnostic">
-    <ant dir="src-util/diagnostic" antfile="build-create.xml" target="build" />
-    <ant dir="src-util/diagnostic" target="check.all" />
-  </target>
   
   <target name="setup.compile">
 	<mkdir dir="build/classes" />
