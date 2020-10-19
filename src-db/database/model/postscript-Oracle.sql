@@ -569,7 +569,7 @@ AS
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009-2017 Openbravo SLU
+* All portions are Copyright (C) 2009-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -591,7 +591,6 @@ AS
   deleted number :=0;
   created number :=0;
   v_message varchar2(500);
-  v_isObps number;
   isavailablename number :=0;
   suffixNumber number :=0;
   numberCharsToRemove number;
@@ -612,16 +611,6 @@ AS
   END;
   
 BEGIN 
-  select count(*) 
-    into v_isObps
-    from ad_system
-   where Instance_key is not null
-     and activation_key is not null;
-     
-  if v_isObps = 0 then
-    RAISE_APPLICATION_ERROR(-20000, '@OBPSNeededForAudit@') ;
-  end if;  
-
   for cur_triggers in (select trigger_name
                          from user_triggers
                         where trigger_name like 'AU\_%' escape '\') loop

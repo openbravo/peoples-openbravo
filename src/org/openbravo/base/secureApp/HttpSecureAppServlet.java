@@ -900,24 +900,16 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     String completeWindowMsg = "";
     String[] discard = { "" };
 
-    if (featureRestriction == null) {
-      infoText = "<p>" + Utility.messageBD(this, "FEATURE_OBPS_ONLY", vars.getLanguage())
-          .replace("@ProfessionalEditionType@",
-              Utility.messageBD(this, "OBPSAnyEdition", vars.getLanguage()))
-          + "</p>";
-      completeWindowMsg = infoText + "\n"
-          + Utility.messageBD(this, "LearnHowToActivate", vars.getLanguage());
-    } else if (featureRestriction == FeatureRestriction.DISABLED_MODULE_RESTRICTION) {
+    if (featureRestriction == FeatureRestriction.DISABLED_MODULE_RESTRICTION) {
       discard[0] = "links";
       String msg = Utility.messageBD(this, "FeatureInDisabledModule", vars.getLanguage());
       infoText = msg;
       completeWindowMsg = msg;
     }
 
-    String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
-    String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
-
     if (isPopup) {
+      String linkText = Utility.messageBD(this, "LEARN_HOW", vars.getLanguage());
+      String afterLinkText = Utility.messageBD(this, "ACTIVATE_INSTANCE", vars.getLanguage());
       XmlDocument xmlDocument = xmlEngine
           .readXmlTemplate("org/openbravo/erpCommon/obps/ErrorActivatedInstancesOnly", discard)
           .createXmlDocument();

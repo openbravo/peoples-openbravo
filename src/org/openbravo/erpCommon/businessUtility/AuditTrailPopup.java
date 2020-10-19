@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.database.SessionInfo;
-import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyException;
@@ -114,11 +113,6 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
     VariablesSecureApp vars = new VariablesSecureApp(request);
-
-    // Prevent execution in Community instances
-    if (!ActivationKey.getInstance().isActive()) {
-      licenseError(classInfo.type, classInfo.id, null, response, request, vars, true);
-    }
 
     String accesTabId = vars.getGlobalVariable("inpTabId", "AuditTrail.tabId", IsIDFilter.instance);
     if (!hasGeneralAccess(vars, "W", accesTabId)) {
