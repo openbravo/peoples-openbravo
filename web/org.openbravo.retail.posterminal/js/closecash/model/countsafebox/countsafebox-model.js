@@ -128,7 +128,8 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
         OB.MobileApp.model.get('payments').forEach(termPayment => {
           if (
             termPayment.paymentMethod.paymentMethod ===
-            sbPaymentMethod.paymentMethodId
+              sbPaymentMethod.paymentMethodId &&
+            termPayment.paymentMethod.currency === sbPaymentMethod.currency
           ) {
             const sbPaymentCounting = sbPaymentMethod.safeBoxCounting,
               expected = OB.DEC.sub(
@@ -149,7 +150,10 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
               sbPaymentMethod.initialBalance || 0
             );
             safeBoxPayment.set('terminalPaymentId', termPayment.payment.id);
-            safeBoxPayment.set('id', sbPaymentMethod.safeBoxPaymentMethodId);
+            safeBoxPayment.set(
+              'safeBoxPaymentMethodId',
+              sbPaymentMethod.safeBoxPaymentMethodId
+            );
             safeBoxPayment.set(
               'totalDeposits',
               sbPaymentMethod.depositBalance || 0
@@ -190,35 +194,35 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
         if (index === safeBox.paymentMethods.length - 1) {
           this.get('paymentList').reset(safeBoxPayments.models);
         }
-
-        // Active/Desactive CashPayments and CashToKeep tabs
-        const paymentsIndex = this.stepIndex('OB.CloseCash.CashPayments'),
-          toKeepIndex = this.stepIndex('OB.CloseCash.CashToKeep');
-        let cashPayments = false,
-          cashToKeep = false;
-
-        for (let i = 0; i < safeBoxPayments.length; i++) {
-          if (this.closeCashSteps[paymentsIndex].isSubstepAvailable(this, i)) {
-            cashPayments = true;
-          }
-          if (this.closeCashSteps[toKeepIndex].isSubstepAvailable(this, i)) {
-            cashToKeep = true;
-          }
-        }
-        this.stepsDefinition[paymentsIndex].active = cashPayments;
-        this.stepsDefinition[toKeepIndex].active = cashToKeep;
-        this.set(
-          'totalExpected',
-          this.get('paymentList').models.reduce((total, model) => {
-            return OB.DEC.add(total, model.get('expected'));
-          }, 0)
-        );
-        this.set(
-          'totalDifference',
-          OB.DEC.sub(this.get('totalDifference'), this.get('totalExpected'))
-        );
-        this.setIgnoreStep3();
       });
+
+      // Active/Desactive CashPayments and CashToKeep tabs
+      const paymentsIndex = this.stepIndex('OB.CloseCash.CashPayments'),
+        toKeepIndex = this.stepIndex('OB.CloseCash.CashToKeep');
+      let cashPayments = false,
+        cashToKeep = false;
+
+      for (let i = 0; i < safeBoxPayments.length; i++) {
+        if (this.closeCashSteps[paymentsIndex].isSubstepAvailable(this, i)) {
+          cashPayments = true;
+        }
+        if (this.closeCashSteps[toKeepIndex].isSubstepAvailable(this, i)) {
+          cashToKeep = true;
+        }
+      }
+      this.stepsDefinition[paymentsIndex].active = cashPayments;
+      this.stepsDefinition[toKeepIndex].active = cashToKeep;
+      this.set(
+        'totalExpected',
+        this.get('paymentList').models.reduce((total, model) => {
+          return OB.DEC.add(total, model.get('expected'));
+        }, 0)
+      );
+      this.set(
+        'totalDifference',
+        OB.DEC.sub(this.get('totalDifference'), this.get('totalExpected'))
+      );
+      this.setIgnoreStep3();
       this.stepsDefinition[
         this.stepIndex('OB.CloseCash.CashPayments')
       ].loaded = true;
@@ -456,7 +460,7 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
           };
         // Set cashclose info
         countSafeBoxInfo.id = OB.UTIL.get_UUID();
-        countSafeBoxInfo.paymentTypeId = curModel.get('id');
+        countSafeBoxInfo.paymentTypeId = curModel.get('safeBoxPaymentMethodId');
         countSafeBoxInfo.difference = curModel.get('difference');
         countSafeBoxInfo.foreignDifference = curModel.get('foreignDifference');
         countSafeBoxInfo.expected = curModel.get('expected');

@@ -1,3 +1,12 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2020 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
 package org.openbravo.retail.posterminal;
 
 import java.util.ArrayList;
@@ -18,6 +27,7 @@ public class SafeBoxPaymentMethodsProperties extends ModelExtension {
         add(new HQLProperty("sfpm.id", "safeBoxPaymentMethodId"));
         add(new HQLProperty("sfpm.fINFinancialaccount.id", "financialAccountId"));
         add(new HQLProperty("sfpm.paymentMethod.id", "paymentMethodId"));
+        add(new HQLProperty("sfpm.fINFinancialaccount.currency.id", "currency"));
         add(new HQLProperty("sfpm.cash", "isCash"));
         add(new HQLProperty("sfpm.countCash", "countCash"));
         add(new HQLProperty("sfpm.automateMovementToOtherAccount",

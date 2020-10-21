@@ -213,8 +213,22 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
         .add(Restrictions.eq(OBPOSSafeBoxPaymentMethod.PROPERTY_PAYMENTMETHOD,
             paymentMethod.getPaymentMethod().getPaymentMethod()));
 
-    OBPOSSafeBoxPaymentMethod safeBoxPaymentMethod = (OBPOSSafeBoxPaymentMethod) safeBoxPaymentMethodCriteria
-        .uniqueResult();
+    OBPOSSafeBoxPaymentMethod safeBoxPaymentMethod = null;
+    final List<OBPOSSafeBoxPaymentMethod> paymentMethods = safeBoxPaymentMethodCriteria.list();
+    if (paymentMethods.size() > 0) {
+      for (OBPOSSafeBoxPaymentMethod obposSafeBoxPaymentMethod : paymentMethods) {
+        if (obposSafeBoxPaymentMethod.getFINFinancialaccount()
+            .getCurrency()
+            .getId()
+            .equals(paymentMethod.getPaymentMethod().getCurrency().getId())) {
+          safeBoxPaymentMethod = obposSafeBoxPaymentMethod;
+          break;
+        }
+      }
+    }
+    if (safeBoxPaymentMethod == null || paymentMethods.size() == 0) {
+      return;
+    }
 
     Date cashMgmtTrxDate = new Date();
     cashMgmtTrxDate = OBMOBCUtils.stripTime(cashMgmtTrxDate);

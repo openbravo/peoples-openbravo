@@ -466,6 +466,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
                 safeBoxPaymentMethod.getFINFinancialaccount().getId());
             jsonSafeBoxPaymentMethodObject.put("financialAccountName",
                 safeBoxPaymentMethod.getFINFinancialaccount().getName());
+            jsonSafeBoxPaymentMethodObject.put("currency",
+                safeBoxPaymentMethod.getFINFinancialaccount().getCurrency().getId());
             jsonSafeBoxPaymentMethodObject.put("keepFixedAmount",
                 safeBoxPaymentMethod.isKeepFixedAmount());
             if (safeBoxPaymentMethod.isKeepFixedAmount()) {

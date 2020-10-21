@@ -84,7 +84,7 @@ public class SafeBoxes extends JSONProcessSimple {
             .getPropertyExtensions(extensionsPaymentMethods);
         String hqlSafeBoxPaymentMethods = "SELECT " + hqlPropertiesPaymentMethods.getHqlSelect() //
             + " FROM OBPOS_SafeBox_PaymentMethod AS sfpm" //
-            + " WHERE sfpm.obposSafebox.id = :safeBoxId"; //
+            + " WHERE sfpm.obposSafebox.id = :safeBoxId order by sfpm.paymentMethod.name, sfpm.fINFinancialaccount.name"; //
 
         @SuppressWarnings("rawtypes")
         Query safeBoxPaymentMethodsQuery = OBDal.getInstance()

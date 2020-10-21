@@ -116,22 +116,24 @@ enyo.kind({
         return;
       }
 
-      let paymentMethodCount = 0;
+      let safeBoxConfigured = true;
       validSafeBox.paymentMethods.forEach(function(paymentMethod) {
         for (let key in OB.MobileApp.model.paymentnames) {
           const payment = OB.MobileApp.model.paymentnames[key];
           if (
+            safeBoxConfigured &&
             payment.paymentMethod.issafebox &&
             payment.paymentMethod.paymentMethod ===
               paymentMethod.paymentMethodId &&
-            payment.payment.financialAccount !==
+            payment.paymentMethod.currency === paymentMethod.currency &&
+            payment.payment.financialAccount ===
               paymentMethod.financialAccountId
           ) {
-            paymentMethodCount++;
+            safeBoxConfigured = false;
           }
         }
       });
-      if (paymentMethodCount !== validSafeBox.paymentMethods.length) {
+      if (!safeBoxConfigured) {
         OB.UTIL.showConfirmation.display(
           OB.I18N.getLabel('OBMOBC_Error'),
           OB.I18N.getLabel('OBPOS_PaymentMethodSafeBoxNotConfigured')
