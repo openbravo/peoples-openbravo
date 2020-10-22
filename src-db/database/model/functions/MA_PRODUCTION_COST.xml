@@ -247,7 +247,8 @@ BEGIN
                                                           WHERE scc1.c_salary_category_id = ple.c_salary_category_id
                                                             AND scc1.datefrom = (SELECT MAX(scc2.datefrom)
                                                                        FROM C_SALARY_CATEGORY_COST scc2
-                                                                       WHERE scc2.c_salary_category_id = scc1.c_salary_category_id))) LOOP
+                                                                       WHERE scc2.c_salary_category_id = scc1.c_salary_category_id
+                                                                       AND scc2.datefrom  <= v_ProductionDate))) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_SalaryCategory.cost,0);
           UPDATE MA_PL_EMPLOYEE
           SET CALCCOST = COALESCE(Cur_SalaryCategory.cost, 0)
@@ -271,7 +272,8 @@ BEGIN
                                                    WHERE mc1.ma_machine_id = plm.ma_machine_id
                                                    AND mc1.validfrom = (SELECT MAX(mc2.validfrom)
                                                    FROM MA_MACHINE_COST mc2
-                                                   WHERE mc2.ma_machine_id = mc1.ma_machine_id))) LOOP
+                                                   WHERE mc2.ma_machine_id = mc1.ma_machine_id
+                                                   AND scc2.datefrom  <= v_ProductionDate))) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_Machine.COST,0);
           UPDATE MA_PL_MACHINE
           SET calccost = COALESCE(Cur_MAchine.cost, 0)
