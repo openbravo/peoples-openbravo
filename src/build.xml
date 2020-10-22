@@ -48,6 +48,9 @@ build.war: build a war file in the lib directory.
 -->
 
 <project name="openbravo sources" default="compile" basedir=".">
+  <condition property="minimizeJSandCSSbool">
+    <istrue value="${minimizeJSandCSS}" />
+  </condition>
 
   <property name="webTab" value="all" />
   <property name="tab" value="%" />
@@ -452,6 +455,8 @@ build.war: build a war file in the lib directory.
     </condition>
     
     <antcall target="build.web.folder.skins"  inheritAll="true" inheritrefs="true" />
+    
+    <antcall target="minimizeJSandCSS" inheritAll="true" inheritrefs="true" />
   </target>
     
   
@@ -499,6 +504,30 @@ build.war: build a war file in the lib directory.
       <classpath refid="project.class.path" />
     </java>
     
+  </target>
+
+  <target name="minimizeJSandCSS" description="minimize JS and CSS files" if="minimizeJSandCSSbool">
+    <taskdef name="minify" classname="org.openbravo.erpCommon.utility.JSCompressTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <minify outputdir="${base.context}/web">
+      <fileset dir="${base.web}">
+        <include name="**/*.js" />
+
+        <exclude name="**/js/dojo/src/docs.js"/>
+        <exclude name="**/js/dojo/src/hostenv_jsc.js"/>
+        <exclude name="**/js/dojo/src/hostenv_jsc.js"/>
+        <exclude name="**/js/jscalendar/lang/calendar-al.js"/>
+        <exclude name="**/js/jscalendar/lang/calendar-he-utf8.js"/>
+        <exclude name="**/js/jscalendar/lang/calendar-hr.js"/>
+        <exclude name="**/dojotoolkit/**"/>
+        <exclude name="**/dojo/**"/>
+      </fileset>
+      <!-- dojo/dojo.js has to be in a separate fileset because it's directory is excluded in the previous one -->
+      <fileset dir="${base.web}">
+        <include name="js/dojo/dojo.js"/>
+      </fileset>
+    </minify>
   </target>
 
   <target name="postwad">
