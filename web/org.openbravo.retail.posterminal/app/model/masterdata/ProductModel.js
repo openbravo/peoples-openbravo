@@ -12,18 +12,26 @@
       super();
       this.indices = [
         new OB.App.Class.Index({
-          name: 'productCategoryBrowse_idx',
+          name: 'productCategoryBrowseGeneric_idx',
           properties: [
             { property: 'productCategory' },
             { property: 'generic_product_id', isNullable: true }
           ]
         }),
         new OB.App.Class.Index({
-          name: 'bestsellerBrowse_idx',
+          name: 'bestsellerBrowseGeneric_idx',
           properties: [
             { property: 'bestseller', isBoolean: true },
             { property: 'generic_product_id', isNullable: true }
           ]
+        }),
+        new OB.App.Class.Index({
+          name: 'productCategoryBrowse_idx',
+          properties: [{ property: 'productCategory' }]
+        }),
+        new OB.App.Class.Index({
+          name: 'bestsellerBrowse_idx',
+          properties: [{ property: 'bestseller', isBoolean: true }]
         }),
         new OB.App.Class.Index({
           name: 'productAndProposalType_idx',
