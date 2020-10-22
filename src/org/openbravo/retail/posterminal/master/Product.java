@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -180,6 +181,7 @@ public class Product extends MasterDataProcessHQLQuery {
     final boolean executeGenericProductQry = getPreference("OBPOS_ExecuteGenericProductQuery");
     final boolean allowNoPriceInMainPriceList = getPreference(
         "OBPOS_allowProductsNoPriceInMainPricelist");
+    final boolean skipPackProduct = canSkipPackProduct(jsonsent);
 
     Map<String, Object> args = new HashMap<>();
     args.put("posPrecision", posPrecision);
@@ -210,9 +212,11 @@ public class Product extends MasterDataProcessHQLQuery {
     }
 
     // Packs
-    final String packHqlString = getPackProductHqlString(isRemote, useGetForProductImages,
-        regularProductsDiscHQLProperties);
-    products.add(packHqlString);
+    if (!skipPackProduct) {
+      final String packHqlString = getPackProductHqlString(isRemote, useGetForProductImages,
+          regularProductsDiscHQLProperties);
+      products.add(packHqlString);
+    }
 
     // Generic products
     if (executeGenericProductQry && !isRemote) {
@@ -336,7 +340,7 @@ public class Product extends MasterDataProcessHQLQuery {
     if (!useGetForProductImages) {
       query.append(" left join p.obdiscImage img");
     }
-    query.append(" where $filtersCriteria");
+    query.append(" where $filtersCriteria and $hqlCriteria");
     query.append(" and pt.obposIsCategory = true");
     query.append(" and pt.active = true");
     query.append(" and p.$incrementalUpdateCriteria");
@@ -581,6 +585,26 @@ public class Product extends MasterDataProcessHQLQuery {
       throw new OBException(e.getMessage());
     }
     return remoteSearch;
+  }
+
+  private boolean canSkipPackProduct(JSONObject jsonsent) {
+    boolean skipPackProduct = false;
+    try {
+      final JSONArray filters = jsonsent.optJSONArray("remoteFilters");
+      if (filters != null && filters.length() > 0) {
+        for (int i = 0; i < filters.length(); i++) {
+          final String value = filters.getJSONObject(i).getString("value");
+          final JSONArray columns = filters.getJSONObject(i).optJSONArray("columns");
+          if (Boolean.valueOf(value) == false && columns != null && columns.length() > 0
+              && columns.getString(0).equals("ispack")) {
+            skipPackProduct = true;
+          }
+        }
+      }
+    } catch (JSONException e) {
+      log.error("Error while checking pack product " + e.getMessage(), e);
+    }
+    return skipPackProduct;
   }
 
   @Override
