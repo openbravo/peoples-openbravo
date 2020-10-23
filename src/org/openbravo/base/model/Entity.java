@@ -688,9 +688,13 @@ public class Entity {
    */
   public List<Property> getRealProperties(boolean includeComputed) {
     List<Property> result = new ArrayList<Property>();
+    boolean isPropertyTSVector;
     for (Property p : properties) {
+      isPropertyTSVector = p.getDomainType() != null && p.getDomainType().getReference() != null
+          && p.getDomainType().getReference().getName() != null
+          && p.getDomainType().getReference().getName().equalsIgnoreCase("Search Vector");
       if ((includeComputed || !p.isComputedColumn())
-          && !Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(p.getName())) {
+          && !Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(p.getName()) && !isPropertyTSVector) {
         result.add(p);
       }
     }
