@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2019 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -213,6 +213,9 @@
 	  v_AD_Reference_ID:='23';
 	ELSIF(Cur_Column.Data_Type IN ('TEXT', 'CLOB')) THEN
 	  v_AD_Reference_ID:='14';
+	ELSIF(Cur_Column.Data_Type IN ('TSVECTOR')) THEN
+	  v_AD_Reference_ID:='81FCDA657A5540F69B0AE57B4E0F8A51';
+	  v_FieldLength:=0;
         ELSE
           v_AD_Reference_ID:='10'; -- if not found, use String
           v_CorrectType:='N';
