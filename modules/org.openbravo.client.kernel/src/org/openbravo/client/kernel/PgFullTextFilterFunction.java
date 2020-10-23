@@ -49,7 +49,7 @@ public class PgFullTextFilterFunction implements SQLFunction {
   @Override
   public String render(Type arg0, List args, SessionFactoryImplementor factory)
       throws QueryException {
-    if (args == null || args.size() < 1) {
+    if (args == null || args.size() < 2) {
       throw new IllegalArgumentException("The function must be passed at least 1 argument");
     }
 
