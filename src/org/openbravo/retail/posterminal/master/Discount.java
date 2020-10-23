@@ -165,7 +165,7 @@ public class Discount extends MasterDataProcessHQLQuery {
 
     // organization
     hql += " and p.$naturalOrgCriteria";
-    if (addIncrementalUpdateFilter == false) {
+    if (lastUpdated == null || addIncrementalUpdateFilter == false) {
       hql += " and ((p.includedOrganizations='Y' ";
       hql += "  and not exists (select 1 ";
       hql += "         from PricingAdjustmentOrganization o";
