@@ -55,6 +55,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 
     <#list entity.properties as p>
     <#if !p.computedColumn>
+    <#if !(p.domainType?? && p.domainType.reference?? && p.domainType.reference.id?matches("81FCDA657A5540F69B0AE57B4E0F8A51"))>
     <#if p.allowDerivedRead() && !p.isBeingReferenced()>
     /**
      * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName} <@addSeeTag p/>     * <@addDeprecationMessageIfNeeded property=p />
@@ -68,6 +69,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     </#if>
     <@addDeprecationTagIfNeeded property=p />
     public static final String PROPERTY_${p.name?upper_case} = "${p.name}";
+    </#if>
     </#if>
 
     </#list>
@@ -107,6 +109,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 
     <#list entity.properties as p>
     <#if !p.oneToMany>
+    <#if !(p.domainType?? && p.domainType.reference.id?matches("81FCDA657A5540F69B0AE57B4E0F8A51"))>
     /**
      * @see ${entity.simpleClassName}#<#if p.computedColumn>COMPUTED_COLUMN<#else>PROPERTY</#if>_${p.name?upper_case}
      * <@addDeprecationMessageIfNeeded property=p />
@@ -126,6 +129,8 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
       </#if>
     </#if>
     }
+    </#if>
+    <#if !(p.domainType?? && p.domainType.reference.id?matches("81FCDA657A5540F69B0AE57B4E0F8A51"))>
     /**
      * @see ${entity.simpleClassName}#<#if p.computedColumn>COMPUTED_COLUMN<#else>PROPERTY</#if>_${p.name?upper_case}
      * <@addDeprecationMessageIfNeeded property=p />
@@ -134,21 +139,18 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#if p.name?matches("Id")>
     @Override
     </#if>
-    public void set${p.getterSetterName?cap_first}(${p.shorterTypeName} ${p.javaName}) <#if p.domainType?? && p.domainType.reference.name?matches("Search Vector")>throws OBException </#if>{
+    public void set${p.getterSetterName?cap_first}(${p.shorterTypeName} ${p.javaName}){
     <#if p.partOfCompositeId>
 	    ((Id)getId()).set${p.getterSetterName?cap_first}(${p.javaName});
 	<#else>
       <#if !p.computedColumn>
-        <#if p.domainType?? && p.domainType.reference.name?matches("Search Vector")>
-          throw new OBException("It is not allowed to set a property that is of Search Vector reference");
-        <#else>
-          set(PROPERTY_${p.name?upper_case}, ${p.javaName});
-        </#if>
+        set(PROPERTY_${p.name?upper_case}, ${p.javaName});
       <#else>
         set(COMPUTED_COLUMN_${p.name?upper_case}, ${p.javaName});
       </#if>
 	</#if>
     }
+    </#if>
 
     </#if>
 	</#list>

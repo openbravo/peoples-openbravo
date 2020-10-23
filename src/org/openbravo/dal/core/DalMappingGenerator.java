@@ -180,6 +180,14 @@ public class DalMappingGenerator implements OBSingleton {
         continue;
       }
 
+      if (p.getDomainType() != null && p.getDomainType().getReference() != null
+          && p.getDomainType()
+              .getReference()
+              .getId()
+              .equalsIgnoreCase("81FCDA657A5540F69B0AE57B4E0F8A51")) {
+        continue;
+      }
+
       if (p.isOneToMany()) {
         content.append(generateOneToMany(p));
       } else {
