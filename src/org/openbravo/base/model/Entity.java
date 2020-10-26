@@ -939,10 +939,6 @@ public class Entity {
       } else if (p.isPrimitive() && !p.getPrimitiveType().isArray()) {
         fullType = p.getPrimitiveType().getName();
         simpleType = p.getPrimitiveType().getSimpleName();
-        if (p.getDomainType().getReference().getName().equalsIgnoreCase("Search Vector")) {
-          imports.add("org.openbravo.base.exception.OBException");
-          simpleImports.add("OBException");
-        }
       } else {
         continue;
       }
