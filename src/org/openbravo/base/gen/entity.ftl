@@ -1,3 +1,4 @@
+<#assign SEARCH_VECTOR_REF_ID = "81FCDA657A5540F69B0AE57B4E0F8A51" >
 <#function getter p>
   <#if p.boolean>
     <#return "is" + p.getterSetterName?cap_first>
@@ -55,7 +56,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 
     <#list entity.properties as p>
     <#if !p.computedColumn>
-    <#if !(p.domainType?? && p.domainType.reference?? && p.domainType.reference.id?matches("81FCDA657A5540F69B0AE57B4E0F8A51"))>
+    <#if !(p.domainType?? && p.domainType.reference?? && p.domainType.reference.id?matches(SEARCH_VECTOR_REF_ID))>
     <#if p.allowDerivedRead() && !p.isBeingReferenced()>
     /**
      * Property ${p.name} stored <#if p.columnName??>in column ${p.columnName} </#if>in table ${entity.tableName} <@addSeeTag p/>     * <@addDeprecationMessageIfNeeded property=p />
@@ -109,7 +110,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
 
     <#list entity.properties as p>
     <#if !p.oneToMany>
-    <#if !(p.domainType?? && p.domainType.reference.id?matches("81FCDA657A5540F69B0AE57B4E0F8A51"))>
+    <#if !(p.domainType?? && p.domainType.reference.id?matches(SEARCH_VECTOR_REF_ID))>
     /**
      * @see ${entity.simpleClassName}#<#if p.computedColumn>COMPUTED_COLUMN<#else>PROPERTY</#if>_${p.name?upper_case}
      * <@addDeprecationMessageIfNeeded property=p />
@@ -130,7 +131,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     </#if>
     }
     </#if>
-    <#if !(p.domainType?? && p.domainType.reference.id?matches("81FCDA657A5540F69B0AE57B4E0F8A51"))>
+    <#if !(p.domainType?? && p.domainType.reference.id?matches(SEARCH_VECTOR_REF_ID))>
     /**
      * @see ${entity.simpleClassName}#<#if p.computedColumn>COMPUTED_COLUMN<#else>PROPERTY</#if>_${p.name?upper_case}
      * <@addDeprecationMessageIfNeeded property=p />

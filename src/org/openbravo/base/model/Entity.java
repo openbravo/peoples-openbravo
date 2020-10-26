@@ -102,6 +102,7 @@ public class Entity {
   private String treeType;
   public static final String COMPUTED_COLUMNS_PROXY_PROPERTY = "_computedColumns";
   public static final String COMPUTED_COLUMNS_CLASS_APPENDIX = "_ComputedColumns";
+  public static final String SEARCH_VECTOR_REF_ID = "81FCDA657A5540F69B0AE57B4E0F8A51";
 
   public String getTreeType() {
     return treeType;
@@ -691,8 +692,7 @@ public class Entity {
     boolean isPropertyTSVector;
     for (Property p : properties) {
       isPropertyTSVector = p.getDomainType() != null && p.getDomainType().getReference() != null
-          && p.getDomainType().getReference().getName() != null
-          && p.getDomainType().getReference().getName().equalsIgnoreCase("Search Vector");
+          && SEARCH_VECTOR_REF_ID.equals(p.getDomainType().getReference().getId());
       if ((includeComputed || !p.isComputedColumn())
           && !Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(p.getName()) && !isPropertyTSVector) {
         result.add(p);

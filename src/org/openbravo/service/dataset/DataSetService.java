@@ -443,16 +443,14 @@ public class DataSetService implements OBSingleton {
 
     final Entity entity = bob.getEntity();
     final List<Property> exportables;
-    boolean isColumnTSVector;
     // check if all are included, except the excluded
     if (dataSetTable.isIncludeAllColumns()) {
       exportables = new ArrayList<Property>(entity.getProperties());
       // now remove the excluded
       for (final DataSetColumn dsc : dataSetColumns) {
-        isColumnTSVector = dsc.getColumn().getReference() != null
-            && dsc.getColumn().getReference().getName() != null
-            && dsc.getColumn().getReference().getName().equalsIgnoreCase("Search Vector");
-        if (dsc.isExcluded() || isColumnTSVector) {
+        boolean isTSVector = dsc.getColumn().getReference() != null
+            && Entity.SEARCH_VECTOR_REF_ID.equals(dsc.getColumn().getReference().getId());
+        if (dsc.isExcluded() || isTSVector) {
           exportables.remove(entity.getPropertyByColumnName(dsc.getColumn().getDBColumnName()));
         }
       }
@@ -461,10 +459,9 @@ public class DataSetService implements OBSingleton {
       // and add the not excluded
       exportables = new ArrayList<Property>();
       for (final DataSetColumn dsc : dataSetColumns) {
-        isColumnTSVector = dsc.getColumn().getReference() != null
-            && dsc.getColumn().getReference().getName() != null
-            && dsc.getColumn().getReference().getName().equalsIgnoreCase("Search Vector");
-        if (!dsc.isExcluded() && !isColumnTSVector) {
+        boolean isTSVector = dsc.getColumn().getReference() != null
+            && Entity.SEARCH_VECTOR_REF_ID.equals(dsc.getColumn().getReference().getId());
+        if (!dsc.isExcluded() && !isTSVector) {
           exportables.add(entity.getPropertyByColumnName(dsc.getColumn().getDBColumnName()));
         }
       }

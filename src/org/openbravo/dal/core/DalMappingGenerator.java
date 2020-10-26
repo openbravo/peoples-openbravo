@@ -181,10 +181,7 @@ public class DalMappingGenerator implements OBSingleton {
       }
 
       if (p.getDomainType() != null && p.getDomainType().getReference() != null
-          && p.getDomainType()
-              .getReference()
-              .getId()
-              .equalsIgnoreCase("81FCDA657A5540F69B0AE57B4E0F8A51")) {
+          && Entity.SEARCH_VECTOR_REF_ID.equals(p.getDomainType().getReference().getId())) {
         continue;
       }
 
