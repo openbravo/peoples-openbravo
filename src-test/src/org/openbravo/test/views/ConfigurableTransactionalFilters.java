@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,8 +24,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
-
-import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -125,11 +123,7 @@ public class ConfigurableTransactionalFilters extends ViewGenerationTest {
   }
 
   private String getTransactionalWindowView() {
-    Optional<String> viewDef = generateView(Windows.SALES_ORDER);
-    if (!viewDef.isPresent()) {
-      return "";
-    }
-    return viewDef.get();
+    return generateView(Windows.SALES_ORDER);
   }
 
 }

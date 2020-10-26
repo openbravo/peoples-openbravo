@@ -40,8 +40,6 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 
@@ -124,8 +122,7 @@ public class StandardWindowComponent extends BaseTemplateComponent {
     final List<OBViewTab> tempTabs = new ArrayList<OBViewTab>();
     for (Tab tab : getWindow().getADTabList()) {
       // NOTE: grid sequence and field sequence tabs do not have any fields defined!
-      if (!tab.isActive() || tab.getADFieldList().isEmpty() || ActivationKey.getInstance()
-          .hasLicencesTabAccess(tab.getId()) != FeatureRestriction.NO_RESTRICTION) {
+      if (!tab.isActive()) {
         continue;
       }
       final OBViewTab tabComponent = createComponent(OBViewTab.class);
