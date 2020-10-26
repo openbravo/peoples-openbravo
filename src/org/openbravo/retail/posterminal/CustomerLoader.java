@@ -430,7 +430,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess
 
   private void setBpLanguage(BusinessPartner customer, final JSONObject jsonCustomer)
       throws JSONException {
-    if (jsonCustomer.has("language")) {
+    if (jsonCustomer.has("language") && jsonCustomer.get("language") != JSONObject.NULL) {
       Object adLanguage = jsonCustomer.get("language");
       OBCriteria<Language> obCriteria = OBDal.getInstance().createCriteria(Language.class);
       obCriteria.add(Restrictions.eq(Language.PROPERTY_LANGUAGE, adLanguage));
