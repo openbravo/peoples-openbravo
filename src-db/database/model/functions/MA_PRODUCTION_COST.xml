@@ -273,7 +273,7 @@ BEGIN
                                                    AND mc1.validfrom = (SELECT MAX(mc2.validfrom)
                                                    FROM MA_MACHINE_COST mc2
                                                    WHERE mc2.ma_machine_id = mc1.ma_machine_id
-                                                   AND scc2.datefrom  <= v_ProductionDate))) LOOP
+                                                   AND mc2.validfrom  <= v_ProductionDate))) LOOP
           v_ProductionCost_Tmp := v_ProductionCost_Tmp + COALESCE(Cur_Machine.COST,0);
           UPDATE MA_PL_MACHINE
           SET calccost = COALESCE(Cur_MAchine.cost, 0)
