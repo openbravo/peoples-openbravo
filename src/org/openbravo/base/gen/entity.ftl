@@ -139,7 +139,7 @@ public class ${entity.simpleClassName} extends BaseOBObject ${entity.implementsS
     <#if p.name?matches("Id")>
     @Override
     </#if>
-    public void set${p.getterSetterName?cap_first}(${p.shorterTypeName} ${p.javaName}){
+    public void set${p.getterSetterName?cap_first}(${p.shorterTypeName} ${p.javaName}) {
     <#if p.partOfCompositeId>
 	    ((Id)getId()).set${p.getterSetterName?cap_first}(${p.javaName});
 	<#else>
