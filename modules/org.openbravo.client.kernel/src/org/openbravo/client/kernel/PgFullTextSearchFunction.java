@@ -20,21 +20,21 @@
 package org.openbravo.client.kernel;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.hibernate.QueryException;
 import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.engine.spi.Mapping;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.type.BooleanType;
 import org.hibernate.type.Type;
 
-/**
- * Creates SQL parsing for fullTextSearchFilter hbm function
- */
-public class PgFullTextFilterFunction implements SQLFunction {
+/** HQL function to support Full Text Search in PostgreSQL */
+public abstract class PgFullTextSearchFunction implements SQLFunction {
+  protected abstract String getFragment(String table, String field, String value,
+      Optional<String> ftsConfiguration);
 
   @Override
-  public Type getReturnType(Type arg0, Mapping arg1) throws QueryException {
+  public Type getReturnType(Type arg0, Mapping arg1) {
     return new BooleanType();
   }
 
@@ -49,40 +49,55 @@ public class PgFullTextFilterFunction implements SQLFunction {
   }
 
   /**
-   * Function that parses the hbm function to SQL language:
+   * Function that parses the HQL function to SQL language:
    * 
-   * @param args:
+   * @param args
    *          list of arguments passed to fullTextSearchFilter hbm function
+   *          <ul>
    *          <li>table
    *          <li>field: tsvector column of table
    *          <li>ftsconfiguration [optional]: language to pass to to_tsquery function
    *          <li>value: string to be searched/compared
+   *          </ul>
    */
-  @SuppressWarnings("rawtypes")
   @Override
-  public String render(Type arg0, List args, SessionFactoryImplementor factory)
-      throws QueryException {
+  public String render(Type type, @SuppressWarnings("rawtypes") List args,
+      SessionFactoryImplementor factory) {
     if (args == null || args.size() < 3) {
       throw new IllegalArgumentException("The function must be passed at least 3 arguments");
     }
 
-    int pointPosition = (int) args.get(0).toString().indexOf(".");
-    String table = (String) args.get(0).toString().substring(0, pointPosition);
+    int pointPosition = args.get(0).toString().indexOf(".");
+    String table = args.get(0).toString().substring(0, pointPosition);
     String field = (String) args.get(1);
-    String ftsConfiguration;
-    String value;
-    String fragment;
+    Optional<String> ftsConfiguration = Optional
+        .ofNullable(args.size() == 4 ? (String) args.get(2) : null);
+    String value = (String) args.get(args.size() == 4 ? 3 : 2);
 
-    if (args.size() == 4) {
-      ftsConfiguration = (String) args.get(2);
-      value = (String) args.get(3);
-      fragment = table + "." + field + " @@ " + "to_tsquery(" + ftsConfiguration + "::regconfig, "
-          + value + ")";
-    } else {
-      value = (String) args.get(2);
-      fragment = table + "." + field + " @@ " + "to_tsquery(" + value + ")";
+    return getFragment(table, field, value, ftsConfiguration);
+  }
+
+  protected String getFtsConfig(Optional<String> ftsConfiguration) {
+    return ftsConfiguration.map(config -> config + "::regconfig, ").orElseGet(() -> "");
+  }
+
+  // TODO: JavaDoc
+  public static class Filter extends PgFullTextSearchFunction {
+    @Override
+    protected String getFragment(String table, String field, String value,
+        Optional<String> ftsConfiguration) {
+      return table + "." + field + " @@ to_tsquery(" + getFtsConfig(ftsConfiguration) + value + ")";
     }
+  }
 
-    return fragment;
+  // TODO: JavaDoc
+  public static class Rank extends PgFullTextSearchFunction {
+    @Override
+    protected String getFragment(String table, String field, String value,
+        Optional<String> ftsConfiguration) {
+
+      return "ts_rank_cd(" + table + "." + field + ", to_tsquery(" + getFtsConfig(ftsConfiguration)
+          + value + "), 4)";
+    }
   }
 }

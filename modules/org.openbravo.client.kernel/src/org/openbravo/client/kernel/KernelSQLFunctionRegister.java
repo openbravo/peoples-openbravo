@@ -50,8 +50,8 @@ public class KernelSQLFunctionRegister implements SQLFunctionRegister {
     sqlFunctions.put("now", new NoArgSQLFunction("now", StandardBasicTypes.TIMESTAMP));
     sqlFunctions.put("to_timestamp",
         new StandardSQLFunction("to_timestamp", StandardBasicTypes.TIMESTAMP));
-    sqlFunctions.put("fullTextSearchFilter", new PgFullTextFilterFunction());
-    sqlFunctions.put("fullTextSearchRank", new PgFullTextRankFunction());
+    sqlFunctions.put("fullTextSearchFilter", new PgFullTextSearchFunction.Filter());
+    sqlFunctions.put("fullTextSearchRank", new PgFullTextSearchFunction.Rank());
     return sqlFunctions;
   }
 }
