@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2263,7 +2263,8 @@ OB.ViewFormProperties = {
 
   validateForm: function() {
     var form = this;
-    if (!form.validate()) {
+    const validateHiddenFields = true;
+    if (!form.validate(validateHiddenFields)) {
       form.handleFieldErrors(null);
       form.view.standardWindow.autoSaveDone(form.view, false);
       form.isSaving = false;
