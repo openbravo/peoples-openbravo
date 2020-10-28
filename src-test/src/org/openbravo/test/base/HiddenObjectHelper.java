@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,9 +38,7 @@ public class HiddenObjectHelper {
   public static void initializeField(Object obj, String fieldName) throws Exception {
     Field fld = getField(obj, fieldName);
 
-    // replace isAccesible() with canAccess() when JDK9 becomes the minimum supported version
-    @SuppressWarnings("all")
-    boolean originallyAccessible = fld.isAccessible();
+    boolean originallyAccessible = fld.canAccess(obj);
     fld.setAccessible(true);
 
     Object o = get(obj, fieldName);
@@ -61,9 +59,7 @@ public class HiddenObjectHelper {
   public static Object get(Object obj, String fieldName) throws Exception {
     Field fld = getField(obj, fieldName);
 
-    // replace isAccesible() with canAccess() when JDK9 becomes the minimum supported version
-    @SuppressWarnings("all")
-    boolean originallyAccessible = fld.isAccessible();
+    boolean originallyAccessible = fld.canAccess(obj);
     fld.setAccessible(true);
 
     Object o = fld.get(obj);
@@ -76,9 +72,7 @@ public class HiddenObjectHelper {
    */
   public static void set(Object obj, String fieldName, Object value) throws Exception {
     Field fld = getField(obj, fieldName);
-    // replace isAccesible() with canAccess() when JDK9 becomes the minimum supported version
-    @SuppressWarnings("all")
-    boolean originallyAccessible = fld.isAccessible();
+    boolean originallyAccessible = fld.canAccess(obj);
     fld.setAccessible(true);
     fld.set(obj, value);
     fld.setAccessible(originallyAccessible);

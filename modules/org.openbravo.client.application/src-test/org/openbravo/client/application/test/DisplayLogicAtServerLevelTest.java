@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2018 Openbravo SLU
+ * All portions are Copyright (C) 2016-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -147,9 +147,7 @@ public class DisplayLogicAtServerLevelTest extends WeldBaseTest {
     try {
       evaluateDisplayLogicAtServerLevel = clazz
           .getDeclaredMethod("evaluateDisplayLogicAtServerLevel", String.class, String.class);
-      // replace isAccesible() with canAccess() when JDK9 becomes the minimum supported version
-      @SuppressWarnings("all")
-      boolean originallyAccessible = evaluateDisplayLogicAtServerLevel.isAccessible();
+      boolean originallyAccessible = evaluateDisplayLogicAtServerLevel.canAccess(field);
       evaluateDisplayLogicAtServerLevel.setAccessible(true);
       boolean evaluatedDisplayLogic = (boolean) evaluateDisplayLogicAtServerLevel.invoke(field,
           displayLogicEvaluatedInServerExpression, "0");

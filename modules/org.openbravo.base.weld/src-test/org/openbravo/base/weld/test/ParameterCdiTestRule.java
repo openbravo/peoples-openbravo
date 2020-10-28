@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,9 +64,7 @@ public class ParameterCdiTestRule<T> implements MethodRule {
       throws Throwable {
     Field targetField = getTargetField(target);
 
-    // replace isAccesible() with canAccess() when JDK9 becomes the minimum supported version
-    @SuppressWarnings("all")
-    boolean isAccesible = targetField.isAccessible();
+    boolean isAccesible = targetField.canAccess(target);
     if (!isAccesible) {
       targetField.setAccessible(true);
     }
