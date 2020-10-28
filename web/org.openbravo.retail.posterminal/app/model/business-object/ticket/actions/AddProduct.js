@@ -829,6 +829,9 @@
           'modalProductAttribute',
           { options }
         );
+        attributeValue = Array.isArray(attributeValue)
+          ? attributeValue[0]
+          : attributeValue;
         if (attributeValue === null || attributeValue === undefined) {
           throw new OB.App.Class.ActionSilentlyCanceled(
             `No attribute provided for product ${product.id}`

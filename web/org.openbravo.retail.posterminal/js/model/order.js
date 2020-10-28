@@ -5258,17 +5258,10 @@
     },
 
     updatePrices: function(callback) {
-      var order = this,
-        newAllLinesCalculated;
-
-      function allLinesCalculated() {
+      let order = this;
+      let newAllLinesCalculated = _.after(this.get('lines').length, function() {
         callback(order);
-      }
-
-      newAllLinesCalculated = _.after(
-        this.get('lines').length,
-        allLinesCalculated
-      );
+      });
 
       // Ensure state model is in sync with backbone. There are processes (ie. Create Order from quotation)
       // that mutate backbone model siltently before reaching this point.
@@ -5277,74 +5270,9 @@
       ).resetStateFromBackbone();
 
       this.get('lines').each(async function(line) {
-        //remove promotions
-        line.unset('promotions');
-
-        let criteria = {},
-          successCallbackPrices = function(dataPrices) {
-            if (
-              !OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)
-            ) {
-              OB.App.State.Ticket.setLinePrice({
-                lineIds: [line.id],
-                price: dataPrices.get('standardPrice', {
-                  setUndo: false
-                })
-              })
-                .then(() => {
-                  OB.UTIL.handlePriceRuleBasedServices(order);
-                  OB.UTIL.TicketUtils.printLinesOfTicket(order, [line.id]);
-                  newAllLinesCalculated();
-                })
-                .catch(OB.App.View.ActionCanceledUIHandler.handle);
-            } else {
-              dataPrices.each(function(price) {
-                OB.App.State.Ticket.setLinePrice({
-                  lineIds: [line.id],
-                  price: price.get('standardPrice', {
-                    setUndo: false
-                  })
-                })
-                  .then(() => {
-                    OB.UTIL.handlePriceRuleBasedServices(order);
-                    OB.UTIL.TicketUtils.printLinesOfTicket(order, [line.id]);
-                    newAllLinesCalculated();
-                  })
-                  .catch(OB.App.View.ActionCanceledUIHandler.handle);
-              });
-            }
-          };
-        if (!OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
-          try {
-            const product = await OB.App.MasterdataModels.Product.withId(
-              line.get('product').get('id')
-            );
-            successCallbackPrices(OB.Dal.transform(OB.Model.Product, product));
-          } catch (error) {
-            OB.error(error.message);
-          }
-        } else {
-          criteria = {};
-          var remoteCriteria = [];
-          var productId = {
-            columns: ['id'],
-            operator: 'equals',
-            value: line.get('product').get('id'),
-            isId: true
-          };
-          remoteCriteria.push(productId);
-          criteria.remoteFilters = remoteCriteria;
-
-          OB.Dal.find(
-            OB.Model.Product,
-            criteria,
-            successCallbackPrices,
-            function() {
-              // TODO: Report error properly.
-            },
-            line
-          );
-        }
+        OB.UTIL.handlePriceRuleBasedServices(order);
+        OB.UTIL.TicketUtils.printLinesOfTicket(order, [line.id]);
+        newAllLinesCalculated();
       });
     },
 
@@ -6073,174 +6001,91 @@
       );
     },
 
-    createOrderFromQuotation: function(updatePrices, callback) {
-      var me = this,
-        execution = OB.UTIL.ProcessController.start('createOrderFromQuotation'),
-        idMap = {},
-        oldIdMap = {},
-        oldId,
-        productHasAttribute = false,
-        productWithAttributeValue = [],
-        needAttributeWhenCreatingQuotation = OB.MobileApp.model.hasPermission(
-          'OBPOS_AskForAttributesWhenCreatingQuotation',
-          true
-        ),
-        attributeSearchAllowed = OB.MobileApp.model.hasPermission(
-          'OBPOS_EnableSupportForProductAttributes',
-          true
-        ),
-        callQuotationAttrs;
-      OB.UTIL.StockUtils.checkOrderLinesStock([this], function(hasStock) {
-        if (hasStock) {
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PreCreateOrderFromQuotation',
-            {
-              updatePrices: updatePrices,
-              order: me
-            },
-            function(args) {
+    createOrderFromQuotation: function(updatePrices, finalCallback) {
+      const me = this;
+      OB.App.State.Ticket.createTicketFromQuotation({
+        firmQuotation: !updatePrices,
+        user: OB.MobileApp.model.get('orgUserId'),
+        session: OB.MobileApp.model.get('session'),
+        date: OB.I18N.normalizeDate(new Date()),
+        terminal: OB.MobileApp.model.get('terminal'),
+        isSalesRepresentative: OB.MobileApp.model.get('context').user
+          .isSalesRepresentative,
+        salesRepresentative: OB.MobileApp.model.get('context').user.id,
+        documentType: OB.UTIL.isCrossStoreReceipt(this)
+          ? this.get('lines').models[0].get('documentTypeId')
+          : OB.MobileApp.model.get('terminal').terminalType.documentType
+      })
+        .then(() => {
+          let callback = function(order) {
+            OB.UTIL.showSuccess(
+              OB.I18N.getLabel('OBPOS_QuotationCreatedOrder')
+            );
+            // This event is used in stock validation module.
+            order.trigger('orderCreatedFromQuotation');
+            // Check Product Attribute
+            const productWithAttributeValue = [];
+            let productHasAttribute = false;
+            let needAttributeWhenCreatingQuotation = OB.MobileApp.model.hasPermission(
+              'OBPOS_AskForAttributesWhenCreatingQuotation',
+              true
+            );
+            let attributeSearchAllowed = OB.MobileApp.model.hasPermission(
+              'OBPOS_EnableSupportForProductAttributes',
+              true
+            );
+            order.get('lines').each(function(line) {
+              let productAttributes = line.get('product').get('hasAttributes');
               if (
-                args &&
-                args.cancelOperation &&
-                args.cancelOperation === true
+                OB.UTIL.isNullOrUndefined(productAttributes) === false &&
+                productAttributes
               ) {
-                OB.UTIL.ProcessController.finish(
-                  'createOrderFromQuotation',
-                  execution
-                );
-                if (callback) {
-                  callback(false);
-                }
-                return;
+                productWithAttributeValue.push(line);
+                productHasAttribute = productAttributes;
               }
-              args.order.get('lines').each(function(line) {
-                oldId = line.get('id');
-                line.set('id', OB.UTIL.get_UUID());
-                line.unset('netFull');
-                line.unset('grossUnitPrice');
-                line.unset('lineGrossAmount');
-                line.unset('obposQtytodeliver');
-                idMap[line.get('id')] = OB.UTIL.get_UUID();
-                line.set('id', idMap[line.get('id')]);
-                if (line.get('hasRelatedServices')) {
-                  oldIdMap[oldId] = line.get('id');
+            });
+            if (
+              attributeSearchAllowed &&
+              needAttributeWhenCreatingQuotation === false &&
+              productHasAttribute
+            ) {
+              OB.MobileApp.view.waterfall('onShowPopup', {
+                popup: 'modalQuotationProductAttributes',
+                args: {
+                  lines: productWithAttributeValue,
+                  quotationProductAttribute: order
                 }
-              }, args.order);
-
-              args.order.set('oldId', args.order.get('id'));
-              args.order.set('id', OB.UTIL.get_UUID());
-              args.order.set('documentNo', '');
-              args.order.set('isQuotation', false);
-              args.order.set(
-                'orderType',
-                OB.MobileApp.model.get('terminal').terminalType.layawayorder
-                  ? 2
-                  : 0
-              );
-              args.order.setFullInvoice(false, true);
-              args.order.set(
-                'documentType',
-                OB.UTIL.isCrossStoreReceipt(args.order)
-                  ? args.order.get('lines').models[0].get('documentTypeId')
-                  : OB.MobileApp.model.get('terminal').terminalType.documentType
-              );
-              args.order.set('createdBy', OB.MobileApp.model.get('orgUserId'));
-              if (
-                OB.MobileApp.model.get('context').user.isSalesRepresentative
-              ) {
-                args.order.set(
-                  'salesRepresentative',
-                  OB.MobileApp.model.get('context').user.id
-                );
-              } else {
-                args.order.set('salesRepresentative', null);
-              }
-              args.order.set('hasbeenpaid', 'N');
-              args.order.set('skipApplyPromotions', false);
-              args.order.set('isPaid', false);
-              args.order.set('isEditable', true);
-              args.order.set('orderDate', OB.I18N.normalizeDate(new Date()));
-              args.order.set('creationDate', null);
-              args.order.set(
-                'posTerminal',
-                OB.MobileApp.model.get('terminal').id
-              );
-              args.order.set('session', OB.MobileApp.model.get('session'));
-              args.order.unset('deletedLines');
-              args.order.save();
-
-              args.order.get('lines').each(function(line) {
-                var productAttributes = line
-                  .get('product')
-                  .get('hasAttributes');
-                if (
-                  OB.UTIL.isNullOrUndefined(productAttributes) === false &&
-                  productAttributes
-                ) {
-                  productWithAttributeValue.push(line);
-                  productHasAttribute = productAttributes;
-                }
-                if (line.get('relatedLines')) {
-                  line.get('relatedLines').forEach(function(rl) {
-                    rl.orderId = args.order.get('id');
-                    rl.orderDocumentNo = args.order.get('documentNo');
-                    if (oldIdMap[rl.orderlineId]) {
-                      rl.orderlineId = oldIdMap[rl.orderlineId];
-                    }
-                  });
-                }
-              }, args.order);
-
-              callQuotationAttrs = function(order) {
-                OB.UTIL.showSuccess(
-                  OB.I18N.getLabel('OBPOS_QuotationCreatedOrder')
-                );
-                OB.UTIL.ProcessController.finish(
-                  'createOrderFromQuotation',
-                  execution
-                );
-                // This event is used in stock validation module.
-                order.trigger('orderCreatedFromQuotation');
-                //call quotation attributes popup
-                if (
-                  attributeSearchAllowed &&
-                  needAttributeWhenCreatingQuotation === false &&
-                  productHasAttribute
-                ) {
-                  OB.MobileApp.view.waterfall('onShowPopup', {
-                    popup: 'modalQuotationProductAttributes',
-                    args: {
-                      lines: productWithAttributeValue,
-                      quotationProductAttribute: order
-                    }
-                  });
-                }
-                if (callback) {
-                  callback(true);
-                }
-              };
-              if (updatePrices) {
-                args.order.updatePrices(function(order) {
-                  order.calculateReceipt(function() {
-                    callQuotationAttrs(order);
-                  });
-                });
-              } else {
-                args.order.set('skipApplyPromotions', true);
-                args.order.calculateReceipt(function() {
-                  args.order.unset('skipApplyPromotions');
-                  callQuotationAttrs(args.order);
-                });
-              }
+              });
             }
-          );
-        } else {
-          OB.UTIL.ProcessController.finish(
-            'createOrderFromQuotation',
-            execution
-          );
-        }
-      });
+            if (finalCallback) {
+              finalCallback(true);
+            }
+          };
+          // Update Order attributes
+          me.setFullInvoice(false, true);
+          if (updatePrices) {
+            me.updatePrices(function(order) {
+              order.calculateReceipt(function() {
+                callback(order);
+              });
+            });
+          } else {
+            OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).resetStateFromBackbone();
+            me.set('skipApplyPromotions', true);
+            me.calculateReceipt(function() {
+              me.unset('skipApplyPromotions');
+              callback(me);
+            });
+          }
+        })
+        .catch(function(error) {
+          OB.UTIL.showError(error.messages);
+          if (finalCallback) {
+            finalCallback(false);
+          }
+        });
     },
 
     reactivateQuotation: async function() {
