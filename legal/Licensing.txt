@@ -60,7 +60,7 @@ https://www.iso.org/iso-4217-currency-codes.html
 Under Tigra Calculator license (license available at http://www.softcomplex.com/)
 Copyright © 2003-2004 Softcomplex Inc. 
 
-# jdt-compiler-4.4.2.jar
+# ecj-4.17.jar
 Eclipse Public License 1.0 (license available at
 http://www.eclipse.org/legal/epl-v10.html) or in the file EPL-1.0.txt in this folder
 

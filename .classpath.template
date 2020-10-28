@@ -20,6 +20,7 @@
 	<classpathentry kind="src" path="modules/org.openbravo.service.datasource/src"/>
 	<classpathentry kind="src" path="modules/org.openbravo.utility.cleanup.log/src"/>
 	<classpathentry including="quartz.properties" kind="src" path="config"/>
+	<classpathentry including="jasperreports.properties" kind="src" path="src/org/openbravo/erpReports"/>
 	<classpathentry kind="src" path="src-gen"/>
 	<classpathentry including="**/*.java" kind="src" path="srcAD"/>
 	<classpathentry including="**/*.java" kind="src" path="build/javasqlc/srcAD"/>

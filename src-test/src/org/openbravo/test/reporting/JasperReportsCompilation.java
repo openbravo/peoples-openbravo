@@ -66,4 +66,33 @@ public class JasperReportsCompilation {
     @SuppressWarnings("unused")
     JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
   }
+
+  /**
+   * Compiles a jrxml which includes several JDK8 and JDK11 features.
+   */
+  @Test
+  public void jrxmlShouldBeCompiledWithJDK11OrHigher() throws JRException, IOException {
+    String jrxml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
+        + "<jasperReport bottomMargin=\"20\" columnWidth=\"535\" leftMargin=\"30\" name=\"ReportTrialBalancePDF\" pageHeight=\"842\" pageWidth=\"595\" rightMargin=\"30\" topMargin=\"20\" uuid=\"94f73212-0a4e-4d01-a77d-7c1011919e14\"\n" //
+        + "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://jasperreports.sourceforge.net/jasperreports\" xsi:schemaLocation=\"http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd\">\n" //
+        + "  <import value=\"net.sf.jasperreports.engine.*\"/>\n" //
+        + "  <import value=\"java.util.*\"/>\n" //
+        + "  <import value=\"java.util.Arrays\"/>\n"
+        + "  <import value=\"java.util.stream.Collectors\"/>\n" + "\n" //
+        + "  <pageFooter>\n" //
+        + "    <band height=\"40\">\n" //
+        + "      <textField>\n" //
+        + "        <reportElement height=\"16\" width=\"257\" x=\"245\" y=\"15\"/>\n" //
+
+        // this was the problematic instruction
+        + "        <textFieldExpression><![CDATA[Arrays.asList(\" \", \" \").stream().filter((var a) -> a.equals(a)).collect(Collectors.joining(\",\"))]]></textFieldExpression>\n" //
+
+        + "      </textField>\n" //
+        + "    </band>\n" //
+        + "  </pageFooter>\n" //
+        + "</jasperReport>";
+    JasperDesign jasperDesign = JRXmlLoader.load(IOUtils.toInputStream(jrxml, "UTF-8"));
+    @SuppressWarnings("unused")
+    JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+  }
 }
