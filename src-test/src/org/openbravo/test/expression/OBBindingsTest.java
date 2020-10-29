@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,7 +60,7 @@ public class OBBindingsTest extends OBBaseTest {
     parameters.put(OBBindingsConstants.COMMAND_TYPE_PARAM, DEFAULT);
     parameters.put(OBBindingsConstants.POSTED_PARAM, YES);
     // initialize Javascript engine
-    engine = new ScriptEngineManager().getEngineByName("js");
+    engine = new ScriptEngineManager().getEngineByName("rhino");
     engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters, request.getSession()));
     log.info("Using script engine {}", engine.getClass().getSimpleName());
   }
