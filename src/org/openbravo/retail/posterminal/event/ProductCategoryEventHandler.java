@@ -25,7 +25,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.ProductCategory;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.config.OBRETCOProductcategory;
-import org.openbravo.retail.config.OBRETCOProlProduct;
 
 public class ProductCategoryEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
@@ -68,19 +67,25 @@ public class ProductCategoryEventHandler extends EntityPersistenceEventObserver 
         }
       } else {
         //@formatter:off
-        String hql = "as asortprod "
-            +" join asortprod.product as p "
-            +" join p.productCategory as pc "
-            +" where pc.id= :prodCategoryId ";
+        String hql = "select distinct(asortprod.obretcoProductlist.id) "
+           +" from OBRETCO_Prol_Product as asortprod "
+           +" join asortprod.product as p "
+           +" join p.productCategory as pc "
+           +" where pc.id= :prodCategoryId ";
         //@formatter:on
-        final List<OBRETCOProlProduct> assortmentProdList = OBDal.getInstance()
-            .createQuery(OBRETCOProlProduct.class, hql)
-            .setNamedParameter("prodCategoryId", productCtgry.getId())
+        final List<String> assortmentList = OBDal.getInstance()
+            .getSession()
+            .createQuery(hql, String.class)
+            .setParameter("prodCategoryId", productCtgry.getId())
             .list();
 
         // Add product category to assortment
-        for (OBRETCOProlProduct assortProd : assortmentProdList) {
-          createAssortmentProductCategory(assortProd.getObretcoProductlist(), productCtgry);
+        for (String assortmentId : assortmentList) {
+          OBRETCOProductList assortment = OBDal.getInstance()
+              .get(OBRETCOProductList.class, assortmentId);
+          if (assortment != null) {
+            createAssortmentProductCategory(assortment, productCtgry);
+          }
         }
       }
     }
