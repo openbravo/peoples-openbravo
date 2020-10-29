@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,8 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Tuple;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
@@ -48,11 +46,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.query.NativeQuery;
-import org.hibernate.query.Query;
-import org.hibernate.type.StandardBasicTypes;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -89,7 +83,6 @@ import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
 import org.openbravo.model.ad.ui.Message;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
-import org.openbravo.model.common.businesspartner.Category;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.InvoiceLine;
@@ -117,24 +110,6 @@ import org.openbravo.test.base.OBBaseTest;
 
 public class IssuesTest extends OBBaseTest {
   private static final Logger log = LogManager.getLogger();
-
-  @Test
-  @Issue("18688")
-  public void test18688() throws Exception {
-    // define the map containing the SQL function to be registered in Hibernate
-    Map<String, SQLFunction> sqlFunctions = new HashMap<>();
-    sqlFunctions.put("ad_column_identifier_std",
-        new StandardSQLFunction("ad_column_identifier_std", StandardBasicTypes.STRING));
-    initializeDalLayer(sqlFunctions);
-
-    final Session session = OBDal.getInstance().getSession();
-    final String qryStr = "select bc.id, ad_column_identifier_std('C_BP_Group', bc.id) from "
-        + Category.ENTITY_NAME + " bc";
-    final Query<Tuple> qry = session.createQuery(qryStr, Tuple.class);
-    for (Tuple tuple : qry.list()) {
-      assertTrue(tuple.get(1) instanceof String && tuple.get(1).toString().length() > 0);
-    }
-  }
 
   @Test
   @Issue("13749")
