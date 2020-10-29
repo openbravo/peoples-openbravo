@@ -111,16 +111,15 @@ enyo.kind({
       if (customer !== undefined) {
         oldCustomer = customer.toJSON();
       }
-      let result = provider.validate(
-        oldCustomer,
-        me.modelProperty,
-        me.getValue()
-      );
-      if (result && result.status) {
-        me.formElement.setMessage();
-      } else {
-        me.formElement.setMessage(result.message, true);
-      }
+      provider.validate(oldCustomer, me.modelProperty, me.getValue(), function(
+        result
+      ) {
+        if (result && result.status) {
+          me.formElement.setMessage();
+        } else {
+          me.formElement.setMessage(result.message, true);
+        }
+      });
     }
   },
   loadValue: function(inSender, inEvent) {
