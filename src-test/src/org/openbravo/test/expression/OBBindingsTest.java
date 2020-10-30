@@ -19,6 +19,7 @@
 package org.openbravo.test.expression;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 import java.text.ParseException;
@@ -28,14 +29,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.mozilla.javascript.NativeArray;
+import org.openbravo.base.expression.OBScriptEngine;
 import org.openbravo.client.application.OBBindings;
 import org.openbravo.client.application.OBBindingsConstants;
 import org.openbravo.dal.core.OBContext;
@@ -50,49 +51,51 @@ public class OBBindingsTest extends OBBaseTest {
   private static final Logger log = LogManager.getLogger();
   private static final String DEFAULT = "DEFAULT";
   private static final String YES = "Y";
-  private ScriptEngine engine;
-  private HttpServletRequestMock request;
+  private OBScriptEngine engine;
+  private Map<String, Object> bindings;
 
   @Before
   public void initScriptEngine() throws Exception {
-    request = new HttpServletRequestMock();
+    HttpServletRequestMock request = new HttpServletRequestMock();
     Map<String, String> parameters = new HashMap<>();
     parameters.put(OBBindingsConstants.COMMAND_TYPE_PARAM, DEFAULT);
     parameters.put(OBBindingsConstants.POSTED_PARAM, YES);
+    bindings = new HashMap<>();
+    bindings.put("OB", new OBBindings(OBContext.getOBContext(), parameters, request.getSession()));
+
     // initialize Javascript engine
-    engine = new ScriptEngineManager().getEngineByName("rhino");
-    engine.put("OB", new OBBindings(OBContext.getOBContext(), parameters, request.getSession()));
+    engine = OBScriptEngine.getInstance();
     log.info("Using script engine {}", engine.getClass().getSimpleName());
   }
 
   @Test
   public void formatDate() throws ScriptException {
-    Object result = engine.eval("OB.formatDate(new Date('12/29/2017'))");
+    Object result = engine.eval("OB.formatDate(new Date('12/29/2017'))", bindings);
     assertThat(result.toString(), equalTo("29-12-2017"));
   }
 
   @Test
   public void customFormatDate() throws ScriptException {
-    Object result = engine.eval("OB.formatDate(new Date('12/29/2017'),'yyyy/MM/dd')");
+    Object result = engine.eval("OB.formatDate(new Date('12/29/2017'),'yyyy/MM/dd')", bindings);
     assertThat(result.toString(), equalTo("2017/12/29"));
   }
 
   @Test
   public void formatDateTime() throws ScriptException {
-    Object result = engine.eval("OB.formatDateTime(new Date('12/29/2017 16:29:21'))");
+    Object result = engine.eval("OB.formatDateTime(new Date('12/29/2017 16:29:21'))", bindings);
     assertThat(result.toString(), equalTo("29-12-2017 16:29:21"));
   }
 
   @Test
   public void parseDate() throws ScriptException, ParseException {
-    Date result = (Date) engine.eval("OB.parseDate('29-12-2017')");
+    Date result = (Date) engine.eval("OB.parseDate('29-12-2017')", bindings);
     Date expectedDate = new SimpleDateFormat("dd-MM-yyyy").parse("29-12-2017");
     assertThat(result, equalTo(expectedDate));
   }
 
   @Test
   public void customParseDate() throws ScriptException, ParseException {
-    Date result = (Date) engine.eval("OB.parseDate('2017/12/29','yyyy/MM/dd')");
+    Date result = (Date) engine.eval("OB.parseDate('2017/12/29','yyyy/MM/dd')", bindings);
     Date expectedDate = new SimpleDateFormat("dd-MM-yyyy").parse("29-12-2017");
     assertThat(result, equalTo(expectedDate));
   }
@@ -101,7 +104,7 @@ public class OBBindingsTest extends OBBaseTest {
   public void parseDateTime() throws ScriptException, ParseException {
     // parseDateTime is only called from the client and assumes that the dates that arrive are in
     // the UTC timezone and transforms it into the local time
-    Date result = (Date) engine.eval("OB.parseDateTime('2017-12-29T16:29:21')");
+    Date result = (Date) engine.eval("OB.parseDateTime('2017-12-29T16:29:21')", bindings);
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     Date expectedDate = convertToLocalTime(sdf.parse("29-12-2017 16:29:21"));
     assertThat(result, equalTo(expectedDate));
@@ -118,19 +121,37 @@ public class OBBindingsTest extends OBBaseTest {
 
   @Test
   public void getContextInfo() throws ScriptException {
-    Object result = engine.eval("OB.getContext().getCurrentClient().id");
+    Object result = engine.eval("OB.getContext().getCurrentClient().id", bindings);
     assertThat(result.toString(), equalTo(TEST_CLIENT_ID));
   }
 
   @Test
   public void getStringValueFromRequestMap() throws ScriptException {
-    String result = (String) engine.eval("OB.getCommandType()");
+    String result = (String) engine.eval("OB.getCommandType()", bindings);
     assertThat(result, equalTo(DEFAULT));
   }
 
   @Test
   public void getBooleanValueFromRequestMap() throws ScriptException {
-    Boolean result = (Boolean) engine.eval("OB.isPosted()");
+    Boolean result = (Boolean) engine.eval("OB.isPosted()", bindings);
     assertThat(result, equalTo(Boolean.TRUE));
+  }
+
+  @Test
+  public void shouldGetNullWhenUndefinedProperty() throws ScriptException {
+    Object object = engine.eval("OB.undefined_property", bindings);
+    assertNull(object);
+  }
+
+  @Test
+  public void shouldGetNullWhenUndefinedPropertyInArray() throws ScriptException {
+    NativeArray result = (NativeArray) engine.eval("[OB.undefined_property]", bindings);
+    assertNull(result.get(0));
+  }
+
+  @Test
+  public void shouldGetNullWhenNull() throws ScriptException {
+    Object result = engine.eval("null", bindings);
+    assertNull(result);
   }
 }

@@ -18,6 +18,7 @@
  */
 package org.openbravo.base.expression;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -48,13 +49,20 @@ public class OBScriptEngine {
   }
 
   public Object eval(String script) throws ScriptException {
-    return engine.eval(script);
+    return eval(script, Collections.emptyMap());
   }
 
   public Object eval(String script, Map<String, Object> properties) throws ScriptException {
     Bindings bindings = engine.createBindings();
     copyPropertiesToBindings(properties, bindings);
-    return engine.eval(script, bindings);
+    Object result = engine.eval(script, bindings);
+    // Sometimes rhino evaluates to "undefined" when it should evaluate to null
+    // This transforms all undefined results to null
+    // Related issue: https://github.com/mozilla/rhino/issues/760
+    if ("undefined".equals(result)) {
+      return null;
+    }
+    return result;
   }
 
   private void copyPropertiesToBindings(Map<String, Object> properties, Bindings bindings) {
