@@ -19,24 +19,27 @@
 package org.openbravo.erpCommon.utility;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.openbravo.client.kernel.JSCompressor;
 
 /**
- * Ant task that compresses JavaScript using JSMin
+ * Ant task that minifies JavaScript using JSMin
  */
-public class JSCompressTask extends Task {
+public class JSMinifyTask extends Task {
+
+  static final Logger log = LogManager.getLogger();
+
   private List<FileSet> filesets = new ArrayList<>();
   private String outputDir;
 
@@ -53,21 +56,29 @@ public class JSCompressTask extends Task {
     verifyParameters();
     for (FileSet fileSet : filesets) {
       DirectoryScanner scanner = fileSet.getDirectoryScanner(getProject());
-      File dir = scanner.getBasedir();
+      String dir = scanner.getBasedir().getPath();
       String[] fileNames = scanner.getIncludedFiles();
-      int totalCompressedFiles = 0;
+      int totalMinifiedFiles = 0;
       for (String fileName : fileNames) {
         try {
           if (fileName.endsWith(".js")) {
-            compressJSFile(new File(dir, fileName), new File(outputDir, fileName));
-            totalCompressedFiles++;
+            if (log.isDebugEnabled()) {
+              log.debug("Minifying file {} to {}", fileName, Path.of(outputDir, fileName));
+            }
+            double compressionRatio = minifyJSFile(Path.of(dir, fileName),
+                Path.of(outputDir, fileName));
+            if (log.isDebugEnabled()) {
+              log.debug("File {} minified successfully. Compression ratio {}% of original.",
+                  fileName, String.format("%.2f", compressionRatio));
+            }
+            totalMinifiedFiles++;
           }
         } catch (IOException ex) {
-          log("Failed to compress file: " + fileName, ex, Project.MSG_ERR);
+          log.error("Failed to minify file: {}", fileName, ex);
         }
       }
-      log(String.format("Compressed %d files from %s directory to %s directory%n",
-          totalCompressedFiles, fileSet.getDir().getPath(), outputDir));
+      log.info("Minified {} files from {} directory to {} directory", totalMinifiedFiles,
+          fileSet.getDir().getPath(), outputDir);
     }
   }
 
@@ -79,18 +90,33 @@ public class JSCompressTask extends Task {
     }
 
     if (!"".equals(errorMsg)) {
-      throw new BuildException("Output directory is not specified");
+      throw new BuildException(errorMsg);
     }
   }
 
-  private void compressJSFile(File source, File dest) throws IOException {
-    try (BufferedWriter out = new BufferedWriter(new FileWriter(dest))) {
-      String fileContent = Files.readString(source.toPath());
-      String compressedLine = JSCompressor.getInstance().compress(fileContent);
-      out.write(compressedLine);
-      out.flush();
+  /**
+   * Minifies a JS file from source to destination
+   * 
+   * @param source
+   *          Path to source input file
+   * @param dest
+   *          Path to destination output file
+   * @return CompressionRatio if successful, 0 otherwise
+   * @throws IOException
+   *           If it fails to read/write from/to input/output files
+   */
+  private double minifyJSFile(Path source, Path dest) throws IOException {
+    double compressionRatio = 0;
+    try (BufferedWriter out = Files.newBufferedWriter(dest)) {
+      String fileContent = Files.readString(source);
+      String minifiedContent = JSCompressor.getInstance().compress(fileContent);
+      out.write(minifiedContent);
+      if (minifiedContent.length() != 0) {
+        compressionRatio = minifiedContent.length() / (double) fileContent.length() * 100;
+      }
     } catch (IOException ex) {
       throw new IOException("Failed to read/write JS file" + source, ex);
     }
+    return compressionRatio;
   }
 }
