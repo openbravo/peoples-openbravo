@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  ************************************************************************
@@ -19,24 +19,20 @@
 
 package org.openbravo.service.centralrepository;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Version;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.http.HttpStatus;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -50,11 +46,6 @@ public class CentralRepository {
   private static final Logger log = LogManager.getLogger();
 
   private static final int TIMEOUT = 10_000;
-  private static final RequestConfig TIMEOUT_CONFIG = RequestConfig.custom()
-      .setConnectionRequestTimeout(TIMEOUT)
-      .setConnectTimeout(TIMEOUT)
-      .setSocketTimeout(TIMEOUT)
-      .build();
 
   private enum Method {
     GET, POST
@@ -121,43 +112,39 @@ public class CentralRepository {
    */
   private static JSONObject executeRequest(Service service, List<String> path, JSONObject payload) {
     long t = System.currentTimeMillis();
-    HttpRequestBase request = getServiceRequest(service, path);
+    HttpRequest request = getServiceRequest(service, path, payload);
 
-    if (payload != null && (request instanceof HttpPost)) {
-      StringEntity requestEntity = new StringEntity(payload.toString(),
-          ContentType.APPLICATION_JSON);
-      ((HttpPost) request).setEntity(requestEntity);
-    }
+    HttpClient client = HttpClient.newBuilder()
+        .version(Version.HTTP_1_1)
+        .connectTimeout(Duration.ofSeconds(5))
+        .build();
 
-    try (CloseableHttpClient httpclient = HttpClients.createDefault();
-        CloseableHttpResponse rawResponse = httpclient.execute(request)) {
+    try {
+      log.trace("Sending request [{}] payload: {}", request.uri(), payload);
+      HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 
-      log.trace("Sending request [{}] payload: {}", request.getURI(), payload);
-
-      String result = new BufferedReader(
-          new InputStreamReader(rawResponse.getEntity().getContent())).lines()
-              .collect(Collectors.joining("\n"));
-
-      log.debug("Processed to Central Repository {} with status {} in {} ms", request.getURI(),
-          rawResponse.getStatusLine().getStatusCode(), System.currentTimeMillis() - t);
-      log.trace("Response to request [{}]: {}", request.getURI(), result);
+      int status = response.statusCode();
+      String responseBody = response.body();
+      log.debug("Processed to Central Repository {} with status {} in {} ms", request.uri(), status,
+          System.currentTimeMillis() - t);
+      log.trace("Response to request [{}]: {}", request.uri(), responseBody);
 
       JSONObject msg = new JSONObject();
-      boolean success = 200 >= rawResponse.getStatusLine().getStatusCode()
-          && rawResponse.getStatusLine().getStatusCode() < 300;
+      boolean success = 200 >= status && status < 300;
       msg.put("success", success);
-      msg.put("responseCode", rawResponse.getStatusLine().getStatusCode());
+      msg.put("responseCode", status);
       JSONObject r;
       try {
-        r = new JSONObject(result);
+        r = new JSONObject(responseBody);
       } catch (JSONException e) {
-        log.debug("Didn't receive a valid JSON response: {}", result, e);
+        log.debug("Didn't receive a valid JSON response: {}", responseBody, e);
         r = new JSONObject();
       }
 
       if (!success && !r.has("msg")) {
         // try to get something meaningful from the status info
-        r.put("msg", rawResponse.getStatusLine().getReasonPhrase());
+        r.put("msg", responseBody); // TODO: check if correct, it was:
+                                    // getStatusLine().getReasonPhrase()
       }
 
       msg.put("response", r);
@@ -172,7 +159,7 @@ public class CentralRepository {
       try {
         JSONObject msg = new JSONObject();
         msg.put("success", false);
-        msg.put("responseCode", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        msg.put("responseCode", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         JSONObject r = new JSONObject();
         r.put("msg", e.getMessage());
@@ -184,23 +171,23 @@ public class CentralRepository {
     }
   }
 
-  private static HttpRequestBase getServiceRequest(Service service, List<String> path) {
-    HttpRequestBase req;
-    switch (service.method) {
-      case GET:
-        req = new HttpGet();
-        break;
-      default: // POST
-        req = new HttpPost();
-    }
+  private static HttpRequest getServiceRequest(Service service, List<String> path,
+      JSONObject payload) {
     String uri = BUTLER_API_URL + service.endpoint + "/"
         + path.stream().collect(Collectors.joining("/"));
-    try {
-      req.setURI(new URI(uri));
-    } catch (URISyntaxException e) {
-      throw new OBException(e);
+    var requestBuilder = HttpRequest.newBuilder()
+        .uri(URI.create(uri))
+        .timeout(Duration.ofMillis(TIMEOUT));
+
+    switch (service.method) {
+      case GET:
+        requestBuilder.GET();
+        break;
+      default: // POST
+        requestBuilder.header("Content-Type", "application/json")
+            .POST(BodyPublishers.ofString(payload.toString()));
     }
-    req.setConfig(TIMEOUT_CONFIG);
-    return req;
+
+    return requestBuilder.build();
   }
 }
