@@ -485,7 +485,7 @@ public class CostingUtils {
             .setParameter("mvtdate", costing.getInventoryTransaction().getMovementDate());
       }
       trxQry.setParameter("refId", CostAdjustmentUtils.MovementTypeRefID)
-          .setParameter("dateFrom", costing.getStartingDate())
+          .setParameter("dateFrom", costing.getInventoryTransaction().getTransactionProcessDate())
           .setParameter("ctrxtypeprio", CostAdjustmentUtils.getTrxTypePrio(ctrx.getMovementType()))
           .setParameter("ctrxqty", ctrx.getMovementQuantity())
           .setParameter("ctrxId", ctrx.getId());
@@ -658,7 +658,7 @@ public class CostingUtils {
             .setParameter("mvtdate", costing.getInventoryTransaction().getMovementDate());
       }
       trxQry.setParameter("refId", CostAdjustmentUtils.MovementTypeRefID)
-          .setParameter("dateFrom", costing.getStartingDate())
+          .setParameter("dateFrom", costing.getInventoryTransaction().getTransactionProcessDate())
           .setParameter("ctrxtypeprio", CostAdjustmentUtils.getTrxTypePrio(ctrx.getMovementType()))
           .setParameter("ctrxqty", ctrx.getMovementQuantity())
           .setParameter("ctrxId", ctrx.getId());
