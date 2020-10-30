@@ -5184,23 +5184,42 @@
     setFullInvoice: function(active, applyDefaultConfiguration, showError) {
       const checkFullInvoice = () => {
         if (showError) {
-          if (!OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix) {
+          if (
+            this.get('bp').get('id') ===
+            OB.App.TerminalProperty.get('terminal').businessPartner
+          ) {
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_IssueInvoiceWithAnonymousCustomer')
+            );
+            return false;
+          } else if (
+            !OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix
+          ) {
             OB.UTIL.showError(
               OB.I18N.getLabel('OBPOS_FullInvoiceSequencePrefixNotConfigured')
             );
+            return false;
           } else if (
             !this.get('bp').get('taxID') &&
+            OB.App.Security.hasPermission(
+              'OBPOS_FullInvoiceRequireCustomerTaxId'
+            ) &&
             OB.UTIL.isNullOrUndefined(
               this.get('externalBusinessPartnerReference')
             )
           ) {
             OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
+            return false;
           }
         }
 
         return OB.MobileApp.model.hasPermission('OBPOS_receipt.invoice') &&
           OB.MobileApp.model.get('terminal').fullInvoiceDocNoPrefix &&
           (this.get('bp').get('taxID') ||
+            (!this.get('bp').get('taxID') &&
+              OB.App.Security.hasPermission(
+                'OBPOS_FullInvoiceRequireCustomerTaxId'
+              ) === false) ||
             this.get('externalBusinessPartnerReference'))
           ? true
           : false;
@@ -8158,7 +8177,8 @@
         (this.get('fullInvoice') ||
           this.getInvoiceTerms() === 'D' ||
           this.getInvoiceTerms() === 'O') &&
-        !this.get('bp').get('taxID')
+        !this.get('bp').get('taxID') &&
+        OB.App.Security.hasPermission('OBPOS_FullInvoiceRequireCustomerTaxId')
       ) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
         finalCallback();

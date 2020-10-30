@@ -187,7 +187,8 @@ enyo.kind({
       tap: function() {
         if (
           (this.getValue() === 'D' || this.getValue() === 'O') &&
-          !OB.MobileApp.model.receipt.get('bp').get('taxID')
+          !OB.MobileApp.model.receipt.get('bp').get('taxID') &&
+          OB.App.Security.hasPermission('OBPOS_FullInvoiceRequireCustomerTaxId')
         ) {
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
           this.setSelectedValue(

@@ -659,7 +659,11 @@ enyo.kind({
         invoiceCreated = true;
       }
 
-      if (invoiceCreated && !order.bp.taxID) {
+      if (
+        invoiceCreated &&
+        !order.bp.taxID &&
+        OB.App.Security.hasPermission('OBPOS_FullInvoiceRequireCustomerTaxId')
+      ) {
         OB.UTIL.showError(OB.I18N.getLabel('OBPOS_BP_No_Taxid'));
         return false;
       }
