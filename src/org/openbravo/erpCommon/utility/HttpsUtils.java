@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2006-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2006-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,9 +26,17 @@ import java.io.OutputStreamWriter;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpClient.Version;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
+import java.time.Duration;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletException;
@@ -160,16 +168,26 @@ public class HttpsUtils {
     }
 
     try {
-      // Double check.
-      URL url = new URL("https://butler.openbravo.com");
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setConnectTimeout(3000);
-      conn.connect();
-      if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+      HttpClient client = HttpClient.newBuilder()
+          .version(Version.HTTP_1_1)
+          .connectTimeout(Duration.ofSeconds(3))
+          .followRedirects(Redirect.NORMAL)
+          .build();
+
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(URI.create("https://butler.openbravo.com"))
+          .timeout(Duration.ofSeconds(3))
+          .GET()
+          .build();
+
+      HttpResponse<Void> resp = client.send(request, BodyHandlers.discarding());
+
+      if (resp.statusCode() != HttpURLConnection.HTTP_OK) {
+        log4j.info("Could not connect to butler.openbravo.com, status code: {}", resp.statusCode());
         return false;
       }
     } catch (Exception e) {
-      log4j.info("Unable to reach butler.openbravo.com");
+      log4j.info("Unable to reach butler.openbravo.com", e);
       return false;
     }
     return true;
