@@ -34,6 +34,18 @@
           payload
         );
 
+        newTicket = OB.App.State.Ticket.Utils.processTicket(newTicket, payload);
+
+        // Document number generation
+        ({
+          ticket: newTicket,
+          documentSequence: newDocumentSequence
+        } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
+          newTicket,
+          newDocumentSequence,
+          payload
+        ));
+
         // Set complete ticket properties
         newTicket.obposIsDeleted = true;
         newTicket.grossAmount = 0;
@@ -58,17 +70,6 @@
             }, {})
           };
         });
-        newTicket = OB.App.State.Ticket.Utils.processTicket(newTicket, payload);
-
-        // Document number generation
-        ({
-          ticket: newTicket,
-          documentSequence: newDocumentSequence
-        } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
-          newTicket,
-          newDocumentSequence,
-          payload
-        ));
 
         // Cashup update
         ({
