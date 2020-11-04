@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -333,7 +333,9 @@ public class OBInterceptor extends EmptyInterceptor {
       }
 
       final Traceable t = (Traceable) object;
-      if (t.getCreatedBy() == null) { // new
+      boolean isNew = t.getCreatedBy() == null || t.getCreationDate() == null
+          || t.getUpdated() == null || t.getUpdatedBy() == null;
+      if (isNew) {
         onNew(t, propertyNames, currentState);
       } else {
         onUpdate(t, propertyNames, currentState);
@@ -380,19 +382,21 @@ public class OBInterceptor extends EmptyInterceptor {
         currentState[i] = currentDate;
       }
 
-      if (PROPERTY_UPDATED.equals(propertyNames[i])) {
+      if (PROPERTY_UPDATED.equals(propertyNames[i]) && traceable.getUpdated() == null) {
         traceable.setUpdated(currentDate);
         currentState[i] = currentDate;
       }
-      if (PROPERTY_UPDATEDBY.equals(propertyNames[i])) {
+      if (PROPERTY_UPDATEDBY.equals(propertyNames[i]) && traceable.getUpdatedBy() == null) {
         traceable.setUpdatedBy(currentUser);
         currentState[i] = currentUser;
       }
-      if (Organization.PROPERTY_CREATIONDATE.equals(propertyNames[i])) {
+      if (Organization.PROPERTY_CREATIONDATE.equals(propertyNames[i])
+          && traceable.getCreationDate() == null) {
         traceable.setCreationDate(currentDate);
         currentState[i] = currentDate;
       }
-      if (Organization.PROPERTY_CREATEDBY.equals(propertyNames[i])) {
+      if (Organization.PROPERTY_CREATEDBY.equals(propertyNames[i])
+          && traceable.getCreatedBy() == null) {
         traceable.setCreatedBy(currentUser);
         currentState[i] = currentUser;
       }

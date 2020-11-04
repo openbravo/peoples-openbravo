@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,8 @@
 package org.openbravo.base.weld.test.testinfrastructure;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
 import org.jboss.arquillian.junit.InSequence;
@@ -30,9 +32,14 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.test.event.ObserverBaseTest;
 import org.openbravo.client.application.test.event.OrderLineTestObserver;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.OBInterceptor;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.geography.Country;
+import org.openbravo.test.base.Issue;
+import org.openbravo.test.base.TestConstants;
 
 /**
  * Persistance observers require of cdi. Test cases covering observers are executed when using
@@ -90,6 +97,37 @@ public class DalPersistanceEventTest extends ObserverBaseTest {
 
       OBDal.getInstance().save(newCountry);
       OBDal.getInstance().flush();
+    } finally {
+      OBDal.getInstance().rollbackAndClose();
+    }
+  }
+
+  @Test
+  @InSequence(5)
+  @Issue("45341")
+  public void persistenceObserversShouldBeExecutedOnModifiedCreatedBy() {
+    try {
+      setSystemAdministratorContext();
+      Country newCountry = OBProvider.getInstance().get(Country.class);
+      newCountry.setName("Wonderland");
+      newCountry.setISOCountryCode("WL");
+      newCountry.setAddressPrintFormat("-");
+
+      // Set createdBy user id manually
+      User user = OBDal.getInstance().get(User.class, TestConstants.Users.OPENBRAVO);
+      newCountry.setCreatedBy(user);
+      OBInterceptor.setPreventUpdateInfoChange(true);
+      OBDal.getInstance().save(newCountry);
+      OBDal.getInstance().flush();
+
+      // createdBy user should be persisted and should be different than updatedBy value
+      String createdById = newCountry.getCreatedBy().getId();
+      String updatedById = newCountry.getUpdatedBy().getId();
+      assertEquals("createdBy value is not the one assigned manually.", user.getId(), createdById);
+      assertEquals("updatedBy value has not been assigned using OBContext user.",
+          OBContext.getOBContext().getUser().getId(), updatedById);
+      assertNotEquals("createdBy and updatedBy are equal, those should be different.", createdById,
+          updatedById);
     } finally {
       OBDal.getInstance().rollbackAndClose();
     }
