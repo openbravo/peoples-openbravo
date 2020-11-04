@@ -18,7 +18,6 @@
  */
 package org.openbravo.erpCommon.utility;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -102,10 +101,10 @@ public class JSMinifyTask extends Task {
    */
   private double minifyJSFile(Path source, Path dest) throws IOException {
     double compressionRatio = 0;
-    try (BufferedWriter out = Files.newBufferedWriter(dest)) {
+    try {
       String fileContent = Files.readString(source);
       String minifiedContent = JSCompressor.getInstance().compress(fileContent);
-      out.write(minifiedContent);
+      Files.writeString(dest, minifiedContent);
       if (minifiedContent.length() != 0) {
         compressionRatio = minifiedContent.length() / (double) fileContent.length() * 100;
       }
