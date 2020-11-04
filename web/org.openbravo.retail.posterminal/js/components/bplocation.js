@@ -700,6 +700,7 @@ enyo.kind({
     }
 
     function successCallbackBPs(dataBps) {
+      dataBps.set('locationBillModel', bploc);
       dataBps.set('locId', bploc.get('id'));
       dataBps.set('locName', bploc.get('name'));
       dataBps.set('postalCode', bploc.get('postalCode'));
