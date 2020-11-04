@@ -126,7 +126,8 @@ enyo.kind({
   },
   payWithProviderGroup: function(keyboard, txt, providerGroup) {
     var amount;
-    var input;
+    var input,
+      txtVal = txt;
 
     if (!txt) {
       OB.UTIL.showWarning(
@@ -134,11 +135,14 @@ enyo.kind({
       );
       return;
     }
-    input = OB.DEC.number(OB.I18N.parseNumber(txt));
-    if (_.isNaN(input)) {
+    if (_.last(txt) === '%') {
+      txtVal = txt.substring(0, txt.length - 1);
+    }
+    if (isNaN(txtVal)) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
       return;
     }
+    input = OB.DEC.number(OB.I18N.parseNumber(txt));
     var decimalInput = OB.DEC.toBigDecimal(input);
     if (decimalInput.scale() > OB.DEC.getScale()) {
       OB.UTIL.showWarning(
@@ -494,21 +498,23 @@ enyo.kind({
                   stateless: false,
                   action: function(keyboard, txt) {
                     var options = {},
-                      amount = 0;
+                      amount = 0,
+                      txtVal = txt;
                     if (txt) {
                       if (_.last(txt) === '%') {
                         options.percentaje = true;
+                        txtVal = txt.substring(0, txt.length - 1);
                       }
-                      amount = OB.DEC.toNumber(
-                        OB.I18N.parseNumber(txt),
-                        payment.obposPosprecision
-                      );
-                      if (_.isNaN(amount)) {
+                      if (isNaN(txtVal)) {
                         OB.UTIL.showWarning(
                           OB.I18N.getLabel('OBPOS_NotValidNumber', [txt])
                         );
                         return;
                       }
+                      amount = OB.DEC.toNumber(
+                        OB.I18N.parseNumber(txt),
+                        payment.obposPosprecision
+                      );
                       var decimalAmount = OB.DEC.toBigDecimal(amount),
                         selectedPayment =
                           OB.MobileApp.model.paymentnames[
@@ -576,21 +582,23 @@ enyo.kind({
                 stateless: false,
                 action: function(keyboard, txt) {
                   var options = {},
-                    amount = 0;
+                    amount = 0,
+                    txtVal = txt;
                   if (txt) {
                     if (_.last(txt) === '%') {
                       options.percentaje = true;
+                      txtVal = txt.substring(0, txt.length - 1);
                     }
-                    amount = OB.DEC.toNumber(
-                      OB.I18N.parseNumber(txt),
-                      payment.obposPosprecision
-                    );
-                    if (_.isNaN(amount)) {
+                    if (isNaN(txtVal)) {
                       OB.UTIL.showWarning(
                         OB.I18N.getLabel('OBPOS_NotValidNumber', [txt])
                       );
                       return;
                     }
+                    amount = OB.DEC.toNumber(
+                      OB.I18N.parseNumber(txt),
+                      payment.obposPosprecision
+                    );
                     var decimalAmount = OB.DEC.toBigDecimal(amount);
                     if (decimalAmount.scale() > payment.obposPosprecision) {
                       OB.UTIL.showWarning(

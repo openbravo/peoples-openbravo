@@ -128,13 +128,17 @@ enyo.kind({
             command: payment.get('_id'),
             definition: {
               action: (keyboard, amt) => {
-                const convAmt = OB.I18N.parseNumber(amt);
-                if (_.isNaN(convAmt)) {
+                let txtVal = amt;
+                if (_.last(amt) === '%') {
+                  txtVal = amt.substring(0, amt.length - 1);
+                }
+                if (isNaN(txtVal)) {
                   OB.UTIL.showWarning(
                     OB.I18N.getLabel('OBPOS_NotValidNumber', [amt])
                   );
                   return;
                 }
+                const convAmt = OB.I18N.parseNumber(amt);
                 payment.set('foreignCounted', OB.DEC.add(0, convAmt));
                 payment.set(
                   'counted',
