@@ -18,7 +18,6 @@
  */
 package org.openbravo.client.application;
 
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +27,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Function;
+import org.mozilla.javascript.Scriptable;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.util.OBClassLoader;
@@ -187,26 +189,24 @@ public class OBBindings {
   }
 
   public String formatDate(Object d) {
-    return formatDate(getTimeFromNashornNativeDate(d));
+    return formatDate(getTimeFromJavaScriptDate(d));
   }
 
-  private Date getTimeFromNashornNativeDate(Object d) {
-    // Since Java 8, Nashorn is the Javascript engine used by default. When returning Javascript
-    // date objects they are represented by jdk.nashorn.internal.objects.NativeDate.
-    //
-    // Although being a public class, it is in an internal module which is not opened by default in
-    // JDK9+ therefore we still need to use reflection to access to it.
-    //
-    // Note Nashorn is marked as deprecated for deletion in JDK11
-    // -> TODO: look for a valid alternative in future releases.
+  private Date getTimeFromJavaScriptDate(Object d) {
+    // Rhino engine is used to generate a Date object from provided JS expression
+    Context rhinoContext = Context.enter();
     try {
-      Method m = d.getClass().getMethod("callMember", String.class, Object[].class);
-      long localTime = ((Double) m.invoke(d, "getTime", null)).longValue();
+      Scriptable scope = rhinoContext.initStandardObjects();
+      Function f = (Function) scope.get("getTime", scope);
+      Object result = f.call(rhinoContext, scope, scope, new Object[] { d });
+      long localTime = ((Double) result).longValue();
       return new Date(localTime);
     } catch (Exception ex) {
       log.error("Error getting javascript date from object {} of class {}", d,
           d.getClass().getName());
       throw new OBException(ex.getMessage(), ex);
+    } finally {
+      Context.exit();
     }
   }
 
@@ -216,7 +216,7 @@ public class OBBindings {
   }
 
   public String formatDateTime(Object d) {
-    return formatDateTime(getTimeFromNashornNativeDate(d));
+    return formatDateTime(getTimeFromJavaScriptDate(d));
   }
 
   public Date parseDate(String date) {
@@ -257,7 +257,7 @@ public class OBBindings {
   }
 
   public String formatDate(Object d, String format) {
-    return formatDate(getTimeFromNashornNativeDate(d), format);
+    return formatDate(getTimeFromJavaScriptDate(d), format);
   }
 
   public Date parseDate(String date, String format) {

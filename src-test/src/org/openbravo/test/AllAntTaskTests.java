@@ -148,6 +148,7 @@ import org.openbravo.test.xml.EntityXMLImportTestSingle;
 import org.openbravo.test.xml.EntityXMLImportTestWarning;
 import org.openbravo.test.xml.EntityXMLIssues;
 import org.openbravo.test.xml.UniqueConstraintImportTest;
+import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
 /**
  * This test class is called from the ant task run.tests. It contains all the testcases which are
@@ -191,7 +192,8 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 
     // expression
     EvaluationTest.class, //
-    OBBindingsTest.class,
+    OBBindingsTest.class, //
+    ExpressionsTest.class,
 
     // model
     RuntimeModelTest.class, //

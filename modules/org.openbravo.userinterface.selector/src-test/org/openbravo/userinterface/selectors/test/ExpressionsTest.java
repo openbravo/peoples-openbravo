@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,32 +22,33 @@ import static org.junit.Assert.assertEquals;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.openbravo.base.expression.OBScriptEngine;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.OBBindings;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.mock.HttpServletRequestMock;
 
 /**
  * Tests the current API exposed to JavaScript expression through OBBindings class
  * 
  * @author iperdomo
  */
-public class ExpressionsTest extends OBBaseTest {
+public class ExpressionsTest extends WeldBaseTest {
 
-  private ScriptEngineManager manager;
-  private ScriptEngine engine;
+  private OBScriptEngine engine;
   private Object result = null;
   private Logger log = LogManager.getLogger();
 
-  private HashMap<String, String> expr = new HashMap<String, String>();
+  private HashMap<String, String> expr = new HashMap<>();
+  private Map<String, Object> bindings = new HashMap<>();
 
   /**
    * This before method is named setUpEt() to avoid overwriting the super setUp method that is
@@ -58,9 +59,10 @@ public class ExpressionsTest extends OBBaseTest {
     // Everything runs as System Admin user
     setSystemAdministratorContext();
 
-    manager = new ScriptEngineManager();
-    engine = manager.getEngineByName("js");
-    engine.put("OB", new OBBindings(OBContext.getOBContext()));
+    HttpServletRequestMock request = new HttpServletRequestMock();
+    engine = OBScriptEngine.getInstance();
+    bindings.put("OB",
+        new OBBindings(OBContext.getOBContext(), Collections.emptyMap(), request.getSession()));
 
     // Initialize expressions
     expr.put("Get current user's name", "OB.getContext().getUser().name");
@@ -90,7 +92,7 @@ public class ExpressionsTest extends OBBaseTest {
   public void testUserName() {
     final String s = expr.get("Get current user's name");
     try {
-      result = engine.eval(s);
+      result = engine.eval(s, bindings);
     } catch (Exception e) {
       log.error("Error evaluating expression: " + s, e);
     }
@@ -101,7 +103,7 @@ public class ExpressionsTest extends OBBaseTest {
   public void testLanguage() {
     final String s = expr.get("Get current language");
     try {
-      result = engine.eval(s);
+      result = engine.eval(s, bindings);
     } catch (Exception e) {
       log.error("Error evaluating expression: " + s, e);
     }
@@ -113,7 +115,7 @@ public class ExpressionsTest extends OBBaseTest {
     final String s = expr.get("Format today's date");
     final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     try {
-      result = engine.eval(s);
+      result = engine.eval(s, bindings);
     } catch (Exception e) {
       log.error("Error evaluating expression: " + s, e);
     }
@@ -124,7 +126,7 @@ public class ExpressionsTest extends OBBaseTest {
   public void testCurrentClientId() {
     final String s = expr.get("Get current client id");
     try {
-      result = engine.eval(s);
+      result = engine.eval(s, bindings);
     } catch (Exception e) {
       log.error("Error evaluating expression: " + s, e);
     }
@@ -136,7 +138,7 @@ public class ExpressionsTest extends OBBaseTest {
     final String s = expr.get("Parse date with fixed format");
     final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     try {
-      result = engine.eval(s);
+      result = engine.eval(s, bindings);
       assertEquals(df.parse("1979-04-24"), result);
     } catch (Exception e) {
       log.error("Error evaluating expression: " + s, e);
@@ -147,7 +149,7 @@ public class ExpressionsTest extends OBBaseTest {
   public void testFormatParsedDate() {
     final String s = expr.get("Format a parsed date");
     try {
-      result = engine.eval(s);
+      result = engine.eval(s, bindings);
       assertEquals("04-24-1979", result);
     } catch (Exception e) {
       log.error("Error evaluating expression: " + s, e);
@@ -158,7 +160,7 @@ public class ExpressionsTest extends OBBaseTest {
   public void testCustomerVendorFilter() {
     final String s = expr.get("Filter by vendor/customer");
     try {
-      result = engine.eval(s);
+      result = engine.eval(s, bindings);
     } catch (Exception e) {
       log.error("Error evaluating expression: " + s, e);
     }
@@ -169,7 +171,7 @@ public class ExpressionsTest extends OBBaseTest {
   public void testGetFilterExpression() {
     final String s = expr.get("Complex expression from Java");
     try {
-      result = engine.eval(s);
+      result = engine.eval(s, bindings);
     } catch (Exception e) {
       log.error("Error evaluating expression: " + s, e);
     }
