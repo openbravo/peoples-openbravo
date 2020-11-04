@@ -62,15 +62,10 @@ public class JSMinifyTask extends Task {
       for (String fileName : fileNames) {
         try {
           if (fileName.endsWith(".js")) {
-            if (log.isDebugEnabled()) {
-              log.debug("Minifying file {} to {}", fileName, Path.of(outputDir, fileName));
-            }
             double compressionRatio = minifyJSFile(Path.of(dir, fileName),
                 Path.of(outputDir, fileName));
-            if (log.isDebugEnabled()) {
-              log.debug("File {} minified successfully. Compression ratio {}% of original.",
-                  fileName, String.format("%.2f", compressionRatio));
-            }
+            log.debug("File {} minified successfully. Compression ratio {}% of original.", fileName,
+                String.format("%.2f", compressionRatio));
             totalMinifiedFiles++;
           }
         } catch (IOException ex) {
