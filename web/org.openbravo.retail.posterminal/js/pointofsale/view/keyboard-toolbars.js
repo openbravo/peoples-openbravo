@@ -318,7 +318,7 @@ enyo.kind({
       this.createComponent(btncomponent);
     } else {
       this.addSideButton(btncomponent);
-      dialogbuttons[payment.payment.searchKey] = payment.payment._identifier;
+      dialogbuttons[btncomponent.btn.command] = btncomponent.btn.label;
     }
   },
   addSideButton: function(btncomponent) {
