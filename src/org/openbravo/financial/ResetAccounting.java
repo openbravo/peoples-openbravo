@@ -180,20 +180,8 @@ public class ResetAccounting {
                     "   and e.accountingDate >= :dateFrom" +
                     "   and e.accountingDate <= :dateTo";
                 final String exceptionsSql = myQuery + consDate;
-                consDate +=
-                    "   and not exists " +
-                    "     (" +
-                    "       select a" +
-                    "         from FinancialMgmtAccountingFact a" +
-                    "        where a.recordID = e.recordID" +
-                    "          and a.table.id = e.table.id" +
-                    "          and" +
-                    "            (" +
-                    "              a.accountingDate < :dateFrom" +
-                    "              or a.accountingDate > :dateTo" +
-                    "            )" +
-                    "     )";
-
+                consDate += " and e.accountingDate >= :periodStartDate "+
+                            " and e.accountingDate <= :periodEndDate ";
                 final Query<String> query = OBDal.getInstance()
                     .getSession()
                     .createQuery(myQuery + consDate, String.class)
@@ -206,6 +194,8 @@ public class ResetAccounting {
                             : p[0])
                     .setParameter("dateTo",
                         StringUtils.isNotEmpty(strdateto) ? OBDateUtils.getDate(strdateto) : p[1])
+                    .setParameter("periodStartDate", p[0])
+                    .setParameter("periodEndDate", p[1])
                     .setParameter("organizationId", organization);
 
                 if (localRecordId != null && !"".equals(localRecordId)) {
