@@ -22,7 +22,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
@@ -63,7 +62,13 @@ public class MimeTypeUtil {
    * @return MIME Type Name detected or application/octet-stream
    */
   public String getMimeTypeName(byte[] data) {
-    return getMimeTypeName(new BufferedInputStream(new ByteArrayInputStream(data)));
+    try (ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        BufferedInputStream bis = new BufferedInputStream(bais)) {
+      return getMimeTypeName(bis);
+    } catch (IOException ex) {
+      logger.error("Failed to retrieve Mime Type.", ex);
+      return NULL_MIME_TYPE;
+    }
   }
 
   /**
@@ -75,9 +80,10 @@ public class MimeTypeUtil {
    * @return MIME Type Name detected or application/octet-stream
    */
   public String getMimeTypeName(File file) {
-    try {
-      return getMimeTypeName(new BufferedInputStream(new FileInputStream(file)));
-    } catch (FileNotFoundException ex) {
+    try (FileInputStream fis = new FileInputStream(file);
+        BufferedInputStream bis = new BufferedInputStream(fis)) {
+      return getMimeTypeName(bis);
+    } catch (IOException ex) {
       logger.error("File {} has not been found on Mime Type detection.", file.getName(), ex);
       return NULL_MIME_TYPE;
     }
