@@ -24,11 +24,11 @@ public class BuildHookExecutor {
   public static void main(String[] args) throws Exception {
     String modulesPathArg = args[0];
     Path modulesPath = Paths.get(modulesPathArg);
-    System.out.println(modulesPath);
+
+    log.debug("Looking for hooks in {}", modulesPath);
 
     BuildHookExecutor executor = new BuildHookExecutor(modulesPath);
     executor.executeHooks();
-
   }
 
   private void executeHooks() throws Exception {
@@ -41,16 +41,18 @@ public class BuildHookExecutor {
     AntExecutor baseBuildXml = getAntExecutor(modulesPath.getParent().resolve("build.xml"));
 
     for (Path buildXml : buildFiles) {
-      System.out.println("executing " + buildXml);
+      log.info("Executing build hook from module {}", buildXml.getParent().getFileName());
       AntExecutor executor = getAntExecutor(buildXml);
       executor.inheritPropertiesFrom(baseBuildXml);
       executor.logOutput();
       executor.runTask("postBuild");
+
+      // prints an empty line in stdout after each script execution
+      System.out.println();
     }
   }
 
   private List<Path> getBuildFilesWithHooks() throws IOException {
-
     try (var files = Files.walk(modulesPath, 2)) {
       return files.filter(Files::isRegularFile)
           .filter(f -> "build.xml".equals(f.getFileName().toString()))
