@@ -30,10 +30,11 @@ public class BuildHookExecutor {
 
     List<Path> buildFiles = getBuildFilesWithHooks();
     for (Path buildXml : buildFiles) {
-      System.out.println("excuting " + buildXml);
-      new AntExecutor(buildXml.toAbsolutePath().toString(),
-          modulesPath.getParent().toAbsolutePath().toString()).runTask("postBuild");
-
+      System.out.println("executing " + buildXml);
+      AntExecutor executor = new AntExecutor(buildXml.toAbsolutePath().toString(),
+          modulesPath.getParent().toAbsolutePath().toString());
+      executor.logOutput();
+      executor.runTask("postBuild");
     }
   }
 
