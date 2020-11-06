@@ -261,12 +261,12 @@ OB.UI.ModalReceiptPropertiesImpl.prototype.newAttributes.push(
         line_ReceiptDeliveryDate = this.owner.owner.$.body.$.attributes.$
           .line_ReceiptDeliveryDate,
         dateComponent = line_ReceiptDeliveryDate
-          ? line_ReceiptDeliveryDate.$.coreElement
+          ? line_ReceiptDeliveryDate.$.newAttribute.$.ReceiptDeliveryDate
           : undefined,
         line_ReceiptDeliveryTime = this.owner.owner.$.body.$.attributes.$
           .line_ReceiptDeliveryTime,
         timeComponent = line_ReceiptDeliveryTime
-          ? line_ReceiptDeliveryTime.$.coreElement
+          ? line_ReceiptDeliveryTime.$.newAttribute.$.ReceiptDeliveryTime
           : undefined;
       if (dateComponent && dateComponent.owner.owner.getShowing()) {
         var dateSelected = dateComponent.getValue(),
