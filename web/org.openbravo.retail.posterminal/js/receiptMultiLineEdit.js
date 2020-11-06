@@ -361,9 +361,12 @@ enyo.kind({
     onApplyChanges: ''
   },
   tap: function() {
-    if (this.doApplyChanges()) {
-      this.doHideThisPopup();
-    }
+    let me = this;
+    this.doApplyChanges({
+      callback: function() {
+        me.doHideThisPopup();
+      }
+    });
   },
   initComponents: function() {
     this.inherited(arguments);
@@ -730,7 +733,11 @@ enyo.kind({
         });
       }
     }
-    return result;
+    if (result && inEvent.callback) {
+      inEvent.callback();
+    } else {
+      return result;
+    }
   },
   validationMessage: function(args) {
     this.owner.doShowPopup({
