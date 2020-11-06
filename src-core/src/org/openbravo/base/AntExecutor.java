@@ -19,6 +19,8 @@
 package org.openbravo.base;
 
 import java.io.File;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 import org.apache.logging.log4j.LogManager;
@@ -141,5 +143,16 @@ public class AntExecutor {
     consoleLogger.setOutputPrintStream(System.out);
     consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
     project.addBuildListener(consoleLogger);
+  }
+
+  /**
+   * Makes the project of this AntExecutor to inherit all the properties set in the other executor.
+   */
+  public void inheritPropertiesFrom(AntExecutor otherExecutor) {
+    project.copyInheritedProperties(otherExecutor.project);
+    Map<String, Object> props = otherExecutor.project.getProperties();
+    for (Entry<String, Object> prop : props.entrySet()) {
+      project.setInheritedProperty(prop.getKey(), (String) prop.getValue());
+    }
   }
 }
