@@ -107,7 +107,7 @@ public class BuildHookExecutor {
   private AntExecutor getAntExecutor(Path buildXml) {
     try {
       return new AntExecutor(buildXml.toAbsolutePath().toString(),
-          modulesPath.getParent().toAbsolutePath().toString());
+          buildXml.getParent().toAbsolutePath().toString());
     } catch (Exception e) {
       throw new BuildException("Couldn't read build file " + buildXml, e);
     }
