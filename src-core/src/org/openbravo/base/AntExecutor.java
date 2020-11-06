@@ -127,4 +127,9 @@ public class AntExecutor {
       logger.error(e.getMessage(), e);
     }
   }
+
+  /** Determines whether current build file has a given target. */
+  public boolean hasTarget(String targetName) {
+    return project.getTargets().containsKey(targetName);
+  }
 }
