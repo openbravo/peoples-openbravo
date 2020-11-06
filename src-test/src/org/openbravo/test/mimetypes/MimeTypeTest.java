@@ -11,15 +11,18 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2014 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.test.mimetypes;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
+
 import org.junit.Test;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.MimeTypeUtil;
 import org.openbravo.model.ad.utility.Image;
@@ -33,19 +36,15 @@ import org.openbravo.test.base.OBBaseTest;
 public class MimeTypeTest extends OBBaseTest {
 
   @Test
-  public void testGetImageMimeTypes() {
+  public void testAllImageMimeTypesShouldBeDetected() {
     setSystemAdministratorContext();
-
-    OBCriteria<Image> obc = OBDal.getInstance().createCriteria(Image.class);
-    for (Image img : obc.list()) {
+    List<Image> images = OBDal.getInstance().createCriteria(Image.class).list();
+    for (Image img : images) {
       byte[] imageBytes = img.getBindaryData();
       if (imageBytes != null) {
-        try {
-          String t = MimeTypeUtil.getInstance().getMimeTypeName(imageBytes);
-          System.out.println(t);
-        } catch (Exception e) {
-          e.printStackTrace();
-        }
+        String resMimeType = MimeTypeUtil.getInstance().getMimeTypeName(imageBytes);
+        String expectedMimeType = img.getMimetype();
+        assertEquals("MIME type detected is not correct.", expectedMimeType, resMimeType);
       }
     }
   }

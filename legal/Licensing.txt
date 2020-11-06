@@ -102,7 +102,6 @@ http://people.apache.org/~andyc/neko/doc/html/
 # log4j-1.2-api-2.11.1.jar
 # quartz-2.3.2.jar
 # servlet-api.jar 
-# tika-core-0.9.jar
 # wstx-asl-3.0.2.jar
 # xercesImpl-2.9.0-patched.jar
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.dal.xml;
 
+import java.io.InputStream;
 import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -32,6 +33,7 @@ import javax.xml.transform.sax.TransformerHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Namespace;
@@ -103,6 +105,28 @@ public class XMLUtil implements OBSingleton {
     reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
     reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
     return reader;
+  }
+
+  /**
+   * Parses provided InputStream into XML and extracts root element
+   * 
+   * @param in
+   *          InputStream XML
+   * @return Element root element
+   */
+  public Element getRootElement(InputStream in) {
+    Element rootElement = null;
+    try {
+      SAXReader reader = newSAXReader();
+      // Most SVG image files come with <Doctype> declaration. This option is set to false to allow
+      // its usage and be able to parse those SVGs
+      reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false);
+      Document doc = reader.read(in);
+      rootElement = doc.getRootElement();
+    } catch (DocumentException | SAXException ex) {
+      log.error("Failed to parse XML input for extracting root element.", ex);
+    }
+    return rootElement;
   }
 
   /** @return a new secure {@link TransformerFactory} */

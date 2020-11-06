@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,7 +40,6 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tika.Tika;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
@@ -62,6 +61,7 @@ import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.utility.MimeTypeUtil;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.List;
@@ -159,11 +159,7 @@ public class AttachImplementationManager {
         attachment.setUpdated(new Date());
       }
       attachment.setOrganization(org);
-      String strDataType = null;
-      try {
-        strDataType = new Tika().detect(file);
-      } catch (IOException ignore) {
-      }
+      String strDataType = MimeTypeUtil.getInstance().getMimeTypeName(file);
 
       if (strDataType != null && strDataType.length() <= DATA_TYPE_MAX_LENGTH) {
         attachment.setDataType(strDataType);

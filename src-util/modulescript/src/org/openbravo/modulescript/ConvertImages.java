@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,11 @@
 package org.openbravo.modulescript;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import javax.imageio.ImageIO;
 import java.io.File;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -37,13 +39,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import javax.imageio.ImageIO;
-import org.apache.tika.Tika;
-import org.apache.tika.mime.MimeType;
 
 public class ConvertImages extends ModuleScript {
 
   private static final Logger log4j = LogManager.getLogger();
-  private Tika tika;
   
   @Override
   public void execute() {
@@ -83,15 +82,13 @@ public class ConvertImages extends ModuleScript {
           is.close();
           ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
           BufferedImage rImage = ImageIO.read(bis);
+          String imageMimeType = URLConnection.guessContentTypeFromStream(new BufferedInputStream(new ByteArrayInputStream(bytes)));
           String qupdate="UPDATE ad_image set name='Image', binarydata=?, width=?, height=?, mimetype=? where ad_image_id=?";
           PreparedStatement ps=cp.getPreparedStatement(qupdate);
           ps.setObject(1, bytes);
           ps.setLong(2, rImage.getWidth());
           ps.setLong(3, rImage.getHeight());
-          if (tika==null) {
-            tika=new Tika();
-          }
-          ps.setString(4, tika.detect(bytes));
+          ps.setString(4, imageMimeType);
           ps.setString(5, imageid);
           ps.executeUpdate();
           cp.releasePreparedStatement(ps);
