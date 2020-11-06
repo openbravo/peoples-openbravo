@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at https://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2020 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.buildscript;
 
 import java.io.IOException;
@@ -12,15 +31,28 @@ import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.AntExecutor;
 
+/**
+ * Allows to execute post build scripts defined in external modules as ant tasks.
+ *
+ * <p>
+ * It iterates over all modules looking for a {@code build.xml} file in their root directory. If
+ * present, it checks whether a {@code postBuild} target is in that build file, if so it gets
+ * executed.
+ *
+ * <p>
+ * Build hooks are executed after {@code postsrc} target in the build flows, this is once all the
+ * code is compiled and JavaScript files are deployed to {@code WebContent} directory.
+ */
 public class BuildHookExecutor {
   private static final Logger log = LogManager.getLogger();
 
   private Path modulesPath;
 
-  public BuildHookExecutor(Path modulesPath) {
+  private BuildHookExecutor(Path modulesPath) {
     this.modulesPath = modulesPath;
   }
 
+  /** Entry point for BuildHookExecutor which is executed from ant build */
   public static void main(String[] args) throws Exception {
     String modulesPathArg = args[0];
     Path modulesPath = Paths.get(modulesPathArg);
