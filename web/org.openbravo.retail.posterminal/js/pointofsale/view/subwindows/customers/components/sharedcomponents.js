@@ -86,12 +86,16 @@ enyo.kind({
         oldCustomer = customer.toJSON();
       }
       if (value.length >= 3) {
-        provider.suggest(oldCustomer, this.modelProperty, value, function(
-          result
-        ) {
-          me.formElement.$.scrim.show();
-          me.formElement.$.suggestionList.createSuggestionList(result, value);
-        });
+        provider.suggest(
+          oldCustomer,
+          this.modelProperty,
+          value,
+          function(result) {
+            me.formElement.$.scrim.show();
+            me.formElement.$.suggestionList.createSuggestionList(result, value);
+          },
+          'customerForm'
+        );
       } else {
         me.formElement.$.suggestionList.$.suggestionListtbody.destroyComponents();
         me.formElement.$.suggestionList.addClass('u-hideFromUI');
@@ -111,15 +115,19 @@ enyo.kind({
       if (customer !== undefined) {
         oldCustomer = customer.toJSON();
       }
-      provider.validate(oldCustomer, me.modelProperty, me.getValue(), function(
-        result
-      ) {
-        if (result && result.status) {
-          me.formElement.setMessage();
-        } else {
-          me.formElement.setMessage(result.message, true);
-        }
-      });
+      provider.validate(
+        oldCustomer,
+        me.modelProperty,
+        me.getValue(),
+        function(result) {
+          if (result && result.status) {
+            me.formElement.setMessage();
+          } else {
+            me.formElement.setMessage(result.message, true);
+          }
+        },
+        'customerForm'
+      );
     }
   },
   loadValue: function(inSender, inEvent) {
