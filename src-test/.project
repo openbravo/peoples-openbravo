@@ -31,6 +31,11 @@
 			<locationURI>MODULES/org.openbravo.base.weld/lib/test</locationURI>
 		</link>
 		<link>
+			<name>userinterface.selector-src-test</name>
+			<type>2</type>
+			<locationURI>MODULES/org.openbravo.userinterface.selector/src-test</locationURI>
+		</link>
+		<link>
 			<name>weld-src-test</name>
 			<type>2</type>
 			<locationURI>MODULES/org.openbravo.base.weld/src-test</locationURI>
