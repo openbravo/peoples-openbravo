@@ -25,21 +25,40 @@
     static getSuggestedFields() {
       throw 'getSuggestedFields method not implemented';
     }
+
+    /**
+     * This method is OPTIONAL and can be overriden in each subclass
+     * Returns the list of suggested fields that can modify values when are selected
+     * Output: Array with Strings with the modelproperty of desired fields
+     */
+    static getOnSuggestSelectedFields() {}
     /**
      * This method must be ALWAYS override in each subclass
      * Implements the logic to validate each field
      * Output: Object contains status (true | false) and message
      */
-    static validate(oldCustomer, property, value, callback) {
+    static validate(oldCustomer, property, value, callback, formName) {
       throw 'validate method not implemented';
     }
     /**
      * This method must be ALWAYS override in each subclass
      * Implements the logic to suggest each field
      */
-    static suggest(oldCustomer, property, value, callback) {
+    static suggest(oldCustomer, property, value, callback, formName) {
       throw 'suggest method not implemented';
     }
+    /**
+     * This method is OPTIONAL and can be overriden in each subclass
+     * Implements the logic to modify values when a suggested field is selected
+     */
+    static selectSuggested(
+      property,
+      data,
+      fieldValue,
+      field,
+      callback,
+      formName
+    ) {}
     /**
      * This method must be ALWAYS override in each data quality implementor that must be registered
      * Identifies the data quality implementor search key to register in the system

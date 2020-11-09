@@ -11,6 +11,7 @@
 
   OB.DQMController.Suggest = 'SUGGEST';
   OB.DQMController.Validate = 'VALIDATE';
+  OB.DQMController.OnSuggestSelected = 'ONSELECTED';
 
   OB.DQMController.providers = {};
 
@@ -30,6 +31,8 @@
           return provider.getSuggestedFields().includes(property);
         } else if (type === OB.DQMController.Validate) {
           return provider.getValidatedFields().includes(property);
+        } else if (type === OB.DQMController.OnSuggestSelected) {
+          return provider.getOnSuggestSelectedFields().includes(property);
         }
       });
     if (selectedConfiguredProvider) {
