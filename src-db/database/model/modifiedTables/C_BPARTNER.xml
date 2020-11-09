@@ -4,5 +4,11 @@
       <index name="EM_OBPOS_C_BPARTNERPRICELISTID" unique="false">
         <index-column name="M_PRICELIST_ID"/>
       </index>
+      <index name="EM_OBPOS_NAME_TRGM" unique="false" containsSearch="true">
+        <index-column name="functionBasedColumn" functionExpression="UPPER(NAME)"/>
+      </index>
+      <index name="EM_OBPOS_VALUE_TRGM" unique="false" containsSearch="true">
+        <index-column name="functionBasedColumn" functionExpression="UPPER(VALUE)"/>
+      </index>
     </table>
   </database>
