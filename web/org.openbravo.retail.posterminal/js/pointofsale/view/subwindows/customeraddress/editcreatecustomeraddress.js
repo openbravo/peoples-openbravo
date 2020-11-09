@@ -224,34 +224,6 @@ enyo.kind({
       readOnly: true
     },
     {
-      kind: 'OB.UI.CustomerAddrTextProperty',
-      name: 'customerAddrName',
-      classes:
-        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrName',
-      modelProperty: 'name',
-      i18nLabel: 'OBPOS_LblAddress',
-      maxlength: 60,
-      mandatory: true
-    },
-    {
-      kind: 'OB.UI.CustomerAddrTextProperty',
-      name: 'customerAddrPostalCode',
-      classes:
-        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrPostalCode',
-      modelProperty: 'postalCode',
-      i18nLabel: 'OBPOS_LblPostalCode',
-      maxlength: 10
-    },
-    {
-      kind: 'OB.UI.CustomerAddrTextProperty',
-      name: 'customerAddrCity',
-      classes:
-        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCity',
-      modelProperty: 'cityName',
-      i18nLabel: 'OBPOS_LblCity',
-      maxlength: 60
-    },
-    {
       kind: 'OB.UI.CustomerAddrComboProperty',
       name: 'customerAddrCountry',
       classes:
@@ -281,6 +253,34 @@ enyo.kind({
           me.dataReadyFunction(null, args);
         }
       }
+    },
+    {
+      kind: 'OB.UI.CustomerAddrTextProperty',
+      name: 'customerAddrPostalCode',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrPostalCode',
+      modelProperty: 'postalCode',
+      i18nLabel: 'OBPOS_LblPostalCode',
+      maxlength: 10
+    },
+    {
+      kind: 'OB.UI.CustomerAddrTextProperty',
+      name: 'customerAddrCity',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrCity',
+      modelProperty: 'cityName',
+      i18nLabel: 'OBPOS_LblCity',
+      maxlength: 60
+    },
+    {
+      kind: 'OB.UI.CustomerAddrTextProperty',
+      name: 'customerAddrName',
+      classes:
+        'obObposPointOfSaleUiCustomeraddrEditCreatecustomersImpl-newAttributes-customerAddrName',
+      modelProperty: 'name',
+      i18nLabel: 'OBPOS_LblAddress',
+      maxlength: 60,
+      mandatory: true
     },
     {
       kind: 'OB.UI.CustomerAddrCheckProperty',

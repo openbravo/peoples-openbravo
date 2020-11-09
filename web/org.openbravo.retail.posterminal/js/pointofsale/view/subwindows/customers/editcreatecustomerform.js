@@ -770,24 +770,6 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.CustomerTextPropertyAddr',
-      name: 'customerLocName',
-      classes:
-        'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-shipAddrAttributes-customerLocName',
-      modelProperty: 'shipLocName',
-      i18nLabel: 'OBPOS_LblAddress',
-      hasAddrIcons: true,
-      maxlength: 60,
-      mandatory: true,
-      hideShow: function(inSender, inEvent) {
-        if (inEvent.checked) {
-          this.owner.owner.hide();
-        } else {
-          this.owner.owner.show();
-        }
-      }
-    },
-    {
-      kind: 'OB.UI.CustomerTextPropertyAddr',
       name: 'customerPostalCode',
       classes:
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-shipAddrAttributes-customerPostalCode',
@@ -810,6 +792,24 @@ enyo.kind({
       modelProperty: 'shipCityName',
       i18nLabel: 'OBPOS_LblCity',
       maxlength: 60,
+      hideShow: function(inSender, inEvent) {
+        if (inEvent.checked) {
+          this.owner.owner.hide();
+        } else {
+          this.owner.owner.show();
+        }
+      }
+    },
+    {
+      kind: 'OB.UI.CustomerTextPropertyAddr',
+      name: 'customerLocName',
+      classes:
+        'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-shipAddrAttributes-customerLocName',
+      modelProperty: 'shipLocName',
+      i18nLabel: 'OBPOS_LblAddress',
+      hasAddrIcons: true,
+      maxlength: 60,
+      mandatory: true,
       hideShow: function(inSender, inEvent) {
         if (inEvent.checked) {
           this.owner.owner.hide();
@@ -854,17 +854,6 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.CustomerTextPropertyAddr',
-      name: 'customerInvLocName',
-      classes:
-        'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerInvLocName',
-      modelProperty: 'locName',
-      i18nLabel: 'OBPOS_LblAddress',
-      maxlength: 60,
-      mandatory: true,
-      hasAddrIcons: true
-    },
-    {
-      kind: 'OB.UI.CustomerTextPropertyAddr',
       name: 'customerInvPostalCode',
       classes:
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerInvPostalCode',
@@ -880,6 +869,17 @@ enyo.kind({
       modelProperty: 'cityName',
       i18nLabel: 'OBPOS_LblCity',
       maxlength: 60
+    },
+    {
+      kind: 'OB.UI.CustomerTextPropertyAddr',
+      name: 'customerInvLocName',
+      classes:
+        'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-invAddrAttributes-customerInvLocName',
+      modelProperty: 'locName',
+      i18nLabel: 'OBPOS_LblAddress',
+      maxlength: 60,
+      mandatory: true,
+      hasAddrIcons: true
     }
   ],
   statisticsAttributes: [

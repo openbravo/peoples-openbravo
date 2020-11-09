@@ -477,11 +477,11 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.CustomerAddrTextProperty',
-      name: 'customerAddrName',
+      name: 'customerAddrCountry',
       classes:
-        'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrName',
-      modelProperty: 'name',
-      i18nLabel: 'OBPOS_LblAddress',
+        'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCountry',
+      modelProperty: 'countryName',
+      i18nLabel: 'OBPOS_LblCountry',
       readOnly: true
     },
     {
@@ -504,11 +504,11 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.CustomerAddrTextProperty',
-      name: 'customerAddrCountry',
+      name: 'customerAddrName',
       classes:
-        'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrCountry',
-      modelProperty: 'countryName',
-      i18nLabel: 'OBPOS_LblCountry',
+        'obObposPointOfSaleUiCustomeraddrEditcustomersImpl-newAttributes-customerAddrName',
+      modelProperty: 'name',
+      i18nLabel: 'OBPOS_LblAddress',
       readOnly: true
     },
     {
