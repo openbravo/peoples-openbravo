@@ -109,7 +109,7 @@
             ? bomGroup1
             : bomGroup2;
         });
-        bomGroup.amount = OB.DEC.add(bomGroup.amount);
+        bomGroup.amount = OB.DEC.add(adjustment, bomGroup.amount);
       }
 
       const lineTaxes = this.calculateLineTaxes(line);
