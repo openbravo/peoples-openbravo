@@ -60,6 +60,15 @@
       <index name="EM_OBPOS_M_PRODUCT_PRODUCTTYPE" unique="false">
         <index-column name="PRODUCTTYPE"/>
       </index>
+      <index name="EM_OBPOS_NAME_TRGM" unique="false" containsSearch="true">
+        <index-column name="functionBasedColumn" functionExpression="UPPER(NAME)"/>
+      </index>
+      <index name="EM_OBPOS_UPC_TRGM" unique="false" containsSearch="true">
+        <index-column name="functionBasedColumn" functionExpression="UPPER(UPC)"/>
+      </index>
+      <index name="EM_OBPOS_VALUE_TRGM" unique="false" containsSearch="true">
+        <index-column name="functionBasedColumn" functionExpression="UPPER(VALUE)"/>
+      </index>
       <check name="EM_OBPOS_EDITABLE_PRICE_CHK"><![CDATA[EM_OBPOS_EDITABLE_PRICE IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_ISMULTISELECTABLE_CHK"><![CDATA[EM_OBPOS_ISMULTISELECTABLE IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_LINKPROD_PROPTYPE_CHK"><![CDATA[ISLINKEDTOPRODUCT = 'Y' AND EM_OBPOS_PROPOSAL_TYPE IS NOT NULL OR ISLINKEDTOPRODUCT = 'N']]></check>
