@@ -162,7 +162,9 @@
           return {
             ...newMultiTicket,
             orderType: multiTicket.orderType,
-            amountToLayaway: multiTicket.amountToLayaway
+            amountToLayaway: multiTicket.amountToLayaway,
+            fullInvoice: multiTicket.fullInvoice,
+            generateInvoice: multiTicket.generateInvoice
           };
         }
       );

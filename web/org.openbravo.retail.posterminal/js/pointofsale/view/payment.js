@@ -2991,22 +2991,55 @@ enyo.kind({
     this.inherited(arguments);
     this.setDisabled(!OB.MobileApp.model.hasPermission(this.permission));
   },
+  checkInvoice: function(isMultiOrder) {
+    let me = this,
+      validInvoice = true;
+    if (!OB.MobileApp.model.get('terminal').terminalType.generateInvoice) {
+      if (isMultiOrder) {
+        for (
+          let i = 0;
+          i < me.model.get('multiOrders').get('multiOrdersList').models.length;
+          i++
+        ) {
+          const model = me.model.get('multiOrders').get('multiOrdersList')
+            .models[i];
+          if (
+            !model.get('fullInvoice') &&
+            !model.setFullInvoice(true, true, true)
+          ) {
+            validInvoice = false;
+            break;
+          }
+        }
+      } else {
+        if (
+          !me.model.get('order').get('fullInvoice') &&
+          !me.model.get('order').setFullInvoice(true, true, true)
+        ) {
+          validInvoice = false;
+        }
+      }
+    }
+    return validInvoice;
+  },
   tap: function() {
     if (this.disabled) {
       return true;
     }
 
     const isMultiOrder = !this.model.get('leftColumnViewManager').isOrder();
-    if (isMultiOrder) {
-      OB.MobileApp.model.receipt.runCompleteTicket(
-        OB.App.State.Global.completeMultiCreditTicket,
-        'completeReceipt'
-      );
-    } else {
-      OB.MobileApp.model.receipt.runCompleteTicket(
-        OB.App.State.Global.completeCreditTicket,
-        'completeReceipt'
-      );
+    if (this.checkInvoice(isMultiOrder)) {
+      if (isMultiOrder) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.completeMultiCreditTicket,
+          'completeReceipt'
+        );
+      } else {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.completeCreditTicket,
+          'completeReceipt'
+        );
+      }
     }
   }
 });
