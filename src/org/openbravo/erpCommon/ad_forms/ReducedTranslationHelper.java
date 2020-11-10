@@ -32,7 +32,7 @@ import org.openbravo.model.ad.ui.Menu;
  */
 class ReducedTranslationHelper {
 
-  //Suppresses default constructor, ensuring non-instantiability.
+  // Suppresses default constructor, ensuring non-instantiability.
   private ReducedTranslationHelper() {
   }
 

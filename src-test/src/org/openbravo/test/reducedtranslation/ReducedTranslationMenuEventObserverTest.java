@@ -35,7 +35,7 @@ import org.openbravo.model.ad.ui.Menu;
  */
 public class ReducedTranslationMenuEventObserverTest extends WeldBaseTest {
   private static final String APPLICATION_DICTIONARY_MENU_ID = "153";
-  private static final String EXCLUDE_FROM_REDUCED_TRANSLATION="EXCLUDE_FROM_REDUCED_TRL";
+  private static final String EXCLUDE_FROM_REDUCED_TRANSLATION = "EXCLUDE_FROM_REDUCED_TRL";
   private static final String ELEMENT_MENU_ID = "138";
 
   @Before
