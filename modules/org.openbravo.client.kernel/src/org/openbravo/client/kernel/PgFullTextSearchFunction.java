@@ -28,7 +28,10 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.type.BooleanType;
 import org.hibernate.type.Type;
 
-/** HQL function to support Full Text Search in PostgreSQL */
+/**
+ * HQL functions to support Full Text Search in PostgreSQL. See each class for more specific
+ * documentation
+ */
 public abstract class PgFullTextSearchFunction implements SQLFunction {
   protected abstract String getFragment(String table, String field, String value,
       Optional<String> ftsConfiguration);
@@ -59,6 +62,8 @@ public abstract class PgFullTextSearchFunction implements SQLFunction {
    *          <li>ftsconfiguration [optional]: language to pass to to_tsquery function
    *          <li>value: string to be searched/compared
    *          </ul>
+   * @return hql string to append to an hql query in order to filter/obtain the rank. See examples
+   *         for each class in each class' doc
    */
   @Override
   public String render(Type type, @SuppressWarnings("rawtypes") List args,
@@ -81,7 +86,22 @@ public abstract class PgFullTextSearchFunction implements SQLFunction {
     return ftsConfiguration.map(config -> config + "::regconfig, ").orElseGet(() -> "");
   }
 
-  // TODO: JavaDoc
+  /**
+   * It allows to add a where clause to filter by those values that fit the search. In order for
+   * this to work there needs to be a column stored in the database that contains a tsvector built
+   * with the columns for which the search is required.
+   * <p>
+   * Examples of usage having p as alias of a product table and searchable_field as the tsvector
+   * field:
+   * <p>
+   * - 'and fullTextSearchFilter(p, p.searchable_field, 'english', 'cat')' this will search for any
+   * field that has any word having to do with cat
+   * <p>
+   * - 'and fullTextSearchFilter(p, p.searchable_field, 'english', 'cat:* | black:*')' this will
+   * search for any field that has any word having to do with cat or black and that starts at least
+   * by cat or black
+   *
+   */
   public static class Filter extends PgFullTextSearchFunction {
     @Override
     protected String getFragment(String table, String field, String value,
@@ -90,7 +110,23 @@ public abstract class PgFullTextSearchFunction implements SQLFunction {
     }
   }
 
-  // TODO: JavaDoc
+  /**
+   * It allows to add an order by clause regarding how fitting a text is according to the values in
+   * the tsvector column. This function returns an integer that can be returned in the select clause
+   * and order by it. It is strictly not necessary to put it in the select clause, but it helps to
+   * know how it orders.
+   * <p>
+   * Examples of usage having p as alias of a product table and searchable_field as the tsvector
+   * field:
+   * <p>
+   * - 'fullTextSearchRank(p, p.searchable_field, 'english', 'cat')' this will return an integer
+   * that will be higher the more fitting to it the chain with which the tsvector field was and the
+   * more times the cat chain appeared on it
+   * <p>
+   * - 'fullTextSearchRank(p, p.searchable_field, 'english', 'cat:* | black:*')' same as before but
+   * with substrings and with cat or black
+   *
+   */
   public static class Rank extends PgFullTextSearchFunction {
     @Override
     protected String getFragment(String table, String field, String value,
