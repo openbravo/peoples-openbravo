@@ -4,7 +4,10 @@
 *.iml
 attachments
 bin
+# Exclude all build directories at any level
+# except lib/build present in top level
 build
+!/lib/build
 docs
 log
 src-gen
