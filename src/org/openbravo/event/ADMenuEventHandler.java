@@ -26,6 +26,7 @@ import javax.servlet.ServletException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -57,28 +58,39 @@ class ADMenuEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-    updateIncludedInReducedTranslationFlagForChildEntries(event);
+    updateTranslationStrategyForChildEntries(event);
   }
 
-  private void updateIncludedInReducedTranslationFlagForChildEntries(EntityUpdateEvent event) {
+  private void updateTranslationStrategyForChildEntries(EntityUpdateEvent event) {
     ConnectionProvider conn = new DalConnectionProvider(false);
-    String menuId = (String) event.getTargetInstance().getId();
+    final String menuId = (String) event.getTargetInstance().getId();
     final Entity menuEntity = ModelProvider.getInstance().getEntity(Menu.ENTITY_NAME);
-    final Property availableForTrlProperty = menuEntity
+    final Property translationStrategyProperty = menuEntity
         .getProperty(Menu.PROPERTY_TRANSLATIONSTRATEGY);
     final String currentValueTranslationStrategy = (String) event
-        .getCurrentState(availableForTrlProperty);
+        .getCurrentState(translationStrategyProperty);
     final String previousValueTranslationStrategy = (String) event
-        .getPreviousState(availableForTrlProperty);
+        .getPreviousState(translationStrategyProperty);
     if (!StringUtils.equals(previousValueTranslationStrategy, currentValueTranslationStrategy)) {
       try {
         Arrays.stream(TreeData.select(conn, MENU_TREE_ID, menuId))
-        .filter(node -> !menuId.equals(node.id))
-        .map(node -> OBDal.getInstance().get(Menu.class, node.id))
-        .forEach(menuEntry -> menuEntry.setTranslationStrategy(currentValueTranslationStrategy));
-
+            .filter(node -> !menuId.equals(node.id))
+            .map(node -> OBDal.getInstance().get(Menu.class, node.id))
+            .forEach(menuEntry -> {
+              if (menuEntry.getModule().isInDevelopment() == null) {
+                throw new OBException(
+                    "IsinDevelopment flag for Module " + menuEntry.getModule().getName()
+                        + " should be either enabled or disabled, cannot be null");
+              }
+              if (menuEntry.getModule().isInDevelopment()) {
+                menuEntry.setTranslationStrategy(currentValueTranslationStrategy);
+              }
+            });
       } catch (ServletException e) {
-        log.error("Error while updating Translation Strategy for Menu", e);
+        Menu menu = OBDal.getInstance().get(Menu.class, menuId);
+        log.error("Error while updating Translation Strategy for Menu: " + menu.getName(), e);
+        throw new OBException(
+            "Error while updating Translation Strategy for Menu: " + menu.getName());
       }
     }
   }
