@@ -28,7 +28,7 @@ import org.openbravo.model.ad.ui.Menu;
  * 
  * The way it works is by adding a specific where clause for each translatable entity to filter out
  * the records that are not directly or indirectly linked to a menu entry set as Included in Reduced
- * Translation ({@link Menu#PROPERTY_FORREDUCEDTRANSLATION}
+ * Translation ({@link Menu#PROPERTY_TRANSLATIONSTRATEGY}
  */
 class ReducedTranslationHelper {
 
@@ -65,7 +65,7 @@ class ReducedTranslationHelper {
         sql += " AND ( EXISTS (SELECT 1 "
              + "                FROM AD_MENU m "
              + "                WHERE o.AD_Process_ID = m.AD_Process_ID "
-             + "                AND m.IS_FOR_REDUCED_TRANSLATION = 'Y') "
+             + "                AND m.translation_Strategy is null) "
                 // Indirect menu entry through a process in another window
              + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_Process_ID", "AD_Process_ID", Optional.empty())
              + "     ) ";
@@ -76,13 +76,13 @@ class ReducedTranslationHelper {
         sql += " AND ( EXISTS (SELECT 1 "
              + "                FROM AD_MENU m "
              + "                WHERE o.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
-             + "                AND m.IS_FOR_REDUCED_TRANSLATION = 'Y') "
+             + "                AND m.translation_Strategy is null) "
              // Indirect menu entry through a process definition in another window
              + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.OBUIAPP_PROCESS_ID", "EM_OBUIAPP_PROCESS_ID", Optional.empty())
              + "     ) ";
         break;
       case "AD_MENU":
-        sql += " AND o.IS_FOR_REDUCED_TRANSLATION = 'Y'";
+        sql += " AND o.translation_Strategy is null";
         break;
       case "AD_WINDOW":
       case "AD_TAB":
@@ -129,7 +129,7 @@ class ReducedTranslationHelper {
     return   "  ( EXISTS (SELECT 1 " 
            + "                FROM AD_MENU m "
            + "                WHERE m.AD_WINDOW_ID = "+tableAlias+".AD_WINDOW_ID "
-           + "                AND m.IS_FOR_REDUCED_TRANSLATION = 'Y') "
+           + "                AND m.translation_Strategy is null) "
            + "        OR EXISTS (SELECT 1 "
            + "                   FROM OBUIAPP_Ref_Window rw, " 
            + "                        OBUIAPP_PARAMETER pp, " 
@@ -147,7 +147,7 @@ class ReducedTranslationHelper {
            + "                      AND rwf.AD_TAB_ID = rwt.AD_TAB_ID "
            + "                      AND rwt.AD_WINDOW_ID = rww.AD_WINDOW_ID "
            + "                      AND m.AD_WINDOW_ID = rww.AD_WINDOW_ID " 
-           + "                      AND m.IS_FOR_REDUCED_TRANSLATION = 'Y') "
+           + "                      AND m.translation_Strategy is null) "
            + "   ) ";
     //@formatter:on
   }
@@ -205,7 +205,7 @@ class ReducedTranslationHelper {
          + "  AND (   EXISTS (SELECT 1 "
          + "                  FROM AD_MENU m "
          + "                  WHERE m." + processParamType.linkToMenuColum + " = pp." + processParamType.processPrimaryKeyColumn
-         + "                  AND  m.IS_FOR_REDUCED_TRANSLATION = 'Y') "               
+         + "                  AND  m.translation_Strategy is null) "
                    // ...indirectly linked to a window menu entry
          + "       OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("pp." + processParamType.processPrimaryKeyColumn, processParamType.linkToMenuColum, Optional.empty())
          + "      ) "

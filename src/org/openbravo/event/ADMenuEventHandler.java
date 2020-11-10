@@ -18,6 +18,8 @@
  */
 package org.openbravo.event;
 
+import java.util.Arrays;
+
 import javax.enterprise.event.Observes;
 import javax.servlet.ServletException;
 
@@ -63,23 +65,20 @@ class ADMenuEventHandler extends EntityPersistenceEventObserver {
     String menuId = (String) event.getTargetInstance().getId();
     final Entity menuEntity = ModelProvider.getInstance().getEntity(Menu.ENTITY_NAME);
     final Property availableForTrlProperty = menuEntity
-        .getProperty(Menu.PROPERTY_FORREDUCEDTRANSLATION);
-    final Boolean currentValueAvailableForTrl = (Boolean) event
+        .getProperty(Menu.PROPERTY_TRANSLATIONSTRATEGY);
+    final String currentValueTranslationStrategy = (String) event
         .getCurrentState(availableForTrlProperty);
-    final Boolean previousValueAvailableForTrl = (Boolean) event
+    final String previousValueTranslationStrategy = (String) event
         .getPreviousState(availableForTrlProperty);
-    if (previousValueAvailableForTrl != null && currentValueAvailableForTrl != null
-        && !previousValueAvailableForTrl.equals(currentValueAvailableForTrl)) {
+    if (!StringUtils.equals(previousValueTranslationStrategy, currentValueTranslationStrategy)) {
       try {
-        TreeData[] data = TreeData.select(conn, MENU_TREE_ID, menuId);
-        for (int i = 0; i < data.length; i++) {
-          if (!StringUtils.equals(menuId, data[i].id)) {
-            final Menu menu = OBDal.getInstance().get(Menu.class, data[i].id);
-            menu.setForReducedTranslation(currentValueAvailableForTrl);
-          }
-        }
+        Arrays.stream(TreeData.select(conn, MENU_TREE_ID, menuId))
+        .filter(node -> !menuId.equals(node.id))
+        .map(node -> OBDal.getInstance().get(Menu.class, node.id))
+        .forEach(menuEntry -> menuEntry.setTranslationStrategy(currentValueTranslationStrategy));
+
       } catch (ServletException e) {
-        log.error("Error while updating AvailableForTranslation flag in Menu", e);
+        log.error("Error while updating Translation Strategy for Menu", e);
       }
     }
   }
