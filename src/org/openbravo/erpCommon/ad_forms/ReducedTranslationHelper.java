@@ -32,6 +32,28 @@ import org.openbravo.model.ad.ui.Menu;
  */
 class ReducedTranslationHelper {
 
+  //Suppresses default constructor, ensuring non-instantiability.
+  private ReducedTranslationHelper() {
+  }
+
+  /*
+   * Process and Process Definition have the same logic, it only varies the columns involved. This
+   * enum helps to encapsulate this logic.
+   */
+  private enum ProcessParamType {
+    AD_PROCESS_PARA("AD_PROCESS_ID", "AD_PROCESS_ID"),
+    OBUIAPP_PARAMETER("EM_OBUIAPP_PROCESS_ID", "OBUIAPP_PROCESS_ID");
+
+    final String linkToMenuColum;
+    final String processPrimaryKeyColumn;
+
+    ProcessParamType(String linkToMenuColum, String processPrimaryKeyColumn) {
+      this.linkToMenuColum = linkToMenuColum;
+      this.processPrimaryKeyColumn = processPrimaryKeyColumn;
+    }
+
+  }
+
   static String getReducedTranslationClause(final String table) {
     // Skip translation table records with isActive = No
     String sql = " and o.IsActive='Y'";
@@ -171,23 +193,6 @@ class ReducedTranslationHelper {
          + (  extraWhereClause.isPresent()? extraWhereClause.get() : "")
          + " ) ";
     //@formatter:on
-  }
-
-  /*
-   * Process and Process Definition have the same logic, it only varies the columns involved. This
-   * enum helps to encapsulate this logic.
-   */
-  private enum ProcessParamType {
-    AD_PROCESS_PARA("AD_PROCESS_ID", "AD_PROCESS_ID"),
-    OBUIAPP_PARAMETER("EM_OBUIAPP_PROCESS_ID", "OBUIAPP_PROCESS_ID");
-
-    ProcessParamType(String linkToMenuColum, String processPrimaryKeyColumn) {
-      this.linkToMenuColum = linkToMenuColum;
-      this.processPrimaryKeyColumn = processPrimaryKeyColumn;
-    }
-
-    final String linkToMenuColum;
-    final String processPrimaryKeyColumn;
   }
 
   /*
