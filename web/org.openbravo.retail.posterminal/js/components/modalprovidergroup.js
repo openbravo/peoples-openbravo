@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -16,6 +16,7 @@ enyo.kind({
   header: '',
   autoDismiss: false,
   hideCloseButton: true,
+  showPopupMessage: true,
   events: {
     onHideThisPopup: ''
   },
@@ -96,25 +97,28 @@ enyo.kind({
     this.$.body.$.lblType.setContent(OB.I18N.getLabel('OBPOS_LblModalType'));
     this.$.body.$.paymenttype.setContent(providerGroup.provider._identifier);
     this.$.body.$.description.setContent(providerGroup.provider.description);
+    this.showPopupMessage = true;
 
     // Set timeout needed because on ExecuteOnShow
     setTimeout(this.startPaymentRefund.bind(this), 0);
   },
   showMessageAndClose: function(message) {
     window.setTimeout(this.doHideThisPopup.bind(this), 0);
-    OB.UTIL.showConfirmation.display(
-      OB.I18N.getLabel('OBPOS_LblPaymentMethod'),
-      message,
-      [
+    if (this.showPopupMessage) {
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBPOS_LblPaymentMethod'),
+        message,
+        [
+          {
+            label: OB.I18N.getLabel('OBMOBC_LblOk'),
+            isConfirmButton: true
+          }
+        ],
         {
-          label: OB.I18N.getLabel('OBMOBC_LblOk'),
-          isConfirmButton: true
+          autoDismiss: false
         }
-      ],
-      {
-        autoDismiss: false
-      }
-    );
+      );
+    }
   },
   startPaymentRefund: function() {
     var receipt = this.args.receipt;
@@ -203,6 +207,8 @@ enyo.kind({
           );
           window.setTimeout(this.doHideThisPopup.bind(this), 0);
         };
+        this.showPopupMessage =
+          response.showPopupMessage === false ? false : true;
 
         // First attempt. Find an exact match.
         const cardlogo = response.properties.cardlogo;
@@ -229,6 +235,8 @@ enyo.kind({
         );
       })
       .catch(exception => {
+        this.showPopupMessage =
+          exception.showPopupMessage === false ? false : true;
         this.showMessageAndClose(
           providerinstance.getErrorMessage
             ? providerinstance.getErrorMessage(exception)
