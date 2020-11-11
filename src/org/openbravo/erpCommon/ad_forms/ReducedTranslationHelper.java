@@ -19,8 +19,6 @@
 
 package org.openbravo.erpCommon.ad_forms;
 
-import java.util.Optional;
-
 import org.openbravo.model.ad.ui.Menu;
 
 /**
@@ -67,7 +65,7 @@ class ReducedTranslationHelper {
         break;
       case "AD_ELEMENT":
                // Window directly or indirectly linked to menu entry with ad_element
-        sql += " AND (EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_ELEMENT_ID", "AD_ELEMENT_ID", Optional.empty())
+        sql += " AND (EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_ELEMENT_ID", "AD_ELEMENT_ID")
                // Process Definition Param with an ad_element
              + "    OR EXISTS " + getLinkToProcessesAvailableForReducedTranslationFromProcessParam(ProcessParamType.OBUIAPP_PARAMETER, "o.AD_ELEMENT_ID", "AD_ELEMENT_ID")
                // Process Param with an ad_element
@@ -89,7 +87,7 @@ class ReducedTranslationHelper {
              + "                WHERE o.AD_Process_ID = m.AD_Process_ID "
              + "                AND m.translation_Strategy is null) "
                 // Indirect menu entry through a process in another window
-             + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_Process_ID", "AD_Process_ID", Optional.empty())
+             + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_Process_ID", "AD_Process_ID")
              + "     ) ";
         break;
       case "OBUIAPP_PROCESS":
@@ -100,7 +98,7 @@ class ReducedTranslationHelper {
              + "                WHERE o.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
              + "                AND m.translation_Strategy is null) "
              // Indirect menu entry through a process definition in another window
-             + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.OBUIAPP_PROCESS_ID", "EM_OBUIAPP_PROCESS_ID", Optional.empty())
+             + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.OBUIAPP_PROCESS_ID", "EM_OBUIAPP_PROCESS_ID")
              + "     ) ";
         break;
       case "AD_MENU":
@@ -123,7 +121,7 @@ class ReducedTranslationHelper {
         break;
       case "AD_REF_LIST":
                        // In Windows
-        sql += " AND ( EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_REFERENCE_ID", "AD_REFERENCE_VALUE_ID", Optional.of("AND c.AD_REFERENCE_ID = '17'"))
+        sql += " AND ( EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_REFERENCE_ID", "AD_REFERENCE_VALUE_ID", "AND c.AD_REFERENCE_ID = '17'")
                        // In Process Definition Param
              + "       OR EXISTS " + getLinkToProcessesAvailableForReducedTranslationFromProcessParam(ProcessParamType.OBUIAPP_PARAMETER, "o.AD_REFERENCE_ID", "AD_REFERENCE_VALUE_ID")
                        // In Process Param
@@ -179,8 +177,27 @@ class ReducedTranslationHelper {
    * translation from Column -> Field -> Tab -> Window.
    */
   private static String getLinkToWindowsAvailableForReducedTranslationFromADColumn(
+      final String referencedColumnToExternalQuery, final String linkThroughADColumn) {
+    //@formatter:off
+    return " (SELECT 1 "
+         + "  FROM AD_COLUMN c, "
+         + "  AD_FIELD f, "
+         + "  AD_TAB t "
+         + "  WHERE c.AD_COLUMN_ID = f.AD_COLUMN_ID "
+         + "  AND f.AD_TAB_ID = t.AD_TAB_ID "
+         + "  AND " + referencedColumnToExternalQuery + " = c." + linkThroughADColumn
+         + "  AND " + getRecordsInWindowsAvailableForReducedTranslation("t") + " "
+         + " ) ";
+    //@formatter:on
+  }
+
+  /*
+   * Utility method that tries to find a (direct or indirect) window available for reduced
+   * translation from Column -> Field -> Tab -> Window.
+   */
+  private static String getLinkToWindowsAvailableForReducedTranslationFromADColumn(
       final String referencedColumnToExternalQuery, final String linkThroughADColumn,
-      final Optional<String> extraWhereClause) {
+      final String extraWhereClause) {
     //@formatter:off
     return " (SELECT 1 "
          + "  FROM AD_COLUMN c, "
@@ -189,8 +206,8 @@ class ReducedTranslationHelper {
          + "  WHERE c.AD_COLUMN_ID = f.AD_COLUMN_ID "
          + "  AND f.AD_TAB_ID = t.AD_TAB_ID "
          + "  AND " + referencedColumnToExternalQuery + " = c." + linkThroughADColumn 
-         + "  AND " + getRecordsInWindowsAvailableForReducedTranslation("t") + " "
-         + (  extraWhereClause.isPresent()? extraWhereClause.get() : "")
+         + "  AND " + getRecordsInWindowsAvailableForReducedTranslation("t")
+         +   extraWhereClause
          + " ) ";
     //@formatter:on
   }
@@ -212,7 +229,7 @@ class ReducedTranslationHelper {
          + "                  WHERE m." + processParamType.linkToMenuColum + " = pp." + processParamType.processPrimaryKeyColumn
          + "                  AND  m.translation_Strategy is null) "
                    // ...indirectly linked to a window menu entry
-         + "       OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("pp." + processParamType.processPrimaryKeyColumn, processParamType.linkToMenuColum, Optional.empty())
+         + "       OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("pp." + processParamType.processPrimaryKeyColumn, processParamType.linkToMenuColum)
          + "      ) "
          + " ) ";
     //@formatter:on
