@@ -8,12 +8,14 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -63,6 +65,12 @@ public class PaidReceipts extends JSONProcessSimple {
   public static final String paidReceiptsShipLinesPropertyExtension = "PRExtensionShipLines";
   public static final String paidReceiptsRelatedLinesPropertyExtension = "PRExtensionRelatedLines";
   public static final String paidReceiptsPaymentsPropertyExtension = "PRExtensionPayments";
+
+  private static final List<String> paidReceiptsLinePromotionStandardProp = Arrays
+      .asList(new String[] { "entityName", "id", "client", "organization", "active", "creationDate",
+          "createdBy", "updated", "updatedBy", "name", "salesOrderLine", "priceAdjustment",
+          "adjustedPrice", "priceAdjustmentAmt", "baseGrossUnitPrice", "obdiscQtyoffer",
+          "obdiscIdentifier", "displayedTotalAmount", "totalAmount" });
 
   @Inject
   @Any
@@ -144,7 +152,7 @@ public class PaidReceipts extends JSONProcessSimple {
 
       // cycle through the lines of the selected order
       JSONArray paidReceipts = hqlPropertiesReceipts.getJSONArray(paidReceiptsQuery);
-
+      List<String> promoExtraFields = getPromotionExtraFields();
       for (int receipt = 0; receipt < paidReceipts.length(); receipt++) {
         JSONObject paidReceipt = paidReceipts.getJSONObject(receipt);
         if (orderIds.indexOf(orderid) == -1) {
@@ -308,6 +316,7 @@ public class PaidReceipts extends JSONProcessSimple {
             if (promotion.getObdiscQtyoffer() != null) {
               jsonPromo.put("obdiscQtyoffer", promotion.getObdiscQtyoffer());
             }
+            setPromotionExtraFieldValues(jsonPromo, promotion, promoExtraFields);
             promotions.put(jsonPromo);
             hasPromotions = true;
           }
@@ -697,6 +706,31 @@ public class PaidReceipts extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  private List<String> getPromotionExtraFields() {
+    List<String> result = new ArrayList<String>();
+    OrderLineOffer promotion = new OrderLineOffer();
+    Class<?> clazz = promotion.getClass();
+    for (Method method : clazz.getDeclaredMethods()) {
+      String mName = method.getName();
+      if (mName.startsWith("get") || mName.startsWith("is")) {
+        String name = mName.substring(mName.startsWith("get") ? 3 : 2);
+        name = ("" + name.charAt(0)).toLowerCase() + name.substring(1);
+        if (!paidReceiptsLinePromotionStandardProp.contains(name)) {
+          result.add(name);
+        }
+      }
+    }
+    return result;
+  }
+
+  private void setPromotionExtraFieldValues(JSONObject jsonPromo, OrderLineOffer promotion,
+      List<String> extraFields) throws JSONException {
+    for (String propName : extraFields) {
+      Object value = promotion.get(propName);
+      jsonPromo.put(propName, value);
+    }
   }
 
   private String getOrderIdFromDocNo(String documentNo) {
