@@ -174,7 +174,8 @@ enyo.kind({
     onPressedButton: ''
   },
   tap: async function() {
-    function sucessCallBack(bp, me) {
+    let me = this;
+    function sucessCallBack(bp) {
       me.doShowPopup({
         popup: 'modalcustomeraddress',
         args: {
@@ -192,13 +193,12 @@ enyo.kind({
       return true;
     }
     this.doPressedButton();
-    var me = this;
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       OB.Dal.get(
         OB.Model.BusinessPartner,
         me.parent.customer.get('id'),
-        function(bp, me) {
-          sucessCallBack(bp, me);
+        function(bp) {
+          sucessCallBack(bp);
         }
       );
     } else {
@@ -206,7 +206,7 @@ enyo.kind({
         let bp = await OB.App.MasterdataModels.BusinessPartner.withId(
           me.parent.customer.get('id')
         );
-        sucessCallBack(OB.Dal.transform(OB.Model.BusinessPartner, bp), me);
+        sucessCallBack(OB.Dal.transform(OB.Model.BusinessPartner, bp));
       } catch (error) {
         OB.error(error);
       }
