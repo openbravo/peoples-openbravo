@@ -1242,6 +1242,7 @@ enyo.kind({
           shipping = loc;
         }
       }
+      model.set('id', model.get('bpartnerId'));
       me.loadBPLocations(model, shipping, billing);
     }
 
