@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -139,6 +139,7 @@ public class OBBaseTest {
           && !OBContext.getOBContext().getUser().getId().equals("0")
           && !OBContext.getOBContext().getRole().getId().equals("0")
           && OBContext.getOBContext().isInAdministratorMode()) {
+        OBContext.clearAdminModeStack();
         OBContext.restorePreviousMode();
         throw new IllegalStateException(
             "Test case should take care of reseting admin mode correctly in a finally block, use OBContext.restorePreviousMode");
