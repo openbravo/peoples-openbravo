@@ -1237,10 +1237,18 @@ enyo.kind({
           true
         )
       );
-    } else if (this.args.makeSearch) {
-      this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+    } else {
+      if (this.args.makeSearch) {
+        this.$.body.$.listBpsLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+      } else {
+        this.$.body.$.listBpsLoc.bpsList.reset(
+          this.$.body.$.listBpsLoc.bpsList.models.map(bp => {
+            bp.unset('ignoreSetBPLoc');
+            return bp;
+          })
+        );
+      }
     }
-
     return true;
   },
   executeOnHide: function() {

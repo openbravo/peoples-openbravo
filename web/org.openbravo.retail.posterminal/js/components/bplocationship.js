@@ -245,8 +245,17 @@ enyo.kind({
           true
         )
       );
-    } else if (this.args.makeSearch) {
-      this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+    } else {
+      if (this.args.makeSearch) {
+        this.$.body.$.listBpsShipLoc.$.bpsloclistitemprinter.$.theader.$.modalBpLocScrollableHeader.searchAction();
+      } else {
+        this.$.body.$.listBpsShipLoc.bpsList.reset(
+          this.$.body.$.listBpsShipLoc.bpsList.models.map(bp => {
+            bp.unset('ignoreSetBPLoc');
+            return bp;
+          })
+        );
+      }
     }
     return true;
   },

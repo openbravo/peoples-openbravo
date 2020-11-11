@@ -1459,7 +1459,10 @@ enyo.kind({
         this.$.body.$.listBpsSelector.$.stBPAssignToReceipt.$.theader.$.modalBpSelectorScrollableHeader.$.filterSelector.searchAction();
       } else {
         this.$.body.$.listBpsSelector.bpsList.reset(
-          this.$.body.$.listBpsSelector.bpsList.models
+          this.$.body.$.listBpsSelector.bpsList.models.map(bp => {
+            bp.unset('ignoreSetBP');
+            return bp;
+          })
         );
       }
     }
