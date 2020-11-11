@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2011 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,12 +26,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.portal.PortalAccessible;
 
@@ -100,43 +100,40 @@ public class ParametersActionHandler extends BaseActionHandler implements Portal
       }
 
       try {
-        @SuppressWarnings("unused")
-        final java.lang.reflect.Field f = ParameterValue.class
-            .getDeclaredField("PROPERTY_" + dbFilterProperty.toUpperCase());
+        ParameterValue.class.getDeclaredField("PROPERTY_" + dbFilterProperty.toUpperCase());
       } catch (NoSuchFieldException fieldException) {
         result.put("message", getMessge("Error",
             "Property " + dbFilterProperty + " is not defined in Parameters class"));
         return result;
       }
 
-      BaseOBObject filterObject = OBDal.getInstance().get(entityName, dbInstanceId);
+      BaseOBObject filterObject = OBDal.getInstance().getProxy(entityName, dbInstanceId);
       for (int i = 0; i < params.length(); i++) {
         final JSONObject p = params.getJSONObject(i);
         final Parameter param = OBDal.getInstance()
-            .get(Parameter.class, p.getString("parameterId"));
-        ParameterValue value;
-        OBQuery<ParameterValue> obq = OBDal.getInstance()
-            .createQuery(ParameterValue.class,
-                dbFilterProperty + " = :filter and parameter = :param")
-            .setNamedParameter("filter", filterObject)
-            .setNamedParameter("param", param);
+            .getProxy(Parameter.class, p.getString("parameterId"));
 
-        if (obq.count() == 0) {
+        ParameterValue value = (ParameterValue) OBDal.getInstance()
+            .createCriteria(ParameterValue.class)
+            .add(Restrictions.eq(dbFilterProperty, filterObject))
+            .add(Restrictions.eq(ParameterValue.PROPERTY_PARAMETER, param))
+            .setMaxResults(1)
+            .uniqueResult();
+
+        if (value == null) {
           value = OBProvider.getInstance().get(ParameterValue.class);
           value.setParameter(param);
           value.set(dbFilterProperty, filterObject);
-          ParameterUtils.setParameterValue(value, p);
-        } else {
-          value = obq.list().get(0);
-          ParameterUtils.setParameterValue(value, p);
         }
+
+        ParameterUtils.setParameterValue(value, p);
         OBDal.getInstance().save(value);
       }
       OBDal.getInstance().flush();
       result.put("message", getMessge("Success", "Process completed successfully"));
       return result;
     } catch (Exception e) {
-      log.error("Error processing Parameters action: " + e.getMessage(), e);
+      log.error("Error processing Parameters action: {}", e.getMessage(), e);
       return new JSONObject();
     } finally {
       OBContext.restorePreviousMode();
