@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -127,7 +127,7 @@ public class AccessLevelTest extends OBBaseTest {
     final Client clientZero = OBDal.getInstance().get(Client.class, "0");
     final Organization orgZero = OBDal.getInstance().get(Organization.class, "0");
     for (Entity e : entities) {
-      if (e.isDataSourceBased() || e.isHQLBased()) {
+      if (e.isDataSourceBased() || e.isHQLBased() || e.isView()) {
         // The entity is not associated with a database table, so it does not apply
         continue;
       }
@@ -177,18 +177,22 @@ public class AccessLevelTest extends OBBaseTest {
       final OBQuery<BaseOBObject> obq = OBDal.getInstance()
           .createQuery(e.getName(), where.toString());
       obq.setNamedParameters(params);
-      for (BaseOBObject bob : obq.list()) {
-        String clientId = null;
-        if (bob instanceof ClientEnabled) {
-          clientId = ((ClientEnabled) bob).getClient().getId();
+      try {
+        for (BaseOBObject bob : obq.list()) {
+          String clientId = null;
+          if (bob instanceof ClientEnabled) {
+            clientId = ((ClientEnabled) bob).getClient().getId();
+          }
+          String orgId = null;
+          if (bob instanceof OrganizationEnabled) {
+            orgId = ((OrganizationEnabled) bob).getOrganization().getId();
+          }
+          sb.append("Object " + bob.getIdentifier() + " (" + bob.getEntityName()
+              + ") has an invalid client/org " + clientId + "/" + orgId
+              + " for the accesslevel of the entity/table: " + e.getAccessLevel().name() + ".\n");
         }
-        String orgId = null;
-        if (bob instanceof OrganizationEnabled) {
-          orgId = ((OrganizationEnabled) bob).getOrganization().getId();
-        }
-        sb.append("Object " + bob.getIdentifier() + " (" + bob.getEntityName()
-            + ") has an invalid client/org " + clientId + "/" + orgId
-            + " for the accesslevel of the entity/table: " + e.getAccessLevel().name() + ".\n");
+      } catch (Exception ex) {
+        throw new OBException("Exception while testing entity: " + e, ex);
       }
     }
     if (sb.length() > 0) {
