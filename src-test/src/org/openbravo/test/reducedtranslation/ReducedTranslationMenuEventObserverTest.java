@@ -34,20 +34,19 @@ import org.openbravo.model.ad.ui.Menu;
  * Tests the org.openbravo.event.ADMenuEventHandler event observer
  */
 public class ReducedTranslationMenuEventObserverTest extends WeldBaseTest {
-  private static final String APPLICATION_DICTIONARY_MENU_ID = "153";
-  private static final String EXCLUDE_FROM_REDUCED_TRANSLATION = "EXCLUDE_FROM_REDUCED_TRL";
-  private static final String ELEMENT_MENU_ID = "138";
 
   @Before
   @After
   public void doNotIncludeApplicationDictionaryInReducedTranslation() {
-    updateApplicationDictionaryMenuTranslationStrategy(EXCLUDE_FROM_REDUCED_TRANSLATION);
+    updateApplicationDictionaryMenuTranslationStrategy(
+        ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION);
   }
 
   private void updateApplicationDictionaryMenuTranslationStrategy(String translationStrategy) {
     try {
       OBContext.setAdminMode(false);
-      final Menu adMenu = OBDal.getInstance().get(Menu.class, APPLICATION_DICTIONARY_MENU_ID);
+      final Menu adMenu = OBDal.getInstance()
+          .get(Menu.class, ReducedTrlTestConstants.APPLICATION_DICTIONARY_MENU_ID);
       adMenu.setTranslationStrategy(translationStrategy);
       OBDal.getInstance().flush();
     } finally {
@@ -61,13 +60,18 @@ public class ReducedTranslationMenuEventObserverTest extends WeldBaseTest {
       OBContext.setAdminMode(false);
       updateApplicationDictionaryMenuTranslationStrategy(null);
       assertThat("Child menu entry has been updated",
-          OBDal.getInstance().get(Menu.class, ELEMENT_MENU_ID).getTranslationStrategy(),
+          OBDal.getInstance()
+              .get(Menu.class, ReducedTrlTestConstants.ELEMENT_MENU_ID)
+              .getTranslationStrategy(),
           equalTo(null));
 
-      updateApplicationDictionaryMenuTranslationStrategy(EXCLUDE_FROM_REDUCED_TRANSLATION);
+      updateApplicationDictionaryMenuTranslationStrategy(
+          ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION);
       assertThat("Child menu entry has been updated",
-          OBDal.getInstance().get(Menu.class, ELEMENT_MENU_ID).getTranslationStrategy(),
-          equalTo(EXCLUDE_FROM_REDUCED_TRANSLATION));
+          OBDal.getInstance()
+              .get(Menu.class, ReducedTrlTestConstants.ELEMENT_MENU_ID)
+              .getTranslationStrategy(),
+          equalTo(ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION));
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -77,28 +81,34 @@ public class ReducedTranslationMenuEventObserverTest extends WeldBaseTest {
   public void parentEntriesAreNotUpdated() {
     try {
       OBContext.setAdminMode(false);
-      final Menu elementMenu = OBDal.getInstance().get(Menu.class, ELEMENT_MENU_ID);
+      final Menu elementMenu = OBDal.getInstance()
+          .get(Menu.class, ReducedTrlTestConstants.ELEMENT_MENU_ID);
       elementMenu.setTranslationStrategy(null);
       OBDal.getInstance().flush();
       assertThat("This menu entry has been updated",
-          OBDal.getInstance().get(Menu.class, ELEMENT_MENU_ID).getTranslationStrategy(),
+          OBDal.getInstance()
+              .get(Menu.class, ReducedTrlTestConstants.ELEMENT_MENU_ID)
+              .getTranslationStrategy(),
           equalTo(null));
       assertThat("Parent menu entry has not been updated",
           OBDal.getInstance()
-              .get(Menu.class, APPLICATION_DICTIONARY_MENU_ID)
+              .get(Menu.class, ReducedTrlTestConstants.APPLICATION_DICTIONARY_MENU_ID)
               .getTranslationStrategy(),
-          equalTo(EXCLUDE_FROM_REDUCED_TRANSLATION));
+          equalTo(ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION));
 
-      elementMenu.setTranslationStrategy(EXCLUDE_FROM_REDUCED_TRANSLATION);
+      elementMenu
+          .setTranslationStrategy(ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION);
       OBDal.getInstance().flush();
       assertThat("This menu entry has been updated",
-          OBDal.getInstance().get(Menu.class, ELEMENT_MENU_ID).getTranslationStrategy(),
-          equalTo(EXCLUDE_FROM_REDUCED_TRANSLATION));
+          OBDal.getInstance()
+              .get(Menu.class, ReducedTrlTestConstants.ELEMENT_MENU_ID)
+              .getTranslationStrategy(),
+          equalTo(ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION));
       assertThat("Parent menu entry has not been updated",
           OBDal.getInstance()
-              .get(Menu.class, APPLICATION_DICTIONARY_MENU_ID)
+              .get(Menu.class, ReducedTrlTestConstants.APPLICATION_DICTIONARY_MENU_ID)
               .getTranslationStrategy(),
-          equalTo(EXCLUDE_FROM_REDUCED_TRANSLATION));
+          equalTo(ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION));
     } finally {
       OBContext.restorePreviousMode();
     }

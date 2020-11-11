@@ -25,17 +25,19 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.TranslationManager;
@@ -49,17 +51,11 @@ import org.openbravo.test.base.OBBaseTest;
  * should exclude or include some terms
  */
 public class ReducedTranslationExportTests extends OBBaseTest {
-  private static final String ATTACHFOLDER = OBPropertiesProvider.getInstance()
-      .getOpenbravoProperties()
-      .getProperty("attach.path");
-  private static final File FULL_TRL_DIR = new File(ATTACHFOLDER + "/full");
-  private static final File REDUCED_TRL_DIR = new File(ATTACHFOLDER + "/reduced");
-  private static final String CLIENT_0 = "0";
-  private static final String ES_ES_LANG_ID = "140";
-  private static final String ES_ES = "es_ES";
+  private static final Logger log = LogManager.getLogger();
+  private static boolean restoreSystemLanguageFlag = false;
 
   @BeforeClass
-  public static void exportReducedTranslation() {
+  public static void exportReducedTranslation() throws IOException {
     doVerifyLanguageIfNotPreviouslyDoneBefore();
     exportReducedAndFullTranslations();
   }
@@ -67,9 +63,11 @@ public class ReducedTranslationExportTests extends OBBaseTest {
   private static void doVerifyLanguageIfNotPreviouslyDoneBefore() {
     try {
       OBContext.setAdminMode(false);
-      final Language esESLang = OBDal.getInstance().get(Language.class, ES_ES_LANG_ID);
+      final Language esESLang = OBDal.getInstance()
+          .get(Language.class, ReducedTrlTestConstants.ES_ES_LANG_ID);
       if (!esESLang.isSystemLanguage()) {
         esESLang.setSystemLanguage(true);
+        restoreSystemLanguageFlag = true;
         CallProcess.getInstance().call("AD_Language_Create", null, null);
       }
     } finally {
@@ -77,25 +75,63 @@ public class ReducedTranslationExportTests extends OBBaseTest {
     }
   }
 
-  private static void exportReducedAndFullTranslations() {
-    REDUCED_TRL_DIR.mkdir();
-    TranslationManager.exportTrl(new DalConnectionProvider(), REDUCED_TRL_DIR.getAbsolutePath(),
-        ES_ES, CLIENT_0, ES_ES, true);
-    FULL_TRL_DIR.mkdir();
-    TranslationManager.exportTrl(new DalConnectionProvider(), FULL_TRL_DIR.getAbsolutePath(), ES_ES,
-        CLIENT_0, ES_ES, false);
+  private static void exportReducedAndFullTranslations() throws IOException {
+    Files.createDirectories(ReducedTrlTestConstants.REDUCED_TRL_DIR);
+
+    TranslationManager.exportTrl(new DalConnectionProvider(),
+        ReducedTrlTestConstants.REDUCED_TRL_DIR.toAbsolutePath().toString(),
+        ReducedTrlTestConstants.ES_ES, ReducedTrlTestConstants.CLIENT_0,
+        ReducedTrlTestConstants.ES_ES, true);
+
+    Files.createDirectories(ReducedTrlTestConstants.FULL_TRL_DIR);
+    TranslationManager.exportTrl(new DalConnectionProvider(),
+        ReducedTrlTestConstants.FULL_TRL_DIR.toAbsolutePath().toString(),
+        ReducedTrlTestConstants.ES_ES, ReducedTrlTestConstants.CLIENT_0,
+        ReducedTrlTestConstants.ES_ES, false);
   }
 
   @AfterClass
   public static void removeTranslationFolders() throws IOException {
-    FileUtils.deleteDirectory(REDUCED_TRL_DIR);
-    FileUtils.deleteDirectory(FULL_TRL_DIR);
+    deleteDirectory(ReducedTrlTestConstants.REDUCED_TRL_DIR);
+    deleteDirectory(ReducedTrlTestConstants.FULL_TRL_DIR);
+  }
+
+  @AfterClass
+  public static void resetSystemLanguageFlag() {
+    try {
+      OBContext.setAdminMode(false);
+      if (restoreSystemLanguageFlag) {
+        final Language esESLang = OBDal.getInstance()
+            .get(Language.class, ReducedTrlTestConstants.ES_ES_LANG_ID);
+        esESLang.setSystemLanguage(false);
+        OBDal.getInstance().save(esESLang);
+        OBDal.getInstance().flush();
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private static void deleteDirectory(Path path) throws IOException {
+    Stream<Path> filePathStream = Files.walk(path);
+    try {
+      filePathStream.sorted(Comparator.reverseOrder()).forEach(p -> {
+        try {
+          Files.delete(p);
+        } catch (IOException e) {
+          log.error("Error while deleting file " + path.getFileName(), e);
+        }
+      });
+    } finally {
+      filePathStream.close();
+    }
   }
 
   @Test
   public void testReducedTranslationSize() {
-    assertThat("Reduced translation size", FileUtils.sizeOfDirectory(REDUCED_TRL_DIR),
-        lessThan(FileUtils.sizeOfDirectory(FULL_TRL_DIR)));
+    assertThat("Reduced translation size",
+        FileUtils.sizeOfDirectory(ReducedTrlTestConstants.REDUCED_TRL_DIR.toFile()),
+        lessThan(FileUtils.sizeOfDirectory(ReducedTrlTestConstants.FULL_TRL_DIR.toFile())));
   }
 
   @Test
@@ -190,39 +226,50 @@ public class ReducedTranslationExportTests extends OBBaseTest {
 
   private void testExistInFullAndNotExistsInReduced(final String fileRelativePath,
       final String string) throws IOException {
+    // cleanup for prototype: relative paths shouldn't start with /
+    String relativePath = fileRelativePath.startsWith("/") ? fileRelativePath.substring(1)
+        : fileRelativePath;
+
+    // Note: Files.readString(FULL_TRL_DIR.resolve(fileRelativePath)) is available since JDK11
     assertThat("Full version " + fileRelativePath,
-        FileUtils.readFileToString(new File(FULL_TRL_DIR.getAbsoluteFile() + fileRelativePath)),
+        new String(Files.readAllBytes(ReducedTrlTestConstants.FULL_TRL_DIR.resolve(relativePath))),
         containsString(string));
     assertThat("Reduced version " + fileRelativePath,
-        FileUtils.readFileToString(new File(REDUCED_TRL_DIR.getAbsoluteFile() + fileRelativePath)),
+        new String(
+            Files.readAllBytes(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath))),
         not(containsString(string)));
   }
 
   private void testExistInBothTranslations(final String fileRelativePath, final String string)
       throws IOException {
+    String relativePath = fileRelativePath.startsWith("/") ? fileRelativePath.substring(1)
+        : fileRelativePath;
+
     assertThat("Full version " + fileRelativePath,
-        FileUtils.readFileToString(new File(FULL_TRL_DIR.getAbsoluteFile() + fileRelativePath)),
+        new String(Files.readAllBytes(ReducedTrlTestConstants.FULL_TRL_DIR.resolve(relativePath))),
         containsString(string));
     assertThat("Reduced version " + fileRelativePath,
-        FileUtils.readFileToString(new File(REDUCED_TRL_DIR.getAbsoluteFile() + fileRelativePath)),
+        new String(
+            Files.readAllBytes(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath))),
         containsString(string));
   }
 
   private void testExpectedEmptyTranslationFile(final String fileRelativePath) {
-    final long lineCountReduced = countLines(REDUCED_TRL_DIR, fileRelativePath);
-    final long lineCountFull = countLines(FULL_TRL_DIR, fileRelativePath);
+    String relativePath = fileRelativePath.startsWith("/") ? fileRelativePath.substring(1)
+        : fileRelativePath;
+
+    final long lineCountReduced = countLines(ReducedTrlTestConstants.REDUCED_TRL_DIR, relativePath);
+    final long lineCountFull = countLines(ReducedTrlTestConstants.FULL_TRL_DIR, relativePath);
 
     final long XmlHeaderLinesOnly = 2l;
-    assertThat("Reduced translation " + fileRelativePath, lineCountReduced,
+    assertThat("Reduced translation " + relativePath, lineCountReduced,
         equalTo(XmlHeaderLinesOnly));
-    assertThat("Reduced translation " + fileRelativePath, lineCountReduced,
-        lessThan(lineCountFull));
+    assertThat("Reduced translation " + relativePath, lineCountReduced, lessThan(lineCountFull));
   }
 
-  private long countLines(final File translationDir, final String fileRelativePath) {
-    try (final Stream<String> stream = Files
-        .lines(new File(translationDir.getAbsoluteFile() + fileRelativePath).toPath())) {
-      return stream.count();
+  private int countLines(final Path translationDir, final String fileRelativePath) {
+    try {
+      return Files.readAllLines(translationDir.resolve(fileRelativePath)).size();
     } catch (IOException e) {
       throw new OBException(e);
     }
