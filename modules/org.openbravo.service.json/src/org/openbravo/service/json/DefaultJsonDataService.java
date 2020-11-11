@@ -147,7 +147,7 @@ public class DefaultJsonDataService implements JsonDataService {
       if (id != null) {
         bobs = new ArrayList<BaseOBObject>();
         final OBQuery<BaseOBObject> obq = OBDal.getInstance()
-            .createQuery(entityName, JsonConstants.ID + " = :bobId");
+            .createQuery(entityName, "id = :bobId");
         obq.setNamedParameter("bobId", id);
         obq.setFilterOnActive(false);
         obq.setMaxResult(1);
