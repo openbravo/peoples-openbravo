@@ -21,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.database.ConnectionProvider;
@@ -50,8 +49,8 @@ public class Translation extends HttpSecureAppServlet {
     } else if (vars.commandIn("EXPORT")) {
 
       final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
-      final boolean isReducedVersion = StringUtils
-          .equals(vars.getRequestGlobalVariable("inpReduced", "translation.reduced"), "Y");
+      final boolean isReducedVersion = "Y"
+          .equals(vars.getRequestGlobalVariable("inpReduced", "translation.reduced"));
 
       // import/export translation is currently always on system level
       final String strClient = "0";
