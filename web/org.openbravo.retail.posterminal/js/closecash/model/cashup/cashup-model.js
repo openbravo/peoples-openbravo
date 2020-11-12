@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, _ */
+/*global OB, Backbone */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
@@ -97,153 +97,13 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     ].loaded = false;
 
     this.set('orderlist', new Backbone.Collection());
-    this.set('paymentList', new Backbone.Collection());
+
     const payMthds = new Backbone.Collection(
       OB.App.State.getState().Cashup.cashPaymentMethodInfo
     );
 
-    //OB.Dal.find success
-    // Get list of active payments
-    let activePaymentsList = [],
-      tempList = new Backbone.Collection();
-    OB.MobileApp.model.get('payments').forEach(payment => {
-      if (
-        payment.payment.active === true &&
-        payment.paymentMethod.countpaymentincashup &&
-        !payment.paymentMethod.issafebox
-      ) {
-        activePaymentsList.push(payment);
-      }
-    });
-    activePaymentsList.forEach((payment, index) => {
-      let expected = 0;
-      const auxPay = payMthds.filter(function(payMthd) {
-        return payMthd.get('paymentMethodId') === payment.payment.id;
-      })[0];
-      if (!auxPay) {
-        //We cannot find this payment in local database, it must be a new payment method, we skip it.
-        return;
-      }
+    this.setPaymentList(true);
 
-      // Not add shared payment to slave terminal
-      if (
-        !terminalSlave ||
-        !OB.MobileApp.model.paymentnames[payment.payment.searchKey]
-          .paymentMethod.isshared
-      ) {
-        auxPay.set('_id', payment.payment.searchKey);
-        auxPay.set('isocode', payment.isocode);
-        auxPay.set('paymentMethod', payment.paymentMethod);
-        auxPay.set('id', payment.payment.id);
-        if (auxPay.get('totalDeposits') === null) {
-          auxPay.set('totalDeposits', 0);
-        }
-        if (auxPay.get('totalDrops') === null) {
-          auxPay.set('totalDrops', 0);
-        }
-        const cStartingCash = auxPay.get('startingCash'),
-          cTotalReturns = auxPay.get('totalReturns'),
-          cTotalSales = auxPay.get('totalSales'),
-          cTotalDeposits = OB.DEC.sub(
-            auxPay.get('totalDeposits'),
-            OB.DEC.abs(auxPay.get('totalDrops'))
-          );
-        expected = OB.DEC.add(
-          OB.DEC.add(
-            cStartingCash,
-            OB.DEC.sub(cTotalSales, cTotalReturns, payment.obposPosprecision),
-            payment.obposPosprecision
-          ),
-          cTotalDeposits,
-          payment.obposPosprecision
-        );
-        const fromCurrencyId = auxPay.get('paymentMethod').currency;
-        auxPay.set(
-          'expected',
-          OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected)
-        );
-        auxPay.set('foreignExpected', expected);
-        const paymentShared =
-          (OB.POS.modelterminal.get('terminal').ismaster ||
-            OB.POS.modelterminal.get('terminal').isslave) &&
-          OB.MobileApp.model.paymentnames[payment.payment.searchKey]
-            .paymentMethod.isshared;
-        if (paymentShared) {
-          auxPay.set(
-            'name',
-            auxPay.get('name') +
-              (paymentShared
-                ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared')
-                : '')
-          );
-        }
-        tempList.add(auxPay);
-      }
-
-      if (index === activePaymentsList.length - 1) {
-        if (terminalSlave && tempList.length === 0) {
-          // Desactivate all steps
-          this.stepsDefinition[
-            this.stepIndex('OB.CloseCash.PaymentMethods')
-          ].active = false;
-        }
-        if (
-          OB.MobileApp.model.hasPermission(
-            'OBPOS_retail.cashupGroupExpectedPayment',
-            true
-          )
-        ) {
-          // Split payment methods
-          const expectedList = _.filter(tempList.models, function(pm) {
-              return pm.get('expected') !== 0;
-            }),
-            emptyList = _.filter(tempList.models, function(pm) {
-              return pm.get('expected') === 0;
-            });
-
-          this.set(
-            'paymentExpectedList',
-            new Backbone.Collection(expectedList)
-          );
-          this.set('paymentEmptyList', new Backbone.Collection(emptyList));
-
-          if (emptyList.length > 0) {
-            emptyList[0].set('firstEmptyPayment', true);
-          }
-          const models = expectedList.concat(emptyList);
-
-          this.get('paymentList').reset(models);
-        } else {
-          this.get('paymentList').reset(tempList.models);
-        }
-        // Active/Desactive CashPayments and CashToKeep tabs
-        let cashPayments = false,
-          cashToKeep = false;
-        const paymentsIndex = this.stepIndex('OB.CloseCash.CashPayments'),
-          toKeepIndex = this.stepIndex('OB.CloseCash.CashToKeep');
-        for (let i = 0; i < tempList.length; i++) {
-          if (this.closeCashSteps[paymentsIndex].isSubstepAvailable(this, i)) {
-            cashPayments = true;
-          }
-          if (this.closeCashSteps[toKeepIndex].isSubstepAvailable(this, i)) {
-            cashToKeep = true;
-          }
-        }
-        this.stepsDefinition[paymentsIndex].active = cashPayments;
-        this.stepsDefinition[toKeepIndex].active = cashToKeep;
-        this.set(
-          'totalExpected',
-          this.get('paymentList').models.reduce((total, model) => {
-            return OB.DEC.add(total, model.get('expected'));
-          }, 0)
-        );
-        this.set(
-          'totalDifference',
-          OB.DEC.sub(this.get('totalDifference'), this.get('totalExpected'))
-        );
-        this.setIgnoreStep3();
-      }
-    });
     this.stepsDefinition[
       this.stepIndex('OB.CloseCash.CashPayments')
     ].loaded = true;
