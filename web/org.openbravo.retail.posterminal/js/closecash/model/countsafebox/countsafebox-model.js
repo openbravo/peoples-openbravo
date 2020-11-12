@@ -59,6 +59,10 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
       });
     },
     initializationProcess: function(initModelsCallback) {
+      const terminalSlave =
+        !OB.POS.modelterminal.get('terminal').ismaster &&
+        OB.POS.modelterminal.get('terminal').isslave;
+
       this.stepsDefinition[
         this.stepIndex('OB.CountSafeBox.StepSafeBoxList')
       ].loaded = false;
@@ -70,6 +74,126 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
       ].loaded = false;
 
       this.set('safeBoxesList', new Backbone.Collection());
+      this.set('paymentList', new Backbone.Collection());
+
+      let activePaymentsList = [],
+        tempList = new Backbone.Collection();
+
+      const payMthds = new Backbone.Collection(
+        OB.App.State.getState().Cashup.cashPaymentMethodInfo
+      );
+
+      // Get list of active payments
+      OB.MobileApp.model.get('payments').forEach(payment => {
+        if (
+          payment.payment.active === true &&
+          payment.paymentMethod.countpaymentincashup &&
+          !payment.paymentMethod.issafebox
+        ) {
+          activePaymentsList.push(payment);
+        }
+      });
+
+      activePaymentsList.forEach((payment, index) => {
+        let expected = 0;
+
+        const auxPay = payMthds.filter(function(payMthd) {
+          return payMthd.get('paymentMethodId') === payment.payment.id;
+        })[0];
+
+        //We cannot find this payment in local database, it must be a new payment method, we skip it.
+        if (!auxPay) {
+          return;
+        }
+
+        // Not add shared payment to slave terminal
+        if (
+          !terminalSlave ||
+          !OB.MobileApp.model.paymentnames[payment.payment.searchKey]
+            .paymentMethod.isshared
+        ) {
+          auxPay.set('_id', payment.payment.searchKey);
+          auxPay.set('isocode', payment.isocode);
+          auxPay.set('paymentMethod', payment.paymentMethod);
+          auxPay.set('id', payment.payment.id);
+          if (auxPay.get('totalDeposits') === null) {
+            auxPay.set('totalDeposits', 0);
+          }
+          if (auxPay.get('totalDrops') === null) {
+            auxPay.set('totalDrops', 0);
+          }
+          const cStartingCash = auxPay.get('startingCash'),
+            cTotalReturns = auxPay.get('totalReturns'),
+            cTotalSales = auxPay.get('totalSales'),
+            cTotalDeposits = OB.DEC.sub(
+              auxPay.get('totalDeposits'),
+              OB.DEC.abs(auxPay.get('totalDrops'))
+            );
+          expected = OB.DEC.add(
+            OB.DEC.add(
+              cStartingCash,
+              OB.DEC.sub(cTotalSales, cTotalReturns, payment.obposPosprecision),
+              payment.obposPosprecision
+            ),
+            cTotalDeposits,
+            payment.obposPosprecision
+          );
+          const fromCurrencyId = auxPay.get('paymentMethod').currency;
+          auxPay.set(
+            'expected',
+            OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, expected)
+          );
+          auxPay.set('foreignExpected', expected);
+          const paymentShared =
+            (OB.POS.modelterminal.get('terminal').ismaster ||
+              OB.POS.modelterminal.get('terminal').isslave) &&
+            OB.MobileApp.model.paymentnames[payment.payment.searchKey]
+              .paymentMethod.isshared;
+          if (paymentShared) {
+            auxPay.set(
+              'name',
+              auxPay.get('name') +
+                (paymentShared
+                  ? OB.I18N.getLabel('OBPOS_LblPaymentMethodShared')
+                  : '')
+            );
+          }
+          tempList.add(auxPay);
+        }
+
+        //Finally assign payment list
+        if (index === activePaymentsList.length - 1) {
+          if (
+            OB.MobileApp.model.hasPermission(
+              'OBPOS_retail.cashupGroupExpectedPayment',
+              true
+            )
+          ) {
+            // Split payment methods
+            const expectedList = _.filter(tempList.models, function(pm) {
+                return pm.get('expected') !== 0;
+              }),
+              emptyList = _.filter(tempList.models, function(pm) {
+                return pm.get('expected') === 0;
+              });
+
+            this.set(
+              'paymentExpectedList',
+              new Backbone.Collection(expectedList)
+            );
+            this.set('paymentEmptyList', new Backbone.Collection(emptyList));
+
+            if (emptyList.length > 0) {
+              emptyList[0].set('firstEmptyPayment', true);
+            }
+            const models = expectedList.concat(emptyList);
+
+            this.get('paymentList').reset(models);
+          } else {
+            this.get('paymentList').reset(tempList.models);
+          }
+        }
+      });
 
       initModelsCallback();
 
