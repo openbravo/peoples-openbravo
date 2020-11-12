@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.query.Query;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.BaseOBObjectDef;
 import org.openbravo.base.model.Entity;
@@ -35,6 +35,7 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Language;
 
@@ -147,20 +148,14 @@ public abstract class BaseOBObject
   }
 
   private BaseOBObject getTranslation(Property trlParentProperty, Language language, String id) {
-    //@formatter:off
-    String hql = 
-            "select trl " +
-            "  from " + trlParentProperty.getEntity() + " as trl " +
-            " where trl." + trlParentProperty.getName() + ".id = :id " +
-            "   and trl.language = :language and trl.active = true";
-    //@formatter:on
-    Query<BaseOBObject> query = OBDal.getInstance()
-        .getSession()
-        .createQuery(hql, BaseOBObject.class)
-        .setParameter("id", id)
-        .setParameter("language", language)
+    OBCriteria<BaseOBObject> obCriteria = OBDal.getInstance()
+        .createCriteria(trlParentProperty.getEntity().getName())
+        .add(Restrictions.eq(trlParentProperty.getName() + ".id", id))
+        .add(Restrictions.eq("language", language))
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
         .setMaxResults(1);
-    return query.uniqueResult();
+    return (BaseOBObject) obCriteria.uniqueResult();
   }
 
   private void setDataValue(String propName, Object value) {
