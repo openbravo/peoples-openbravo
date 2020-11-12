@@ -213,42 +213,19 @@ enyo.kind({
       i18nLabel: 'OBPOS_PriceModification',
       retrievedPropertyForValue: 'id',
       retrievedPropertyForText: '_identifier',
-      init: function(model) {
-        this.model = model;
-        this.collection = new Backbone.Collection();
-        this.setCollection(this.collection);
-        var i = 0;
-        for (
-          i;
-          i < OB.MobileApp.model.get('priceModificationReasons').length;
-          i++
-        ) {
-          model = new Backbone.Model(
-            OB.MobileApp.model.get('priceModificationReasons')[i]
-          );
-          this.collection.add(model);
-        }
+      collection: new Backbone.Collection(),
+      init: function() {
+        OB.MobileApp.model.get('priceModificationReasons').forEach(reason => {
+          this.collection.add(new Backbone.Model(reason));
+        }, this);
       },
-      loadValue: function(inSender, inEvent) {
-        if (inEvent.modelProperty === this.modelProperty && inEvent.model) {
-          if (inEvent.model.get('oBPOSPriceModificationReason')) {
-            var i;
-            for (
-              i = 0;
-              i < OB.MobileApp.model.get('priceModificationReasons').length;
-              i++
-            ) {
-              if (
-                inEvent.model.get('oBPOSPriceModificationReason') ===
-                OB.MobileApp.model.get('priceModificationReasons')[i].id
-              ) {
-                this.setSelected(i);
-                break;
-              }
-            }
-          } else {
-            this.setSelected(0);
-          }
+      fetchDataFunction: function(args) {
+        if (
+          args &&
+          args.model &&
+          args.model.get('oBPOSPriceModificationReason')
+        ) {
+          this.dataReadyFunction(this.collection, args);
         }
       },
       applyValue: function(inSender, inEvent) {
