@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
@@ -54,8 +55,8 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.utils.CryptoUtility;
 
@@ -571,18 +572,18 @@ public class JsonToDataConverter {
         // if an id we should use the get method as it loads from the first level
         // cache
         if (property.getReferencedProperty() != null && !property.getReferencedProperty().isId()) {
-          final OBQuery<BaseOBObject> qry = OBDal.getInstance()
-              .createQuery(entity.getName(),
-                  property.getReferencedProperty().getName() + "=:reference");
-          qry.setNamedParameter("reference", referencedId);
-          qry.setFilterOnActive(false);
-          qry.setFilterOnReadableClients(false);
-          qry.setFilterOnReadableOrganization(false);
-          final List<BaseOBObject> result = qry.list();
+          OBCriteria<BaseOBObject> obCriteria = OBDal.getInstance()
+              .createCriteria(entity.getName())
+              .add(Restrictions.eq(property.getReferencedProperty().getName(), referencedId))
+              .setFilterOnActive(false)
+              .setFilterOnReadableClients(false)
+              .setFilterOnReadableOrganization(false);
+          final List<BaseOBObject> result = obCriteria.list();
           if (result.size() > 1) {
-            log.warn("More than one result when querying " + entity + " using property "
-                + property.getReferencedProperty() + " with value " + referencedId
-                + ", choosing the first result");
+            log.warn(
+                "More than one result when querying {} "
+                    + "using property {} with value {}, choosing the first result",
+                entity, property.getReferencedProperty(), referencedId);
             value = result.get(0);
           } else if (result.size() == 1) {
             value = result.get(0);
