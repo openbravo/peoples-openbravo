@@ -989,7 +989,7 @@ enyo.kind({
           'OBPOS_payments.hideCancelAndReplace',
           true
         ) &&
-        !haspayments
+        haspayments
       ) {
         this.hide();
       } else {
