@@ -380,16 +380,16 @@ public class OBContext implements OBNotSingleton, Serializable {
   public static void clearAdminModeStack() {
     for (AdminType type : AdminType.values()) {
       Stack<OBAdminMode> stack = getAdminModeStack(type);
-      if (stack.size() > 0) {
+      if (!stack.isEmpty()) {
         printUnbalancedWarning(false, type);
       }
       stack.clear();
-      type.trace.set(null);
+      type.trace.remove();
     }
 
     if (adminModeSet.get() != null) {
-      log.warn("Unbalanced calls to enableAsAdminContext and resetAsAdminContext");
-      adminModeSet.set(null);
+      log.warn("Unbalanced calls to setAdminMode and restorePreviousMode");
+      adminModeSet.remove();
     }
   }
 
@@ -554,10 +554,14 @@ public class OBContext implements OBNotSingleton, Serializable {
   public static void setOBContext(OBContext obContext) {
     // if (obContext != null && instance.get() != null)
     // throw new ArgumentException("OBContext already set");
-    instance.set(obContext);
+    if (obContext != null) {
+      instance.set(obContext);
+    } else {
+      instance.remove();
+    }
 
     // nullify the admin context
-    adminModeSet.set(null);
+    adminModeSet.remove();
   }
 
   /**
@@ -1222,7 +1226,7 @@ public class OBContext implements OBNotSingleton, Serializable {
     if (inAdministratorMode) {
       adminModeSet.set(this);
     } else {
-      adminModeSet.set(null);
+      adminModeSet.remove();
     }
     return prevMode;
   }
