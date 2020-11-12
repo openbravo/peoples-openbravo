@@ -77,6 +77,15 @@ enyo.kind({
     this.inherited(arguments);
   },
   doCheckSafeBox: function() {
+    if (
+      !OB.UTIL.localStorage.getItem('safeBoxes') ||
+      JSON.parse(OB.UTIL.localStorage.getItem('safeBoxes')).length <= 0
+    ) {
+      OB.UTIL.showError(OB.I18N.getLabel('OBPOS_NoSafeBoxInformation'));
+      this.doSkipSafeBox();
+      return;
+    }
+
     const searchKey = this.$.body.$.safeBoxInput.getValue();
     if (_.isEmpty(searchKey)) {
       this.doSkipSafeBox();
