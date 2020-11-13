@@ -27,20 +27,20 @@ import org.apache.logging.log4j.Logger;
 
 /** Some constants to be used in tests */
 
-public class ReducedTrlTestConstants {
+class ReducedTrlTestConstants {
   private static final Logger log = LogManager.getLogger();
 
-  public static Path ATTACHFOLDER;
+  private static Path TRLFOLDER;
   static {
     try {
-      ATTACHFOLDER = Files.createTempDirectory("trl");
+      TRLFOLDER = Files.createTempDirectory("trl");
     } catch (IOException e) {
       log.error("Error while creating temporary directory.", e);
     }
   }
 
-  public static final Path FULL_TRL_DIR = ATTACHFOLDER.resolve("full");
-  public static final Path REDUCED_TRL_DIR = ATTACHFOLDER.resolve("reduced");
+  public static final Path FULL_TRL_DIR = TRLFOLDER.resolve("full");
+  public static final Path REDUCED_TRL_DIR = TRLFOLDER.resolve("reduced");
   public static final String CLIENT_0 = "0";
   public static final String ES_ES_LANG_ID = "140";
   public static final String ES_ES = "es_ES";
