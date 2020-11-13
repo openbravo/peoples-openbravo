@@ -436,7 +436,7 @@ OB.OBPOSCloseCash.Model.CloseCash = OB.Model.TerminalWindowModel.extend({
   processAndFinishCloseCash: function() {
     this.processAndFinish();
   },
-  setPaymentList: function(validateSteps) {
+  setPaymentList: function(payMthds, validateSteps) {
     const terminalSlave =
       !OB.POS.modelterminal.get('terminal').ismaster &&
       OB.POS.modelterminal.get('terminal').isslave;
@@ -445,10 +445,6 @@ OB.OBPOSCloseCash.Model.CloseCash = OB.Model.TerminalWindowModel.extend({
 
     let activePaymentsList = [],
       tempList = new Backbone.Collection();
-
-    const payMthds = new Backbone.Collection(
-      OB.App.State.getState().Cashup.cashPaymentMethodInfo
-    );
 
     // Get list of active payments
     OB.MobileApp.model.get('payments').forEach(payment => {

@@ -71,7 +71,11 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
 
       this.set('safeBoxesList', new Backbone.Collection());
 
-      this.setPaymentList(false);
+      const payMthds = new Backbone.Collection(
+        OB.App.State.getState().Cashup.cashPaymentMethodInfo
+      );
+
+      this.setPaymentList(payMthds, false);
 
       initModelsCallback();
 

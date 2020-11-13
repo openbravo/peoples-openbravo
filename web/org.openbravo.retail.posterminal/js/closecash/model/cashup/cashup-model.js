@@ -102,7 +102,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       OB.App.State.getState().Cashup.cashPaymentMethodInfo
     );
 
-    this.setPaymentList(true);
+    this.setPaymentList(payMthds, true);
 
     this.stepsDefinition[
       this.stepIndex('OB.CloseCash.CashPayments')
