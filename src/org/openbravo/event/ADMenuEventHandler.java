@@ -24,8 +24,6 @@ import javax.enterprise.event.Observes;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -44,7 +42,6 @@ import org.openbravo.service.db.DalConnectionProvider;
  * It updates the "Included In Reduced Translation" flag for any child menu entry.
  */
 class ADMenuEventHandler extends EntityPersistenceEventObserver {
-  private static final Logger log = LogManager.getLogger();
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(Menu.ENTITY_NAME) };
   private static final String MENU_TREE_ID = "10";
@@ -77,20 +74,15 @@ class ADMenuEventHandler extends EntityPersistenceEventObserver {
             .filter(node -> !menuId.equals(node.id))
             .map(node -> OBDal.getInstance().get(Menu.class, node.id))
             .forEach(menuEntry -> {
-              if (menuEntry.getModule().isInDevelopment() == null) {
-                throw new OBException(
-                    "IsinDevelopment flag for Module " + menuEntry.getModule().getName()
-                        + " should be either enabled or disabled, cannot be null");
-              }
-              if (menuEntry.getModule().isInDevelopment()) {
+              if (menuEntry.getModule().isInDevelopment() != null
+                  && menuEntry.getModule().isInDevelopment()) {
                 menuEntry.setTranslationStrategy(currentValueTranslationStrategy);
               }
             });
       } catch (ServletException e) {
         Menu menu = OBDal.getInstance().get(Menu.class, menuId);
-        log.error("Error while updating Translation Strategy for Menu: " + menu.getName(), e);
         throw new OBException(
-            "Error while updating Translation Strategy for Menu: " + menu.getName());
+            "Error while updating Translation Strategy for Menu: " + menu.getName(), e, true);
       }
     }
   }
