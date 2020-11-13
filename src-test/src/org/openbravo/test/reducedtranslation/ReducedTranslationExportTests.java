@@ -28,12 +28,9 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,7 +48,6 @@ import org.openbravo.test.base.OBBaseTest;
  * should exclude or include some terms
  */
 public class ReducedTranslationExportTests extends OBBaseTest {
-  private static final Logger log = LogManager.getLogger();
   private static boolean restoreSystemLanguageFlag = false;
 
   @BeforeClass
@@ -92,8 +88,8 @@ public class ReducedTranslationExportTests extends OBBaseTest {
 
   @AfterClass
   public static void removeTranslationFolders() throws IOException {
-    deleteDirectory(ReducedTrlTestConstants.REDUCED_TRL_DIR);
-    deleteDirectory(ReducedTrlTestConstants.FULL_TRL_DIR);
+    FileUtils.deleteDirectory(ReducedTrlTestConstants.REDUCED_TRL_DIR.getFileName().toFile());
+    FileUtils.deleteDirectory(ReducedTrlTestConstants.FULL_TRL_DIR.getFileName().toFile());
   }
 
   @AfterClass
@@ -109,21 +105,6 @@ public class ReducedTranslationExportTests extends OBBaseTest {
       }
     } finally {
       OBContext.restorePreviousMode();
-    }
-  }
-
-  private static void deleteDirectory(Path path) throws IOException {
-    Stream<Path> filePathStream = Files.walk(path);
-    try {
-      filePathStream.sorted(Comparator.reverseOrder()).forEach(p -> {
-        try {
-          Files.delete(p);
-        } catch (IOException e) {
-          log.error("Error while deleting file " + path.getFileName(), e);
-        }
-      });
-    } finally {
-      filePathStream.close();
     }
   }
 
