@@ -206,15 +206,16 @@
       <index name="M_TRANSACTION_PROCESSED" unique="false">
         <index-column name="ISPROCESSED"/>
       </index>
+      <index name="M_TRANSACTION_PRODUCT_TRXPRDT" unique="false">
+        <index-column name="M_PRODUCT_ID"/>
+        <index-column name="TRXPROCESSDATE"/>
+      </index>
       <index name="M_TRANSACTION_PRODUCTIONLINE" unique="false">
         <index-column name="M_PRODUCTIONLINE_ID"/>
         <whereClause><![CDATA[M_PRODUCTIONLINE_ID IS NOT NULL]]></whereClause>
       </index>
       <index name="M_TRANSACTION_TRXPROCDATE" unique="false">
         <index-column name="TRXPROCESSDATE"/>
-      </index>
-      <index name="M_TRANSSACTION_PRODUCT" unique="false">
-        <index-column name="M_PRODUCT_ID"/>
       </index>
       <check name="M_TRANSACTION_CHECK1"><![CDATA[QUANTITYORDER IS NULL AND M_PRODUCT_UOM_ID IS NULL OR QUANTITYORDER IS NOT NULL AND M_PRODUCT_UOM_ID IS NOT NULL]]></check>
       <check name="M_TRANSACTION_CHECKPRICEDIFF"><![CDATA[CHECKPRICEDIFFERENCE IN ('Y', 'N')]]></check>
