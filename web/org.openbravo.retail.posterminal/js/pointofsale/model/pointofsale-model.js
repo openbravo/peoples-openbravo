@@ -438,7 +438,9 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       });
 
       receipt.on('calculatedReceipt', function() {
-        OB.UTIL.ProcessController.finish('slowCalculateReceipt', execution);
+        if (!OB.UTIL.isNullOrUndefined(execution)) {
+          OB.UTIL.ProcessController.finish('slowCalculateReceipt', execution);
+        }
       });
     }
 
