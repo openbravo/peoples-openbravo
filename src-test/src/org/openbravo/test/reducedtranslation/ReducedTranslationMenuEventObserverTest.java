@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Menu;
 
 /**
@@ -55,8 +56,7 @@ public class ReducedTranslationMenuEventObserverTest extends WeldBaseTest {
   private void setModuleInDevelopment(final String moduleId, final boolean isInDevelopment) {
     try {
       OBContext.setAdminMode(false);
-      final org.openbravo.model.ad.module.Module module = OBDal.getInstance()
-          .get(org.openbravo.model.ad.module.Module.class, moduleId);
+      final Module module = OBDal.getInstance().get(Module.class, moduleId);
       module.setInDevelopment(isInDevelopment);
       OBDal.getInstance().flush();
     } finally {
