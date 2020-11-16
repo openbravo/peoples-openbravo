@@ -116,11 +116,16 @@
             'priceIncludesTax',
             OB.MobileApp.model.get('pricelist').priceIncludesTax
           );
+          me.set(
+            'priceListCurrency',
+            OB.MobileApp.model.get('pricelist').currency
+          );
           saveCallback();
         } else {
           OB.UTIL.getPriceList(me.get('priceList'), function(priceList) {
             if (priceList) {
               me.set('priceIncludesTax', priceList.get('priceIncludesTax'));
+              me.set('priceListCurrency', priceList.get('c_currency_id'));
             }
             saveCallback();
           });

@@ -618,7 +618,7 @@ enyo.kind({
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerPriceList',
       modelProperty: 'priceList',
       //Required: property where the selected value will be get and where the value will be saved
-      modelPropertyText: 'priceList_name',
+      modelPropertyText: 'priceListName',
       //optional: When saving, the property which will store the selected text
       collectionName: 'PriceListList',
       defaultValue: function() {
