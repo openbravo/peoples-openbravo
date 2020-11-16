@@ -94,6 +94,7 @@ public class ExternalOrderLoader extends OrderLoader {
   public static final String PAY = "pay";
   public static final String SHIP = "ship";
   public static final String CANCEL = "cancel";
+  public static final String CANCEL_REPLACE = "cancel_replace";
   public static final String ALL = "all";
 
   private static ThreadLocal<JSONArray> processedOrders = new ThreadLocal<JSONArray>();
@@ -501,6 +502,9 @@ public class ExternalOrderLoader extends OrderLoader {
                 "Step " + order.getString("step") + " must have property canceledorder");
           }
         }
+        if (order.has("step") && CANCEL_REPLACE.equals(order.getString("step"))) {
+          order.put("doCancelAndReplace", true);
+        }
         transformOrder(data.getJSONObject(i));
       }
       if (log.isDebugEnabled()) {
@@ -589,7 +593,8 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(orderJson, "netAmount", "net");
 
     if (CREATE.equals(orderJson.getString("step")) || SHIP.equals(orderJson.getString("step"))
-        || ALL.equals(orderJson.getString("step")) || CANCEL.equals(orderJson.getString("step"))) {
+        || ALL.equals(orderJson.getString("step")) || CANCEL.equals(orderJson.getString("step"))
+        || CANCEL_REPLACE.equals(orderJson.getString("step"))) {
       setBusinessPartnerInformation(orderJson);
       transformTaxes(orderJson.getJSONObject("taxes"));
       transformLines(orderJson);
@@ -628,7 +633,7 @@ public class ExternalOrderLoader extends OrderLoader {
       orderJson.put("step", ALL);
     }
     final String step = orderJson.getString("step");
-    if (CREATE.equals(step)) {
+    if (CREATE.equals(step) || CANCEL_REPLACE.equals(step)) {
       orderJson.put("payment", -1);
       orderJson.put("isLayaway", false);
     } else if (PAY.equals(step)) {
@@ -723,7 +728,7 @@ public class ExternalOrderLoader extends OrderLoader {
 
   private void setQuantityToDeliver(JSONObject orderJson, JSONObject lineJson, String step)
       throws JSONException {
-    if (CREATE.equals(step) || PAY.equals(step)) {
+    if (CREATE.equals(step) || PAY.equals(step) || CANCEL_REPLACE.equals(step)) {
       if (lineJson.has("deliveredQuantity")) {
         copyPropertyValue(lineJson, "deliveredQuantity", "obposQtytodeliver");
       } else if (!lineJson.has("obposQtytodeliver")) {
