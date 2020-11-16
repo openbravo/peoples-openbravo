@@ -1873,6 +1873,7 @@ enyo.kind({
       this.$.overpaymentexceedlimit.hide();
       this.$.allAttributesNeedValue.hide();
     }
+    this.$.errorMaxlimitamount.hide();
     this.$.noenoughchangelbl.hide();
     this.$.onlycashpaymentmethod.hide();
 
