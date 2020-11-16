@@ -73,16 +73,14 @@ class ADMenuEventHandler extends EntityPersistenceEventObserver {
         Arrays.stream(TreeData.select(conn, MENU_TREE_ID, menuId))
             .filter(node -> !menuId.equals(node.id))
             .map(node -> OBDal.getInstance().get(Menu.class, node.id))
-            .forEach(menuEntry -> {
-              if (menuEntry.getModule().isInDevelopment() != null
-                  && menuEntry.getModule().isInDevelopment()) {
-                menuEntry.setTranslationStrategy(currentValueTranslationStrategy);
-              }
-            });
+            .filter(menuEntry -> menuEntry.getModule().isInDevelopment() != null
+                && menuEntry.getModule().isInDevelopment())
+            .forEach(
+                menuEntry -> menuEntry.setTranslationStrategy(currentValueTranslationStrategy));
       } catch (ServletException e) {
         Menu menu = OBDal.getInstance().get(Menu.class, menuId);
         throw new OBException(
-            "Error while updating Translation Strategy for Menu: " + menu.getName(), e, true);
+            "Error while updating Translation Strategy for Menu: " + menu.getName(), e);
       }
     }
   }

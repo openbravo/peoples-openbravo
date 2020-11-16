@@ -42,6 +42,28 @@ public class ReducedTranslationMenuEventObserverTest extends WeldBaseTest {
         ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION);
   }
 
+  @Before
+  public void setModuleInDevelopmentYes() {
+    setModuleInDevelopment(ReducedTrlTestConstants.CORE_MODULE_0, true);
+  }
+
+  @After
+  public void setModuleInDevelopmentNo() {
+    setModuleInDevelopment(ReducedTrlTestConstants.CORE_MODULE_0, false);
+  }
+
+  private void setModuleInDevelopment(final String moduleId, final boolean isInDevelopment) {
+    try {
+      OBContext.setAdminMode(false);
+      final org.openbravo.model.ad.module.Module module = OBDal.getInstance()
+          .get(org.openbravo.model.ad.module.Module.class, moduleId);
+      module.setInDevelopment(isInDevelopment);
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   private void updateApplicationDictionaryMenuTranslationStrategy(String translationStrategy) {
     try {
       OBContext.setAdminMode(false);
@@ -96,8 +118,7 @@ public class ReducedTranslationMenuEventObserverTest extends WeldBaseTest {
               .getTranslationStrategy(),
           equalTo(ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION));
 
-      elementMenu
-          .setTranslationStrategy(ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION);
+      elementMenu.setTranslationStrategy(ReducedTrlTestConstants.EXCLUDE_FROM_REDUCED_TRANSLATION);
       OBDal.getInstance().flush();
       assertThat("This menu entry has been updated",
           OBDal.getInstance()
