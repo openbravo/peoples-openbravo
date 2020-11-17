@@ -85,7 +85,7 @@ class ReducedTranslationHelper {
         sql += " AND ( EXISTS (SELECT 1 "
              + "                FROM AD_MENU m "
              + "                WHERE o.AD_Process_ID = m.AD_Process_ID "
-             + "                AND m.translation_Strategy is null) "
+             + "                AND m.translation_Strategy <> 'EXCLUDE_FROM_REDUCED_TRL') "
                 // Indirect menu entry through a process in another window
              + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.AD_Process_ID", "AD_Process_ID", "")
              + "     ) ";
@@ -96,13 +96,13 @@ class ReducedTranslationHelper {
         sql += " AND ( EXISTS (SELECT 1 "
              + "                FROM AD_MENU m "
              + "                WHERE o.OBUIAPP_PROCESS_ID = m.EM_OBUIAPP_PROCESS_ID "
-             + "                AND m.translation_Strategy is null) "
+             + "                AND m.translation_Strategy <> 'EXCLUDE_FROM_REDUCED_TRL') "
              // Indirect menu entry through a process definition in another window
              + "      OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("o.OBUIAPP_PROCESS_ID", "EM_OBUIAPP_PROCESS_ID", "")
              + "     ) ";
         break;
       case "AD_MENU":
-        sql += " AND o.translation_Strategy is null";
+        sql += " AND o.translation_Strategy <> 'EXCLUDE_FROM_REDUCED_TRL'";
         break;
       case "AD_WINDOW":
       case "AD_TAB":
@@ -149,7 +149,7 @@ class ReducedTranslationHelper {
     return   "  ( EXISTS (SELECT 1 " 
            + "                FROM AD_MENU m "
            + "                WHERE m.AD_WINDOW_ID = "+tableAlias+".AD_WINDOW_ID "
-           + "                AND m.translation_Strategy is null) "
+           + "                AND m.translation_Strategy <> 'EXCLUDE_FROM_REDUCED_TRL') "
            + "        OR EXISTS (SELECT 1 "
            + "                   FROM OBUIAPP_Ref_Window rw, " 
            + "                        OBUIAPP_PARAMETER pp, " 
@@ -167,7 +167,7 @@ class ReducedTranslationHelper {
            + "                      AND rwf.AD_TAB_ID = rwt.AD_TAB_ID "
            + "                      AND rwt.AD_WINDOW_ID = rww.AD_WINDOW_ID "
            + "                      AND m.AD_WINDOW_ID = rww.AD_WINDOW_ID " 
-           + "                      AND m.translation_Strategy is null) "
+           + "                      AND m.translation_Strategy <> 'EXCLUDE_FROM_REDUCED_TRL') "
            + "   ) ";
     //@formatter:on
   }
@@ -208,7 +208,7 @@ class ReducedTranslationHelper {
          + "  AND (   EXISTS (SELECT 1 "
          + "                  FROM AD_MENU m "
          + "                  WHERE m." + processParamType.linkToMenuColum + " = pp." + processParamType.processPrimaryKeyColumn
-         + "                  AND  m.translation_Strategy is null) "
+         + "                  AND  m.translation_Strategy <> 'EXCLUDE_FROM_REDUCED_TRL') "
                    // ...indirectly linked to a window menu entry
          + "       OR EXISTS " + getLinkToWindowsAvailableForReducedTranslationFromADColumn("pp." + processParamType.processPrimaryKeyColumn, processParamType.linkToMenuColum, "")
          + "      ) "
