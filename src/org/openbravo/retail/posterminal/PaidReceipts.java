@@ -8,7 +8,6 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
@@ -37,6 +36,9 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -710,16 +712,11 @@ public class PaidReceipts extends JSONProcessSimple {
 
   private List<String> getPromotionExtraFields() {
     List<String> result = new ArrayList<String>();
-    OrderLineOffer promotion = new OrderLineOffer();
-    Class<?> clazz = promotion.getClass();
-    for (Method method : clazz.getDeclaredMethods()) {
-      String mName = method.getName();
-      if (mName.startsWith("get") || mName.startsWith("is")) {
-        String name = mName.substring(mName.startsWith("get") ? 3 : 2);
-        name = ("" + name.charAt(0)).toLowerCase() + name.substring(1);
-        if (!paidReceiptsLinePromotionStandardProp.contains(name)) {
-          result.add(name);
-        }
+    Entity orderLineOfferEntity = ModelProvider.getInstance().getEntity(OrderLineOffer.class);
+    for (Property property : orderLineOfferEntity.getProperties()) {
+      String name = property.getName();
+      if (!paidReceiptsLinePromotionStandardProp.contains(name)) {
+        result.add(name);
       }
     }
     return result;
