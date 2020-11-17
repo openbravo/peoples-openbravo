@@ -69,7 +69,7 @@ public class ProductProperties extends ModelExtension {
             add(new HQLProperty("ppp.algorithm", "algorithm"));
           }
           add(new HQLProperty(
-              "case when product.active = 'Y' and pli.active is not null then pli.active else product.active end",
+              "case when product.active = 'Y' and coalesce(pli.active, 'Y') = 'Y' and coalesce(ppp.active, 'Y') = 'Y' then true else false end",
               "active"));
         }
         add(new HQLProperty("product.obposEditablePrice", "obposEditablePrice"));
