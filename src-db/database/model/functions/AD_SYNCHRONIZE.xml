@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -217,18 +217,36 @@
     --Updates ad_column: element id and name (name is only updated first time)
     --Name is updated with the value in the element regardless the language
     UPDATE AD_COLUMN c
-      SET AD_Element_id=(SELECT MAX(AD_Element_ID)
-                           FROM AD_ELEMENT e 
-                          WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
-                            AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y'),
+      SET AD_Element_id=CASE UPPER(c.ColumnName)
+                             WHEN 'AD_ORG_ID'    THEN '113'
+                             WHEN 'AD_CLIENT_ID' THEN '102'
+                             WHEN 'CREATED'      THEN '245'
+                             WHEN 'CREATEDBY'    THEN '246'
+                             WHEN 'ISACTIVE'     THEN '348'
+                             WHEN 'UPDATED'      THEN '607'
+                             WHEN 'UPDATEDBY'    THEN '608'
+                             ELSE (SELECT MAX(AD_ELEMENT_ID)
+                                     FROM AD_ELEMENT e
+                                    WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
+                                      AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y')
+                        END,
                    Name=(SELECT (CASE WHEN MT.AD_MODULE_ID = C.AD_MODULE_ID OR UPPER(AD_ELEMENT.NAME) LIKE 'EM_%'||P.NAME||'_%' 
                                            THEN AD_ELEMENT.NAME 
                                       ELSE 'EM_'||P.NAME||'_'||AD_ELEMENT.NAME END)
                            FROM AD_ELEMENT, AD_MODULE_DBPREFIX P, AD_MODULE MT, AD_TABLE T, AD_PACKAGE PA
-                            WHERE AD_ELEMENT_ID = (SELECT MAX(AD_Element_ID)
-                                                   FROM AD_ELEMENT e 
-                                                  WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
-                                                    AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y')
+                            WHERE AD_ELEMENT_ID = CASE UPPER(c.ColumnName)
+                                                       WHEN 'AD_ORG_ID'    THEN '113'
+                                                       WHEN 'AD_CLIENT_ID' THEN '102'
+                                                       WHEN 'CREATED'      THEN '245'
+                                                       WHEN 'CREATEDBY'    THEN '246'
+                                                       WHEN 'ISACTIVE'     THEN '348'
+                                                       WHEN 'UPDATED'      THEN '607'
+                                                       WHEN 'UPDATEDBY'    THEN '608'
+                                                       ELSE (SELECT MAX(AD_ELEMENT_ID)
+                                                               FROM AD_ELEMENT e
+                                                              WHERE UPPER(c.ColumnName)=UPPER(e.ColumnName)
+                                                                AND AD_Module_Dependent(e.AD_Module_ID, c.AD_Module_ID)='Y')
+                                                  END
                             AND T.AD_TABLE_ID = C.AD_TABLE_ID
                             AND T.AD_PACKAGE_ID = PA.AD_PACKAGE_ID
                             AND MT.AD_MODULE_ID = PA.AD_MODULE_ID                                                    
@@ -249,13 +267,20 @@
     DBMS_OUTPUT.PUT_LINE('  rows updated: ' || v_rowcount) ;
     DBMS_OUTPUT.PUT_LINE('Creating link from Element to Process Para') ;
     UPDATE AD_PROCESS_PARA
-      SET AD_Element_id=
-      (SELECT MAX(AD_Element_ID)
-      FROM AD_ELEMENT e, AD_PROCESS P
-      WHERE UPPER(AD_PROCESS_PARA.ColumnName)=UPPER(e.ColumnName)
-      AND P.AD_PROCESS_ID = AD_PROCESS_PARA.AD_PROCESS_ID
-      AND AD_Module_Dependent(e.AD_Module_ID, p.AD_Module_ID)='Y'
-      )
+      SET AD_Element_id = CASE UPPER(AD_PROCESS_PARA.ColumnName)
+                               WHEN 'AD_ORG_ID'    THEN '113'
+                               WHEN 'AD_CLIENT_ID' THEN '102'
+                               WHEN 'CREATED'      THEN '245'
+                               WHEN 'CREATEDBY'    THEN '246'
+                               WHEN 'ISACTIVE'     THEN '348'
+                               WHEN 'UPDATED'      THEN '607'
+                               WHEN 'UPDATEDBY'    THEN '608'
+                               ELSE (SELECT MAX(AD_ELEMENT_ID)
+                                       FROM AD_ELEMENT e, AD_PROCESS P
+                                      WHERE UPPER(AD_PROCESS_PARA.ColumnName)=UPPER(e.ColumnName)
+                                        AND P.AD_PROCESS_ID = AD_PROCESS_PARA.AD_PROCESS_ID
+                                        AND AD_Module_Dependent(e.AD_Module_ID, p.AD_Module_ID)='Y')
+                          END
     WHERE AD_Element_ID IS NULL
      AND EXISTS (SELECT 1 
                    FROM AD_PROCESS P, AD_MODULE M
