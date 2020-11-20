@@ -9,6 +9,8 @@
 
 package org.openbravo.retail.posterminal.ad_callouts;
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,19 +62,35 @@ public class CheckForSharedDocumentType extends SimpleCallout {
   }
 
   private String checkOrderDocTypeRefInOtherStores(String orgId, String docTypeId) {
-    String referredStores = "";
-    OBQuery<Organization> orgQuery = OBDal.getInstance()
-        .createQuery(Organization.class,
-            " as org where org.id<>:orgId and (org.obposCDoctype.id = :docTypeId or org.obposCDoctyperet.id = :docTypeId)");
-    orgQuery.setFilterOnActive(false);
-    orgQuery.setNamedParameter("orgId", orgId);
-    orgQuery.setNamedParameter("docTypeId", docTypeId);
-    orgQuery.setNamedParameter("docTypeId", docTypeId);
-    for (Organization org : orgQuery.list()) {
-      if (StringUtils.isEmpty(referredStores)) {
-        referredStores = org.getName();
-      } else {
-        referredStores += ", " + org.getName();
+    String referredStores = "",
+        orgQueryHql = " as org where org.id<>:orgId and (org.obposCDoctype.id = :docTypeId or org.obposCDoctyperet.id = :docTypeId)";
+    OBQuery<Organization> orgQueryCnt = OBDal.getInstance()
+        .createQuery(Organization.class, orgQueryHql);
+    orgQueryCnt.setFilterOnActive(false);
+    orgQueryCnt.setNamedParameter("orgId", orgId);
+    orgQueryCnt.setNamedParameter("docTypeId", docTypeId);
+    orgQueryCnt.setNamedParameter("docTypeId", docTypeId);
+    orgQueryCnt.setMaxResult(1);
+
+    if (orgQueryCnt.uniqueResult() != null) {
+      OBQuery<Organization> orgQuery = OBDal.getInstance()
+          .createQuery(Organization.class, orgQueryHql);
+      orgQuery.setFilterOnActive(false);
+      orgQuery.setNamedParameter("orgId", orgId);
+      orgQuery.setNamedParameter("docTypeId", docTypeId);
+      orgQuery.setNamedParameter("docTypeId", docTypeId);
+      orgQuery.setMaxResult(4);
+      List<Organization> list = orgQuery.list();
+      int count = list.size();
+      for (Organization org : list) {
+        if (StringUtils.isEmpty(referredStores)) {
+          referredStores = org.getName();
+        } else {
+          referredStores += ", " + org.getName();
+        }
+      }
+      if (count > 3) {
+        referredStores += "...";
       }
     }
     return referredStores;
@@ -90,7 +108,8 @@ public class CheckForSharedDocumentType extends SimpleCallout {
     orgQuery.setFilterOnActive(false);
     orgQuery.setNamedParameter("orgId", orgId);
     orgQuery.setNamedParameter("docTypeId", docTypeId);
-    if (orgQuery.list().size() > 0) {
+    orgQuery.setMaxResult(1);
+    if (orgQuery.uniqueResult() != null) {
       return true;
     } else {
       return false;
@@ -98,38 +117,76 @@ public class CheckForSharedDocumentType extends SimpleCallout {
   }
 
   private String checkDocTypeRefInOtherDocType(String selectedDocTypeId, String docTypeId) {
-    String referredDocType = "";
-    OBQuery<DocumentType> docTypeQry = OBDal.getInstance()
-        .createQuery(DocumentType.class,
-            " as dt where dt.id<>:docTypeId and (dt.documentTypeForInvoice.id = :invDocTypeId or dt.doctypesimpinvoice.id = :invDocTypeId or dt.doctypeaggrinvoice.id = :invDocTypeId)");
-    docTypeQry.setFilterOnActive(false);
-    docTypeQry.setNamedParameter("docTypeId", selectedDocTypeId);
-    docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
-    docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
-    docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
-    for (DocumentType doctype : docTypeQry.list()) {
-      if (StringUtils.isEmpty(referredDocType)) {
-        referredDocType = doctype.getName();
-      } else {
-        referredDocType += ", " + doctype.getName();
+    String referredDocType = "",
+        docTypeHql = " as dt where dt.id<>:docTypeId and (dt.documentTypeForInvoice.id = :invDocTypeId or dt.doctypesimpinvoice.id = :invDocTypeId or dt.doctypeaggrinvoice.id = :invDocTypeId)";
+
+    if (StringUtils.length(docTypeId) == 32) {
+      OBQuery<DocumentType> docTypeQryCnt = OBDal.getInstance()
+          .createQuery(DocumentType.class, docTypeHql);
+      docTypeQryCnt.setFilterOnActive(false);
+      docTypeQryCnt.setNamedParameter("docTypeId", selectedDocTypeId);
+      docTypeQryCnt.setNamedParameter("invDocTypeId", docTypeId);
+      docTypeQryCnt.setNamedParameter("invDocTypeId", docTypeId);
+      docTypeQryCnt.setNamedParameter("invDocTypeId", docTypeId);
+      docTypeQryCnt.setMaxResult(1);
+
+      if (docTypeQryCnt.uniqueResult() != null) {
+        OBQuery<DocumentType> docTypeQry = OBDal.getInstance()
+            .createQuery(DocumentType.class, docTypeHql);
+        docTypeQry.setFilterOnActive(false);
+        docTypeQry.setNamedParameter("docTypeId", selectedDocTypeId);
+        docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
+        docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
+        docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
+        docTypeQry.setMaxResult(4);
+        List<DocumentType> list = docTypeQry.list();
+        int count = list.size();
+        for (DocumentType doctype : list) {
+          if (StringUtils.isEmpty(referredDocType)) {
+            referredDocType = doctype.getName();
+          } else {
+            referredDocType += ", " + doctype.getName();
+          }
+        }
+        if (count > 3) {
+          referredDocType += "...";
+        }
       }
     }
     return referredDocType;
   }
 
   private String checkShipDocTypeRefInOtherDocType(String selectedDocTypeId, String docTypeId) {
-    String referredDocType = "";
-    OBQuery<DocumentType> docTypeQry = OBDal.getInstance()
-        .createQuery(DocumentType.class,
-            " as dt where dt.id<>:docTypeId and dt.documentTypeForShipment.id = :shipDocTypeId");
-    docTypeQry.setFilterOnActive(false);
-    docTypeQry.setNamedParameter("docTypeId", selectedDocTypeId);
-    docTypeQry.setNamedParameter("shipDocTypeId", docTypeId);
-    for (DocumentType doctype : docTypeQry.list()) {
-      if (StringUtils.isEmpty(referredDocType)) {
-        referredDocType = doctype.getName();
-      } else {
-        referredDocType += ", " + doctype.getName();
+    String referredDocType = "",
+        docTypeHql = " as dt where dt.id<>:docTypeId and dt.documentTypeForShipment.id = :shipDocTypeId";
+
+    if (StringUtils.length(docTypeId) == 32) {
+      OBQuery<DocumentType> docTypeQryCnt = OBDal.getInstance()
+          .createQuery(DocumentType.class, docTypeHql);
+      docTypeQryCnt.setFilterOnActive(false);
+      docTypeQryCnt.setNamedParameter("docTypeId", selectedDocTypeId);
+      docTypeQryCnt.setNamedParameter("shipDocTypeId", docTypeId);
+      docTypeQryCnt.setMaxResult(1);
+
+      if (docTypeQryCnt.uniqueResult() != null) {
+        OBQuery<DocumentType> docTypeQry = OBDal.getInstance()
+            .createQuery(DocumentType.class, docTypeHql);
+        docTypeQry.setFilterOnActive(false);
+        docTypeQry.setNamedParameter("docTypeId", selectedDocTypeId);
+        docTypeQry.setNamedParameter("shipDocTypeId", docTypeId);
+        docTypeQry.setMaxResult(4);
+        List<DocumentType> list = docTypeQry.list();
+        int count = list.size();
+        for (DocumentType doctype : list) {
+          if (StringUtils.isEmpty(referredDocType)) {
+            referredDocType = doctype.getName();
+          } else {
+            referredDocType += ", " + doctype.getName();
+          }
+        }
+        if (count > 3) {
+          referredDocType += "...";
+        }
       }
     }
     return referredDocType;
@@ -210,36 +267,66 @@ public class CheckForSharedDocumentType extends SimpleCallout {
   }
 
   private String checkQuotationDocTypeRefInOtherStores(String orgId, String docTypeId) {
-    String referredStores = "";
-    OBQuery<Organization> orgQuery = OBDal.getInstance()
-        .createQuery(Organization.class,
-            " as org where org.id<>:orgId and (org.obposCDoctypequot.id = :docTypeId)");
-    orgQuery.setFilterOnActive(false);
-    orgQuery.setNamedParameter("orgId", orgId);
-    orgQuery.setNamedParameter("docTypeId", docTypeId);
-    for (Organization org : orgQuery.list()) {
-      if (StringUtils.isEmpty(referredStores)) {
-        referredStores = org.getName();
-      } else {
-        referredStores += ", " + org.getName();
+    String referredStores = "",
+        orgQueryHql = " as org where org.id<>:orgId and (org.obposCDoctypequot.id = :docTypeId)";
+    OBQuery<Organization> orgQueryCnt = OBDal.getInstance()
+        .createQuery(Organization.class, orgQueryHql);
+    orgQueryCnt.setFilterOnActive(false);
+    orgQueryCnt.setNamedParameter("orgId", orgId);
+    orgQueryCnt.setNamedParameter("docTypeId", docTypeId);
+    orgQueryCnt.setMaxResult(1);
+
+    if (orgQueryCnt.uniqueResult() != null) {
+      OBQuery<Organization> orgQuery = OBDal.getInstance()
+          .createQuery(Organization.class, orgQueryHql);
+      orgQuery.setFilterOnActive(false);
+      orgQuery.setNamedParameter("orgId", orgId);
+      orgQuery.setNamedParameter("docTypeId", docTypeId);
+      orgQuery.setMaxResult(4);
+      List<Organization> list = orgQuery.list();
+      int count = list.size();
+      for (Organization org : list) {
+        if (StringUtils.isEmpty(referredStores)) {
+          referredStores = org.getName();
+        } else {
+          referredStores += ", " + org.getName();
+        }
+      }
+      if (count > 3) {
+        referredStores += "...";
       }
     }
     return referredStores;
   }
 
   private String checkReconcileDocTypeRefInOtherStores(String orgId, String docTypeId) {
-    String referredStores = "";
-    OBQuery<Organization> orgQuery = OBDal.getInstance()
-        .createQuery(Organization.class,
-            " as org where org.id<>:orgId and (org.obposCDoctyperecon.id = :docTypeId)");
-    orgQuery.setFilterOnActive(false);
-    orgQuery.setNamedParameter("orgId", orgId);
-    orgQuery.setNamedParameter("docTypeId", docTypeId);
-    for (Organization org : orgQuery.list()) {
-      if (StringUtils.isEmpty(referredStores)) {
-        referredStores = org.getName();
-      } else {
-        referredStores += ", " + org.getName();
+    String referredStores = "",
+        orgQueryHql = " as org where org.id<>:orgId and (org.obposCDoctyperecon.id = :docTypeId)";
+    OBQuery<Organization> orgQueryCnt = OBDal.getInstance()
+        .createQuery(Organization.class, orgQueryHql);
+    orgQueryCnt.setFilterOnActive(false);
+    orgQueryCnt.setNamedParameter("orgId", orgId);
+    orgQueryCnt.setNamedParameter("docTypeId", docTypeId);
+    orgQueryCnt.setMaxResult(1);
+
+    if (orgQueryCnt.uniqueResult() != null) {
+      OBQuery<Organization> orgQuery = OBDal.getInstance()
+          .createQuery(Organization.class, orgQueryHql);
+      orgQuery.setFilterOnActive(false);
+      orgQuery.setNamedParameter("orgId", orgId);
+      orgQuery.setNamedParameter("docTypeId", docTypeId);
+      orgQuery.setMaxResult(4);
+      List<Organization> list = orgQuery.list();
+      int count = list.size();
+      for (Organization org : list) {
+        if (StringUtils.isEmpty(referredStores)) {
+          referredStores = org.getName();
+        } else {
+          referredStores += ", " + org.getName();
+        }
+      }
+      if (count > 3) {
+        referredStores += "...";
       }
     }
     return referredStores;
