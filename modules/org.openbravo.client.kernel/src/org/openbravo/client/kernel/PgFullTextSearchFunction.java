@@ -116,48 +116,6 @@ public abstract class PgFullTextSearchFunction implements SQLFunction {
   }
 
   /**
-   * Gets rank normalization from a preference, it needs to be an integer. According to Postgresql
-   * documentation {@link "https://www.postgresql.org/docs/current/textsearch-controls.html"}
-   * <p>
-   * Since a longer document has a greater chance of containing a query term it is reasonable to
-   * take into account document size, e.g., a hundred-word document with five instances of a search
-   * word is probably more relevant than a thousand-word document with five instances. Both ranking
-   * functions take an integer normalization option that specifies whether and how a document's
-   * length should impact its rank. The integer option controls several behaviors, so it is a bit
-   * mask: you can specify one or more behaviors using | (for example, 2|4).
-   * <p>
-   * <ul>
-   * <li>0 (the default) ignores the document length
-   * <li>1 divides the rank by 1 + the logarithm of the document length
-   * <li>2 divides the rank by the document length
-   * <li>4 divides the rank by the mean harmonic distance between extents (this is implemented only
-   * by ts_rank_cd)
-   * <li>8 divides the rank by the number of unique words in document
-   * <li>16 divides the rank by 1 + the logarithm of the number of unique words in document
-   * <li>32 divides the rank by itself + 1
-   * </ul>
-   * <p>
-   * 
-   * @return numLike String
-   */
-  protected String getRankNormalizationPref() {
-    try {
-      String rankNormalization = Preferences.getPreferenceValue("FullTextSearchRankNormalization",
-          true, OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null);
-      try {
-        Integer.parseInt(rankNormalization);
-      } catch (NumberFormatException nfe) {
-        throw new OBException("IncorrectFullTextSearchRankNormalization", nfe.getCause());
-      }
-    } catch (PropertyException e) {
-      // no need, exception when no result
-    }
-    return "0";
-  }
-
-  /**
    * It allows to add an order by clause regarding how fitting a text is according to the values in
    * the tsvector column. This function returns an integer that can be returned in the select clause
    * and order by it. It is strictly not necessary to put it in the select clause, but it helps to
@@ -183,9 +141,50 @@ public abstract class PgFullTextSearchFunction implements SQLFunction {
     @Override
     protected String getFragment(String table, String field, String value,
         Optional<String> ftsConfiguration) {
-
       return "ts_rank_cd(" + table + "." + field + ", to_tsquery(" + getFtsConfig(ftsConfiguration)
           + value + "), " + getRankNormalizationPref() + ")";
+    }
+
+    /**
+     * Gets rank normalization from a preference, it needs to be an integer. According to Postgresql
+     * documentation {@link "https://www.postgresql.org/docs/current/textsearch-controls.html"}
+     * <p>
+     * Since a longer document has a greater chance of containing a query term it is reasonable to
+     * take into account document size, e.g., a hundred-word document with five instances of a
+     * search word is probably more relevant than a thousand-word document with five instances. Both
+     * ranking functions take an integer normalization option that specifies whether and how a
+     * document's length should impact its rank. The integer option controls several behaviors, so
+     * it is a bit mask: you can specify one or more behaviors using | (for example, 2|4).
+     * <p>
+     * <ul>
+     * <li>0 (the default) ignores the document length
+     * <li>1 divides the rank by 1 + the logarithm of the document length
+     * <li>2 divides the rank by the document length
+     * <li>4 divides the rank by the mean harmonic distance between extents (this is implemented
+     * only by ts_rank_cd)
+     * <li>8 divides the rank by the number of unique words in document
+     * <li>16 divides the rank by 1 + the logarithm of the number of unique words in document
+     * <li>32 divides the rank by itself + 1
+     * </ul>
+     * <p>
+     *
+     * @return numLike String
+     */
+    private String getRankNormalizationPref() {
+      try {
+        String rankNormalization = Preferences.getPreferenceValue("FullTextSearchRankNormalization",
+            true, OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null);
+        try {
+          Integer.parseInt(rankNormalization);
+        } catch (NumberFormatException nfe) {
+          throw new OBException("IncorrectFullTextSearchRankNormalization", nfe.getCause());
+        }
+      } catch (PropertyException e) {
+        // no need, exception when no result
+      }
+      return "0";
     }
   }
 }
