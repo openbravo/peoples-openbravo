@@ -42,21 +42,25 @@ public class CheckForSharedDocumentType extends SimpleCallout {
       // Quotations - Check Quotation DocType in other stores
       selectedDocTypeId = info.getStringParameter("inpemObposCDoctypequotId");
       selectedDocType = OBDal.getInstance().get(DocumentType.class, selectedDocTypeId);
-      String referredStores = checkQuotationDocTypeRefInOtherStores(orgId, selectedDocTypeId);
-      if (!StringUtils.isEmpty(referredStores)) {
-        info.addResult("WARNING",
-            String.format(Utility.messageBD(this, "OBPOS_SharedDocType", info.vars.getLanguage()),
-                selectedDocType.getName(), referredStores));
+      if (selectedDocType != null) {
+        String referredStores = checkQuotationDocTypeRefInOtherStores(orgId, selectedDocTypeId);
+        if (!StringUtils.isEmpty(referredStores)) {
+          info.addResult("WARNING",
+              String.format(Utility.messageBD(this, "OBPOS_SharedDocType", info.vars.getLanguage()),
+                  selectedDocType.getName(), referredStores));
+        }
       }
     } else if (StringUtils.equals(lastFieldChanged, "inpemObposCDoctypereconId")) {
       // Reconcillations - Check Reconcillations DocType in other stores
       selectedDocTypeId = info.getStringParameter("inpemObposCDoctypereconId");
       selectedDocType = OBDal.getInstance().get(DocumentType.class, selectedDocTypeId);
-      String referredStores = checkReconcileDocTypeRefInOtherStores(orgId, selectedDocTypeId);
-      if (!StringUtils.isEmpty(referredStores)) {
-        info.addResult("WARNING",
-            String.format(Utility.messageBD(this, "OBPOS_SharedDocType", info.vars.getLanguage()),
-                selectedDocType.getName(), referredStores));
+      if (selectedDocType != null) {
+        String referredStores = checkReconcileDocTypeRefInOtherStores(orgId, selectedDocTypeId);
+        if (!StringUtils.isEmpty(referredStores)) {
+          info.addResult("WARNING",
+              String.format(Utility.messageBD(this, "OBPOS_SharedDocType", info.vars.getLanguage()),
+                  selectedDocType.getName(), referredStores));
+        }
       }
     }
   }
@@ -116,76 +120,97 @@ public class CheckForSharedDocumentType extends SimpleCallout {
     }
   }
 
-  private String checkDocTypeRefInOtherDocType(String selectedDocTypeId, String docTypeId) {
+  private String checkDocTypeRefInOtherDocType(String selectedDocTypeId, DocumentType invDocType) {
+    //@formatter:off
     String referredDocType = "",
-        docTypeHql = " as dt where dt.id<>:docTypeId and (dt.documentTypeForInvoice.id = :invDocTypeId or dt.doctypesimpinvoice.id = :invDocTypeId or dt.doctypeaggrinvoice.id = :invDocTypeId)";
+        docTypeHql = " as dt "
+          +" left join dt.organizationEMObposCDoctypeIDList ord "
+          +" left join dt.organizationEMObposCDoctyperetIDList ret "
+          +" where dt.id<>:docTypeId "
+          +" and (dt.documentTypeForInvoice.id = :invDocTypeId or dt.doctypesimpinvoice.id = :invDocTypeId or dt.doctypeaggrinvoice.id = :invDocTypeId) "
+          +" and (ord is not null or ret is not null)";
+    //@formatter:on
 
-    if (StringUtils.length(docTypeId) == 32) {
-      OBQuery<DocumentType> docTypeQryCnt = OBDal.getInstance()
-          .createQuery(DocumentType.class, docTypeHql);
-      docTypeQryCnt.setFilterOnActive(false);
-      docTypeQryCnt.setNamedParameter("docTypeId", selectedDocTypeId);
-      docTypeQryCnt.setNamedParameter("invDocTypeId", docTypeId);
-      docTypeQryCnt.setNamedParameter("invDocTypeId", docTypeId);
-      docTypeQryCnt.setNamedParameter("invDocTypeId", docTypeId);
-      docTypeQryCnt.setMaxResult(1);
-
-      if (docTypeQryCnt.uniqueResult() != null) {
-        OBQuery<DocumentType> docTypeQry = OBDal.getInstance()
+    if (invDocType != null) {
+      String docTypeId = invDocType.getId();
+      if (StringUtils.length(docTypeId) == 32) {
+        OBQuery<DocumentType> docTypeQryCnt = OBDal.getInstance()
             .createQuery(DocumentType.class, docTypeHql);
-        docTypeQry.setFilterOnActive(false);
-        docTypeQry.setNamedParameter("docTypeId", selectedDocTypeId);
-        docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
-        docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
-        docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
-        docTypeQry.setMaxResult(4);
-        List<DocumentType> list = docTypeQry.list();
-        int count = list.size();
-        for (DocumentType doctype : list) {
-          if (StringUtils.isEmpty(referredDocType)) {
-            referredDocType = doctype.getName();
-          } else {
-            referredDocType += ", " + doctype.getName();
+        docTypeQryCnt.setFilterOnActive(false);
+        docTypeQryCnt.setNamedParameter("docTypeId", selectedDocTypeId);
+        docTypeQryCnt.setNamedParameter("invDocTypeId", docTypeId);
+        docTypeQryCnt.setNamedParameter("invDocTypeId", docTypeId);
+        docTypeQryCnt.setNamedParameter("invDocTypeId", docTypeId);
+        docTypeQryCnt.setMaxResult(1);
+
+        if (docTypeQryCnt.uniqueResult() != null) {
+          OBQuery<DocumentType> docTypeQry = OBDal.getInstance()
+              .createQuery(DocumentType.class, docTypeHql);
+          docTypeQry.setFilterOnActive(false);
+          docTypeQry.setNamedParameter("docTypeId", selectedDocTypeId);
+          docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
+          docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
+          docTypeQry.setNamedParameter("invDocTypeId", docTypeId);
+          docTypeQry.setMaxResult(4);
+          List<DocumentType> list = docTypeQry.list();
+          int count = list.size();
+          for (DocumentType doctype : list) {
+            if (StringUtils.isEmpty(referredDocType)) {
+              referredDocType = doctype.getName();
+            } else {
+              referredDocType += ", " + doctype.getName();
+            }
           }
-        }
-        if (count > 3) {
-          referredDocType += "...";
+          if (count > 3) {
+            referredDocType += "...";
+          }
         }
       }
     }
     return referredDocType;
   }
 
-  private String checkShipDocTypeRefInOtherDocType(String selectedDocTypeId, String docTypeId) {
+  private String checkShipDocTypeRefInOtherDocType(String selectedDocTypeId,
+      DocumentType shipDocType) {
+    //@formatter:off
     String referredDocType = "",
-        docTypeHql = " as dt where dt.id<>:docTypeId and dt.documentTypeForShipment.id = :shipDocTypeId";
+        docTypeHql = " as dt "
+        + " left join dt.organizationEMObposCDoctypeIDList ord "
+        + " left join dt.organizationEMObposCDoctyperetIDList ret "
+        +" where dt.id<>:docTypeId "
+        +" and dt.documentTypeForShipment.id = :shipDocTypeId "
+        +" and (ord is not null or ret is not null)";
+    //@formatter:on
 
-    if (StringUtils.length(docTypeId) == 32) {
-      OBQuery<DocumentType> docTypeQryCnt = OBDal.getInstance()
-          .createQuery(DocumentType.class, docTypeHql);
-      docTypeQryCnt.setFilterOnActive(false);
-      docTypeQryCnt.setNamedParameter("docTypeId", selectedDocTypeId);
-      docTypeQryCnt.setNamedParameter("shipDocTypeId", docTypeId);
-      docTypeQryCnt.setMaxResult(1);
-
-      if (docTypeQryCnt.uniqueResult() != null) {
-        OBQuery<DocumentType> docTypeQry = OBDal.getInstance()
+    if (shipDocType != null) {
+      String docTypeId = shipDocType.getId();
+      if (StringUtils.length(docTypeId) == 32) {
+        OBQuery<DocumentType> docTypeQryCnt = OBDal.getInstance()
             .createQuery(DocumentType.class, docTypeHql);
-        docTypeQry.setFilterOnActive(false);
-        docTypeQry.setNamedParameter("docTypeId", selectedDocTypeId);
-        docTypeQry.setNamedParameter("shipDocTypeId", docTypeId);
-        docTypeQry.setMaxResult(4);
-        List<DocumentType> list = docTypeQry.list();
-        int count = list.size();
-        for (DocumentType doctype : list) {
-          if (StringUtils.isEmpty(referredDocType)) {
-            referredDocType = doctype.getName();
-          } else {
-            referredDocType += ", " + doctype.getName();
+        docTypeQryCnt.setFilterOnActive(false);
+        docTypeQryCnt.setNamedParameter("docTypeId", selectedDocTypeId);
+        docTypeQryCnt.setNamedParameter("shipDocTypeId", docTypeId);
+        docTypeQryCnt.setMaxResult(1);
+
+        if (docTypeQryCnt.uniqueResult() != null) {
+          OBQuery<DocumentType> docTypeQry = OBDal.getInstance()
+              .createQuery(DocumentType.class, docTypeHql);
+          docTypeQry.setFilterOnActive(false);
+          docTypeQry.setNamedParameter("docTypeId", selectedDocTypeId);
+          docTypeQry.setNamedParameter("shipDocTypeId", docTypeId);
+          docTypeQry.setMaxResult(4);
+          List<DocumentType> list = docTypeQry.list();
+          int count = list.size();
+          for (DocumentType doctype : list) {
+            if (StringUtils.isEmpty(referredDocType)) {
+              referredDocType = doctype.getName();
+            } else {
+              referredDocType += ", " + doctype.getName();
+            }
           }
-        }
-        if (count > 3) {
-          referredDocType += "...";
+          if (count > 3) {
+            referredDocType += "...";
+          }
         }
       }
     }
@@ -195,68 +220,70 @@ public class CheckForSharedDocumentType extends SimpleCallout {
   private boolean checkOrderDocumentTypeRef(String orgId, String selectedDocTypeId,
       CalloutInfo info, boolean isReturn) {
     DocumentType selectedDocType = OBDal.getInstance().get(DocumentType.class, selectedDocTypeId);
-    // Check Order and Return DocType in other stores
-    String referredStores = checkOrderDocTypeRefInOtherStores(orgId, selectedDocTypeId);
-    if (!StringUtils.isEmpty(referredStores)) {
-      info.addResult("WARNING",
-          String.format(Utility.messageBD(this, "OBPOS_SharedDocType", info.vars.getLanguage()),
-              selectedDocType.getName(), referredStores));
-      return false;
-    } else {
-      // Check DocType Reference in same store
-      if (checkOrderDocTypeRefInSameStore(orgId, selectedDocTypeId, isReturn)) {
-        if (isReturn) {
-          info.addResult("WARNING",
-              String.format(
-                  Utility.messageBD(this, "OBPOS_DocTypeUsedInOrder", info.vars.getLanguage()),
-                  selectedDocType.getName()));
-        } else {
-          info.addResult("WARNING",
-              String.format(
-                  Utility.messageBD(this, "OBPOS_DocTypeUsedInReturn", info.vars.getLanguage()),
-                  selectedDocType.getName()));
-        }
+    if (selectedDocType != null) {
+      // Check Order and Return DocType in other stores
+      String referredStores = checkOrderDocTypeRefInOtherStores(orgId, selectedDocTypeId);
+      if (!StringUtils.isEmpty(referredStores)) {
+        info.addResult("WARNING",
+            String.format(Utility.messageBD(this, "OBPOS_SharedDocType", info.vars.getLanguage()),
+                selectedDocType.getName(), referredStores));
         return false;
       } else {
-        // Check Invoice DocType in other document types
-        String referredInvoiceDocType = checkDocTypeRefInOtherDocType(selectedDocTypeId,
-            selectedDocType.getDocumentTypeForInvoice().getId());
-        if (!StringUtils.isEmpty(referredInvoiceDocType)) {
-          info.addResult("WARNING",
-              String.format(
-                  Utility.messageBD(this, "OBPOS_SharedInvoiceDocType", info.vars.getLanguage()),
-                  selectedDocType.getDocumentTypeForInvoice().getName(), referredInvoiceDocType));
-          return false;
-        } else {
-          // Check Simplified Invoice DocType in other document types
-          String referredSimpInvoiceDocType = checkDocTypeRefInOtherDocType(selectedDocTypeId,
-              selectedDocType.getDoctypesimpinvoice().getId());
-          if (!StringUtils.isEmpty(referredSimpInvoiceDocType)) {
+        // Check DocType Reference in same store
+        if (checkOrderDocTypeRefInSameStore(orgId, selectedDocTypeId, isReturn)) {
+          if (isReturn) {
             info.addResult("WARNING",
                 String.format(
-                    Utility.messageBD(this, "OBPOS_SharedSimplifedInvoiceDocType",
-                        info.vars.getLanguage()),
-                    selectedDocType.getDoctypesimpinvoice().getName(), referredSimpInvoiceDocType));
+                    Utility.messageBD(this, "OBPOS_DocTypeUsedInOrder", info.vars.getLanguage()),
+                    selectedDocType.getName()));
+          } else {
+            info.addResult("WARNING",
+                String.format(
+                    Utility.messageBD(this, "OBPOS_DocTypeUsedInReturn", info.vars.getLanguage()),
+                    selectedDocType.getName()));
+          }
+          return false;
+        } else {
+          // Check Invoice DocType in other document types
+          String referredInvoiceDocType = checkDocTypeRefInOtherDocType(selectedDocTypeId,
+              selectedDocType.getDocumentTypeForInvoice());
+          if (!StringUtils.isEmpty(referredInvoiceDocType)) {
+            info.addResult("WARNING",
+                String.format(
+                    Utility.messageBD(this, "OBPOS_SharedInvoiceDocType", info.vars.getLanguage()),
+                    selectedDocType.getDocumentTypeForInvoice().getName(), referredInvoiceDocType));
             return false;
           } else {
-            // Check Aggregate Invoice DocTypes in other document types
-            String referredAggrInvoiceDocType = checkDocTypeRefInOtherDocType(selectedDocTypeId,
-                selectedDocType.getDoctypeaggrinvoice().getId());
-            if (!StringUtils.isEmpty(referredAggrInvoiceDocType)) {
+            // Check Simplified Invoice DocType in other document types
+            String referredSimpInvoiceDocType = checkDocTypeRefInOtherDocType(selectedDocTypeId,
+                selectedDocType.getDoctypesimpinvoice());
+            if (!StringUtils.isEmpty(referredSimpInvoiceDocType)) {
               info.addResult("WARNING", String.format(
-                  Utility.messageBD(this, "OBPOS_SharedAggregateInvoiceDocType",
+                  Utility.messageBD(this, "OBPOS_SharedSimplifedInvoiceDocType",
                       info.vars.getLanguage()),
-                  selectedDocType.getDoctypeaggrinvoice().getName(), referredAggrInvoiceDocType));
+                  selectedDocType.getDoctypesimpinvoice().getName(), referredSimpInvoiceDocType));
               return false;
             } else {
-              // Check Shipment DocType in other document types
-              String referredShipDocType = checkShipDocTypeRefInOtherDocType(selectedDocTypeId,
-                  selectedDocType.getDocumentTypeForShipment().getId());
-              if (!StringUtils.isEmpty(referredShipDocType)) {
+              // Check Aggregate Invoice DocTypes in other document types
+              String referredAggrInvoiceDocType = checkDocTypeRefInOtherDocType(selectedDocTypeId,
+                  selectedDocType.getDoctypeaggrinvoice());
+              if (!StringUtils.isEmpty(referredAggrInvoiceDocType)) {
                 info.addResult("WARNING", String.format(
-                    Utility.messageBD(this, "OBPOS_SharedShipmentDocType", info.vars.getLanguage()),
-                    selectedDocType.getDocumentTypeForShipment().getName(), referredShipDocType));
+                    Utility.messageBD(this, "OBPOS_SharedAggregateInvoiceDocType",
+                        info.vars.getLanguage()),
+                    selectedDocType.getDoctypeaggrinvoice().getName(), referredAggrInvoiceDocType));
                 return false;
+              } else {
+                // Check Shipment DocType in other document types
+                String referredShipDocType = checkShipDocTypeRefInOtherDocType(selectedDocTypeId,
+                    selectedDocType.getDocumentTypeForShipment());
+                if (!StringUtils.isEmpty(referredShipDocType)) {
+                  info.addResult("WARNING", String.format(
+                      Utility.messageBD(this, "OBPOS_SharedShipmentDocType",
+                          info.vars.getLanguage()),
+                      selectedDocType.getDocumentTypeForShipment().getName(), referredShipDocType));
+                  return false;
+                }
               }
             }
           }
