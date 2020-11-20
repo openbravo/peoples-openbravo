@@ -8997,9 +8997,10 @@
         );
 
         if (discount.endingDate && discount.endingDate.length > 0) {
-          var objDate = new Date(discount.endingDate);
-          var now = new Date();
-          var nowWithoutTime = new Date(now.toISOString().split('T')[0]);
+          var objDate = new Date(discount.endingDate.split('T')[0]);
+          const nowWithoutTime = new Date(
+            new Date().toISOString().split('T')[0]
+          );
           if (nowWithoutTime > objDate) {
             OB.UTIL.showConfirmation.display(
               OB.I18N.getLabel('OBPOS_PackExpired_header'),
