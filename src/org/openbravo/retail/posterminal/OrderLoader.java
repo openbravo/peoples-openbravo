@@ -216,7 +216,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       OBPOSApplications posTerminal = null;
       JSONObject paymentResponse = null;
       ArrayList<OrderLine> lineReferences = new ArrayList<OrderLine>();
-      final JSONArray orderlines = jsonorder.getJSONArray("lines");
+      JSONArray orderlines = jsonorder.getJSONArray("lines");
 
       if (jsonorder.getLong("orderType") != 2 && !jsonorder.getBoolean("isLayaway") && !isQuotation
           && validateOrder(jsonorder)
@@ -287,6 +287,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
       if (!doCancelLayaway) {
         if (!isModified) {
           DeferredServiceDelivery.calculateQtyToDeliver(jsonorder);
+          // Reassigning orderlines to update DeferredServiceDelivery details
+          orderlines = jsonorder.getJSONArray("lines");
           executeOrderLoaderPreProcessHook(orderPreProcesses, jsonorder);
         } else {
           executeOrderLoaderModifiedPreProcessHook(orderModifiedPreProcesses, jsonorder);
