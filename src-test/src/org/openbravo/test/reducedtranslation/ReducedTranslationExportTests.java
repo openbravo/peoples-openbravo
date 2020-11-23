@@ -228,9 +228,9 @@ public class ReducedTranslationExportTests extends OBBaseTest {
     final long lineCountReduced = countLines(ReducedTrlTestConstants.REDUCED_TRL_DIR, relativePath);
     final long lineCountFull = countLines(ReducedTrlTestConstants.FULL_TRL_DIR, relativePath);
 
-    final long XmlHeaderLinesOnly = 2l;
+    final long xmlHeaderLinesOnly = 2l;
     assertThat("Reduced translation " + relativePath, lineCountReduced,
-        equalTo(XmlHeaderLinesOnly));
+        equalTo(xmlHeaderLinesOnly));
     assertThat("Reduced translation " + relativePath, lineCountReduced, lessThan(lineCountFull));
   }
 
