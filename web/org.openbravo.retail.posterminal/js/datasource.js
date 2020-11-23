@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, _, enyo, Audio, setTimeout, setInterval, clearTimeout, clearInterval, Promise */
+/*global enyo */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function(res) {
@@ -608,14 +608,16 @@ OB.DS.HWServer.prototype._sendHWMPrinter = function(sendurl) {
 };
 
 OB.DS.HWServer.prototype.storeData = function(data, device) {
-  var terminaldata = {
-    time: new Date().getTime(),
-    data: data
-  };
+  const time = new Date().getTime();
   OB.UTIL.localStorage.setItem(
     'HWM.' + this.storeDataKey + '.' + (device || OB.DS.HWServer.PRINTER),
-    JSON.stringify(terminaldata)
+    JSON.stringify({ time, data })
   );
+  OB.UTIL.HookManager.executeHooks('OBPOS_HWServerSend', {
+    device: device || OB.DS.HWServer.PRINTER,
+    time,
+    data
+  });
 };
 
 OB.DS.HWServer.prototype._send = function(data, callback, device) {

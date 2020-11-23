@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone */
+/*global */
 
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
@@ -449,6 +449,16 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     return this.get('step') - 1 === this.stepIndex('OB.CloseCash.CashPayments');
   },
   processAndFinish: function() {
+    const cashupext = {};
+    OB.UTIL.HookManager.executeHooks(
+      'OBPOS_ProcessCashup',
+      { cashupext },
+      () => {
+        this.processAndFinishExt(cashupext);
+      }
+    );
+  },
+  processAndFinishExt: function(cashupext) {
     OB.UTIL.showLoading(true);
 
     const cashUp = new Backbone.Collection([OB.App.State.getState().Cashup]);
@@ -505,6 +515,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
       objToSend.cashMgmtIds.push(cashMgmt.get('id'));
     });
     cashUp.at(0).set('userId', OB.MobileApp.model.get('context').user.id);
+    objToSend = Object.assign(objToSend, cashupext); // Add all properties added by the hook OBPOS_ProcessCashup
     objToSend.userId = OB.MobileApp.model.get('context').user.id;
     objToSend.isprocessed = 'Y';
     cashUp.at(0).set('objToSend', JSON.stringify(objToSend));
