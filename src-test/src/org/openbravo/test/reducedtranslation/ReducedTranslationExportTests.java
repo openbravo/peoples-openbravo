@@ -211,13 +211,11 @@ public class ReducedTranslationExportTests extends OBBaseTest {
     String relativePath = fileRelativePath.startsWith("/") ? fileRelativePath.substring(1)
         : fileRelativePath;
 
-    // Note: Files.readString(FULL_TRL_DIR.resolve(fileRelativePath)) is available since JDK11
     assertThat("Full version " + fileRelativePath,
-        new String(Files.readAllBytes(ReducedTrlTestConstants.FULL_TRL_DIR.resolve(relativePath))),
+        Files.readString(ReducedTrlTestConstants.FULL_TRL_DIR.resolve(relativePath)),
         containsString(string));
     assertThat("Reduced version " + fileRelativePath,
-        new String(
-            Files.readAllBytes(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath))),
+        Files.readString(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath)),
         not(containsString(string)));
   }
 
@@ -227,11 +225,10 @@ public class ReducedTranslationExportTests extends OBBaseTest {
         : fileRelativePath;
 
     assertThat("Full version " + fileRelativePath,
-        new String(Files.readAllBytes(ReducedTrlTestConstants.FULL_TRL_DIR.resolve(relativePath))),
+        Files.readString(ReducedTrlTestConstants.FULL_TRL_DIR.resolve(relativePath)),
         containsString(string));
     assertThat("Reduced version " + fileRelativePath,
-        new String(
-            Files.readAllBytes(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath))),
+        Files.readString(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath)),
         containsString(string));
   }
 
