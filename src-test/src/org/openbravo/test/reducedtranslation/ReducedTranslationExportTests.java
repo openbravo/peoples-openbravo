@@ -118,124 +118,113 @@ public class ReducedTranslationExportTests extends OBBaseTest {
   @Test
   public void testAdTextInterfacesJrxml() throws IOException {
     testExistInFullAndNotExistsInReduced(
-        "/lang/es_ES/org.openbravo.financial.paymentreport/AD_TEXTINTERFACES_TRL_es_ES.xml",
+        "lang/es_ES/org.openbravo.financial.paymentreport/AD_TEXTINTERFACES_TRL_es_ES.xml",
         "ACCS_ACCOUNT_ID_D");
   }
 
   @Test
   public void testAdElementDirectAccessInWindowExcludingTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", "\"Application\"");
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", "\"Application\"");
   }
 
   @Test
   public void testAdElementIndirectAccessInWindowReferenceExcludingTranslation()
       throws IOException {
     testExistInFullAndNotExistsInReduced(
-        "/lang/es_ES/org.openbravo.client.application/AD_ELEMENT_TRL_es_ES.xml", "\"Logger\"");
+        "lang/es_ES/org.openbravo.client.application/AD_ELEMENT_TRL_es_ES.xml", "\"Logger\"");
   }
 
   @Test
   public void testAdElementIndirectProcessDefinitionIncludedTranslation() throws IOException {
-    testExistInBothTranslations("/lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", "\"LC Costs\"");
+    testExistInBothTranslations("lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", "\"LC Costs\"");
   }
 
   @Test
   public void testAdElementDirectProcessIncludedTranslation() throws IOException {
-    testExistInBothTranslations("/lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", "\"Export Audit Info\"");
+    testExistInBothTranslations("lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", "\"Export Audit Info\"");
   }
 
   @Test
   public void testAdFieldExcludedTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_FIELD_TRL_es_ES.xml",
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_FIELD_TRL_es_ES.xml",
         "\"Copy from Attribute\"");
   }
 
   @Test
   public void testAdProcessAdMenuExcludedTranslation() throws IOException {
     final String string = "\"Project Status Summary\"";
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_PROCESS_TRL_es_ES.xml", string);
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_MENU_TRL_es_ES.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_PROCESS_TRL_es_ES.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_MENU_TRL_es_ES.xml", string);
   }
 
   @Test
   public void testProcessDefinitionAdMenuAdWindowExcludedTranslation() throws IOException {
     final String string = "\"Log Management\"";
     testExistInFullAndNotExistsInReduced(
-        "/lang/es_ES/org.openbravo.client.application/OBUIAPP_PROCESS_TRL_es_ES.xml", string);
+        "lang/es_ES/org.openbravo.client.application/OBUIAPP_PROCESS_TRL_es_ES.xml", string);
     testExistInFullAndNotExistsInReduced(
-        "/lang/es_ES/org.openbravo.client.application/AD_MENU_TRL_es_ES.xml", string);
+        "lang/es_ES/org.openbravo.client.application/AD_MENU_TRL_es_ES.xml", string);
     testExistInFullAndNotExistsInReduced(
-        "/lang/es_ES/org.openbravo.client.application/AD_WINDOW_TRL_es_ES.xml", string);
+        "lang/es_ES/org.openbravo.client.application/AD_WINDOW_TRL_es_ES.xml", string);
   }
 
   @Test
   public void testAdProcessParaExcludedTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_PROCESS_PARA_TRL_es_ES.xml",
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_PROCESS_PARA_TRL_es_ES.xml",
         "Target Payment Rule");
   }
 
   @Test
   public void testAdWindowAdMenuExcludedTranslation() throws IOException {
     final String string = "\"Windows, Tabs, and Fields\"";
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_WINDOW_TRL_es_ES.xml", string);
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_MENU_TRL_es_ES.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_WINDOW_TRL_es_ES.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_MENU_TRL_es_ES.xml", string);
   }
 
   @Test
   public void testAdTabAdElementExcludedTranslation() throws IOException {
     final String string = "\"Window Translation\"";
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_TAB_TRL_es_ES.xml", string);
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_TAB_TRL_es_ES.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", string);
   }
 
   @Test
   public void testAdFieldGroupExcludedTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_FIELDGROUP_TRL_es_ES.xml", "\"Assets\"");
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_FIELDGROUP_TRL_es_ES.xml", "\"Assets\"");
   }
 
   @Test
   public void testAdRefListExcludedTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("/lang/es_ES/AD_REF_LIST_TRL_es_ES.xml", "\"Servlet\"");
+    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_REF_LIST_TRL_es_ES.xml", "\"Servlet\"");
   }
 
   @Test
   public void expectedEmptyTranslationFiles() {
-    Stream
-        .of("/lang/es_ES/AD_REFERENCE_TRL_es_ES.xml", "/lang/es_ES/OBUISEL_SELECTOR_TRL_es_ES.xml")
+    Stream.of("lang/es_ES/AD_REFERENCE_TRL_es_ES.xml", "lang/es_ES/OBUISEL_SELECTOR_TRL_es_ES.xml")
         .forEach(this::testExpectedEmptyTranslationFile);
   }
 
-  private void testExistInFullAndNotExistsInReduced(final String fileRelativePath,
-      final String string) throws IOException {
-    // cleanup for prototype: relative paths shouldn't start with /
-    String relativePath = fileRelativePath.startsWith("/") ? fileRelativePath.substring(1)
-        : fileRelativePath;
-
-    assertThat("Full version " + fileRelativePath,
+  private void testExistInFullAndNotExistsInReduced(final String relativePath, final String string)
+      throws IOException {
+    assertThat("Full version " + relativePath,
         Files.readString(ReducedTrlTestConstants.FULL_TRL_DIR.resolve(relativePath)),
         containsString(string));
-    assertThat("Reduced version " + fileRelativePath,
+    assertThat("Reduced version " + relativePath,
         Files.readString(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath)),
         not(containsString(string)));
   }
 
-  private void testExistInBothTranslations(final String fileRelativePath, final String string)
+  private void testExistInBothTranslations(final String relativePath, final String string)
       throws IOException {
-    String relativePath = fileRelativePath.startsWith("/") ? fileRelativePath.substring(1)
-        : fileRelativePath;
-
-    assertThat("Full version " + fileRelativePath,
+    assertThat("Full version " + relativePath,
         Files.readString(ReducedTrlTestConstants.FULL_TRL_DIR.resolve(relativePath)),
         containsString(string));
-    assertThat("Reduced version " + fileRelativePath,
+    assertThat("Reduced version " + relativePath,
         Files.readString(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath)),
         containsString(string));
   }
 
-  private void testExpectedEmptyTranslationFile(final String fileRelativePath) {
-    String relativePath = fileRelativePath.startsWith("/") ? fileRelativePath.substring(1)
-        : fileRelativePath;
-
+  private void testExpectedEmptyTranslationFile(final String relativePath) {
     final long lineCountReduced = countLines(ReducedTrlTestConstants.REDUCED_TRL_DIR, relativePath);
     final long lineCountFull = countLines(ReducedTrlTestConstants.FULL_TRL_DIR, relativePath);
 
