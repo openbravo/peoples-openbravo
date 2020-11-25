@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -34,8 +34,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.base.exception.OBException;
@@ -404,52 +404,35 @@ public abstract class FIN_BankStatementImport {
     OBContext.setAdminMode();
     ScrollableResults businessPartnersScroll = null;
     try {
-      //@formatter:off
-      String whereClause = "select b.id as id, b.name as name "
-          + " from BusinessPartner b "
-          + " where (";
-      HashMap<String, String> tokenPrams = new HashMap<>();
-      int tokenIndex = 0;
-      for (String token : list) {
-        String tokenParamName = String.format("token_%d", tokenIndex);
-        tokenPrams.put(tokenParamName, "%" + token + "%");
-        if(tokenIndex != 0) {
-          whereClause += " or ";
-        }
-        whereClause += " lower(b.name) like lower(:" + tokenParamName + " ) ";
-        tokenIndex++;
+      OBCriteria<BusinessPartner> obCriteria = OBDal.getInstance()
+          .createCriteria(BusinessPartner.class);
+      Criterion[] orCriterionElements = new Criterion[list.size()];
+      for (int i = 0; i < list.size(); i++) {
+        String token = list.get(i);
+        orCriterionElements[i] = Restrictions.like("name", "%" + token + "%").ignoreCase();
       }
-      whereClause += ")"
-            + "  and b.organization.id in :orgNaturalTree";
-      //@formatter:on
-      final Query<Object[]> bl = OBDal.getInstance()
-          .getSession()
-          .createQuery(whereClause, Object[].class);
-      bl.setProperties(tokenPrams);
-      bl.setParameterList("orgNaturalTree",
-          new OrganizationStructureProvider().getNaturalTree(organization.getId()));
+      obCriteria.add(Restrictions.or(orCriterionElements))
+          .add(Restrictions.in("organization.id",
+              new OrganizationStructureProvider().getNaturalTree(organization.getId())));
 
-      businessPartnersScroll = bl.scroll(ScrollMode.SCROLL_SENSITIVE);
+      businessPartnersScroll = obCriteria.scroll(ScrollMode.SCROLL_SENSITIVE);
 
       if (!businessPartnersScroll.next()) {
         return null;
-      }
-
-      else {
-        final String id = businessPartnersScroll.getString(0);
+      } else {
+        BusinessPartner bp = (BusinessPartner) businessPartnersScroll.get(0);
+        final String id = bp.getId();
         if (!businessPartnersScroll.next()) {
           return OBDal.getInstance().get(BusinessPartner.class, id);
-        }
-
-        else {
+        } else {
           String closestId = closest(businessPartnersScroll, partnername);
-          BusinessPartner closest = OBDal.getInstance().get(BusinessPartner.class, closestId);
-          return closest;
+          return OBDal.getInstance().get(BusinessPartner.class, closestId);
         }
       }
-
     } finally {
-      businessPartnersScroll.close();
+      if (businessPartnersScroll != null) {
+        businessPartnersScroll.close();
+      }
       OBContext.restorePreviousMode();
     }
   }
