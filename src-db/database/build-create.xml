@@ -101,7 +101,7 @@ create.database: creates the database from scratch.
   </target>		
 	
   <target name="clean.database.POSTGRE.param">
-    <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" autocommit="true">
+    <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" autocommit="true" delimitertype="row">
       <classpath>
         <fileset dir="${base.lib}">
           <include name="**/*.jar">
@@ -109,6 +109,13 @@ create.database: creates the database from scratch.
         </fileset>
       </classpath>
       <transaction>
+        DO 'DECLARE cnt integer;
+        BEGIN
+          SELECT COUNT(*) into cnt from pg_database where datname = ''${sid}'';
+          if cnt > 0 then
+            alter database "${sid}" owner to "${systemUser}";
+          end if;
+        END';
         DROP DATABASE IF EXISTS "${sid}";
       </transaction>
     </sql>
