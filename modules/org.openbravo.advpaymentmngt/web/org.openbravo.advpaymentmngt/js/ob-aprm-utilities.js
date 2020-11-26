@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -163,10 +163,41 @@ OB.APRM.selectionChangePaymentProposalPickAndEdit = function(
     var paidamount = new BigDecimal(String(record.payment));
 
     if (paidamount.compareTo(new BigDecimal('0')) === 0) {
-      record.payment = record.outstanding;
-      record.difference = Number(new BigDecimal('0'));
+      grid.setEditValue(
+        grid.getRecordIndex(record),
+        'payment',
+        record.outstanding
+      );
+      grid.setEditValue(
+        grid.getRecordIndex(record),
+        'difference',
+        Number(new BigDecimal('0'))
+      );
     }
   }
+};
+
+OB.APRM.onChangePaymentProposalPickAndEditPayment = function(
+  item,
+  view,
+  form,
+  grid
+) {
+  var paymentField = grid.getFieldByColumnName('Payment'),
+    paidamount = new BigDecimal(
+      String(grid.getEditedCell(item.rowNum, paymentField) || 0)
+    ),
+    outstandingField = grid.getFieldByColumnName('Outstanding'),
+    outstanding = new BigDecimal(
+      String(grid.getEditedCell(item.rowNum, outstandingField)) || 0
+    );
+
+  grid.setEditValue(
+    item.rowNum,
+    'difference',
+    Number(outstanding.subtract(paidamount))
+  );
+  grid.setEditValue(item.rowNum, 'payment', Number(paidamount));
 };
 
 OB.APRM.validatePaymentProposalPickAndEdit = function(
@@ -207,8 +238,6 @@ OB.APRM.validatePaymentProposalPickAndEdit = function(
 
   // When possible to capture on change event, move this code to another method
   if (row) {
-    row.difference = Number(outstanding.subtract(paidamount));
-    row.payment = Number(record.payment);
     if (contextInfo.inplimitwriteoff && contextInfo.inplimitwriteoff !== '') {
       var differencewriteoff = OB.Utilities.Number.JSToOBMasked(
         row.difference * contextInfo.inpfinaccTxnConvertRate,
