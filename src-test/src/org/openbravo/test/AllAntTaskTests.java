@@ -361,12 +361,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     InvoiceFromShipmentTest.class,
 
     // C_Order_Post
-    OrderProcessTest.class,
-
-    // Reduced Translation
-    ReducedTranslationExportTests.class, //
-    ReducedTranslationMenuEventObserverTest.class
-
+    OrderProcessTest.class
 })
 public class AllAntTaskTests {
 }
