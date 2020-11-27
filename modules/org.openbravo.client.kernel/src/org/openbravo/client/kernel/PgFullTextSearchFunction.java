@@ -29,9 +29,7 @@ import org.hibernate.type.BigDecimalType;
 import org.hibernate.type.BooleanType;
 import org.hibernate.type.Type;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.client.application.CachedPreference;
 
 /**
  * HQL functions to support Full Text Search in PostgreSQL. See each class for more specific
@@ -133,16 +131,10 @@ public abstract class PgFullTextSearchFunction implements SQLFunction {
    *
    */
   public static class Rank extends PgFullTextSearchFunction {
+
     @Override
     public Type getReturnType(Type arg0, Mapping arg1) {
       return new BigDecimalType();
-    }
-
-    @Override
-    protected String getFragment(String table, String field, String value,
-        Optional<String> ftsConfiguration) {
-      return "ts_rank_cd(" + table + "." + field + ", to_tsquery(" + getFtsConfig(ftsConfiguration)
-          + value + "), " + getRankNormalizationPref() + ")";
     }
 
     /**
@@ -167,24 +159,31 @@ public abstract class PgFullTextSearchFunction implements SQLFunction {
      * <li>32 divides the rank by itself + 1
      * </ul>
      * <p>
-     *
+     * 
      * @return numLike String
      */
-    private String getRankNormalizationPref() {
-      try {
-        String rankNormalization = Preferences.getPreferenceValue("FullTextSearchRankNormalization",
-            true, OBContext.getOBContext().getCurrentClient(),
-            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-            OBContext.getOBContext().getRole(), null);
-        try {
-          Integer.parseInt(rankNormalization);
-        } catch (NumberFormatException nfe) {
-          throw new OBException("IncorrectFullTextSearchRankNormalization", nfe.getCause());
-        }
-      } catch (PropertyException e) {
-        // no need, exception when no result
+    protected String getRankNormalizationPref() {
+      CachedPreference cachedPreference = org.openbravo.base.weld.WeldUtils
+          .getInstanceFromStaticBeanManager(CachedPreference.class);
+      String rankNormalization = cachedPreference
+          .getPreferenceValue(CachedPreference.RANK_NORMALIZATION);
+      if (rankNormalization == null) {
+        return "0";
       }
-      return "0";
+      try {
+        Integer.parseInt(rankNormalization);
+      } catch (NumberFormatException nfe) {
+        throw new OBException("IncorrectFullTextSearchRankNormalization", nfe.getCause());
+      }
+      return rankNormalization;
+    }
+
+    @Override
+    protected String getFragment(String table, String field, String value,
+        Optional<String> ftsConfiguration) {
+
+      return "ts_rank_cd(" + table + "." + field + ", to_tsquery(" + getFtsConfig(ftsConfiguration)
+          + value + "), " + getRankNormalizationPref() + ")";
     }
   }
 }
