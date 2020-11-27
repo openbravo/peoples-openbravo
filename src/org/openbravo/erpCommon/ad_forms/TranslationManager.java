@@ -109,6 +109,32 @@ public class TranslationManager {
    */
   public static OBError exportTrl(ConnectionProvider conn, String exportDirectory, String strLang,
       String strClient, String uiLanguage) {
+    return exportTrl(conn, exportDirectory, strLang, strClient, uiLanguage, false);
+  }
+
+  /**
+   * Export all the trl tables that refers to tables with ad_module_id column or trl tables that
+   * refers to tables with a parent table with ad_module_id column
+   * 
+   * For example: If a record from ad_process is in module "core", the records from ad_process_trl
+   * and ad_process_para_trl are exported in "core" module
+   * 
+   * @param exportDirectory
+   *          Directory for trl's xml files
+   * @param strLang
+   *          Language to export.
+   * @param strClient
+   *          Client to export.
+   * @param uiLanguage
+   *          Language to be used for translating error messages
+   * @param isReducedVersion
+   *          If true then the export will only take into account elements that are related with a
+   *          Menu entry that is checked to be translated. If false, everything will be exported to
+   *          the translation
+   * @return Message with the error or with the success
+   */
+  public static OBError exportTrl(ConnectionProvider conn, String exportDirectory, String strLang,
+      String strClient, String uiLanguage, boolean isReducedVersion) {
     final String AD_Language = strLang;
     OBError myMessage = null;
 
@@ -143,11 +169,12 @@ public class TranslationManager {
       final TranslationData[] modulesTables = TranslationData.trlModulesTables(conn);
 
       for (int i = 0; i < modulesTables.length; i++) {
-        exportModulesTrl(conn, rootDirectory, AD_Client_ID, AD_Language, modulesTables[i].c);
+        exportModulesTrl(conn, rootDirectory, AD_Client_ID, AD_Language, modulesTables[i].c,
+            isReducedVersion);
       }
       // We need to also export translations for some tables which are considered reference data
       // and are imported using datasets (such as Masterdata: UOMs, Currencies, ...)
-      exportReferenceData(conn, rootDirectory, AD_Language);
+      exportReferenceData(conn, rootDirectory, AD_Language, isReducedVersion);
 
       exportContibutors(conn, directory, AD_Language);
     } catch (final Exception e) {
@@ -273,7 +300,7 @@ public class TranslationManager {
   }
 
   private static void exportReferenceData(ConnectionProvider conn, String rootDirectory,
-      String AD_Language) {
+      String AD_Language, final boolean isReducedVersion) {
     try {
       // Export translations for reference data (do not take into account
       // client data, only system)
@@ -281,7 +308,7 @@ public class TranslationManager {
       for (final TranslationData refTrl : referenceTrlData) {
         exportTable(conn, AD_Language, true, refTrl.isindevelopment.equals("Y"),
             refTrl.tablename.toUpperCase(), refTrl.adTableId, rootDirectory, refTrl.adModuleId,
-            refTrl.adLanguage, refTrl.value, true);
+            refTrl.adLanguage, refTrl.value, true, isReducedVersion);
       }
     } catch (final Exception e) {
       e.printStackTrace();
@@ -289,7 +316,7 @@ public class TranslationManager {
   }
 
   private static String exportModulesTrl(ConnectionProvider conn, String rootDirectory,
-      String AD_Client_ID, String AD_Language, String Trl_Table) {
+      String AD_Client_ID, String AD_Language, String Trl_Table, final boolean isReducedVersion) {
     try {
       final TranslationData[] modules = TranslationData.modules(conn);
       for (int mod = 0; mod < modules.length; mod++) {
@@ -312,7 +339,7 @@ public class TranslationManager {
             trl = false;
           }
           exportTable(conn, AD_Language, false, false, Base_Table, "0", rootDirectory,
-              modules[mod].adModuleId, moduleLanguage, modules[mod].value, trl);
+              modules[mod].adModuleId, moduleLanguage, modules[mod].value, trl, isReducedVersion);
 
         } // translate or not (if)
       }
@@ -343,11 +370,15 @@ public class TranslationManager {
    *          Base language for the module
    * @param javaPackage
    *          Java package for the module
+   * @param isReducedVersion
+   *          If true then the export will only take into account elements that are related with a
+   *          Menu entry that is checked to be translated. If false, everything will be exported to
+   *          the translation
    */
   private static void exportTable(ConnectionProvider cp, String AD_Language,
       boolean exportReferenceData, boolean exportAll, String table, String tableID,
-      String rootDirectory, String moduleId, String moduleLanguage, String javaPackage,
-      boolean trl) {
+      String rootDirectory, String moduleId, String moduleLanguage, String javaPackage, boolean trl,
+      final boolean isReducedVersion) {
 
     PreparedStatement st = null;
     String sql = null;
@@ -357,7 +388,7 @@ public class TranslationManager {
       if (trl && !table.endsWith("_TRL")) {
         trlTable = table + "_TRL";
       }
-      final TranslationData[] trlColumns = getTrlColumns(cp, table);
+      final TranslationData[] trlColumns = getTrlColumns(cp, table, isReducedVersion);
       final String keyColumn = table + "_ID";
 
       boolean m_IsCentrallyMaintained = false;
@@ -401,6 +432,7 @@ public class TranslationManager {
       if (m_IsCentrallyMaintained) {
         sql += " and o.IsCentrallyMaintained='N'";
       }
+
       // AdClient !=0 not supported
       sql += " and o.AD_Client_ID='0' ";
 
@@ -451,6 +483,10 @@ public class TranslationManager {
         //@formatter:on
         parameters.add(tableID);
         parameters.add(moduleId);
+      }
+
+      if (isReducedVersion) {
+        sql += ReducedTranslationHelper.getReducedTranslationClause(table);
       }
 
       sql += " order by t." + keyColumn;
@@ -644,12 +680,14 @@ public class TranslationManager {
     }
   }
 
-  private static TranslationData[] getTrlColumns(ConnectionProvider cp, String Base_Table) {
+  private static TranslationData[] getTrlColumns(ConnectionProvider cp, String Base_Table,
+      boolean isReducedVersion) {
 
     TranslationData[] list = null;
 
     try {
-      list = TranslationData.trlColumns(cp, Base_Table + "_TRL");
+      list = TranslationData.trlColumns(cp, Base_Table + "_TRL",
+          isReducedVersion ? "isReducedVersion" : "");
     } catch (final Exception e) {
       log4j.error("getTrlColumns", e);
     }

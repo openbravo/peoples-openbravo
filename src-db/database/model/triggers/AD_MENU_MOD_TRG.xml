@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2012 Openbravo SLU
+* All portions are Copyright (C) 2008-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -74,6 +74,7 @@ BEGIN
         COALESCE(:NEW.AD_Form_ID , '.') != COALESCE(:OLD.AD_Form_ID , '.') OR
         COALESCE(:NEW.URL , '.') != COALESCE(:OLD.URL , '.') OR
         COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.') OR
+        COALESCE(:NEW.Translation_Strategy , '.') != COALESCE(:OLD.Translation_Strategy , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;

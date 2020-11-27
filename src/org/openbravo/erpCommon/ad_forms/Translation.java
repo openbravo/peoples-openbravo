@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2020 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -49,6 +49,9 @@ public class Translation extends HttpSecureAppServlet {
     } else if (vars.commandIn("EXPORT")) {
 
       final String strLang = vars.getRequestGlobalVariable("language", "translation.lang");
+      final boolean isReducedVersion = "Y"
+          .equals(vars.getRequestGlobalVariable("inpReduced", "translation.reduced"));
+
       // import/export translation is currently always on system level
       final String strClient = "0";
       if (log4j.isDebugEnabled()) {
@@ -57,7 +60,7 @@ public class Translation extends HttpSecureAppServlet {
 
       // New message system
       final OBError myMessage = TranslationManager.exportTrl(this, globalParameters.strFTPDirectory,
-          strLang, strClient, vars.getLanguage());
+          strLang, strClient, vars.getLanguage(), isReducedVersion);
 
       if (log4j.isDebugEnabled()) {
         log4j.debug("message:" + myMessage.getMessage());
@@ -162,6 +165,7 @@ public class Translation extends HttpSecureAppServlet {
       xmlDocument.setParameter("paramLanguage", "defaultLang=\"" + vars.getLanguage() + "\";");
       xmlDocument.setParameter("paramSelLanguage", vars.getSessionValue("translation.lang"));
       xmlDocument.setData("structure1", LanguageComboData.select(this));
+      xmlDocument.setParameter("inpReduced", vars.getSessionValue("translation.reduced"));
 
       out.println(xmlDocument.print());
       out.close();
