@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,6 +50,8 @@ public class KernelSQLFunctionRegister implements SQLFunctionRegister {
     sqlFunctions.put("now", new NoArgSQLFunction("now", StandardBasicTypes.TIMESTAMP));
     sqlFunctions.put("to_timestamp",
         new StandardSQLFunction("to_timestamp", StandardBasicTypes.TIMESTAMP));
+    sqlFunctions.put("fullTextSearchFilter", new PgFullTextSearchFunction.Filter());
+    sqlFunctions.put("fullTextSearchRank", new PgFullTextSearchFunction.Rank());
     return sqlFunctions;
   }
 }

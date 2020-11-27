@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2012 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -124,14 +124,16 @@
     
     FOR Cur_Column IN(-- added by Pablo Sarobe
     SELECT c.Columnname, c.Name, c.Description, c.Help, c.AD_Column_ID, c.FieldLength, t.tablename, c.AD_Module_ID, c.IsIdentifier, c.sqllogic
-    FROM AD_Column c, AD_Table t
+    FROM AD_Column c, AD_Table t, user_tab_columns utc
     WHERE NOT EXISTS
       (SELECT *
       FROM AD_Field f
       WHERE c.AD_Column_ID=f.AD_Column_ID  AND c.AD_Table_ID=v_AD_Table_ID  AND f.AD_Tab_ID=v_Record_ID
       )
       AND c.AD_Table_ID=v_AD_Table_ID  AND c.AD_Table_ID=t.AD_Table_ID  -- added by Pablo Sarobe
+	  AND utc.table_name = t.tablename AND utc.column_name = c.Columnname
       AND UPPER(c.Columnname) NOT IN ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') AND c.IsActive='Y'
+	  AND utc.data_type <> 'TSVECTOR'
     ORDER BY POSITION)
     LOOP
       v_showInRelation:='N';

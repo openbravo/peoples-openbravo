@@ -2,7 +2,6 @@
   <database name="TRIGGER AD_FIELD_MOD_TRG">
     <trigger name="AD_FIELD_MOD_TRG" table="AD_FIELD" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
-
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -15,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2012 Openbravo SLU
+* All portions are Copyright (C) 2008-2020 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -99,6 +98,20 @@ BEGIN
               COALESCE(:NEW.Help , '.') != COALESCE(:OLD.Help , '.'))) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
     END IF;
+  END IF;
+  
+  IF (UPDATING OR INSERTING) THEN
+    SELECT COUNT(*)
+	INTO vAux
+	FROM AD_COLUMN c, AD_TABLE t, USER_TAB_COLUMNS utc
+	WHERE c.AD_Table_ID = t.AD_Table_ID
+	  AND UPPER(utc.Column_Name) = UPPER(c.ColumnName)
+	  AND UPPER(utc.Table_Name) = UPPER(t.TableName)
+	  AND c.AD_Column_ID = :NEW.AD_Column_ID
+	  AND utc.Data_Type = 'TSVECTOR';
+	IF (vAux!=0) THEN
+	  RAISE_APPLICATION_ERROR(-20000, '@TSV_NotAllowedInFields@');
+	END IF;
   END IF;
   
   IF ((DELETING OR INSERTING) AND devModule='N') THEN

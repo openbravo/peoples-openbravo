@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -102,6 +102,7 @@ public class Entity {
   private String treeType;
   public static final String COMPUTED_COLUMNS_PROXY_PROPERTY = "_computedColumns";
   public static final String COMPUTED_COLUMNS_CLASS_APPENDIX = "_ComputedColumns";
+  public static final String SEARCH_VECTOR_REF_ID = "81FCDA657A5540F69B0AE57B4E0F8A51";
 
   public String getTreeType() {
     return treeType;
@@ -688,9 +689,12 @@ public class Entity {
    */
   public List<Property> getRealProperties(boolean includeComputed) {
     List<Property> result = new ArrayList<Property>();
+    boolean isPropertyTSVector;
     for (Property p : properties) {
+      isPropertyTSVector = p.getDomainType() != null && p.getDomainType().getReference() != null
+          && SEARCH_VECTOR_REF_ID.equals(p.getDomainType().getReference().getId());
       if ((includeComputed || !p.isComputedColumn())
-          && !Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(p.getName())) {
+          && !Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(p.getName()) && !isPropertyTSVector) {
         result.add(p);
       }
     }

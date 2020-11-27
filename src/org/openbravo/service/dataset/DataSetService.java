@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -448,7 +448,9 @@ public class DataSetService implements OBSingleton {
       exportables = new ArrayList<Property>(entity.getProperties());
       // now remove the excluded
       for (final DataSetColumn dsc : dataSetColumns) {
-        if (dsc.isExcluded()) {
+        boolean isTSVector = dsc.getColumn().getReference() != null
+            && Entity.SEARCH_VECTOR_REF_ID.equals(dsc.getColumn().getReference().getId());
+        if (dsc.isExcluded() || isTSVector) {
           exportables.remove(entity.getPropertyByColumnName(dsc.getColumn().getDBColumnName()));
         }
       }
@@ -457,7 +459,9 @@ public class DataSetService implements OBSingleton {
       // and add the not excluded
       exportables = new ArrayList<Property>();
       for (final DataSetColumn dsc : dataSetColumns) {
-        if (!dsc.isExcluded()) {
+        boolean isTSVector = dsc.getColumn().getReference() != null
+            && Entity.SEARCH_VECTOR_REF_ID.equals(dsc.getColumn().getReference().getId());
+        if (!dsc.isExcluded() && !isTSVector) {
           exportables.add(entity.getPropertyByColumnName(dsc.getColumn().getDBColumnName()));
         }
       }
