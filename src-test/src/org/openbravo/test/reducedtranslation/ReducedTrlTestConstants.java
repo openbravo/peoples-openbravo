@@ -41,10 +41,6 @@ class ReducedTrlTestConstants {
 
   public static final Path FULL_TRL_DIR = TRLFOLDER.resolve("full");
   public static final Path REDUCED_TRL_DIR = TRLFOLDER.resolve("reduced");
-  public static final String CLIENT_0 = "0";
-  public static final String CORE_MODULE_0 = "0";
-  public static final String ES_ES_LANG_ID = "140";
-  public static final String ES_ES = "es_ES";
   public static final String APPLICATION_DICTIONARY_MENU_ID = "153";
   public static final String EXCLUDE_FROM_REDUCED_TRANSLATION = "EXCLUDE_FROM_REDUCED_TRL";
   public static final String ELEMENT_MENU_ID = "138";

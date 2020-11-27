@@ -42,6 +42,7 @@ import org.openbravo.model.ad.system.Language;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants;
 
 /**
  * Tests that checks some examples of expected scenarios where the reduced translation version
@@ -60,7 +61,7 @@ public class ReducedTranslationExportTests extends OBBaseTest {
     try {
       OBContext.setAdminMode(false);
       final Language esESLang = OBDal.getInstance()
-          .get(Language.class, ReducedTrlTestConstants.ES_ES_LANG_ID);
+          .get(Language.class, TestConstants.Languages.ES_ES_LANG_ID);
       if (!esESLang.isSystemLanguage()) {
         esESLang.setSystemLanguage(true);
         restoreSystemLanguageFlag = true;
@@ -76,14 +77,14 @@ public class ReducedTranslationExportTests extends OBBaseTest {
 
     TranslationManager.exportTrl(new DalConnectionProvider(),
         ReducedTrlTestConstants.REDUCED_TRL_DIR.toAbsolutePath().toString(),
-        ReducedTrlTestConstants.ES_ES, ReducedTrlTestConstants.CLIENT_0,
-        ReducedTrlTestConstants.ES_ES, true);
+        TestConstants.Languages.ES_ES_ISOCODE, TestConstants.Clients.SYSTEM,
+        TestConstants.Languages.ES_ES_ISOCODE, true);
 
     Files.createDirectories(ReducedTrlTestConstants.FULL_TRL_DIR);
     TranslationManager.exportTrl(new DalConnectionProvider(),
         ReducedTrlTestConstants.FULL_TRL_DIR.toAbsolutePath().toString(),
-        ReducedTrlTestConstants.ES_ES, ReducedTrlTestConstants.CLIENT_0,
-        ReducedTrlTestConstants.ES_ES, false);
+        TestConstants.Languages.ES_ES_ISOCODE, TestConstants.Clients.SYSTEM,
+        TestConstants.Languages.ES_ES_ISOCODE, false);
   }
 
   @AfterClass
@@ -98,7 +99,7 @@ public class ReducedTranslationExportTests extends OBBaseTest {
       OBContext.setAdminMode(false);
       if (restoreSystemLanguageFlag) {
         final Language esESLang = OBDal.getInstance()
-            .get(Language.class, ReducedTrlTestConstants.ES_ES_LANG_ID);
+            .get(Language.class, TestConstants.Languages.ES_ES_LANG_ID);
         esESLang.setSystemLanguage(false);
         OBDal.getInstance().save(esESLang);
         OBDal.getInstance().flush();

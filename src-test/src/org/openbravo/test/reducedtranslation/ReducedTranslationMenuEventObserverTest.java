@@ -30,6 +30,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Menu;
+import org.openbravo.test.base.TestConstants;
 
 /**
  * Tests the org.openbravo.event.ADMenuEventHandler event observer
@@ -45,12 +46,12 @@ public class ReducedTranslationMenuEventObserverTest extends WeldBaseTest {
 
   @Before
   public void setModuleInDevelopmentYes() {
-    setModuleInDevelopment(ReducedTrlTestConstants.CORE_MODULE_0, true);
+    setModuleInDevelopment(TestConstants.Modules.ID_CORE, true);
   }
 
   @After
   public void setModuleInDevelopmentNo() {
-    setModuleInDevelopment(ReducedTrlTestConstants.CORE_MODULE_0, false);
+    setModuleInDevelopment(TestConstants.Modules.ID_CORE, false);
   }
 
   private void setModuleInDevelopment(final String moduleId, final boolean isInDevelopment) {
