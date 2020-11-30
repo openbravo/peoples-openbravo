@@ -430,7 +430,6 @@
             } else {
               if (
                 receipt.get('orderType') === 2 ||
-                receipt.get('isLayaway') ||
                 receipt.get('orderType') === 3
               ) {
                 args.template = me.templatelayaway;
