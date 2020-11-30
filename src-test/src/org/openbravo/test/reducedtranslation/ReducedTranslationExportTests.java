@@ -60,10 +60,10 @@ public class ReducedTranslationExportTests extends OBBaseTest {
   private static void doVerifyLanguageIfNotPreviouslyDoneBefore() {
     try {
       OBContext.setAdminMode(false);
-      final Language esESLang = OBDal.getInstance()
-          .get(Language.class, TestConstants.Languages.ES_ES_LANG_ID);
-      if (!esESLang.isSystemLanguage()) {
-        esESLang.setSystemLanguage(true);
+      final Language lang = OBDal.getInstance()
+          .get(Language.class, TestConstants.Languages.SQ_AL_LANG_ID);
+      if (!lang.isSystemLanguage()) {
+        lang.setSystemLanguage(true);
         restoreSystemLanguageFlag = true;
         CallProcess.getInstance().call("AD_Language_Create", null, null);
       }
@@ -77,14 +77,14 @@ public class ReducedTranslationExportTests extends OBBaseTest {
 
     TranslationManager.exportTrl(new DalConnectionProvider(),
         ReducedTrlTestConstants.REDUCED_TRL_DIR.toAbsolutePath().toString(),
-        TestConstants.Languages.ES_ES_ISOCODE, TestConstants.Clients.SYSTEM,
-        TestConstants.Languages.ES_ES_ISOCODE, true);
+        TestConstants.Languages.SQ_AL_ISOCODE, TestConstants.Clients.SYSTEM,
+        TestConstants.Languages.SQ_AL_ISOCODE, true);
 
     Files.createDirectories(ReducedTrlTestConstants.FULL_TRL_DIR);
     TranslationManager.exportTrl(new DalConnectionProvider(),
         ReducedTrlTestConstants.FULL_TRL_DIR.toAbsolutePath().toString(),
-        TestConstants.Languages.ES_ES_ISOCODE, TestConstants.Clients.SYSTEM,
-        TestConstants.Languages.ES_ES_ISOCODE, false);
+        TestConstants.Languages.SQ_AL_ISOCODE, TestConstants.Clients.SYSTEM,
+        TestConstants.Languages.SQ_AL_ISOCODE, false);
   }
 
   @AfterClass
@@ -98,10 +98,10 @@ public class ReducedTranslationExportTests extends OBBaseTest {
     try {
       OBContext.setAdminMode(false);
       if (restoreSystemLanguageFlag) {
-        final Language esESLang = OBDal.getInstance()
-            .get(Language.class, TestConstants.Languages.ES_ES_LANG_ID);
-        esESLang.setSystemLanguage(false);
-        OBDal.getInstance().save(esESLang);
+        final Language lang = OBDal.getInstance()
+            .get(Language.class, TestConstants.Languages.SQ_AL_LANG_ID);
+        lang.setSystemLanguage(false);
+        OBDal.getInstance().save(lang);
         OBDal.getInstance().flush();
       }
     } finally {
@@ -119,89 +119,89 @@ public class ReducedTranslationExportTests extends OBBaseTest {
   @Test
   public void testAdTextInterfacesJrxml() throws IOException {
     testExistInFullAndNotExistsInReduced(
-        "lang/es_ES/org.openbravo.financial.paymentreport/AD_TEXTINTERFACES_TRL_es_ES.xml",
+        "lang/sq_AL/org.openbravo.financial.paymentreport/AD_TEXTINTERFACES_TRL_sq_AL.xml",
         "ACCS_ACCOUNT_ID_D");
   }
 
   @Test
   public void testAdElementDirectAccessInWindowExcludingTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", "\"Application\"");
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_ELEMENT_TRL_sq_AL.xml", "\"Application\"");
   }
 
   @Test
   public void testAdElementIndirectAccessInWindowReferenceExcludingTranslation()
       throws IOException {
     testExistInFullAndNotExistsInReduced(
-        "lang/es_ES/org.openbravo.client.application/AD_ELEMENT_TRL_es_ES.xml", "\"Logger\"");
+        "lang/sq_AL/org.openbravo.client.application/AD_ELEMENT_TRL_sq_AL.xml", "\"Logger\"");
   }
 
   @Test
   public void testAdElementIndirectProcessDefinitionIncludedTranslation() throws IOException {
-    testExistInBothTranslations("lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", "\"LC Costs\"");
+    testExistInBothTranslations("lang/sq_AL/AD_ELEMENT_TRL_sq_AL.xml", "\"LC Costs\"");
   }
 
   @Test
   public void testAdElementDirectProcessIncludedTranslation() throws IOException {
-    testExistInBothTranslations("lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", "\"Export Audit Info\"");
+    testExistInBothTranslations("lang/sq_AL/AD_ELEMENT_TRL_sq_AL.xml", "\"Export Audit Info\"");
   }
 
   @Test
   public void testAdFieldExcludedTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_FIELD_TRL_es_ES.xml",
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_FIELD_TRL_sq_AL.xml",
         "\"Copy from Attribute\"");
   }
 
   @Test
   public void testAdProcessAdMenuExcludedTranslation() throws IOException {
     final String string = "\"Project Status Summary\"";
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_PROCESS_TRL_es_ES.xml", string);
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_MENU_TRL_es_ES.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_PROCESS_TRL_sq_AL.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_MENU_TRL_sq_AL.xml", string);
   }
 
   @Test
   public void testProcessDefinitionAdMenuAdWindowExcludedTranslation() throws IOException {
     final String string = "\"Log Management\"";
     testExistInFullAndNotExistsInReduced(
-        "lang/es_ES/org.openbravo.client.application/OBUIAPP_PROCESS_TRL_es_ES.xml", string);
+        "lang/sq_AL/org.openbravo.client.application/OBUIAPP_PROCESS_TRL_sq_AL.xml", string);
     testExistInFullAndNotExistsInReduced(
-        "lang/es_ES/org.openbravo.client.application/AD_MENU_TRL_es_ES.xml", string);
+        "lang/sq_AL/org.openbravo.client.application/AD_MENU_TRL_sq_AL.xml", string);
     testExistInFullAndNotExistsInReduced(
-        "lang/es_ES/org.openbravo.client.application/AD_WINDOW_TRL_es_ES.xml", string);
+        "lang/sq_AL/org.openbravo.client.application/AD_WINDOW_TRL_sq_AL.xml", string);
   }
 
   @Test
   public void testAdProcessParaExcludedTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_PROCESS_PARA_TRL_es_ES.xml",
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_PROCESS_PARA_TRL_sq_AL.xml",
         "Target Payment Rule");
   }
 
   @Test
   public void testAdWindowAdMenuExcludedTranslation() throws IOException {
     final String string = "\"Windows, Tabs, and Fields\"";
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_WINDOW_TRL_es_ES.xml", string);
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_MENU_TRL_es_ES.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_WINDOW_TRL_sq_AL.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_MENU_TRL_sq_AL.xml", string);
   }
 
   @Test
   public void testAdTabAdElementExcludedTranslation() throws IOException {
     final String string = "\"Window Translation\"";
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_TAB_TRL_es_ES.xml", string);
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_ELEMENT_TRL_es_ES.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_TAB_TRL_sq_AL.xml", string);
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_ELEMENT_TRL_sq_AL.xml", string);
   }
 
   @Test
   public void testAdFieldGroupExcludedTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_FIELDGROUP_TRL_es_ES.xml", "\"Assets\"");
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_FIELDGROUP_TRL_sq_AL.xml", "\"Assets\"");
   }
 
   @Test
   public void testAdRefListExcludedTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("lang/es_ES/AD_REF_LIST_TRL_es_ES.xml", "\"Servlet\"");
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_REF_LIST_TRL_sq_AL.xml", "\"Servlet\"");
   }
 
   @Test
   public void expectedEmptyTranslationFiles() {
-    Stream.of("lang/es_ES/AD_REFERENCE_TRL_es_ES.xml", "lang/es_ES/OBUISEL_SELECTOR_TRL_es_ES.xml")
+    Stream.of("lang/sq_AL/AD_REFERENCE_TRL_sq_AL.xml", "lang/sq_AL/OBUISEL_SELECTOR_TRL_sq_AL.xml")
         .forEach(this::testExpectedEmptyTranslationFile);
   }
 

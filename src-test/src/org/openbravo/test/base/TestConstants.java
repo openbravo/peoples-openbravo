@@ -75,6 +75,8 @@ public class TestConstants {
   public static class Languages {
     public static final String ES_ES_LANG_ID = "140";
     public static final String ES_ES_ISOCODE = "es_ES";
+    public static final String SQ_AL_LANG_ID = "181";
+    public static final String SQ_AL_ISOCODE = "sq_AL";
   }
 
   public static class Modules {
