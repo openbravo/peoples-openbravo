@@ -125,7 +125,7 @@ enyo.kind({
         const criteria = new OB.App.Class.Criteria();
         criteria.criterion('bpartner', this.bPartner.get('id'));
         criteria.criterion('isShipTo', true);
-        criteria.criterion('name', filter, 'includes');
+        criteria.textCriterion('name', filter);
         let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
           criteria.build()
         );

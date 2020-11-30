@@ -1096,17 +1096,25 @@ enyo.kind({
         if (inEvent.filters.length > 0) {
           for (const filter of inEvent.filters) {
             if (filter.entity === 'BusinessPartner') {
-              criteriaAdvancedBP.criterion(
-                filter.entityColumn,
-                filter.value,
-                'includes'
-              );
+              if (filter.entityColumn === 'name') {
+                criteriaAdvancedBP.textCriterion('name', filter.value);
+              } else {
+                criteriaAdvancedBP.criterion(
+                  filter.entityColumn,
+                  filter.value,
+                  'includes'
+                );
+              }
             } else if (filter.entity === 'BusinessPartnerLocation') {
-              criteriaAdvancedBPLoc.criterion(
-                filter.entityColumn,
-                filter.value,
-                'includes'
-              );
+              if (filter.entityColumn === 'name') {
+                criteriaAdvancedBPLoc.textCriterion('name', filter.value);
+              } else {
+                criteriaAdvancedBPLoc.criterion(
+                  filter.entityColumn,
+                  filter.value,
+                  'includes'
+                );
+              }
             }
           }
         }
@@ -1178,7 +1186,7 @@ enyo.kind({
         try {
           //filter by bpName
           let criteriaBP = new OB.App.Class.Criteria();
-          criteriaBP.criterion('name', text, 'includes');
+          criteriaBP.textCriterion('name', text);
           criteriaBP.orderBy('id');
           const bp = await OB.App.MasterdataModels.BusinessPartner.find(
             criteriaBP.build()
@@ -1197,7 +1205,7 @@ enyo.kind({
           }
           //filter by bplocation name
           let criteriaBpLoc = new OB.App.Class.Criteria();
-          criteriaBpLoc.criterion('name', text, 'includes');
+          criteriaBpLoc.textCriterion('name', text);
           criteriaBpLoc.orderBy('bpartner');
           const bPLoc = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
             criteriaBpLoc.build()

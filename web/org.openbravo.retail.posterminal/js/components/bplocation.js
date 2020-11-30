@@ -1034,7 +1034,8 @@ enyo.kind({
         if (!this.manageAddress) {
           criteria.criterion('isBillTo', true);
         }
-        criteria.criterion('name', filter, 'includes');
+
+        criteria.textCriterion('name', filter);
 
         let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
           criteria.build()
