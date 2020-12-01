@@ -21,7 +21,7 @@ package org.openbravo.reference.ui;
 /**
  * Reference class to be used in AD definition for a tsvector column based on the UIString class
  */
-public class UISearchVector extends UITableDir {
+public class UISearchVector extends UIString {
   public UISearchVector(String reference, String subreference) {
     super(reference, subreference);
   }
