@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2019 Openbravo S.L.U.
+ * Copyright (C) 2012-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -158,7 +158,6 @@ enyo.kind({
         }
 
         function successCallbackBPs(dataBps) {
-          dataBps.set('locationModel', model);
           dataBps.set('shipLocId', model.get('id'));
           dataBps.set('shipLocName', model.get('name'));
           dataBps.set('shipPostalCode', model.get('postalCode'));
@@ -173,6 +172,13 @@ enyo.kind({
           dataBps.set('postalCode', me.bPartner.get('postalCode'));
           dataBps.set('cityName', me.bPartner.get('cityName'));
           dataBps.set('countryName', me.bPartner.get('countryName'));
+
+          if (dataBps.get('locId') === dataBps.get('shipLocId')) {
+            dataBps.set('locationModel', model);
+            dataBps.set('locationBillModel', model);
+          } else if (dataBps.get('locId') !== dataBps.get('shipLocId')) {
+            dataBps.set('locationModel', model);
+          }
 
           if (me.target.startsWith('filterSelectorButton_')) {
             me.doChangeFilterSelector({

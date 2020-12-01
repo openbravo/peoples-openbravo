@@ -1148,8 +1148,12 @@ enyo.kind({
             dataBps.set('postalCode', model.get('postalCode'));
             dataBps.set('cityName', model.get('cityName'));
             dataBps.set('countryName', model.get('countryName'));
-            dataBps.set('locationModel', model);
-            dataBps.set('locationBillModel', model);
+            if (dataBps.get('locId') === dataBps.get('shipLocId')) {
+              dataBps.set('locationModel', model);
+              dataBps.set('locationBillModel', model);
+            } else if (dataBps.get('locId') !== dataBps.get('shipLocId')) {
+              dataBps.set('locationBillModel', model);
+            }
           }
 
           if (me.target.startsWith('filterSelectorButton_')) {
