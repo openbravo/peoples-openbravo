@@ -2,7 +2,7 @@
   formatNameToMask, returnMaskChange, getDefaultMaskNumeric, getElementsByName,
   displayLogicElement, returnFormattedNumber, returnFormattedToCalc, roundNumber,
   returnCalcToFormatted, setWindowElementFocus, showJSMessage, initialize_MessageBox,
-  updateData, top, getFrame*/
+  updateData, getFrame*/
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License

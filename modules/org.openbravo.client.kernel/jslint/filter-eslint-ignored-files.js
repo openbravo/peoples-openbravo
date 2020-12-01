@@ -25,7 +25,7 @@
  * it is possible through their CLIEngine. For more details, see: https://github.com/eslint/eslint/issues/9977
  **/
 
-/*global require,process*/
+/*global process*/
 var CLIEngine = require('eslint').CLIEngine,
   fs = require('fs'),
   ignoreFile = process.cwd() + '/.eslintignore',
