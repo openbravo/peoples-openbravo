@@ -1495,7 +1495,7 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function(
       newCriteria = {};
 
     for (i in values) {
-      if (values.hasOwnProperty(i)) {
+      if (Object.prototype.hasOwnProperty.call(values, i)) {
         def = values[i];
         field = thisform.getItem(i);
         if (field) {

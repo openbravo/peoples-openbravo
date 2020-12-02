@@ -73,7 +73,7 @@ isc.defineClass('OBShowParameterWidget', isc.OBWidget).addProperties({
     });
 
     for (i in this.parameters) {
-      if (this.parameters.hasOwnProperty(i)) {
+      if (Object.prototype.hasOwnProperty.call(this.parameters, i)) {
         items.push({
           name: i,
           title: i,

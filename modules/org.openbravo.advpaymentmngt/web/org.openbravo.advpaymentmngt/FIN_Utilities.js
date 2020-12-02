@@ -624,7 +624,7 @@ function updateTotal() {
       var i;
       this.numberofitems = 0;
       for (i in this) {
-        if (this.hasOwnProperty(i)) {
+        if (Object.prototype.hasOwnProperty.call(this, i)) {
           if (typeof this[i] !== 'function') {
             this[i] = 0;
           }

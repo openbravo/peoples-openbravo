@@ -857,7 +857,7 @@ OB.ViewFormProperties = {
       return;
     }
     for (itemName in storedValueMaps) {
-      if (storedValueMaps.hasOwnProperty(itemName)) {
+      if (Object.prototype.hasOwnProperty.call(storedValueMaps, itemName)) {
         item = this.getItem(itemName);
         if (item) {
           item.setValueMap(storedValueMaps[itemName]);
@@ -972,7 +972,7 @@ OB.ViewFormProperties = {
 
     if (columnValues) {
       for (prop in columnValues) {
-        if (columnValues.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(columnValues, prop)) {
           this.processColumnValue(
             prop,
             columnValues[prop],
@@ -989,7 +989,7 @@ OB.ViewFormProperties = {
       this.hiddenInputs = {};
     } else if (retHiddenInputs) {
       for (prop in retHiddenInputs) {
-        if (retHiddenInputs.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(retHiddenInputs, prop)) {
           this.hiddenInputs[prop] = retHiddenInputs[prop];
         }
       }
@@ -1014,7 +1014,7 @@ OB.ViewFormProperties = {
     }
     if (auxInputs) {
       for (prop in auxInputs) {
-        if (auxInputs.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(auxInputs, prop)) {
           value =
             typeof auxInputs[prop].value !== 'undefined'
               ? auxInputs[prop].value
@@ -1112,7 +1112,7 @@ OB.ViewFormProperties = {
     // refresh WidgetInForm fields if present (as they might depend on data of current record)
     for (i = 0; i < length; i++) {
       var locField = this.getFields()[i];
-      if (locField.hasOwnProperty('widgetClassId')) {
+      if (Object.prototype.hasOwnProperty.call(locField, 'widgetClassId')) {
         locField.refresh();
       }
     }
@@ -2014,7 +2014,9 @@ OB.ViewFormProperties = {
         eventHandlerParams = {},
         eventHandlerCallback;
 
-      if (this.hasOwnProperty('previousExplicitOffline')) {
+      if (
+        Object.prototype.hasOwnProperty.call(this, 'previousExplicitOffline')
+      ) {
         isc.Offline.explicitOffline = this.previousExplicitOffline;
         delete this.previousExplicitOffline;
       }
@@ -2320,7 +2322,7 @@ OB.ViewFormProperties = {
     if (errors) {
       this.setErrors(errors, true);
       for (err in errors) {
-        if (errors.hasOwnProperty(err)) {
+        if (Object.prototype.hasOwnProperty.call(errors, err)) {
           var fld = this.getField(err);
           if (additionalMsg !== '') {
             additionalMsg = additionalMsg + '<br/>';

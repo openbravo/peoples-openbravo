@@ -93,7 +93,7 @@ isc.OBToolbarActionButton.addProperties({
       // TODO: these transformations shoulnd't be needed here as soon as getContextInfo returns
       // the transformed values.
       if (
-        allProperties.hasOwnProperty(param) &&
+        Object.prototype.hasOwnProperty.call(allProperties, param) &&
         typeof allProperties[param] === 'boolean'
       ) {
         allProperties[param] = allProperties[param] ? 'Y' : 'N';

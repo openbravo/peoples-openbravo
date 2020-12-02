@@ -1067,7 +1067,7 @@ isc.OBPersonalizeFormLayout.addProperties({
       fld = personalizationData.form.fields[i];
       for (prop in fld) {
         if (
-          fld.hasOwnProperty(prop) &&
+          Object.prototype.hasOwnProperty.call(fld, prop) &&
           !this.personalizationDataProperties.contains(prop)
         ) {
           this.personalizationDataProperties.push(prop);

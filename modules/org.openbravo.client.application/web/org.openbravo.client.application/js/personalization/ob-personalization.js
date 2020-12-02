@@ -321,7 +321,7 @@ OB.Personalization.personalizeWindow = function(data, window) {
 
   // iterate over the tabs
   for (tabId in data) {
-    if (data.hasOwnProperty(tabId)) {
+    if (Object.prototype.hasOwnProperty.call(data, tabId)) {
       personalizationData = data[tabId];
       view = window.getView(tabId);
 

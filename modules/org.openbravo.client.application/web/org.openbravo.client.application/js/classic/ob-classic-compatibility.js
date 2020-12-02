@@ -583,7 +583,7 @@
             frm.setAttribute('method', 'post');
             frm.setAttribute('action', cPopup.popupURL);
             for (i in postParams) {
-              if (postParams.hasOwnProperty(i)) {
+              if (Object.prototype.hasOwnProperty.call(postParams, i)) {
                 var inp = doc.createElement('input');
                 inp.setAttribute('type', 'hidden');
                 inp.setAttribute('name', i);

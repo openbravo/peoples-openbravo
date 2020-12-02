@@ -1024,7 +1024,7 @@ isc.OBToolbar.addProperties({
     if (
       !(
         typeof members.length === 'number' &&
-        !members.propertyIsEnumerable('length') &&
+        !Object.prototype.propertyIsEnumerable.call(members, 'length') &&
         typeof members.splice === 'function'
       )
     ) {
@@ -1090,7 +1090,7 @@ isc.OBToolbar.addProperties({
     if (
       !(
         typeof newMembers.length === 'number' &&
-        !newMembers.propertyIsEnumerable('length') &&
+        !Object.prototype.propertyIsEnumerable.call(newMembers, 'length') &&
         typeof newMembers.splice === 'function'
       )
     ) {
@@ -1274,7 +1274,7 @@ isc.OBToolbar.addProperties({
     if (
       !(
         typeof members.length === 'number' &&
-        !members.propertyIsEnumerable('length') &&
+        !Object.prototype.propertyIsEnumerable.call(members, 'length') &&
         typeof members.splice === 'function'
       )
     ) {
@@ -1341,7 +1341,7 @@ isc.OBToolbar.addProperties({
     if (
       !(
         typeof newMembers.length === 'number' &&
-        !newMembers.propertyIsEnumerable('length') &&
+        !Object.prototype.propertyIsEnumerable.call(newMembers, 'length') &&
         typeof newMembers.splice === 'function'
       )
     ) {
@@ -1510,7 +1510,7 @@ isc.OBToolbar.addProperties({
           if (auxInputs) {
             this.auxInputs = {};
             for (prop in auxInputs) {
-              if (auxInputs.hasOwnProperty(prop)) {
+              if (Object.prototype.hasOwnProperty.call(auxInputs, prop)) {
                 currentContext.viewForm.setValue(prop, auxInputs[prop].value);
                 currentContext.viewForm.auxInputs[prop] = auxInputs[prop].value;
               }
@@ -1669,7 +1669,7 @@ isc.OBToolbar.addProperties({
           if (auxInputs) {
             this.auxInputs = {};
             for (prop in auxInputs) {
-              if (auxInputs.hasOwnProperty(prop)) {
+              if (Object.prototype.hasOwnProperty.call(auxInputs, prop)) {
                 me.view.viewForm.setValue(prop, auxInputs[prop].value);
                 me.view.viewForm.auxInputs[prop] = auxInputs[prop].value;
               }
@@ -2061,7 +2061,7 @@ OB.ToolbarUtils.print = function(view, url, directPrint, type) {
   };
 
   for (param in allProperties) {
-    if (allProperties.hasOwnProperty(param)) {
+    if (Object.prototype.hasOwnProperty.call(allProperties, param)) {
       value = allProperties[param];
 
       if (typeof value === 'boolean') {

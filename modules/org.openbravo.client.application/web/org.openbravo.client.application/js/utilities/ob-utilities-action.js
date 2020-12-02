@@ -250,7 +250,7 @@ OB.Utilities.Action = {
     object = jsonArray[0];
     if (Object.prototype.toString.apply(object) === '[object Object]') {
       for (member in object) {
-        if (object.hasOwnProperty(member)) {
+        if (Object.prototype.hasOwnProperty.call(object, member)) {
           if (
             Object.prototype.toString.apply(object[member]) ===
             '[object Object]'

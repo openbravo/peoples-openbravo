@@ -353,19 +353,22 @@ isc.OBSelectorWidget.addProperties({
     if (!selected) {
       // Cleaning hidden inputs
       for (i in this.outHiddenInputs) {
-        if (this.outHiddenInputs.hasOwnProperty(i) && this.outHiddenInputs[i]) {
+        if (
+          Object.prototype.hasOwnProperty.call(this.outHiddenInputs, i) &&
+          this.outHiddenInputs[i]
+        ) {
           this.outHiddenInputs[i].value = '';
         }
       }
 
       for (i in this.outFields) {
-        if (this.outFields.hasOwnProperty(i)) {
+        if (Object.prototype.hasOwnProperty.call(this.outFields, i)) {
           changeField(this.outFields[i].fieldName, '');
         }
       }
     } else {
       for (i in this.outFields) {
-        if (this.outFields.hasOwnProperty(i)) {
+        if (Object.prototype.hasOwnProperty.call(this.outFields, i)) {
           selectedObj[i] = selected[i];
           if (!this.outFields[i]) {
             // skip id and _identifier and other columns without
@@ -662,7 +665,7 @@ isc.OBSelectorWidget.addProperties({
 
     if (this.dataSource.fields) {
       for (f in this.dataSource.fields) {
-        if (this.dataSource.fields.hasOwnProperty(f)) {
+        if (Object.prototype.hasOwnProperty.call(this.dataSource.fields, f)) {
           this.dataSource.fields[f].escapeHTML = true;
         }
       }

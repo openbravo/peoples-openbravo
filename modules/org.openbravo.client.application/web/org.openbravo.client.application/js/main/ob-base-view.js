@@ -42,7 +42,7 @@ isc.OBBaseView.addProperties({
     var prop;
 
     for (prop in params) {
-      if (params.hasOwnProperty(prop)) {
+      if (Object.prototype.hasOwnProperty.call(params, prop)) {
         if (params[prop] !== this[prop]) {
           return false;
         }

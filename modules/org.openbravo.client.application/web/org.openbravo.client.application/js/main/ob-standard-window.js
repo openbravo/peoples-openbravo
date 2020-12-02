@@ -836,7 +836,7 @@ isc.OBStandardWindow.addProperties({
     if (personalization.forms) {
       for (p in personalization.forms) {
         if (
-          personalization.forms.hasOwnProperty(p) &&
+          Object.prototype.hasOwnProperty.call(personalization.forms, p) &&
           personalization.forms[p].personalizationId
         ) {
           OB.RemoteCallManager.call(

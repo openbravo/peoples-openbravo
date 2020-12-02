@@ -443,7 +443,7 @@ isc.OBBaseParameterWindowView.addProperties({
     }
 
     for (i in defaults) {
-      if (defaults.hasOwnProperty(i)) {
+      if (Object.prototype.hasOwnProperty.call(defaults, i)) {
         def = defaults[i];
         field = this.theForm.getItem(i);
         if (field) {
@@ -460,7 +460,7 @@ isc.OBBaseParameterWindowView.addProperties({
       }
     }
     for (i in filterExpressions) {
-      if (filterExpressions.hasOwnProperty(i)) {
+      if (Object.prototype.hasOwnProperty.call(filterExpressions, i)) {
         field = this.theForm.getItem(i);
         defaultFilter = {};
         isc.addProperties(defaultFilter, filterExpressions[i]);

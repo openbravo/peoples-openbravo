@@ -752,7 +752,7 @@ isc.OBSelectorItem.addProperties({
     if (val && this.valueMap) {
       displayedVal = this.valueMap[val];
       for (i in this.valueMap) {
-        if (this.valueMap.hasOwnProperty(i)) {
+        if (Object.prototype.hasOwnProperty.call(this.valueMap, i)) {
           if (this.valueMap[i] === displayedVal && i !== val) {
             // cleaning up valueMap: there are 2 values that display the same info, keep just the one for
             // the current value
@@ -1139,7 +1139,7 @@ isc.OBSelectorItem.addProperties({
     fields = form.fields || grid.fields;
     form.hiddenInputs = form.hiddenInputs || {};
     for (i in outFields) {
-      if (outFields.hasOwnProperty(i)) {
+      if (Object.prototype.hasOwnProperty.call(outFields, i)) {
         if (outFields[i].suffix) {
           // when it has a suffix
           if (record) {
@@ -1757,7 +1757,7 @@ isc.OBSelectorLinkItem.addProperties({
       fields = form.fields || grid.fields;
     form.hiddenInputs = form.hiddenInputs || {};
     for (i in outFields) {
-      if (outFields.hasOwnProperty(i)) {
+      if (Object.prototype.hasOwnProperty.call(outFields, i)) {
         if (outFields[i].suffix) {
           if (record) {
             value = record[i];

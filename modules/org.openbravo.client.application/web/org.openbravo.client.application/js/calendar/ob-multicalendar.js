@@ -708,7 +708,12 @@ isc.OBMultiCalendar.addProperties({
     }
     if (calendarData.calendarProps && this.calendarProps) {
       for (cPropAttr in calendarData.calendarProps) {
-        if (calendarData.calendarProps.hasOwnProperty(cPropAttr)) {
+        if (
+          Object.prototype.hasOwnProperty.call(
+            calendarData.calendarProps,
+            cPropAttr
+          )
+        ) {
           this.calendarProps[cPropAttr] = calendarData.calendarProps[cPropAttr];
         }
       }

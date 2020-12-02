@@ -544,7 +544,10 @@ isc.OBTreeViewGrid.addProperties({
     if (record) {
       childrenProperty = this.data ? this.data.childrenProperty : 'children';
       for (p in values) {
-        if (values.hasOwnProperty(p) && p !== childrenProperty) {
+        if (
+          Object.prototype.hasOwnProperty.call(values, p) &&
+          p !== childrenProperty
+        ) {
           record[p] = values[p];
         }
       }

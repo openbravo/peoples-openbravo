@@ -355,7 +355,7 @@ OB.Utilities.callAction = function(action) {
 OB.Utilities.replaceNullStringValue = function(form, values) {
   var prop;
   for (prop in values) {
-    if (values.hasOwnProperty(prop)) {
+    if (Object.prototype.hasOwnProperty.call(values, prop)) {
       var value = values[prop];
       if (value === 'null') {
         values[prop] = null;
@@ -665,7 +665,7 @@ OB.Utilities.openProcessPopup = function(
       frm.setAttribute('method', 'post');
       frm.setAttribute('action', url);
       for (i in postParams) {
-        if (postParams.hasOwnProperty(i)) {
+        if (Object.prototype.hasOwnProperty.call(postParams, i)) {
           var inp = winPopUp.document.createElement('input');
           inp.setAttribute('type', 'hidden');
           inp.setAttribute('name', i);
@@ -861,7 +861,7 @@ OB.Utilities.applyDefaultValues = function(fields, defaultValues) {
   for (i = 0; i < fieldsLength; i++) {
     var field = fields[i];
     for (property in defaultValues) {
-      if (defaultValues.hasOwnProperty(property)) {
+      if (Object.prototype.hasOwnProperty.call(defaultValues, property)) {
         if (!field[property] && field[property] !== false) {
           field[property] = defaultValues[property];
         }
@@ -934,7 +934,7 @@ OB.Utilities.postThroughHiddenForm = function(url, data) {
   };
 
   for (key in data) {
-    if (data.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
       var field = document.createElement('input');
       field.setAttribute('type', 'hidden');
       field.setAttribute('name', key);
@@ -974,7 +974,7 @@ OB.Utilities.fixNull250 = function(currentValues) {
   var i;
   for (i in currentValues) {
     if (
-      currentValues.hasOwnProperty(i) &&
+      Object.prototype.hasOwnProperty.call(currentValues, i) &&
       (currentValues[i] === null || currentValues[i] === undefined)
     ) {
       currentValues[i] = '';
@@ -1411,7 +1411,7 @@ OB.Utilities.getObjectSize = function(object) {
     return false;
   }
   for (key in object) {
-    if (object.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(object, key)) {
       size++;
     }
   }

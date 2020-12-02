@@ -55,7 +55,9 @@ isc.OBCharacteristicsItem.addProperties({
 
     if (value.characteristics) {
       for (field in value.characteristics) {
-        if (value.characteristics.hasOwnProperty(field)) {
+        if (
+          Object.prototype.hasOwnProperty.call(value.characteristics, field)
+        ) {
           formFields.push({
             width: '*',
             title: field,
@@ -288,7 +290,7 @@ isc.OBCharacteristicsFilterDialog.addProperties({
     checkInitialNodes = function(internalValue) {
       var c, v, value, node, characteristic;
       for (c in internalValue) {
-        if (internalValue.hasOwnProperty(c)) {
+        if (Object.prototype.hasOwnProperty.call(internalValue, c)) {
           characteristic = internalValue[c];
           for (v = 0; v < characteristic.values.length; v++) {
             value = characteristic.values[v];
@@ -428,7 +430,7 @@ isc.OBCharacteristicsFilterItem.addClassProperties({
       result = '';
 
     for (c in displayValue) {
-      if (displayValue.hasOwnProperty(c)) {
+      if (Object.prototype.hasOwnProperty.call(displayValue, c)) {
         characteristic = displayValue[c];
         result += (hasAny ? '], ' : '') + characteristic.name + ':[';
         hasAny = true;
@@ -507,7 +509,7 @@ isc.OBCharacteristicsFilterItem.addProperties({
     };
 
     for (c in this.internalValue) {
-      if (this.internalValue.hasOwnProperty(c)) {
+      if (Object.prototype.hasOwnProperty.call(this.internalValue, c)) {
         characteristic = this.internalValue[c];
 
         inValues = [];

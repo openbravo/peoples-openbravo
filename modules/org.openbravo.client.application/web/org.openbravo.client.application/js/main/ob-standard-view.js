@@ -472,7 +472,7 @@ isc.OBStandardView.addProperties({
       // While evaluating the 'defaultTreeViewLogicIf' the parent contextInfo is needed
       // because based on the parent selected record, the current view will be shown
       // in tree view or in grid view mode.
-      if (parentContextInfo.hasOwnProperty(p)) {
+      if (Object.prototype.hasOwnProperty.call(parentContextInfo, p)) {
         contextInfo[p] = parentContextInfo[p];
       }
     }
@@ -2079,8 +2079,8 @@ isc.OBStandardView.addProperties({
     }
     for (p in childView.preferenceValues) {
       if (
-        childView.preferenceValues.hasOwnProperty(p) &&
-        !auxInputs.hasOwnProperty(p)
+        Object.prototype.hasOwnProperty.call(childView.preferenceValues, p) &&
+        !Object.prototype.hasOwnProperty.call(auxInputs, p)
       ) {
         contextInfo[p] = childView.preferenceValues[p];
       }
@@ -2668,13 +2668,16 @@ isc.OBStandardView.addProperties({
             return;
           }
           var status = resp.status;
-          if (localData && localData.hasOwnProperty('status')) {
+          if (
+            localData &&
+            Object.prototype.hasOwnProperty.call(localData, 'status')
+          ) {
             status = localData.status;
           }
           if (
             localData &&
             localData.response &&
-            localData.response.hasOwnProperty('status')
+            Object.prototype.hasOwnProperty.call(localData.response, 'status')
           ) {
             status = localData.response.status;
           }
@@ -3191,7 +3194,9 @@ isc.OBStandardView.addProperties({
 
       if (!onlySessionProperties) {
         for (p in this.standardProperties) {
-          if (this.standardProperties.hasOwnProperty(p)) {
+          if (
+            Object.prototype.hasOwnProperty.call(this.standardProperties, p)
+          ) {
             if (classicMode) {
               contextInfo[p] = this.convertContextValue(
                 this.standardProperties[p]

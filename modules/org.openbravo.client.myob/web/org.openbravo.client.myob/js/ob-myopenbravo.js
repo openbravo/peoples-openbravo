@@ -1368,7 +1368,7 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
 
     if (!OB.MyOB.isValueMapTranslated) {
       for (prop in valueMap) {
-        if (valueMap.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(valueMap, prop)) {
           OB.MyOB.adminModeValueMap.level[prop] = OB.I18N.getLabel(
             valueMap[prop]
           );

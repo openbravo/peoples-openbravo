@@ -205,7 +205,7 @@ isc.OBListItem.addProperties({
       else if (
         !this.valueMap[value] &&
         OB.Utilities.isUUID(value) &&
-        this.valueMap.hasOwnProperty(value)
+        Object.prototype.hasOwnProperty.call(this.valueMap, value)
       ) {
         return '';
       }
