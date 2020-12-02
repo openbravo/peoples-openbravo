@@ -125,7 +125,7 @@ public class ReducedTranslationExportTests extends OBBaseTest {
 
   @Test
   public void testAdElementDirectAccessInWindowExcludingTranslation() throws IOException {
-    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_ELEMENT_TRL_sq_AL.xml", "\"Application\"");
+    testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_ELEMENT_TRL_sq_AL.xml", "\"SO Sub Type\"");
   }
 
   @Test
