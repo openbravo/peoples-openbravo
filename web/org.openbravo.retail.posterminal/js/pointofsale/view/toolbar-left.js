@@ -525,6 +525,11 @@ enyo.kind({
 
     this.disabled = newIsDisabledState; // for getDisabled() to return the correct value
     this.setAttribute('disabled', newIsDisabledState); // to effectively turn the button enabled or disabled
+    if (newIsDisabledState) {
+      this.addClass('disabled');
+    } else {
+      this.removeClass('disabled');
+    }
     if (hasBeenPaid && !newIsDisabledState) {
       this.totalPrinter.removeClass(
         'obObposPointOfSaleUiButtonTabPayment-totalPrinter_white'
