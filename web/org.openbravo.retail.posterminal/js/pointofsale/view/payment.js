@@ -1669,7 +1669,10 @@ enyo.kind({
                 }
               }
             });
-          } else if (!_.isUndefined(paymentstatus)) {
+          } else if (
+            !_.isUndefined(paymentstatus) &&
+            this.activeModel().has('changePayments')
+          ) {
             selectedChange = this.activeModel()
               .get('changePayments')
               .find(function(item) {
