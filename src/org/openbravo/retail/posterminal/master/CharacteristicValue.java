@@ -57,6 +57,7 @@ public class CharacteristicValue extends MasterDataProcessHQLQuery {
 
     final List<HQLPropertyList> propertiesList = new ArrayList<>();
     propertiesList.add(characteristicsHQLProperties);
+    propertiesList.add(characteristicsHQLProperties);
     return propertiesList;
   }
 
@@ -85,6 +86,8 @@ public class CharacteristicValue extends MasterDataProcessHQLQuery {
 
     final List<String> hqlQueries = new ArrayList<>();
     hqlQueries.add(
+        getCharacteristicValueHqlString2(characteristicValueHQLProperties, isRemote, lastUpdated));
+    hqlQueries.add(
         getCharacteristicValueHqlString(characteristicValueHQLProperties, isRemote, lastUpdated));
     return hqlQueries;
   }
@@ -111,8 +114,41 @@ public class CharacteristicValue extends MasterDataProcessHQLQuery {
       query.append("   where pcv.product.id = assort.product.id");
       query.append("   and pcv.characteristicValue.id = cv.id");
       query.append("   and assort.obretcoProductlist.id in :productListIds");
-      query.append(" ))");
-      query.append(" or cv.summaryLevel = true)");
+      query.append(" )))");
+      query.append(" and (cv.$incrementalUpdateCriteria");
+      query
+          .append(" " + (lastUpdated == null ? "and" : "or") + " node.$incrementalUpdateCriteria)");
+    }
+    query.append(" and $filtersCriteria");
+    query.append(" and $hqlCriteria");
+    query.append(" and cv.$readableSimpleClientCriteria");
+    query.append(" and ch.obposUseonwebpos = true");
+    query.append(" and cv.active = true");
+    query.append(" and exists (");
+    query.append("   select 1");
+    query.append("   from Organization o");
+    query.append("   where o.id in :orgIds");
+    query.append("   and ad_org_isinnaturaltree(cv.organization.id, o.id, cv.client.id) = 'Y'");
+    query.append(" )");
+    query.append(" order by cv.name, cv.id");
+    return query.toString();
+  }
+
+  private String getCharacteristicValueHqlString2(
+      final HQLPropertyList characteristicValueHQLProperties, final boolean isRemote,
+      final Long lastUpdated) {
+    final StringBuilder query = new StringBuilder();
+    query.append(" select");
+    query.append(characteristicValueHQLProperties.getHqlSelect());
+    query.append(" from CharacteristicValue cv");
+    query.append(" join cv.characteristic ch");
+    if (isRemote) {
+      query.append(" where cv.$incrementalUpdateCriteria");
+    } else {
+      query.append(" , ADTreeNode node");
+      query.append(" where ch.tree = node.tree");
+      query.append(" and cv.id = node.node");
+      query.append(" and (cv.summaryLevel = true)");
       query.append(" and (cv.$incrementalUpdateCriteria");
       query
           .append(" " + (lastUpdated == null ? "and" : "or") + " node.$incrementalUpdateCriteria)");
