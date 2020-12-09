@@ -51,6 +51,7 @@
     },
     loadById: async function(CusAddrId, userCallback) {
       //search data in local DB and load it to this
+      const me = this;
 
       function successCallback(customerAddr) {
         if (!customerAddr || customerAddr.length === 0) {
@@ -61,7 +62,6 @@
           userCallback(me);
         }
       }
-      const me = this;
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
         OB.Dal.get(OB.Model.BPLocation, CusAddrId, successCallback);
