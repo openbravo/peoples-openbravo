@@ -502,7 +502,7 @@ enyo.kind({
             attributes = iter.attributes,
             propt;
           for (propt in attributes) {
-            if (attributes.hasOwnProperty(propt)) {
+            if (Object.prototype.hasOwnProperty.call(attributes, propt)) {
               newline[propt] = attributes[propt];
             }
           }

@@ -226,7 +226,7 @@ enyo.kind({
     var p, att;
     // reset all properties
     for (p in this.newAttributes) {
-      if (this.newAttributes.hasOwnProperty(p)) {
+      if (Object.prototype.hasOwnProperty.call(this.newAttributes, p)) {
         att = this.$.body.$.attributes.$['line_' + this.newAttributes[p].name].$
           .coreElementContainer.$[this.newAttributes[p].name];
         if (att && att.setValue) {
@@ -262,7 +262,7 @@ enyo.kind({
       this.$.body.$.attributes.$.line_ReceiptDeliveryTime.hide();
     }
     for (p in this.newAttributes) {
-      if (this.newAttributes.hasOwnProperty(p)) {
+      if (Object.prototype.hasOwnProperty.call(this.newAttributes, p)) {
         this.loadValue(this.newAttributes[p].modelProperty);
       }
     }
@@ -279,7 +279,7 @@ enyo.kind({
         var diff = this.model.changedAttributes(),
           att;
         for (att in diff) {
-          if (diff.hasOwnProperty(att)) {
+          if (Object.prototype.hasOwnProperty.call(diff, att)) {
             this.loadValue(att);
           }
         }

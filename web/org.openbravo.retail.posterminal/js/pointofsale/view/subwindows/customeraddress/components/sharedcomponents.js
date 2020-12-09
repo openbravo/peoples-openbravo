@@ -107,7 +107,9 @@ enyo.kind({
   },
   change: function() {},
   valueSet: function(inSender, inEvent) {
-    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+    if (
+      Object.prototype.hasOwnProperty.call(inEvent.data, this.modelProperty)
+    ) {
       this.setValue(inEvent.data[this.modelProperty]);
     }
   },
@@ -650,7 +652,9 @@ enyo.kind({
     onSaveProperty: ''
   },
   valueSet: function(inSender, inEvent) {
-    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+    if (
+      Object.prototype.hasOwnProperty.call(inEvent.data, this.modelProperty)
+    ) {
       if (inEvent.data[this.modelProperty]) {
         this.check();
       } else {
@@ -713,7 +717,9 @@ enyo.kind({
   renderEmpty: 'enyo.Control',
   valueSet: function(inSender, inEvent) {
     var i;
-    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+    if (
+      Object.prototype.hasOwnProperty.call(inEvent.data, this.modelProperty)
+    ) {
       for (i = 0; i < this.getCollection().length; i++) {
         if (
           this.getCollection().models[i].get('id') ===

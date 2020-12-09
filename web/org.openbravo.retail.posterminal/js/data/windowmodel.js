@@ -31,7 +31,7 @@ OB.Model.WindowModel = Backbone.Model.extend({
       }
       this.trigger('ready');
     }
-    //TODO: load offline models when regesitering window
+    //TODO: load offline models when registering window
   },
 
   setAllOff: function(model) {
@@ -41,7 +41,10 @@ OB.Model.WindowModel = Backbone.Model.extend({
     }
     if (model.attributes) {
       for (p in model.attributes) {
-        if (model.attributes.hasOwnProperty(p) && model.attributes[p]) {
+        if (
+          Object.prototype.hasOwnProperty.call(model.attributes, p) &&
+          model.attributes[p]
+        ) {
           this.setAllOff(model);
         }
       }

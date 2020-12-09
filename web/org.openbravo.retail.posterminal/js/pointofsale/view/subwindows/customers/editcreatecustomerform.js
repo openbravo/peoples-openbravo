@@ -511,7 +511,9 @@ enyo.kind({
         onRetrieveValues: 'retrieveValue'
       },
       valueSet: function(inSender, inEvent) {
-        if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+        if (
+          Object.prototype.hasOwnProperty.call(inEvent.data, this.modelProperty)
+        ) {
           this.setValue(inEvent.data[this.modelProperty]);
         }
       },

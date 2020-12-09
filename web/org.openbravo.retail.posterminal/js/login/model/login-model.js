@@ -1373,7 +1373,7 @@
       params.params = terminalData;
       var terminalDataObject = JSON.parse(terminalData);
       for (key in terminalDataObject) {
-        if (terminalDataObject.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(terminalDataObject, key)) {
           params[key] = terminalDataObject[key];
         }
       }

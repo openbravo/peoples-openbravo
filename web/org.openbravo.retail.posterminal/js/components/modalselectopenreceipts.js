@@ -327,11 +327,16 @@ enyo.kind({
 
     // Remove grey background to opened receipts list
     for (control in items) {
-      if (items.hasOwnProperty(control)) {
+      if (Object.prototype.hasOwnProperty.call(items, control)) {
         if (control.substring(0, 7) === 'control') {
           buttonContainer = items[control].$;
           for (openedReceiptsListLine in buttonContainer) {
-            if (buttonContainer.hasOwnProperty(openedReceiptsListLine)) {
+            if (
+              Object.prototype.hasOwnProperty.call(
+                buttonContainer,
+                openedReceiptsListLine
+              )
+            ) {
               if (
                 openedReceiptsListLine.substring(0, 22) ===
                 'openedReceiptsListLine'

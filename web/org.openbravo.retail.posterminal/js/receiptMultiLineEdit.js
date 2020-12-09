@@ -404,7 +404,7 @@ enyo.kind({
       var diff = this.propertycomponents;
       var att;
       for (att in diff) {
-        if (diff.hasOwnProperty(att)) {
+        if (Object.prototype.hasOwnProperty.call(diff, att)) {
           this.loadValue(att, diff[att]);
         }
       }
@@ -524,7 +524,7 @@ enyo.kind({
     }
 
     for (att in diff) {
-      if (diff.hasOwnProperty(att)) {
+      if (Object.prototype.hasOwnProperty.call(diff, att)) {
         if (diff[att].owner.owner.getShowing()) {
           //Single or multiline selection
           if (this.args.selectedLines) {
@@ -779,7 +779,7 @@ enyo.kind({
           if (lineSelected) {
             diff = this.propertycomponents;
             for (att in diff) {
-              if (diff.hasOwnProperty(att)) {
+              if (Object.prototype.hasOwnProperty.call(diff, att)) {
                 this.loadValue(att, diff[att]);
               }
             }

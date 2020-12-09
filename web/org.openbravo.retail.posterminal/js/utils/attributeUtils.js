@@ -25,7 +25,7 @@
 
     for (key in jsonAttValues) {
       if (
-        jsonAttValues.hasOwnProperty(key) &&
+        Object.prototype.hasOwnProperty.call(jsonAttValues, key) &&
         standardAttributes.indexOf(key) === -1
       ) {
         attributesList.push(jsonAttValues[key]);
@@ -37,7 +37,7 @@
 
     _.each(standardAttributes, function(attribute) {
       if (
-        jsonAttValues.hasOwnProperty(attribute) &&
+        Object.prototype.hasOwnProperty.call(jsonAttValues, attribute) &&
         jsonAttValues[attribute].label
       ) {
         attributesList.push(jsonAttValues[attribute]);
