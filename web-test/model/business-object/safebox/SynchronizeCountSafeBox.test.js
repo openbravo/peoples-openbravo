@@ -24,7 +24,7 @@ OB.App.StateAPI.Messages.utilities.forEach(util => {
 });
 
 describe('SynchronizeCountSafeBox action', () => {
-  it('Expected state after Synchronize SafeBox ', () => {
+  it('Expected state after Synchronize SafeBox', () => {
     const countSafeBox = {
       isbeingprocessed: 'Y',
       creationDate: 'test',
