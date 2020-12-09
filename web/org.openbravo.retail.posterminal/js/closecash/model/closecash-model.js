@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _ */
+/* global enyo */
 
 OB.OBPOSCloseCash = OB.OBPOSCloseCash || {};
 OB.OBPOSCloseCash.Model = OB.OBPOSCloseCash.Model || {};

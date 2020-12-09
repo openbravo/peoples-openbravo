@@ -7,7 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB */
 OB.UTIL.servicesFilter = async function(
   criteria,
   productId,

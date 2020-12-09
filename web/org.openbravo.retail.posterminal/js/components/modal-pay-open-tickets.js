@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _, OB*/
+/* global enyo */
 
 enyo.kind({
   name: 'OB.UI.ReceiptsForPayOpenTicketsList',

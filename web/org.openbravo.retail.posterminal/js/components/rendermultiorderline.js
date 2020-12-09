@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _ */
+/* global enyo */
 enyo.kind({
   name: 'OB.UI.RemoveMultiOrders',
   kind: 'OB.UI.Button',

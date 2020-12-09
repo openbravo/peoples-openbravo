@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, OB, _ */
+/* global enyo */
 
 OB.UTIL.BusinessPartnerSelector = {
   cloneAndPush: function(list, value) {

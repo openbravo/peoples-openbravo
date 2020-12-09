@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, moment, _ */
+/*global enyo,moment */
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',

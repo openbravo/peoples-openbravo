@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global Backbone*/
-
 /** Backbone model kept for backward compatibibility. @see OB.App.OfflineSession  */
 OB.Data.Registry.registerModel(
   Backbone.Model.extend({

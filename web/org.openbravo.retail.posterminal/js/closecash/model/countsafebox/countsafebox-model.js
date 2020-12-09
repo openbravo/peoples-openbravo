@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone */
-
 OB.OBPOSCountSafeBox = OB.OBPOSCountSafeBox || {};
 OB.OBPOSCountSafeBox.Model = OB.OBPOSCountSafeBox.Model || {};
 OB.OBPOSCountSafeBox.UI = OB.OBPOSCountSafeBox.UI || {};

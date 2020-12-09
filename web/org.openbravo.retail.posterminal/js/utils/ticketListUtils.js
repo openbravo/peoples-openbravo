@@ -6,7 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*global OB, _,moment, Backbone, enyo, BigDecimal*/
+/* global moment, enyo */
 
 (function() {
   OB.UTIL = window.OB.UTIL || {};

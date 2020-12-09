@@ -9,8 +9,6 @@
  ************************************************************************************
  */
 
-/*global OB, _ */
-
 (function() {
   var BPLocation = OB.Data.ExtensibleModel.extend({
     modelName: 'BPLocation',

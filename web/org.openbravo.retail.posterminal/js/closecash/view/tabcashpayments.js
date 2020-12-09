@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone */
+/* global enyo */
 
 enyo.kind({
   name: 'OB.OBPOSCloseCash.UI.RenderCashPaymentsLine',

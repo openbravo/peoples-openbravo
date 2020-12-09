@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/* global enyo */
 
 enyo.kind({
   name: 'OB.OBPOSCloseCash.UI.Button',

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo */
+/* global enyo */
 
 // HWServer: TODO: this should be implemented in HW Manager module
 OB.DS.HWResource = function(res) {

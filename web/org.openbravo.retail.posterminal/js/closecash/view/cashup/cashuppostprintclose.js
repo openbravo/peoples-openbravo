@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo */
+/* global enyo */
 
 enyo.kind({
   kind: 'OB.OBPOSCloseCash.UI.PostPrintClose',

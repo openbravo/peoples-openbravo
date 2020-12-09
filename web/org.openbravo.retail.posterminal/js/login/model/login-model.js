@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, enyo, BigDecimal, setTimeout */
+/* global enyo */
 
 (function() {
   // initialize the WebPOS terminal model that extends the core terminal model. after this, OB.MobileApp.model will be available

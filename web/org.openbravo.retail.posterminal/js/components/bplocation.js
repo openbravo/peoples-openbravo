@@ -9,7 +9,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/* global enyo */
 
 enyo.kind({
   kind: 'OB.UI.FormElement.Selector',

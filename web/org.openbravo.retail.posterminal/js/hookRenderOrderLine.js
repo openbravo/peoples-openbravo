@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _*/
+/* global enyo */
 
 OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
   args,

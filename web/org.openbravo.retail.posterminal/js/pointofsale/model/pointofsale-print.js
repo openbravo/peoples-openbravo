@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, lodash */
+/* global lodash */
 
 (function() {
   function dumyFunction() {}

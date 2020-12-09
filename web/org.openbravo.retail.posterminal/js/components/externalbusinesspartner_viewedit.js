@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, moment */
+/* global enyo, moment */
 
 enyo.kind({
   name: 'OB.OBPOSPointOfSale.UI.ModalExternalBusinessPartnerControlsDate',

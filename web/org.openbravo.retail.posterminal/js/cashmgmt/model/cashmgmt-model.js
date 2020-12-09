@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, _, TestRegistry, Promise */
+/* global TestRegistry */
 
 OB.OBPOSCashMgmt = OB.OBPOSCashMgmt || {};
 OB.OBPOSCashMgmt.Model = OB.OBPOSCashMgmt.Model || {};

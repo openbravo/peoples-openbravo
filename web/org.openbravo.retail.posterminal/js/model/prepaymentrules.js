@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB*/
-
 (function() {
   OB.UTIL.prepaymentRules = {};
   OB.UTIL.prepaymentRules.OBPOS_Default = {

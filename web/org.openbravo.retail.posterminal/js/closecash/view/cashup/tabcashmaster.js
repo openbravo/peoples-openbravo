@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _ */
+/* global enyo */
 
 enyo.kind({
   name: 'OB.OBPOSCashUp.UI.RenderCashMasterLine',

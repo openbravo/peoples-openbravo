@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, Backbone, enyo, BigDecimal*/
+/* global enyo */
 
 (function() {
   // Sales.OrderLine Model

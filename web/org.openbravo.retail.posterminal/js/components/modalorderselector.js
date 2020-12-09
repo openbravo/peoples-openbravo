@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/* global enyo */
 
 enyo.kind({
   name: 'OBPOS.UI.ReceiptSelector',
