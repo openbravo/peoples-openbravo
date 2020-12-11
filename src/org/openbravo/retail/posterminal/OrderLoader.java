@@ -535,6 +535,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
           try {
             // Set default payment type to order in case there is no payment on the order
             POSUtils.setDefaultPaymentType(jsonorder, order);
+            // Check if the current order has PaymentSchedule, if not, it is needed to create one
+            if (getPaymentScheduleOfOrder(order) == null) {
+              createPaymentSchedule(order, order.getGrandTotalAmount());
+            }
             // Cancel and Replace the order
             final Organization paymentOrganization = getPaymentOrganization(posTerminal,
                 POSUtils.isCrossStore(order.getReplacedorder(), posTerminal));
@@ -622,6 +626,41 @@ public class OrderLoader extends POSDataSynchronizationProcess
     } finally {
       documentNoHandlers.set(null);
     }
+  }
+
+  private FIN_PaymentSchedule getPaymentScheduleOfOrder(final Order order) {
+    final OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance()
+        .createCriteria(FIN_PaymentSchedule.class);
+    paymentScheduleCriteria.add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORDER, order));
+    paymentScheduleCriteria
+        .add(Restrictions.eq(FIN_PaymentSchedule.PROPERTY_ORGANIZATION, order.getOrganization()));
+    paymentScheduleCriteria.setFilterOnReadableOrganization(false);
+    paymentScheduleCriteria.setMaxResults(1);
+    return (FIN_PaymentSchedule) paymentScheduleCriteria.uniqueResult();
+  }
+
+  private static FIN_PaymentSchedule createPaymentSchedule(final Order order,
+      final BigDecimal amount) {
+    final FIN_PaymentSchedule paymentSchedule;
+    // Create a Payment Schedule if the order hasn't got
+    paymentSchedule = OBProvider.getInstance().get(FIN_PaymentSchedule.class);
+    paymentSchedule.setClient(order.getClient());
+    paymentSchedule.setOrganization(order.getOrganization());
+    paymentSchedule.setCurrency(order.getCurrency());
+    paymentSchedule.setOrder(order);
+    paymentSchedule.setFinPaymentmethod(order.getPaymentMethod());
+    paymentSchedule.setAmount(amount);
+    paymentSchedule.setOutstandingAmount(amount);
+    paymentSchedule.setDueDate(order.getOrderDate());
+    paymentSchedule.setExpectedDate(order.getOrderDate());
+    if (ModelProvider.getInstance()
+        .getEntity(FIN_PaymentSchedule.class)
+        .hasProperty("origDueDate")) {
+      paymentSchedule.set("origDueDate", paymentSchedule.getDueDate());
+    }
+    paymentSchedule.setFINPaymentPriority(order.getFINPaymentPriority());
+    OBDal.getInstance().save(paymentSchedule);
+    return paymentSchedule;
   }
 
   private void updateLinesWithAttributes(Order order, JSONArray orderlines,
