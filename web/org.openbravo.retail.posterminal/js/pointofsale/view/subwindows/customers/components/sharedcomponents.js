@@ -323,8 +323,6 @@ enyo.kind({
   },
   change: function() {},
   dataReadyFunction: function(data, inEvent) {
-    var index = 0,
-      result = null;
     if (this.destroyed) {
       return;
     }
@@ -337,33 +335,23 @@ enyo.kind({
       return;
     }
 
-    result = _.find(
-      this.collection.models,
-      function(categ) {
-        if (inEvent.customer) {
-          //Edit: select actual value
-          if (
-            categ.get(this.retrievedPropertyForValue) ===
-            inEvent.customer.get(this.modelProperty)
-          ) {
-            return true;
-          }
-        } else {
-          //New: select default value
-          if (
-            categ.get(this.retrievedPropertyForValue) === this.defaultValue()
-          ) {
-            return true;
-          }
-        }
-        index += 1;
-      },
-      this
-    );
-    if (result) {
-      this.setSelected(index);
-    } else {
-      this.setSelected(0);
+    var i;
+    for (i = 0; i < this.collection.models.length; i++) {
+      var categ = this.collection.models[i];
+      //Edit: select actual value
+      if (
+        inEvent.customer &&
+        categ.get(this.retrievedPropertyForValue) ===
+          inEvent.customer.get(this.modelProperty)
+      ) {
+        this.setSelected(i);
+        break;
+      } else if (
+        //New: select default value
+        categ.get(this.retrievedPropertyForValue) === this.defaultValue()
+      ) {
+        this.setSelected(i);
+      }
     }
   },
   saveChange: function(inSender, inEvent) {
