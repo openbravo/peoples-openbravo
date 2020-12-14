@@ -67,9 +67,9 @@ public class CheckApproval extends HttpServlet {
       JSONObject result = new JSONObject();
       result.put("status", 1);
       result.put("error", jsonError);
-      PrintWriter out = response.getWriter();
       response.setContentType("application/json");
       response.setCharacterEncoding("UTF-8");
+      PrintWriter out = response.getWriter();
       out.print(result.toString());
       out.flush();
     } catch (Exception e) {
@@ -165,9 +165,9 @@ public class CheckApproval extends HttpServlet {
           result.put("error", jsonError);
         }
       }
-      PrintWriter out = response.getWriter();
       response.setContentType("application/json");
       response.setCharacterEncoding("UTF-8");
+      PrintWriter out = response.getWriter();
       out.print(result.toString());
       out.flush();
     } catch (JSONException e) {
