@@ -102,6 +102,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
         OBCriteria<OBPOSSafeBox> safeBoxCriteria = OBDal.getInstance()
             .createCriteria(OBPOSSafeBox.class);
         safeBoxCriteria.add(Restrictions.eq(OBPOSSafeBox.PROPERTY_SEARCHKEY, safeBoxSK));
+        safeBoxCriteria.add(
+            Restrictions.eq(OBPOSSafeBox.PROPERTY_ORGANIZATION, posTerminal.getOrganization()));
 
         safeBox = (OBPOSSafeBox) safeBoxCriteria.uniqueResult();
       }
