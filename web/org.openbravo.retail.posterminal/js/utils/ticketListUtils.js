@@ -548,16 +548,20 @@
                       discount.discountType
                     )
                   ) {
-                    var percentage;
-                    if (discount.obdiscPercentage) {
-                      percentage = OB.DEC.mul(
-                        OB.DEC.div(promotion.amt, iter.lineGrossAmount),
-                        new BigDecimal('100')
-                      );
+                    const discountRule =
+                      OB.Model.Discounts.discountRules[discount.discountType];
+                    if (discountRule && discountRule.isManual) {
+                      if (!discountRule.isAmount) {
+                        promotion.userAmt = OB.DEC.mul(
+                          OB.DEC.div(promotion.amt, iter.lineGrossAmount),
+                          new BigDecimal('100')
+                        );
+                      } else {
+                        promotion.userAmt = promotion.amt;
+                      }
+                      promotion.discountType = discount.discountType;
+                      promotion.manual = true;
                     }
-                    promotion.userAmt = percentage ? percentage : promotion.amt;
-                    promotion.discountType = discount.discountType;
-                    promotion.manual = true;
                   }
                 } catch (error) {
                   OB.UTIL.showError(error);
