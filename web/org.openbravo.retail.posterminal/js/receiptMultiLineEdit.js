@@ -848,7 +848,15 @@ enyo.kind({
       onShowhide: function(inSender, inEvent) {
         if (inEvent.showDate) {
           this.owner.owner.show();
-          this.setValue(this.model.get('obrdmDeliveryDate'));
+          if (OB.UTIL.isNullOrUndefined(this.model.get('obrdmDeliveryDate'))) {
+            this.setValue(this.model.get('obrdmDeliveryDate'));
+          } else {
+            this.setValue(
+              this.model.get('obrdmDeliveryDate') instanceof Date
+                ? this.model.get('obrdmDeliveryDate')
+                : new Date(this.model.get('obrdmDeliveryDate'))
+            );
+          }
         } else {
           this.owner.owner.hide();
         }
@@ -892,7 +900,15 @@ enyo.kind({
       onShowhide: function(inSender, inEvent) {
         if (inEvent.showTime) {
           this.owner.owner.show();
-          this.setValue(this.model.get('obrdmDeliveryDate'));
+          if (OB.UTIL.isNullOrUndefined(this.model.get('obrdmDeliveryDate'))) {
+            this.setValue(this.model.get('obrdmDeliveryDate'));
+          } else {
+            this.setValue(
+              this.model.get('obrdmDeliveryDate') instanceof Date
+                ? this.model.get('obrdmDeliveryDate')
+                : new Date(this.model.get('obrdmDeliveryDate'))
+            );
+          }
         } else {
           this.owner.owner.hide();
         }
