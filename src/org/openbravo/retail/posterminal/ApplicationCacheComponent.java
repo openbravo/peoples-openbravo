@@ -23,11 +23,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.openbravo.client.kernel.StaticResourceProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.MobileCoreApplicationCacheComponent;
+import org.openbravo.mobile.core.MobileCoreConstants;
 import org.openbravo.retail.posterminal.utility.OBPOSPrintTemplateReader;
 
 /**
@@ -37,6 +41,9 @@ import org.openbravo.retail.posterminal.utility.OBPOSPrintTemplateReader;
 
 @RequestScoped
 public class ApplicationCacheComponent extends MobileCoreApplicationCacheComponent {
+
+  @Inject
+  private StaticResourceProvider resourceProvider;
 
   @Override
   public List<String> getAppList() {
@@ -102,6 +109,31 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
 
     resources.sort(Comparator.comparing(String::toString));
     return resources;
+  }
+
+  @Override
+  public String getETag() {
+    final String appNameKey = getAppNameKey();
+    if (resourceProvider.getStaticResourceCachedInfo(appNameKey) == null) {
+      // do something unique
+      return String.valueOf(System.currentTimeMillis());
+    } else {
+      // compute the md5 of the cached content
+      return DigestUtils.md5Hex(resourceProvider.getStaticResourceCachedInfo(appNameKey));
+    }
+  }
+
+  private String getAppNameKey() {
+    return getApplicationName() + "_" + MobileCoreConstants.APP_CACHE_COMPONENT;
+  }
+
+  @Override
+  public String generate() {
+    final String content = super.generate();
+    if (!isInDevelopment()) {
+      resourceProvider.putStaticResourceCachedInfo(getAppNameKey(), content);
+    }
+    return content;
   }
 
   @Override
