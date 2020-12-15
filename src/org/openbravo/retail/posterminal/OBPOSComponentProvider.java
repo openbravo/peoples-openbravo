@@ -90,15 +90,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/order",
         // "model/terminal",
         // "model/user",
-        "model/promotions", "utils/ob-utilitiesuipos", "utils/externalBpUtils",
-        "model/bpartnerfilter", "model/orderfilter", "model/crossstorefilter",
-        "model/orders-for-verified-returns-filter", "model/bplocation", // Model
-                                                                        // for
-                                                                        // Customer
-                                                                        // Address
-
-        "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter", "webprinter/escpos",
-        "webprinter/standardprinters", "webprinter/typedarrays", "webprinter/testprinter",
+        "utils/ob-utilitiesuipos", "utils/externalBpUtils", "model/bpartnerfilter",
+        "model/orderfilter", "model/crossstorefilter", "model/orders-for-verified-returns-filter",
+        "model/bplocation", "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter",
+        "webprinter/escpos", "webprinter/standardprinters", "webprinter/typedarrays",
+        "webprinter/testprinter",
 
         "webprinter/usbprinters/epsontmt20", "webprinter/usbprinters/epsontmt20ii",
         "webprinter/usbprinters/epsontmt88v", "webprinter/usbprinters/ncr7197",
