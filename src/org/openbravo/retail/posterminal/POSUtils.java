@@ -561,11 +561,10 @@ public class POSUtils {
     try {
       OBQuery<OBPOSAppPayment> paymentQuery = OBDal.getInstance()
           .createQuery(OBPOSAppPayment.class,
-              "as e where e.obposApplications.organization = :organization and e.obposApplications.id = :terminal and e.paymentMethod.paymentMethod.id = :paymentMethod and e.financialAccount.currency = :currency order by e.id");
+              "as e where e.obposApplications.organization = :organization and e.obposApplications.id = :terminal and e.financialAccount.currency = :currency order by e.id");
       paymentQuery.setNamedParameter("organization",
           order.getObposApplications().getOrganization());
       paymentQuery.setNamedParameter("terminal", order.getObposApplications().getId());
-      paymentQuery.setNamedParameter("paymentMethod", order.getPaymentMethod().getId());
       paymentQuery.setNamedParameter("currency", order.getOrganization().getCurrency());
       paymentQuery.setFilterOnReadableOrganization(false);
       paymentQuery.setMaxResult(1);
