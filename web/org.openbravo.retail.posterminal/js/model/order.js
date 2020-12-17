@@ -2322,6 +2322,9 @@
               }
               attrs.cancelOperation = true;
             }
+            if (callback) {
+              callback(false, null);
+            }
             return null;
           }
 
@@ -2441,6 +2444,9 @@
               ) {
                 OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
               }
+              if (callback) {
+                callback(false, null);
+              }
               return null;
             }
             checkLineStock(function() {
@@ -2457,6 +2463,9 @@
                 },
                 function(args) {
                   if (args && args.cancelOperation) {
+                    if (callback) {
+                      callback(false, null);
+                    }
                     return;
                   }
                   if (args.receipt.isCalculateReceiptLocked === true) {
@@ -2470,6 +2479,9 @@
                       args.attrs.obposEpccode
                     ) {
                       OB.UTIL.RfidController.removeEpc(args.attrs.obposEpccode);
+                    }
+                    if (callback) {
+                      callback(false, null);
                     }
                     return null;
                   }
@@ -2488,6 +2500,9 @@
                         OB.UTIL.RfidController.removeEpc(
                           args.attrs.obposEpccode
                         );
+                      }
+                      if (callback) {
+                        callback(false, null);
                       }
                       return;
                     }
@@ -2584,6 +2599,9 @@
                 ) {
                   OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
                 }
+                if (callback) {
+                  callback(false, null);
+                }
                 return;
               }
             }
@@ -2598,6 +2616,9 @@
                 attrs.obposEpccode
               ) {
                 OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+              }
+              if (callback) {
+                callback(false, null);
               }
               return null;
             }
@@ -4179,6 +4200,9 @@
             attrs.obposEpccode
           ) {
             OB.UTIL.RfidController.removeEpc(attrs.obposEpccode);
+          }
+          if (callback) {
+            callback(false, null);
           }
           return null;
         }
