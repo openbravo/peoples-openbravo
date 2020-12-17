@@ -53,32 +53,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     resources.add("../../web/org.openbravo.client.kernel/js/LAB.min.js");
     resources.add("../../web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js");
 
-    // Boot code
-
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxRate&modelName=TaxRate&source=org.openbravo.retail.posterminal.master.TaxRate");
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=FinancialMgmtTaxZone&modelName=TaxZone&source=org.openbravo.retail.posterminal.master.TaxZone");
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingProductPrice&modelName=ProductPrice&source=org.openbravo.retail.posterminal.master.ProductPrice");
-
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustment&modelName=Discount&source=org.openbravo.retail.posterminal.master.Discount");
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartner&modelName=DiscountFilterBusinessPartner&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartner&remote=OBPOS_remote.discount.bp");
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerGroup&modelName=DiscountFilterBusinessPartnerGroup&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerGroup");
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProduct&modelName=DiscountFilterProduct&source=org.openbravo.retail.posterminal.master.DiscountFilterProduct");
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentProductCategory&modelName=DiscountFilterProductCategory&source=org.openbravo.retail.posterminal.master.DiscountFilterProductCategory");
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=OBDISC_Offer_Role&modelName=DiscountFilterRole&source=org.openbravo.retail.posterminal.master.DiscountFilterRole");
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentCharacteristic&modelName=DiscountFilterCharacteristic&source=org.openbravo.retail.posterminal.master.DiscountFilterCharacteristic");
-    resources.add(
-        "../../org.openbravo.mobile.core/OBMOBC_Main/ClientModel?entity=PricingAdjustmentBusinessPartnerExtRef&modelName=DiscountFilterBusinessPartnerExtRef&source=org.openbravo.retail.posterminal.master.DiscountFilterBusinessPartnerExtRef");
-
     // Sounds
     resources.add("../../web/org.openbravo.retail.posterminal/sounds/drawerAlert.mp3");
 
