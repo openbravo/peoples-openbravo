@@ -466,7 +466,29 @@ enyo.kind({
         if (checkedMultiOrders.length === alreadyPaidOrders.length) {
           OB.UTIL.showConfirmation.display(
             OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_PaidOrderAllPaid', [alreadyPaidOrdersDocNo])
+            OB.I18N.getLabel('OBPOS_PaidOrderAllPaid', [
+              alreadyPaidOrdersDocNo
+            ]),
+            [
+              {
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: function() {
+                  OB.UTIL.ProcessController.finish(
+                    'payOpenTicketsValidation',
+                    execution
+                  );
+                }
+              }
+            ],
+            {
+              onHideFunction: function() {
+                OB.UTIL.ProcessController.finish(
+                  'payOpenTicketsValidation',
+                  execution
+                );
+              }
+            }
           );
           return;
         } else {
