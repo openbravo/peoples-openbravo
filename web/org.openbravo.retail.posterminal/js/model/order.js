@@ -1029,7 +1029,6 @@
     // This function calculate the promotions, taxes and gross of all the receipt
     calculateReceipt: function(callback, line, forceCalculateReceipt) {
       var me = this;
-      var execution = OB.UTIL.ProcessController.start('calculateReceipt');
 
       if (this.propagatingStateToBackbone) {
         // calculateReceipt was invoked by a backbone trigger while propagating a change from
@@ -1078,6 +1077,12 @@
         }
         return;
       }
+
+      OB.MobileApp.view.waterfall('calculatingReceipt');
+      this.trigger('calculatingReceipt');
+      this.calculatingReceipt = true;
+      var execution = OB.UTIL.ProcessController.start('calculateReceipt');
+      this.addToListOfCallbacks(callback);
 
       const finalCallbacksAndFinish = function() {
         var finishCalculateReceipt = function(callback) {
@@ -1137,11 +1142,6 @@
         });
         me.calculateGross();
       };
-
-      OB.MobileApp.view.waterfall('calculatingReceipt');
-      this.trigger('calculatingReceipt');
-      this.calculatingReceipt = true;
-      this.addToListOfCallbacks(callback);
 
       if (
         this.get('skipApplyPromotions') ||
@@ -2857,9 +2857,9 @@
 
     //Attrs is an object of attributes that will be set in order
     addProduct: async function(p, qty, options, attrs, callback) {
+      var me = this;
       var execution = OB.UTIL.ProcessController.start('addProduct');
       OB.debug('_addProduct');
-      var me = this;
 
       function successCallback(productPrices) {
         if (productPrices.length > 0) {
