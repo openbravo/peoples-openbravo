@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, OB */
+/* global enyo */
 
 enyo.kind({
   name: 'OB.UI.NewExternalBusinessPartner',

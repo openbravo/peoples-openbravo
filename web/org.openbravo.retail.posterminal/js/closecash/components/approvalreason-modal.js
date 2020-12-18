@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone, _, enyo */
+/* global enyo */
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',

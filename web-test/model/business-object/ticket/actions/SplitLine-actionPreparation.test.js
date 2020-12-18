@@ -34,6 +34,13 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/SplitLine');
 
+const basicTicket = deepfreeze({
+  lines: [
+    { id: '1', qty: 100, product: { id: 'p1' } },
+    { id: '2', qty: 100, product: { id: 'p2' } }
+  ]
+});
+
 const prepareAction = async (payload, ticket = basicTicket) => {
   const newPayload = await executeActionPreparations(
     OB.App.StateAPI.Ticket.splitLine,
@@ -42,13 +49,6 @@ const prepareAction = async (payload, ticket = basicTicket) => {
   );
   return newPayload;
 };
-
-const basicTicket = deepfreeze({
-  lines: [
-    { id: '1', qty: 100, product: { id: 'p1' } },
-    { id: '2', qty: 100, product: { id: 'p2' } }
-  ]
-});
 
 describe('Ticket.splitLine action preparation', () => {
   it('checks line id parameter is present', async () => {

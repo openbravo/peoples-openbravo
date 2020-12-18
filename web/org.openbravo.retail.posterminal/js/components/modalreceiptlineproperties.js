@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/* global enyo */
 
 enyo.kind({
   name: 'OB.UI.ModalReceiptLinesProperties',
@@ -21,7 +21,7 @@ enyo.kind({
       let att,
         diff = this.propertycomponents;
       for (att in diff) {
-        if (diff.hasOwnProperty(att)) {
+        if (Object.prototype.hasOwnProperty.call(diff, att)) {
           this.loadValue(att, diff[att]);
         }
       }
@@ -112,7 +112,7 @@ enyo.kind({
     diff = this.propertycomponents;
     this.formData = {};
     for (att in diff) {
-      if (diff.hasOwnProperty(att)) {
+      if (Object.prototype.hasOwnProperty.call(diff, att)) {
         if (diff[att].owner.owner.getShowing()) {
           if (this.args.callback) {
             this.formData[diff[att].modelProperty] = diff[att].getValue
@@ -180,7 +180,7 @@ enyo.kind({
           if (lineSelected) {
             diff = this.propertycomponents;
             for (att in diff) {
-              if (diff.hasOwnProperty(att)) {
+              if (Object.prototype.hasOwnProperty.call(diff, att)) {
                 this.loadValue(att, diff[att]);
               }
             }

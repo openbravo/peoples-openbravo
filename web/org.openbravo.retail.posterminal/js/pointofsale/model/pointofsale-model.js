@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, enyo, _*/
+/* global enyo */
 
 OB.OBPOSPointOfSale = OB.OBPOSPointOfSale || {};
 OB.OBPOSPointOfSale.Model = OB.OBPOSPointOfSale.Model || {};

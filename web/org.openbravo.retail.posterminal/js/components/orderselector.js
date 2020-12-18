@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, moment, OBRDM, _ */
+/* global enyo, moment, OBRDM */
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
@@ -702,7 +702,7 @@ enyo.kind({
           var newline = {};
           var prop;
           for (prop in line.attributes) {
-            if (line.attributes.hasOwnProperty(prop)) {
+            if (Object.prototype.hasOwnProperty.call(line.attributes, prop)) {
               newline[prop] = line.get(prop);
             }
           }
@@ -877,7 +877,7 @@ enyo.kind({
                 var newline = {};
                 var prop;
                 for (prop in line) {
-                  if (line.hasOwnProperty(prop)) {
+                  if (Object.prototype.hasOwnProperty.call(line, prop)) {
                     newline[prop] = line[prop];
                   }
                 }
@@ -989,7 +989,8 @@ enyo.kind({
                               function(component) {
                                 var renderOrderLine = component.renderline;
                                 if (
-                                  data.qtyDeliveredByOrderLine.hasOwnProperty(
+                                  Object.prototype.hasOwnProperty.call(
+                                    data.qtyDeliveredByOrderLine,
                                     renderOrderLine.model.get('id')
                                   )
                                 ) {
@@ -1163,7 +1164,7 @@ enyo.kind({
           var newline = {};
           var prop;
           for (prop in iter) {
-            if (iter.hasOwnProperty(prop)) {
+            if (Object.prototype.hasOwnProperty.call(iter, prop)) {
               newline[prop] = iter[prop];
             }
           }

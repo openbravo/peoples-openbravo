@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, _, lodash */
+/* global lodash */
 
 (function() {
   function dumyFunction() {}
@@ -21,7 +21,9 @@
       var i = 0,
         subreports = [];
 
-      while (terminal.hasOwnProperty(template + 'Subrep' + i)) {
+      while (
+        Object.prototype.hasOwnProperty.call(terminal, template + 'Subrep' + i)
+      ) {
         subreports[i] = new OB.DS.HWResource(terminal[template + 'Subrep' + i]);
         subreports[i].getData(dumyFunction);
         i++;

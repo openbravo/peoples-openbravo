@@ -7,7 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB */
 OB.UTIL.remoteSearch = function(currentModel) {
   return (
     OB.MobileApp.model.hasPermission(currentModel.prototype.remote, true) ||

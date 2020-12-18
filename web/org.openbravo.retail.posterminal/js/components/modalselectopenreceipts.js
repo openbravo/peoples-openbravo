@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global enyo, Promise*/
+/* global enyo */
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
@@ -327,11 +327,16 @@ enyo.kind({
 
     // Remove grey background to opened receipts list
     for (control in items) {
-      if (items.hasOwnProperty(control)) {
+      if (Object.prototype.hasOwnProperty.call(items, control)) {
         if (control.substring(0, 7) === 'control') {
           buttonContainer = items[control].$;
           for (openedReceiptsListLine in buttonContainer) {
-            if (buttonContainer.hasOwnProperty(openedReceiptsListLine)) {
+            if (
+              Object.prototype.hasOwnProperty.call(
+                buttonContainer,
+                openedReceiptsListLine
+              )
+            ) {
               if (
                 openedReceiptsListLine.substring(0, 22) ===
                 'openedReceiptsListLine'

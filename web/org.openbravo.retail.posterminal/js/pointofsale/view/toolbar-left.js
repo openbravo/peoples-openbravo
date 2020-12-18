@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, _ */
+/* global enyo */
 
 /*left toolbar*/
 enyo.kind({
@@ -736,6 +736,93 @@ enyo.kind({
       OB.UTIL.StockUtils.checkOrderLinesStock([receipt], async function(
         hasStock
       ) {
+        const completePayment = function() {
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_PrePaymentHook',
+            {
+              context: me.model,
+              caller: me
+            },
+            function(args) {
+              if (args && args.cancellation) {
+                OB.UTIL.ProcessController.finish(
+                  'totalAmountValidation',
+                  execution
+                );
+                return;
+              }
+              OB.UTIL.HookManager.executeHooks(
+                'OBPOS_PrePaymentApproval',
+                {
+                  context: me.model,
+                  caller: me
+                },
+                function(args2) {
+                  OB.UTIL.HookManager.executeHooks(
+                    'OBPOS_CheckPaymentApproval',
+                    {
+                      approvals: [],
+                      context: me.model,
+                      caller: me
+                    },
+                    function(args3) {
+                      function showPaymentTab() {
+                        if (
+                          !_.isUndefined(args3.approved) ? args3.approved : true
+                        ) {
+                          me.model.get('order').getPrepaymentAmount(function() {
+                            OB.UTIL.ProcessController.finish(
+                              'totalAmountValidation',
+                              execution
+                            );
+                            me.showPaymentTab();
+                          }, true);
+                        } else {
+                          OB.UTIL.ProcessController.finish(
+                            'totalAmountValidation',
+                            execution
+                          );
+                        }
+                      }
+
+                      if (
+                        me.model.get('order').getGross() < 0 &&
+                        !OB.MobileApp.model.get('permissions')[
+                          'OBPOS_approval.returns'
+                        ]
+                      ) {
+                        args3.approvals.push('OBPOS_approval.returns');
+                      }
+                      if (
+                        args3.approvals.length > 0 &&
+                        !receipt.get('isLayaway') &&
+                        !receipt.get('isPaid')
+                      ) {
+                        OB.UTIL.Approval.requestApproval(
+                          me.model,
+                          args3.approvals,
+                          function(approved) {
+                            if (approved) {
+                              showPaymentTab();
+                            } else {
+                              OB.UTIL.ProcessController.finish(
+                                'totalAmountValidation',
+                                execution
+                              );
+                            }
+                          }
+                        );
+                      } else {
+                        showPaymentTab();
+                      }
+                    }
+                  );
+                }
+              );
+            }
+          );
+        };
+
         function successCallback(data) {
           if (
             data &&
@@ -766,97 +853,6 @@ enyo.kind({
         }
 
         if (hasStock) {
-          var completePayment = function() {
-            OB.UTIL.HookManager.executeHooks(
-              'OBPOS_PrePaymentHook',
-              {
-                context: me.model,
-                caller: me
-              },
-              function(args) {
-                if (args && args.cancellation) {
-                  OB.UTIL.ProcessController.finish(
-                    'totalAmountValidation',
-                    execution
-                  );
-                  return;
-                }
-                OB.UTIL.HookManager.executeHooks(
-                  'OBPOS_PrePaymentApproval',
-                  {
-                    context: me.model,
-                    caller: me
-                  },
-                  function(args2) {
-                    OB.UTIL.HookManager.executeHooks(
-                      'OBPOS_CheckPaymentApproval',
-                      {
-                        approvals: [],
-                        context: me.model,
-                        caller: me
-                      },
-                      function(args3) {
-                        function showPaymentTab() {
-                          if (
-                            !_.isUndefined(args3.approved)
-                              ? args3.approved
-                              : true
-                          ) {
-                            me.model
-                              .get('order')
-                              .getPrepaymentAmount(function() {
-                                OB.UTIL.ProcessController.finish(
-                                  'totalAmountValidation',
-                                  execution
-                                );
-                                me.showPaymentTab();
-                              }, true);
-                          } else {
-                            OB.UTIL.ProcessController.finish(
-                              'totalAmountValidation',
-                              execution
-                            );
-                          }
-                        }
-
-                        if (
-                          me.model.get('order').getGross() < 0 &&
-                          !OB.MobileApp.model.get('permissions')[
-                            'OBPOS_approval.returns'
-                          ]
-                        ) {
-                          args3.approvals.push('OBPOS_approval.returns');
-                        }
-                        if (
-                          args3.approvals.length > 0 &&
-                          !receipt.get('isLayaway') &&
-                          !receipt.get('isPaid')
-                        ) {
-                          OB.UTIL.Approval.requestApproval(
-                            me.model,
-                            args3.approvals,
-                            function(approved) {
-                              if (approved) {
-                                showPaymentTab();
-                              } else {
-                                OB.UTIL.ProcessController.finish(
-                                  'totalAmountValidation',
-                                  execution
-                                );
-                              }
-                            }
-                          );
-                        } else {
-                          showPaymentTab();
-                        }
-                      }
-                    );
-                  }
-                );
-              }
-            );
-          };
-
           if (OB.MobileApp.model.hasPermission('OBPOS_remote.product', true)) {
             criteria.remoteFilters = [];
             criteria.remoteFilters.push({

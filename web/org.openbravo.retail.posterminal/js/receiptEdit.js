@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global Backbone, _, OBRDM */
+/* global OBRDM */
 
 var ReceiptDeliveryModeDefinition = {
   kind: 'OB.UI.renderComboProperty',

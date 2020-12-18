@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB */
-
 (function() {
   var ProductServiceLinked = OB.Data.ExtensibleModel.extend({
     modelName: 'ProductServiceLinked',

@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, _ */
+/* global enyo */
 
 enyo.kind({
   name: 'OB.UI.OrderMultiSelect',
@@ -816,7 +816,7 @@ enyo.kind({
     // Inject the footer components
     var prop;
     for (prop in OB.POS.ORDERFOOTER) {
-      if (OB.POS.ORDERFOOTER.hasOwnProperty(prop)) {
+      if (Object.prototype.hasOwnProperty.call(OB.POS.ORDERFOOTER, prop)) {
         this.$.injectedFooter
           .createComponent({
             kind: OB.POS.ORDERFOOTER[prop],

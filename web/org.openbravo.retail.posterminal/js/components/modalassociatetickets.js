@@ -1,13 +1,13 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2019 Openbravo S.L.U.
+ * Copyright (C) 2016-2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global OB, enyo, Backbone, moment, _ */
+/*global enyo,moment */
 
 enyo.kind({
   kind: 'OB.UI.ModalDialogButton',
@@ -502,7 +502,7 @@ enyo.kind({
             attributes = iter.attributes,
             propt;
           for (propt in attributes) {
-            if (attributes.hasOwnProperty(propt)) {
+            if (Object.prototype.hasOwnProperty.call(attributes, propt)) {
               newline[propt] = attributes[propt];
             }
           }

@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global */
-
 OB.OBPOSCashUp = OB.OBPOSCashUp || {};
 OB.OBPOSCashUp.Model = OB.OBPOSCashUp.Model || {};
 OB.OBPOSCashUp.UI = OB.OBPOSCashUp.UI || {};

@@ -6,7 +6,6 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*global OB */
 
 (function() {
   OB.Taxes = OB.Taxes || {};

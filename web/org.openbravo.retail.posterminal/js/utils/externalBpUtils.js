@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB */
-
 // Returns true if extbpEnabled is enabled
 OB.UTIL.externalBp = function() {
   return OB.MobileApp.model.get('externalBpIntegration') ? true : false;

@@ -6,7 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/*global OB, _,moment, Backbone, enyo, BigDecimal*/
+/* global moment, enyo */
 
 (function() {
   OB.UTIL = window.OB.UTIL || {};
@@ -464,7 +464,7 @@
         var paymentProp;
         curPayment = new OB.Model.PaymentLine();
         for (paymentProp in iter) {
-          if (iter.hasOwnProperty(paymentProp)) {
+          if (Object.prototype.hasOwnProperty.call(iter, paymentProp)) {
             if (paymentProp === 'paymentDate') {
               if (
                 !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
@@ -495,7 +495,7 @@
         var taxProp;
         taxes[iter.taxid] = {};
         for (taxProp in iter) {
-          if (iter.hasOwnProperty(taxProp)) {
+          if (Object.prototype.hasOwnProperty.call(iter, taxProp)) {
             taxes[iter.taxid][taxProp] = iter[taxProp];
           }
         }

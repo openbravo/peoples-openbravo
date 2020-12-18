@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, OB, _ */
+/* global enyo */
 
 OB.UTIL.BusinessPartnerSelector = {
   cloneAndPush: function(list, value) {
@@ -346,6 +346,8 @@ enyo.kind({
   classes: 'obUiBpDetailsContextMenuItem',
   i18NLabel: 'OBPOS_BPViewDetails',
   selectItem: async function(bpartner) {
+    var dialog = this.owner.owner.dialog;
+
     function successCallback(bp) {
       dialog.bubble('onShowPopup', {
         popup: 'customerView',
@@ -362,7 +364,7 @@ enyo.kind({
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
-    var dialog = this.owner.owner.dialog;
+
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       OB.Dal.get(
         OB.Model.BusinessPartner,
@@ -397,6 +399,12 @@ enyo.kind({
       silent: true
     });
 
+    var dialog = this.owner.owner.dialog,
+      navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
+        dialog.owner.owner.args.navigationPath,
+        'modalcustomer'
+      );
+
     function successCallback(bp) {
       dialog.bubble('onShowPopup', {
         popup: 'customerCreateAndEdit',
@@ -411,11 +419,7 @@ enyo.kind({
         }
       });
     }
-    var dialog = this.owner.owner.dialog,
-      navigationPath = OB.UTIL.BusinessPartnerSelector.cloneAndPush(
-        dialog.owner.owner.args.navigationPath,
-        'modalcustomer'
-      );
+
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       OB.Dal.get(
         OB.Model.BusinessPartner,
@@ -447,6 +451,8 @@ enyo.kind({
   classes: 'obUiBpAddressContextMenuItem',
   i18NLabel: 'OBPOS_BPAddress',
   selectItem: async function(bpartner) {
+    var dialog = this.owner.owner.dialog;
+
     function successCallback(bp) {
       OB.MobileApp.view.$.containerWindow.getRoot().bubble('onShowPopup', {
         popup: 'modalcustomeraddress',
@@ -463,7 +469,6 @@ enyo.kind({
       });
     }
 
-    var dialog = this.owner.owner.dialog;
     bpartner.set('ignoreSetBP', true, {
       silent: true
     });
@@ -502,6 +507,9 @@ enyo.kind({
     onShowPopup: ''
   },
   selectItem: async function(bpartner) {
+    var me = this,
+      dialog;
+
     function successCallback(bp) {
       me.doShowPopup({
         popup: 'modalReceiptSelectorCustomerView',
@@ -517,11 +525,10 @@ enyo.kind({
       });
     }
     if (OB.MobileApp.model.get('connectedToERP')) {
-      var me = this,
-        dialog = this.owner.owner.dialog;
       bpartner.set('ignoreSetBP', true, {
         silent: true
       });
+      dialog = this.owner.owner.dialog;
       dialog.owner.owner.hide();
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
@@ -1316,6 +1323,8 @@ enyo.kind({
     }
   },
   setBPLocation: async function(bpartner, shipping, billing, locations) {
+    var me = this;
+
     function successCallback(bp) {
       bp.setBPLocations(
         shipping,
@@ -1358,7 +1367,7 @@ enyo.kind({
         return;
       }
     }
-    var me = this;
+
     if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
       OB.Dal.get(
         OB.Model.BusinessPartner,

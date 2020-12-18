@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, _*/
+/* global enyo */
 
 enyo.kind({
   name:
@@ -64,7 +64,9 @@ enyo.kind({
     onSetValues: ''
   },
   valueSet: function(inSender, inEvent) {
-    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+    if (
+      Object.prototype.hasOwnProperty.call(inEvent.data, this.modelProperty)
+    ) {
       this.setValue(inEvent.data[this.modelProperty]);
     }
   },
@@ -243,7 +245,7 @@ enyo.kind({
     onHideShowFields: ''
   },
   valueSet: function(inSender, inEvent) {
-    if (inEvent.data.hasOwnProperty('btnUseSameCheck')) {
+    if (Object.prototype.hasOwnProperty.call(inEvent.data, 'btnUseSameCheck')) {
       this.doHideShowFields({
         checked: inEvent.data.btnUseSameCheck
       });
@@ -302,7 +304,9 @@ enyo.kind({
   },
   valueSet: function(inSender, inEvent) {
     var i;
-    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+    if (
+      Object.prototype.hasOwnProperty.call(inEvent.data, this.modelProperty)
+    ) {
       for (i = 0; i < this.getCollection().length; i++) {
         if (
           this.getCollection().models[i].get('id') ===
@@ -961,7 +965,9 @@ enyo.kind({
     onSaveProperty: ''
   },
   valueSet: function(inSender, inEvent) {
-    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+    if (
+      Object.prototype.hasOwnProperty.call(inEvent.data, this.modelProperty)
+    ) {
       this.setChecked(inEvent.data[this.modelProperty]);
     }
     this.inherited(arguments);
@@ -999,7 +1005,9 @@ enyo.kind({
     onSaveProperty: ''
   },
   valueSet: function(inSender, inEvent) {
-    if (inEvent.data.hasOwnProperty(this.modelProperty)) {
+    if (
+      Object.prototype.hasOwnProperty.call(inEvent.data, this.modelProperty)
+    ) {
       this.setChecked(inEvent.data[this.modelProperty]);
     }
     this.inherited(arguments);

@@ -139,7 +139,10 @@ describe('Ticket.setPrice action', () => {
     });
 
     expect(
-      newTicket.lines[0].hasOwnProperty('oBPOSPriceModificationReason')
+      Object.prototype.hasOwnProperty.call(
+        newTicket.lines[0],
+        'oBPOSPriceModificationReason'
+      )
     ).toBe(false);
   });
 

@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB, Promise */
-
 (function() {
   var isQtyEditable = function(line) {
     if (!line) {

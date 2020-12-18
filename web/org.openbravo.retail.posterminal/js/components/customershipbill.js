@@ -9,7 +9,7 @@
  ************************************************************************************
  */
 
-/*global OB, enyo*/
+/* global enyo */
 
 enyo.kind({
   kind: 'OB.UI.FormElement.Selector',

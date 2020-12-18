@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/*global enyo, Backbone, _ */
+/* global enyo */
 
 /*items of collection*/
 enyo.kind({

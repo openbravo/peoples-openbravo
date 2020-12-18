@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB, Backbone, _ */
-
 (function() {
   var BusinessPartner = OB.Data.ExtensibleModel.extend({
     modelName: 'BusinessPartner',

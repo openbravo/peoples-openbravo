@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/*global OB*/
-
 (function() {
   OB.MobileApp.actionsRegistry.register(
     new OB.Actions.CommandAction({
