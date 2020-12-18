@@ -12905,7 +12905,7 @@ group by  coalesce(lcm.id, lcc.id), lcc, lct.name, lcc.amount, lcc.currency.iSOC
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1D94B84E040007F01006125]]></AD_PACKAGE_ID>
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <ISTREE><![CDATA[N]]></ISTREE>
-<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <HQLQUERY><![CDATA[select iol.id as id, iol.organization as organization, iol.client as client,  iol.product as product,  
+<!--CDB9DC9655F24DF8AB41AA0ADBD04390-->  <HQLQUERY><![CDATA[select iol.id as id, iol.organization as organization, iol.client as client, iol.product as M_Product_ID,
 iol.uOM as uOM, iol.id as goodsShipmentLine, iol.movementQuantity as movementQuantity,
 io.businessPartner as businessPartner, io.documentNo as shipmentNumber,
 io.movementDate as movementDate,  attributeSetValue as attributeSetValue,
