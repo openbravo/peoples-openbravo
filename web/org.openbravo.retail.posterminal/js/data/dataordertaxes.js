@@ -8,7 +8,7 @@
  */
 
 (function() {
-  function calculateTaxes(receipt) {
+  const calculateTaxes = function(receipt) {
     if (!receipt.get('isEditable') && !receipt.get('forceCalculateTaxes')) {
       return regenerateTaxes(receipt);
     }
@@ -20,9 +20,9 @@
     } catch (error) {
       showLineTaxError(receipt, error);
     }
-  }
+  };
 
-  function regenerateTaxes(receipt) {
+  const regenerateTaxes = function(receipt) {
     const value = _.map(receipt.get('lines').models, function(line) {
       const taxes = Array.isArray(line.get('taxes'))
         ? line.get('taxes').reduce((obj, item) => {
@@ -96,9 +96,9 @@
         silent: true
       }
     );
-  }
+  };
 
-  function initializeTaxes(receipt) {
+  const initializeTaxes = function(receipt) {
     receipt.set(
       {
         taxes: []
@@ -107,9 +107,9 @@
         silent: true
       }
     );
-  }
+  };
 
-  function setTaxes(receipt, taxes) {
+  const setTaxes = function(receipt, taxes) {
     receipt.set(
       {
         gross: taxes.grossAmount,
@@ -124,9 +124,9 @@
       const lineTax = taxes.lines.find(lineTax => lineTax.id === line.id);
       setLineTaxes(receipt, line, lineTax);
     });
-  }
+  };
 
-  function setLineTaxes(receipt, line, values) {
+  const setLineTaxes = function(receipt, line, values) {
     const taxAmount = getTaxAmount(values.taxes);
     line.set(
       {
@@ -148,15 +148,14 @@
         silent: true
       }
     );
-  }
+  };
 
-  function getTaxAmount(taxes) {
-    return Object.keys(taxes)
+  const getTaxAmount = taxes =>
+    Object.keys(taxes)
       .map(key => taxes[key].amount)
       .reduce((sum, amount) => sum + amount);
-  }
 
-  function showLineTaxError(receipt, error) {
+  const showLineTaxError = function(receipt, error) {
     // We use Promise.reject to show async message in case of error
     new Promise((resolve, reject) => {
       const lineIdWithError = error.message.substring(
@@ -206,7 +205,7 @@
         });
       });
     });
-  }
+  };
 
   OB.DATA = window.OB.DATA || {};
   OB.DATA.OrderTaxes = function(modelOfAnOrder) {

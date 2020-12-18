@@ -508,7 +508,7 @@ enyo.kind({
   },
   selectItem: async function(bpartner) {
     var me = this,
-      dialog = this.owner.owner.dialog;
+      dialog;
 
     function successCallback(bp) {
       me.doShowPopup({
@@ -528,6 +528,7 @@ enyo.kind({
       bpartner.set('ignoreSetBP', true, {
         silent: true
       });
+      dialog = this.owner.owner.dialog;
       dialog.owner.owner.hide();
 
       if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
