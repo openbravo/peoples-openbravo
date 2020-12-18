@@ -2,7 +2,7 @@
   formatNameToMask, returnMaskChange, getDefaultMaskNumeric, getElementsByName,
   displayLogicElement, returnFormattedNumber, returnFormattedToCalc, roundNumber,
   returnCalcToFormatted, setWindowElementFocus, showJSMessage, initialize_MessageBox,
-  updateData, top, getFrame*/
+  updateData, getFrame*/
 /*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
@@ -16,7 +16,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -624,7 +624,7 @@ function updateTotal() {
       var i;
       this.numberofitems = 0;
       for (i in this) {
-        if (this.hasOwnProperty(i)) {
+        if (Object.prototype.hasOwnProperty.call(this, i)) {
           if (typeof this[i] !== 'function') {
             this[i] = 0;
           }

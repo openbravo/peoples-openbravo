@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -321,7 +321,7 @@ OB.Personalization.personalizeWindow = function(data, window) {
 
   // iterate over the tabs
   for (tabId in data) {
-    if (data.hasOwnProperty(tabId)) {
+    if (Object.prototype.hasOwnProperty.call(data, tabId)) {
       personalizationData = data[tabId];
       view = window.getView(tabId);
 

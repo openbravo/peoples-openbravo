@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2017 Openbravo SLU
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,7 +93,7 @@ isc.OBToolbarActionButton.addProperties({
       // TODO: these transformations shoulnd't be needed here as soon as getContextInfo returns
       // the transformed values.
       if (
-        allProperties.hasOwnProperty(param) &&
+        Object.prototype.hasOwnProperty.call(allProperties, param) &&
         typeof allProperties[param] === 'boolean'
       ) {
         allProperties[param] = allProperties[param] ? 'Y' : 'N';

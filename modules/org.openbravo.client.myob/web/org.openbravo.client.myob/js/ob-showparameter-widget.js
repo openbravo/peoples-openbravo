@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2012 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -73,7 +73,7 @@ isc.defineClass('OBShowParameterWidget', isc.OBWidget).addProperties({
     });
 
     for (i in this.parameters) {
-      if (this.parameters.hasOwnProperty(i)) {
+      if (Object.prototype.hasOwnProperty.call(this.parameters, i)) {
         items.push({
           name: i,
           title: i,

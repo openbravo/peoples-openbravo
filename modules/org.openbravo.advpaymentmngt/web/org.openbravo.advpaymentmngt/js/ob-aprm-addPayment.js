@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2019 Openbravo SLU
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1495,7 +1495,7 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function(
       newCriteria = {};
 
     for (i in values) {
-      if (values.hasOwnProperty(i)) {
+      if (Object.prototype.hasOwnProperty.call(values, i)) {
         def = values[i];
         field = thisform.getItem(i);
         if (field) {

@@ -570,7 +570,7 @@ isc.OBGrid.addProperties({
         // an operator, if so, go away
         opDefs = isc.DataSource.getSearchOperators();
         for (prop in opDefs) {
-          if (opDefs.hasOwnProperty(prop)) {
+          if (Object.prototype.hasOwnProperty.call(opDefs, prop)) {
             // let null and not null fall through
             // as they should be filtered
             if (prop === 'isNull' || prop === 'notNull') {

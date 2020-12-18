@@ -150,7 +150,7 @@ isc.OBParameterWindowView.addProperties({
 
     if (this.buttons && !isc.isA.emptyObject(this.buttons)) {
       for (i in this.buttons) {
-        if (this.buttons.hasOwnProperty(i)) {
+        if (Object.prototype.hasOwnProperty.call(this.buttons, i)) {
           newButton = isc.OBFormButton.create({
             title: this.buttons[i],
             realTitle: '',

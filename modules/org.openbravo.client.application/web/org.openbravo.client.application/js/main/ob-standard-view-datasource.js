@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -93,7 +93,7 @@ isc.OBViewDataSource.addProperties({
         prop;
       for (prop in data) {
         if (
-          data.hasOwnProperty(prop) &&
+          Object.prototype.hasOwnProperty.call(data, prop) &&
           !prop.contains(OB.Constants.FIELDSEPARATOR)
         ) {
           correctedData[prop] = data[prop];
@@ -195,7 +195,7 @@ isc.OBViewDataSource.addProperties({
   deleteNulls: function(data) {
     var column;
     for (column in data) {
-      if (data.hasOwnProperty(column)) {
+      if (Object.prototype.hasOwnProperty.call(data, column)) {
         if (
           !data[column] &&
           data[column] !== false &&

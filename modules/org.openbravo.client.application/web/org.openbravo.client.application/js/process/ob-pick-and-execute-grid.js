@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -857,7 +857,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       context = this.view.getContextInfo();
       for (i in context) {
         if (
-          context.hasOwnProperty(i) &&
+          Object.prototype.hasOwnProperty.call(context, i) &&
           (i.indexOf('organization') !== -1 || i === 'ad_org_id')
         ) {
           return context[i];
@@ -869,7 +869,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       context = this.view.buttonOwnerView.getContextInfo(true, false);
       for (i in context) {
         if (
-          context.hasOwnProperty(i) &&
+          Object.prototype.hasOwnProperty.call(context, i) &&
           (i.indexOf('organization') !== -1 || i === 'ad_org_id')
         ) {
           return context[i];
@@ -1077,7 +1077,7 @@ isc.OBPickAndExecuteGrid.addProperties({
     columnValues = data.columnValues;
 
     for (prop in columnValues) {
-      if (columnValues.hasOwnProperty(prop)) {
+      if (Object.prototype.hasOwnProperty.call(columnValues, prop)) {
         if (
           columnValues[prop] &&
           columnValues[prop].entries &&

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -583,7 +583,7 @@
             frm.setAttribute('method', 'post');
             frm.setAttribute('action', cPopup.popupURL);
             for (i in postParams) {
-              if (postParams.hasOwnProperty(i)) {
+              if (Object.prototype.hasOwnProperty.call(postParams, i)) {
                 var inp = doc.createElement('input');
                 inp.setAttribute('type', 'hidden');
                 inp.setAttribute('name', i);

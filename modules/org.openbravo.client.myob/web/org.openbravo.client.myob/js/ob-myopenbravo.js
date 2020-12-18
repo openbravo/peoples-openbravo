@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1368,7 +1368,7 @@ isc.defineClass('OBMyOBAdminModeDialog', isc.OBMyOBDialog).addProperties({
 
     if (!OB.MyOB.isValueMapTranslated) {
       for (prop in valueMap) {
-        if (valueMap.hasOwnProperty(prop)) {
+        if (Object.prototype.hasOwnProperty.call(valueMap, prop)) {
           OB.MyOB.adminModeValueMap.level[prop] = OB.I18N.getLabel(
             valueMap[prop]
           );

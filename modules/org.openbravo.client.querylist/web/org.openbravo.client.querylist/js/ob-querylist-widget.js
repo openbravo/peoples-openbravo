@@ -316,7 +316,9 @@ isc.OBQueryListGrid.addProperties({
     localWidgetProperties = isc.clone(this.widget.parameters);
     delete localWidgetProperties.formValues;
     for (propName in localWidgetProperties) {
-      if (localWidgetProperties.hasOwnProperty(propName)) {
+      if (
+        Object.prototype.hasOwnProperty.call(localWidgetProperties, propName)
+      ) {
         propValue = localWidgetProperties[propName];
         if (typeof propValue === 'string') {
           localWidgetProperties[propName] = this.widget.evaluateContents(

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,7 +25,7 @@
  * it is possible through their CLIEngine. For more details, see: https://github.com/eslint/eslint/issues/9977
  **/
 
-/*global require,process*/
+/*global process*/
 var CLIEngine = require('eslint').CLIEngine,
   fs = require('fs'),
   ignoreFile = process.cwd() + '/.eslintignore',

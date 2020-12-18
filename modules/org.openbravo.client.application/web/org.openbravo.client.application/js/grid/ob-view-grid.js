@@ -1414,7 +1414,7 @@ isc.OBViewGrid.addProperties({
     if (state && (state.groupByFields || state.groupByFields === '')) {
       if (state.groupingModes) {
         for (key in state.groupingModes) {
-          if (state.groupingModes.hasOwnProperty(key)) {
+          if (Object.prototype.hasOwnProperty.call(state.groupingModes, key)) {
             fld = this.getField(key);
             if (fld) {
               fld.groupingMode = state.groupingModes[key];
@@ -3871,7 +3871,7 @@ isc.OBViewGrid.addProperties({
     }
     isNew = this.getEditForm() ? this.getEditForm().isNew : false;
     for (fieldName in newValues) {
-      if (newValues.hasOwnProperty(fieldName)) {
+      if (Object.prototype.hasOwnProperty.call(newValues, fieldName)) {
         if (fieldName === this.removeRecordProperty) {
           continue;
         }
@@ -4733,7 +4733,10 @@ isc.OBViewGrid.addProperties({
   //  https://issues.openbravo.com/view.php?id=16611
   getEditItem: function() {
     var result = this.Super('getEditItem', arguments);
-    if (result.hasOwnProperty('valueMap') && !result.valueMap) {
+    if (
+      Object.prototype.hasOwnProperty.call(result, 'valueMap') &&
+      !result.valueMap
+    ) {
       delete result.valueMap;
     }
     return result;
@@ -4794,9 +4797,10 @@ isc.OBViewGrid.addProperties({
       }
       // sometimes the error is there but the error message is null
       if (
-        this.getEditForm()
-          .getErrors()
-          .hasOwnProperty(itemName)
+        Object.prototype.hasOwnProperty.call(
+          this.getEditForm().getErrors(),
+          itemName
+        )
       ) {
         return true;
       }
@@ -5048,7 +5052,7 @@ isc.OBViewGrid.addProperties({
     columnValues = data.columnValues;
 
     for (prop in columnValues) {
-      if (columnValues.hasOwnProperty(prop)) {
+      if (Object.prototype.hasOwnProperty.call(columnValues, prop)) {
         field = this.getFieldFromColumnName(prop);
         // This call to the FIC was done to retrieve the missing values
         // Do not try to overwrite the existing values
@@ -5111,7 +5115,7 @@ isc.OBViewGrid.addProperties({
           if (auxInputs) {
             this.auxInputs = {};
             for (prop in auxInputs) {
-              if (auxInputs.hasOwnProperty(prop)) {
+              if (Object.prototype.hasOwnProperty.call(auxInputs, prop)) {
                 me.view.viewForm.setValue(prop, auxInputs[prop].value);
                 me.view.viewForm.auxInputs[prop] = auxInputs[prop].value;
               }
