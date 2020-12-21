@@ -402,7 +402,7 @@
         payload.bpSets,
         payload.taxRules
       );
-      this.adjustPayment(payload.payments, payload.paymentcash);
+      this.adjustPayments(payload.payments, payload.paymentcash);
       this.setTotalQuantity(payload.qtyScale);
     }
 
@@ -516,7 +516,7 @@
         );
     }
 
-    adjustPayment(paymentTypes, paymentCash) {
+    adjustPayments(paymentTypes, paymentCash) {
       const loadedFromBackend = this.ticket.isLayaway || this.ticket.isPaid;
 
       // set the payments origAmount property
@@ -779,6 +779,22 @@
     calculateTotals(ticket, payload) {
       const handler = new TicketHandler(ticket);
       handler.calculateTotals(payload);
+      return handler.getTicket();
+    },
+
+    /**
+     * Adjust ticket payments.
+     *
+     * @param {object} ticket - The ticket whose payments will be adjusted
+     * @param {object} payload - The calculation payload, which include:
+     *             * qtyScale - The scale of the ticket quantity (qty)
+     *             * payments - The available payment types
+     *             * paymentcash - Default cash payment
+     * @returns The ticket with the result of the payments adjustment
+     */
+    adjustPayments(ticket, payload) {
+      const handler = new TicketHandler(ticket);
+      handler.adjustPayments(payload.payments, payload.paymentcash);
       return handler.getTicket();
     },
 

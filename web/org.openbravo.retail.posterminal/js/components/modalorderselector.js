@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/* global enyo */
+/*global enyo*/
 
 enyo.kind({
   name: 'OBPOS.UI.ReceiptSelector',
@@ -847,58 +847,18 @@ enyo.kind({
     this.inherited(arguments);
     this.receiptList.on(
       'click',
-      function(model) {
-        if (!this.$.openreceiptslistitemprinter.multiselect) {
-          if (model.crossStoreInfo && OB.UTIL.isCrossStoreReceipt(model)) {
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_LblCrossStorePayment'),
-              OB.I18N.getLabel('OBPOS_LblCrossStoreMessage', [
-                model.get('documentNo'),
-                model.get('store')
-              ]) +
-                '. ' +
-                OB.I18N.getLabel('OBPOS_LblCrossStoreDelivery'),
-              [
-                {
-                  label: OB.I18N.getLabel('OBMOBC_Continue'),
-                  isConfirmButton: true,
-                  action: function() {
-                    OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(
-                      model,
-                      me.model.get('orderList'),
-                      me,
-                      undefined,
-                      'orderSelector',
-                      function() {
-                        me.doHideThisPopup();
-                      }
-                    );
-                  }
-                },
-                {
-                  label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                  action: function() {
-                    me.doHideThisPopup();
-                  }
-                }
-              ]
-            );
-          } else {
-            OB.UTIL.OrderSelectorUtils.checkOrderAndLoad(
-              model,
-              me.model.get('orderList'),
-              me,
-              undefined,
-              'orderSelector',
-              function() {
-                me.doHideThisPopup();
-              }
-            );
-          }
-        } else {
+      async function(model) {
+        if (this.$.openreceiptslistitemprinter.multiselect) {
           me.waterfall('onChangeCheck', {
             id: model.get('id')
           });
+        } else {
+          try {
+            await OB.UTIL.TicketListUtils.loadTicketFromBackoffice(model);
+            me.doHideThisPopup();
+          } catch (error) {
+            OB.App.View.ActionCanceledUIHandler.handle(error);
+          }
         }
       },
       this

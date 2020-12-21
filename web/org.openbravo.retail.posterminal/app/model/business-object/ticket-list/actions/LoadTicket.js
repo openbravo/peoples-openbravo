@@ -7,40 +7,618 @@
  ************************************************************************************
  */
 
+/* eslint-disable no-use-before-define */
+
 /**
  * @fileoverview Declares a global action that loads the Ticket passed as payload as the current active ticket
  * and enqueues the active ticket into the list
  */
-(function LoadTicketActions() {
-  function loadTicketById(state, ticketToLoadId) {
-    if (ticketToLoadId && state.Ticket.id === ticketToLoadId) {
-      return state;
+(() => {
+  OB.App.StateAPI.Global.registerAction(
+    'loadTicket',
+    (globalState, payload) => {
+      const newGlobalState = { ...globalState };
+
+      let newTicket = createTicket(payload);
+      newTicket = addPayments(newTicket, payload);
+      newTicket = addBusinessPartner(newTicket);
+      newTicket = addProducts(newTicket, payload);
+
+      newGlobalState.TicketList = [
+        { ...newGlobalState.Ticket },
+        ...newGlobalState.TicketList
+      ];
+      newGlobalState.Ticket = newTicket;
+
+      return newGlobalState;
+    }
+  );
+
+  const createTicket = payload => {
+    const transformTaxes = taxes => {
+      if (!taxes) {
+        return {};
+      }
+      return taxes
+        .map(tax => ({
+          id: tax.taxid,
+          net: tax.net,
+          amount: tax.amount,
+          name: tax.name,
+          docTaxAmount: tax.docTaxAmount,
+          rate: tax.rate,
+          cascade: tax.cascade,
+          lineNo: tax.lineNo
+        }))
+        .reduce((obj, item) => {
+          const newObj = { ...obj };
+          newObj[[item.id]] = item;
+          return newObj;
+        }, {});
+    };
+
+    const newTicket = {
+      ...payload.ticket,
+      isbeingprocessed: 'N',
+      hasbeenpaid: 'N',
+      isEditable: false,
+      isModified: false,
+      orderDate: OB.I18N.normalizeDate(payload.ticket.orderDate),
+      creationDate: OB.I18N.normalizeDate(payload.ticket.creationDate),
+      updatedBy: OB.MobileApp.model.usermodel.id,
+      paidPartiallyOnCredit: false,
+      paidOnCredit: false,
+      session: OB.MobileApp.model.get('session'),
+      skipApplyPromotions: true,
+      grossAmount: payload.ticket.totalamount,
+      netAmount: payload.ticket.totalNetAmount,
+      payments: payload.ticket.receiptPayments,
+      taxes: transformTaxes(payload.ticket.receiptTaxes),
+      qty: payload.ticket.lines.reduce(
+        (accumulator, line) => OB.DEC.add(accumulator, line.quantity),
+        OB.DEC.Zero
+      ),
+      approvals: []
+    };
+
+    if (payload.ticket.isQuotation) {
+      newTicket.oldId = payload.ticket.orderid;
+      newTicket.documentType = OB.MobileApp.model.get(
+        'terminal'
+      ).terminalType.documentTypeForQuotations;
+      newTicket.hasbeenpaid = 'Y';
+      newTicket.id = null;
+    } else {
+      newTicket.id = payload.ticket.orderid;
     }
 
-    const newState = { ...state };
-    const newCurrentTicket = newState.TicketList.find(
-      ticket => ticket.id === ticketToLoadId
+    if (!payload.ticket.isLayaway) {
+      newTicket.isPaid = true;
+      const paidByPayments = payload.ticket.receiptPayments.reduce(
+        (accumulator, payment) =>
+          OB.DEC.add(accumulator, OB.DEC.mul(payment.amount, payment.rate)),
+        OB.DEC.Zero
+      );
+      const creditAmount = OB.DEC.sub(newTicket.grossAmount, paidByPayments);
+      if (
+        OB.DEC.compare(newTicket.grossAmount) > 0 &&
+        OB.DEC.compare(creditAmount) > 0 &&
+        !newTicket.isQuotation
+      ) {
+        newTicket.creditAmount = creditAmount;
+        if (paidByPayments) {
+          newTicket.paidPartiallyOnCredit = true;
+        }
+        newTicket.paidOnCredit = true;
+      }
+
+      if (
+        newTicket.documentType ===
+        OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns
+      ) {
+        newTicket.orderType = 1;
+      }
+    }
+
+    return newTicket;
+  };
+
+  const addBusinessPartner = ticket => {
+    const shippingLocation = ticket.businessPartner.locations[0];
+    const invoicingLocation = ticket.businessPartner.locations[1];
+    return {
+      ...ticket,
+      businessPartner: {
+        ...ticket.businessPartner,
+        shipLocId: shippingLocation.id,
+        shipLocName: shippingLocation.name,
+        shipPostalCode: shippingLocation.postalCode,
+        shipCityName: shippingLocation.cityName,
+        shipCountryId: shippingLocation.countryId,
+        shipCountryName: shippingLocation.countryName,
+        shipRegionId: shippingLocation.regionId,
+        locId: (invoicingLocation || shippingLocation).id,
+        locName: (invoicingLocation || shippingLocation).name,
+        postalCode: (invoicingLocation || shippingLocation).postalCode,
+        cityName: (invoicingLocation || shippingLocation).cityName,
+        countryName: (invoicingLocation || shippingLocation).countryName,
+        regionId: (invoicingLocation || shippingLocation).regionId,
+        locationModel: shippingLocation,
+        locationBillModel: invoicingLocation
+      }
+    };
+  };
+
+  const addPayments = (ticket, payload) => {
+    // _.each(
+    //   _.filter(model.receiptPayments, function(payment) {
+    //     return payment.isReversed;
+    //   }),
+    //   function(payment) {
+    //     var reversalPayment = _.find(model.receiptPayments, function(
+    //       currentPayment
+    //     ) {
+    //       return currentPayment.paymentId === payment.reversedPaymentId;
+    //     });
+    //     reversalPayment.reversedPaymentId = payment.paymentId;
+    //     reversalPayment.isReversePayment = true;
+    //     delete payment.reversedPaymentId;
+    //   }
+    // );
+
+    // function getReverserPayment(payment, Payments) {
+    //   return _.filter(model.receiptPayments, function(receiptPayment) {
+    //     return receiptPayment.paymentId === payment.reversedPaymentId;
+    //   })[0];
+    // }
+
+    // i = 0;
+    // // Sort payments array, puting reverser payments inmediatly after their reversed payment
+    // while (i < model.receiptPayments.length) {
+    //   var payment = model.receiptPayments[i];
+    //   if (payment.reversedPaymentId && !payment.isSorted) {
+    //     var reversed_index = model.receiptPayments.indexOf(
+    //       getReverserPayment(payment, model.receiptPayments)
+    //     );
+    //     payment.isSorted = true;
+    //     if (i < reversed_index) {
+    //       model.receiptPayments.splice(i, 1);
+    //       model.receiptPayments.splice(reversed_index, 0, payment);
+    //       sortedPayments = true;
+    //     } else if (i > reversed_index + 1) {
+    //       model.receiptPayments.splice(i, 1);
+    //       model.receiptPayments.splice(reversed_index + 1, 0, payment);
+    //       sortedPayments = true;
+    //     }
+    //   } else {
+    //     i++;
+    //   }
+    // }
+    // if (sortedPayments) {
+    //   model.receiptPayments.forEach(function(receitPayment) {
+    //     if (receitPayment.isSorted) {
+    //       delete receitPayment.isSorted;
+    //     }
+    //   });
+    // }
+    // payments = new Backbone.Collection();
+    // _.each(model.receiptPayments, function(iter) {
+    //   var paymentProp;
+    //   curPayment = new OB.Model.PaymentLine();
+    //   for (paymentProp in iter) {
+    //     if (iter.hasOwnProperty(paymentProp)) {
+    //       if (paymentProp === 'paymentDate') {
+    //         if (
+    //           !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
+    //           moment(iter[paymentProp]).isValid()
+    //         ) {
+    //           curPayment.set(
+    //             paymentProp,
+    //             OB.I18N.normalizeDate(new Date(iter[paymentProp]))
+    //           );
+    //         } else {
+    //           curPayment.set(paymentProp, null);
+    //         }
+    //       } else {
+    //         curPayment.set(paymentProp, iter[paymentProp]);
+    //       }
+    //     }
+    //   }
+    //
+    //   payments.add(curPayment);
+    // });
+    // order.adjustPayment();
+
+    // if (!model.isLayaway && !model.isQuotation) {
+    //   if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
+    //     order.set('paidOnCredit', true);
+    //   } else if (
+    //     model.totalamount < 0 &&
+    //     (order.get('payment') === 0 ||
+    //       OB.DEC.abs(model.totalamount) > order.get('payment'))
+    //   ) {
+    //     order.set('paidOnCredit', true);
+    //   }
+    // }
+
+    // return {
+    //   ...ticket,
+    //   payments: ticket.payments.map(payment => {
+    //     return {
+    //       ...payment,
+    //       date: new Date(payment.paymentDate),
+    //       orderGross: ticket.grossAmount,
+    //       isPaid: ticket.isPaid
+    //     };
+    //   })
+    // };
+
+    return OB.App.State.Ticket.Utils.adjustPayments(ticket, payload);
+  };
+
+  const addProducts = (ticket, payload) => {
+    // if (iter.relatedLines && !order.get('hasServices')) {
+    //   order.set('hasServices', true);
+    // }
+
+    // await order._loadRelatedServices(
+    //   prod.get('productType'),
+    //   prod.get('id'),
+    //   prod.get('productCategory'),
+    //   async function(data) {
+    //     let hasservices;
+    //     if (
+    //       !OB.UTIL.isNullOrUndefined(data) &&
+    //       OB.DEC.number(iter.quantity) > 0
+    //     ) {
+    //       hasservices = data.hasservices;
+    //     }
+    //
+    //     for (let promotion of iter.promotions) {
+    //       try {
+    //         const discount = OB.Discounts.Pos.manualRuleImpls.find(
+    //           discount => discount.id === promotion.ruleId
+    //         );
+    //         if (
+    //           discount &&
+    //           OB.Discounts.Pos.getManualPromotions().includes(
+    //             discount.discountType
+    //           )
+    //         ) {
+    //           var percentage;
+    //           if (discount.obdiscPercentage) {
+    //             percentage = OB.DEC.mul(
+    //               OB.DEC.div(promotion.amt, iter.lineGrossAmount),
+    //               new BigDecimal('100')
+    //             );
+    //           }
+    //           promotion.userAmt = percentage ? percentage : promotion.amt;
+    //           promotion.discountType = discount.discountType;
+    //           promotion.manual = true;
+    //         }
+    //       } catch (error) {
+    //         OB.UTIL.showError(error);
+    //       }
+    //     }
+    //
+    //     if (
+    //       OB.MobileApp.model.hasPermission(
+    //         'OBPOS_EnableSupportForProductAttributes',
+    //         true
+    //       )
+    //     ) {
+    //       if (iter.attributeValue && _.isString(iter.attributeValue)) {
+    //         var processedAttValues = OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson(
+    //           iter.attributeValue
+    //         );
+    //         if (
+    //           processedAttValues &&
+    //           processedAttValues.keyValue &&
+    //           _.isArray(processedAttValues.keyValue) &&
+    //           processedAttValues.keyValue.length > 0
+    //         ) {
+    //           iter.attSetInstanceDesc = processedAttValues.description;
+    //         }
+    //       }
+    //     }
+    //
+
+    //       order.set(
+    //         'isPartiallyDelivered',
+    //         hasDeliveredProducts && hasNotDeliveredProducts ? true : false
+    //       );
+    //       if (hasDeliveredProducts && !hasNotDeliveredProducts) {
+    //         order.set('isFullyDelivered', true);
+    //       }
+    //       if (order.get('isPartiallyDelivered')) {
+    //         var partiallyPaid = 0;
+    //         _.each(
+    //           _.filter(order.get('receiptLines'), function(reciptLine) {
+    //             return reciptLine.deliveredQuantity;
+    //           }),
+    //           function(deliveredLine) {
+    //             partiallyPaid = OB.DEC.add(
+    //               partiallyPaid,
+    //               OB.DEC.mul(
+    //                 deliveredLine.deliveredQuantity,
+    //                 deliveredLine.grossUnitPrice
+    //               )
+    //             );
+    //           }
+    //         );
+    //         order.set('deliveredQuantityAmount', partiallyPaid);
+    //         if (
+    //           order.get('deliveredQuantityAmount') &&
+    //           order.get('deliveredQuantityAmount') > order.get('payment')
+    //         ) {
+    //           order.set('isDeliveredGreaterThanGross', true);
+    //         }
+    //       }
+    //     }
+    //   }
+    // );
+
+    const transformTaxes = taxes => {
+      if (!taxes) {
+        return {};
+      }
+      return taxes
+        .map(tax => ({
+          id: tax.taxId,
+          net: tax.taxableAmount,
+          amount: tax.taxAmount,
+          name: tax.identifier,
+          docTaxAmount: tax.docTaxAmount,
+          rate: tax.taxRate,
+          cascade: tax.cascade,
+          lineNo: tax.lineNo
+        }))
+        .reduce((obj, item) => {
+          const newObj = { ...obj };
+          newObj[[item.id]] = item;
+          return newObj;
+        }, {});
+    };
+    return {
+      ...ticket,
+      lines: ticket.lines.map(line => {
+        return {
+          ...line,
+          taxes: transformTaxes(line.taxes),
+          qty: OB.DEC.number(line.quantity, line.product.uOMstandardPrecision),
+          netListPrice: line.listPrice,
+          grossListPrice: line.grossListPrice,
+          baseNetUnitPrice: line.standardPrice,
+          baseGrossUnitPrice: line.baseGrossUnitPrice,
+          netUnitPrice: line.unitPrice,
+          grossUnitPrice: line.grossUnitPrice,
+          baseNetUnitAmount: line.lineNetAmount,
+          baseGrossUnitAmount: line.lineGrossAmount,
+          netUnitAmount: line.lineNetAmount,
+          grossUnitAmount: line.lineGrossAmount,
+          priceIncludesTax: ticket.priceIncludesTax,
+          // TODO: hasRelatedServices: hasservices,
+          warehouse: {
+            id: line.warehouse,
+            warehousename: line.warehousename
+          },
+          groupService: line.product.groupProduct,
+          isEditable: true,
+          isDeletable: true,
+          country:
+            // eslint-disable-next-line no-nested-ternary
+            line.obrdmDeliveryMode === 'HomeDelivery'
+              ? ticket.businessPartner.shipLocId
+                ? ticket.businessPartner.locationModel.countryId
+                : null
+              : line.organization
+              ? line.organization.country
+              : payload.terminal.organizationCountryId,
+          region:
+            // eslint-disable-next-line no-nested-ternary
+            line.obrdmDeliveryMode === 'HomeDelivery'
+              ? ticket.businessPartner.shipLocId
+                ? ticket.businessPartner.locationModel.regionId
+                : null
+              : line.organization
+              ? line.organization.region
+              : payload.terminal.organizationRegionId
+        };
+      })
+    };
+  };
+
+  OB.App.StateAPI.Global.loadTicket.addActionPreparation(
+    async (globalState, payload) => {
+      let newPayload = { ...payload };
+
+      newPayload = await checkCrossStore(newPayload);
+      // TODO: checkSession, searchRelatedReceipts
+      newPayload = await loadTicket(newPayload);
+      newPayload = await loadBusinessPartner(newPayload);
+      newPayload = await loadProducts(newPayload);
+
+      return newPayload;
+    }
+  );
+
+  const checkCrossStore = async payload => {
+    const isCrossStore = OB.App.State.Ticket.Utils.isCrossStore(
+      payload.ticket,
+      payload
     );
-    if (!newCurrentTicket) {
-      throw new OB.App.Class.ActionCanceled('Ticket to load not found', {
-        ticketToLoadId
+    if (!isCrossStore) {
+      return payload;
+    }
+    await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
+      title: 'OBPOS_LblCrossStorePayment',
+      message: 'OBPOS_LblCrossStoreDeliveryMessage',
+      messageParams: [payload.ticket.documentNo, payload.ticket.store]
+    });
+    return { ...payload, ticket: { ...payload.ticket, isCrossStore } };
+  };
+
+  const loadTicket = async payload => {
+    const data = await OB.App.Request.mobileServiceRequest(
+      'org.openbravo.retail.posterminal.PaidReceipts',
+      {
+        orderid: payload.ticket.id,
+        crossStore: payload.ticket.isCrossStore
+      }
+    );
+    if (data.response.error) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: data.response.error.message
+      });
+    } else if (data.response.data[0].recordInImportEntry) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_ReceiptNotSynced',
+        messageParams: [data.response.data[0].documentNo]
       });
     }
 
-    newState.TicketList = newState.TicketList.filter(
-      ticket => ticket.id !== ticketToLoadId
+    return {
+      ...payload,
+      ticket: { ...payload.ticket, ...data.response.data[0] }
+    };
+  };
+
+  const loadBusinessPartner = async payload => {
+    const getBusinessPartnerFromBackoffice = async () => {
+      try {
+        const data = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.master.LoadedCustomer',
+          {
+            parameters: {
+              bpartnerId: { value: payload.ticket.bp },
+              bpLocationId: { value: payload.ticket.bpLocId },
+              bpBillLocationId:
+                payload.ticket.bpLocId !== payload.ticket.bpBillLocId
+                  ? { value: payload.ticket.bpBillLocId }
+                  : undefined
+            }
+          }
+        );
+        if (data.response.data.length < 2) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_NoCustomerForPaidReceipt'
+          });
+        }
+        const [businessPartner, ...locations] = data.response.data;
+        return { ...businessPartner, locations };
+      } catch (error) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_NoCustomerForPaidReceipt'
+        });
+      }
+    };
+    const getRemoteBusinessPartner = async () => {
+      const businessPartner = await OB.App.DAL.remoteGet(
+        'BusinessPartner',
+        payload.ticket.bp
+      );
+      return businessPartner;
+    };
+    const getLocalBusinessPartner = async () => {
+      const businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+        payload.ticket.bp
+      );
+      return businessPartner;
+    };
+    const getRemoteBusinessPartnerLocation = async () => {
+      const businessPartnerLocations =
+        payload.ticket.bpLocId === payload.ticket.bpBillLocId
+          ? await OB.App.DAL.remoteGet('BPLocation', payload.ticket.bpLocId)
+          : await OB.App.DAL.remoteSearch('BPLocation', {
+              remoteFilters: [
+                {
+                  columns: ['id'],
+                  operator: 'equals',
+                  value: [payload.ticket.bpLocId, payload.ticket.bpBillLocId]
+                }
+              ]
+            });
+      return [businessPartnerLocations];
+    };
+    const getLocalBusinessPartnerLocation = async () => {
+      const businessPartnerLocations =
+        payload.ticket.bpLocId === payload.ticket.bpBillLocId
+          ? await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+              payload.ticket.bpLocId
+            )
+          : await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+              new OB.App.Class.Criteria()
+                .criterion(
+                  'id',
+                  [payload.ticket.bpLocId, payload.ticket.bpBillLocId],
+                  'in'
+                )
+                .build()
+            );
+      return [businessPartnerLocations];
+    };
+
+    const newPayload = { ...payload };
+    if (newPayload.ticket.externalBusinessPartnerReference) {
+      newPayload.ticket.externalBusinessPartner = await OB.App.ExternalBusinessPartnerAPI.getBusinessPartner(
+        newPayload.ticket.externalBusinessPartnerReference
+      );
+    }
+    newPayload.ticket.businessPartner =
+      (OB.App.Security.hasPermission('OBPOS_remote.customer')
+        ? await getRemoteBusinessPartner()
+        : await getLocalBusinessPartner()) ||
+      (await getBusinessPartnerFromBackoffice());
+
+    if (newPayload.ticket.businessPartner.locations) {
+      return payload;
+    }
+
+    newPayload.ticket.businessPartner.locations =
+      (OB.App.Security.hasPermission('OBPOS_remote.customer')
+        ? await getRemoteBusinessPartnerLocation()
+        : await getLocalBusinessPartnerLocation()) ||
+      (await getBusinessPartnerFromBackoffice().locations);
+
+    return newPayload;
+  };
+
+  const loadProducts = async payload => {
+    const getRemoteProduct = async productId => {
+      const product = await OB.App.DAL.remoteGet('Product', productId);
+      return product;
+    };
+    const getLocalProduct = async productId => {
+      const product = await OB.App.MasterdataModels.Product.withId(productId);
+      return product;
+    };
+    const getProductFromBackoffice = async (lineId, productId) => {
+      try {
+        const data = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.master.LoadedProduct',
+          {
+            salesOrderLineId: lineId,
+            productId
+          }
+        );
+        return data.response.data[0];
+      } catch (error) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_NoReceiptLoadedText'
+        });
+      }
+    };
+
+    const lines = await Promise.all(
+      payload.ticket.receiptLines.map(async line => {
+        const product =
+          (OB.App.Security.hasPermission('OBPOS_remote.product')
+            ? await getRemoteProduct(line.id)
+            : await getLocalProduct(line.id)) ||
+          (await getProductFromBackoffice(line.lineId, line.id));
+        return { ...line, id: line.lineId, product };
+      })
     );
-    newState.TicketList = [{ ...newState.Ticket }, ...newState.TicketList];
-    newState.Ticket = newCurrentTicket;
-
-    return newState;
-  }
-
-  OB.App.StateAPI.Global.registerAction('loadTicket', (state, payload) => {
-    return loadTicketById(state, payload.ticket.id);
-  });
-
-  OB.App.StateAPI.Global.registerAction('loadTicketById', (state, payload) => {
-    return loadTicketById(state, payload.id);
-  });
+    return { ...payload, ticket: { ...payload.ticket, lines } };
+  };
 })();

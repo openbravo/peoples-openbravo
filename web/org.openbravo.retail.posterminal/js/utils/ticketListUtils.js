@@ -12,22 +12,17 @@
   OB.UTIL = window.OB.UTIL || {};
   OB.UTIL.TicketListUtils = OB.UTIL.TicketListUtils || {};
 
-  OB.UTIL.TicketListUtils.loadStateTicket = async function(ticket) {
-    await OB.App.State.Global.loadTicket({
-      ticket
-    });
+  OB.UTIL.TicketListUtils.loadTicketFromBackoffice = async function(
+    ticketModel
+  ) {
+    await OB.App.State.Global.loadTicket(
+      OB.UTIL.TicketUtils.addTicketCreationDataToPayload({
+        ticket: JSON.parse(JSON.stringify(ticketModel))
+      })
+    );
     OB.MobileApp.model.set(
       'terminalLogContext',
       OB.App.State.getState().Ticket.id
-    );
-    OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
-  };
-
-  OB.UTIL.TicketListUtils.loadTicket = async function(ticketModel) {
-    await OB.UTIL.TicketListUtils.loadStateTicket(
-      OB.App.StateBackwardCompatibility.getInstance('Ticket').toStateObject(
-        ticketModel
-      )
     );
     OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
   };
@@ -39,6 +34,15 @@
     OB.MobileApp.model.set(
       'terminalLogContext',
       OB.App.State.getState().Ticket.id
+    );
+    OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
+  };
+
+  OB.UTIL.TicketListUtils.loadTicket = async function(ticketModel) {
+    await OB.UTIL.TicketListUtils.loadTicketById(
+      OB.App.StateBackwardCompatibility.getInstance('Ticket').toStateObject(
+        ticketModel
+      ).id
     );
     OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
   };
@@ -1091,7 +1095,7 @@
           OB.MobileApp.model.receipt.get('documentNo') !==
           model.get('documentNo')
         ) {
-          OB.UTIL.TicketListUtils.loadStateTicket(modelAtIndex);
+          OB.UTIL.TicketListUtils.loadTicketById(modelAtIndex.id);
         }
         if (model.get('searchSynchId')) {
           model.unset('searchSynchId');
