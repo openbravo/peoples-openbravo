@@ -310,6 +310,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess
       usr.setName(name);
       usr.setBusinessPartner(customer);
       usr.setNewOBObject(true);
+      usr.setOBRETCODefaultPosContact(true);
       OBDal.getInstance().save(usr);
     }
   }

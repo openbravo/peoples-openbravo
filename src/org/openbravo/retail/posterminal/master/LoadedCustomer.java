@@ -104,10 +104,10 @@ public class LoadedCustomer extends ProcessHQLQuery {
     bpartnerHQLQuery.append(" )");
     bpartnerHQLQuery.append(" and (ulist is null");
     bpartnerHQLQuery.append(" or ulist.id in (");
-    bpartnerHQLQuery.append("   select max(ulist2.id)");
+    bpartnerHQLQuery.append("   select ulist2.id");
     bpartnerHQLQuery.append("   from ADUser as ulist2");
-    bpartnerHQLQuery.append("   where ulist2.businessPartner = bp");
-    bpartnerHQLQuery.append("   group by ulist2.businessPartner");
+    bpartnerHQLQuery.append("   where ulist2.oBRETCODefaultPosContact='Y'");
+    bpartnerHQLQuery.append("   and ulist2.businessPartner = bp");
     bpartnerHQLQuery.append(" ))");
     bpartnerHQLQuery.append(" and (bpsl is null");
     bpartnerHQLQuery.append(" or bpsl.id in (");

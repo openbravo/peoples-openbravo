@@ -113,7 +113,7 @@ public class BusinessPartner extends MasterDataProcessHQLQuery {
         + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND " + "bp.$readableSimpleClientCriteria AND "
         + "bp.$naturalOrgCriteria AND " + "(bp.$incrementalUpdateCriteria) AND "
-        + "(ulist.id in (select max(ulist2.id) from ADUser as ulist2 where ulist2.businessPartner=bp)) ";
+        + "(ulist.id in (select ulist2.id from ADUser as ulist2 where ulist2.oBRETCODefaultPosContact='Y' and ulist2.businessPartner=bp)) ";
     if (useGroupBy) {
       hql2 += "GROUP BY " + groupByExpression;
       hql2 += "HAVING $havingCriteria ";
