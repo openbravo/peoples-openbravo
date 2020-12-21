@@ -90,15 +90,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/order",
         // "model/terminal",
         // "model/user",
-        "model/promotions", "utils/ob-utilitiesuipos", "utils/externalBpUtils",
-        "model/bpartnerfilter", "model/orderfilter", "model/crossstorefilter",
-        "model/orders-for-verified-returns-filter", "model/bplocation", // Model
-                                                                        // for
-                                                                        // Customer
-                                                                        // Address
-
-        "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter", "webprinter/escpos",
-        "webprinter/standardprinters", "webprinter/typedarrays", "webprinter/testprinter",
+        "utils/ob-utilitiesuipos", "utils/externalBpUtils", "model/bpartnerfilter",
+        "model/orderfilter", "model/crossstorefilter", "model/orders-for-verified-returns-filter",
+        "model/bplocation", "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter",
+        "webprinter/escpos", "webprinter/standardprinters", "webprinter/typedarrays",
+        "webprinter/testprinter",
 
         "webprinter/usbprinters/epsontmt20", "webprinter/usbprinters/epsontmt20ii",
         "webprinter/usbprinters/epsontmt88v", "webprinter/usbprinters/ncr7197",
@@ -154,12 +150,11 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalcontextchanged", "components/modalproductcharacteristic",
 
         // Point of sale models
-
-        "model/pricelist", "model/product-category-tree", "model/product", "model/productprice",
+        "model/discounts", "model/discountsbusinesspartner", "model/pricelist",
+        "model/product-category-tree", "model/product", "model/productprice",
         "model/service-product", "model/service-category", "model/businesspartner",
         "model/servicepricerule", "model/servicepricerulerange",
         "model/servicepricerulerangeprices", "model/servicepriceruleversion",
-
         "model/obpos-supervisor-model",
 
         // Point of sale
@@ -235,9 +230,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
 
         // Payment providers
         "components/mockpayments",
-
-        // Discounts
-        "model/discounts",
 
         // Hook
         "components/menuhook",
