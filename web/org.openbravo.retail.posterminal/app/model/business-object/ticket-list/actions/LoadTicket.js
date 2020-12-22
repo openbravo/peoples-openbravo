@@ -20,8 +20,8 @@
       const newGlobalState = { ...globalState };
 
       let newTicket = createTicket(payload);
-      newTicket = addPayments(newTicket, payload);
       newTicket = addBusinessPartner(newTicket);
+      newTicket = addPayments(newTicket, payload);
       newTicket = addProducts(newTicket, payload);
 
       newGlobalState.TicketList = [
@@ -35,28 +35,6 @@
   );
 
   const createTicket = payload => {
-    const transformTaxes = taxes => {
-      if (!taxes) {
-        return {};
-      }
-      return taxes
-        .map(tax => ({
-          id: tax.taxid,
-          net: tax.net,
-          amount: tax.amount,
-          name: tax.name,
-          docTaxAmount: tax.docTaxAmount,
-          rate: tax.rate,
-          cascade: tax.cascade,
-          lineNo: tax.lineNo
-        }))
-        .reduce((obj, item) => {
-          const newObj = { ...obj };
-          newObj[[item.id]] = item;
-          return newObj;
-        }, {});
-    };
-
     const newTicket = {
       ...payload.ticket,
       isbeingprocessed: 'N',
@@ -65,36 +43,47 @@
       isModified: false,
       orderDate: OB.I18N.normalizeDate(payload.ticket.orderDate),
       creationDate: OB.I18N.normalizeDate(payload.ticket.creationDate),
-      updatedBy: OB.MobileApp.model.usermodel.id,
+      updatedBy: payload.orgUserId,
       paidPartiallyOnCredit: false,
       paidOnCredit: false,
-      session: OB.MobileApp.model.get('session'),
+      session: payload.session,
       skipApplyPromotions: true,
+      payments: payload.ticket.receiptPayments,
       grossAmount: payload.ticket.totalamount,
       netAmount: payload.ticket.totalNetAmount,
-      payments: payload.ticket.receiptPayments,
-      taxes: transformTaxes(payload.ticket.receiptTaxes),
-      qty: payload.ticket.lines.reduce(
-        (accumulator, line) => OB.DEC.add(accumulator, line.quantity),
-        OB.DEC.Zero
-      ),
       approvals: []
     };
 
-    if (payload.ticket.isQuotation) {
-      newTicket.oldId = payload.ticket.orderid;
-      newTicket.documentType = OB.MobileApp.model.get(
-        'terminal'
-      ).terminalType.documentTypeForQuotations;
+    newTicket.taxes = payload.ticket.receiptTaxes
+      .map(tax => ({
+        id: tax.taxid,
+        net: tax.net,
+        amount: tax.amount,
+        name: tax.name,
+        docTaxAmount: tax.docTaxAmount,
+        rate: tax.rate,
+        cascade: tax.cascade,
+        lineNo: tax.lineNo
+      }))
+      .reduce((obj, item) => {
+        const newObj = { ...obj };
+        newObj[[item.id]] = item;
+        return newObj;
+      }, {});
+
+    if (newTicket.isQuotation) {
+      newTicket.oldId = newTicket.orderid;
+      newTicket.documentType =
+        payload.terminal.terminalType.documentTypeForQuotations;
       newTicket.hasbeenpaid = 'Y';
       newTicket.id = null;
     } else {
-      newTicket.id = payload.ticket.orderid;
+      newTicket.id = newTicket.orderid;
     }
 
-    if (!payload.ticket.isLayaway) {
+    if (!newTicket.isLayaway) {
       newTicket.isPaid = true;
-      const paidByPayments = payload.ticket.receiptPayments.reduce(
+      const paidByPayments = newTicket.payments.reduce(
         (accumulator, payment) =>
           OB.DEC.add(accumulator, OB.DEC.mul(payment.amount, payment.rate)),
         OB.DEC.Zero
@@ -114,7 +103,7 @@
 
       if (
         newTicket.documentType ===
-        OB.MobileApp.model.get('terminal').terminalType.documentTypeForReturns
+        payload.terminal.terminalType.documentTypeForReturns
       ) {
         newTicket.orderType = 1;
       }
@@ -150,110 +139,53 @@
   };
 
   const addPayments = (ticket, payload) => {
-    // _.each(
-    //   _.filter(model.receiptPayments, function(payment) {
-    //     return payment.isReversed;
-    //   }),
-    //   function(payment) {
-    //     var reversalPayment = _.find(model.receiptPayments, function(
-    //       currentPayment
-    //     ) {
-    //       return currentPayment.paymentId === payment.reversedPaymentId;
-    //     });
-    //     reversalPayment.reversedPaymentId = payment.paymentId;
-    //     reversalPayment.isReversePayment = true;
-    //     delete payment.reversedPaymentId;
-    //   }
-    // );
+    const newTicket = {
+      ...ticket,
+      change: OB.DEC.Zero,
+      paidOnCredit:
+        !ticket.isLayaway &&
+        !ticket.isQuotation &&
+        ((ticket.totalamount > 0 && ticket.payment < ticket.totalamount) ||
+          (ticket.totalamount < 0 &&
+            (ticket.payment === 0 ||
+              OB.DEC.abs(ticket.totalamount) > ticket.payment)))
+    };
 
-    // function getReverserPayment(payment, Payments) {
-    //   return _.filter(model.receiptPayments, function(receiptPayment) {
-    //     return receiptPayment.paymentId === payment.reversedPaymentId;
-    //   })[0];
-    // }
+    newTicket.payments = newTicket.payments
+      .map(payment => {
+        const newPayment = {
+          ...payment,
+          date: new Date(payment.paymentDate),
+          paymentDate: new Date(payment.paymentDate).toISOString(),
+          orderGross: newTicket.grossAmount,
+          origAmount: OB.DEC.Zero,
+          isPaid: newTicket.isPaid
+        };
 
-    // i = 0;
-    // // Sort payments array, puting reverser payments inmediatly after their reversed payment
-    // while (i < model.receiptPayments.length) {
-    //   var payment = model.receiptPayments[i];
-    //   if (payment.reversedPaymentId && !payment.isSorted) {
-    //     var reversed_index = model.receiptPayments.indexOf(
-    //       getReverserPayment(payment, model.receiptPayments)
-    //     );
-    //     payment.isSorted = true;
-    //     if (i < reversed_index) {
-    //       model.receiptPayments.splice(i, 1);
-    //       model.receiptPayments.splice(reversed_index, 0, payment);
-    //       sortedPayments = true;
-    //     } else if (i > reversed_index + 1) {
-    //       model.receiptPayments.splice(i, 1);
-    //       model.receiptPayments.splice(reversed_index + 1, 0, payment);
-    //       sortedPayments = true;
-    //     }
-    //   } else {
-    //     i++;
-    //   }
-    // }
-    // if (sortedPayments) {
-    //   model.receiptPayments.forEach(function(receitPayment) {
-    //     if (receitPayment.isSorted) {
-    //       delete receitPayment.isSorted;
-    //     }
-    //   });
-    // }
-    // payments = new Backbone.Collection();
-    // _.each(model.receiptPayments, function(iter) {
-    //   var paymentProp;
-    //   curPayment = new OB.Model.PaymentLine();
-    //   for (paymentProp in iter) {
-    //     if (iter.hasOwnProperty(paymentProp)) {
-    //       if (paymentProp === 'paymentDate') {
-    //         if (
-    //           !OB.UTIL.isNullOrUndefined(iter[paymentProp]) &&
-    //           moment(iter[paymentProp]).isValid()
-    //         ) {
-    //           curPayment.set(
-    //             paymentProp,
-    //             OB.I18N.normalizeDate(new Date(iter[paymentProp]))
-    //           );
-    //         } else {
-    //           curPayment.set(paymentProp, null);
-    //         }
-    //       } else {
-    //         curPayment.set(paymentProp, iter[paymentProp]);
-    //       }
-    //     }
-    //   }
-    //
-    //   payments.add(curPayment);
-    // });
-    // order.adjustPayment();
+        const reversedPayment = newTicket.payments.find(
+          p => p.reversedPaymentId === payment.paymentId
+        );
+        if (payment.isReversed) {
+          newPayment.reversedPaymentId = undefined;
+        }
+        if (reversedPayment) {
+          newPayment.reversedPaymentId = reversedPayment.paymentId;
+          newPayment.isReversePayment = true;
+        }
 
-    // if (!model.isLayaway && !model.isQuotation) {
-    //   if (model.totalamount > 0 && order.get('payment') < model.totalamount) {
-    //     order.set('paidOnCredit', true);
-    //   } else if (
-    //     model.totalamount < 0 &&
-    //     (order.get('payment') === 0 ||
-    //       OB.DEC.abs(model.totalamount) > order.get('payment'))
-    //   ) {
-    //     order.set('paidOnCredit', true);
-    //   }
-    // }
+        return newPayment;
+      })
+      .sort((payment1, payment2) => {
+        if (payment1.paymentId === payment2.reversedPaymentId) {
+          return -1;
+        }
+        if (payment1.reversedPaymentId === payment2.paymentId) {
+          return 1;
+        }
+        return payment1;
+      });
 
-    // return {
-    //   ...ticket,
-    //   payments: ticket.payments.map(payment => {
-    //     return {
-    //       ...payment,
-    //       date: new Date(payment.paymentDate),
-    //       orderGross: ticket.grossAmount,
-    //       isPaid: ticket.isPaid
-    //     };
-    //   })
-    // };
-
-    return OB.App.State.Ticket.Utils.adjustPayments(ticket, payload);
+    return OB.App.State.Ticket.Utils.adjustPayments(newTicket, payload);
   };
 
   const addProducts = (ticket, payload) => {
@@ -358,11 +290,54 @@
     //   }
     // );
 
-    const transformTaxes = taxes => {
-      if (!taxes) {
-        return {};
-      }
-      return taxes
+    const newTicket = {
+      ...ticket,
+      qty: payload.ticket.lines.reduce(
+        (accumulator, line) => OB.DEC.add(accumulator, line.quantity),
+        OB.DEC.Zero
+      )
+    };
+    newTicket.lines = newTicket.lines.map(line => ({
+      ...line,
+      qty: OB.DEC.number(line.quantity, line.product.uOMstandardPrecision),
+      netListPrice: line.listPrice,
+      grossListPrice: line.grossListPrice,
+      baseNetUnitPrice: line.standardPrice,
+      baseGrossUnitPrice: line.baseGrossUnitPrice,
+      netUnitPrice: line.unitPrice,
+      grossUnitPrice: line.grossUnitPrice,
+      baseNetUnitAmount: line.lineNetAmount,
+      baseGrossUnitAmount: line.lineGrossAmount,
+      netUnitAmount: line.lineNetAmount,
+      grossUnitAmount: line.lineGrossAmount,
+      priceIncludesTax: ticket.priceIncludesTax,
+      // TODO: hasRelatedServices: hasservices,
+      warehouse: {
+        id: line.warehouse,
+        warehousename: line.warehousename
+      },
+      groupService: line.product.groupProduct,
+      isEditable: true,
+      isDeletable: true,
+      country:
+        // eslint-disable-next-line no-nested-ternary
+        line.obrdmDeliveryMode === 'HomeDelivery'
+          ? ticket.businessPartner.shipLocId
+            ? ticket.businessPartner.locationModel.countryId
+            : null
+          : line.organization
+          ? line.organization.country
+          : payload.terminal.organizationCountryId,
+      region:
+        // eslint-disable-next-line no-nested-ternary
+        line.obrdmDeliveryMode === 'HomeDelivery'
+          ? ticket.businessPartner.shipLocId
+            ? ticket.businessPartner.locationModel.regionId
+            : null
+          : line.organization
+          ? line.organization.region
+          : payload.terminal.organizationRegionId,
+      taxes: line.taxes
         .map(tax => ({
           id: tax.taxId,
           net: tax.taxableAmount,
@@ -377,55 +352,10 @@
           const newObj = { ...obj };
           newObj[[item.id]] = item;
           return newObj;
-        }, {});
-    };
-    return {
-      ...ticket,
-      lines: ticket.lines.map(line => {
-        return {
-          ...line,
-          taxes: transformTaxes(line.taxes),
-          qty: OB.DEC.number(line.quantity, line.product.uOMstandardPrecision),
-          netListPrice: line.listPrice,
-          grossListPrice: line.grossListPrice,
-          baseNetUnitPrice: line.standardPrice,
-          baseGrossUnitPrice: line.baseGrossUnitPrice,
-          netUnitPrice: line.unitPrice,
-          grossUnitPrice: line.grossUnitPrice,
-          baseNetUnitAmount: line.lineNetAmount,
-          baseGrossUnitAmount: line.lineGrossAmount,
-          netUnitAmount: line.lineNetAmount,
-          grossUnitAmount: line.lineGrossAmount,
-          priceIncludesTax: ticket.priceIncludesTax,
-          // TODO: hasRelatedServices: hasservices,
-          warehouse: {
-            id: line.warehouse,
-            warehousename: line.warehousename
-          },
-          groupService: line.product.groupProduct,
-          isEditable: true,
-          isDeletable: true,
-          country:
-            // eslint-disable-next-line no-nested-ternary
-            line.obrdmDeliveryMode === 'HomeDelivery'
-              ? ticket.businessPartner.shipLocId
-                ? ticket.businessPartner.locationModel.countryId
-                : null
-              : line.organization
-              ? line.organization.country
-              : payload.terminal.organizationCountryId,
-          region:
-            // eslint-disable-next-line no-nested-ternary
-            line.obrdmDeliveryMode === 'HomeDelivery'
-              ? ticket.businessPartner.shipLocId
-                ? ticket.businessPartner.locationModel.regionId
-                : null
-              : line.organization
-              ? line.organization.region
-              : payload.terminal.organizationRegionId
-        };
-      })
-    };
+        }, {})
+    }));
+
+    return newTicket;
   };
 
   OB.App.StateAPI.Global.loadTicket.addActionPreparation(
