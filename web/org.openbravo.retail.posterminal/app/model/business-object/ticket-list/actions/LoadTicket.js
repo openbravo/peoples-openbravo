@@ -37,8 +37,9 @@
   const createTicket = payload => {
     const newTicket = {
       ...payload.ticket,
+      id: payload.ticket.orderid,
       isbeingprocessed: 'N',
-      hasbeenpaid: 'N',
+      hasbeenpaid: payload.ticket.isQuotation ? 'Y' : 'N',
       isEditable: false,
       isModified: false,
       orderDate: OB.I18N.normalizeDate(payload.ticket.orderDate),
@@ -51,7 +52,12 @@
       payments: payload.ticket.receiptPayments,
       grossAmount: payload.ticket.totalamount,
       netAmount: payload.ticket.totalNetAmount,
-      approvals: []
+      approvals: [],
+      orderType:
+        payload.ticket.documentType ===
+        payload.terminal.terminalType.documentTypeForReturns
+          ? 1
+          : 0
     };
 
     newTicket.taxes = payload.ticket.receiptTaxes
@@ -71,43 +77,12 @@
         return newObj;
       }, {});
 
-    if (newTicket.isQuotation) {
-      newTicket.oldId = newTicket.orderid;
-      newTicket.documentType =
-        payload.terminal.terminalType.documentTypeForQuotations;
-      newTicket.hasbeenpaid = 'Y';
-      newTicket.id = null;
-    } else {
-      newTicket.id = newTicket.orderid;
-    }
-
-    if (!newTicket.isLayaway) {
-      newTicket.isPaid = true;
-      const paidByPayments = newTicket.payments.reduce(
-        (accumulator, payment) =>
-          OB.DEC.add(accumulator, OB.DEC.mul(payment.amount, payment.rate)),
-        OB.DEC.Zero
-      );
-      const creditAmount = OB.DEC.sub(newTicket.grossAmount, paidByPayments);
-      if (
-        OB.DEC.compare(newTicket.grossAmount) > 0 &&
-        OB.DEC.compare(creditAmount) > 0 &&
-        !newTicket.isQuotation
-      ) {
-        newTicket.creditAmount = creditAmount;
-        if (paidByPayments) {
-          newTicket.paidPartiallyOnCredit = true;
-        }
-        newTicket.paidOnCredit = true;
-      }
-
-      if (
-        newTicket.documentType ===
-        payload.terminal.terminalType.documentTypeForReturns
-      ) {
-        newTicket.orderType = 1;
-      }
-    }
+    // TODO
+    // if (newTicket.isQuotation) {
+    //   newTicket.oldId = newTicket.orderid;
+    //   newTicket.documentType =
+    //     payload.terminal.terminalType.documentTypeForQuotations;
+    // }
 
     return newTicket;
   };
@@ -184,6 +159,27 @@
         }
         return payment1;
       });
+
+    if (!newTicket.isLayaway) {
+      newTicket.isPaid = true;
+      const paidByPayments = newTicket.payments.reduce(
+        (accumulator, payment) =>
+          OB.DEC.add(accumulator, OB.DEC.mul(payment.amount, payment.rate)),
+        OB.DEC.Zero
+      );
+      const creditAmount = OB.DEC.sub(newTicket.grossAmount, paidByPayments);
+      if (
+        OB.DEC.compare(newTicket.grossAmount) > 0 &&
+        OB.DEC.compare(creditAmount) > 0 &&
+        !newTicket.isQuotation
+      ) {
+        newTicket.creditAmount = creditAmount;
+        if (paidByPayments) {
+          newTicket.paidPartiallyOnCredit = true;
+        }
+        newTicket.paidOnCredit = true;
+      }
+    }
 
     return OB.App.State.Ticket.Utils.adjustPayments(newTicket, payload);
   };
