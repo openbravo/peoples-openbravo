@@ -8,7 +8,7 @@
  */
 
 /**
- * @fileoverview Defines the HardwareMaangerEndpoint class.
+ * @fileoverview Defines the HardwareManagerEndpoint class.
  * @author Carlos Aristu <carlos.aristu@openbravo.com>
  */
 
@@ -30,18 +30,36 @@
     return new OB.Model.OrderLine(line);
   };
 
+  // Retrieves the template to display the total of a ticket
+  const getDisplayTotalTemplate = () => {
+    const terminal = OB.App.TerminalProperty.get('terminal');
+    const template =
+      terminal && terminal.printDisplayTotalTemplate
+        ? terminal.printDisplayTotalTemplate
+        : '../org.openbravo.retail.posterminal/res/displaytotal.xml';
+    return new OB.App.Class.PrintTemplate(template);
+  };
+
   /**
    * A synchronization endpoint in charge of the messages for communicating with the Hardware Manager.
    */
   class HardwareManagerEndpoint extends OB.App.Class.SynchronizationEndpoint {
+    /**
+     * Base constructor, it can be used once the terminal information is loaded.
+     * That means that this endpoint should not be registered until that information is ready.
+     */
     constructor(name) {
       super(name || 'HardwareManager');
+
       this.messageTypes.push(
         'displayTotal',
         'printTicket',
         'printTicketLine',
         'printWelcome'
       );
+
+      this.controller = new OB.App.Class.HardwareManagerController();
+      this.printTemplates = { displayTotal: getDisplayTotalTemplate() };
     }
 
     // Sets the printers
@@ -73,14 +91,12 @@
     }
 
     displayTotal(messageData) {
-      if (!this.printer) {
-        throw new Error(`The endpoint has no printer assigned`);
-      }
       try {
+        const template = this.printTemplates.displayTotal;
         const order = toOrder(messageData.data.ticket);
-        this.printer.doDisplayTotal(order);
+        this.controller.display(template, { order });
       } catch (error) {
-        OB.error(`Error displaying total: ${error}`);
+        OB.error(`Error displaying ticket total: ${error}`);
       }
     }
 
