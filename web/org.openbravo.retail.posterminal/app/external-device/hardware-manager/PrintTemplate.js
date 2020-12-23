@@ -67,7 +67,7 @@
       await Promise.all(dataRetrievals);
 
       return JSON.stringify({
-        param: params.order.serializeToJSON(),
+        param: params.ticket,
         mainReport: newTemplate,
         subReports: newTemplate.subReports
       });
@@ -94,12 +94,10 @@
       return this.resourcedata;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     prepareParams(params) {
-      if (!OB.App.StateBackwardCompatibility) {
+      if (!this.isBackwardCompatible()) {
         return params;
       }
-      // backward compatible mode
       const newParams = { ...params };
       if (params.ticket) {
         newParams.order = toOrder(params.ticket);
@@ -108,6 +106,11 @@
         newParams.line = toOrderLine(params.ticketLine);
       }
       return newParams;
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    isBackwardCompatible() {
+      return OB.App.StateBackwardCompatibility != null;
     }
   };
 })();
