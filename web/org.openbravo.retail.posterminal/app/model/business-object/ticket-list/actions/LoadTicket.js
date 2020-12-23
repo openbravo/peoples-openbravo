@@ -286,8 +286,9 @@
         OB.DEC.Zero
       )
     };
-    newTicket.lines = newTicket.lines.map(line => ({
+    newTicket.lines = newTicket.lines.map((line, index) => ({
       ...line,
+      linepos: index,
       qty: OB.DEC.number(line.quantity, line.product.uOMstandardPrecision),
       netListPrice: line.listPrice,
       grossListPrice: line.grossListPrice,
