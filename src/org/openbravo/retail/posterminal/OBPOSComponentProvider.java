@@ -405,6 +405,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/synchronization-buffer/HardwareManagerEndpoint"), //
 
         // External Device
+        businesslogic("app/external-device/hardware-manager/HardwareManagerController"), //
+        businesslogic("app/external-device/hardware-manager/PrintTemplate"), //
         businesslogic("app/external-device/actions/Print"), //
         businesslogic("app/external-device/actions/PrintLine"), //
         businesslogic("app/external-device/actions/PrintWelcome")));
