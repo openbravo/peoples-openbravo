@@ -42,6 +42,8 @@
       hasbeenpaid: payload.ticket.isQuotation ? 'Y' : 'N',
       isEditable: false,
       isModified: false,
+      generateInvoice: payload.ticket.generateInvoice || false,
+      fullInvoice: payload.ticket.fullInvoice || false,
       orderDate: OB.I18N.normalizeDate(payload.ticket.orderDate),
       creationDate: OB.I18N.normalizeDate(payload.ticket.creationDate),
       updatedBy: payload.orgUserId,
@@ -114,17 +116,14 @@
   };
 
   const addPayments = (ticket, payload) => {
-    const newTicket = {
-      ...ticket,
-      change: OB.DEC.Zero,
-      paidOnCredit:
-        !ticket.isLayaway &&
-        !ticket.isQuotation &&
-        ((ticket.totalamount > 0 && ticket.payment < ticket.totalamount) ||
-          (ticket.totalamount < 0 &&
-            (ticket.payment === 0 ||
-              OB.DEC.abs(ticket.totalamount) > ticket.payment)))
-    };
+    const newTicket = OB.App.State.Ticket.Utils.adjustPayments(
+      {
+        ...ticket,
+        change: OB.DEC.Zero,
+        isPaid: !ticket.isLayaway
+      },
+      payload
+    );
 
     newTicket.payments = newTicket.payments
       .map(payment => {
@@ -160,8 +159,7 @@
         return payment1;
       });
 
-    if (!newTicket.isLayaway) {
-      newTicket.isPaid = true;
+    if (!newTicket.isQuotation && !newTicket.isLayaway) {
       const paidByPayments = newTicket.payments.reduce(
         (accumulator, payment) =>
           OB.DEC.add(accumulator, OB.DEC.mul(payment.amount, payment.rate)),
@@ -170,18 +168,25 @@
       const creditAmount = OB.DEC.sub(newTicket.grossAmount, paidByPayments);
       if (
         OB.DEC.compare(newTicket.grossAmount) > 0 &&
-        OB.DEC.compare(creditAmount) > 0 &&
-        !newTicket.isQuotation
+        OB.DEC.compare(creditAmount) > 0
       ) {
         newTicket.creditAmount = creditAmount;
         if (paidByPayments) {
           newTicket.paidPartiallyOnCredit = true;
         }
         newTicket.paidOnCredit = true;
+      } else if (
+        (newTicket.totalamount > 0 &&
+          newTicket.totalamount > newTicket.payment) ||
+        (newTicket.totalamount < 0 &&
+          (newTicket.payment === 0 ||
+            OB.DEC.abs(newTicket.totalamount) > newTicket.payment))
+      ) {
+        newTicket.paidOnCredit = true;
       }
     }
 
-    return OB.App.State.Ticket.Utils.adjustPayments(newTicket, payload);
+    return newTicket;
   };
 
   const addProducts = (ticket, payload) => {
@@ -346,7 +351,7 @@
       let newPayload = { ...payload };
 
       newPayload = await checkCrossStore(newPayload);
-      // TODO: checkSession, searchRelatedReceipts
+      // TODO: checkPermissions, checkSession, searchRelatedReceipts
       newPayload = await loadTicket(newPayload);
       newPayload = await loadBusinessPartner(newPayload);
       newPayload = await loadProducts(newPayload);
@@ -392,7 +397,7 @@
 
     return {
       ...payload,
-      ticket: { ...payload.ticket, ...data.response.data[0] }
+      ticket: { ...data.response.data[0] }
     };
   };
 
@@ -444,8 +449,9 @@
       };
       return (
         (isRemoteCustomer
-          ? getRemoteBusinessPartner()
-          : getLocalBusinessPartner()) || getBusinessPartnerFromBackoffice()
+          ? await getRemoteBusinessPartner()
+          : await getLocalBusinessPartner()) ||
+        getBusinessPartnerFromBackoffice()
       );
     };
     const getBusinessPartnerLocation = async () => {
@@ -483,8 +489,8 @@
       };
       return (
         (isRemoteCustomer
-          ? getRemoteBusinessPartnerLocation()
-          : getLocalBusinessPartnerLocation()) ||
+          ? await getRemoteBusinessPartnerLocation()
+          : await getLocalBusinessPartnerLocation()) ||
         getBusinessPartnerFromBackoffice().locations
       );
     };
@@ -534,8 +540,8 @@
       };
       return (
         (isRemoteProduct
-          ? getRemoteProduct(line.id)
-          : getLocalProduct(line.id)) ||
+          ? await getRemoteProduct(line.id)
+          : await getLocalProduct(line.id)) ||
         getProductFromBackoffice(line.lineId, line.id)
       );
     };
