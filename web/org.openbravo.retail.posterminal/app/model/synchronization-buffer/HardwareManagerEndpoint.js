@@ -13,23 +13,6 @@
  */
 
 (function HardwareManagerEndpointDefinition() {
-  // Turns an state ticket into a backbone order
-  const toOrder = ticket => {
-    if (!ticket.id) {
-      // force to have a ticket id: if no id is provided an empty backbone order is created
-      // eslint-disable-next-line no-param-reassign
-      ticket.id = OB.App.UUID.generate();
-    }
-    return OB.App.StateBackwardCompatibility.getInstance(
-      'Ticket'
-    ).toBackboneObject(ticket);
-  };
-
-  // Turns a JSON representation of a backbone order line into a backbone order line
-  const toOrderLine = line => {
-    return new OB.Model.OrderLine(line);
-  };
-
   // Retrieves the template to display the total of a ticket
   const getDisplayTotalTemplate = () => {
     const terminal = OB.App.TerminalProperty.get('terminal');
@@ -106,8 +89,7 @@
     displayTotal(messageData) {
       try {
         const template = this.printTemplates.displayTotal;
-        const order = toOrder(messageData.data.ticket);
-        this.controller.display(template, { order });
+        this.controller.display(template, { ticket: messageData.data.ticket });
       } catch (error) {
         OB.error(`Error displaying ticket total: ${error}`);
       }
@@ -118,8 +100,8 @@
         throw new Error(`The endpoint has no printer assigned`);
       }
       try {
-        const order = toOrder(messageData.data.ticket);
-        await this.printer.doPrint(order, {
+        // TODO -- not working, use new engine
+        await this.printer.doPrint(messageData.data.ticket, {
           ...messageData.data.printSettings
         });
       } catch (error) {
@@ -132,8 +114,9 @@
         throw new Error(`The endpoint has no line printer assigned`);
       }
       try {
-        const line = toOrderLine(messageData.data.line);
-        this.linePrinter.doPrint(line);
+        // TODO -- not working, use new engine
+        const ticketLine = messageData.data.line;
+        this.linePrinter.doPrint(ticketLine);
       } catch (error) {
         OB.error(`Error printing ticket line: ${error}`);
       }
