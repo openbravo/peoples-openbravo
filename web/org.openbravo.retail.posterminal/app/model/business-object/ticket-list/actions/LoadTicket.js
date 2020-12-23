@@ -468,7 +468,9 @@
                   }
                 ]
               });
-        return [businessPartnerLocations];
+        return Array.isArray(businessPartnerLocations)
+          ? businessPartnerLocations
+          : [businessPartnerLocations];
       };
       const getLocalBusinessPartnerLocation = async () => {
         const businessPartnerLocations =
@@ -485,7 +487,9 @@
                   )
                   .build()
               );
-        return [businessPartnerLocations];
+        return Array.isArray(businessPartnerLocations)
+          ? businessPartnerLocations
+          : [businessPartnerLocations];
       };
       return (
         (isRemoteCustomer
