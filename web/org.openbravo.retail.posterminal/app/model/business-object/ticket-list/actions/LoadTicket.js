@@ -189,18 +189,6 @@
     //   order.set('hasServices', true);
     // }
 
-    // await order._loadRelatedServices(
-    //   prod.get('productType'),
-    //   prod.get('id'),
-    //   prod.get('productCategory'),
-    //   async function(data) {
-    //     let hasservices;
-    //     if (
-    //       !OB.UTIL.isNullOrUndefined(data) &&
-    //       OB.DEC.number(iter.quantity) > 0
-    //     ) {
-    //       hasservices = data.hasservices;
-    //     }
     //
     //     for (let promotion of iter.promotions) {
     //       try {
@@ -307,7 +295,6 @@
       netUnitAmount: line.lineNetAmount,
       grossUnitAmount: line.lineGrossAmount,
       priceIncludesTax: ticket.priceIncludesTax,
-      // TODO: hasRelatedServices: hasservices,
       warehouse: {
         id: line.warehouse,
         warehousename: line.warehousename
@@ -410,6 +397,9 @@
   };
 
   const loadBusinessPartner = async payload => {
+    const isRemoteCustomer = OB.App.Security.hasPermission(
+      'OBPOS_remote.customer'
+    );
     const getBusinessPartnerFromBackoffice = async () => {
       try {
         const data = await OB.App.Request.mobileServiceRequest(
@@ -438,50 +428,65 @@
         });
       }
     };
-    const getRemoteBusinessPartner = async () => {
-      const businessPartner = await OB.App.DAL.remoteGet(
-        'BusinessPartner',
-        payload.ticket.bp
+    const getBusinessPartner = async () => {
+      const getRemoteBusinessPartner = async () => {
+        const businessPartner = await OB.App.DAL.remoteGet(
+          'BusinessPartner',
+          payload.ticket.bp
+        );
+        return businessPartner;
+      };
+      const getLocalBusinessPartner = async () => {
+        const businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
+          payload.ticket.bp
+        );
+        return businessPartner;
+      };
+      return (
+        (isRemoteCustomer
+          ? getRemoteBusinessPartner()
+          : getLocalBusinessPartner()) || getBusinessPartnerFromBackoffice()
       );
-      return businessPartner;
     };
-    const getLocalBusinessPartner = async () => {
-      const businessPartner = await OB.App.MasterdataModels.BusinessPartner.withId(
-        payload.ticket.bp
+    const getBusinessPartnerLocation = async () => {
+      const getRemoteBusinessPartnerLocation = async () => {
+        const businessPartnerLocations =
+          payload.ticket.bpLocId === payload.ticket.bpBillLocId
+            ? await OB.App.DAL.remoteGet('BPLocation', payload.ticket.bpLocId)
+            : await OB.App.DAL.remoteSearch('BPLocation', {
+                remoteFilters: [
+                  {
+                    columns: ['id'],
+                    operator: 'equals',
+                    value: [payload.ticket.bpLocId, payload.ticket.bpBillLocId]
+                  }
+                ]
+              });
+        return [businessPartnerLocations];
+      };
+      const getLocalBusinessPartnerLocation = async () => {
+        const businessPartnerLocations =
+          payload.ticket.bpLocId === payload.ticket.bpBillLocId
+            ? await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
+                payload.ticket.bpLocId
+              )
+            : await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+                new OB.App.Class.Criteria()
+                  .criterion(
+                    'id',
+                    [payload.ticket.bpLocId, payload.ticket.bpBillLocId],
+                    'in'
+                  )
+                  .build()
+              );
+        return [businessPartnerLocations];
+      };
+      return (
+        (isRemoteCustomer
+          ? getRemoteBusinessPartnerLocation()
+          : getLocalBusinessPartnerLocation()) ||
+        getBusinessPartnerFromBackoffice().locations
       );
-      return businessPartner;
-    };
-    const getRemoteBusinessPartnerLocation = async () => {
-      const businessPartnerLocations =
-        payload.ticket.bpLocId === payload.ticket.bpBillLocId
-          ? await OB.App.DAL.remoteGet('BPLocation', payload.ticket.bpLocId)
-          : await OB.App.DAL.remoteSearch('BPLocation', {
-              remoteFilters: [
-                {
-                  columns: ['id'],
-                  operator: 'equals',
-                  value: [payload.ticket.bpLocId, payload.ticket.bpBillLocId]
-                }
-              ]
-            });
-      return [businessPartnerLocations];
-    };
-    const getLocalBusinessPartnerLocation = async () => {
-      const businessPartnerLocations =
-        payload.ticket.bpLocId === payload.ticket.bpBillLocId
-          ? await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
-              payload.ticket.bpLocId
-            )
-          : await OB.App.MasterdataModels.BusinessPartnerLocation.find(
-              new OB.App.Class.Criteria()
-                .criterion(
-                  'id',
-                  [payload.ticket.bpLocId, payload.ticket.bpBillLocId],
-                  'in'
-                )
-                .build()
-            );
-      return [businessPartnerLocations];
     };
 
     const newPayload = { ...payload };
@@ -490,59 +495,105 @@
         newPayload.ticket.externalBusinessPartnerReference
       );
     }
-    newPayload.ticket.businessPartner =
-      (OB.App.Security.hasPermission('OBPOS_remote.customer')
-        ? await getRemoteBusinessPartner()
-        : await getLocalBusinessPartner()) ||
-      (await getBusinessPartnerFromBackoffice());
-
-    if (newPayload.ticket.businessPartner.locations) {
-      return payload;
-    }
-
+    newPayload.ticket.businessPartner = await getBusinessPartner();
     newPayload.ticket.businessPartner.locations =
-      (OB.App.Security.hasPermission('OBPOS_remote.customer')
-        ? await getRemoteBusinessPartnerLocation()
-        : await getLocalBusinessPartnerLocation()) ||
-      (await getBusinessPartnerFromBackoffice().locations);
+      newPayload.ticket.businessPartner.locations ||
+      (await getBusinessPartnerLocation());
 
     return newPayload;
   };
 
   const loadProducts = async payload => {
-    const getRemoteProduct = async productId => {
-      const product = await OB.App.DAL.remoteGet('Product', productId);
-      return product;
+    const isRemoteProduct = OB.App.Security.hasPermission(
+      'OBPOS_remote.product'
+    );
+    const getProduct = async line => {
+      const getRemoteProduct = async productId => {
+        const product = await OB.App.DAL.remoteGet('Product', productId);
+        return product;
+      };
+      const getLocalProduct = async productId => {
+        const product = await OB.App.MasterdataModels.Product.withId(productId);
+        return product;
+      };
+      const getProductFromBackoffice = async (lineId, productId) => {
+        try {
+          const data = await OB.App.Request.mobileServiceRequest(
+            'org.openbravo.retail.posterminal.master.LoadedProduct',
+            {
+              salesOrderLineId: lineId,
+              productId
+            }
+          );
+          return data.response.data[0];
+        } catch (error) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_NoReceiptLoadedText'
+          });
+        }
+      };
+      return (
+        (isRemoteProduct
+          ? getRemoteProduct(line.id)
+          : getLocalProduct(line.id)) ||
+        getProductFromBackoffice(line.lineId, line.id)
+      );
     };
-    const getLocalProduct = async productId => {
-      const product = await OB.App.MasterdataModels.Product.withId(productId);
-      return product;
-    };
-    const getProductFromBackoffice = async (lineId, productId) => {
-      try {
-        const data = await OB.App.Request.mobileServiceRequest(
-          'org.openbravo.retail.posterminal.master.LoadedProduct',
-          {
-            salesOrderLineId: lineId,
-            productId
-          }
-        );
-        return data.response.data[0];
-      } catch (error) {
-        throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBPOS_NoReceiptLoadedText'
-        });
-      }
+    const getService = async product => {
+      const getRemoteService = async () => {
+        try {
+          const data = await OB.App.Request.mobileServiceRequest(
+            'org.openbravo.retail.posterminal.process.HasServices',
+            {
+              product: product.productId,
+              productCategory: product.productCategory,
+              parameters: {
+                terminalTime: new Date(),
+                terminalTimeOffset: new Date().getTimezoneOffset()
+              },
+              remoteFilters: [
+                {
+                  columns: [],
+                  operator: 'filter',
+                  value: 'OBRDM_DeliveryServiceFilter',
+                  params: [false]
+                }
+              ]
+            }
+          );
+          return data.response.data.length > 0;
+        } catch (error) {
+          return false;
+        }
+      };
+      const getLocalService = async () => {
+        try {
+          const criteria = await OB.App.StandardFilters.Services.apply({
+            productId: product.productId,
+            productCategory: product.productCategory
+          });
+          const data = await OB.App.MasterdataModels.Product.find(
+            criteria.criterion('obrdmIsdeliveryservice', false).build()
+          );
+          return data.length > 0;
+        } catch (error) {
+          return false;
+        }
+      };
+
+      return isRemoteProduct
+        ? getRemoteService(product)
+        : getLocalService(product);
     };
 
     const lines = await Promise.all(
       payload.ticket.receiptLines.map(async line => {
-        const product =
-          (OB.App.Security.hasPermission('OBPOS_remote.product')
-            ? await getRemoteProduct(line.id)
-            : await getLocalProduct(line.id)) ||
-          (await getProductFromBackoffice(line.lineId, line.id));
-        return { ...line, id: line.lineId, product };
+        const product = await getProduct(line);
+        const hasRelatedServices =
+          line.qty <= 0 || product.productType === 'S'
+            ? false
+            : await getService(product);
+        return { ...line, id: line.lineId, product, hasRelatedServices };
       })
     );
     return { ...payload, ticket: { ...payload.ticket, lines } };
