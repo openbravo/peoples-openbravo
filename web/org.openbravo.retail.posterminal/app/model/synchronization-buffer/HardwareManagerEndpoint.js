@@ -40,6 +40,16 @@
     return new OB.App.Class.PrintTemplate(template);
   };
 
+  // Retrieves the template to display the welcome message
+  const getWelcomeTemplate = () => {
+    const terminal = OB.App.TerminalProperty.get('terminal');
+    const template =
+      terminal && terminal.printWelcomeTemplate
+        ? terminal.printWelcomeTemplate
+        : '../org.openbravo.retail.posterminal/res/welcome.xml';
+    return new OB.App.Class.PrintTemplate(template);
+  };
+
   /**
    * A synchronization endpoint in charge of the messages for communicating with the Hardware Manager.
    */
@@ -59,7 +69,10 @@
       );
 
       this.controller = new OB.App.Class.HardwareManagerController();
-      this.printTemplates = { displayTotal: getDisplayTotalTemplate() };
+      this.printTemplates = {
+        displayTotal: getDisplayTotalTemplate(),
+        welcome: getWelcomeTemplate()
+      };
     }
 
     // Sets the printers
@@ -127,10 +140,12 @@
     }
 
     printWelcome() {
-      if (!this.welcomePrinter) {
-        throw new Error(`The endpoint has no printer assigned`);
+      try {
+        const template = this.printTemplates.welcome;
+        this.controller.display(template);
+      } catch (error) {
+        OB.error(`Error displaying welcome message: ${error}`);
       }
-      this.welcomePrinter.doPrintWelcome();
     }
   }
 
