@@ -33,6 +33,16 @@
     return new OB.App.Class.PrintTemplate(template);
   };
 
+  // Retrieves the template to display the information of a ticket line
+  const getTicketLineTemplate = () => {
+    const terminal = OB.App.TerminalProperty.get('terminal');
+    const template =
+      terminal && terminal.printReceiptLineTemplate
+        ? terminal.printReceiptLineTemplate
+        : '../org.openbravo.retail.posterminal/res/printline.xml';
+    return new OB.App.Class.PrintTemplate(template);
+  };
+
   /**
    * A synchronization endpoint in charge of the messages for communicating with the Hardware Manager.
    */
@@ -54,6 +64,7 @@
       this.controller = new OB.App.Class.HardwareManagerController();
       this.printTemplates = {
         displayTotal: getDisplayTotalTemplate(),
+        ticketLine: getTicketLineTemplate(),
         welcome: getWelcomeTemplate()
       };
     }
@@ -114,9 +125,10 @@
         throw new Error(`The endpoint has no line printer assigned`);
       }
       try {
-        // TODO -- not working, use new engine
-        const ticketLine = messageData.data.line;
-        this.linePrinter.doPrint(ticketLine);
+        const template = this.printTemplates.ticketLine;
+        this.controller.display(template, {
+          ticketLine: messageData.data.line
+        });
       } catch (error) {
         OB.error(`Error printing ticket line: ${error}`);
       }
