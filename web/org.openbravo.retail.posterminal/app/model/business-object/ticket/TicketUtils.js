@@ -690,7 +690,7 @@
       } else {
         origAmount = payment.amount;
       }
-      return { ...payment, origAmount, paid: payment.origAmount, precision };
+      return { ...payment, origAmount, paid: origAmount, precision };
     }
 
     // Returns the difference (abs) between total to pay and payments without take into account the provided payment
