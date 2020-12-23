@@ -116,27 +116,18 @@
   };
 
   const addPayments = (ticket, payload) => {
-    const newTicket = OB.App.State.Ticket.Utils.adjustPayments(
-      {
-        ...ticket,
-        change: OB.DEC.Zero,
-        isPaid: !ticket.isLayaway
-      },
-      payload
-    );
-
-    newTicket.payments = newTicket.payments
+    const payments = ticket.payments
       .map(payment => {
         const newPayment = {
           ...payment,
           date: new Date(payment.paymentDate),
           paymentDate: new Date(payment.paymentDate).toISOString(),
-          orderGross: newTicket.grossAmount,
+          orderGross: ticket.grossAmount,
           origAmount: OB.DEC.Zero,
-          isPaid: newTicket.isPaid
+          isPaid: !ticket.isLayaway
         };
 
-        const reversedPayment = newTicket.payments.find(
+        const reversedPayment = ticket.payments.find(
           p => p.reversedPaymentId === payment.paymentId
         );
         if (payment.isReversed) {
@@ -158,6 +149,16 @@
         }
         return payment1;
       });
+
+    const newTicket = OB.App.State.Ticket.Utils.adjustPayments(
+      {
+        ...ticket,
+        change: OB.DEC.Zero,
+        isPaid: !ticket.isLayaway,
+        payments
+      },
+      payload
+    );
 
     if (!newTicket.isQuotation && !newTicket.isLayaway) {
       const paidByPayments = newTicket.payments.reduce(
