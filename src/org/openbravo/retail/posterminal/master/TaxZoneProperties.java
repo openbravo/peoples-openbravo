@@ -33,6 +33,7 @@ public class TaxZoneProperties extends ModelExtension {
     list.add(new HQLProperty("financialMgmtTaxRate.rate", "rate"));
     list.add(new HQLProperty("financialMgmtTaxRate.taxCategory.id", "taxCategory"));
     list.add(new HQLProperty("financialMgmtTaxRate.summaryLevel", "summaryLevel"));
+    list.add(new HQLProperty("financialMgmtTaxRate.active", "active"));
     list.add(new HQLProperty("financialMgmtTaxRate.businessPartnerTaxCategory.id",
         "businessPartnerTaxCategory"));
     return list;

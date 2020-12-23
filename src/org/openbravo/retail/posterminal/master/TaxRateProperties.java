@@ -26,6 +26,7 @@ public class TaxRateProperties extends ModelExtension {
     list.add(new HQLProperty("tr.name", "name"));
     list.add(new HQLProperty("tr.description", "description"));
     list.add(new HQLProperty("tr.taxSearchKey", "taxSearchKey"));
+    list.add(new HQLProperty("tr.active", "active"));
     list.add(new HQLProperty("tr.summaryLevel", "summaryLevel"));
     list.add(new HQLProperty("tr.rate", "rate"));
     list.add(new HQLProperty("tr.parentTaxRate.id", "parentTaxRate"));
