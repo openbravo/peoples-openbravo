@@ -291,7 +291,7 @@
       qty: OB.DEC.number(line.quantity, line.product.uOMstandardPrecision),
       netListPrice: line.listPrice,
       grossListPrice: line.grossListPrice,
-      baseNetUnitPrice: line.standardPrice,
+      baseNetUnitPrice: line.baseNetUnitPrice,
       baseGrossUnitPrice: line.baseGrossUnitPrice,
       netUnitPrice: line.unitPrice,
       grossUnitPrice: line.grossUnitPrice,
