@@ -51,10 +51,12 @@
       paidOnCredit: false,
       session: payload.session,
       skipApplyPromotions: true,
-      payments: payload.ticket.receiptPayments,
       grossAmount: payload.ticket.totalamount,
       netAmount: payload.ticket.totalNetAmount,
       approvals: [],
+      taxes: payload.ticket.receiptTaxes,
+      payments: payload.ticket.receiptPayments,
+      lines: payload.ticket.receiptLines,
       orderType:
         payload.ticket.documentType ===
         payload.terminal.terminalType.documentTypeForReturns
@@ -62,7 +64,7 @@
           : 0
     };
 
-    newTicket.taxes = payload.ticket.receiptTaxes
+    newTicket.taxes = newTicket.taxes
       .map(tax => ({
         id: tax.taxid,
         net: tax.net,
@@ -224,7 +226,7 @@
     //     }
     //
     //     if (
-    //       OB.MobileApp.model.hasPermission(
+    //       OB.App.Security.hasPermission(
     //         'OBPOS_EnableSupportForProductAttributes',
     //         true
     //       )
@@ -282,7 +284,7 @@
 
     const newTicket = {
       ...ticket,
-      qty: payload.ticket.lines.reduce(
+      qty: ticket.lines.reduce(
         (accumulator, line) => OB.DEC.add(accumulator, line.quantity),
         OB.DEC.Zero
       )
@@ -352,6 +354,7 @@
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
+      newPayload = await checkPermission(newPayload);
       newPayload = await checkCrossStore(newPayload);
       // TODO: checkPermissions, checkSession, searchRelatedReceipts
       newPayload = await loadTicket(newPayload);
@@ -361,6 +364,33 @@
       return newPayload;
     }
   );
+
+  const checkPermission = async payload => {
+    switch (payload.ticket.orderType) {
+      case 'QT':
+        if (!OB.App.Security.hasPermission('OBPOS_retail.quotations')) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_OpenReceiptPermissionError_Quotation'
+          });
+        }
+        break;
+      case 'LAY':
+        if (!OB.App.Security.hasPermission('OBPOS_retail.layaways')) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_OpenReceiptPermissionError_Layaway'
+          });
+        }
+        break;
+      default:
+        if (!OB.App.Security.hasPermission('OBPOS_retail.paidReceipts')) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_OpenReceiptPermissionError_Receipt'
+          });
+        }
+        break;
+    }
+    return payload;
+  };
 
   const checkCrossStore = async payload => {
     const isCrossStore = OB.App.State.Ticket.Utils.isCrossStore(
@@ -608,6 +638,6 @@
         return { ...line, id: line.lineId, product, hasRelatedServices };
       })
     );
-    return { ...payload, ticket: { ...payload.ticket, lines } };
+    return { ...payload, ticket: { ...payload.ticket, receiptLines: lines } };
   };
 })();
