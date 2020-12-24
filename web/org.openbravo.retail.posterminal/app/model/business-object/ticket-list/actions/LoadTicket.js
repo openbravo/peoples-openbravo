@@ -384,43 +384,30 @@
   const checkSession = async payload => {
     const ticketInSession = OB.App.State.TicketList.Utils.getSessionTickets(
       payload.session
-    )
-      .concat(
-        OB.App.State.TicketList.Utils.getOtherSessionsTickets(
-          payload.session
-        ).filter(ticket => ticket.hasbeenpaid === 'N')
-      )
-      .find(
-        ticket =>
-          ticket.id === payload.ticket.id ||
-          ticket.oldId === payload.ticket.id ||
-          (ticket.canceledorder || {}).id === payload.ticket.id
-      );
+    ).find(
+      ticket =>
+        ticket.id === payload.ticket.id ||
+        ticket.oldId === payload.ticket.id ||
+        (ticket.canceledorder || {}).id === payload.ticket.id
+    );
 
     if (ticketInSession) {
-      if (ticketInSession.session === payload.session) {
-        if (ticketInSession.oldId === payload.ticket.id) {
-          throw new OB.App.Class.ActionCanceled({
-            errorConfirmation: 'OBPOS_OrderAssociatedToQuotationInProgress',
-            messageParams: [
-              payload.ticket.documentNo,
-              ticketInSession.documentNo,
-              payload.ticket.documentNo,
-              ticketInSession.documentNo
-            ]
-          });
-        }
-        await OB.App.View.DialogUIHandler.askConfirmation({
-          message: `OBPOS_ticketAlreadyOpened_${payload.ticket.orderType}`,
-          messageParams: [ticketInSession.documentNo],
-          hideCancel: true
-        });
-      } else {
-        await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
-          message: `OBPOS_ticketAlreadyOpenedInSession_${payload.ticket.orderType}`,
-          messageParams: [payload.ticket.documentNo, payload.ticket.updatedBy]
+      if (ticketInSession.oldId === payload.ticket.id) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_OrderAssociatedToQuotationInProgress',
+          messageParams: [
+            payload.ticket.documentNo,
+            ticketInSession.documentNo,
+            payload.ticket.documentNo,
+            ticketInSession.documentNo
+          ]
         });
       }
+      await OB.App.View.DialogUIHandler.askConfirmation({
+        message: `OBPOS_ticketAlreadyOpened_${payload.ticket.orderType}`,
+        messageParams: [ticketInSession.documentNo],
+        hideCancel: true
+      });
     }
 
     return { ...payload, ticketInSession };
