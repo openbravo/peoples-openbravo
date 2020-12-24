@@ -854,6 +854,47 @@ enyo.kind({
           });
         } else {
           try {
+            //Check Permissions
+            const openReceiptPermissionError = orderType => {
+              OB.UTIL.showConfirmation.display(
+                OB.I18N.getLabel('OBMOBC_Error'),
+                OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [
+                  orderType
+                ])
+              );
+            };
+            switch (model.get('orderType')) {
+              case 'QT':
+                if (
+                  !OB.MobileApp.model.hasPermission('OBPOS_retail.quotations')
+                ) {
+                  openReceiptPermissionError(
+                    OB.I18N.getLabel('OBPOS_Quotations')
+                  );
+                  return;
+                }
+                break;
+              case 'LAY':
+                if (
+                  !OB.MobileApp.model.hasPermission('OBPOS_retail.layaways')
+                ) {
+                  openReceiptPermissionError(
+                    OB.I18N.getLabel('OBPOS_LblLayaways')
+                  );
+                  return;
+                }
+                break;
+              default:
+                if (
+                  !OB.MobileApp.model.hasPermission('OBPOS_retail.paidReceipts')
+                ) {
+                  openReceiptPermissionError(
+                    OB.I18N.getLabel('OBPOS_LblPaidReceipts')
+                  );
+                  return;
+                }
+                break;
+            }
             await OB.UTIL.TicketListUtils.loadTicketFromBackoffice(model);
             me.doHideThisPopup();
           } catch (error) {

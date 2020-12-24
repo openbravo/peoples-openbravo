@@ -19,6 +19,20 @@
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
 
+      if (payload.ticketInSession) {
+        if (payload.ticketInSession.id === newGlobalState.Ticket.id) {
+          return newGlobalState;
+        }
+        newGlobalState.TicketList = [
+          { ...newGlobalState.Ticket },
+          ...newGlobalState.TicketList.filter(
+            ticket => ticket.id !== payload.ticketInSession.id
+          )
+        ];
+        newGlobalState.Ticket = payload.ticketInSession;
+        return newGlobalState;
+      }
+
       let newTicket = createTicket(payload);
       newTicket = addBusinessPartner(newTicket);
       newTicket = addPayments(newTicket, payload);
@@ -354,42 +368,62 @@
     async (globalState, payload) => {
       let newPayload = { ...payload };
 
-      newPayload = await checkPermission(newPayload);
-      newPayload = await checkCrossStore(newPayload);
-      // TODO: checkPermissions, checkSession, searchRelatedReceipts
-      newPayload = await loadTicket(newPayload);
-      newPayload = await loadBusinessPartner(newPayload);
-      newPayload = await loadProducts(newPayload);
+      newPayload = await checkSession(newPayload);
+      if (!newPayload.ticketInSession) {
+        newPayload = await checkCrossStore(newPayload);
+        // TODO: searchRelatedReceipts
+        newPayload = await loadTicket(newPayload);
+        newPayload = await loadBusinessPartner(newPayload);
+        newPayload = await loadProducts(newPayload);
+      }
 
       return newPayload;
     }
   );
 
-  const checkPermission = async payload => {
-    switch (payload.ticket.orderType) {
-      case 'QT':
-        if (!OB.App.Security.hasPermission('OBPOS_retail.quotations')) {
+  const checkSession = async payload => {
+    const ticketInSession = OB.App.State.TicketList.Utils.getSessionTickets(
+      payload.session
+    )
+      .concat(
+        OB.App.State.TicketList.Utils.getOtherSessionsTickets(
+          payload.session
+        ).filter(ticket => ticket.hasbeenpaid === 'N')
+      )
+      .find(
+        ticket =>
+          ticket.id === payload.ticket.id ||
+          ticket.oldId === payload.ticket.id ||
+          (ticket.canceledorder || {}).id === payload.ticket.id
+      );
+
+    if (ticketInSession) {
+      if (ticketInSession.session === payload.session) {
+        if (ticketInSession.oldId === payload.ticket.id) {
           throw new OB.App.Class.ActionCanceled({
-            errorConfirmation: 'OBPOS_OpenReceiptPermissionError_Quotation'
+            errorConfirmation: 'OBPOS_OrderAssociatedToQuotationInProgress',
+            messageParams: [
+              payload.ticket.documentNo,
+              ticketInSession.documentNo,
+              payload.ticket.documentNo,
+              ticketInSession.documentNo
+            ]
           });
         }
-        break;
-      case 'LAY':
-        if (!OB.App.Security.hasPermission('OBPOS_retail.layaways')) {
-          throw new OB.App.Class.ActionCanceled({
-            errorConfirmation: 'OBPOS_OpenReceiptPermissionError_Layaway'
-          });
-        }
-        break;
-      default:
-        if (!OB.App.Security.hasPermission('OBPOS_retail.paidReceipts')) {
-          throw new OB.App.Class.ActionCanceled({
-            errorConfirmation: 'OBPOS_OpenReceiptPermissionError_Receipt'
-          });
-        }
-        break;
+        await OB.App.View.DialogUIHandler.askConfirmation({
+          message: `OBPOS_ticketAlreadyOpened_${payload.ticket.orderType}`,
+          messageParams: [ticketInSession.documentNo],
+          hideCancel: true
+        });
+      } else {
+        await OB.App.View.DialogUIHandler.askConfirmationWithCancel({
+          message: `OBPOS_ticketAlreadyOpenedInSession_${payload.ticket.orderType}`,
+          messageParams: [payload.ticket.documentNo, payload.ticket.updatedBy]
+        });
+      }
     }
-    return payload;
+
+    return { ...payload, ticketInSession };
   };
 
   const checkCrossStore = async payload => {
