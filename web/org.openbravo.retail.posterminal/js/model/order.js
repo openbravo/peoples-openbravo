@@ -3552,7 +3552,9 @@
 
         if (
           l.get('product').id === p.id &&
-          l.get('price') === line.get('price')
+          l.get('price') === line.get('price') &&
+          ((l.get('qty') >= 0 && line.get('qty') >= 0) ||
+            (l.get('qty') < 0 && line.get('qty') < 0))
         ) {
           line.set({
             qty: line.get('qty') + l.get('qty'),
