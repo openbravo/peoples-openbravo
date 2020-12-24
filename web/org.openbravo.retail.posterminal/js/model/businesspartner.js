@@ -102,6 +102,7 @@
       }
 
       this.set('_identifier', this.get('name'));
+      this.set('taxExempt', false);
 
       saveCallback = function() {
         // in case of synchronized then directly call customer save with the callback

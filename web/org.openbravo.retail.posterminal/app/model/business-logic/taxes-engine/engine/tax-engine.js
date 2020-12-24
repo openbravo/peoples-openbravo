@@ -202,11 +202,11 @@
       );
     };
     const checkTaxCategory = rule => {
-      const isTaxExempt = line.taxExempt || ticket.businessPartner.taxExempt;
       return (
-        (isTaxExempt
-          ? equals(rule.taxExempt, isTaxExempt)
-          : equals(
+        (line.taxExempt
+          ? equals(rule.taxExempt, true)
+          : equals(rule.taxExempt, ticket.businessPartner.taxExempt) &&
+            equals(
               rule.businessPartnerTaxCategory,
               ticket.businessPartner.taxCategory
             )) && equals(rule.taxCategory, line.product.taxCategory)
