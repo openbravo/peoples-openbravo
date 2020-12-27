@@ -603,7 +603,7 @@
           const data = await OB.App.Request.mobileServiceRequest(
             'org.openbravo.retail.posterminal.process.HasServices',
             {
-              product: product.productId,
+              product: product.id,
               productCategory: product.productCategory,
               parameters: {
                 terminalTime: new Date(),
@@ -619,7 +619,7 @@
               ]
             }
           );
-          return data.response.data.length > 0;
+          return data.response.data.hasservices;
         } catch (error) {
           return false;
         }
@@ -640,8 +640,8 @@
       };
 
       const service = isRemoteProduct
-        ? await getRemoteService(product)
-        : await getLocalService(product);
+        ? await getRemoteService()
+        : await getLocalService();
       return service;
     };
 
