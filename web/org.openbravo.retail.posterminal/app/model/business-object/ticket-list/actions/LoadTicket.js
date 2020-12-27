@@ -261,41 +261,6 @@
     //     }
     //
 
-    //       order.set(
-    //         'isPartiallyDelivered',
-    //         hasDeliveredProducts && hasNotDeliveredProducts ? true : false
-    //       );
-    //       if (hasDeliveredProducts && !hasNotDeliveredProducts) {
-    //         order.set('isFullyDelivered', true);
-    //       }
-    //       if (order.get('isPartiallyDelivered')) {
-    //         var partiallyPaid = 0;
-    //         _.each(
-    //           _.filter(order.get('receiptLines'), function(reciptLine) {
-    //             return reciptLine.deliveredQuantity;
-    //           }),
-    //           function(deliveredLine) {
-    //             partiallyPaid = OB.DEC.add(
-    //               partiallyPaid,
-    //               OB.DEC.mul(
-    //                 deliveredLine.deliveredQuantity,
-    //                 deliveredLine.grossUnitPrice
-    //               )
-    //             );
-    //           }
-    //         );
-    //         order.set('deliveredQuantityAmount', partiallyPaid);
-    //         if (
-    //           order.get('deliveredQuantityAmount') &&
-    //           order.get('deliveredQuantityAmount') > order.get('payment')
-    //         ) {
-    //           order.set('isDeliveredGreaterThanGross', true);
-    //         }
-    //       }
-    //     }
-    //   }
-    // );
-
     const newTicket = {
       ...ticket,
       qty: ticket.lines.reduce(
@@ -360,6 +325,36 @@
           return newObj;
         }, {})
     }));
+
+    const hasDeliveredProducts = newTicket.lines.some(
+      line => line.deliveredQuantity && line.deliveredQuantity >= line.quantity
+    );
+    const hasNotDeliveredProducts = newTicket.lines.some(
+      line => !line.deliveredQuantity || line.deliveredQuantity < line.quantity
+    );
+    newTicket.isPartiallyDelivered =
+      hasDeliveredProducts && hasNotDeliveredProducts;
+    newTicket.isFullyDelivered =
+      hasDeliveredProducts && !hasNotDeliveredProducts;
+    if (newTicket.isPartiallyDelivered) {
+      newTicket.deliveredQuantityAmount = newTicket.lines.reduce(
+        (accumulator, line) =>
+          OB.DEC.add(
+            accumulator,
+            OB.DEC.mul(
+              line.deliveredQuantity || OB.DEC.Zero,
+              line.grossUnitPrice
+            )
+          ),
+        OB.DEC.Zero
+      );
+      if (
+        newTicket.deliveredQuantityAmount &&
+        newTicket.deliveredQuantityAmount > newTicket.payment
+      ) {
+        newTicket.isDeliveredGreaterThanGross = true;
+      }
+    }
 
     return newTicket;
   };
