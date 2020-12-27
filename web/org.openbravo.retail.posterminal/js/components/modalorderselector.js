@@ -897,6 +897,10 @@ enyo.kind({
             }
             await OB.UTIL.TicketListUtils.loadTicketFromBackoffice(model);
             me.doHideThisPopup();
+            OB.MobileApp.model.receipt.trigger(
+              'change:bp',
+              OB.MobileApp.model.receipt
+            );
           } catch (error) {
             OB.App.View.ActionCanceledUIHandler.handle(error);
           }
