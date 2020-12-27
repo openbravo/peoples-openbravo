@@ -500,16 +500,16 @@
         );
         return businessPartner;
       };
-      return (
+      const businessPartner =
         (isRemoteCustomer
           ? await getRemoteBusinessPartner()
           : await getLocalBusinessPartner()) ||
-        getBusinessPartnerFromBackoffice()
-      );
+        (await getBusinessPartnerFromBackoffice());
+      return businessPartner;
     };
     const getBusinessPartnerLocation = async () => {
       const getRemoteBusinessPartnerLocation = async () => {
-        const businessPartnerLocations =
+        const businessPartnerLocation =
           payload.ticket.bpLocId === payload.ticket.bpBillLocId
             ? await OB.App.DAL.remoteGet('BPLocation', payload.ticket.bpLocId)
             : await OB.App.DAL.remoteSearch('BPLocation', {
@@ -521,12 +521,12 @@
                   }
                 ]
               });
-        return Array.isArray(businessPartnerLocations)
-          ? businessPartnerLocations
-          : [businessPartnerLocations];
+        return Array.isArray(businessPartnerLocation)
+          ? businessPartnerLocation
+          : [businessPartnerLocation];
       };
       const getLocalBusinessPartnerLocation = async () => {
-        const businessPartnerLocations =
+        const businessPartnerLocation =
           payload.ticket.bpLocId === payload.ticket.bpBillLocId
             ? await OB.App.MasterdataModels.BusinessPartnerLocation.withId(
                 payload.ticket.bpLocId
@@ -540,16 +540,16 @@
                   )
                   .build()
               );
-        return Array.isArray(businessPartnerLocations)
-          ? businessPartnerLocations
-          : [businessPartnerLocations];
+        return Array.isArray(businessPartnerLocation)
+          ? businessPartnerLocation
+          : [businessPartnerLocation];
       };
-      return (
+      const businessPartnerLocation =
         (isRemoteCustomer
           ? await getRemoteBusinessPartnerLocation()
           : await getLocalBusinessPartnerLocation()) ||
-        getBusinessPartnerFromBackoffice().locations
-      );
+        (await getBusinessPartnerFromBackoffice().locations);
+      return businessPartnerLocation;
     };
 
     const newPayload = { ...payload };
@@ -595,12 +595,12 @@
           });
         }
       };
-      return (
+      const product =
         (isRemoteProduct
           ? await getRemoteProduct(line.id)
           : await getLocalProduct(line.id)) ||
-        getProductFromBackoffice(line.lineId, line.id)
-      );
+        (await getProductFromBackoffice(line.lineId, line.id));
+      return product;
     };
     const getService = async product => {
       const getRemoteService = async () => {
@@ -644,9 +644,10 @@
         }
       };
 
-      return isRemoteProduct
-        ? getRemoteService(product)
-        : getLocalService(product);
+      const service = isRemoteProduct
+        ? await getRemoteService(product)
+        : await getLocalService(product);
+      return service;
     };
 
     const lines = await Promise.all(
