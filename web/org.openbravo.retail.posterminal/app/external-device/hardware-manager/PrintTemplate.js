@@ -97,7 +97,7 @@
     }
 
     prepareParams(params) {
-      if (!this.isBackwardCompatible()) {
+      if (!this.isLegacyMode()) {
         return params;
       }
       const newParams = { ...params };
@@ -111,7 +111,7 @@
     }
 
     // eslint-disable-next-line class-methods-use-this
-    isBackwardCompatible() {
+    isLegacyMode() {
       return OB.App.StateBackwardCompatibility != null;
     }
   };
