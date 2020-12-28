@@ -67,7 +67,9 @@
       await Promise.all(dataRetrievals);
 
       return JSON.stringify({
-        param: params.ticket,
+        param: templateParams.order
+          ? templateParams.order.serializeToJSON()
+          : params.ticket,
         mainReport: newTemplate,
         subReports: newTemplate.subReports
       });
