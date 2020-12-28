@@ -703,6 +703,80 @@
                     order.set('isDeliveredGreaterThanGross', true);
                   }
                 }
+
+                // Update Manual promotions
+                const manualPromotions = [];
+                const byTotalManualPromotions = [];
+                order.get('lines').models.forEach(line => {
+                  line.get('promotions').forEach(p => {
+                    if (p.manual) {
+                      const manualPromo = OB.Discounts.Pos.manualRuleImpls.find(
+                        r => r.id === p.ruleId
+                      );
+                      const discountRule =
+                        OB.Model.Discounts.discountRules[p.discountType];
+                      if (
+                        !manualPromo ||
+                        !discountRule ||
+                        !discountRule.isManual
+                      ) {
+                        return;
+                      }
+                      const addPromotion = {
+                        ...manualPromo,
+                        ...p,
+                        discountinstance: p.obposDiscountinstance,
+                        noOrder:
+                          manualPromotions.length +
+                          byTotalManualPromotions.length
+                      };
+                      if (discountRule.getAmountProperty()) {
+                        addPromotion[discountRule.getAmountProperty()] =
+                          p.userAmt;
+                      }
+                      delete addPromotion.obposDiscountinstance;
+
+                      if (discountRule.byTotalDiscount) {
+                        const byTotalPromo = byTotalManualPromotions.find(
+                          tP =>
+                            tP.ruleId === p.ruleId &&
+                            tP.discountinstance === p.obposDiscountinstance
+                        );
+                        if (byTotalPromo) {
+                          byTotalPromo.linesToApply.push(line.get('id'));
+                          if (discountRule.isAmount) {
+                            const amtProperty =
+                              discountRule.getAmountProperty() || p.userAmt;
+                            byTotalPromo[amtProperty] = OB.DEC.add(
+                              byTotalPromo[amtProperty],
+                              p.userAmt
+                            );
+                          }
+                        } else {
+                          addPromotion.linesToApply = [line.get('id')];
+                          byTotalManualPromotions.push(addPromotion);
+                        }
+                      } else {
+                        const manualPromo = manualPromotions.find(
+                          mP =>
+                            mP.ruleId === p.ruleId &&
+                            mP.discountinstance === p.obposDiscountinstance
+                        );
+                        if (manualPromo) {
+                          manualPromo.linesToApply.push(line.get('id'));
+                        } else {
+                          addPromotion.linesToApply = [line.get('id')];
+                          manualPromotions.push(addPromotion);
+                        }
+                      }
+                    }
+                  });
+                });
+                order.set('discountsFromUser', {
+                  manualPromotions: manualPromotions,
+                  bytotalManualPromotions: byTotalManualPromotions
+                });
+
                 order.set('json', JSON.stringify(order.toJSON()));
                 callback(order);
                 OB.UTIL.ProcessController.finish('newPaidReceipt', execution);
