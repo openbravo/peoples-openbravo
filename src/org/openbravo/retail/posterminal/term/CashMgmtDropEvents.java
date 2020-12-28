@@ -21,7 +21,8 @@ public class CashMgmtDropEvents extends QueryTerminalProperty {
     return Arrays.asList(new String[] {
         "select c.id as id, c.name as name, c.paymentMethod.id as paymentmethod, 'drop' as type, "
             + "c.currency.iSOCode as isocode from OBRETCO_CashManagementEvents c "
-            + "where c.$naturalOrgCriteria and c.eventtype like '%OUT%' order by c.name " });
+            + "where c.active = 'Y' and c.$naturalOrgCriteria and c.eventtype like '%OUT%' "
+            + "order by c.name " });
   }
 
   @Override
