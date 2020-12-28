@@ -132,46 +132,54 @@
   };
 
   const addPayments = (ticket, payload) => {
-    const payments = ticket.payments
-      .map(payment => {
-        const newPayment = {
-          ...payment,
-          date: new Date(payment.paymentDate),
-          paymentDate: new Date(payment.paymentDate).toISOString(),
-          orderGross: ticket.grossAmount,
-          origAmount: OB.DEC.Zero,
-          isPaid: !ticket.isLayaway
-        };
+    const payments = ticket.payments.map(payment => {
+      const newPayment = {
+        ...payment,
+        date: new Date(payment.paymentDate),
+        paymentDate: new Date(payment.paymentDate).toISOString(),
+        orderGross: ticket.grossAmount,
+        origAmount: OB.DEC.Zero,
+        isPaid: !ticket.isLayaway
+      };
 
-        const reversedPayment = ticket.payments.find(
-          p => p.reversedPaymentId === payment.paymentId
-        );
-        if (payment.isReversed) {
-          newPayment.reversedPaymentId = undefined;
-        }
-        if (reversedPayment) {
-          newPayment.reversedPaymentId = reversedPayment.paymentId;
-          newPayment.isReversePayment = true;
-        }
+      const reversedPayment = ticket.payments.find(
+        p => p.reversedPaymentId === payment.paymentId
+      );
+      if (payment.isReversed) {
+        newPayment.reversedPaymentId = undefined;
+      }
+      if (reversedPayment) {
+        newPayment.reversedPaymentId = reversedPayment.paymentId;
+        newPayment.isReversePayment = true;
+      }
 
-        return newPayment;
-      })
-      .sort((payment1, payment2) => {
-        if (payment1.paymentId === payment2.reversedPaymentId) {
-          return -1;
-        }
-        if (payment1.reversedPaymentId === payment2.paymentId) {
-          return 1;
-        }
-        return payment1;
-      });
+      return newPayment;
+    });
 
     const newTicket = OB.App.State.Ticket.Utils.adjustPayments(
       {
         ...ticket,
         change: OB.DEC.Zero,
         isPaid: !ticket.isLayaway,
-        payments
+        payments: payments.reduce(
+          (accumulator, payment) => {
+            if (payment.reversedPaymentId) {
+              // Move reverse payments inmediatly after their reversed payment
+              accumulator.splice(
+                accumulator.findIndex(
+                  p => p.paymentId === payment.reversedPaymentId
+                ),
+                0,
+                ...accumulator.splice(
+                  accumulator.findIndex(p => p.paymentId === payment.paymentId),
+                  1
+                )
+              );
+            }
+            return accumulator;
+          },
+          [...payments]
+        )
       },
       payload
     );
