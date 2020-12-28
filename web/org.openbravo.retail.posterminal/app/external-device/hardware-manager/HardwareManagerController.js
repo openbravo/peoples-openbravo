@@ -146,7 +146,7 @@
       await this.print(template, params, this.devices.DISPLAY);
     }
 
-    async print(printTemplate, params = {}, device) {
+    async print(printTemplate, params = {}, device = 0) {
       try {
         const data = await printTemplate.generate(params);
         this.storeData(data, device);
