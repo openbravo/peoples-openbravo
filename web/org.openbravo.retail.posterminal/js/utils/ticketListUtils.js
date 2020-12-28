@@ -25,6 +25,7 @@
       OB.App.State.getState().Ticket.id
     );
     OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
+    OB.MobileApp.model.receipt.trigger('change:bp', OB.MobileApp.model.receipt);
   };
 
   OB.UTIL.TicketListUtils.loadTicketById = async function(ticketId) {

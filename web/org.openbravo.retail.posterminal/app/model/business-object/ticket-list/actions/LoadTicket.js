@@ -95,13 +95,6 @@
         return newObj;
       }, {});
 
-    // TODO
-    // if (newTicket.isQuotation) {
-    //   newTicket.oldId = newTicket.orderid;
-    //   newTicket.documentType =
-    //     payload.terminal.terminalType.documentTypeForQuotations;
-    // }
-
     return newTicket;
   };
 
@@ -215,60 +208,6 @@
   };
 
   const addProducts = (ticket, payload) => {
-    // if (iter.relatedLines && !order.get('hasServices')) {
-    //   order.set('hasServices', true);
-    // }
-
-    //
-    //     for (let promotion of iter.promotions) {
-    //       try {
-    //         const discount = OB.Discounts.Pos.manualRuleImpls.find(
-    //           discount => discount.id === promotion.ruleId
-    //         );
-    //         if (
-    //           discount &&
-    //           OB.Discounts.Pos.getManualPromotions().includes(
-    //             discount.discountType
-    //           )
-    //         ) {
-    //           var percentage;
-    //           if (discount.obdiscPercentage) {
-    //             percentage = OB.DEC.mul(
-    //               OB.DEC.div(promotion.amt, iter.lineGrossAmount),
-    //               new BigDecimal('100')
-    //             );
-    //           }
-    //           promotion.userAmt = percentage ? percentage : promotion.amt;
-    //           promotion.discountType = discount.discountType;
-    //           promotion.manual = true;
-    //         }
-    //       } catch (error) {
-    //         OB.UTIL.showError(error);
-    //       }
-    //     }
-    //
-    //     if (
-    //       OB.App.Security.hasPermission(
-    //         'OBPOS_EnableSupportForProductAttributes',
-    //         true
-    //       )
-    //     ) {
-    //       if (iter.attributeValue && _.isString(iter.attributeValue)) {
-    //         var processedAttValues = OB.UTIL.AttributeUtils.generateDescriptionBasedOnJson(
-    //           iter.attributeValue
-    //         );
-    //         if (
-    //           processedAttValues &&
-    //           processedAttValues.keyValue &&
-    //           _.isArray(processedAttValues.keyValue) &&
-    //           processedAttValues.keyValue.length > 0
-    //         ) {
-    //           iter.attSetInstanceDesc = processedAttValues.description;
-    //         }
-    //       }
-    //     }
-    //
-
     const newTicket = {
       ...ticket,
       qty: ticket.lines.reduce(
@@ -374,7 +313,6 @@
       newPayload = await checkSession(newPayload);
       if (!newPayload.ticketInSession) {
         newPayload = await checkCrossStore(newPayload);
-        // TODO: searchRelatedReceipts
         newPayload = await loadTicket(newPayload);
         newPayload = await loadBusinessPartner(newPayload);
         newPayload = await loadProducts(newPayload);
