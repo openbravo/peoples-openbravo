@@ -107,10 +107,13 @@
         ];
 
         // Ticket print message
-        newMessages = [
-          ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(newMultiTicket)
-        ];
+        if (payload.preferences && payload.preferences.autoPrintReceipts) {
+          newMessages = [
+            ...newMessages,
+            OB.App.State.Messages.Utils.createPrintTicketMessage(newMultiTicket)
+          ];
+        }
+
         if (newMultiTicket.calculatedInvoice) {
           newMessages = [
             ...newMessages,

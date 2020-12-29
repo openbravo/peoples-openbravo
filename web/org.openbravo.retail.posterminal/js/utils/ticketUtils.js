@@ -83,6 +83,10 @@
       enableDeliveryModes: OB.MobileApp.model.hasPermission(
         'OBRDM_EnableDeliveryModes',
         true
+      ),
+      autoPrintReceipts: OB.MobileApp.model.hasPermission(
+        'OBPOS_print.invoicesautomatically',
+        true
       )
     };
     newPayload.constants = {

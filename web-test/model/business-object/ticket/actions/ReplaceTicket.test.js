@@ -62,7 +62,9 @@ describe('Replace ticket action', () => {
       documentNumberSeparator: '/',
       pricelist: {},
       context: { user: {} },
-      preferences: {},
+      preferences: {
+        autoPrintReceipts: true
+      },
       constants: {
         fieldSeparator: '-',
         identifierSuffix: '_id'

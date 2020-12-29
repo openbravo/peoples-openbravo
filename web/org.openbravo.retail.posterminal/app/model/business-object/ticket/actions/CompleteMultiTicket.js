@@ -105,12 +105,17 @@
         ];
 
         // Ticket print message
-        newMessages = [
-          ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(newMultiTicket, {
-            skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
-          })
-        ];
+        if (payload.preferences && payload.preferences.autoPrintReceipts) {
+          newMessages = [
+            ...newMessages,
+            OB.App.State.Messages.Utils.createPrintTicketMessage(
+              newMultiTicket,
+              {
+                skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+              }
+            )
+          ];
+        }
         if (newMultiTicket.calculatedInvoice) {
           newMessages = [
             ...newMessages,
