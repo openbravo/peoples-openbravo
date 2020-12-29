@@ -52,6 +52,7 @@
     const newTicket = {
       ...payload.ticket,
       id: payload.ticket.orderid,
+      timezoneOffset: new Date().getTimezoneOffset(),
       isbeingprocessed: 'N',
       hasbeenpaid: payload.ticket.isQuotation ? 'Y' : 'N',
       isEditable: false,
