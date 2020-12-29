@@ -498,6 +498,7 @@
       newPayload.ticket.externalBusinessPartner = await OB.App.ExternalBusinessPartnerAPI.getBusinessPartner(
         newPayload.ticket.externalBusinessPartnerReference
       );
+      newPayload.ticket.externalBusinessPartner = newPayload.ticket.externalBusinessPartner.getPlainObject();
     }
     newPayload.ticket.businessPartner = await getBusinessPartner();
     newPayload.ticket.businessPartner.locations =
