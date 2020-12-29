@@ -10,8 +10,8 @@
 
 global.OB = { App: { Class: {} } };
 const deepfreeze = require('deepfreeze');
-require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets');
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets');
 
 describe('Mark ignore check if is active to pending tickets', () => {
   let action;
