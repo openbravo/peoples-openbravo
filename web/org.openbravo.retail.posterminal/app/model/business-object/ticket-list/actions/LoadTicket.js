@@ -66,6 +66,7 @@
       paidOnCredit: false,
       session: payload.session,
       skipApplyPromotions: true,
+      print: true,
       grossAmount: payload.ticket.totalamount,
       netAmount: payload.ticket.totalNetAmount,
       approvals: [],
