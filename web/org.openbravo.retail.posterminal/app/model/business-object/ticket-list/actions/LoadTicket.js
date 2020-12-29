@@ -600,6 +600,7 @@
           line.qty <= 0 || product.productType === 'S'
             ? false
             : await getService(product);
+        product.img = undefined;
         return { ...line, id: line.lineId, product, hasRelatedServices };
       })
     );
