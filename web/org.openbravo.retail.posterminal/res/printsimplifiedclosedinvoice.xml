@@ -238,7 +238,9 @@
     </line>
 
     <line>
-      <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.get('orderDocumentNo')) %></barcode>
+      <% if(!OB.UTIL.isNullOrUndefined(order.get('orderDocumentNo'))){ %>
+        <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.get('orderDocumentNo')) %></barcode>
+      <% } %>
     </line>
 
   </ticket>

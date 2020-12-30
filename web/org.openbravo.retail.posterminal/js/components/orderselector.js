@@ -641,6 +641,98 @@ enyo.kind({
     return true;
   },
 
+  printInvoiceAction: function(invoiceIds) {
+    var me = this,
+      process = new OB.DS.Process(
+        'org.openbravo.retail.posterminal.OpenInvoices'
+      );
+
+    var execution = OB.UTIL.ProcessController.start('invoicesPrintInvoices');
+
+    process.exec(
+      {
+        invoices: invoiceIds,
+        originServer: undefined
+      },
+      function(data) {
+        if (data && data.exception) {
+          OB.error('Error getting invoices: ' + data.exception.message);
+          OB.UTIL.ProcessController.finish('invoicesPrintInvoices', execution);
+        } else if (data) {
+          var printInvoice,
+            finishPrintInvoices = _.after(data.length, function() {
+              OB.UTIL.ProcessController.finish(
+                'invoicesPrintInvoices',
+                execution
+              );
+            });
+
+          printInvoice = function(indx) {
+            if (indx >= data.length) {
+              return;
+            }
+            if (
+              OB.UTIL.isNullOrUndefined(data[indx].receiptLines) ||
+              data[indx].receiptLines.length === 0
+            ) {
+              finishPrintInvoices();
+              printInvoice(++indx);
+            } else {
+              OB.UTIL.TicketListUtils.newPaidReceipt(data[indx], function(
+                invoice
+              ) {
+                invoice.set('loadedFromServer', true);
+                invoice.set('checked', true);
+                invoice.set('belongsToMultiOrder', true);
+                invoice.set('isInvoice', true);
+                invoice.calculateGrossAndSave(false, function() {
+                  try {
+                    OB.UTIL.HookManager.executeHooks(
+                      'OBPOS_PrePrintPaidReceipt',
+                      {
+                        context: this.model,
+                        receipt: invoice
+                      },
+                      function(args) {
+                        if (
+                          args &&
+                          args.cancelOperation &&
+                          args.cancelOperation === true
+                        ) {
+                          finishPrintInvoices();
+                          printInvoice(++indx);
+                          return;
+                        }
+                        me.model.printReceipt.print(invoice);
+                        finishPrintInvoices();
+                        printInvoice(++indx);
+                      }
+                    );
+                  } catch (e) {
+                    OB.error('Error printing the receipt:' + e);
+                    finishPrintInvoices();
+                    printInvoice(++indx);
+                  }
+                });
+              });
+            }
+          };
+
+          printInvoice(0);
+        } else {
+          //error or offline
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_ErrorGettingInvoices'));
+          OB.UTIL.ProcessController.finish('invoicesPrintInvoices', execution);
+        }
+      },
+      function(err) {
+        //error or offline
+        OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_ErrorGettingInvoices'));
+        OB.UTIL.ProcessController.finish('invoicesPrintInvoices', execution);
+      }
+    );
+  },
+
   prepareSelected: function(inSender, inEvent) {
     var showApproval = false,
       me = this,
@@ -969,6 +1061,19 @@ enyo.kind({
                           );
                         } else {
                           if (data && data.response) {
+                            //Print Invoice
+                            var invoiceIds = [];
+                            data.deliveredOrders.forEach(delivered => {
+                              if (delivered.invoiceId) {
+                                var invoice = {};
+                                invoice.id = delivered.invoiceId;
+                                invoiceIds.push(invoice);
+                              }
+                            });
+                            if (invoiceIds && invoiceIds.length > 0) {
+                              me.printInvoiceAction(invoiceIds);
+                            }
+
                             OB.UTIL.showConfirmation.display(
                               OB.I18N.getLabel('OBRDM_IssueSalesOrderTitle'),
                               data.response,
@@ -1262,6 +1367,7 @@ enyo.kind({
   init: function(model) {
     var me = this,
       terminal = OB.POS.modelterminal.get('terminal');
+    this.model = model;
     this.ordersList = new Backbone.Collection();
     this.$.stOrderSelector.setCollection(this.ordersList);
     this.templatePreparation = new OB.DS.HWResource(
