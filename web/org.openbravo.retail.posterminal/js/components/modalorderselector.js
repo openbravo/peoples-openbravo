@@ -894,7 +894,7 @@ enyo.kind({
               break;
           }
 
-          await OB.UTIL.TicketListUtils.loadTicketFromBackoffice(model);
+          await OB.UTIL.TicketListUtils.loadRemoteTicket(model);
           me.doHideThisPopup();
 
           // Check related receipts
@@ -945,7 +945,7 @@ enyo.kind({
                   }
                 );
                 data2.response.data.forEach(relatedReceipt =>
-                  OB.UTIL.TicketListUtils.loadTicketFromBackoffice({
+                  OB.UTIL.TicketListUtils.loadRemoteTicket({
                     ...relatedReceipt,
                     id: relatedReceipt.orderid
                   })

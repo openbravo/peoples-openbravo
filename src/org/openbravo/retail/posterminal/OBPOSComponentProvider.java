@@ -395,8 +395,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/ticket-list/actions/AddNewTicket"), //
         businesslogic("app/model/business-object/ticket-list/actions/AddNewQuotation"), //
         businesslogic("app/model/business-object/ticket-list/actions/BringTicketToSession"), //
-        businesslogic("app/model/business-object/ticket-list/actions/LoadTicketById"), //
-        businesslogic("app/model/business-object/ticket-list/actions/LoadTicket"), //
+        businesslogic("app/model/business-object/ticket-list/actions/LoadLocalTicket"), //
+        businesslogic("app/model/business-object/ticket-list/actions/LoadRemoteTicket"), //
         businesslogic(
             "app/model/business-object/ticket-list/actions/MarkIgnoreCheckIfIsActiveToPendingTickets"), //
         businesslogic("app/model/business-object/ticket-list/actions/UpdateBPInAllTickets"), //

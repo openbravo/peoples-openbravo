@@ -8,11 +8,11 @@
  */
 
 require('../../global/SetupGlobal');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/LoadTicket');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/LoadRemoteTicket');
 require('../../global/SetupGlobalUtils');
 const deepfreeze = require('deepfreeze');
 
-describe('Load Ticket action', () => {
+describe('Load Remote Ticket action', () => {
   it('should not load ticket if it is the current ticket', () => {
     const state = deepfreeze({
       Ticket: {
@@ -25,7 +25,7 @@ describe('Load Ticket action', () => {
       }
     });
 
-    const newState = OB.App.StateAPI.Global.loadTicket(state, payload);
+    const newState = OB.App.StateAPI.Global.loadRemoteTicket(state, payload);
 
     expect(newState).toMatchObject({
       Ticket: {
@@ -51,7 +51,7 @@ describe('Load Ticket action', () => {
       }
     });
 
-    const newState = OB.App.StateAPI.Global.loadTicket(state, payload);
+    const newState = OB.App.StateAPI.Global.loadRemoteTicket(state, payload);
 
     expect(newState).toMatchObject({
       TicketList: [
@@ -90,7 +90,7 @@ describe('Load Ticket action', () => {
       terminal: { terminalType: {} }
     });
 
-    const newState = OB.App.StateAPI.Global.loadTicket(state, payload);
+    const newState = OB.App.StateAPI.Global.loadRemoteTicket(state, payload);
 
     expect(newState).toMatchObject({
       TicketList: [

@@ -10,12 +10,12 @@
 /* eslint-disable no-use-before-define */
 
 /**
- * @fileoverview Declares a global action that loads the Ticket passed as payload as the current active ticket
+ * @fileoverview Declares a global action that loads from backoffice the Ticket passed as payload as the current active ticket
  * and enqueues the active ticket into the list
  */
 (() => {
   OB.App.StateAPI.Global.registerAction(
-    'loadTicket',
+    'loadRemoteTicket',
     (globalState, payload) => {
       const newGlobalState = { ...globalState };
 
@@ -310,7 +310,7 @@
     return newTicket;
   };
 
-  OB.App.StateAPI.Global.loadTicket.addActionPreparation(
+  OB.App.StateAPI.Global.loadRemoteTicket.addActionPreparation(
     async (globalState, payload) => {
       let newPayload = { ...payload };
 

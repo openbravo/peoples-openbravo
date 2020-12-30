@@ -12,12 +12,12 @@ global.OB = { App: { Class: {} } };
 const deepfreeze = require('deepfreeze');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/LoadTicketById');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/LoadLocalTicket');
 
-describe('Load Ticket by Id action', () => {
+describe('Load Local Ticket action', () => {
   let action;
   beforeEach(() => {
-    action = OB.App.StateAPI.Global.loadTicketById;
+    action = OB.App.StateAPI.Global.loadLocalTicket;
   });
 
   it('does not modify the state when ticket to load is the current ticket', () => {

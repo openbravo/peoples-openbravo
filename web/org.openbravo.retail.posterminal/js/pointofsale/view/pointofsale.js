@@ -1715,7 +1715,7 @@ enyo.kind({
   },
   changeCurrentOrder: function(inSender, inEvent) {
     OB.MobileApp.model.receipt.set('preventServicesUpdate', true);
-    OB.UTIL.TicketListUtils.loadTicket(inEvent.newCurrentOrder)
+    OB.UTIL.TicketListUtils.loadLocalTicket(inEvent.newCurrentOrder.id)
       .then(() => {
         if (inEvent.callback) {
           inEvent.callback();

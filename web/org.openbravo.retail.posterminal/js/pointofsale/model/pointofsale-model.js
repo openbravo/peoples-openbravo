@@ -107,24 +107,24 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       },
                       function(args) {
                         reCalculateReceipt = args.reCalculateReceipt;
-                        OB.UTIL.TicketListUtils.loadTicket(currentOrder).then(
-                          () => {
-                            if (reCalculateReceipt) {
-                              OB.MobileApp.model.receipt.calculateGrossAndSave();
-                            }
-
-                            if (currentOrder.documentNo) {
-                              loadOrderStr =
-                                OB.I18N.getLabel('OBPOS_Order') +
-                                currentOrder.documentNo +
-                                OB.I18N.getLabel('OBPOS_Loaded');
-                              OB.UTIL.showAlert.display(
-                                loadOrderStr,
-                                OB.I18N.getLabel('OBPOS_Info')
-                              );
-                            }
+                        OB.UTIL.TicketListUtils.loadLocalTicket(
+                          currentOrder.id
+                        ).then(() => {
+                          if (reCalculateReceipt) {
+                            OB.MobileApp.model.receipt.calculateGrossAndSave();
                           }
-                        );
+
+                          if (currentOrder.documentNo) {
+                            loadOrderStr =
+                              OB.I18N.getLabel('OBPOS_Order') +
+                              currentOrder.documentNo +
+                              OB.I18N.getLabel('OBPOS_Loaded');
+                            OB.UTIL.showAlert.display(
+                              loadOrderStr,
+                              OB.I18N.getLabel('OBPOS_Info')
+                            );
+                          }
+                        });
                       }
                     );
                   });
@@ -156,7 +156,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
   updateCurrentTicketIfNeeded: async function(unPaidTickets) {
     const stateTicket = OB.App.State.getState().Ticket;
     if (stateTicket.session !== OB.App.TerminalProperty.get('session')) {
-      await OB.App.State.Global.loadTicketById({
+      await OB.App.State.Global.loadLocalTicket({
         id: unPaidTickets[0].id
       });
     }
