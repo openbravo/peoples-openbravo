@@ -156,6 +156,7 @@
         ...ticket,
         change: OB.DEC.Zero,
         isPaid: !ticket.isLayaway,
+        obposPrepaymentlimitamt: OB.DEC.Zero,
         payments: payments.reduce(
           (accumulator, payment) => {
             if (payment.reversedPaymentId) {
