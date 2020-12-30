@@ -467,7 +467,27 @@ enyo.kind({
       classes: 'obObPosCloseCashUiPpcCashDepositsTable-separator'
     }
   ],
+  getDepositInOthersModel: function(col) {
+    let totalInCash = BigDecimal.prototype.ZERO;
+    col.forEach(model => {
+      totalInCash = OB.BIGDEC.add(totalInCash, model.get('amount'));
+    });
+    let totalDeposits = this.$.totaldeposits.value || 0;
+    let totalInOthers = OB.BIGDEC.sub(totalDeposits, totalInCash);
+    return new Backbone.Model({
+      description: OB.I18N.getLabel('OBPOS_DepositInOtherPaymentMethods'),
+      amount: Number(totalInOthers),
+      countInCashup: false,
+      origAmount: Number(totalInOthers),
+      searchKey: 'OBPOS_payment.depositInOthers'
+    });
+  },
+  addDepositInOthersToCollection: function(col) {
+    let inOthers = this.getDepositInOthersModel(col);
+    col.push(inOthers);
+  },
   setCollection: function(col) {
+    this.addDepositInOthersToCollection(col);
     this.$.deposits.setCollection(col);
   }
 });
@@ -1019,11 +1039,11 @@ enyo.kind({
     this.$.dropsTable.setCollection(filtered.drops);
     this.$.dropsTable.setValue('totaldrops', closeCashReport.get('totalDrops'));
 
-    this.$.depositsTable.setCollection(filtered.deposits);
     this.$.depositsTable.setValue(
       'totaldeposits',
       closeCashReport.get('totalDeposits')
     );
+    this.$.depositsTable.setCollection(filtered.deposits);
   },
 
   summaryChanged: function() {
@@ -1076,11 +1096,11 @@ enyo.kind({
     this.$.dropsTable.setCollection(filtered.drops);
     this.$.dropsTable.setValue('totaldrops', this.model.get('totalDrops'));
 
-    this.$.depositsTable.setCollection(filtered.deposits);
     this.$.depositsTable.setValue(
       'totaldeposits',
       this.model.get('totalDeposits')
     );
+    this.$.depositsTable.setCollection(filtered.deposits);
 
     this.model.on('change:time', () => {
       this.$.headerContainer.$.time.setContent(
