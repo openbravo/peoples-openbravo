@@ -854,6 +854,7 @@ enyo.kind({
           });
           return;
         }
+
         try {
           //Check permissions
           const openReceiptPermissionError = orderType => {

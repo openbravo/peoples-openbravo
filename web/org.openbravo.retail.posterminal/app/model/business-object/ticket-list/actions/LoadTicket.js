@@ -211,11 +211,7 @@
 
   const addProducts = (ticket, payload) => {
     const newTicket = {
-      ...ticket,
-      qty: ticket.lines.reduce(
-        (accumulator, line) => OB.DEC.add(accumulator, line.quantity),
-        OB.DEC.Zero
-      )
+      ...ticket
     };
     newTicket.lines = newTicket.lines.map((line, index) => ({
       ...line,
@@ -274,6 +270,11 @@
           return newObj;
         }, {})
     }));
+    newTicket.qty = newTicket.lines.reduce(
+      (accumulator, line) =>
+        line.qty > 0 ? OB.DEC.add(accumulator, line.qty) : accumulator,
+      OB.DEC.Zero
+    );
 
     const hasDeliveredProducts = newTicket.lines.some(
       line => line.deliveredQuantity && line.deliveredQuantity >= line.quantity
