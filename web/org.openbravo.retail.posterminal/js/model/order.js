@@ -5405,11 +5405,7 @@
       var process = new OB.DS.Process(
           'org.openbravo.retail.posterminal.process.IsOrderCancelled'
         ),
-        receipt =
-          cancellingReceipt ||
-          OB.App.StateBackwardCompatibility.getInstance(
-            'Ticket'
-          ).toBackboneObject(OB.App.State.getState().Ticket),
+        receipt = cancellingReceipt || this,
         orderLines = [];
       _.each(receipt.get('lines').models, function(line) {
         orderLines.push({
