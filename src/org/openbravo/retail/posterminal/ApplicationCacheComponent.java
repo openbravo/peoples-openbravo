@@ -51,7 +51,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     List<String> resources = new ArrayList<String>();
 
     resources.add("../../web/org.openbravo.client.kernel/js/LAB.min.js");
-    resources.add("../../web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js");
 
     // Sounds
     resources.add("../../web/org.openbravo.retail.posterminal/sounds/drawerAlert.mp3");
