@@ -852,112 +852,110 @@ enyo.kind({
           me.waterfall('onChangeCheck', {
             id: model.get('id')
           });
-        } else {
-          try {
-            //Check Permissions
-            const openReceiptPermissionError = orderType => {
-              OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBMOBC_Error'),
-                OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [
-                  orderType
-                ])
-              );
-            };
-            switch (model.get('orderType')) {
-              case 'QT':
-                if (
-                  !OB.MobileApp.model.hasPermission('OBPOS_retail.quotations')
-                ) {
-                  openReceiptPermissionError(
-                    OB.I18N.getLabel('OBPOS_Quotations')
-                  );
-                  return;
-                }
-                break;
-              case 'LAY':
-                if (
-                  !OB.MobileApp.model.hasPermission('OBPOS_retail.layaways')
-                ) {
-                  openReceiptPermissionError(
-                    OB.I18N.getLabel('OBPOS_LblLayaways')
-                  );
-                  return;
-                }
-                break;
-              default:
-                if (
-                  !OB.MobileApp.model.hasPermission('OBPOS_retail.paidReceipts')
-                ) {
-                  openReceiptPermissionError(
-                    OB.I18N.getLabel('OBPOS_LblPaidReceipts')
-                  );
-                  return;
-                }
-                break;
-            }
-
-            await OB.UTIL.TicketListUtils.loadTicketFromBackoffice(model);
-            me.doHideThisPopup();
-
-            if (
-              OB.MobileApp.model.get('terminal').terminalType
-                .ignoreRelatedreceipts ||
-              !OB.MobileApp.model.get('terminal').terminalType
-                .openrelatedreceipts ||
-              model.get('businessPartner') ===
-                OB.MobileApp.model.get('terminal').businessPartner
-            ) {
-              return;
-            }
-            const data1 = await OB.App.Request.mobileServiceRequest(
-              'org.openbravo.retail.posterminal.process.SearchRelatedReceipts',
-              {
-                orderId: model.get('id'),
-                bp: model.get('businessPartner')
-              }
-            );
-            const relatedReceipts = data1.response.data.filter(
-              relatedReceipt =>
-                !OB.App.State.TicketList.Utils.getSessionTickets(
-                  OB.MobileApp.model.get('session')
-                )
-                  .map(receipt => receipt.id)
-                  .includes(relatedReceipt.id)
-            );
-            if (!relatedReceipts.length) {
-              return;
-            }
-            me.doShowPopup({
-              popup: 'modalOpenRelatedReceipts',
-              args: {
-                models: [
-                  model,
-                  ...relatedReceipts.map(data => new OB.Model.Order().set(data))
-                ],
-                callback: async function(selectedReceipts) {
-                  selectedReceipts.shift();
-                  if (!selectedReceipts.length) {
-                    return;
-                  }
-                  const data2 = await OB.App.Request.mobileServiceRequest(
-                    'org.openbravo.retail.posterminal.process.OpenRelatedReceipts',
-                    {
-                      orders: selectedReceipts
-                    }
-                  );
-                  data2.response.data.forEach(relatedReceipt =>
-                    OB.UTIL.TicketListUtils.loadTicketFromBackoffice({
-                      ...relatedReceipt,
-                      id: relatedReceipt.orderid
-                    })
-                  );
-                }
-              }
-            });
-          } catch (error) {
-            OB.App.View.ActionCanceledUIHandler.handle(error);
-          }
+          return;
         }
+        try {
+          //Check permissions
+          const openReceiptPermissionError = orderType => {
+            OB.UTIL.showConfirmation.display(
+              OB.I18N.getLabel('OBMOBC_Error'),
+              OB.I18N.getLabel('OBPOS_OpenReceiptPermissionError', [orderType])
+            );
+          };
+          switch (model.get('orderType')) {
+            case 'QT':
+              if (
+                !OB.MobileApp.model.hasPermission('OBPOS_retail.quotations')
+              ) {
+                openReceiptPermissionError(
+                  OB.I18N.getLabel('OBPOS_Quotations')
+                );
+                return;
+              }
+              break;
+            case 'LAY':
+              if (!OB.MobileApp.model.hasPermission('OBPOS_retail.layaways')) {
+                openReceiptPermissionError(
+                  OB.I18N.getLabel('OBPOS_LblLayaways')
+                );
+                return;
+              }
+              break;
+            default:
+              if (
+                !OB.MobileApp.model.hasPermission('OBPOS_retail.paidReceipts')
+              ) {
+                openReceiptPermissionError(
+                  OB.I18N.getLabel('OBPOS_LblPaidReceipts')
+                );
+                return;
+              }
+              break;
+          }
+
+          await OB.UTIL.TicketListUtils.loadTicketFromBackoffice(model);
+          me.doHideThisPopup();
+
+          // Check related receipts
+          if (
+            OB.MobileApp.model.get('terminal').terminalType
+              .ignoreRelatedreceipts ||
+            !OB.MobileApp.model.get('terminal').terminalType
+              .openrelatedreceipts ||
+            model.get('businessPartner') ===
+              OB.MobileApp.model.get('terminal').businessPartner
+          ) {
+            return;
+          }
+          const data1 = await OB.App.Request.mobileServiceRequest(
+            'org.openbravo.retail.posterminal.process.SearchRelatedReceipts',
+            {
+              orderId: model.get('id'),
+              bp: model.get('businessPartner')
+            }
+          );
+          const relatedReceipts = data1.response.data.filter(
+            relatedReceipt =>
+              !OB.App.State.TicketList.Utils.getSessionTickets(
+                OB.MobileApp.model.get('session')
+              )
+                .map(receipt => receipt.id)
+                .includes(relatedReceipt.id)
+          );
+          if (!relatedReceipts.length) {
+            return;
+          }
+          me.doShowPopup({
+            popup: 'modalOpenRelatedReceipts',
+            args: {
+              models: [
+                model,
+                ...relatedReceipts.map(data => new OB.Model.Order().set(data))
+              ],
+              callback: async function(selectedReceipts) {
+                selectedReceipts.shift();
+                if (!selectedReceipts.length) {
+                  return;
+                }
+                const data2 = await OB.App.Request.mobileServiceRequest(
+                  'org.openbravo.retail.posterminal.process.OpenRelatedReceipts',
+                  {
+                    orders: selectedReceipts
+                  }
+                );
+                data2.response.data.forEach(relatedReceipt =>
+                  OB.UTIL.TicketListUtils.loadTicketFromBackoffice({
+                    ...relatedReceipt,
+                    id: relatedReceipt.orderid
+                  })
+                );
+              }
+            }
+          });
+        } catch (error) {
+          OB.App.View.ActionCanceledUIHandler.handle(error);
+        }
+        return;
       },
       this
     );
