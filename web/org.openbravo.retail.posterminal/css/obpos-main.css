@@ -10102,27 +10102,47 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   grid-auto-flow: column;
   grid-template-columns: 1fr 32px;
   align-items: center;
-
+  max-width: 385px;
   color: black;
+}
+
+@media (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiRenderPaymentLine-container1 {
+	max-width: 512px;
+  }
 }
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1 {
   padding: 0px 10px 0px 0px;
+  max-width: 350px;
 }
+
+@media (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiRenderPaymentLine-container1-container1 {
+	max-width: 480px;
+  }
+}	
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1 {
   display: flex;
+  max-width: 385px;
+}
+
+@media (max-aspect-ratio: 9/8) {
+  .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1 {
+	max-width: 512px;
+  }
 }
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-name {
-  width: 65%;
+  width: 35%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container1-amount {
-  width: 35%;
+  width: 60%;
   text-align: right;
 }
 
@@ -10131,7 +10151,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-info {
-  width: 65%;
+  width: 35%;
   font-size: smaller;
   white-space: nowrap;
   overflow: hidden;
@@ -10139,7 +10159,7 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 }
 
 .obObposPointOfSaleUiRenderPaymentLine-container1-container1-container2-foreignAmount {
-  width: 35%;
+  width: 60%;
   font-size: smaller;
   text-align: right;
 }
