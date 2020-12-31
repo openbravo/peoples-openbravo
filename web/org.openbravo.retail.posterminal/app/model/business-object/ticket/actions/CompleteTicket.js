@@ -88,7 +88,14 @@
       ];
 
       // Ticket print message
-      if (payload.preferences && payload.preferences.autoPrintReceipts) {
+      if (
+        !newTicket.calculatedInvoice ||
+        (newTicket.calculatedInvoice &&
+          (newTicket.calculatedInvoice.fullInvoice ||
+            (!newTicket.calculatedInvoice.fullInvoice &&
+              payload.preferences &&
+              payload.preferences.autoPrintReceipts)))
+      ) {
         newMessages = [
           ...newMessages,
           OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket)
