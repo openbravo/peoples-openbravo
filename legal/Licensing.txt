@@ -25,11 +25,6 @@ web/org.openbravo.mobile.core/lib/vendor/moment-1.7.2-min.js
 Under the MIT License available at:
 http://opensource.org/licenses/MIT
 
-web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2.js
-web/org.openbravo.retail.posterminal/js/libs/jquery-1.7.2-min.js
-Under the MIT license available at:
-https://jquery.org/license/
-
 js/libs/text-1.0.8.min.js
 Under the MIT or BSD license available at:
 https://github.com/requirejs/text/blob/master/LICENSE
