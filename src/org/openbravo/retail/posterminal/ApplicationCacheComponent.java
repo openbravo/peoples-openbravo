@@ -50,8 +50,6 @@ public class ApplicationCacheComponent extends MobileCoreApplicationCacheCompone
     // TODO: review this list: is it needed to be hardcoded?
     List<String> resources = new ArrayList<String>();
 
-    resources.add("../../web/org.openbravo.client.kernel/js/LAB.min.js");
-
     // Sounds
     resources.add("../../web/org.openbravo.retail.posterminal/sounds/drawerAlert.mp3");
 
