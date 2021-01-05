@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -668,22 +668,20 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceipt.put("receiptTaxes", jsonListTaxes);
 
         // Approvals
-        if (paidReceipt.getBoolean("isLayaway")) {
-          final String hqlApproval = "select a.approvalType, a.userContact.id "
-              + "from OBPOS_Order_Approval a where a.salesOrder.id = :salesOrderId";
-          Query<Object[]> queryApprovals = OBDal.getInstance()
-              .getSession()
-              .createQuery(hqlApproval, Object[].class);
-          queryApprovals.setParameter("salesOrderId", orderid);
-          JSONArray jsonListApproval = new JSONArray();
-          for (Object[] objApprovalInfo : queryApprovals.list()) {
-            JSONObject jsonObjApproval = new JSONObject();
-            jsonObjApproval.put("approvalType", objApprovalInfo[0]);
-            jsonObjApproval.put("userContact", objApprovalInfo[1]);
-            jsonListApproval.put(jsonObjApproval);
-          }
-          paidReceipt.put("approvedList", jsonListApproval);
+        final String hqlApproval = "select a.approvalType, a.userContact.id "
+            + "from OBPOS_Order_Approval a where a.salesOrder.id = :salesOrderId";
+        Query<Object[]> queryApprovals = OBDal.getInstance()
+            .getSession()
+            .createQuery(hqlApproval, Object[].class);
+        queryApprovals.setParameter("salesOrderId", orderid);
+        JSONArray jsonListApproval = new JSONArray();
+        for (Object[] objApprovalInfo : queryApprovals.list()) {
+          JSONObject jsonObjApproval = new JSONObject();
+          jsonObjApproval.put("approvalType", objApprovalInfo[0]);
+          jsonObjApproval.put("userContact", objApprovalInfo[1]);
+          jsonListApproval.put(jsonObjApproval);
         }
+        paidReceipt.put("approvedList", jsonListApproval);
 
         executePaidReceiptsHooks(orderid, paidReceipt);
 
