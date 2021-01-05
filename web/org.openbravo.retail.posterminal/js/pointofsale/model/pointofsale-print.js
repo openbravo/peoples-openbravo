@@ -214,7 +214,7 @@
       let paymentOrigAmt = payment.get('origAmount');
       let changeAmount, changeOrigAmount, overPaymentAmt, overPaymentOrigAmt;
 
-      if (paymntData) {
+      if (paymntData && paymntData.key === payment.get('kind')) {
         if (typeof paymntData !== 'object') {
           paymntData = JSON.parse(paymntData);
         }

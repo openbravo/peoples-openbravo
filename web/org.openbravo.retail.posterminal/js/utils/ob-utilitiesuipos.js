@@ -1738,7 +1738,11 @@ OB.UTIL.getChangeLabelFromReceipt = function(receipt) {
   const getChangeLabelFromPayments = payments => {
     return payments
       .filter(function(payment) {
-        return payment.get('paymentData') && payment.get('paymentData').label;
+        return (
+          payment.get('paymentData') &&
+          payment.get('paymentData').label &&
+          payment.get('paymentData').key === payment.get('kind')
+        );
       })
       .map(function(payment) {
         return payment.get('paymentData').label;
