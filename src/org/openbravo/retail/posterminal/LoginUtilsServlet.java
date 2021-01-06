@@ -28,6 +28,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
@@ -307,6 +308,11 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
         HttpServletResponse response = RequestContext.get().getResponse();
         userId = authManager.authenticate(request, response);
         terminal = OBDal.getInstance().get(OBPOSApplications.class, terminal.getId());
+      } catch (AuthenticationExpirationPasswordException aep) {
+        JSONObject jsonMsg = new JSONObject();
+        jsonMsg.put("key", "CPExpirationPassword");
+        jsonMsg.put("msg", aep.getMessage());
+        throw new AuthenticationException(jsonMsg.toString());
       } catch (AuthenticationException ae) {
         ConnectionProvider cp = new DalConnectionProvider(false);
         Client systemClient = OBDal.getInstance().get(Client.class, "0");

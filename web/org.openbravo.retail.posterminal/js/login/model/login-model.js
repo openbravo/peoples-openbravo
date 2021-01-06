@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1394,9 +1394,21 @@
             inResponse.exception ||
             (inResponse.response && inResponse.response.error)
           ) {
-            var msg = inResponse.exception
-              ? OB.I18N.getLabel(inResponse.exception)
-              : inResponse.response.error.message;
+            var msg, jsonMsg;
+            try {
+              jsonMsg = JSON.parse(inResponse.response.error.message);
+              if (
+                !OB.UTIL.isNullOrUndefined(jsonMsg) &&
+                jsonMsg.key === 'CPExpirationPassword'
+              ) {
+                msg = jsonMsg.msg;
+              }
+            } catch (e) {
+              msg = inResponse.exception
+                ? OB.I18N.getLabel(inResponse.exception)
+                : inResponse.response.error.message;
+            }
+
             OB.UTIL.showConfirmation.display(
               OB.I18N.getLabel('OBMOBC_Error'),
               msg,
@@ -1405,7 +1417,18 @@
                   label: OB.I18N.getLabel('OBMOBC_LblOk'),
                   isConfirmButton: true,
                   action: function() {
-                    if (OB.UI.ModalSelectTerminal) {
+                    if (
+                      !OB.UTIL.isNullOrUndefined(jsonMsg) &&
+                      jsonMsg.key === 'CPExpirationPassword'
+                    ) {
+                      OB.MobileApp.model.login(
+                        parsedTerminalData.user,
+                        parsedTerminalData.password,
+                        OB.MobileApp.model.get('mode'),
+                        'FORCE_RESET_PASSWORD'
+                      );
+                      return;
+                    } else if (OB.UI.ModalSelectTerminal) {
                       me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent(
                         {
                           kind: 'OB.UI.ModalSelectTerminal',
@@ -1423,7 +1446,15 @@
               {
                 showLoading: true,
                 onHideFunction: function() {
-                  if (OB.UI.ModalSelectTerminal) {
+                  if (jsonMsg.key === 'CPExpirationPassword') {
+                    OB.MobileApp.model.login(
+                      parsedTerminalData.user,
+                      parsedTerminalData.password,
+                      OB.MobileApp.model.get('mode'),
+                      'FORCE_RESET_PASSWORD'
+                    );
+                    return;
+                  } else if (OB.UI.ModalSelectTerminal) {
                     me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent(
                       {
                         kind: 'OB.UI.ModalSelectTerminal',
