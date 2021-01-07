@@ -113,7 +113,11 @@ enyo.kind({
     this.$.label.$.bottonLine.setContent(
       this.model.get('totalamount') +
         ' (' +
-        OB.I18N.formatDate(new Date(this.model.get('orderDate'))) +
+        OB.I18N.formatDate(
+          OB.Utilities.Date.addTimezoneOffset(
+            new Date(this.model.get('orderDate'))
+          )
+        ) +
         ') '
     );
     this.setChecked(this.model.get('checked'));
