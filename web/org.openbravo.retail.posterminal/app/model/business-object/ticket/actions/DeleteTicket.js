@@ -27,7 +27,7 @@
       if (
         payload.preferences.removeTicket &&
         globalState.Ticket.isEditable &&
-        (globalState.Ticket.lines.length || !globalState.Ticket.isNew)
+        globalState.Ticket.lines.length
       ) {
         newTicket = OB.App.State.Ticket.Utils.updateTicketType(
           newTicket,
