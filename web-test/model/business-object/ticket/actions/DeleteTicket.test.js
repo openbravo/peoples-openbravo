@@ -16,6 +16,7 @@ describe('Delete ticket action', () => {
   it('should delete ticket', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
+      id: 'A',
       grossAmount: 100,
       netAmount: 80,
       payment: 100,
@@ -56,6 +57,7 @@ describe('Delete ticket action', () => {
         terminalType: { documentType: 'Sale' }
       },
       businessPartner: 'BP',
+      multiTicketList: [ticket],
       documentNumberSeparator: '/',
       pricelist: {},
       context: { user: {} },
@@ -96,6 +98,7 @@ describe('Delete ticket action', () => {
   it('should delete ticket with removeTicket preference', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
+      id: 'A',
       isEditable: true,
       grossAmount: 100,
       netAmount: 80,
@@ -138,6 +141,7 @@ describe('Delete ticket action', () => {
         terminalType: { documentType: 'Sale' }
       },
       businessPartner: 'BP',
+      multiTicketList: [ticket],
       documentNumberSeparator: '/',
       pricelist: {},
       context: { user: {} },

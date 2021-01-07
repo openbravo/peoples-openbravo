@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -24,74 +24,84 @@
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
 
-      if (
-        payload.preferences.removeTicket &&
-        globalState.Ticket.isEditable &&
-        globalState.Ticket.lines.length
-      ) {
-        newTicket = OB.App.State.Ticket.Utils.updateTicketType(
-          newTicket,
-          payload
-        );
+      payload.multiTicketList.forEach(multiTicket => {
+        let newMultiTicket = { ...multiTicket };
 
-        newTicket = OB.App.State.Ticket.Utils.processTicket(newTicket, payload);
+        if (
+          payload.preferences.removeTicket &&
+          newMultiTicket.isEditable &&
+          newMultiTicket.lines.length
+        ) {
+          newMultiTicket = OB.App.State.Ticket.Utils.updateTicketType(
+            newMultiTicket,
+            payload
+          );
 
-        // Document number generation
-        ({
-          ticket: newTicket,
-          documentSequence: newDocumentSequence
-        } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
-          newTicket,
-          newDocumentSequence,
-          payload
-        ));
+          newMultiTicket = OB.App.State.Ticket.Utils.processTicket(
+            newMultiTicket,
+            payload
+          );
 
-        // Set complete ticket properties
-        newTicket.obposIsDeleted = true;
-        newTicket.grossAmount = 0;
-        newTicket.netAmount = 0;
-        newTicket.taxes = Object.keys(newTicket.taxes).reduce((taxes, tax) => {
-          const result = { ...taxes };
-          result[tax] = { ...newTicket.taxes[tax], net: 0, amount: 0 };
-          return result;
-        }, {});
-        newTicket.lines = newTicket.lines.map(line => {
-          return {
-            ...line,
-            obposIsDeleted: true,
-            obposQtyDeleted: line.qty,
-            grossUnitAmount: 0,
-            netUnitAmount: 0,
-            qty: 0,
-            taxes: Object.keys(line.taxes).reduce((taxes, tax) => {
+          // Document number generation
+          ({
+            ticket: newMultiTicket,
+            documentSequence: newDocumentSequence
+          } = OB.App.State.DocumentSequence.Utils.generateDocumentNumber(
+            newMultiTicket,
+            newDocumentSequence,
+            payload
+          ));
+
+          // Set complete ticket properties
+          newMultiTicket.obposIsDeleted = true;
+          newMultiTicket.grossAmount = 0;
+          newMultiTicket.netAmount = 0;
+          newMultiTicket.taxes = Object.keys(newMultiTicket.taxes).reduce(
+            (taxes, tax) => {
               const result = { ...taxes };
-              result[tax] = { ...line.taxes[tax], net: 0, amount: 0 };
+              result[tax] = { ...newMultiTicket.taxes[tax], net: 0, amount: 0 };
               return result;
-            }, {})
-          };
-        });
+            },
+            {}
+          );
+          newMultiTicket.lines = newMultiTicket.lines.map(line => {
+            return {
+              ...line,
+              obposIsDeleted: true,
+              obposQtyDeleted: line.qty,
+              grossUnitAmount: 0,
+              netUnitAmount: 0,
+              qty: 0,
+              taxes: Object.keys(line.taxes).reduce((taxes, tax) => {
+                const result = { ...taxes };
+                result[tax] = { ...line.taxes[tax], net: 0, amount: 0 };
+                return result;
+              }, {})
+            };
+          });
 
-        // Cashup update
-        ({
-          ticket: newTicket,
-          cashup: newCashup
-        } = OB.App.State.Cashup.Utils.updateCashupFromTicket(
-          newTicket,
-          newCashup,
-          payload
-        ));
+          // Cashup update
+          ({
+            ticket: newMultiTicket,
+            cashup: newCashup
+          } = OB.App.State.Cashup.Utils.updateCashupFromTicket(
+            newMultiTicket,
+            newCashup,
+            payload
+          ));
 
-        // Ticket synchronization message
-        newMessages = [
-          ...newMessages,
-          OB.App.State.Messages.Utils.createNewMessage(
-            'Order',
-            'org.openbravo.retail.posterminal.OrderLoader',
-            [OB.App.State.Ticket.Utils.cleanTicket(newTicket)],
-            payload.extraProperties
-          )
-        ];
-      }
+          // Ticket synchronization message
+          newMessages = [
+            ...newMessages,
+            OB.App.State.Messages.Utils.createNewMessage(
+              'Order',
+              'org.openbravo.retail.posterminal.OrderLoader',
+              [OB.App.State.Ticket.Utils.cleanTicket(newMultiTicket)],
+              payload.extraProperties
+            )
+          ];
+        }
+      });
 
       // TicketList update
       ({
@@ -110,6 +120,24 @@
       newGlobalState.Messages = newMessages;
 
       return newGlobalState;
+    }
+  );
+
+  OB.App.StateAPI.Global.deleteTicket.addActionPreparation(
+    async (globalState, payload) => {
+      const newPayload = { ...payload };
+
+      if (newPayload.ticketIds) {
+        newPayload.multiTicketList = newPayload.ticketIds.map(ticketId =>
+          globalState.Ticket.id === ticketId
+            ? globalState.Ticket
+            : globalState.TicketList.find(ticket => ticket.id === ticketId)
+        );
+      } else {
+        newPayload.multiTicketList = [globalState.Ticket];
+      }
+
+      return newPayload;
     }
   );
 })();
