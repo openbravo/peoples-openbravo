@@ -694,77 +694,9 @@ describe('Delete ticket action', () => {
       documentNumberSeparator: '/',
       pricelist: {},
       context: { user: {} },
-      preferences: {},
-      constants: {
-        fieldSeparator: '-',
-        identifierSuffix: '_id'
-      }
-    });
-
-    const newState = OB.App.StateAPI.Global.deleteTicket(state, payload);
-
-    expect(newState).toMatchObject({
-      TicketList: [],
-      Ticket: {
-        documentNo: '',
-        businessPartner: 'BP',
-        grossAmount: 0,
-        netAmount: 0,
-        payment: 0,
-        lines: [],
-        payments: [],
-        approvals: []
+      preferences: {
+        removeTicket: true
       },
-      DocumentSequence: {
-        lastassignednum: { sequencePrefix: 'O', sequenceNumber: 0 }
-      },
-      Cashup: {
-        grossSales: 0,
-        netSales: 0,
-        grossReturns: 0,
-        netReturns: 0
-      },
-      Messages: []
-    });
-  });
-
-  it('should not synchronize ticket without lines', () => {
-    const ticketList = deepfreeze([]);
-    const ticket = deepfreeze({
-      id: 'A',
-      isEditable: true,
-      lines: []
-    });
-    const documentSequence = deepfreeze({
-      lastassignednum: { sequencePrefix: 'O', sequenceNumber: 0 }
-    });
-    const cashup = deepfreeze({
-      grossSales: 0,
-      netSales: 0,
-      grossReturns: 0,
-      netReturns: 0,
-      cashPaymentMethodInfo: []
-    });
-    const messages = deepfreeze([]);
-    const state = deepfreeze({
-      TicketList: ticketList,
-      Ticket: ticket,
-      DocumentSequence: documentSequence,
-      Cashup: cashup,
-      Messages: messages
-    });
-    const payload = deepfreeze({
-      terminal: {
-        id: '0',
-        documentnoPadding: 5,
-        terminalType: { documentType: 'Sale' }
-      },
-      businessPartner: 'BP',
-      multiTicketList: [ticket],
-      documentNumberSeparator: '/',
-      pricelist: {},
-      context: { user: {} },
-      preferences: {},
       constants: {
         fieldSeparator: '-',
         identifierSuffix: '_id'
