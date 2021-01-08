@@ -4506,36 +4506,20 @@
     },
 
     setAndSaveExternalBP: function(bp) {
-      let order = this;
       return new Promise((resolve, reject) => {
         let execution = OB.UTIL.ProcessController.start(
           'setExternalBusinessPartner'
         );
-        execution.businessPartner = bp || order.get('bp');
-        OB.App.ExternalBusinessPartnerAPI.onBusinessPartnerSelected(bp, order)
+        OB.App.State.Ticket.assignExternalBusinessPartner({
+          businessPartner: bp
+        })
           .then(() => {
-            order.set(
-              'externalBusinessPartnerReference',
-              bp ? bp.getKey() : null
+            OB.MobileApp.model.receipt.trigger('updateView');
+            OB.UTIL.ProcessController.finish(
+              'setExternalBusinessPartner',
+              execution
             );
-            order.set(
-              'externalBusinessPartnerCategory',
-              new OB.App.Class.ExternalBusinessPartner(
-                bp ? bp.getPlainObject() : null
-              ).getCategoryKey()
-            );
-            order.set(
-              'externalBusinessPartner',
-              bp ? bp.getPlainObject() : null
-            );
-            order.save(function() {
-              OB.MobileApp.model.receipt.trigger('updateView');
-              OB.UTIL.ProcessController.finish(
-                'setExternalBusinessPartner',
-                execution
-              );
-              resolve();
-            });
+            resolve();
           })
           .catch(objError => {
             execution.businessPartner = null;
@@ -4896,7 +4880,6 @@
         }
       });
     },
-
     validateAllowSalesWithReturn: function(qty, skipValidaton, selectedModels) {
       if (
         OB.MobileApp.model.hasPermission(
