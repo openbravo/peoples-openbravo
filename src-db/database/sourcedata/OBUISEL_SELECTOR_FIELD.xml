@@ -337,7 +337,7 @@ Usually, company's internal identifiers for various records (products, customers
 <!--0F4AEA7AAB7D4D2AA913B5B5976BA0E9-->  <NAME><![CDATA[Name]]></NAME>
 <!--0F4AEA7AAB7D4D2AA913B5B5976BA0E9-->  <DESCRIPTION><![CDATA[A non-unique identifier for a record/document often used as a search tool.]]></DESCRIPTION>
 <!--0F4AEA7AAB7D4D2AA913B5B5976BA0E9-->  <HELP><![CDATA[A more descriptive identifier (that does need to be unique) of a record/document that is used as a default search option along with the search key (that is unique and mostly shorter). It is up to 60 characters in length.]]></HELP>
-<!--0F4AEA7AAB7D4D2AA913B5B5976BA0E9-->  <PROPERTY><![CDATA[name]]></PROPERTY>
+<!--0F4AEA7AAB7D4D2AA913B5B5976BA0E9-->  <PROPERTY><![CDATA[_identifier]]></PROPERTY>
 <!--0F4AEA7AAB7D4D2AA913B5B5976BA0E9-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--0F4AEA7AAB7D4D2AA913B5B5976BA0E9-->  <SORT><![CDATA[Y]]></SORT>
 <!--0F4AEA7AAB7D4D2AA913B5B5976BA0E9-->  <FILTER><![CDATA[Y]]></FILTER>
