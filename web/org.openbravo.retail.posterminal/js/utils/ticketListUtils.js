@@ -23,7 +23,6 @@
       OB.App.State.getState().Ticket.id
     );
     OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
-    OB.MobileApp.model.receipt.trigger('change:bp', OB.MobileApp.model.receipt);
   };
 
   OB.UTIL.TicketListUtils.loadLocalTicket = async function(ticketId) {
@@ -1186,6 +1185,10 @@
       OB.MobileApp.model.receipt.trigger('loadedOrder');
       OB.MobileApp.model.receipt.trigger('updatePending');
       OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
+      OB.MobileApp.model.receipt.trigger(
+        'change:bp',
+        OB.MobileApp.model.receipt
+      );
     }
   };
 })();
