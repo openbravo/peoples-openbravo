@@ -30,7 +30,7 @@
         if (
           payload.preferences.removeTicket &&
           newMultiTicket.isEditable &&
-          (newMultiTicket.lines.length || !newMultiTicket.isNew)
+          (newMultiTicket.lines.length || newMultiTicket.deletedLines)
         ) {
           newMultiTicket = OB.App.State.Ticket.Utils.updateTicketType(
             newMultiTicket,
@@ -56,14 +56,6 @@
           newMultiTicket.obposIsDeleted = true;
           newMultiTicket.grossAmount = 0;
           newMultiTicket.netAmount = 0;
-          newMultiTicket.taxes = Object.keys(newMultiTicket.taxes).reduce(
-            (taxes, tax) => {
-              const result = { ...taxes };
-              result[tax] = { ...newMultiTicket.taxes[tax], net: 0, amount: 0 };
-              return result;
-            },
-            {}
-          );
           newMultiTicket.lines = newMultiTicket.lines.map(line => {
             return {
               ...line,
@@ -79,6 +71,14 @@
               }, {})
             };
           });
+          newMultiTicket.taxes = newMultiTicket.lines
+            .concat(newMultiTicket.deletedLines || [])
+            .flatMap(line => Object.values(line.taxes))
+            .reduce((taxes, tax) => {
+              const result = { ...taxes };
+              result[tax.id] = result[tax.id] || { ...tax };
+              return result;
+            }, {});
 
           // Cashup update
           ({
