@@ -189,8 +189,8 @@
         } else {
           this.requestPrint(data, device);
         }
-      } catch (ex) {
-        OB.error('Error printing template', ex);
+      } catch (error) {
+        OB.error(`Error printing template: ${error}`);
       }
     }
 

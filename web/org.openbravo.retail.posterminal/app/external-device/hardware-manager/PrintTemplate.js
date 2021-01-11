@@ -22,9 +22,15 @@
     ).toBackboneObject(ticket);
   };
 
-  // Turns a JSON representation of a backbone order line into a backbone order line
+  // Turns a state ticket line into a backbone order line
   const toOrderLine = line => {
-    return new OB.Model.OrderLine(line);
+    const order = toOrder({
+      orderDate: new Date(),
+      creationDate: new Date(),
+      bp: { locationModel: undefined, locationBillModel: undefined },
+      lines: [line]
+    });
+    return order.get('lines').get(line.id);
   };
 
   /**

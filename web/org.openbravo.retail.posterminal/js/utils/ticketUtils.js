@@ -130,8 +130,18 @@
       .flat();
     receiptLines.forEach(line => {
       OB.App.State.Global.printTicketLine({
-        line: JSON.parse(JSON.stringify(line))
+        line: OB.UTIL.TicketUtils.toTicketLine(line)
       });
     });
+  };
+
+  // turns a backbone order line into a state ticket line
+  OB.UTIL.TicketUtils.toTicketLine = line => {
+    const order = new OB.Model.Order();
+    order.set('lines', new Backbone.Collection(line));
+    const ticket = OB.App.StateBackwardCompatibility.getInstance(
+      'Ticket'
+    ).toStateObject(order);
+    return ticket.lines[0];
   };
 })();

@@ -266,9 +266,6 @@
     }
 
     async printTicketLine(messageData) {
-      if (!this.linePrinter) {
-        throw new Error(`The endpoint has no line printer assigned`);
-      }
       try {
         const template = this.templateStore.getTicketLineTemplate();
         await this.controller.display(template, {

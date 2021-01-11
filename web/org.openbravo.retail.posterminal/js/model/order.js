@@ -3469,9 +3469,7 @@
             }
             if (currentLine) {
               OB.App.State.Global.printTicketLine({
-                line: JSON.parse(
-                  JSON.stringify(receiptLines.get(currentLine.id).toJSON())
-                )
+                line: currentLine
               });
             }
             currentReceipt.trigger('updatePending');
