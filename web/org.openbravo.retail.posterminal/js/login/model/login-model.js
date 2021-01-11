@@ -1409,6 +1409,34 @@
                 : inResponse.response.error.message;
             }
 
+            var showTerminalAuthPopup = () => {
+              me = this;
+              me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent(
+                {
+                  kind: 'OB.UI.ModalSelectTerminal',
+                  name: 'modalSelectTerminal',
+                  classes: 'modalSelectTerminal',
+                  callback: callback,
+                  context: me
+                }
+              );
+              me.dialog.show();
+            };
+
+            var showChangePasswordPopup = () => {
+              me = this;
+              me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent(
+                {
+                  kind: 'OB.UI.ExpirationPassword',
+                  classes:
+                    'obUiTerminal-confirmationContainer-obUiExpirationPassword',
+                  context: me,
+                  callback: showTerminalAuthPopup
+                }
+              );
+              me.dialog.show();
+            };
+
             OB.UTIL.showConfirmation.display(
               OB.I18N.getLabel('OBMOBC_Error'),
               msg,
@@ -1421,24 +1449,10 @@
                       !OB.UTIL.isNullOrUndefined(jsonMsg) &&
                       jsonMsg.key === 'CPExpirationPassword'
                     ) {
-                      OB.MobileApp.model.login(
-                        parsedTerminalData.user,
-                        parsedTerminalData.password,
-                        OB.MobileApp.model.get('mode'),
-                        'FORCE_RESET_PASSWORD'
-                      );
+                      showChangePasswordPopup();
                       return;
                     } else if (OB.UI.ModalSelectTerminal) {
-                      me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent(
-                        {
-                          kind: 'OB.UI.ModalSelectTerminal',
-                          name: 'modalSelectTerminal',
-                          classes: 'modalSelectTerminal',
-                          callback: callback,
-                          context: me
-                        }
-                      );
-                      me.dialog.show();
+                      showTerminalAuthPopup();
                     }
                   }
                 }
@@ -1447,24 +1461,10 @@
                 showLoading: true,
                 onHideFunction: function() {
                   if (jsonMsg.key === 'CPExpirationPassword') {
-                    OB.MobileApp.model.login(
-                      parsedTerminalData.user,
-                      parsedTerminalData.password,
-                      OB.MobileApp.model.get('mode'),
-                      'FORCE_RESET_PASSWORD'
-                    );
+                    showChangePasswordPopup();
                     return;
                   } else if (OB.UI.ModalSelectTerminal) {
-                    me.dialog = OB.MobileApp.view.$.confirmationContainer.createComponent(
-                      {
-                        kind: 'OB.UI.ModalSelectTerminal',
-                        name: 'modalSelectTerminal',
-                        classes: 'modalSelectTerminal',
-                        callback: callback,
-                        context: me
-                      }
-                    );
-                    me.dialog.show();
+                    showTerminalAuthPopup();
                   }
                 }
               }
@@ -1497,7 +1497,11 @@
                 '"'
             );
             me.manageTerminalSafeBoxes(inResponse.safeBoxInfo);
-            callback();
+            if (OB.MobileApp.model.get('passResetInTermAuth')) {
+              window.location.reload();
+            } else {
+              callback();
+            }
           }
         })
         .error(function() {
