@@ -27,7 +27,7 @@ OB.App.StateAPI.Messages.utilities.forEach(util => {
   OB.App.State.Messages.Utils[util.functionName] = util.implementation;
 });
 
-describe('Print action', () => {
+describe('PrintWelcome action', () => {
   it('Expected state after print welcome action', () => {
     const state = {
       Messages: []
