@@ -12,10 +12,12 @@
   OB.UTIL = window.OB.UTIL || {};
   OB.UTIL.TicketListUtils = OB.UTIL.TicketListUtils || {};
 
-  OB.UTIL.TicketListUtils.loadStateTicket = async function(ticket) {
-    await OB.App.State.Global.loadTicket({
-      ticket
-    });
+  OB.UTIL.TicketListUtils.loadRemoteTicket = async function(ticketModel) {
+    await OB.App.State.Global.loadRemoteTicket(
+      OB.UTIL.TicketUtils.addTicketCreationDataToPayload({
+        ticket: JSON.parse(JSON.stringify(ticketModel))
+      })
+    );
     OB.MobileApp.model.set(
       'terminalLogContext',
       OB.App.State.getState().Ticket.id
@@ -23,17 +25,8 @@
     OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
   };
 
-  OB.UTIL.TicketListUtils.loadTicket = async function(ticketModel) {
-    await OB.UTIL.TicketListUtils.loadStateTicket(
-      OB.App.StateBackwardCompatibility.getInstance('Ticket').toStateObject(
-        ticketModel
-      )
-    );
-    OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
-  };
-
-  OB.UTIL.TicketListUtils.loadTicketById = async function(ticketId) {
-    await OB.App.State.Global.loadTicketById({
+  OB.UTIL.TicketListUtils.loadLocalTicket = async function(ticketId) {
+    await OB.App.State.Global.loadLocalTicket({
       id: ticketId
     });
     OB.MobileApp.model.set(
@@ -1091,7 +1084,7 @@
           OB.MobileApp.model.receipt.get('documentNo') !==
           model.get('documentNo')
         ) {
-          OB.UTIL.TicketListUtils.loadStateTicket(modelAtIndex);
+          OB.UTIL.TicketListUtils.loadLocalTicket(modelAtIndex.id);
         }
         if (model.get('searchSynchId')) {
           model.unset('searchSynchId');
@@ -1192,6 +1185,10 @@
       OB.MobileApp.model.receipt.trigger('loadedOrder');
       OB.MobileApp.model.receipt.trigger('updatePending');
       OB.MobileApp.model.receipt.trigger('forceRenderCurrentCustomer');
+      OB.MobileApp.model.receipt.trigger(
+        'change:bp',
+        OB.MobileApp.model.receipt
+      );
     }
   };
 })();

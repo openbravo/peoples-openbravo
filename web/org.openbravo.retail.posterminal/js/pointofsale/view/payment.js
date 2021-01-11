@@ -2717,7 +2717,9 @@ enyo.kind({
   ],
   renderPaymentLine: function(inSender, inEvent) {
     const payment = OB.MobileApp.model.paymentnames[this.model.get('kind')],
-      receipt = this.owner.owner.owner.owner.owner.owner.model.get('order');
+      receipt = OB.App.StateBackwardCompatibility.getInstance(
+        'Ticket'
+      ).toBackboneObject(OB.App.State.getState().Ticket);
     this.addClass('obObposPointOfSaleUiRenderPaymentLine_renderPaymentLine');
     if (this.model.get('reversedPaymentId')) {
       this.$.name.setContent(

@@ -11,14 +11,14 @@
 
 global.OB = { App: { Class: {} } };
 const deepfreeze = require('deepfreeze');
-global.lodash = require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
+global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 const {
   executeActionPreparations
-} = require('../../../../../org.openbravo.mobile.core/web-test/base/state-utils');
+} = require('../../../../../../org.openbravo.mobile.core/web-test/base/state-utils');
 
-require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketList');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/BringTicketToSession');
+require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketList');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/BringTicketToSession');
 
 describe('Bring Ticket To Session', () => {
   describe('Bring Ticket To Session action preparation', () => {

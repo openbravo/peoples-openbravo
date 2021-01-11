@@ -8,11 +8,12 @@
  */
 
 /**
- * @fileoverview Declares a global action that loads the Ticket passed as payload as the current active ticket
+ * @fileoverview Declares a global action that loads from local database the Ticket passed as payload as the current active ticket
  * and enqueues the active ticket into the list
  */
-(function LoadTicketActions() {
-  function loadTicketById(state, ticketToLoadId) {
+(() => {
+  OB.App.StateAPI.Global.registerAction('loadLocalTicket', (state, payload) => {
+    const ticketToLoadId = payload.id;
     if (ticketToLoadId && state.Ticket.id === ticketToLoadId) {
       return state;
     }
@@ -34,13 +35,5 @@
     newState.Ticket = newCurrentTicket;
 
     return newState;
-  }
-
-  OB.App.StateAPI.Global.registerAction('loadTicket', (state, payload) => {
-    return loadTicketById(state, payload.ticket.id);
-  });
-
-  OB.App.StateAPI.Global.registerAction('loadTicketById', (state, payload) => {
-    return loadTicketById(state, payload.id);
   });
 })();
