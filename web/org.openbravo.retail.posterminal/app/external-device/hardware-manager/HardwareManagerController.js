@@ -13,8 +13,8 @@
  */
 
 (function HardwareManagerControllerDefinition() {
-  // used to send requests to the HardwareManager
-  async function request(url, data, options = {}) {
+  // used to send POST requests to the HardwareManager
+  async function post(url, data, options = {}) {
     await OB.App.Request.post(url, data, {
       timeout: 20000,
       type: 'json',
@@ -26,6 +26,22 @@
         }
       }
     });
+  }
+
+  // used to send GET requests to the HardwareManager
+  async function get(url, options = {}) {
+    const response = await OB.App.Request.get(url, {
+      timeout: 5000,
+      type: 'json',
+      cache: 'no-cache',
+      options: {
+        headers: {
+          'Content-Type':
+            options.contentType || 'application/json; charset=utf-8'
+        }
+      }
+    });
+    return response;
   }
 
   /**
@@ -122,7 +138,7 @@
           }
         : {
             url: this.mainURL,
-            identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
+            identifier: 'MP', // TODO: OB.I18N.getLabel('OBPOS_MainPrinter'),
             id: OB.App.TerminalProperty.get('terminal').id
           };
     }
@@ -140,6 +156,24 @@
         time,
         data
       }); */
+    }
+
+    async getStatus() {
+      if (!this.activeURL) {
+        return {};
+      }
+      try {
+        const data = (await get(`${this.activeURL}/status.json`)) || {};
+        OB.App.SynchronizationBuffer.goOnline('HardwareManager');
+        return data;
+      } catch (error) {
+        OB.App.SynchronizationBuffer.goOffline('HardwareManager');
+        return {};
+        // TODO -- how to show in the new UI?
+        /* OB.UTIL.showError(
+          OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable')
+        ); */
+      }
     }
 
     async display(template, params) {
@@ -173,7 +207,7 @@
         const options = {
           contentType: 'application/xml; charset=utf-8'
         };
-        await request(`${url}/printer`, data, options);
+        await post(`${url}/printer`, data, options);
         OB.App.SynchronizationBuffer.goOnline('HardwareManager');
       } catch (error) {
         OB.App.SynchronizationBuffer.goOffline('HardwareManager');
@@ -190,7 +224,7 @@
       }
 
       try {
-        await request(`${this.activePDFURL}/printerpdf`, data);
+        await post(`${this.activePDFURL}/printerpdf`, data);
       } catch (error) {
         // TODO -- how to show in the new UI?
         OB.UTIL.showError(

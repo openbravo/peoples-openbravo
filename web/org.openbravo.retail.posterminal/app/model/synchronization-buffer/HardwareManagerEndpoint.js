@@ -26,6 +26,7 @@
 
       this.messageTypes.push(
         'displayTotal',
+        'getHardwareManagerStatus',
         'printTicket',
         'printTicketLine',
         'printWelcome'
@@ -46,6 +47,9 @@
       switch (message.type) {
         case 'displayTotal':
           await this.displayTotal(message.messageObj);
+          break;
+        case 'getHardwareManagerStatus':
+          await this.getStatus();
           break;
         case 'printTicket':
           await this.printTicket(message.messageObj);
@@ -71,6 +75,28 @@
         });
       } catch (error) {
         OB.error(`Error displaying ticket total: ${error}`);
+      }
+    }
+
+    async getStatus() {
+      const data = await this.controller.getStatus();
+      const { version, revision, javaInfo } = data;
+
+      // Save hardware manager information
+      if (version) {
+        // Max database string size: 10
+        const hwmVersion =
+          version.length > 10 ? version.substring(0, 9) : version;
+        OB.UTIL.localStorage.setItem('hardwareManagerVersion', hwmVersion);
+      }
+      if (revision) {
+        // Max database string size: 15
+        const hwmRevision =
+          revision.length > 15 ? revision.substring(0, 14) : revision;
+        OB.UTIL.localStorage.setItem('hardwareManagerRevision', hwmRevision);
+      }
+      if (javaInfo) {
+        OB.UTIL.localStorage.setItem('hardwareManagerJavaInfo', javaInfo);
       }
     }
 
