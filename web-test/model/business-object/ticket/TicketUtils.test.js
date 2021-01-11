@@ -141,4 +141,32 @@ describe('TicketUtils', () => {
   `("Ticket '$ticket' is fully paid", async ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isFullyPaid(ticket)).toBe(expected);
   });
+
+  test.each`
+    ticket                                                                                        | expected
+    ${{ cancelAndReplaceChangePending: true }}                                                    | ${true}
+    ${{ isNegative: true }}                                                                       | ${true}
+    ${{ isNegative: false }}                                                                      | ${false}
+    ${{ isLayaway: true, total: -100 }}                                                           | ${true}
+    ${{ isLayaway: true, total: 100 }}                                                            | ${false}
+    ${{ isPaid: true, total: -100 }}                                                              | ${true}
+    ${{ isPaid: true, total: 100 }}                                                               | ${false}
+    ${{ payments: [{ origAmount: 10 }, { origAmount: 200, isPrePayment: true }], total: 100 }}    | ${true}
+    ${{ payments: [{ origAmount: 10 }, { origAmount: 100, isPrePayment: true }], total: 100 }}    | ${false}
+    ${{ payments: [{ origAmount: 10 }, { origAmount: 10, isPrePayment: true }], total: 100 }}     | ${false}
+    ${{ payments: [{ origAmount: 10 }, { origAmount: 200, isPrePayment: false }], total: 100 }}   | ${false}
+    ${{ payments: [{ origAmount: 10 }, { origAmount: 200, isPrePayment: true }], total: -100 }}   | ${true}
+    ${{ payments: [{ origAmount: 10 }, { origAmount: -100, isPrePayment: true }], total: -100 }}  | ${true}
+    ${{ payments: [{ origAmount: 10 }, { origAmount: -110, isPrePayment: true }], total: -100 }}  | ${false}
+    ${{ payments: [{ origAmount: 10 }, { origAmount: 10, isPrePayment: true }], total: -100 }}    | ${true}
+    ${{ payments: [{ origAmount: 10 }, { origAmount: 200, isPrePayment: false }], total: -100 }}  | ${true}
+    ${{ payments: [{ origAmount: 10, isPrePayment: true }], nettingPayment: 100, total: 100 }}    | ${true}
+    ${{ payments: [{ origAmount: 10, isPrePayment: true }], nettingPayment: 90, total: 100 }}     | ${false}
+    ${{ payments: [{ origAmount: 10, isPrePayment: true }], nettingPayment: 80, total: 100 }}     | ${false}
+    ${{ payments: [{ origAmount: -10, isPrePayment: true }], nettingPayment: -100, total: -100 }} | ${false}
+    ${{ payments: [{ origAmount: -10, isPrePayment: true }], nettingPayment: -90, total: -100 }}  | ${true}
+    ${{ payments: [{ origAmount: -10, isPrePayment: true }], nettingPayment: -80, total: -100 }}  | ${true}
+  `("Ticket '$ticket' is negative", async ({ ticket, expected }) => {
+    expect(OB.App.State.Ticket.Utils.isNegative(ticket)).toBe(expected);
+  });
 });

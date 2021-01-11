@@ -123,12 +123,7 @@
             line.baseGrossUnitAmount
         );
 
-        // TODO -- implement this (in TicketUtils?)
-        const isNegative = () => {
-          return false;
-        };
-
-        if (isNegative(ticket)) {
+        if (OB.App.State.Ticket.Utils.isNegative(ticket)) {
           ticket.payments = ticket.payments.map(payment => {
             if (!payment.isPrePayment && !payment.isReversePayment) {
               return {

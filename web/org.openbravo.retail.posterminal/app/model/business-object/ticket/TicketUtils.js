@@ -858,6 +858,41 @@
     },
 
     /**
+     * Checks if a ticket is considered as negative
+     *
+     * @param {object} ticket - The ticket to check
+     * @returns {boolean} - True if the given ticket is negative, otherwise false is returned
+     */
+    isNegative(ticket) {
+      if (ticket.cancelAndReplaceChangePending) {
+        return true;
+      }
+      if (ticket.isNegative != null) {
+        return ticket.isNegative;
+      }
+
+      const loadedFromBackend = ticket.isLayaway || ticket.isPaid;
+      if (loadedFromBackend) {
+        return OB.DEC.compare(ticket.total) === -1;
+      }
+
+      const prePaymentsAmount = ticket.payments.reduce((total, payment) => {
+        if (payment.isPrePayment) {
+          return OB.DEC.add(total, payment.origAmount);
+        }
+        return total;
+      }, OB.DEC.Zero);
+
+      const processedPaymentsAmount = OB.DEC.add(
+        prePaymentsAmount,
+        ticket.nettingPayment || OB.DEC.Zero
+      );
+      return OB.DEC.compare(ticket.total) === -1
+        ? processedPaymentsAmount >= ticket.total
+        : processedPaymentsAmount > ticket.total;
+    },
+
+    /**
      * Generates a new ticket resulting of adding a new line into the provided ticket
      *
      * @param {object} ticket - The ticket which we want to add a line
