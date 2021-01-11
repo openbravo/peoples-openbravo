@@ -186,6 +186,9 @@ enyo.kind({
           );
         } else if (data) {
           _.each(data, function(iter) {
+            iter.orderDate = OB.I18N.parseServerDate(
+              iter.orderDate
+            ).toISOString();
             me.invoicesList.add(iter);
           });
         } else {
