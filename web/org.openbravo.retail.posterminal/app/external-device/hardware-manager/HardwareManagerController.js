@@ -30,7 +30,7 @@
 
   // used to send GET requests to the HardwareManager
   async function get(url, options = {}) {
-    const response = await OB.App.Request.get(url, {
+    const response = await OB.App.Request.get(url, null, {
       timeout: 5000,
       type: 'json',
       cache: 'no-cache',
