@@ -223,11 +223,16 @@ public class ShipmentUtils implements TicketPropertyMapping {
         pendingQty = pendingQty.subtract(
             new BigDecimal(orderlines.getJSONObject(i).getLong("deliveredQuantity")).abs());
       }
+      log.info("Create Shipment pendingQty "+pendingQty);
       if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
         boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
-
+        
+        log.info("Line warehouse "+orderLine.getWarehouse());
+        log.info("warehouse "+warehouse);
+        log.info("Shipment warehouse "+shipment.getWarehouse());
         if (!warehouse.equals(shipment.getWarehouse())) {
           shipment.setWarehouse(warehouse);
+          log.info("New Shipment warehouse "+shipment.getWarehouse());
         }
 
         boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
