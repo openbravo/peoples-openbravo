@@ -168,11 +168,10 @@
         return data;
       } catch (error) {
         OB.App.SynchronizationBuffer.goOffline('HardwareManager');
+        OB.App.UserNotifier.notifyError({
+          message: 'OBPOS_MsgHardwareServerNotAvailable'
+        });
         return {};
-        // TODO -- how to show in the new UI?
-        /* OB.UTIL.showError(
-          OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable')
-        ); */
       }
     }
 
@@ -211,10 +210,9 @@
         OB.App.SynchronizationBuffer.goOnline('HardwareManager');
       } catch (error) {
         OB.App.SynchronizationBuffer.goOffline('HardwareManager');
-        // TODO -- how to show in the new UI?
-        OB.UTIL.showError(
-          OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable')
-        );
+        OB.App.UserNotifier.notifyError({
+          message: 'OBPOS_MsgHardwareServerNotAvailable'
+        });
       }
     }
 
@@ -226,10 +224,9 @@
       try {
         await post(`${this.activePDFURL}/printerpdf`, data);
       } catch (error) {
-        // TODO -- how to show in the new UI?
-        OB.UTIL.showError(
-          OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable')
-        );
+        OB.App.UserNotifier.notifyError({
+          message: 'OBPOS_MsgHardwareServerNotAvailable'
+        });
       }
     }
   };
