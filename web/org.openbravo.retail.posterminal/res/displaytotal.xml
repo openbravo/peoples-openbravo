@@ -9,37 +9,38 @@
 -->
 <output>
   <display>
-    <% if(order.getPending() === order.getTotal()){ 
+    <% const pendingAmount = OB.App.State.Ticket.Utils.getPendingAmount(ticket); %>
+    <% if(pendingAmount === ticket.grossAmount){ 
     %>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
-        <text align="right" length="10"><%= order.printGross() %></text>
+        <text align="right" length="10"><%= OB.UTIL.printAmount(ticket.grossAmount)%></text>
       </line>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_RemainingToPay'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(order.getPending()))%></text>
+        <text align="right" length="10"><%= OB.UTIL.printAmount(pendingAmount)%></text>
       </line>
     <% }else{ 
     %>
-      <% if(!order.getChange()){   
+      <% if(!ticket.change){   
       %>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_Paid'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(OB.DEC.sub(order.getTotal(), order.getPending()))) %></text>
+        <text align="right" length="10"><%= OB.UTIL.printAmount(OB.DEC.sub(ticket.grossAmount, pendingAmount))%></text>
       </line>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_RemainingToPay'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(order.getPending()))%></text>
+        <text align="right" length="10"><%= OB.UTIL.printAmount(pendingAmount)%></text>
       </line>
     <% }else{ 
     %>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_Paid'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(OB.DEC.add(order.getTotal(), order.getChange()))) %></text>
+        <text align="right" length="10"><%= OB.UTIL.printAmount(OB.DEC.add(ticket.grossAmount, ticket.change))%></text>
       </line>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.formatCurrency(order.getChange()))%></text>
+        <text align="right" length="10"><%= OB.UTIL.printAmount(ticket.change)%></text>
       </line>
     <% } 
     %>
