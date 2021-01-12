@@ -4506,10 +4506,12 @@
     },
 
     setAndSaveExternalBP: function(bp) {
+      let order = this;
       return new Promise((resolve, reject) => {
         let execution = OB.UTIL.ProcessController.start(
           'setExternalBusinessPartner'
         );
+        execution.businessPartner = bp || order.get('bp');
         OB.App.State.Ticket.assignExternalBusinessPartner({
           businessPartner: bp
         })
