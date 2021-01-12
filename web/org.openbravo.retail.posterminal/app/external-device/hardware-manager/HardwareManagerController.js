@@ -159,20 +159,20 @@
     }
 
     async getStatus() {
+      let data = {};
       if (!this.activeURL) {
-        return {};
+        return data;
       }
       try {
-        const data = (await get(`${this.activeURL}/status.json`)) || {};
+        data = (await get(`${this.activeURL}/status.json`)) || {};
         OB.App.SynchronizationBuffer.goOnline('HardwareManager');
-        return data;
       } catch (error) {
         OB.App.SynchronizationBuffer.goOffline('HardwareManager');
         OB.App.UserNotifier.notifyError({
           message: 'OBPOS_MsgHardwareServerNotAvailable'
         });
-        return {};
       }
+      return data;
     }
 
     async display(template, params) {
