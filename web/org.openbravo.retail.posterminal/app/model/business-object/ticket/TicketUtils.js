@@ -1201,7 +1201,7 @@
     },
 
     /**
-     * Retrieves the amount pending to be ticket for a given ticket
+     * Retrieves the amount pending to be paid for a given ticket
      *
      * @param {object} ticket - The ticket whose pending amount is checked
      *
