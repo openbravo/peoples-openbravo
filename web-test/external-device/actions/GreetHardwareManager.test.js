@@ -20,21 +20,21 @@ require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app
 require('.../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/Messages');
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/MessagesUtils');
-require('../../../web/org.openbravo.retail.posterminal/app/external-device/actions/GetHardwareManagerStatus');
+require('../../../web/org.openbravo.retail.posterminal/app/external-device/actions/GreetHardwareManager');
 
 OB.App.State = { Messages: { Utils: {} } };
 OB.App.StateAPI.Messages.utilities.forEach(util => {
   OB.App.State.Messages.Utils[util.functionName] = util.implementation;
 });
 
-describe('GetHardwareManagerStatus action', () => {
-  it('Expected state after GetHardwareManagerStatus action', () => {
+describe('GreetHardwareManager action', () => {
+  it('Expected state after GreetHardwareManager action', () => {
     const state = {
       Messages: []
     };
     const payload = {};
     deepfreeze(state);
-    const newState = OB.App.StateAPI.Global.getHardwareManagerStatus(
+    const newState = OB.App.StateAPI.Global.greetHardwareManager(
       state,
       payload
     );
@@ -48,7 +48,7 @@ describe('GetHardwareManagerStatus action', () => {
           modelName: '',
           service: '',
           time: expect.any(Number),
-          type: 'getHardwareManagerStatus',
+          type: 'greetHardwareManager',
           consumeOffline: true
         }
       ]

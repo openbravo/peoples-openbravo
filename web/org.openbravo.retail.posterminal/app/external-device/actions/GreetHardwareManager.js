@@ -8,18 +8,19 @@
  */
 
 /**
- * @fileoverview defines the action to create a message to get the status of the hardware manager.
+ * @fileoverview defines the action to create a message that when consumed fires the initial
+ *               communication with the Hardware Manager and its related tasks.
  * @author Carlos Aristu <carlos.aristu@openbravo.com>
  */
 
-OB.App.StateAPI.Global.registerAction('getHardwareManagerStatus', state => {
+OB.App.StateAPI.Global.registerAction('greetHardwareManager', state => {
   const newState = { ...state };
 
   const newMsg = OB.App.State.Messages.Utils.createNewMessage(
     '',
     '',
     {},
-    { type: 'getHardwareManagerStatus', consumeOffline: true }
+    { type: 'greetHardwareManager', consumeOffline: true }
   );
 
   newState.Messages = [...newState.Messages, newMsg];

@@ -26,7 +26,7 @@
 
       this.messageTypes.push(
         'displayTotal',
-        'getHardwareManagerStatus',
+        'greetHardwareManager',
         'printTicket',
         'printTicketLine',
         'printWelcome'
@@ -48,8 +48,8 @@
         case 'displayTotal':
           await this.displayTotal(message.messageObj);
           break;
-        case 'getHardwareManagerStatus':
-          await this.getStatus();
+        case 'greetHardwareManager':
+          await this.greet();
           break;
         case 'printTicket':
           await this.printTicket(message.messageObj);
@@ -78,11 +78,15 @@
       }
     }
 
-    async getStatus() {
+    async greet() {
       const data = await this.controller.getStatus();
-      const { version, revision, javaInfo } = data;
+
+      if (Object.keys(data).length > 0) {
+        await this.printWelcome();
+      }
 
       // Save hardware manager information
+      const { version, revision, javaInfo } = data;
       if (version) {
         // Max database string size: 10
         const hwmVersion =
