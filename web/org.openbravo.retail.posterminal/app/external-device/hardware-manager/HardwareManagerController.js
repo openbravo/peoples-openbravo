@@ -138,7 +138,7 @@
           }
         : {
             url: this.mainURL,
-            identifier: 'MP', // TODO: OB.I18N.getLabel('OBPOS_MainPrinter'),
+            identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
             id: OB.App.TerminalProperty.get('terminal').id
           };
     }
