@@ -169,4 +169,15 @@ describe('TicketUtils', () => {
   `("Ticket '$ticket' is negative", async ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isNegative(ticket)).toBe(expected);
   });
+
+  test.each`
+    ticket                                                                                                    | expected
+    ${{ paymentWithSign: 50, grossAmount: 150.5 }}                                                            | ${100.5}
+    ${{ prepaymentChangeMode: true, payments: [{ origAmount: 50 }, { origAmount: 60 }], grossAmount: 150.5 }} | ${40.5}
+  `(
+    "Pending amount for ticket '$ticket' is $expected",
+    async ({ ticket, expected }) => {
+      expect(OB.App.State.Ticket.Utils.getPendingAmount(ticket)).toBe(expected);
+    }
+  );
 });

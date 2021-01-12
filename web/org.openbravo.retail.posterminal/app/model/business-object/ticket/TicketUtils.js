@@ -1201,6 +1201,24 @@
     },
 
     /**
+     * Retrieves the amount pending to be ticket for a given ticket
+     *
+     * @param {object} ticket - The ticket whose pending amount is checked
+     *
+     * @returns {number} the amount pending to be paid for the given ticket
+     */
+    getPendingAmount(ticket) {
+      if (ticket.prepaymentChangeMode) {
+        const paymentsAmt = ticket.payments.reduce(
+          (memo, payment) => OB.DEC.add(memo, payment.origAmount),
+          OB.DEC.Zero
+        );
+        return OB.DEC.abs(OB.DEC.sub(ticket.grossAmount, paymentsAmt));
+      }
+      return OB.DEC.abs(OB.DEC.sub(ticket.grossAmount, ticket.paymentWithSign));
+    },
+
+    /**
      * Returns ticket payment status.
      *
      * @param {object} ticket - The ticket whose payment status will be retrieved
