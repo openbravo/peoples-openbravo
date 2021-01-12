@@ -13,6 +13,39 @@
  */
 
 (function HardwareManagerEndpointDefinition() {
+  // determines if a ticket line should be printed or not
+  const isPrintable = line => {
+    const { product } = line;
+    return product.productType !== 'S' || product.isPrintServices;
+  };
+
+  // generates a printable version of the provided ticket
+  const toPrintableTicket = ticket => {
+    const printableTicket = { ...ticket };
+    if (!(printableTicket.orderDate instanceof Date)) {
+      printableTicket.orderDate = new Date(printableTicket.orderDate);
+    }
+
+    printableTicket.lines = printableTicket.lines.filter(
+      line =>
+        isPrintable(line) || line.baseNetUnitAmount || line.baseGrossUnitAmount
+    );
+
+    if (OB.App.State.Ticket.Utils.isNegative(printableTicket)) {
+      printableTicket.payments = printableTicket.payments.map(payment => {
+        if (!payment.isPrePayment && !payment.isReversePayment) {
+          return {
+            ...payment,
+            amount: -Math.abs(payment.amount),
+            origAmount: -Math.abs(payment.origAmount)
+          };
+        }
+        return payment;
+      });
+    }
+    return printableTicket;
+  };
+
   /**
    * A synchronization endpoint in charge of the messages for communicating with the Hardware Manager.
    */
@@ -52,7 +85,7 @@
           await this.greet();
           break;
         case 'printTicket':
-          await this.printTicket(message.messageObj);
+          await this.printTickets(message.messageObj);
           break;
         case 'printTicketLine':
           await this.printTicketLine(message.messageObj);
@@ -104,11 +137,26 @@
       }
     }
 
-    async printTicket(messageData) {
-      try {
-        const { ticket } = messageData.data;
-        const printSettings = messageData.data.printSettings || {};
+    async printTickets(messageData) {
+      const { ticket } = messageData.data;
+      const printSettings = messageData.data.printSettings || {};
+      // print main ticket
+      await this.printTicket(ticket, printSettings);
+      // print related canceled ticket (if any)
+      if (ticket.doCancelAndReplace && ticket.canceledorder) {
+        const { negativeDocNo } = ticket;
+        // TODO -- this:
+        const canceledTicket = {
+          ...ticket.canceledorder,
+          ordercanceled: true,
+          negativeDocNo
+        };
+        await this.printTicket(canceledTicket, printSettings);
+      }
+    }
 
+    async printTicket(ticket, printSettings) {
+      try {
         // Tickets with simplified invoice will print only the invoice
         if (ticket.calculatedInvoice && !ticket.calculatedInvoice.fullInvoice) {
           return;
@@ -126,63 +174,38 @@
 
         const terminal = OB.App.TerminalProperty.get('terminal');
 
-        if (!(ticket.orderDate instanceof Date)) {
-          ticket.orderDate = new Date(ticket.orderDate);
-        }
-
         const negativeLines = ticket.lines.filter(line => line.qty < 0);
-
         const hasNegativeLines =
           negativeLines.length === ticket.lines.length ||
           (negativeLines.length > 0 &&
             OB.App.TerminalProperty.get('permissions')
               .OBPOS_SalesWithOneLineNegativeAsReturns);
 
-        const isPrintable = line => {
-          const { product } = line;
-          if (product.productType === 'S' && !product.isPrintServices) {
-            return false;
+        const printableTicket = toPrintableTicket(ticket);
+
+        const template = this.templateStore.selectTicketPrintTemplate(
+          printableTicket,
+          {
+            forcedtemplate: additionalPrintSettings.forcedtemplate
           }
-          return true;
-        };
-
-        ticket.lines = ticket.lines.filter(
-          line =>
-            isPrintable(line) ||
-            line.baseNetUnitAmount ||
-            line.baseGrossUnitAmount
         );
-
-        if (OB.App.State.Ticket.Utils.isNegative(ticket)) {
-          ticket.payments = ticket.payments.map(payment => {
-            if (!payment.isPrePayment && !payment.isReversePayment) {
-              return {
-                ...payment,
-                amount: -Math.abs(payment.amount),
-                origAmount: -Math.abs(payment.origAmount)
-              };
-            }
-            return payment;
-          });
-        }
-
-        const template = this.templateStore.selectTicketPrintTemplate(ticket, {
-          forcedtemplate: additionalPrintSettings.forcedtemplate
-        });
+        const selectPrinter =
+          terminal.terminalType.selectprinteralways &&
+          !printSettings.skipSelectPrinters &&
+          OB.OBPOS;
 
         if (template.ispdf) {
           const printPdfProcess = () => {
             template.dateFormat = OB.Format.date;
-            if (ticket.canceledorder) {
-              const clonedTicket = { ...ticket };
-              delete clonedTicket.canceledorder;
+            if (printableTicket.canceledorder) {
+              delete printableTicket.canceledorder;
               // TODO: implement printPDF
               // printPDF(clonedTicket, args);
             } else {
               // printPDF(ticket, args);
             }
             if (
-              ((ticket.orderType === 1 || hasNegativeLines) &&
+              ((printableTicket.orderType === 1 || hasNegativeLines) &&
                 !OB.App.Security.hasPermission('OBPOS_print.once', true)) ||
               terminal.terminalType.printTwice
             ) {
@@ -190,11 +213,7 @@
             }
           };
 
-          if (
-            terminal.terminalType.selectprinteralways &&
-            !printSettings.skipSelectPrinters
-          ) {
-            // TODO -- implement printer selection dialog
+          if (selectPrinter) {
             /* OB.OBPOS.showSelectPrintersWindow(
               printPdfProcess,
               cancelSelectPrinter,
@@ -206,10 +225,7 @@
             printPdfProcess();
           }
         } else {
-          if (
-            terminal.terminalType.selectprinteralways &&
-            !printSettings.skipSelectPrinters
-          ) {
+          if (selectPrinter) {
             /* OB.OBPOS.showSelectPrintersWindow(
               printProcess,
               cancelSelectPrinter,
@@ -218,21 +234,13 @@
               me.isRetry
             ); */
           } else {
-            await this.controller.print(template, { ticket });
-          }
-
-          if (ticket.doCancelAndReplace && ticket.canceledorder) {
-            // const { negativeDocNo } = ticket;
-            // TODO -- this:
-            /* receipt.get('canceledorder').set('ordercanceled', true);
-            receipt.get('canceledorder').set('negativeDocNo', negativeDocNo);
-            me.print(receipt.get('canceledorder'), args); */
+            await this.controller.print(template, { ticket: printableTicket });
           }
 
           await this.controller.display(
             this.templateStore.getDisplayTicketTemplate(),
             {
-              ticket
+              ticket: printableTicket
             }
           );
         }
