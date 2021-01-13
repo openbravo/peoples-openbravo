@@ -152,10 +152,11 @@ enyo.kind({
   },
 
   applyChanges: function(inSender, inEvent) {
-    OB.POS.hwserver.setActiveURL(this.printerscontainer.getActiveURL());
+    const printer = this.printerscontainer.getActiveURL();
+    OB.POS.hwserver.setActiveURL(printer);
     this.args.actionExecuted = true;
     while (this.successCallbackArray.length !== 0) {
-      this.successCallbackArray.pop()();
+      this.successCallbackArray.pop()({ printer });
     }
     return true;
   },
@@ -163,7 +164,7 @@ enyo.kind({
   cancelChanges: function(inSender, inEvent) {
     this.args.actionExecuted = true;
     while (this.cancellCallbackArray.length !== 0) {
-      this.cancellCallbackArray.pop()();
+      this.cancellCallbackArray.pop()({});
     }
   },
 
@@ -225,7 +226,7 @@ enyo.kind({
 
   executeOnHide: function() {
     while (!this.args.actionExecuted && this.hideCallbackArray.length !== 0) {
-      this.hideCallbackArray.pop()();
+      this.hideCallbackArray.pop()({});
     }
     this.cleanBuffers();
   },
@@ -239,6 +240,11 @@ enyo.kind({
     }
     if (this.args.onSuccess) {
       this.successCallbackArray.push(this.args.onSuccess);
+    }
+    if (this.args.callback) {
+      this.hideCallbackArray.push(this.args.callback);
+      this.cancellCallbackArray.push(this.args.callback);
+      this.successCallbackArray.push(this.args.callback);
     }
     if (
       OB.MobileApp.model.get('terminal').terminalType.selectprinteralways &&
@@ -336,10 +342,11 @@ enyo.kind({
   },
 
   applyChanges: function(inSender, inEvent) {
-    OB.POS.hwserver.setActivePDFURL(this.printerscontainer.getActiveURL());
+    const printer = this.printerscontainer.getActiveURL();
+    OB.POS.hwserver.setActivePDFURL(printer);
     this.args.actionExecuted = true;
     while (this.successCallbackArray.length !== 0) {
-      this.successCallbackArray.pop()();
+      this.successCallbackArray.pop()({ printer });
     }
     return true;
   },
@@ -347,7 +354,7 @@ enyo.kind({
   cancelChanges: function(inSender, inEvent) {
     this.args.actionExecuted = true;
     while (this.cancellCallbackArray.length !== 0) {
-      this.cancellCallbackArray.pop()();
+      this.cancellCallbackArray.pop()({});
     }
   },
 
@@ -409,7 +416,7 @@ enyo.kind({
 
   executeOnHide: function() {
     while (!this.args.actionExecuted && this.hideCallbackArray.length !== 0) {
-      this.hideCallbackArray.pop()();
+      this.hideCallbackArray.pop()({});
     }
     this.cleanBuffers();
   },
@@ -423,6 +430,11 @@ enyo.kind({
     }
     if (this.args.onSuccess) {
       this.successCallbackArray.push(this.args.onSuccess);
+    }
+    if (this.args.callback) {
+      this.hideCallbackArray.push(this.args.callback);
+      this.cancellCallbackArray.push(this.args.callback);
+      this.successCallbackArray.push(this.args.callback);
     }
     if (
       OB.MobileApp.model.get('terminal').terminalType.selectprinteralways &&
