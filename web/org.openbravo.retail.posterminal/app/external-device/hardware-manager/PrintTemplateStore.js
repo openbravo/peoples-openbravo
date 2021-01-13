@@ -142,8 +142,9 @@
       const hasNegativeLines =
         negativeLines.length === ticket.lines.length ||
         (negativeLines.length > 0 &&
-          OB.App.TerminalProperty.get('permissions')
-            .OBPOS_SalesWithOneLineNegativeAsReturns);
+          OB.App.Security.hasPermission(
+            'OBPOS_SalesWithOneLineNegativeAsReturns'
+          ));
 
       if (forcedtemplate) {
         return forcedtemplate;

@@ -15,20 +15,25 @@
 (function HardwareManagerEndpointDefinition() {
   // determines if a ticket line should be printed or not
   const isPrintable = line => {
-    const { product } = line;
-    return product.productType !== 'S' || product.isPrintServices;
+    const { product, baseNetUnitAmount, baseGrossUnitAmount } = line;
+    return (
+      product.productType !== 'S' ||
+      product.isPrintServices ||
+      baseNetUnitAmount ||
+      baseGrossUnitAmount
+    );
   };
 
   // generates a printable version of the provided ticket
-  const toPrintableTicket = ticket => {
+  // it also returns the backbone object of the printable version used for backward compatibility
+  const toPrintable = ticket => {
     const printableTicket = { ...ticket };
     if (!(printableTicket.orderDate instanceof Date)) {
       printableTicket.orderDate = new Date(printableTicket.orderDate);
     }
 
-    printableTicket.lines = printableTicket.lines.filter(
-      line =>
-        isPrintable(line) || line.baseNetUnitAmount || line.baseGrossUnitAmount
+    printableTicket.lines = printableTicket.lines.filter(line =>
+      isPrintable(line)
     );
 
     if (OB.App.State.Ticket.Utils.isNegative(printableTicket)) {
@@ -43,7 +48,35 @@
         return payment;
       });
     }
-    return printableTicket;
+
+    if (OB.App.StateBackwardCompatibility !== null) {
+      const printableOrder = OB.App.StateBackwardCompatibility.getInstance(
+        'Ticket'
+      ).toBackboneObject(printableTicket);
+      return { printableTicket, printableOrder };
+    }
+
+    return { printableTicket };
+  };
+
+  // checks if a ticket should be printed twice. It should be printed twice when:
+  // - it is a return and the corresponding preference is enabled
+  // - or when one of the payment methods has the "printtwice" flag enabled
+  const shouldPrintTwice = ticket => {
+    const negativeLines = ticket.lines.filter(line => line.qty < 0);
+    const hasNegativeLines =
+      negativeLines.length === ticket.lines.length ||
+      (negativeLines.length > 0 &&
+        OB.App.Security.hasPermission(
+          'OBPOS_SalesWithOneLineNegativeAsReturns'
+        ));
+
+    return (
+      ((ticket.orderType === 1 || hasNegativeLines) &&
+        ticket.lines.length > 0 &&
+        !OB.App.Security.hasPermission('OBPOS_print.once')) ||
+      ticket.payments.some(payment => payment.printtwice)
+    );
   };
 
   /**
@@ -69,11 +102,11 @@
       this.templateStore = OB.App.PrintTemplateStore;
     }
 
-    // Sets the printers
+    // Sets the legacy printers
     setPrinters(printers) {
-      this.printer = printers.printer;
-      this.linePrinter = printers.linePrinter;
-      this.welcomePrinter = printers.welcomePrinter;
+      // kept for backwards compatibility in order to not break "OBPRINT_PrePrint" hooks
+      // this hooks receive a parameter referencing the OB.OBPOSPointOfSale.Print.Receipt model
+      this.legacyPrinter = printers.printer;
     }
 
     async synchronizeMessage(message) {
@@ -145,7 +178,6 @@
       // print related canceled ticket (if any)
       if (ticket.doCancelAndReplace && ticket.canceledorder) {
         const { negativeDocNo } = ticket;
-        // TODO -- this:
         const canceledTicket = {
           ...ticket.canceledorder,
           ordercanceled: true,
@@ -162,119 +194,110 @@
           return;
         }
 
-        let additionalPrintSettings;
-        try {
-          additionalPrintSettings = await this.executeHooks(
-            'OBPRINT_PrePrint',
-            printSettings
-          );
-        } catch (error) {
+        const { cancelOperation, forcedtemplate } = await this.executeHooks(
+          'OBPRINT_PrePrint',
+          {
+            forcePrint: printSettings.forcePrint,
+            offline: printSettings.offline,
+            ticket,
+            forcedtemplate: printSettings.forcedtemplate,
+            model: this.legacyPrinter ? this.legacyPrinter.model : null,
+            cancelOperation: false
+          }
+        );
+
+        if (cancelOperation && cancelOperation === true) {
           return;
         }
 
         const terminal = OB.App.TerminalProperty.get('terminal');
+        const { printableTicket, printableOrder } = toPrintable(ticket);
 
-        const negativeLines = ticket.lines.filter(line => line.qty < 0);
-        const hasNegativeLines =
-          negativeLines.length === ticket.lines.length ||
-          (negativeLines.length > 0 &&
-            OB.App.TerminalProperty.get('permissions')
-              .OBPOS_SalesWithOneLineNegativeAsReturns);
-
-        const printableTicket = toPrintableTicket(ticket);
+        if (!printableTicket.print) {
+          return;
+        }
 
         const template = this.templateStore.selectTicketPrintTemplate(
           printableTicket,
+          { forcedtemplate }
+        );
+
+        const printParams = {};
+        if (template.ispdf) {
+          template.dateFormat = OB.Format.date;
+          if (printableTicket.canceledorder) {
+            delete printableTicket.canceledorder;
+          }
+          printParams.param = printableOrder
+            ? printableOrder.serializeToJSON()
+            : printableTicket;
+          printParams.mainReport = template;
+          printParams.subReports = template.subreports;
+        } else {
+          printParams.ticket = printableTicket;
+        }
+
+        await this.controller.selectPrinter({
+          isPdf: template.ispdf,
+          isRetry: false,
+          skipSelectPrinters: printSettings.skipSelectPrinters
+        });
+
+        const printedTicket = await this.controller.print(
+          template,
+          printParams
+        );
+
+        if (!printedTicket) {
+          throw new Error(`Could not print ticket ${printableTicket.id}`);
+        }
+
+        if (
+          shouldPrintTwice(printableTicket) ||
+          terminal.terminalType.printTwice
+        ) {
+          await this.controller.print(template, { ticket: printableTicket });
+        }
+
+        await this.executeHooks('OBPRINT_PostPrint', {
+          ticket: printableOrder || printableTicket,
+          printedTicket
+        });
+
+        await this.controller.display(
+          this.templateStore.getDisplayTicketTemplate(),
           {
-            forcedtemplate: additionalPrintSettings.forcedtemplate
+            ticket: printableTicket
           }
         );
-        const selectPrinter =
-          terminal.terminalType.selectprinteralways &&
-          !printSettings.skipSelectPrinters &&
-          OB.OBPOS;
-
-        if (template.ispdf) {
-          const printPdfProcess = () => {
-            template.dateFormat = OB.Format.date;
-            if (printableTicket.canceledorder) {
-              delete printableTicket.canceledorder;
-              // TODO: implement printPDF
-              // printPDF(clonedTicket, args);
-            } else {
-              // printPDF(ticket, args);
-            }
-            if (
-              ((printableTicket.orderType === 1 || hasNegativeLines) &&
-                !OB.App.Security.hasPermission('OBPOS_print.once', true)) ||
-              terminal.terminalType.printTwice
-            ) {
-              // printPDF(ticket, args);
-            }
-          };
-
-          if (selectPrinter) {
-            /* OB.OBPOS.showSelectPrintersWindow(
-              printPdfProcess,
-              cancelSelectPrinter,
-              cancelSelectPrinter,
-              true,
-              me.isRetry
-            ); */
-          } else {
-            printPdfProcess();
-          }
-        } else {
-          if (selectPrinter) {
-            /* OB.OBPOS.showSelectPrintersWindow(
-              printProcess,
-              cancelSelectPrinter,
-              cancelSelectPrinter,
-              false,
-              me.isRetry
-            ); */
-          } else {
-            await this.controller.print(template, { ticket: printableTicket });
-          }
-
-          await this.controller.display(
-            this.templateStore.getDisplayTicketTemplate(),
-            {
-              ticket: printableTicket
-            }
-          );
-        }
       } catch (error) {
         OB.error(`Error printing ticket: ${error}`);
       }
     }
 
     // eslint-disable-next-line class-methods-use-this
-    async executeHooks(hookName, printSettings) {
-      // TODO -- complete data properties: order, template, model
-      const data = {
-        forcePrint: printSettings.forcePrint,
-        offline: printSettings.offline,
-        // order: receipt,
-        // template: template,
-        forcedtemplate: printSettings.forcedtemplate
-        // model: me.model
-      };
-
-      if (!OB.UTIL.HookManager) {
-        return data;
+    async executeHooks(hookName, payload) {
+      if (OB.App.StateBackwardCompatibility === null) {
+        // not in legacy mode: hooks are not supported
+        return payload;
       }
 
-      const finalData = await new Promise((resolve, reject) => {
-        OB.UTIL.HookManager.executeHooks(hookName, data, args => {
-          if (args.cancelOperation && args.cancelOperation === true) {
-            reject();
-          }
-          resolve(args);
-        });
+      const order =
+        payload.ticket instanceof Backbone.Model
+          ? payload.ticket
+          : OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(payload.ticket);
+
+      const finalPayload = await new Promise(resolve => {
+        OB.UTIL.HookManager.executeHooks(
+          hookName,
+          { ...payload, order, receipt: order },
+          args => resolve(args)
+        );
       });
 
-      return finalData;
+      return finalPayload;
     }
 
     async printTicketLine(messageData) {
