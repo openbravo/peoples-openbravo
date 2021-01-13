@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -571,7 +571,8 @@
     runCompleteTicket: async function(
       completeTicketAction,
       actionName,
-      callback
+      callback,
+      payload
     ) {
       const isMultiTicket =
         completeTicketAction === OB.App.State.Global.completeMultiTicket ||
@@ -586,7 +587,7 @@
 
           // Complete Ticket action
           await completeTicketAction(
-            OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
+            OB.UTIL.TicketUtils.addTicketCreationDataToPayload(payload)
           );
 
           if (!isDeleteTicket) {
@@ -7993,7 +7994,9 @@
 
       await this.runCompleteTicket(
         OB.App.State.Global.deleteTicket,
-        'deleteCurrentOrder'
+        'deleteCurrentOrder',
+        undefined,
+        { ticketIds: [this.id] }
       );
 
       if (callback && callback instanceof Function) {
