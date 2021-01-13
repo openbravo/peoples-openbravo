@@ -31,6 +31,8 @@
       }
     ],
     "no-console": ["warn"],
-    "no-useless-escape": ["warn"]
+    "no-useless-escape": ["warn"],
+    "class-methods-use-this": "off",
+    "no-use-before-define": ["error", "nofunc"]
   }
 }
