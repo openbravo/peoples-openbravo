@@ -10,7 +10,7 @@
     "jslint": "eslint --max-warnings 0",
     "jsformat": "prettier"
   },
-  "repository": "https://code.openbravo.com/erp/devel/pi",
+  "repository": "https://gitlab.com/openbravo/product/openbravo",
   "author": "Openbravo SLU",
   "license": "SEE LICENSE IN legal/Openbravo_license.txt",
   "devDependencies": {
