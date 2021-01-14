@@ -49,7 +49,7 @@
       });
     }
 
-    if (OB.App.StateBackwardCompatibility !== null) {
+    if (OB.App.StateBackwardCompatibility != null) {
       const printableOrder = OB.App.StateBackwardCompatibility.getInstance(
         'Ticket'
       ).toBackboneObject(printableTicket);
@@ -277,7 +277,7 @@
 
     // eslint-disable-next-line class-methods-use-this
     async executeHooks(hookName, payload) {
-      if (OB.App.StateBackwardCompatibility === null) {
+      if (!OB.App.StateBackwardCompatibility) {
         // not in legacy mode: hooks are not supported
         return payload;
       }
