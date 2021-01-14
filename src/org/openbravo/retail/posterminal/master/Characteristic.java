@@ -76,12 +76,13 @@ public class Characteristic extends MasterDataProcessHQLQuery {
         .getPropertyExtensions(extensions);
 
     final List<String> hqlQueries = new ArrayList<>();
-    hqlQueries.add(getCharacteristicHqlString(characteristicHQLProperties, isRemote));
+    hqlQueries
+        .add(getCharacteristicHqlString(characteristicHQLProperties, isRemote, isCrossStoreSearch));
     return hqlQueries;
   }
 
   private String getCharacteristicHqlString(final HQLPropertyList characteristicHQLProperties,
-      final boolean isRemote) {
+      final boolean isRemote, final boolean isCrossStoreSearch) {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(characteristicHQLProperties.getHqlSelect());
@@ -91,12 +92,16 @@ public class Characteristic extends MasterDataProcessHQLQuery {
     query.append(" and ch.$readableSimpleClientCriteria");
     query.append(" and ch.$incrementalUpdateCriteria");
     query.append(" and ch.obposFilteronwebpos = true");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in :orgIds");
-    query.append("   and ad_org_isinnaturaltree(ch.organization.id, o.id, ch.client.id) = 'Y'");
-    query.append(" )");
+    if (isCrossStoreSearch) {
+      query.append(" and exists (");
+      query.append("   select 1");
+      query.append("   from Organization o");
+      query.append("   where o.id in :orgIds");
+      query.append("   and ad_org_isinnaturaltree(ch.organization.id, o.id, ch.client.id) = 'Y'");
+      query.append(" )");
+    } else {
+      query.append(" and ch.$naturalOrgCriteria ");
+    }
     if (!isRemote) {
       query.append(" and exists (");
       query.append("   select 1");
@@ -107,7 +112,11 @@ public class Characteristic extends MasterDataProcessHQLQuery {
       query.append("   and assort.obretcoProductlist.id = :productListIds");
       query.append(" )");
     }
-    query.append(" order by ch.name, ch.id");
+    if (isRemote) {
+      query.append(" order by ch.name, ch.id");
+    } else {
+      query.append(" order by ch.id");
+    }
     return query.toString();
   }
 

@@ -85,16 +85,16 @@ public class CharacteristicValue extends MasterDataProcessHQLQuery {
         .getPropertyExtensions(extensions, args);
 
     final List<String> hqlQueries = new ArrayList<>();
-    hqlQueries.add(
-        getCharacteristicValueHqlString2(characteristicValueHQLProperties, isRemote, lastUpdated));
-    hqlQueries.add(
-        getCharacteristicValueHqlString(characteristicValueHQLProperties, isRemote, lastUpdated));
+    hqlQueries.add(getCharacteristicValueHqlString2(characteristicValueHQLProperties, isRemote,
+        lastUpdated, isCrossStoreSearch));
+    hqlQueries.add(getCharacteristicValueHqlString(characteristicValueHQLProperties, isRemote,
+        lastUpdated, isCrossStoreSearch));
     return hqlQueries;
   }
 
   private String getCharacteristicValueHqlString(
       final HQLPropertyList characteristicValueHQLProperties, final boolean isRemote,
-      final Long lastUpdated) {
+      final Long lastUpdated, final boolean isCrossStoreSearch) {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(characteristicValueHQLProperties.getHqlSelect());
@@ -124,19 +124,27 @@ public class CharacteristicValue extends MasterDataProcessHQLQuery {
     query.append(" and cv.$readableSimpleClientCriteria");
     query.append(" and ch.obposUseonwebpos = true");
     query.append(" and cv.active = true");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in :orgIds");
-    query.append("   and ad_org_isinnaturaltree(cv.organization.id, o.id, cv.client.id) = 'Y'");
-    query.append(" )");
-    query.append(" order by cv.name, cv.id");
+    if (isCrossStoreSearch) {
+      query.append(" and exists (");
+      query.append("   select 1");
+      query.append("   from Organization o");
+      query.append("   where o.id in :orgIds");
+      query.append("   and ad_org_isinnaturaltree(cv.organization.id, o.id, cv.client.id) = 'Y'");
+      query.append(" )");
+    } else {
+      query.append(" and cv.$naturalOrgCriteria ");
+    }
+    if (isRemote) {
+      query.append(" order by cv.name, cv.id");
+    } else {
+      query.append(" order by cv.id");
+    }
     return query.toString();
   }
 
   private String getCharacteristicValueHqlString2(
       final HQLPropertyList characteristicValueHQLProperties, final boolean isRemote,
-      final Long lastUpdated) {
+      final Long lastUpdated, final boolean isCrossStoreSearch) {
     final StringBuilder query = new StringBuilder();
     query.append(" select");
     query.append(characteristicValueHQLProperties.getHqlSelect());
@@ -158,13 +166,21 @@ public class CharacteristicValue extends MasterDataProcessHQLQuery {
     query.append(" and cv.$readableSimpleClientCriteria");
     query.append(" and ch.obposUseonwebpos = true");
     query.append(" and cv.active = true");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   from Organization o");
-    query.append("   where o.id in :orgIds");
-    query.append("   and ad_org_isinnaturaltree(cv.organization.id, o.id, cv.client.id) = 'Y'");
-    query.append(" )");
-    query.append(" order by cv.name, cv.id");
+    if (isCrossStoreSearch) {
+      query.append(" and exists (");
+      query.append("   select 1");
+      query.append("   from Organization o");
+      query.append("   where o.id in :orgIds");
+      query.append("   and ad_org_isinnaturaltree(cv.organization.id, o.id, cv.client.id) = 'Y'");
+      query.append(" )");
+    } else {
+      query.append(" and cv.$naturalOrgCriteria ");
+    }
+    if (isRemote) {
+      query.append(" order by cv.name, cv.id");
+    } else {
+      query.append(" order by cv.id");
+    }
     return query.toString();
   }
 
