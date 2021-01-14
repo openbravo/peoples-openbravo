@@ -7,8 +7,6 @@
  ************************************************************************************
  */
 
-/* eslint-disable no-use-before-define */
-
 (function AssignExternalBusinessPartner() {
   OB.App.StateAPI.Ticket.registerAction(
     'assignExternalBusinessPartner',

@@ -11,8 +11,6 @@
  * @fileoverview defines the Ticket global action that completes a credit ticket and moves it to a message in the state
  */
 
-/* eslint-disable no-use-before-define */
-
 (() => {
   OB.App.StateAPI.Global.registerAction(
     'completeCreditTicket',

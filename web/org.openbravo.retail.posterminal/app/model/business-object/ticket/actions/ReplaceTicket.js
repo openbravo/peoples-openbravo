@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,8 +10,6 @@
 /**
  * @fileoverview defines the Ticket global action that replaces a ticket and moves it to a message in the state
  */
-
-/* eslint-disable no-use-before-define */
 
 (() => {
   OB.App.StateAPI.Global.registerAction(

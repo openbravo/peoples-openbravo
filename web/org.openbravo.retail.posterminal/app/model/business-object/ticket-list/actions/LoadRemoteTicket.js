@@ -1,13 +1,11 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-
-/* eslint-disable no-use-before-define */
 
 /**
  * @fileoverview Declares a global action that loads from backoffice the Ticket passed as payload as the current active ticket
@@ -48,7 +46,7 @@
     }
   );
 
-  const createTicket = payload => {
+  function createTicket(payload) {
     const newTicket = {
       ...payload.ticket,
       id: payload.ticket.orderid,
@@ -98,9 +96,9 @@
       }, {});
 
     return newTicket;
-  };
+  }
 
-  const addBusinessPartner = ticket => {
+  function addBusinessPartner(ticket) {
     const shippingLocation = ticket.businessPartner.locations[0];
     const invoicingLocation = ticket.businessPartner.locations[1];
     return {
@@ -124,9 +122,9 @@
         locationBillModel: invoicingLocation
       }
     };
-  };
+  }
 
-  const addPayments = (ticket, payload) => {
+  function addPayments(ticket, payload) {
     const payments = ticket.payments.map(payment => {
       const newPayment = {
         ...payment,
@@ -208,9 +206,9 @@
     }
 
     return newTicket;
-  };
+  }
 
-  const addProducts = (ticket, payload) => {
+  function addProducts(ticket, payload) {
     const newTicket = {
       ...ticket
     };
@@ -308,7 +306,7 @@
     }
 
     return newTicket;
-  };
+  }
 
   OB.App.StateAPI.Global.loadRemoteTicket.addActionPreparation(
     async (globalState, payload) => {
@@ -326,7 +324,7 @@
     }
   );
 
-  const checkSession = async payload => {
+  async function checkSession(payload) {
     const ticketInSession = OB.App.State.TicketList.Utils.getSessionTickets(
       payload.session
     ).find(
@@ -356,9 +354,9 @@
     }
 
     return { ...payload, ticketInSession };
-  };
+  }
 
-  const checkCrossStore = async payload => {
+  async function checkCrossStore(payload) {
     const isCrossStore = OB.App.State.Ticket.Utils.isCrossStore(
       payload.ticket,
       payload
@@ -372,9 +370,9 @@
       messageParams: [payload.ticket.documentNo, payload.ticket.store]
     });
     return { ...payload, ticket: { ...payload.ticket, isCrossStore } };
-  };
+  }
 
-  const loadTicket = async payload => {
+  async function loadTicket(payload) {
     const data = await OB.App.Request.mobileServiceRequest(
       'org.openbravo.retail.posterminal.PaidReceipts',
       {
@@ -397,9 +395,9 @@
       ...payload,
       ticket: { ...data.response.data[0] }
     };
-  };
+  }
 
-  const loadBusinessPartner = async payload => {
+  async function loadBusinessPartner(payload) {
     const isRemoteCustomer = OB.App.Security.hasPermission(
       'OBPOS_remote.customer'
     );
@@ -510,9 +508,9 @@
       (await getBusinessPartnerLocation());
 
     return newPayload;
-  };
+  }
 
-  const loadProducts = async payload => {
+  async function loadProducts(payload) {
     const isRemoteProduct = OB.App.Security.hasPermission(
       'OBPOS_remote.product'
     );
@@ -608,5 +606,5 @@
       })
     );
     return { ...payload, ticket: { ...payload.ticket, receiptLines: lines } };
-  };
+  }
 })();

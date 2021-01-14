@@ -8,7 +8,6 @@
  */
 
 /* global lodash */
-/* eslint-disable no-use-before-define */
 
 (function AddProductDefinition() {
   OB.App.StateAPI.Ticket.registerAction('addProduct', (state, payload) => {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,8 +10,6 @@
 /**
  * @fileoverview defines the Ticket global action that completes a layaway and moves it to a message in the state
  */
-
-/* eslint-disable no-use-before-define */
 
 (() => {
   OB.App.StateAPI.Global.registerAction(
@@ -116,7 +114,7 @@
     }
   );
 
-  const checkReturnLayaway = async (ticket, payload) => {
+  async function checkReturnLayaway(ticket, payload) {
     const negativeLines = ticket.lines.some(line => line.qty < 0);
     if (
       negativeLines &&
@@ -134,9 +132,9 @@
     }
 
     return payload;
-  };
+  }
 
-  const checkPrePayments = async (ticket, payload) => {
+  async function checkPrePayments(ticket, payload) {
     const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
       ticket,
       payload
@@ -179,9 +177,9 @@
       payload
     );
     return newPayload;
-  };
+  }
 
-  const checkInvoiceLayaway = async (ticket, payload) => {
+  async function checkInvoiceLayaway(ticket, payload) {
     if (ticket.generateInvoice) {
       OB.App.UserNotifier.notifyWarning({
         message: 'OBPOS_noInvoiceIfLayaway'
@@ -189,5 +187,5 @@
     }
 
     return payload;
-  };
+  }
 })();
