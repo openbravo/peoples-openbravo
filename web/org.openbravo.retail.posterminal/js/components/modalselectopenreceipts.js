@@ -89,7 +89,7 @@ enyo.kind({
         kind: 'OB.UI.ModalSelectOpenedReceipt_btnApply',
         disabled: true,
         checkModifyTax: function(params) {
-          return new Promise(async function(resolve, reject) {
+          return new Promise(function(resolve, reject) {
             function promiseResolve() {
               resolve(params);
             }
@@ -169,10 +169,11 @@ enyo.kind({
                   params.product.get('id')
                 );
                 try {
-                  const data = await OB.App.MasterdataModels.ProductServiceLinked.find(
+                  OB.App.MasterdataModels.ProductServiceLinked.find(
                     criteria.build()
-                  );
-                  checkCategory(data);
+                  ).then(data => {
+                    checkCategory(data);
+                  });
                 } catch (error) {
                   OB.error(error.message);
                   reject();
