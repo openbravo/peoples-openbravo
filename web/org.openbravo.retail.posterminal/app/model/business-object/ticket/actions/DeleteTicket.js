@@ -54,6 +54,7 @@
 
           // Set complete ticket properties
           newMultiTicket.obposIsDeleted = true;
+          newTicket.organization = payload.terminal.organization;
           newMultiTicket.grossAmount = 0;
           newMultiTicket.netAmount = 0;
           newMultiTicket.lines = newMultiTicket.lines.map(line => {
