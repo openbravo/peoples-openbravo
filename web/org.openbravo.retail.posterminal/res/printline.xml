@@ -16,7 +16,7 @@
         </line>
         <line>
         <% if (ticketLine.qty === 1) {%>
-           <text align="right" length="20"><%= OB.UTIL.printTicketLineAmount(ticketLine) %></text>
+           <text align="right" length="20"><%= OB.UTIL.printTicketLinePrice(ticketLine) %></text>
         <% } else { %>
            <text align="right" length="10"><%= OB.UTIL.printTicketLinePrice(ticketLine) %></text>
            <text align="right" length="10"><%= OB.UTIL.printTicketLineAmount(ticketLine) %></text>
