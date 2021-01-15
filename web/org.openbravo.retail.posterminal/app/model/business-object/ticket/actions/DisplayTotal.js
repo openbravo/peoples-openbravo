@@ -12,10 +12,10 @@
  * @author Carlos Aristu <carlos.aristu@openbravo.com>
  */
 
-OB.App.StateAPI.Global.registerAction('displayTotal', state => {
+OB.App.StateAPI.Global.registerAction('displayTotal', (state, payload) => {
   const newState = { ...state };
   const data = {
-    ticket: { ...newState.Ticket }
+    ticket: payload.ticket || { ...newState.Ticket }
   };
 
   const displayTotalMsg = OB.App.State.Messages.Utils.createNewMessage(
