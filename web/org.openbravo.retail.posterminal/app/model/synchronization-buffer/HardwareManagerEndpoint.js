@@ -194,17 +194,17 @@
           return;
         }
 
-        const { cancelOperation, forcedtemplate } = await this.executeHooks(
-          'OBPRINT_PrePrint',
-          {
-            forcePrint: printSettings.forcePrint,
-            offline: printSettings.offline,
-            ticket,
-            forcedtemplate: printSettings.forcedtemplate,
-            model: this.legacyPrinter ? this.legacyPrinter.model : null,
-            cancelOperation: false
-          }
-        );
+        const {
+          cancelOperation,
+          forcedtemplate
+        } = await this.controller.executeHooks('OBPRINT_PrePrint', {
+          forcePrint: printSettings.forcePrint,
+          offline: printSettings.offline,
+          ticket,
+          forcedtemplate: printSettings.forcedtemplate,
+          model: this.legacyPrinter ? this.legacyPrinter.model : null,
+          cancelOperation: false
+        });
 
         if (cancelOperation && cancelOperation === true) {
           return;
@@ -259,7 +259,7 @@
           await this.controller.print(template, { ticket: printableTicket });
         }
 
-        await this.executeHooks('OBPRINT_PostPrint', {
+        await this.controller.executeHooks('OBPRINT_PostPrint', {
           ticket: printableOrder || printableTicket,
           printedTicket
         });
@@ -273,31 +273,6 @@
       } catch (error) {
         OB.error(`Error printing ticket: ${error}`);
       }
-    }
-
-    // eslint-disable-next-line class-methods-use-this
-    async executeHooks(hookName, payload) {
-      if (!OB.App.StateBackwardCompatibility) {
-        // not in legacy mode: hooks are not supported
-        return payload;
-      }
-
-      const order =
-        payload.ticket instanceof Backbone.Model
-          ? payload.ticket
-          : OB.App.StateBackwardCompatibility.getInstance(
-              'Ticket'
-            ).toBackboneObject(payload.ticket);
-
-      const finalPayload = await new Promise(resolve => {
-        OB.UTIL.HookManager.executeHooks(
-          hookName,
-          { ...payload, order, receipt: order },
-          args => resolve(args)
-        );
-      });
-
-      return finalPayload;
     }
 
     async printTicketLine(messageData) {

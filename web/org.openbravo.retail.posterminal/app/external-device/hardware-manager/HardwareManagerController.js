@@ -147,13 +147,6 @@
         `HWM.${this.storeDataKey}.${device || this.devices.PRINTER}`,
         JSON.stringify({ time, data })
       );
-
-      // TODO -- check how to implement this
-      /* OB.UTIL.HookManager.executeHooks('OBPOS_HWServerSend', {
-        device: device || OB.DS.HWServer.PRINTER,
-        time,
-        data
-      }); */
     }
 
     async selectPrinter(options) {
@@ -229,7 +222,15 @@
         const data = printTemplate.ispdf
           ? params
           : await printTemplate.generate(params);
+
         this.storeData(data, device);
+
+        await this.executeHooks('OBPOS_HWServerSend', {
+          device,
+          time: new Date().getTime(),
+          data
+        });
+
         if (this.devices.PRINTER === device && data.mainReport) {
           await this.requestPDFPrint(data);
         } else {
@@ -241,6 +242,31 @@
         const data = await this.retryPrinting(printTemplate, params, device);
         return data;
       }
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    async executeHooks(hookName, payload) {
+      if (!OB.App.StateBackwardCompatibility) {
+        // not in legacy mode: hooks are not supported
+        return payload;
+      }
+
+      const order =
+        payload.ticket instanceof Backbone.Model
+          ? payload.ticket
+          : OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(payload.ticket);
+
+      const finalPayload = await new Promise(resolve => {
+        OB.UTIL.HookManager.executeHooks(
+          hookName,
+          { ...payload, order, receipt: order },
+          args => resolve(args)
+        );
+      });
+
+      return finalPayload;
     }
 
     async retryPrinting(printTemplate, params, device) {
