@@ -266,7 +266,7 @@
     </line>
     <%
       let totAmount = 0;
-      const taxes = Object.values(ticket.taxes).sort((a, b) => tax.name.localeCompare(tax.name));
+      const taxes = Object.values(ticket.taxes).sort((a, b) => a.name.localeCompare(b.name));
       taxes.forEach(tax => {
         totAmount += tax.amount;
     %>
