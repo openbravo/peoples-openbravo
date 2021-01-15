@@ -226,7 +226,9 @@
 
     async print(printTemplate, params = {}, device = 0) {
       try {
-        const data = await printTemplate.generate(params);
+        const data = printTemplate.ispdf
+          ? params
+          : await printTemplate.generate(params);
         this.storeData(data, device);
         if (this.devices.PRINTER === device && data.mainReport) {
           await this.requestPDFPrint(data);
