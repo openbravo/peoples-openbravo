@@ -144,4 +144,25 @@
     ).toStateObject(order);
     return ticket.lines[0];
   };
+
+  // turns a backbone "multi-order" into a "multi-ticket"
+  OB.UTIL.TicketUtils.toMultiTicket = multiOrder => {
+    const tickets = multiOrder
+      .get('multiOrdersList')
+      .map(t =>
+        OB.App.StateBackwardCompatibility.getInstance(
+          'Ticket',
+          false
+        ).toStateObject(t)
+      );
+
+    const ticket = OB.App.StateBackwardCompatibility.getInstance(
+      'Ticket',
+      false
+    ).toStateObject(multiOrder);
+
+    ticket.multiOrdersList = tickets;
+
+    return ticket;
+  };
 })();

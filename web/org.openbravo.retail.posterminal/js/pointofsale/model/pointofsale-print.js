@@ -678,17 +678,9 @@
   };
 
   PrintReceipt.prototype.displayTotalMultiorders = function() {
-    // Clone the receipt
-    var multiOrders;
-    multiOrders = this.multiOrders;
-    OB.POS.hwserver.print(
-      this.templatetotal,
-      {
-        order: multiOrders
-      },
-      null,
-      OB.DS.HWServer.DISPLAY
-    );
+    OB.App.State.Global.displayTotal({
+      ticket: OB.UTIL.TicketUtils.toMultiTicket(this.multiOrders)
+    });
   };
 
   var PrintReceiptLine = function(receipt) {

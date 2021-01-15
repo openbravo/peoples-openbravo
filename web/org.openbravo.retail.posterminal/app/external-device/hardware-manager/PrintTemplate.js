@@ -10,8 +10,20 @@
 /* global lodash */
 
 (function PrintTemplateDefinition() {
-  // Turns an state ticket into a backbone order
+  // Turns a state ticket into a backbone order
   const toOrder = ticket => {
+    if (ticket.multiOrdersList) {
+      const multiOrder = new OB.Model.MultiOrders(ticket);
+      const orders = ticket.multiOrdersList.map(t =>
+        OB.App.StateBackwardCompatibility.getInstance(
+          'Ticket'
+        ).toBackboneObject(t)
+      );
+      multiOrder.set('multiOrdersList', new Backbone.Collection(orders));
+      multiOrder.set('payments', new Backbone.Collection(ticket.payments));
+      return multiOrder;
+    }
+
     if (!ticket.id) {
       // force to have a ticket id: if no id is provided an empty backbone order is created
       // eslint-disable-next-line no-param-reassign

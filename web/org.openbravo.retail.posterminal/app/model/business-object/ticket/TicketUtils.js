@@ -1215,7 +1215,11 @@
         );
         return OB.DEC.abs(OB.DEC.sub(ticket.grossAmount, paymentsAmt));
       }
-      return OB.DEC.abs(OB.DEC.sub(ticket.grossAmount, ticket.paymentWithSign));
+      const payment =
+        ticket.paymentWithSign != null
+          ? ticket.paymentWithSign
+          : ticket.payment;
+      return OB.DEC.abs(OB.DEC.sub(ticket.grossAmount, payment));
     },
 
     /**
