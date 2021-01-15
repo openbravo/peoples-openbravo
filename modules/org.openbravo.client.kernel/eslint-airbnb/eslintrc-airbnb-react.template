@@ -17,6 +17,8 @@
       {
         "devDependencies": ["**/*.stories.*",  "**/?(*.)+(test).[jt]s?(x)"]
       }
-    ]
+    ],
+    "class-methods-use-this": "off",
+    "no-use-before-define": ["error", "nofunc"]
   }
 }
