@@ -11,22 +11,9 @@
 # * under the License.
 # * The Original Code is Openbravo ERP.
 # * The Initial Developer of the Original Code is Openbravo SLU
-# * All portions are Copyright (C) 2019-2020 Openbravo SLU
+# * All portions are Copyright (C) 2020 Openbravo SLU
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-
-echo "Copying .eslintrc.json with Airbnb rules to modules with web/app or web-jspack folder"
-for mod in modules/*; do
-  if [[ -d "${mod}/web/$(basename ${mod})/app" ]]; then
-    cp ${SCRIPT_DIR}/eslintrc-airbnb.template ${mod}/web/$(basename ${mod})/app/.eslintrc.json
-    echo "> Copied to ${mod}/app"
-  fi
-
-  if [[ -d "${mod}/web-jspack/$(basename ${mod})" ]]; then
-    cp ${SCRIPT_DIR}/eslintrc-airbnb-react.template ${mod}/web-jspack/$(basename ${mod})/.eslintrc.json
-    echo "> Copied to ${mod}/web-jspack"
-  fi
-done
+modules/org.openbravo.client.kernel/eslint-airbnb/copy-config

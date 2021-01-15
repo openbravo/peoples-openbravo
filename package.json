@@ -3,34 +3,56 @@
   "version": "1.0.0",
   "description": "This contains some utilities used to format and lint Javascript code",
   "private": true,
+  "config": {
+    "preinstall": "modules/org.openbravo.client.kernel/build-scripts/pre-install",
+    "postinstall": "modules/org.openbravo.client.kernel/build-scripts/post-install",
+    "updatedeps": "modules/org.openbravo.client.kernel/build-scripts/update-deps"
+  },
   "scripts": {
-    "postinstall": "lerna bootstrap --no-ci --hoist; modules/org.openbravo.client.kernel/eslint-airbnb/copy-config",
+    "preinstall": "$npm_package_config_preinstall",
+    "install": "npx lerna bootstrap --no-ci --hoist",
+    "postinstall": "$npm_package_config_postinstall",
+    "update-dependencies": "$npm_package_config_updatedeps",
     "test": "jest",
     "coverage": "jest --coverage",
     "jslint": "eslint --max-warnings 0",
     "jsformat": "prettier"
   },
-  "repository": "https://code.openbravo.com/erp/devel/pi",
+  "repository": "https://gitlab.com/openbravo/product/openbravo",
   "author": "Openbravo SLU",
   "license": "SEE LICENSE IN legal/Openbravo_license.txt",
   "devDependencies": {
-    "eslint": "~5.16.0",
-    "eslint-config-prettier": "~4.3.0",
-    "eslint-plugin-jest": "~23.0.2",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "babel-jest": "^26.6.0",
+    "babel-plugin-undeclared-variables-check": "^6.22.0",
+    "babel-preset-latest": "^6.24.1",
+    "eslint": "~7.17.0",
+    "eslint-config-prettier": "~7.1.0",
+    "eslint-plugin-jest": "~24.1.3",
+    "eslint-config-airbnb-base": "~14.2.1",
+    "eslint-plugin-import": "~2.22.1",
+    "eslint-plugin-prettier": "~3.3.1",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "26.6.0",
+    "jest-html-reporters": "~2.1.2",
+    "lerna": "~3.18.3",
     "prettier": "~1.18.2",
-    "eslint-config-airbnb-base": "~14.0.0",
-    "eslint-plugin-import": "~2.18.2",
-    "eslint-plugin-prettier": "~3.1.1",
-    "jest": "~24.9.0",
-    "jest-html-reporters": "~1.2.0",
-    "xmldom": "~0.1.27",
-    "lerna": "~3.18.3"
+    "react-test-renderer": "^16.13.1",
+    "xmldom": "~0.1.27"
   },
   "jest": {
     "testMatch": [
-      "**/web-test/**/?(*.)+(test).[jt]s?(x)"
+      "**/web-test/**/?(*.)+(test).[jt]s?(x)",
+      "**/web-jspack/**/?(*.)+(test).[jt]s?(x)"
     ],
+    "moduleNameMapper": {
+      "\\.(css|svg)$": "identity-obj-proxy"
+    },
     "coverageDirectory": "./test-reports/coverage",
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ],
     "reporters": [
       "default",
       [
