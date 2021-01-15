@@ -10,41 +10,6 @@
 /* global lodash */
 
 (function PrintTemplateDefinition() {
-  // Turns a state ticket into a backbone order
-  const toOrder = ticket => {
-    if (ticket.multiOrdersList) {
-      const multiOrder = new OB.Model.MultiOrders(ticket);
-      const orders = ticket.multiOrdersList.map(t =>
-        OB.App.StateBackwardCompatibility.getInstance(
-          'Ticket'
-        ).toBackboneObject(t)
-      );
-      multiOrder.set('multiOrdersList', new Backbone.Collection(orders));
-      multiOrder.set('payments', new Backbone.Collection(ticket.payments));
-      return multiOrder;
-    }
-
-    if (!ticket.id) {
-      // force to have a ticket id: if no id is provided an empty backbone order is created
-      // eslint-disable-next-line no-param-reassign
-      ticket.id = OB.App.UUID.generate();
-    }
-    return OB.App.StateBackwardCompatibility.getInstance(
-      'Ticket'
-    ).toBackboneObject(ticket);
-  };
-
-  // Turns a state ticket line into a backbone order line
-  const toOrderLine = line => {
-    const order = toOrder({
-      orderDate: new Date(),
-      creationDate: new Date(),
-      bp: { locationModel: undefined, locationBillModel: undefined },
-      lines: [line]
-    });
-    return order.get('lines').get(line.id);
-  };
-
   /**
    * Builds the data that is sent to the Hardware Manager to be printed in a particular format.
    */
@@ -118,12 +83,15 @@
       if (!this.isLegacyMode()) {
         return params;
       }
+      const { ticket, ticketLine } = params;
       const newParams = { ...params };
-      if (params.ticket) {
-        newParams.order = toOrder(params.ticket);
+      if (ticket) {
+        newParams.order = ticket.multiOrdersList
+          ? OB.UTIL.TicketUtils.toMultiOrder(ticket)
+          : OB.UTIL.TicketUtils.toOrder(ticket);
       }
-      if (params.ticketLine) {
-        newParams.line = toOrderLine(params.ticketLine);
+      if (ticketLine) {
+        newParams.line = OB.UTIL.TicketUtils.toOrderLine(ticketLine);
       }
       return newParams;
     }
