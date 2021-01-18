@@ -376,6 +376,7 @@ public class ShipmentUtils implements TicketPropertyMapping {
                     .getWarehouse()
                     .equals(shipment.getWarehouse())) {
                   shipment.setWarehouse(stock.getStorageDetail().getStorageBin().getWarehouse());
+                  log.info("New StorageDetail Shipment warehouse " + shipment.getWarehouse());
                 }
               }
             } finally {
