@@ -87,7 +87,7 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
           OB.UTIL.showError(OB.I18N.getLabel('OBPOS_amtGreaterThanZero'));
           return;
         }
-        var asyncToSyncWrapper = new Promise(async function(resolve, reject) {
+        var asyncToSyncWrapper = new Promise(function(resolve, reject) {
           const cashup = OB.Dal.transform(
             OB.Model.CashUp,
             OB.App.State.getState().Cashup
@@ -119,20 +119,20 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
             });
           }
 
-          await OB.App.State.Cashup.createCashManagement({
+          OB.App.State.Cashup.createCashManagement({
             cashManagement: JSON.parse(JSON.stringify(addedCashMgmt))
+          }).then(() => {
+            var selectedPayment = me.payments.filter(function(payment) {
+              return payment.get('paymentmethod_id') === p.id;
+            })[0];
+            if (selectedPayment.get('listdepositsdrops')) {
+              selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
+              selectedPayment.trigger('change');
+            } else {
+              selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
+            }
+            resolve();
           });
-
-          var selectedPayment = me.payments.filter(function(payment) {
-            return payment.get('paymentmethod_id') === p.id;
-          })[0];
-          if (selectedPayment.get('listdepositsdrops')) {
-            selectedPayment.get('listdepositsdrops').push(addedCashMgmt);
-            selectedPayment.trigger('change');
-          } else {
-            selectedPayment.set('listdepositsdrops', [addedCashMgmt]);
-          }
-          resolve();
         });
 
         asyncToSyncWrapper.then(

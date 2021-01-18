@@ -128,7 +128,6 @@ const prepareAction = async (payload, ticket = Ticket.simple) => {
   return newPayload;
 };
 
-// eslint-disable-next-line no-unused-vars
 const expectError = async (action, expectedError) => {
   let error;
   try {

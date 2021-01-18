@@ -11,7 +11,6 @@
  * @fileoverview Declares a global action that creates a new ticket in the state.Ticket object
  * and stores the existing one into state.TicketList
  */
-// eslint-disable-next-line no-unused-vars
 OB.App.StateAPI.Global.registerAction('addNewTicket', (state, payload) => {
   const newState = { ...state };
   newState.Ticket = { ...state.Ticket };
