@@ -274,11 +274,8 @@ public class RuntimeModelTest extends OBBaseTest {
       }
     }
 
-    if (columns.size() != 0) {
-      log.debug(columns.size() + " columns set as *isParent* errors (wrong reference): "
-          + columns.toString());
-    }
-    assertEquals(0, columns.size());
+    assertEquals(columns.size() + " columns set as *isParent* errors (wrong reference): "
+        + columns.toString(), 0, columns.size());
   }
 
   /**
@@ -296,11 +293,8 @@ public class RuntimeModelTest extends OBBaseTest {
       }
     }
 
-    if (columns.size() != 0) {
-      log.debug(columns.size() + " columns set as *isParent* and are *primitive type*: "
-          + columns.toString());
-    }
-    assertEquals(0, columns.size());
+    assertEquals(columns.size() + " columns set as *isParent* and are *primitive type*: "
+        + columns.toString(), 0, columns.size());
   }
 
   /**
