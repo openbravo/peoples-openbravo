@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1000,6 +1000,7 @@
 
       ticket.client = payload.terminal.client;
       ticket.organization = payload.terminal.organization;
+      ticket.organizationTaxId = payload.terminal.organizationTaxId;
       ticket.organizationAddressIdentifier =
         payload.terminal.organizationAddressIdentifier;
       ticket.trxOrganization = payload.terminal.organization;
