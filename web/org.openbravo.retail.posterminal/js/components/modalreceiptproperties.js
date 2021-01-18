@@ -27,7 +27,7 @@ enyo.kind({
         'obUiModalReceiptPropertiesImpl-newAttributes-receiptDescription',
       modelProperty: 'description',
       i18nLabel: 'OBPOS_LblDescription',
-      maxLength: 255
+      maxlength: 255
     },
     {
       kind: 'OB.UI.renderBooleanProperty',
