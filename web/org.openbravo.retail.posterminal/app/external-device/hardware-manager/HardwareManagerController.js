@@ -251,18 +251,19 @@
         return payload;
       }
 
-      const order =
-        payload.ticket instanceof Backbone.Model
-          ? payload.ticket
-          : OB.App.StateBackwardCompatibility.getInstance(
-              'Ticket'
-            ).toBackboneObject(payload.ticket);
+      let payloadForHooks = payload;
+      if (payload.ticket) {
+        const order =
+          payload.ticket instanceof Backbone.Model
+            ? payload.ticket
+            : OB.UTIL.TicketUtils.toOrder(payload.ticket);
+        // some hooks (OBPRINT_PrePrint) expect "order" and others (OBPRINT_PostPrint) "receipt"...
+        payloadForHooks = { ...payload, order, receipt: order };
+      }
 
       const finalPayload = await new Promise(resolve => {
-        OB.UTIL.HookManager.executeHooks(
-          hookName,
-          { ...payload, order, receipt: order },
-          args => resolve(args)
+        OB.UTIL.HookManager.executeHooks(hookName, payloadForHooks, args =>
+          resolve(args)
         );
       });
 
