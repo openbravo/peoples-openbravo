@@ -46,7 +46,7 @@
 
   /**
    * This is an internal class used by the HardwareManagerEndpoint when consumming its messages.
-   * It handles the communication with the HardwareManager.
+   * It handles the communication with the HardwareManager and other devices (web printers).
    *
    * @see HardwareManagerEndpoint
    */
@@ -72,6 +72,13 @@
 
       this.setActiveURL(OB.UTIL.localStorage.getItem('hw_activeurl_id'));
       this.setActivePDFURL(OB.UTIL.localStorage.getItem('hw_activepdfurl_id'));
+
+      // WebPrinter
+      const printerTypeInfo =
+        OB.PRINTERTYPES && OB.PRINTERTYPES[terminal.printertype];
+      this.webprinter = printerTypeInfo
+        ? new OB.WEBPrinter(printerTypeInfo, OB.PRINTERIMAGES.getImagesMap())
+        : null;
 
       this.storeDataKey = terminal.searchKey;
       this.storeData(null, this.devices.PRINTER);
@@ -160,7 +167,7 @@
       );
     }
 
-    async getStatus() {
+    async getHardwareManagerStatus() {
       let data = {};
       if (!this.activeURL) {
         return data;
@@ -192,6 +199,11 @@
           })
         : await printTemplate.generate(params);
 
+      await this.send(data, device);
+      return data;
+    }
+
+    async send(data, device) {
       this.storeData(data, device);
 
       await this.executeHooks('OBPOS_HWServerSend', {
@@ -200,12 +212,33 @@
         data
       });
 
-      if (this.devices.PRINTER === device && data.mainReport) {
-        await this.requestPDFPrint(data);
-      } else {
-        await this.requestPrint(data, device);
+      switch (device) {
+        case this.devices.DISPLAY:
+          await this.requestPrint(data, device);
+          break;
+        case this.devices.DRAWER:
+          if (this.webprinter) {
+            await this.requestWebPrinter(data);
+          } else {
+            await this.requestPrint(data, device);
+          }
+          break;
+        case this.devices.PRINTER:
+          if (this.webprinter && this.isMainURLActive()) {
+            await this.requestWebPrinter(data);
+          } else if (data.mainReport) {
+            await this.requestPDFPrint(data);
+          } else {
+            await this.requestPrint(data, device);
+          }
+          break;
+        default:
+          throw new Error(`Unkwnown device: ${device}`);
       }
-      return data;
+    }
+
+    isMainURLActive() {
+      return this.activeURL === this.mainURL;
     }
 
     async executeHooks(hookName, payload) {
@@ -270,6 +303,22 @@
         });
         throw error;
       }
+    }
+
+    async requestWebPrinter(data) {
+      if (!this.webprinter.connected()) {
+        const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
+          title: 'OBPOS_WebPrinter',
+          message: 'OBPOS_WebPrinterPair'
+        });
+
+        if (!confirmation) {
+          return;
+        }
+
+        await this.webprinter.request();
+      }
+      await this.webprinter.print(data);
     }
   };
 })();

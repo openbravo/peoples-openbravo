@@ -84,7 +84,7 @@
   };
 
   /**
-   * A synchronization endpoint in charge of the messages for communicating with the Hardware Manager.
+   * A synchronization endpoint in charge of the messages for communicating with external devices.
    */
   class HardwareManagerEndpoint extends OB.App.Class.SynchronizationEndpoint {
     /**
@@ -152,7 +152,7 @@
 
     async greet() {
       try {
-        const data = await this.controller.getStatus();
+        const data = await this.controller.getHardwareManagerStatus();
 
         if (Object.keys(data).length > 0) {
           await this.printWelcome();
