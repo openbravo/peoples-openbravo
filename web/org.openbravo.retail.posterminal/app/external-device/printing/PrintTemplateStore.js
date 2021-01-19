@@ -8,135 +8,54 @@
  */
 
 (function PrintTemplateStoreDefinition() {
-  // TODO -- should this component be placed under 'hardware-manager' ?
-  const templates = {}; // TODO -- check in old implementation if templates are cached
+  const templates = {};
 
   OB.App.PrintTemplateStore = {
-    // TODO: implement extendHWResource for templates
-
-    // Retrieves the template to display the total of a ticket
-    getDisplayTotalTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printDisplayTotalTemplate',
-        '../org.openbravo.retail.posterminal/res/displaytotal.xml'
-      );
+    register: (name, defaultTemplate) => {
+      if (templates[name]) {
+        throw new Error(`A template with name ${name} already exists`);
+      }
+      templates[name] = { defaultTemplate, printTemplate: null };
     },
 
-    getDisplayTicketTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'displayReceiptTemplate',
-        '../org.openbravo.retail.posterminal/res/displayreceipt.xml'
-      );
+    get: async name => {
+      if (!templates[name]) {
+        throw new Error(`Unknown template with name ${name}`);
+      }
+      if (!templates[name].printTemplate) {
+        const terminal = OB.App.TerminalProperty.get('terminal');
+        if (!terminal) {
+          throw new Error('Missing terminal information');
+        }
+
+        templates[name].printTemplate = new OB.App.Class.PrintTemplate(
+          terminal[name] ? terminal[name] : templates[name].defaultTemplate
+        );
+
+        if (terminal[`${name}IsPdf`] === true) {
+          const params = {
+            printer: terminal[`${name}Printer`],
+            subreports: Object.keys(terminal)
+              .filter(key => key.startsWith(`${name}Subrep`))
+              .map(key => terminal[key])
+          };
+
+          await templates[name].printTemplate.processPDFTemplate(params);
+        }
+      }
+      return templates[name].printTemplate;
     },
 
-    // Retrieves the template to display the welcome message
-    getWelcomeTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printWelcomeTemplate',
-        '../org.openbravo.retail.posterminal/res/welcome.xml'
+    selectTicketPrintTemplate: async (ticket, options) => {
+      const name = OB.App.PrintTemplateStore.selectTicketPrintTemplateName(
+        ticket,
+        options
       );
+      const template = await OB.App.PrintTemplateStore.get(name);
+      return template;
     },
 
-    // Retrieves the template to display the information of a ticket line
-    getTicketLineTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printReceiptLineTemplate',
-        '../org.openbravo.retail.posterminal/res/printline.xml'
-      );
-    },
-
-    getTicketTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printTicketTemplate',
-        '../org.openbravo.retail.posterminal/res/printreceipt.xml'
-      );
-    },
-
-    getCanceledTicketTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printCanceledReceiptTemplate',
-        '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml'
-      );
-    },
-
-    getLayawayTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printLayawayTemplate',
-        '../org.openbravo.retail.posterminal/res/printlayaway.xml'
-      );
-    },
-
-    getCanceledLayawayTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printCanceledLayawayTemplate',
-        '../org.openbravo.retail.posterminal/res/printcanceledlayaway.xml'
-      );
-    },
-
-    getClosedTicketTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printClosedReceiptTemplate',
-        '../org.openbravo.retail.posterminal/res/printclosedreceipt.xml'
-      );
-    },
-
-    getInvoiceTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printInvoiceTemplate',
-        '../org.openbravo.retail.posterminal/res/printinvoice.xml'
-      );
-    },
-
-    getSimplifiedInvoiceTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printSimplifiedInvoiceTemplate',
-        '../org.openbravo.retail.posterminal/res/printsimplifiedinvoice.xml'
-      );
-    },
-
-    getClosedInvoiceTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printClosedInvoiceTemplate',
-        '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml'
-      );
-    },
-
-    getSimplifiedClosedInvoiceTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printSimplifiedClosedInvoiceTemplate',
-        '../org.openbravo.retail.posterminal/res/printsimplifiedclosedinvoice.xml'
-      );
-    },
-
-    getReturnedInvoiceTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printReturnInvoiceTemplate',
-        '../org.openbravo.retail.posterminal/res/printreturninvoice.xml'
-      );
-    },
-
-    getSimplifiedReturnedInvoiceTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printSimplifiedReturnInvoiceTemplate',
-        '../org.openbravo.retail.posterminal/res/printsimplifiedreturninvoice.xml'
-      );
-    },
-
-    getQuotationTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printQuotationTemplate',
-        '../org.openbravo.retail.posterminal/res/printquotation.xml'
-      );
-    },
-
-    getReturnTemplate: () => {
-      return OB.App.PrintTemplateStore.getOrDefault(
-        'printReturnTemplate',
-        '../org.openbravo.retail.posterminal/res/printreturn.xml'
-      );
-    },
-
-    selectTicketPrintTemplate: (ticket, options) => {
+    selectTicketPrintTemplateName: (ticket, options) => {
       const { forcedtemplate } = options;
       const negativeLines = ticket.lines.filter(line => line.qty < 0);
       const hasNegativeLines =
@@ -150,66 +69,141 @@
         return forcedtemplate;
       }
       if (ticket.ordercanceled) {
-        return OB.App.PrintTemplateStore.getCanceledTicketTemplate();
+        return 'printCanceledReceiptTemplate';
       }
       if (ticket.cancelLayaway) {
-        return OB.App.PrintTemplateStore.getCanceledLayawayTemplate();
+        return 'printCanceledLayawayTemplate';
       }
       if (ticket.isInvoice) {
         if (ticket.orderType === 1 || hasNegativeLines) {
           if (ticket.fullInvoice) {
-            return OB.App.PrintTemplateStore.getReturnedInvoiceTemplate();
+            return 'printReturnInvoiceTemplate';
           }
-          return OB.App.PrintTemplateStore.getSimplifiedReturnedInvoiceTemplate();
+          return 'printSimplifiedReturnInvoiceTemplate';
         }
         if (ticket.isQuotation) {
-          return OB.App.PrintTemplateStore.getQuotationTemplate();
+          return 'printQuotationTemplate';
         }
         if (ticket.isPaid) {
           if (ticket.fullInvoice) {
-            return OB.App.PrintTemplateStore.getClosedInvoiceTemplate();
+            return 'printClosedInvoiceTemplate';
           }
-          return OB.App.PrintTemplateStore.getSimplifiedClosedInvoiceTemplate();
+          return 'printSimplifiedClosedInvoiceTemplate';
         }
         if (ticket.fullInvoice) {
-          return OB.App.PrintTemplateStore.getInvoiceTemplate();
+          return 'printInvoiceTemplate';
         }
-        return OB.App.PrintTemplateStore.getSimplifiedInvoiceTemplate();
+        return 'printSimplifiedInvoiceTemplate';
       }
       if (ticket.isPaid) {
         if (ticket.orderType === 1 || hasNegativeLines) {
-          return OB.App.PrintTemplateStore.getReturnTemplate();
+          return 'printReturnTemplate';
         }
         if (ticket.isQuotation) {
-          return OB.App.PrintTemplateStore.getQuotationTemplate();
+          return 'printQuotationTemplate';
         }
-        return OB.App.PrintTemplateStore.getClosedTicketTemplate();
+        return 'printClosedReceiptTemplate';
       }
       if (ticket.orderType === 2 || ticket.orderType === 3) {
-        return OB.App.PrintTemplateStore.getLayawayTemplate();
+        return 'printLayawayTemplate';
       }
       if (
         (ticket.orderType === 1 || hasNegativeLines) &&
         ticket.lines.length > 0
       ) {
-        return OB.App.PrintTemplateStore.getReturnTemplate();
+        return 'printReturnTemplate';
       }
       if (ticket.isQuotation) {
-        return OB.App.PrintTemplateStore.getQuotationTemplate();
+        return 'printQuotationTemplate';
       }
-      return OB.App.PrintTemplateStore.getTicketTemplate();
-    },
-
-    getOrDefault: (name, defaultTemplate) => {
-      if (!templates[name]) {
-        const terminal = OB.App.TerminalProperty.get('terminal');
-        if (!terminal) {
-          throw new Error('Missing terminal information');
-        }
-        const template = terminal[name] ? terminal[name] : defaultTemplate;
-        templates[name] = new OB.App.Class.PrintTemplate(template);
-      }
-      return templates[name];
+      return 'printTicketTemplate';
     }
   };
+
+  // register default templates
+
+  OB.App.PrintTemplateStore.register(
+    'printDisplayTotalTemplate',
+    '../org.openbravo.retail.posterminal/res/displaytotal.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'displayReceiptTemplate',
+    '../org.openbravo.retail.posterminal/res/displayreceipt.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printWelcomeTemplate',
+    '../org.openbravo.retail.posterminal/res/welcome.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printReceiptLineTemplate',
+    '../org.openbravo.retail.posterminal/res/printline.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printTicketTemplate',
+    '../org.openbravo.retail.posterminal/res/printreceipt.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printCanceledReceiptTemplate',
+    '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printLayawayTemplate',
+    '../org.openbravo.retail.posterminal/res/printlayaway.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printCanceledLayawayTemplate',
+    '../org.openbravo.retail.posterminal/res/printcanceledlayaway.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printClosedReceiptTemplate',
+    '../org.openbravo.retail.posterminal/res/printclosedreceipt.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printInvoiceTemplate',
+    '../org.openbravo.retail.posterminal/res/printinvoice.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printSimplifiedInvoiceTemplate',
+    '../org.openbravo.retail.posterminal/res/printsimplifiedinvoice.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printClosedInvoiceTemplate',
+    '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printSimplifiedClosedInvoiceTemplate',
+    '../org.openbravo.retail.posterminal/res/printsimplifiedclosedinvoice.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printReturnInvoiceTemplate',
+    '../org.openbravo.retail.posterminal/res/printreturninvoice.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printSimplifiedReturnInvoiceTemplate',
+    '../org.openbravo.retail.posterminal/res/printsimplifiedreturninvoice.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printQuotationTemplate',
+    '../org.openbravo.retail.posterminal/res/printquotation.xml'
+  );
+
+  OB.App.PrintTemplateStore.register(
+    'printReturnTemplate',
+    '../org.openbravo.retail.posterminal/res/printreturn.xml'
+  );
 })();

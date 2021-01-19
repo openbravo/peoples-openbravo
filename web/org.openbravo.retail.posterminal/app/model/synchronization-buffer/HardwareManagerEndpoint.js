@@ -135,7 +135,9 @@
 
     async displayTotal(messageData) {
       try {
-        const template = this.templateStore.getDisplayTotalTemplate();
+        const template = await this.templateStore.get(
+          'printDisplayTotalTemplate'
+        );
         await this.controller.display(template, {
           ticket: messageData.data.ticket
         });
@@ -217,7 +219,7 @@
           return;
         }
 
-        const template = this.templateStore.selectTicketPrintTemplate(
+        const template = await this.templateStore.selectTicketPrintTemplate(
           printableTicket,
           { forcedtemplate }
         );
@@ -264,12 +266,12 @@
           printedTicket
         });
 
-        await this.controller.display(
-          this.templateStore.getDisplayTicketTemplate(),
-          {
-            ticket: printableTicket
-          }
+        const displayTicketTemplate = await this.templateStore.get(
+          'displayReceiptTemplate'
         );
+        await this.controller.display(displayTicketTemplate, {
+          ticket: printableTicket
+        });
       } catch (error) {
         OB.error(`Error printing ticket: ${error}`);
       }
@@ -277,7 +279,9 @@
 
     async printTicketLine(messageData) {
       try {
-        const template = this.templateStore.getTicketLineTemplate();
+        const template = await this.templateStore.get(
+          'printReceiptLineTemplate'
+        );
         await this.controller.display(template, {
           ticketLine: messageData.data.line
         });
@@ -288,7 +292,7 @@
 
     async printWelcome() {
       try {
-        const template = this.templateStore.getWelcomeTemplate();
+        const template = await this.templateStore.get('printWelcomeTemplate');
         await this.controller.display(template);
       } catch (error) {
         OB.error(`Error displaying welcome message: ${error}`);

@@ -36,26 +36,32 @@
       // Template for printing a jasper PDF report
       const jasperParams = JSON.parse(data.substr(6));
       const newTemplate = new OB.App.Class.PrintTemplate(jasperParams.report);
-      newTemplate.ispdf = true;
-      newTemplate.printer = jasperParams.printer || 1;
-      newTemplate.dateFormat = OB.Format.date;
-      newTemplate.subreports = jasperParams.subreports.map(
-        subReport => new OB.App.Class.PrintTemplate(subReport)
-      );
-
-      const templates = [newTemplate, ...newTemplate.subreports];
-      const dataRetrievals = templates.map(async template => {
-        await template.getData();
-      });
-      await Promise.all(dataRetrievals);
+      await newTemplate.processPDFTemplate(jasperParams);
 
       return JSON.stringify({
         param: templateParams.order
           ? templateParams.order.serializeToJSON()
           : params.ticket,
         mainReport: newTemplate,
-        subReports: newTemplate.subReports
+        subReports: newTemplate.subreports
       });
+    }
+
+    async processPDFTemplate(params) {
+      const { printer, subreports } = params;
+
+      this.ispdf = true;
+      this.printer = printer || 1;
+      this.dateFormat = OB.Format.date;
+      this.subreports = subreports
+        ? subreports.map(subReport => new OB.App.Class.PrintTemplate(subReport))
+        : [];
+
+      const templates = [this, ...this.subreports];
+      const dataRetrievals = templates.map(async template => {
+        await template.getData();
+      });
+      await Promise.all(dataRetrievals);
     }
 
     async getData() {
