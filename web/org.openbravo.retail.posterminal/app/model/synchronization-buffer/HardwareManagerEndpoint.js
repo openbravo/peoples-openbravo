@@ -109,7 +109,7 @@
     // Sets the legacy printers
     setPrinters(printers) {
       // kept for backwards compatibility in order to not break "OBPRINT_PrePrint" hooks
-      // this hooks receive a parameter referencing the OB.OBPOSPointOfSale.Print.Receipt model
+      // this hooks receive a parameter referencing the PointOfSale model
       this.legacyPrinter = printers.printer;
     }
 
