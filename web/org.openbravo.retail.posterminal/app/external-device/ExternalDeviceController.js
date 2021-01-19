@@ -8,11 +8,11 @@
  */
 
 /**
- * @fileoverview Defines the HardwareManagerController class.
+ * @fileoverview Defines the ExternalDeviceController class.
  * @author Carlos Aristu <carlos.aristu@openbravo.com>
  */
 
-(function HardwareManagerControllerDefinition() {
+(function ExternalDeviceControllerDefinition() {
   // used to send POST requests to the HardwareManager
   async function post(url, data, options = {}) {
     await OB.App.Request.post(url, data, {
@@ -50,7 +50,7 @@
    *
    * @see HardwareManagerEndpoint
    */
-  OB.App.Class.HardwareManagerController = class HardwareManagerController {
+  OB.App.Class.ExternalDeviceController = class ExternalDeviceController {
     constructor() {
       this.devices = { PRINTER: 0, DISPLAY: 1, DRAWER: 2 };
       this.initialize();

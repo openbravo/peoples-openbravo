@@ -102,7 +102,7 @@
         'printWelcome'
       );
 
-      this.controller = new OB.App.Class.HardwareManagerController();
+      this.controller = new OB.App.Class.ExternalDeviceController();
       this.templateStore = OB.App.PrintTemplateStore;
     }
 
