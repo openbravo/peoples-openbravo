@@ -49,6 +49,10 @@
       });
     }
 
+    if (printableTicket.canceledorder) {
+      delete printableTicket.canceledorder;
+    }
+
     if (OB.App.StateBackwardCompatibility != null) {
       const printableOrder = OB.App.StateBackwardCompatibility.getInstance(
         'Ticket'
@@ -224,31 +228,18 @@
           { forcedtemplate }
         );
 
-        const printParams = {};
-        if (template.ispdf) {
-          template.dateFormat = OB.Format.date;
-          if (printableTicket.canceledorder) {
-            delete printableTicket.canceledorder;
-          }
-          printParams.param = printableOrder
-            ? printableOrder.serializeToJSON()
-            : printableTicket;
-          printParams.mainReport = template;
-          printParams.subReports = template.subreports;
-        } else {
-          printParams.ticket = printableTicket;
-        }
-
         await this.controller.selectPrinter({
           isPdf: template.ispdf,
           isRetry: false,
           skipSelectPrinters: printSettings.skipSelectPrinters
         });
 
-        const printedTicket = await this.controller.print(
-          template,
-          printParams
-        );
+        const printedTicket = await this.controller.print(template, {
+          ticket:
+            template.ispdf && printableOrder
+              ? printableOrder.serializeToJSON()
+              : printableTicket
+        });
 
         if (!printedTicket) {
           throw new Error(`Could not print ticket ${printableTicket.id}`);

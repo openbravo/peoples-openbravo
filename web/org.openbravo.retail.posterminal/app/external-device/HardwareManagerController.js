@@ -220,7 +220,11 @@
     async print(printTemplate, params = {}, device = 0) {
       try {
         const data = printTemplate.ispdf
-          ? params
+          ? JSON.stringify({
+              param: params.ticket,
+              mainReport: printTemplate,
+              subReports: printTemplate.subreports
+            })
           : await printTemplate.generate(params);
 
         this.storeData(data, device);
