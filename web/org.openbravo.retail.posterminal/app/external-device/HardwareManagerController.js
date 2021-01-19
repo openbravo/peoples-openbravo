@@ -149,46 +149,11 @@
       );
     }
 
-    async selectPrinter(options) {
-      const terminal = OB.App.TerminalProperty.get('terminal');
-      const { isPdf, isRetry, skipSelectPrinters, forceSelect } = options;
-
-      if (
-        !forceSelect &&
-        (!terminal.terminalType.selectprinteralways ||
-          skipSelectPrinters ||
-          !this.canSelectPrinter(isPdf))
-      ) {
-        // skip printer selection
-        return;
-      }
-
-      const { printer } = await OB.App.View.DialogUIHandler.inputData(
-        isPdf ? 'modalSelectPDFPrinters' : 'modalSelectPrinters',
-        {
-          title: isPdf
-            ? OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle')
-            : OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
-          isRetry
-        }
-      );
-
-      if (!printer) {
-        return;
-      }
-
-      if (isPdf) {
-        this.setActivePDFURL(printer);
-      } else {
-        this.setActiveURL(printer);
-      }
+    getActiveURLIdentifier(isPdf) {
+      return isPdf ? this.activePDFURLIdentifier : this.activeIdentifier;
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    canSelectPrinter(isPdf) {
-      if (!OB.App.Security.hasPermission('OBPOS_retail.selectprinter')) {
-        return false;
-      }
+    hasAvailablePrinter(isPdf) {
       const urlList = OB.App.TerminalProperty.get('hardwareURL') || [];
       return urlList.some(printer =>
         isPdf ? printer.hasPDFPrinter : printer.hasReceiptPrinter
@@ -208,6 +173,7 @@
         OB.App.UserNotifier.notifyError({
           message: 'OBPOS_MsgHardwareServerNotAvailable'
         });
+        throw error;
       }
       return data;
     }
@@ -218,37 +184,30 @@
     }
 
     async print(printTemplate, params = {}, device = 0) {
-      try {
-        const data = printTemplate.ispdf
-          ? JSON.stringify({
-              param: params.ticket,
-              mainReport: printTemplate,
-              subReports: printTemplate.subreports
-            })
-          : await printTemplate.generate(params);
+      const data = printTemplate.ispdf
+        ? JSON.stringify({
+            param: params.ticket,
+            mainReport: printTemplate,
+            subReports: printTemplate.subreports
+          })
+        : await printTemplate.generate(params);
 
-        this.storeData(data, device);
+      this.storeData(data, device);
 
-        await this.executeHooks('OBPOS_HWServerSend', {
-          device,
-          time: new Date().getTime(),
-          data
-        });
+      await this.executeHooks('OBPOS_HWServerSend', {
+        device,
+        time: new Date().getTime(),
+        data
+      });
 
-        if (this.devices.PRINTER === device && data.mainReport) {
-          await this.requestPDFPrint(data);
-        } else {
-          await this.requestPrint(data, device);
-        }
-        return data;
-      } catch (error) {
-        OB.error(`Error printing template: ${error}`);
-        const data = await this.retryPrinting(printTemplate, params, device);
-        return data;
+      if (this.devices.PRINTER === device && data.mainReport) {
+        await this.requestPDFPrint(data);
+      } else {
+        await this.requestPrint(data, device);
       }
+      return data;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     async executeHooks(hookName, payload) {
       if (!OB.App.StateBackwardCompatibility) {
         // not in legacy mode: hooks are not supported
@@ -274,45 +233,6 @@
       return finalPayload;
     }
 
-    async retryPrinting(printTemplate, params, device) {
-      if (this.devices.PRINTER !== device) {
-        return null;
-      }
-
-      const isPdf = printTemplate.ispdf;
-      const selectPrinterButton = {
-        label: isPdf
-          ? 'OBPOS_SelectPDFPrintersTitle'
-          : 'OBPOS_SelectPrintersTitle',
-        action: async () => {
-          const { printer } = await this.selectPrinter({
-            isPdf,
-            isRetry: true,
-            forceSelect: true
-          });
-          return printer != null;
-        }
-      };
-
-      const retry = await OB.App.View.DialogUIHandler.askConfirmation({
-        title: 'OBPOS_MsgHardwareServerNotAvailable',
-        message: isPdf ? 'OBPOS_MsgPDFPrintAgain' : 'OBPOS_MsgPrintAgain',
-        messageParams: [
-          isPdf ? this.activePDFURLIdentifier : this.activeIdentifier
-        ],
-        confirmLabel: 'OBPOS_LblRetry',
-        additionalButtons: this.canSelectPrinter(isPdf)
-          ? [selectPrinterButton]
-          : []
-      });
-
-      const data = retry
-        ? await this.print(printTemplate, params, device)
-        : null;
-
-      return data;
-    }
-
     async requestPrint(data, device) {
       const url =
         this.devices.PRINTER === device ? this.activeURL : this.mainURL;
@@ -333,6 +253,7 @@
         OB.App.UserNotifier.notifyError({
           message: 'OBPOS_MsgHardwareServerNotAvailable'
         });
+        throw error;
       }
     }
 
@@ -347,6 +268,7 @@
         OB.App.UserNotifier.notifyError({
           message: 'OBPOS_MsgHardwareServerNotAvailable'
         });
+        throw error;
       }
     }
   };
