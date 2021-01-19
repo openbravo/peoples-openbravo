@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2018 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -250,10 +250,14 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
 
     // Prepare some information for cash up event
     String isoCode = jsonPayment.getString("isocode");
+    FIN_FinancialAccount account = paymentMethod.getFinancialAccount();
+    FIN_FinancialAccount safeBoxAccount = safeBoxPaymentMethod.getFINFinancialaccount();
+    FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
 
     TerminalTypePaymentMethod terminalPaymentMethod = paymentMethod.getPaymentMethod();
-    GLItem glItemMain = terminalPaymentMethod.getGLItemForDrops();
-    GLItem glItemSecondary = terminalPaymentMethod.getGLItemForDeposits();
+    GLItem terminalPaymentMethodGLItemForDrops = terminalPaymentMethod.getGLItemForDrops();
+    GLItem terminalPaymentMethodGLItemForDeposits = terminalPaymentMethod.getGLItemForDeposits();
+    GLItem safeBoxGLItemForDropDeposit = safeBoxPaymentMethod.getGLItemForCashDropDeposit();
 
     // Save cash up events for payment method status
     OBPOSPaymentcashupEvents paymentcashupEvent = null;
@@ -271,8 +275,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     OBDal.getInstance().save(paymentcashupEvent);
 
     // Create withdrawal movement from POS payment financial account
-    FIN_FinancialAccount account = paymentMethod.getFinancialAccount();
-    FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
+    GLItem glItemMain = terminalPaymentMethodGLItemForDrops == null ? safeBoxGLItemForDropDeposit
+        : terminalPaymentMethodGLItemForDrops;
     transaction.setObposAppCashup(cashup);
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
@@ -290,13 +294,15 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     paymentcashupEvent.setFINFinaccTransaction(transaction);
 
     // Create deposit movement to safe box payment financial account
-    FIN_FinancialAccount safeBoxAccount = safeBoxPaymentMethod.getFINFinancialaccount();
+    GLItem glItemSecondary = safeBoxGLItemForDropDeposit == null
+        ? terminalPaymentMethodGLItemForDeposits
+        : safeBoxGLItemForDropDeposit;
     FIN_FinaccTransaction safeBoxTransaction = OBProvider.getInstance()
         .get(FIN_FinaccTransaction.class);
     safeBoxTransaction.setObposAppCashup(cashup);
     safeBoxTransaction.setCurrency(safeBoxAccount.getCurrency());
     safeBoxTransaction.setAccount(safeBoxAccount);
-    safeBoxTransaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
+    safeBoxTransaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(safeBoxAccount) + 10);
     safeBoxTransaction.setGLItem(glItemSecondary);
     safeBoxTransaction.setDepositAmount(amount);
     safeBoxAccount.setCurrentBalance(safeBoxAccount.getCurrentBalance().add(amount));
