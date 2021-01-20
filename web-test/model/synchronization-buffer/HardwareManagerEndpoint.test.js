@@ -9,23 +9,34 @@
 
 /* global global */
 
-global.OB = { debug: jest.fn() };
-OB.App = {
-  Class: {},
-  MessageModelController: {
-    add: jest.fn(),
-    put: jest.fn(),
-    findAll: jest.fn(),
-    delete: jest.fn()
+global.OB = {
+  debug: jest.fn(),
+  App: {
+    Class: {},
+    MessageModelController: {
+      add: jest.fn(),
+      put: jest.fn(),
+      findAll: jest.fn(),
+      delete: jest.fn()
+    },
+    TerminalProperty: {
+      get: jest.fn()
+    }
+  },
+  I18N: { getLabel: jest.fn() },
+  UTIL: {
+    localStorage: {
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      removeItem: jest.fn()
+    }
   }
-};
-OB.POS = {
-  hwserver: {}
 };
 
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/synchronization-buffer/SynchronizationBuffer');
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/synchronization-buffer/SynchronizationEndpoint');
 require('../../../web/org.openbravo.retail.posterminal/app/model/synchronization-buffer/HardwareManagerEndpoint');
+require('../../../web/org.openbravo.retail.posterminal/app/external-device/ExternalDeviceController');
 
 describe('Harware Manager Synchronization Endpoint', () => {
   let syncBuffer;
@@ -40,6 +51,14 @@ describe('Harware Manager Synchronization Endpoint', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
+
+    OB.App.TerminalProperty.get.mockImplementation(property => {
+      if (property === 'hardwareURL') {
+        return [];
+      }
+      return {};
+    });
+
     // by default execute the tests with a unique synchronization endpoint
     initSingleEndpointSyncBuffer();
   });
@@ -66,14 +85,14 @@ describe('Harware Manager Synchronization Endpoint', () => {
       'printTicket message consumed with status $status',
       async ({ messages, status, numberOfCalls }) => {
         hwManagerEndpoint.online = status === 'online' ? true : false;
-        hwManagerEndpoint.printTicket = jest.fn();
+        hwManagerEndpoint.printTickets = jest.fn();
         OB.App.MessageModelController.findAll
           .mockResolvedValueOnce(messages)
           .mockResolvedValue([]);
 
         await syncBuffer.internalFlush();
 
-        expect(hwManagerEndpoint.printTicket).toHaveBeenCalledTimes(
+        expect(hwManagerEndpoint.printTickets).toHaveBeenCalledTimes(
           numberOfCalls
         );
       }
