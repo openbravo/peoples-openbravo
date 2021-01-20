@@ -20,9 +20,10 @@
     }
 
     /**
-     * Generates the data to be sent to the Hardware Manager for the printing according to this template
+     * Processes the print template, generating the result to be printed
      *
-     * @param data {string} - the data to be sent for the printing
+     * @param params {object} - the parameters to be provided to the template
+     * @return {string} - the result of processing the template
      */
     async generate(params) {
       const templateData = await this.getData();
