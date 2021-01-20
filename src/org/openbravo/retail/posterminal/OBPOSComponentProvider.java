@@ -178,8 +178,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "pointofsale/view/subwindows/customeraddress/editcreatecustomeraddress",
         "pointofsale/view/subwindows/customeraddress/customeraddrdetailview",
 
-        "pointofsale/view/subwindows/dqm/controller-dqm",
-        "pointofsale/view/subwindows/dqm/customerValidatorProvider",
         "pointofsale/view/subwindows/dqm/posterminalValidations-dqm",
 
         // Point of sale modals
