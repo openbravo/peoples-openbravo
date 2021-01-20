@@ -76,7 +76,7 @@
       // WebPrinter
       const printerTypeInfo =
         OB.PRINTERTYPES && OB.PRINTERTYPES[terminal.printertype];
-      this.webprinter = printerTypeInfo
+      this.webPrinter = printerTypeInfo
         ? new OB.WEBPrinter(printerTypeInfo, OB.PRINTERIMAGES.getImagesMap())
         : null;
 
@@ -192,18 +192,21 @@
 
     async print(printTemplate, params = {}, device = 0) {
       const data = printTemplate.ispdf
-        ? JSON.stringify({
+        ? {
             param: params.ticket,
             mainReport: printTemplate,
             subReports: printTemplate.subreports
-          })
+          }
         : await printTemplate.generate(params);
 
       await this.send(data, device);
       return data;
     }
 
-    async send(data, device) {
+    async send(dataToSend, device) {
+      const isPdf = dataToSend.mainReport;
+      const data = isPdf ? JSON.stringify(dataToSend) : dataToSend.data;
+
       this.storeData(data, device);
 
       await this.executeHooks('OBPOS_HWServerSend', {
@@ -217,16 +220,16 @@
           await this.requestPrint(data, device);
           break;
         case this.devices.DRAWER:
-          if (this.webprinter) {
+          if (this.webPrinter) {
             await this.requestWebPrinter(data);
           } else {
             await this.requestPrint(data, device);
           }
           break;
         case this.devices.PRINTER:
-          if (this.webprinter && this.isMainURLActive()) {
+          if (this.webPrinter && this.isMainURLActive()) {
             await this.requestWebPrinter(data);
-          } else if (data.mainReport) {
+          } else if (isPdf) {
             await this.requestPDFPrint(data);
           } else {
             await this.requestPrint(data, device);
@@ -306,7 +309,7 @@
     }
 
     async requestWebPrinter(data) {
-      if (!this.webprinter.connected()) {
+      if (!this.webPrinter.connected()) {
         const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
           title: 'OBPOS_WebPrinter',
           message: 'OBPOS_WebPrinterPair'
@@ -316,9 +319,9 @@
           return;
         }
 
-        await this.webprinter.request();
+        await this.webPrinter.request();
       }
-      await this.webprinter.print(data);
+      await this.webPrinter.print(data);
     }
   };
 })();
