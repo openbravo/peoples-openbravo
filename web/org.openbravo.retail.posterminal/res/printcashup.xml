@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  ************************************************************************************
- * Copyright (C) 2013-2015 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -41,50 +41,29 @@
     </line>  
     <line>
     </line>
-    <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblNetSales')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(cashup.report.get('netSales')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblNetSales'),27,OB.I18N.formatCurrency(cashup.report.get('netSales')),14,) %>
     <%
     _.each(cashup.report.get('salesTaxes'),function(tax){
     %>
-    <line>
-      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(tax.get('name')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.get('amount')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(tax.get('name'),27,OB.I18N.formatCurrency(tax.get('amount')),14) %>
     <%
     });
     %>
-    <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblGrossSales')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('grossSales')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblGrossSales'),27,OB.I18N.formatCurrency(cashup.report.get('grossSales')),14,true) %> %>
     <line>
     </line>
-    <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblNetReturns')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(cashup.report.get('netReturns')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblNetReturns'),27,OB.I18N.formatCurrency(cashup.report.get('netReturns')),14) %>
     <%
     _.each(cashup.report.get('returnsTaxes'), function(tax){
     %>
-    <line>
-      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(tax.get('name')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(tax.get('amount')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(tax.get('name'),27,OB.I18N.formatCurrency(tax.get('amount')),14) %>
     <%
     });
     %>
-    <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblGrossReturns')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('grossReturns')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblGrossReturns'),27,OB.I18N.formatCurrency(cashup.report.get('grossReturns')),14,true) %>
     <line>
     </line>
-     <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel(OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave ? 'OBPOS_LblTotalRetailTransLocalPrint' : 'OBPOS_LblTotalRetailTrans')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('totalRetailTransactions')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel(OB.POS.modelterminal.get('terminal').ismaster || OB.POS.modelterminal.get('terminal').isslave ? 'OBPOS_LblTotalRetailTransLocalPrint' : 'OBPOS_LblTotalRetailTrans'),27,OB.I18N.formatCurrency(cashup.report.get('totalRetailTransactions')),14,true) %>
     <line>
     </line>
     <%
@@ -99,18 +78,12 @@
     <%
     }else if(starting.get('countInCashup')){
     %>
-    <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(starting.get('description')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(OB.DEC.mul(starting.get('amount'), starting.get('rate'))) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(starting.get('description'),27,OB.I18N.formatCurrency(OB.DEC.mul(starting.get('amount'), starting.get('rate'))),14) %>
     <%
     }
     });
     %>
-     <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalStarting')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('totalStartings')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalStarting'),27,OB.I18N.formatCurrency(cashup.report.get('totalStartings')),14,true) %>
     <line>
     </line>
     <%
@@ -125,18 +98,12 @@
     <%
     }else if(drop.get('countInCashup')){
     %>
-    <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(drop.get('description')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(drop.get('amount')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(drop.get('description'),27,OB.I18N.formatCurrency(drop.get('amount')),14) %>
     <%
     }
     });
     %>
-    <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalWithdrawals')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('totalDrops')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalWithdrawals'),27,OB.I18N.formatCurrency(cashup.report.get('totalDrops')),14,true) %>
     <line>
     </line>
     <%
@@ -151,18 +118,12 @@
     <%
     }else if(deposit.get('countInCashup')){
      %>
-    <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(deposit.get('description')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(deposit.get('amount')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(deposit.get('description'),27,OB.I18N.formatCurrency(deposit.get('amount')),14) %>
     <%
     }
     });
     %>
-    <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalDeposits')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.report.get('totalDeposits')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalDeposits'),27,OB.I18N.formatCurrency(cashup.report.get('totalDeposits')),14,true) %>
     <line>
     </line>
     <%
@@ -177,18 +138,12 @@
     <%
     }else{
      %>
-    <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.get('value')) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'),27,OB.I18N.formatCurrency(payment.get('value')),14) %>
     <%
     }
     });
     %>
-    <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalExpected')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.summary.totalExpected) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalExpected'),27,OB.I18N.formatCurrency(cashup.summary.totalExpected),14,true) %>
     <line>
     </line>
     <%
@@ -204,18 +159,12 @@
     <%
     }else{
      %>
-    <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.get('value')) %></text>
-    </line>
+     <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'),27,OB.I18N.formatCurrency(payment.get('value')),14) %>
     <%
     }
     });
     %>
-    <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalCounted')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.summary.totalCounted) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalCounted'),27,OB.I18N.formatCurrency(cashup.summary.totalCounted),14,true) %>
     <line>
     </line>
     <%
@@ -230,18 +179,12 @@
     <%
     }else{
      %>
-    <line>
-      <text align ="left" length="25"><%=OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.get('value')) %></text>
-    </line>
+     <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'),27,OB.I18N.formatCurrency(payment.get('value')),14) %>
     <%
     }
     });
     %>
-    <line>
-      <text align ="left" length="25" bold="true"><%=OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalDifference')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.summary.totalDifference) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalDifference'),27,OB.I18N.formatCurrency(cashup.summary.totalDifference),14,true) %>
     <line>
     </line>
     <%
@@ -256,18 +199,12 @@
     <%
     }else{
      %>
-    <line>
-      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.get('value')) %></text>
-    </line>
+     <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'),27,OB.I18N.formatCurrency(payment.get('value')),14) %>
     <%
     }
     });
     %>
-    <line>
-      <text align ="left" length="25" bold="true"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalQtyToKeep')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.summary.totalQtyToKeep) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalQtyToKeep'),27,OB.I18N.formatCurrency(cashup.summary.totalQtyToKeep),14,true) %>
     <line>
     </line>
     <%
@@ -282,18 +219,12 @@
     <%
     }else{
      %>
-    <line>
-      <text align ="left" length="25"><%= OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-      <text align ="right" length="14"><%= OB.I18N.formatCurrency(payment.get('value')) %></text>
-    </line>
+     <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'),27,OB.I18N.formatCurrency(payment.get('value')),14) %>
     <%
     }
     });
     %>
-    <line>
-      <text align ="left" length="25" bold="true"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalQtyToDepo')) %></text>
-      <text align ="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.summary.totalQtyToDepo) %></text>
-    </line>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalQtyToDepo'),27,OB.I18N.formatCurrency(cashup.summary.totalQtyToDepo),14,true) %>
     <line>
     </line>
     <%
