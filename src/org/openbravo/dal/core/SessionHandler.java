@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.provider.OBNotSingleton;
@@ -626,6 +627,11 @@ public class SessionHandler implements OBNotSingleton {
           con.setAutoCommit(false);
         }
         if (trx != null && trx.isActive()) {
+          if (trx.getStatus() == TransactionStatus.MARKED_ROLLBACK) {
+            log.error(
+                "Hibernate transaction was marked for rollback, its DB transaction is also rolled back.",
+                new Exception("stack trace"));
+          }
           trx.commit();
         }
       }
