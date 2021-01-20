@@ -55,7 +55,7 @@
       return template;
     },
 
-    selectTicketPrintTemplateName: (ticket, options) => {
+    selectTicketPrintTemplateName: (ticket, options = {}) => {
       const { forcedtemplate } = options;
       const negativeLines = ticket.lines.filter(line => line.qty < 0);
       const hasNegativeLines =
