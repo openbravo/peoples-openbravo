@@ -23,7 +23,11 @@
      * Processes the print template, generating the result to be printed
      *
      * @param params {object} - the parameters to be provided to the template
-     * @return {string} - the result of processing the template
+     * @return {object} - the result of processing the template. It is an object that may contain:
+     *                  - data: a string with the template processing result (regular templates)
+     *                  - param: if provided, the ticket information (PDF templates)
+     *                  - mainReport: the main report definition (PDF templates)
+     *                  - subReports: an array with the subreports (PDF templates)
      */
     async generate(params) {
       const templateData = await this.getData();
@@ -31,7 +35,7 @@
       const data = lodash.template(templateData)(templateParams);
 
       if (data.substr(0, 6) !== 'jrxml:') {
-        return data;
+        return { data };
       }
 
       // Template for printing a jasper PDF report
@@ -39,13 +43,13 @@
       const newTemplate = new OB.App.Class.PrintTemplate(jasperParams.report);
       await newTemplate.processPDFTemplate(jasperParams);
 
-      return JSON.stringify({
+      return {
         param: templateParams.order
           ? templateParams.order.serializeToJSON()
           : params.ticket,
         mainReport: newTemplate,
         subReports: newTemplate.subreports
-      });
+      };
     }
 
     async processPDFTemplate(params) {

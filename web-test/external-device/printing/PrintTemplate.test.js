@@ -49,7 +49,7 @@ describe('PrintTemplate', () => {
     OB.I18N.getLabel.mockReturnValue('Total');
 
     const result = await printTemplate.generate({ ticket });
-    expect(result).toBe(getFileContent('printResult.txt'));
+    expect(result).toStrictEqual({ data: getFileContent('printResult.txt') });
   });
 
   it('get template data', async () => {
