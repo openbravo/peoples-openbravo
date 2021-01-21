@@ -11,6 +11,12 @@
   const templates = {};
 
   OB.App.PrintTemplateStore = {
+    /**
+     * Registers a print template
+     *
+     * @param name {string} - the name that identifies the print template
+     * @param name {string} - the default template resource to be requested when retrieving the template data
+     */
     register: (name, defaultTemplate) => {
       if (templates[name]) {
         throw new Error(`A template with name ${name} already exists`);
@@ -18,6 +24,15 @@
       templates[name] = { defaultTemplate, printTemplate: null };
     },
 
+    /**
+     * Retrieves a print template. The template resource is retrieved as follows:
+     *   If there is a terminal property equal to the provided name, the resource is taken from that property value.
+     *   If not, the template default resource is used.
+     *
+     * @param name {string} - the name that identifies the print template.
+     * @return {PrintTemplate} - the PrintTemplate identified with the provided name
+     * @throws {Error} in case the template can not be retrieved
+     */
     get: async name => {
       if (!templates[name]) {
         throw new Error(`Unknown template with name ${name}`);
@@ -46,6 +61,14 @@
       return templates[name].printTemplate;
     },
 
+    /**
+     * Selects the correct print template to be used to print the provided ticket.
+     *
+     * @param ticket {ticket} - the ticket to be printed
+     * @param options {string} - options that are used in the template selection. It may contain:
+     *                           - forcedtemplate: is used to forcibly select this template
+     * @return {PrintTemplate} - the PrintTemplate for printing the provided ticket
+     */
     selectTicketPrintTemplate: async (ticket, options) => {
       const name = OB.App.PrintTemplateStore.selectTicketPrintTemplateName(
         ticket,
