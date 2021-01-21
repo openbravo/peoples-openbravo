@@ -85,14 +85,14 @@ describe('Harware Manager Synchronization Endpoint', () => {
       'printTicket message consumed with status $status',
       async ({ messages, status, numberOfCalls }) => {
         hwManagerEndpoint.online = status === 'online' ? true : false;
-        hwManagerEndpoint.printTickets = jest.fn();
+        hwManagerEndpoint.printTicket = jest.fn();
         OB.App.MessageModelController.findAll
           .mockResolvedValueOnce(messages)
           .mockResolvedValue([]);
 
         await syncBuffer.internalFlush();
 
-        expect(hwManagerEndpoint.printTickets).toHaveBeenCalledTimes(
+        expect(hwManagerEndpoint.printTicket).toHaveBeenCalledTimes(
           numberOfCalls
         );
       }

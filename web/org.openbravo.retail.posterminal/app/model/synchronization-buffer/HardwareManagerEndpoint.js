@@ -177,10 +177,10 @@
           await this.displayTotal(message.messageObj);
           break;
         case 'greetHardwareManager':
-          await this.greet();
+          await this.greetHardwareManager();
           break;
         case 'printTicket':
-          await this.printTickets(message.messageObj);
+          await this.printTicket(message.messageObj);
           break;
         case 'printTicketLine':
           await this.printTicketLine(message.messageObj);
@@ -208,7 +208,7 @@
       }
     }
 
-    async greet() {
+    async greetHardwareManager() {
       try {
         const data = await this.controller.getHardwareManagerStatus();
 
@@ -238,12 +238,12 @@
       }
     }
 
-    async printTickets(messageData) {
+    async printTicket(messageData) {
       const { ticket } = messageData.data;
       const printSettings = messageData.data.printSettings || {};
 
       // print main ticket
-      await this.printTicket(includeOverPaymentAmt(ticket), printSettings);
+      await this.doPrintTicket(includeOverPaymentAmt(ticket), printSettings);
 
       // print related canceled ticket (if any)
       if (ticket.doCancelAndReplace && ticket.canceledorder) {
@@ -253,11 +253,11 @@
           ordercanceled: true,
           negativeDocNo
         };
-        await this.printTicket(canceledTicket, printSettings);
+        await this.doPrintTicket(canceledTicket, printSettings);
       }
     }
 
-    async printTicket(ticket, printSettings) {
+    async doPrintTicket(ticket, printSettings) {
       let isPdf = false;
       try {
         // Tickets with simplified invoice will print only the invoice
@@ -354,7 +354,7 @@
       });
 
       if (retry) {
-        await this.printTicket(ticket, printSettings);
+        await this.doPrintTicket(ticket, printSettings);
       }
     }
 
