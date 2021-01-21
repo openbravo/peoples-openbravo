@@ -48,17 +48,20 @@ enyo.kind({
     return {
       permission: key,
       action: function(keyboard, txt) {
-        txt = OB.I18N.parseNumber(txt);
-        if (txt === 0) {
-          OB.UTIL.showI18NWarning(
-            'OBPOS_NoCashMgmtZero',
-            'OBPOS_NoCashMgmtZero'
-          );
+        let amt = OB.I18N.parseNumber(txt);
+        if (isNaN(amt)) {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
+          return;
+        } else if (amt === 0) {
+          OB.UTIL.showI18NWarning('OBPOS_NoCashMgmtZero');
+          return;
+        } else if (amt !== OB.DEC.add(0, amt)) {
+          OB.UTIL.showI18NWarning('OBPOS_PrecisionDifferAfterFormat');
           return;
         }
         keyboard.owner.owner.owner.currentPayment = {
           id: id,
-          amount: txt,
+          amount: amt,
           identifier: identifier,
           destinationKey: key,
           type: type,
