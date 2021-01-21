@@ -11,7 +11,7 @@
 # * under the License.
 # * The Original Code is Openbravo ERP.
 # * The Initial Developer of the Original Code is Openbravo SLU
-# * All portions are Copyright (C) 2020 Openbravo SLU
+# * All portions are Copyright (C) 2020-2021 Openbravo SLU
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
@@ -44,8 +44,8 @@ FILES=()
 for changedfile in $(git diff --cached --name-only --diff-filter=ACMR)
 do
   if [[ -f "${changedfile}" ]]; then
-    if [[ "${IS_A_MODULE}" == true && -n "$(echo ${changedfile} | awk '/.js$/')" || \
-          "${IS_A_MODULE}" == false && -n "$(echo ${changedfile} | awk '/.js$/ && ! /^web/')" ]]; then
+    if [[ "${IS_A_MODULE}" == true && -n "$(echo ${changedfile} | awk '/.js(x)?$/')" || \
+          "${IS_A_MODULE}" == false && -n "$(echo ${changedfile} | awk '/.js(x)?$/ && ! /^web/')" ]]; then
         FILES+=("$(pwd)/${changedfile}")
     fi
   fi
