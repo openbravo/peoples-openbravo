@@ -26,40 +26,35 @@
     <line></line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticket')) %></text>
-      <text><%= OB.UTIL.encodeXMLComponent(order.get('documentNo')) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(ticket.documentNo) %></text>
     </line>
     <line>
      <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_datetime')) %></text>
-     <text><%= OB.I18N.formatDate(order.get('orderDate')) %></text>
+     <text><%= OB.I18N.formatDate(ticket.orderDate) %></text>
        <text> </text>
-       <% var time;
-       if(!OB.UTIL.isNullOrUndefined(order.get('created'))){
-         time = new Date(order.get('created'));       
-       } else {
-         time = new Date(); 
-       }
+       <%
+         const time = ticket.created != null ? new Date(ticket.created) : new Date();
        %>
       <text><%= OB.I18N.formatHour(time) %></text>
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_cashierPOS')) %></text>
-      <text><%= OB.UTIL.encodeXMLComponent(order.get('salesRepresentative'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(ticket['salesRepresentative$_identifier']) %></text>
       <text>, </text>
-      <text><%= OB.UTIL.encodeXMLComponent(order.get('posTerminal'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(ticket['posTerminal$_identifier']) %></text>
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTaxId')) %></text>
-      <text><%= OB.UTIL.encodeXMLComponent(OB.MobileApp.model.get('terminal').organizationTaxId) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(terminal.organizationTaxId) %></text>
     </line>
     <line>
-      <text><%= OB.UTIL.encodeXMLComponent(OB.MobileApp.model.get('terminal').organizationAddressIdentifier) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(terminal.organizationAddressIdentifier) %></text>
     </line>
-    <line></line>
     <line size="1">
       <text align ="center" length="42"><%= OB.I18N.getLabel('OBPOS_ToReturn') %></text>
     </line>
     <line></line>
-    
+    <line></line>
     <line>
       <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineItem'))%></text>
       <text align ="center" length="5">#</text>
@@ -70,46 +65,44 @@
       <text>------------------------------------------</text>
     </line>
     <% 
-      var lines = order.get('lines'), line, promotions;
-      for (var i = 0; i < lines.length; i++) {
-        line = lines.at(i);
+      ticket.lines.forEach(line => {
     %>
       <line>
-        <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(lines.at(i).get('product').get('_identifier')) %></text>
-        <text align ="center" length="5"><%= lines.at(i).printQty() %></text>
-        <text align ="left" length="8"><%= lines.at(i).printPrice() %></text>
-    <%if(order.get('priceIncludesTax')){%>
-        <text align ="right" length="8"><%= lines.at(i).printGross() %></text>  
-    <%}else{%>
-        <text align ="right" length="8"><%= lines.at(i).printNet() %></text>
-    <%}%>
+        <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(line.product._identifier) %></text>
+        <text align ="center" length="5"><%= OB.UTIL.printQty(line.qty) %></text>
+        <text align ="left" length="8"><%= OB.UTIL.printTicketLinePrice(line) %></text>
+        <text align ="right" length="8"><%= OB.UTIL.printTicketLineAmount(line) %></text>
       </line>
-    <%if(line.has('organization') && OB.UTIL.isCrossStoreOrganization(line.get('organization'))){%>
+    <%if(line.organization && line.organization.id !== terminal.organization) {%>
       <line>
-        <text align ="right">-- <%= line.get('organization').name %></text>  
+        <text align ="right">-- <%= line.organization.name %></text>
       </line>
     <%}
-    if (OB.MobileApp.model.hasPermission('OBRDM_EnableDeliveryModes', true)) {
-      var deliveryDate = line.get('obrdmDeliveryDate') ? (line.get('obrdmDeliveryDate') instanceof Date ? line.get('obrdmDeliveryDate') : new Date(line.get('obrdmDeliveryDate'))) : null,
-        deliveryTime = line.get('obrdmDeliveryTime') ? (line.get('obrdmDeliveryTime') instanceof Date ? line.get('obrdmDeliveryTime') : new Date(line.get('obrdmDeliveryTime'))) : null,
-        showDate = line.get('obrdmDeliveryMode') === 'PickupInStoreDate' || line.get('obrdmDeliveryMode') === 'HomeDelivery',
-        showTime = line.get('obrdmDeliveryMode') === 'HomeDelivery',
-        deliveryName = line.get('nameDelivery') ? line.get('nameDelivery') : (line.get('obrdmDeliveryMode') ? _.find(OB.MobileApp.model.get('deliveryModes'), function (dm) {
-           return dm.id === line.get('obrdmDeliveryMode');
-         }).name : null);
+    if (OB.App.Security.hasPermission('OBRDM_EnableDeliveryModes')) {
+     const {obrdmDeliveryDate, obrdmDeliveryTime, obrdmDeliveryMode, nameDelivery} = line;
+     let deliveryDate;
+     if(obrdmDeliveryDate) {
+       deliveryDate = obrdmDeliveryDate instanceof Date ? obrdmDeliveryDate : new Date(obrdmDeliveryDate);
+     }
+     let deliveryTime;
+     if(obrdmDeliveryTime) {
+       deliveryDate = obrdmDeliveryTime instanceof Date ? obrdmDeliveryTime : new Date(obrdmDeliveryTime);
+     }
+     const showDate = obrdmDeliveryMode === 'PickupInStoreDate' || obrdmDeliveryMode === 'HomeDelivery';
+     const showTime = obrdmDeliveryMode === 'HomeDelivery';
+     const deliveryName = nameDelivery ? nameDelivery : (obrdmDeliveryMode ? OB.App.TerminalProperty.get('deliveryModes').find(dm => dm.id === obrdmDeliveryMode).name : null);
      
-     if (line.get('obrdmDeliveryMode') && deliveryName && (line.get('obrdmDeliveryMode') !== order.get('obrdmDeliveryModeProperty') || deliveryDate)) {
-      var currentDate, currentTime;
+     if (obrdmDeliveryMode && deliveryName && (obrdmDeliveryMode !== ticket.obrdmDeliveryModeProperty || deliveryDate)) {
       if (!deliveryDate) {
-        currentDate = new Date();
-        currentDate.setHours(0);
-        currentDate.setMinutes(0);
-        currentDate.setSeconds(0);
+        deliveryDate = new Date();
+        deliveryDate.setHours(0);
+        deliveryDate.setMinutes(0);
+        deliveryDate.setSeconds(0);
       }
 
       if (!deliveryTime) {
-        currentTime = new Date();
-        currentTime.setSeconds(0);
+        deliveryTime = new Date();
+        deliveryTime.setSeconds(0);
       }
      %>
       <line>
@@ -117,82 +110,82 @@
       </line>
      <% if(showDate){%>
 		<line>
-          <text align ="right">-- <%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBRDM_DeliveryDate'))%>: <%=deliveryDate ? OB.I18N.formatDate(deliveryDate) : OB.I18N.formatDate(currentDate)%></text>
+          <text align ="right">-- <%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBRDM_DeliveryDate'))%>: <%=OB.I18N.formatDate(deliveryDate) %></text>
         </line>         
      <%}
       if(showTime){%>
 		<line>
-          <text align ="right">-- <%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBRDM_DeliveryTime'))%>: <%=deliveryTime ? OB.I18N.formatHour(deliveryTime) : OB.I18N.formatHour(currentDate)%></text>
+          <text align ="right">-- <%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBRDM_DeliveryTime'))%>: <%=OB.I18N.formatHour(deliveryTime) %></text>
         </line>
       <%}
       }
      }
-        promotions = line.get('promotions');
-        if (promotions) {
-          promotions.forEach(function(p) {
+
+        if (line.promotions) {
+          line.promotions.forEach(p => {
             if (!p.hidden) {
             %>
           <line>
             <text align="left" length="2">--</text>
             <text align="left" length="32"><%= OB.UTIL.encodeXMLComponent(p.name) %></text>
-            <text align="right" length="8"><%= OB.I18N.formatCurrency(-p.amt) %></text>
+            <text align="right" length="8"><%= OB.UTIL.printAmount(-p.amt) %></text>
           </line>
           <%
             }
           });
         }
-      }
+      });
     %>
-    <%if(!order.get('priceIncludesTax')){%>
+    <%if(!ticket.priceIncludesTax){%>
       <line>
         <text align ="left" length="21"><%= OB.I18N.getLabel('OBPOS_LblTotalTax') %></text>
         <text align ="right" length="5"></text>
         <text align ="right" length="8"></text>
-        <text align ="right" length="8"><%= OB.I18N.formatCurrency(OB.DEC.sub(order.getGross() , order.getNet())) %></text>  
+        <text align ="right" length="8"><%= OB.UTIL.printAmount(OB.DEC.sub(ticket.grossAmount, ticket.netAmount)) %></text>
       </line>
     <%}%>
     <line></line>
     <line size="1">
-      <text align ="left" length="25"><%=OB.I18N.getLabel('OBPOS_ReceiptTotal') + ' ' + order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER) %></text>
-      <text align ="right" length="14"><%= order.printGross() %></text>
+      <text align ="left" length="25"><%=OB.I18N.getLabel('OBPOS_ReceiptTotal') + ' ' + ticket['currency$_identifier'] %></text>
+      <text align ="right" length="14"><%= OB.UTIL.printAmount(ticket.grossAmount) %></text>
     </line>
       <%
-        var payments = order.get('payments');
-        var isCancelled = order.get('iscancelled');
-        for (var i = 0; i < payments.length; i++) {
-          var paymentName = payments.at(i).get('name'), isCancelledPayment;
-          if (payments && payments.at(i) && payments.at(i).get('paymentData') && payments.at(i).get('paymentData').name && payments.at(i).get('paymentData').name.length > 0) {
-            paymentName = paymentName + ' (' + payments.at(i).get('paymentData').name + ')';
+        const payments = ticket.payments || [];
+        payments.forEach(payment => {
+          let paymentName = payment.name;
+          let isCancelledPayment;
+          if (payment.paymentData && payment.paymentData.name && payment.paymentData.name.length > 0) {
+            paymentName = paymentName + ' (' + payment.paymentData.name + ')';
           }
-          if(isCancelled && payments.at(i).get('paymentAmount') === 0){
+          if(ticket.iscancelled && payment.paymentAmount === 0) {
             isCancelledPayment = true;
           }
-      if(payments.at(i).get('rate') && payments.at(i).get('rate')!=='1'){
+         if(payment.rate && payment.rate !=='1') {
       %>
         <line>
           <text align="left" length="15"><%= paymentName %></text>
-          <text align="right" length="12"><%= '('+OB.I18N.formatCurrency(OB.DEC.abs(payments.at(i).get('amount')))+' '+payments.at(i).get('isocode')+')' %></text>
-          <text align="right" length="13"><%= OB.I18N.formatCurrency(payments.at(i).get('origAmount')) %></text>
+          <text align="right" length="12"><%= '('+OB.UTIL.printAmount(OB.DEC.abs(payment.amount))+' '+payment.isocode+')' %></text>
+          <text align="right" length="13"><%= OB.UTIL.printAmount(payment.origAmount) %></text>
         </line>
      <%
          }else {
      %>
         <line>
           <%
-            if(isCancelledPayment){
+            if(isCancelledPayment) {
           %>
             <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_Cancelled') %></text>
           <%
            } else {
           %>
-            <text align="left" length="20"><%= paymentName %></text>
+          <text align="left" length="20"><%= paymentName %></text>
           <% } %>
-          <text align="right" length="20"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
+          <text align="right" length="20"><%= OB.UTIL.printAmount(payment.amount) %></text>
         </line>
       <%
         }
-          if (payments.at(i).get('gatewayData')) {
-          var pinfo = payments.at(i).get('gatewayData');
+          if (payment.gatewayData) {
+          const pinfo = payment.gatewayData;
       %>
         <line>
           <text align="left" length="2"></text>
@@ -220,27 +213,27 @@
         <% } %>
       <%
           }
-        }
+        });
       %>   
-    <% if (order.get('hasbeenpaid') === 'Y' && order.get('paidOnCredit')) { %>
+    <% if (ticket.hasbeenpaid === 'Y' && ticket.paidOnCredit) { %>
     <line>
       <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidOnCredit')) %></text>
-      <text align="right" length="20"><%= OB.I18N.formatCurrency(OB.DEC.abs(order.getGross() + order.get('payment'))) %></text>
+      <text align="right" length="20"><%= OB.UTIL.printAmount(OB.DEC.abs(ticket.grossAmount + ticket.payment)) %></text>
     </line>
     <% } %>
 
     <%
-      var changelabel = OB.UTIL.getChangeLabelFromReceipt(order);
+      const changelabel = OB.UTIL.getChangeLabelFromTicket(ticket)
       if (changelabel) {
         if (changelabel.length > 34) {
-          var changesplit = changelabel.split(' + ');
+          const changesplit = changelabel.split(' + ');
     %>
           <line>
               <text align ="left" length="7"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
               <text align ="right" length="35"><%= changesplit[0] %> </text>
           </line>      
     <%     
-          var changeindex;
+          let changeindex;
           for (changeindex = 1; changeindex < changesplit.length; changeindex++) {
     %>
           <line>
@@ -261,10 +254,10 @@
     
     <line></line>
     <line size="1">
-      <% if (order.get('hasbeenpaid') === 'N' && !order.get('isPaid')) { %>
+      <% if (ticket.hasbeenpaid === 'N' && !ticket.isPaid) { %>
         <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_draft')) %></text>
       <% } else { %>
-        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_returned')) %></text>
+        <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_returned'))  %></text>
       <% } %>
     </line>
     <line>
@@ -280,30 +273,30 @@
       <text>------------------------------------------</text>
     </line>
     <%
-      var totAmount = 0;
-      var taxes = order.get('taxes');
-      for (var t in taxes) {
-        totAmount += taxes[t].amount;
+      let totAmount = 0;
+      const taxes = Object.values(ticket.taxes).sort((a, b) => a.name.localeCompare(b.name));
+      taxes.forEach(tax => {
+        totAmount += tax.amount;
     %>
       <line>
-        <text align ="left" length="12"><%= OB.I18N.formatRate(taxes[t].rate) %></text>
-        <text align ="left" length="12"><%= OB.I18N.formatCurrency(taxes[t].net) %></text>
-        <text align ="left" length="12"><%= OB.I18N.formatCurrency(taxes[t].amount) %></text>
+        <text align ="left" length="12"><%= OB.I18N.formatRate(tax.rate) %></text>
+        <text align ="left" length="12"><%= OB.UTIL.printAmount(tax.net) %></text>
+        <text align ="left" length="12"><%= OB.UTIL.printAmount(tax.amount) %></text>
       </line>
     <%
-      }
+      });
     %>
     <line>
       <text>------------------------------------------</text>
     </line>
     <line>
       <text align ="left" length="24"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
-      <text align ="left" length="12"><%= OB.I18N.formatCurrency(totAmount) %></text>
+      <text align ="left" length="12"><%= OB.UTIL.printAmount(totAmount) %></text>
     </line>
 
     <line>
-      <% if(order.getScannableDocumentNo() !== ''){ %>
-        <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.getScannableDocumentNo()) %></barcode>
+      <% if(ticket.documentNo !== ''){ %>
+        <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(ticket.documentNo) %></barcode>
       <% } %>
     </line>
 
