@@ -53,6 +53,19 @@ describe('PrintTemplateStore', () => {
     expect(template.resource).toBe(defaultResource);
   });
 
+  it('select ticket print template', async () => {
+    const ticket = { orderType: 0, lines: [{ qty: 1 }] };
+    const resource = '../org.openbravo.retail.posterminal/res/printreceipt.xml';
+
+    OB.App.TerminalProperty.get.mockReturnValue({});
+
+    const template = await OB.App.PrintTemplateStore.selectTicketPrintTemplate(
+      ticket
+    );
+
+    expect(template.resource).toBe(resource);
+  });
+
   test.each`
     ticket                                                                                      | expected
     ${{ ordercanceled: true, lines: [{ qty: 1 }] }}                                             | ${'printCanceledReceiptTemplate'}
