@@ -41,6 +41,7 @@ describe('ExternalDeviceController', () => {
     OB.App.TerminalProperty.get.mockImplementation(property => {
       if (property === 'terminal') {
         return {
+          id: '12FA7864FBDE4FCC8D6E3891A936D61F',
           searchKey: 'VBS1001',
           hardwareurl: 'http://127.0.0.1:8090/printer'
         };
@@ -72,6 +73,31 @@ describe('ExternalDeviceController', () => {
       }
       return {};
     });
+  });
+
+  it('get identifier of active URLs', async () => {
+    OB.I18N.getLabel.mockReturnValue('Main Terminal Printer');
+
+    const controller = new OB.App.Class.ExternalDeviceController();
+    expect(controller.getActiveURLIdentifier(false)).toBe(
+      'Main Terminal Printer'
+    );
+    expect(controller.getActiveURLIdentifier(true)).toBe(
+      'Main Terminal Printer'
+    );
+  });
+
+  it('change active URLs', async () => {
+    const controller = new OB.App.Class.ExternalDeviceController();
+    controller.setActiveURL('2');
+    controller.setActivePDFURL('3');
+
+    expect(controller.getActiveURLIdentifier(false)).toBe(
+      'Test Printer 2 (Receipt only)'
+    );
+    expect(controller.getActiveURLIdentifier(true)).toBe(
+      'Test Printer 3 (PDF only)'
+    );
   });
 
   it('main URL is active', async () => {

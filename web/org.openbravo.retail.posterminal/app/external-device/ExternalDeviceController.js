@@ -130,22 +130,20 @@
     getPrinterData(hardwareId, filter) {
       const urlList = OB.App.TerminalProperty.get('hardwareURL') || [];
       const validPrinter =
-        hardwareId == null && this.mainURL == null
-          ? urlList.find(url => filter(url) && url.hardwareURL === this.mainURL)
-          : urlList.find(url => filter(url) && url.id === hardwareId);
+        hardwareId != null
+          ? urlList.find(url => filter(url) && url.id === hardwareId)
+          : null;
 
-      return validPrinter
-        ? {
-            url: validPrinter.hardwareURL,
-            // eslint-disable-next-line no-underscore-dangle
-            identifier: validPrinter._identifier,
-            id: validPrinter.id
-          }
-        : {
-            url: this.mainURL,
-            identifier: OB.I18N.getLabel('OBPOS_MainPrinter'),
-            id: OB.App.TerminalProperty.get('terminal').id
-          };
+      return {
+        url: validPrinter ? validPrinter.hardwareURL : this.mainURL,
+        identifier: validPrinter
+          ? // eslint-disable-next-line no-underscore-dangle
+            validPrinter._identifier
+          : OB.I18N.getLabel('OBPOS_MainPrinter'),
+        id: validPrinter
+          ? validPrinter.id
+          : OB.App.TerminalProperty.get('terminal').id
+      };
     }
 
     storeData(data, device) {
