@@ -14,11 +14,11 @@
     %>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.printAmount(ticket.grossAmount)%></text>
+        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(ticket.grossAmount)%></text>
       </line>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_RemainingToPay'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.printAmount(pendingAmount)%></text>
+        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(pendingAmount)%></text>
       </line>
     <% }else{ 
     %>
@@ -26,21 +26,21 @@
       %>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_Paid'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.printAmount(OB.DEC.sub(ticket.grossAmount, pendingAmount))%></text>
+        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(OB.DEC.sub(ticket.grossAmount, pendingAmount))%></text>
       </line>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_RemainingToPay'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.printAmount(pendingAmount)%></text>
+        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(pendingAmount)%></text>
       </line>
     <% }else{ 
     %>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_Paid'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.printAmount(OB.DEC.add(ticket.grossAmount, ticket.change))%></text>
+        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(OB.DEC.add(ticket.grossAmount, ticket.change))%></text>
       </line>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.printAmount(ticket.change)%></text>
+        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(ticket.change)%></text>
       </line>
     <% } 
     %>

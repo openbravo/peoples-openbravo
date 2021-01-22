@@ -11,7 +11,7 @@
   <display>
       <line>
         <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
-        <text align="right" length="10"><%= OB.UTIL.printAmount(ticket.grossAmount) %></text>
+        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(ticket.grossAmount) %></text>
       </line>
       <line>
         <text align="center" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_thankyou'))%></text>

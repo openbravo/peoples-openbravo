@@ -70,9 +70,9 @@
     %>
       <line>
         <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(line.product._identifier) %></text>
-        <text align ="right" length="5"><%= OB.UTIL.printQty(line.qty) %></text>
-        <text align ="right" length="8"><%= OB.UTIL.printTicketLinePrice(line) %></text>
-        <text align ="right" length="8"><%= OB.UTIL.printTicketLineAmount(line) %></text>
+        <text align ="right" length="5"><%= OB.App.PrintUtils.printQty(line.qty) %></text>
+        <text align ="right" length="8"><%= OB.App.PrintUtils.printTicketLinePrice(line) %></text>
+        <text align ="right" length="8"><%= OB.App.PrintUtils.printTicketLineAmount(line) %></text>
       </line>
     <%if(line.organization && line.organization.id !== terminal.organization) {%>
       <line>
@@ -129,7 +129,7 @@
           <line>
             <text align="left" length="2">--</text>
             <text align="left" length="32"><%= OB.UTIL.encodeXMLComponent(p.name) %></text>
-            <text align="right" length="8"><%= OB.UTIL.printAmount(-p.amt) %></text>
+            <text align="right" length="8"><%= OB.App.PrintUtils.printAmount(-p.amt) %></text>
           </line>
           <%
             }
@@ -142,13 +142,13 @@
         <text align ="left" length="21"><%= OB.I18N.getLabel('OBPOS_LblTotalTax') %></text>
         <text align ="right" length="5"></text>
         <text align ="right" length="8"></text>
-        <text align ="right" length="8"><%= OB.UTIL.printAmount(OB.DEC.sub(ticket.grossAmount, ticket.netAmount)) %></text>  
+        <text align ="right" length="8"><%= OB.App.PrintUtils.printAmount(OB.DEC.sub(ticket.grossAmount, ticket.netAmount)) %></text>
       </line>
     <%}%>
     <line></line>
     <line size="1">
       <text align ="left" length="25"><%=OB.I18N.getLabel('OBPOS_ReceiptTotal') + ' ' + ticket['currency$_identifier'] %></text>
-      <text align ="right" length="14"><%= OB.UTIL.printAmount(ticket.grossAmount) %></text>
+      <text align ="right" length="14"><%= OB.App.PrintUtils.printAmount(ticket.grossAmount) %></text>
     </line>   
       <%
         const payments = ticket.payments || [];
@@ -161,15 +161,15 @@
       %>
         <line>
           <text align="left" length="15"><%= paymentName %></text>
-          <text align="right" length="12"><%= '('+OB.UTIL.printAmount(payment.amount)+' '+payment.isocode+')' %></text>
-          <text align="right" length="13"><%= OB.UTIL.printAmount(payment.origAmount) %></text>
+          <text align="right" length="12"><%= '('+OB.App.PrintUtils.printAmount(payment.amount)+' '+payment.isocode+')' %></text>
+          <text align="right" length="13"><%= OB.App.PrintUtils.printAmount(payment.origAmount) %></text>
         </line>
      <%
          }else {
      %>
         <line>
           <text align="left" length="20"><%= paymentName %></text>
-          <text align="right" length="20"><%= OB.UTIL.printAmount(payment.amount) %></text>
+          <text align="right" length="20"><%= OB.App.PrintUtils.printAmount(payment.amount) %></text>
         </line>
       <%
         }
@@ -208,12 +208,12 @@
     <% if (ticket.hasbeenpaid === 'Y' && ticket.paidOnCredit) { %>
     <line>
       <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidOnCredit')) %></text>
-      <text align="right" length="20"><%= OB.UTIL.printAmount(ticket.grossAmount - ticket.payment) %></text>
+      <text align="right" length="20"><%= OB.App.PrintUtils.printAmount(ticket.grossAmount - ticket.payment) %></text>
     </line>
     <% } %>
     
     <%
-      const changelabel = OB.UTIL.getChangeLabelFromTicket(ticket)
+      const changelabel = OB.App.PrintUtils.getChangeLabelFromTicket(ticket)
       if (changelabel) {
         if (changelabel.length > 34) {
           const changesplit = changelabel.split(' + ');
@@ -272,8 +272,8 @@
     %>
       <line>
         <text align ="left" length="12"><%= OB.I18N.formatRate(tax.rate) %></text>
-        <text align ="left" length="12"><%= OB.UTIL.printAmount(tax.net) %></text>
-        <text align ="left" length="12"><%= OB.UTIL.printAmount(tax.amount) %></text>
+        <text align ="left" length="12"><%= OB.App.PrintUtils.printAmount(tax.net) %></text>
+        <text align ="left" length="12"><%= OB.App.PrintUtils.printAmount(tax.amount) %></text>
       </line>
     <%
       });
@@ -283,7 +283,7 @@
     </line>
     <line>
       <text align ="left" length="24"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
-      <text align ="left" length="12"><%= OB.UTIL.printAmount(totAmount) %></text>
+      <text align ="left" length="12"><%= OB.App.PrintUtils.printAmount(totAmount) %></text>
     </line>
 
     <line>

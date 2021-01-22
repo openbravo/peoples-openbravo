@@ -12,14 +12,14 @@
     <display>
         <line>
             <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(ticketLine.product._identifier) %></text>
-            <text align="right" length="5">x<%= OB.UTIL.printQty(ticketLine.qty) %></text>
+            <text align="right" length="5">x<%= OB.App.PrintUtils.printQty(ticketLine.qty) %></text>
         </line>
         <line>
         <% if (ticketLine.qty === 1) {%>
-           <text align="right" length="20"><%= OB.UTIL.printTicketLinePrice(ticketLine) %></text>
+           <text align="right" length="20"><%= OB.App.PrintUtils.printTicketLinePrice(ticketLine) %></text>
         <% } else { %>
-           <text align="right" length="10"><%= OB.UTIL.printTicketLinePrice(ticketLine) %></text>
-           <text align="right" length="10"><%= OB.UTIL.printTicketLineAmount(ticketLine) %></text>
+           <text align="right" length="10"><%= OB.App.PrintUtils.printTicketLinePrice(ticketLine) %></text>
+           <text align="right" length="10"><%= OB.App.PrintUtils.printTicketLineAmount(ticketLine) %></text>
         <% } %>
         </line>
     </display>
