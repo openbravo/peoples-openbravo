@@ -183,6 +183,13 @@
       return data;
     }
 
+    async openDrawer() {
+      const template = await OB.App.PrintTemplateStore.get(
+        'openDrawerTemplate'
+      );
+      await this.print(template, {}, this.devices.DRAWER);
+    }
+
     async display(template, params) {
       const data = await this.print(template, params, this.devices.DISPLAY);
       return data;

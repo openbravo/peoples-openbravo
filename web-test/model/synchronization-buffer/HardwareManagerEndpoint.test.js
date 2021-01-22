@@ -255,6 +255,14 @@ describe('Harware Manager Synchronization Endpoint', () => {
       );
     });
 
+    it('openDrawer', async () => {
+      hwManagerEndpoint.controller.openDrawer = jest.fn();
+
+      await hwManagerEndpoint.openDrawer();
+
+      expect(hwManagerEndpoint.controller.openDrawer).toHaveBeenCalledTimes(1);
+    });
+
     it('printTicket - with canceled ticket', async () => {
       const ticket = {
         id: '1',

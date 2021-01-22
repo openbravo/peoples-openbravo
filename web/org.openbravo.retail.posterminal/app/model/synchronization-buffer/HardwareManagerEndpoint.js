@@ -155,6 +155,7 @@
       this.messageTypes.push(
         'displayTotal',
         'greetHardwareManager',
+        'openDrawer',
         'printTicket',
         'printTicketLine',
         'printWelcome'
@@ -178,6 +179,9 @@
           break;
         case 'greetHardwareManager':
           await this.greetHardwareManager();
+          break;
+        case 'openDrawer':
+          await this.openDrawer();
           break;
         case 'printTicket':
           await this.printTicket(message.messageObj);
@@ -235,6 +239,14 @@
         }
       } catch (error) {
         OB.error(`Error greeting hardware manager: ${error}`);
+      }
+    }
+
+    async openDrawer() {
+      try {
+        await this.controller.openDrawer();
+      } catch (error) {
+        OB.error(`Error opening the drawer: ${error}`);
       }
     }
 

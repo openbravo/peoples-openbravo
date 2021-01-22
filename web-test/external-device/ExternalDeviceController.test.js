@@ -11,9 +11,10 @@
 global.OB = {
   App: {
     Class: {},
+    PrintTemplateStore: { get: jest.fn() },
     Request: { get: jest.fn(), post: jest.fn() },
-    TerminalProperty: { get: jest.fn() },
     SynchronizationBuffer: { goOnline: jest.fn(), goOffline: jest.fn() },
+    TerminalProperty: { get: jest.fn() },
     UserNotifier: { notifyError: jest.fn() },
     View: { DialogUIHandler: { askConfirmation: jest.fn() } }
   },
@@ -161,6 +162,32 @@ describe('ExternalDeviceController', () => {
     expect(controller.storeData.mock.calls[0][0]).toBe('<output></output>');
     expect(controller.storeData.mock.calls[0][1]).toBe(
       controller.devices.DISPLAY
+    );
+  });
+
+  it('openDrawer', async () => {
+    const controller = new OB.App.Class.ExternalDeviceController();
+    const templateContent = '<output><opendrawer/></output>';
+    OB.App.PrintTemplateStore.get.mockResolvedValue({
+      generate: async () => {
+        return { data: templateContent };
+      }
+    });
+    controller.requestPrint = jest.fn();
+    controller.storeData = jest.fn();
+
+    await controller.openDrawer();
+
+    expect(OB.App.PrintTemplateStore.get.mock.calls[0][0]).toBe(
+      'openDrawerTemplate'
+    );
+    expect(controller.requestPrint.mock.calls[0][0]).toBe(templateContent);
+    expect(controller.requestPrint.mock.calls[0][1]).toBe(
+      controller.devices.DRAWER
+    );
+    expect(controller.storeData.mock.calls[0][0]).toBe(templateContent);
+    expect(controller.storeData.mock.calls[0][1]).toBe(
+      controller.devices.DRAWER
     );
   });
 

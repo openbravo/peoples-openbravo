@@ -229,4 +229,9 @@
     'printReturnTemplate',
     '../org.openbravo.retail.posterminal/res/printreturn.xml'
   );
+
+  OB.App.PrintTemplateStore.register(
+    'openDrawerTemplate',
+    '../org.openbravo.retail.posterminal/res/opendrawer.xml'
+  );
 })();
