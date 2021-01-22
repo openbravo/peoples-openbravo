@@ -407,8 +407,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // External Device
         businesslogic("app/external-device/ExternalDeviceController"), //
         businesslogic("app/external-device/actions/GreetHardwareManager"), //
-        businesslogic("app/external-device/actions/Print"), //
         businesslogic("app/external-device/actions/PrintLine"), //
+        businesslogic("app/external-device/actions/PrintTicket"), //
         businesslogic("app/external-device/actions/PrintWelcome"), //
         businesslogic("app/external-device/printing/PrintTemplate"), //
         businesslogic("app/external-device/printing/PrintTemplateStore"), //
