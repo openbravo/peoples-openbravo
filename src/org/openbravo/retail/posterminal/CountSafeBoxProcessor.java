@@ -53,6 +53,15 @@ public class CountSafeBoxProcessor {
     JSONArray countSafeBoxInfo = jsonCountSafeBox.getJSONArray("countSafeBoxInfo");
 
     boolean isInitialCount = jsonCountSafeBox.optBoolean("isInitialCount", false);
+
+    /**
+     * Insert the record on the safeBox history
+     */
+    if (isInitialCount) {
+      createSafeboxHistoryRecord(safeBox, countSafeBoxDate,
+          jsonCountSafeBox.optString("touchpointId"));
+    }
+
     ArrayList<FIN_Reconciliation> arrayReconciliations = new ArrayList<FIN_Reconciliation>();
 
     for (int i = 0; i < countSafeBoxInfo.length(); i++) {
@@ -139,6 +148,38 @@ public class CountSafeBoxProcessor {
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return result;
+  }
+
+  /**
+   * @name createSafeboxHistoryRecord
+   * @param safeBox
+   *          The safeBox associated to the history record.
+   * @param countSafeBoxDate
+   *          The date when the safeBox was counted.
+   */
+  private void createSafeboxHistoryRecord(OBPOSSafeBox safeBox, Date countSafeBoxDate,
+      String touchpointId) {
+    OBPOSSafeboxTouchpoint historyRecord = OBProvider.getInstance()
+        .get(OBPOSSafeboxTouchpoint.class);
+
+    if (touchpointId == null) {
+      logger.warn("Can not create Safebox history record without a touchpoint available");
+    }
+
+    OBPOSApplications touchpoint = OBDal.getInstance().get(OBPOSApplications.class, touchpointId);
+
+    if (touchpoint == null) {
+      logger.warn(String.format(
+          "Can not find a touchpoint with ID (%s), and for that reason, a Safebox history record can not be created.",
+          safeBox.getId()));
+    }
+
+    historyRecord.setNewOBObject(true);
+    historyRecord.setDateIn(countSafeBoxDate);
+    historyRecord.setObposSafebox(safeBox);
+    historyRecord.setTouchpoint(touchpoint);
+    historyRecord.setActive(true);
+    OBDal.getInstance().save(historyRecord);
   }
 
   private void associateTransactions(OBPOSSafeBoxPaymentMethod paymentType,

@@ -21,6 +21,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
@@ -108,6 +109,9 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
         safeBox = (OBPOSSafeBox) safeBoxCriteria.uniqueResult();
       }
       if (jsonCashup.has("cashPaymentMethodInfo") && safeBox != null) {
+
+        updateSafeboxHistoryRecord(cashUpDate, cashUp, safeBox);
+
         JSONArray paymentCashupInfo = jsonCashup.getJSONArray("cashPaymentMethodInfo");
         for (int i = 0; i < paymentCashupInfo.length(); ++i) {
           JSONObject payment = paymentCashupInfo.getJSONObject(i);
@@ -193,6 +197,42 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
 
     return jsonData;
+  }
+
+  /**
+   * @name updateSafeboxHistoryRecord
+   * @param cashUpDate
+   *          The date of the cash up
+   * @param cashUp
+   *          The cash up object being associated
+   * @param safeBox
+   *          The safeBox object being associated
+   */
+  private void updateSafeboxHistoryRecord(Date cashUpDate, OBPOSAppCashup cashUp,
+      OBPOSSafeBox safeBox) {
+    OBCriteria<OBPOSSafeboxTouchpoint> criteria = OBDal.getInstance()
+        .createCriteria(OBPOSSafeboxTouchpoint.class);
+    criteria.add(Restrictions.eq(OBPOSSafeboxTouchpoint.PROPERTY_OBPOSSAFEBOX, safeBox));
+    criteria.add(Restrictions.isNull(OBPOSSafeboxTouchpoint.PROPERTY_DATEOUT));
+    criteria.addOrder(Order.desc(OBPOSSafeboxTouchpoint.PROPERTY_DATEIN));
+    List<OBPOSSafeboxTouchpoint> list = criteria.list();
+
+    /**
+     * Check if the list is empty. This might happen if the [in] record was not created for some
+     * reason.
+     */
+    if (!list.isEmpty()) {
+      OBPOSSafeboxTouchpoint historyRecord = list.get(0);
+      historyRecord.setCashUp(cashUp);
+      historyRecord.setDateOut(cashUpDate);
+      OBDal.getInstance().save(historyRecord);
+    } else {
+      log.warn(
+
+          String.format(
+              "The dateOut property for the history record of the safebox %s has not been set because there are not history records created yet.",
+              safeBox.getId()));
+    }
   }
 
   /**
