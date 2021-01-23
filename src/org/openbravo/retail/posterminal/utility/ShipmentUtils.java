@@ -266,9 +266,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
           createdShipmentLines
               .add(addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
                   jsonorder, lineNo, pendingQty.negate(), binForReturn, null, i));
-          if (lineNo == 10) {
-            shipment.setWarehouse(binForReturn.getWarehouse());
-          }
         } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
           lineNo += 10;
@@ -293,9 +290,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
           createdShipmentLines
               .add(addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
                   jsonorder, lineNo, pendingQty, foundSingleBin, null, i));
-          if (lineNo == 10) {
-            shipment.setWarehouse(foundSingleBin.getWarehouse());
-          }
         } else {
           HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
           if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
@@ -426,9 +420,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
               createdShipmentLines
                   .add(addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i),
                       orderLine, jsonorder, lineNo, pendingQty, loc, null, i));
-              if (lineNo == 10) {
-                shipment.setWarehouse(loc.getWarehouse());
-              }
             }
           }
         }
