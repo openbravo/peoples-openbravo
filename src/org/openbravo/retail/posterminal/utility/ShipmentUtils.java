@@ -223,15 +223,11 @@ public class ShipmentUtils implements TicketPropertyMapping {
         pendingQty = pendingQty.subtract(
             new BigDecimal(orderlines.getJSONObject(i).getLong("deliveredQuantity")).abs());
       }
-      log.info("Create Shipment pendingQty " + pendingQty);
       if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
         boolean negativeLine = orderLine.getOrderedQuantity().compareTo(BigDecimal.ZERO) < 0;
 
-        log.info("Line warehouse " + orderLine.getWarehouse());
-        log.info("Shipment warehouse " + shipment.getWarehouse());
         if (!warehouse.equals(shipment.getWarehouse())) {
           shipment.setWarehouse(warehouse);
-          log.info("New Shipment warehouse " + shipment.getWarehouse());
         }
 
         boolean useSingleBin = foundSingleBin != null && orderLine.getAttributeSetValue() == null
@@ -272,7 +268,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
                   jsonorder, lineNo, pendingQty.negate(), binForReturn, null, i));
           if (lineNo == 10) {
             shipment.setWarehouse(binForReturn.getWarehouse());
-            log.info("New Shipment binForReturn warehouse " + shipment.getWarehouse());
           }
         } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
@@ -300,7 +295,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
                   jsonorder, lineNo, pendingQty, foundSingleBin, null, i));
           if (lineNo == 10) {
             shipment.setWarehouse(foundSingleBin.getWarehouse());
-            log.info("New Shipment foundSingleBin warehouse " + shipment.getWarehouse());
           }
         } else {
           HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
@@ -383,7 +377,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
                     .getWarehouse()
                     .equals(shipment.getWarehouse())) {
                   shipment.setWarehouse(stock.getStorageDetail().getStorageBin().getWarehouse());
-                  log.info("New StorageDetail Shipment warehouse " + shipment.getWarehouse());
                 }
               }
             } finally {
@@ -391,7 +384,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
             }
           }
 
-          log.info("pendingQty " + pendingQty);
           if (pendingQty.compareTo(BigDecimal.ZERO) != 0) {
             // still qty to ship or return: let's use the bin with highest prio
             OrderLoaderPreAddShipmentLineHook_Response lastAttemptBinHookResponse = null;
@@ -436,7 +428,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
                       orderLine, jsonorder, lineNo, pendingQty, loc, null, i));
               if (lineNo == 10) {
                 shipment.setWarehouse(loc.getWarehouse());
-                log.info("New Shipment overissueStoreBin warehouse " + shipment.getWarehouse());
               }
             }
           }
@@ -585,7 +576,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
 
     line.setMovementQuantity(qty);
     line.setStorageBin(bin);
-    log.info("New Bin Warehouse " + line.getStorageBin().getWarehouse());
     if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
         "attSetInstanceDesc")) {
       line.setAttributeSetValue(
