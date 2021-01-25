@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -178,6 +178,13 @@
       'Ticket'
     ).toStateObject(order);
     return ticket.lines[0];
+  };
+
+  // Turns a backbone order into a state ticket
+  OB.UTIL.TicketUtils.toTicket = order => {
+    return OB.App.StateBackwardCompatibility.getInstance(
+      'Ticket'
+    ).toStateObject(order);
   };
 
   // Turns a backbone "multi-order" into a "multi-ticket"

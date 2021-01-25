@@ -342,7 +342,7 @@ describe('Harware Manager Synchronization Endpoint', () => {
         hwManagerEndpoint.retryPrintTicket = jest.fn();
         hwManagerEndpoint.controller.executeHooks = jest
           .fn()
-          .mockResolvedValue({});
+          .mockResolvedValue({ ticket });
         OB.App.State.Ticket.Utils.isNegative.mockReturnValue(false);
         hwManagerEndpoint.selectPrinter = jest.fn();
 
@@ -382,7 +382,7 @@ describe('Harware Manager Synchronization Endpoint', () => {
       hwManagerEndpoint.retryPrintTicket = jest.fn();
       hwManagerEndpoint.controller.executeHooks = jest
         .fn()
-        .mockResolvedValue({});
+        .mockResolvedValue({ ticket });
       OB.App.State.Ticket.Utils.isNegative.mockReturnValue(false);
       hwManagerEndpoint.selectPrinter = jest.fn();
 

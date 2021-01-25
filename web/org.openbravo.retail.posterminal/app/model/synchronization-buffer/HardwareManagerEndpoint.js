@@ -277,24 +277,26 @@
           return;
         }
 
-        const {
-          cancelOperation,
-          forcedtemplate
-        } = await this.controller.executeHooks('OBPRINT_PrePrint', {
-          forcePrint: printSettings.forcePrint,
-          offline: printSettings.offline,
-          ticket,
-          forcedtemplate: printSettings.forcedtemplate,
-          model: this.legacyPrinter ? this.legacyPrinter.model : null,
-          cancelOperation: false
-        });
+        const prePrintData = await this.controller.executeHooks(
+          'OBPRINT_PrePrint',
+          {
+            forcePrint: printSettings.forcePrint,
+            offline: printSettings.offline,
+            ticket,
+            forcedtemplate: printSettings.forcedtemplate,
+            model: this.legacyPrinter ? this.legacyPrinter.model : null,
+            cancelOperation: false
+          }
+        );
 
-        if (cancelOperation && cancelOperation === true) {
+        if (prePrintData.cancelOperation === true) {
           return;
         }
 
         const terminal = OB.App.TerminalProperty.get('terminal');
-        const { printableTicket, printableOrder } = toPrintable(ticket);
+        const { printableTicket, printableOrder } = toPrintable(
+          prePrintData.ticket
+        );
 
         if (!printableTicket.print) {
           return;
@@ -302,7 +304,7 @@
 
         const template = await this.templateStore.selectTicketPrintTemplate(
           printableTicket,
-          { forcedtemplate }
+          { forcedtemplate: prePrintData.forcedtemplate }
         );
         isPdf = template.ispdf;
 
@@ -328,12 +330,15 @@
           await this.controller.print(template, { ticket: ticketToPrint });
         }
 
-        await this.controller.executeHooks('OBPRINT_PostPrint', {
-          ticket: printableOrder || printableTicket,
-          printedTicket
-        });
+        const postPrintData = await this.controller.executeHooks(
+          'OBPRINT_PostPrint',
+          {
+            ticket: printableTicket,
+            printedTicket
+          }
+        );
 
-        await this.displayTicket(printableTicket);
+        await this.displayTicket(postPrintData.ticket);
       } catch (error) {
         OB.error(`Error printing ticket: ${error}`);
         await this.retryPrintTicket(ticket, printSettings, isPdf);

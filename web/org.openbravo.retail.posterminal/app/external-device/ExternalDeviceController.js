@@ -251,7 +251,7 @@
 
     async executeHooks(hookName, payload) {
       if (!OB.App.StateBackwardCompatibility) {
-        // not in legacy mode: hooks are not supported
+        // not in legacy mode: printing hooks are not supported
         return payload;
       }
 
@@ -265,13 +265,20 @@
         payloadForHooks = { ...payload, order, receipt: order };
       }
 
-      const finalPayload = await new Promise(resolve => {
+      const afterHooksPayload = await new Promise(resolve => {
         OB.UTIL.HookManager.executeHooks(hookName, payloadForHooks, args =>
-          resolve(args)
+          resolve(args || {})
         );
       });
 
-      return finalPayload;
+      if (afterHooksPayload.order) {
+        return {
+          ...afterHooksPayload,
+          ticket: OB.UTIL.TicketUtils.toTicket(afterHooksPayload.order)
+        };
+      }
+
+      return afterHooksPayload;
     }
 
     async requestPrint(data, device) {
