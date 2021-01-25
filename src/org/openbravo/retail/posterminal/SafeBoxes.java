@@ -1,5 +1,7 @@
 package org.openbravo.retail.posterminal;
 
+import java.util.List;
+
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -8,9 +10,12 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
@@ -22,6 +27,9 @@ public class SafeBoxes extends JSONProcessSimple {
   public static final String safeBoxesPaymentMethodsPropertyExtension = "SafeBoxesExtensionPaymentMethods";
   public static final String safeBoxesPaymentMethodsTransactionPropertyExtension = "SafeBoxesPaymentMethodsExtensionTransaction";
   public static final String safeBoxesPaymentMethodsAccountPropertyExtension = "SafeBoxesPaymentMethodsExtensionAccount";
+  public static final String LAST_TERMINAL_IN = "lastIn";
+  public static final String LAST_TERMINAL_OUT = "lastOut";
+  public static final String LAST_TERMINAL_SEARCHKEY = "searchKey";
 
   @Inject
   @Any
@@ -77,6 +85,13 @@ public class SafeBoxes extends JSONProcessSimple {
 
       for (int countSafeBox = 0; countSafeBox < safeBoxes.length(); countSafeBox++) {
         JSONObject safeBox = safeBoxes.getJSONObject(countSafeBox);
+
+        OBPOSSafeBox safeBoxObject = OBDal.getInstance()
+            .get(OBPOSSafeBox.class, safeBox.getString("safeBoxId"));
+
+        JSONObject lastHistoryRecord = getLastHistoryRecord(safeBoxObject);
+
+        safeBox.putOpt("lastTouchpoint", lastHistoryRecord);
 
         JSONArray safeBoxPaymentMethods = new JSONArray();
         // get the details of each payment method
@@ -157,6 +172,41 @@ public class SafeBoxes extends JSONProcessSimple {
     } finally {
       OBContext.restorePreviousMode();
     }
+    return result;
+  }
+
+  /**
+   * @name getLastHistoryRecord
+   * @param safeBox
+   *          The reference of a safeBox to get the last history record
+   * @return OBPOSSafeboxTouchpoint the last history record of a given safeBox
+   * @throws JSONException
+   */
+  public JSONObject getLastHistoryRecord(OBPOSSafeBox safeBox) throws JSONException {
+
+    JSONObject result = null;
+
+    if (safeBox == null) {
+      return result;
+    }
+
+    OBCriteria<OBPOSSafeboxTouchpoint> criteria = OBDal.getInstance()
+        .createCriteria(OBPOSSafeboxTouchpoint.class);
+    criteria.add(Restrictions.eq(OBPOSSafeboxTouchpoint.PROPERTY_OBPOSSAFEBOX, safeBox));
+    criteria.addOrder(Order.desc(OBPOSSafeboxTouchpoint.PROPERTY_DATEOUT));
+    criteria.addOrder(Order.desc(OBPOSSafeboxTouchpoint.PROPERTY_DATEIN));
+    List<OBPOSSafeboxTouchpoint> list = criteria.list();
+
+    if (list.isEmpty()) {
+      return result;
+    }
+
+    OBPOSSafeboxTouchpoint historyRecord = list.get(0);
+    result = new JSONObject();
+    result.put(LAST_TERMINAL_IN, historyRecord.getDateIn());
+    result.put(LAST_TERMINAL_OUT, historyRecord.getDateOut());
+    result.put(LAST_TERMINAL_SEARCHKEY, historyRecord.getTouchpoint().getSearchKey());
+
     return result;
   }
 
