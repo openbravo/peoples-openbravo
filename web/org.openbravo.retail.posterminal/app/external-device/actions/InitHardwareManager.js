@@ -13,14 +13,14 @@
  * @author Carlos Aristu <carlos.aristu@openbravo.com>
  */
 
-OB.App.StateAPI.Global.registerAction('greetHardwareManager', state => {
+OB.App.StateAPI.Global.registerAction('initHardwareManager', state => {
   const newState = { ...state };
 
   const newMsg = OB.App.State.Messages.Utils.createNewMessage(
     '',
     '',
     {},
-    { type: 'greetHardwareManager', consumeOffline: true }
+    { type: 'initHardwareManager', consumeOffline: true }
   );
 
   newState.Messages = [...newState.Messages, newMsg];

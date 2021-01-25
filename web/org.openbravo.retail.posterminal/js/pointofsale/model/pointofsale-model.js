@@ -585,14 +585,36 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.Taxes.Pos.initCache(function() {
                 OB.Discounts.Pos.initCache(function() {
                   me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
+
                   const hardwareManagerEnpoint = new OB.App.Class.HardwareManagerEndpoint();
-                  hardwareManagerEnpoint.setPrinters({
-                    printer: me.printReceipt,
-                    linePrinter: me.printLine
-                  });
                   OB.App.SynchronizationBuffer.registerEndpoint(
                     hardwareManagerEnpoint
                   );
+
+                  const ticketPrinter = new OB.App.Class.TicketPrinter();
+                  ticketPrinter.setLegacyPrinter(me.printReceipt);
+                  OB.App.SynchronizationBuffer.consume(
+                    'HardwareManager',
+                    'displayTotal',
+                    async message => {
+                      await ticketPrinter.displayTotal(message);
+                    }
+                  );
+                  OB.App.SynchronizationBuffer.consume(
+                    'HardwareManager',
+                    'printTicket',
+                    async message => {
+                      await ticketPrinter.printTicket(message);
+                    }
+                  );
+                  OB.App.SynchronizationBuffer.consume(
+                    'HardwareManager',
+                    'printTicketLine',
+                    async message => {
+                      await ticketPrinter.printTicketLine(message);
+                    }
+                  );
+
                   // Now, get the hardware manager status
                   OB.POS.hwserver.status(function(data) {
                     if (data && data.exception) {
