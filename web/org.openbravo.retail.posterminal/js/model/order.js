@@ -4551,9 +4551,19 @@
       setAndSaveBP = function(bp, saveBPCallback) {
         me.set({
           bp: bp,
-          externalBusinessPartnerReference: null,
-          externalBusinessPartnerCategory: null,
-          externalBusinessPartner: null
+          externalBusinessPartnerReference: bp.get(
+            'externalBusinessPartnerReference'
+          )
+            ? bp.get('externalBusinessPartnerReference')
+            : null,
+          externalBusinessPartnerCategory: bp.get(
+            'externalBusinessPartnerCategory'
+          )
+            ? bp.get('externalBusinessPartnerCategory')
+            : null,
+          externalBusinessPartner: bp.get('externalBusinessPartner')
+            ? bp.get('externalBusinessPartner')
+            : null
         });
         if (oldbp.id === businessPartner.id) {
           me.trigger('change:bp', me);
