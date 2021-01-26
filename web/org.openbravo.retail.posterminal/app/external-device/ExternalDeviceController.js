@@ -15,7 +15,7 @@
 (function ExternalDeviceControllerDefinition() {
   // used to send POST requests to the HardwareManager
   async function post(url, data, options = {}) {
-    await OB.App.Request.post(url, data, {
+    const response = await OB.App.Request.post(url, data, {
       timeout: 20000,
       type: 'json',
       cache: 'no-cache',
@@ -26,6 +26,8 @@
         }
       }
     });
+    checkSuccessfulResponse(response);
+    return response;
   }
 
   // used to send GET requests to the HardwareManager
@@ -41,7 +43,17 @@
         }
       }
     });
+    checkSuccessfulResponse(response);
     return response;
+  }
+
+  // throws an error in case the provided HardwareManager response was not successful
+  function checkSuccessfulResponse(response) {
+    if (response && response.exception) {
+      throw new Error(
+        `Hardware Manager request responded with error: ${response.exception}`
+      );
+    }
   }
 
   /**
