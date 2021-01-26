@@ -244,7 +244,7 @@
             ? printableOrder.serializeToJSON()
             : printableTicket;
 
-        const printedTicket = await this.controller.print(template, {
+        const printedData = await this.controller.print(template, {
           ticket: ticketToPrint
         });
 
@@ -259,7 +259,7 @@
           'OBPRINT_PostPrint',
           {
             ticket: printableTicket,
-            printedTicket
+            printedReceipt: isPdf ? undefined : printedData
           }
         );
 
