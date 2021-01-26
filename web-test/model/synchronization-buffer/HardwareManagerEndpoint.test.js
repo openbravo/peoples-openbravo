@@ -171,9 +171,13 @@ describe('Harware Manager Synchronization Endpoint', () => {
     `(
       'printTicket calls with status $status: $numberOfCalls',
       async ({ messages, status, numberOfCalls }) => {
-        syncBuffer.consume('HardwareManager', 'newType', async message => {
-          await synchronization(message);
-        });
+        syncBuffer.addMessageSynchronization(
+          'HardwareManager',
+          'newType',
+          async message => {
+            await synchronization(message);
+          }
+        );
         hwManagerEndpoint.online = status === 'online' ? true : false;
         OB.App.MessageModelController.findAll
           .mockResolvedValueOnce(messages)

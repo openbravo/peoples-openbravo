@@ -593,21 +593,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
 
                   const ticketPrinter = new OB.App.Class.TicketPrinter();
                   ticketPrinter.setLegacyPrinter(me.printReceipt);
-                  OB.App.SynchronizationBuffer.consume(
+                  OB.App.SynchronizationBuffer.addMessageSynchronization(
                     'HardwareManager',
                     'displayTotal',
                     async message => {
                       await ticketPrinter.displayTotal(message);
                     }
                   );
-                  OB.App.SynchronizationBuffer.consume(
+                  OB.App.SynchronizationBuffer.addMessageSynchronization(
                     'HardwareManager',
                     'printTicket',
                     async message => {
                       await ticketPrinter.printTicket(message);
                     }
                   );
-                  OB.App.SynchronizationBuffer.consume(
+                  OB.App.SynchronizationBuffer.addMessageSynchronization(
                     'HardwareManager',
                     'printTicketLine',
                     async message => {
