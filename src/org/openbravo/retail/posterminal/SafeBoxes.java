@@ -20,6 +20,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.service.json.JsonConstants;
 
 public class SafeBoxes extends JSONProcessSimple {
@@ -92,6 +93,24 @@ public class SafeBoxes extends JSONProcessSimple {
         JSONObject lastHistoryRecord = getLastHistoryRecord(safeBoxObject);
 
         safeBox.putOpt("lastTouchpoint", lastHistoryRecord);
+
+        if (safeBox.has("safeBoxUserId")) {
+          User cashier = OBDal.getInstance().get(User.class, safeBox.get("safeBoxUserId"));
+          if (cashier != null) {
+            String firstName = cashier.getName();
+            String lastName = cashier.getLastName();
+            StringBuilder fullName = new StringBuilder();
+
+            fullName.append(firstName);
+
+            if (lastName != null) {
+              fullName.append(" " + lastName);
+            }
+
+            safeBox.putOpt("safeBoxCashierName", fullName);
+          }
+
+        }
 
         JSONArray safeBoxPaymentMethods = new JSONArray();
         // get the details of each payment method
