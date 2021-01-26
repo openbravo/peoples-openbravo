@@ -272,10 +272,10 @@
       });
 
       if (afterHooksPayload.order) {
-        return {
-          ...afterHooksPayload,
-          ticket: OB.UTIL.TicketUtils.toTicket(afterHooksPayload.order)
-        };
+        // transform to state ticket again, just in case any hook modified the backbone order...
+        afterHooksPayload.ticket = OB.UTIL.TicketUtils.toTicket(
+          afterHooksPayload.order
+        );
       }
 
       return afterHooksPayload;
