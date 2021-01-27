@@ -40,6 +40,19 @@ describe('PrintTemplateStore', () => {
     expect(template.resource).toBe(resource);
   });
 
+  it('can not register a template with an already registered name', async () => {
+    const templateName = 'testPrintTemplate';
+    const resource = '../org.openbravo.retail.posterminal/res/template.xml';
+
+    OB.App.TerminalProperty.get.mockReturnValue({
+      testPrintTemplate: resource
+    });
+
+    expect(() =>
+      OB.App.PrintTemplateStore.register(templateName, resource)
+    ).toThrow('A template with name testPrintTemplate already exists');
+  });
+
   it('template registry, get default resource', async () => {
     const templateName = 'anotherTestPrintTemplate';
     const defaultResource =
@@ -51,6 +64,21 @@ describe('PrintTemplateStore', () => {
     const template = await OB.App.PrintTemplateStore.get(templateName);
 
     expect(template.resource).toBe(defaultResource);
+  });
+
+  it('overwrite registered template', async () => {
+    const templateName = 'overwrittenTestPrintTemplate';
+    const defaultResource =
+      '../org.openbravo.retail.posterminal/res/default.xml';
+    const customResource = '../org.openbravo.retail.posterminal/res/custom.xml';
+
+    OB.App.TerminalProperty.get.mockReturnValue({});
+
+    OB.App.PrintTemplateStore.register(templateName, defaultResource);
+    OB.App.PrintTemplateStore.overwrite(templateName, customResource);
+    const template = await OB.App.PrintTemplateStore.get(templateName);
+
+    expect(template.resource).toBe(customResource);
   });
 
   it('select ticket print template', async () => {

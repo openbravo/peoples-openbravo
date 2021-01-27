@@ -10,17 +10,32 @@
 (function PrintTemplateStoreDefinition() {
   const templates = {};
 
+  /**
+   * The central point to register and get printing templates
+   *
+   * @see PrintTemplate
+   */
   OB.App.PrintTemplateStore = {
     /**
      * Registers a print template
      *
      * @param name {string} - the name that identifies the print template
-     * @param name {string} - the default template resource to be requested when retrieving the template data
+     * @param defaultTemplate {string} - the default template resource to be requested when retrieving the template data
      */
     register: (name, defaultTemplate) => {
       if (templates[name]) {
         throw new Error(`A template with name ${name} already exists`);
       }
+      templates[name] = { defaultTemplate, printTemplate: null };
+    },
+
+    /**
+     * Allows to overwrite an existing template with a new definition
+     *
+     * @param name {string} - the name that identifies the print template
+     * @param defaultTemplate {string} - the new default template resource to be requested when retrieving the template data
+     */
+    overwrite: (name, defaultTemplate) => {
       templates[name] = { defaultTemplate, printTemplate: null };
     },
 
