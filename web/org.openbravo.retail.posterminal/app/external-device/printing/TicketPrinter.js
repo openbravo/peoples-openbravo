@@ -127,15 +127,10 @@
           await this.controller.print(template, { ticket: ticketToPrint });
         }
 
-        const postPrintData = await this.controller.executeHooks(
-          'OBPRINT_PostPrint',
-          {
-            ticket: printableTicket,
-            printedReceipt: isPdf ? undefined : printedData
-          }
-        );
-
-        await this.displayTicket(postPrintData.ticket);
+        await this.controller.executeHooks('OBPRINT_PostPrint', {
+          ticket: printableTicket,
+          printedReceipt: isPdf ? undefined : printedData
+        });
       } catch (error) {
         OB.error(`Error printing ticket: ${error}`);
         await this.retryPrintTicket(ticket, printSettings, isPdf);
@@ -212,15 +207,6 @@
         OB.App.Security.hasPermission('OBPOS_retail.selectprinter') &&
         this.controller.hasAvailablePrinter(isPdf)
       );
-    }
-
-    async displayTicket(ticket) {
-      const displayTicketTemplate = await this.templateStore.get(
-        'displayReceiptTemplate'
-      );
-      await this.controller.display(displayTicketTemplate, {
-        ticket
-      });
     }
 
     async printTicketLine(message) {

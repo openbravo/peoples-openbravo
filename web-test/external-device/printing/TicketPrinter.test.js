@@ -170,7 +170,6 @@ describe('TicketPrinter', () => {
         property === 'terminal' ? { terminalType: { printTwice } } : {}
       );
       ticketPrinter.controller.print = jest.fn();
-      ticketPrinter.displayTicket = jest.fn();
       ticketPrinter.retryPrintTicket = jest.fn();
       ticketPrinter.controller.executeHooks = jest
         .fn()
@@ -188,8 +187,6 @@ describe('TicketPrinter', () => {
       expect(ticketPrinter.selectPrinter).toHaveBeenCalledTimes(1);
       // print ticket
       expect(ticketPrinter.controller.print).toHaveBeenCalledTimes(times);
-      // display total
-      expect(ticketPrinter.displayTicket).toHaveBeenCalledTimes(1);
       // retry is not called
       expect(ticketPrinter.retryPrintTicket).not.toHaveBeenCalled();
     }
@@ -210,7 +207,6 @@ describe('TicketPrinter', () => {
     ticketPrinter.controller.print = jest
       .fn()
       .mockRejectedValue(new Error('print failed'));
-    ticketPrinter.displayTicket = jest.fn();
     ticketPrinter.retryPrintTicket = jest.fn();
     ticketPrinter.controller.executeHooks = jest
       .fn()
@@ -228,8 +224,6 @@ describe('TicketPrinter', () => {
     expect(ticketPrinter.selectPrinter).toHaveBeenCalledTimes(1);
     // print ticket (fails)
     expect(ticketPrinter.controller.print).toHaveBeenCalledTimes(1);
-    // not display total
-    expect(ticketPrinter.displayTicket).not.toHaveBeenCalled();
     // retry
     expect(ticketPrinter.retryPrintTicket).toHaveBeenCalledTimes(1);
   });
@@ -350,28 +344,6 @@ describe('TicketPrinter', () => {
       expect(ticketPrinter.canSelectPrinter()).toBe(expected);
     }
   );
-
-  it('displayTicket', async () => {
-    const printTemplate = new OB.App.Class.PrintTemplate();
-    const ticket = { id: '1' };
-
-    ticketPrinter.templateStore.get = jest
-      .fn()
-      .mockResolvedValue(printTemplate);
-    ticketPrinter.controller.display = jest.fn();
-
-    await ticketPrinter.displayTicket(ticket);
-
-    expect(ticketPrinter.templateStore.get.mock.calls[0][0]).toBe(
-      'displayReceiptTemplate'
-    );
-    expect(ticketPrinter.controller.display.mock.calls[0][0]).toBe(
-      printTemplate
-    );
-    expect(ticketPrinter.controller.display.mock.calls[0][1]).toStrictEqual({
-      ticket
-    });
-  });
 
   it('printTicketLine', async () => {
     const printTemplate = new OB.App.Class.PrintTemplate();
