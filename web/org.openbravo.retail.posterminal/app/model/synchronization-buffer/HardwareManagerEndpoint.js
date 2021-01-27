@@ -45,9 +45,12 @@
       try {
         const data = await this.controller.getHardwareManagerStatus();
 
-        if (Object.keys(data).length > 0) {
-          await this.printWelcome();
+        if (Object.keys(data).length === 0) {
+          // HWM might not be connected
+          return;
         }
+
+        await this.printWelcome();
 
         // Save hardware manager information
         const { version, revision, javaInfo } = data;
