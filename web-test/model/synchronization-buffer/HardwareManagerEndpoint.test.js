@@ -191,10 +191,13 @@ describe('Harware Manager Synchronization Endpoint', () => {
   });
 
   it('printWelcome', async () => {
-    const printTemplate = new OB.App.Class.PrintTemplate();
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'printWelcome',
+      'res/printWelcome.xml'
+    );
 
     hwManagerEndpoint.controller.display = jest.fn();
-    OB.App.PrintTemplateStore.get = jest.fn().mockResolvedValue(printTemplate);
+    OB.App.PrintTemplateStore.get = jest.fn().mockReturnValue(printTemplate);
 
     await hwManagerEndpoint.printWelcome();
 

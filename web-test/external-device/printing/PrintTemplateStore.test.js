@@ -35,7 +35,7 @@ describe('PrintTemplateStore', () => {
     });
 
     OB.App.PrintTemplateStore.register(templateName, defaultResource);
-    const template = await OB.App.PrintTemplateStore.get(templateName);
+    const template = OB.App.PrintTemplateStore.get(templateName);
 
     expect(template.resource).toBe(resource);
   });
@@ -61,7 +61,7 @@ describe('PrintTemplateStore', () => {
     OB.App.TerminalProperty.get.mockReturnValue({});
 
     OB.App.PrintTemplateStore.register(templateName, defaultResource);
-    const template = await OB.App.PrintTemplateStore.get(templateName);
+    const template = OB.App.PrintTemplateStore.get(templateName);
 
     expect(template.resource).toBe(defaultResource);
   });
@@ -76,7 +76,7 @@ describe('PrintTemplateStore', () => {
 
     OB.App.PrintTemplateStore.register(templateName, defaultResource);
     OB.App.PrintTemplateStore.overwrite(templateName, customResource);
-    const template = await OB.App.PrintTemplateStore.get(templateName);
+    const template = OB.App.PrintTemplateStore.get(templateName);
 
     expect(template.resource).toBe(customResource);
   });
@@ -87,7 +87,7 @@ describe('PrintTemplateStore', () => {
 
     OB.App.TerminalProperty.get.mockReturnValue({});
 
-    const template = await OB.App.PrintTemplateStore.selectTicketPrintTemplate(
+    const template = OB.App.PrintTemplateStore.selectTicketPrintTemplate(
       ticket
     );
 

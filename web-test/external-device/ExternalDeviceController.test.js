@@ -35,7 +35,16 @@ describe('ExternalDeviceController', () => {
       };
     }
   };
-  const printPDFTemplate = { ispdf: true, subreports: [] };
+  const printPDFTemplate = {
+    ispdf: true,
+    generate: params => {
+      return {
+        param: params.ticket,
+        mainReport: {},
+        subReports: []
+      };
+    }
+  };
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -168,7 +177,7 @@ describe('ExternalDeviceController', () => {
   it('openDrawer', async () => {
     const controller = new OB.App.Class.ExternalDeviceController();
     const templateContent = '<output><opendrawer/></output>';
-    OB.App.PrintTemplateStore.get.mockResolvedValue({
+    OB.App.PrintTemplateStore.get.mockReturnValue({
       generate: async () => {
         return { data: templateContent };
       }
@@ -220,15 +229,15 @@ describe('ExternalDeviceController', () => {
     expect(controller.requestPDFPrint.mock.calls[0][0]).toBe(
       JSON.stringify({
         param: ticket,
-        mainReport: printPDFTemplate,
-        subReports: printPDFTemplate.subreports
+        mainReport: {},
+        subReports: []
       })
     );
     expect(controller.storeData.mock.calls[0][0]).toBe(
       JSON.stringify({
         param: ticket,
-        mainReport: printPDFTemplate,
-        subReports: printPDFTemplate.subreports
+        mainReport: {},
+        subReports: []
       })
     );
     expect(controller.storeData.mock.calls[0][1]).toBe(

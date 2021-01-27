@@ -196,9 +196,7 @@
     }
 
     async openDrawer() {
-      const template = await OB.App.PrintTemplateStore.get(
-        'openDrawerTemplate'
-      );
+      const template = OB.App.PrintTemplateStore.get('openDrawerTemplate');
       await this.print(template, {}, this.devices.DRAWER);
     }
 
@@ -208,20 +206,14 @@
     }
 
     async print(printTemplate, params = {}, device = 0) {
-      const data = printTemplate.ispdf
-        ? {
-            param: params.ticket,
-            mainReport: printTemplate,
-            subReports: printTemplate.subreports
-          }
-        : await printTemplate.generate(params);
+      const data = await printTemplate.generate(params);
 
-      await this.send(data, device);
+      await this.send(data, device, { isPdf: printTemplate.ispdf });
       return data;
     }
 
-    async send(dataToSend, device) {
-      const isPdf = dataToSend.mainReport;
+    async send(dataToSend, device, options = {}) {
+      const { isPdf } = options;
       const data = isPdf ? JSON.stringify(dataToSend) : dataToSend.data;
 
       this.storeData(data, device);

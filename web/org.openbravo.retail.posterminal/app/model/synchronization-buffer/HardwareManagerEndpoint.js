@@ -90,9 +90,7 @@
      */
     async printWelcome() {
       try {
-        const template = await OB.App.PrintTemplateStore.get(
-          'printWelcomeTemplate'
-        );
+        const template = OB.App.PrintTemplateStore.get('printWelcomeTemplate');
         await this.controller.display(template);
       } catch (error) {
         OB.error(`Error displaying welcome message: ${error}`);

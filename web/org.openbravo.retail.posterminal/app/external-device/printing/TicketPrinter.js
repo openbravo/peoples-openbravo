@@ -22,7 +22,6 @@
   class TicketPrinter {
     constructor() {
       this.controller = new OB.App.Class.ExternalDeviceController();
-      this.templateStore = OB.App.PrintTemplateStore;
     }
 
     // Sets the legacy printers
@@ -35,7 +34,7 @@
     async displayTotal(message) {
       const messageData = message.messageObj;
       try {
-        const template = await this.templateStore.get(
+        const template = OB.App.PrintTemplateStore.get(
           'printDisplayTotalTemplate'
         );
         await this.controller.display(template, {
@@ -99,7 +98,7 @@
           return;
         }
 
-        const template = await this.templateStore.selectTicketPrintTemplate(
+        const template = OB.App.PrintTemplateStore.selectTicketPrintTemplate(
           printableTicket,
           { forcedtemplate: prePrintData.forcedtemplate }
         );
@@ -212,7 +211,7 @@
     async printTicketLine(message) {
       const messageData = message.messageObj;
       try {
-        const template = await this.templateStore.get(
+        const template = OB.App.PrintTemplateStore.get(
           'printReceiptLineTemplate'
         );
         await this.controller.display(template, {

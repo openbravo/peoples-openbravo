@@ -21,12 +21,13 @@
      *
      * @param name {string} - the name that identifies the print template
      * @param defaultTemplate {string} - the default template resource to be requested when retrieving the template data
+     * @param options {object} - additional configuration options for the print template
      */
-    register: (name, defaultTemplate) => {
+    register: (name, defaultTemplate, options) => {
       if (templates[name]) {
         throw new Error(`A template with name ${name} already exists`);
       }
-      templates[name] = { defaultTemplate, printTemplate: null };
+      templates[name] = { defaultTemplate, printTemplate: null, options };
     },
 
     /**
@@ -34,9 +35,10 @@
      *
      * @param name {string} - the name that identifies the print template
      * @param defaultTemplate {string} - the new default template resource to be requested when retrieving the template data
+     * @param options {object} - additional configuration options for the new print template
      */
-    overwrite: (name, defaultTemplate) => {
-      templates[name] = { defaultTemplate, printTemplate: null };
+    overwrite: (name, defaultTemplate, options) => {
+      templates[name] = { defaultTemplate, printTemplate: null, options };
     },
 
     /**
@@ -48,7 +50,7 @@
      * @return {PrintTemplate} - the PrintTemplate identified with the provided name
      * @throws {Error} in case the template can not be retrieved
      */
-    get: async name => {
+    get: name => {
       if (!templates[name]) {
         throw new Error(`Unknown template with name ${name}`);
       }
@@ -59,19 +61,10 @@
         }
 
         templates[name].printTemplate = new OB.App.Class.PrintTemplate(
-          terminal[name] ? terminal[name] : templates[name].defaultTemplate
+          name,
+          terminal[name] ? terminal[name] : templates[name].defaultTemplate,
+          templates[name].options
         );
-
-        if (terminal[`${name}IsPdf`] === true) {
-          const params = {
-            printer: terminal[`${name}Printer`],
-            subreports: Object.keys(terminal)
-              .filter(key => key.startsWith(`${name}Subrep`))
-              .map(key => terminal[key])
-          };
-
-          await templates[name].printTemplate.processPDFTemplate(params);
-        }
       }
       return templates[name].printTemplate;
     },
@@ -84,12 +77,12 @@
      *                           - forcedtemplate: is used to forcibly select this template
      * @return {PrintTemplate} - the PrintTemplate for printing the provided ticket
      */
-    selectTicketPrintTemplate: async (ticket, options) => {
+    selectTicketPrintTemplate: (ticket, options) => {
       const name = OB.App.PrintTemplateStore.selectTicketPrintTemplateName(
         ticket,
         options
       );
-      const template = await OB.App.PrintTemplateStore.get(name);
+      const template = OB.App.PrintTemplateStore.get(name);
       return template;
     },
 
@@ -187,52 +180,62 @@
 
   OB.App.PrintTemplateStore.register(
     'printCanceledReceiptTemplate',
-    '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml'
+    '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(
     'printLayawayTemplate',
-    '../org.openbravo.retail.posterminal/res/printlayaway.xml'
+    '../org.openbravo.retail.posterminal/res/printlayaway.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(
     'printCanceledLayawayTemplate',
-    '../org.openbravo.retail.posterminal/res/printcanceledlayaway.xml'
+    '../org.openbravo.retail.posterminal/res/printcanceledlayaway.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(
     'printClosedReceiptTemplate',
-    '../org.openbravo.retail.posterminal/res/printclosedreceipt.xml'
+    '../org.openbravo.retail.posterminal/res/printclosedreceipt.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(
     'printInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printinvoice.xml'
+    '../org.openbravo.retail.posterminal/res/printinvoice.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(
     'printSimplifiedInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printsimplifiedinvoice.xml'
+    '../org.openbravo.retail.posterminal/res/printsimplifiedinvoice.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(
     'printClosedInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml'
+    '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(
     'printSimplifiedClosedInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printsimplifiedclosedinvoice.xml'
+    '../org.openbravo.retail.posterminal/res/printsimplifiedclosedinvoice.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(
     'printReturnInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printreturninvoice.xml'
+    '../org.openbravo.retail.posterminal/res/printreturninvoice.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(
     'printSimplifiedReturnInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printsimplifiedreturninvoice.xml'
+    '../org.openbravo.retail.posterminal/res/printsimplifiedreturninvoice.xml',
+    { isLegacy: true }
   );
 
   OB.App.PrintTemplateStore.register(

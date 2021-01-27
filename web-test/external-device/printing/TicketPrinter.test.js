@@ -67,18 +67,19 @@ describe('TicketPrinter', () => {
   });
 
   it('displayTotal', async () => {
-    const printTemplate = new OB.App.Class.PrintTemplate();
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'displayTotal',
+      'res/displayTotal.xml'
+    );
     const ticket = { id: '1' };
 
-    ticketPrinter.templateStore.get = jest
-      .fn()
-      .mockResolvedValue(printTemplate);
+    OB.App.PrintTemplateStore.get = jest.fn().mockReturnValue(printTemplate);
 
     ticketPrinter.controller.display = jest.fn();
 
     await ticketPrinter.displayTotal({ messageObj: { data: { ticket } } });
 
-    expect(ticketPrinter.templateStore.get.mock.calls[0][0]).toBe(
+    expect(OB.App.PrintTemplateStore.get.mock.calls[0][0]).toBe(
       'printDisplayTotalTemplate'
     );
     expect(ticketPrinter.controller.display.mock.calls[0][0]).toBe(
@@ -161,11 +162,14 @@ describe('TicketPrinter', () => {
         payments: [],
         print: true
       };
-      const printTemplate = new OB.App.Class.PrintTemplate();
+      const printTemplate = new OB.App.Class.PrintTemplate(
+        'printTicket',
+        'res/printTicket.xml'
+      );
 
-      ticketPrinter.templateStore.selectTicketPrintTemplate = jest
+      OB.App.PrintTemplateStore.selectTicketPrintTemplate = jest
         .fn()
-        .mockResolvedValue(printTemplate);
+        .mockReturnValue(printTemplate);
       OB.App.TerminalProperty.get.mockImplementation(property =>
         property === 'terminal' ? { terminalType: { printTwice } } : {}
       );
@@ -181,7 +185,7 @@ describe('TicketPrinter', () => {
 
       // select template
       expect(
-        ticketPrinter.templateStore.selectTicketPrintTemplate
+        OB.App.PrintTemplateStore.selectTicketPrintTemplate
       ).toHaveBeenCalledTimes(1);
       // printer selection
       expect(ticketPrinter.selectPrinter).toHaveBeenCalledTimes(1);
@@ -199,11 +203,14 @@ describe('TicketPrinter', () => {
       payments: [],
       print: true
     };
-    const printTemplate = new OB.App.Class.PrintTemplate();
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'printTicket',
+      'res/printTicket.xml'
+    );
 
-    ticketPrinter.templateStore.selectTicketPrintTemplate = jest
+    OB.App.PrintTemplateStore.selectTicketPrintTemplate = jest
       .fn()
-      .mockResolvedValue(printTemplate);
+      .mockReturnValue(printTemplate);
     ticketPrinter.controller.print = jest
       .fn()
       .mockRejectedValue(new Error('print failed'));
@@ -218,7 +225,7 @@ describe('TicketPrinter', () => {
 
     // select template
     expect(
-      ticketPrinter.templateStore.selectTicketPrintTemplate
+      OB.App.PrintTemplateStore.selectTicketPrintTemplate
     ).toHaveBeenCalledTimes(1);
     // printer selection
     expect(ticketPrinter.selectPrinter).toHaveBeenCalledTimes(1);
@@ -346,17 +353,18 @@ describe('TicketPrinter', () => {
   );
 
   it('printTicketLine', async () => {
-    const printTemplate = new OB.App.Class.PrintTemplate();
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'printTicketLine',
+      'res/printTicketLine'
+    );
     const line = { id: 'l1' };
 
-    ticketPrinter.templateStore.get = jest
-      .fn()
-      .mockResolvedValue(printTemplate);
+    OB.App.PrintTemplateStore.get = jest.fn().mockReturnValue(printTemplate);
     ticketPrinter.controller.display = jest.fn();
 
     await ticketPrinter.printTicketLine({ messageObj: { data: { line } } });
 
-    expect(ticketPrinter.templateStore.get.mock.calls[0][0]).toBe(
+    expect(OB.App.PrintTemplateStore.get.mock.calls[0][0]).toBe(
       'printReceiptLineTemplate'
     );
     expect(ticketPrinter.controller.display.mock.calls[0][0]).toBe(

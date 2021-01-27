@@ -14,9 +14,13 @@
    * Builds the data that is sent to the Hardware Manager to be printed in a particular format.
    */
   OB.App.Class.PrintTemplate = class PrintTemplate {
-    constructor(resource) {
-      this.resource = resource;
+    constructor(name, resource, options = {}) {
+      this.name = name;
+      this.resource = resource.startsWith('res/')
+        ? `../org.openbravo.retail.posterminal/${resource}`
+        : resource;
       this.resourcedata = null;
+      this.isLegacy = options.isLegacy === true;
     }
 
     /**
@@ -30,23 +34,45 @@
      *                  - subReports: an array with the subreports (PDF templates)
      */
     async generate(params) {
-      const templateData = await this.getData();
+      const terminal = OB.App.TerminalProperty.get('terminal');
+      if (terminal[`${this.name}IsPdf`] === true && !this.ispdf) {
+        await this.processPDFTemplate({
+          printer: terminal[`${this.name}Printer`],
+          subreports: Object.keys(terminal)
+            .filter(key => key.startsWith(`${this.name}Subrep`))
+            .map(key => terminal[key])
+        });
+      }
+
       const templateParams = this.prepareParams(params);
+
+      if (this.ispdf) {
+        // Template for printing a jasper PDF report
+        return {
+          param: this.getTicketForPDFReport(templateParams),
+          mainReport: this,
+          subReports: this.subreports
+        };
+      }
+
+      const templateData = await this.getData();
       const data = lodash.template(templateData)(templateParams);
 
       if (data.substr(0, 6) !== 'jrxml:') {
+        // Standard XML template
         return { data };
       }
 
       // Template for printing a jasper PDF report
       const jasperParams = JSON.parse(data.substr(6));
-      const newTemplate = new OB.App.Class.PrintTemplate(jasperParams.report);
+      const newTemplate = new OB.App.Class.PrintTemplate(
+        null,
+        jasperParams.report
+      );
       await newTemplate.processPDFTemplate(jasperParams);
 
       return {
-        param: templateParams.order
-          ? templateParams.order.serializeToJSON()
-          : params.ticket,
+        param: this.getTicketForPDFReport(templateParams),
         mainReport: newTemplate,
         subReports: newTemplate.subreports
       };
@@ -58,9 +84,15 @@
       this.ispdf = true;
       this.printer = printer || 1;
       this.dateFormat = OB.Format.date;
-      this.subreports = subreports
-        ? subreports.map(subReport => new OB.App.Class.PrintTemplate(subReport))
-        : [];
+      this.subreports = [];
+      for (let i = 0; i < subreports.length; i += 1) {
+        this.subreports.push(
+          new OB.App.Class.PrintTemplate(
+            `${this.name}Subrep${i}`,
+            subreports[i]
+          )
+        );
+      }
 
       const templates = [this, ...this.subreports];
       const dataRetrievals = templates.map(async template => {
@@ -91,7 +123,7 @@
     }
 
     prepareParams(params) {
-      if (!this.isLegacyMode()) {
+      if (!this.isLegacyTemplate()) {
         return params;
       }
       const { ticket, ticketLine } = params;
@@ -107,9 +139,15 @@
       return newParams;
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    isLegacyMode() {
-      return OB.App.StateBackwardCompatibility != null;
+    getTicketForPDFReport(params) {
+      return this.isLegacyTemplate() && params.order
+        ? params.order.serializeToJSON()
+        : params.ticket;
+    }
+
+    isLegacyTemplate() {
+      const terminal = OB.App.TerminalProperty.get('terminal');
+      return terminal[`${this.name}IsLegacy`] === true || this.isLegacy;
     }
   };
 })();

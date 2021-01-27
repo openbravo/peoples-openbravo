@@ -11,7 +11,10 @@
 global.OB = {
   App: {
     Class: {},
-    Request: { get: jest.fn() }
+    Request: { get: jest.fn() },
+    TerminalProperty: {
+      get: jest.fn().mockReturnValue({})
+    }
   },
   I18N: { getLabel: jest.fn() },
   UTIL: {
@@ -33,12 +36,13 @@ function getFileContent(fileName) {
 
 describe('PrintTemplate', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('generate', async () => {
     const ticket = { grossAmount: 23 };
     const printTemplate = new OB.App.Class.PrintTemplate(
+      'testTemplate',
       '../org.openbravo.retail.posterminal/res/template.xml'
     );
 
@@ -55,7 +59,10 @@ describe('PrintTemplate', () => {
   it('get template data', async () => {
     const resource = '../org.openbravo.retail.posterminal/res/template.xml';
     const resourcedata = '<output></output>';
-    const printTemplate = new OB.App.Class.PrintTemplate(resource);
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'testTemplate',
+      resource
+    );
 
     OB.App.Request.get.mockResolvedValue(resourcedata);
 
@@ -72,11 +79,13 @@ describe('PrintTemplate', () => {
     expect(OB.App.Request.get).toHaveBeenCalledTimes(1);
   });
 
-  it('prepare params in standard mode', () => {
+  it('prepare params in standard template', () => {
     const params = { ticket: { id: 't1' }, ticketLine: { id: 'l1' } };
-    const printTemplate = new OB.App.Class.PrintTemplate();
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'testTemplate',
+      '../org.openbravo.retail.posterminal/res/template.xml'
+    );
 
-    printTemplate.isLegacyMode = jest.fn().mockReturnValue(false);
     OB.UTIL.TicketUtils.toOrder.mockReturnValue({});
     OB.UTIL.TicketUtils.toOrderLine.mockReturnValue({});
 
@@ -87,11 +96,16 @@ describe('PrintTemplate', () => {
     });
   });
 
-  it('prepare params in legacy mode', () => {
+  it('prepare params in legacy template', () => {
     const params = { ticket: { id: 't1' }, ticketLine: { id: 'l1' } };
-    const printTemplate = new OB.App.Class.PrintTemplate();
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'testTemplate',
+      '../org.openbravo.retail.posterminal/res/template.xml',
+      {
+        isLegacy: true
+      }
+    );
 
-    printTemplate.isLegacyMode = jest.fn().mockReturnValue(true);
     OB.UTIL.TicketUtils.toOrder.mockReturnValue({ id: 'o1' });
     OB.UTIL.TicketUtils.toOrderLine.mockReturnValue({ id: 'ol1' });
 
