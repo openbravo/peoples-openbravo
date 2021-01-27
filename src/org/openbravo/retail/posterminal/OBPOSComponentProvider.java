@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -322,6 +322,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/masterdata/discount/DiscountFilterBusinessPartnerExtRef"), //
         businesslogic("app/model/masterdata/discount/DiscountModel"), //
         // Business-Logic
+        businesslogic("app/model/business-logic/currency/CurrencyConversion"), //
         businesslogic("app/model/business-logic/stock/StockChecker"), //
         businesslogic("app/model/business-logic/pack/ProductPack"), //
         businesslogic("app/model/business-logic/pack/ProductPackProvider"), //

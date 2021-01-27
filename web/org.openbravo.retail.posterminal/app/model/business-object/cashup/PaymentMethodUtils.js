@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -199,17 +199,9 @@
      * @param {Object} paymentMethods - The payment methods from the cashup
      * @param {string} paymentMethodId - The id of the paymentMethod
      * @param {Object[]}   payments - payments available in the terminal
-     * @param  {currencyId} defaultCurrencyId - the currencyId of the default payment method
-     * @param  {Object[]}   conversions - array of converters availables
      * @return {Object} A JS Object with the currentCash and foreignCurrentCash
      */
-    getPaymentMethodCurrentCash(
-      paymentMethods,
-      paymentMethodId,
-      payments,
-      defaultCurrencyId,
-      conversions
-    ) {
+    getPaymentMethodCurrentCash(paymentMethods, paymentMethodId, payments) {
       const paymentMethod = paymentMethods.find(
         payment => payment.paymentMethodId === paymentMethodId
       );
@@ -232,17 +224,13 @@
         },
         0
       );
-      const currentCash = OB.App.State.Cashup.Utils.toDefaultCurrency(
+      const currentCash = OB.UTIL.currency.toDefaultCurrency(
         payments[paymentMethod.searchKey].paymentMethod.currency,
-        OB.DEC.add(cash, cashInDraft),
-        defaultCurrencyId,
-        conversions
+        OB.DEC.add(cash, cashInDraft)
       );
-      const foreignCurrentCash = OB.App.State.Cashup.Utils.toForeignCurrency(
+      const foreignCurrentCash = OB.UTIL.currency.toForeignCurrency(
         payments[paymentMethod.searchKey].paymentMethod.currency,
-        currentCash,
-        defaultCurrencyId,
-        conversions
+        currentCash
       );
       return { currentCash, foreignCurrentCash };
     },

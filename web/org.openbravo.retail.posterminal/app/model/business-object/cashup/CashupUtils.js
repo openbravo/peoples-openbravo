@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -180,72 +180,6 @@
       );
 
       return cashupToSend;
-    },
-
-    /**
-     * converts an amount to the WebPOS amount currency
-     * @param  {currencyId} fromCurrencyId    the currencyId of the amount to be converted
-     * @param  {float}      amount            the amount to be converted
-     * @param  {currencyId} defaultCurrencyId the currencyId of the default payment method
-     * @param  {Object[]}   conversions       array of converters availables
-     * @return {float}                        the converted amount
-     */
-    toDefaultCurrency(fromCurrencyId, amount, defaultCurrencyId, conversions) {
-      if (
-        fromCurrencyId === defaultCurrencyId &&
-        fromCurrencyId != null &&
-        defaultCurrencyId != null
-      ) {
-        return amount;
-      }
-
-      const converter = conversions.find(function getConverter(c) {
-        return (
-          c.fromCurrencyId === fromCurrencyId &&
-          c.toCurrencyId === defaultCurrencyId
-        );
-      });
-
-      if (!converter.length === 0) {
-        throw new Error(
-          `Currency converter not added: ${fromCurrencyId} -> ${defaultCurrencyId}`
-        );
-      }
-
-      return OB.DEC.mul(amount, converter.rate);
-    },
-
-    /**
-     * converts an amount from the WebPOS currency to the toCurrencyId currency
-     * @param  {currencyId} toCurrencyId      the currencyId of the final amount
-     * @param  {float}      amount            the amount to be converted
-     * @param  {currencyId} defaultCurrencyId the currencyId of the default payment method
-     * @param  {Object[]}   conversions       array of converters availables
-     * @return {float}                        the converted amount
-     */
-    toForeignCurrency(toCurrencyId, amount, defaultCurrencyId, conversions) {
-      if (
-        toCurrencyId === defaultCurrencyId &&
-        toCurrencyId != null &&
-        defaultCurrencyId != null
-      ) {
-        return amount;
-      }
-
-      const converter = conversions.find(function getConverter(c) {
-        return (
-          c.fromCurrencyId === defaultCurrencyId &&
-          c.toCurrencyId === toCurrencyId
-        );
-      });
-
-      if (!converter.length === 0) {
-        throw new Error(
-          `Currency converter not added: ${toCurrencyId} -> ${defaultCurrencyId}`
-        );
-      }
-
-      return OB.DEC.mul(amount, converter.rate);
     },
 
     countTicketInCashup(cashup, ticket, countLayawayAsSales, terminalPayments) {

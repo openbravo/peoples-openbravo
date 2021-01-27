@@ -947,6 +947,9 @@
             OB.MobileApp.model.get('currency').id,
             10
           );
+          OB.UTIL.currency.setDefaultCurrencyId(
+            OB.MobileApp.model.get('currency').id
+          );
           var toCurrencyId = parseInt(paymentMethod.paymentMethod.currency, 10);
           if (fromCurrencyId !== toCurrencyId) {
             OB.UTIL.currency.addConversion(
