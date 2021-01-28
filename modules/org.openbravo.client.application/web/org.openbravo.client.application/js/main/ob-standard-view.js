@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -3372,10 +3372,16 @@ isc.OBStandardView.addProperties({
 
   getTabMessage: function(forcedTabId) {
     var tabId = forcedTabId || this.tabId,
-      callback;
+      callback,
+      me = this;
 
     callback = function(resp, data, req) {
-      if (req.clientContext && data.type && (data.text || data.title)) {
+      if (
+        req.clientContext &&
+        window[req.clientContext.ID] === me &&
+        data.type &&
+        (data.text || data.title)
+      ) {
         req.clientContext.messageBar.setMessage(
           isc.OBMessageBar[data.type],
           data.title,
