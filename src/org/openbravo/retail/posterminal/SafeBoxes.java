@@ -97,16 +97,7 @@ public class SafeBoxes extends JSONProcessSimple {
         if (safeBox.has("safeBoxUserId")) {
           User cashier = OBDal.getInstance().get(User.class, safeBox.get("safeBoxUserId"));
           if (cashier != null) {
-            String firstName = cashier.getName();
-            String lastName = cashier.getLastName();
-            StringBuilder fullName = new StringBuilder();
-
-            fullName.append(firstName);
-
-            if (lastName != null) {
-              fullName.append(" " + lastName);
-            }
-
+            String fullName = cashier.getName();
             safeBox.putOpt("safeBoxCashierName", fullName);
           }
 
