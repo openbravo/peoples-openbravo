@@ -203,8 +203,7 @@ public class SafeBoxes extends JSONProcessSimple {
     OBCriteria<OBPOSSafeboxTouchpoint> criteria = OBDal.getInstance()
         .createCriteria(OBPOSSafeboxTouchpoint.class);
     criteria.add(Restrictions.eq(OBPOSSafeboxTouchpoint.PROPERTY_OBPOSSAFEBOX, safeBox));
-    criteria.addOrder(Order.desc(OBPOSSafeboxTouchpoint.PROPERTY_DATEOUT));
-    criteria.addOrder(Order.desc(OBPOSSafeboxTouchpoint.PROPERTY_DATEIN));
+    criteria.addOrder(Order.desc(OBPOSSafeboxTouchpoint.PROPERTY_UPDATED));
     List<OBPOSSafeboxTouchpoint> list = criteria.list();
 
     if (list.isEmpty()) {
