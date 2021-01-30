@@ -14,6 +14,14 @@
    * Builds the data that is sent to the Hardware Manager to be printed in a particular format.
    */
   OB.App.Class.PrintTemplate = class PrintTemplate {
+    /**
+     * Creates a new PrintTemplate instance
+     *
+     * @param name {string} - the name that identifies the template
+     * @param resource {string} - the resource relative path used to retrieve the template data
+     * @param options {object} - additional configuration options:
+     *                           - isLegacy: whether this is a legacy template or not
+     */
     constructor(name, resource, options = {}) {
       this.name = name;
       this.resource = resource.startsWith('res/')
