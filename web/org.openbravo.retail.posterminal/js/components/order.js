@@ -1590,7 +1590,7 @@ enyo.kind({
           })
             .then(() => {
               OB.App.State.Global.printTicketLine({
-                line: JSON.parse(JSON.stringify(line))
+                line: OB.UTIL.TicketUtils.toTicketLine(line)
               });
             })
             .catch(OB.App.View.ActionCanceledUIHandler.handle);

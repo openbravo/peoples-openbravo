@@ -405,9 +405,15 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/synchronization-buffer/HardwareManagerEndpoint"), //
 
         // External Device
-        businesslogic("app/external-device/actions/Print"), //
+        businesslogic("app/external-device/ExternalDeviceController"), //
+        businesslogic("app/external-device/actions/InitHardwareManager"), //
         businesslogic("app/external-device/actions/PrintLine"), //
-        businesslogic("app/external-device/actions/PrintWelcome")));
+        businesslogic("app/external-device/actions/PrintTicket"), //
+        businesslogic("app/external-device/actions/PrintWelcome"), //
+        businesslogic("app/external-device/printing/PrintTemplate"), //
+        businesslogic("app/external-device/printing/PrintTemplateStore"), //
+        businesslogic("app/external-device/printing/PrintUtils"), //
+        businesslogic("app/external-device/printing/TicketPrinter")));
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -130,8 +130,81 @@
       .flat();
     receiptLines.forEach(line => {
       OB.App.State.Global.printTicketLine({
-        line: JSON.parse(JSON.stringify(line))
+        line: OB.UTIL.TicketUtils.toTicketLine(line)
       });
     });
+  };
+
+  // Turns a state ticket line into a backbone order line
+  OB.UTIL.TicketUtils.toOrderLine = line => {
+    const order = OB.UTIL.TicketUtils.toOrder({
+      orderDate: new Date(),
+      creationDate: new Date(),
+      bp: { locationModel: undefined, locationBillModel: undefined },
+      lines: [line]
+    });
+    return order.get('lines').get(line.id);
+  };
+
+  // Turns a state ticket into a backbone order
+  OB.UTIL.TicketUtils.toOrder = ticket => {
+    if (!ticket.id) {
+      // force to have a ticket id: if no id is provided an empty backbone order is created
+      ticket.id = OB.App.UUID.generate();
+    }
+    return OB.App.StateBackwardCompatibility.getInstance(
+      'Ticket'
+    ).toBackboneObject(ticket);
+  };
+
+  // Turns a "multi-ticket" into a backbone "multi-order"
+  OB.UTIL.TicketUtils.toMultiOrder = multiTicket => {
+    const multiOrder = new OB.Model.MultiOrders(multiTicket);
+    const orders = multiTicket.multiOrdersList.map(ticket =>
+      OB.App.StateBackwardCompatibility.getInstance('Ticket').toBackboneObject(
+        ticket
+      )
+    );
+    multiOrder.set('multiOrdersList', new Backbone.Collection(orders));
+    multiOrder.set('payments', new Backbone.Collection(multiTicket.payments));
+    return multiOrder;
+  };
+
+  // Turns a backbone order line into a state ticket line
+  OB.UTIL.TicketUtils.toTicketLine = line => {
+    const order = new OB.Model.Order();
+    order.set('lines', new Backbone.Collection(line));
+    const ticket = OB.App.StateBackwardCompatibility.getInstance(
+      'Ticket'
+    ).toStateObject(order);
+    return ticket.lines[0];
+  };
+
+  // Turns a backbone order into a state ticket
+  OB.UTIL.TicketUtils.toTicket = order => {
+    return OB.App.StateBackwardCompatibility.getInstance(
+      'Ticket'
+    ).toStateObject(order);
+  };
+
+  // Turns a backbone "multi-order" into a "multi-ticket"
+  OB.UTIL.TicketUtils.toMultiTicket = multiOrder => {
+    const tickets = multiOrder
+      .get('multiOrdersList')
+      .map(t =>
+        OB.App.StateBackwardCompatibility.getInstance(
+          'Ticket',
+          false
+        ).toStateObject(t)
+      );
+
+    const ticket = OB.App.StateBackwardCompatibility.getInstance(
+      'Ticket',
+      false
+    ).toStateObject(multiOrder);
+
+    ticket.multiOrdersList = tickets;
+
+    return ticket;
   };
 })();

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -20,21 +20,21 @@ require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app
 require('.../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/Messages');
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/MessagesUtils');
-require('../../../web/org.openbravo.retail.posterminal/app/external-device/actions/PrintWelcome');
+require('../../../web/org.openbravo.retail.posterminal/app/external-device/actions/InitHardwareManager');
 
 OB.App.State = { Messages: { Utils: {} } };
 OB.App.StateAPI.Messages.utilities.forEach(util => {
   OB.App.State.Messages.Utils[util.functionName] = util.implementation;
 });
 
-describe('PrintWelcome action', () => {
-  it('Expected state after print welcome action', () => {
+describe('InitHardwareManager action', () => {
+  it('Expected state after InitHardwareManager action', () => {
     const state = {
       Messages: []
     };
     const payload = {};
     deepfreeze(state);
-    const newState = OB.App.StateAPI.Global.printWelcome(state, payload);
+    const newState = OB.App.StateAPI.Global.initHardwareManager(state, payload);
     const expectedState = {
       Messages: [
         {
@@ -45,7 +45,7 @@ describe('PrintWelcome action', () => {
           modelName: '',
           service: '',
           time: expect.any(Number),
-          type: 'printWelcome',
+          type: 'initHardwareManager',
           consumeOffline: true
         }
       ]

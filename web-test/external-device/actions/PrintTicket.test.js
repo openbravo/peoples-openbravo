@@ -20,7 +20,7 @@ require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/Messages');
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/MessagesUtils');
-require('../../../web/org.openbravo.retail.posterminal/app/external-device/actions/Print');
+require('../../../web/org.openbravo.retail.posterminal/app/external-device/actions/PrintTicket');
 
 OB.App.State = { Messages: { Utils: {} } };
 OB.App.StateAPI.Messages.utilities.forEach(util => {

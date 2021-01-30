@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -585,18 +585,36 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               OB.Taxes.Pos.initCache(function() {
                 OB.Discounts.Pos.initCache(function() {
                   me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
-                  const welcomePrinter = {
-                    doPrintWelcome: OB.OBPOSPointOfSale.Print.doPrintWelcome
-                  };
+
                   const hardwareManagerEnpoint = new OB.App.Class.HardwareManagerEndpoint();
-                  hardwareManagerEnpoint.setPrinters({
-                    printer: me.printReceipt,
-                    linePrinter: me.printLine,
-                    welcomePrinter
-                  });
                   OB.App.SynchronizationBuffer.registerEndpoint(
                     hardwareManagerEnpoint
                   );
+
+                  const ticketPrinter = new OB.App.Class.TicketPrinter();
+                  ticketPrinter.setLegacyPrinter(me.printReceipt);
+                  OB.App.SynchronizationBuffer.addMessageSynchronization(
+                    'HardwareManager',
+                    'displayTotal',
+                    async message => {
+                      await ticketPrinter.displayTotal(message);
+                    }
+                  );
+                  OB.App.SynchronizationBuffer.addMessageSynchronization(
+                    'HardwareManager',
+                    'printTicket',
+                    async message => {
+                      await ticketPrinter.printTicket(message);
+                    }
+                  );
+                  OB.App.SynchronizationBuffer.addMessageSynchronization(
+                    'HardwareManager',
+                    'printTicketLine',
+                    async message => {
+                      await ticketPrinter.printTicketLine(message);
+                    }
+                  );
+
                   // Now, get the hardware manager status
                   OB.POS.hwserver.status(function(data) {
                     if (data && data.exception) {

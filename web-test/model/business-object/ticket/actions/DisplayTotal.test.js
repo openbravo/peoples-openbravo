@@ -53,4 +53,30 @@ describe('Display Total action', () => {
     };
     expect(newState).toMatchObject(expectedState);
   });
+
+  it('Expected state after displaying total of payload ticket', () => {
+    const state = { Messages: [], Ticket: { dummy: 'state' } };
+    const payload = { ticket: { dummy: 'payload' } };
+    deepfreeze(state);
+    const newState = OB.App.StateAPI.Global.displayTotal(state, payload);
+    const expectedState = {
+      Messages: [
+        {
+          id: expect.stringMatching(/^[0-9A-F]{32}$/),
+          messageObj: {
+            data: {
+              ticket: { dummy: 'payload' }
+            }
+          },
+          modelName: '',
+          service: '',
+          time: expect.any(Number),
+          type: 'displayTotal',
+          consumeOffline: true
+        }
+      ],
+      Ticket: { dummy: 'state' }
+    };
+    expect(newState).toMatchObject(expectedState);
+  });
 });
