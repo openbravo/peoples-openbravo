@@ -178,13 +178,13 @@
     }
 
     async getHardwareManagerStatus() {
-      let data = {};
       if (!this.activeURL) {
-        return data;
+        return { notConfigured: true };
       }
       try {
-        data = (await get(`${this.activeURL}/status.json`)) || {};
+        const data = (await get(`${this.activeURL}/status.json`)) || {};
         OB.App.SynchronizationBuffer.goOnline('HardwareManager');
+        return data;
       } catch (error) {
         OB.App.SynchronizationBuffer.goOffline('HardwareManager');
         OB.App.UserNotifier.notifyError({
@@ -192,7 +192,6 @@
         });
         throw error;
       }
-      return data;
     }
 
     async openDrawer() {

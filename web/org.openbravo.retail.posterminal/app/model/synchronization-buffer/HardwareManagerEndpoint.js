@@ -42,18 +42,13 @@
      * @see printWelcome
      */
     async initHardwareManager() {
+      let status = {};
+
       try {
-        const data = await this.controller.getHardwareManagerStatus();
-
-        if (Object.keys(data).length === 0) {
-          // HWM might not be connected
-          return;
-        }
-
-        await this.printWelcome();
+        status = await this.controller.getHardwareManagerStatus();
 
         // Save hardware manager information
-        const { version, revision, javaInfo } = data;
+        const { version, revision, javaInfo } = status;
         if (version) {
           // Max database string size: 10
           const hwmVersion =
@@ -71,6 +66,11 @@
         }
       } catch (error) {
         OB.error(`Error initializing hardware manager: ${error}`);
+      }
+
+      if (!status.notConfigured) {
+        // HWM is configured, display the welcome message
+        await this.printWelcome();
       }
     }
 

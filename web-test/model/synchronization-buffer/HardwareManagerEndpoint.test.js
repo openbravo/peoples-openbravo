@@ -239,10 +239,10 @@ describe('Harware Manager Synchronization Endpoint', () => {
     expect(OB.UTIL.localStorage.setItem.mock.calls[2][1]).toBe('Java Info');
   });
 
-  it('initHardwareManager - no info retrieved', async () => {
+  it('initHardwareManager - HWM not configured', async () => {
     hwManagerEndpoint.controller.getHardwareManagerStatus = jest
       .fn()
-      .mockResolvedValue({});
+      .mockResolvedValue({ notConfigured: true });
 
     hwManagerEndpoint.printWelcome = jest.fn();
 
@@ -250,6 +250,22 @@ describe('Harware Manager Synchronization Endpoint', () => {
     await hwManagerEndpoint.initHardwareManager();
 
     expect(hwManagerEndpoint.printWelcome).not.toHaveBeenCalled();
+    expect(OB.UTIL.localStorage.setItem).not.toHaveBeenCalled();
+  });
+
+  it('initHardwareManager - status request failure', async () => {
+    hwManagerEndpoint.controller.getHardwareManagerStatus = jest
+      .fn()
+      .mockImplementation(() => {
+        throw new Error('Request failed');
+      });
+
+    hwManagerEndpoint.printWelcome = jest.fn();
+
+    OB.UTIL.localStorage.setItem.mockClear();
+    await hwManagerEndpoint.initHardwareManager();
+
+    expect(hwManagerEndpoint.printWelcome).toHaveBeenCalledTimes(1);
     expect(OB.UTIL.localStorage.setItem).not.toHaveBeenCalled();
   });
 
