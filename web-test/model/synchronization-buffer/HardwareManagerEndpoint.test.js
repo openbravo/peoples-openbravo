@@ -161,15 +161,15 @@ describe('Harware Manager Synchronization Endpoint', () => {
   });
 
   describe('new type of message synchronization', () => {
-    const printTicketMsg = { type: 'newType' };
+    const newTicketMsg = { type: 'newType' };
     const synchronization = jest.fn();
 
     test.each`
-      messages            | numberOfCalls | status
-      ${[printTicketMsg]} | ${1}          | ${'online'}
-      ${[printTicketMsg]} | ${0}          | ${'offline'}
+      messages          | numberOfCalls | status
+      ${[newTicketMsg]} | ${1}          | ${'online'}
+      ${[newTicketMsg]} | ${0}          | ${'offline'}
     `(
-      'printTicket calls with status $status: $numberOfCalls',
+      'synchronization calls with status $status: $numberOfCalls',
       async ({ messages, status, numberOfCalls }) => {
         syncBuffer.addMessageSynchronization(
           'HardwareManager',
