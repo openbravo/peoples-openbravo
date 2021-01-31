@@ -199,15 +199,6 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     return jsonData;
   }
 
-  /**
-   * @name updateSafeboxHistoryRecord
-   * @param cashUpDate
-   *          The date of the cash up
-   * @param cashUp
-   *          The cash up object being associated
-   * @param safeBox
-   *          The safeBox object being associated
-   */
   private void updateSafeboxHistoryRecord(Date cashUpDate, OBPOSAppCashup cashUp,
       OBPOSSafeBox safeBox) {
     OBCriteria<OBPOSSafeboxTouchpoint> criteria = OBDal.getInstance()
@@ -215,23 +206,19 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     criteria.add(Restrictions.eq(OBPOSSafeboxTouchpoint.PROPERTY_OBPOSSAFEBOX, safeBox));
     criteria.add(Restrictions.isNull(OBPOSSafeboxTouchpoint.PROPERTY_DATEOUT));
     criteria.addOrder(Order.desc(OBPOSSafeboxTouchpoint.PROPERTY_DATEIN));
-    List<OBPOSSafeboxTouchpoint> list = criteria.list();
-
+    criteria.setMaxResults(1);
+    OBPOSSafeboxTouchpoint historyRecord = (OBPOSSafeboxTouchpoint) criteria.uniqueResult();
     /**
      * Check if the list is empty. This might happen if the [in] record was not created for some
      * reason.
      */
-    if (!list.isEmpty()) {
-      OBPOSSafeboxTouchpoint historyRecord = list.get(0);
+    if (historyRecord != null) {
       historyRecord.setCashUp(cashUp);
       historyRecord.setDateOut(cashUpDate);
-      OBDal.getInstance().save(historyRecord);
     } else {
-      log.warn(
-
-          String.format(
-              "The dateOut property for the history record of the safebox %s has not been set because there are not history records created yet.",
-              safeBox.getId()));
+      log.warn(String.format(
+          "The dateOut property for the history record of the safebox %s has not been set because there are not history records created yet.",
+          safeBox.getId()));
     }
   }
 

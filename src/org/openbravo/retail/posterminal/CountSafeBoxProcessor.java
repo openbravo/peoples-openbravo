@@ -54,9 +54,6 @@ public class CountSafeBoxProcessor {
 
     boolean isInitialCount = jsonCountSafeBox.optBoolean("isInitialCount", false);
 
-    /**
-     * Insert the record on the safeBox history
-     */
     if (isInitialCount) {
       createSafeboxHistoryRecord(safeBox, countSafeBoxDate,
           jsonCountSafeBox.optString("touchpointId"));
@@ -150,13 +147,6 @@ public class CountSafeBoxProcessor {
     return result;
   }
 
-  /**
-   * @name createSafeboxHistoryRecord
-   * @param safeBox
-   *          The safeBox associated to the history record.
-   * @param countSafeBoxDate
-   *          The date when the safeBox was counted.
-   */
   private void createSafeboxHistoryRecord(OBPOSSafeBox safeBox, Date countSafeBoxDate,
       String touchpointId) {
     OBPOSSafeboxTouchpoint historyRecord = OBProvider.getInstance()
@@ -164,6 +154,7 @@ public class CountSafeBoxProcessor {
 
     if (touchpointId == null) {
       logger.warn("Can not create Safebox history record without a touchpoint available");
+      return;
     }
 
     OBPOSApplications touchpoint = OBDal.getInstance().get(OBPOSApplications.class, touchpointId);
@@ -172,13 +163,11 @@ public class CountSafeBoxProcessor {
       logger.warn(String.format(
           "Can not find a touchpoint with ID (%s), and for that reason, a Safebox history record can not be created.",
           safeBox.getId()));
+      return;
     }
-
-    historyRecord.setNewOBObject(true);
     historyRecord.setDateIn(countSafeBoxDate);
     historyRecord.setObposSafebox(safeBox);
     historyRecord.setTouchpoint(touchpoint);
-    historyRecord.setActive(true);
     OBDal.getInstance().save(historyRecord);
   }
 
