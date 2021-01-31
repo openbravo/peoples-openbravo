@@ -262,6 +262,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Taxes
         "taxesengine/pos/pos-taxes",
 
+        // Terminal Log
+        "utils/terminal-log-context",
+
         // Discounts
         "discountsengine/pos/pos-discounts",
 
