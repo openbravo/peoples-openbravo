@@ -92,7 +92,6 @@
       this.ispdf = true;
       this.printer = printer || 1;
       this.dateFormat = OB.Format.date;
-      this.subreports = [];
       this.subreports = subreports.map(
         (s, index) =>
           new OB.App.Class.PrintTemplate(`${this.name}Subrep${index}`, s)
