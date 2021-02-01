@@ -100,7 +100,7 @@
 
         const template = OB.App.PrintTemplateStore.selectTicketPrintTemplate(
           printableTicket,
-          { forcedtemplate: prePrintData.forcedtemplate }
+          { forcedtemplate: toPrintTemplate(prePrintData.forcedtemplate) }
         );
         isPdf = template.ispdf;
 
@@ -351,5 +351,28 @@
         !OB.App.Security.hasPermission('OBPOS_print.once')) ||
       ticket.payments.some(payment => payment.printtwice)
     );
+  }
+
+  // registers a OB.DS.HWResource as a PrintTemplate for backwards compatibility support
+  // and returns the name of the registered PrintTemplate
+  // if the provided template is not a OB.DS.HWResource then this function just returns it without changes
+  function toPrintTemplate(template) {
+    if (!template || !OB.DS || !OB.DS.HWResource) {
+      return template;
+    }
+    if (template instanceof OB.DS.HWResource) {
+      try {
+        return OB.App.PrintTemplateStore.get(template.resource).name;
+      } catch (error) {
+        // template not registered yet
+        OB.App.PrintTemplateStore.register(
+          template.resource,
+          template.resource,
+          { isLegacy: true }
+        );
+        return OB.App.PrintTemplateStore.get(template.resource).name;
+      }
+    }
+    return template;
   }
 })();
