@@ -93,14 +93,10 @@
       this.printer = printer || 1;
       this.dateFormat = OB.Format.date;
       this.subreports = [];
-      for (let i = 0; i < subreports.length; i += 1) {
-        this.subreports.push(
-          new OB.App.Class.PrintTemplate(
-            `${this.name}Subrep${i}`,
-            subreports[i]
-          )
-        );
-      }
+      this.subreports = subreports.map(
+        (s, index) =>
+          new OB.App.Class.PrintTemplate(`${this.name}Subrep${index}`, s)
+      );
 
       const templates = [this, ...this.subreports];
       const dataRetrievals = templates.map(async template => {

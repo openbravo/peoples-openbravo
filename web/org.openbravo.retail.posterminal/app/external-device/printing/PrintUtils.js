@@ -52,7 +52,7 @@ OB.App.PrintUtils = {
   /**
    * Returns a formatted quantity according to the current configuration
    *
-   * @param amount {number} - the amount to be formatted
+   * @param qty {number} - the quantity to be formatted
    * @return {string} - the formatted amount
    */
   printQty: qty => {
