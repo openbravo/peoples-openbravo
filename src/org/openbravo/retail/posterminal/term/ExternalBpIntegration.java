@@ -16,6 +16,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.login.ExternalBusinessPartnerConfigurationProvider;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.service.json.JsonConstants;
 
@@ -26,14 +27,10 @@ public class ExternalBpIntegration extends JSONTerminalProperty {
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
     try {
-
+      Client clientEntity = OBDal.getInstance()
+          .get(Client.class, OBContext.getOBContext().getCurrentClient().getId());
       ClientInformation clientInfoFromDb = OBDal.getInstance()
-          .get(ClientInformation.class,
-              OBContext.getOBContext()
-                  .getCurrentClient()
-                  .getClientInformationList()
-                  .get(0)
-                  .getId());
+          .get(ClientInformation.class, clientEntity.getClientInformationList().get(0).getId());
 
       if (clientInfoFromDb.isExtbpEnabled()) {
         ExternalBusinessPartnerConfigurationProvider extBpInstance = WeldUtils
@@ -54,7 +51,7 @@ public class ExternalBpIntegration extends JSONTerminalProperty {
 
   @Override
   public String getProperty() {
-    return "externalBpIntegration";
+    return "externalBpIntegrationnn";
   }
 
   @Override
