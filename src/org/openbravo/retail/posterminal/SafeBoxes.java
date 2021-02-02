@@ -1,6 +1,13 @@
-package org.openbravo.retail.posterminal;
+/*
+ ************************************************************************************
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
 
-import java.util.List;
+package org.openbravo.retail.posterminal;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -97,8 +104,8 @@ public class SafeBoxes extends JSONProcessSimple {
         if (safeBox.has("safeBoxUserId")) {
           User cashier = OBDal.getInstance().get(User.class, safeBox.get("safeBoxUserId"));
           if (cashier != null) {
-            String fullName = cashier.getName();
-            safeBox.put("safeBoxCashierName", fullName);
+            safeBox.put("safeBoxCashierName", cashier.getName());
+            safeBox.put("safeBoxCashierUserName", cashier.getUsername());
           }
 
         }
@@ -193,28 +200,25 @@ public class SafeBoxes extends JSONProcessSimple {
    * @throws JSONException
    */
   public JSONObject getLastHistoryRecord(OBPOSSafeBox safeBox) throws JSONException {
-
-    JSONObject result = null;
-
     if (safeBox == null) {
-      return result;
+      return null;
     }
 
     OBCriteria<OBPOSSafeboxTouchpoint> criteria = OBDal.getInstance()
         .createCriteria(OBPOSSafeboxTouchpoint.class);
     criteria.add(Restrictions.eq(OBPOSSafeboxTouchpoint.PROPERTY_OBPOSSAFEBOX, safeBox));
     criteria.addOrder(Order.desc(OBPOSSafeboxTouchpoint.PROPERTY_UPDATED));
-    List<OBPOSSafeboxTouchpoint> list = criteria.list();
+    criteria.setMaxResults(1);
+    OBPOSSafeboxTouchpoint lastTouchpoint = (OBPOSSafeboxTouchpoint) criteria.uniqueResult();
 
-    if (list.isEmpty()) {
-      return result;
+    if (lastTouchpoint == null) {
+      return null;
     }
 
-    OBPOSSafeboxTouchpoint historyRecord = list.get(0);
-    result = new JSONObject();
-    result.put(LAST_TERMINAL_IN, historyRecord.getDateIn());
-    result.put(LAST_TERMINAL_OUT, historyRecord.getDateOut());
-    result.put(LAST_TERMINAL_SEARCHKEY, historyRecord.getTouchpoint().getSearchKey());
+    JSONObject result = new JSONObject();
+    result.put(LAST_TERMINAL_IN, lastTouchpoint.getDateIn());
+    result.put(LAST_TERMINAL_OUT, lastTouchpoint.getDateOut());
+    result.put(LAST_TERMINAL_SEARCHKEY, lastTouchpoint.getTouchpoint().getSearchKey());
 
     return result;
   }
