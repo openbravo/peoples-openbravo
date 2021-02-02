@@ -44,6 +44,9 @@ import org.openbravo.service.json.JsonConstants;
 public class CountSafeBoxProcessor {
 
   private static final Logger logger = LogManager.getLogger();
+  private static final String PAYMENT_CLEARED = "RPPC";
+  private static final String WITHDRAWN_NOT_CLEARED = "PWNC";
+  private static final String DEPOSITED_NOT_CLEARED = "RDNC";
 
   public JSONObject processCountSafeBox(OBPOSSafeBox safeBox, JSONObject jsonCountSafeBox,
       Date countSafeBoxDate) throws Exception {
@@ -83,7 +86,7 @@ public class CountSafeBoxProcessor {
       FIN_FinaccTransaction diffTransaction = null;
       if (!differenceToApply.equals(BigDecimal.ZERO)) {
         diffTransaction = createDifferenceTransaction(safeBox, paymentType, differenceToApply,
-            countSafeBoxDate);
+            countSafeBoxDate, isInitialCount);
         OBDal.getInstance().save(diffTransaction);
       }
 
@@ -178,13 +181,13 @@ public class CountSafeBoxProcessor {
     try {
       while (transactions.next()) {
         FIN_FinaccTransaction transaction = (FIN_FinaccTransaction) transactions.get(0);
-        transaction.setStatus("RPPC");
+        transaction.setStatus(PAYMENT_CLEARED);
         transaction.setReconciliation(reconciliation);
 
         // not all transactions have payment (i.e. deposits don't have), if there is payment, set it
         // as cleared
         if (transaction.getFinPayment() != null) {
-          transaction.getFinPayment().setStatus("RPPC");
+          transaction.getFinPayment().setStatus(PAYMENT_CLEARED);
         }
       }
     } finally {
@@ -256,7 +259,8 @@ public class CountSafeBoxProcessor {
   }
 
   private FIN_FinaccTransaction createDifferenceTransaction(OBPOSSafeBox safeBox,
-      OBPOSSafeBoxPaymentMethod payment, BigDecimal difference, Date countSafeBoxDate) {
+      OBPOSSafeBoxPaymentMethod payment, BigDecimal difference, Date countSafeBoxDate,
+      boolean isInitialCount) {
     FIN_FinancialAccount account = payment.getFINFinancialaccount();
     GLItem glItem = null;
 
@@ -271,13 +275,14 @@ public class CountSafeBoxProcessor {
       transaction.setPaymentAmount(difference.abs());
       account.setCurrentBalance(account.getCurrentBalance().subtract(difference.abs()));
       transaction.setTransactionType("BPW");
+      transaction.setStatus(isInitialCount ? WITHDRAWN_NOT_CLEARED : PAYMENT_CLEARED);
     } else {
       transaction.setDepositAmount(difference);
       account.setCurrentBalance(account.getCurrentBalance().add(difference));
       transaction.setTransactionType("BPD");
+      transaction.setStatus(isInitialCount ? DEPOSITED_NOT_CLEARED : PAYMENT_CLEARED);
     }
     transaction.setProcessed(true);
-    transaction.setStatus("RPPC");
     transaction.setDescription("GL Item: " + glItem.getName());
     transaction.setDateAcct(OBMOBCUtils.stripTime(countSafeBoxDate));
     transaction.setTransactionDate(OBMOBCUtils.stripTime(countSafeBoxDate));
@@ -309,7 +314,7 @@ public class CountSafeBoxProcessor {
       transaction.setTransactionType("BPW");
     }
     transaction.setProcessed(true);
-    transaction.setStatus("RPPC");
+    transaction.setStatus(PAYMENT_CLEARED);
     transaction.setDescription(
         String.format("GL Item: %s, Safe Box: %s", glItem.getName(), safeBox.getSearchKey()));
     transaction.setDateAcct(OBMOBCUtils.stripTime(countSafeBoxDate));
