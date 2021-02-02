@@ -887,9 +887,10 @@
         prePaymentsAmount,
         ticket.nettingPayment || OB.DEC.Zero
       );
-      return OB.DEC.compare(ticket.total) === -1
-        ? processedPaymentsAmount >= ticket.total
-        : processedPaymentsAmount > ticket.total;
+      const total = ticket.total || OB.DEC.Zero;
+      return OB.DEC.compare(total) === -1
+        ? processedPaymentsAmount >= total
+        : processedPaymentsAmount > total;
     },
 
     /**

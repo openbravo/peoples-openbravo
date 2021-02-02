@@ -151,6 +151,7 @@ describe('TicketUtils', () => {
     ${{ isLayaway: true, total: 100 }}                                                            | ${false}
     ${{ isPaid: true, total: -100 }}                                                              | ${true}
     ${{ isPaid: true, total: 100 }}                                                               | ${false}
+    ${{ payments: [] }}                                                                           | ${false}
     ${{ payments: [{ origAmount: 10 }, { origAmount: 200, isPrePayment: true }], total: 100 }}    | ${true}
     ${{ payments: [{ origAmount: 10 }, { origAmount: 100, isPrePayment: true }], total: 100 }}    | ${false}
     ${{ payments: [{ origAmount: 10 }, { origAmount: 10, isPrePayment: true }], total: 100 }}     | ${false}
