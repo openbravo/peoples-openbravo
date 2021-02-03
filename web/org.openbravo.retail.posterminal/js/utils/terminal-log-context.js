@@ -9,17 +9,21 @@
 
 (function() {
   /*
-  Add action preparation to add the ticket id to the payload,
-  this is only for the pos,
+  Add action preparation to add the context of pos application to the payload,
   it will be executed later the action preparation of mobile.core
-  and will use the ticketid to calculate the contex.
+  and will use if specified the appContext to calculate the context.
   The priority of these action preparation is set to -100 so it is
   executed before the default one that is 100, that is the one that
   have the mobile.core action preparation
   */
   async function addTicketIdToPayload(terminalLog, payload, options) {
     const newPayload = { ...payload };
-    newPayload.ticketid = options.globalState.Ticket.id;
+    if (
+      terminalLog.context === 'retail.pointofsale' &&
+      options.globalState.Ticket.id
+    ) {
+      newPayload.appContext = options.globalState.Ticket.id;
+    }
     return newPayload;
   }
 
