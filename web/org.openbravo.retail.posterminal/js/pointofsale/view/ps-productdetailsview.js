@@ -415,14 +415,32 @@ enyo.kind({
           selectedStoreCallBack(data);
         }
       } else {
-        this.doShowPopup({
-          popup: 'OBPOS_modalCrossStoreSelector',
-          args: {
-            productId: this.leftSubWindow.product.get('id'),
-            productUOM: this.leftSubWindow.product.get('uOMsymbol'),
-            callback: selectedStoreCallBack
-          }
-        });
+        if (this.leftSubWindow.product.get('productType') !== 'S') {
+          this.doShowPopup({
+            popup: 'OBPOS_modalCrossStoreSelector',
+            args: {
+              productId: this.leftSubWindow.product.get('id'),
+              productUOM: this.leftSubWindow.product.get('uOMsymbol'),
+              callback: selectedStoreCallBack
+            }
+          });
+        } else {
+          data = {
+            orgId: this.leftSubWindow.product.get('orgId'),
+            orgName: this.leftSubWindow.product.get('organization').name,
+            countryId: this.leftSubWindow.product.get('organization').country,
+            regionId: this.leftSubWindow.product.get('organization').region,
+            warehouseid: this.leftSubWindow.product.get('warehouse').id,
+            warehousename: this.leftSubWindow.product.get('warehouse')
+              .warehousename,
+            stock: 0,
+            currentPrice: {
+              priceListId: OB.MobileApp.model.get('terminal').priceList,
+              price: this.leftSubWindow.product.get('standardPrice')
+            }
+          };
+          selectedStoreCallBack(data);
+        }
       }
     } else {
       if (this.leftSubWindow.otherStoresStockModel) {
@@ -609,7 +627,9 @@ enyo.kind({
             OB.UTIL.isCrossStoreProduct(me.product)) &&
             (!me.line || OB.DEC.compare(me.line.get('qty')) > 0))
       );
-      me.bodyComponent.$.productAddToReceipt.setDisabled(true);
+      if (this.product.get('productType') !== 'S') {
+        me.bodyComponent.$.productAddToReceipt.setDisabled(true);
+      }
       if (params.checkStockCallback) {
         params.checkStockCallback();
       }

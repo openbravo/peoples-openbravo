@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-/* global enyo */
+/* global enyo OBRDM*/
 
 OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
   args,
@@ -151,6 +151,9 @@ OB.UTIL.HookManager.registerHook('OBPOS_RenderOrderLine', function(
         name: 'showDeliveryServicesButton',
         classes: 'obPosRenderOrderLine-showDeliveryServicesButton'
       });
+      if (OB.MobileApp.model.get('deliveryModesCrossStore')) {
+        OBRDM.UTIL.processDeliveryProductsServices([orderline]);
+      }
     }
   }
   OB.UTIL.HookManager.callbackExecutor(args, callbacks);

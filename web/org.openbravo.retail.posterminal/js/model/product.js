@@ -37,6 +37,11 @@
       type: 'TEXT'
     },
     {
+      name: 'orgId',
+      column: 'organization',
+      type: 'TEXT'
+    },
+    {
       name: 'uPCEAN',
       column: 'upc',
       filter: true,

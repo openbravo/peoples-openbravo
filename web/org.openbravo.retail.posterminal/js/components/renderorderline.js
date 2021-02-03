@@ -516,7 +516,16 @@ enyo.kind({
     });
     this.bubble('onSelectFilter', {
       params: {
-        skipProductCharacteristic: true
+        skipProductCharacteristic: true,
+        crossStore: product.get('crossStore') === true,
+        crossStoreProductOrg:
+          product.get('crossStore') === true
+            ? product.get('organization')
+            : undefined,
+        crossStoreProductWhs:
+          product.get('crossStore') === true
+            ? orderline.get('warehouse')
+            : undefined
       }
     });
   },
