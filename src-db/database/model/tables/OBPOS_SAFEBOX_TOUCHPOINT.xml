@@ -77,6 +77,9 @@
       <index name="OBPOS_SAFEBOXHISTORY_DATEIN" unique="false">
         <index-column name="DATEIN"/>
       </index>
+      <index name="OBPOS_SAFEBOXHISTORY_SFBX" unique="false">
+        <index-column name="OBPOS_SAFEBOX_ID"/>
+      </index>
       <check name="OBPOS_SAFEBOXHISTORY_ACTIVE"><![CDATA[ISACTIVE = 'Y' OR ISACTIVE = 'N']]></check>
     </table>
   </database>

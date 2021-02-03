@@ -216,7 +216,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
       historyRecord.setCashUp(cashUp);
       historyRecord.setDateOut(cashUpDate);
     } else {
-      log.warn(String.format(
+      log.info(String.format(
           "The dateOut property for the history record of the safebox %s has not been set because there are not history records created yet.",
           safeBox.getId()));
     }
