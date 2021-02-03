@@ -51,7 +51,7 @@ public class ExternalBpIntegration extends JSONTerminalProperty {
 
   @Override
   public String getProperty() {
-    return "externalBpIntegrationnn";
+    return "externalBpIntegration";
   }
 
   @Override
