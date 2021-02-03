@@ -1,3 +1,12 @@
+/*
+ ************************************************************************************
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+
 package org.openbravo.retail.posterminal;
 
 import javax.enterprise.inject.Any;
@@ -8,13 +17,17 @@ import javax.servlet.ServletException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.service.json.JsonConstants;
 
 public class SafeBoxes extends JSONProcessSimple {
@@ -22,6 +35,9 @@ public class SafeBoxes extends JSONProcessSimple {
   public static final String safeBoxesPaymentMethodsPropertyExtension = "SafeBoxesExtensionPaymentMethods";
   public static final String safeBoxesPaymentMethodsTransactionPropertyExtension = "SafeBoxesPaymentMethodsExtensionTransaction";
   public static final String safeBoxesPaymentMethodsAccountPropertyExtension = "SafeBoxesPaymentMethodsExtensionAccount";
+  public static final String LAST_TERMINAL_IN = "lastIn";
+  public static final String LAST_TERMINAL_OUT = "lastOut";
+  public static final String LAST_TERMINAL_SEARCHKEY = "searchKey";
 
   @Inject
   @Any
@@ -77,6 +93,22 @@ public class SafeBoxes extends JSONProcessSimple {
 
       for (int countSafeBox = 0; countSafeBox < safeBoxes.length(); countSafeBox++) {
         JSONObject safeBox = safeBoxes.getJSONObject(countSafeBox);
+
+        OBPOSSafeBox safeBoxObject = OBDal.getInstance()
+            .get(OBPOSSafeBox.class, safeBox.getString("safeBoxId"));
+
+        JSONObject lastHistoryRecord = getLastHistoryRecord(safeBoxObject);
+
+        safeBox.putOpt("lastTouchpoint", lastHistoryRecord);
+
+        if (safeBox.has("safeBoxUserId")) {
+          User cashier = OBDal.getInstance().get(User.class, safeBox.get("safeBoxUserId"));
+          if (cashier != null) {
+            safeBox.put("safeBoxCashierName", cashier.getName());
+            safeBox.put("safeBoxCashierUserName", cashier.getUsername());
+          }
+
+        }
 
         JSONArray safeBoxPaymentMethods = new JSONArray();
         // get the details of each payment method
@@ -157,6 +189,37 @@ public class SafeBoxes extends JSONProcessSimple {
     } finally {
       OBContext.restorePreviousMode();
     }
+    return result;
+  }
+
+  /**
+   * @name getLastHistoryRecord
+   * @param safeBox
+   *          The reference of a safeBox to get the last history record
+   * @return OBPOSSafeboxTouchpoint the last history record of a given safeBox
+   * @throws JSONException
+   */
+  public JSONObject getLastHistoryRecord(OBPOSSafeBox safeBox) throws JSONException {
+    if (safeBox == null) {
+      return null;
+    }
+
+    OBCriteria<OBPOSSafeboxTouchpoint> criteria = OBDal.getInstance()
+        .createCriteria(OBPOSSafeboxTouchpoint.class);
+    criteria.add(Restrictions.eq(OBPOSSafeboxTouchpoint.PROPERTY_OBPOSSAFEBOX, safeBox));
+    criteria.addOrder(Order.desc(OBPOSSafeboxTouchpoint.PROPERTY_UPDATED));
+    criteria.setMaxResults(1);
+    OBPOSSafeboxTouchpoint lastTouchpoint = (OBPOSSafeboxTouchpoint) criteria.uniqueResult();
+
+    if (lastTouchpoint == null) {
+      return null;
+    }
+
+    JSONObject result = new JSONObject();
+    result.put(LAST_TERMINAL_IN, lastTouchpoint.getDateIn());
+    result.put(LAST_TERMINAL_OUT, lastTouchpoint.getDateOut());
+    result.put(LAST_TERMINAL_SEARCHKEY, lastTouchpoint.getTouchpoint().getSearchKey());
+
     return result;
   }
 

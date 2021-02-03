@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+  <database name="TABLE OBPOS_SAFEBOX_TOUCHPOINT">
+    <table name="OBPOS_SAFEBOX_TOUCHPOINT" primaryKey="OBPOS_SAFEBOX_TOUCHPOINT_PK">
+      <column name="OBPOS_SAFEBOX_TOUCHPOINT_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_CLIENT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_ORG_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISACTIVE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CREATEDBY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATED" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default><![CDATA[SYSDATE]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="UPDATEDBY" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DATEIN" primaryKey="false" required="true" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DATEOUT" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_SAFEBOX_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_APP_CASHUP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="OBPOS_APPLICATIONS_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_SAFEBOX_TOUCHPOINT_APP">
+        <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_APP_CASHUP" name="OBPOS_SAFEBOXHISTORY_CASHUP">
+        <reference local="OBPOS_APP_CASHUP_ID" foreign="OBPOS_APP_CASHUP_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_CLIENT" name="OBPOS_SAFEBOXHISTORY_CLIENT">
+        <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="OBPOS_SAFEBOXHISTORY_CREATED">
+        <reference local="CREATEDBY" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="OBPOS_SAFEBOXHISTORY_ORG">
+        <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBPOS_SAFEBOX" name="OBPOS_SAFEBOXHISTORY_SAFEBOX">
+        <reference local="OBPOS_SAFEBOX_ID" foreign="OBPOS_SAFEBOX_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="OBPOS_SAFEBOXHISTORY_UPDATED">
+        <reference local="UPDATEDBY" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <index name="OBPOS_SAFEBOXHISTORY_DATEIN" unique="false">
+        <index-column name="DATEIN"/>
+      </index>
+      <index name="OBPOS_SAFEBOXHISTORY_SFBX" unique="false">
+        <index-column name="OBPOS_SAFEBOX_ID"/>
+      </index>
+      <check name="OBPOS_SAFEBOXHISTORY_ACTIVE"><![CDATA[ISACTIVE = 'Y' OR ISACTIVE = 'N']]></check>
+    </table>
+  </database>
