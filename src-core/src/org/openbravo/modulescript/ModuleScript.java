@@ -17,8 +17,7 @@ import org.openbravo.base.ExecutionLimits;
 
 /**
  * Classes extending ModuleScript can be included in Openbravo Core or a module and will be
- * automatically executed when the system is rebuilt (technically in: update.database and
- * update.database.mod)
+ * automatically executed when the system is rebuilt (technically in: update.database)
  * 
  */
 public abstract class ModuleScript extends ExecutionLimitBaseProcess {
@@ -28,8 +27,7 @@ public abstract class ModuleScript extends ExecutionLimitBaseProcess {
   /**
    * This method must be implemented by the ModuleScripts, and is used to define the actions that
    * the script itself will take. This method will be automatically called by the
-   * ModuleScriptHandler when the update.database or the update.database.mod tasks are being
-   * executed
+   * ModuleScriptHandler when the update.database task is being executed
    */
   public abstract void execute();
 
