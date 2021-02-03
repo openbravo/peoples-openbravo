@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2020 Openbravo SLU
+ * All portions are Copyright (C) 2014-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -46,6 +47,7 @@ import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonUtils;
 
 public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
+  private static final String BEGINNING_OF_TIMES = "01-01-1900";
   private static final Logger log4j = LogManager.getLogger();
   private static CostAdjustment costAdjHeader = null;
 
@@ -97,9 +99,14 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
         int i = 0;
         try {
           final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-          Date lastMovementDate = dateFormat.parse("01-01-1900");
+          Date lastMovementDate = dateFormat.parse(BEGINNING_OF_TIMES);
+          String productId = "";
           while (transactions.next()) {
             final MaterialTransaction trx = (MaterialTransaction) transactions.get()[0];
+            if (!StringUtils.equals(productId, trx.getProduct().getId())) {
+              productId = trx.getProduct().getId();
+              lastMovementDate = dateFormat.parse(BEGINNING_OF_TIMES);
+            }
             if (trx.getMovementDate().compareTo(lastMovementDate) < 0) {
               createCostAdjustmenHeader(rule.getOrganization());
               final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
@@ -203,7 +210,7 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
     }
     //@formatter:off
     hql +=
-        " order by trx.transactionProcessDate";
+        " order by trx.product, trx.transactionProcessDate";
     //@formatter:on
 
     final Query<MaterialTransaction> stockLinesQry = OBDal.getInstance()
