@@ -568,6 +568,67 @@
       }
     },
 
+    getOpenDrawerStatus: function({ isMultiTicket, receipt }) {
+      let openDrawer = false;
+      let label = false;
+      const payments = !isMultiTicket
+        ? receipt.get('payments')
+        : OB.MobileApp.model.multiOrders.get('payments');
+      payments.forEach(payment => {
+        if (openDrawer || payment.get('isPrePayment')) {
+          return;
+        } else {
+          const paymentMethod =
+            OB.MobileApp.model.paymentnames[payment.get('kind')];
+          openDrawer =
+            (paymentMethod.paymentMethod.iscash ||
+              paymentMethod.paymentMethod.allowopendrawer) &&
+            !paymentMethod.paymentMethod.openDrawer;
+        }
+      });
+      if (openDrawer) {
+        if (isMultiTicket) {
+          if (OB.MobileApp.model.multiOrders.get('change') <= 0) {
+            label = OB.I18N.getLabel('OBPOS_PaymentsExact');
+          } else if (OB.MobileApp.model.multiOrders.get('change') > 0) {
+            label = `${OB.I18N.getLabel(
+              'OBPOS_ticketChange'
+            )}: ${OB.App.TerminalProperty.get('changeReceipt')}`;
+          }
+        } else {
+          const paymentStatus = receipt.getPaymentStatus();
+          if (paymentStatus.isReturn || paymentStatus.isNegative) {
+            const returnAmt = [];
+            paymentStatus.payments.forEach(payment => {
+              if (payment.get('isCash') && !payment.get('isPrePayment')) {
+                const paymentMethod =
+                  OB.MobileApp.model.paymentnames[payment.get('kind')];
+                returnAmt.push(
+                  OB.I18N.formatCurrencyWithSymbol(
+                    payment.get('paid'),
+                    paymentMethod.symbol,
+                    paymentMethod.currencySymbolAtTheRight
+                  )
+                );
+              }
+            });
+            if (returnAmt.length > 0) {
+              label = `${OB.I18N.getLabel('OBPOS_ToReturn')}: ${returnAmt.join(
+                ', '
+              )}`;
+            }
+          } else if (receipt.get('change') <= 0) {
+            label = OB.I18N.getLabel('OBPOS_PaymentsExact');
+          } else if (receipt.get('change') > 0) {
+            label = `${OB.I18N.getLabel(
+              'OBPOS_ticketChange'
+            )}: ${OB.App.TerminalProperty.get('changeReceipt')}`;
+          }
+        }
+      }
+      return { openDrawer, label };
+    },
+
     runCompleteTicket: async function(
       completeTicketAction,
       actionName,
@@ -592,7 +653,10 @@
 
           if (!isDeleteTicket) {
             // Open drawer
-            receipt.trigger('checkOpenDrawer');
+            OB.MobileApp.model.receipt.trigger(
+              'checkOpenDrawer',
+              me.getOpenDrawerStatus({ isMultiTicket, receipt })
+            );
 
             // RFID
             if (OB.UTIL.RfidController.isRfidConfigured()) {

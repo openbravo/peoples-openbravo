@@ -2479,8 +2479,10 @@ enyo.kind({
   },
   blocked: false,
   tap: function() {
-    var me = this,
-      orderDesc = '';
+    let me = this;
+    let isMultiOrder = !this.owner.model.get('leftColumnViewManager').isOrder();
+    let orderDesc = '';
+    let payments;
 
     //*** Avoid double click ***
     if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
@@ -2519,26 +2521,75 @@ enyo.kind({
       return true;
     }
 
-    if (!me.owner.model.get('leftColumnViewManager').isOrder()) {
-      OB.MobileApp.model.receipt.runCompleteTicket(
-        OB.App.State.Global.completeMultiTicket,
-        'completeReceipt'
-      );
-    } else if (OB.MobileApp.model.receipt.get('cancelLayaway')) {
-      OB.MobileApp.model.receipt.runCompleteTicket(
-        OB.App.State.Global.cancelTicket,
-        'cancelLayaway'
-      );
-    } else if (OB.MobileApp.model.receipt.get('doCancelAndReplace')) {
-      OB.MobileApp.model.receipt.runCompleteTicket(
-        OB.App.State.Global.replaceTicket,
-        'completeReceipt'
-      );
+    if (isMultiOrder) {
+      payments = this.owner.model.get('multiOrders').get('payments');
     } else {
-      OB.MobileApp.model.receipt.runCompleteTicket(
-        OB.App.State.Global.completeTicket,
-        'completeReceipt'
-      );
+      payments = OB.MobileApp.model.receipt.get('payments');
+    }
+
+    payments.each(function(payment) {
+      if (payment.get('allowOpenDrawer') || payment.get('isCash')) {
+        me.allowOpenDrawer = true;
+      }
+    });
+
+    let processTicket = () => {
+      if (!me.owner.model.get('leftColumnViewManager').isOrder()) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.completeMultiTicket,
+          'completeReceipt'
+        );
+      } else if (OB.MobileApp.model.receipt.get('cancelLayaway')) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.cancelTicket,
+          'cancelLayaway'
+        );
+      } else if (OB.MobileApp.model.receipt.get('doCancelAndReplace')) {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.replaceTicket,
+          'completeReceipt'
+        );
+      } else {
+        OB.MobileApp.model.receipt.runCompleteTicket(
+          OB.App.State.Global.completeTicket,
+          'completeReceipt'
+        );
+      }
+    };
+
+    if (me.drawerpreference && me.allowOpenDrawer) {
+      if (me.drawerOpened) {
+        if (!isMultiOrder) {
+          me.owner.receipt.set('openDrawer', false);
+        } else {
+          me.owner.model.get('multiOrders').set('openDrawer', false);
+        }
+        me.drawerOpened = false;
+        processTicket();
+      } else {
+        // Open drawer
+        OB.POS.hwserver.openDrawer(
+          {
+            openFirst: true,
+            ...OB.MobileApp.model.receipt.getOpenDrawerStatus({
+              openFirst: true,
+              isMultiTicket: isMultiOrder,
+              receipt: me.owner.receipt
+            })
+          },
+          OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales
+        );
+        me.drawerOpened = true;
+        this.setContent(OB.I18N.getLabel('OBPOS_LblDone'));
+      }
+    } else {
+      if (!isMultiOrder) {
+        me.owner.receipt.set('openDrawer', false);
+      } else {
+        me.owner.model.get('multiOrders').set('openDrawer', false);
+      }
+      me.drawerOpened = false;
+      processTicket();
     }
   }
 });

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -279,8 +279,6 @@ OB.DS.HWServer.prototype.isDrawerClosed = function(popup, timeout) {
     template = new OB.DS.HWResource(this.isDrawerClosedTemplate),
     me = this,
     errorCounter = 0,
-    symbol,
-    symbolAtRight,
     popupDrawerOpened =
       OB.MobileApp.view.$.confirmationContainer.$.popupDrawerOpened;
 
@@ -301,57 +299,25 @@ OB.DS.HWServer.prototype.isDrawerClosed = function(popup, timeout) {
       );
     }
 
-    if (popup.receipt) {
-      var paymentStatus = popup.receipt.getPaymentStatus();
-      popupDrawerOpened.$.table.addClass(
-        'popupDrawerOpened-table_noTop popupDrawerOpened-table-generic'
-      );
-      if (paymentStatus.isReturn || paymentStatus.isNegative) {
-        popupDrawerOpened.$.bodyContent.$.label.setContent(
-          OB.I18N.getLabel('OBPOS_ToReturn') + ':'
-        );
-        _.each(popup.receipt.get('payments').models, function(payment) {
-          if (payment.get('isCash')) {
-            symbol =
-              OB.MobileApp.model.paymentnames[payment.get('kind')].symbol;
-            symbolAtRight =
-              OB.MobileApp.model.paymentnames[payment.get('kind')]
-                .currencySymbolAtTheRight;
-            popupDrawerOpened.$.bodyContent.$.label.setContent(
-              popupDrawerOpened.$.bodyContent.$.label.getContent() +
-                ' ' +
-                OB.I18N.formatCurrencyWithSymbol(
-                  payment.get('paid'),
-                  symbol,
-                  symbolAtRight
-                )
-            );
-          }
-        });
-      } else {
-        if (OB.DEC.compare(popup.receipt.get('change')) <= 0) {
-          popupDrawerOpened.$.bodyContent.$.label.setContent(
-            OB.I18N.getLabel('OBPOS_PaymentsExact')
-          );
-        } else {
-          popupDrawerOpened.$.bodyContent.$.label.setContent(
-            OB.I18N.getLabel('OBPOS_ticketChange') +
-              ': ' +
-              OB.MobileApp.model.get('changeReceipt')
-          );
-        }
-      }
-    } else {
-      popupDrawerOpened.$.bodyContent.$.label.setContent('');
-      popupDrawerOpened.$.table.addClass(
-        'popupDrawerOpened-table_standardTop popupDrawerOpened-table-generic'
-      );
-    }
+    popupDrawerOpened.$.bodyContent.$.label.setContent(
+      popup.label ? popup.label : ''
+    );
+    popupDrawerOpened.$.table.addClass(' popupDrawerOpened-table-generic');
+    popupDrawerOpened.$.table.addRemoveClass(
+      'popupDrawerOpened-table_noTop',
+      popup.label ? true : false
+    );
+    popupDrawerOpened.$.table.addRemoveClass(
+      'popupDrawerOpened-table_standardTop',
+      popup.label ? false : true
+    );
 
     if (popup.openFirst) {
       OB.UTIL.showLoading(false);
       popupDrawerOpened.show();
     }
+  } else {
+    return;
   }
 
   statusChecker = setInterval(function() {

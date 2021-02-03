@@ -398,14 +398,12 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       }
     );
 
-    this.checkOpenDrawer = function() {
-      if (me.openDrawer) {
+    this.checkOpenDrawer = function({ openDrawer, label } = {}) {
+      if (openDrawer) {
         OB.POS.hwserver.openDrawer(
           {
             openFirst: true,
-            receipt: me.get('leftColumnViewManager').isMultiOrder()
-              ? me.get('multiOrders')
-              : receipt
+            label
           },
           OB.MobileApp.model.get('permissions').OBPOS_timeAllowedDrawerSales
         );
@@ -444,12 +442,21 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       });
     }
 
-    receipt.on('checkOpenDrawer', function() {
-      me.checkOpenDrawer();
+    receipt.on('checkOpenDrawer', function({ openDrawer, label } = {}) {
+      me.checkOpenDrawer({
+        openDrawer,
+        label
+      });
     });
 
-    this.get('multiOrders').on('checkOpenDrawer', function() {
-      me.checkOpenDrawer();
+    this.get('multiOrders').on('checkOpenDrawer', function({
+      openDrawer,
+      label
+    } = {}) {
+      me.checkOpenDrawer({
+        openDrawer,
+        label
+      });
     });
 
     // Listening events that cause a discount recalculation
