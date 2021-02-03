@@ -39,7 +39,8 @@
       "**/web-jspack/**/?(*.)+(test).[jt]s?(x)"
     ],
     "moduleNameMapper": {
-      "\\.(css|svg)$": "identity-obj-proxy"
+      "\\.(css)$": "identity-obj-proxy",
+      "\\.(svg)$": "<rootDir>/modules/org.openbravo.client.kernel/jsutils/fileMock.js"
     },
     "coverageDirectory": "./test-reports/coverage",
     "setupFilesAfterEnv": [
