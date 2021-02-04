@@ -54,22 +54,6 @@ public class SystemValidationTask extends DalInitializingTask {
   protected void doExecute() {
     final Module module = getModule();
 
-    if (getType().contains("database")) {
-      final Database database = createDatabaseObject();
-      log.info("Validating Database and Application Dictionary");
-      final DatabaseValidator databaseValidator = new DatabaseValidator();
-      databaseValidator.setValidateModule(module);
-      databaseValidator.setDatabase(database);
-      final SystemValidationResult result = databaseValidator.validate();
-      if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
-        log.warn("Validation successfull no warnings or errors");
-      } else {
-        final String errors = SystemService.getInstance().logValidationResult(log, result);
-        if (failOnError) {
-          throw new OBException(errors);
-        }
-      }
-    }
     // does both module and database
     if (getType().contains("module")) {
       log.info("Validating Modules");
@@ -123,12 +107,6 @@ public class SystemValidationTask extends DalInitializingTask {
     ds.setUsername(props.getProperty("bbdd.user"));
     ds.setPassword(props.getProperty("bbdd.password"));
     return PlatformFactory.createNewPlatformInstance(ds);
-  }
-
-  private Database createDatabaseObject() {
-    Platform platform = getPlatform();
-    platform.getModelLoader().setOnlyLoadTableColumns(true);
-    return platform.loadModelFromDatabase(null);
   }
 
   private Module getModule() {
