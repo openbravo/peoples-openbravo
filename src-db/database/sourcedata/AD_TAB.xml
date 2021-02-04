@@ -7989,7 +7989,7 @@ WARNING: This window is not supported anymore and it is only kept for backward c
 <!--800056-->  <HELP><![CDATA[Asigns products to customers]]></HELP>
 <!--800056-->  <AD_TABLE_ID><![CDATA[800042]]></AD_TABLE_ID>
 <!--800056-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
-<!--800056-->  <SEQNO><![CDATA[20]]></SEQNO>
+<!--800056-->  <SEQNO><![CDATA[23]]></SEQNO>
 <!--800056-->  <TABLEVEL><![CDATA[1]]></TABLEVEL>
 <!--800056-->  <ISSINGLEROW><![CDATA[N]]></ISSINGLEROW>
 <!--800056-->  <ISINFOTAB><![CDATA[N]]></ISINFOTAB>
