@@ -89,20 +89,6 @@ build.war: build a war file in the lib directory.
      </sequential>
   </macrodef>
 
-  <target name="validate.database">
-    <taskdef name="validateDatabase" classname="org.openbravo.service.system.SystemValidationTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <validateDatabase userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="database" />
-  </target>
-
-  <target name="validate.modules">
-    <taskdef name="validateModules" classname="org.openbravo.service.system.SystemValidationTask">
-      <classpath refid="project.class.path" />
-    </taskdef>
-    <validateModules userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" type="module" moduleJavaPackage="${module}"/>
-  </target>
-
   <target name="trl.clean" if="translation">
     <java classname="org.openbravo.translate.Translate" jvm="${env.JAVA_HOME}/bin/java" fork="yes" maxmemory="${build.maxmemory}">
       <arg line="'${base.config}/Openbravo.properties' clean" />
