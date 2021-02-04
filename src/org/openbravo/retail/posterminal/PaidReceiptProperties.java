@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -57,6 +57,7 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.organization.id", "organization"));
         add(new HQLProperty("ord.organization.name", "organization$_identifier"));
         add(new HQLProperty("ord.client.id", "client"));
+        add(new HQLProperty("ord.obposAppCashup", "obposAppCashup"));
         add(new HQLProperty(
             "(case when ord.documentType.sOSubType = 'OB' then true else false end)",
             "isQuotation"));

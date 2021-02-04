@@ -410,7 +410,10 @@
       // insert cashup in the ticket
       const newTicket = {
         ...ticket,
-        obposAppCashup: newCashup.id,
+        obposAppCashup:
+          ticket.isPaid && !ticket.isPaymentModified
+            ? ticket.obposAppCashup
+            : newCashup.id,
         cashUpReportInformation: OB.App.State.Cashup.Utils.getCashupFilteredForSendToBackendInEachTicket(
           {
             cashup: newCashup,
