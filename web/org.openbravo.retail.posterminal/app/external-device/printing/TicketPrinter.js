@@ -278,8 +278,16 @@
   // Include over-payment amount to total paid amount from change amount
   function includeOverPaymentAmt(ticket) {
     const newTicket = { ...ticket };
+    const changePrePayments = newTicket.payments.filter(payment => {
+      const { paymentData } = payment;
+      return paymentData && paymentData.changePayment;
+    });
+    const ticketPayments = newTicket.payments.filter(payment => {
+      const { paymentData } = payment;
+      return !paymentData || !paymentData.changePayment;
+    });
 
-    newTicket.payments = newTicket.payments.map(payment => {
+    newTicket.payments = ticketPayments.map(payment => {
       const { paymentData } = payment;
       const overPaymentAmounts = { amount: 0, origAmount: 0 };
 
@@ -293,7 +301,11 @@
             ? paymentData.origAmount
             : 0;
         }
-      } else if (ticket.changePayments && ticket.changePayments.length > 0) {
+      } else if (
+        !changePrePayments.find(p => p.kind === payment.kind) &&
+        ticket.changePayments &&
+        ticket.changePayments.length > 0
+      ) {
         // Do not print over-payment amount for MultiTicket payments
         const changePayments = ticket.changePayments.filter(
           chngpayment =>

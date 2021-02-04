@@ -468,6 +468,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             printtwice: terminalPayment.paymentMethod.printtwice,
             changePayment: true,
             paymentData: {
+              changePayment: true,
               mergeable,
               label: changePayment.label
             }
