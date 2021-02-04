@@ -459,10 +459,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile.development" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="validate.database">
-    <ant dir="${base.src}" target="validate.database" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="validate.modules">
     <ant dir="${base.src}" target="validate.modules" inheritAll="true" inheritRefs="true" />
   </target>
@@ -610,7 +606,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
 
     <!--
-		<antcall target="validate.database" />
 		<antcall target="validate.modules" />
 		-->
   </target>
