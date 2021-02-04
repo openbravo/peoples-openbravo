@@ -459,14 +459,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="compile.development" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <target name="validate.database">
-    <ant dir="${base.src}" target="validate.database" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="validate.modules">
-    <ant dir="${base.src}" target="validate.modules" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="compile.war" if="mode.war">
     <antcall target="generate.entities" />
     <antcall target="compile" />
@@ -608,11 +600,6 @@ export.database: exports database structure and data to xml files.
   <target name="install.source" depends="init, cleanSubfolders, create.database, wad.lib, trl.lib, compile.complete.deploy, apply.module, import.sample.data">
     <updatesystemstatus v="RB51"/> 
     <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
-
-    <!--
-		<antcall target="validate.database" />
-		<antcall target="validate.modules" />
-		-->
   </target>
 
   <target name="create.database" depends="init, core.lib, database.lib">
