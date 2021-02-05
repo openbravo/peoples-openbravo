@@ -210,7 +210,7 @@ public class FixBackdatedTransactionsProcess extends BaseProcessActionHandler {
     }
     //@formatter:off
     hql +=
-        " order by trx.product, trx.transactionProcessDate";
+        " order by trx.product.id, trx.transactionProcessDate";
     //@formatter:on
 
     final Query<MaterialTransaction> stockLinesQry = OBDal.getInstance()
