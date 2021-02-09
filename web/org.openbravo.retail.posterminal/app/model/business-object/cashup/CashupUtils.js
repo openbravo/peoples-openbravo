@@ -407,6 +407,10 @@
         cashupPayment.usedInCurrentTrx = true;
       });
 
+      // Save the date of the first ticket included in the cashup
+      newCashup.initialTicketDate =
+        newCashup.initialTicketDate || ticket.creationDate;
+
       return newCashup;
     },
 
