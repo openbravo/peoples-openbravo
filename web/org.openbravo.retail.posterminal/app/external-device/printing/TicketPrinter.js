@@ -59,7 +59,13 @@
         const canceledTicket = {
           ...ticket.canceledorder,
           ordercanceled: true,
-          negativeDocNo
+          negativeDocNo,
+          payments: ticket.payments.filter(p => {
+            const { paymentData } = p;
+            return (
+              p.isPrePayment && (!paymentData || !paymentData.changePayment)
+            );
+          })
         };
         await this.doPrintTicket(canceledTicket, printSettings);
       }
@@ -282,10 +288,31 @@
       const { paymentData } = payment;
       return paymentData && paymentData.changePayment;
     });
-    const ticketPayments = newTicket.payments.filter(payment => {
-      const { paymentData } = payment;
-      return !paymentData || !paymentData.changePayment;
-    });
+    const ticketPayments = newTicket.payments
+      .filter(payment => {
+        const { paymentData } = payment;
+        return !paymentData || !paymentData.changePayment;
+      })
+      .map(payment => {
+        const newPayment = { ...payment };
+        const { paymentData } = payment;
+        for (let i = 0; i < changePrePayments.length; i += 1) {
+          if (
+            changePrePayments[i].kind === payment.kind &&
+            (!payment.isPrePayment ||
+              (paymentData &&
+                Math.abs(paymentData.amount) ===
+                  Math.abs(changePrePayments[i].amount)))
+          ) {
+            const changePayment = changePrePayments.splice(i, 1)[0];
+            newPayment.amount += isNumeric(changePayment.amount)
+              ? changePayment.amount
+              : 0;
+            break;
+          }
+        }
+        return newPayment;
+      });
 
     newTicket.payments = ticketPayments.map(payment => {
       const { paymentData } = payment;
@@ -301,11 +328,7 @@
             ? paymentData.origAmount
             : 0;
         }
-      } else if (
-        !changePrePayments.find(p => p.kind === payment.kind) &&
-        ticket.changePayments &&
-        ticket.changePayments.length > 0
-      ) {
+      } else if (ticket.changePayments && ticket.changePayments.length > 0) {
         // Do not print over-payment amount for MultiTicket payments
         const changePayments = ticket.changePayments.filter(
           chngpayment =>
