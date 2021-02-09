@@ -676,6 +676,8 @@
             }
             // Focus on scanning window
             OB.UTIL.setScanningFocus(true);
+            // Receipt Close Events
+            OB.MobileApp.model.receipt.trigger('integrityOk', receipt);
           }
 
           // Trigger some UI events
