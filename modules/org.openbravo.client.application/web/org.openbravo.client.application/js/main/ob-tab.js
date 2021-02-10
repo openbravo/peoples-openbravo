@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -772,7 +772,9 @@ isc.OBTabSetChild.addProperties({
       pane = this.getTabPane(tab);
       pane.show();
       if (pane.refreshContents) {
-        pane.doRefreshContents(true, true);
+        // Should only force refresh if lazy filtering is not activated for that grid, or if there's no grid
+        const hasLazyFiltering = pane.viewGrid && pane.viewGrid.lazyFiltering;
+        pane.doRefreshContents(!hasLazyFiltering, !hasLazyFiltering);
       }
       if (pane.members[0]) {
         pane.members[0].show();
