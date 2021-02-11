@@ -34,11 +34,60 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    OB.MobileApp.model.receipt.runCompleteTicket(
-      OB.App.State.Global.voidLayaway,
-      'voidLayaway'
-    );
-    return;
+
+    function checkNotDeliveredDeferredServices(callback) {
+      var receipt = OB.MobileApp.model.receipt;
+      receipt.checkNotProcessedPayments(function() {
+        receipt.canCancelOrder(
+          null,
+          {
+            checkNotDeliveredDeferredServices: true
+          },
+          function(data) {
+            if (
+              data &&
+              data.notDeliveredDeferredServices &&
+              data.notDeliveredDeferredServices.length
+            ) {
+              var components = [];
+              components.push({
+                content: OB.I18N.getLabel('OBPOS_CannotVoidLayWithDeferred'),
+                classes:
+                  'confirmationPopup-body_cannotCancelLayWithDeferred confirmationPopup-body_generic'
+              });
+              components.push({
+                content: OB.I18N.getLabel('OBPOS_RelatedOrders'),
+                classes:
+                  'confirmationPopup-body_relatedOrders confirmationPopup-body_generic'
+              });
+              _.each(data.notDeliveredDeferredServices, function(documentNo) {
+                components.push({
+                  content:
+                    OB.I18N.getLabel('OBMOBC_Character')[1] + ' ' + documentNo,
+                  classes:
+                    'confirmationPopup-body_character confirmationPopup-body_generic'
+                });
+              });
+              OB.UTIL.showConfirmation.display(
+                OB.I18N.getLabel('OBMOBC_Error'),
+                components
+              );
+            } else {
+              if (callback) {
+                callback();
+              }
+            }
+          }
+        );
+      });
+    }
+    checkNotDeliveredDeferredServices(function() {
+      OB.MobileApp.model.receipt.runCompleteTicket(
+        OB.App.State.Global.voidLayaway,
+        'voidLayaway'
+      );
+      return;
+    });
   },
   displayLogic: function() {
     var me = this,
