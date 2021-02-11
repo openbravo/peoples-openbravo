@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2020 Openbravo SLU
+ * All portions are Copyright (C) 2014-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -629,8 +629,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         .abs()
         .multiply(cost)
         .setScale(stdCurPrecission, RoundingMode.HALF_UP);
-    BigDecimal currentCost = trx.getTransactionCost();
-    return expectedCostAmt.subtract(currentCost);
+    BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
+    return expectedCostAmt.subtract(trxCalculatedCost);
   }
 
   @Override
