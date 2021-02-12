@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -136,14 +136,20 @@ public class ClassLoaderTest extends OBBaseTest {
   private void checkClasses(String type, List<ModelImplementation> models, List<String> notFound,
       List<String> notServlet) {
     for (ModelImplementation mi : models) {
+      String className = mi.getJavaClassName();
       try {
-        Class<?> clz = Class.forName(mi.getJavaClassName());
+        Class<?> clz = Class.forName(className);
         if (!Servlet.class.isAssignableFrom(clz)) {
-          notServlet.add(type + " - " + mi.getId() + ": " + mi.getJavaClassName());
+          notServlet.add(type + " - " + mi.getId() + ": " + className);
         }
 
       } catch (ClassNotFoundException e) {
-        notFound.add(type + " - " + mi.getId() + " : " + mi.getJavaClassName());
+        if ("Listener/Filter".equals(type)
+            && mi.getJavaClassName().startsWith("org.apache.catalina.filters")) {
+          log.info("Not checking filter {}, which might be implemented by Tomcat", className);
+        } else {
+          notFound.add(type + " - " + mi.getId() + " : " + className);
+        }
       }
     }
   }
