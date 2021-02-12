@@ -301,26 +301,30 @@ enyo.kind({
 
     this.$.theList.setCollection(transactionsCollection);
 
-    this.$.startingCashPayName.setContent(
-      OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('name')
-    );
-    var startingCash = OB.DEC.add(0, this.model.get('startingCash'));
-    this.$.startingCashAmnt.setContent(
-      OB.I18N.formatCurrency(
-        OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, startingCash)
-      )
-    );
-    if (
-      OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId) === false &&
-      startingCash > 0
-    ) {
-      this.$.startingCashForeignAmnt.setContent(
-        '(' +
-          OB.I18N.formatCurrency(startingCash) +
-          ' ' +
-          this.model.get('isocode') +
-          ')'
+    if (!this.model.attributes.issafebox) {
+      this.$.startingCashPayName.setContent(
+        OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('name')
       );
+      var startingCash = OB.DEC.add(0, this.model.get('startingCash'));
+      this.$.startingCashAmnt.setContent(
+        OB.I18N.formatCurrency(
+          OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, startingCash)
+        )
+      );
+      if (
+        OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId) === false &&
+        startingCash > 0
+      ) {
+        this.$.startingCashForeignAmnt.setContent(
+          '(' +
+            OB.I18N.formatCurrency(startingCash) +
+            ' ' +
+            this.model.get('isocode') +
+            ')'
+        );
+      }
+    } else {
+      this.$.startingCashPayName.parent.setStyle('display:none');
     }
 
     this.$.tenderedLbl.setContent(
