@@ -629,8 +629,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
         .abs()
         .multiply(cost)
         .setScale(stdCurPrecission, RoundingMode.HALF_UP);
-    BigDecimal trxCalculatedCost = CostAdjustmentUtils.getTrxCost(trx, true, getCostCurrency());
-    return expectedCostAmt.subtract(trxCalculatedCost);
+    final BigDecimal currentCostWithAdjustments = CostAdjustmentUtils.getTrxCost(trx, true,
+        getCostCurrency());
+    return expectedCostAmt.subtract(currentCostWithAdjustments);
   }
 
   @Override
