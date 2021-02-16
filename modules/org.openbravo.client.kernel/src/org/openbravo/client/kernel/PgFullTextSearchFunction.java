@@ -139,7 +139,7 @@ public abstract class PgFullTextSearchFunction implements SQLFunction {
 
     /**
      * Gets rank normalization from a preference, it needs to be an integer. According to Postgresql
-     * documentation {@link "https://www.postgresql.org/docs/current/textsearch-controls.html"}
+     * documentation.
      * <p>
      * Since a longer document has a greater chance of containing a query term it is reasonable to
      * take into account document size, e.g., a hundred-word document with five instances of a
@@ -160,6 +160,8 @@ public abstract class PgFullTextSearchFunction implements SQLFunction {
      * </ul>
      * <p>
      * 
+     * @see <a href= "https://www.postgresql.org/docs/current/textsearch-controls.html">PostgreSQL
+     *      Controlling Text Search</a>
      * @return numLike String
      */
     protected String getRankNormalizationPref() {

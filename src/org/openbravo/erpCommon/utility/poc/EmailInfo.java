@@ -167,7 +167,7 @@ public class EmailInfo {
 
     /**
      * Generates a EmailInfo instance initialized with all fields set using the set* methods.
-     * Otherwise they will be initialized as null or as an empty array for the List<> fields.
+     * Otherwise they will be initialized as null or as an empty array for the List fields.
      * 
      * @return a new EmailInfo instance
      */

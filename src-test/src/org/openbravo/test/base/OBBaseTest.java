@@ -479,7 +479,7 @@ public class OBBaseTest {
     OBContext.setOBContext(TEST_USER_ID, TEST_ROLE_ID, TEST_CLIENT_ID, TEST_ORG_ID);
   }
 
-  /** Sets the current user to the 100 user as F&B Group Admin */
+  /** Sets the current user to the 100 user as F&amp;B Group Admin */
   protected void setTestAdminContext() {
     OBContext.setOBContext(Users.OPENBRAVO, Roles.FB_GRP_ADMIN, Clients.FB_GRP, Orgs.MAIN);
   }

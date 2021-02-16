@@ -24,8 +24,8 @@ import org.openbravo.test.base.OBBaseTest;
 public class ADOrgPersistInfoSetReadyTest extends OBBaseTest {
 
   /**
-   * Create a new Organization of type Generic under F&B España, S.A Organization and test persist
-   * organization info after the organization is set as ready with Cascade No.
+   * Create a new Organization of type Generic under F&amp;B España, S.A Organization and test
+   * persist organization info after the organization is set as ready with Cascade No.
    */
   @Test
   public void testSetReadyOneGenericOrganizationNoCascade() {
@@ -33,8 +33,8 @@ public class ADOrgPersistInfoSetReadyTest extends OBBaseTest {
   }
 
   /**
-   * Create a new Organization of type Generic under F&B España, S.A Organization and test persist
-   * organization info after the organization is set as ready with Cascade Yes.
+   * Create a new Organization of type Generic under F&amp;B España, S.A Organization and test
+   * persist organization info after the organization is set as ready with Cascade Yes.
    */
   @Test
   public void testSetReadyOneGenericOrganizationCascade() {
@@ -68,9 +68,9 @@ public class ADOrgPersistInfoSetReadyTest extends OBBaseTest {
   }
 
   /**
-   * Create a new Organization of type Generic under F&B España, S.A Organization and a child under
-   * it and test persist organization info after the organization is set as ready with cascade as
-   * No.
+   * Create a new Organization of type Generic under F&amp;B España, S.A Organization and a child
+   * under it and test persist organization info after the organization is set as ready with cascade
+   * as No.
    */
   @Test
   public void testSetReadyTwoGenericOrganizationNoCascade() {
@@ -88,9 +88,9 @@ public class ADOrgPersistInfoSetReadyTest extends OBBaseTest {
   }
 
   /**
-   * Create a new Organization of type Generic under F&B España, S.A Organization and a child under
-   * it and test persist organization info after the organization is set as ready with cascade as
-   * Yes.
+   * Create a new Organization of type Generic under F&amp;B España, S.A Organization and a child
+   * under it and test persist organization info after the organization is set as ready with cascade
+   * as Yes.
    */
   @Test
   public void testSetReadyTwoGenericOrganizationCascade() {

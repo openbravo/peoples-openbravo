@@ -216,10 +216,6 @@ public abstract class CostingAlgorithmAdjustmentImp {
   /**
    * Inserts a new cost adjustment line
    *
-   * @param trx
-   *          Material transaction
-   * @param adjustmentamt
-   *          Adjustment amount
    * @param parentLine
    *          Cost Adjustment Line
    * 
