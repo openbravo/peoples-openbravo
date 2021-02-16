@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2020 Openbravo S.L.U.
+ * Copyright (C) 2015-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -55,6 +55,7 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.common.enterprise.OrgWarehouse;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.invoice.Invoice;
@@ -1282,9 +1283,17 @@ public class ExternalOrderLoader extends OrderLoader {
           orderJson.getString("warehouse"), new String[] { "id", "name", "searchKey" }));
     } else {
       Warehouse wh = posTerminal.getOrganization().getObretcoMWarehouse();
-      if (wh == null && !posTerminal.getOrganization().getOrganizationWarehouseList().isEmpty()) {
-        // TODO: sort by prio, check for active...
-        wh = posTerminal.getOrganization().getOrganizationWarehouseList().get(0).getWarehouse();
+      wh = null;
+      if (wh == null) {
+        OBQuery<OrgWarehouse> orgWarehouses = OBDal.getInstance()
+            .createQuery(OrgWarehouse.class, " e where e.organization=:org and "
+                + "e.active=true and e.warehouse.active=true order by priority, e.warehouse.name");
+        orgWarehouses.setNamedParameter("org", posTerminal.getOrganization());
+        orgWarehouses.setMaxResult(1);
+        OrgWarehouse orgWarehouse = orgWarehouses.uniqueResult();
+        if (orgWarehouse != null) {
+          wh = orgWarehouse.getWarehouse();
+        }
       }
       if (wh != null) {
         orderJson.put("warehouse", wh.getId());
