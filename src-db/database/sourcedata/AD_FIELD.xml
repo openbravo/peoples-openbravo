@@ -17268,8 +17268,8 @@ Usually, company's internal identifiers for various records (products, customers
 <!--F3EA88B2BFA445EEAB992346821E7C8E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--F3EA88B2BFA445EEAB992346821E7C8E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F3EA88B2BFA445EEAB992346821E7C8E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--F3EA88B2BFA445EEAB992346821E7C8E-->  <NAME><![CDATA[Time to Show Incremental Refresh Popup (in minutes)]]></NAME>
-<!--F3EA88B2BFA445EEAB992346821E7C8E-->  <DESCRIPTION><![CDATA[Time to Show Incremental Refresh Popup (in minutes)]]></DESCRIPTION>
+<!--F3EA88B2BFA445EEAB992346821E7C8E-->  <NAME><![CDATA[Time to force masterdata refresh because of inactivity (in m]]></NAME>
+<!--F3EA88B2BFA445EEAB992346821E7C8E-->  <DESCRIPTION><![CDATA[Time to force masterdata refresh because of inactivity (in minutes)]]></DESCRIPTION>
 <!--F3EA88B2BFA445EEAB992346821E7C8E-->  <HELP><![CDATA[This field allows the user to specify the interval of time to wait before forcing the incremental refresh if no action is performed on WebPOS and there is a pending incremental will be configured in a POS Terminal Window]]></HELP>
 <!--F3EA88B2BFA445EEAB992346821E7C8E-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
 <!--F3EA88B2BFA445EEAB992346821E7C8E-->  <AD_TAB_ID><![CDATA[D01039797B054BE69CA5770B8CFB933C]]></AD_TAB_ID>
