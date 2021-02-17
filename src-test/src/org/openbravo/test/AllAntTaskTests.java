@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2020 Openbravo SLU
+ * All portions are Copyright (C) 2009-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,6 +50,7 @@ import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.authentication.AuthenticationManagerTest;
 import org.openbravo.test.cancelandreplace.CancelAndReplaceTest;
 import org.openbravo.test.centralbroker.CentralBrokerTest;
+import org.openbravo.test.conversionratedoc.ConversionRateDocUniqueTestSuite;
 import org.openbravo.test.copyLinesFromOrders.CopyLinesFromOrdersTest;
 import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.createlinesfrom.CreateLinesFromTest;
@@ -359,7 +360,10 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     InvoiceFromShipmentTest.class,
 
     // C_Order_Post
-    OrderProcessTest.class
+    OrderProcessTest.class,
+
+    // Conversion Rate Document Unique constraint refactor
+    ConversionRateDocUniqueTestSuite.class
 
 })
 public class AllAntTaskTests {
