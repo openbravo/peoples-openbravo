@@ -20,17 +20,15 @@
 package org.openbravo.test.conversionratedoc;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import javax.persistence.PersistenceException;
 
-import org.hibernate.criterion.Restrictions;
+import org.jboss.arquillian.junit.InSequence;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBDao;
 import org.openbravo.model.common.currency.ConversionRateDoc;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.test.base.OBBaseTest;
@@ -58,21 +56,11 @@ public abstract class ConversionRateDocUniqueTest extends OBBaseTest {
 
   @After
   public void postDocuments() {
-    getCurrencyConversionRateDocList().forEach(cr -> OBDal.getInstance().remove(cr));
-    getCurrencyConversionRateDocList().clear();
-    OBDal.getInstance().flush();
-    setPosted("Y");
+    OBDal.getInstance().rollbackAndClose();
   }
 
   protected void setPosted(final String isPosted) {
     OBDal.getInstance().getProxy(getDocumentEntityName(), getDocumentId()).set("posted", isPosted);
-  }
-
-  private List<ConversionRateDoc> getCurrencyConversionRateDocList() {
-    return OBDao
-        .getFilteredCriteria(ConversionRateDoc.class,
-            Restrictions.eq(getPropertyName() + ".id", getDocumentId()))
-        .list();
   }
 
   private void createDummyConversionRate(final String docPropertyName, final String docId,
@@ -85,16 +73,8 @@ public abstract class ConversionRateDocUniqueTest extends OBBaseTest {
     OBDal.getInstance().save(cr);
   }
 
-  @Test(expected = PersistenceException.class)
-  public void testTwoConversionsForTheSameCurrenciesAndDocIsNotAllowed() {
-    createDummyConversionRate(getPropertyName(), getDocumentId(), "100", "102",
-        new BigDecimal("1.25"));
-    createDummyConversionRate(getPropertyName(), getDocumentId(), "100", "102",
-        new BigDecimal("1.50"));
-    OBDal.getInstance().flush();
-  }
-
   @Test
+  @InSequence(1)
   public void testTwoConversionsForDifferentCurrenciesAndTheSameDocIsAllowed() {
     createDummyConversionRate(getPropertyName(), getDocumentId(), "100", "103",
         new BigDecimal("1.25"));
@@ -103,4 +83,13 @@ public abstract class ConversionRateDocUniqueTest extends OBBaseTest {
     OBDal.getInstance().flush();
   }
 
+  @Test(expected = PersistenceException.class)
+  @InSequence(2)
+  public void testTwoConversionsForTheSameCurrenciesAndDocIsNotAllowed() {
+    createDummyConversionRate(getPropertyName(), getDocumentId(), "100", "102",
+        new BigDecimal("1.25"));
+    createDummyConversionRate(getPropertyName(), getDocumentId(), "100", "102",
+        new BigDecimal("1.50"));
+    OBDal.getInstance().flush();
+  }
 }
