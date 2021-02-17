@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,10 @@ package org.openbravo.client.kernel;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 
@@ -306,6 +309,57 @@ public class KernelUtils {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Retrieves all the modules that are part of the dependency tree of the given module. This
+   * includes all the modules that depend on the provided module (ancestors) and their ancestors, as
+   * well as all the modules the provided module depends on (descendants) and their descendants.
+   *
+   * @param module
+   *          the module to get the dependency tree for
+   *
+   * @return the full tree of dependencies for the given module
+   */
+  public List<Module> getDependencyTree(Module module) {
+    Set<String> moduleDependencyTree = getDescendantsDependencyTree(module);
+    moduleDependencyTree.addAll(getAncestorsDependencyTree(module));
+
+    return KernelUtils.getInstance()
+        .getModulesOrderedByDependency()
+        .stream()
+        .filter(m -> moduleDependencyTree.contains(m.getId()))
+        .collect(Collectors.toList());
+  }
+
+  private Set<String> getDescendantsDependencyTree(Module module) {
+    Set<String> tree = new HashSet<>();
+    tree.add(module.getId());
+    for (ModuleDependency dep : module.getModuleDependencyList()) {
+      Module depMod = dep.getDependentModule();
+      if (!tree.contains(depMod.getId())) {
+        tree.add(depMod.getId());
+        tree.addAll(getDescendantsDependencyTree(depMod));
+      }
+    }
+    return tree;
+  }
+
+  private Set<String> getAncestorsDependencyTree(Module module) {
+    Set<String> tree = new HashSet<>();
+
+    for (Module m : KernelUtils.getInstance().getModulesOrderedByDependency()) {
+      boolean isParent = m.getModuleDependencyList()
+          .stream()
+          .map(ModuleDependency::getDependentModule)
+          .anyMatch(dep -> dep.getId().equals(module.getId()) && !tree.contains(dep.getId()));
+      if (isParent) {
+        tree.addAll(getAncestorsDependencyTree(m));
+      }
+    }
+
+    tree.add(module.getId());
+    return tree;
   }
 
   protected int computeLowLevelCode(Module module, List<Module> modules) {
