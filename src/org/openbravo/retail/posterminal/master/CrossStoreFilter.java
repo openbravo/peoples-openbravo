@@ -157,11 +157,13 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     if (showProductsWithoutPrice) {
       hql.append(" left join pl.pricingPriceListVersionList plv");
       hql.append(" left join plv.pricingProductPriceList pp");
+      hql.append(" left join pp.product p");
     } else {
       hql.append(" join pl.pricingPriceListVersionList plv");
       hql.append(" join plv.pricingProductPriceList pp");
+      hql.append(" join pp.product p");
     }
-    hql.append(" with pp.product.id = :productId");
+    hql.append(" with p.id = :productId");
     hql.append(" and plv.id = (");
     hql.append("   select min(plv2.id)");
     hql.append("   from PricingPriceListVersion plv2");
@@ -195,9 +197,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append(" and owh.active = true");
     hql.append(" and wh.active = true");
     hql.append(" and l.active = true");
-    hql.append(
-        " group by o.id, o.name, la.country.id, la.region.id, o.obposCDoctype.id, o.obposCDoctypequot.id, w.id, w.name");
-    hql.append(" , pl.id, pl.priceIncludesTax, pp.standardPrice");
+    hql.append(" group by " + crossStoreHQLProperties.getHqlGroupBy());
     hql.append(" having w.id = min(wh.id)");
     if (filterByStock) {
       hql.append(" and coalesce(sum(sd.quantityOnHand - sd.reservedQty), 0) > 0");

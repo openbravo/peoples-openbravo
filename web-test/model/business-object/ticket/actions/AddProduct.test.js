@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -261,6 +261,51 @@ describe('addProduct', () => {
 
         const newTicket = addProduct(baseTicket, {
           products: [{ product: product, qty: 1 }]
+        });
+
+        expect(newTicket.lines).toHaveLength(expectNewLine ? 2 : 1);
+      }
+    );
+
+    it.each`
+      standardPrice | listPrice | taxCategory | expectNewLine
+      ${1}          | ${1}      | ${'A'}      | ${false}
+      ${2}          | ${1}      | ${'A'}      | ${true}
+      ${1}          | ${2}      | ${'A'}      | ${true}
+      ${1}          | ${1}      | ${'B'}      | ${true}
+      ${2}          | ${2}      | ${'A'}      | ${true}
+      ${2}          | ${1}      | ${'B'}      | ${true}
+      ${1}          | ${2}      | ${'B'}      | ${true}
+      ${2}          | ${2}      | ${'B'}      | ${true}
+    `(
+      'adds or edits line depending on standardPrice: $standardPrice, listPrice: $listPrice and taxCategory: $taxCategory',
+      ({ standardPrice, listPrice, taxCategory, expectNewLine }) => {
+        const baseTicket = addProduct(emptyTicket, {
+          products: [
+            {
+              product: {
+                ...productA,
+                standardPrice: 1,
+                listPrice: 1,
+                taxCategory: 'A'
+              },
+              qty: 1
+            }
+          ]
+        });
+
+        const newTicket = addProduct(baseTicket, {
+          products: [
+            {
+              product: {
+                ...productA,
+                standardPrice,
+                listPrice,
+                taxCategory
+              },
+              qty: 1
+            }
+          ]
         });
 
         expect(newTicket.lines).toHaveLength(expectNewLine ? 2 : 1);

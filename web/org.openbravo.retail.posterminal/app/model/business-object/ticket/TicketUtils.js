@@ -969,8 +969,11 @@
 
       return ticket.lines.find(
         l =>
-          l.product.id === product.id &&
           l.isEditable &&
+          l.product.id === product.id &&
+          l.product.standardPrice === product.standardPrice &&
+          l.product.listPrice === product.listPrice &&
+          l.product.taxCategory === product.taxCategory &&
           Math.sign(l.qty) === Math.sign(qty) &&
           (!attributeValue || l.attributeValue === attributeValue) &&
           !l.splitline &&
