@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2020 Openbravo SLU
+ * All portions are Copyright (C) 2014-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1532,14 +1532,20 @@ OB.APRM.AddPayment.recalcDisplayLogicOrReadOnlyLogic = function(
     }
   };
 
-  OB.RemoteCallManager.call(
-    'org.openbravo.advpaymentmngt.actionHandler.AddPaymentDisplayLogicActionHandler',
-    {
-      affectedParams: affectedParams,
-      params: params
+  thisview.fireOnPause(
+    'recalcDisplayLogicOrReadOnlyLogic' + affectedParams,
+    function() {
+      OB.RemoteCallManager.call(
+        'org.openbravo.advpaymentmngt.actionHandler.AddPaymentDisplayLogicActionHandler',
+        {
+          affectedParams: affectedParams,
+          params: params
+        },
+        {},
+        callbackDisplayLogicActionHandler
+      );
     },
-    {},
-    callbackDisplayLogicActionHandler
+    200
   );
 };
 
