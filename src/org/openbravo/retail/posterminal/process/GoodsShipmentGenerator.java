@@ -116,21 +116,25 @@ class GoodsShipmentGenerator {
     BigDecimal quantityPending = qtyToDeliver;
     ScrollableResults proposedBins = null;
     try {
-      proposedBins = StockUtils.getStockProposed(salesOrderLine, qtyToDeliver,
-          this.shipment.getWarehouse());
-      while (quantityPending.compareTo(BigDecimal.ZERO) > 0 && proposedBins.next()) {
-        StockProposed stockProposed = (StockProposed) proposedBins.get(0);
-        BigDecimal shipmentlineQty;
-        BigDecimal stockProposedQty = stockProposed.getQuantity();
-        if (quantityPending.compareTo(stockProposedQty) > 0) {
-          shipmentlineQty = stockProposedQty;
-          quantityPending = quantityPending.subtract(shipmentlineQty);
-        } else {
-          shipmentlineQty = quantityPending;
-          quantityPending = BigDecimal.ZERO;
+      if (product.isStocked()) {
+        proposedBins = StockUtils.getStockProposed(salesOrderLine, qtyToDeliver,
+            this.shipment.getWarehouse());
+        while (quantityPending.compareTo(BigDecimal.ZERO) > 0 && proposedBins.next()) {
+          StockProposed stockProposed = (StockProposed) proposedBins.get(0);
+          BigDecimal shipmentlineQty;
+          BigDecimal stockProposedQty = stockProposed.getQuantity();
+          if (quantityPending.compareTo(stockProposedQty) > 0) {
+            shipmentlineQty = stockProposedQty;
+            quantityPending = quantityPending.subtract(shipmentlineQty);
+          } else {
+            shipmentlineQty = quantityPending;
+            quantityPending = BigDecimal.ZERO;
+          }
+          result.add(createShipmentLine(product, shipmentlineQty, salesOrderLine,
+              stockProposed.getStorageDetail().getStorageBin()));
         }
-        result.add(createShipmentLine(product, shipmentlineQty, salesOrderLine,
-            stockProposed.getStorageDetail().getStorageBin()));
+      } else {
+        result.add(createShipmentLine(product, qtyToDeliver, salesOrderLine, null));
       }
     } finally {
       if (proposedBins != null) {
