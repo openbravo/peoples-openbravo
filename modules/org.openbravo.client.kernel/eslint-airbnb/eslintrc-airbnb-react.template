@@ -1,0 +1,24 @@
+{
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "plugin:prettier/recommended"
+  ],
+
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
+  },
+
+  "rules": {
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": ["**/*.stories.*",  "**/?(*.)+(test).[jt]s?(x)"]
+      }
+    ],
+    "class-methods-use-this": "off",
+    "no-use-before-define": ["error", "nofunc"]
+  }
+}
