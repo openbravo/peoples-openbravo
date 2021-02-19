@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="APPROVAL_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="APPROVAL_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
