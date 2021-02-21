@@ -377,6 +377,7 @@
       'org.openbravo.retail.posterminal.PaidReceipts',
       {
         orderid: payload.ticket.id,
+        documentNo: payload.ticket.id ? undefined : payload.ticket.documentNo, // If action was called without order id, we can specify the docNo to load the ticket
         crossStore: payload.ticket.isCrossStore
       }
     );
