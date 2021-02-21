@@ -579,7 +579,18 @@
       throw new OB.App.Class.ActionSilentlyCanceled(
         `No products to add after processing packs`
       );
+    } else {
+      newPayload.products.forEach(p => {
+        if (!p.product) {
+          throw new OB.App.Class.ActionCanceled({
+            errorMsg: 'OBPOS_ErrorProductPack',
+            // eslint-disable-next-line no-underscore-dangle
+            messageParams: [packs[0].product._identifier]
+          });
+        }
+      });
     }
+
     return newPayload;
   }
 
