@@ -391,6 +391,20 @@
             precision
           );
         }
+        if (orderPayment.countPerAmount) {
+          cashupPayment.countPerAmount = cashupPayment.countPerAmount || [];
+          Object.keys(orderPayment.countPerAmount).forEach(entryAmount => {
+            const currentCount =
+              cashupPayment.countPerAmount[OB.DEC.abs(entryAmount)] || 0;
+            const updatedCount =
+              entryAmount > 0
+                ? currentCount + orderPayment.countPerAmount[entryAmount]
+                : currentCount - orderPayment.countPerAmount[entryAmount];
+            cashupPayment.countPerAmount[
+              OB.DEC.abs(entryAmount)
+            ] = updatedCount;
+          });
+        }
         // set used in transaction payment methods to true
         cashupPayment.usedInCurrentTrx = true;
       });

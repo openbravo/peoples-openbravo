@@ -70,7 +70,7 @@
           ) {
             startingCash = OB.DEC.Zero;
           }
-          paymentMethods.push({
+          const paymentMethod = {
             id: OB.App.UUID.generate(),
             paymentMethodId: terminalPayment.payment.id,
             searchKey: terminalPayment.payment.searchKey,
@@ -86,7 +86,14 @@
             lineNo: terminalPayment.lineNo,
             newPaymentMethod: true,
             cashManagements: []
-          });
+          };
+          if (
+            terminalPayment.paymentMethod &&
+            terminalPayment.paymentMethod.countPerAmount
+          ) {
+            paymentMethod.countPerAmount = {};
+          }
+          paymentMethods.push(paymentMethod);
         }
       });
       return paymentMethods;

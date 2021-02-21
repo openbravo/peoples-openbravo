@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2020 Openbravo S.L.U.
+ * Copyright (C) 2016-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -11,6 +11,7 @@ package org.openbravo.retail.posterminal;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -256,11 +257,9 @@ public class UpdateCashup {
             }
           }
         }
-
         if (createPaymentMethods) {
           createPaymentMethodCashUp(cashup, payment);
         }
-
       }
     }
   }
@@ -268,51 +267,86 @@ public class UpdateCashup {
   /**
    * Create the OBPOSPaymentMethodCashup object from json
    * 
-   * @param jsonCashup
+   * @param jsonPayment
    * @throws JSONException
    */
-  private static void createPaymentMethodCashUp(OBPOSAppCashup cashup, JSONObject jsonCashup)
+  private static void createPaymentMethodCashUp(OBPOSAppCashup cashup, JSONObject jsonPayment)
       throws JSONException {
     OBPOSPaymentMethodCashup newPaymentMethodCashUp = OBDal.getInstance()
-        .get(OBPOSPaymentMethodCashup.class, jsonCashup.get("id"));
+        .get(OBPOSPaymentMethodCashup.class, jsonPayment.get("id"));
 
     if (newPaymentMethodCashUp == null) {
       newPaymentMethodCashUp = OBProvider.getInstance().get(OBPOSPaymentMethodCashup.class);
       newPaymentMethodCashUp.setNewOBObject(true);
-      newPaymentMethodCashUp.setId(jsonCashup.get("id"));
+      newPaymentMethodCashUp.setId(jsonPayment.get("id"));
       cashup.getOBPOSPaymentmethodcashupList().add(newPaymentMethodCashUp);
     }
     JSONPropertyToEntity.fillBobFromJSON(newPaymentMethodCashUp.getEntity(), newPaymentMethodCashUp,
-        jsonCashup);
+        jsonPayment);
     newPaymentMethodCashUp.setCashUp(cashup);
 
     newPaymentMethodCashUp.setOrganization(cashup.getOrganization());
 
     newPaymentMethodCashUp.setClient(cashup.getClient());
 
-    newPaymentMethodCashUp.setSearchkey((String) jsonCashup.get("searchKey"));
-    newPaymentMethodCashUp.setStartingcash(new BigDecimal(jsonCashup.getString("startingCash")));
+    newPaymentMethodCashUp.setSearchkey((String) jsonPayment.get("searchKey"));
+    newPaymentMethodCashUp.setStartingcash(new BigDecimal(jsonPayment.getString("startingCash")));
 
-    newPaymentMethodCashUp.setTotalsales(new BigDecimal(jsonCashup.getString("totalSales")));
-    newPaymentMethodCashUp.setTotalreturns(new BigDecimal(jsonCashup.getString("totalReturns")));
-    newPaymentMethodCashUp.setTotalDeposits(new BigDecimal(jsonCashup.getString("totalDeposits")));
-    newPaymentMethodCashUp.setTotalDrops(new BigDecimal(jsonCashup.getString("totalDrops")));
+    newPaymentMethodCashUp.setTotalsales(new BigDecimal(jsonPayment.getString("totalSales")));
+    newPaymentMethodCashUp.setTotalreturns(new BigDecimal(jsonPayment.getString("totalReturns")));
+    newPaymentMethodCashUp.setTotalDeposits(new BigDecimal(jsonPayment.getString("totalDeposits")));
+    newPaymentMethodCashUp.setTotalDrops(new BigDecimal(jsonPayment.getString("totalDrops")));
     newPaymentMethodCashUp.setTotalCounted(
-        jsonCashup.has("totalCounted") ? new BigDecimal(jsonCashup.getString("totalCounted"))
+        jsonPayment.has("totalCounted") ? new BigDecimal(jsonPayment.getString("totalCounted"))
             : BigDecimal.ZERO);
     newPaymentMethodCashUp.setAmountToKeep(
-        jsonCashup.has("amountToKeep") ? new BigDecimal(jsonCashup.getString("amountToKeep"))
+        jsonPayment.has("amountToKeep") ? new BigDecimal(jsonPayment.getString("amountToKeep"))
             : BigDecimal.ZERO);
-    newPaymentMethodCashUp.setRate(new BigDecimal(jsonCashup.getString("rate")));
-    newPaymentMethodCashUp.setIsocode((String) jsonCashup.get("isocode"));
+    newPaymentMethodCashUp.setRate(new BigDecimal(jsonPayment.getString("rate")));
+    newPaymentMethodCashUp.setIsocode((String) jsonPayment.get("isocode"));
 
     OBPOSAppPayment appPayment = OBDal.getInstance()
-        .get(OBPOSAppPayment.class, jsonCashup.getString("paymentMethodId"));
+        .get(OBPOSAppPayment.class, jsonPayment.getString("paymentMethodId"));
     newPaymentMethodCashUp.setPaymentType(appPayment);
 
     String name = appPayment.getCommercialName();
     newPaymentMethodCashUp.setName(name);
     OBDal.getInstance().save(newPaymentMethodCashUp);
+
+    if (jsonPayment.has("countPerAmount")) {
+      JSONObject countPerAmount = jsonPayment.getJSONObject("countPerAmount");
+      refreshCountPerAmountEntries(cashup, newPaymentMethodCashUp, countPerAmount);
+    }
+  }
+
+  private static void refreshCountPerAmountEntries(OBPOSAppCashup cashup,
+      OBPOSPaymentMethodCashup newPaymentMethodCashUp, JSONObject countPerAmount)
+      throws JSONException {
+
+    //@formatter:off
+    String hql =
+            "delete from obpos_pmcashup_amntcnt " +
+            " where obposPaymentmethodcashup.id = :paymentMethodCashupId ";
+    //@formatter:on
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("paymentMethodCashupId", newPaymentMethodCashUp.getId())
+        .executeUpdate();
+
+    @SuppressWarnings("unchecked")
+    Iterator<String> keys = countPerAmount.keys();
+    while (keys.hasNext()) {
+      String amount = (String) keys.next();
+      OBPOS_PaymentMethodCashCountPerAmount newEntry = OBProvider.getInstance()
+          .get(OBPOS_PaymentMethodCashCountPerAmount.class);
+      newEntry.setOrganization(cashup.getOrganization());
+      newEntry.setClient(cashup.getClient());
+      newEntry.setObposPaymentmethodcashup(newPaymentMethodCashUp);
+      newEntry.setAmount(new BigDecimal(amount));
+      newEntry.setExpectedAmount(countPerAmount.getLong(amount));
+      OBDal.getInstance().save(newEntry);
+    }
   }
 
   /**
