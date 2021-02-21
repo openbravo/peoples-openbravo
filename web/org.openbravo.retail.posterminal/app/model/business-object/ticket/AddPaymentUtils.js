@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -321,6 +321,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       ? terminalPayment.obposPosprecision
       : OB.DEC.getScale();
 
+    const countPerAmount =
+      terminalPayment &&
+      terminalPayment.paymentMethod &&
+      terminalPayment.paymentMethod.countPerAmount;
+
     const paymentIndex = newTicket.payments.findIndex(
       payment =>
         payment.kind === payload.payment.kind &&
@@ -377,6 +382,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         // Save the payment which is rounding current payment
         if (roundingPayment) {
           newPayment.paymentRoundingLine = roundingPayment;
+        }
+
+        if (countPerAmount) {
+          newPayment.countPerAmount = { ...payment.countPerAmount };
+          const currentCount =
+            newPayment.countPerAmount[payload.payment.amount] || 0;
+          newPayment.countPerAmount[payload.payment.amount] = currentCount + 1;
         }
 
         return newPayment;
@@ -436,6 +448,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         roundingPayment.roundedPaymentId = newPayment.id;
         // Save the payment which is rounding current payment
         newPayment.paymentRoundingLine = roundingPayment;
+      }
+
+      if (countPerAmount) {
+        newPayment.countPerAmount = { [payload.payment.amount]: 1 };
       }
 
       newTicket.payments.splice(index, 0, newPayment);

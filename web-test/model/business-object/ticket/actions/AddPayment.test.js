@@ -38,6 +38,16 @@ const terminalPayments = deepfreeze([
       searchKey: 'OBPOS_payment.card'
     },
     obposPosprecision: 2
+  },
+  {
+    payment: {
+      _identifier: 'Voucher',
+      searchKey: 'OBPOS_payment.voucher'
+    },
+    paymentMethod: {
+      countPerAmount: true
+    },
+    obposPosprecision: 2
   }
 ]);
 const cashPayment = deepfreeze({
@@ -51,6 +61,18 @@ const cardPayment = deepfreeze({
   amount: 100,
   origAmount: 200,
   kind: 'OBPOS_payment.card'
+});
+const voucherPayment50 = deepfreeze({
+  id: '1',
+  amount: 50,
+  origAmount: 50,
+  kind: 'OBPOS_payment.voucher'
+});
+const voucherPayment25 = deepfreeze({
+  id: '1',
+  amount: 25,
+  origAmount: 25,
+  kind: 'OBPOS_payment.voucher'
 });
 const terminal = { id: '9104513C2D0741D4850AE8493998A7C8' };
 describe('Ticket.addPayment action', () => {
@@ -90,4 +112,26 @@ it('add two payments of different paymentType', () => {
     payment: cardPayment
   });
   expect(newTicket.payments).toHaveLength(2);
+});
+
+it('adds payment of payment method that keeps track of count per amount', () => {
+  let newTicket = OB.App.StateAPI.Ticket.addPayment(basicTicket, {
+    payments: terminalPayments,
+    terminal,
+    payment: voucherPayment50
+  });
+  newTicket = OB.App.StateAPI.Ticket.addPayment(newTicket, {
+    payments: terminalPayments,
+    terminal,
+    payment: voucherPayment50
+  });
+  newTicket = OB.App.StateAPI.Ticket.addPayment(newTicket, {
+    payments: terminalPayments,
+    terminal,
+    payment: voucherPayment25
+  });
+  expect(newTicket.payments[0].countPerAmount).toStrictEqual({
+    '50': 2,
+    '25': 1
+  });
 });
