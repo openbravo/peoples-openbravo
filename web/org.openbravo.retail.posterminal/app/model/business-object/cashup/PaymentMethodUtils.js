@@ -100,7 +100,7 @@
     },
 
     getPaymentMethodFromBackendObject(paymentMethodCashUpModel) {
-      return {
+      const paymentMethodInfo = {
         id: paymentMethodCashUpModel.id,
         paymentMethodId: paymentMethodCashUpModel.paymentmethod_id,
         searchKey: paymentMethodCashUpModel.searchKey,
@@ -117,6 +117,11 @@
         newPaymentMethod: false,
         cashManagements: []
       };
+      if (paymentMethodCashUpModel.countPerAmount) {
+        paymentMethodInfo.countPerAmount =
+          paymentMethodCashUpModel.countPerAmount;
+      }
+      return paymentMethodInfo;
     },
 
     addPaymentsFromBackendCashup(payload) {
