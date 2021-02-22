@@ -394,15 +394,13 @@
         if (orderPayment.countPerAmount) {
           cashupPayment.countPerAmount = cashupPayment.countPerAmount || [];
           Object.keys(orderPayment.countPerAmount).forEach(entryAmount => {
-            const currentCount =
-              cashupPayment.countPerAmount[OB.DEC.abs(entryAmount)] || 0;
+            const key = String(OB.DEC.abs(entryAmount));
+            const currentCount = cashupPayment.countPerAmount[key] || 0;
             const updatedCount =
               entryAmount > 0
                 ? currentCount + orderPayment.countPerAmount[entryAmount]
                 : currentCount - orderPayment.countPerAmount[entryAmount];
-            cashupPayment.countPerAmount[
-              OB.DEC.abs(entryAmount)
-            ] = updatedCount;
+            cashupPayment.countPerAmount[key] = updatedCount;
           });
         }
         // set used in transaction payment methods to true

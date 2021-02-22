@@ -385,10 +385,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         }
 
         if (countPerAmount) {
+          const key = String(payload.payment.amount);
           newPayment.countPerAmount = { ...payment.countPerAmount };
-          const currentCount =
-            newPayment.countPerAmount[payload.payment.amount] || 0;
-          newPayment.countPerAmount[payload.payment.amount] = currentCount + 1;
+          const currentCount = newPayment.countPerAmount[key] || 0;
+          newPayment.countPerAmount[key] = currentCount + 1;
         }
 
         return newPayment;
@@ -451,7 +451,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       }
 
       if (countPerAmount) {
-        newPayment.countPerAmount = { [payload.payment.amount]: 1 };
+        const key = String(payload.payment.amount);
+        newPayment.countPerAmount = { [key]: 1 };
       }
 
       newTicket.payments.splice(index, 0, newPayment);
