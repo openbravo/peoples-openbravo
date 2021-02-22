@@ -392,7 +392,7 @@
           );
         }
         if (orderPayment.countPerAmount) {
-          cashupPayment.countPerAmount = cashupPayment.countPerAmount || [];
+          cashupPayment.countPerAmount = cashupPayment.countPerAmount || {};
           Object.keys(orderPayment.countPerAmount).forEach(entryAmount => {
             const key = String(OB.DEC.abs(entryAmount));
             const currentCount = cashupPayment.countPerAmount[key] || 0;
