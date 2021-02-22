@@ -447,6 +447,8 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       result.put("isSafeBox", true);
       // Get all safeBoxes defined and their payment methods
       OBCriteria<OBPOSSafeBox> safeBoxCrt = OBDal.getInstance().createCriteria(OBPOSSafeBox.class);
+      safeBoxCrt
+          .add(Restrictions.eq(OBPOSSafeBox.PROPERTY_ORGANIZATION, terminal.getOrganization()));
       safeBoxCrt.setFilterOnReadableOrganization(false);
       safeBoxCrt.setFilterOnReadableClients(false);
       if (safeBoxCrt.count() > 0) {

@@ -64,6 +64,7 @@ public class SafeBoxes extends JSONProcessSimple {
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
     try {
+      String orgId = jsonsent.getString("organization");
       String optSafeBoxSearchKey = null;
       if (jsonsent.has("safeBoxSearchKey")) {
         optSafeBoxSearchKey = jsonsent.getString("safeBoxSearchKey");
@@ -73,7 +74,7 @@ public class SafeBoxes extends JSONProcessSimple {
       String hqlSafeBoxes = "SELECT " + hqlPropertiesSafeBox.getHqlSelect()
           + " FROM OBPOS_SafeBox AS sf" //
           + " LEFT JOIN sf.user AS u " //
-          + " WHERE 1 = 1";
+          + " WHERE 1 = 1" + " AND sf.organization.id = :organization";
 
       if (optSafeBoxSearchKey != null) {
         hqlSafeBoxes += " AND sf.searchKey = :safeBoxSearchKey";
@@ -84,6 +85,8 @@ public class SafeBoxes extends JSONProcessSimple {
 
       @SuppressWarnings("rawtypes")
       Query safeBoxesQuery = OBDal.getInstance().getSession().createQuery(hqlSafeBoxes);
+
+      safeBoxesQuery.setParameter("organization", orgId);
 
       if (optSafeBoxSearchKey != null) {
         safeBoxesQuery.setParameter("safeBoxSearchKey", optSafeBoxSearchKey);
