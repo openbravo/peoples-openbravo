@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,16 +17,23 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.Check;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.materialmgmt.InvoiceGeneratorFromGoodsShipment;
 import org.openbravo.materialmgmt.StockUtils;
 import org.openbravo.model.ad.process.ProcessInstance;
@@ -54,6 +61,7 @@ class GoodsShipmentGenerator {
 
   private static final String PROCESS_M_MINOUT_POST = "109";
   private static final String DOCBASETYPE_MATERIAL_SHIPMENT = "MMS";
+  private static final Logger log = LogManager.getLogger();
 
   private ShipmentInOut shipment;
   private long lineNo = 10L;
@@ -116,6 +124,16 @@ class GoodsShipmentGenerator {
     BigDecimal quantityPending = qtyToDeliver;
     ScrollableResults proposedBins = null;
     try {
+      boolean allowShipmentWithoutStock = false;
+      try {
+        allowShipmentWithoutStock = "Y".equals(Preferences.getPreferenceValue(
+            "OBPOS_AllowShipmentWithoutStock", true, OBContext.getOBContext().getCurrentClient(),
+            OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+            OBContext.getOBContext().getRole(), null));
+      } catch (PropertyException e) {
+        log.error("Error while getting Preference : " + e.getMessage(), e);
+      }
+
       if (product.isStocked()) {
         proposedBins = StockUtils.getStockProposed(salesOrderLine, qtyToDeliver,
             this.shipment.getWarehouse());
@@ -132,6 +150,21 @@ class GoodsShipmentGenerator {
           }
           result.add(createShipmentLine(product, shipmentlineQty, salesOrderLine,
               stockProposed.getStorageDetail().getStorageBin()));
+        }
+        if (salesOrderLine != null && allowShipmentWithoutStock && result.size() == 0
+            && quantityPending.compareTo(BigDecimal.ZERO) > 0) {
+          final Warehouse warehouse = salesOrderLine.getWarehouse() != null
+              ? salesOrderLine.getWarehouse()
+              : salesOrderLine.getSalesOrder().getWarehouse();
+          final OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
+          locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, warehouse));
+          locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
+          locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
+          locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
+          locators.setFilterOnReadableOrganization(false);
+          locators.setMaxResults(1);
+          Locator locator = (Locator) locators.uniqueResult();
+          result.add(createShipmentLine(product, qtyToDeliver, salesOrderLine, locator));
         }
       } else {
         result.add(createShipmentLine(product, qtyToDeliver, salesOrderLine, null));
