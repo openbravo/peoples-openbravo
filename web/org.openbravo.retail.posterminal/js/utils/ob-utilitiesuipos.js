@@ -275,6 +275,9 @@ OB.UTIL.checkRefreshMasterData = function() {
   if (OB.MobileApp.view.applicationLocked === true) {
     return;
   }
+  if (OB.MobileApp.model.get('loggedOffline')) {
+    return;
+  }
   if (
     OB.MobileApp.model.get('refreshMasterdata') === true &&
     OB.UTIL.refreshMasterDataGetProperty('allowedIncrementalRefresh')
@@ -299,6 +302,7 @@ OB.UTIL.checkRefreshMasterData = function() {
         ) {
           OB.UTIL.refreshMasterDataInBackgroundSave();
         } else {
+          OB.UTIL.masterdataRefreshStatus = '';
           OB.info('No updates in the masterdata.');
         }
       }
@@ -493,6 +497,10 @@ OB.UTIL.loadModelsIncFunc = function() {
   if (OB.MobileApp.view.applicationLocked === true) {
     return;
   }
+  if (OB.MobileApp.model.get('loggedOffline')) {
+    return;
+  }
+
   var msg = OB.I18N.getLabel(
       OB.MobileApp.view.currentWindow === 'retail.pointofsale'
         ? 'OBPOS_MasterdataWillHappenOnCloseTicket'
