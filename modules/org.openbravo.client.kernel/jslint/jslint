@@ -67,7 +67,7 @@ function lintFiles {
     else
       # Since eslint complains when ignoring a file explicitly passed and there's no way to workaround that via CLI,
       # ignored files are removed using a script
-      FILTERED_FILES=$(node ${SCRIPT_DIR}/filter-eslint-ignored-files.js "$@")
+      FILTERED_FILES=$(node ${SCRIPT_DIR}/filter-eslint-ignored-files.js "${@:2}")
       if [[ -n "${FILTERED_FILES}" ]]; then
           echo "${FILTERED_FILES}" | xargs -n 250 npm run --prefix ${OPENBRAVO_ROOT_PATH} jslint -s -- ${FLAGS} ${IGNORE_PATH} || exit 1
       fi
