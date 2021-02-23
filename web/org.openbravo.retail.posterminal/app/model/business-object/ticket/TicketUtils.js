@@ -957,6 +957,10 @@
         return undefined;
       }
 
+      if (attrs && attrs.createNewLine) {
+        return undefined;
+      }
+
       if (options.line) {
         return ticket.lines.find(l => l.id === options.line);
       }
