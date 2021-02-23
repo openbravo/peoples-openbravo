@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2020 Openbravo SLU
+ * All portions are Copyright (C) 2013-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -45,6 +45,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
@@ -145,9 +146,8 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
         i++;
       }
 
-      if (variantNumber > 1000) {
-        throw new OBException("HighRecords");
-      }
+      throwExceptionIfVariantNumberIsTooHigh(variantNumber);
+
       totalMaxLength += Long.toString(variantNumber).length();
       boolean useCodes = totalMaxLength <= SEARCH_KEY_LENGTH;
 
@@ -294,6 +294,23 @@ public class ManageVariantsDS extends ReadOnlyDataSourceService {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  private void throwExceptionIfVariantNumberIsTooHigh(long variantNumber) {
+    if (variantNumber > getManageVariantsLimitPrefValue()) {
+      throw new OBException("ManageVariantsLimitReached");
+    }
+  }
+
+  private int getManageVariantsLimitPrefValue() {
+    try {
+      OBContext context = OBContext.getOBContext();
+      return Integer.parseInt(
+          Preferences.getPreferenceValue("ManageVariantsLimit", false, context.getCurrentClient(),
+              context.getCurrentOrganization(), context.getUser(), context.getRole(), null));
+    } catch (Exception e) {
+      return 1000;
+    }
   }
 
   private ProductChSelectedFilters readCriteria(Map<String, String> parameters)
