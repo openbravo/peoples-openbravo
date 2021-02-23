@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -48,6 +52,10 @@ public class CountSafeBoxProcessor {
   private static final String PAYMENT_CLEARED = "RPPC";
   private static final String WITHDRAWN_NOT_CLEARED = "PWNC";
   private static final String DEPOSITED_NOT_CLEARED = "RDNC";
+
+  @Inject
+  @Any
+  private Instance<CountSafeboxHook> countSafeboxHooks;
 
   public JSONObject processCountSafeBox(OBPOSSafeBox safeBox, JSONObject jsonCountSafeBox,
       Date countSafeBoxDate) throws Exception {
@@ -158,6 +166,20 @@ public class CountSafeBoxProcessor {
 
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+    result = executeHooks(safeBox, jsonCountSafeBox, countSafeBoxDate, result);
+    return result;
+  }
+
+  private JSONObject executeHooks(OBPOSSafeBox safeBox, JSONObject jsonCountSafeBox,
+      Date countSafeBoxDate, JSONObject jsonBeingSent) throws Exception {
+
+    JSONObject result = jsonBeingSent;
+    for (CountSafeboxHook hook : countSafeboxHooks) {
+      JSONObject hookResult = hook.exec(safeBox, jsonCountSafeBox, countSafeBoxDate, jsonBeingSent);
+      if (hookResult != null) {
+        result = hookResult;
+      }
+    }
     return result;
   }
 
