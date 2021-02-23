@@ -89,6 +89,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA[N]]></onCreateDefault>
       </column>
+      <column name="COUNTPERAMOUNT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_SAFEBOX_PM_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -124,6 +128,7 @@
         <unique-column name="FIN_FINANCIAL_ACCOUNT_ID"/>
         <unique-column name="FIN_PAYMENTMETHOD_ID"/>
       </unique>
+      <check name="OBPOS_SAFEBOXPM_CNT"><![CDATA[COUNTPERAMOUNT = 'Y' OR COUNTPERAMOUNT = 'N']]></check>
       <check name="OBPOS_SB_PM_ALLOWDONTMOVE_CHK"><![CDATA[ALLOWDONTMOVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_SB_PM_ALLOWMOVEEVER_CHK"><![CDATA[ALLOWMOVEEVERYTHING IN ('Y', 'N')]]></check>
       <check name="OBPOS_SB_PM_ALLOWVARAMT_CHK"><![CDATA[ALLOWVARIABLEAMOUNT IN ('Y', 'N')]]></check>

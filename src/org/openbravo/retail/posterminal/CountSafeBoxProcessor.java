@@ -180,6 +180,8 @@ public class CountSafeBoxProcessor {
   private OBPOS_SafeboxCount createSafeboxCountHistoryRecord(OBPOSSafeBox safeBox,
       Date countSafeBoxDate, JSONObject jsonCountSafeBox) throws JSONException {
 
+    flagSafeboxCashupsAsCounted(safeBox);
+
     OBPOS_SafeboxCount safeboxCount = OBProvider.getInstance().get(OBPOS_SafeboxCount.class);
     String userId = jsonCountSafeBox.getString("userId");
     safeboxCount.setUser(OBDal.getInstance().getProxy(User.class, userId));
@@ -189,6 +191,21 @@ public class CountSafeBoxProcessor {
 
     OBDal.getInstance().save(safeboxCount);
     return safeboxCount;
+  }
+
+  private void flagSafeboxCashupsAsCounted(OBPOSSafeBox safeBox) {
+    //@formatter:off
+    String hql =
+            " update OBPOS_Safebox_Touchpoint " +
+            " set iscounted = true " +
+            " where obposSafebox.id = :safeboxId " +
+            " and iscounted = false ";
+    //@formatter:on
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("safeboxId", safeBox.getId())
+        .executeUpdate();
   }
 
   private void initializeSafeboxTerminalHistoryRecord(OBPOSSafeBox safeBox, Date countSafeBoxDate,

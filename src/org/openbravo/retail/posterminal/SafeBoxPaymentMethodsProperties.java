@@ -38,6 +38,7 @@ public class SafeBoxPaymentMethodsProperties extends ModelExtension {
         add(new HQLProperty("sfpm.allowNotToMove", "allowNotToMove"));
         add(new HQLProperty("sfpm.allowMoveEverything", "allowMoveEverything"));
         add(new HQLProperty("sfpm.countDifferenceLimit", "countDifferenceLimit"));
+        add(new HQLProperty("sfpm.countPerAmount", "countPerAmount"));
       }
     };
 

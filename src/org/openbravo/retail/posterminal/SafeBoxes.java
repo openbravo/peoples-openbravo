@@ -9,6 +9,8 @@
 
 package org.openbravo.retail.posterminal;
 
+import java.util.List;
+
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -183,6 +185,12 @@ public class SafeBoxes extends JSONProcessSimple {
               safeBoxPaymentMethodAccount.getDouble("initialBalance"));
 
           safeBoxPaymentMethod.put("safeBoxCounting", safeBoxPaymentMethodCounting);
+
+          if (safeBoxPaymentMethod.optBoolean("countPerAmount")) {
+            safeBoxPaymentMethod.put("countPerAmountEntries",
+                getCountPerAmountEntries(safeBoxObject, safeBoxPaymentMethod));
+            System.out.println(safeBoxPaymentMethod);
+          }
         }
         safeBox.put("paymentMethods", safeBoxPaymentMethods);
       }
@@ -193,6 +201,64 @@ public class SafeBoxes extends JSONProcessSimple {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  private JSONObject getCountPerAmountEntries(OBPOSSafeBox safebox,
+      JSONObject safeBoxPaymentMethodJson) throws JSONException {
+    List<OBPOSSafeboxTouchpoint> uncountedCashups = getUncountedCashups(safebox);
+
+    JSONObject countPerAmountEntries = new JSONObject();
+    for (OBPOSSafeboxTouchpoint obposSafeboxTouchpoint : uncountedCashups) {
+      OBPOSAppCashup cashUp = obposSafeboxTouchpoint.getCashUp();
+      OBPOSPaymentMethodCashup paymentMethodCashup = getPaymentMethodCashup(cashUp,
+          safeBoxPaymentMethodJson);
+      if (paymentMethodCashup == null) {
+        continue;
+      }
+      List<OBPOS_PaymentMethodCashCountPerAmount> countPerAmount = paymentMethodCashup
+          .getObposPmcashupAmntcntList();
+      for (OBPOS_PaymentMethodCashCountPerAmount countPerAmountEntry : countPerAmount) {
+        String key = countPerAmountEntry.getAmount().toString();
+        Long cashupExpected = countPerAmountEntry.getExpectedAmount();
+        long currentExpected = countPerAmountEntries.optLong(key, 0);
+        countPerAmountEntries.put(key, currentExpected + cashupExpected);
+      }
+    }
+    return countPerAmountEntries;
+  }
+
+  private List<OBPOSSafeboxTouchpoint> getUncountedCashups(OBPOSSafeBox safebox) {
+    //@formatter:off
+    String hql = 
+            "as sfc" +
+            " where sfc.obposSafebox.id = :safeboxId" +
+            " and sfc.cashUp is not null" +
+            " and sfc.iscounted = false";
+    //@formatter:on
+
+    List<OBPOSSafeboxTouchpoint> uncountedCashups = OBDal.getInstance()
+        .createQuery(OBPOSSafeboxTouchpoint.class, hql)
+        .setNamedParameter("safeboxId", safebox.getId())
+        .list();
+    return uncountedCashups;
+  }
+
+  private OBPOSPaymentMethodCashup getPaymentMethodCashup(OBPOSAppCashup cashUp,
+      JSONObject safeBoxPaymentMethodJson) throws JSONException {
+    //@formatter:off
+    String hql = 
+            "as pmc" +
+            " where pmc.cashUp.id = :cashUpId" +
+            " and pmc.paymentType.paymentMethod.paymentMethod.id = :paymentMethodId" +
+            " and pmc.paymentType.paymentMethod.currency.id = :currencyId";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .createQuery(OBPOSPaymentMethodCashup.class, hql)
+        .setNamedParameter("cashUpId", cashUp.getId())
+        .setNamedParameter("paymentMethodId", safeBoxPaymentMethodJson.get("paymentMethodId"))
+        .setNamedParameter("currencyId", safeBoxPaymentMethodJson.get("currency"))
+        .uniqueResult();
   }
 
   /**
