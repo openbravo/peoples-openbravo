@@ -333,7 +333,8 @@
           (ticket.id === payload.ticket.id ||
             ticket.oldId === payload.ticket.id ||
             (ticket.canceledorder || {}).id === payload.ticket.id)) ||
-        ticket.documentNo === payload.ticket.documentNo
+        (payload.ticket.documentno &&
+          ticket.documentNo === payload.ticket.documentNo)
     );
 
     if (ticketInSession) {
