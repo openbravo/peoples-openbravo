@@ -329,9 +329,11 @@
       payload.session
     ).find(
       ticket =>
-        ticket.id === payload.ticket.id ||
-        ticket.oldId === payload.ticket.id ||
-        (ticket.canceledorder || {}).id === payload.ticket.id
+        (payload.ticket.id &&
+          (ticket.id === payload.ticket.id ||
+            ticket.oldId === payload.ticket.id ||
+            (ticket.canceledorder || {}).id === payload.ticket.id)) ||
+        ticket.documentNo === payload.ticket.documentNo
     );
 
     if (ticketInSession) {
