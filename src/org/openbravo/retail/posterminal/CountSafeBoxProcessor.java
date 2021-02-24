@@ -164,23 +164,20 @@ public class CountSafeBoxProcessor {
     logger.debug("Count Safe Box Processor. Total time: " + (t2 - t0) + ". Processing: " + (t1 - t0)
         + ". Flush: " + (t2 - t1));
 
+    if (safeboxCount != null) {
+      executeHooks(safeboxCount, jsonCountSafeBox);
+    }
+
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
-    result = executeHooks(safeBox, jsonCountSafeBox, countSafeBoxDate, result);
     return result;
   }
 
-  private JSONObject executeHooks(OBPOSSafeBox safeBox, JSONObject jsonCountSafeBox,
-      Date countSafeBoxDate, JSONObject jsonBeingSent) throws Exception {
-
-    JSONObject result = jsonBeingSent;
+  private void executeHooks(OBPOS_SafeboxCount safeboxCount, JSONObject jsonCountSafeBox)
+      throws Exception {
     for (CountSafeboxHook hook : countSafeboxHooks) {
-      JSONObject hookResult = hook.exec(safeBox, jsonCountSafeBox, countSafeBoxDate, jsonBeingSent);
-      if (hookResult != null) {
-        result = hookResult;
-      }
+      hook.exec(safeboxCount, jsonCountSafeBox);
     }
-    return result;
   }
 
   private void addSafeboxCountPaymentMethod(OBPOS_SafeboxCount safeboxCount,
