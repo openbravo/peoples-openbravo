@@ -385,7 +385,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         }
 
         if (countPerAmount) {
-          const key = String(payload.payment.amount);
+          const key = OB.App.Locale.formatAmount(payload.payment.amount);
           newPayment.countPerAmount = { ...payment.countPerAmount };
           const currentCount = newPayment.countPerAmount[key] || 0;
           newPayment.countPerAmount[key] = currentCount + 1;
@@ -451,7 +451,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       }
 
       if (countPerAmount) {
-        const key = String(payload.payment.amount);
+        const key = OB.App.Locale.formatAmount(payload.payment.amount);
         newPayment.countPerAmount = { [key]: 1 };
       }
 

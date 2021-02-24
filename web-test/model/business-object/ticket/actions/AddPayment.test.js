@@ -11,6 +11,7 @@ require('../SetupTicket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddPayment');
 require('../SetupTicketUtils');
 const deepfreeze = require('deepfreeze');
+OB.App.Locale = { formatAmount: number => number.toFixed(2) };
 
 const basicTicket = deepfreeze({
   lines: [
@@ -131,7 +132,7 @@ it('adds payment of payment method that keeps track of count per amount', () => 
     payment: voucherPayment25
   });
   expect(newTicket.payments[0].countPerAmount).toStrictEqual({
-    '50': 2,
-    '25': 1
+    '50.00': 2,
+    '25.00': 1
   });
 });

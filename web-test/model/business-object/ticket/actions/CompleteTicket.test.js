@@ -137,7 +137,7 @@ describe('Complete ticket action', () => {
         {
           kind: 'OBPOS_payment.voucher',
           amount: 100,
-          countPerAmount: { '50': 1, '10': 5 }
+          countPerAmount: { '50.00': 1, '10.00': 5 }
         }
       ]
     };
@@ -151,7 +151,7 @@ describe('Complete ticket action', () => {
           id: '1',
           searchKey: 'OBPOS_payment.voucher',
           totalSales: 50,
-          countPerAmount: { '50': 1 },
+          countPerAmount: { '50.00': 1 },
           usedInCurrentTrx: false
         }
       ]
@@ -180,7 +180,7 @@ describe('Complete ticket action', () => {
     );
     expect(newState).toMatchObject({
       Cashup: {
-        cashPaymentMethodInfo: [{ countPerAmount: { '50': 2, '10': 5 } }]
+        cashPaymentMethodInfo: [{ countPerAmount: { '50.00': 2, '10.00': 5 } }]
       }
     });
   });

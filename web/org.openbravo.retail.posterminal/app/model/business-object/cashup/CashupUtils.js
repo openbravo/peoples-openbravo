@@ -393,13 +393,13 @@
         }
         if (orderPayment.countPerAmount) {
           cashupPayment.countPerAmount = cashupPayment.countPerAmount || {};
-          Object.keys(orderPayment.countPerAmount).forEach(entryAmount => {
-            const key = String(OB.DEC.abs(entryAmount));
+          Object.keys(orderPayment.countPerAmount).forEach(key => {
+            const entryAmount = Number(key);
             const currentCount = cashupPayment.countPerAmount[key] || 0;
             const updatedCount =
               entryAmount > 0
-                ? currentCount + orderPayment.countPerAmount[entryAmount]
-                : currentCount - orderPayment.countPerAmount[entryAmount];
+                ? currentCount + orderPayment.countPerAmount[key]
+                : currentCount - orderPayment.countPerAmount[key];
             cashupPayment.countPerAmount[key] = updatedCount;
           });
         }
