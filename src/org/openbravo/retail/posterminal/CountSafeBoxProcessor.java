@@ -164,8 +164,9 @@ public class CountSafeBoxProcessor {
     logger.debug("Count Safe Box Processor. Total time: " + (t2 - t0) + ". Processing: " + (t1 - t0)
         + ". Flush: " + (t2 - t1));
 
-    if (safeboxCount != null) {
+    if (!isInitialCount) {
       executeHooks(safeboxCount, jsonCountSafeBox);
+      flagSafeboxCashupsAsCounted(safeBox);
     }
 
     JSONObject result = new JSONObject();
@@ -198,8 +199,6 @@ public class CountSafeBoxProcessor {
 
   private OBPOS_SafeboxCount createSafeboxCountHistoryRecord(OBPOSSafeBox safeBox,
       Date countSafeBoxDate, JSONObject jsonCountSafeBox) throws JSONException {
-
-    flagSafeboxCashupsAsCounted(safeBox);
 
     OBPOS_SafeboxCount safeboxCount = OBProvider.getInstance().get(OBPOS_SafeboxCount.class);
     String userId = jsonCountSafeBox.getString("userId");

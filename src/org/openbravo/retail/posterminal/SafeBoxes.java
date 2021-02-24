@@ -203,7 +203,7 @@ public class SafeBoxes extends JSONProcessSimple {
     return result;
   }
 
-  private JSONObject getCountPerAmountEntries(OBPOSSafeBox safebox,
+  public static JSONObject getCountPerAmountEntries(OBPOSSafeBox safebox,
       JSONObject safeBoxPaymentMethodJson) throws JSONException {
     List<OBPOSSafeboxTouchpoint> uncountedCashups = getUncountedCashups(safebox);
 
@@ -227,7 +227,7 @@ public class SafeBoxes extends JSONProcessSimple {
     return countPerAmountEntries;
   }
 
-  private List<OBPOSSafeboxTouchpoint> getUncountedCashups(OBPOSSafeBox safebox) {
+  private static List<OBPOSSafeboxTouchpoint> getUncountedCashups(OBPOSSafeBox safebox) {
     //@formatter:off
     String hql = 
             "as sfc" +
@@ -243,7 +243,7 @@ public class SafeBoxes extends JSONProcessSimple {
     return uncountedCashups;
   }
 
-  private OBPOSPaymentMethodCashup getPaymentMethodCashup(OBPOSAppCashup cashUp,
+  private static OBPOSPaymentMethodCashup getPaymentMethodCashup(OBPOSAppCashup cashUp,
       JSONObject safeBoxPaymentMethodJson) throws JSONException {
     //@formatter:off
     String hql = 
