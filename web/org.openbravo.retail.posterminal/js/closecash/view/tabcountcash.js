@@ -399,7 +399,10 @@ enyo.kind({
       // Auto confirm empty payment methods
       model.get('paymentEmptyList').models.forEach(payment => {
         const paymentModel = model.get('paymentList').models.find(p => {
-          return p.id === payment.id;
+          return (
+            p.id === payment.id ||
+            p.get('paymentMethod').id === payment.get('paymentMethod').id
+          );
         });
         if (
           paymentModel &&
