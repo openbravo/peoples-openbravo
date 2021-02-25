@@ -189,7 +189,6 @@ public class SafeBoxes extends JSONProcessSimple {
           if (safeBoxPaymentMethod.optBoolean("countPerAmount")) {
             safeBoxPaymentMethod.put("countPerAmountEntries",
                 getCountPerAmountEntries(safeBoxObject, safeBoxPaymentMethod));
-            System.out.println(safeBoxPaymentMethod);
           }
         }
         safeBox.put("paymentMethods", safeBoxPaymentMethods);
