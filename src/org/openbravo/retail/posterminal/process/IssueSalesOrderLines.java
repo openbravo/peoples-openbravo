@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -112,9 +112,9 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
 
     } catch (Exception e) {
       try {
+        log.error("Exception in IssueSalesOrderLines: " + e.getMessage(), e);
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
         jsonResponse.put(JsonConstants.RESPONSE_ERRORMESSAGE, cleanUpMessage(e.getMessage()));
-        log.debug(e.getMessage());
       } catch (JSONException e1) {
         log.debug(e1.getMessage());
       }

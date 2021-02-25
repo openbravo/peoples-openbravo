@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -982,6 +982,8 @@ enyo.kind({
                 }
               });
 
+              const sequenceName = 'fullinvoiceslastassignednum';
+              const invoiceList = [];
               Object.keys(
                 _.groupBy(groupedLinesToPrepare, l => l.order)
               ).forEach(async key => {
@@ -992,35 +994,14 @@ enyo.kind({
                   .filter(l => l.order === key)
                   .flatMap(l => l.lines);
                 if (isInvoiceCreated(order, orderLines)) {
-                  await OB.App.State.DocumentSequence.increaseSequence({
-                    sequenceName: 'fullinvoiceslastassignednum'
+                  invoiceList.push({
+                    order,
+                    orderLines
                   });
-                  const documentSequence = OB.App.State.getState()
-                    .DocumentSequence;
-                  const { sequencePrefix, sequenceNumber } = documentSequence[
-                    'fullinvoiceslastassignednum'
-                  ];
-                  const documentNumberPadding = OB.MobileApp.model.get(
-                    'terminal'
-                  ).documentnoPadding;
-                  const documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
-                    {
-                      sequencePrefix,
-                      documentNumberSeparator: OB.Model.Order.prototype
-                        .includeDocNoSeperator
-                        ? '/'
-                        : '',
-                      documentNumberPadding,
-                      sequenceNumber
-                    }
-                  );
-                  order.invoiceSequenceName = 'fullinvoiceslastassignednum';
-                  order.invoiceSequenceNumber = sequenceNumber;
-                  order.invoiceDocumentNo = documentNo;
                 }
               });
 
-              OB.Dal.transaction(function(tx) {
+              let issueSalesOrder = () => {
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_PreIssueSalesOrder',
                   {
@@ -1041,7 +1022,7 @@ enyo.kind({
                               if (order.invoiceDocumentNo) {
                                 await OB.App.State.DocumentSequence.decreaseSequence(
                                   {
-                                    sequenceName: 'fullinvoiceslastassignednum'
+                                    sequenceName
                                   }
                                 );
                               }
@@ -1129,7 +1110,41 @@ enyo.kind({
                     );
                   }
                 );
-              });
+              };
+
+              const createInvoiceSequence = index => {
+                if (index === invoiceList.length) {
+                  issueSalesOrder();
+                } else {
+                  OB.App.State.DocumentSequence.increaseSequence({
+                    sequenceName
+                  }).then(() => {
+                    let {
+                      sequencePrefix,
+                      sequenceNumber
+                    } = OB.App.State.getState().DocumentSequence[sequenceName];
+                    const order = invoiceList[index].order;
+                    const documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
+                      {
+                        sequencePrefix,
+                        documentNumberSeparator: OB.Model.Order.prototype
+                          .includeDocNoSeperator
+                          ? '/'
+                          : '',
+                        documentNumberPadding: OB.MobileApp.model.get(
+                          'terminal'
+                        ).documentnoPadding,
+                        sequenceNumber
+                      }
+                    );
+                    order.invoiceSequenceName = sequenceName;
+                    order.invoiceSequenceNumber = sequenceNumber;
+                    order.invoiceDocumentNo = documentNo;
+                    createInvoiceSequence(++index);
+                  });
+                }
+              };
+              createInvoiceSequence(0);
             }
           }
         );
