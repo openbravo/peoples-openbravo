@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -30,6 +34,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
@@ -48,6 +53,10 @@ public class CountSafeBoxProcessor {
   private static final String WITHDRAWN_NOT_CLEARED = "PWNC";
   private static final String DEPOSITED_NOT_CLEARED = "RDNC";
 
+  @Inject
+  @Any
+  private Instance<CountSafeboxHook> countSafeboxHooks;
+
   public JSONObject processCountSafeBox(OBPOSSafeBox safeBox, JSONObject jsonCountSafeBox,
       Date countSafeBoxDate) throws Exception {
 
@@ -57,9 +66,12 @@ public class CountSafeBoxProcessor {
 
     boolean isInitialCount = jsonCountSafeBox.optBoolean("isInitialCount", false);
 
+    OBPOS_SafeboxCount safeboxCount = null;
     if (isInitialCount) {
-      createSafeboxHistoryRecord(safeBox, countSafeBoxDate,
+      initializeSafeboxTerminalHistoryRecord(safeBox, countSafeBoxDate,
           jsonCountSafeBox.optString("touchpointId"));
+    } else {
+      safeboxCount = createSafeboxCountHistoryRecord(safeBox, countSafeBoxDate, jsonCountSafeBox);
     }
 
     ArrayList<FIN_Reconciliation> arrayReconciliations = new ArrayList<FIN_Reconciliation>();
@@ -71,6 +83,14 @@ public class CountSafeBoxProcessor {
       BigDecimal difference = new BigDecimal(countSafeBoxObj.getString("difference"));
       BigDecimal differenceToApply = difference;
       BigDecimal foreignDifference = new BigDecimal(0);
+      BigDecimal foreignExpected = BigDecimal.valueOf(countSafeBoxObj.getDouble("foreignExpected"));
+      BigDecimal amountToKeep = null;
+      if (!countSafeBoxObj.getJSONObject("paymentMethod").isNull("amountToKeep")) {
+        amountToKeep = BigDecimal
+            .valueOf(countSafeBoxObj.getJSONObject("paymentMethod").getDouble("amountToKeep"));
+      } else {
+        amountToKeep = BigDecimal.ZERO;
+      }
 
       if (countSafeBoxObj.has("foreignDifference")) {
         foreignDifference = new BigDecimal(countSafeBoxObj.getString("foreignDifference"));
@@ -90,6 +110,12 @@ public class CountSafeBoxProcessor {
         OBDal.getInstance().save(diffTransaction);
       }
 
+      if (safeboxCount != null) {
+        BigDecimal counted = foreignExpected.subtract(foreignDifference);
+        addSafeboxCountPaymentMethod(safeboxCount, foreignExpected, counted, amountToKeep,
+            countSafeBoxObj);
+      }
+
       if (!paymentType.isAutomateMovementToOtherAccount() || isInitialCount) {
         continue;
       }
@@ -104,17 +130,10 @@ public class CountSafeBoxProcessor {
       arrayReconciliations.add(reconciliation);
       OBDal.getInstance().save(reconciliation);
 
-      BigDecimal reconciliationTotal = BigDecimal
-          .valueOf(countSafeBoxObj.getDouble("foreignExpected"))
-          .add(foreignDifference);
+      BigDecimal reconciliationTotal = foreignExpected.add(foreignDifference);
       if (reconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
 
-        if (!countSafeBoxObj.getJSONObject("paymentMethod").isNull("amountToKeep") && BigDecimal
-            .valueOf(countSafeBoxObj.getJSONObject("paymentMethod").getDouble("amountToKeep"))
-            .compareTo(new BigDecimal(0)) != 0) {
-
-          BigDecimal amountToKeep = BigDecimal
-              .valueOf(countSafeBoxObj.getJSONObject("paymentMethod").getDouble("amountToKeep"));
+        if (amountToKeep.compareTo(new BigDecimal(0)) != 0) {
           reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
         }
         if (reconciliationTotal.compareTo(BigDecimal.ZERO) != 0) {
@@ -145,12 +164,69 @@ public class CountSafeBoxProcessor {
     logger.debug("Count Safe Box Processor. Total time: " + (t2 - t0) + ". Processing: " + (t1 - t0)
         + ". Flush: " + (t2 - t1));
 
+    if (!isInitialCount) {
+      executeHooks(safeboxCount, jsonCountSafeBox);
+      flagSafeboxCashupsAsCounted(safeBox);
+    }
+
     JSONObject result = new JSONObject();
     result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     return result;
   }
 
-  private void createSafeboxHistoryRecord(OBPOSSafeBox safeBox, Date countSafeBoxDate,
+  private void executeHooks(OBPOS_SafeboxCount safeboxCount, JSONObject jsonCountSafeBox)
+      throws Exception {
+    for (CountSafeboxHook hook : countSafeboxHooks) {
+      hook.exec(safeboxCount, jsonCountSafeBox);
+    }
+  }
+
+  private void addSafeboxCountPaymentMethod(OBPOS_SafeboxCount safeboxCount,
+      BigDecimal foreignExpected, BigDecimal counted, BigDecimal amountToKeep,
+      JSONObject countSafeBoxObj) throws JSONException {
+    OBPOS_SafeboxCountPaymentMethod safeboxCountPaymentMethod = OBProvider.getInstance()
+        .get(OBPOS_SafeboxCountPaymentMethod.class);
+    safeboxCountPaymentMethod.setOrganization(safeboxCount.getOrganization());
+    safeboxCountPaymentMethod.setObposSafeboxCount(safeboxCount);
+    safeboxCountPaymentMethod.setExpectedAmount(foreignExpected);
+    safeboxCountPaymentMethod.setCount(counted);
+    safeboxCountPaymentMethod.setAmountToKeep(amountToKeep);
+    String paymentTypeId = countSafeBoxObj.getString("paymentTypeId");
+    safeboxCountPaymentMethod.setObposSafeboxPaymentmethod(
+        OBDal.getInstance().getProxy(OBPOSSafeBoxPaymentMethod.class, paymentTypeId));
+    safeboxCount.getOBPOSSafeboxCountPMList().add(safeboxCountPaymentMethod);
+  }
+
+  private OBPOS_SafeboxCount createSafeboxCountHistoryRecord(OBPOSSafeBox safeBox,
+      Date countSafeBoxDate, JSONObject jsonCountSafeBox) throws JSONException {
+
+    OBPOS_SafeboxCount safeboxCount = OBProvider.getInstance().get(OBPOS_SafeboxCount.class);
+    String userId = jsonCountSafeBox.getString("userId");
+    safeboxCount.setUser(OBDal.getInstance().getProxy(User.class, userId));
+    safeboxCount.setCountdate(countSafeBoxDate);
+    safeboxCount.setSafeBox(safeBox);
+    safeboxCount.setOrganization(safeBox.getOrganization());
+
+    OBDal.getInstance().save(safeboxCount);
+    return safeboxCount;
+  }
+
+  private void flagSafeboxCashupsAsCounted(OBPOSSafeBox safeBox) {
+    //@formatter:off
+    String hql =
+            " update OBPOS_Safebox_Touchpoint " +
+            " set iscounted = true " +
+            " where obposSafebox.id = :safeboxId " +
+            " and iscounted = false ";
+    //@formatter:on
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("safeboxId", safeBox.getId())
+        .executeUpdate();
+  }
+
+  private void initializeSafeboxTerminalHistoryRecord(OBPOSSafeBox safeBox, Date countSafeBoxDate,
       String touchpointId) {
     OBPOSSafeboxTouchpoint historyRecord = OBProvider.getInstance()
         .get(OBPOSSafeboxTouchpoint.class);

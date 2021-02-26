@@ -70,7 +70,7 @@
           ) {
             startingCash = OB.DEC.Zero;
           }
-          paymentMethods.push({
+          const paymentMethod = {
             id: OB.App.UUID.generate(),
             paymentMethodId: terminalPayment.payment.id,
             searchKey: terminalPayment.payment.searchKey,
@@ -86,14 +86,21 @@
             lineNo: terminalPayment.lineNo,
             newPaymentMethod: true,
             cashManagements: []
-          });
+          };
+          if (
+            terminalPayment.paymentMethod &&
+            terminalPayment.paymentMethod.countPerAmount
+          ) {
+            paymentMethod.countPerAmount = {};
+          }
+          paymentMethods.push(paymentMethod);
         }
       });
       return paymentMethods;
     },
 
     getPaymentMethodFromBackendObject(paymentMethodCashUpModel) {
-      return {
+      const paymentMethodInfo = {
         id: paymentMethodCashUpModel.id,
         paymentMethodId: paymentMethodCashUpModel.paymentmethod_id,
         searchKey: paymentMethodCashUpModel.searchKey,
@@ -110,6 +117,11 @@
         newPaymentMethod: false,
         cashManagements: []
       };
+      if (paymentMethodCashUpModel.countPerAmount) {
+        paymentMethodInfo.countPerAmount =
+          paymentMethodCashUpModel.countPerAmount;
+      }
+      return paymentMethodInfo;
     },
 
     addPaymentsFromBackendCashup(payload) {

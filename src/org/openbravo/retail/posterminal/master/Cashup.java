@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2020 Openbravo S.L.U.
+ * Copyright (C) 2014-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -41,6 +41,7 @@ import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
 import org.openbravo.retail.posterminal.OBPOSTaxCashup;
+import org.openbravo.retail.posterminal.OBPOS_PaymentMethodCashCountPerAmount;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
@@ -191,7 +192,7 @@ public class Cashup extends JSONProcessSimple {
     paymentMethodCashupCriteria
         .add(Restrictions.eq(OBPOSPaymentMethodCashup.PROPERTY_CASHUP, cashupObj));
     List<OBPOSPaymentMethodCashup> paymentMethodList = paymentMethodCashupCriteria.list();
-    for (BaseOBObject paymentMethod : paymentMethodList) {
+    for (OBPOSPaymentMethodCashup paymentMethod : paymentMethodList) {
       JSONObject paymentMethodJSON = converter.toJsonObject(paymentMethod, DataResolvingMode.FULL);
       OBCriteria<OBPOSAppPayment> paymentAppMethodCriteria = OBDal.getInstance()
           .createCriteria(OBPOSAppPayment.class);
@@ -210,6 +211,17 @@ public class Cashup extends JSONProcessSimple {
       paymentMethodJSON.put("totalSales", paymentMethodJSON.get("totalsales"));
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));
       paymentMethodJSON.put("lineNo", paymentAppMethod != null ? paymentAppMethod.get("line") : 1L);
+
+      if (paymentAppMethod.getPaymentMethod().isCountPerAmount()) {
+        List<OBPOS_PaymentMethodCashCountPerAmount> countPerAmount = paymentMethod
+            .getObposPmcashupAmntcntList();
+        JSONObject object = new JSONObject();
+        for (OBPOS_PaymentMethodCashCountPerAmount entry : countPerAmount) {
+          object.put(entry.getAmount().toString(), entry.getExpectedAmount());
+        }
+        paymentMethodJSON.put("countPerAmount", object);
+      }
+
       respArray.put(paymentMethodJSON);
     }
 
