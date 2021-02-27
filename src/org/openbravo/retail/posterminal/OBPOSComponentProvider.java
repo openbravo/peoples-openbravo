@@ -405,6 +405,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/ticket-list/actions/UpdateBPInAllTickets"), //
         businesslogic("app/model/business-object/ticket-list/actions/SaveTicket"), //
 
+        // Remote Server
+        businesslogic("app/integration/remote-server/HardwareManagerServer"), //
         // Synchronization Buffer
         businesslogic("app/model/synchronization-buffer/HardwareManagerEndpoint"), //
 
