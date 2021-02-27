@@ -277,10 +277,10 @@ public class Product extends MasterDataProcessHQLQuery {
       JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
 
     String hql = "FROM OBRETCO_Prol_Product as pli ";
-    if (!useGetForProductImages) {
-      hql += "left outer join pli.product.image img ";
-    }
     hql += "inner join pli.product as product ";
+    if (!useGetForProductImages) {
+      hql += "left outer join product.image img ";
+    }
     hql += "left join product.attributeSet as attrset ";
 
     if (isMultipricelist && allowNoPriceInMainPriceList
