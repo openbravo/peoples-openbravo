@@ -25,7 +25,7 @@
       hwURLs.push(toPrinterURL(terminal.hardwareurl, '/printer'));
     }
     if (terminal.scaleurl) {
-      hwURLs.push(terminal.scaleurl);
+      hwURLs.push(toPrinterURL(terminal.scaleurl, '/scale'));
     }
 
     return hwURLs;
@@ -42,12 +42,11 @@
   OB.App.Class.HardwareManagerServer = class HardwareManagerServer extends OB
     .App.Class.RemoteServer {
     constructor() {
-      super('HardwareManager');
-      this.hardwareURLs = getHardwareURLs();
+      super('HardwareManagerServer');
     }
 
     isAttendedURL(url) {
-      return this.hardwareURLs.includes(url);
+      return getHardwareURLs().includes(url);
     }
   };
 

@@ -24,7 +24,7 @@
     constructor(name) {
       super(name || 'HardwareManager');
 
-      const remoteServerName = 'HardwareManager';
+      const remoteServerName = 'HardwareManagerServer';
       OB.App.RemoteServerController.subscribe(this.name, remoteServerName);
 
       this.controller = new OB.App.Class.ExternalDeviceController();

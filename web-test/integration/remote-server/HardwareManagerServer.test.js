@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at https://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -59,7 +59,10 @@ describe('HardwareManagerServer', () => {
             }
           ];
         case 'terminal':
-          return { hardwareurl: 'https://127.0.0.1:8090/printer' };
+          return {
+            hardwareurl: 'https://127.0.0.1:8090/printer',
+            scaleurl: 'https://127.0.0.1:8090/scale'
+          };
         default:
           throw new Error(`not mocked ${property}`);
       }
@@ -71,23 +74,13 @@ describe('HardwareManagerServer', () => {
   });
 
   it('get name', () => {
-    expect(hwManagerServer.getName()).toBe('HardwareManager');
+    expect(hwManagerServer.getName()).toBe('HardwareManagerServer');
   });
 
   it('get from RemoteServerController', () => {
     expect(
-      OB.App.RemoteServerController.getRemoteServer('HardwareManager')
+      OB.App.RemoteServerController.getRemoteServer('HardwareManagerServer')
     ).not.toBeNull();
-  });
-
-  it('list of HWM urls', () => {
-    expect(hwManagerServer.hardwareURLs).toStrictEqual([
-      'https://127.0.1.1:8090/printer',
-      'https://127.0.2.1:8090/printer',
-      'https://127.0.1.1:8090/printerpdf',
-      'https://127.0.3.1:8090/printerpdf',
-      'https://127.0.0.1:8090/printer'
-    ]);
   });
 
   test.each`
@@ -100,6 +93,7 @@ describe('HardwareManagerServer', () => {
     ${'https://127.0.1.1:8090/printerpdf'}                       | ${true}
     ${'https://127.0.3.1:8090/printerpdf'}                       | ${true}
     ${'https://127.0.0.1:8090/printer'}                          | ${true}
+    ${'https://127.0.0.1:8090/scale'}                            | ${true}
   `("Backend server attends to '$url' ($isAttended)", ({ url, isAttended }) => {
     expect(hwManagerServer.isAttendedURL(url)).toBe(isAttended);
   });
