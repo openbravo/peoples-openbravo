@@ -183,10 +183,8 @@
       }
       try {
         const data = (await get(`${this.activeURL}/status.json`)) || {};
-        OB.App.SynchronizationBuffer.goOnline('HardwareManager');
         return data;
       } catch (error) {
-        OB.App.SynchronizationBuffer.goOffline('HardwareManager');
         OB.App.UserNotifier.notifyError({
           message: 'OBPOS_MsgHardwareServerNotAvailable'
         });
@@ -289,7 +287,6 @@
         this.devices.PRINTER === device ? this.activeURL : this.mainURL;
 
       if (!url) {
-        OB.App.SynchronizationBuffer.goOnline('HardwareManager');
         return;
       }
 
@@ -298,9 +295,7 @@
           contentType: 'application/xml; charset=utf-8'
         };
         await post(`${url}/printer`, data, options);
-        OB.App.SynchronizationBuffer.goOnline('HardwareManager');
       } catch (error) {
-        OB.App.SynchronizationBuffer.goOffline('HardwareManager');
         OB.App.UserNotifier.notifyError({
           message: 'OBPOS_MsgHardwareServerNotAvailable'
         });

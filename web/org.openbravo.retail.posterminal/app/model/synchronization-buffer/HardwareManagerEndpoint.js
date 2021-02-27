@@ -24,6 +24,9 @@
     constructor(name) {
       super(name || 'HardwareManager');
 
+      const remoteServerName = 'HardwareManager';
+      OB.App.RemoteServerController.subscribe(this.name, remoteServerName);
+
       this.controller = new OB.App.Class.ExternalDeviceController();
       this.addMessageSynchronization('initHardwareManager', async () => {
         await this.initHardwareManager();
