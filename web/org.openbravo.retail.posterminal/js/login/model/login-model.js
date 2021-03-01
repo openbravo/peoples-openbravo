@@ -832,7 +832,7 @@
               this.runSyncProcess(function() {
                 OB.UTIL.sendLastTerminalStatusValues();
                 OB.App.RemoteServerController.getRemoteServer(
-                  'Backend'
+                  'BackendServer'
                 ).connectSynchronizationEndpoints();
               });
             }
@@ -845,7 +845,7 @@
         this.runSyncProcess(function() {
           OB.UTIL.sendLastTerminalStatusValues();
           OB.App.RemoteServerController.getRemoteServer(
-            'Backend'
+            'BackendServer'
           ).connectSynchronizationEndpoints();
         });
       }
