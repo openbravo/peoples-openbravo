@@ -1390,7 +1390,9 @@
           '"'
       );
       new OB.OBPOSLogin.UI.LoginRequest({
-        url: OB.MobileApp.model.get('loginUtilsUrl')
+        url: OB.MobileApp.model.get('loginUtilsUrl'),
+        method: 'POST',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8'
       })
         .response(this, function(inSender, inResponse) {
           if (
