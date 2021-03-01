@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -951,7 +951,10 @@ enyo.kind({
     this.order.on(
       'change:invoiceTerms',
       function(model) {
-        if (model.get('invoiceTerms') !== model.get('bp').get('invoiceTerms')) {
+        if (
+          model.get('isEditable') &&
+          model.get('invoiceTerms') !== model.get('bp').get('invoiceTerms')
+        ) {
           model.setFullInvoice(false, true, true);
         }
         if (model.get('fullInvoice') && model.get('invoiceTerms') === 'I') {

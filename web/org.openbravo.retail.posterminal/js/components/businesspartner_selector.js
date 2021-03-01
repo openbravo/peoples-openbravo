@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016-2020 Openbravo S.L.U.
+ * Copyright (C) 2016-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -101,9 +101,23 @@ enyo.kind({
     }
   },
   orderChanged: function(oldValue) {
+    let updateInvoice = order => {
+      if (order.get('externalBusinessPartner')) {
+        order.set(
+          'invoiceTerms',
+          order.get('externalBusinessPartner').invoiceTerms ||
+            OB.MobileApp.model.get('terminal').defaultbp_invoiceterm
+        );
+        order.setFullInvoice(order.get('fullInvoice'), true);
+      } else if (order.get('bp')) {
+        order.set('invoiceTerms', order.get('bp').get('invoiceTerms'));
+        order.setFullInvoice(order.get('fullInvoice'), true);
+      }
+    };
     this.renderCurrentCustomer();
     this.order.on('change:externalBusinessPartner', () => {
       this.renderCurrentCustomer();
+      updateInvoice(this.order);
     });
     this.order.on('forceRenderCurrentCustomer', () => {
       this.renderCurrentCustomer();
@@ -111,9 +125,7 @@ enyo.kind({
     this.order.on('change:bp', () => {
       const model = this.order;
       if (model.get('bp')) {
-        model.set('invoiceTerms', model.get('bp').get('invoiceTerms'));
-        model.setFullInvoice(model.get('fullInvoice'), true);
-
+        updateInvoice(this.order);
         if (
           model.get('isEditable') &&
           !model.get('cloningReceipt') &&

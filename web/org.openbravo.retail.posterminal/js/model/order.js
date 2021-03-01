@@ -5276,7 +5276,10 @@
         if (showError) {
           if (
             this.get('bp').get('id') ===
-            OB.App.TerminalProperty.get('terminal').businessPartner
+              OB.App.TerminalProperty.get('terminal').businessPartner &&
+            OB.UTIL.isNullOrUndefined(
+              this.get('externalBusinessPartnerReference')
+            )
           ) {
             OB.UTIL.showError(
               OB.I18N.getLabel('OBPOS_IssueInvoiceWithAnonymousCustomer')
