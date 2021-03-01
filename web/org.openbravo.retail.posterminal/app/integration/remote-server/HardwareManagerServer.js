@@ -10,6 +10,18 @@
 (function HardwareManagerServerDefinition() {
   // retrieve the list of hardware URLs
   function getHardwareURLs() {
+    const terminal = OB.App.TerminalProperty.get('terminal');
+    if (!terminal) {
+      // terminal information not yet available
+      return undefined;
+    }
+    const terminalURLs = [];
+    if (terminal.hardwareurl) {
+      terminalURLs.push(toPrinterURL(terminal.hardwareurl, '/printer'));
+    }
+    if (terminal.scaleurl) {
+      terminalURLs.push(toPrinterURL(terminal.scaleurl, '/scale'));
+    }
     const urlList = OB.App.TerminalProperty.get('hardwareURL') || [];
     const printers = urlList
       .filter(hwURL => hwURL.hasReceiptPrinter)
@@ -18,17 +30,7 @@
       .filter(hwUrl => hwUrl.hasPDFPrinter)
       .map(hwURL => toPrinterURL(hwURL.hardwareURL, '/printerpdf'));
 
-    const hwURLs = [...printers, ...pdfPrinters];
-
-    const terminal = OB.App.TerminalProperty.get('terminal') || {};
-    if (terminal.hardwareurl) {
-      hwURLs.push(toPrinterURL(terminal.hardwareurl, '/printer'));
-    }
-    if (terminal.scaleurl) {
-      hwURLs.push(toPrinterURL(terminal.scaleurl, '/scale'));
-    }
-
-    return hwURLs;
+    return [...terminalURLs, ...printers, ...pdfPrinters];
   }
 
   // includes the printer type in the URL (if required)
@@ -46,7 +48,11 @@
     }
 
     isAttendedURL(url) {
-      return getHardwareURLs().includes(url);
+      if (!this.hardwareURLs) {
+        this.hardwareURLs = getHardwareURLs();
+      }
+      const hardwareURLs = this.hardwareURLs || [];
+      return hardwareURLs.includes(url);
     }
   };
 
