@@ -8,6 +8,23 @@
  */
 
 (function HardwareManagerServerDefinition() {
+  /**
+   * Allows to handle connectivity with the backend server
+   */
+  class HardwareManagerServer extends OB.App.Class.RemoteServer {
+    constructor() {
+      super('HardwareManagerServer');
+    }
+
+    isAttendedURL(url) {
+      if (!this.hardwareURLs) {
+        this.hardwareURLs = getHardwareURLs();
+      }
+      const hardwareURLs = this.hardwareURLs || [];
+      return hardwareURLs.includes(url);
+    }
+  }
+
   // retrieve the list of hardware URLs
   function getHardwareURLs() {
     const terminal = OB.App.TerminalProperty.get('terminal');
@@ -36,23 +53,6 @@
   // includes the printer type in the URL (if required)
   function toPrinterURL(url, printerType) {
     return `${url}${url.endsWith(printerType) ? '' : printerType}`;
-  }
-
-  /**
-   * Allows to handle connectivity with the backend server
-   */
-  class HardwareManagerServer extends OB.App.Class.RemoteServer {
-    constructor() {
-      super('HardwareManagerServer');
-    }
-
-    isAttendedURL(url) {
-      if (!this.hardwareURLs) {
-        this.hardwareURLs = getHardwareURLs();
-      }
-      const hardwareURLs = this.hardwareURLs || [];
-      return hardwareURLs.includes(url);
-    }
   }
 
   OB.App.RemoteServerController.registerRemoteServer(
