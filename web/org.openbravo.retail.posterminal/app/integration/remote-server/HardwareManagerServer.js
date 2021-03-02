@@ -56,6 +56,7 @@
   }
 
   OB.App.RemoteServerController.registerRemoteServer(
-    new HardwareManagerServer()
+    new HardwareManagerServer(),
+    { priority: 50 }
   );
 })();
