@@ -41,8 +41,7 @@
   /**
    * Allows to handle connectivity with the backend server
    */
-  OB.App.Class.HardwareManagerServer = class HardwareManagerServer extends OB
-    .App.Class.RemoteServer {
+  class HardwareManagerServer extends OB.App.Class.RemoteServer {
     constructor() {
       super('HardwareManagerServer');
     }
@@ -54,9 +53,9 @@
       const hardwareURLs = this.hardwareURLs || [];
       return hardwareURLs.includes(url);
     }
-  };
+  }
 
   OB.App.RemoteServerController.registerRemoteServer(
-    new OB.App.Class.HardwareManagerServer()
+    new HardwareManagerServer()
   );
 })();

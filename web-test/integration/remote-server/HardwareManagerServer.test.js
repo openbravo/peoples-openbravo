@@ -24,11 +24,14 @@ require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app
 require('../../../web/org.openbravo.retail.posterminal/app/integration/remote-server/HardwareManagerServer');
 
 describe('HardwareManagerServer', () => {
+  const HardwareManagerServerClass = OB.App.RemoteServerController.getRemoteServer(
+    'HardwareManagerServer'
+  ).constructor;
   let hwManagerServer;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    hwManagerServer = new OB.App.Class.HardwareManagerServer();
+    hwManagerServer = new HardwareManagerServerClass();
     OB.App.TerminalProperty.get.mockImplementation(property => {
       switch (property) {
         case 'hardwareURL':
