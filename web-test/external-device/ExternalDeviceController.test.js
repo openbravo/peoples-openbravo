@@ -13,7 +13,9 @@ global.OB = {
     Class: {},
     PrintTemplateStore: { get: jest.fn() },
     Request: { get: jest.fn(), post: jest.fn() },
-    SynchronizationBuffer: { goOnline: jest.fn(), goOffline: jest.fn() },
+    RemoteServerController: {
+      subscribe: jest.fn()
+    },
     TerminalProperty: { get: jest.fn() },
     UserNotifier: { notifyError: jest.fn() },
     View: { DialogUIHandler: { askConfirmation: jest.fn() } }
@@ -138,7 +140,6 @@ describe('ExternalDeviceController', () => {
     expect(OB.App.Request.get.mock.calls[0][0]).toBe(
       'http://127.0.0.1:8090/status.json'
     );
-    expect(OB.App.SynchronizationBuffer.goOnline).toHaveBeenCalled();
   });
 
   it('getHardwareManagerStatus request failure', async () => {
@@ -151,7 +152,6 @@ describe('ExternalDeviceController', () => {
       // expected error
     }
 
-    expect(OB.App.SynchronizationBuffer.goOffline).toHaveBeenCalled();
     expect(OB.App.UserNotifier.notifyError).toHaveBeenCalledWith({
       message: 'OBPOS_MsgHardwareServerNotAvailable'
     });
@@ -274,7 +274,6 @@ describe('ExternalDeviceController', () => {
       'http://127.0.0.1:8090/printer'
     );
     expect(OB.App.Request.post.mock.calls[0][1]).toBe(requestData);
-    expect(OB.App.SynchronizationBuffer.goOnline).toHaveBeenCalled();
   });
 
   it('print request failure', async () => {
@@ -292,7 +291,6 @@ describe('ExternalDeviceController', () => {
     expect(OB.App.Request.post.mock.calls[0][0]).toBe(
       'http://127.0.0.1:8090/printer'
     );
-    expect(OB.App.SynchronizationBuffer.goOffline).toHaveBeenCalled();
     expect(OB.App.UserNotifier.notifyError).toHaveBeenCalledWith({
       message: 'OBPOS_MsgHardwareServerNotAvailable'
     });
