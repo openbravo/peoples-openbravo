@@ -154,22 +154,6 @@
     }
   }
 
-  async function checkApprovals(payload, lines) {
-    // TODO: check if this logic is correct (moved from old implementation):
-    // request approval if there is at least one Item product, what has services to do with this?
-    if (
-      !OB.App.Security.hasPermission('OBPOS_ChangeServicePriceNeedApproval') &&
-      lines.some(l => l.product.productType === 'I')
-    ) {
-      const newPayload = await OB.App.Security.requestApprovalForAction(
-        'OBPOS_approval.setPrice',
-        payload
-      );
-      return newPayload;
-    }
-    return payload;
-  }
-
   OB.App.StateAPI.Ticket.setLinePrice.addActionPreparation(
     async (ticket, payload) => {
       const { price, lineIds, ignoreValidations } = payload;
@@ -182,8 +166,7 @@
         checkRestrictions(ticket, lines, price);
       }
 
-      const payloadWithApprovals = await checkApprovals(payload, lines);
-      return payloadWithApprovals;
+      return payload;
     }
   );
 })();

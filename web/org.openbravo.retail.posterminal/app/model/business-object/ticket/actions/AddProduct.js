@@ -115,17 +115,6 @@
     300
   );
 
-  // check the approvals
-  OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
-    async (ticket, payload) => {
-      const newPayload = { ...payload };
-      const payloadWithApprovals = await checkApprovals(ticket, newPayload);
-      return payloadWithApprovals;
-    },
-    async (ticket, payload) => payload,
-    400
-  );
-
   function createLines(productInfo, ticket, extraData) {
     const { qty } = productInfo;
     let newTicket = ticket;
@@ -1069,61 +1058,6 @@
           : undefined;
     }
     return result;
-  }
-
-  async function checkApprovals(ticket, payload) {
-    const { products } = payload;
-    let newPayload = { ...payload };
-
-    const linesWithQuantityZero = products.some(pi => {
-      const lineToEdit = OB.App.State.Ticket.Utils.getLineToEdit(ticket, pi);
-      const qty = lineToEdit ? lineToEdit.qty + pi.qty : pi.qty;
-      return qty === 0;
-    });
-
-    if (linesWithQuantityZero) {
-      newPayload = await OB.App.Security.requestApprovalForAction(
-        'OBPOS_approval.deleteLine',
-        newPayload
-      );
-    }
-
-    const servicesWithReturnApproval = products.filter(p => {
-      const line = p.options.line
-        ? ticket.lines.find(l => l.id === p.options.line)
-        : null;
-      return (
-        (line ? line.qty + p.qty : p.qty) < 0 &&
-        p.product.productType === 'S' &&
-        !p.product.ignoreReturnApproval
-      );
-    });
-
-    if (servicesWithReturnApproval.length === 0) {
-      const service = findServiceForNegativeProduct(ticket, products);
-      if (service) {
-        servicesWithReturnApproval.push(service);
-      }
-    }
-
-    if (servicesWithReturnApproval.length > 0) {
-      const separator = `<br>${OB.App.SpecialCharacters.bullet()}`;
-      const servicesToApprove = `
-        ${separator} 
-        ${servicesWithReturnApproval
-          // eslint-disable-next-line no-underscore-dangle
-          .map(p => p._identifier)
-          .join(separator)}`;
-      newPayload = await OB.App.Security.requestApprovalForAction(
-        {
-          approvalType: 'OBPOS_approval.returnService',
-          message: 'OBPOS_approval.returnService',
-          params: [servicesToApprove]
-        },
-        payload
-      );
-    }
-    return newPayload;
   }
 
   async function checkStock(ticket, payload) {

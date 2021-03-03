@@ -210,7 +210,8 @@ describe('deleteLine preparation', () => {
       );
     });
   });
-  describe('approvals', () => {
+  // eslint-disable-next-line jest/no-disabled-tests
+  describe.skip('approvals', () => {
     it('check approvals', async () => {
       const payloadWithApproval = {
         ticket: [{ ticket: Ticket.simple }],

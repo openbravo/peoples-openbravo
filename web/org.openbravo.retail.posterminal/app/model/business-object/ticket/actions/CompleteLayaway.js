@@ -172,10 +172,9 @@
       return payload;
     }
 
-    const newPayload = await OB.App.Security.requestApprovalForAction(
-      'OBPOS_approval.prepaymentUnderLimitLayaway',
-      payload
-    );
+    const newPayload = { ...payload };
+    newPayload.checkApproval = { prepaymentUnderLimitLayaway: true };
+
     return newPayload;
   }
 

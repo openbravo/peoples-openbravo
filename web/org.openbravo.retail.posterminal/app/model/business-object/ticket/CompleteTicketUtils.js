@@ -669,10 +669,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       return payload;
     }
 
-    const newPayload = await OB.App.Security.requestApprovalForAction(
-      'OBPOS_approval.prepaymentUnderLimit',
-      payload
-    );
+    const newPayload = { ...payload };
+    newPayload.checkApproval = { prepaymentUnderLimit: true };
+
     return newPayload;
   },
 

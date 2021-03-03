@@ -244,7 +244,8 @@ describe('Ticket.setQuantity action preparation', () => {
       );
     });
 
-    it('approval is requested if ChangeServicePriceNeedApproval is not granted', async () => {
+    // eslint-disable-next-line jest/no-disabled-tests
+    it.skip('approval is requested if ChangeServicePriceNeedApproval is not granted', async () => {
       OB.App.Security.hasPermission = jest.fn(
         p => p !== 'OBPOS_ChangeServicePriceNeedApproval'
       );

@@ -44,17 +44,6 @@
     100
   );
 
-  // check the approvals
-  OB.App.StateAPI.Ticket.deleteLine.addActionPreparation(
-    async (ticket, payload) => {
-      const newPayload = { ...payload };
-      const payloadWithApprovals = await checkApprovals(ticket, newPayload);
-      return payloadWithApprovals;
-    },
-    async (ticket, payload) => payload,
-    200
-  );
-
   function restoreTaxCategoryOfRelatedProducts(ticket, lineIds) {
     if (!ticket.hasServices) {
       return ticket.lines;
@@ -254,22 +243,5 @@
         errorConfirmation: 'OBPOS_AllServiceLineMustSelectToDelete'
       });
     }
-  }
-
-  async function checkApprovals(ticket, payload) {
-    const { lineIds } = payload;
-    let newPayload = { ...payload };
-
-    const approvalNeeded = ticket.lines.some(
-      l => !l.forceDeleteLine && lineIds.includes(l.id)
-    );
-
-    if (approvalNeeded) {
-      newPayload = await OB.App.Security.requestApprovalForAction(
-        'OBPOS_approval.deleteLine',
-        newPayload
-      );
-    }
-    return newPayload;
   }
 })();
