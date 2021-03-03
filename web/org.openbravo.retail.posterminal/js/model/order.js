@@ -1380,8 +1380,10 @@
         if (
           !this.isNegative() &&
           !this.get('cancelLayaway') &&
-          this.get('bp') &&
-          this.get('bp').get('id') !== OB.MobileApp.model.get('businesspartner')
+          (!OB.UTIL.isNullOrUndefined(this.get('externalBusinessPartner')) ||
+            (this.get('bp') &&
+              this.get('bp').get('id') !==
+                OB.MobileApp.model.get('businesspartner')))
         ) {
           OB.UTIL.prepaymentRules[
             OB.MobileApp.model.get('terminal').prepaymentAlgorithm
