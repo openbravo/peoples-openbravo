@@ -9,7 +9,7 @@
 
 (function HardwareManagerServerDefinition() {
   /**
-   * Allows to handle connectivity with the backend server
+   * Allows to handle connectivity with the HardwareManager remote server
    */
   class HardwareManagerServer extends OB.App.Class.RemoteServer {
     constructor() {
