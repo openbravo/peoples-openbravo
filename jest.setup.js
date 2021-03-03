@@ -17,4 +17,32 @@
  ************************************************************************
  */
 
+/* global global */
+
 require('@testing-library/jest-dom/extend-expect');
+
+// Check if a console.error or console.warn has been thrown during the test and make it fail
+// this is necessary, due to jest not failing a test automatically when a console.error/warn appears
+let consoleHasErrorOrWarning = false;
+const { error, warn } = console;
+
+global.console.error = (...args) => {
+  consoleHasErrorOrWarning = true;
+  error(...args);
+};
+global.console.warn = (...args) => {
+  consoleHasErrorOrWarning = true;
+  warn(...args);
+};
+
+beforeEach(() => {
+  if (consoleHasErrorOrWarning) {
+    consoleHasErrorOrWarning = false;
+  }
+});
+
+afterEach(() => {
+  if (consoleHasErrorOrWarning) {
+    throw new Error('console.error and console.warn are not allowed');
+  }
+});
