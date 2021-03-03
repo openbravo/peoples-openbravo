@@ -17,6 +17,10 @@
     }
 
     isAttendedURL(url) {
+      if (url.includes('/res/')) {
+        // attend requests for printing templates
+        return true;
+      }
       if (!this.hardwareURLs) {
         this.hardwareURLs = getHardwareURLs();
       }
