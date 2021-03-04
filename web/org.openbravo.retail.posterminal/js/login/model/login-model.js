@@ -831,7 +831,9 @@
               OB.MobileApp.model.off('change:isLoggingIn', null, this);
               this.runSyncProcess(function() {
                 OB.UTIL.sendLastTerminalStatusValues();
-                OB.App.SynchronizationBuffer.goOnline('Backend');
+                OB.App.RemoteServerController.getRemoteServer(
+                  'BackendServer'
+                ).connectSynchronizationEndpoints();
               });
             }
           },
@@ -842,7 +844,9 @@
         //but we will attempt to send all pending orders automatically
         this.runSyncProcess(function() {
           OB.UTIL.sendLastTerminalStatusValues();
-          OB.App.SynchronizationBuffer.goOnline('Backend');
+          OB.App.RemoteServerController.getRemoteServer(
+            'BackendServer'
+          ).connectSynchronizationEndpoints();
         });
       }
     },

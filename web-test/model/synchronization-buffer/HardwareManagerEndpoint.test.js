@@ -19,6 +19,9 @@ global.OB = {
       findAll: jest.fn(),
       delete: jest.fn()
     },
+    RemoteServerController: {
+      subscribe: jest.fn()
+    },
     TerminalProperty: {
       get: jest.fn().mockImplementation(property => {
         if (property === 'hardwareURL') {
@@ -65,6 +68,14 @@ describe('Harware Manager Synchronization Endpoint', () => {
 
     // by default execute the tests with a unique synchronization endpoint
     initSingleEndpointSyncBuffer();
+  });
+
+  it('endpoint is subscribed to HWM remote server', () => {
+    expect(OB.App.RemoteServerController.subscribe).toHaveBeenCalledWith(
+      'HardwareManager',
+      'HardwareManagerServer'
+    );
+    expect(OB.App.RemoteServerController.subscribe).toHaveBeenCalledTimes(1);
   });
 
   describe('online/offline endpoint status', () => {
