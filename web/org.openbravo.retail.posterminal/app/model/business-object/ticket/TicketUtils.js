@@ -445,6 +445,34 @@
           ...line,
           promotions: discounts ? discounts.discounts : []
         };
+        const calculateUnitAmountWithoutTicketDiscounts = (
+          baseUnitPrice,
+          promotions
+        ) => {
+          const ticketDiscountsDiscountTypeIds = OB.Discounts.Pos.getTicketDiscountsDiscountTypeIds();
+          const discountedWithoutTicketDiscounts = promotions.reduce(
+            (discounted, promotion) => {
+              if (
+                ticketDiscountsDiscountTypeIds.indexOf(
+                  promotion.discountType
+                ) !== -1
+              ) {
+                return discounted;
+              }
+
+              return OB.DEC.add(discounted, promotion.amt);
+            },
+            OB.DEC.Zero
+          );
+
+          return OB.DEC.sub(baseUnitPrice, discountedWithoutTicketDiscounts);
+        };
+        const calculateUnitPriceWithoutTicketDiscounts = (
+          unitAmount,
+          quantity
+        ) => {
+          return OB.DEC.div(unitAmount, quantity);
+        };
         if (priceIncludesTax) {
           newLine.baseGrossUnitAmount = OB.DEC.mul(baseGrossUnitPrice, qty);
           newLine.baseNetUnitAmount = OB.DEC.Zero;
@@ -454,6 +482,15 @@
           newLine.grossUnitAmount = discounts
             ? discounts.grossUnitAmount
             : OB.DEC.mul(baseGrossUnitPrice, qty);
+          // This part is only used for visualization in WebPOS 2.0
+          newLine.grossUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
+            newLine.baseGrossUnitAmount,
+            newLine.promotions
+          );
+          newLine.grossUnitPriceWithoutTicketDiscounts = calculateUnitPriceWithoutTicketDiscounts(
+            newLine.grossUnitAmountWithoutTicketDiscounts,
+            qty
+          );
         } else {
           newLine.baseGrossUnitAmount = OB.DEC.Zero;
           newLine.baseNetUnitAmount = OB.DEC.mul(baseNetUnitPrice, qty);
@@ -463,6 +500,15 @@
           newLine.netUnitAmount = discounts
             ? discounts.netUnitAmount
             : OB.DEC.mul(baseNetUnitPrice, qty);
+          // This part is only used for visualization in WebPOS 2.0
+          newLine.netUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
+            newLine.baseNetUnitAmount,
+            newLine.promotions
+          );
+          newLine.netUnitPriceWithoutTicketDiscounts = calculateUnitPriceWithoutTicketDiscounts(
+            newLine.netUnitAmountWithoutTicketDiscounts,
+            qty
+          );
         }
         return newLine;
       });
