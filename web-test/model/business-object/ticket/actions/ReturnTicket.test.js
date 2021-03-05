@@ -9,32 +9,23 @@
 
 require('../SetupTicket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/ReturnTicket');
+require('../SetupTicketUtils');
 const deepfreeze = require('deepfreeze');
 
 describe('returnTicket', () => {
-  it('should not return lines when empty ticket', () => {
-    const ticket = deepfreeze({ lines: [] });
-    const newTicket = OB.App.StateAPI.Ticket.returnTicket(ticket);
-    expect(newTicket).toStrictEqual({ lines: [] });
-  });
-
-  it('should return lines', () => {
-    const ticket = deepfreeze({
-      lines: [{ id: '1', qty: 1 }, { id: '2', qty: 2 }, { id: '3', qty: 3 }]
+  test.each`
+    lines                                         | result
+    ${[]}                                         | ${{ orderType: 0, documentType: 'O', lines: [] }}
+    ${[{ id: '1', qty: 1 }]}                      | ${{ orderType: 1, documentType: 'R', lines: [{ id: '1', qty: -1 }] }}
+    ${[{ id: '1', qty: 1 }, { id: '2', qty: 2 }]} | ${{ orderType: 1, documentType: 'R', lines: [{ id: '1', qty: -1 }, { id: '2', qty: -2 }] }}
+  `('should return ticket lines', ({ lines, result }) => {
+    const ticket = deepfreeze({ lines });
+    const payload = deepfreeze({
+      terminal: {
+        terminalType: { documentType: 'O', documentTypeForReturns: 'R' }
+      }
     });
-    const newTicket = OB.App.StateAPI.Ticket.returnTicket(ticket);
-    expect(newTicket).toStrictEqual({
-      lines: [{ id: '1', qty: -1 }, { id: '2', qty: -2 }, { id: '3', qty: -3 }]
-    });
-  });
-
-  it('should return negative lines', () => {
-    const ticket = deepfreeze({
-      lines: [{ id: '1', qty: -1 }, { id: '2', qty: -2 }, { id: '3', qty: -3 }]
-    });
-    const newTicket = OB.App.StateAPI.Ticket.returnTicket(ticket);
-    expect(newTicket).toStrictEqual({
-      lines: [{ id: '1', qty: 1 }, { id: '2', qty: 2 }, { id: '3', qty: 3 }]
-    });
+    const newTicket = OB.App.StateAPI.Ticket.returnTicket(ticket, payload);
+    expect(newTicket).toStrictEqual(result);
   });
 });

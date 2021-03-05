@@ -8,14 +8,15 @@
  */
 
 (function ReturnTicketDefinition() {
-  OB.App.StateAPI.Ticket.registerAction('returnTicket', ticket => {
-    const newTicket = { ...ticket };
+  OB.App.StateAPI.Ticket.registerAction('returnTicket', (ticket, payload) => {
+    let newTicket = { ...ticket };
 
     newTicket.lines = newTicket.lines.map(line => {
       const newLine = { ...line };
       newLine.qty = -newLine.qty;
       return newLine;
     });
+    newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, payload);
 
     return newTicket;
   });
