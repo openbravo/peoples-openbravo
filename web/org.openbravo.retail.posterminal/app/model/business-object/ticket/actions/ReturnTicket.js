@@ -16,7 +16,10 @@
       newLine.qty = -newLine.qty;
       return newLine;
     });
-    newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, payload);
+    newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, {
+      ...payload,
+      isSale: false
+    });
 
     // FIXME: add service approval -> order.setOrderType()
     // FIXME: check line.promotions.obdiscAllowinnegativelines -> order.returnLine()
@@ -35,30 +38,10 @@
   );
 
   function checkTicketRestrictions(ticket) {
-    checkIsEditable(ticket);
-  }
-
-  function checkIsEditable(ticket) {
-    if (ticket.isEditable === false) {
-      throw new OB.App.Class.ActionCanceled({
-        title: 'OBPOS_modalNoEditableHeader',
-        errorConfirmation: 'OBPOS_modalNoEditableBody'
-      });
-    }
+    OB.App.State.Ticket.Utils.checkIsEditable(ticket);
   }
 
   function checkTicketLineRestrictions(ticket, line) {
-    checkReturnable(ticket, line);
-  }
-
-  function checkReturnable(ticket, line) {
-    if (!line.product.returnable) {
-      throw new OB.App.Class.ActionCanceled({
-        title: 'OBPOS_UnreturnableProduct',
-        errorConfirmation: 'OBPOS_UnreturnableProductMessage',
-        // eslint-disable-next-line no-underscore-dangle
-        messageParams: [line.product._identifier]
-      });
-    }
+    OB.App.State.Ticket.Utils.checkReturnable(line);
   }
 })();

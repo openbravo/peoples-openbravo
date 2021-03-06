@@ -15,7 +15,7 @@ const deepfreeze = require('deepfreeze');
 describe('returnTicket', () => {
   test.each`
     lines                                         | result
-    ${[]}                                         | ${{ orderType: 0, documentType: 'O', lines: [] }}
+    ${[]}                                         | ${{ orderType: 1, documentType: 'R', lines: [] }}
     ${[{ id: '1', qty: 1 }]}                      | ${{ orderType: 1, documentType: 'R', lines: [{ id: '1', qty: -1 }] }}
     ${[{ id: '1', qty: 1 }, { id: '2', qty: 2 }]} | ${{ orderType: 1, documentType: 'R', lines: [{ id: '1', qty: -1 }, { id: '2', qty: -2 }] }}
   `('should return ticket lines', ({ lines, result }) => {

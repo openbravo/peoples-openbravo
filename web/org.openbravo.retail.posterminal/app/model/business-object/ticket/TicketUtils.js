@@ -1380,6 +1380,7 @@
      *
      * @param {object} ticket - The ticket whose type will be updated
      * @param {object} payload - The calculation payload, which include:
+     *             * isSale - If defined, it determines if ticket type needs to be updated to sales or return. If not defined, ticket lines are checked to determine it.
      *             * terminal.terminalType.documentType - Terminal document type for sales
      *             * terminal.terminalType.documentTypeForReturns - Terminal document type for returns
      *             * terminal.organization - Organization of the current terminal
@@ -1397,7 +1398,10 @@
       }
 
       const newTicket = { ...ticket };
-      const isSale = OB.App.State.Ticket.Utils.isSale(ticket, payload);
+      const isSale =
+        payload.isSale != null
+          ? payload.isSale
+          : OB.App.State.Ticket.Utils.isSale(ticket, payload);
       newTicket.orderType = isSale ? 0 : 1;
       newTicket.documentType = isSale
         ? payload.terminal.terminalType.documentType
