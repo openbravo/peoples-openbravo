@@ -4,11 +4,13 @@
   "description": "This contains some utilities used to format and lint Javascript code",
   "private": true,
   "config": {
+    "install": "modules/org.openbravo.client.kernel/build-scripts/install-deps",
     "postinstall": "modules/org.openbravo.client.kernel/build-scripts/post-install",
     "test": "modules/org.openbravo.client.kernel/test-scripts/run-tests"
   },
   "scripts": {
-    "install": "npx lerna bootstrap --no-ci --hoist",
+    "install": "node $npm_package_config_install",
+    "ci": "node $npm_package_config_install",
     "postinstall": "$npm_package_config_postinstall",
     "test": "$npm_package_config_test",
     "coverage": "$npm_package_config_test --coverage",
