@@ -333,12 +333,16 @@
           (ticket.id === payload.ticket.id ||
             ticket.oldId === payload.ticket.id ||
             (ticket.canceledorder || {}).id === payload.ticket.id)) ||
-        (payload.ticket.documentno &&
+        (payload.ticket.documentNo &&
           ticket.documentNo === payload.ticket.documentNo)
     );
 
     if (ticketInSession) {
-      if (ticketInSession.oldId === payload.ticket.id) {
+      if (
+        ticketInSession.oldId &&
+        payload.ticket.id &&
+        ticketInSession.oldId === payload.ticket.id
+      ) {
         throw new OB.App.Class.ActionCanceled({
           errorConfirmation: 'OBPOS_OrderAssociatedToQuotationInProgress',
           messageParams: [
@@ -350,7 +354,7 @@
         });
       }
       await OB.App.View.DialogUIHandler.askConfirmation({
-        message: `OBPOS_ticketAlreadyOpened_${payload.ticket.orderType}`,
+        message: `OBPOS_ticketAlreadyOpened_ORD`,
         messageParams: [ticketInSession.documentNo],
         hideCancel: true
       });
