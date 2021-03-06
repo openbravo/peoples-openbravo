@@ -23,10 +23,10 @@
     });
 
     if (payload.preferences.notAllowSalesWithReturn) {
-      newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, {
-        ...payload,
-        isSale: false
-      });
+      newTicket = OB.App.State.Ticket.Utils.updateTicketType(
+        newTicket,
+        payload
+      );
     }
 
     // FIXME: !line.get('relatedLines'? -> returnline.js
@@ -43,7 +43,7 @@
       checkTicketRestrictions(ticket, payload);
       payload.lineIds.forEach(lineId => {
         const line = ticket.lines.find(l => l.id === lineId);
-        checkTicketLineRestrictions(ticket, line);
+        checkTicketLineRestrictions(ticket, line, payload);
       });
       return payload;
     }
@@ -55,10 +55,10 @@
     checkReturnLayaway(ticket);
   }
 
-  function checkTicketLineRestrictions(ticket, line) {
+  function checkTicketLineRestrictions(ticket, line, payload) {
     checkCancelReplace(ticket, line);
     // FIXME: implement checkReturnableServices from order.js (see checkNotReturnableService from AddProduct)
-    OB.App.State.Ticket.Utils.checkReturnable(line);
+    checkReturnable(ticket, line, payload);
   }
 
   function checkSaleWithReturn(ticket, payload) {
@@ -90,6 +90,51 @@
       throw new OB.App.Class.ActionCanceled({
         errorMsg: 'OBPOS_CancelReplaceReturnLines'
       });
+    }
+  }
+
+  function checkReturnable(ticket, line, payload) {
+    if (!line.product.returnable) {
+      throw new OB.App.Class.ActionCanceled({
+        title: 'OBPOS_UnreturnableProduct',
+        errorConfirmation: 'OBPOS_UnreturnableProductMessage',
+        // eslint-disable-next-line no-underscore-dangle
+        messageParams: [line.product._identifier]
+      });
+    }
+
+    if (line.product.productType === 'S') {
+      const notSelectedRelatedProduct = line.relatedLines.find(
+        l => !payload.lineIds.includes(l.id)
+      );
+      if (notSelectedRelatedProduct) {
+        throw new OB.App.Class.ActionCanceled({
+          title: 'OBPOS_UnreturnableRelatedService',
+          errorConfirmation: 'OBPOS_NotProductSelectedToReturn',
+          // eslint-disable-next-line no-underscore-dangle
+          messageParams: [line.product._identifier]
+        });
+      }
+    } else {
+      const notReturnableRelatedService = ticket.lines.find(
+        l =>
+          !payload.lineIds.includes(l.id) &&
+          !l.product.returnable &&
+          l.relatedLines.some(
+            relatedLine => relatedLine.orderlineId === line.id
+          )
+      );
+      if (notReturnableRelatedService) {
+        throw new OB.App.Class.ActionCanceled({
+          title: 'OBPOS_UnreturnableRelatedService',
+          errorConfirmation: 'OBPOS_UnreturnableRelatedServiceMessage',
+          messageParams: [
+            // eslint-disable-next-line no-underscore-dangle
+            line.product._identifier,
+            notReturnableRelatedService.productName
+          ]
+        });
+      }
     }
   }
 })();
