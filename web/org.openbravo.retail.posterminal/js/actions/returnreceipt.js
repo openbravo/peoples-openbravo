@@ -59,9 +59,13 @@
         return active;
       },
       command: async function(view) {
-        await OB.App.State.Ticket.returnTicket(
-          OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
-        );
+        try {
+          await OB.App.State.Ticket.returnTicket(
+            OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
+          );
+        } catch (error) {
+          OB.App.View.ActionCanceledUIHandler.handle(error);
+        }
 
         OB.MobileApp.model.receipt.trigger('updateView');
         OB.MobileApp.model.receipt.trigger('paintTaxes');
