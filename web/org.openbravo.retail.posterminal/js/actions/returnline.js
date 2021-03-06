@@ -67,59 +67,25 @@
 
         return active;
       },
-      command: function(view) {
-        var receipt = view.model.get('order');
-        var selectedReceiptLines = view.state.readCommandState({
-          name: 'selectedReceiptLines'
-        });
-
-        if (
-          receipt.get('replacedorder') &&
-          _.find(selectedReceiptLines, function(l) {
-            l.get('remainingQuantity');
-          })
-        ) {
-          OB.UTIL.showConfirmation.display(
-            OB.I18N.getLabel('OBMOBC_Error'),
-            OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines')
+      command: async function(view) {
+        try {
+          await OB.App.State.Ticket.returnLine(
+            OB.UTIL.TicketUtils.addTicketCreationDataToPayload({
+              lineIds: view.state
+                .readCommandState({
+                  name: 'selectedReceiptLines'
+                })
+                .map(line => line.id)
+            })
           );
-          return;
+        } catch (error) {
+          OB.App.View.ActionCanceledUIHandler.handle(error);
         }
 
-        receipt.checkReturnableProducts(
-          selectedReceiptLines,
-          view.model,
-          function(success) {
-            if (!success) {
-              return;
-            }
-            //The value of qty need to be negate because we want to change it
-            if (
-              receipt.validateAllowSalesWithReturn(
-                -1,
-                false,
-                selectedReceiptLines
-              )
-            ) {
-              view.waterfall('onRearrangedEditButtonBar');
-              return;
-            }
-            receipt.set('undo', null);
-            receipt.set('multipleUndo', true);
-            receipt.set('preventServicesUpdate', true);
-            _.each(selectedReceiptLines, function(line) {
-              if (!line.get('relatedLines')) {
-                view.returnLine(view, {
-                  line: line
-                });
-              }
-            });
-            receipt.unset('preventServicesUpdate');
-            receipt.get('lines').trigger('updateRelations');
-            receipt.set('multipleUndo', null);
-            view.waterfall('onRearrangedEditButtonBar');
-          }
-        );
+        OB.MobileApp.model.receipt.trigger('updateView');
+        OB.MobileApp.model.receipt.trigger('paintTaxes');
+
+        view.waterfall('onRearrangedEditButtonBar');
       }
     })
   );

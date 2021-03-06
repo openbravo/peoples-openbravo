@@ -73,6 +73,7 @@
         if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
           OB.MobileApp.model.receipt.trigger('scan');
         }
+
         view.waterfall('onRearrangedEditButtonBar', {
           permission: this.permission,
           orderType: 1

@@ -16,6 +16,7 @@
       newLine.qty = -newLine.qty;
       return newLine;
     });
+
     newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, {
       ...payload,
       isSale: false

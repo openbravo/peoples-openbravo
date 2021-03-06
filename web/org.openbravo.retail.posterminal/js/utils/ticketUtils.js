@@ -87,6 +87,10 @@
       autoPrintReceipts: OB.MobileApp.model.hasPermission(
         'OBPOS_print.invoicesautomatically',
         true
+      ),
+      notAllowSalesWithReturn: OB.MobileApp.model.hasPermission(
+        'OBPOS_NotAllowSalesWithReturn',
+        true
       )
     };
     newPayload.constants = {
