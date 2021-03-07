@@ -25,27 +25,27 @@
  * it runs npm ci to ensure that a clean installation is done, enforcing the use of the dependency versions
  * included in the package-lock files
  *
- * dependencies are not hoisted, the dependencies defined in each module will be installed in a node_modules
- * folder in the module folder where the package.json file is included
+ * the dependencies defined in each module will be installed in a node_modules folder in the module folder where
+ * the package.json file is included
  *
  * symlinks are created to ensure that a given module has access to the dependencies defined in modules that it
  * depends on
  */
 
-const NpmDependencyReader = require('./NpmDependencyReader');
 const execSync = require('child_process').execSync;
 const path = require('path');
 const fs = require('fs');
+const NpmDependenciesValidator = require('./NpmDependenciesValidator');
 
 const WEB_JSPACK = 'web-jspack';
 const PACKAGE_JSON = 'package.json';
 const GLOBAL_MODULES = 'node_modules_global';
 
-const npmDependencyReader = new NpmDependencyReader();
-
 const modulesDir = path.resolve('modules');
 const globalModulesPath = path.resolve(GLOBAL_MODULES);
+const npmDependenciesValidator = new NpmDependenciesValidator();
 
+validateDependencies();
 // prepares folder where links to openbravo node modules will be linked
 execSync(`rm -rf ${globalModulesPath}`, { stdio: 'inherit' });
 execSync(`mkdir -p ${globalModulesPath}`, { stdio: 'inherit' });
@@ -73,23 +73,31 @@ getModules()
         console.log(
           `Running npm link to make ${packageJsonPath} available to other modules`
         );
-        const fromPath = `${globalModulesPath}`;
-        const toPath = `${packageJsonPath}`;
-        const relativePath = path.relative(fromPath, toPath);
-        console.log(
-          `Executing ln -fs ${relativePath} ${module} in ${globalModulesPath}`
-        );
-        execSync(`ln -fs ${relativePath} ${module}`, {
+        execSync(`npm_config_prefix=${globalModulesPath} npm link`, {
           stdio: 'inherit',
-          cwd: `${globalModulesPath}`
+          cwd: packageJsonPath
         });
         console.log(
           `Creating links for ${module} dependencies in ${packageJsonPath}`
         );
-        linkInheritedDependencies(module, packageJsonPath);
+        linkDependenciesInBaseNodeModules(module, packageJsonPath);
       }
     });
   });
+
+function validateDependencies() {
+  const { warnings, errors } = npmDependenciesValidator.validate();
+
+  warnings.forEach(warning => console.log(warning));
+  if (errors.length > 0) {
+    console.log(
+      'Errors found in the npm dependency validation, stopping process'
+    );
+    errors.forEach(error => console.log(error));
+    // eslint-disable-next-line no-undef
+    process.exit(1);
+  }
+}
 
 function getModules() {
   return fs.readdirSync(modulesDir);
@@ -118,33 +126,38 @@ function getScopeAndName(npmDependency) {
   return { scope, packageName };
 }
 
-function linkInheritedDependencies(module, packageJsonPath) {
-  const inheritedDependencies = npmDependencyReader.getInheritedNpmDependencies(
-    module
+function linkDependenciesInBaseNodeModules(module, packageJsonPath) {
+  const nodeModulesRootPath = path.resolve('node_modules');
+  let fromPath = `${nodeModulesRootPath}`;
+  let toPath = `${globalModulesPath}/lib/node_modules/${module}`;
+  let relativePath = path.relative(fromPath, toPath);
+  execSync(`ln -fs ${relativePath} ${module}`, {
+    stdio: 'inherit',
+    cwd: `${nodeModulesRootPath}`
+  });
+
+  const jsonContent = JSON.parse(
+    fs.readFileSync(path.resolve(packageJsonPath, PACKAGE_JSON))
   );
-  Object.keys(inheritedDependencies)
-    .filter(obDependency => obDependency !== '../../')
-    .forEach(obDependency => {
-      const npmDependencies = inheritedDependencies[obDependency];
-      execSync(`ln -fs ${globalModulesPath}/${obDependency} ${obDependency}`, {
+  const dependencies = {
+    ...jsonContent.dependencies,
+    ...jsonContent.devDependencies
+  };
+
+  Object.keys(dependencies).forEach(depFullName => {
+    const { scope, packageName } = getScopeAndName(depFullName);
+    if (scope.length > 0) {
+      execSync(`mkdir -p ${scope}`, {
         stdio: 'inherit',
-        cwd: `${packageJsonPath}/node_modules`
+        cwd: `${nodeModulesRootPath}`
       });
-      Object.keys(npmDependencies).forEach(depFullName => {
-        const { scope, packageName } = getScopeAndName(depFullName);
-        if (scope.length > 0) {
-          execSync(`mkdir -p ${scope}`, {
-            stdio: 'inherit',
-            cwd: `${packageJsonPath}/node_modules`
-          });
-        }
-        const fromPath = `${packageJsonPath}/node_modules/${scope}`;
-        const toPath = `${globalModulesPath}/${obDependency}/node_modules/${scope}/${packageName}`;
-        const relativePath = path.relative(fromPath, toPath);
-        execSync(`ln -fs ${relativePath} ${packageName}`, {
-          stdio: 'inherit',
-          cwd: `${packageJsonPath}/node_modules/${scope}`
-        });
-      });
+    }
+    fromPath = `${nodeModulesRootPath}/${scope}`;
+    toPath = `${globalModulesPath}/lib/node_modules/${module}/node_modules/${scope}/${packageName}`;
+    relativePath = path.relative(fromPath, toPath);
+    execSync(`ln -fs ${relativePath} ${packageName}`, {
+      stdio: 'inherit',
+      cwd: `${nodeModulesRootPath}/${scope}`
     });
+  });
 }
