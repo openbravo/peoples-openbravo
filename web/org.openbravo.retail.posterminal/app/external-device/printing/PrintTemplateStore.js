@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -180,62 +180,52 @@
 
   OB.App.PrintTemplateStore.register(
     'printCanceledReceiptTemplate',
-    '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printcanceledreceipt.xml'
   );
 
   OB.App.PrintTemplateStore.register(
     'printLayawayTemplate',
-    '../org.openbravo.retail.posterminal/res/printlayaway.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printlayaway.xml'
   );
 
   OB.App.PrintTemplateStore.register(
     'printCanceledLayawayTemplate',
-    '../org.openbravo.retail.posterminal/res/printcanceledlayaway.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printcanceledlayaway.xml'
   );
 
   OB.App.PrintTemplateStore.register(
     'printClosedReceiptTemplate',
-    '../org.openbravo.retail.posterminal/res/printclosedreceipt.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printclosedreceipt.xml'
   );
 
   OB.App.PrintTemplateStore.register(
     'printInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printinvoice.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printinvoice.xml'
   );
 
   OB.App.PrintTemplateStore.register(
     'printSimplifiedInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printsimplifiedinvoice.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printsimplifiedinvoice.xml'
   );
 
   OB.App.PrintTemplateStore.register(
     'printClosedInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printclosedinvoice.xml'
   );
 
   OB.App.PrintTemplateStore.register(
     'printSimplifiedClosedInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printsimplifiedclosedinvoice.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printsimplifiedclosedinvoice.xml'
   );
 
   OB.App.PrintTemplateStore.register(
     'printReturnInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printreturninvoice.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printreturninvoice.xml'
   );
 
   OB.App.PrintTemplateStore.register(
     'printSimplifiedReturnInvoiceTemplate',
-    '../org.openbravo.retail.posterminal/res/printsimplifiedreturninvoice.xml',
-    { isLegacy: true }
+    '../org.openbravo.retail.posterminal/res/printsimplifiedreturninvoice.xml'
   );
 
   OB.App.PrintTemplateStore.register(

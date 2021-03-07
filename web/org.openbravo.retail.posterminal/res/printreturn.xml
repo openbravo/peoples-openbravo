@@ -33,9 +33,9 @@
      <text><%= OB.I18N.formatDate(ticket.orderDate) %></text>
        <text> </text>
        <%
-         const time = ticket.created != null ? new Date(ticket.created) : new Date();
+         const ticketTime = ticket.created != null ? new Date(ticket.created) : new Date();
        %>
-      <text><%= OB.I18N.formatHour(time) %></text>
+      <text><%= OB.I18N.formatHour(ticketTime) %></text>
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_cashierPOS')) %></text>
@@ -160,7 +160,7 @@
           if(ticket.iscancelled && payment.paymentAmount === 0) {
             isCancelledPayment = true;
           }
-         if(payment.rate && payment.rate !=='1') {
+          if (payment.rate && payment.rate !=='1') {
       %>
         <line>
           <text align="left" length="15"><%= paymentName %></text>
@@ -168,7 +168,7 @@
           <text align="right" length="13"><%= OB.App.PrintUtils.printAmount(payment.origAmount) %></text>
         </line>
      <%
-         }else {
+          } else {
      %>
         <line>
           <%

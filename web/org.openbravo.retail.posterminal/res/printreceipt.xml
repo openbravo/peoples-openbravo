@@ -208,7 +208,7 @@
     <% if (ticket.hasbeenpaid === 'Y' && ticket.paidOnCredit) { %>
     <line>
       <text align="left" length="20"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidOnCredit')) %></text>
-      <text align="right" length="20"><%= OB.App.PrintUtils.printAmount(ticket.grossAmount - ticket.payment) %></text>
+      <text align="right" length="20"><%= OB.App.PrintUtils.printAmount(OB.DEC.sub(ticket.grossAmount, ticket.payment)) %></text>
     </line>
     <% } %>
     

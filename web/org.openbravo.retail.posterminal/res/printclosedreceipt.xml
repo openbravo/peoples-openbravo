@@ -23,131 +23,122 @@
     <line></line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticket')) %></text>
-      <text><%= OB.UTIL.encodeXMLComponent(order.get('documentNo')) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(ticket.documentNo) %></text>
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_datetime')) %></text>
-      <text><%= OB.I18N.formatDate(new Date(order.get('orderDate'))) %></text>
+      <text><%= OB.I18N.formatDate(ticket.orderDate) %></text>
       <text> </text>
-      <text><%= OB.I18N.formatHour(new Date(order.get('creationDate'))) %></text>
+      <%
+        const ticketTime = ticket.creationDate != null ? new Date(ticket.creationDate) : new Date();
+      %>
+      <text><%= OB.I18N.formatHour(ticketTime) %></text>
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_cashierPOS')) %></text>
-      <text><%= OB.UTIL.encodeXMLComponent(order.get('salesRepresentative'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(ticket['salesRepresentative$_identifier']) %></text>
       <text>, </text>
-      <text><%= OB.UTIL.encodeXMLComponent(order.get('posTerminal'+OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER)) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(ticket['posTerminal$_identifier']) %></text>
     </line>
     <line>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTaxId')) %></text>
-      <text><%= OB.UTIL.encodeXMLComponent(OB.MobileApp.model.get('terminal').organizationTaxId) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(OB.App.TerminalProperty.get('terminal').organizationTaxId) %></text>
     </line>
     <line>
-      <text><%= OB.UTIL.encodeXMLComponent(OB.MobileApp.model.get('terminal').organizationAddressIdentifier) %></text>
+      <text><%= OB.UTIL.encodeXMLComponent(OB.App.TerminalProperty.get('terminal').organizationAddressIdentifier) %></text>
     </line>
     <line>
-        <%if (order.get('isReturn')){%>
+        <%if (ticket.isReturn){%>
                <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_paidReturn')) %></text>
         <% }  %>
     </line>
     <line>
-      <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineItem'))%></text>
-      <text align ="center" length="5">#</text>
-      <text align ="left" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LinePrice'))%></text>
-      <text align ="left" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineTotal'))%></text>
+      <text align="left" length="21"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineItem')) %></text>
+      <text align="center" length="5">#</text>
+      <text align="left" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LinePrice')) %></text>
+      <text align="left" length="8"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LineTotal')) %></text>
     </line>
     <line>
       <text>------------------------------------------</text>
     </line>
     <% 
-      var lines = order.get('lines');
-      for (var i = 0; i < lines.length; i++) {
-        line = lines.at(i);
+      ticket.lines.forEach(line => {
     %>
       <line>
-        <text align ="left" length="21"><%= OB.UTIL.encodeXMLComponent(lines.at(i).get('product').get('_identifier')) %></text>
-        <text align ="right" length="5"><%= lines.at(i).printQty() %></text>
-        <text align ="right" length="8"><%= lines.at(i).printPrice() %></text>
-    <%if(order.get('priceIncludesTax')){%>
-        <text align ="right" length="8"><%= lines.at(i).printGross() %></text>  
-    <%}else{%>
-        <text align ="right" length="8"><%= lines.at(i).printNet() %></text>
-    <%}%>
+        <text align="left" length="21"><%= OB.UTIL.encodeXMLComponent(line.product._identifier) %></text>
+        <text align="right" length="5"><%= OB.App.PrintUtils.printQty(line.qty) %></text>
+        <text align="right" length="8"><%= OB.App.PrintUtils.printTicketLinePrice(line) %></text>
+        <text align="right" length="8"><%= OB.App.PrintUtils.printTicketLineAmount(line) %></text>
       </line>
     <%
-        promotions = line.get('promotions');
-        if (promotions){
-          promotions.forEach(function(p) {
+        if (line.promotions) {
+          line.promotions.forEach(p => {
             if (!p.hidden) {
             %>
           <line>
             <text align="left" length="2">--</text>
             <text align="left" length="32"><%= OB.UTIL.encodeXMLComponent(p.name) %></text>
-            <text align="right" length="8"><%= OB.I18N.formatCurrency(-p.amt) %></text>
+            <text align="right" length="8"><%= OB.App.PrintUtils.printAmount(-p.amt) %></text>
           </line>
           <%
             }
           });
         }
-      }
-      if(!order.get('priceIncludesTax')){%>
+      });
+    %>
+    <% if(!ticket.priceIncludesTax) { %>
       <line>
-        <text align ="left" length="21"><%= OB.I18N.getLabel('OBPOS_LblTotalTax') %></text>
-        <text align ="right" length="5"></text>
-        <text align ="right" length="8"></text>
-        <text align ="right" length="8"><%= OB.I18N.formatCurrency(OB.DEC.sub(order.getGross() , order.getNet())) %></text>  
+        <text align="left" length="21"><%= OB.I18N.getLabel('OBPOS_LblTotalTax') %></text>
+        <text align="right" length="5"></text>
+        <text align="right" length="8"></text>
+        <text align="right" length="8"><%= OB.App.PrintUtils.printAmount(OB.DEC.sub(ticket.grossAmount, ticket.netAmount)) %></text>
       </line>
-    <%}%>
+    <% } %>
     <line></line>
     <line size="1">
-      <text align ="left" length="25"><%=OB.I18N.getLabel('OBPOS_ReceiptTotal') + ' ' + order.get('currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER) %></text>
-      <text align ="right" length="14"><%= order.printGross() %></text>
-    </line>   
-      <%
-        var payments = order.get('payments');
-        var isCancelled = order.get('iscancelled');
-        for (var i = 0; i < payments.length; i++) {
-          var paymentDate, isCancelledPayment;
-          var paymentName = payments.at(i).get('name');
-          if(_.isUndefined(payments.at(i).get('paymentDate')) || _.isNull(payments.at(i).get('paymentDate'))){
-              paymentDate = OB.I18N.formatDate(new Date());
-          }else{
-              paymentDate = new Date(payments.at(i).get('paymentDate'));
-          }
-          if (payments && payments.at(i) && payments.at(i).get('paymentData') && payments.at(i).get('paymentData').name && payments.at(i).get('paymentData').name.length > 0) {
-            paymentName = paymentName + ' (' + payments.at(i).get('paymentData').name + ')';
-          }
-          if(isCancelled && payments.at(i).get('paymentAmount') === 0){
-            isCancelledPayment = true;
-          }
-          
-         if(payments.at(i).get('rate') && payments.at(i).get('rate')!=='1'){
+      <text align="left" length="25"><%= OB.I18N.getLabel('OBPOS_ReceiptTotal') + ' ' + ticket['currency$_identifier'] %></text>
+      <text align="right" length="14"><%= OB.App.PrintUtils.printAmount(ticket.grossAmount) %></text>
+    </line>
+    <%
+      const payments = ticket.payments || [];
+      payments.forEach(payment => {
+        let paymentName = payment.name;
+        let paymentDate = payment.paymentDate || OB.I18N.formatDate(new Date());
+        let isCancelledPayment = false;
+        if (payment.paymentData && payment.paymentData.name && payment.paymentData.name.length > 0) {
+          paymentName = paymentName + ' (' + payment.paymentData.name + ')';
+        }
+        if (ticket.iscancelled && payment.paymentAmount === 0) {
+          isCancelledPayment = true;
+        }
+        if (payment.rate && payment.rate !== '1') {
       %>
         <line>
           <text align="left" length="10"><%= paymentName %></text>
           <text align="left" length="10"><%= OB.I18N.formatDate(paymentDate) %></text>
-          <text align="right" length="12"><%= '('+OB.I18N.formatCurrency(payments.at(i).get('amount'))+' '+payments.at(i).get('isocode')+')' %></text>
-          <text align="right" length="10"><%= OB.I18N.formatCurrency(payments.at(i).get('origAmount')) %></text>
+          <text align="right" length="12"><%= '(' + OB.App.PrintUtils.printAmount(payment.amount) + ' ' + payment.isocode + ')' %></text>
+          <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(payment.origAmount) %></text>
         </line>
-     <%
-         }else {
-     %>
+      <%
+         } else {
+      %>
         <line>
-          <%
-            if(isCancelledPayment){
-          %>
-            <text align="left" length="15"><%= OB.I18N.getLabel('OBPOS_Cancelled') %></text>
-          <%
-           } else {
-          %>
-            <text align="left" length="15"><%= paymentName %></text>
-          <% } %>
+        <%
+        if(isCancelledPayment) {
+        %>
+          <text align="left" length="15"><%= OB.I18N.getLabel('OBPOS_Cancelled') %></text>
+        <%
+        } else {
+        %>
+          <text align="left" length="15"><%= paymentName %></text>
+        <% } %>
           <text align="left" length="10"><%= OB.I18N.formatDate(paymentDate) %></text>
-          <text align="right" length="15"><%= OB.I18N.formatCurrency(payments.at(i).get('amount')) %></text>
+          <text align="right" length="15"><%= OB.App.PrintUtils.printAmount(payment.amount) %></text>
         </line>
       <%
         }
-          if (payments.at(i).get('gatewayData')) {
-          var pinfo = payments.at(i).get('gatewayData');
+        if (payment.gatewayData) {
+          const pinfo = payment.gatewayData;
       %>
         <line>
           <text align="left" length="2"></text>
@@ -172,84 +163,82 @@
           <text align="left" length="20"><%= OB.I18N.getLabel('OBPOS_PaymentLogo') %></text>
           <text align="left" length="20"><%= pinfo.cardlogo %></text>
         </line>
-        <% } %>      
-            
-      <%
-          }
-        }
-      %>   
-      
+        <% } %>    
     <%
-      var changelabel = OB.UTIL.getChangeLabelFromReceipt(order);
+        }
+      });
+    %>
+    <%
+      const changelabel = OB.App.PrintUtils.getChangeLabelFromTicket(ticket);
       if (changelabel) {
         if (changelabel.length > 34) {
-          var changesplit = changelabel.split(' + ');
+          const changesplit = changelabel.split(' + ');
     %>
           <line>
-              <text align ="left" length="7"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
-              <text align ="right" length="35"><%= changesplit[0] %> </text>
+            <text align="left" length="7"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
+            <text align="right" length="35"><%= changesplit[0] %> </text>
           </line>      
     <%     
-          var changeindex;
+          let changeindex;
           for (changeindex = 1; changeindex < changesplit.length; changeindex++) {
     %>
           <line>
-              <text align ="right" length="42">+ <%= changesplit[changeindex] %> </text>
+            <text align="right" length="42">+ <%= changesplit[changeindex] %> </text>
           </line> 
     <%      
           }
         } else {
     %>
           <line>
-              <text align ="left" length="7"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
-              <text align ="right" length="35"><%= changelabel %> </text>
+            <text align="left" length="7"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange')) %></text>
+            <text align="right" length="35"><%= changelabel %> </text>
           </line>
     <% 
         }
       } 
-    %>     
+    %>
       
     <line></line>
     <line size="1">
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_duplicate')) %></text>
     </line>
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line2'))%></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tckfooter_line2')) %></text>
     </line>
     <line></line>
     <line>
-      <text align ="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_breakdown'))%></text>
-      <text align ="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_base'))%></text>
-      <text align ="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_TAX'))%></text>
+      <text align="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_breakdown')) %></text>
+      <text align="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_base')) %></text>
+      <text align="left" length="12"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_tck_TAX')) %></text>
     </line>
     <line>
       <text>------------------------------------------</text>
     </line>
     <%
-      var totAmount = 0;
-      var taxes = order.get('taxes');
-      for (var t in taxes) {
-        totAmount += taxes[t].amount;
+      let totAmount = 0;
+      const taxes = Object.values(ticket.taxes).sort((a, b) => a.name.localeCompare(b.name));
+      taxes.forEach(tax => {
+        totAmount += tax.amount;
     %>
       <line>
-        <text align ="left" length="12"><%= OB.I18N.formatRate(taxes[t].rate) %></text>
-        <text align ="left" length="12"><%= OB.I18N.formatCurrency(taxes[t].net) %></text>
-        <text align ="left" length="12"><%= OB.I18N.formatCurrency(taxes[t].amount) %></text>
+        <text align="left" length="12"><%= OB.I18N.formatRate(tax.rate) %></text>
+        <text align="left" length="12"><%= OB.App.PrintUtils.printAmount(tax.net) %></text>
+        <text align="left" length="12"><%= OB.App.PrintUtils.printAmount(tax.amount) %></text>
       </line>
     <%
-      }
+      });
     %>
     <line>
       <text>------------------------------------------</text>
     </line>
     <line>
-      <text align ="left" length="24"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
-      <text align ="left" length="12"><%= OB.I18N.formatCurrency(totAmount) %></text>
+      <text align="left" length="24"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total')) %></text>
+      <text align="left" length="12"><%= OB.App.PrintUtils.printAmount(totAmount) %></text>
     </line>
 
     <line>
-      <% if(order.getScannableDocumentNo() !== ''){ %>
-        <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(order.getScannableDocumentNo()) %></barcode>
+      <% if (ticket.documentNo !== '') { %>
+        <barcode type="CODE128" position="left"><%= OB.UTIL.encodeXMLComponent(ticket.documentNo) %></barcode>
       <% } %>
     </line>
 
