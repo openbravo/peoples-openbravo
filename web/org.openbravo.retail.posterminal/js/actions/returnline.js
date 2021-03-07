@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -68,6 +68,8 @@
         return active;
       },
       command: async function(view) {
+        OB.MobileApp.model.receipt.set('preventServicesUpdate', true);
+
         try {
           await OB.App.State.Ticket.returnLine(
             OB.UTIL.TicketUtils.addTicketCreationDataToPayload({
@@ -82,6 +84,8 @@
           OB.App.View.ActionCanceledUIHandler.handle(error);
         }
 
+        OB.MobileApp.model.receipt.unset('preventServicesUpdate');
+        OB.MobileApp.model.receipt.get('lines').trigger('updateRelations');
         OB.MobileApp.model.receipt.trigger('updateView');
         OB.MobileApp.model.receipt.trigger('paintTaxes');
 
