@@ -17,6 +17,7 @@
  ************************************************************************
  */
 /* eslint-disable no-console */
+/* eslint-disable no-undef */
 
 /**
  * node script that installs the npm dependencies defined in the package.json of the Openbravo root and
@@ -45,6 +46,8 @@ const modulesDir = path.resolve('modules');
 const globalModulesPath = path.resolve(GLOBAL_MODULES);
 const npmDependenciesValidator = new NpmDependenciesValidator();
 
+const production = process.env.NODE_ENV === 'production';
+
 validateDependencies();
 // prepares folder where links to openbravo node modules will be linked
 execSync(`rm -rf ${globalModulesPath}`, { stdio: 'inherit' });
@@ -52,7 +55,8 @@ execSync(`mkdir -p ${globalModulesPath}`, { stdio: 'inherit' });
 
 // install modules in openbravo root rolder
 // ignore scripts to avoid a infinite loop caused by this script already being executed as part of a npm script
-execSync('npm ci --ignore-scripts', { stdio: 'inherit' });
+const environment = production ? '--production' : '';
+execSync(`npm ci --ignore-scripts ${environment}`, { stdio: 'inherit' });
 
 getModules()
   .filter(module => moduleContainsPackageJson(module))
@@ -69,18 +73,13 @@ getModules()
         });
         console.log(`Installing node modules in ${packageJsonPath}`);
         console.log(`npm ci...`);
-        execSync('npm ci', { stdio: 'inherit', cwd: packageJsonPath });
-        console.log(
-          `Running npm link to make ${packageJsonPath} available to other modules`
-        );
-        execSync(`npm_config_prefix=${globalModulesPath} npm link`, {
+        execSync(`npm ci ${environment}`, {
           stdio: 'inherit',
           cwd: packageJsonPath
         });
-        console.log(
-          `Creating links for ${module} dependencies in ${packageJsonPath}`
-        );
-        linkDependenciesInBaseNodeModules(module, packageJsonPath);
+        if (!production) {
+          linkDependenciesInBaseNodeModules(module, packageJsonPath);
+        }
       }
     });
   });
@@ -94,7 +93,6 @@ function validateDependencies() {
       'Errors found in the npm dependency validation, stopping process'
     );
     errors.forEach(error => console.log(error));
-    // eslint-disable-next-line no-undef
     process.exit(1);
   }
 }
@@ -127,6 +125,16 @@ function getScopeAndName(npmDependency) {
 }
 
 function linkDependenciesInBaseNodeModules(module, packageJsonPath) {
+  console.log(
+    `Running npm link to make ${packageJsonPath} available to other modules`
+  );
+  execSync(`npm_config_prefix=${globalModulesPath} npm link`, {
+    stdio: 'inherit',
+    cwd: packageJsonPath
+  });
+  console.log(
+    `Creating links for ${module} dependencies in ${packageJsonPath}`
+  );
   const nodeModulesRootPath = path.resolve('node_modules');
   let fromPath = `${nodeModulesRootPath}`;
   let toPath = `${globalModulesPath}/lib/node_modules/${module}`;
