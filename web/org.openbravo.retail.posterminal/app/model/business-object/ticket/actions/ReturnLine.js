@@ -12,15 +12,49 @@
     const { lineIds } = payload;
     let newTicket = { ...ticket };
 
-    newTicket.lines = newTicket.lines.map(line => {
-      if (!lineIds.includes(line.id)) {
-        return line;
-      }
+    newTicket.lines = newTicket.lines
+      .map(line => {
+        if (!lineIds.includes(line.id)) {
+          return line;
+        }
 
-      const newLine = { ...line };
-      newLine.qty = -newLine.qty;
-      return newLine;
-    });
+        const newLine = { ...line };
+        newLine.qty = -newLine.qty;
+        return newLine;
+      })
+      .reduce((accumulator, line) => {
+        if (
+          line.qty < 0 ||
+          !line.product ||
+          !line.product.groupProduct ||
+          line.splitline
+        ) {
+          return [...accumulator, line];
+        }
+
+        const lineWithSameProduct = accumulator.find(
+          otherLine =>
+            otherLine.product.id === line.product.id &&
+            otherLine.baseGrossUnitPrice === line.baseGrossUnitPrice &&
+            otherLine.baseNetUnitPrice === line.baseNetUnitPrice &&
+            otherLine.qty > 0 &&
+            line.qty > 0
+        );
+        if (!lineWithSameProduct) {
+          return [...accumulator, line];
+        }
+
+        return accumulator.map(mergedLine => {
+          if (mergedLine.id !== lineWithSameProduct.id) {
+            return mergedLine;
+          }
+
+          const newMergedLine = { ...mergedLine };
+          newMergedLine.qty += line.qty;
+
+          return newMergedLine;
+        });
+      }, []);
 
     if (payload.preferences.notAllowSalesWithReturn) {
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(
