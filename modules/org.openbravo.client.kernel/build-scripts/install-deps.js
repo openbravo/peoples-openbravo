@@ -50,8 +50,12 @@ const production = process.env.NODE_ENV === 'production';
 
 validateDependencies();
 // prepares folder where links to openbravo node modules will be linked
-execSync(`rm -rf ${globalModulesPath}`, { stdio: 'inherit' });
-execSync(`mkdir -p ${globalModulesPath}`, { stdio: 'inherit' });
+fs.rmdirSync(globalModulesPath, {
+  recursive: true
+});
+fs.mkdirSync(globalModulesPath, {
+  recursive: true
+});
 
 // install modules in openbravo root rolder
 // ignore scripts to avoid a infinite loop caused by this script already being executed as part of a npm script
@@ -67,9 +71,8 @@ getModules()
     ];
     packageJsonPaths.forEach(packageJsonPath => {
       if (fs.existsSync(path.resolve(packageJsonPath, PACKAGE_JSON))) {
-        execSync('mkdir -p node_modules', {
-          stdio: 'inherit',
-          cwd: packageJsonPath
+        fs.mkdirSync(`${packageJsonPath}/node_modules`, {
+          recursive: true
         });
         console.log(`Installing node modules in ${packageJsonPath}`);
         console.log(`npm ci...`);
@@ -136,13 +139,9 @@ function linkDependenciesInBaseNodeModules(module, packageJsonPath) {
     `Creating links for ${module} dependencies in ${packageJsonPath}`
   );
   const nodeModulesRootPath = path.resolve('node_modules');
-  let fromPath = `${nodeModulesRootPath}`;
-  let toPath = `${globalModulesPath}/lib/node_modules/${module}`;
-  let relativePath = path.relative(fromPath, toPath);
-  execSync(`ln -fs ${relativePath} ${module}`, {
-    stdio: 'inherit',
-    cwd: `${nodeModulesRootPath}`
-  });
+  let linkTarget = `../${GLOBAL_MODULES}/lib/node_modules/${module}`;
+  let linkPath = `${nodeModulesRootPath}/${module}`;
+  fs.symlinkSync(linkTarget, linkPath);
 
   const jsonContent = JSON.parse(
     fs.readFileSync(path.resolve(packageJsonPath, PACKAGE_JSON))
@@ -155,17 +154,17 @@ function linkDependenciesInBaseNodeModules(module, packageJsonPath) {
   Object.keys(dependencies).forEach(depFullName => {
     const { scope, packageName } = getScopeAndName(depFullName);
     if (scope.length > 0) {
-      execSync(`mkdir -p ${scope}`, {
-        stdio: 'inherit',
-        cwd: `${nodeModulesRootPath}`
+      fs.mkdirSync(`${nodeModulesRootPath}/${scope}`, {
+        recursive: true
       });
+      linkTarget = `../../${GLOBAL_MODULES}/lib/node_modules/${module}/node_modules/${scope}/${packageName}`;
+      linkPath = `${nodeModulesRootPath}/${scope}/${packageName}`;
+    } else {
+      linkTarget = `../${GLOBAL_MODULES}/lib/node_modules/${module}/node_modules/${packageName}`;
+      linkPath = `${nodeModulesRootPath}/${packageName}`;
     }
-    fromPath = `${nodeModulesRootPath}/${scope}`;
-    toPath = `${globalModulesPath}/lib/node_modules/${module}/node_modules/${scope}/${packageName}`;
-    relativePath = path.relative(fromPath, toPath);
-    execSync(`ln -fs ${relativePath} ${packageName}`, {
-      stdio: 'inherit',
-      cwd: `${nodeModulesRootPath}/${scope}`
-    });
+    if (!fs.existsSync(linkPath)) {
+      fs.symlinkSync(linkTarget, linkPath);
+    }
   });
 }
