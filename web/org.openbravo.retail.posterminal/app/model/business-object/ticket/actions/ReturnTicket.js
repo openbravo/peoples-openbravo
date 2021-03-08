@@ -22,27 +22,31 @@
       isSale: false
     });
 
-    // FIXME: add service approval -> order.setOrderType()
-    // FIXME: check line.promotions.obdiscAllowinnegativelines -> order.returnLine()
-
     return newTicket;
   });
 
   OB.App.StateAPI.Ticket.returnTicket.addActionPreparation(
     async (ticket, payload) => {
-      checkTicketRestrictions(ticket);
-      ticket.lines.forEach(line => {
-        checkTicketLineRestrictions(ticket, line);
-      });
+      checkRestrictions(ticket);
       return payload;
     }
   );
 
-  function checkTicketRestrictions(ticket) {
+  function checkRestrictions(ticket) {
     OB.App.State.Ticket.Utils.checkIsEditable(ticket);
+    checkReturnable(ticket);
   }
 
-  function checkTicketLineRestrictions(ticket, line) {
-    OB.App.State.Ticket.Utils.checkReturnable(line);
+  function checkReturnable(ticket) {
+    ticket.lines.forEach(line => {
+      if (!line.product.returnable) {
+        throw new OB.App.Class.ActionCanceled({
+          title: 'OBPOS_UnreturnableProduct',
+          errorConfirmation: 'OBPOS_UnreturnableProductMessage',
+          // eslint-disable-next-line no-underscore-dangle
+          messageParams: [line.product._identifier]
+        });
+      }
+    });
   }
 })();

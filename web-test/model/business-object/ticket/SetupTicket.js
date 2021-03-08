@@ -24,4 +24,4 @@ require('../../../../web/org.openbravo.retail.posterminal/app/model/business-obj
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CompleteTicketUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/AddPaymentUtils');
-require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/ReturnTicketUtils');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/AddProductUtils');

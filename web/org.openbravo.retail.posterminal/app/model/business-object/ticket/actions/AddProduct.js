@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -295,7 +295,7 @@
     const { products } = payload;
 
     checkClosedQuotation(ticket);
-    checkIsEditable(ticket);
+    OB.App.State.Ticket.Utils.checkIsEditable(ticket);
     checkQuantities(ticket, products);
     checkProductWithoutPrice(products);
     checkGenericProduct(products);
@@ -314,15 +314,6 @@
     ) {
       throw new OB.App.Class.ActionCanceled({
         errorMsg: 'OBPOS_QuotationClosed'
-      });
-    }
-  }
-
-  function checkIsEditable(ticket) {
-    if (ticket.isEditable === false) {
-      throw new OB.App.Class.ActionCanceled({
-        title: 'OBPOS_modalNoEditableHeader',
-        errorConfirmation: 'OBPOS_modalNoEditableBody'
       });
     }
   }

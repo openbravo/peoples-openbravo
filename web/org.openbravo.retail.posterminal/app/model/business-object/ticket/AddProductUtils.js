@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 /**
- * @fileoverview Define utility functions for the Return Ticket action
+ * @fileoverview Define utility functions for the Add Product action
  */
 
 OB.App.StateAPI.Ticket.registerUtilityFunctions({
@@ -19,20 +19,6 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       throw new OB.App.Class.ActionCanceled({
         title: 'OBPOS_modalNoEditableHeader',
         errorConfirmation: 'OBPOS_modalNoEditableBody'
-      });
-    }
-  },
-
-  /**
-   * Throws error in case line is not returnable.
-   */
-  checkReturnable(line) {
-    if (!line.product.returnable) {
-      throw new OB.App.Class.ActionCanceled({
-        title: 'OBPOS_UnreturnableProduct',
-        errorConfirmation: 'OBPOS_UnreturnableProductMessage',
-        // eslint-disable-next-line no-underscore-dangle
-        messageParams: [line.product._identifier]
       });
     }
   }

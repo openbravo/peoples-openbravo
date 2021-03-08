@@ -63,17 +63,11 @@
       );
     }
 
-    // FIXME: !line.get('relatedLines'? -> returnline.js
-    // FIXME: OBPOS_CheckStockReturnLine hook -> pointofsale.returnLine()
-    // FIXME: add service approval -> order.setOrderType()
-    // FIXME: check line.promotions.obdiscAllowinnegativelines -> order.returnLine()
-
     return newTicket;
   });
 
   OB.App.StateAPI.Ticket.returnLine.addActionPreparation(
     async (ticket, payload) => {
-      // FIXME: validations needed in ReturnTicket?
       await checkTicketRestrictions(ticket, payload);
       payload.lineIds.forEach(async lineId => {
         const line = ticket.lines.find(l => l.id === lineId);
