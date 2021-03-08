@@ -11,12 +11,14 @@
   OB.App.StateAPI.Ticket.registerAction('returnTicket', (ticket, payload) => {
     let newTicket = { ...ticket };
 
+    // Change the sign of every ticket line
     newTicket.lines = newTicket.lines.map(line => {
       const newLine = { ...line };
       newLine.qty = -newLine.qty;
       return newLine;
     });
 
+    // Change ticket type to return although ticket has no lines
     newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, {
       ...payload,
       isSale: false

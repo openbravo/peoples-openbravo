@@ -13,6 +13,7 @@
     let newTicket = { ...ticket };
 
     newTicket.lines = newTicket.lines
+      // Change the sign of every returned line
       .map(line => {
         if (!lineIds.includes(line.id)) {
           return line;
@@ -22,6 +23,7 @@
         newLine.qty = -newLine.qty;
         return newLine;
       })
+      // Merge lines if possible after changing the sign
       .reduce((accumulator, line) => {
         if (
           line.qty < 0 ||
@@ -56,6 +58,7 @@
         });
       }, []);
 
+    // Change ticket type if OBPOS_NotAllowSalesWithReturn preference is defined
     if (payload.preferences.notAllowSalesWithReturn) {
       newTicket = OB.App.State.Ticket.Utils.updateTicketType(
         newTicket,
