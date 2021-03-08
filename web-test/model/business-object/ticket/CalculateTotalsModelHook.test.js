@@ -17,7 +17,10 @@ global.OB = {
   Discounts: {
     Pos: {
       ruleImpls: [],
-      bpSets: []
+      bpSets: [],
+      getTicketDiscountsDiscountTypeIds: () => {
+        return [];
+      }
     }
   },
   Format: {
@@ -226,10 +229,12 @@ const results = [
         id: 'BB66D8D151964A8A39586FCD7D9A3941',
         qty: 2,
         grossUnitAmount: 540,
+        grossUnitAmountWithoutTicketDiscounts: 570,
         netUnitAmount: 446.28,
         taxRate: 1.21,
         baseGrossUnitPrice: 300,
         grossUnitPrice: 270,
+        grossUnitPriceWithoutTicketDiscounts: 285,
         netUnitPrice: 223.14,
         baseGrossUnitAmount: 600,
         baseNetUnitAmount: 0,
@@ -290,10 +295,12 @@ const results = [
         qty: 2,
         grossUnitAmount: 459.8,
         netUnitAmount: 380,
+        netUnitAmountWithoutTicketDiscounts: 390,
         taxRate: 1.21,
         baseNetUnitPrice: 200,
         grossUnitPrice: 229.9,
         netUnitPrice: 190,
+        netUnitPriceWithoutTicketDiscounts: 195,
         baseGrossUnitAmount: 0,
         baseNetUnitAmount: 400,
         promotions: [
