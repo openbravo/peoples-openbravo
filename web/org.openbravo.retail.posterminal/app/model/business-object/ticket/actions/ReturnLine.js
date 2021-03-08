@@ -74,24 +74,25 @@
   OB.App.StateAPI.Ticket.returnLine.addActionPreparation(
     async (ticket, payload) => {
       // FIXME: validations needed in ReturnTicket?
-      checkTicketRestrictions(ticket, payload);
-      payload.lineIds.forEach(lineId => {
+      await checkTicketRestrictions(ticket, payload);
+      payload.lineIds.forEach(async lineId => {
         const line = ticket.lines.find(l => l.id === lineId);
-        checkTicketLineRestrictions(ticket, line, payload);
+        await checkTicketLineRestrictions(ticket, line, payload);
       });
       return payload;
     }
   );
 
-  function checkTicketRestrictions(ticket, payload) {
+  async function checkTicketRestrictions(ticket, payload) {
     OB.App.State.Ticket.Utils.checkIsEditable(ticket);
     checkSaleWithReturn(ticket, payload);
     checkReturnLayaway(ticket);
   }
 
-  function checkTicketLineRestrictions(ticket, line, payload) {
+  async function checkTicketLineRestrictions(ticket, line, payload) {
     checkCancelReplace(ticket, line);
     checkReturnable(ticket, line, payload);
+    await checkStock(ticket, line);
   }
 
   function checkSaleWithReturn(ticket, payload) {
@@ -168,6 +169,24 @@
           ]
         });
       }
+    }
+  }
+
+  async function checkStock(ticket, line) {
+    if (line.qty > 0) {
+      return;
+    }
+
+    const hasStock = await OB.App.StockChecker.hasStock(
+      line.product,
+      -line.qty,
+      { ticket, lineId: line.id, options: {}, attrs: {} }
+    );
+
+    if (!hasStock) {
+      throw new OB.App.Class.ActionSilentlyCanceled(
+        `Return line canceled: there is no stock of product ${line.product.id}`
+      );
     }
   }
 })();
