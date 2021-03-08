@@ -91,7 +91,6 @@
 
   function checkTicketLineRestrictions(ticket, line, payload) {
     checkCancelReplace(ticket, line);
-    // FIXME: implement checkReturnableServices from order.js (see checkNotReturnableService from AddProduct)
     checkReturnable(ticket, line, payload);
   }
 
@@ -128,7 +127,7 @@
   }
 
   function checkReturnable(ticket, line, payload) {
-    if (!line.product.returnable) {
+    if (line.qty > 0 && !line.product.returnable) {
       throw new OB.App.Class.ActionCanceled({
         title: 'OBPOS_UnreturnableProduct',
         errorConfirmation: 'OBPOS_UnreturnableProductMessage',
