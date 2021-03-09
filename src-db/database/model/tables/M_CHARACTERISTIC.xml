@@ -53,6 +53,10 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="M_CHARACTERISTIC_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_CHARACTERISTIC_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -62,6 +66,10 @@
       <foreign-key foreignTable="AD_TREE" name="M_PRODUCT_TREE">
         <reference local="AD_TREE_ID" foreign="AD_TREE_ID"/>
       </foreign-key>
+      <index name="M_CHARACTERISTIC_TYPE_IX" unique="false">
+        <index-column name="M_CHARACTERISTIC_TYPE"/>
+        <whereClause><![CDATA[M_CHARACTERISTIC_TYPE IS NOT NULL]]></whereClause>
+      </index>
       <check name="M_CHARACTERISTIC_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_CHARACTERISTIC_ISEXPLODECONF"><![CDATA[ISEXPLODECONF IN ('Y', 'N')]]></check>
       <check name="M_CHARACTERISTIC_VARIANT"><![CDATA[ISVARIANT IN ('Y', 'N')]]></check>
