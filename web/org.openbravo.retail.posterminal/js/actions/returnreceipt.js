@@ -60,7 +60,7 @@
       },
       command: async function(view) {
         try {
-          await OB.App.State.Ticket.returnTicket(
+          await OB.App.State.Ticket.returnBlindTicket(
             OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
           );
         } catch (error) {

@@ -8,11 +8,11 @@
  */
 
 require('../SetupTicket');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/ReturnTicket');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/ReturnBlindTicket');
 require('../SetupTicketUtils');
 const deepfreeze = require('deepfreeze');
 
-describe('returnTicket', () => {
+describe('returnBlindTicket', () => {
   test.each`
     lines                                         | result
     ${[]}                                         | ${{ orderType: 1, documentType: 'R', lines: [] }}
@@ -25,7 +25,7 @@ describe('returnTicket', () => {
         terminalType: { documentType: 'O', documentTypeForReturns: 'R' }
       }
     });
-    const newTicket = OB.App.StateAPI.Ticket.returnTicket(ticket, payload);
+    const newTicket = OB.App.StateAPI.Ticket.returnBlindTicket(ticket, payload);
     expect(newTicket).toStrictEqual(result);
   });
 });

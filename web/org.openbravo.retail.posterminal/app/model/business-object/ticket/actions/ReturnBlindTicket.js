@@ -8,26 +8,29 @@
  */
 
 (function ReturnTicketDefinition() {
-  OB.App.StateAPI.Ticket.registerAction('returnTicket', (ticket, payload) => {
-    let newTicket = { ...ticket };
+  OB.App.StateAPI.Ticket.registerAction(
+    'returnBlindTicket',
+    (ticket, payload) => {
+      let newTicket = { ...ticket };
 
-    // Change the sign of every ticket line
-    newTicket.lines = newTicket.lines.map(line => {
-      const newLine = { ...line };
-      newLine.qty = -newLine.qty;
-      return newLine;
-    });
+      // Change the sign of every ticket line
+      newTicket.lines = newTicket.lines.map(line => {
+        const newLine = { ...line };
+        newLine.qty = -newLine.qty;
+        return newLine;
+      });
 
-    // Change ticket type to return although ticket has no lines
-    newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, {
-      ...payload,
-      isSale: false
-    });
+      // Change ticket type to return although ticket has no lines
+      newTicket = OB.App.State.Ticket.Utils.updateTicketType(newTicket, {
+        ...payload,
+        isSale: false
+      });
 
-    return newTicket;
-  });
+      return newTicket;
+    }
+  );
 
-  OB.App.StateAPI.Ticket.returnTicket.addActionPreparation(
+  OB.App.StateAPI.Ticket.returnBlindTicket.addActionPreparation(
     async (ticket, payload) => {
       OB.App.State.Ticket.Utils.checkIsEditable(ticket);
       checkReturnable(ticket);
