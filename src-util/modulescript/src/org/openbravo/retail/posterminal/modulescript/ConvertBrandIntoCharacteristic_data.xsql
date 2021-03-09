@@ -2,7 +2,7 @@
 <!--
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -161,5 +161,23 @@
         WHERE attribute = 'ConvertBrandIntoCharacteristic'        
       ]]>
     </Sql>
+  </SqlMethod>
+  <SqlMethod name="existCharacteristicsTree" type="preparedStatement" return="boolean">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        select count(ad_tree_id) as ad_tree_id from ad_tree where ad_client_id = ? and ad_tree_id ='899D83A7B7E24F57911A91AE82DCA496'
+      ]]>
+    </Sql>
+    <Parameter name="adClientId"/>
+  </SqlMethod>
+  <SqlMethod name="insertCharacteristicsTree" type="preparedStatement" connection="true" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      insert into ad_tree(ad_tree_id, ad_client_id, ad_org_id, createdby, updatedby, name, description, treetype, isallnodes, ad_table_id) values ('899D83A7B7E24F57911A91AE82DCA496', ?, '0', '100', '100', 'Product Characteristic tree', null, 'CH', 'Y', 'E913D17C9B3847CF92235082DBE2EC44')
+      ]]>
+    </Sql>
+    <Parameter name="adClientId"/>
   </SqlMethod>
 </SqlClass>

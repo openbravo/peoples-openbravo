@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -12,7 +12,6 @@ package org.openbravo.retail.posterminal.modulescript;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.modulescript.ModuleScript;
@@ -34,6 +33,12 @@ public class ConvertBrandIntoCharacteristic extends ModuleScript {
           ConvertBrandIntoCharacteristicData[] data = ConvertBrandIntoCharacteristicData
               .selectBrandByClient(cp);
           for (ConvertBrandIntoCharacteristicData brand : data) {
+            // Create Characteristic Tree
+            if (!ConvertBrandIntoCharacteristicData.existCharacteristicsTree(cp,
+                brand.adClientId)) {
+              ConvertBrandIntoCharacteristicData.insertCharacteristicsTree(cp.getConnection(), cp,
+                  brand.adClientId);
+            }
             String id = UUID.randomUUID().toString().replace("-", "").toUpperCase();
             ConvertBrandIntoCharacteristicData.insertCharacteristic(cp.getConnection(), cp, id,
                 brand.adClientId);
