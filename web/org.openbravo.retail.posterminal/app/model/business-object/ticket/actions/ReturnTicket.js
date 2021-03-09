@@ -29,15 +29,11 @@
 
   OB.App.StateAPI.Ticket.returnTicket.addActionPreparation(
     async (ticket, payload) => {
-      checkRestrictions(ticket);
+      OB.App.State.Ticket.Utils.checkIsEditable(ticket);
+      checkReturnable(ticket);
       return payload;
     }
   );
-
-  function checkRestrictions(ticket) {
-    OB.App.State.Ticket.Utils.checkIsEditable(ticket);
-    checkReturnable(ticket);
-  }
 
   function checkReturnable(ticket) {
     ticket.lines.forEach(line => {

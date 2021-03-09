@@ -71,26 +71,21 @@
 
   OB.App.StateAPI.Ticket.returnLine.addActionPreparation(
     async (ticket, payload) => {
-      await checkTicketRestrictions(ticket, payload);
-      payload.lineIds.forEach(async lineId => {
+      OB.App.State.Ticket.Utils.checkIsEditable(ticket);
+      checkSaleWithReturn(ticket, payload);
+      checkReturnLayaway(ticket);
+
+      payload.lineIds.forEach(lineId => {
         const line = ticket.lines.find(l => l.id === lineId);
-        await checkTicketLineRestrictions(ticket, line, payload);
+        checkCancelReplace(ticket, line);
+        checkReturnable(ticket, line, payload);
       });
+
+      await checkStock(ticket, payload);
+
       return payload;
     }
   );
-
-  async function checkTicketRestrictions(ticket, payload) {
-    OB.App.State.Ticket.Utils.checkIsEditable(ticket);
-    checkSaleWithReturn(ticket, payload);
-    checkReturnLayaway(ticket);
-  }
-
-  async function checkTicketLineRestrictions(ticket, line, payload) {
-    checkCancelReplace(ticket, line);
-    checkReturnable(ticket, line, payload);
-    await checkStock(ticket, line);
-  }
 
   function checkSaleWithReturn(ticket, payload) {
     if (
@@ -162,28 +157,35 @@
           messageParams: [
             // eslint-disable-next-line no-underscore-dangle
             line.product._identifier,
-            notReturnableRelatedService.productName
+            // eslint-disable-next-line no-underscore-dangle
+            notReturnableRelatedService.product._identifier
           ]
         });
       }
     }
   }
 
-  async function checkStock(ticket, line) {
-    if (line.qty > 0) {
-      return;
-    }
+  async function checkStock(ticket, payload) {
+    for (let i = 0; i < payload.lineIds.length; i += 1) {
+      const lineId = payload.lineIds[i];
+      const line = ticket.lines.find(l => l.id === lineId);
 
-    const hasStock = await OB.App.StockChecker.hasStock(
-      line.product,
-      -line.qty,
-      { ticket, lineId: line.id, options: {}, attrs: {} }
-    );
+      if (line.qty > 0) {
+        return;
+      }
 
-    if (!hasStock) {
-      throw new OB.App.Class.ActionSilentlyCanceled(
-        `Return line canceled: there is no stock of product ${line.product.id}`
+      // eslint-disable-next-line no-await-in-loop
+      const hasStock = await OB.App.StockChecker.hasStock(
+        line.product,
+        -line.qty,
+        { ticket, lineId, options: {}, attrs: {} }
       );
+
+      if (!hasStock) {
+        throw new OB.App.Class.ActionSilentlyCanceled(
+          `Return line canceled: there is no stock of product ${line.product.id}`
+        );
+      }
     }
   }
 })();
