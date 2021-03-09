@@ -40,7 +40,6 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "26.6.0",
     "jest-html-reporters": "~2.1.2",
-    "react-test-renderer": "^16.13.1",
     "xmldom": "~0.1.27"
   },
   "jest": {
