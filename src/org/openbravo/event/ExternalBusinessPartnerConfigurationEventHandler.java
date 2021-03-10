@@ -21,6 +21,7 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -29,7 +30,10 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.ClientInformation;
+import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfig;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigFilter;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigProperty;
 
@@ -71,6 +75,7 @@ public class ExternalBusinessPartnerConfigurationEventHandler
     if (!isValidEvent(event)) {
       return;
     }
+    checkDefaultEmailDuplicates(event);
     removeSequenceIfNotSelected(event);
   }
 
@@ -78,7 +83,45 @@ public class ExternalBusinessPartnerConfigurationEventHandler
     if (!isValidEvent(event)) {
       return;
     }
+    checkDefaultEmailDuplicates(event);
     removeSequenceIfNotSelected(event);
+  }
+
+  private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+
+    final String id = event.getId();
+    final Entity transactionEntity = ModelProvider.getInstance()
+        .getEntity(event.getTargetInstance().getEntityName());
+
+    final ExternalBusinessPartnerConfig currentExtBPConfig = (ExternalBusinessPartnerConfig) event
+        .getCurrentState(transactionEntity.getProperty(
+            ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION));
+    final boolean isCurrentActive = (boolean) event.getCurrentState(
+        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE));
+    final boolean isCurrentDefaultEmail = (boolean) event.getCurrentState(transactionEntity
+        .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTEMAIL));
+
+    if (!isCurrentDefaultEmail || !isCurrentActive) {
+      return;
+    }
+
+    final OBCriteria<?> criteria = OBDal.getInstance()
+        .createCriteria(event.getTargetInstance().getClass());
+    criteria.add(Restrictions.eq(
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        currentExtBPConfig));
+    criteria
+        .add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTEMAIL, true));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
+    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
+
+    criteria.setMaxResults(1);
+    if (criteria.uniqueResult() != null) {
+      throw new OBException("@DuplicatedCRMDefaultEmail@");
+    }
   }
 
   private void removeSequenceIfNotSelected(final EntityPersistenceEvent event) {
