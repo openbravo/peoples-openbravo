@@ -14,6 +14,7 @@
   class HardwareManagerServer extends OB.App.Class.RemoteServer {
     constructor() {
       super('HardwareManagerServer');
+      this.label = 'OBPOS_HardwareManagerServer';
     }
 
     isAttendedURL(url) {
