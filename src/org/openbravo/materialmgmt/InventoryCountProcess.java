@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -83,6 +83,8 @@ public class InventoryCountProcess implements Process {
       }
       inventory.setProcessNow(true);
       OBDal.getInstance().save(inventory);
+      OBDal.getInstance().flush();
+      OBDal.getInstance().refresh(inventory);
       if (SessionHandler.isSessionHandlerPresent()) {
         SessionHandler.getInstance().commitAndStart();
       }
