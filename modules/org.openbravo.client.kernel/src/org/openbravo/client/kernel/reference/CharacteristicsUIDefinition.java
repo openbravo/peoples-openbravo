@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2016 Openbravo SLU
+ * All portions are Copyright (C) 2013-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -99,7 +99,8 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
       value.put("dbValue", columnValue);
 
       JSONObject jsonValue = new JSONObject();
-      for (ProductCharacteristicValue charValue : product.getProductCharacteristicValueList()) {
+      for (ProductCharacteristicValue charValue : getProductCharacteristicValueListOrderedByCharacteristicType(
+          product)) {
         jsonValue.put(charValue.getCharacteristic().getIdentifier(),
             getValue(charValue.getCharacteristicValue()));
       }
@@ -114,6 +115,21 @@ public class CharacteristicsUIDefinition extends TextUIDefinition {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private List<ProductCharacteristicValue> getProductCharacteristicValueListOrderedByCharacteristicType(
+      final Product product) {
+    //@formatter:off
+    final String hql = 
+        "  as pcv "
+        + "where pcv.product.id = :productId "
+        + "order by pcv.characteristic.characteristicType ";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .createQuery(ProductCharacteristicValue.class, hql)
+        .setNamedParameter("productId", product.getId())
+        .list();
   }
 
   @Override
