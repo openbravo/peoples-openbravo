@@ -32,7 +32,7 @@
       }
 
       let newTicket = createTicket(payload);
-      newTicket = addBusinessPartner(newTicket);
+      newTicket = OB.App.State.Ticket.Utils.addBusinessPartner(newTicket);
       newTicket = addPayments(newTicket, payload);
       newTicket = addProducts(newTicket, payload);
 
@@ -96,32 +96,6 @@
       }, {});
 
     return newTicket;
-  }
-
-  function addBusinessPartner(ticket) {
-    const shippingLocation = ticket.businessPartner.locations[0];
-    const invoicingLocation = ticket.businessPartner.locations[1];
-    return {
-      ...ticket,
-      businessPartner: {
-        ...ticket.businessPartner,
-        shipLocId: shippingLocation.id,
-        shipLocName: shippingLocation.name,
-        shipPostalCode: shippingLocation.postalCode,
-        shipCityName: shippingLocation.cityName,
-        shipCountryId: shippingLocation.countryId,
-        shipCountryName: shippingLocation.countryName,
-        shipRegionId: shippingLocation.regionId,
-        locId: (invoicingLocation || shippingLocation).id,
-        locName: (invoicingLocation || shippingLocation).name,
-        postalCode: (invoicingLocation || shippingLocation).postalCode,
-        cityName: (invoicingLocation || shippingLocation).cityName,
-        countryName: (invoicingLocation || shippingLocation).countryName,
-        regionId: (invoicingLocation || shippingLocation).regionId,
-        locationModel: shippingLocation,
-        locationBillModel: invoicingLocation
-      }
-    };
   }
 
   function addPayments(ticket, payload) {

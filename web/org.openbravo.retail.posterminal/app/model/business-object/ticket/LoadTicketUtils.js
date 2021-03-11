@@ -12,9 +12,42 @@
 
 OB.App.StateAPI.Ticket.registerUtilityFunctions({
   /**
+   * Adds business partner information as needed by ticket model to the ticket defined as parameter
+   *
+   * @param {object} payload - The ticket for which business partner information needs to be added
+   *
+   * @returns {object} the ticket with the business partner information
+   */
+  addBusinessPartner(ticket) {
+    const shippingLocation = ticket.businessPartner.locations[0];
+    const invoicingLocation = ticket.businessPartner.locations[1];
+    return {
+      ...ticket,
+      businessPartner: {
+        ...ticket.businessPartner,
+        shipLocId: shippingLocation.id,
+        shipLocName: shippingLocation.name,
+        shipPostalCode: shippingLocation.postalCode,
+        shipCityName: shippingLocation.cityName,
+        shipCountryId: shippingLocation.countryId,
+        shipCountryName: shippingLocation.countryName,
+        shipRegionId: shippingLocation.regionId,
+        locId: (invoicingLocation || shippingLocation).id,
+        locName: (invoicingLocation || shippingLocation).name,
+        postalCode: (invoicingLocation || shippingLocation).postalCode,
+        cityName: (invoicingLocation || shippingLocation).cityName,
+        countryName: (invoicingLocation || shippingLocation).countryName,
+        regionId: (invoicingLocation || shippingLocation).regionId,
+        locationModel: shippingLocation,
+        locationBillModel: invoicingLocation
+      }
+    };
+  },
+
+  /**
    * Load business partner information for ticket defined in the payload
    *
-   * @param {object} payload - The payload with the ticket for which business partner need to be loaded
+   * @param {object} payload - The payload with the ticket for which business partner needs to be loaded
    *
    * @returns {object} the payload with the ticket including business partner information
    */
