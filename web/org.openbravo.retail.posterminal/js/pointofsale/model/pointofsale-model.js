@@ -684,14 +684,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
       async function initHardwareManagerServer() {
         const hardwareManagerEndpoint = new OB.App.Class.HardwareManagerEndpoint();
         OB.App.SynchronizationBuffer.registerEndpoint(hardwareManagerEndpoint);
-
-        let isOnline = true;
-        try {
-          const data = await hardwareManagerEndpoint.controller.getHardwareManagerStatus();
-          isOnline = data && !data.notConfigured;
-        } catch (error) {
-          isOnline = false;
-        }
+        const isOnline = await hardwareManagerEndpoint.controller.isHardwareManagerReady();
         const hardwareManagerServer = OB.App.RemoteServerController.getRemoteServer(
           'HardwareManagerServer'
         );

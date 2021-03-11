@@ -192,6 +192,18 @@
       }
     }
 
+    async isHardwareManagerReady() {
+      if (!this.activeURL) {
+        return false;
+      }
+      try {
+        await get(`${this.activeURL}/status.json`);
+      } catch (error) {
+        return false;
+      }
+      return true;
+    }
+
     async openDrawer() {
       const template = OB.App.PrintTemplateStore.get('openDrawerTemplate');
       await this.print(template, {}, this.devices.DRAWER);
