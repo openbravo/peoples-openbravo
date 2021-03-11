@@ -167,13 +167,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   /**
-   * Load product information for each ticket line defined in the payload
+   * Load lines information for ticket defined in the payload
    *
-   * @param {object} payload - The payload with the ticket for which products need to be loaded
+   * @param {object} payload - The payload with the ticket for which lines need to be loaded
    *
-   * @returns {object} the payload with the ticket including products information
+   * @returns {object} the payload with the ticket including lines information
    */
-  async loadProducts(payload) {
+  async loadLines(payload) {
     const isRemoteProduct = OB.App.Security.hasPermission(
       'OBPOS_remote.product'
     );

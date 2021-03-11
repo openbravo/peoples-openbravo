@@ -196,7 +196,7 @@
         newPayload = await OB.App.State.Ticket.Utils.loadBusinessPartner(
           newPayload
         );
-        newPayload = await OB.App.State.Ticket.Utils.loadProducts(newPayload);
+        newPayload = await OB.App.State.Ticket.Utils.loadLines(newPayload);
       }
 
       return newPayload;
