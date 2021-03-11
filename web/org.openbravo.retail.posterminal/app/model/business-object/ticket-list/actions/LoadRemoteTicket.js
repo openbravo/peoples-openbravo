@@ -34,7 +34,7 @@
       let newTicket = createTicket(payload);
       newTicket = OB.App.State.Ticket.Utils.addBusinessPartner(newTicket);
       newTicket = addPayments(newTicket, payload);
-      newTicket = addProducts(newTicket, payload);
+      newTicket = OB.App.State.Ticket.Utils.addProducts(newTicket);
 
       newGlobalState.TicketList = [
         { ...newGlobalState.Ticket },
@@ -176,106 +176,6 @@
             OB.DEC.abs(newTicket.totalamount) > newTicket.payment))
       ) {
         newTicket.paidOnCredit = true;
-      }
-    }
-
-    return newTicket;
-  }
-
-  function addProducts(ticket, payload) {
-    const newTicket = {
-      ...ticket
-    };
-    newTicket.lines = newTicket.lines.map((line, index) => ({
-      ...line,
-      linepos: index,
-      qty: OB.DEC.number(line.quantity, line.product.uOMstandardPrecision),
-      netListPrice: line.listPrice,
-      grossListPrice: line.grossListPrice,
-      baseNetUnitPrice: line.baseNetUnitPrice,
-      baseGrossUnitPrice: line.baseGrossUnitPrice,
-      netUnitPrice: line.unitPrice,
-      grossUnitPrice: line.grossUnitPrice,
-      baseNetUnitAmount: line.lineNetAmount,
-      baseGrossUnitAmount: line.lineGrossAmount,
-      netUnitAmount: line.lineNetAmount,
-      grossUnitAmount: line.lineGrossAmount,
-      priceIncludesTax: ticket.priceIncludesTax,
-      warehouse: {
-        id: line.warehouse,
-        warehousename: line.warehousename
-      },
-      groupService: line.product.groupProduct,
-      isEditable: true,
-      isDeletable: true,
-      country:
-        // eslint-disable-next-line no-nested-ternary
-        line.obrdmDeliveryMode === 'HomeDelivery'
-          ? ticket.businessPartner.shipLocId
-            ? ticket.businessPartner.locationModel.countryId
-            : null
-          : line.organization
-          ? line.organization.country
-          : payload.terminal.organizationCountryId,
-      region:
-        // eslint-disable-next-line no-nested-ternary
-        line.obrdmDeliveryMode === 'HomeDelivery'
-          ? ticket.businessPartner.shipLocId
-            ? ticket.businessPartner.locationModel.regionId
-            : null
-          : line.organization
-          ? line.organization.region
-          : payload.terminal.organizationRegionId,
-      taxes: line.taxes
-        .map(tax => ({
-          id: tax.taxId,
-          net: tax.taxableAmount,
-          amount: tax.taxAmount,
-          name: tax.identifier,
-          docTaxAmount: tax.docTaxAmount,
-          rate: tax.taxRate,
-          cascade: tax.cascade,
-          lineNo: tax.lineNo
-        }))
-        .reduce((obj, item) => {
-          const newObj = { ...obj };
-          newObj[[item.id]] = item;
-          return newObj;
-        }, {})
-    }));
-    newTicket.qty = newTicket.lines.reduce(
-      (accumulator, line) =>
-        line.qty > 0 ? OB.DEC.add(accumulator, line.qty) : accumulator,
-      OB.DEC.Zero
-    );
-
-    const hasDeliveredProducts = newTicket.lines.some(
-      line => line.deliveredQuantity && line.deliveredQuantity >= line.quantity
-    );
-    const hasNotDeliveredProducts = newTicket.lines.some(
-      line => !line.deliveredQuantity || line.deliveredQuantity < line.quantity
-    );
-    newTicket.isPartiallyDelivered =
-      hasDeliveredProducts && hasNotDeliveredProducts;
-    newTicket.isFullyDelivered =
-      hasDeliveredProducts && !hasNotDeliveredProducts;
-    if (newTicket.isPartiallyDelivered) {
-      newTicket.deliveredQuantityAmount = newTicket.lines.reduce(
-        (accumulator, line) =>
-          OB.DEC.add(
-            accumulator,
-            OB.DEC.mul(
-              line.deliveredQuantity || OB.DEC.Zero,
-              line.grossUnitPrice
-            )
-          ),
-        OB.DEC.Zero
-      );
-      if (
-        newTicket.deliveredQuantityAmount &&
-        newTicket.deliveredQuantityAmount > newTicket.payment
-      ) {
-        newTicket.isDeliveredGreaterThanGross = true;
       }
     }
 
