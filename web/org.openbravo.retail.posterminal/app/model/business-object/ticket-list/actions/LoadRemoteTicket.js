@@ -32,9 +32,12 @@
       }
 
       let newTicket = createTicket(payload);
-      newTicket = OB.App.State.Ticket.Utils.addBusinessPartner(newTicket);
+      newTicket = OB.App.State.Ticket.Utils.addBusinessPartner(
+        newTicket,
+        payload
+      );
       newTicket = addPayments(newTicket, payload);
-      newTicket = OB.App.State.Ticket.Utils.addProducts(newTicket);
+      newTicket = OB.App.State.Ticket.Utils.addProducts(newTicket, payload);
 
       newGlobalState.TicketList = [
         { ...newGlobalState.Ticket },
@@ -69,8 +72,8 @@
       netAmount: payload.ticket.totalNetAmount,
       approvals: [],
       taxes: payload.ticket.receiptTaxes,
-      payments: payload.ticket.receiptPayments,
-      lines: payload.ticket.receiptLines,
+      payments: [],
+      lines: [],
       orderType:
         payload.ticket.documentType ===
         payload.terminal.terminalType.documentTypeForReturns
@@ -99,7 +102,7 @@
   }
 
   function addPayments(ticket, payload) {
-    const payments = ticket.payments.map(payment => {
+    const payments = payload.ticket.receiptPayments.map(payment => {
       const newPayment = {
         ...payment,
         date: new Date(payment.paymentDate),
@@ -109,7 +112,7 @@
         isPaid: !ticket.isLayaway
       };
 
-      const reversedPayment = ticket.payments.find(
+      const reversedPayment = payload.ticket.receiptPayments.find(
         p => p.reversedPaymentId === payment.paymentId
       );
       if (payment.isReversed) {

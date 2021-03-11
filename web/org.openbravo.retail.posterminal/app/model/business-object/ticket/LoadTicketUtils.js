@@ -274,19 +274,20 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   /**
-   * Adds business partner information as needed by ticket model to the ticket defined as parameter
+   * Adds business partner information as needed by ticket model from the payload to the ticket
    *
-   * @param {object} payload - The ticket for which business partner information needs to be added
+   * @param {object} ticket - The ticket for which business partner information needs to be added
+   * @param {object} payload - The payload from where business partner information is read
    *
    * @returns {object} the ticket with the business partner information
    */
-  addBusinessPartner(ticket) {
-    const shippingLocation = ticket.businessPartner.locations[0];
-    const invoicingLocation = ticket.businessPartner.locations[1];
+  addBusinessPartner(ticket, payload) {
+    const shippingLocation = payload.ticket.businessPartner.locations[0];
+    const invoicingLocation = payload.ticket.businessPartner.locations[1];
     return {
       ...ticket,
       businessPartner: {
-        ...ticket.businessPartner,
+        ...payload.ticket.businessPartner,
         shipLocId: shippingLocation.id,
         shipLocName: shippingLocation.name,
         shipPostalCode: shippingLocation.postalCode,
@@ -307,9 +308,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   /**
-   * Adds products information as needed by ticket model to the ticket defined as parameter
+   * Adds products information as needed by ticket model from the payload to the ticket
    *
-   * @param {object} payload - The ticket for which products information needs to be added
+   * @param {object} ticket - The ticket for which products information needs to be added
+   * @param {object} payload - The payload from where products information is read
    *
    * @returns {object} the ticket with the products information
    */
@@ -317,7 +319,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     const newTicket = {
       ...ticket
     };
-    newTicket.lines = newTicket.lines.map((line, index) => ({
+    const newLines = payload.ticket.receiptLines.map((line, index) => ({
       ...line,
       linepos: index,
       qty: OB.DEC.number(line.quantity, line.product.uOMstandardPrecision),
@@ -374,6 +376,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           return newObj;
         }, {})
     }));
+    newTicket.lines = [...newTicket.lines, ...newLines];
     newTicket.qty = newTicket.lines.reduce(
       (accumulator, line) =>
         line.qty > 0 ? OB.DEC.add(accumulator, line.qty) : accumulator,
