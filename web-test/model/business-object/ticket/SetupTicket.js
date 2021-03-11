@@ -23,5 +23,6 @@ require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CompleteTicketUtils');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/LoadTicketUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/AddPaymentUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/AddProductUtils');

@@ -27,6 +27,7 @@ require('../../../../web/org.openbravo.retail.posterminal/app/model/business-obj
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/Messages');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CompleteTicketUtils');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/LoadTicketUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketListUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/document-sequence/DocumentSequenceUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/cashup/CashupUtils');
