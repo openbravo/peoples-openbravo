@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2020-2021 Openbravo SLU
+ * All portions are Copyright (C) 2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,7 +21,6 @@ package org.openbravo.event;
 
 import javax.enterprise.event.Observes;
 
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -30,10 +29,7 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.dal.service.OBCriteria;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.ClientInformation;
-import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfig;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigFilter;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigProperty;
 
@@ -75,8 +71,6 @@ public class ExternalBusinessPartnerConfigurationEventHandler
     if (!isValidEvent(event)) {
       return;
     }
-    checkDefaultEmailDuplicates(event);
-    checkScanFilterIsUnique(event);
     removeSequenceIfNotSelected(event);
   }
 
@@ -84,96 +78,7 @@ public class ExternalBusinessPartnerConfigurationEventHandler
     if (!isValidEvent(event)) {
       return;
     }
-    checkDefaultEmailDuplicates(event);
-    checkScanFilterIsUnique(event);
     removeSequenceIfNotSelected(event);
-  }
-
-  private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
-    if (!isValidEvent(event)) {
-      return;
-    }
-
-    final String id = event.getId();
-    final Entity transactionEntity = ModelProvider.getInstance()
-        .getEntity(event.getTargetInstance().getEntityName());
-
-    if (!transactionEntity.getName().equals(ExternalBusinessPartnerConfigProperty.ENTITY_NAME)) {
-      return;
-    }
-
-    final ExternalBusinessPartnerConfig currentExtBPConfig = (ExternalBusinessPartnerConfig) event
-        .getCurrentState(transactionEntity.getProperty(
-            ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION));
-    final boolean isCurrentActive = (boolean) event.getCurrentState(
-        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE));
-    final boolean isCurrentDefaultEmail = (boolean) event.getCurrentState(transactionEntity
-        .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTEMAIL));
-
-    if (!isCurrentDefaultEmail || !isCurrentActive) {
-      return;
-    }
-
-    final OBCriteria<?> criteria = OBDal.getInstance()
-        .createCriteria(event.getTargetInstance().getClass());
-    criteria.add(Restrictions.eq(
-        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-        currentExtBPConfig));
-    criteria
-        .add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTEMAIL, true));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
-    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
-
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
-      throw new OBException("@DuplicatedCRMDefaultEmail@");
-    }
-  }
-
-  private void checkScanFilterIsUnique(final EntityPersistenceEvent event) {
-    if (!isValidEvent(event)) {
-      return;
-    }
-
-    final String id = event.getId();
-    final Entity transactionEntity = ModelProvider.getInstance()
-        .getEntity(event.getTargetInstance().getEntityName());
-
-    if (!transactionEntity.getName().equals(ExternalBusinessPartnerConfigFilter.ENTITY_NAME)) {
-      return;
-    }
-
-    final ExternalBusinessPartnerConfig currentExtBPConfig = (ExternalBusinessPartnerConfig) event
-        .getCurrentState(transactionEntity.getProperty(
-            ExternalBusinessPartnerConfigFilter.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION));
-
-    // If saved filter is not active or has isScanIdentifier=false, exit. There's nothing to check
-    final boolean isCurrentActive = (boolean) event.getCurrentState(
-        transactionEntity.getProperty(ExternalBusinessPartnerConfigFilter.PROPERTY_ACTIVE));
-    final boolean isScanIdentifier = (boolean) event.getCurrentState(transactionEntity
-        .getProperty(ExternalBusinessPartnerConfigFilter.PROPERTY_ISSCANIDENTIFIER));
-
-    if (!isScanIdentifier || !isCurrentActive) {
-      return;
-    }
-
-    // Query the filters for the current config and check that there is 0 or 1 with the flag
-    // isScanIdentifier=true.
-    // Fail otherwise
-    final OBCriteria<?> criteria = OBDal.getInstance()
-        .createCriteria(event.getTargetInstance().getClass());
-    criteria.add(Restrictions.eq(
-        ExternalBusinessPartnerConfigFilter.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-        currentExtBPConfig));
-    criteria
-        .add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ISSCANIDENTIFIER, true));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ACTIVE, true));
-    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigFilter.PROPERTY_ID, id));
-
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
-      throw new OBException("@DuplicatedCRMScanFilter@");
-    }
   }
 
   private void removeSequenceIfNotSelected(final EntityPersistenceEvent event) {
