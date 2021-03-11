@@ -289,7 +289,7 @@
       newPayload = await checkSession(newPayload);
       if (!newPayload.ticketInSession) {
         newPayload = await checkCrossStore(newPayload);
-        newPayload = await loadTicket(newPayload);
+        newPayload = await OB.App.State.Ticket.Utils.loadTicket(newPayload);
         newPayload = await OB.App.State.Ticket.Utils.loadBusinessPartner(
           newPayload
         );
@@ -353,31 +353,5 @@
       messageParams: [payload.ticket.documentNo, payload.ticket.store]
     });
     return { ...payload, ticket: { ...payload.ticket, isCrossStore } };
-  }
-
-  async function loadTicket(payload) {
-    const data = await OB.App.Request.mobileServiceRequest(
-      'org.openbravo.retail.posterminal.PaidReceipts',
-      {
-        orderid: payload.ticket.id,
-        documentNo: payload.ticket.id ? undefined : payload.ticket.documentNo, // If action was called without order id, we can specify the docNo to load the ticket
-        crossStore: payload.ticket.isCrossStore
-      }
-    );
-    if (data.response.error) {
-      throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: data.response.error.message
-      });
-    } else if (data.response.data[0].recordInImportEntry) {
-      throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBPOS_ReceiptNotSynced',
-        messageParams: [data.response.data[0].documentNo]
-      });
-    }
-
-    return {
-      ...payload,
-      ticket: { ...data.response.data[0] }
-    };
   }
 })();

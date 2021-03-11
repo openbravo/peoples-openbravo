@@ -12,35 +12,37 @@
 
 OB.App.StateAPI.Ticket.registerUtilityFunctions({
   /**
-   * Adds business partner information as needed by ticket model to the ticket defined as parameter
+   * Load ticket information for ticket defined in the payload
    *
-   * @param {object} payload - The ticket for which business partner information needs to be added
+   * @param {object} payload - The payload with the ticket id or ticket documentNo which needs to be loaded
    *
-   * @returns {object} the ticket with the business partner information
+   * @returns {object} the payload with the ticket information
    */
-  addBusinessPartner(ticket) {
-    const shippingLocation = ticket.businessPartner.locations[0];
-    const invoicingLocation = ticket.businessPartner.locations[1];
-    return {
-      ...ticket,
-      businessPartner: {
-        ...ticket.businessPartner,
-        shipLocId: shippingLocation.id,
-        shipLocName: shippingLocation.name,
-        shipPostalCode: shippingLocation.postalCode,
-        shipCityName: shippingLocation.cityName,
-        shipCountryId: shippingLocation.countryId,
-        shipCountryName: shippingLocation.countryName,
-        shipRegionId: shippingLocation.regionId,
-        locId: (invoicingLocation || shippingLocation).id,
-        locName: (invoicingLocation || shippingLocation).name,
-        postalCode: (invoicingLocation || shippingLocation).postalCode,
-        cityName: (invoicingLocation || shippingLocation).cityName,
-        countryName: (invoicingLocation || shippingLocation).countryName,
-        regionId: (invoicingLocation || shippingLocation).regionId,
-        locationModel: shippingLocation,
-        locationBillModel: invoicingLocation
+  async loadTicket(payload) {
+    const data = await OB.App.Request.mobileServiceRequest(
+      'org.openbravo.retail.posterminal.PaidReceipts',
+      {
+        orderid: payload.ticket.id,
+        // If action was called without order id, we can specify the docNo to load the ticket
+        documentNo: payload.ticket.id ? undefined : payload.ticket.documentNo,
+        crossStore: payload.ticket.isCrossStore
       }
+    );
+
+    if (data.response.error) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: data.response.error.message
+      });
+    } else if (data.response.data[0].recordInImportEntry) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_ReceiptNotSynced',
+        messageParams: [data.response.data[0].documentNo]
+      });
+    }
+
+    return {
+      ...payload,
+      ticket: { ...data.response.data[0] }
     };
   },
 
@@ -269,5 +271,38 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       })
     );
     return { ...payload, ticket: { ...payload.ticket, receiptLines: lines } };
+  },
+
+  /**
+   * Adds business partner information as needed by ticket model to the ticket defined as parameter
+   *
+   * @param {object} payload - The ticket for which business partner information needs to be added
+   *
+   * @returns {object} the ticket with the business partner information
+   */
+  addBusinessPartner(ticket) {
+    const shippingLocation = ticket.businessPartner.locations[0];
+    const invoicingLocation = ticket.businessPartner.locations[1];
+    return {
+      ...ticket,
+      businessPartner: {
+        ...ticket.businessPartner,
+        shipLocId: shippingLocation.id,
+        shipLocName: shippingLocation.name,
+        shipPostalCode: shippingLocation.postalCode,
+        shipCityName: shippingLocation.cityName,
+        shipCountryId: shippingLocation.countryId,
+        shipCountryName: shippingLocation.countryName,
+        shipRegionId: shippingLocation.regionId,
+        locId: (invoicingLocation || shippingLocation).id,
+        locName: (invoicingLocation || shippingLocation).name,
+        postalCode: (invoicingLocation || shippingLocation).postalCode,
+        cityName: (invoicingLocation || shippingLocation).cityName,
+        countryName: (invoicingLocation || shippingLocation).countryName,
+        regionId: (invoicingLocation || shippingLocation).regionId,
+        locationModel: shippingLocation,
+        locationBillModel: invoicingLocation
+      }
+    };
   }
 });
