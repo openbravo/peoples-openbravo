@@ -308,14 +308,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   /**
-   * Adds products information as needed by ticket model from the payload to the ticket
+   * Adds lines information as needed by ticket model from the payload to the ticket
    *
-   * @param {object} ticket - The ticket for which products information needs to be added
-   * @param {object} payload - The payload from where products information is read
+   * @param {object} ticket - The ticket for which lines information needs to be added
+   * @param {object} payload - The payload from where lines information is read
    *
-   * @returns {object} the ticket with the products information
+   * @returns {object} the ticket with the lines information
    */
-  addProducts(ticket, payload) {
+  addLines(ticket, payload) {
     const newTicket = {
       ...ticket
     };

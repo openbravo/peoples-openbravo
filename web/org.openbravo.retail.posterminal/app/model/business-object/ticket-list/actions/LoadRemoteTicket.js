@@ -37,7 +37,7 @@
         payload
       );
       newTicket = addPayments(newTicket, payload);
-      newTicket = OB.App.State.Ticket.Utils.addProducts(newTicket, payload);
+      newTicket = OB.App.State.Ticket.Utils.addLines(newTicket, payload);
 
       newGlobalState.TicketList = [
         { ...newGlobalState.Ticket },
