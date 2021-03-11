@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2013 Openbravo SLU
+ * All portions are Copyright (C) 2012-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -82,6 +82,7 @@ public class CharacteristicsUtils {
     pc.setProduct(product);
     pc.setCharacteristic(characteristic);
     pc.setSequenceNumber((product.getProductCharacteristicList().size() + 1) * 10L);
+    product.getProductCharacteristicList().add(pc);
     OBDal.getInstance().save(pc);
   }
 
