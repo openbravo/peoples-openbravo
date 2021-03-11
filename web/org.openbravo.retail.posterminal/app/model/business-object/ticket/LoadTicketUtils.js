@@ -319,9 +319,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     const newTicket = {
       ...ticket
     };
-    const newLines = payload.ticket.receiptLines.map((line, index) => ({
+    const newLines = payload.ticket.receiptLines.map(line => ({
       ...line,
-      linepos: index,
       qty: OB.DEC.number(line.quantity, line.product.uOMstandardPrecision),
       netListPrice: line.listPrice,
       grossListPrice: line.grossListPrice,
