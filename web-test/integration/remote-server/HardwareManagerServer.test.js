@@ -97,6 +97,7 @@ describe('HardwareManagerServer', () => {
     ${'https://127.0.3.1:8090/printerpdf'}                       | ${true}
     ${'https://127.0.0.1:8090/printer'}                          | ${true}
     ${'https://127.0.0.1:8090/scale'}                            | ${true}
+    ${'https://127.0.0.1:8090/status.json'}                      | ${true}
   `("Backend server attends to '$url' ($isAttended)", ({ url, isAttended }) => {
     expect(hwManagerServer.isAttendedURL(url)).toBe(isAttended);
   });
