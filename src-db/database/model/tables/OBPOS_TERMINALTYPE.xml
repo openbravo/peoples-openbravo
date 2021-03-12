@@ -195,7 +195,6 @@
         <index-column name="C_DOCTYPEQUOT_ID"/>
         <whereClause><![CDATA[C_DOCTYPEQUOT_ID IS NOT NULL]]></whereClause>
       </index>
-      <check name="OBPOS_MINSHOWFRESHDATAINC_CHK"><![CDATA[MINUTESTORESHOWFRESHDATAINC < MINUTESTOREFRESHDATAINC]]></check>
       <check name="OBPOS_OPENRELATEDRECEIPTS_CHK"><![CDATA[OPENRELATEDRECEIPTS IN ('Y', 'N')]]></check>
       <check name="OBPOS_SHOWTAXBREAKDOWN_CHK"><![CDATA[SHOWTAXBREAKDOWN IN ('Y', 'N')]]></check>
       <check name="OBPOS_TERMTYPE_MULTICHANGE_CHK"><![CDATA[ISMULTICHANGE IN ('Y', 'N')]]></check>
