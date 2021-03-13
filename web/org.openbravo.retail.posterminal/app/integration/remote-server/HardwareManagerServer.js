@@ -14,6 +14,7 @@
   class HardwareManagerServer extends OB.App.Class.RemoteServer {
     constructor() {
       super('HardwareManagerServer');
+      this.label = 'OBPOS_HardwareManagerServer';
     }
 
     isAttendedURL(url) {
@@ -35,6 +36,7 @@
     const terminalURLs = [];
     if (terminal.hardwareurl) {
       terminalURLs.push(toPrinterURL(terminal.hardwareurl, '/printer'));
+      terminalURLs.push(toStatusURL(terminal.hardwareurl, '/status.json'));
     }
     if (terminal.scaleurl) {
       terminalURLs.push(toPrinterURL(terminal.scaleurl, '/scale'));
@@ -43,16 +45,27 @@
     const printers = urlList
       .filter(hwURL => hwURL.hasReceiptPrinter)
       .map(hwURL => toPrinterURL(hwURL.hardwareURL, '/printer'));
+    const statuses = urlList
+      .filter(hwURL => hwURL.hasReceiptPrinter)
+      .map(hwURL => toStatusURL(hwURL.hardwareURL, '/status.json'));
     const pdfPrinters = urlList
       .filter(hwUrl => hwUrl.hasPDFPrinter)
       .map(hwURL => toPrinterURL(hwURL.hardwareURL, '/printerpdf'));
 
-    return [...terminalURLs, ...printers, ...pdfPrinters];
+    return [...terminalURLs, ...printers, ...statuses, ...pdfPrinters];
   }
 
   // includes the printer type in the URL (if required)
   function toPrinterURL(url, printerType) {
     return `${url}${url.endsWith(printerType) ? '' : printerType}`;
+  }
+
+  // transforms a printer url into an url to check the status
+  function toStatusURL(url) {
+    if (url.endsWith('/printer')) {
+      return `${url.substring(0, url.length - 8)}/status.json`;
+    }
+    return `${url}/status.json`;
   }
 
   OB.App.RemoteServerController.registerRemoteServer(

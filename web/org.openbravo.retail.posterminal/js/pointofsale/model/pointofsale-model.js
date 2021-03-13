@@ -593,10 +593,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                 OB.Discounts.Pos.initCache(function() {
                   me.printReceipt = new OB.OBPOSPointOfSale.Print.Receipt(me);
 
-                  const hardwareManagerEnpoint = new OB.App.Class.HardwareManagerEndpoint();
-                  OB.App.SynchronizationBuffer.registerEndpoint(
-                    hardwareManagerEnpoint
-                  );
+                  initHardwareManagerServer();
 
                   const ticketPrinter = new OB.App.Class.TicketPrinter();
                   ticketPrinter.setLegacyPrinter(me.printReceipt);
@@ -681,6 +678,20 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
               });
             });
           });
+        }
+      }
+
+      async function initHardwareManagerServer() {
+        const hardwareManagerEndpoint = new OB.App.Class.HardwareManagerEndpoint();
+        OB.App.SynchronizationBuffer.registerEndpoint(hardwareManagerEndpoint);
+        const isOnline = await hardwareManagerEndpoint.controller.isHardwareManagerReady();
+        const hardwareManagerServer = OB.App.RemoteServerController.getRemoteServer(
+          'HardwareManagerServer'
+        );
+        if (isOnline) {
+          hardwareManagerServer.setOnline();
+        } else {
+          hardwareManagerServer.setOffline();
         }
       }
 
