@@ -45,14 +45,14 @@
     const printers = urlList
       .filter(hwURL => hwURL.hasReceiptPrinter)
       .map(hwURL => toPrinterURL(hwURL.hardwareURL, '/printer'));
-    const status = urlList
+    const statuses = urlList
       .filter(hwURL => hwURL.hasReceiptPrinter)
       .map(hwURL => toStatusURL(hwURL.hardwareURL, '/status.json'));
     const pdfPrinters = urlList
       .filter(hwUrl => hwUrl.hasPDFPrinter)
       .map(hwURL => toPrinterURL(hwURL.hardwareURL, '/printerpdf'));
 
-    return [...terminalURLs, ...printers, ...status, ...pdfPrinters];
+    return [...terminalURLs, ...printers, ...statuses, ...pdfPrinters];
   }
 
   // includes the printer type in the URL (if required)
