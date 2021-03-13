@@ -80,6 +80,10 @@ describe('HardwareManagerServer', () => {
     expect(hwManagerServer.getName()).toBe('HardwareManagerServer');
   });
 
+  it('get label', () => {
+    expect(hwManagerServer.getLabel()).toBe('OBPOS_HardwareManagerServer');
+  });
+
   it('get from RemoteServerController', () => {
     expect(
       OB.App.RemoteServerController.getRemoteServer('HardwareManagerServer')
