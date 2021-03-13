@@ -197,7 +197,11 @@
         return false;
       }
       try {
-        await get(`${this.activeURL}/status.json`);
+        await get(
+          `${this.activeURL}/status.json?${new URLSearchParams({
+            ignoreForConnectionStatus: true
+          })}`
+        );
       } catch (error) {
         return false;
       }
