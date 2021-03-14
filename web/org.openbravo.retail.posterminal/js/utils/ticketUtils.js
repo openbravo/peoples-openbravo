@@ -51,6 +51,10 @@
     newPayload.orgUserId = OB.MobileApp.model.get('orgUserId');
     newPayload.pricelist = OB.MobileApp.model.get('pricelist');
     newPayload.context = OB.MobileApp.model.get('context');
+    newPayload.qtyScale =
+      OB.Format.formats.qtyEdition.length -
+      OB.Format.formats.qtyEdition.indexOf('.') -
+      1;
     newPayload.documentNumberSeparator = OB.Model.Order.prototype
       .includeDocNoSeperator
       ? '/'
