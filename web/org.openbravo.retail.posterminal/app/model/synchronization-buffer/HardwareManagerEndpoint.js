@@ -37,6 +37,9 @@
       this.addMessageSynchronization('openDrawer', async () => {
         await this.openDrawer();
       });
+      this.addMessageSynchronization('display', async message => {
+        await this.display(message);
+      });
     }
 
     /**
@@ -97,6 +100,20 @@
         await this.controller.display(template);
       } catch (error) {
         OB.error(`Error displaying welcome message: ${error}`);
+      }
+    }
+
+    /**
+     * Displays information into the display device using a given template
+     */
+    async display(message) {
+      const messageData = message.messageObj;
+      try {
+        const { template, displayData } = messageData.data;
+        const printTemplate = OB.App.PrintTemplateStore.get(template);
+        await this.controller.display(printTemplate, displayData);
+      } catch (error) {
+        OB.error(`Error displaying information in display device: ${error}`);
       }
     }
   }
