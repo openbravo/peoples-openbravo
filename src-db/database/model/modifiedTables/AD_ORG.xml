@@ -179,7 +179,7 @@
       </column>
       <column name="EM_OBPOS_APPLYTCKDISCATORDER" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault><![CDATA[N]]></onCreateDefault>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_CLOSINV_TEMPLATE_ID">
         <reference local="EM_OBPOS_CLOSINV_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
