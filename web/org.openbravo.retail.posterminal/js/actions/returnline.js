@@ -128,6 +128,10 @@
               view.waterfall('onRearrangedEditButtonBar');
               return;
             }
+            if (!receipt.validateAvoidBlindAndReturnLines(false)) {
+              view.waterfall('onRearrangedEditButtonBar');
+              return;
+            }
             receipt.set('undo', null);
             receipt.set('multipleUndo', true);
             receipt.set('preventServicesUpdate', true);

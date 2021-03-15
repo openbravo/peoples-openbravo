@@ -4126,6 +4126,14 @@
           }
           return false;
         }
+
+        if (
+          !me.validateAvoidBlindAndReturnLines(
+            options.isVerifiedReturn || false
+          )
+        ) {
+          return;
+        }
         // Get prices from BP pricelist
         var newline = new OrderLine({
           id: OB.UTIL.get_UUID(),
@@ -4957,6 +4965,56 @@
           });
         }
       });
+    },
+    validateAvoidBlindAndReturnLines: function(isVerifiedReturnLine) {
+      if (
+        !OB.MobileApp.model.hasPermission(
+          'OBPOS_AvoidBlindAndVerifiedReturnInSameTicket',
+          true
+        )
+      ) {
+        return true;
+      }
+
+      const totalLines = this.get('lines').length;
+      const negativeLines = _.filter(this.get('lines').models, function(line) {
+        return line.get('qty') < 0;
+      }).length;
+
+      if (negativeLines === 0 || negativeLines !== totalLines) {
+        return true;
+      }
+
+      const blindReturnLines = this.get('lines').models.filter(line => {
+        return !line.get('isVerifiedReturn');
+      });
+      const verifiedReturnLines = this.get('lines').models.filter(line => {
+        return line.get('isVerifiedReturn');
+      });
+
+      if (isVerifiedReturnLine) {
+        if (
+          blindReturnLines.length === 0 &&
+          verifiedReturnLines.length === totalLines
+        ) {
+          return true;
+        } else {
+          OB.UTIL.showWarning(
+            OB.I18N.getLabel('OBPOS_CannotAddVerifiedReturn')
+          );
+          return false;
+        }
+      } else {
+        if (
+          verifiedReturnLines.length === 0 &&
+          blindReturnLines.length === totalLines
+        ) {
+          return true;
+        } else {
+          OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddBlindReturn'));
+          return false;
+        }
+      }
     },
     validateAllowSalesWithReturn: function(qty, skipValidaton, selectedModels) {
       if (

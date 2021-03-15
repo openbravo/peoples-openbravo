@@ -192,6 +192,10 @@
         return;
       }
 
+      if (receipt.validateAvoidBlindAndReturnLines(false)) {
+        return;
+      }
+
       validateQuantity()
         .then(
           function() {
