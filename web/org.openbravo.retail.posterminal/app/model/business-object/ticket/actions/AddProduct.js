@@ -7,6 +7,8 @@
  ************************************************************************************
  */
 
+/* global lodash */
+
 (function AddProductDefinition() {
   OB.App.StateAPI.Ticket.registerAction('addProduct', (ticket, payload) => {
     return OB.App.State.Ticket.Utils.addProduct(ticket, payload);
