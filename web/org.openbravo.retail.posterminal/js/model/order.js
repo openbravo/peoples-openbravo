@@ -4129,7 +4129,7 @@
 
         if (
           !me.validateAvoidBlindAndReturnLines(
-            options.isVerifiedReturn || false
+            (options && options.isVerifiedReturn) || false
           )
         ) {
           return;
