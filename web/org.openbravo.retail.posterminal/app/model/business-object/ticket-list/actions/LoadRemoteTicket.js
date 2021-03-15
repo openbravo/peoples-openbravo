@@ -189,8 +189,9 @@
     const newTicket = {
       ...ticket
     };
-    const newLines = payload.ticket.receiptLines.map(line => ({
+    const newLines = payload.ticket.receiptLines.map((line, index) => ({
       ...line,
+      linepos: index,
       qty: OB.DEC.number(line.quantity, line.product.uOMstandardPrecision),
       netListPrice: line.listPrice,
       grossListPrice: line.grossListPrice,
