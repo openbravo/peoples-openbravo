@@ -45,6 +45,15 @@
       }
     }
 
+    async printDocument(message) {
+      const { data, device } = message.messageObj;
+      try {
+        await this.controller.send({ data }, device);
+      } catch (error) {
+        OB.error(`Error sending document: ${error}`);
+      }
+    }
+
     async printTicket(message) {
       const messageData = message.messageObj;
       const { ticket } = messageData.data;
