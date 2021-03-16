@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 
-(function ReturnTicketDefinition() {
+(function ReturnBlindTicketDefinition() {
   OB.App.StateAPI.Ticket.registerAction(
     'returnBlindTicket',
     (ticket, payload) => {
