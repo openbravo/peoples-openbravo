@@ -212,7 +212,7 @@ public class Cashup extends JSONProcessSimple {
       paymentMethodJSON.put("totalReturns", paymentMethodJSON.get("totalreturns"));
       paymentMethodJSON.put("lineNo", paymentAppMethod != null ? paymentAppMethod.get("line") : 1L);
 
-      if (paymentAppMethod.getPaymentMethod().isCountPerAmount()) {
+      if (paymentAppMethod != null && paymentAppMethod.getPaymentMethod().isCountPerAmount()) {
         List<OBPOS_PaymentMethodCashCountPerAmount> countPerAmount = paymentMethod
             .getObposPmcashupAmntcntList();
         JSONObject object = new JSONObject();
