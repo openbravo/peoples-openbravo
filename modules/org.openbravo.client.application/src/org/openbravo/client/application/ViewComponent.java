@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,12 +53,15 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_callouts.SimpleCallout;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
+import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.ModelImplementation;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.AttachmentMethod;
+import org.openbravo.userinterface.selector.Selector;
 
 /**
  * Reads the view and generates it.
@@ -67,6 +70,10 @@ import org.openbravo.model.ad.utility.AttachmentMethod;
  */
 @RequestScoped
 public class ViewComponent extends BaseComponent {
+
+  private static final String BUTTON_REFERENCE_ID = "28";
+  private static final String SELECTOR_REFERENCE_ID = "95E2A8B50A254B2AAE6774B8C2F28120";
+
   private static Logger log = LogManager.getLogger();
 
   @Inject
@@ -100,9 +107,8 @@ public class ViewComponent extends BaseComponent {
         if (featureRestriction != FeatureRestriction.NO_RESTRICTION) {
           throw new OBUserException(featureRestriction.toString());
         }
-        // Verify if window is using an old callout
-        window.getADTabList()
-            .forEach(tab -> tab.getADFieldList().forEach(field -> verifyCallout(field)));
+        verifyOldCalloutUse(window);
+        verifyUnsupportedCustomQuerySelector(window);
         return generateWindow(window);
       } else if (viewId.startsWith("processDefinition_")) {
         String processId = viewId.substring("processDefinition_".length());
@@ -126,6 +132,81 @@ public class ViewComponent extends BaseComponent {
       OBContext.restorePreviousMode();
       log.debug("View {} generated in {} ms", viewId, System.currentTimeMillis() - t);
     }
+  }
+
+  private void verifyUnsupportedCustomQuerySelector(Window window) {
+    window.getADTabList()
+        .forEach(tab -> tab.getADFieldList().forEach(this::verifyUnsupportedCustomQuerySelector));
+
+  }
+
+  private void verifyUnsupportedCustomQuerySelector(Field field) {
+    Column column = field.getColumn();
+    if (column == null) {
+      return;
+    }
+    Reference reference = column.getReference();
+    if (reference.getId().equals(SELECTOR_REFERENCE_ID)) {
+      try {
+        checkReference(column.getReferenceSearchKey());
+      } catch (Exception e) {
+        String hql = e.getMessage();
+        throw new IllegalStateException(String.format(
+            "Wrong selector definition in (Window, Tab, Field) (%s, %s, %s), missing @additional_filters@ clause: %s",
+            field.getTab().getWindow().getName(), field.getTab().getName(), field.getName(), hql),
+            e);
+      }
+    } else if (reference.getId().equals(BUTTON_REFERENCE_ID)) {
+      checkParameterWindow(column.getOBUIAPPProcess());
+    }
+  }
+
+  private void checkParameterWindow(Process process) {
+    if (process == null) {
+      return;
+    }
+    getParameterList(process).forEach(this::verifyUnsupportedCustomQuerySelector);
+  }
+
+  private List<Parameter> getParameterList(Process process) {
+    OBCriteria<Parameter> criteria = OBDal.getInstance().createCriteria(Parameter.class);
+    criteria.add(Restrictions.eq(Parameter.PROPERTY_OBUIAPPPROCESS, process));
+    criteria.setFilterOnReadableClients(false);
+    criteria.setFilterOnReadableOrganization(false);
+    return criteria.list();
+  }
+
+  private void verifyUnsupportedCustomQuerySelector(Parameter parameter) {
+    Reference reference = parameter.getReference();
+    if (reference.getId().equals(SELECTOR_REFERENCE_ID)) {
+      try {
+        checkReference(parameter.getReferenceSearchKey());
+      } catch (IllegalStateException e) {
+        String hql = e.getMessage();
+        throw new IllegalStateException(String.format(
+            "Wrong selector definition in parameter %s of standard process %s, missing @additional_filters@ clause: %s",
+            parameter.getName(), parameter.getObuiappProcess().getName(), hql), e);
+      }
+    }
+  }
+
+  private void checkReference(Reference reference) {
+    if (reference == null) {
+      return;
+    }
+    List<Selector> selectorList = reference.getOBUISELSelectorList();
+    if (selectorList.isEmpty()) {
+      return;
+    }
+    Selector selector = selectorList.get(0);
+    String hql = selector.getHQL();
+    if (!StringUtils.isBlank(hql) && !hql.toLowerCase().contains("@additional_filters@")) {
+      throw new IllegalStateException(hql);
+    }
+  }
+
+  private void verifyOldCalloutUse(final Window window) {
+    window.getADTabList().forEach(tab -> tab.getADFieldList().forEach(this::verifyCallout));
   }
 
   /**
