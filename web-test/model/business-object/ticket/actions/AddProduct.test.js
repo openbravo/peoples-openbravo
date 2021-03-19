@@ -338,6 +338,44 @@ describe('addProduct', () => {
       expect(newTicket.lines).toHaveLength(2);
     });
 
+    it.each`
+      originalAttrs                                        | newAttrs                                             | expectNewLine
+      ${{}}                                                | ${{}}                                                | ${true}
+      ${{}}                                                | ${{ originalOrderLineId: '1' }}                      | ${true}
+      ${{ originalOrderLineId: '1' }}                      | ${{}}                                                | ${true}
+      ${{ originalOrderLineId: '0' }}                      | ${{ originalOrderLineId: '1' }}                      | ${true}
+      ${{ originalOrderLineId: '1' }}                      | ${{ originalOrderLineId: '1' }}                      | ${false}
+      ${{ originalOrderLineId: '1' }}                      | ${{ originalOrderLineId: '1', shipmentlineId: '2' }} | ${true}
+      ${{ originalOrderLineId: '1', shipmentlineId: '2' }} | ${{ originalOrderLineId: '1' }}                      | ${true}
+      ${{ originalOrderLineId: '1', shipmentlineId: '0' }} | ${{ originalOrderLineId: '1', shipmentlineId: '2' }} | ${true}
+      ${{ originalOrderLineId: '1', shipmentlineId: '2' }} | ${{ originalOrderLineId: '1', shipmentlineId: '2' }} | ${false}
+    `(
+      'adds or edits verified return line depending on originalAttrs: $originalAttrs and newAttrs: $newAttrs',
+      ({ originalAttrs, newAttrs, expectNewLine }) => {
+        const baseTicket = addProduct(emptyTicket, {
+          products: [
+            {
+              product: productA,
+              attrs: { isVerifiedReturn: true, ...originalAttrs },
+              qty: -1
+            }
+          ]
+        });
+
+        const newTicket = addProduct(baseTicket, {
+          products: [
+            {
+              product: productA,
+              attrs: { isVerifiedReturn: true, ...newAttrs },
+              qty: -1
+            }
+          ]
+        });
+
+        expect(newTicket.lines).toHaveLength(expectNewLine ? 2 : 1);
+      }
+    );
+
     it('can select the line to work with', () => {
       const newTicket = addProduct(
         {
