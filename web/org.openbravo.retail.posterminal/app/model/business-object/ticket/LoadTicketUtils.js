@@ -261,12 +261,17 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     const lines = await Promise.all(
       payload.ticket.receiptLines.map(async line => {
+        if (line.product) {
+          return line;
+        }
+
         const product = await getProduct(line);
         const hasRelatedServices =
           line.qty <= 0 || product.productType === 'S'
             ? false
             : await getService(product);
         product.img = undefined;
+
         return { ...line, id: line.lineId, product, hasRelatedServices };
       })
     );
