@@ -239,6 +239,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "actionpreparation/AddProductApproval", "actionpreparation/CompleteLayawayApproval",
         "actionpreparation/CompleteTicketApproval", "actionpreparation/DeleteLineApproval",
         "actionpreparation/SetLinePriceApproval", "actionpreparation/ReturnLineApproval",
+        "actionpreparation/ReturnBlindTicketApproval",
 
         // States
         "actionstates/commonreceipt", "actionstates/commonwindow",
