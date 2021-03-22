@@ -554,7 +554,10 @@ enyo.kind({
                           }
                         },
                         {
-                          label: OB.I18N.getLabel('OBMOBC_LblCancel')
+                          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                          action: function() {
+                            enableButtonsCallback();
+                          }
                         }
                       ],
                       {
