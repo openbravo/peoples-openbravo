@@ -236,9 +236,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/rfidWebsocket",
 
         // Action Preparation
-        "actionpreparation/AddProduct", "actionpreparation/CompleteLayaway",
-        "actionpreparation/CompleteTicket", "actionpreparation/DeleteLine",
-        "actionpreparation/SetLinePrice",
+        "actionpreparation/AddProductApproval", "actionpreparation/CompleteLayawayApproval",
+        "actionpreparation/CompleteTicketApproval", "actionpreparation/DeleteLineApproval",
+        "actionpreparation/SetLinePriceApproval",
 
         // States
         "actionstates/commonreceipt", "actionstates/commonwindow",
