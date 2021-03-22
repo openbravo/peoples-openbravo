@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -13,7 +13,8 @@ module.exports = [
   {
     id: 'CD0EA49B0941ADFD933081E34CF9BEB9',
     type: 'backend',
-    modelName: 'Cash Up',
+    modelName: 'OBPOS_CashUp',
+    name: 'OBPOS_CashUp',
     service: 'org.openbravo.retail.posterminal.ProcessCashClose',
     time: 1593182307146,
     messageObj: {

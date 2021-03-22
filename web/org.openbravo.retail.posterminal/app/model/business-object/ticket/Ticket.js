@@ -55,3 +55,7 @@ if (!OB.App.StateBackwardCompatibility) {
     { isUndoable: true }
   );
 }
+
+OB.App.StateAPI.registerIdentifierForMessages('OBPOS_Order', message => {
+  return message.documentNo;
+});

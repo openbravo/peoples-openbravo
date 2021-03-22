@@ -134,7 +134,7 @@ describe('Complete Multi ticket action', () => {
       },
       Messages: [
         {
-          modelName: 'Order',
+          modelName: 'OBPOS_Order',
           service: 'org.openbravo.retail.posterminal.OrderLoader',
           type: 'backend',
           messageObj: {
@@ -159,7 +159,7 @@ describe('Complete Multi ticket action', () => {
           }
         },
         {
-          modelName: 'Order',
+          modelName: 'OBPOS_Order',
           service: 'org.openbravo.retail.posterminal.OrderLoader',
           type: 'backend',
           messageObj: {

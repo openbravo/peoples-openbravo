@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,9 +17,13 @@ OB.App.StateAPI.Global.registerAction(
   (state, payload) => {
     const newState = { ...state };
     const data = {
-      modelName: 'BusinessPartner',
+      modelName: 'OBPOS_BusinessPartner',
+      masterDataModelName: 'BusinessPartner',
       service: 'org.openbravo.retail.posterminal.CustomerLoader',
-      newObject: payload
+      newObject: payload,
+      extraProperties: {
+        name: 'OBPOS_LblCustomer'
+      }
     };
 
     const messages = OB.App.State.Messages.Utils.createMasterdataMessages(data);
@@ -45,5 +49,13 @@ OB.App.StateAPI.Global.registerAction(
 
     newState.Messages = [...newState.Messages, localMsg];
     return newState;
+  }
+);
+
+OB.App.StateAPI.registerIdentifierForMessages(
+  'OBPOS_BusinessPartner',
+  message => {
+    // eslint-disable-next-line no-underscore-dangle
+    return message._identifier;
   }
 );

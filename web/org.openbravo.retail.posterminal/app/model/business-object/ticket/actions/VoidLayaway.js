@@ -35,7 +35,7 @@
       newMessages = [
         ...newMessages,
         OB.App.State.Messages.Utils.createNewMessage(
-          'Order',
+          'OBPOS_Order',
           'org.openbravo.retail.posterminal.ProcessVoidLayaway',
           [
             {

@@ -117,6 +117,7 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                           if (currentOrder.documentNo) {
                             loadOrderStr =
                               OB.I18N.getLabel('OBPOS_Order') +
+                              ' ' +
                               currentOrder.documentNo +
                               OB.I18N.getLabel('OBPOS_Loaded');
                             OB.UTIL.showAlert.display(

@@ -38,4 +38,17 @@
       return newCashup;
     }
   });
+
+  OB.App.StateAPI.registerIdentifierForMessages('OBPOS_CashUp', message => {
+    return new Date(message.creationDate).toLocaleString();
+  });
+
+  OB.App.StateAPI.registerIdentifierForMessages(
+    'OBPOS_CashManagment',
+    message => {
+      return `${message.type}: ${message.user} - ${new Date(
+        message.creationDate
+      ).toLocaleString()}`;
+    }
+  );
 })();

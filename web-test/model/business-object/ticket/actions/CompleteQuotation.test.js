@@ -101,7 +101,7 @@ describe('Complete quotation action', () => {
       },
       Messages: [
         {
-          modelName: 'Order',
+          modelName: 'OBPOS_Order',
           service: 'org.openbravo.retail.posterminal.OrderLoader',
           type: 'backend',
           messageObj: {

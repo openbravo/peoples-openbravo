@@ -56,7 +56,7 @@ describe('SynchronizeBusinessPartner action', () => {
               name: 'test'
             }
           },
-          modelName: 'BusinessPartner',
+          modelName: 'OBPOS_BusinessPartner',
           service: 'org.openbravo.retail.posterminal.CustomerLoader',
           time: expect.any(Number),
           type: 'backend'

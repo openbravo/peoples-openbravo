@@ -13,12 +13,16 @@
       const { rejectReasonId } = payload;
 
       const rejectQuotationMessage = OB.App.State.Messages.Utils.createNewMessage(
-        'Reject Quotation',
+        'OBPOS_Order',
         'org.openbravo.retail.posterminal.QuotationsReject',
         {
           id: state.Ticket.id,
           orderid: state.Ticket.id,
           rejectReasonId
+        },
+        {
+          ...payload.extraProperties,
+          name: 'OBPOS_RejectQuotation'
         }
       );
       newState.Messages = [...newState.Messages, rejectQuotationMessage];

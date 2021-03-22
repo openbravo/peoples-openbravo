@@ -93,10 +93,13 @@
           newMessages = [
             ...newMessages,
             OB.App.State.Messages.Utils.createNewMessage(
-              'Order',
+              'OBPOS_Order',
               'org.openbravo.retail.posterminal.OrderLoader',
               [OB.App.State.Ticket.Utils.cleanTicket(newMultiTicket)],
-              payload.extraProperties
+              {
+                ...payload.extraProperties,
+                name: 'OBPOS_Order'
+              }
             )
           ];
         }

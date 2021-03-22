@@ -99,9 +99,13 @@
           data: [newCashup]
         };
         const newMessage = OB.App.State.Messages.Utils.createNewMessage(
-          'Cash Up',
+          'OBPOS_CashUp',
           'org.openbravo.retail.posterminal.ProcessCashClose',
-          newMessagePayload
+          newMessagePayload,
+          {
+            ...payload.extraProperties,
+            name: 'OBPOS_CashUp'
+          }
         );
         newState.Messages = [...newState.Messages, newMessage];
       }

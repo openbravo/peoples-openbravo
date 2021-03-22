@@ -92,7 +92,7 @@ describe('Complete Layaway action', () => {
       },
       Messages: [
         {
-          modelName: 'Order',
+          modelName: 'OBPOS_Order',
           service: 'org.openbravo.retail.posterminal.OrderLoader',
           type: 'backend',
           messageObj: {

@@ -41,10 +41,13 @@
       newMessages = [
         ...newMessages,
         OB.App.State.Messages.Utils.createNewMessage(
-          'Order',
+          'OBPOS_Order',
           'org.openbravo.retail.posterminal.CancelLayawayLoader',
           [OB.App.State.Ticket.Utils.cleanTicket(newTicket)],
-          payload.extraProperties
+          {
+            ...payload.extraProperties,
+            name: 'OBPOS_Order'
+          }
         )
       ];
 

@@ -72,7 +72,7 @@ describe('Cashup - process Cash Management State Action', () => {
     expect(paymentInfo.totalDrops).toEqual(0);
     expect(result.Messages).toHaveLength(1);
     const message = result.Messages[0];
-    expect(message.modelName).toEqual('Cash Management');
+    expect(message.modelName).toEqual('OBPOS_CashManagment');
     const messageData = message.messageObj.data[0];
     expect(messageData.amount).toEqual(1);
     expect(messageData.paymentMethodId).toEqual(

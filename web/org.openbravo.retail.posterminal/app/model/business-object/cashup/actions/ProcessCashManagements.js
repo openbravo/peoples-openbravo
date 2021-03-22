@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -92,9 +92,13 @@
             data: [cashManagementToProcess]
           };
           const newMessage = OB.App.State.Messages.Utils.createNewMessage(
-            'Cash Management',
+            'OBPOS_CashManagment',
             'org.openbravo.retail.posterminal.ProcessCashMgmt',
-            newMessagePayload
+            newMessagePayload,
+            {
+              ...newMessagePayload.extraProperties,
+              name: 'OBPOS_CashMgmt'
+            }
           );
           newState.Messages = [...newState.Messages, newMessage];
         });
