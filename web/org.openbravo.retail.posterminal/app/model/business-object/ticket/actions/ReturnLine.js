@@ -130,9 +130,11 @@
     }
 
     if (line.product.productType === 'S') {
-      const notSelectedRelatedProduct = line.relatedLines.find(
-        l => !payload.lineIds.includes(l.id)
-      );
+      const notSelectedRelatedProduct =
+        line.relatedLines &&
+        line.relatedLines.some(
+          relatedLine => !payload.lineIds.includes(relatedLine.orderlineId)
+        );
       if (notSelectedRelatedProduct) {
         throw new OB.App.Class.ActionCanceled({
           title: 'OBPOS_UnreturnableRelatedService',
@@ -146,6 +148,7 @@
         l =>
           !payload.lineIds.includes(l.id) &&
           !l.product.returnable &&
+          l.relatedLines &&
           l.relatedLines.some(
             relatedLine => relatedLine.orderlineId === line.id
           )
