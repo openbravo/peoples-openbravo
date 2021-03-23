@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2021 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -131,7 +131,7 @@
       WHERE c.AD_Column_ID=f.AD_Column_ID  AND c.AD_Table_ID=v_AD_Table_ID  AND f.AD_Tab_ID=v_Record_ID
       )
       AND c.AD_Table_ID=v_AD_Table_ID  AND c.AD_Table_ID=t.AD_Table_ID  -- added by Pablo Sarobe
-	  AND utc.table_name = t.tablename AND utc.column_name = c.Columnname
+	  AND utc.table_name = UPPER(t.tablename) AND utc.column_name = UPPER(c.Columnname)
       AND UPPER(c.Columnname) NOT IN ('CREATED', 'UPDATED', 'CREATEDBY', 'UPDATEDBY') AND c.IsActive='Y'
 	  AND utc.data_type <> 'TSVECTOR'
     ORDER BY POSITION)
