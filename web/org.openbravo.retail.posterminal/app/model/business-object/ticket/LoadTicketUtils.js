@@ -304,6 +304,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         locName: (invoicingLocation || shippingLocation).name,
         postalCode: (invoicingLocation || shippingLocation).postalCode,
         cityName: (invoicingLocation || shippingLocation).cityName,
+        countryId: (invoicingLocation || shippingLocation).countryId,
         countryName: (invoicingLocation || shippingLocation).countryName,
         regionId: (invoicingLocation || shippingLocation).regionId,
         locationModel: shippingLocation,
