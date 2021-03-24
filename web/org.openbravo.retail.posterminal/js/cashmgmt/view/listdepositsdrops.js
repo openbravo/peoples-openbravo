@@ -272,88 +272,84 @@ enyo.kind({
 
     this.$.theList.setCollection(transactionsCollection);
 
-    if (!this.model.attributes.issafebox) {
-      this.$.availableLbl.setContent(
-        OB.I18N.getLabel('OBPOS_LblNewAvailableIn') +
-          ' ' +
-          this.model.get('name')
-      );
+    this.$.availableLbl.setContent(
+      OB.I18N.getLabel('OBPOS_LblNewAvailableIn') + ' ' + this.model.get('name')
+    );
 
-      if (OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId)) {
-        this.model.set('total', total, {
-          silent: true // prevents triggering change event
-        });
-        this.$.total.setTotal(total);
-      } else {
-        var foreignTotal = OB.UTIL.currency.toDefaultCurrency(
-          fromCurrencyId,
-          total
-        );
-        this.model.set('total', foreignTotal, {
-          silent: true // prevents triggering change event
-        });
-        this.$.total.setTotal(foreignTotal);
-        if (foreignTotal > 0) {
-          this.$.foreignTotal.setTextForeignTotal(
-            '(' +
-              OB.I18N.formatCurrency(total) +
-              ' ' +
-              this.model.get('isocode') +
-              ')'
-          );
-          this.$.foreignTotal.setForeignTotal(total);
-        }
-      }
-
-      this.$.startingCashPayName.setContent(
-        OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('name')
-      );
-      var startingCash = OB.DEC.add(0, this.model.get('startingCash'));
-      this.$.startingCashAmnt.setContent(
-        OB.I18N.formatCurrency(
-          OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, startingCash)
-        )
-      );
-      if (
-        OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId) === false &&
-        startingCash > 0
-      ) {
-        this.$.startingCashForeignAmnt.setContent(
-          '(' +
-            OB.I18N.formatCurrency(startingCash) +
-            ' ' +
-            this.model.get('isocode') +
-            ')'
-        );
-      }
-
-      this.$.tenderedLbl.setContent(
-        OB.I18N.getLabel('OBPOS_LblTotalTendered') +
-          ' ' +
-          this.model.get('name')
-      );
-      var totalSalesReturns = OB.DEC.add(
-        0,
-        OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns'))
-      );
-      if (
-        OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId) === false &&
-        totalSalesReturns > 0
-      ) {
-        this.$.tenderedForeignAmnt.setContent(
-          '(' +
-            OB.I18N.formatCurrency(totalSalesReturns) +
-            ' ' +
-            this.model.get('isocode') +
-            ')'
-        );
-      }
-      this.$.tenderedAmnt.setContent(
-        OB.I18N.formatCurrency(
-          OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, totalSalesReturns)
-        )
-      );
+    if (OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId)) {
+      this.model.set('total', total, {
+        silent: true // prevents triggering change event
+      });
+      this.$.total.setTotal(total);
     } else {
+      var foreignTotal = OB.UTIL.currency.toDefaultCurrency(
+        fromCurrencyId,
+        total
+      );
+      this.model.set('total', foreignTotal, {
+        silent: true // prevents triggering change event
+      });
+      this.$.total.setTotal(foreignTotal);
+      if (foreignTotal > 0) {
+        this.$.foreignTotal.setTextForeignTotal(
+          '(' +
+            OB.I18N.formatCurrency(total) +
+            ' ' +
+            this.model.get('isocode') +
+            ')'
+        );
+        this.$.foreignTotal.setForeignTotal(total);
+      }
+    }
+
+    this.$.startingCashPayName.setContent(
+      OB.I18N.getLabel('OBPOS_LblStarting') + ' ' + this.model.get('name')
+    );
+    var startingCash = OB.DEC.add(0, this.model.get('startingCash'));
+    this.$.startingCashAmnt.setContent(
+      OB.I18N.formatCurrency(
+        OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, startingCash)
+      )
+    );
+    if (
+      OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId) === false &&
+      startingCash > 0
+    ) {
+      this.$.startingCashForeignAmnt.setContent(
+        '(' +
+          OB.I18N.formatCurrency(startingCash) +
+          ' ' +
+          this.model.get('isocode') +
+          ')'
+      );
+    }
+
+    this.$.tenderedLbl.setContent(
+      OB.I18N.getLabel('OBPOS_LblTotalTendered') + ' ' + this.model.get('name')
+    );
+    var totalSalesReturns = OB.DEC.add(
+      0,
+      OB.DEC.sub(this.model.get('totalSales'), this.model.get('totalReturns'))
+    );
+    if (
+      OB.UTIL.currency.isDefaultCurrencyId(fromCurrencyId) === false &&
+      totalSalesReturns > 0
+    ) {
+      this.$.tenderedForeignAmnt.setContent(
+        '(' +
+          OB.I18N.formatCurrency(totalSalesReturns) +
+          ' ' +
+          this.model.get('isocode') +
+          ')'
+      );
+    }
+    this.$.tenderedAmnt.setContent(
+      OB.I18N.formatCurrency(
+        OB.UTIL.currency.toDefaultCurrency(fromCurrencyId, totalSalesReturns)
+      )
+    );
+
+    if (this.model.attributes.issafebox) {
       this.$.startingCashPayName.parent.setStyle('display:none');
       this.$.availableLbl.parent.setStyle('display:none');
       this.$.tenderedLbl.parent.setStyle('display:none');
