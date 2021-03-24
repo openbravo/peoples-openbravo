@@ -9,6 +9,7 @@
 
 require('../SetupTicket');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/ReturnLine');
+require('../SetupTicketUtils');
 const deepfreeze = require('deepfreeze');
 
 describe('returnLine', () => {
@@ -57,4 +58,28 @@ describe('returnLine', () => {
     const newTicket = OB.App.StateAPI.Ticket.returnLine(ticket, payload);
     expect(newTicket).toStrictEqual(result);
   });
+
+  test.each`
+    lines                     | lineIds  | notAllowSalesWithReturn | result
+    ${[]}                     | ${[]}    | ${false}                | ${{ lines: [] }}
+    ${[]}                     | ${[]}    | ${true}                 | ${{ orderType: 0, documentType: 'O', lines: [] }}
+    ${[{ id: '1', qty: 1 }]}  | ${[]}    | ${true}                 | ${{ orderType: 0, documentType: 'O', lines: [{ id: '1', qty: 1 }] }}
+    ${[{ id: '1', qty: -1 }]} | ${[]}    | ${true}                 | ${{ orderType: 1, documentType: 'R', lines: [{ id: '1', qty: -1 }] }}
+    ${[{ id: '1', qty: 1 }]}  | ${['1']} | ${true}                 | ${{ orderType: 1, documentType: 'R', lines: [{ id: '1', qty: -1 }] }}
+    ${[{ id: '1', qty: -1 }]} | ${['1']} | ${true}                 | ${{ orderType: 0, documentType: 'O', lines: [{ id: '1', qty: 1 }] }}
+  `(
+    'should change ticket type',
+    ({ lines, lineIds, notAllowSalesWithReturn, result }) => {
+      const ticket = deepfreeze({ lines });
+      const payload = deepfreeze({
+        lineIds,
+        preferences: { notAllowSalesWithReturn },
+        terminal: {
+          terminalType: { documentType: 'O', documentTypeForReturns: 'R' }
+        }
+      });
+      const newTicket = OB.App.StateAPI.Ticket.returnLine(ticket, payload);
+      expect(newTicket).toStrictEqual(result);
+    }
+  );
 });
