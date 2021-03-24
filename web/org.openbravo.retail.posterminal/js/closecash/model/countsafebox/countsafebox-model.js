@@ -427,6 +427,8 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
     processAndFinish: function() {
       OB.UTIL.showLoading(true);
 
+      var me = this;
+
       const currentSafeBox = JSON.parse(
           OB.UTIL.localStorage.getItem('currentSafeBox')
         ),
@@ -480,11 +482,11 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
         .then(sync => {
           const callbackFinishedSuccess = () => {
             OB.UTIL.showLoading(true);
-            this.set('finished', true);
+            me.set('finished', true);
             if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
               var cashUpReport = new OB.Model.CashUp(),
-                countCashSummary = this.getCountCashSummary();
-              OB.UTIL.clone(this.get('closeCashReport').at(0), cashUpReport);
+                countCashSummary = me.getCountCashSummary();
+              OB.UTIL.clone(me.get('closeCashReport').at(0), cashUpReport);
               if (
                 OB.MobileApp.model.hasPermission(
                   'OBPOS_retail.cashupRemoveUnusedPayment',
