@@ -998,6 +998,16 @@
      */
     getLineToEdit(ticket, productInfo) {
       const { product, qty, options, attrs } = productInfo;
+
+      if (attrs.isVerifiedReturn) {
+        return ticket.lines.find(
+          l =>
+            l.originalOrderLineId &&
+            l.originalOrderLineId === attrs.originalOrderLineId &&
+            l.shipmentlineId === attrs.shipmentlineId
+        );
+      }
+
       if (product.obposScale || !product.groupProduct) {
         return undefined;
       }
@@ -1008,15 +1018,6 @@
 
       if (options.line) {
         return ticket.lines.find(l => l.id === options.line);
-      }
-
-      if (attrs.isVerifiedReturn) {
-        return ticket.lines.find(
-          l =>
-            l.originalOrderLineId &&
-            l.originalOrderLineId === attrs.originalOrderLineId &&
-            l.shipmentlineId === attrs.shipmentlineId
-        );
       }
 
       const attributeValue =
