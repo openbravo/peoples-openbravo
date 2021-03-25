@@ -41,6 +41,9 @@
       <text><%= OB.UTIL.encodeXMLComponent(ticket['posTerminal$_identifier']) %></text>
     </line>
     <line>
+      <%
+        const terminal = OB.App.TerminalProperty.get('terminal');
+      %>
       <text align="left" length="22"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTaxId')) %></text>
       <text><%= OB.UTIL.encodeXMLComponent(terminal.organizationTaxId) %></text>
     </line>
