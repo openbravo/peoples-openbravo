@@ -10,8 +10,14 @@
 /* global global */
 global.OB = {
   App: {
+    StateBackwardCompatibility: { setProperties: jest.fn() },
     Class: {},
-    UUID: { generate: jest.fn() }
+    Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
+    UUID: { generate: jest.fn() },
+    StockChecker: { hasStock: jest.fn() }
+  },
+  UTIL: {
+    HookManager: { registerHook: jest.fn() }
   }
 };
 
@@ -19,7 +25,11 @@ global.lodash = require('../../../../../org.openbravo.mobile.core/web/org.openbr
 require('../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
+require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/exception/TranslatableError');
+require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionCanceled');
+require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionSilentlyCanceled');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/util/ArrayUtils');
+require('../../../../web/org.openbravo.retail.posterminal/app/model/business-logic/stock/StockChecker');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
 require('../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CompleteTicketUtils');
