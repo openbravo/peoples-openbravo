@@ -33,7 +33,7 @@ const expectActionPreparationError = async (ticket, payload, expectedError) => {
   }
 };
 
-describe('Ticket.setQuantity action preparation', () => {
+describe('returnLine action preparation', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
