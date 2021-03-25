@@ -6,7 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/* global global */
+/* global global __dirname */
 
 global.OB = {
   App: {
@@ -26,11 +26,11 @@ global.OB = {
 
 global.lodash = require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
 require('../../../web/org.openbravo.retail.posterminal/app/external-device/printing/PrintTemplate');
+const getPrintTemplateMock = require('./PrintTemplateMock');
 const fs = require('fs');
 const path = require('path');
 
 function getFileContent(fileName) {
-  // eslint-disable-next-line no-undef
   return fs.readFileSync(path.resolve(__dirname, './', fileName), 'utf-8');
 }
 
@@ -41,14 +41,8 @@ describe('PrintTemplate', () => {
 
   it('generate', async () => {
     const ticket = { grossAmount: 23 };
-    const printTemplate = new OB.App.Class.PrintTemplate(
-      'testTemplate',
-      '../org.openbravo.retail.posterminal/res/template.xml'
-    );
+    const printTemplate = getPrintTemplateMock('template.xml');
 
-    printTemplate.getData = jest
-      .fn()
-      .mockResolvedValue(getFileContent('template.xml'));
     OB.UTIL.encodeXMLComponent.mockImplementation(value => value);
     OB.I18N.getLabel.mockReturnValue('Total');
 
