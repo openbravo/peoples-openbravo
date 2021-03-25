@@ -14,7 +14,11 @@ global.OB = {
     Class: {},
     Security: { hasPermission: jest.fn(), requestApprovalForAction: jest.fn() },
     UUID: { generate: jest.fn() },
-    StockChecker: { hasStock: jest.fn() }
+    StockChecker: { hasStock: jest.fn() },
+    View: {
+      DialogUIHandler: { askConfirmation: jest.fn(), inputData: jest.fn() }
+    },
+    UserNotifier: { notifyWarning: jest.fn() }
   },
   UTIL: {
     HookManager: { registerHook: jest.fn() }
