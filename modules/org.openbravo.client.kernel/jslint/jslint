@@ -11,7 +11,7 @@
 # * under the License.
 # * The Original Code is Openbravo ERP.
 # * The Initial Developer of the Original Code is Openbravo SLU
-# * All portions are Copyright (C) 2019 Openbravo SLU
+# * All portions are Copyright (C) 2019-2021 Openbravo SLU
 # * All Rights Reserved.
 # * Contributor(s):  ______________________________________.
 # ************************************************************************
@@ -74,12 +74,22 @@ function lintFiles {
     fi
 }
 
+function getWebJspackIgnorePatterns {
+    PATTERNS=""
+    CORE_2_PATH=modules/org.openbravo.core2
+    if  [ ! -d "$CORE_2_PATH" ]; then
+        PATTERNS="${PATTERNS} --ignore-pattern **/web-jspack/*"
+    fi
+    echo "${PATTERNS}"
+}
+
+
 function getEslintIgnorePatterns {
     PATTERNS=""
     for mod in ${@} ; do
         PATTERNS="${PATTERNS} --ignore-pattern $(basename ${mod})"
     done
-
+    PATTERNS="${PATTERNS} $(getWebJspackIgnorePatterns)"
     echo "${PATTERNS}"
 }
 
@@ -89,7 +99,6 @@ function lintAllFiles {
         MODS_WITH_IGNORE=$(getModulesPathWithIgnoreFile ".eslintignore")
         MODS_COMPLETELY_IGNORED=$(getModulesPathWithIgnoreFile ".jsignore")
         IGNORE_PATTERNS=$(getEslintIgnorePatterns "${MODS_WITH_IGNORE}" "${MODS_COMPLETELY_IGNORED}")
-
         runLinterInCore  ${SCAN_BASE_PATH} "${IGNORE_PATTERNS}" "${FLAGS}"
         for mod in ${MODS_WITH_IGNORE} ; do
             runLinterInModule  ${mod} "${FLAGS}"
@@ -114,12 +123,14 @@ function runLinterInModule {
         IGNORE_PATH="--ignore-path ${BASE}/.eslintignore"
     fi
 
+    IGNORE_PATTERNS=$(getWebJspackIgnorePatterns)
+
     if [[ -f "${BASE}/.jsignore" ]]; then
         exit 0
     fi
 
     echo "Lint check for module $(basename ${BASE})"
-    npm run jslint --prefix ${OPENBRAVO_ROOT_PATH} -s -- ${LINTER_FLAGS} ${IGNORE_PATH} "${BASE}"
+    npm run jslint --prefix ${OPENBRAVO_ROOT_PATH} -s -- ${LINTER_FLAGS} ${IGNORE_PATH} ${IGNORE_PATTERNS} --no-error-on-unmatched-pattern "${BASE}"
 }
 
 #Parse input arguments
