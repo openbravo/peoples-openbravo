@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -700,6 +700,7 @@
                 // Update Manual promotions
                 const manualPromotions = [];
                 const byTotalManualPromotions = [];
+                const manuallyAppliedPromotions = [];
                 order.get('lines').models.forEach(line => {
                   line.get('promotions').forEach(p => {
                     if (p.manual) {
@@ -721,7 +722,8 @@
                         discountinstance: p.obposDiscountinstance,
                         noOrder:
                           manualPromotions.length +
-                          byTotalManualPromotions.length
+                          byTotalManualPromotions.length +
+                          manuallyAppliedPromotions.length
                       };
                       if (discountRule.getAmountProperty()) {
                         addPromotion[discountRule.getAmountProperty()] =
@@ -749,6 +751,18 @@
                           addPromotion.linesToApply = [line.get('id')];
                           byTotalManualPromotions.push(addPromotion);
                         }
+                      } else if (discountRule.isExternal) {
+                        const manualPromo = manuallyAppliedPromotions.find(
+                          tP =>
+                            tP.ruleId === p.ruleId &&
+                            tP.discountinstance === p.obposDiscountinstance
+                        );
+                        if (manualPromo) {
+                          manualPromo.linesToApply.push(line.get('id'));
+                        } else {
+                          addPromotion.linesToApply = [line.get('id')];
+                          manuallyAppliedPromotions.push(addPromotion);
+                        }
                       } else {
                         const manualPromo = manualPromotions.find(
                           mP =>
@@ -767,7 +781,8 @@
                 });
                 order.set('discountsFromUser', {
                   manualPromotions: manualPromotions,
-                  bytotalManualPromotions: byTotalManualPromotions
+                  bytotalManualPromotions: byTotalManualPromotions,
+                  manuallyAppliedPromotions: manuallyAppliedPromotions
                 });
 
                 order.set('json', JSON.stringify(order.toJSON()));

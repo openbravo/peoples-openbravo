@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -412,30 +412,27 @@ enyo.kind({
 
   getMaxNoOrder: function(receipt) {
     let maxNoOrder = 0;
-
-    if (receipt.get('discountsFromUser')) {
-      if (receipt.get('discountsFromUser').manualPromotions) {
-        const manualPromotions = receipt.get('discountsFromUser')
-          .manualPromotions;
-        manualPromotions.forEach(manualPromotion => {
-          const noOrder = manualPromotion.noOrder || 0;
-          if (noOrder > maxNoOrder) {
-            maxNoOrder = noOrder;
-          }
-        });
-      }
-
-      if (receipt.get('discountsFromUser').bytotalManualPromotions) {
-        const bytotalManualPromotions = receipt.get('discountsFromUser')
-          .bytotalManualPromotions;
-        bytotalManualPromotions.forEach(bytotalManualPromotion => {
-          const noOrder = bytotalManualPromotion.noOrder || 0;
-          if (noOrder > maxNoOrder) {
-            maxNoOrder = noOrder;
-          }
-        });
-      }
+    if (!receipt.get('discountsFromUser')) {
+      return maxNoOrder;
     }
+
+    const promoToUpdate = [
+      'manualPromotions',
+      'bytotalManualPromotions',
+      'manuallyAppliedPromotions'
+    ];
+    promoToUpdate.forEach(function(promoName) {
+      const promotions = receipt.get('discountsFromUser')[promoName];
+      if (!promotions || promotions.length === 0) {
+        return;
+      }
+      promotions.forEach(promotion => {
+        const noOrder = promotion.noOrder || 0;
+        if (noOrder > maxNoOrder) {
+          maxNoOrder = noOrder;
+        }
+      });
+    });
 
     return maxNoOrder;
   },

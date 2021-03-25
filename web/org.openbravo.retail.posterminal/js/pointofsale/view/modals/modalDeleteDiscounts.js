@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2020 Openbravo S.L.U.
+ * Copyright (C) 2018-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -236,38 +236,30 @@ enyo.kind({
         this.args.selectedLines.forEach(selectedLine => {
           selectedLines.push(selectedLine.get('id'));
         });
-        if (
-          receipt.get('discountsFromUser') &&
-          receipt.get('discountsFromUser').manualPromotions
-        ) {
-          const manualPromotion = receipt
-            .get('discountsFromUser')
-            .manualPromotions.find(manualPromotion => {
-              return (
-                promotionObj.ruleId === manualPromotion.ruleId &&
-                promotionObj.discountinstance ===
-                  manualPromotion.discountinstance
-              );
-            });
-          if (manualPromotion) {
-            let linesToApply = [...manualPromotion.linesToApply];
+        const promoToUpdate = ['manualPromotions', 'manuallyAppliedPromotions'];
+        promoToUpdate.forEach(function(promoName) {
+          const promotions = receipt.get('discountsFromUser')[promoName];
+          if (!receipt.get('discountsFromUser') || !promotions) {
+            return;
+          }
+          const promotion = promotions.find(promotion => {
+            return (
+              promotionObj.ruleId === promotion.ruleId &&
+              promotionObj.discountinstance === promotion.discountinstance
+            );
+          });
+          if (promotion) {
+            let linesToApply = [...promotion.linesToApply];
             for (let j = 0; j < selectedLines.length; j++) {
               linesToApply.splice(linesToApply.indexOf(selectedLines[j]), 1);
             }
             if (linesToApply.length === 0) {
-              receipt
-                .get('discountsFromUser')
-                .manualPromotions.splice(
-                  receipt
-                    .get('discountsFromUser')
-                    .manualPromotions.indexOf(manualPromotion),
-                  1
-                );
+              promotions.splice(promotions.indexOf(promotion), 1);
             } else {
-              manualPromotion.linesToApply = linesToApply;
+              promotion.linesToApply = linesToApply;
             }
           }
-        }
+        });
       }
     }
     if (this.args.context) {
