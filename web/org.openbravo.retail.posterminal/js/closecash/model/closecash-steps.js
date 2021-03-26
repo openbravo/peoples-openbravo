@@ -49,7 +49,7 @@ enyo.kind({
     return false;
   },
   allowNext: function() {
-    const paymentList = this.model.get(
+    let paymentList = this.model.get(
       OB.MobileApp.model.hasPermission(
         'OBPOS_retail.cashupGroupExpectedPayment',
         true
@@ -57,6 +57,11 @@ enyo.kind({
         ? 'paymentExpectedList'
         : 'paymentList'
     );
+
+    if (paymentList.length === 0 && this.model.has('safeBoxesList')) {
+      paymentList = this.model.get('paymentList');
+    }
+
     return paymentList.models.reduce((allCounted, model) => {
       return (
         allCounted &&
