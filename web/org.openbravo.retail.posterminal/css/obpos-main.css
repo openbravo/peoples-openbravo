@@ -8005,11 +8005,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 .obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper {}
 
 .obObposPointOfSaleUiRightBottomPanelWrapper-keyboardWrapper-keyboard {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: calc(25% - var(--panel-components-separation)) calc(75% - var(--panel-components-separation));
-  column-gap: calc(2 * var(--panel-components-separation));
-
   box-sizing: border-box;
   height: var(--keypad-height);
   padding: var(--panel-components-separation) var(--panel-outer-side-padding) var(--panel-bottom-padding) var(--panel-inner-side-padding);
@@ -12659,11 +12654,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Inherits: [OB.UI.MultiColumn.Keyboard]
 */
 .obObposcashmgmtUiCashMgmtKeyboard {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: calc(25% - var(--panel-components-separation)) calc(75% - var(--panel-components-separation));
-  column-gap: calc(2 * var(--panel-components-separation));
-
   box-sizing: border-box;
   height: var(--keypad-height);
   padding: var(--panel-components-separation) var(--panel-outer-side-padding) var(--panel-bottom-padding) var(--panel-inner-side-padding);
@@ -13584,11 +13574,6 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
 # Component: OB.OBPOSCashUp.UI.CashUpKeyboard
 */
 .obObposCloseCashUiCloseCashKeyboard {
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-columns: calc(25% - var(--panel-components-separation)) calc(75% - var(--panel-components-separation));
-  column-gap: calc(2 * var(--panel-components-separation));
-
   box-sizing: border-box;
   height: var(--keypad-height);
   padding: var(--panel-components-separation) var(--panel-outer-side-padding) var(--panel-bottom-padding) var(--panel-inner-side-padding);
