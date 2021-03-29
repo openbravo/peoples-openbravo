@@ -423,7 +423,6 @@
           grossUnitPrice,
           grossUnitAmount,
           baseNetUnitPrice,
-          netUnitPrice,
           netUnitAmount,
           qty
         } = line;
@@ -435,7 +434,7 @@
               : undefined,
             netUnitAmount: priceIncludesTax
               ? undefined
-              : netUnitAmount || OB.DEC.mul(netUnitPrice, qty)
+              : netUnitAmount || OB.DEC.mul(baseNetUnitPrice, qty)
           };
         }
         const discounts = line.skipApplyPromotions
