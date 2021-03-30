@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -3006,7 +3006,7 @@ enyo.kind({
                 reverseCallback: function() {
                   me.deleting = false;
                   me.removeClass(
-                    'obobObposPointOfSaleUiReversePayment_iconLoading'
+                    'obObposPointOfSaleUiReversePayment_iconLoading'
                   );
                   me.addClass(
                     'obObposPointOfSaleUiReversePayment_iconReversePayment'
