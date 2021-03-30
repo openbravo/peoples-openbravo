@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2021 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="InsertNewStateActionsPreferenceData" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="dummy" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          SELECT 1 AS dummy FROM DUAL
+        ]]>
+      </Sql>
+  </SqlMethod>
+  <SqlMethod name="insertNewStateActionsPreference" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        <![CDATA[
+          INSERT INTO AD_PREFERENCE
+          (AD_PREFERENCE_ID,AD_CLIENT_ID,AD_ORG_ID,ISACTIVE,CREATED,CREATEDBY,UPDATED,UPDATEDBY,AD_WINDOW_ID,AD_USER_ID,ATTRIBUTE,VALUE,PROPERTY,ISPROPERTYLIST,VISIBLEAT_CLIENT_ID,VISIBLEAT_ORG_ID,VISIBLEAT_ROLE_ID,SELECTED,AD_MODULE_ID) 
+          VALUES (get_uuid(),'0','0','Y',now(),'100',now(),'100',null,null,null,'Y','OBPOS_NewStateActions','Y',null,null,null,'N',null)
+        ]]>
+      </Sql>
+  </SqlMethod>
+</SqlClass>

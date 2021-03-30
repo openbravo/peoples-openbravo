@@ -68,28 +68,82 @@
         return active;
       },
       command: async function(view) {
-        OB.MobileApp.model.receipt.set('preventServicesUpdate', true);
-
-        try {
-          await OB.App.State.Ticket.returnLine(
-            OB.UTIL.TicketUtils.addTicketCreationDataToPayload({
-              lineIds: view.state
-                .readCommandState({
-                  name: 'selectedReceiptLines'
-                })
-                .map(line => line.id)
-            })
-          );
-        } catch (error) {
-          OB.App.View.ActionCanceledUIHandler.handle(error);
+        // Run new ReturnLine state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
+        if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
+          OB.MobileApp.model.receipt.set('preventServicesUpdate', true);
+          try {
+            await OB.App.State.Ticket.returnLine(
+              OB.UTIL.TicketUtils.addTicketCreationDataToPayload({
+                lineIds: view.state
+                  .readCommandState({
+                    name: 'selectedReceiptLines'
+                  })
+                  .map(line => line.id)
+              })
+            );
+          } catch (error) {
+            OB.App.View.ActionCanceledUIHandler.handle(error);
+          }
+          OB.MobileApp.model.receipt.unset('preventServicesUpdate');
+          OB.MobileApp.model.receipt.get('lines').trigger('updateRelations');
+          OB.MobileApp.model.receipt.trigger('updateView');
+          OB.MobileApp.model.receipt.trigger('paintTaxes');
+          view.waterfall('onRearrangedEditButtonBar');
+          return;
         }
 
-        OB.MobileApp.model.receipt.unset('preventServicesUpdate');
-        OB.MobileApp.model.receipt.get('lines').trigger('updateRelations');
-        OB.MobileApp.model.receipt.trigger('updateView');
-        OB.MobileApp.model.receipt.trigger('paintTaxes');
+        var receipt = view.model.get('order');
+        var selectedReceiptLines = view.state.readCommandState({
+          name: 'selectedReceiptLines'
+        });
 
-        view.waterfall('onRearrangedEditButtonBar');
+        if (
+          receipt.get('replacedorder') &&
+          _.find(selectedReceiptLines, function(l) {
+            l.get('remainingQuantity');
+          })
+        ) {
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBMOBC_Error'),
+            OB.I18N.getLabel('OBPOS_CancelReplaceReturnLines')
+          );
+          return;
+        }
+
+        receipt.checkReturnableProducts(
+          selectedReceiptLines,
+          view.model,
+          function(success) {
+            if (!success) {
+              return;
+            }
+            //The value of qty need to be negate because we want to change it
+            if (
+              receipt.validateAllowSalesWithReturn(
+                -1,
+                false,
+                selectedReceiptLines
+              )
+            ) {
+              view.waterfall('onRearrangedEditButtonBar');
+              return;
+            }
+            receipt.set('undo', null);
+            receipt.set('multipleUndo', true);
+            receipt.set('preventServicesUpdate', true);
+            _.each(selectedReceiptLines, function(line) {
+              if (!line.get('relatedLines')) {
+                view.returnLine(view, {
+                  line: line
+                });
+              }
+            });
+            receipt.unset('preventServicesUpdate');
+            receipt.get('lines').trigger('updateRelations');
+            receipt.set('multipleUndo', null);
+            view.waterfall('onRearrangedEditButtonBar');
+          }
+        );
       }
     })
   );

@@ -59,21 +59,34 @@
         return active;
       },
       command: async function(view) {
-        try {
-          await OB.App.State.Ticket.returnBlindTicket(
-            OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
-          );
-        } catch (error) {
-          OB.App.View.ActionCanceledUIHandler.handle(error);
+        // Run new ReturnBlindTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
+        if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
+          try {
+            await OB.App.State.Ticket.returnBlindTicket(
+              OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
+            );
+          } catch (error) {
+            OB.App.View.ActionCanceledUIHandler.handle(error);
+          }
+          OB.MobileApp.model.receipt.trigger('updateView');
+          OB.MobileApp.model.receipt.trigger('paintTaxes');
+          if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
+            OB.MobileApp.model.receipt.trigger('scan');
+          }
+          view.waterfall('onRearrangedEditButtonBar', {
+            permission: this.permission,
+            orderType: 1
+          });
+          return;
         }
 
-        OB.MobileApp.model.receipt.trigger('updateView');
-        OB.MobileApp.model.receipt.trigger('paintTaxes');
-
+        view.showDivText(this, {
+          permission: this.permission,
+          orderType: 1
+        });
         if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
-          OB.MobileApp.model.receipt.trigger('scan');
+          view.model.get('order').trigger('scan');
         }
-
         view.waterfall('onRearrangedEditButtonBar', {
           permission: this.permission,
           orderType: 1
