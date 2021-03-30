@@ -18,8 +18,8 @@
 
 CORE_2_PATH=modules/org.openbravo.core2
 if [ -d "$CORE_2_PATH" ]; then
-  jest $@
+  jest $@ --passWithNoTests
 else
   echo "org.openbravo.core2 not installed, ignoring web-jspack tests"
-  jest $@ --testPathIgnorePatterns=web-jspack
+  jest $@ --testPathIgnorePatterns=web-jspack --passWithNoTests
 fi
