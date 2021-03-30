@@ -99,14 +99,19 @@
       ) {
         newMessages = [
           ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket)
+          OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket, {
+            forcedtemplate: payload.forcedtemplate
+          })
         ];
       }
       if (newTicket.calculatedInvoice) {
         newMessages = [
           ...newMessages,
           OB.App.State.Messages.Utils.createPrintTicketMessage(
-            newTicket.calculatedInvoice
+            newTicket.calculatedInvoice,
+            {
+              forcedtemplate: payload.forcedtemplate
+            }
           )
         ];
       }
