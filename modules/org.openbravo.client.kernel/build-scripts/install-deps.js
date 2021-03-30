@@ -17,7 +17,7 @@
  ************************************************************************
  */
 /* eslint-disable no-console */
-/* eslint-disable no-undef */
+/* global process */
 
 /**
  * node script that installs the npm dependencies defined in the package.json of the Openbravo root and
@@ -69,8 +69,11 @@ getModules()
       path.resolve(modulesDir, module),
       path.resolve(modulesDir, module, WEB_JSPACK, module)
     ];
-    packageJsonPaths.forEach(packageJsonPath => {
-      if (fs.existsSync(path.resolve(packageJsonPath, PACKAGE_JSON))) {
+    packageJsonPaths
+      .filter(packageJsonPath =>
+        fs.existsSync(path.resolve(packageJsonPath, PACKAGE_JSON))
+      )
+      .forEach(packageJsonPath => {
         fs.mkdirSync(`${packageJsonPath}/node_modules`, {
           recursive: true
         });
@@ -83,8 +86,7 @@ getModules()
         if (!production) {
           linkDependenciesInBaseNodeModules(module, packageJsonPath);
         }
-      }
-    });
+      });
   });
 
 function validateDependencies() {

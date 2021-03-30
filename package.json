@@ -1,7 +1,5 @@
 {
   "name": "openbravo",
-  "version": "1.0.0",
-  "description": "This contains some utilities used to format and lint Javascript code",
   "private": true,
   "config": {
     "preinstall": "modules/org.openbravo.client.kernel/build-scripts/pre-install",
