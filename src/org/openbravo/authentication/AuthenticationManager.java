@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Copyright (C) 2001-2021 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -228,7 +228,20 @@ public abstract class AuthenticationManager {
    */
   public final String webServiceAuthenticate(HttpServletRequest request)
       throws AuthenticationException {
-    final String userId = doWebServiceAuthenticate(request);
+
+    String userId = null;
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      OBContext context = (OBContext) session.getAttribute(OBContext.CONTEXT_PARAM);
+      if (context != null) {
+        userId = context.getUser().getId();
+      }
+    }
+
+    if (userId == null) {
+      userId = doWebServiceAuthenticate(request);
+    }
+
     return webServicePostAuthenticate(request, userId);
   }
 
