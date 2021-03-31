@@ -74,9 +74,6 @@ getModules()
         fs.existsSync(path.resolve(packageJsonPath, PACKAGE_JSON))
       )
       .forEach(packageJsonPath => {
-        fs.mkdirSync(`${packageJsonPath}/node_modules`, {
-          recursive: true
-        });
         console.log(`Installing node modules in ${packageJsonPath}`);
         console.log(`npm ci...`);
         execSync(`npm ci ${environment}`, {
@@ -129,6 +126,11 @@ function getScopeAndName(npmDependency) {
   return { scope, packageName };
 }
 
+/**
+ * Create symbolic links of first-level dependencies to base node_modules folder. This will make those
+ * dependencies available to all modules, enabling the execution of jest tests from the root and the
+ * resolution of modules in IDEs
+ */
 function linkDependenciesInBaseNodeModules(module, packageJsonPath) {
   console.log(
     `Running npm link to make ${packageJsonPath} available to other modules`
