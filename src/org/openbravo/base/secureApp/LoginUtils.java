@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Copyright (C) 2001-2021 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -26,12 +26,14 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.dal.xml.XMLUtil;
@@ -48,6 +50,7 @@ import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -298,7 +301,8 @@ public class LoginUtils {
         }
 
         // Get General Ledger of context organizations
-        if (ArrayUtils.isEmpty(attr)) {
+        // Before going for all organizations, check if any org has an accounting schema
+        if (ArrayUtils.isEmpty(attr) && existsOrgWithledgerConfigured()) {
           String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler")
               .replace("'", "")
               .split(",");
@@ -415,6 +419,16 @@ public class LoginUtils {
     // See the HttpSecureAppServlet
     vars.setSessionValue("#loggingIn", "N");
     return true;
+  }
+
+  private static boolean existsOrgWithledgerConfigured() {
+
+    OBCriteria<Organization> orgCriteria = OBDal.getInstance().createCriteria(Organization.class);
+    orgCriteria.setFilterOnReadableOrganization(false);
+    orgCriteria.add(Restrictions.isNotNull(Organization.PROPERTY_GENERALLEDGER));
+    orgCriteria.setMaxResults(1);
+
+    return orgCriteria.uniqueResult() != null;
   }
 
   /**
