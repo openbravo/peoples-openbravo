@@ -107,57 +107,20 @@
         )
       );
 
-      if (OB.DEC.compare(adjustment) === 0) {
-        return;
-      }
-      const linesToAdjust = [];
-      lines.forEach(line => {
-        const roundingLineTax = [];
-        line.taxes.forEach(tax => {
-          if (tax.tax.summaryLevel || OB.DEC.compare(tax.base) === 0) {
-            return;
-          }
-          roundingLineTax.push(
-            OB.DEC.sub(
-              OB.DEC.mul(
-                OB.DEC.add(tax.base, adjustment, 20),
-                OB.DEC.div(tax.tax.rate, 100, 20),
-                20
-              ),
-              OB.DEC.sub(tax.amount, adjustment, 20),
-              20
-            )
-          );
+      if (OB.DEC.compare(adjustment) !== 0) {
+        const line = lines.reduce((line1, line2) => {
+          return OB.DEC.abs(line1.netUnitAmount) >
+            OB.DEC.abs(line2.netUnitAmount)
+            ? line1
+            : line2;
         });
-        if (roundingLineTax.length > 0) {
-          linesToAdjust.push({
-            line,
-            roundingAmt: Math.abs(
-              OB.DEC.div(
-                roundingLineTax.reduce((a, b) => OB.DEC.add(a, b, 20), 0),
-                roundingLineTax.length,
-                20
-              )
-            )
-          });
-        }
-      });
-      if (linesToAdjust.length > 0) {
-        const lineToAdjust = linesToAdjust.reduce((line1, line2) => {
-          return line1.roundingAmt > line2.roundingAmt ? line1 : line2;
-        }).line;
-        lineToAdjust.netUnitAmount = OB.DEC.add(
-          lineToAdjust.netUnitAmount,
-          adjustment
+        line.netUnitAmount = OB.DEC.add(line.netUnitAmount, adjustment);
+        line.netUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
+          line.netUnitAmount,
+          line.qty
         );
-        lineToAdjust.netUnitPrice = OB.Taxes.Tax.calculatePriceFromAmount(
-          lineToAdjust.netUnitAmount,
-          lineToAdjust.qty
-        );
-        const adjustedTax = lineToAdjust.taxes.reduce((tax1, tax2) => {
-          return OB.DEC.abs(tax1.amount) > OB.DEC.abs(tax2.amount)
-            ? tax1
-            : tax2;
+        const adjustedTax = line.taxes.reduce((tax1, tax2) => {
+          return OB.DEC.abs(tax1.base) <= OB.DEC.abs(tax2.base) ? tax1 : tax2;
         });
         adjustedTax.base = OB.DEC.add(adjustedTax.base, adjustment);
         adjustedTax.amount = OB.DEC.sub(adjustedTax.amount, adjustment);

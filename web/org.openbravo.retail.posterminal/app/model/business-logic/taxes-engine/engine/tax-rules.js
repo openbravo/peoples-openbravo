@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -78,7 +78,7 @@
             bomGroup.amount = OB.DEC.add(bomGroup.amount, bomLine.amount);
           } else {
             const updatedLine = { ...line };
-            updatedLine.id = bomLine.id || updatedLine.id;
+            updatedLine.id = bomLine.id;
             updatedLine.amount = bomLine.amount;
             updatedLine.quantity = bomLine.quantity;
             updatedLine.product = bomLine.product;
