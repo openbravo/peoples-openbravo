@@ -54,6 +54,16 @@
       }
     }
 
+    async printDocumentTemplate(message) {
+      const { template, data, device, hardwareURL } = message.messageObj;
+      const templateObject = OB.App.PrintTemplateStore.get(template);
+      try {
+        await this.controller.print(templateObject, data, device, hardwareURL);
+      } catch (error) {
+        OB.error(`Error sending document: ${error}`);
+      }
+    }
+
     async printTicket(message) {
       const messageData = message.messageObj;
       const { ticket } = messageData.data;

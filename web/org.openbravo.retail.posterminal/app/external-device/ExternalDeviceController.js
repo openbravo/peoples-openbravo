@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2021 Openbravo S.L.U.
+ * Copyright (C) 2021-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -260,10 +260,13 @@
       return data;
     }
 
-    async print(printTemplate, params = {}, device = 0) {
+    async print(printTemplate, params = {}, device = 0, hardwareURL) {
       const data = await printTemplate.generate(params);
 
-      await this.send(data, device, { isPdf: printTemplate.ispdf });
+      await this.send(data, device, {
+        isPdf: printTemplate.ispdf,
+        hardwareURL
+      });
       return data;
     }
 
@@ -281,13 +284,13 @@
 
       switch (device) {
         case this.devices.DISPLAY:
-          await this.requestPrint(data, device);
+          await this.requestPrint(data, device, options);
           break;
         case this.devices.DRAWER:
           if (this.webPrinter) {
             await this.requestWebPrinter(data);
           } else {
-            await this.requestPrint(data, device);
+            await this.requestPrint(data, device, options);
           }
           break;
         case this.devices.PRINTER:
@@ -296,7 +299,7 @@
           } else if (isPdf) {
             await this.requestPDFPrint(data);
           } else {
-            await this.requestPrint(data, device);
+            await this.requestPrint(data, device, options);
           }
           break;
         default:
@@ -340,9 +343,10 @@
       return afterHooksPayload;
     }
 
-    async requestPrint(data, device) {
+    async requestPrint(data, device, { hardwareURL } = {}) {
       const url =
-        this.devices.PRINTER === device ? this.activeURL : this.mainURL;
+        hardwareURL ||
+        (this.devices.PRINTER === device ? this.activeURL : this.mainURL);
 
       if (!url) {
         return;

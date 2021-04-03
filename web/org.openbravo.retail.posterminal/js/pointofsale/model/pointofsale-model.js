@@ -626,6 +626,13 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       await ticketPrinter.printDocument(message);
                     }
                   );
+                  OB.App.SynchronizationBuffer.addMessageSynchronization(
+                    'HardwareManager',
+                    'printDocumentTemplate',
+                    async message => {
+                      await ticketPrinter.printDocumentTemplate(message);
+                    }
+                  );
 
                   // Now, get the hardware manager status
                   OB.POS.hwserver.status(function(data) {

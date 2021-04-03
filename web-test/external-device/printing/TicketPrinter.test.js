@@ -384,4 +384,41 @@ describe('TicketPrinter', () => {
       ticketLine: line
     });
   });
+
+  it('printDocumentTemplate', async () => {
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'testTemplate',
+      'res/printDocumentTemplate.xml'
+    );
+    const data = { testMessage: 'This a test message' };
+
+    OB.App.PrintTemplateStore.get = jest.fn().mockReturnValue(printTemplate);
+
+    ticketPrinter.controller.print = jest.fn();
+
+    await ticketPrinter.printDocumentTemplate({
+      messageObj: {
+        template: printTemplate,
+        data: { data },
+        device: 0,
+        hardwareURL: 'http://localhost:8090'
+      }
+    });
+
+    expect(OB.App.PrintTemplateStore.get.mock.calls[0][0]).toEqual({
+      initialized: false,
+      isLegacy: false,
+      name: 'testTemplate',
+      resource:
+        '../org.openbravo.retail.posterminal/res/printDocumentTemplate.xml'
+    });
+    expect(ticketPrinter.controller.print.mock.calls[0][0]).toBe(printTemplate);
+    expect(ticketPrinter.controller.print.mock.calls[0][1]).toStrictEqual({
+      data
+    });
+    expect(ticketPrinter.controller.print.mock.calls[0][2]).toStrictEqual(0);
+    expect(ticketPrinter.controller.print.mock.calls[0][3]).toStrictEqual(
+      'http://localhost:8090'
+    );
+  });
 });
