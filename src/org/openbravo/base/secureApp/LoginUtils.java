@@ -302,7 +302,7 @@ public class LoginUtils {
 
         // Get General Ledger of context organizations
         // Before going for all organizations, check if any org has an accounting schema
-        if (ArrayUtils.isEmpty(attr) && existsOrgWithledgerConfigured()) {
+        if (ArrayUtils.isEmpty(attr) && existsAnyOrgWithLedgerConfigured()) {
           String[] orgList = Utility.getContext(conn, vars, "#User_Org", "LoginHandler")
               .replace("'", "")
               .split(",");
@@ -421,13 +421,10 @@ public class LoginUtils {
     return true;
   }
 
-  private static boolean existsOrgWithledgerConfigured() {
-
+  private static boolean existsAnyOrgWithLedgerConfigured() {
     OBCriteria<Organization> orgCriteria = OBDal.getInstance().createCriteria(Organization.class);
-    orgCriteria.setFilterOnReadableOrganization(false);
     orgCriteria.add(Restrictions.isNotNull(Organization.PROPERTY_GENERALLEDGER));
     orgCriteria.setMaxResults(1);
-
     return orgCriteria.uniqueResult() != null;
   }
 
