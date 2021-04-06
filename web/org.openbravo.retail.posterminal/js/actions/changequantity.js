@@ -192,7 +192,7 @@
         return;
       }
 
-      if (receipt.validateAvoidBlindAndReturnLines(false)) {
+      if (!receipt.validateAvoidBlindAndReturnLines(false)) {
         return;
       }
 
