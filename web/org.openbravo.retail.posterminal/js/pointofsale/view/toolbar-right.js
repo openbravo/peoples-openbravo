@@ -505,14 +505,13 @@ enyo.kind({
       this.removeClass('empty');
     }
   },
-  tap: function(options) {
+  tap: function() {
     if (this.disabled === false) {
       OB.UI.SearchProductCharacteristic.prototype.filtersCustomClear();
       this.doTabChange({
         tabPanel: this.tabPanel,
         keyboard: false,
-        edit: false,
-        options: options
+        edit: false
       });
       OB.MobileApp.view.scanningFocus(true);
     }
