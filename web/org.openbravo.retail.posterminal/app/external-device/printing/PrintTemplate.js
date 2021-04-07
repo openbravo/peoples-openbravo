@@ -52,7 +52,7 @@
         });
       }
 
-      const templateParams = this.prepareParams(params);
+      const templateParams = await this.prepareParams(params);
 
       if (this.ispdf) {
         // Template for printing a jasper PDF report
@@ -125,12 +125,29 @@
       return this.resourcedata;
     }
 
-    prepareParams(params) {
+    async prepareParams(params) {
+      const newParams = { ...params };
       if (!this.isLegacyTemplate()) {
-        return params;
+        const orgVariables = await OB.App.OrgVariables.getAll();
+        const defaultLanguage = OB.App.TerminalProperty.get('terminal')
+          .language_string;
+
+        newParams.getOrgVariable = (searchKey, language) => {
+          const lang = language || defaultLanguage;
+
+          const orgVariable = orgVariables.find(
+            p =>
+              p.variable === searchKey &&
+              (!p.translatable || p.language === lang)
+          );
+
+          return orgVariable && orgVariable.value;
+        };
+
+        return newParams;
       }
       const { ticket, ticketLine } = params;
-      const newParams = { ...params };
+
       if (ticket) {
         newParams.order = ticket.multiOrdersList
           ? OB.UTIL.TicketUtils.toMultiOrder(ticket)

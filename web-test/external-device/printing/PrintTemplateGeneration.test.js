@@ -23,6 +23,9 @@ global.OB = {
     State: { Ticket: { Utils: { getPendingAmount: jest.fn() } } },
     TerminalProperty: {
       get: jest.fn()
+    },
+    OrgVariables: {
+      getAll: jest.fn().mockReturnValue([])
     }
   },
   DEC: { abs: jest.fn(), add: jest.fn(), sub: jest.fn() },
