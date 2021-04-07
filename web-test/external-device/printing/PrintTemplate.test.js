@@ -16,7 +16,17 @@ global.OB = {
       get: jest.fn().mockReturnValue({})
     },
     OrgVariables: {
-      getAll: jest.fn().mockReturnValue([])
+      getAll: jest.fn().mockReturnValue([
+        {
+          id: '4C5E56D05A144C5BA0B22AC1F77C72F6',
+          variable: 'test_variable',
+          value: 'Test value',
+          translatable: false,
+          language: null,
+          langName: null,
+          active: true
+        }
+      ])
     }
   },
   I18N: { getLabel: jest.fn() },
