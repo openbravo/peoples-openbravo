@@ -6141,8 +6141,18 @@
         {
           order: this
         },
-        function(args) {
+        async function(args) {
           if (args && args.cancelOperation && args.cancelOperation === true) {
+            return;
+          }
+          // Run new convertTicketIntoQuotation state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
+          if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
+            try {
+              await OB.App.State.Global.convertTicketIntoQuotation();
+            } catch (error) {
+              OB.App.View.ActionCanceledUIHandler.handle(error);
+            }
+            args.order.trigger('scan');
             return;
           }
           args.order.setQuotationProperties();
