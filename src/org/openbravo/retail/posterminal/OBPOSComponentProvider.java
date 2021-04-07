@@ -238,7 +238,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // Action Preparation
         "actionpreparation/AddProductApproval", "actionpreparation/CompleteLayawayApproval",
         "actionpreparation/CompleteTicketApproval", "actionpreparation/DeleteLineApproval",
-        "actionpreparation/SetLinePriceApproval",
+        "actionpreparation/SetLinePriceApproval", "actionpreparation/ReturnLineApproval",
+        "actionpreparation/ReturnBlindTicketApproval",
 
         // States
         "actionstates/commonreceipt", "actionstates/commonwindow",
@@ -354,6 +355,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/ticket/Ticket"), //
         businesslogic("app/model/business-object/ticket/TicketUtils"), //
         businesslogic("app/model/business-object/ticket/CompleteTicketUtils"), //
+        businesslogic("app/model/business-object/ticket/AddProductUtils"), //
+        businesslogic("app/model/business-object/ticket/LoadTicketUtils"), //
         businesslogic("app/model/business-object/ticket/actions/CompleteTicket"), //
         businesslogic("app/model/business-object/ticket/actions/CompleteCreditTicket"), //
         businesslogic("app/model/business-object/ticket/actions/CancelTicket"), //
@@ -362,6 +365,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/ticket/actions/CompleteLayaway"), //
         businesslogic("app/model/business-object/ticket/actions/VoidLayaway"), //
         businesslogic("app/model/business-object/ticket/actions/DeleteTicket"), //
+        businesslogic("app/model/business-object/ticket/actions/ReturnBlindTicket"), //
         businesslogic("app/model/business-object/ticket/actions/CompleteMultiTicket"), //
         businesslogic("app/model/business-object/ticket/actions/CompleteMultiCreditTicket"), //
         businesslogic("app/model/business-object/ticket/CompleteMultiTicketUtils"), //
@@ -379,6 +383,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/ticket/actions/RejectQuotation"), //
         businesslogic("app/model/business-object/ticket/actions/CreateTicketFromQuotation"), //
         businesslogic("app/model/business-object/ticket/actions/DeleteLine"), //
+        businesslogic("app/model/business-object/ticket/actions/ReturnLine"), //
         businesslogic("app/model/business-object/ticket/actions/AssignExternalBusinessPartner"), //
 
         businesslogic("app/model/business-object/ticket/actions/CheckTicketForPayOpenTickets"), //

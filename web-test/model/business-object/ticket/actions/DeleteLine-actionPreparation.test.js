@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -58,7 +58,15 @@ require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.co
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/ActionSilentlyCanceled');
 
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/Ticket');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/AddProductUtils');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/DeleteLine');
+
+// set Ticket model utility functions
+OB.App.State = { Ticket: { Utils: {} } };
+OB.App.StateAPI.Ticket.utilities.forEach(
+  util => (OB.App.State.Ticket.Utils[util.functionName] = util.implementation)
+);
 
 let Ticket = {
   empty: {
