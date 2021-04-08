@@ -14,6 +14,19 @@ global.OB = {
     Request: { get: jest.fn() },
     TerminalProperty: {
       get: jest.fn().mockReturnValue({})
+    },
+    OrgVariables: {
+      getAll: jest.fn().mockReturnValue([
+        {
+          id: '4C5E56D05A144C5BA0B22AC1F77C72F6',
+          variable: 'test_variable',
+          value: 'Test value',
+          translatable: false,
+          language: null,
+          langName: null,
+          active: true
+        }
+      ])
     }
   },
   I18N: { getLabel: jest.fn() },
@@ -73,7 +86,7 @@ describe('PrintTemplate', () => {
     expect(OB.App.Request.get).toHaveBeenCalledTimes(1);
   });
 
-  it('prepare params in standard template', () => {
+  it('prepare params in standard template', async () => {
     const params = { ticket: { id: 't1' }, ticketLine: { id: 'l1' } };
     const printTemplate = new OB.App.Class.PrintTemplate(
       'testTemplate',
@@ -83,14 +96,15 @@ describe('PrintTemplate', () => {
     OB.UTIL.TicketUtils.toOrder.mockReturnValue({});
     OB.UTIL.TicketUtils.toOrderLine.mockReturnValue({});
 
-    const result = printTemplate.prepareParams(params);
+    const result = await printTemplate.prepareParams(params);
     expect(result).toStrictEqual({
+      getOrgVariable: expect.any(Function),
       ticket: { id: 't1' },
       ticketLine: { id: 'l1' }
     });
   });
 
-  it('prepare params in legacy template', () => {
+  it('prepare params in legacy template', async () => {
     const params = { ticket: { id: 't1' }, ticketLine: { id: 'l1' } };
     const printTemplate = new OB.App.Class.PrintTemplate(
       'testTemplate',
@@ -103,7 +117,7 @@ describe('PrintTemplate', () => {
     OB.UTIL.TicketUtils.toOrder.mockReturnValue({ id: 'o1' });
     OB.UTIL.TicketUtils.toOrderLine.mockReturnValue({ id: 'ol1' });
 
-    const result = printTemplate.prepareParams(params);
+    const result = await printTemplate.prepareParams(params);
     expect(result).toStrictEqual({
       ticket: { id: 't1' },
       ticketLine: { id: 'l1' },
