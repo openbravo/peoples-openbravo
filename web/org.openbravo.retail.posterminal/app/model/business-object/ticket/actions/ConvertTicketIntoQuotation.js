@@ -18,7 +18,7 @@ OB.App.StateAPI.Global.registerAction('convertTicketIntoQuotation', state => {
   ticket.isQuotation = true;
   ticket.fullInvoice = false;
   ticket.generateInvoice = false;
-  ticket.orderType = '0';
+  ticket.orderType = 0;
   ticket.documentType = OB.App.TerminalProperty.get(
     'terminal'
   ).terminalType.documentTypeForQuotations;
