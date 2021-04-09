@@ -7,7 +7,7 @@
  ************************************************************************************
  */
 /**
- * @fileoverview Declares a Ticket action that creates converts the actual Ticket object
+ * @fileoverview Declares a State action that creates converts the actual Ticket object
  * into a Sales Quotation
  */
 OB.App.StateAPI.Ticket.registerAction(
