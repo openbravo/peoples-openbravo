@@ -35,7 +35,7 @@ module.exports = {
   posTerminal: '9104513C2D0741D4850AE8493998A7C8',
   posTerminal$_identifier: 'VBS POS Terminal',
   orderDate: '2020-06-26T11:59:31.822Z',
-  creationDate: null,
+  creationDate: '2020-06-26T11:59:31.822Z',
   documentNo: '',
   externalBusinessPartnerReference: null,
   externalBusinessPartner: null,
