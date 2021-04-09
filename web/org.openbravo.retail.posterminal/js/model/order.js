@@ -6148,7 +6148,8 @@
           // Run new convertTicketIntoQuotation state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
           if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
             try {
-              await OB.App.State.Global.convertTicketIntoQuotation();
+              const payload = { terminal: OB.MobileApp.model.get('terminal') };
+              await OB.App.State.Ticket.convertTicketIntoQuotation(payload);
             } catch (error) {
               OB.App.View.ActionCanceledUIHandler.handle(error);
             }
