@@ -14,6 +14,7 @@
         <text align="left" length="10">Total</text>
         <text align="right" length="10">23</text>
         <text align="center" length="10">Test value</text>
+        <text align="left" length="10">Test value in english</text>
       </line>
     </display>
 </output>

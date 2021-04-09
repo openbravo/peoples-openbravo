@@ -138,7 +138,7 @@
           const orgVariable = orgVariables.find(
             p =>
               p.variable === searchKey &&
-              (!p.translatable || p.language === lang)
+              (!p.translatable || p.langCode === lang)
           );
 
           return orgVariable && orgVariable.value;

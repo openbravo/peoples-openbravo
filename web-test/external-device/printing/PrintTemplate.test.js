@@ -24,6 +24,17 @@ global.OB = {
           translatable: false,
           language: null,
           langName: null,
+          langCode: null,
+          active: true
+        },
+        {
+          id: '4C5E56D05A144C5BA0B22AC1F77C72F6',
+          variable: 'test_variable2',
+          value: 'Test value in english',
+          translatable: true,
+          language: '2C5E56D05A144C5BA0B22AC1F77C72F6',
+          langName: 'English (USA)',
+          langCode: 'en_US',
           active: true
         }
       ])
