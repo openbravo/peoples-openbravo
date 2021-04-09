@@ -60,7 +60,7 @@ describe('Convert Ticket Into Quotation', () => {
         isQuotation: true,
         fullInvoice: false,
         generateInvoice: false,
-        orderType: '0',
+        orderType: 0,
         documentType: 'Quotation',
         grossAmount: 100,
         netAmount: 80,
