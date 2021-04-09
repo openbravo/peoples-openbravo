@@ -7,21 +7,19 @@
  ************************************************************************************
  */
 /**
- * @fileoverview Declares a global action that creates converts the actual state.Ticket object
+ * @fileoverview Declares a Ticket action that creates converts the actual Ticket object
  * into a Sales Quotation
  */
-OB.App.StateAPI.Global.registerAction('convertTicketIntoQuotation', state => {
-  const newState = { ...state };
-  newState.Ticket = { ...state.Ticket };
-
-  const ticket = newState.Ticket;
-  ticket.isQuotation = true;
-  ticket.fullInvoice = false;
-  ticket.generateInvoice = false;
-  ticket.orderType = 0;
-  ticket.documentType = OB.App.TerminalProperty.get(
-    'terminal'
-  ).terminalType.documentTypeForQuotations;
-  newState.Ticket = ticket;
-  return newState;
-});
+OB.App.StateAPI.Ticket.registerAction(
+  'convertTicketIntoQuotation',
+  (ticket, payload) => {
+    const newTicket = { ...ticket };
+    newTicket.isQuotation = true;
+    newTicket.fullInvoice = false;
+    newTicket.generateInvoice = false;
+    newTicket.orderType = 0;
+    newTicket.documentType =
+      payload.terminal.terminalType.documentTypeForQuotations;
+    return newTicket;
+  }
+);
