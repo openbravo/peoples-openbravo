@@ -19,7 +19,7 @@ OB.App.StateAPI.Global.registerAction('addNewQuotation', (state, payload) => {
   newState.TicketList.unshift(newState.Ticket);
   const ticket = OB.App.State.Ticket.Utils.newTicket(payload);
   ticket.isQuotation = true;
-  ticket.orderType = '0';
+  ticket.orderType = 0;
   ticket.documentType = OB.App.TerminalProperty.get(
     'terminal'
   ).terminalType.documentTypeForQuotations;
