@@ -15,7 +15,7 @@
       const newTicket = {
         ...ticket,
         oldId: ticket.id,
-        id: OB.UTIL.get_UUID(),
+        id: OB.App.UUID.generate(),
         documentNo: '',
         isQuotation: false,
         orderType: payload.terminal.terminalType.layawayorder ? 2 : 0,
