@@ -84,6 +84,9 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       case "verifiedReturns":
         orderTypeHql = "and ord.documentType.return = false and ord.documentType.sOSubType <> 'OB' and ord.obposIslayaway = false and cancelledorder is null";
         break;
+      case "QT":
+        orderTypeHql = "and ord.documentType.return = false and ord.documentType.sOSubType = 'OB' and ord.obposIslayaway = false";
+        break;
       case "payOpenTickets":
         orderTypeHql = "and ord.grandTotalAmount>0 and ord.documentType.sOSubType <> 'OB' and ord.documentStatus <> 'CL'";
         isPayOpenTicket = true;
