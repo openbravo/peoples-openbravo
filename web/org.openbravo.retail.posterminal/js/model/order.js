@@ -517,7 +517,9 @@
         if (attributes.canceledorder) {
           this.set(
             'canceledorder',
-            new OB.Model.Order(attributes.canceledorder)
+            OB.App.StateBackwardCompatibility.getInstance(
+              'Ticket'
+            ).toBackboneObject(attributes.canceledorder)
           );
         }
         this.set('payment', attributes.payment);
@@ -5876,7 +5878,19 @@
       }
     },
 
-    cancelLayaway: function(context) {
+    cancelLayaway: async function(context) {
+      // Run new CreateCancelTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
+      if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
+        try {
+          await OB.App.State.Ticket.createCancelTicket(
+            OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
+          );
+        } catch (error) {
+          OB.App.View.ActionCanceledUIHandler.handle(error);
+        }
+        return;
+      }
+
       var me = this;
       this.checkNotProcessedPayments(function() {
         me.canCancelOrder(
