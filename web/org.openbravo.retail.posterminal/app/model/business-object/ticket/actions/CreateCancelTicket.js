@@ -38,6 +38,19 @@
         paidOnCredit: false,
         paidPartiallyOnCredit: false,
         creditAmount: OB.DEC.Zero,
+        obposPrepaymentamt: ticket.grossAmount,
+        obposPrepaymentlimitamt: ticket.grossAmount,
+        obposPrepaymentlaylimitamt:
+          payload.terminal.terminalType.calculateprepayments &&
+          payload.terminal.prepaymentAlgorithm
+            ? OB.DEC.div(
+                OB.DEC.mul(
+                  ticket.grossAmount,
+                  payload.terminal.obposPrepayPercLayLimit
+                ),
+                100
+              )
+            : OB.DEC.Zero,
         canceledorder: ticket,
         lines: ticket.lines.map(line => ({
           ...line,
@@ -47,9 +60,6 @@
       };
 
       // lines
-      // me.set('forceCalculateTaxes', true);
-      // me.calculateReceipt(function() {
-      // me.getPrepaymentAmount(function() {
 
       return newTicket;
     }
