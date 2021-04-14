@@ -5878,19 +5878,7 @@
       }
     },
 
-    cancelLayaway: async function(context) {
-      // Run new CreateCancelTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
-      if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
-        try {
-          await OB.App.State.Ticket.createCancelTicket(
-            OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
-          );
-        } catch (error) {
-          OB.App.View.ActionCanceledUIHandler.handle(error);
-        }
-        return;
-      }
-
+    cancelLayaway: function(context) {
       var me = this;
       this.checkNotProcessedPayments(function() {
         me.canCancelOrder(

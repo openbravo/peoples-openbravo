@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -253,6 +253,31 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
+
+    // Run new CreateCancelTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
+    if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreCancelLayaway',
+        {
+          context: this
+        },
+        async function(args) {
+          if (args && args.cancelOperation) {
+            return;
+          }
+
+          try {
+            await OB.App.State.Ticket.createCancelTicket(
+              OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
+            );
+          } catch (error) {
+            OB.App.View.ActionCanceledUIHandler.handle(error);
+          }
+        }
+      );
+      return;
+    }
+
     if (this.model.get('order').get('iscancelled')) {
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBPOS_AlreadyCancelledHeader'),
