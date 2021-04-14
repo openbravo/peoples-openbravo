@@ -11,6 +11,8 @@
     rejectQuotation(state, payload) {
       const newState = { ...state };
       const { rejectReasonId } = payload;
+      let newTicketList = [...newState.TicketList];
+      let newTicket = { ...newState.Ticket };
 
       const rejectQuotationMessage = OB.App.State.Messages.Utils.createNewMessage(
         'OBPOS_Order',
@@ -26,6 +28,19 @@
         }
       );
       newState.Messages = [...newState.Messages, rejectQuotationMessage];
+
+      // TicketList update
+      ({
+        ticketList: newTicketList,
+        ticket: newTicket
+      } = OB.App.State.TicketList.Utils.removeTicket(
+        newTicketList,
+        newTicket,
+        payload
+      ));
+
+      newState.TicketList = newTicketList;
+      newState.Ticket = newTicket;
       return newState;
     }
   });

@@ -1363,13 +1363,7 @@ enyo.kind({
     return true;
   },
   rejectQuotation: function(inSender, inEvent) {
-    this.model
-      .get('order')
-      .rejectQuotation(inEvent.rejectReason, this, function(success) {
-        if (success) {
-          this.deleteCurrentOrder(inSender, inEvent);
-        }
-      });
+    this.model.get('order').rejectQuotation(inEvent.rejectReason);
     return true;
   },
   showDivText: function(inSender, inEvent) {

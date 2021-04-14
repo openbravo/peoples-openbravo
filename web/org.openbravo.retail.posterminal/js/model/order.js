@@ -6258,11 +6258,14 @@
       });
     },
     rejectQuotation: function(rejectReasonId, scope, callback) {
-      OB.App.State.Global.rejectQuotation({ rejectReasonId }).then(() => {
-        if (callback) {
-          callback.call(scope, true);
+      const payload = OB.UTIL.TicketUtils.addTicketCreationDataToPayload();
+      OB.App.State.Global.rejectQuotation({ ...payload, rejectReasonId }).then(
+        () => {
+          if (callback) {
+            callback.call(scope, true);
+          }
         }
-      });
+      );
     },
     getPrecision: function(payment) {
       var terminalpayment =
