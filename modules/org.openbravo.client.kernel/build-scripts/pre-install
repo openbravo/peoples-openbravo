@@ -28,3 +28,6 @@ if [[ ! "$NPM_VERSION" =~ ^6[.].*$ ]]; then
   echo "npm version $NPM_VERSION not supported. Only npm 6.x is supported"
   exit 1
 fi
+
+rm -rf node_modules
+rm -rf node_modules_global
