@@ -50,7 +50,6 @@ Thumbs.db
 sources
 scripts
 node_modules
-node_modules_global
 test-reports
 
 # ignore all modules 
