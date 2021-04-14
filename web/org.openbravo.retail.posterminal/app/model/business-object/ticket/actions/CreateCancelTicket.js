@@ -38,15 +38,65 @@
         paidOnCredit: false,
         paidPartiallyOnCredit: false,
         creditAmount: OB.DEC.Zero,
-        canceledorder: ticket,
-        lines: ticket.lines.map(line => ({
-          ...line,
-          id: OB.App.UUID.generate(),
-          qty: -line.qty
-        }))
+        canceledorder: ticket
       };
 
-      // lines
+      newTicket.lines = ticket.lines
+        .flatMap(line => {
+          // Remove negative and fully delivered lines
+          if (line.qty < 0 || line.qty === line.deliveredQuantity) {
+            return [];
+          }
+
+          const newLine = { ...line };
+          const newQty = (line.deliveredQuantity || 0) - line.qty;
+          newLine.id = OB.App.UUID.generate();
+          newLine.canceledLine = line.id;
+          newLine.qty = newQty;
+          newLine.deliveredQuantity = undefined;
+          newLine.invoicedQuantity = undefined;
+          newLine.obposCanbedelivered = true;
+          newLine.obposIspaid = false;
+
+          newLine.promotions = line.promotions.map(promotion => {
+            const getPromotionAmount = amount =>
+              OB.DEC.mul(amount, OB.BIGDEC.div(newQty, line.qty));
+            const newPromotion = { ...promotion };
+            newPromotion.amt = getPromotionAmount(promotion.amt);
+            newPromotion.actualAmt = getPromotionAmount(promotion.actualAmt);
+            newPromotion.displayedTotalAmount = getPromotionAmount(
+              promotion.displayedTotalAmount
+            );
+            return newPromotion;
+          });
+
+          return newLine;
+        })
+        .map((line, index, lines) => {
+          // Update or remove related lines
+          if (
+            line.product.productType !== 'S' ||
+            !line.product.isLinkedToProduct
+          ) {
+            return line;
+          }
+
+          const newLine = { ...line };
+          newLine.relatedLines = line.relatedLines.flatMap(relatedLine => {
+            const updatedLine = lines.find(
+              l => l.canceledLine === relatedLine.orderlineId
+            );
+            if (updatedLine) {
+              return { ...relatedLine, orderlineId: updatedLine.id };
+            }
+            if (!relatedLine.deferred) {
+              return [];
+            }
+            return relatedLine;
+          });
+
+          return newLine;
+        });
 
       return newTicket;
     }
