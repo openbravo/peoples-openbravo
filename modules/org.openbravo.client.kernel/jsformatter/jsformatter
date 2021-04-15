@@ -85,7 +85,9 @@ function formatAllFiles {
 
         runFormatterInCore "${IGNORE_PATTERNS}" "${FLAGS}"
         for mod in ${MODS_WITH_IGNORE} ; do
-            runFormatterInModule ${mod} "${FLAGS}"
+            if [[ ! "$mod" =~ .*"node_modules".* ]]; then
+                runFormatterInModule ${mod} "${FLAGS}"
+            fi        
         done
     elif [[ -d ${SCAN_BASE_PATH}/../../modules ]]; then
         runFormatterInModule ${SCAN_BASE_PATH} "${FLAGS}"
