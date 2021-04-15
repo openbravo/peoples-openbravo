@@ -19,6 +19,18 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 echo "Copying .eslintrc.json with Airbnb rules to modules with web/app or web-jspack folder"
+
+
+BASE_PATH=$(pwd)
+PACKAGE_DIR_PATHS="";
+# generates list of web-jspack paths that contain a package.json file
+for mod in modules/*; do
+  if [[ -f "${mod}/web-jspack/$(basename ${mod})/package.json" ]]; then
+    [ ! "$PACKAGE_DIR_PATHS" = "" ] && PACKAGE_DIR_PATHS="${PACKAGE_DIR_PATHS},"
+    PACKAGE_DIR_PATHS="${PACKAGE_DIR_PATHS}\"${BASE_PATH}/${mod}/web-jspack/$(basename ${mod})\""
+  fi
+done
+
 for mod in modules/*; do
   if [[ -d "${mod}/web/$(basename ${mod})/app" ]]; then
     cp ${SCRIPT_DIR}/eslintrc-airbnb.template ${mod}/web/$(basename ${mod})/app/.eslintrc.json
@@ -26,7 +38,8 @@ for mod in modules/*; do
   fi
 
   if [[ -d "${mod}/web-jspack/$(basename ${mod})" ]]; then
-    cp ${SCRIPT_DIR}/eslintrc-airbnb-react.template ${mod}/web-jspack/$(basename ${mod})/.eslintrc.json
+    ## copy eslintrc-airbnb-react.template, replacing the placeholder with the actual content
+    cat ${SCRIPT_DIR}/eslintrc-airbnb-react.template | sed -e "s#packageDirPlaceholder#${PACKAGE_DIR_PATHS}#" > ${mod}/web-jspack/$(basename ${mod})/.eslintrc.json
     echo "> Copied to ${mod}/web-jspack"
   fi
 done

@@ -101,7 +101,9 @@ function lintAllFiles {
         IGNORE_PATTERNS=$(getEslintIgnorePatterns "${MODS_WITH_IGNORE}" "${MODS_COMPLETELY_IGNORED}")
         runLinterInCore  ${SCAN_BASE_PATH} "${IGNORE_PATTERNS}" "${FLAGS}"
         for mod in ${MODS_WITH_IGNORE} ; do
-            runLinterInModule  ${mod} "${FLAGS}"
+            if [[ ! "$mod" =~ .*"node_modules".* ]]; then
+                runLinterInModule  ${mod} "${FLAGS}"
+            fi
         done
     elif [[ -d ${SCAN_BASE_PATH}/../../modules ]]; then
         runLinterInModule ${SCAN_BASE_PATH}
