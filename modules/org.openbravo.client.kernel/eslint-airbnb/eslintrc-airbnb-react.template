@@ -21,6 +21,7 @@
     "import/no-extraneous-dependencies": [
       "error",
       {
+        "packageDir": [ packageDirPlaceholder ],
         "devDependencies": [
           "**/*.stories.*",
           "**/?(*.)+(test).[jt]s?(x)",
