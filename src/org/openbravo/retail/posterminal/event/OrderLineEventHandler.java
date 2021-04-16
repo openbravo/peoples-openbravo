@@ -56,10 +56,12 @@ public class OrderLineEventHandler extends EntityPersistenceEventObserver {
     OrderLine orderLine = (OrderLine) event.getTargetInstance();
     BigDecimal deliveredQuantity = orderLine.getDeliveredQuantity();
     if (deliveredQuantity != null) {
+      final Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME);
+      final Property canBeDeliveredProperty = orderLineEntity.getProperty("obposCanbedelivered");
       if (deliveredQuantity.compareTo(orderLine.getOrderedQuantity()) == 0) {
-        final Entity orderLineEntity = ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME);
-        final Property canBeDeliveredProperty = orderLineEntity.getProperty("obposCanbedelivered");
         event.setCurrentState(canBeDeliveredProperty, false);
+      } else if (orderLine.getSalesOrder().getObposApplications() == null) {
+        event.setCurrentState(canBeDeliveredProperty, true);
       }
     }
   }
