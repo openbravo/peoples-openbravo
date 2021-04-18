@@ -105,7 +105,18 @@
   OB.App.StateAPI.Ticket.createCancelTicket.addActionPreparation(
     async (ticket, payload) => {
       await OB.App.State.Ticket.Utils.checkTicketCanceled(ticket, payload);
+      await checkDeliveredQuantity(ticket);
       return payload;
     }
   );
+
+  async function checkDeliveredQuantity(ticket) {
+    if (ticket.payment >= (ticket.deliveredQuantityAmount || 0)) {
+      return;
+    }
+    await OB.App.View.DialogUIHandler.askConfirmation({
+      title: 'OBPOS_Attention',
+      message: 'OBPOS_DeliveredMoreThanPaid'
+    });
+  }
 })();
