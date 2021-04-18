@@ -254,50 +254,26 @@ enyo.kind({
     }
     this.inherited(arguments); // Manual dropdown menu closure
 
-    // Run new CreateCancelTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
-    if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
-      OB.UTIL.HookManager.executeHooks(
-        'OBPOS_PreCancelLayaway',
-        {
-          context: this
-        },
-        async function(args) {
-          if (args && args.cancelOperation) {
-            return;
-          }
+    const me = this;
+    const order = me.model.get('order');
 
-          try {
-            await OB.App.State.Ticket.createCancelTicket(
-              OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
-            );
-          } catch (error) {
-            OB.App.View.ActionCanceledUIHandler.handle(error);
-          }
-        }
-      );
-      return;
-    }
-
-    if (this.model.get('order').get('iscancelled')) {
+    if (order.get('iscancelled')) {
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBPOS_AlreadyCancelledHeader'),
         OB.I18N.getLabel('OBPOS_AlreadyCancelled')
       );
       return;
     }
-    if (this.model.get('order').get('isFullyDelivered')) {
+    if (order.get('isFullyDelivered')) {
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBPOS_FullyDeliveredHeader'),
         OB.I18N.getLabel('OBPOS_FullyDelivered')
       );
       return;
     }
-    var negativeLines = _.find(
-      this.model.get('order').get('lines').models,
-      function(line) {
-        return line.get('qty') < 0;
-      }
-    );
+    var negativeLines = _.find(order.get('lines').models, function(line) {
+      return line.get('qty') < 0;
+    });
     if (negativeLines) {
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBPOS_cannotCancelLayawayHeader'),
@@ -305,12 +281,9 @@ enyo.kind({
       );
       return;
     }
-    var reservationLines = _.find(
-      this.model.get('order').get('lines').models,
-      function(line) {
-        return line.get('hasStockReservation');
-      }
-    );
+    var reservationLines = _.find(order.get('lines').models, function(line) {
+      return line.get('hasStockReservation');
+    });
     if (reservationLines) {
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBPOS_cannotCancelOrderHeader'),
@@ -319,7 +292,9 @@ enyo.kind({
       return;
     }
 
-    this.model.get('order').cancelLayaway(this);
+    order.checkNotProcessedPayments(() => {
+      order.cancelLayaway(me);
+    });
   },
   displayLogic: function() {
     var me = this,

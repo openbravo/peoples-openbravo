@@ -101,4 +101,11 @@
       return newTicket;
     }
   );
+
+  OB.App.StateAPI.Ticket.createCancelTicket.addActionPreparation(
+    async (ticket, payload) => {
+      await OB.App.State.Ticket.Utils.checkTicketCanceled(ticket, payload);
+      return payload;
+    }
+  );
 })();

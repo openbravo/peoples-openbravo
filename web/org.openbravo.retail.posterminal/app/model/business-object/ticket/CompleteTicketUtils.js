@@ -796,13 +796,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   async checkTicketCanceled(ticket, payload) {
     const runCheckTicketCanceledRequest = async () => {
       try {
-        const data = await OB.App.Request.mobileServiceRequest(
+        const result = await OB.App.Request.mobileServiceRequest(
           'org.openbravo.retail.posterminal.process.IsOrderCancelled',
           {
-            orderId: ticket.canceledorder.id,
-            documentNo: ticket.canceledorder.documentNo,
-            orderLoaded: ticket.canceledorder.loaded,
-            orderLines: ticket.canceledorder.lines.map(line => {
+            orderId: ticket.id,
+            documentNo: ticket.documentNo,
+            orderLoaded: ticket.loaded,
+            orderLines: ticket.lines.map(line => {
               return {
                 id: line.id,
                 loaded: line.loaded
@@ -810,7 +810,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             })
           }
         );
-        return data;
+        return result.response.data;
       } catch (error) {
         throw new OB.App.Class.ActionCanceled({
           errorConfirmation: 'OBMOBC_OfflineWindowRequiresOnline'
@@ -819,9 +819,19 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     };
 
     const data = await runCheckTicketCanceledRequest();
-    if (data.response.data.orderCancelled) {
+    if (data.orderCancelled) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_LayawayCancelledError'
+      });
+    }
+
+    if (
+      data.notDeliveredDeferredServices &&
+      data.notDeliveredDeferredServices.length
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_CannotCancelLayWithDeferredOrders',
+        messageParams: [data.notDeliveredDeferredServices.join(', ')]
       });
     }
 
