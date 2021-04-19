@@ -104,7 +104,9 @@
 
   OB.App.StateAPI.Ticket.createCancelTicket.addActionPreparation(
     async (ticket, payload) => {
-      await OB.App.State.Ticket.Utils.checkTicketCanceled(ticket, payload);
+      await OB.App.State.Ticket.Utils.checkTicketCanceled(ticket, {
+        checkNotDeliveredDeferredServices: true
+      });
       await checkDeliveredQuantity(ticket);
       return payload;
     }

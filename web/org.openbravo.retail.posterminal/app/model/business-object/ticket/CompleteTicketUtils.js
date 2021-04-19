@@ -802,12 +802,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             orderId: ticket.id,
             documentNo: ticket.documentNo,
             orderLoaded: ticket.loaded,
-            orderLines: ticket.lines.map(line => {
-              return {
-                id: line.id,
-                loaded: line.loaded
-              };
-            })
+            orderLines: ticket.lines.map(line => ({
+              id: line.id,
+              loaded: line.loaded
+            })),
+            checkNotEditableLines: payload.checkNotEditableLines,
+            checkNotDeliveredDeferredServices:
+              payload.checkNotDeliveredDeferredServices
           }
         );
         return result.response.data;
