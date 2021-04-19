@@ -5898,6 +5898,14 @@
             } catch (error) {
               OB.App.View.ActionCanceledUIHandler.handle(error);
             }
+
+            OB.MobileApp.model.receipt.trigger('updateView');
+            OB.MobileApp.model.receipt.trigger('updatePending', true);
+            context.doTabChange({
+              tabPanel: 'payment',
+              keyboard: 'toolbarpayment',
+              edit: false
+            });
           }
         );
         return;
