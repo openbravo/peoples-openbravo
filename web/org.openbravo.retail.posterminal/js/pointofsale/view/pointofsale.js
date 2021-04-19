@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -933,11 +933,13 @@ enyo.kind({
       receipt = this.model.get('order'),
       execution = OB.UTIL.ProcessController.start('deleteCurrentOrder');
 
+    OB.UTIL.setScanningFocus(false);
     inEvent.status = true;
     this.leftToolbarDisabled(inSender, inEvent);
     receipt.deleteOrder(this, function() {
       inEvent.status = false;
       me.leftToolbarDisabled(inSender, inEvent);
+      OB.UTIL.setScanningFocus(true);
       OB.UTIL.ProcessController.finish('deleteCurrentOrder', execution);
     });
   },
