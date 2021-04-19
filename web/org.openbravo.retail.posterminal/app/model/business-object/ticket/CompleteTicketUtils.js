@@ -794,45 +794,47 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if given ticket was canceled in a different terminal.
    */
   async checkTicketCanceled(ticket, payload) {
-    const runCheckTicketCanceledRequest = async () => {
-      try {
-        const result = await OB.App.Request.mobileServiceRequest(
-          'org.openbravo.retail.posterminal.process.IsOrderCancelled',
-          {
-            orderId: ticket.id,
-            documentNo: ticket.documentNo,
-            orderLoaded: ticket.loaded,
-            orderLines: ticket.lines.map(line => ({
-              id: line.id,
-              loaded: line.loaded
-            })),
-            checkNotEditableLines: payload.checkNotEditableLines,
-            checkNotDeliveredDeferredServices:
-              payload.checkNotDeliveredDeferredServices
-          }
-        );
-        return result.response.data;
-      } catch (error) {
+    try {
+      const result = await OB.App.Request.mobileServiceRequest(
+        'org.openbravo.retail.posterminal.process.IsOrderCancelled',
+        {
+          orderId: ticket.id,
+          documentNo: ticket.documentNo,
+          orderLoaded: ticket.loaded,
+          orderLines: ticket.lines.map(line => ({
+            id: line.id,
+            loaded: line.loaded
+          })),
+          checkNotEditableLines: payload.checkNotEditableLines,
+          checkNotDeliveredDeferredServices:
+            payload.checkNotDeliveredDeferredServices
+        }
+      );
+
+      if (result.response.error) {
         throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBMOBC_OfflineWindowRequiresOnline'
+          errorConfirmation: result.response.error.message
         });
       }
-    };
-
-    const data = await runCheckTicketCanceledRequest();
-    if (data.orderCancelled) {
+      if (result.response.data.orderCancelled) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_LayawayCancelledError'
+        });
+      }
+      if (
+        result.response.data.notDeliveredDeferredServices &&
+        result.response.data.notDeliveredDeferredServices.length
+      ) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_CannotCancelLayWithDeferredOrders',
+          messageParams: [
+            result.response.data.notDeliveredDeferredServices.join(', ')
+          ]
+        });
+      }
+    } catch (error) {
       throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBPOS_LayawayCancelledError'
-      });
-    }
-
-    if (
-      data.notDeliveredDeferredServices &&
-      data.notDeliveredDeferredServices.length
-    ) {
-      throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBPOS_CannotCancelLayWithDeferredOrders',
-        messageParams: [data.notDeliveredDeferredServices.join(', ')]
+        errorConfirmation: 'OBMOBC_OfflineWindowRequiresOnline'
       });
     }
 
