@@ -102,6 +102,15 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
     Role defaultRole = currentUser.getDefaultRole();
     Role defaultPosRole = currentUser.getOBPOSDefaultPOSRole();
 
+    if (defaultPosRole != null
+        && getDistanceToStoreOrganizationForCertainRole(defaultPosRole, posTerminal) < 1) {
+      defaultPosRole = null;
+    }
+    if (defaultRole != null
+        && getDistanceToStoreOrganizationForCertainRole(defaultRole, posTerminal) < 1) {
+      defaultRole = null;
+    }
+
     // When defaults role are not defined, then system will try to find the best role to login in
     // the desired store.
     // Apart from that, if defaults are not valid (-1) system will try to find a better role.
@@ -266,7 +275,7 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
       }
       if (distance == null) {
         distance = BigDecimal.ONE;
-        distance.negate();
+        distance = distance.negate();
       }
       if (distance.compareTo(BigDecimal.ZERO) > 0) {
         log.debug("Default role: " + currentRole.getIdentifier()
