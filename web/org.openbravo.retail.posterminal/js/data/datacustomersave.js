@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -72,41 +72,50 @@
         customer.set('id', uuid);
         customer.id = uuid;
         billing = new OB.Model.BPLocation();
+        // Defaults
         billing.set('id', customer.get('locId'));
         billing.set('bpartner', customer.get('id'));
         billing.set('name', customer.get('locName'));
-        billing.set('postalCode', customer.get('postalCode'));
-        billing.set('cityName', customer.get('cityName'));
         billing.set('_identifier', customer.get('locName'));
-        billing.set('countryName', customer.get('countryName'));
-        billing.set('countryId', customer.get('countryId'));
-        billing.set('regionId', customer.get('regionId'));
-        billing.set('regionName', customer.get('regionName'));
+        billing.set('isBillTo', true);
+        billing.set('isShipTo', true);
         billing.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-
+        // Model Properties
+        OB.Model.BPLocation.getProperties().forEach(property => {
+          if (
+            !billing.get(property.name) &&
+            !OB.UTIL.isNullOrUndefined(customer.get(property.name))
+          ) {
+            billing.set(property.name, customer.get(property.name));
+          }
+        });
         if (customer.get('useSameAddrForShipAndInv')) {
-          billing.set('isBillTo', true);
-          billing.set('isShipTo', true);
           shipping = billing;
           locations.push(billing);
         } else {
           billing.set('isBillTo', true);
           billing.set('isShipTo', false);
           shipping = new OB.Model.BPLocation();
+          // Defaults
           shipping.set('id', customer.get('shipLocId'));
           shipping.set('bpartner', customer.get('id'));
           shipping.set('name', customer.get('shipLocName'));
-          shipping.set('postalCode', customer.get('shipPostalCode'));
-          shipping.set('cityName', customer.get('shipCityName'));
           shipping.set('_identifier', customer.get('shipLocName'));
-          shipping.set('countryName', customer.get('shipCountryName'));
-          shipping.set('countryId', customer.get('shipCountryId'));
-          shipping.set('regionId', customer.get('shipRegionId'));
-          shipping.set('regionName', customer.get('shipRegionName'));
           shipping.set('isBillTo', false);
           shipping.set('isShipTo', true);
           shipping.set('posTerminal', OB.MobileApp.model.get('terminal').id);
-
+          // Model Properties
+          OB.Model.BPLocation.getProperties().forEach(property => {
+            const shippingProperty =
+              'ship' +
+              (property.name.charAt(0).toUpperCase() + property.name.slice(1));
+            if (
+              !shipping.get(property.name) &&
+              !OB.UTIL.isNullOrUndefined(customer.get(shippingProperty))
+            ) {
+              shipping.set(property.name, customer.get(shippingProperty));
+            }
+          });
           locations.push(billing);
           locations.push(shipping);
         }
