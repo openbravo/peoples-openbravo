@@ -567,11 +567,12 @@ enyo.kind({
         edit: false
       });
     }
-    if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-      this.model.get('multiOrders').trigger('displayTotal');
-    } else {
-      receipt.trigger('displayTotal');
-    }
+
+    OB.App.State.Global.displayTotal({
+      ticket: this.model.get('leftColumnViewManager').isMultiOrder()
+        ? OB.UTIL.TicketUtils.toMultiTicket(this.model.get('multiOrders'))
+        : null
+    });
 
     me.doTabChange({
       tabPanel: me.tabPanel,

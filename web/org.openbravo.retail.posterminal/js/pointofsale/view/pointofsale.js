@@ -1727,14 +1727,8 @@ enyo.kind({
       paymentProvider;
 
     var removeTransaction = function() {
-      //      if (!me.model.get('multiOrders').get('isMultiOrders')) {
-      //        me.model.get('order').removePayment(inEvent.payment);
-      //      } else {
-      //        me.model.get('multiOrders').removePayment(inEvent.payment);
-      //      }
       if (me.model.get('leftColumnViewManager').isOrder()) {
         me.model.get('order').removePayment(inEvent.payment, null, function() {
-          me.model.get('order').trigger('displayTotal');
           if (inEvent.removeCallback) {
             inEvent.removeCallback();
           }
@@ -1745,7 +1739,9 @@ enyo.kind({
         me.model
           .get('multiOrders')
           .removePayment(inEvent.payment, inEvent.removeCallback);
-        me.model.get('multiOrders').trigger('displayTotal');
+        OB.App.State.Global.displayTotal({
+          ticket: OB.UTIL.TicketUtils.toMultiTicket(me.model.get('multiOrders'))
+        });
         return;
       }
     };
@@ -1921,7 +1917,6 @@ enyo.kind({
           inEvent.sender,
           inEvent.reverseCallback
         );
-      me.model.get('order').trigger('displayTotal');
       return;
     }
   },

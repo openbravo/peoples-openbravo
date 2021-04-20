@@ -6617,7 +6617,6 @@
           var executeFinalCallback = function(saveChanges) {
             if (saveChanges && !payment.get('changePayment')) {
               order.trigger('updatePending');
-              order.trigger('displayTotal');
             }
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_postAddPayment',
@@ -8709,13 +8708,20 @@
               receipt: me
             },
             function(args) {
-              var executeFinalCallback = function() {
+              var executeFinalCallback = function(saveChanges) {
+                if (saveChanges) {
+                  order.adjustPayment();
+                  OB.App.State.Global.displayTotal({
+                    ticket: OB.UTIL.TicketUtils.toMultiTicket(me)
+                  });
+                }
                 OB.UTIL.HookManager.executeHooks(
                   'OBPOS_postAddPayment',
                   {
                     paymentAdded: payment,
                     payments: payments,
-                    receipt: order
+                    receipt: order,
+                    saveChanges: saveChanges
                   },
                   function(args2) {
                     finalCallback();
@@ -8724,7 +8730,7 @@
               };
 
               if (args && args.cancellation) {
-                executeFinalCallback();
+                executeFinalCallback(false);
                 return;
               }
 
@@ -8757,9 +8763,7 @@
                       p.set('origAmount', p.get('amount'));
                     }
                     payment.set('date', new Date());
-                    order.adjustPayment();
-                    order.trigger('displayTotal');
-                    executeFinalCallback();
+                    executeFinalCallback(true);
                     return;
                   }
                 }
@@ -8790,9 +8794,7 @@
                       );
                     }
                     payment.set('date', new Date());
-                    order.adjustPayment();
-                    order.trigger('displayTotal');
-                    executeFinalCallback();
+                    executeFinalCallback(true);
                     return;
                   }
                 }
@@ -8812,9 +8814,7 @@
                   .set('roundedPaymentId', payment.get('id'));
               }
               payments.add(payment);
-              order.adjustPayment();
-              order.trigger('displayTotal');
-              executeFinalCallback();
+              executeFinalCallback(true);
               return;
             }
           );
