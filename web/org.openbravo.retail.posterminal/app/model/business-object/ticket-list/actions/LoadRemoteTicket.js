@@ -50,7 +50,7 @@
   );
 
   function createTicket(payload) {
-    const newTicket = {
+    let newTicket = {
       ...payload.ticket,
       id: payload.ticket.orderid,
       timezoneOffset: new Date().getTimezoneOffset(),
@@ -80,7 +80,7 @@
           ? 1
           : 0
     };
-
+    newTicket = OB.App.State.Ticket.Utils.setDelivery(newTicket);
     newTicket.taxes = newTicket.taxes
       .map(tax => ({
         id: tax.taxid,
@@ -186,7 +186,7 @@
   }
 
   function addLines(ticket, payload) {
-    const newTicket = {
+    let newTicket = {
       ...ticket
     };
     const newLines = payload.ticket.receiptLines.map((line, index) => ({
@@ -259,10 +259,11 @@
     const hasNotDeliveredProducts = newTicket.lines.some(
       line => !line.deliveredQuantity || line.deliveredQuantity < line.quantity
     );
-    newTicket.isPartiallyDelivered =
-      hasDeliveredProducts && hasNotDeliveredProducts;
-    newTicket.isFullyDelivered =
-      hasDeliveredProducts && !hasNotDeliveredProducts;
+    newTicket = OB.App.State.Ticket.Utils.setDelivery(
+      newTicket,
+      hasDeliveredProducts && !hasNotDeliveredProducts
+    );
+
     if (newTicket.isPartiallyDelivered) {
       newTicket.deliveredQuantityAmount = newTicket.lines.reduce(
         (accumulator, line) =>

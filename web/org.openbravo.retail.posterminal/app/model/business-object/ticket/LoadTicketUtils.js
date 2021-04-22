@@ -311,5 +311,23 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         locationBillModel: invoicingLocation
       }
     };
+  },
+
+  setEditableAttributes(ticket) {
+    return {
+      ...ticket,
+      hasbeenpaid: ticket.isQuotation ? 'Y' : 'N',
+      isEditable: false,
+      isPaid: !ticket.isLayaway,
+      isModified: false
+    };
+  },
+
+  setDelivery(ticket, isFullyDelivered = false) {
+    return {
+      ...ticket,
+      isPartiallyDelivered: !isFullyDelivered,
+      isFullyDelivered
+    };
   }
 });
