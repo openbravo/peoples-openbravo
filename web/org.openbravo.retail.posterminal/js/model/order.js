@@ -5879,40 +5879,6 @@
     },
 
     cancelLayaway: function(context) {
-      // Run new CreateCancelTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
-      if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_PreCancelLayaway',
-          {
-            context: context
-          },
-          async function(args) {
-            if (args && args.cancelOperation) {
-              return;
-            }
-
-            try {
-              await OB.App.State.Ticket.createCancelTicket(
-                OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
-              );
-            } catch (error) {
-              OB.App.View.ActionCanceledUIHandler.handle(error);
-            }
-
-            OB.MobileApp.model.receipt.getPrepaymentAmount(function() {
-              OB.MobileApp.model.receipt.trigger('updateView');
-              OB.MobileApp.model.receipt.trigger('updatePending', true);
-              context.doTabChange({
-                tabPanel: 'payment',
-                keyboard: 'toolbarpayment',
-                edit: false
-              });
-            }, true);
-          }
-        );
-        return;
-      }
-
       var me = this;
       me.canCancelOrder(
         null,

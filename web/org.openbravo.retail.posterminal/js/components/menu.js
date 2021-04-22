@@ -257,13 +257,40 @@ enyo.kind({
     const me = this;
     const order = me.model.get('order');
 
-    if (order.get('iscancelled')) {
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_AlreadyCancelledHeader'),
-        OB.I18N.getLabel('OBPOS_AlreadyCancelled')
+    // Run new CreateCancelTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
+    if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreCancelLayaway',
+        {
+          context: me
+        },
+        async function(args) {
+          if (args && args.cancelOperation) {
+            return;
+          }
+
+          try {
+            await OB.App.State.Ticket.createCancelTicket(
+              OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
+            );
+          } catch (error) {
+            OB.App.View.ActionCanceledUIHandler.handle(error);
+          }
+
+          OB.MobileApp.model.receipt.getPrepaymentAmount(function() {
+            OB.MobileApp.model.receipt.trigger('updateView');
+            OB.MobileApp.model.receipt.trigger('updatePending', true);
+            me.doTabChange({
+              tabPanel: 'payment',
+              keyboard: 'toolbarpayment',
+              edit: false
+            });
+          }, true);
+        }
       );
       return;
     }
+
     if (order.get('isFullyDelivered')) {
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBPOS_FullyDeliveredHeader'),
@@ -298,6 +325,7 @@ enyo.kind({
   },
   displayLogic: function() {
     var me = this,
+      isCanceled,
       isPaidReceipt,
       isReturn,
       receiptLines,
@@ -305,6 +333,7 @@ enyo.kind({
 
     receipt = this.model.get('order');
 
+    isCanceled = receipt.get('iscancelled');
     isPaidReceipt = receipt.get('isPaid') && !receipt.get('isQuotation');
     isReturn =
       receipt.get('orderType') === 1 ||
@@ -359,6 +388,7 @@ enyo.kind({
     }
 
     if (
+      !isCanceled &&
       !isReturn &&
       delivered() !== 'TD' &&
       (isPaidReceipt ||

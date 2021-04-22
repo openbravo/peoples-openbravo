@@ -104,6 +104,10 @@
 
   OB.App.StateAPI.Ticket.createCancelTicket.addActionPreparation(
     async (ticket, payload) => {
+      await checkTicketDelivered(ticket);
+      await checkNegativeLines(ticket);
+      await checkReservationLines(ticket);
+      await checkPrePayments(ticket);
       await OB.App.State.Ticket.Utils.checkTicketCanceled(ticket, {
         checkNotDeliveredDeferredServices: true
       });
@@ -112,13 +116,44 @@
     }
   );
 
-  async function checkDeliveredQuantity(ticket) {
-    if (ticket.payment >= (ticket.deliveredQuantityAmount || 0)) {
-      return;
+  async function checkTicketDelivered(ticket) {
+    if (ticket.isFullyDelivered) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_FullyDelivered'
+      });
     }
-    await OB.App.View.DialogUIHandler.askConfirmation({
-      title: 'OBPOS_Attention',
-      message: 'OBPOS_DeliveredMoreThanPaid'
-    });
+  }
+
+  async function checkNegativeLines(ticket) {
+    if (ticket.lines.some(line => line.qty < 0)) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_cancelLayawayWithNegativeLines'
+      });
+    }
+  }
+
+  async function checkReservationLines(ticket) {
+    if (ticket.lines.some(line => line.hasStockReservation)) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_cancelOrderWithReservation'
+      });
+    }
+  }
+
+  async function checkPrePayments(ticket) {
+    if (ticket.payments.some(payment => !payment.isPrePayment)) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_C&RDeletePaymentsHeader'
+      });
+    }
+  }
+
+  async function checkDeliveredQuantity(ticket) {
+    if (ticket.payment < (ticket.deliveredQuantityAmount || 0)) {
+      await OB.App.View.DialogUIHandler.askConfirmation({
+        title: 'OBPOS_Attention',
+        message: 'OBPOS_DeliveredMoreThanPaid'
+      });
+    }
   }
 })();
