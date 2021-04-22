@@ -7066,6 +7066,10 @@
                     }
 
                     executeFinalCallback(true);
+                    OB.UTIL.ProcessController.finish(
+                      'reversePayment',
+                      execution
+                    );
                     return;
                   })
                   .catch(function(error) {
@@ -7078,78 +7082,6 @@
                   });
               }
             ); // call with callback, no args
-
-            // if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
-            //   reversalPaymentRoundingLine = new OB.Model.PaymentLine(
-            //     reversalPaymentRounding.attributes
-            //   );
-            //   // Save the payment which is rounding current payment
-            //   reversalPaymentLine.set(
-            //     'paymentRoundingLine',
-            //     reversalPaymentRoundingLine
-            //   );
-
-            //   await OB.App.State.Ticket.reversePayment({
-            //     payments: OB.MobileApp.model.get('payments'),
-            //     terminal: OB.MobileApp.model.get('terminal'),
-            //     payment: JSON.parse(JSON.stringify(payment))
-            //   })
-            //     .then(async () => {
-            //       const reversalPaymentId = me
-            //         .get('payments')
-            //         .models.find(
-            //           p =>
-            //             p.get('isReversePayment') &&
-            //             p.get('kind') === reversalPaymentLine.get('kind')
-            //         ).id;
-            //       // In rounding payments, we need to save the id of the payment we are rounding
-            //       reversalPaymentRoundingLine.set(
-            //         'roundedPaymentId',
-            //         reversalPaymentId
-            //       );
-
-            //       await OB.App.State.Ticket.reversePayment({
-            //         payments: OB.MobileApp.model.get('payments'),
-            //         terminal: OB.MobileApp.model.get('terminal'),
-            //         payment: JSON.parse(JSON.stringify(payment))
-            //       })
-            //         .then(() => {
-            //           reverseCallback(true);
-            //           return;
-            //         })
-            //         .catch(function(error) {
-            //           OB.App.View.ActionCanceledUIHandler.handle(error);
-            //           OB.UTIL.ProcessController.finish(
-            //             'reversePayment',
-            //             execution
-            //           );
-            //           payments.forEach(p => p.trigger('updateView'));
-            //         });
-
-            //       reverseCallback(true);
-            //       return;
-            //     })
-            //     .catch(function(error) {
-            //       OB.App.View.ActionCanceledUIHandler.handle(error);
-            //       OB.UTIL.ProcessController.finish('reversePayment', execution);
-            //       payments.forEach(p => p.trigger('updateView'));
-            //     });
-            // } else {
-            //   await OB.App.State.Ticket.reversePayment({
-            //     payments: OB.MobileApp.model.get('payments'),
-            //     terminal: OB.MobileApp.model.get('terminal'),
-            //     payment: JSON.parse(JSON.stringify(payment))
-            //   })
-            //     .then(() => {
-            //       reverseCallback(true);
-            //       return;
-            //     })
-            //     .catch(function(error) {
-            //       OB.App.View.ActionCanceledUIHandler.handle(error);
-            //       OB.UTIL.ProcessController.finish('reversePayment', execution);
-            //       payments.forEach(p => p.trigger('updateView'));
-            //     });
-            // }
           }
         }
       } else {
