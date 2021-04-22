@@ -5899,13 +5899,15 @@
               OB.App.View.ActionCanceledUIHandler.handle(error);
             }
 
-            OB.MobileApp.model.receipt.trigger('updateView');
-            OB.MobileApp.model.receipt.trigger('updatePending', true);
-            context.doTabChange({
-              tabPanel: 'payment',
-              keyboard: 'toolbarpayment',
-              edit: false
-            });
+            OB.MobileApp.model.receipt.getPrepaymentAmount(function() {
+              OB.MobileApp.model.receipt.trigger('updateView');
+              OB.MobileApp.model.receipt.trigger('updatePending', true);
+              context.doTabChange({
+                tabPanel: 'payment',
+                keyboard: 'toolbarpayment',
+                edit: false
+              });
+            }, true);
           }
         );
         return;
