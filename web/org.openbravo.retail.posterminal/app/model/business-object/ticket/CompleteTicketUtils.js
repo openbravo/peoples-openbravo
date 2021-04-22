@@ -720,7 +720,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   async checkTicketUpdated(ticket, payload) {
     const runCheckTicketUpdatedRequest = async () => {
       try {
-        const data = await OB.App.Request.mobileServiceRequest(
+        const request = await OB.App.Request.mobileServiceRequest(
           'org.openbravo.retail.posterminal.process.CheckUpdated',
           {
             order: {
@@ -735,7 +735,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             }
           }
         );
-        return data;
+        return request;
       } catch (error) {
         if (
           !OB.App.Security.hasPermission(
@@ -794,47 +794,51 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if given ticket was canceled in a different terminal.
    */
   async checkTicketCanceled(ticket, payload) {
-    try {
-      const result = await OB.App.Request.mobileServiceRequest(
-        'org.openbravo.retail.posterminal.process.IsOrderCancelled',
-        {
-          orderId: ticket.id,
-          documentNo: ticket.documentNo,
-          orderLoaded: ticket.loaded,
-          orderLines: ticket.lines.map(line => ({
-            id: line.id,
-            loaded: line.loaded
-          })),
-          checkNotEditableLines: payload.checkNotEditableLines,
-          checkNotDeliveredDeferredServices:
-            payload.checkNotDeliveredDeferredServices
-        }
-      );
+    const runCheckTicketCanceledRequest = async () => {
+      try {
+        const request = await OB.App.Request.mobileServiceRequest(
+          'org.openbravo.retail.posterminal.process.IsOrderCancelled',
+          {
+            orderId: ticket.id,
+            documentNo: ticket.documentNo,
+            orderLoaded: ticket.loaded,
+            orderLines: ticket.lines.map(line => ({
+              id: line.id,
+              loaded: line.loaded
+            })),
+            checkNotEditableLines: payload.checkNotEditableLines,
+            checkNotDeliveredDeferredServices:
+              payload.checkNotDeliveredDeferredServices
+          }
+        );
+        return request;
+      } catch (error) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBMOBC_OfflineWindowRequiresOnline'
+        });
+      }
+    };
 
-      if (result.response.error) {
-        throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: result.response.error.message
-        });
-      }
-      if (result.response.data.orderCancelled) {
-        throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBPOS_LayawayCancelledError'
-        });
-      }
-      if (
-        result.response.data.notDeliveredDeferredServices &&
-        result.response.data.notDeliveredDeferredServices.length
-      ) {
-        throw new OB.App.Class.ActionCanceled({
-          errorConfirmation: 'OBPOS_CannotCancelLayWithDeferredOrders',
-          messageParams: [
-            result.response.data.notDeliveredDeferredServices.join(', ')
-          ]
-        });
-      }
-    } catch (error) {
+    const data = await runCheckTicketCanceledRequest();
+    if (data.response.error) {
       throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBMOBC_OfflineWindowRequiresOnline'
+        errorConfirmation: data.response.error.message
+      });
+    }
+    if (data.response.data.orderCancelled) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_LayawayCancelledError'
+      });
+    }
+    if (
+      data.response.data.notDeliveredDeferredServices &&
+      data.response.data.notDeliveredDeferredServices.length
+    ) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_CannotCancelLayWithDeferredOrders',
+        messageParams: [
+          data.response.data.notDeliveredDeferredServices.join(', ')
+        ]
       });
     }
 
@@ -860,14 +864,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
     const runCheckBusinessPartnerCreditRequest = async () => {
       try {
-        const data = await OB.App.Request.mobileServiceRequest(
+        const request = await OB.App.Request.mobileServiceRequest(
           'org.openbravo.retail.posterminal.CheckBusinessPartnerCredit',
           {
             businessPartnerId: ticket.businessPartner.id,
             totalPending: paymentStatus.pendingAmt
           }
         );
-        return data;
+        return request;
       } catch (error) {
         if (
           !OB.App.Security.hasPermission('OBPOS_AllowSellOnCreditWhileOffline')
