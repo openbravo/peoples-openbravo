@@ -6956,6 +6956,7 @@
               }
             }
           });
+          OB.UTIL.ProcessController.finish('reversePayment', execution);
         } else {
           provider =
             me.getTotal() > 0
