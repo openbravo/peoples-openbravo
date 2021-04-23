@@ -67,7 +67,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       ? payload.payment.paymentRoundingLine
       : null;
     let reversalPaymentRounding;
-    if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
+    if (!(paymentRounding === null || paymentRounding === undefined)) {
       reversalPaymentRounding = this.createReversePayment(
         !paymentRounding.get
           ? new OB.Model.PaymentLine(paymentRounding)

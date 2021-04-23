@@ -45,7 +45,7 @@
       return newPayload;
     },
     async (ticket, payload) => payload,
-    0
+    10
   );
 
   OB.App.StateAPI.Ticket.reversePayment.addActionPreparation(
@@ -59,7 +59,7 @@
       return newPayload;
     },
     async (ticket, payload) => payload,
-    20
+    0
   );
 
   OB.App.StateAPI.Ticket.reversePayment.addActionPreparation(
