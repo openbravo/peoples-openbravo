@@ -244,3 +244,38 @@ isc.OBLevelImg.addProperties({
     }
   }
 });
+
+isc.defineClass('OBColorField', isc.OBGridFormLabel);
+
+isc.OBColorField.addProperties({
+  height: 1,
+  width: 100,
+  initWidget: function() {
+    if (this.record && this.record.hexColor) {
+      this.createField(this.record.hexColor);
+    }
+    this.Super('initWidget', arguments);
+  },
+
+  createField: function(hexColor) {
+    if (hexColor) {
+      this.setBackgroundColor(hexColor);
+    }
+  },
+
+  setRecord: function(record) {
+    const hexColor = record.hexColor;
+    if (hexColor) {
+      this.showValue(hexColor);
+    }
+  },
+
+  showValue: function(displayValue, dataValue, form, item) {
+    if (displayValue) {
+      this.setBackgroundColor(displayValue);
+    }
+    if (this.grid && this.grid.body) {
+      this.grid.body.markForRedraw();
+    }
+  }
+});
