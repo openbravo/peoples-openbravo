@@ -273,7 +273,10 @@ isc.OBColorField.addProperties({
   showValue: function(displayValue, dataValue, form, item) {
     if (displayValue) {
       this.setBackgroundColor(displayValue);
+    } else if (!displayValue && form && form.getValue('hexColor')) {
+      this.setBackgroundColor(form.getValue('hexColor'));
     }
+
     if (this.grid && this.grid.body) {
       this.grid.body.markForRedraw();
     }
