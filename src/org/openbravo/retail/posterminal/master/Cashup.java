@@ -269,7 +269,7 @@ public class Cashup extends JSONProcessSimple {
     for (int i = 0; i < paymentTypesCashup.length; i++) {
       String hqlglItem = "select distinct fmgi from FinancialMgmtGLItem fmgi join "
           + paymentTypesCashup[i] + " as oapt " + "where oapt.id in (select oap.paymentMethod.id "
-          + "from OBPOS_App_Payment oap where oap.obposApplications.id = :terminal)";
+          + "from OBPOS_App_Payment oap where oap.active = true and oap.obposApplications.id = :terminal)";
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlglItem,
           OBContext.getOBContext().getCurrentClient().getId(),
           OBContext.getOBContext().getCurrentOrganization().getId(), null, null, null);
@@ -286,7 +286,7 @@ public class Cashup extends JSONProcessSimple {
     }
 
     // Get Financial Accounts
-    String hqlFinanAcct = "from FIN_Financial_Account ffa where ffa.id in (select oap.financialAccount.id from OBPOS_App_Payment oap where oap.obposApplications.id = :terminal)";
+    String hqlFinanAcct = "from FIN_Financial_Account ffa where ffa.id in (select oap.financialAccount.id from OBPOS_App_Payment oap where oap.active = true and oap.obposApplications.id = :terminal)";
     SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlFinanAcct,
         OBContext.getOBContext().getCurrentClient().getId(),
         OBContext.getOBContext().getCurrentOrganization().getId(), null, null, null);
