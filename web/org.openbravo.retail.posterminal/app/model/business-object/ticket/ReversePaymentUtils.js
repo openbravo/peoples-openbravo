@@ -25,7 +25,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     reversePayment.isPrePayment = undefined;
     reversePayment.paymentAmount = undefined;
     reversePayment.paymentDate = undefined;
-    reversePayment.paymentId = OB.App.UUID.generate();
+    reversePayment.paymentId = undefined;
     reversePayment.paymentRoundingLine = undefined;
 
     // Modify other properties for the reverse payment

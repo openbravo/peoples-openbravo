@@ -6712,7 +6712,6 @@
     },
 
     reversePayment: async function(payment, sender, reverseCallback) {
-      var execution = OB.UTIL.ProcessController.start('reversePayment');
       var payments = this.get('payments'),
         me = this,
         usedPayment,
@@ -6924,8 +6923,9 @@
         }
       }
 
-      // Run new ReturnBlindTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
+      // Run new ReversePayment state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
       if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
+        var execution = OB.UTIL.ProcessController.start('reversePayment');
         var provider;
         var firstpayment = OB.MobileApp.model.paymentnames[payment.get('kind')];
         let reversalPayment = createReversePayment(payment);
