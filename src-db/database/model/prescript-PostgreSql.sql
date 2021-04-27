@@ -1,36 +1,3 @@
-CREATE OR REPLACE FUNCTION exist_language(varchar)
-RETURNS bigint AS ' 
-  SELECT count(*) from pg_language where lanname = $1;
-' LANGUAGE 'sql' STABLE
-/-- END
-
-CREATE OR REPLACE FUNCTION insert_pg_language()
-RETURNS integer AS ' 
-  CREATE TRUSTED PROCEDURAL LANGUAGE ''plpgsql''
-  HANDLER plpgsql_call_handler
-  VALIDATOR plpgsql_validator;
-  SELECT 1;
-' LANGUAGE 'sql'
-/-- END
-
-CREATE OR REPLACE FUNCTION create_language(varchar)
-RETURNS integer AS '
-SELECT
-CASE WHEN exist_language($1)=0
-THEN insert_pg_language()
-END;
-SELECT 1;
-' LANGUAGE 'sql'
-/-- END
-
-SELECT * FROM create_language('plpgsql')
-/-- END
-
---CREATE TRUSTED PROCEDURAL LANGUAGE 'plpgsql'
---  HANDLER plpgsql_call_handler
---  VALIDATOR plpgsql_validator;
---/--END
-
 CREATE OR REPLACE FUNCTION dba_getattnumpos(conkey _int4, attnum int4)
   RETURNS int4 AS
 $BODY$
@@ -1213,17 +1180,6 @@ FROM PG_TRIGGER, PG_CLASS, PG_NAMESPACE
 WHERE PG_TRIGGER.tgrelid = PG_CLASS.OID
 AND PG_CLASS.RELNAMESPACE = PG_NAMESPACE.OID
 AND PG_NAMESPACE.NSPNAME = CURRENT_SCHEMA()
-/-- END
-
-
--- DROP TEMPORARY FUNCTIONS
-DROP FUNCTION exist_language(varchar)
-/-- END
-
-DROP FUNCTION insert_pg_language()
-/-- END
-
-DROP FUNCTION create_language(varchar)
 /-- END
 
 DROP FUNCTION type_oid(varchar)
