@@ -167,7 +167,7 @@ OB.Layout.initialize = function() {
     imageType: 'normal',
     imageWidth: '130',
     imageHeight: '32',
-    src: OB.Application.contextUrl + 'utility/GetOpenbravoLogo.png',
+    src: OB.Application.contextUrl + 'web/images/PoweredByOpenbravo.svg',
 
     getInnerHTML: function() {
       var html = this.Super('getInnerHTML', arguments);
