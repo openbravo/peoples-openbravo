@@ -119,7 +119,7 @@
       </column>
       <column name="SUPPORT_CONTACT" primaryKey="false" required="false" type="NVARCHAR" size="200" autoIncrement="false">
         <default/>
-        <onCreateDefault><![CDATA['www.your-it-service.com']]></onCreateDefault>
+        <onCreateDefault><![CDATA['https://www.openbravo.com/services/support-maintenance']]></onCreateDefault>
       </column>
       <column name="SYSTEM_STATUS" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
