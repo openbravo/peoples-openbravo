@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2007 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,7 +21,7 @@
 .Login_Logo_Openbravo {
   width: 260px;
   height: 70px;
-  background: url(OpenbravoWithVesion_Logo.png) no-repeat center center;
+  background: url(openbravoLogo.svg) no-repeat center center;
 }
 
 tr.Login_Logo_SourceForge_Field {
