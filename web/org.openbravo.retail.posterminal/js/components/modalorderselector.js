@@ -309,38 +309,40 @@ enyo.kind({
       this.$.customer.addClass('u-hideFromUI');
     }
 
-    this.$.orderType.setContent(orderType);
-    switch (this.model.get('orderType')) {
-      case 'QT':
-        this.$.orderType.addClass(
-          'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_qt'
-        );
-        break;
-      case 'LAY':
-        this.$.orderType.addClass(
-          'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_lay'
-        );
-        break;
-      case 'CAN':
-        this.$.orderType.addClass(
-          'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_cancelled'
-        );
-        break;
-      case 'RET':
-        this.$.orderType.addClass(
-          'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_ret'
-        );
-        break;
-      case 'DR':
-        this.$.orderType.addClass(
-          'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_dr'
-        );
-        break;
-      default:
-        this.$.orderType.addClass(
-          'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_default'
-        );
-        break;
+    if (me.model.get('iscancelled')) {
+      this.$.orderType.setContent(OB.I18N.getLabel('OBPOS_Cancelled'));
+      this.$.orderType.addClass(
+        'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_cancelled'
+      );
+    } else {
+      this.$.orderType.setContent(orderType);
+      switch (this.model.get('orderType')) {
+        case 'QT':
+          this.$.orderType.addClass(
+            'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_qt'
+          );
+          break;
+        case 'LAY':
+          this.$.orderType.addClass(
+            'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_lay'
+          );
+          break;
+        case 'RET':
+          this.$.orderType.addClass(
+            'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_ret'
+          );
+          break;
+        case 'DR':
+          this.$.orderType.addClass(
+            'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_dr'
+          );
+          break;
+        default:
+          this.$.orderType.addClass(
+            'obUiReceiptSelectorRender-lineInfoContainerSecondRow-orderType_default'
+          );
+          break;
+      }
     }
     if (this.model.get('multiselect')) {
       this.$.lineInfo.addClass('obUiReceiptSelectorRender-line-lineInfo_check');
