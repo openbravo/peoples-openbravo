@@ -18,7 +18,7 @@ temp
 WebContent
 .ant-targets-build.xml
 
-config/Openbravo.properties
+config/*Openbravo.properties
 config/quartz.properties
 config/Format.xml
 config/log4j.lcf
