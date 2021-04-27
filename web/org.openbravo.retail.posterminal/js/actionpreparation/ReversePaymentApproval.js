@@ -14,7 +14,7 @@
       return payloadWithApprovals;
     },
     async (ticket, payload) => payload,
-    10
+    400
   );
 
   async function checkApprovals(payload) {
@@ -31,7 +31,7 @@
       !(
         !OB.UTIL.isNullOrUndefined(usedPaymentMethod.availableReverseDelay) &&
         currentDate.getTime() <=
-          new Date(payload.payment.get('paymentDate')).getTime() +
+          new Date(payload.payment.paymentDate).getTime() +
             usedPaymentMethod.availableReverseDelay * 86400000
       )
     ) {
