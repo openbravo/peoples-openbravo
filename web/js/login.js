@@ -4,15 +4,15 @@
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2019 Openbravo SLU 
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2017-2021 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
@@ -35,17 +35,23 @@ function setLoginMessage(type, title, text) {
   if (type === 'Error') {
     var msgContainer = document.getElementById('errorMsg');
     var msgContainerTitle = document.getElementById('errorMsgTitle');
-    var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
+    var msgContainerTitleContainer = document.getElementById(
+      'errorMsgTitle_Container'
+    );
     var msgContainerContent = document.getElementById('errorMsgContent');
     if (typeof title !== 'undefined' && title !== '' && title !== null) {
-      msgContainerTitle.innerHTML = title.replace(/\n/g, '<br>').replace(/\\n/g, '<br>');
+      msgContainerTitle.innerHTML = title
+        .replace(/\n/g, '<br>')
+        .replace(/\\n/g, '<br>');
       msgContainerTitleContainer.style.display = '';
     } else {
       msgContainerTitle.innerHTML = '';
       msgContainerTitleContainer.style.display = 'none';
     }
     if (typeof text !== 'undefined' && text !== '' && text !== null) {
-      msgContainerContent.innerHTML = text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>');
+      msgContainerContent.innerHTML = text
+        .replace(/\n/g, '<br>')
+        .replace(/\\n/g, '<br>');
     } else {
       msgContainerContent.innerHTML = '';
     }
@@ -58,7 +64,7 @@ function setLoginMessage(type, title, text) {
       alertText += title.replace(/<br>/g, '\n') + '\n';
     }
     if (typeof text !== 'undefined' && text !== '' && text !== null) {
-      alertText += text.replace(/<br>/g, '\n')
+      alertText += text.replace(/<br>/g, '\n');
     }
     if (type === 'Warning') {
       alert(alertText);
@@ -71,29 +77,60 @@ function setLoginMessage(type, title, text) {
 
 function doLogin(command) {
   var extraParams;
-  if (document.getElementById('resetPassword').value === 'true' && document.getElementById('user').value !== document.getElementById('password').value) {
+  if (
+    document.getElementById('resetPassword').value === 'true' &&
+    document.getElementById('user').value !==
+      document.getElementById('password').value
+  ) {
     setLoginMessage('Error', errorSamePassword, errorDifferentPasswordInFields);
     return true;
   }
-  if (focusedWindowElement.id === 'user' && document.getElementById('user').value !== '' && document.getElementById('password').value === '') {
-    setTimeout(function () { // To manage browser autocomplete feature if it is active
-      if (focusedWindowElement.id === 'user' && document.getElementById('password').value === '') {
-        setWindowElementFocus(document.getElementById('password'))
+  if (
+    focusedWindowElement.id === 'user' &&
+    document.getElementById('user').value !== '' &&
+    document.getElementById('password').value === ''
+  ) {
+    setTimeout(function() {
+      // To manage browser autocomplete feature if it is active
+      if (
+        focusedWindowElement.id === 'user' &&
+        document.getElementById('password').value === ''
+      ) {
+        setWindowElementFocus(document.getElementById('password'));
       } else {
         return true;
       }
     }, 10);
-  } else if (focusedWindowElement.id === 'password' && document.getElementById('password').value !== '' && document.getElementById('user').value === '') {
-    setWindowElementFocus(document.getElementById('user'))
+  } else if (
+    focusedWindowElement.id === 'password' &&
+    document.getElementById('password').value !== '' &&
+    document.getElementById('user').value === ''
+  ) {
+    setWindowElementFocus(document.getElementById('user'));
   } else {
-    if (document.getElementById('user').value === '' || document.getElementById('password').value === '') {
+    if (
+      document.getElementById('user').value === '' ||
+      document.getElementById('password').value === ''
+    ) {
       setLoginMessage('Error', identificationFailureTitle, errorEmptyContent);
       return true;
     }
     disableButton('buttonOK');
-    command = command || (document.getElementById('resetPassword').value === 'true' ? 'FORCE_RESET_PASSWORD' : 'DEFAULT');
+    command =
+      command ||
+      (document.getElementById('resetPassword').value === 'true'
+        ? 'FORCE_RESET_PASSWORD'
+        : 'DEFAULT');
     extraParams = '&targetQueryString=' + getURLQueryString();
-    submitXmlHttpRequest(loginResult, document.frmIdentificacion, command, '../secureApp/LoginHandler.html', false, extraParams, null);
+    submitXmlHttpRequest(
+      loginResult,
+      document.frmIdentificacion,
+      command,
+      '../secureApp/LoginHandler.html',
+      false,
+      extraParams,
+      null
+    );
   }
 
   return false;
@@ -118,7 +155,11 @@ function loginResult(paramXMLParticular, XMLHttpRequestObj) {
 function processResult(result) {
   var shouldContinue = true;
   if (result.showMessage) {
-    shouldContinue = setLoginMessage(result.messageType, result.messageTitle, result.messageText);
+    shouldContinue = setLoginMessage(
+      result.messageType,
+      result.messageTitle,
+      result.messageText
+    );
     if (!shouldContinue) {
       document.getElementById('password').value = '';
     }
@@ -134,7 +175,7 @@ function processResult(result) {
   }
   if (shouldContinue) {
     if (result.showMessage && result.messageType === 'Confirmation') {
-      doLogin(result.command)
+      doLogin(result.command);
     } else {
       window.location = result.target;
     }
@@ -173,12 +214,14 @@ function redirectWhenInsideMDI() {
     } else {
       LayoutMDI = getFrame('LayoutMDI');
     }
-    if (LayoutMDI && typeof parent.document.getElementById('framesetMenu') === 'object') {
+    if (
+      LayoutMDI &&
+      typeof parent.document.getElementById('framesetMenu') === 'object'
+    ) {
       LayoutMDI.location.href = location.href || parent.window.location.href;
     }
   }
 }
-
 
 function manageVisualPreferences() {
   var topLogos = document.getElementById('TopLogos_Container');
@@ -194,19 +237,34 @@ function manageVisualPreferences() {
   }
 
   if (showCompanyLogo && urlCompany !== '') {
-    document.getElementById('CompanyLogo_Container').innerHTML = '<a href="' + urlCompany + '" target="_blank" class="Login_Img_Link">' + document.getElementById('CompanyLogo_Container').innerHTML + '</a>';
+    document.getElementById('CompanyLogo_Container').innerHTML =
+      '<a href="' +
+      urlCompany +
+      '" target="_blank" class="Login_Img_Link">' +
+      document.getElementById('CompanyLogo_Container').innerHTML +
+      '</a>';
   }
 
   if (showSupportLogo && urlSupport !== '') {
-    document.getElementById('SupportLogo_Container').innerHTML = '<a href="' + urlSupport + '" target="_blank" class="Login_Img_Link">' + document.getElementById('SupportLogo_Container').innerHTML + '</a>';
+    document.getElementById('SupportLogo_Container').innerHTML =
+      '<a href="' +
+      urlSupport +
+      '" target="_blank" class="Login_Img_Link">' +
+      document.getElementById('SupportLogo_Container').innerHTML +
+      '</a>';
   }
 
   if (showForgeLogo && urlForge !== '') {
-    document.getElementById('ForgeLogo_Container').innerHTML = '<a href="' + urlForge + '" target="_blank" class="Login_Img_Link">' + document.getElementById('ForgeLogo_Container').innerHTML + '</a>';
+    document.getElementById('ForgeLogo_Container').innerHTML =
+      '<a href="' +
+      urlForge +
+      '" target="_blank" class="Login_Img_Link">' +
+      document.getElementById('ForgeLogo_Container').innerHTML +
+      '</a>';
   }
 
   if (showCompanyLogo) {
-    document.getElementById('CompanyLogo_Container').style.display = ''
+    document.getElementById('CompanyLogo_Container').style.display = '';
   }
   topLogos.style.display = '';
   bottomLogos.style.display = '';
@@ -215,56 +273,88 @@ function manageVisualPreferences() {
 function maskLoginWindow(errorMsg) {
   var client = document.getElementById('client');
   var blocker = document.getElementById('blocker');
-  blocker.innerHTML = '<div class="Login_Home_Logo_Icon"></div><div class="error-text">' + errorMsg + '</div>';
+  blocker.innerHTML =
+    '<div class="Login_Home_Logo_Icon"></div><div class="error-text">' +
+    errorMsg +
+    '</div>';
   blocker.style.display = '';
   client.style.display = 'none';
 }
 
 function browserVersionToFloat(versionNum) {
   while (versionNum.indexOf('.') !== versionNum.lastIndexOf('.')) {
-    versionNum = versionNum.substring(0, versionNum.lastIndexOf('.')) + versionNum.substring(versionNum.lastIndexOf('.') + 1, versionNum.length);
+    versionNum =
+      versionNum.substring(0, versionNum.lastIndexOf('.')) +
+      versionNum.substring(versionNum.lastIndexOf('.') + 1, versionNum.length);
   }
   versionNum = parseFloat(versionNum, 10);
   return versionNum;
 }
 
 function browserVersionTrim(versionNum) {
-  while ((versionNum.substring(versionNum.length - 1, versionNum.length) === '0' && versionNum.indexOf('.') !== -1) || versionNum.substring(versionNum.length - 1, versionNum.length) === '.') {
+  while (
+    (versionNum.substring(versionNum.length - 1, versionNum.length) === '0' &&
+      versionNum.indexOf('.') !== -1) ||
+    versionNum.substring(versionNum.length - 1, versionNum.length) === '.'
+  ) {
     versionNum = versionNum.substring(0, versionNum.length - 1);
   }
   return versionNum;
 }
 
-function isValidBrowser(browser){
-	return browser in validBrowserVersions;
+function isValidBrowser(browser) {
+  return browser in validBrowserVersions;
 }
 
-function isRecBrowser(browser){
-	return browser in recBrowserVersions;
+function isRecBrowser(browser) {
+  return browser in recBrowserVersions;
 }
 
 function checkBrowserCompatibility() {
   var browserName = getBrowserInfo('name');
   var browserVersion = getBrowserInfo('version');
   var isValid = false;
-  if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
-    if (isValidBrowser('firefox') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserVersions.firefox)) {
+  if (
+    browserName.toUpperCase().indexOf('FIREFOX') != -1 ||
+    browserName.toUpperCase().indexOf('ICEWEASEL') != -1
+  ) {
+    if (
+      isValidBrowser('firefox') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(validBrowserVersions.firefox)
+    ) {
       isValid = true;
     }
   } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-    if (isValidBrowser('explorer') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserVersions.explorer)) {
+    if (
+      isValidBrowser('explorer') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(validBrowserVersions.explorer)
+    ) {
       isValid = true;
     }
   } else if (browserName.toUpperCase().indexOf('GOOGLE CHROME') != -1) {
-    if (isValidBrowser('chrome') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserVersions.chrome)) {
+    if (
+      isValidBrowser('chrome') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(validBrowserVersions.chrome)
+    ) {
       isValid = true;
     }
   } else if (browserName.toUpperCase().indexOf('APPLE SAFARI') != -1) {
-    if (isValidBrowser('safari') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserVersions.safari)) {
+    if (
+      isValidBrowser('safari') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(validBrowserVersions.safari)
+    ) {
       isValid = true;
     }
   } else if (browserName.toUpperCase().indexOf('MICROSOFT EDGE') != -1) {
-    if (isValidBrowser('edge') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(validBrowserVersions.edge)) {
+    if (
+      isValidBrowser('edge') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(validBrowserVersions.edge)
+    ) {
       isValid = true;
     }
   }
@@ -275,24 +365,47 @@ function checkRecommendedBrowser() {
   var browserName = getBrowserInfo('name');
   var browserVersion = getBrowserInfo('version');
   var isRecommended = false;
-  if (browserName.toUpperCase().indexOf('FIREFOX') != -1 || browserName.toUpperCase().indexOf('ICEWEASEL') != -1) {
-    if (isRecBrowser('firefox') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserVersions.firefox)) {
+  if (
+    browserName.toUpperCase().indexOf('FIREFOX') != -1 ||
+    browserName.toUpperCase().indexOf('ICEWEASEL') != -1
+  ) {
+    if (
+      isRecBrowser('firefox') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(recBrowserVersions.firefox)
+    ) {
       isRecommended = true;
     }
   } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-    if (isRecBrowser('explorer') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserVersions.explorer)) {
+    if (
+      isRecBrowser('explorer') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(recBrowserVersions.explorer)
+    ) {
       isRecommended = true;
     }
   } else if (browserName.toUpperCase().indexOf('GOOGLE CHROME') != -1) {
-    if (isRecBrowser('chrome') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserVersions.chrome)) {
+    if (
+      isRecBrowser('chrome') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(recBrowserVersions.chrome)
+    ) {
       isRecommended = true;
     }
   } else if (browserName.toUpperCase().indexOf('APPLE SAFARI') != -1) {
-    if (isRecBrowser('safari') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserVersions.safari)) {
+    if (
+      isRecBrowser('safari') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(recBrowserVersions.safari)
+    ) {
       isRecommended = true;
     }
   } else if (browserName.toUpperCase().indexOf('MICROSOFT EDGE') != -1) {
-    if (isRecBrowser('edge') && browserVersionToFloat(browserVersion) >= browserVersionToFloat(recBrowserVersions.edge)) {
+    if (
+      isRecBrowser('edge') &&
+      browserVersionToFloat(browserVersion) >=
+        browserVersionToFloat(recBrowserVersions.edge)
+    ) {
       isRecommended = true;
     }
   }
@@ -301,22 +414,47 @@ function checkRecommendedBrowser() {
 
 function buildValidBrowserMsg() {
   var displayValidBrowserMsg = validBrowserMsg;
-  if (isValidBrowser('firefox')){
-	  displayValidBrowserMsg += '<br>' + ' * Mozilla Firefox ' + browserVersionTrim(validBrowserVersions.firefox) + ' ' + validBrowserMsgOrHigher;
+  if (isValidBrowser('firefox')) {
+    displayValidBrowserMsg +=
+      '<br>' +
+      ' * Mozilla Firefox ' +
+      browserVersionTrim(validBrowserVersions.firefox) +
+      ' ' +
+      validBrowserMsgOrHigher;
   }
-  if (isValidBrowser('chrome')){
-	  displayValidBrowserMsg += '<br>' + ' * Google Chrome ' + browserVersionTrim(validBrowserVersions.chrome) + ' ' + validBrowserMsgOrHigher;
+  if (isValidBrowser('chrome')) {
+    displayValidBrowserMsg +=
+      '<br>' +
+      ' * Google Chrome ' +
+      browserVersionTrim(validBrowserVersions.chrome) +
+      ' ' +
+      validBrowserMsgOrHigher;
   }
-  if (isValidBrowser('explorer')){
-	  displayValidBrowserMsg += '<br>' + ' * Microsoft Internet Explorer ' + browserVersionTrim(validBrowserVersions.explorer) + ' ' + validBrowserMsgOrHigher;
+  if (isValidBrowser('explorer')) {
+    displayValidBrowserMsg +=
+      '<br>' +
+      ' * Microsoft Internet Explorer ' +
+      browserVersionTrim(validBrowserVersions.explorer) +
+      ' ' +
+      validBrowserMsgOrHigher;
   }
-  if (isValidBrowser('edge')){
-	  displayValidBrowserMsg += '<br>' + ' * Microsoft Edge ' + browserVersionTrim(validBrowserVersions.edge) + ' ' + validBrowserMsgOrHigher;
+  if (isValidBrowser('edge')) {
+    displayValidBrowserMsg +=
+      '<br>' +
+      ' * Microsoft Edge ' +
+      browserVersionTrim(validBrowserVersions.edge) +
+      ' ' +
+      validBrowserMsgOrHigher;
   }
-  if (isValidBrowser('safari')){
-	  displayValidBrowserMsg += '<br>' + ' * Apple Safari ' + browserVersionTrim(validBrowserVersions.safari) + ' ' + validBrowserMsgOrHigher;
+  if (isValidBrowser('safari')) {
+    displayValidBrowserMsg +=
+      '<br>' +
+      ' * Apple Safari ' +
+      browserVersionTrim(validBrowserVersions.safari) +
+      ' ' +
+      validBrowserMsgOrHigher;
   }
-  
+
   return displayValidBrowserMsg;
 }
 
@@ -324,23 +462,38 @@ function buildRecBrowserMsgText() {
   var displayRecBrowserMsgText = recBrowserMsgText;
   xxReplaceMsg = '';
   yyReplaceMsg = '';
-  if (isRecBrowser('chrome')){
-	  xxReplaceMsg += 'Google Chrome ' + browserVersionTrim(recBrowserVersions.chrome) + ', ';
+  if (isRecBrowser('chrome')) {
+    xxReplaceMsg +=
+      'Google Chrome ' + browserVersionTrim(recBrowserVersions.chrome) + ', ';
   }
-  if (isRecBrowser('firefox')){
-	  xxReplaceMsg += 'Mozilla Firefox ' + browserVersionTrim(recBrowserVersions.firefox) + ', ';
+  if (isRecBrowser('firefox')) {
+    xxReplaceMsg +=
+      'Mozilla Firefox ' +
+      browserVersionTrim(recBrowserVersions.firefox) +
+      ', ';
   }
-  if (isRecBrowser('explorer')){
-	  xxReplaceMsg += 'Internet Explorer ' + browserVersionTrim(recBrowserVersions.explorer) + ', ';
+  if (isRecBrowser('explorer')) {
+    xxReplaceMsg +=
+      'Internet Explorer ' +
+      browserVersionTrim(recBrowserVersions.explorer) +
+      ', ';
   }
-  if (isRecBrowser('edge')){
-	  xxReplaceMsg += 'Microsoft Edge ' + browserVersionTrim(recBrowserVersions.edge) + ', ';
+  if (isRecBrowser('edge')) {
+    xxReplaceMsg +=
+      'Microsoft Edge ' + browserVersionTrim(recBrowserVersions.edge) + ', ';
   }
-  if (isRecBrowser('safari')){
-	  yyReplaceMsg += 'Apple Safari ' + browserVersionTrim(recBrowserVersions.safari);
+  if (isRecBrowser('safari')) {
+    yyReplaceMsg +=
+      'Apple Safari ' + browserVersionTrim(recBrowserVersions.safari);
   }
-  displayRecBrowserMsgText = displayRecBrowserMsgText.replace('XX', xxReplaceMsg);
-  displayRecBrowserMsgText = displayRecBrowserMsgText.replace('YY', yyReplaceMsg);
+  displayRecBrowserMsgText = displayRecBrowserMsgText.replace(
+    'XX',
+    xxReplaceMsg
+  );
+  displayRecBrowserMsgText = displayRecBrowserMsgText.replace(
+    'YY',
+    yyReplaceMsg
+  );
   return displayRecBrowserMsgText;
 }
 
@@ -357,12 +510,20 @@ function setRecommendedBrowserMessage(title, text) {
   var msgContainerContent = document.getElementById('errorMsgContent');
   msgContainerTitle.innerHTML = '';
   if (typeof title !== 'undefined' && title !== '' && title !== null) {
-    msgContainerContent.innerHTML = '<span class="Login_RecBrowserMsg_Title">' + title.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') + ': ' + '</span>';
+    msgContainerContent.innerHTML =
+      '<span class="Login_RecBrowserMsg_Title">' +
+      title.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') +
+      ': ' +
+      '</span>';
   } else {
     msgContainerContent.innerHTML = '';
   }
   if (typeof text !== 'undefined' && text !== '' && text !== null) {
-    msgContainerContent.innerHTML = msgContainerContent.innerHTML + '<span class="Login_RecBrowserMsg_Content">' + text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') + '</span>';
+    msgContainerContent.innerHTML =
+      msgContainerContent.innerHTML +
+      '<span class="Login_RecBrowserMsg_Content">' +
+      text.replace(/\n/g, '<br>').replace(/\\n/g, '<br>') +
+      '</span>';
   }
   msgContainer.style.display = '';
   isRecBrowserMsgShown = true;
@@ -371,7 +532,9 @@ function setRecommendedBrowserMessage(title, text) {
 function resetLoginMessage() {
   var msgContainer = document.getElementById('errorMsg');
   var msgContainerTitle = document.getElementById('errorMsgTitle');
-  var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
+  var msgContainerTitleContainer = document.getElementById(
+    'errorMsgTitle_Container'
+  );
   var msgContainerContent = document.getElementById('errorMsgContent');
   msgContainerTitle.innerHTML = '';
   msgContainerTitleContainer.style.display = '';
@@ -385,7 +548,7 @@ function checkInputKeyDown(input, valueLength) {
   if (msgContainer.style.display !== 'none' && typeof input === 'object') {
     if (typeof valueLength === 'undefined' || valueLength === null) {
       valueLength = input.value.length;
-      setTimeout(function () {
+      setTimeout(function() {
         checkInputKeyDown(input, valueLength);
       }, 100);
     } else {
@@ -404,24 +567,29 @@ function beforeLoadDo() {
 
 function onLoadDo() {
   var msgContainerTitle = document.getElementById('errorMsgTitle');
-  var msgContainerTitleContainer = document.getElementById('errorMsgTitle_Container');
+  var msgContainerTitleContainer = document.getElementById(
+    'errorMsgTitle_Container'
+  );
   var msgContainerContent = document.getElementById('errorMsgContent');
 
   if (msgContainerTitle.innerHTML.length === 0) {
     msgContainerTitleContainer.style.display = 'none';
   }
-  try { // To avoid in a release upgrade, that a change in code depending on these functions cause revisionControl message not being displayed
+  try {
+    // To avoid in a release upgrade, that a change in code depending on these functions cause revisionControl message not being displayed
     manageVisualPreferences();
     addInputChangeCheck(document.getElementById('user'));
     addInputChangeCheck(document.getElementById('password'));
-    this.windowTables = new Array(
-    new windowTableId('client', 'buttonOK'));
+    this.windowTables = new Array(new windowTableId('client', 'buttonOK'));
     setWindowTableParentElement();
     enableEditionShortcuts();
     setWindowElementFocus('user', 'id');
   } catch (e) {}
 
-  if ((!revisionControl(currentRevision)) || (isOpsInstance() != isOpsInstanceCached())) {
+  if (
+    !revisionControl(currentRevision) ||
+    isOpsInstance() != isOpsInstanceCached()
+  ) {
     maskLoginWindow(cacheMsg);
     setLoginMessage('Warning', '', cacheMsg);
   }
@@ -430,13 +598,21 @@ function onLoadDo() {
     var displayValidBrowserMsg = buildValidBrowserMsg();
     setLoginMessage('Warning', '', displayValidBrowserMsg);
   }
-  if (!checkRecommendedBrowser() && msgContainerTitle.innerHTML.length === 0 && msgContainerContent.innerHTML.length === 0) {
+  if (
+    !checkRecommendedBrowser() &&
+    msgContainerTitle.innerHTML.length === 0 &&
+    msgContainerContent.innerHTML.length === 0
+  ) {
     var displayRecBrowserMsgText = buildRecBrowserMsgText();
     setRecommendedBrowserMessage(recBrowserMsgTitle, displayRecBrowserMsgText);
   }
 
   if (expirationMessage) {
-    setLoginMessage(expirationMessage.type, expirationMessage.title, expirationMessage.text);
+    setLoginMessage(
+      expirationMessage.type,
+      expirationMessage.title,
+      expirationMessage.text
+    );
     if (expirationMessage.disableLogin) {
       disableButton('buttonOK');
       document.frmIdentificacion.user.disabled = true;
@@ -460,14 +636,63 @@ function enableEditionShortcuts() {
 
 function getEditionShortcuts() {
   this.keyArray = [
-	  new keyArrayItem('TAB', 'windowTabKey(true);', null, null, false, 'onkeydown'),
-	  new keyArrayItem('TAB', 'windowTabKey(false);', null, null, false, 'onkeyup'),
-	  new keyArrayItem('TAB', 'windowShiftTabKey(true);', null, 'shiftKey', false, 'onkeydown'),
-	  new keyArrayItem('TAB', 'windowShiftTabKey(false);', null, 'shiftKey', false, 'onkeyup'),
-	  new keyArrayItem('ENTER', 'windowCtrlShiftEnterKey();', null, 'ctrlKey+shiftKey', false, 'onkeydown'),
-	  new keyArrayItem('ENTER', 'windowCtrlEnterKey();', null, 'ctrlKey', true, 'onkeydown'),
-	  new keyArrayItem('ENTER', 'windowEnterKey();', null, null, true, 'onkeydown')
-    ];
+    new keyArrayItem(
+      'TAB',
+      'windowTabKey(true);',
+      null,
+      null,
+      false,
+      'onkeydown'
+    ),
+    new keyArrayItem(
+      'TAB',
+      'windowTabKey(false);',
+      null,
+      null,
+      false,
+      'onkeyup'
+    ),
+    new keyArrayItem(
+      'TAB',
+      'windowShiftTabKey(true);',
+      null,
+      'shiftKey',
+      false,
+      'onkeydown'
+    ),
+    new keyArrayItem(
+      'TAB',
+      'windowShiftTabKey(false);',
+      null,
+      'shiftKey',
+      false,
+      'onkeyup'
+    ),
+    new keyArrayItem(
+      'ENTER',
+      'windowCtrlShiftEnterKey();',
+      null,
+      'ctrlKey+shiftKey',
+      false,
+      'onkeydown'
+    ),
+    new keyArrayItem(
+      'ENTER',
+      'windowCtrlEnterKey();',
+      null,
+      'ctrlKey',
+      true,
+      'onkeydown'
+    ),
+    new keyArrayItem(
+      'ENTER',
+      'windowEnterKey();',
+      null,
+      null,
+      true,
+      'onkeydown'
+    )
+  ];
 }
 
 /**
@@ -478,10 +703,19 @@ function disableButton(id) {
   var link = null;
   try {
     link = document.getElementById(id);
-    if (link.className.indexOf('ButtonLink') != -1 && link.className.indexOf('ButtonLink_disabled') == -1) {
-      link.className = link.className.replace('ButtonLink_default', 'ButtonLink');
+    if (
+      link.className.indexOf('ButtonLink') != -1 &&
+      link.className.indexOf('ButtonLink_disabled') == -1
+    ) {
+      link.className = link.className.replace(
+        'ButtonLink_default',
+        'ButtonLink'
+      );
       link.className = link.className.replace('ButtonLink_focus', 'ButtonLink');
-      link.className = link.className.replace('ButtonLink', 'ButtonLink_disabled');
+      link.className = link.className.replace(
+        'ButtonLink',
+        'ButtonLink_disabled'
+      );
       link.setAttribute('id', link.getAttribute('id') + '_disabled');
       link.disabled = true;
       disableAttributeWithFunction(link, 'obj', 'onclick');
@@ -495,9 +729,12 @@ function disableButton(id) {
 function enableButton(id) {
   var link = null;
   try {
-    link = document.getElementById(id + "_disabled");
+    link = document.getElementById(id + '_disabled');
     if (link.className.indexOf('ButtonLink_disabled') != -1) {
-      link.className = link.className.replace('ButtonLink_disabled', 'ButtonLink');
+      link.className = link.className.replace(
+        'ButtonLink_disabled',
+        'ButtonLink'
+      );
       link.setAttribute('id', link.getAttribute('id').replace('_disabled', ''));
       link.disabled = false;
       enableAttributeWithFunction(link, 'obj', 'onclick');
@@ -531,7 +768,7 @@ function enableAttributeWithFunction(element, type, attribute) {
     obj = document.getElementById(element);
   }
   var attribute_text = getObjAttribute(obj, attribute);
-  attribute_text = attribute_text.replace('return true; tmp_water_mark; ', '')
+  attribute_text = attribute_text.replace('return true; tmp_water_mark; ', '');
   setObjAttribute(obj, attribute, attribute_text);
 }
 
@@ -539,7 +776,15 @@ function enableAttributeWithFunction(element, type, attribute) {
  * Functions for asynchronous ajax calls. Used to submit the login request.
  */
 
-function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, debug, extraParams, paramXMLReq) {
+function submitXmlHttpRequest(
+  callbackFunction,
+  formObject,
+  Command,
+  Action,
+  debug,
+  extraParams,
+  paramXMLReq
+) {
   var XMLHttpRequestObj = null;
   XMLHttpRequestObj = getXMLHttpRequest();
   if (formObject === null) {
@@ -555,18 +800,21 @@ function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, deb
     alert("Your browser doesn't support this technology");
     return false;
   }
-  var sendText = "Command=" + encodeURIComponent(Command);
-  sendText += "&IsAjaxCall=1";
+  var sendText = 'Command=' + encodeURIComponent(Command);
+  sendText += '&IsAjaxCall=1';
   var length = formObject.elements.length;
   for (var i = 0; i < length; i++) {
     if (formObject.elements[i].type) {
-      var text = inputValueForms(formObject.elements[i].name, formObject.elements[i]);
+      var text = inputValueForms(
+        formObject.elements[i].name,
+        formObject.elements[i]
+      );
       if (text && text.indexOf('=') !== 0) {
-        sendText += "&" + text;
+        sendText += '&' + text;
       }
     }
   }
-  if (extraParams !== null && extraParams !== "" && extraParams !== "null") {
+  if (extraParams !== null && extraParams !== '' && extraParams !== 'null') {
     sendText += extraParams;
   }
 
@@ -575,12 +823,15 @@ function submitXmlHttpRequest(callbackFunction, formObject, Command, Action, deb
       return false;
     }
   }
-  XMLHttpRequestObj.open("POST", Action);
+  XMLHttpRequestObj.open('POST', Action);
   try {
-    XMLHttpRequestObj.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    XMLHttpRequestObj.setRequestHeader(
+      'Content-Type',
+      'application/x-www-form-urlencoded'
+    );
   } catch (e) {}
   var paramXMLParticular = paramXMLReq;
-  XMLHttpRequestObj.onreadystatechange = function () {
+  XMLHttpRequestObj.onreadystatechange = function() {
     return callbackFunction(paramXMLParticular, XMLHttpRequestObj);
   };
   XMLHttpRequestObj.send(sendText);
@@ -602,13 +853,13 @@ function getXMLHttpRequest() {
     try {
       // Try to create XMLHttpRequest in later versions
       // of Internet Explorer
-      XMLHttpRequestObj = new ActiveXObject("Msxml2.XMLHTTP");
+      XMLHttpRequestObj = new ActiveXObject('Msxml2.XMLHTTP');
     } catch (e1) {
       // Failed to create required ActiveXObject
       try {
         // Try version supported by older versions
         // of Internet Explorer
-        XMLHttpRequestObj = new ActiveXObject("Microsoft.XMLHTTP");
+        XMLHttpRequestObj = new ActiveXObject('Microsoft.XMLHTTP');
       } catch (e2) {
         // Unable to create an XMLHttpRequest by any means
         XMLHttpRequestObj = false;
@@ -635,7 +886,7 @@ function getReadyStateHandler(req, responseXmlHandler, notifyError) {
     } else {
       // An HTTP problem has occurred
       if (notifyError) {
-        alert("HTTP error " + req.status + ": " + req.statusText);
+        alert('HTTP error ' + req.status + ': ' + req.statusText);
       }
       return false;
     }
