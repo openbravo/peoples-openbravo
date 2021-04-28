@@ -80,7 +80,7 @@
           ? 1
           : 0
     };
-    newTicket = OB.App.State.Ticket.Utils.setDelivery(newTicket);
+    newTicket = OB.App.State.Ticket.Utils.setEditableAttributes(newTicket);
     newTicket.taxes = newTicket.taxes
       .map(tax => ({
         id: tax.taxid,
@@ -261,7 +261,8 @@
     );
     newTicket = OB.App.State.Ticket.Utils.setDelivery(
       newTicket,
-      hasDeliveredProducts && !hasNotDeliveredProducts
+      hasDeliveredProducts && !hasNotDeliveredProducts,
+      hasDeliveredProducts && hasNotDeliveredProducts
     );
 
     if (newTicket.isPartiallyDelivered) {

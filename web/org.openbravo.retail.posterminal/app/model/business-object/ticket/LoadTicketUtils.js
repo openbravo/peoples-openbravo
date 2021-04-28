@@ -323,10 +323,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     };
   },
 
-  setDelivery(ticket, isFullyDelivered = false) {
+  setDelivery(ticket, isFullyDelivered = false, isPartiallyDelivered = false) {
     return {
       ...ticket,
-      isPartiallyDelivered: !isFullyDelivered,
+      isPartiallyDelivered,
       isFullyDelivered
     };
   }
