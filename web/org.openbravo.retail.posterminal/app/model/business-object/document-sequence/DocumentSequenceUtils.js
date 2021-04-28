@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -56,6 +56,29 @@
           .toString()
           .padStart(payload.documentNumberPadding, '0')
       );
+    },
+
+    /**
+     * Generates a replace document number based on given document number.
+     *
+     * @param {object} payload - The calculation payload, which include:
+     *             * replaceNumberSeparator - Character to separate document number and replace number in replace document number
+     *             * documentNumberPadding - Padding to use in the the suffix of document number
+     *
+     * @returns {number} The document number.
+     */
+    calculateReplaceDocumentNumber(documentNo, payload) {
+      const replaceDocumentNoSeparator = payload.replaceNumberSeparator || '-';
+      const replaceDocumentNoBase = documentNo.match(
+        `.*[0-9]{${payload.documentNumberPadding}}${replaceDocumentNoSeparator}`
+      );
+      if (!replaceDocumentNoBase) {
+        return `${documentNo + replaceDocumentNoSeparator}1`;
+      }
+
+      const replaceDocumentNoNumber =
+        Number(documentNo.split(replaceDocumentNoBase)[1]) + 1;
+      return replaceDocumentNoBase + replaceDocumentNoNumber;
     },
 
     /**
