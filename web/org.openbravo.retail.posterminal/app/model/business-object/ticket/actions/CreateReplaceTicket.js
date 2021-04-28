@@ -92,56 +92,18 @@
           return newLine;
         });
 
-      // if (deferredLines.length) {
-      //   linesWithDeferred.push(
-      //     OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBody')
-      //   );
-      // }
-      // //Set to not editable and not deletable to all deferred lines or lines that have deferred services
-      // _.each(deferredLines, function(deferredLine) {
-      //   var deffLine = _.find(me.get('lines').models, function(line) {
-      //     return (
-      //       deferredLine === OB.DEC.mul(OB.DEC.add(line.get('linepos'), 1), 10)
-      //     );
-      //   });
-      //   deffLine.set('isEditable', false);
-      //   deffLine.set('isDeletable', false);
-      //   linesWithDeferred.push(
-      //     OB.I18N.getLabel('OBMOBC_Character')[1] +
-      //       ' ' +
-      //       deffLine.get('product').get('_identifier') +
-      //       ' (' +
-      //       OB.I18N.getLabel('OBPOS_LineQuantity') +
-      //       ': ' +
-      //       deffLine.get('qty') +
-      //       ')'
-      //   );
-      // });
-      // if (deferredLines.length) {
-      //   linesWithDeferred.push(
-      //     OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter')
-      //   );
-      //   linesWithDeferred.push(
-      //     OB.I18N.getLabel('OBPOS_NotModifiableDefLinesBodyFooter2')
-      //   );
-      //   OB.UTIL.showConfirmation.display(
-      //     OB.I18N.getLabel('OBPOS_NotModifiableLines'),
-      //     linesWithDeferred
-      //   );
-      // }
-
-      // // Set the last line as selected to call the 'onRearrangeEditButtonBar' event and update the isEditable and
-      // // isDeletable status for the lines (to hide or show the buttons)
-      // if (deferredLines.length) {
-      //   me.get('lines')
-      //     .at(me.get('lines').models.length - 1)
-      //     .trigger(
-      //       'selected',
-      //       me.get('lines').at(me.get('lines').models.length - 1)
-      //     );
-      // }
-
       return newTicket;
+    }
+  );
+
+  OB.App.StateAPI.Ticket.createReplaceTicket.addActionPreparation(
+    async (ticket, payload) => {
+      await OB.App.State.Ticket.Utils.checkDraftPayments(ticket);
+      await OB.App.State.Ticket.Utils.checkTicketCanceled(ticket, {
+        actionType: 'R',
+        checkNotEditableLines: true
+      });
+      return payload;
     }
   );
 })();
