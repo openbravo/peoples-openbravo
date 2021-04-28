@@ -991,7 +991,51 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    this.model.get('order').verifyCancelAndReplace(this);
+
+    const me = this;
+    const order = me.model.get('order');
+
+    // Run new CreateCancelTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
+    if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreCancelAndReplace',
+        {
+          context: me
+        },
+        async function(args) {
+          if (args && args.cancelOperation) {
+            return;
+          }
+
+          try {
+            await OB.App.State.Ticket.createReplaceTicket(
+              OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
+            );
+          } catch (error) {
+            OB.App.View.ActionCanceledUIHandler.handle(error);
+          }
+
+          OB.UTIL.HookManager.executeHooks(
+            'OBPOS_PostCancelAndReplace',
+            {
+              context: me,
+              receipt: order
+            },
+            function() {
+              OB.UTIL.showSuccess(
+                OB.I18N.getLabel('OBPOS_OrderReplaced', [
+                  order.get('replacedorder_documentNo'),
+                  order.get('documentNo')
+                ])
+              );
+            }
+          );
+        }
+      );
+      return;
+    }
+
+    order.verifyCancelAndReplace(this);
   },
   updateVisibility: function() {
     var isPaidReceipt, isLayaway, isReturn, haspayments, receiptLines, receipt;
