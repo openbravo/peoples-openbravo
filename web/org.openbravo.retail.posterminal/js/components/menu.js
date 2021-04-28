@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -253,26 +253,54 @@ enyo.kind({
       return true;
     }
     this.inherited(arguments); // Manual dropdown menu closure
-    if (this.model.get('order').get('iscancelled')) {
-      OB.UTIL.showConfirmation.display(
-        OB.I18N.getLabel('OBPOS_AlreadyCancelledHeader'),
-        OB.I18N.getLabel('OBPOS_AlreadyCancelled')
+
+    const me = this;
+    const order = me.model.get('order');
+
+    // Run new CreateCancelTicket state action just in case OBPOS_NewStateActions preference is enabled, otherwise run old action
+    if (OB.MobileApp.model.hasPermission('OBPOS_NewStateActions', true)) {
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_PreCancelLayaway',
+        {
+          context: me
+        },
+        async function(args) {
+          if (args && args.cancelOperation) {
+            return;
+          }
+
+          try {
+            await OB.App.State.Ticket.createCancelTicket(
+              OB.UTIL.TicketUtils.addTicketCreationDataToPayload()
+            );
+          } catch (error) {
+            OB.App.View.ActionCanceledUIHandler.handle(error);
+          }
+
+          OB.MobileApp.model.receipt.getPrepaymentAmount(function() {
+            OB.MobileApp.model.receipt.trigger('updateView');
+            OB.MobileApp.model.receipt.trigger('updatePending', true);
+            me.doTabChange({
+              tabPanel: 'payment',
+              keyboard: 'toolbarpayment',
+              edit: false
+            });
+          }, true);
+        }
       );
       return;
     }
-    if (this.model.get('order').get('isFullyDelivered')) {
+
+    if (order.get('isFullyDelivered')) {
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBPOS_FullyDeliveredHeader'),
         OB.I18N.getLabel('OBPOS_FullyDelivered')
       );
       return;
     }
-    var negativeLines = _.find(
-      this.model.get('order').get('lines').models,
-      function(line) {
-        return line.get('qty') < 0;
-      }
-    );
+    var negativeLines = _.find(order.get('lines').models, function(line) {
+      return line.get('qty') < 0;
+    });
     if (negativeLines) {
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBPOS_cannotCancelLayawayHeader'),
@@ -280,12 +308,9 @@ enyo.kind({
       );
       return;
     }
-    var reservationLines = _.find(
-      this.model.get('order').get('lines').models,
-      function(line) {
-        return line.get('hasStockReservation');
-      }
-    );
+    var reservationLines = _.find(order.get('lines').models, function(line) {
+      return line.get('hasStockReservation');
+    });
     if (reservationLines) {
       OB.UTIL.showConfirmation.display(
         OB.I18N.getLabel('OBPOS_cannotCancelOrderHeader'),
@@ -294,10 +319,13 @@ enyo.kind({
       return;
     }
 
-    this.model.get('order').cancelLayaway(this);
+    order.checkNotProcessedPayments(() => {
+      order.cancelLayaway(me);
+    });
   },
   displayLogic: function() {
     var me = this,
+      isCanceled,
       isPaidReceipt,
       isReturn,
       receiptLines,
@@ -305,6 +333,7 @@ enyo.kind({
 
     receipt = this.model.get('order');
 
+    isCanceled = receipt.get('iscancelled');
     isPaidReceipt = receipt.get('isPaid') && !receipt.get('isQuotation');
     isReturn =
       receipt.get('orderType') === 1 ||
@@ -359,6 +388,7 @@ enyo.kind({
     }
 
     if (
+      !isCanceled &&
       !isReturn &&
       delivered() !== 'TD' &&
       (isPaidReceipt ||
