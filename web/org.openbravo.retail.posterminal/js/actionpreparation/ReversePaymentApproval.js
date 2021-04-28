@@ -31,7 +31,7 @@
       !(
         !OB.UTIL.isNullOrUndefined(usedPaymentMethod.availableReverseDelay) &&
         currentDate.getTime() <=
-          new Date(payload.payment.paymentDate).getTime() +
+          new Date(payload.payment.reversedPayment.paymentDate).getTime() +
             usedPaymentMethod.availableReverseDelay * 86400000
       )
     ) {
