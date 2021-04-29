@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2021 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -174,7 +174,17 @@ public class OBViewParameterHandler {
     }
 
     public OBViewParameter(Parameter param) {
-      uiDefinition = UIDefinitionController.getInstance().getUIDefinition(param.getReference());
+      // UIDefinition may be in sub-reference, under Reference Search Key, check and use this first
+      // in case the sub-reference doesn't define a custom UIDefinition use parameter base reference
+      // UIDefinition
+      Reference paramReference;
+      if (param.getReferenceSearchKey() != null
+          && !param.getReferenceSearchKey().getOBCLKERUIDefinitionList().isEmpty()) {
+        paramReference = param.getReferenceSearchKey();
+      } else {
+        paramReference = param.getReference();
+      }
+      uiDefinition = UIDefinitionController.getInstance().getUIDefinition(paramReference);
       parameter = param;
     }
 
