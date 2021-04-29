@@ -186,7 +186,7 @@
   }
 
   function addLines(ticket, payload) {
-    let newTicket = {
+    const newTicket = {
       ...ticket
     };
     const newLines = payload.ticket.receiptLines.map((line, index) => ({
