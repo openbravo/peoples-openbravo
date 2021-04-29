@@ -80,7 +80,7 @@
           ? 1
           : 0
     };
-    newTicket = OB.App.State.Ticket.Utils.setEditableAttributes(newTicket);
+    newTicket = OB.App.State.Ticket.Utils.setLoadedTicketAttributes(newTicket);
     newTicket.taxes = newTicket.taxes
       .map(tax => ({
         id: tax.taxid,
@@ -259,11 +259,10 @@
     const hasNotDeliveredProducts = newTicket.lines.some(
       line => !line.deliveredQuantity || line.deliveredQuantity < line.quantity
     );
-    newTicket = OB.App.State.Ticket.Utils.setDelivery(
-      newTicket,
-      hasDeliveredProducts && !hasNotDeliveredProducts,
-      hasDeliveredProducts && hasNotDeliveredProducts
-    );
+    newTicket.isPartiallyDelivered =
+      hasDeliveredProducts && hasNotDeliveredProducts;
+    newTicket.isFullyDelivered =
+      hasDeliveredProducts && !hasNotDeliveredProducts;
 
     if (newTicket.isPartiallyDelivered) {
       newTicket.deliveredQuantityAmount = newTicket.lines.reduce(

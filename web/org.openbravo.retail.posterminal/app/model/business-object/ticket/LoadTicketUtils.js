@@ -313,21 +313,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     };
   },
 
-  setEditableAttributes(ticket) {
+  setLoadedTicketAttributes(ticket) {
     return {
       ...ticket,
       hasbeenpaid: ticket.isQuotation ? 'Y' : 'N',
       isEditable: false,
       isPaid: !ticket.isLayaway,
       isModified: false
-    };
-  },
-
-  setDelivery(ticket, isFullyDelivered = false, isPartiallyDelivered = false) {
-    return {
-      ...ticket,
-      isPartiallyDelivered,
-      isFullyDelivered
     };
   }
 });
