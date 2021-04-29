@@ -849,9 +849,21 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       data.response.data.deferredLines &&
       data.response.data.deferredLines.length
     ) {
-      throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBPOS_NotModifiableDefLines',
-        messageParams: [data.response.data.deferredLines.join(', ')]
+      await OB.App.View.DialogUIHandler.askConfirmation({
+        title: 'OBPOS_NotModifiableLines',
+        message: 'OBPOS_NotModifiableDefLines',
+        messageParams: [
+          data.response.data.deferredLines
+            .map(
+              deferredLine =>
+                // eslint-disable-next-line no-underscore-dangle
+                ticket.lines.find(
+                  line => (line.linepos + 1) * 10 === deferredLine
+                ).product._identifier
+            )
+            .join(', ')
+        ],
+        hideCancel: true
       });
     }
     if (
