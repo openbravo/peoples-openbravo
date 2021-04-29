@@ -68,7 +68,7 @@
             grossUnitPrice: undefined,
             lineGrossAmount: undefined,
             obposIspaid: false,
-            documentType: newTicket.documentType,
+            documentType: ticket.documentType,
             obposCanbedelivered:
               line.obposCanbedelivered || line.deliveredQuantity === line.qty
           };
