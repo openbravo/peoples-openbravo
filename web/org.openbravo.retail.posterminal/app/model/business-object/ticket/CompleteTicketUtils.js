@@ -845,28 +845,6 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       });
     }
     if (
-      payload.actionType === 'R' &&
-      data.response.data.deferredLines &&
-      data.response.data.deferredLines.length
-    ) {
-      await OB.App.View.DialogUIHandler.askConfirmation({
-        title: 'OBPOS_NotModifiableLines',
-        message: 'OBPOS_NotModifiableDefLines',
-        messageParams: [
-          data.response.data.deferredLines
-            .map(
-              deferredLine =>
-                // eslint-disable-next-line no-underscore-dangle
-                ticket.lines.find(
-                  line => (line.linepos + 1) * 10 === deferredLine
-                ).product._identifier
-            )
-            .join(', ')
-        ],
-        hideCancel: true
-      });
-    }
-    if (
       (payload.actionType === 'C' || payload.actionType === 'V') &&
       data.response.data.notDeliveredDeferredServices &&
       data.response.data.notDeliveredDeferredServices.length
@@ -880,6 +858,30 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           data.response.data.notDeliveredDeferredServices.join(', ')
         ]
       });
+    }
+    if (
+      payload.actionType === 'R' &&
+      data.response.data.deferredLines &&
+      data.response.data.deferredLines.length
+    ) {
+      const deferredLines = data.response.data.deferredLines.map(deferredLine =>
+        ticket.lines.find(line => (line.linepos + 1) * 10 === deferredLine)
+      );
+      await OB.App.View.DialogUIHandler.askConfirmation({
+        title: 'OBPOS_NotModifiableLines',
+        message: 'OBPOS_NotModifiableDefLines',
+        messageParams: [
+          deferredLines
+            // eslint-disable-next-line no-underscore-dangle
+            .map(deferredLine => deferredLine.product._identifier)
+            .join(', ')
+        ],
+        hideCancel: true
+      });
+      return {
+        ...payload,
+        deferredLines
+      };
     }
 
     return payload;

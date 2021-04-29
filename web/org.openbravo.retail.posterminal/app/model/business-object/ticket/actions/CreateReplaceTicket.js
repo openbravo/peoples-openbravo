@@ -73,6 +73,14 @@
               line.obposCanbedelivered || line.deliveredQuantity === line.qty
           };
 
+          const deferredLine = (payload.deferredLines || []).find(
+            l => l.id === line.id
+          );
+          if (deferredLine) {
+            newLine.isEditable = false;
+            newLine.isDeletable = false;
+          }
+
           return newLine;
         })
         .map((line, index, lines) => {
@@ -99,11 +107,11 @@
   OB.App.StateAPI.Ticket.createReplaceTicket.addActionPreparation(
     async (ticket, payload) => {
       await OB.App.State.Ticket.Utils.checkDraftPayments(ticket);
-      await OB.App.State.Ticket.Utils.checkTicketCanceled(ticket, {
-        actionType: 'R',
-        checkNotEditableLines: true
-      });
-      return payload;
+      const newPayload = await OB.App.State.Ticket.Utils.checkTicketCanceled(
+        ticket,
+        { ...payload, actionType: 'R', checkNotEditableLines: true }
+      );
+      return newPayload;
     }
   );
 })();
