@@ -74,5 +74,16 @@ isc.OBColorItem.addProperties({
         }
       ]
     });
+  },
+
+  filterDataBoundPickList: function(requestProperties, dropCache) {
+    // This is a workaround to fix displayField and valueField being modified by a previous _filter call
+    this.displayField = '_identifier';
+    this.valueField = 'id';
+
+    return this.Super('filterDataBoundPickList', [
+      requestProperties,
+      dropCache
+    ]);
   }
 });
