@@ -91,13 +91,18 @@
           }
 
           const newLine = { ...line };
-          newLine.relatedLines = line.relatedLines.map(relatedLine => ({
-            ...relatedLine,
-            orderId: newTicket.id,
-            orderlineId: lines.find(
+          newLine.relatedLines = line.relatedLines.map(relatedLine => {
+            const updatedLine = lines.find(
               l => l.replacedorderline === relatedLine.orderlineId
-            )
-          }));
+            );
+            return {
+              ...relatedLine,
+              orderId: newTicket.id,
+              orderlineId: updatedLine
+                ? updatedLine.id
+                : relatedLine.orderlineId
+            };
+          });
           return newLine;
         });
 
