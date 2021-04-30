@@ -55,9 +55,9 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <unique name="AD_COLOR_UNIQUE">
-        <unique-column name="AD_COLOR_ID"/>
-        <unique-column name="AD_CLIENT_ID"/>
         <unique-column name="AD_COLOR_PALETTE_ID"/>
+        <unique-column name="AD_CLIENT_ID"/>
+        <unique-column name="AD_COLOR_ID"/>
         <unique-column name="NAME"/>
       </unique>
       <check name="AD_COLOR_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
