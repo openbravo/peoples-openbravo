@@ -29,7 +29,10 @@
     if (
       usedPaymentMethod.isreversable &&
       !(
-        !OB.UTIL.isNullOrUndefined(usedPaymentMethod.availableReverseDelay) &&
+        !(
+          usedPaymentMethod.availableReverseDelay === null ||
+          usedPaymentMethod.availableReverseDelay === undefined
+        ) &&
         currentDate.getTime() <=
           new Date(payload.payment.reversedPayment.paymentDate).getTime() +
             usedPaymentMethod.availableReverseDelay * 86400000

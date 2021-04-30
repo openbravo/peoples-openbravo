@@ -12,9 +12,8 @@
  */
 
 (function ReversePaymentDefinition() {
-  OB.App.StateAPI.Ticket.registerAction('reversePayment', (ticket, payload) => {
+  function addPayment(ticket, payload) {
     let newTicket = { ...ticket };
-
     newTicket = OB.App.State.Ticket.Utils.addPaymentRounding(
       newTicket,
       payload
@@ -23,8 +22,17 @@
     if (payload.extraInfo) {
       newTicket = { ...newTicket, ...payload.extraInfo.ticket };
     }
-
     newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, payload);
+    return newTicket;
+  }
+  OB.App.StateAPI.Ticket.registerAction('reversePayment', (ticket, payload) => {
+    let newTicket = { ...ticket };
+    newTicket = addPayment(newTicket, payload);
+    if (payload.payment.paymentRoundingLine) {
+      const newPayloadRounding = { ...payload };
+      newPayloadRounding.payment = payload.payment.paymentRoundingLine;
+      newTicket = addPayment(newTicket, newPayloadRounding);
+    }
     return newTicket;
   });
 
@@ -56,6 +64,15 @@
         ticket,
         newPayload
       );
+      if (newPayload.payment.paymentRoundingLine) {
+        const newPayloadRounding = { ...payload };
+        newPayloadRounding.payment = newPayload.payment.paymentRoundingLine;
+        const paymentRounding = await OB.App.State.Ticket.Utils.fillPayment(
+          ticket,
+          newPayloadRounding
+        );
+        newPayload.payment.paymentRoundingLine = paymentRounding.payment;
+      }
       return newPayload;
     },
     async (ticket, payload) => payload,

@@ -49,7 +49,6 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         ? payments.indexOf(originalPayment) + OB.DEC.One
         : payments.indexOf(originalPayment)
     );
-    // reversePayment.set('reverseCallback', reverseCallback);
     reversePayment.isReversePayment = true;
     reversePayment.paymentData = originalPayment.paymentData
       ? originalPayment.paymentData
@@ -62,20 +61,21 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
 
   async createReversalPaymentAndRounding(ticket, payload) {
     const newPayload = { ...payload };
-    const reversalPayment = this.createReversePayment(ticket, payload);
+    const reversalPayment = this.createReversePayment(ticket, newPayload);
+    newPayload.payment = reversalPayment;
     const paymentRounding = payload.payment.paymentRoundingLine
       ? payload.payment.paymentRoundingLine
       : null;
     let reversalPaymentRounding;
     if (!(paymentRounding === null || paymentRounding === undefined)) {
+      const newPayloadRounding = { ...payload };
+      newPayloadRounding.payment = paymentRounding;
       reversalPaymentRounding = this.createReversePayment(
-        !paymentRounding.get
-          ? new OB.Model.PaymentLine(paymentRounding)
-          : paymentRounding
+        ticket,
+        newPayloadRounding
       );
+      newPayload.payment.paymentRoundingLine = reversalPaymentRounding;
     }
-    newPayload.payment = reversalPayment;
-    newPayload.paymentRounding = reversalPaymentRounding;
     return newPayload;
   },
 
