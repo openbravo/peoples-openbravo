@@ -248,8 +248,9 @@ isc.OBLevelImg.addProperties({
 isc.defineClass('OBColorField', isc.OBGridFormLabel);
 
 isc.OBColorField.addProperties({
-  height: 1,
-  width: 100,
+  height: 22,
+  cellAlign: 'center',
+  overflow: 'visible',
   initWidget: function() {
     if (this.record && this.record.hexColor) {
       this.createField(this.record.hexColor);
