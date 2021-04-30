@@ -45,7 +45,9 @@
         ),
         replacedorder_documentNo: ticket.documentNo,
         negativeDocNo: `${ticket.documentNo}*R*`,
-        documentType: payload.terminal.terminalType.documentType,
+        documentType: OB.App.State.Ticket.Utils.isCrossStore(ticket, payload)
+          ? ticket.documentType
+          : payload.terminal.terminalType.documentType,
         cashVAT: payload.terminal.cashVat,
         posTerminal: payload.terminal.id,
         salesRepresentative:
@@ -68,7 +70,6 @@
             grossUnitPrice: undefined,
             lineGrossAmount: undefined,
             obposIspaid: false,
-            documentType: ticket.documentType,
             obposCanbedelivered:
               line.obposCanbedelivered || line.deliveredQuantity === line.qty
           };
