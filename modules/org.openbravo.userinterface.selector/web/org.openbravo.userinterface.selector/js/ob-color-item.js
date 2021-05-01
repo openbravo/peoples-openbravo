@@ -27,12 +27,12 @@ isc.OBColorItem.addProperties({
 
   pickListFields: [
     {
-      title: 'Palette-Name',
+      title: OB.I18N.getLabel('OBUISC_Identifier'),
       name: '_identifier',
       type: 'text'
     },
     {
-      title: 'Color',
+      title: OB.I18N.getLabel('ColorLbl'),
       name: 'hexColor',
       type: 'text'
     }

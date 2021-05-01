@@ -272,10 +272,11 @@ isc.OBColorField.addProperties({
   },
 
   showValue: function(displayValue, dataValue, form, item) {
-    if (displayValue) {
-      this.setBackgroundColor(displayValue);
-    } else if (!displayValue && form && form.getValue('hexColor')) {
-      this.setBackgroundColor(form.getValue('hexColor'));
+    const backgroundColor = displayValue || (form && form.getValue('hexColor'));
+    if (backgroundColor) {
+      this.setBackgroundColor(backgroundColor);
+    } else {
+      this.setBackgroundColor(null);
     }
 
     if (this.grid && this.grid.body) {
