@@ -100,3 +100,18 @@ OB.OnChange.agingProcessDefinitionOrganization = function(
     callbackGetGLbyOrganization
   );
 };
+
+//**  {{{OB.OnChange.colorSelection}}}**
+// Used to handle change of hex color selection in Color Palette - Color tab
+OB.OnChange.colorSelection = function(item, view, form, grid) {
+  const re = /^#([a-f0-9]{8}|[a-f0-9]{6}|[a-f0-9]{4}|[a-f0-9]{3})\b$/gi;
+  const isValidHexValue = re.test(item.getValue());
+  if (isValidHexValue && form && form.getFields()) {
+    // Update color field background color and mark for redraw
+    const a = form.getFields().find(f => f.name === 'Color');
+    if (a && a.canvas) {
+      a.canvas.setBackgroundColor(item.getValue());
+      a.canvas.markForRedraw();
+    }
+  }
+};
