@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018-2021 Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -118,18 +118,13 @@ public class DalLockingTest extends OBBaseTest {
   public void lockedObjectShouldAllowChildrenCreation()
       throws InterruptedException, ExecutionException {
     CountDownLatch latch = new CountDownLatch(1);
-    CountDownLatch t2completes = new CountDownLatch(1);
     List<Callable<Void>> threads = Arrays.asList( //
-        doWithDAL(() -> {
-          acquireLock(latch);
-          waitUntil(t2completes);
-        }, "T1", 0), //
+        doWithDAL(() -> acquireLock(latch), "T1", 200), //
         doWithDAL(() -> {
           AlertRecipient recipient = OBProvider.getInstance().get(AlertRecipient.class);
           recipient.setRole(OBContext.getOBContext().getRole());
           recipient.setAlertRule(getTestingAlertRule());
           OBDal.getInstance().save(recipient);
-          t2completes.countDown();
         }, "T2", latch));
 
     executeAndGetResults(threads);
@@ -149,7 +144,7 @@ public class DalLockingTest extends OBBaseTest {
           AlertRule ar = getTestingAlertRule();
           originalName.append(ar.getName());
           gotRule.countDown();
-          waitUntil(ruleModified);
+          waitUnitl(ruleModified);
           lockedName.append(OBDal.getInstance().getObjectLockForNoKeyUpdate(ar).getName());
         }, "T1", 50), //
         doWithDAL(() -> {
@@ -196,18 +191,10 @@ public class DalLockingTest extends OBBaseTest {
       long waitAfter) {
     return () -> {
       boolean errorOccurred = false;
-      long tWaitBefore = -1;
-      long tCompletion = -1;
       try {
         OBContext.setAdminMode(true);
-        tWaitBefore = System.currentTimeMillis();
-        waitUntil(waitEvent);
-        tWaitBefore = System.currentTimeMillis() - tWaitBefore;
-
-        tCompletion = System.currentTimeMillis();
+        waitUnitl(waitEvent);
         r.run();
-        tCompletion = System.currentTimeMillis() - tCompletion;
-
         TimeUnit.MILLISECONDS.sleep(waitAfter);
         return null;
       } catch (Exception e) {
@@ -217,9 +204,7 @@ public class DalLockingTest extends OBBaseTest {
         throw new OBException(e);
       } finally {
         synchronized (executionOrder) {
-          log.info(
-              "Completed thread {}. Timings - wait before: {} - execution: {} - wait after: {}",
-              name, tWaitBefore, tCompletion, waitAfter);
+          log.info("Completed thread {}", name);
           executionOrder.add(name);
         }
         if (!errorOccurred) {
@@ -258,7 +243,7 @@ public class DalLockingTest extends OBBaseTest {
     return OBDal.getInstance().get(AlertRule.class, testingRuleId);
   }
 
-  private void waitUntil(CountDownLatch event) {
+  private void waitUnitl(CountDownLatch event) {
     if (event == null) {
       return;
     }
