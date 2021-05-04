@@ -6984,6 +6984,11 @@
               reversalPayment.attributes
             );
             if (!OB.UTIL.isNullOrUndefined(paymentRounding)) {
+              reversalPaymentRounding = createReversePayment(
+                !paymentRounding.get
+                  ? new OB.Model.PaymentLine(paymentRounding)
+                  : paymentRounding
+              );
               reversalPaymentRoundingLine = new OB.Model.PaymentLine(
                 reversalPaymentRounding.attributes
               );
