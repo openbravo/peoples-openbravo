@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -65,17 +65,31 @@ enyo.kind({
     this.$.paymenttype.setContent(this.paymentType);
     this.$.paymentamount.setContent(OB.I18N.formatCurrency(this.paymentAmount));
 
-    if (!this.paymentMethod.allowoverpayment) {
-      this.exitWithMessage(OB.I18N.getLabel('OBPOS_OverpaymentNotAvailable'));
+    if (OB.UTIL.isNullOrUndefined(this.receipt)) {
+      return;
     }
+    let paymentlimit;
+    if (this.paymentMethod.allowoverpayment) {
+      if (_.isNumber(this.paymentMethod.overpaymentLimit)) {
+        paymentlimit = this.paymentMethod.overpaymentLimit;
+      } else {
+        paymentlimit = Number.MAX_VALUE;
+      }
+    } else {
+      paymentlimit = 0;
+    }
+
     if (
-      _.isNumber(this.paymentMethod.overpaymentLimit) &&
       this.paymentAmount >
-        this.receipt.get('gross') +
-          this.paymentMethod.overpaymentLimit -
-          this.receipt.get('payment')
+      this.receipt.get('gross') + paymentlimit - this.receipt.get('payment')
     ) {
-      this.exitWithMessage(OB.I18N.getLabel('OBPOS_OverpaymentExcededLimit'));
+      this.exitWithMessage(
+        OB.I18N.getLabel(
+          paymentlimit === 0
+            ? 'OBPOS_OverpaymentNotAvailable'
+            : 'OBPOS_OverpaymentExcededLimit'
+        )
+      );
     }
   },
   exitWithMessage: function(message) {
