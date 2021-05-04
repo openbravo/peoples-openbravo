@@ -412,10 +412,16 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         (newTicket.doCancelAndReplace && newTicket.replacedordernewTicket) ||
         newTicket.cancelAndReplaceChangePending;
       if (newPayment.reversedPayment) {
-        newPayment.reversedPayment.isReversed = true;
-        newTicket.payments.find(
-          p => p.paymentId === newPayment.reversedPayment.paymentId
-        ).isReversed = true;
+        newPayment.reversedPayment = {
+          ...newPayment.reversedPayment,
+          isReversed: true
+        };
+        newTicket.payments = newTicket.payments.map(payment => {
+          if (payment.paymentId === newPayment.reversedPayment.paymentId) {
+            return { ...payment, isReversed: true };
+          }
+          return payment;
+        });
       }
       if (newPayment.paymentRoundingLine) {
         newPayment.paymentRoundingLine.roundedPaymentId = newPayment.id;
