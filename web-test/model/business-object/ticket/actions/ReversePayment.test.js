@@ -149,7 +149,7 @@ const reversePayment = deepfreeze({
 });
 
 const terminal = { id: '9104513C2D0741D4850AE8493998A7C8' };
-describe('Ticket.addPayment action', () => {
+describe('Ticket.reversePayment action', () => {
   it('reverse a payment', () => {
     const newTicket = OB.App.StateAPI.Ticket.reversePayment(basicTicket, {
       payments: terminalPayments,
