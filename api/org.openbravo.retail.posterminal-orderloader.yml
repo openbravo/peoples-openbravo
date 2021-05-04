@@ -338,6 +338,7 @@ components:
         - discountRule
         - amount
         - quantity
+        - unitDiscount
       description: Information for the promotion applied to the line.  
     Approval:
       type: object
