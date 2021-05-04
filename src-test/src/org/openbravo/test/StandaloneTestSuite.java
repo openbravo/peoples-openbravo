@@ -152,9 +152,14 @@ import org.openbravo.test.xml.UniqueConstraintImportTest;
 import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
 /**
- * This test class is called from the ant task run.tests. It contains all the testcases which are
- * runnable and valid.
+ * This test class is called from the ant task run.all.tests by the CI server. It contains all the
+ * test cases which are runnable and valid and do not require Tomcat to be running.
  * 
+ * Test cases requiring Tomcat (ie. testing web service requests) should be inclued in
+ * {@link WebserviceTestSuite}.
+ *
+ * @see WebserviceTestSuite
+ *
  * @author mtaal
  */
 
@@ -366,5 +371,5 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     ConversionRateDocUniqueTestSuite.class
 
 })
-public class AllAntTaskTests {
+public class StandaloneTestSuite {
 }

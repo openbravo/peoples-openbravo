@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -67,26 +67,12 @@
     </javac>
   </target>
 
-  <target name="run.tests" depends="compile.test">
-    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
-      <classpath refid="test.class.path" />
-      <test name="org.openbravo.test.AntTaskTests" haltonfailure="no"/>
-    </junit>
-  </target>
-
   <target name="run.all.tests" depends="compile.test">
     <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
-      <test name="org.openbravo.test.AllAntTaskTests" haltonfailure="no" outfile="../src/result">
+      <test name="org.openbravo.test.StandaloneTestSuite" haltonfailure="no" outfile="../src/result">
       <formatter type="xml" />
     </test>
-    </junit>
-  </target>
-
-  <target name="run.quick.tests" depends="compile.test">
-    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
-      <classpath refid="test.class.path" />
-      <test name="org.openbravo.test.AllQuickAntTaskTests" haltonfailure="no"/>
     </junit>
   </target>
 
@@ -102,7 +88,7 @@
   <target name="run.webservice.tests" depends="compile.test">
     <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
       <classpath refid="test.class.path" />
-      <test name="org.openbravo.test.AllWebserviceTests" haltonfailure="no" outfile="../src/resultws">
+      <test name="org.openbravo.test.WebserviceTestSuite" haltonfailure="no" outfile="../src/resultws">
         <formatter type="xml" />
       </test>
     </junit>

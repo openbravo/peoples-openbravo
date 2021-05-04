@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2020 Openbravo SLU
+* All portions are Copyright (C) 2001-2021 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -519,10 +519,6 @@ export.database: exports database structure and data to xml files.
   <target name="compile.test" depends="init">
     <ant dir="${base.src.test}" target="compile.test" inheritAll="true" inheritRefs="true" />
   </target>
-  
-  <target name="run.tests" depends="init">
-    <ant dir="${base.src.test}" target="run.tests" inheritAll="true" inheritRefs="true" />
-  </target>
 
   <target name="run.all.tests" depends="init">
     <ant dir="${base.src.test}" target="run.all.tests" inheritAll="true" inheritRefs="true" />
@@ -530,10 +526,6 @@ export.database: exports database structure and data to xml files.
 
   <target name="run.webservice.tests" depends="init">
       <ant dir="${base.src.test}" target="run.webservice.tests" inheritAll="true" inheritRefs="true" />
-  </target>
-
-  <target name="run.quick.tests" depends="init">
-    <ant dir="${base.src.test}" target="run.quick.tests" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="run.test" depends="init">

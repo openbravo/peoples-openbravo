@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -61,9 +61,13 @@ import org.openbravo.test.webservice.WSWithNoActiveDalObjects;
 import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
 
 /**
- * This test suite should only contain test cases which are to run the webservices included in core.
+ * This test suite is called from the ant task run.webservice.tests by the CI server. It contains
+ * all the test cases that require Tomcat to be running, for example tests including web service
+ * requests.
  * 
- * 
+ * Tests cases not requiring Tomcat should be included in {@link StandaloneTestSuite} instead.
+ *
+ * @see StandaloneTestSuite
  */
 
 @RunWith(Suite.class)
@@ -108,5 +112,5 @@ import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
     SummaryFieldRequestTest.class, //
     CSRFAttackTest.class //
 })
-public class AllWebserviceTests {
+public class WebserviceTestSuite {
 }
