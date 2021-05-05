@@ -231,7 +231,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             paymentStatus.pendingAmt < multiplyBy) ||
           (payment.paid === 0 &&
             paymentDifference !== 0 &&
-            payment.amount >= paymentStatus.pendingAmt))
+            payment.amount >= paymentStatus.pendingAmt &&
+            payment.amount >= multiplyBy))
       ) {
         if (rounding === 'UR') {
           if (paymentDifference !== 0) {
