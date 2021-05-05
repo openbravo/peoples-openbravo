@@ -327,7 +327,9 @@
             ticket.oldId === payload.ticket.id ||
             (ticket.canceledorder || {}).id === payload.ticket.id)) ||
         (payload.ticket.documentNo &&
-          ticket.documentNo === payload.ticket.documentNo)
+          (ticket.documentNo === payload.ticket.documentNo ||
+            (ticket.canceledorder || {}).documentNo ===
+              payload.ticket.documentNo))
     );
 
     if (ticketInSession) {
@@ -346,6 +348,21 @@
           ]
         });
       }
+
+      if (
+        ticketInSession.canceledorder &&
+        ((payload.ticket.id &&
+          ticketInSession.canceledorder.id === payload.ticket.id) ||
+          (payload.ticket.documentNo &&
+            ticketInSession.canceledorder.documentNo ===
+              payload.ticket.documentNo))
+      ) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_OrderAssociatedToCancelInProgress',
+          messageParams: [payload.ticket.documentNo, ticketInSession.documentNo]
+        });
+      }
+
       await OB.App.View.DialogUIHandler.askConfirmation({
         message: `OBPOS_ticketAlreadyOpened_ORD`,
         messageParams: [ticketInSession.documentNo],
