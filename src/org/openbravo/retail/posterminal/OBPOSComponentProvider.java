@@ -239,7 +239,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "actionpreparation/AddProductApproval", "actionpreparation/CompleteLayawayApproval",
         "actionpreparation/CompleteTicketApproval", "actionpreparation/DeleteLineApproval",
         "actionpreparation/SetLinePriceApproval", "actionpreparation/ReturnLineApproval",
-        "actionpreparation/ReturnBlindTicketApproval",
+        "actionpreparation/ReturnBlindTicketApproval", "actionpreparation/ReversePaymentApproval",
 
         // States
         "actionstates/commonreceipt", "actionstates/commonwindow",
@@ -392,6 +392,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/ticket/AddPaymentUtils"), //
         businesslogic("app/model/business-object/ticket/actions/AddPayment"), //
         businesslogic("app/model/business-object/ticket/actions/AddPaymentRounding"), //
+        businesslogic("app/model/business-object/ticket/ReversePaymentUtils"), //
+        businesslogic("app/model/business-object/ticket/actions/ReversePayment"), //
 
         // Cashup
         businesslogic("app/model/business-object/cashup/Cashup"), //
