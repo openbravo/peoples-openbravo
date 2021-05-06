@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2018 Openbravo SLU
+ * All portions are Copyright (C) 2017-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -171,15 +171,9 @@ OB.Layout.initialize = function() {
 
     getInnerHTML: function() {
       var html = this.Super('getInnerHTML', arguments);
-      if (!OB.Application.isActiveInstance) {
-        return (
-          '<a href="http://www.openbravo.com/product/erp/professional/" target="_new">' +
-          html +
-          '</a>'
-        );
-      } else {
-        return html;
-      }
+      return (
+        '<a href="https://www.openbravo.com" target="_new">' + html + '</a>'
+      );
     }
   });
   OB.TestRegistry.register(
