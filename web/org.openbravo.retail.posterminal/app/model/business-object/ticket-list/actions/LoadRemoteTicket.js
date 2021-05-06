@@ -189,6 +189,15 @@
     const newTicket = {
       ...ticket
     };
+    const calculateGrossAmount = (lineGrossAmount, promotions) => {
+      return (
+        lineGrossAmount -
+        promotions.reduce(
+          (sumDiscounts, promotion) => sumDiscounts + promotion.amt,
+          0
+        )
+      );
+    };
     const newLines = payload.ticket.receiptLines.map((line, index) => ({
       ...line,
       linepos: index,
@@ -202,7 +211,10 @@
       baseNetUnitAmount: line.lineNetAmount,
       baseGrossUnitAmount: line.lineGrossAmount,
       netUnitAmount: line.lineNetAmount,
-      grossUnitAmount: line.lineGrossAmount,
+      grossUnitAmount: calculateGrossAmount(
+        line.lineGrossAmount,
+        line.promotions
+      ),
       priceIncludesTax: ticket.priceIncludesTax,
       warehouse: {
         id: line.warehouse,
