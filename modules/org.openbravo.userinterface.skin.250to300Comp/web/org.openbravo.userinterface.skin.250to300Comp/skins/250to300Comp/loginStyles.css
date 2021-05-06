@@ -399,7 +399,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 
 .Login_LogForm {
   background: url(../../Default/Login/LoginBox-bg.png) repeat-x scroll left bottom transparent;
-  left: 170px;
+  left: 162px;
   position: absolute;
   top: 10px;
   border: 3px solid #B4B4B4;
@@ -485,7 +485,8 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   position: relative;
   clear: left;
   padding-top: 10px;
-  left: 250px; /*~RTL   right: 250px; */
+  left: 255px; /*~RTL   right: 255px; */
+  width: fit-content;
 }
 
 .Login_BottomLogos_Openbravo_Logo_Container {
@@ -497,7 +498,6 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   position: relative;
   clear: left;
   padding-top: 5px;
-  padding-left: 50px; /*~RTL   padding-right: 60px; */
   background-color: white;
 }
 
@@ -506,7 +506,6 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   color: #afafaf;
   font-size: .9em;
   line-height: 0.9em;
-  width: 14em;
   text-align: center;
 }
 
