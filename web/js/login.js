@@ -226,12 +226,8 @@ function redirectWhenInsideMDI() {
 function manageVisualPreferences() {
   var topLogos = document.getElementById('TopLogos_Container');
   var bottomLogos = document.getElementById('BottomLogos_Container');
-  if (showSupportLogo && showForgeLogo) {
-    topLogos.className = 'Login_TopLogos_Container_Support_Forge';
-  } else if (showSupportLogo) {
+  if (showSupportLogo) {
     topLogos.className = 'Login_TopLogos_Container_Support';
-  } else if (showForgeLogo) {
-    topLogos.className = 'Login_TopLogos_Container_Forge';
   } else {
     topLogos.className = 'Login_TopLogos_Container_None';
   }
@@ -251,15 +247,6 @@ function manageVisualPreferences() {
       urlSupport +
       '" target="_blank" class="Login_Img_Link">' +
       document.getElementById('SupportLogo_Container').innerHTML +
-      '</a>';
-  }
-
-  if (showForgeLogo && urlForge !== '') {
-    document.getElementById('ForgeLogo_Container').innerHTML =
-      '<a href="' +
-      urlForge +
-      '" target="_blank" class="Login_Img_Link">' +
-      document.getElementById('ForgeLogo_Container').innerHTML +
       '</a>';
   }
 

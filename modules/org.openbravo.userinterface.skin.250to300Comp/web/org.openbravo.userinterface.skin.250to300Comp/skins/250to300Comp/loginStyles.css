@@ -444,9 +444,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   margin-top: 10px;
 }
 
-.Login_TopLogos_Container_Support_Forge,
-.Login_TopLogos_Container_Support,
-.Login_TopLogos_Container_Forge {
+.Login_TopLogos_Container_Support {
   position: relative;
   padding-top: 290px;
   text-align: center;
@@ -460,34 +458,8 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   width: 100%;
 }
 
-.Login_TopLogos_Container_Support_Forge .Login_TopLogos_ForgeLogo_Container {
-  left: -90px;
-}
-
-.Login_TopLogos_Container_Support_Forge .Login_TopLogos_SupportLogo_Container {
-  left: 356px;
-}
-
-.Login_TopLogos_Container_Support .Login_TopLogos_ForgeLogo_Container {
-  display: none;
-}
-
 .Login_TopLogos_Container_Support .Login_TopLogos_SupportLogo_Container {
   left: 616px;
-}
-
-
-.Login_TopLogos_Container_Forge .Login_TopLogos_ForgeLogo_Container {
-  left: -90px;
-}
-
-.Login_TopLogos_Container_Forge .Login_TopLogos_SupportLogo_Container {
-  display: none;
-}
-
-
-.Login_TopLogos_Container_None .Login_TopLogos_ForgeLogo_Container {
-  display: none;
 }
 
 .Login_TopLogos_Container_None .Login_TopLogos_SupportLogo_Container {
@@ -508,22 +480,6 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .Login_TopLogos_SupportLogo_Logo_Container {
   text-align: center;
 }
-
-.Login_TopLogos_ForgeLogo_Container {
-  width: 260px;
-  position: relative;
-  float: left;
-}
-
-.Login_TopLogos_ForgeLogo_Text {
-  text-align: center;
-  margin-bottom: 5px;
-}
-
-.Login_TopLogos_ForgeLogo_Logo_Container {
-  text-align: center;
-}
-
 
 .Login_BottomLogos_Container {
   position: relative;
@@ -648,10 +604,4 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   width: 197px;
   height: 55px;
   background: url(../../../../../utility/ShowImageLogo?logo=youritservicelogin) no-repeat center center;
-}
-
-.Login_Logo_Forge {
-  width: 225px;
-  height: 55px;
-  background: url(../../../../images/OBForge.png) no-repeat center center;
 }
