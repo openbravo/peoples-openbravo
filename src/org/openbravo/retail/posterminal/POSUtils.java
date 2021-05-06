@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -561,10 +561,14 @@ public class POSUtils {
     try {
       OBQuery<OBPOSAppPayment> paymentQuery = OBDal.getInstance()
           .createQuery(OBPOSAppPayment.class,
-              "as e where e.obposApplications.organization = :organization and e.obposApplications.id = :terminal and e.financialAccount.currency = :currency order by e.id");
+              "as e where e.obposApplications.organization = :organization"
+                  + " and e.obposApplications.id = :terminal"
+                  + " and e.paymentMethod.paymentMethod.id = :paymentMethod"
+                  + " and e.financialAccount.currency = :currency order by e.id");
       paymentQuery.setNamedParameter("organization",
           order.getObposApplications().getOrganization());
       paymentQuery.setNamedParameter("terminal", order.getObposApplications().getId());
+      paymentQuery.setNamedParameter("paymentMethod", order.getPaymentMethod().getId());
       paymentQuery.setNamedParameter("currency", order.getOrganization().getCurrency());
       paymentQuery.setFilterOnReadableOrganization(false);
       paymentQuery.setMaxResult(1);
