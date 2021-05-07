@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2018 Openbravo SLU
+ * All portions are Copyright (C) 2016-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -105,9 +105,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private enum JSONObjectURL {
     // Move node in Account Tree
     MOVEMENT_NODE("?_skinVersion=Default&_create=true&Constants_FIELDSEPARATOR=$&_new=true"
-        + "&_contextUrl=http://localhost:8080/openbravo&Constants_IDENTIFIER=_identifier"
         + "&_startRow=0&_endRow=200&referencedTableId=188&parentRecordId=56E65CF592BD4DAF8A8A879810646266&tabId=132"
-        + "&_selectedProperties=['searchKey','name','elementLevel','accountType','showValueCondition','summaryLevel']"
         + "&@FinancialMgmtElement.client@=23C59575B9CF467C9620760EB255B389"
         + "&@FinancialMgmtElement.id@=56E65CF592BD4DAF8A8A879810646266"
         + "&@FinancialMgmtElement.organization@=B843C30461EA4501935CB1D125C9C25A&@FinancialMgmtElement.type@=A"
