@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -116,10 +116,10 @@ public class BaseDataSourceTestDal extends OBBaseTest {
   }
 
   private String findCsrfTokenInResponse(String response) throws Exception {
-    Pattern pattern = Pattern.compile("csrfToken:\'[A-Z0-9]+\'");
+    Pattern pattern = Pattern.compile("csrfToken:\\s?\'([A-Z0-9]+)\'");
     Matcher matcher = pattern.matcher(response);
     if (matcher.find()) {
-      return matcher.group(0).split(":")[1].replace("\'", "");
+      return matcher.group(1);
     }
 
     throw new Exception("Cannot find CSRF Token in SessionDynamic response");
