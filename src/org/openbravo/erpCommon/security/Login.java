@@ -127,7 +127,6 @@ public class Login extends HttpBaseServlet {
       String emptyUsernameOrPasswordText, String errorSamePassword,
       String errorDifferentPasswordInFields) throws IOException {
 
-    boolean showForgeLogo = true;
     boolean showITLogo = false;
     boolean showCompanyLogo = false;
     boolean showGSignInButtonDemo = true;
@@ -152,8 +151,7 @@ public class Login extends HttpBaseServlet {
     } else {
       showITLogo = sysInfo.getYourItServiceLoginImage() != null;
       showCompanyLogo = sysInfo.getYourCompanyLoginImage() != null;
-      showForgeLogo = !ActivationKey.getInstance().isActive()
-          || (ActivationKey.getInstance().isActive() && sysInfo.isShowForgeLogoInLogin());
+
       itLink = sysInfo.getSupportContact() == null ? "" : sysInfo.getSupportContact();
       if (!itLink.isEmpty() && !(StringUtils.startsWithIgnoreCase(itLink, "http://")
           || StringUtils.startsWithIgnoreCase(itLink, "https://")
@@ -178,8 +176,7 @@ public class Login extends HttpBaseServlet {
     xmlDocument.setParameter("theme", strTheme);
 
     String visualPrefs = "var showCompanyLogo = " + showCompanyLogo + ", showSupportLogo = "
-        + showITLogo + ", showForgeLogo = " + showForgeLogo + ", urlCompany = '" + companyLink
-        + "', urlSupport = '" + itLink + "', urlOBForge = 'http://forge.openbravo.com/';";
+        + showITLogo + ", urlCompany = '" + companyLink + "', urlSupport = '" + itLink + "';";
     xmlDocument.setParameter("visualPrefs", visualPrefs);
 
     String expirationMessage = "var expirationMessage="

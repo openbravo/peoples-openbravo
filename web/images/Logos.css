@@ -11,45 +11,17 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2007 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
 */
 
-
 .Login_Logo_Openbravo {
   width: 260px;
   height: 70px;
-  background: url(OpenbravoWithVesion_Logo.png) no-repeat center center;
+  background: url(openbravoLogo.svg) no-repeat center center;
 }
-
-tr.Login_Logo_SourceForge_Field {
-  /*display: none;*/
-}
-
-tr.Login_Logo_Support_Field {
-  /*display: none;*/
-}
-
-td.Login_Logo_SourceForge_Container_Cell {
-  border: 0px none;
-  vertical-align: middle;
-  text-align: right;
-  padding-right: 3px;
-  padding-left: 3px;
-  padding-top:3px;
-  padding-bottom:3px;
-  border-collapse: collapse;
-}
-
-.Login_Logo_SourceForge {
-  width: 210px;
-  height: 62px;
-  /*background: url(SFLogo.png) no-repeat center center;*/
-  background: url(http://sflogo.sourceforge.net/sflogo.php?group_id=162271&type=5) no-repeat center center;
-}
-
 
 .Login_Logo_Company_Container {
   background-color: white;
@@ -111,12 +83,6 @@ td.Login_Logo_Support_Container_Cell {
 .Login_Logo_Support_Props {
   margin-top: 3px;
   margin-bottom: 3px;
-}
-
-.Login_Logo_Forge {
-  width: 225px;
-  height: 55px;
-  background: url(OBForge.png) no-repeat center center;
 }
 
 .Menu_NavBar_logo {
