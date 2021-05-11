@@ -485,8 +485,7 @@ public class ExternalOrderLoader extends OrderLoader {
         }
 
         // In case of cancel layaway, validate and transform canceledorder
-        if (order.has("step") && (CANCEL.equals(order.getString("step"))
-            || CANCEL_REPLACE.equals(order.getString("step")))) {
+        if (order.has("step") && CANCEL.equals(order.getString("step"))) {
           if (order.has("canceledorder")) {
             JSONObject cancelledOrder = order.getJSONObject("canceledorder");
             validateCancelHeader(cancelledOrder);
@@ -506,6 +505,7 @@ public class ExternalOrderLoader extends OrderLoader {
         }
         if (order.has("step") && CANCEL_REPLACE.equals(order.getString("step"))) {
           order.put("doCancelAndReplace", true);
+          order.put("bypassConcurrentModificationCheck", true);
         }
         transformOrder(data.getJSONObject(i));
       }
