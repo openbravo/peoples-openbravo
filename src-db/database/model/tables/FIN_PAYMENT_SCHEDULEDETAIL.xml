@@ -156,6 +156,11 @@
       <index name="FIN_PYMT_SCHDET_DET_IDX" unique="false">
         <index-column name="FIN_PAYMENT_DETAIL_ID"/>
       </index>
+      <index name="FIN_PYMT_SCHDET_DET_ORNOIN" unique="false">
+        <index-column name="FIN_PAYMENT_DETAIL_ID"/>
+        <index-column name="AMOUNT"/>
+        <whereClause><![CDATA[FIN_PAYMENT_SCHEDULE_ORDER IS NOT NULL AND FIN_PAYMENT_SCHEDULE_INVOICE IS NULL AND ISACTIVE='Y' AND ISCANCELED='N']]></whereClause>
+      </index>
       <check name="FIN_PAY_SCHE_DETAIL_ISCANC_CHK"><![CDATA[ISCANCELED IN ('Y', 'N')]]></check>
       <check name="FIN_PAY_SCHE_DETAIL_ISPAID_CHK"><![CDATA[ISINVOICEPAID IN ('Y', 'N')]]></check>
     </table>
