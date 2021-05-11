@@ -147,16 +147,23 @@
   }
 
   function checkCancelAndReplaceQty(ticket, products) {
-    products
-      .filter(p => p.options.line)
-      .forEach(p => {
-        const line = ticket.lines.find(l => l.id === p.options.line);
-        if (line && line.replacedorderline && line.qty < 0) {
+    products.forEach(p => {
+      const line = ticket.lines.find(l => l.id === p.options.line);
+      if (line && line.replacedorderline && line.remainingQuantity) {
+        const oldQty = line.qty;
+        const newQty = oldQty + p.qty;
+        if (oldQty > 0 && newQty < line.remainingQuantity) {
+          throw new OB.App.Class.ActionCanceled({
+            errorConfirmation: 'OBPOS_CancelReplaceQtyEdit'
+          });
+        }
+        if (oldQty < 0 && newQty > line.remainingQuantity) {
           throw new OB.App.Class.ActionCanceled({
             errorConfirmation: 'OBPOS_CancelReplaceQtyEditReturn'
           });
         }
-      });
+      }
+    });
   }
 
   function checkAnonymousBusinessPartner(ticket, products) {

@@ -620,6 +620,17 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
   },
 
   /**
+   * Checks if draft payments exists for given ticket.
+   */
+  async checkDraftPayments(ticket) {
+    if (ticket.payments.some(payment => !payment.isPrePayment)) {
+      throw new OB.App.Class.ActionCanceled({
+        errorConfirmation: 'OBPOS_C&RDeletePaymentsHeader'
+      });
+    }
+  },
+
+  /**
    * Checks if prepayments exists for given ticket.
    */
   async checkPrePayments(ticket, payload) {
@@ -825,21 +836,52 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         errorConfirmation: data.response.error.message
       });
     }
-    if (data.response.data.orderCancelled) {
+    if (payload.actionType !== 'V' && data.response.data.orderCancelled) {
       throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBPOS_LayawayCancelledError'
+        errorConfirmation:
+          payload.actionType === 'R'
+            ? 'OBPOS_OrderReplacedError'
+            : 'OBPOS_OrderCanceledError'
       });
     }
     if (
+      (payload.actionType === 'C' || payload.actionType === 'V') &&
       data.response.data.notDeliveredDeferredServices &&
       data.response.data.notDeliveredDeferredServices.length
     ) {
       throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBPOS_CannotCancelLayWithDeferredOrders',
+        errorConfirmation:
+          payload.actionType === 'C'
+            ? 'OBPOS_CannotCancelLayWithDeferredOrders'
+            : 'OBPOS_CannotVoidLayWithDeferredOrders',
         messageParams: [
           data.response.data.notDeliveredDeferredServices.join(', ')
         ]
       });
+    }
+    if (
+      payload.actionType === 'R' &&
+      data.response.data.deferredLines &&
+      data.response.data.deferredLines.length
+    ) {
+      const deferredLines = data.response.data.deferredLines.map(deferredLine =>
+        ticket.lines.find(line => (line.linepos + 1) * 10 === deferredLine)
+      );
+      await OB.App.View.DialogUIHandler.askConfirmation({
+        title: 'OBPOS_NotModifiableLines',
+        message: 'OBPOS_NotModifiableDefLines',
+        messageParams: [
+          deferredLines
+            // eslint-disable-next-line no-underscore-dangle
+            .map(deferredLine => deferredLine.product._identifier)
+            .join(', ')
+        ],
+        hideCancel: true
+      });
+      return {
+        ...payload,
+        deferredLines
+      };
     }
 
     return payload;

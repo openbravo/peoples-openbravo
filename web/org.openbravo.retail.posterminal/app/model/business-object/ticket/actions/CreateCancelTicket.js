@@ -107,8 +107,9 @@
       await checkTicketDelivered(ticket);
       await checkNegativeLines(ticket);
       await checkReservationLines(ticket);
-      await checkPrePayments(ticket);
+      await OB.App.State.Ticket.Utils.checkDraftPayments(ticket);
       await OB.App.State.Ticket.Utils.checkTicketCanceled(ticket, {
+        actionType: 'C',
         checkNotDeliveredDeferredServices: true
       });
       await checkDeliveredQuantity(ticket);
@@ -136,14 +137,6 @@
     if (ticket.lines.some(line => line.hasStockReservation)) {
       throw new OB.App.Class.ActionCanceled({
         errorConfirmation: 'OBPOS_cancelOrderWithReservation'
-      });
-    }
-  }
-
-  async function checkPrePayments(ticket) {
-    if (ticket.payments.some(payment => !payment.isPrePayment)) {
-      throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: 'OBPOS_C&RDeletePaymentsHeader'
       });
     }
   }

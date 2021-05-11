@@ -153,7 +153,7 @@
       );
       newPayload = await OB.App.State.Ticket.Utils.checkTicketCanceled(
         globalState.Ticket.canceledorder,
-        newPayload
+        { ...newPayload, actionType: 'R' }
       );
       newPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
         globalState.Ticket.canceledorder,

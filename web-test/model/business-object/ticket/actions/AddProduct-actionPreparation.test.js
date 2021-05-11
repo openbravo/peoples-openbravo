@@ -163,11 +163,32 @@ const Ticket = {
     businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 0
   },
-  cancelAndReplace: {
+  positiveCancelAndReplace: {
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [
-      { id: '1', product: Product.productA, qty: -1, replacedorderline: true }
+      {
+        id: '1',
+        product: Product.productA,
+        qty: 2,
+        remainingQuantity: 2,
+        replacedorderline: true
+      }
+    ],
+    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
+    orderType: 0
+  },
+  negativeCancelAndReplace: {
+    priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
+    lines: [
+      {
+        id: '1',
+        product: Product.productA,
+        qty: -2,
+        remainingQuantity: -2,
+        replacedorderline: true
+      }
     ],
     businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
     orderType: 0
@@ -312,14 +333,39 @@ describe('addProduct preparation', () => {
       );
     });
 
-    it('cancel and replace qty check', async () => {
+    it('cancel and replace positive qty check', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_ReturnLine'
+      );
       await expectError(
         () =>
           prepareAction(
             {
-              products: [{ product: Product.productA, options: { line: '1' } }]
+              products: [
+                { product: Product.productA, qty: -1, options: { line: '1' } }
+              ]
             },
-            Ticket.cancelAndReplace
+            Ticket.positiveCancelAndReplace
+          ),
+        {
+          errorConfirmation: 'OBPOS_CancelReplaceQtyEdit'
+        }
+      );
+    });
+
+    it('cancel and replace negative qty check', async () => {
+      OB.App.Security.hasPermission.mockImplementation(
+        p => p === 'OBPOS_ReturnLine'
+      );
+      await expectError(
+        () =>
+          prepareAction(
+            {
+              products: [
+                { product: Product.productA, qty: 1, options: { line: '1' } }
+              ]
+            },
+            Ticket.negativeCancelAndReplace
           ),
         {
           errorConfirmation: 'OBPOS_CancelReplaceQtyEditReturn'
