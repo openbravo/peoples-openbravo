@@ -249,6 +249,7 @@ enyo.kind({
     onModalSelectPrinters: 'modalSelectPrinters',
     onModalSelectPDFPrinters: 'modalSelectPDFPrinters',
     onChangeFilterSelector: 'changeFilterSelector',
+    onResetAdvancedFilters: 'resetAdvancedFilters',
     onChangeInitFilters: 'changeInitFilters',
     onClearAllFilterSelector: 'clearAllFilterSelector',
     onCheckPresetFilterSelector: 'checkPresetFilterSelector',
@@ -2164,6 +2165,9 @@ enyo.kind({
   },
   pricelistChanged: function(inSender, inEvent) {
     this.waterfall('onChangePricelist', inEvent);
+  },
+  resetAdvancedFilters: function(inSender, inEvent) {
+    this.waterfallDown('onResetAdvancedFilters', inEvent);
   },
   changeFilterSelector: function(inSender, inEvent) {
     this.waterfall('onUpdateFilterSelector', inEvent);

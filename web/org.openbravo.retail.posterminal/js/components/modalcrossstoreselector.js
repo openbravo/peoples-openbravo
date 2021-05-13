@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,13 +17,31 @@ enyo.kind({
   body: {
     kind: 'OBPOS.UI.CrossStoreList'
   },
+  events: {
+    onResetAdvancedFilters: ''
+  },
   productId: null,
   productUOM: null,
   executeOnShow: function() {
+    const me = this;
     if (!this.initialized) {
       this.inherited(arguments);
+      // Update Advanced Filters for Service Product
+      if (this.lastProductType !== this.args.productType) {
+        me.doResetAdvancedFilters({
+          advancedFilterDialog: me.getAdvancedFilterDialog(),
+          filterSelector: me.getFilterSelectorTableHeader(),
+          filters: OB.Model.CrossStoreFilter.getProperties().filter(p => {
+            return me.args.productType === 'S' && p.column === 'stock'
+              ? false
+              : true;
+          })
+        });
+        this.lastProductType = this.args.productType;
+      }
       this.getFilterSelectorTableHeader().clearFilter();
       this.productId = this.args.productId;
+      this.productType = this.args.productType;
       this.productUOM = this.args.productUOM;
       this.$.body.$.crossStoreList.callback = this.args.callback;
       this.$.body.$.crossStoreList.searchAction(null, {
@@ -242,6 +260,7 @@ enyo.kind({
           _limit: OB.Model.CrossStoreFilter.prototype.dataLimit,
           remoteFilters: remoteFilters,
           product: this.owner.owner.productId,
+          filterByStock: this.owner.owner.productType === 'I',
           parameters: params
         },
         successCallBack,
@@ -349,10 +368,14 @@ enyo.kind({
         ? OB.I18N.formatCurrency(this.model.get('currentPrice').price)
         : ''
     );
-    this.$.stock.setContent(
-      this.model.get('stock') +
-        ' ' +
-        this.owner.owner.owner.owner.owner.owner.productUOM
-    );
+    if (this.owner.owner.owner.owner.owner.owner.productType !== 'S') {
+      this.$.stock.setContent(
+        this.model.get('stock') +
+          ' ' +
+          this.owner.owner.owner.owner.owner.owner.productUOM
+      );
+    } else {
+      this.$.stock.hide();
+    }
   }
 });

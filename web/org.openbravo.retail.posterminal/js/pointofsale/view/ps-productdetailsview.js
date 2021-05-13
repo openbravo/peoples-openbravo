@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -159,6 +159,7 @@ enyo.kind({
       if (
         line &&
         line.get('obrdmDeliveryMode') !== product.get('obrdmDeliveryMode') &&
+        product.get('productType') !== 'S' &&
         OB.UTIL.isCrossStoreOrganization(attrs.organization)
       ) {
         attrs.obrdmDeliveryMode = product.get('obrdmDeliveryMode');
@@ -355,7 +356,8 @@ enyo.kind({
           me.leftSubWindow.setDefaultDeliveryMode();
         }
         me.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(
-          OB.UTIL.isCrossStoreOrganization(organization)
+          me.leftSubWindow.product.get('productType') !== 'S' &&
+            OB.UTIL.isCrossStoreOrganization(organization)
         );
         me.leftSubWindow.changeWarehouseInfo(null, warehouse);
         me.leftSubWindow.product.set('listPrice', data.currentPrice.price);
@@ -415,11 +417,15 @@ enyo.kind({
           selectedStoreCallBack(data);
         }
       } else {
-        if (this.leftSubWindow.product.get('productType') !== 'S') {
+        if (
+          this.leftSubWindow.product.get('productType') === 'I' ||
+          this.leftSubWindow.product.get('productType') === 'S'
+        ) {
           this.doShowPopup({
             popup: 'OBPOS_modalCrossStoreSelector',
             args: {
               productId: this.leftSubWindow.product.get('id'),
+              productType: this.leftSubWindow.product.get('productType'),
               productUOM: this.leftSubWindow.product.get('uOMsymbol'),
               callback: selectedStoreCallBack
             }
@@ -586,38 +592,38 @@ enyo.kind({
         inEvent.warehouseqty = inEvent.warehouseqty
           ? inEvent.warehouseqty
           : '0';
-        me.bodyComponent.$.warehouseToGet.setContent(
-          OB.I18N.getLabel('OBPOS_warehouseSelected', [
-            inEvent.warehousename,
-            inEvent.warehouseqty
-          ])
-        );
+        me.setWarehouseInfo(inEvent.warehousename, inEvent.warehouseqty);
         me.warehouse = inEvent;
       }
     );
   },
+  setWarehouseInfo: function(warehouseName, quantity) {
+    this.bodyComponent.$.warehouseToGet.setContent(
+      OB.UTIL.isNullOrUndefined(quantity) ||
+        this.product.get('productType') === 'S'
+        ? warehouseName
+        : OB.I18N.getLabel('OBPOS_warehouseSelected', [warehouseName, quantity])
+    );
+  },
   loadDefaultWarehouseData: function(defaultWarehouse) {
     if (defaultWarehouse) {
-      this.bodyComponent.$.warehouseToGet.setContent(
-        OB.I18N.getLabel('OBPOS_warehouseSelected', [
-          defaultWarehouse.get('warehousename'),
-          defaultWarehouse.get('warehouseqty')
-            ? defaultWarehouse.get('warehouseqty')
-            : '0'
-        ])
+      this.setWarehouseInfo(
+        defaultWarehouse.get('warehousename'),
+        defaultWarehouse.get('warehouseqty')
       );
     } else {
-      this.bodyComponent.$.warehouseToGet.setContent(
-        OB.I18N.getLabel('OBPOS_warehouseSelected', [
-          OB.MobileApp.model.get('warehouses')[0].warehousename,
-          '0'
-        ])
+      this.setWarehouseInfo(
+        OB.MobileApp.model.get('warehouses')[0].warehousename,
+        0
       );
     }
   },
   getStoreStock: function(params) {
     var me = this;
     if (OB.UTIL.isCrossStoreEnabled()) {
+      me.bodyComponent.$.stockHere.setShowing(
+        this.product.get('productType') !== 'S'
+      );
       me.bodyComponent.$.stockHere.setContent(
         OB.I18N.getLabel('OBPOS_storeStock_NotCalculated')
       );
@@ -641,8 +647,9 @@ enyo.kind({
       me.bodyComponent.$.productAddToReceipt.setDisabled(true);
     }
     if (
-      OB.UTIL.isNullOrUndefined(me.organization) ||
-      !OB.UTIL.isCrossStoreOrganization(me.organization)
+      this.product.get('productType') !== 'S' &&
+      (OB.UTIL.isNullOrUndefined(me.organization) ||
+        !OB.UTIL.isCrossStoreOrganization(me.organization))
     ) {
       OB.UTIL.StockUtils.getReceiptLineStock(
         me.product.get('id'),
@@ -761,8 +768,9 @@ enyo.kind({
     this.product = params.product;
     this.forceSelectStore = params.forceSelectStore || false;
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setShowing(
-      !OB.UTIL.isNullOrUndefined(this.organization) &&
-        OB.UTIL.isCrossStoreOrganization(this.organization)
+      this.product.get('productType') !== 'S' &&
+        (!OB.UTIL.isNullOrUndefined(this.organization) &&
+          OB.UTIL.isCrossStoreOrganization(this.organization))
     );
     this.$.leftSubWindowBody.leftSubWindow.bodyComponent.$.productDeliveryModes.setDetailsView(
       this.$.leftSubWindowBody.$.body
@@ -802,7 +810,7 @@ enyo.kind({
     } else {
       this.bodyComponent.$.productImage.setImg(params.product.get('img'));
     }
-    this.bodyComponent.$.warehouseToGet.setContent(
+    this.setWarehouseInfo(
       OB.UTIL.isCrossStoreProduct(this.product)
         ? OB.I18N.getLabel('OBPOS_loadingFromCrossStoreWarehouses')
         : OB.I18N.getLabel('OBPOS_loadingFromWarehouse', [

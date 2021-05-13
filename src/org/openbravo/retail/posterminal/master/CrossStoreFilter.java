@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -80,7 +80,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
               .getJSONObject("terminalTimeOffset")
               .getLong("value"));
 
-      boolean filterByStock = true;
+      boolean filterByStock = jsonsent.optBoolean("filterByStock", false);
       if (jsonsent.has("remoteFilters")) {
         final JSONArray remoteFilters = jsonsent.getJSONArray("remoteFilters");
         for (int i = 0; i < remoteFilters.length(); i++) {

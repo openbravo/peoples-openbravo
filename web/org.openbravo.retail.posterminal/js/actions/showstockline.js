@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -33,7 +33,9 @@
           (!selectedReceiptLines || selectedReceiptLines.length <= 1);
         active =
           active &&
-          selectedReceiptLine.get('product').get('productType') === 'I' &&
+          (selectedReceiptLine.get('product').get('productType') === 'I' ||
+            (OB.UTIL.isCrossStoreEnabled() &&
+              selectedReceiptLine.get('product').get('productType') === 'S')) &&
           !selectedReceiptLine.get('product').get('ispack');
         return active;
       },
@@ -44,7 +46,11 @@
         var product = selectedReceiptLine.get('product');
         var warehouse = selectedReceiptLine.get('warehouse');
         //show always or just when the product has been set to show stock screen?
-        if (product.get('productType') === 'I' && !product.get('ispack')) {
+        if (
+          (product.get('productType') === 'I' ||
+            product.get('productType') === 'S') &&
+          !product.get('ispack')
+        ) {
           if (OB.MobileApp.model.get('connectedToERP')) {
             view.showLeftSubWindow(this, {
               leftSubWindow:
