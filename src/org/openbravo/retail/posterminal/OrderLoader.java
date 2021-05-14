@@ -862,7 +862,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
     if (paymentDocTypes.get(org.getId()) != null) {
       return paymentDocTypes.get(org.getId());
     }
-    final DocumentType docType = FIN_Utility.getDocumentType(org, AcctServer.DOCTYPE_ARReceipt);
+
+    final DocumentType docType = org.getObposCDoctypepayment() != null
+        ? org.getObposCDoctypepayment()
+        : FIN_Utility.getDocumentType(org, AcctServer.DOCTYPE_ARReceipt);
     paymentDocTypes.put(org.getId(), docType);
     return docType;
 

@@ -181,11 +181,18 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="EM_OBPOS_C_DOCTYPEPAYMENT_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_CLOSINV_TEMPLATE_ID">
         <reference local="EM_OBPOS_CLOSINV_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOC_AD_ORG">
         <reference local="EM_OBPOS_C_DOCTYPE_ID" foreign="C_DOCTYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOCPAY_AD_ORG">
+        <reference local="EM_OBPOS_C_DOCTYPEPAYMENT_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_DOCTYPE" name="EM_OBPOS_DOCQUOT_AD_ORG">
         <reference local="EM_OBPOS_C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
