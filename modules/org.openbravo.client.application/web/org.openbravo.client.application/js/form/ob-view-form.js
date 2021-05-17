@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2682,5 +2682,14 @@ OB.ViewFormProperties = {
         item.updateAlwaysTakeSpace(true);
       }
     }
+  },
+
+  validateField: function(field, validators, value, record, options) {
+    if (field.hiddenInForm && !field.displayed) {
+      // Only validate fields that are hidden but are displayed, that means, those are potentially in a collapsed field group
+      // if field is hidden but not displayed, it should not be validated.
+      return true;
+    }
+    return this.Super('validateField', arguments);
   }
 };
