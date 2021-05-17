@@ -305,7 +305,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    *           Exception thrown when a validation fails.
    */
 
-  private void doGenerateReport(JSONObject result, Map<String, Object> parameters,
+  protected void doGenerateReport(JSONObject result, Map<String, Object> parameters,
       JSONObject jsonContent, String action) throws JSONException, OBException {
     JSONObject params = jsonContent.getJSONObject("_params");
     final ReportDefinition report = OBDal.getInstance()
