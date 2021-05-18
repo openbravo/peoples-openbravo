@@ -101,6 +101,10 @@ public class PaidReceipts extends JSONProcessSimple {
 
   @Inject
   @Any
+  private Instance<PaidReceiptsPaymentsTypeTerminalHook> paymentsTypeInTerminalProcesses;
+
+  @Inject
+  @Any
   private Instance<PaidReceiptsPaymentsTypeHook> paymentsTypeInProcesses;
 
   @Inject
@@ -548,25 +552,31 @@ public class PaidReceipts extends JSONProcessSimple {
           }
           if (!added) {
             // The payment type of the current payment is not configured for the webpos
+            List<Object[]> paymentTypeList = new ArrayList<Object[]>();
+            executePaidReceiptsPaymentTypeTerminalHooks(paymentTypeList,
+                objectIn.getString("paymentId"), posTerminal.getId());
+            int paymentTypeCount = paymentTypeList.size();
 
-            String hqlPaymentType = "select p.paymentMethod.name as name, p.account.id as account, "
-                + "obpos_currency_rate(p.account.currency, p.organization.currency, null, null, p.client.id, p.organization.id) as rate, "
-                + "obpos_currency_rate(p.organization.currency, p.account.currency, null, null, p.client.id, p.organization.id) as mulrate, "
-                + "p.account.currency.iSOCode as isocode, " //
-                + "ap.searchKey as kind " + "from FIN_Payment as p "
-                + "join OBPOS_App_Payment_Type pt with pt.paymentMethod = p.paymentMethod "
-                + "join OBPOS_App_Payment ap with ap.paymentMethod.id = pt.id "
-                + "where p.id=:paymentId and ap.obposApplications.id=:posId";
-            Query<Object[]> paymentTypeQuery = OBDal.getInstance()
-                .getSession()
-                .createQuery(hqlPaymentType, Object[].class);
-            paymentTypeQuery.setParameter("paymentId", objectIn.getString("paymentId"));
-            paymentTypeQuery.setParameter("posId", posTerminal.getId());
-            int paymentTypeCount = paymentTypeQuery.list().size();
+            if (paymentTypeCount == 0) {
+              String hqlPaymentType = "select p.paymentMethod.name as name, p.account.id as account, "
+                  + "obpos_currency_rate(p.account.currency, p.organization.currency, null, null, p.client.id, p.organization.id) as rate, "
+                  + "obpos_currency_rate(p.organization.currency, p.account.currency, null, null, p.client.id, p.organization.id) as mulrate, "
+                  + "p.account.currency.iSOCode as isocode, " //
+                  + "ap.searchKey as kind " + "from FIN_Payment as p "
+                  + "join OBPOS_App_Payment_Type pt with pt.paymentMethod = p.paymentMethod "
+                  + "join OBPOS_App_Payment ap with ap.paymentMethod.id = pt.id "
+                  + "where p.id=:paymentId and ap.obposApplications.id=:posId";
+              Query<Object[]> paymentTypeQuery = OBDal.getInstance()
+                  .getSession()
+                  .createQuery(hqlPaymentType, Object[].class);
+              paymentTypeQuery.setParameter("paymentId", objectIn.getString("paymentId"));
+              paymentTypeQuery.setParameter("posId", posTerminal.getId());
+              paymentTypeList = paymentTypeQuery.list();
+            }
 
             if (paymentTypeCount > 0) {
 
-              Object objPaymentType = paymentTypeQuery.list().get(0);
+              Object objPaymentType = paymentTypeList.get(0);
               Object[] objPaymentsType = (Object[]) objPaymentType;
               JSONObject paymentsType = new JSONObject();
               paymentsType.put("name", objPaymentsType[0]);
@@ -860,6 +870,13 @@ public class PaidReceipts extends JSONProcessSimple {
       throws Exception {
     for (final PaidReceiptsHook paidReceiptsHook : paidReceiptsHooks) {
       paidReceiptsHook.exec(orderId, paidReceipt);
+    }
+  }
+
+  private void executePaidReceiptsPaymentTypeTerminalHooks(final List<Object[]> paymentTypes,
+      final String paymentId, final String terminalId) throws Exception {
+    for (final PaidReceiptsPaymentsTypeTerminalHook paidReceiptsPaymentsTypeTerminalHook : paymentsTypeInTerminalProcesses) {
+      paidReceiptsPaymentsTypeTerminalHook.exec(paymentTypes, paymentId, terminalId);
     }
   }
 
