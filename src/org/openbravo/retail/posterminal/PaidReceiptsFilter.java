@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2019 Openbravo S.L.U.
+ * Copyright (C) 2017-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -94,12 +94,30 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       default:
         orderTypeHql = "";
     }
-
+    String deliveryModeFilter = getDeliveryModeFilter(jsonsent);
+    String deliveryModeHql;
+    switch (deliveryModeFilter) {
+      case "PickupInStore":
+        deliveryModeHql = " and exists (select 1 from OrderLine ol where ord.id = ol.salesOrder.id and ol.obrdmDeliveryMode = 'PickupInStore') ";
+        break;
+      case "PickupInStoreWithDate":
+        deliveryModeHql = " and exists (select 1 from OrderLine ol where ord.id = ol.salesOrder.id and ol.obrdmDeliveryMode = 'PickupInStoreWithDate') ";
+        break;
+      case "HomeDelivery":
+        deliveryModeHql = " and exists (select 1 from OrderLine ol where ord.id = ol.salesOrder.id and ol.obrdmDeliveryMode = 'HomeDelivery') ";
+        break;
+      case "PickAndCarry":
+        deliveryModeHql = " and exists (select 1 from OrderLine ol where ord.id = ol.salesOrder.id and coalesce(ol.obrdmDeliveryMode, 'PickAndCarry') = 'PickAndCarry') ";
+        break;
+      default:
+        deliveryModeHql = "";
+    }
     String hqlPaidReceipts = "select " //
         + receiptsHQLProperties.getHqlSelect() //
         + " from Order as ord" //
         + " where $filtersCriteria and $hqlCriteria" //
         + orderTypeHql //
+        + deliveryModeHql //
         + " and ord.client.id = $clientId" //
         + getOganizationFilter(jsonsent) //
         + " and ord.obposIsDeleted = false" //
@@ -119,6 +137,10 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
 
   protected static String getOrderTypeFilter(JSONObject jsonsent) {
     return getColumnFilterValue(jsonsent, "orderType");
+  }
+
+  protected static String getDeliveryModeFilter(JSONObject jsonsent) {
+    return getColumnFilterValue(jsonsent, "deliveryMode");
   }
 
   private static String getOganizationFilter(final JSONObject jsonsent) throws JSONException {

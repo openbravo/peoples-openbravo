@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2020 Openbravo S.L.U.
+ * Copyright (C) 2017-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -44,6 +44,9 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
         add(new HQLProperty("ord.obposApplications.organization.id", "trxOrganization"));
         add(new HQLProperty("ord.externalBusinessPartnerReference",
             "externalBusinessPartnerReference"));
+        add(new HQLProperty(
+            "(select coalesce(max(ol.obrdmDeliveryMode), 'PickAndCarry') from OrderLine ol where ord.id = ol.salesOrder.id)",
+            "deliveryMode"));
         String orderTypeFilter = PaidReceiptsFilter.getOrderTypeFilter((JSONObject) params);
         switch (orderTypeFilter) {
           case "ORD":
@@ -62,7 +65,6 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
             add(new HQLProperty("(case when ord.documentType.return = true then 'RET'"
                 + " when ord.documentType.sOSubType = 'OB' then 'QT'"
                 + " when ord.obposIslayaway = true then 'LAY' else 'ORD' end)", "orderType"));
-
         }
       }
     };
