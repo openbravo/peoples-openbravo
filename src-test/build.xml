@@ -25,7 +25,7 @@
   <property name="build.test" location="${base.src.test}/build/classes" />
 
   <path id="test-src-dirs">
-    <pathelement path="${base.src.test}" />
+    <pathelement path="${base.src.test}/src" />
     <dirset dir="${base.modules}">
       <include name="*/src-test" />
     </dirset>
