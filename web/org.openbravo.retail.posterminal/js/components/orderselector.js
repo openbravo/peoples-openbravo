@@ -1113,7 +1113,10 @@ enyo.kind({
               };
 
               const createInvoiceSequence = index => {
-                if (index === invoiceList.length) {
+                if (
+                  invoiceList.length === 0 ||
+                  index === groupedLinesToPrepare.length
+                ) {
                   issueSalesOrder();
                 } else {
                   OB.App.State.DocumentSequence.increaseSequence({
@@ -1123,7 +1126,7 @@ enyo.kind({
                       sequencePrefix,
                       sequenceNumber
                     } = OB.App.State.getState().DocumentSequence[sequenceName];
-                    const order = invoiceList[index].order;
+                    const order = groupedLinesToPrepare[index];
                     const documentNo = OB.App.State.DocumentSequence.Utils.calculateDocumentNumber(
                       {
                         sequencePrefix,
