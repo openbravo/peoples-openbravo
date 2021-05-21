@@ -41,7 +41,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ADDRESS1" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="ADDRESS1" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -49,11 +49,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CITY" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="CITY" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="POSTAL" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="POSTAL" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -61,7 +61,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="REGION" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="REGION" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
