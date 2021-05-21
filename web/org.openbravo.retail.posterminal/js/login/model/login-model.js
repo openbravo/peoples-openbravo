@@ -823,18 +823,35 @@
     },
 
     returnToOnline: function() {
+      const me = this;
+      let syncProcess = function() {
+        me.runSyncProcess(function() {
+          OB.UTIL.sendLastTerminalStatusValues();
+          OB.App.RemoteServerController.getRemoteServer(
+            'BackendServer'
+          ).connectSynchronizationEndpoints();
+        });
+      };
       if (OB.MobileApp.model.get('isLoggingIn')) {
         OB.MobileApp.model.on(
           'change:isLoggingIn',
           function() {
             if (!OB.MobileApp.model.get('isLoggingIn')) {
               OB.MobileApp.model.off('change:isLoggingIn', null, this);
-              this.runSyncProcess(function() {
-                OB.UTIL.sendLastTerminalStatusValues();
-                OB.App.RemoteServerController.getRemoteServer(
-                  'BackendServer'
-                ).connectSynchronizationEndpoints();
-              });
+              if (OB.MobileApp.model.get('terminal')) {
+                syncProcess();
+              } else {
+                let syncIntervalCount = 0;
+                let syncIntervalId = setInterval(function() {
+                  syncIntervalCount++;
+                  if (OB.MobileApp.model.get('terminal')) {
+                    syncProcess();
+                    clearInterval(syncIntervalId);
+                  } else if (syncIntervalCount === 30) {
+                    clearInterval(syncIntervalId);
+                  }
+                }, 500);
+              }
             }
           },
           this
@@ -842,12 +859,7 @@
       } else {
         //The session is fine, we don't need to warn the user
         //but we will attempt to send all pending orders automatically
-        this.runSyncProcess(function() {
-          OB.UTIL.sendLastTerminalStatusValues();
-          OB.App.RemoteServerController.getRemoteServer(
-            'BackendServer'
-          ).connectSynchronizationEndpoints();
-        });
+        syncProcess();
       }
     },
 
