@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2020 Openbravo S.L.U.
+ * Copyright (C) 2015-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.LockOptions;
 import org.hibernate.query.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -24,7 +25,10 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCategory;
 import org.openbravo.retail.config.OBRETCOProductList;
@@ -46,9 +50,11 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    final OBRETCOProlProduct assortmentProduct = (OBRETCOProlProduct) event.getTargetInstance();
-    addProductCategoryToAssortment(assortmentProduct.getObretcoProductlist(),
-        assortmentProduct.getProduct().getProductCategory());
+    if (getAddProductCategoriesToAssortmentPref()) {
+      final OBRETCOProlProduct assortmentProduct = (OBRETCOProlProduct) event.getTargetInstance();
+      addProductCategoryToAssortment(assortmentProduct.getObretcoProductlist(),
+          assortmentProduct.getProduct().getProductCategory());
+    }
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -61,17 +67,18 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
     final Property prolProductProductProperty = prolProductEntity
         .getProperty(OBRETCOProlProduct.PROPERTY_PRODUCT);
 
-    final OBRETCOProlProduct assortmentProduct = (OBRETCOProlProduct) event.getTargetInstance();
-    final Product previousProduct = (Product) event.getPreviousState(prolProductProductProperty);
-    final Product currentProduct = (Product) event.getCurrentState(prolProductProductProperty);
+    if (getAddProductCategoriesToAssortmentPref()) {
+      final OBRETCOProlProduct assortmentProduct = (OBRETCOProlProduct) event.getTargetInstance();
+      final Product previousProduct = (Product) event.getPreviousState(prolProductProductProperty);
+      final Product currentProduct = (Product) event.getCurrentState(prolProductProductProperty);
 
-    if (!StringUtils.equals(previousProduct.getId(), currentProduct.getId())) {
-      removeProductCategoryFromAssortment(assortmentProduct.getObretcoProductlist(),
-          previousProduct.getProductCategory());
-      addProductCategoryToAssortment(assortmentProduct.getObretcoProductlist(),
-          currentProduct.getProductCategory());
+      if (!StringUtils.equals(previousProduct.getId(), currentProduct.getId())) {
+        removeProductCategoryFromAssortment(assortmentProduct.getObretcoProductlist(),
+            previousProduct.getProductCategory());
+        addProductCategoryToAssortment(assortmentProduct.getObretcoProductlist(),
+            currentProduct.getProductCategory());
+      }
     }
-
   }
 
   public void onDelete(@Observes EntityDeleteEvent event) {
@@ -82,6 +89,21 @@ public class ProductListEventHandler extends EntityPersistenceEventObserver {
     final OBRETCOProlProduct assortmentProduct = (OBRETCOProlProduct) event.getTargetInstance();
     removeProductCategoryFromAssortment(assortmentProduct.getObretcoProductlist(),
         assortmentProduct.getProduct().getProductCategory());
+  }
+
+  private boolean getAddProductCategoriesToAssortmentPref() {
+    boolean addProdCategoriesToAssortment = false;
+    try {
+      addProdCategoriesToAssortment = Preferences.YES.equals(
+          Preferences.getPreferenceValue("OBPOS_AutomaticallyAddProductCategoriesToAssortment",
+              true, OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e) {
+      throw new OBException(
+          "Error while reading OBPOS_AutomaticallyAddProductCategoriesToAssortment preference", e);
+    }
+    return addProdCategoriesToAssortment;
   }
 
   private void addProductCategoryToAssortment(final OBRETCOProductList assortment,
