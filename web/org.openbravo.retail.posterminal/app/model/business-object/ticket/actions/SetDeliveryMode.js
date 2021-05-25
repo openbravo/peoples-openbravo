@@ -16,7 +16,9 @@
     'setDeliveryMode',
     (ticket, payload) => {
       let newTicket = { ...ticket };
-      newTicket.obrdmDeliveryModeProperty = payload.obrdmDeliveryModeProperty;
+      if (payload.obrdmDeliveryModeProperty) {
+        newTicket.obrdmDeliveryModeProperty = payload.obrdmDeliveryModeProperty;
+      }
       if (payload.obrdmDeliveryDateProperty) {
         newTicket.obrdmDeliveryDateProperty = payload.obrdmDeliveryDateProperty;
       }
