@@ -24,7 +24,7 @@
         let deposits = terminalPayment.payment.totalDeposits;
         let drops = terminalPayment.payment.totalDrops;
 
-        if (lastCashUpPayments && lastCashUpPayments.length > 1) {
+        if (lastCashUpPayments && lastCashUpPayments.length >= 1) {
           const lastCashUpPayment = lastCashUpPayments.filter(function filter(
             lastCahupPaymentFilter
           ) {
