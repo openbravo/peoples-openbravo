@@ -198,6 +198,30 @@
         )
       );
     };
+    const calculateUnitAmountWithoutTicketDiscounts = (
+      baseUnitPrice,
+      promotions
+    ) => {
+      const ticketDiscountsDiscountTypeIds = OB.Discounts.Pos.getTicketDiscountsDiscountTypeIds();
+      const discountedWithoutTicketDiscounts = promotions.reduce(
+        (discounted, promotion) => {
+          if (
+            ticketDiscountsDiscountTypeIds.indexOf(promotion.discountType) !==
+            -1
+          ) {
+            return discounted;
+          }
+
+          return OB.DEC.add(discounted, promotion.amt);
+        },
+        OB.DEC.Zero
+      );
+
+      return OB.DEC.sub(baseUnitPrice, discountedWithoutTicketDiscounts);
+    };
+    const calculateUnitPriceWithoutTicketDiscounts = (unitAmount, quantity) => {
+      return OB.DEC.div(unitAmount, quantity);
+    };
     const newLines = payload.ticket.receiptLines.map((line, index) => ({
       ...line,
       linepos: index,
@@ -214,6 +238,17 @@
       grossUnitAmount: calculateGrossAmount(
         line.lineGrossAmount,
         line.promotions
+      ),
+      grossUnitAmountWithoutTicketDiscounts: calculateUnitAmountWithoutTicketDiscounts(
+        line.lineGrossAmount,
+        line.promotions
+      ),
+      grossUnitPriceWithoutTicketDiscounts: calculateUnitPriceWithoutTicketDiscounts(
+        calculateUnitAmountWithoutTicketDiscounts(
+          line.lineGrossAmount,
+          line.promotions
+        ),
+        OB.DEC.number(line.quantity, line.product.uOMstandardPrecision)
       ),
       priceIncludesTax: ticket.priceIncludesTax,
       warehouse: {
