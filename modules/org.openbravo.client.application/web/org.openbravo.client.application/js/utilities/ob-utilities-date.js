@@ -105,7 +105,11 @@ OB.Utilities.getTimeFormatDefinition = function() {
     is24h = false;
   }
 
-  if (timeFormat.toLowerCase().contains('ss')) {
+  const format = timeFormat.toLowerCase();
+  const toTime = format.contains
+    ? format.contains('ss')
+    : format.includes('ss');
+  if (toTime) {
     return {
       timeFormat: timeFormat,
       is24h: is24h,
