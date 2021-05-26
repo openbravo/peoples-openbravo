@@ -32,34 +32,4 @@
       return newTicket;
     }
   );
-
-  OB.App.StateAPI.Ticket.setDeliveryMode.addActionPreparation(
-    async (ticket, payload) => {
-      let newPayload = { ...payload };
-
-      newPayload = hasErrorLines(newPayload, ticket);
-
-      return newPayload;
-    },
-    async (ticket, payload) => payload,
-    10
-  );
-
-  function hasErrorLines(newPayload, ticket) {
-    if (ticket.isQuotation !== true) {
-      ticket.lines.forEach(line => {
-        if (
-          (!line.obrdmDeliveryMode ||
-            line.obrdmDeliveryMode === 'PickAndCarry') &&
-          !line.obposCanbedelivered &&
-          line.deliveredQuantity !== line.qty
-        ) {
-          throw new OB.App.Class.ActionCanceled({
-            warningMsg: 'OBRDM_PickAndCarryError'
-          });
-        }
-      });
-    }
-    return newPayload;
-  }
 })();
