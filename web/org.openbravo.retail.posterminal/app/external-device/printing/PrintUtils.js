@@ -72,7 +72,7 @@ OB.App.PrintUtils = {
     if (ticket.changePayments) {
       return ticket.changePayments.map(payment => payment.label).join(' + ');
     }
-    return ticket.payments
+    const changeLoadedTicket = ticket.payments
       .filter(
         payment =>
           payment.paymentData &&
@@ -81,5 +81,15 @@ OB.App.PrintUtils = {
       )
       .map(payment => payment.paymentData.label)
       .join(' + ');
+    if (changeLoadedTicket !== '') {
+      return changeLoadedTicket;
+    }
+    if (ticket.change) {
+      // exist and different from zero
+      // TODO Remove this when implement multicurrency in pos2
+      //      Since changePayments will have value
+      return OB.I18N.formatCurrency(ticket.change);
+    }
+    return '';
   }
 };
