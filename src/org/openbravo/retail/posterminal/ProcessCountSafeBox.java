@@ -18,6 +18,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -69,11 +70,12 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
       log.debug(
           "Error processing count safe box (2): error retrieving countSafeBox date. Using current server date");
     }
-
     OBCriteria<OBPOSSafeBox> safeBoxCriteria = OBDal.getInstance()
         .createCriteria(OBPOSSafeBox.class);
     safeBoxCriteria.add(
         Restrictions.eq(OBPOSSafeBox.PROPERTY_SEARCHKEY, jsonCountSafeBox.getString("safeBox")));
+    safeBoxCriteria.add(Restrictions.eq(OBPOSSafeBox.PROPERTY_ORGANIZATION,
+        OBContext.getOBContext().getCurrentOrganization()));
 
     OBPOSSafeBox safebox = (OBPOSSafeBox) safeBoxCriteria.uniqueResult();
 
