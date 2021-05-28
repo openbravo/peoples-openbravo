@@ -112,6 +112,9 @@ public class Invoices extends JSONProcessSimple {
               .createCriteria(InvoiceLineOffer.class);
           qPromotions.add(Restrictions.eq(InvoiceLineOffer.PROPERTY_INVOICELINE + ".id",
               (String) invoiceLine.getString("lineId")));
+          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
+            qPromotions.setFilterOnReadableOrganization(false);
+          }
           qPromotions.addOrder(Order.asc(InvoiceLineOffer.PROPERTY_LINENO));
           JSONArray promotions = new JSONArray();
           boolean hasPromotions = false;
@@ -151,6 +154,9 @@ public class Invoices extends JSONProcessSimple {
               .createCriteria(InvoiceLineTax.class);
           qTaxes.add(Restrictions.eq(InvoiceLineTax.PROPERTY_INVOICELINE + ".id",
               (String) invoiceLine.getString("lineId")));
+          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
+            qTaxes.setFilterOnReadableOrganization(false);
+          }
           qTaxes.addOrder(Order.asc(InvoiceLineTax.PROPERTY_LINENO));
           JSONArray taxes = new JSONArray();
           for (InvoiceLineTax tax : qTaxes.list()) {
