@@ -47,6 +47,7 @@ import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.Role;
@@ -1360,9 +1361,19 @@ public class ExternalOrderLoader extends OrderLoader {
       throw new OBException("No pos terminal found using id " + posId + " json " + jsonObject);
     }
 
+    String orgId = result.getOrganization().getId();
+    try {
+      if ("Y"
+          .equals(Preferences.getPreferenceValue("OBPOS_ExternalOrderLoaderCrossStoreOrg", true,
+              null, null, OBContext.getOBContext().getUser(), null, null))
+          && result.getOrganization().getOBRETCOCrossStoreOrganization() != null) {
+        orgId = result.getOrganization().getOBRETCOCrossStoreOrganization().getId();
+      }
+    } catch (PropertyException e) {
+      log.error("Error while reading OBPOS_ExternalOrderLoaderCrossStoreOrg preference");
+    }
     OBContext.setOBContext(OBContext.getOBContext().getUser().getId(),
-        OBContext.getOBContext().getRole().getId(), result.getClient().getId(),
-        result.getOrganization().getId());
+        OBContext.getOBContext().getRole().getId(), result.getClient().getId(), orgId);
 
     final Role role = OBDal.getInstance()
         .get(Role.class, OBContext.getOBContext().getRole().getId());
