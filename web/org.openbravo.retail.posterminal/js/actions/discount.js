@@ -49,13 +49,6 @@
           return false;
         }
 
-        if (selectedReceiptLine.get('product').get('isEditableQty') === false) {
-          view.doShowPopup({
-            popup: 'modalNotEditableLine'
-          });
-          return;
-        }
-
         view.discountsMode(view, {
           tabPanel: 'edit',
           keyboard: 'toolbardiscounts',
