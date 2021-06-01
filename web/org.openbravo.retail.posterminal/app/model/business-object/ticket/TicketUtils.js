@@ -470,7 +470,7 @@
           unitAmount,
           quantity
         ) => {
-          return OB.DEC.div(unitAmount, quantity);
+          return quantity === 0 ? 0 : OB.DEC.div(unitAmount, quantity);
         };
         if (priceIncludesTax) {
           newLine.baseGrossUnitAmount = OB.DEC.mul(baseGrossUnitPrice, qty);

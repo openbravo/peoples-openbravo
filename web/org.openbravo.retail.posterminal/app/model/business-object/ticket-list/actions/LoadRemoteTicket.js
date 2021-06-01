@@ -220,7 +220,7 @@
       return OB.DEC.sub(baseUnitPrice, discountedWithoutTicketDiscounts);
     };
     const calculateUnitPriceWithoutTicketDiscounts = (unitAmount, quantity) => {
-      return OB.DEC.div(unitAmount, quantity);
+      return quantity === 0 ? 0 : OB.DEC.div(unitAmount, quantity);
     };
     const newLines = payload.ticket.receiptLines.map((line, index) => ({
       ...line,
