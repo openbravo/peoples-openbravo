@@ -27,7 +27,22 @@
       }
 
       newTicket.lines.forEach(line => {
-        newTicket = OB.App.State.Ticket.Utils.setDeliveryMode(line, newTicket);
+        const newLine = { ...line };
+
+        if (payload.obrdmDeliveryModeProperty) {
+          newLine.obrdmDeliveryMode = payload.obrdmDeliveryModeProperty;
+        }
+        if (payload.obrdmDeliveryDateProperty) {
+          newLine.obrdmDeliveryDate = payload.obrdmDeliveryDateProperty;
+        }
+        if (payload.obrdmDeliveryTimeProperty) {
+          newLine.obrdmDeliveryTime = payload.obrdmDeliveryTimeProperty;
+        }
+        newTicket = OB.App.State.Ticket.Utils.setDeliveryMode(
+          newLine,
+          newTicket
+        );
+        newTicket.line = newLine;
       });
       return newTicket;
     }
