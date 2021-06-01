@@ -1728,12 +1728,18 @@ enyo.kind({
 
     var removeTransaction = function() {
       if (me.model.get('leftColumnViewManager').isOrder()) {
-        me.model.get('order').removePayment(inEvent.payment, null, function() {
-          if (inEvent.removeCallback) {
-            inEvent.removeCallback();
-          }
-          return;
-        });
+        me.model
+          .get('order')
+          .removePayment(
+            inEvent.payment,
+            inEvent.cancellationCallback,
+            function() {
+              if (inEvent.removeCallback) {
+                inEvent.removeCallback();
+              }
+              return;
+            }
+          );
       }
       if (me.model.get('leftColumnViewManager').isMultiOrder()) {
         me.model

@@ -2923,14 +2923,16 @@ enyo.kind({
         currency: '',
         symbolAtRight: true
       });
+      const removeCallback = function() {
+        me.deleting = false;
+        me.putDisabled(false);
+        me.removeClass('obObposPointOfSaleUiRemovePayment_iconLoading');
+        me.addClass('obObposPointOfSaleUiRemovePayment_iconClearPayment');
+      };
       this.doRemovePayment({
         payment: this.owner.model,
-        removeCallback: function() {
-          me.deleting = false;
-          me.putDisabled(false);
-          me.removeClass('obObposPointOfSaleUiRemovePayment_iconLoading');
-          me.addClass('obObposPointOfSaleUiRemovePayment_iconClearPayment');
-        }
+        removeCallback: removeCallback,
+        cancellationCallback: removeCallback
       });
     }
   }

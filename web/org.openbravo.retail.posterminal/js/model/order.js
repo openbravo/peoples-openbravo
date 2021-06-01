@@ -6703,8 +6703,9 @@
             }
           );
         })
-        .catch(err => {
-          OB.error('RemovePayment action failed: ' + err.message);
+        .catch(error => {
+          OB.App.View.ActionCanceledUIHandler.handle(error);
+          OB.error('RemovePayment action failed: ' + error.message);
           if (cancellationCallback) {
             cancellationCallback();
           }

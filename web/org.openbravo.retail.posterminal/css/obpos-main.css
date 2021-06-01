@@ -10193,6 +10193,11 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
     background-color: #e8e8e8;
     border-radius: 50%;
   }
+  
+  .obObposPointOfSaleUiRemovePayment_iconLoading:hover {
+    opacity: 1;
+    background-color: transparent;
+  }
 }
 
 .obObposPointOfSaleUiRemovePayment:active {
@@ -10222,8 +10227,10 @@ li.obUiListOrders-orderSelector_obOrder:last-child > button > div > div:last-chi
   filter: var(--color-secondary_img);
 }
 
-.obObposPointOfSaleUiRemovePayment_loading .obUiButton-components-icon {
+.obObposPointOfSaleUiRemovePayment_iconLoading .obUiButton-components-icon {
   background-image: url('./../../org.openbravo.mobile.core/assets/img/iconloading.gif');
+  background-size: 18px 18px;
+  filter: none;
 }
 
 
