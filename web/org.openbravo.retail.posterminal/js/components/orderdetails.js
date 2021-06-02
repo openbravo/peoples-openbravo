@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -42,7 +42,7 @@ enyo.kind({
   preSetContentDetail: function(order, docNo) {
     var orderDate = new Date(order.get('orderDate'));
     if (order.get('isPaid') || order.get('isLayaway')) {
-      if (this.order.get('creationDate') !== null) {
+      if (this.order.get('creationDate')) {
         orderDate = new Date(
           OB.I18N.normalizeDate(this.order.get('creationDate'))
         );

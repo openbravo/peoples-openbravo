@@ -482,10 +482,12 @@
           ]
         );
         this.set('orderDate', OB.I18N.normalizeDate(attributes.orderDate));
-        this.set(
-          'creationDate',
-          OB.I18N.normalizeDate(attributes.creationDate)
-        );
+        if (attributes.creationDate) {
+          this.set(
+            'creationDate',
+            OB.I18N.normalizeDate(attributes.creationDate)
+          );
+        }
         this.setUndo('InitializeAttr', attributes.undo);
         bpModel = new OB.Model.BusinessPartner(attributes.bp);
         bpModel.set(
@@ -1629,7 +1631,6 @@
         null
       );
       this.set('orderDate', OB.I18N.normalizeDate(new Date()));
-      this.set('creationDate', null);
       this.set('documentNo', '');
       this.set('undo', null);
       this.set({
@@ -5781,7 +5782,6 @@
       }
 
       me.set('orderDate', new Date());
-      me.set('creationDate', null);
 
       me.set('negativeDocNo', me.get('documentNo') + '*R*');
       newDocNo = '';
