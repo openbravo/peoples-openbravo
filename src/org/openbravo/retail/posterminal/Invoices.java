@@ -29,6 +29,7 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 import org.openbravo.model.ad.access.InvoiceLineTax;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
@@ -83,7 +84,7 @@ public class Invoices extends JSONProcessSimple {
 
       for (int receipt = 0; receipt < invoices.length(); receipt++) {
         JSONObject invoice = invoices.getJSONObject(receipt);
-
+        Organization org = OBDal.getInstance().get(Organization.class, invoice.get("organization"));
         invoice.put("orderid", invoiceid);
         invoice.put("generateInvoice", true);
 
@@ -112,7 +113,7 @@ public class Invoices extends JSONProcessSimple {
               .createCriteria(InvoiceLineOffer.class);
           qPromotions.add(Restrictions.eq(InvoiceLineOffer.PROPERTY_INVOICELINE + ".id",
               (String) invoiceLine.getString("lineId")));
-          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
+          if (org.getOBRETCOCrossStoreOrganization() != null) {
             qPromotions.setFilterOnReadableOrganization(false);
           }
           qPromotions.addOrder(Order.asc(InvoiceLineOffer.PROPERTY_LINENO));
@@ -154,7 +155,7 @@ public class Invoices extends JSONProcessSimple {
               .createCriteria(InvoiceLineTax.class);
           qTaxes.add(Restrictions.eq(InvoiceLineTax.PROPERTY_INVOICELINE + ".id",
               (String) invoiceLine.getString("lineId")));
-          if (jsonsent.has("crossStore") && jsonsent.get("crossStore") != JSONObject.NULL) {
+          if (org.getOBRETCOCrossStoreOrganization() != null) {
             qTaxes.setFilterOnReadableOrganization(false);
           }
           qTaxes.addOrder(Order.asc(InvoiceLineTax.PROPERTY_LINENO));
