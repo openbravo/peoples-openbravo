@@ -33,6 +33,13 @@
       payment => !newTicket.payments.includes(payment)
     );
 
+    if (
+      ticket.changePayments.length > 0 &&
+      (ticket.grossAmount === 0 || newTicket.payments.length === 0)
+    ) {
+      newTicket.changePayments = [];
+    }
+
     // Then we remove the payments which are rounding lines for some removed payment
     newTicket.payments = newTicket.payments.filter(
       payment =>
