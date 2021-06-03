@@ -25,6 +25,12 @@
       if (payload.obrdmDeliveryTimeProperty) {
         newTicket.obrdmDeliveryTimeProperty = payload.obrdmDeliveryTimeProperty;
       }
+      if (payload.obrdmDeliveryDateProperty === null) {
+        newTicket.obrdmDeliveryDateProperty = undefined;
+      }
+      if (payload.obrdmDeliveryTimeProperty === '') {
+        newTicket.obrdmDeliveryTimeProperty = undefined;
+      }
 
       newTicket.lines.forEach(line => {
         const newLine = { ...line };
@@ -37,6 +43,12 @@
         }
         if (payload.obrdmDeliveryTimeProperty) {
           newLine.obrdmDeliveryTime = payload.obrdmDeliveryTimeProperty;
+        }
+        if (payload.obrdmDeliveryDateProperty === null) {
+          newLine.obrdmDeliveryDate = undefined;
+        }
+        if (payload.obrdmDeliveryTimeProperty === '') {
+          newLine.obrdmDeliveryTime = undefined;
         }
         newTicket = OB.App.State.Ticket.Utils.setDeliveryMode(
           newLine,
