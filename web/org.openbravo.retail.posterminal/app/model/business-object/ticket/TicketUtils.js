@@ -151,9 +151,7 @@
           line.obrdmDeliveryDate = productDeliveryMode
             ? productDeliveryDate || currentDate
             : ticket.obrdmDeliveryDateProperty;
-        }
 
-        if (deliveryMode === 'HomeDelivery') {
           const currentTime = new Date();
           currentTime.setSeconds(0);
           currentTime.setMilliseconds(0);
