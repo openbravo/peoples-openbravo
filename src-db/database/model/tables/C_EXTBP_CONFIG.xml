@@ -57,6 +57,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="COLUMNSDETAILVIEW" primaryKey="false" required="false" type="DECIMAL" size="1,0" autoIncrement="false">
+        <default><![CDATA[3]]></default>
+        <onCreateDefault><![CDATA[3]]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTBPCONF_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
