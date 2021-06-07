@@ -512,9 +512,20 @@
         return newLine;
       });
 
+      let ticketTaxRules;
+      // Applied Taxes should be used to calculate if ticket is not editable
+      if (this.ticket.isEditable === false) {
+        ticketTaxRules = this.ticket.receiptTaxes.map(receiptTax =>
+          taxRules.find(taxRule => taxRule.id === receiptTax.taxid)
+        );
+      }
+
       let taxesResult;
       try {
-        taxesResult = OB.Taxes.Pos.applyTaxes(this.ticket, taxRules);
+        taxesResult = OB.Taxes.Pos.applyTaxes(
+          this.ticket,
+          this.ticket.isEditable ? taxRules : ticketTaxRules
+        );
       } catch (error) {
         if (error instanceof OB.App.Class.TaxEngineError) {
           throw new OB.App.Class.ActionCanceled({
