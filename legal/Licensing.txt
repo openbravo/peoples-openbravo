@@ -74,6 +74,11 @@ http://www.eclipse.org/legal/epl-v10.html)
 and Eclipse Distribution License v 1.0 (license available at 
 http://www.eclipse.org/org/documents/edl-v10.php)
 
+# jboss-annotations-api_1.3_spec-2.0.1.Final.jar
+# jboss-interceptors-api_1.2_spec-2.0.0.Final.jar
+Dual license EPL 2.0 and GPL2 w/ CPE. Using the Eclipse Public License v 2.0,
+available at https://www.eclipse.org/legal/epl-2.0/ and in the EPL-2.0.txt in this folder
+
 # nekohtml.jar (CyberNeko HTML Parser)
 Under the CyberNeko Software License, Version 1.0 (license available at
 http://people.apache.org/~andyc/neko/doc/html/
@@ -178,18 +183,18 @@ In addition, the distribution includes
 # jboss-ejb3-api-3.1.0.jar
 Under the LGPL license (included as LGPL-2.1.txt in this folder)
 
-# cdi-api-2.0.SP1.jar
+# jakarta.enterprise.cdi-api-2.0.2.jar
 # guava-21.0.jar
-# javax.inject-1.jar
+# jakarta.inject-api-1.0.jar
 # jboss-logging-3.3.2.Final.jar
 # jboss-classfilewriter-1.2.4.Final.jar
-# weld-api-3.1.Final.jar
-# weld-core-impl-3.1.1.Final.jar
-# weld-environment-common-3.1.1.Final.jar
-# weld-jsf-3.1.1.Final.jar
-# weld-servlet-core-3.1.1.Final.jar
-# weld-spi-3.1.Final.jar
-# weld-web-3.1.1.Final.jar
+# weld-api-3.1.SP4.jar
+# weld-core-impl-3.1.7.SP1.jar
+# weld-environment-common-3.1.7.SP1.jar
+# weld-jsf-3.1.7.SP1.jar
+# weld-servlet-core-3.1.7.SP1.jar
+# weld-spi-3.1.SP4.jar
+# weld-web-3.1.7.SP1.jar
 # arquillian-config-api-1.4.1.Final.jar
 # arquillian-config-impl-base-1.4.1.Final.jar
 # arquillian-config-spi-1.4.1.Final.jar
@@ -233,7 +238,6 @@ Under the WTFPL license (included as WTFPL_license.txt in this folder)
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder),
 note that Byte Buddy depends on the ASM library which is distributed under a BSD license (included as ASM_BSD_license.txt in this folder)
 
-# jboss-interceptors-api_1.2_spec-1.0.0.Final.jar
 # jboss-transaction-api_1.2_spec-1.1.1.Final.jar
 Under the CDDL license version 1.0 (license available at https://spdx.org/licenses/CDDL-1.0.html 
 or in the file CDDL-1.0.txt in this folder)
@@ -243,7 +247,6 @@ or in the file CDDL-1.0.txt in this folder)
 # jaxb-api-2.3.1.jar
 # jaxb-runtime-2.3.1.jar
 # javax.mail-1.6.1.jar
-# jboss-annotations-api_1.3_spec-1.0.0.Final.jar
 # jboss-el-api_3.0_spec-1.0.13.Final.jar
 # stax-ex-1.8.jar
 # txw2-2.3.1.jar
