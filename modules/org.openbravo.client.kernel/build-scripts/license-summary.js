@@ -116,16 +116,18 @@ function groupedByLicense(packages) {
 
 function printSummary(licenses) {
   fs.writeFileSync(fileName, '\n');
-  Object.keys(licenses).forEach(license => {
-    const packages = licenses[license];
-    fs.appendFileSync(fileName, `Available under ${license} license: \n`);
-    fs.appendFileSync(
-      fileName,
-      `-----------------------------------------------------------\n`
-    );
-    packages.forEach(package => {
-      fs.appendFileSync(fileName, `  ${package}\n`);
+  Object.keys(licenses)
+    .sort()
+    .forEach(license => {
+      const packages = licenses[license];
+      fs.appendFileSync(fileName, `Available under ${license} license: \n`);
+      fs.appendFileSync(
+        fileName,
+        `-----------------------------------------------------------\n`
+      );
+      packages.sort().forEach(package => {
+        fs.appendFileSync(fileName, `  ${package}\n`);
+      });
+      fs.appendFileSync(fileName, '\n');
     });
-    fs.appendFileSync(fileName, '\n');
-  });
 }
