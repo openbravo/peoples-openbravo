@@ -100,6 +100,8 @@ function getPackageJsonPath() {
 
 function groupedByLicense(packages) {
   const groupedByLicense = {};
+  const allowMissingLicenseInfo =
+    process.env.npm_config_allow_packages_with_no_license_info === 'true';
   Object.keys(packages).forEach(packageName => {
     if (packages[packageName].licenses) {
       const license = packages[packageName].licenses;
@@ -107,8 +109,11 @@ function groupedByLicense(packages) {
         ...(groupedByLicense[license] || []),
         packageName
       ];
-    } else {
-      console.log(`${packages[packageName]} does not have a license!`);
+    } else if (!allowMissingLicenseInfo) {
+      console.error(
+        `${packageName} does not license information. Check if it can be included as a dependency in Openbravo and run the license-summary script again with the --allow-packages-with-no-license-info parameter`
+      );
+      process.exit(1);
     }
   });
   return groupedByLicense;
