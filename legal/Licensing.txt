@@ -3,7 +3,7 @@
 This license file applies to the Openbravo ERP software (the "Openbravo
 Software"), except as described below.
 
-This product is Copyright 2001-2018 Openbravo S.L.U.  For other detailed notice,
+This product is Copyright 2001-2021 Openbravo S.L.U.  For other detailed notice,
 see the "NOTICE" file with this distribution.
 
 This product is free software; you can redistribute it and/or modify
@@ -108,8 +108,8 @@ http://people.apache.org/~andyc/neko/doc/html/
 All files under Apache Software License 2.0, available at
 http://www.apache.org/licenses/LICENSE-2.0
 
-# postgresql-42.2.16.jar
-Under the BSD license, also available at http://jdbc.postgresql.org/license.html  
+# postgresql-42.2.20.jar
+Under the BSD license, also available at https://jdbc.postgresql.org/about/license.html
 
 # Dojo Foundation javascripts in web/js/dojo/
 All files under the Academic Free License 2.1 (license available at
