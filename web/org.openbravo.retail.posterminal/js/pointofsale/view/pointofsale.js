@@ -945,9 +945,33 @@ enyo.kind({
   },
   addProductToOrder: function(inSender, inEvent) {
     var targetOrder, attrs, finalCallback, negativeLines;
+    let me = this;
+    if (inEvent && inEvent.targetOrder) {
+      targetOrder = inEvent.targetOrder;
+    } else {
+      targetOrder = this.model.get('order');
+    }
     finalCallback = function(success, orderline) {
       if (inEvent.callback) {
         inEvent.callback.call(inEvent.context, success || false, orderline);
+      }
+      if (
+        !success ||
+        (orderline && orderline.get('hasMandatoryServices') === true)
+      ) {
+        targetOrder.addProcess = {};
+      }
+      if (
+        targetOrder.addProcess.products &&
+        targetOrder.addProcess.products.length > 0
+      ) {
+        const pendingProductToAdd = targetOrder.addProcess.products.shift();
+        me.addProductToOrder(pendingProductToAdd.inSender, {
+          ...pendingProductToAdd.inEvent,
+          skipPendingProductToAdd: true
+        });
+      } else {
+        targetOrder.addProcess.pending = false;
       }
     };
     if (inEvent.product.get('ignoreAddProduct')) {
@@ -955,19 +979,19 @@ enyo.kind({
       finalCallback(false);
       return;
     }
-    if (inEvent && inEvent.targetOrder) {
-      targetOrder = inEvent.targetOrder;
-    } else {
-      targetOrder = this.model.get('order');
-    }
-    if (targetOrder.addProcess && targetOrder.addProcess.pending === true) {
-      targetOrder.addProcess.hasProduct = true;
+    targetOrder.addProcess = targetOrder.addProcess || {};
+    targetOrder.addProcess.products = targetOrder.addProcess.products || [];
+    if (
+      targetOrder.addProcess.pending === true &&
+      !inEvent.skipPendingProductToAdd
+    ) {
       targetOrder.addProcess.products.push({
         inSender: inSender,
         inEvent: inEvent
       });
       return false;
     }
+    targetOrder.addProcess.pending = true;
     negativeLines = _.filter(targetOrder.get('lines').models, function(line) {
       return line.get('qty') < 0;
     }).length;
@@ -1048,9 +1072,8 @@ enyo.kind({
                   targetOrder.get('approvals').splice(index, 1);
                 }
               }
-            } else {
-              finalCallback(false);
             }
+            finalCallback(false);
           } else {
             this.doShowPopup({
               popup: 'modalNotEditableOrder'
@@ -1087,6 +1110,7 @@ enyo.kind({
         if (OB.UI.MultiColumn.isSingleColumn()) {
           this.$.multiColumn.$.rightToolbar.$.rightToolbar.$.toolbar.$.toolbarBtnCart.tap();
         }
+        finalCallback(false);
         return true;
       } else {
         if (
@@ -1137,7 +1161,10 @@ enyo.kind({
           args.qtyToAdd,
           args.options,
           args.attrs,
-          finalCallback
+          finalCallback,
+          function() {
+            finalCallback(false);
+          }
         );
       }
     );
