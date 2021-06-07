@@ -14,7 +14,6 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.retail.posterminal.term.QueryTerminalProperty;
 
 public class DeliveryModes extends QueryTerminalProperty {
 

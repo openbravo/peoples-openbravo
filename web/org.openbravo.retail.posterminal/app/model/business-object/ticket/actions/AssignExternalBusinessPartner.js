@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -22,6 +22,10 @@
       newTicket.externalBusinessPartner = businessPartner
         ? businessPartner.getPlainObject()
         : null;
+      const addressConfig = OB.App.TerminalProperty.get('externalBpIntegration').addresses.find(e => e.shippingAddress===true);
+      if (addressConfig && 'HomeDelivery' === newTicket.obrdmDeliveryModeProperty) {
+        newTicket.alternateAddress = OB.App.ExternalBusinessPartnerAPI.getAlternateDeliveryLocation(businessPartner, addressConfig);
+      }
       return newTicket;
     }
   );

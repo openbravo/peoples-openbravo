@@ -16,7 +16,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.retail.posterminal.term.JSONTerminalProperty;
 import org.openbravo.service.json.JsonConstants;
 
 public class DeliveryPaymentMode extends JSONTerminalProperty {
