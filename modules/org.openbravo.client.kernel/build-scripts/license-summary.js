@@ -44,7 +44,7 @@ const os = require('os');
 
 const WEB_JSPACK = 'web-jspack';
 const PACKAGE_JSON = 'package.json';
-const DEFAULT_LICENSE_FILENAME = `${os.tmpdir()}/npmLicenses.txt`;
+const DEFAULT_LICENSE_FILENAME = `${getLegalFolder()}/npmLicenses.txt`;
 
 const fileName = process.env.npm_config_toFile || DEFAULT_LICENSE_FILENAME;
 
@@ -74,6 +74,11 @@ checker.init(
     }
   }
 );
+
+function getLegalFolder() {
+  const targetModule = process.env.npm_config_module;
+  return targetModule ? path.resolve(`modules/${targetModule}/legal`) : 'legal';
+}
 
 function getPackageJsonPath() {
   const targetModule = process.env.npm_config_module;
