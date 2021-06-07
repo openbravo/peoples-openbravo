@@ -36,7 +36,7 @@
  * Output: A header for each license type and below it the list of packages that use it
  * 
  */
-var checker = require('license-checker');
+const checker = require('license-checker');
 const execSync = require('child_process').execSync;
 const path = require('path');
 const fs = require('fs');
@@ -102,13 +102,15 @@ function groupedByLicense(packages) {
         ...(groupedByLicense[license] || []),
         packageName
       ];
+    } else {
+      console.log(`${packages[packageName]} does not have a license!`);
     }
   });
   return groupedByLicense;
 }
 
 function printSummary(licenses) {
-  fs.appendFileSync(fileName, '\n');
+  fs.writeFileSync(fileName, '\n');
   Object.keys(licenses).forEach(license => {
     const packages = licenses[license];
     fs.appendFileSync(fileName, `Available under ${license} license: \n`);
