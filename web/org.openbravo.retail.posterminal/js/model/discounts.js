@@ -402,8 +402,9 @@
           let promotionToDelete = manualPromotions.find(manualPromotion => {
             return (
               manualPromotion.id === promotionRule.id &&
-              manualPromotion.discountinstance ===
-                promotionRule.discountinstance
+              (manualPromotion.discountinstance ===
+                promotionRule.discountinstance ||
+                promotionRule.obdiscAllowmultipleinstan)
             );
           });
           if (promotionToDelete) {
