@@ -122,6 +122,9 @@ build.war: build a war file in the lib directory.
         <exclude name="META-INF/MANIFEST.MF" />
         <exclude name="**/.keep" />
       </fileset>
+      <!-- Remove leftovers from (removed) dbmanager.jar -->
+      <fileset dir="${base.src.db}/build" />
+      <fileset file="${base.db}/lib/dbmanager.jar" />
     </delete>
   </target>
 
