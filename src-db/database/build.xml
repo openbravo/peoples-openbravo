@@ -67,12 +67,12 @@ export.database.structure: Exports the database structure in the xml's files.
   </taskdef>
 
   <target name="export.config.script">
-    <exportconfigscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" filter="com.openbravo.db.OpenbravoMetadataFilter" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" moduledir="${base.modules}" model="model" coreData="${base.db}/sourcedata" industryTemplate="${industryTemplate}" />
+    <exportconfigscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" moduledir="${base.modules}" model="model" coreData="${base.db}/sourcedata" industryTemplate="${industryTemplate}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
 
   <target name="update.database">
-    <alterdatabasedataall driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter" model="model" filter="com.openbravo.db.OpenbravoMetadataFilter" input="sourcedata" object="${bbdd.object}" failonerror="false" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" forcedRecreation="${forcedRecreation}" executeModuleScripts="${execute.modulescripts}" threads="${max.threads}" systemUser="${bbdd.systemUser}" systemPassword="${bbdd.systemPassword}"/>
+    <alterdatabasedataall driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model" input="sourcedata" object="${bbdd.object}" failonerror="false" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" userId="0" adminMode="true" propertiesFile="${base.config}/Openbravo.properties" force="${force}" onlyIfModified="${onlyIfModified}" forcedRecreation="${forcedRecreation}" executeModuleScripts="${execute.modulescripts}" threads="${max.threads}" systemUser="${bbdd.systemUser}" systemPassword="${bbdd.systemPassword}"/>
     <antcall target="database.postupdate.${bbdd.rdbms}" />
     <antcall target="update.dbupdate.timestamp" />
   </target>
@@ -83,9 +83,9 @@ export.database.structure: Exports the database structure in the xml's files.
       <arg value="${bbdd.owner.url}"/>
       <arg value="${bbdd.user}"/>
       <arg value="${bbdd.password}"/>
-      <arg value="com.openbravo.db.OpenbravoExcludeFilter"/>
+      <arg value="dummy-unused"/>
       <arg value="model"/>
-      <arg value="com.openbravo.db.OpenbravoMetadataFilter"/>
+      <arg value="dummy-unused"/>
       <arg value="sourcedata"/>
       <arg value="${bbdd.object}"/>
       <arg value="false"/>
@@ -115,7 +115,7 @@ export.database.structure: Exports the database structure in the xml's files.
   </target>
 
   <target name="update.database.script">
-    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" excludeobjects="com.openbravo.db.OpenbravoExcludeFilter"  model="model/" filter="com.openbravo.db.OpenbravoMetadataFilter"  input="sourcedata" object="${bbdd.object}" failonerror="false" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
+    <alterscript driver="${bbdd.driver}" url="${bbdd.owner.url}" user="${bbdd.user}" password="${bbdd.password}" model="model/" input="sourcedata" object="${bbdd.object}" failonerror="false" basedir="${base.modules}/" dirFilter="*/src-db/database/model" datadir="${base.modules}/" dataFilter="*/src-db/database/sourcedata" force="${force}" onlyIfModified="${onlyIfModified}" output="${bbdd.outputscript}" />
   </target>
 
   <target name="export.database.structure">
