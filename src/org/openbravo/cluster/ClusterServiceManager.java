@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2020 Openbravo SLU
+ * All portions are Copyright (C) 2017-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -107,9 +107,7 @@ public class ClusterServiceManager {
     return Executors.newSingleThreadExecutor(new ThreadFactory() {
       @Override
       public Thread newThread(Runnable runnable) {
-        SecurityManager s = System.getSecurityManager();
-        ThreadGroup group = (s != null) ? s.getThreadGroup()
-            : Thread.currentThread().getThreadGroup();
+        ThreadGroup group = Thread.currentThread().getThreadGroup();
         final Thread thread = new Thread(group, runnable, "Cluster Service Leader Registrator");
         if (thread.getPriority() != Thread.NORM_PRIORITY) {
           thread.setPriority(Thread.NORM_PRIORITY);
