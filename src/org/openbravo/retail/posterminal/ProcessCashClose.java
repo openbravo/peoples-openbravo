@@ -442,11 +442,16 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
       }
     }
 
-    OBCriteria<OBPOSErrors> errorsQuery = OBDal.getInstance().createCriteria(OBPOSErrors.class);
-    errorsQuery.add(Restrictions.ne(OBPOSErrors.PROPERTY_TYPEOFDATA, "OBPOS_App_Cashup"));
-    errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_ORDERSTATUS, "N"));
-    errorsQuery.add(Restrictions.eq(OBPOSErrors.PROPERTY_OBPOSAPPLICATIONS, posTerminal));
-    if (errorsQuery.count() > 0) {
+    // Get the errors while importing ignoring the ones that have specified to not block the cashup
+    final OBQuery<OBPOSErrors> obQuery = OBDal.getInstance()
+        .createQuery(OBPOSErrors.class, "typeofdata <> :typeofdata"
+            + " and orderstatus = :orderstatus" + "  and obposApplications = :obposApplications"
+            + " and typeofdata not in (select searchKey from ADList where reference = 'DCB89F69939D4222B53D6CFC4C674E5D' )");
+    obQuery.setNamedParameter("typeofdata", "OBPOS_App_Cashup");
+    obQuery.setNamedParameter("orderstatus", "N");
+    obQuery.setNamedParameter("obposApplications", posTerminal);
+    final List<OBPOSErrors> errorsQuery = obQuery.list();
+    if (errorsQuery.size() > 0) {
       throw new OBException(
           "There are errors related to non-created customers, orders, or cash management movements pending to be processed. Process them before processing the cash ups");
     }
