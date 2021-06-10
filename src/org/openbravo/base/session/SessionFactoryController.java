@@ -233,8 +233,6 @@ public abstract class SessionFactoryController {
     if (obProps.getProperty("bbdd.rdbms") != null) {
       if (obProps.getProperty("bbdd.rdbms").equals("POSTGRE")) {
         props = getPostgresHbProps(obProps);
-      } else if (obProps.getProperty("bbdd.rdbms").equals("DB2")) {
-        props = getDB2HbProps(obProps);
       } else {
         props = getOracleHbProps(obProps);
       }
@@ -280,21 +278,6 @@ public abstract class SessionFactoryController {
       setJNDI(obProps, props);
     } else {
       props.setProperty(AvailableSettings.DRIVER, "oracle.jdbc.driver.OracleDriver");
-      props.setProperty(AvailableSettings.URL, obProps.getProperty("bbdd.url"));
-      props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
-      props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));
-    }
-    return props;
-  }
-
-  private Properties getDB2HbProps(Properties obProps) {
-    isPostgresDatabase = false;
-    final Properties props = new Properties();
-    props.setProperty(AvailableSettings.DIALECT, OBDB2v97Dialect.class.getName());
-    if (isJNDIModeOn(obProps)) {
-      setJNDI(obProps, props);
-    } else {
-      props.setProperty(AvailableSettings.DRIVER, "com.ibm.db2.jcc.DB2Driver");
       props.setProperty(AvailableSettings.URL, obProps.getProperty("bbdd.url"));
       props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
       props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));
