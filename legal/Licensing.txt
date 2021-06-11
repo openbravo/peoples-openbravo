@@ -89,7 +89,7 @@ http://people.apache.org/~andyc/neko/doc/html/
 # commons-dbcp-1.4.jar
 # commons-digester-1.8.1.jar
 # commons-fileupload-1.4.jar
-# commons-io-2.4.jar
+# commons-io-2.9.0.jar
 # commons-lang-2.6.jar
 # commons-logging-1.2.jar
 # commons-pool-1.5.6.jar
