@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2014 Openbravo SLU
+ * All portions are Copyright (C) 2011-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -140,6 +140,9 @@ class ImageUtils {
           if (!mimeType.equals("")) {
             resp.setContentType(mimeType);
           }
+
+          // prevent execution of inline scripts within images
+          resp.setHeader("Content-Security-Policy", "script-src 'none'");
 
           // write the image
           OutputStream out = resp.getOutputStream();
