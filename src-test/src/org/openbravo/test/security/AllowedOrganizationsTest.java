@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.test.security;
 
+import static java.util.Map.entry;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -56,8 +57,6 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationType;
 import org.openbravo.test.base.OBBaseTest;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * Tests computation of natural tree of an organization. This is used to compute the readable
  * organizations of a user.
@@ -70,30 +69,32 @@ import com.google.common.collect.ImmutableMap;
 
 @RunWith(Parameterized.class)
 public class AllowedOrganizationsTest extends OBBaseTest {
-  private static final Map<String, String> ORG_NAMES = ImmutableMap.<String, String> builder()
-      .put(MAIN, "Main") //
-      .put(FB_GROUP, "F&B International Group") //
-      .put(US, "F&B US, Inc.") //
-      .put(US_EST, "F&B US East Coast") //
-      .put(US_WEST, "F&B US West Coast") //
-      .put(ESP, "F&B España, S.A") //
-      .put(ESP_SUR, "F&B España - Región Sur") //
-      .put(ESP_NORTE, "F&B España - Región Norte") //
-      .put("Dummy", "Dummy")
-      .build();
+
+  //@formatter:off
+  private static final Map<String, String> ORG_NAMES = Map.of(
+	      MAIN, "Main",
+	      FB_GROUP, "F&B International Group",
+	      US, "F&B US, Inc.",
+	      US_EST, "F&B US East Coast",
+	      US_WEST, "F&B US West Coast",
+	      ESP, "F&B España, S.A",
+	      ESP_SUR, "F&B España - Región Sur",
+	      ESP_NORTE, "F&B España - Región Norte",
+	      "Dummy", "Dummy"
+	      );
 
   // note first parent must be first element in list
-  private static final Map<String, List<TestOrg>> ORG_TREES = ImmutableMap
-      .<String, List<TestOrg>> builder()
-      .put(FB_GROUP, orgs(MAIN, FB_GROUP, US, US_EST, US_WEST, ESP, ESP_SUR, ESP_NORTE))
-      .put(US, orgs(FB_GROUP, US, US_EST, US_WEST, MAIN))
-      .put(US_WEST, orgs(US, US_WEST, MAIN, FB_GROUP))
-      .put(US_EST, orgs(US, US_EST, MAIN, FB_GROUP))
-      .put(ESP, orgs(FB_GROUP, MAIN, ESP, ESP_SUR, ESP_NORTE))
-      .put(ESP_SUR, orgs(ESP, ESP_SUR, MAIN, FB_GROUP))
-      .put(ESP_NORTE, orgs(ESP, ESP_NORTE, MAIN, FB_GROUP)) //
-      .put("Dummy", orgs("Dummy")) // special case: non-existent org returns itself
-      .build();
+  private static final Map<String, List<TestOrg>> ORG_TREES = Map.ofEntries(
+      entry(FB_GROUP, orgs(MAIN, FB_GROUP, US, US_EST, US_WEST, ESP, ESP_SUR, ESP_NORTE)),
+      entry(US, orgs(FB_GROUP, US, US_EST, US_WEST, MAIN)),
+      entry(US_WEST, orgs(US, US_WEST, MAIN, FB_GROUP)),
+      entry(US_EST, orgs(US, US_EST, MAIN, FB_GROUP)),
+      entry(ESP, orgs(FB_GROUP, MAIN, ESP, ESP_SUR, ESP_NORTE)),
+      entry(ESP_SUR, orgs(ESP, ESP_SUR, MAIN, FB_GROUP)),
+      entry(ESP_NORTE, orgs(ESP, ESP_NORTE, MAIN, FB_GROUP)),
+      entry("Dummy", orgs("Dummy")) // special case: non-existent org returns itself
+      );
+  //@formatter:on
 
   @Parameter(0)
   public String testingOrgName;

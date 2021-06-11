@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.test.security;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,8 +53,6 @@ import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
-
-import com.google.common.collect.Lists;
 
 /**
  * Base class for test for cross organization reference functionality.
@@ -174,7 +173,8 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
     OBContext.setOBContext("0");
     OBContext.setAdminMode(false);
     try {
-      for (BaseOBObject obj : Lists.reverse(createdObjects)) {
+      Collections.reverse(createdObjects);
+      for (BaseOBObject obj : createdObjects) {
         OBDal.getInstance().remove(obj);
         OBDal.getInstance().flush();
       }

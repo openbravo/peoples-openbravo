@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.businessUtility;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -92,8 +93,6 @@ import org.openbravo.model.financialmgmt.gl.GLCategory;
 import org.openbravo.service.datasource.DataSource;
 import org.openbravo.service.db.DataImportService;
 import org.openbravo.service.db.ImportResult;
-
-import com.google.common.base.Charsets;
 
 /**
  * @author David Alsasua
@@ -1782,7 +1781,7 @@ public class InitialSetupUtility {
         xmlPath += "/modules/" + dataset.getModule().getJavaPackage();
       }
       xmlPath += "/referencedata/standard";
-      return new String(Files.readAllBytes(Paths.get(xmlPath, fileName)), Charsets.UTF_8);
+      return Files.readString(Paths.get(xmlPath, fileName), StandardCharsets.UTF_8);
     }
   }
 
