@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -237,6 +238,17 @@ public abstract class ImportEntryProcessor {
     return true;
   }
 
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + "\n"
+        + (runnables.isEmpty() ? "  No runnables"
+            : runnables.entrySet()
+                .stream()
+                .map(e -> "  " + e.getKey() + "\n" + e.getValue())
+                .collect(Collectors.joining("\n")));
+
+  }
+
   /**
    * The default implementation of the ImportEntryProcessRunnable. It performs the following
    * actions:
@@ -277,6 +289,9 @@ public abstract class ImportEntryProcessor {
     // use weakhashmap so that the content is automatically purged
     // when the garbagecollector runs
     private Map<String, OBContext> cachedOBContexts = new HashMap<>();
+
+    private String currentProcessingEntry;
+    private long currentProcessingEntryStarted;
 
     public ImportEntryProcessRunnable() {
       logger = LogManager.getLogger();
@@ -341,6 +356,9 @@ public abstract class ImportEntryProcessor {
             return;
           }
           final long t0 = System.currentTimeMillis();
+
+          currentProcessingEntry = queuedImportEntry.importEntryId;
+          currentProcessingEntryStarted = System.currentTimeMillis();
 
           // set the same obcontext as was being used for the original
           // entry
@@ -514,6 +532,7 @@ public abstract class ImportEntryProcessor {
     protected void cleanUpThreadForNextCycle() {
       OBContext.setOBContext((OBContext) null);
       RequestContext.get().setVariableSecureApp(null);
+      currentProcessingEntry = null;
     }
 
     /**
@@ -568,6 +587,25 @@ public abstract class ImportEntryProcessor {
       return key;
     }
 
+    @Override
+    public String toString() {
+      String currentProcessing = currentProcessingEntry == null ? "none"
+          : (currentProcessingEntry + " - "
+              + (System.currentTimeMillis() - currentProcessingEntryStarted) + "ms");
+
+      int queueSize = importEntries.size();
+      int idsSize = importEntryIds.size();
+
+      // IDs should always be in sync with queue (or 1 item more while synchronizing as it gets
+      // first dequeued when processing starts and then removed from the IDs when it finishes).
+      // Let's log them in case they are not in sync.
+      boolean queuAndIdsInSync = idsSize == queueSize || idsSize == queueSize + 1;
+
+      return "   processing: " + currentProcessing + "\n" + //
+          "   queue: (" + importEntries.size() + ") - " + importEntries + //
+          (queuAndIdsInSync ? "" : "\n   ids: (" + importEntryIds.size() + ") - " + importEntryIds);
+    }
+
     // Local cache to make sure that there is a much lower mem foot print in the queue
     // of entries, so only keep the needed info to create an obcontext
     private static class QueuedEntry {
@@ -588,6 +626,11 @@ public abstract class ImportEntryProcessor {
           roleId = null;
         }
         clientId = importEntry.getClient().getId();
+      }
+
+      @Override
+      public String toString() {
+        return importEntryId;
       }
     }
   }

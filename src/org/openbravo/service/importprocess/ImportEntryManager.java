@@ -32,6 +32,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -50,6 +51,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.jmx.MBeanRegistry;
 import org.openbravo.service.json.JsonUtils;
 
 /**
@@ -60,7 +62,7 @@ import org.openbravo.service.json.JsonUtils;
  * @author mtaal
  */
 @ApplicationScoped
-public class ImportEntryManager {
+public class ImportEntryManager implements ImportEntryManagerMBean {
 
   /*
    * For an overview of the technical layer, first view this presentation:
@@ -190,6 +192,8 @@ public class ImportEntryManager {
     log.info("  task queue size: {}", maxTaskQueueSize);
     log.info("  wait time: {} sec", managerWaitTime);
     log.info("  processing capacity per second: {} entries", processingCapacityPerSecond);
+
+    MBeanRegistry.registerMBean("ImportEntryManager", this);
   }
 
   public synchronized void start() {
@@ -479,6 +483,24 @@ public class ImportEntryManager {
       log.error(logIt.getMessage(), logIt);
       return "{error:\"" + logIt.getMessage() + "\"}";
     }
+  }
+
+  @Override
+  public void logImportEntryManager() {
+    log.info(this);
+  }
+
+  @Override
+  public String toString() {
+    return "Import Entry Manager\n" + //
+        "* Active threads: " + getNumberOfActiveTasks() + "/" + numberOfThreads + "\n" + //
+        "* Processor queue size: " + getNumberOfQueuedTasks() + "/" + maxTaskQueueSize + "\n" + //
+        "* Processors:\n" + //
+        importEntryProcessors.entrySet()
+            .stream()
+            .map(e -> " " + e.getKey() + " - " + e.getValue())
+            .collect(Collectors.joining("\n"))
+        + "\n" + clusterService;
   }
 
   private static class ImportEntryManagerThread implements Runnable {

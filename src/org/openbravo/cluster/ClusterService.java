@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -340,4 +340,15 @@ public abstract class ClusterService {
    */
   protected abstract boolean isEnabled();
 
+  @Override
+  public String toString() {
+    return "Cluster Service - " + getServiceName()
+        + (nodeName != null || nodeId != null ? " - " + nodeName + "[" + nodeId + "]" : "") + "\n" + //
+        "* cluster: " + ClusterServiceManager.isCluster() + "\n" + //
+        "* node enabled: " + isEnabled() + "\n" + //
+        "* handling in this node: " + isHandledInCurrentNode() + "\n" + //
+        (!isHandledInCurrentNode()
+            ? "* handling in: " + nodeHandlingServiceName + "[" + nodeHandlingServiceId + "]\n"
+            : "");
+  }
 }
