@@ -179,11 +179,12 @@ public abstract class ImportEntryProcessor {
     runnable.setKey(key);
     runnable.addEntry(importEntry);
 
-    // and make sure it can get next entries by caching it
-    runnables.put(key, runnable);
-
     // and give it to the executorServer to run
-    importEntryManager.submitRunnable(runnable);
+    boolean submitted = importEntryManager.submitRunnable(runnable);
+    if (submitted) {
+      // and make sure it can get next entries by caching it
+      runnables.put(key, runnable);
+    }
   }
 
   /**

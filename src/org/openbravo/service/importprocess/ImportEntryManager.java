@@ -235,15 +235,19 @@ public class ImportEntryManager {
   /**
    * Is called by the {@link ImportEntryProcessor} objects to submit a
    * {@link ImportEntryProcessor.ImportEntryProcessRunnable}. for execution.
+   * 
+   * Returns true if the runnable was properly submitted and false if the submission was rejected
    */
-  public void submitRunnable(Runnable runnable) {
+  boolean submitRunnable(Runnable runnable) {
     try {
       executorService.submit(runnable);
+      return true;
     } catch (Exception e) {
       // except for logging we can ignore the exception
       // as the import entry will be offered again for reprocessing later anyway
       log.warn(
           "Exception while trying to add runnable " + runnable + " to the list of tasks to run", e);
+      return false;
     }
   }
 
