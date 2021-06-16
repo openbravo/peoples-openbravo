@@ -1995,6 +1995,8 @@ isc.OBStandardView.addProperties({
           !tabViewPane.showTabIf(contextInfo)
         ) {
           this.childTabSet.tabBar.members[i].hide();
+          // disabling the tab disables also it in the picker menu
+          this.childTabSet.tabs[i].disabled = true;
           tabViewPane.hidden = true;
         } else {
           if (this.childTabSet.visibility === 'hidden') {
@@ -2012,10 +2014,14 @@ isc.OBStandardView.addProperties({
             }
           }
           this.childTabSet.tabBar.members[i].show();
+          this.childTabSet.tabs[i].disabled = false;
           tabViewPane.hidden = false;
           tabViewPane.updateSubtabVisibility();
         }
       }
+
+      // menu might have changed, resetting it will force it to be regenereated next time it's opened
+      this.childTabSet.resetTabPickerMenu();
 
       // If the active tab of the tabset is now hidden, another tab has to to be selected
       // If there are no visible tabs left, maximize the current view
