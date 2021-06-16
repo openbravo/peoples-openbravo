@@ -82,7 +82,7 @@
         ticket: { ...ticket }
       };
       const displayTotalMsg = OB.App.State.Messages.Utils.createNewMessage(
-        '',
+        'OBPOS_DisplayTotal',
         '',
         data,
         { type: 'displayTotal', consumeOffline: true }

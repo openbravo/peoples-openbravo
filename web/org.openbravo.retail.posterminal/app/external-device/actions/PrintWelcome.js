@@ -16,7 +16,7 @@ OB.App.StateAPI.Global.registerAction('printWelcome', state => {
   const newState = { ...state };
 
   const printWelcomeMsg = OB.App.State.Messages.Utils.createNewMessage(
-    '',
+    'OBPOS_PrintWelcome',
     '',
     {},
     { type: 'printWelcome', consumeOffline: true }
