@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,9 +34,6 @@ import java.util.Map;
 import org.apache.commons.lang.WordUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tools.ant.Task;
-import org.openbravo.base.AntExecutor;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -52,7 +49,7 @@ import freemarker.template.TemplateException;
  * @author Martin Taal
  * @author Stefan Huehner
  */
-public class GenerateEntitiesTask extends Task {
+public class GenerateEntitiesTask {
   private static final Logger log = LogManager.getLogger();
 
   private String basePath;
@@ -62,62 +59,18 @@ public class GenerateEntitiesTask extends Task {
 
   public static void main(String[] args) {
     final String srcPath = args[0];
-    String friendlyWarnings = "false";
-    if (args.length >= 2) {
-      friendlyWarnings = args[0];
-    }
-    final File srcDir = new File(srcPath);
-    final File baseDir = srcDir.getParentFile();
-    try {
-      final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
-      antExecutor.setProperty("friendlyWarnings", friendlyWarnings);
-      antExecutor.runTask("generate.entities.quick.forked");
-    } catch (final Exception e) {
-      throw new OBException(e);
-    }
+
+    GenerateEntitiesTask instance = new GenerateEntitiesTask();
+    instance.basePath = srcPath;
+    instance.srcGenPath = args[1];
+    instance.propertiesFile = args[2];
+    instance.execute();
   }
 
-  public String getBasePath() {
-    return basePath;
-  }
-
-  public void setBasePath(String basePath) {
-    this.basePath = basePath;
-  }
-
-  public boolean getFriendlyWarnings() {
-    return OBPropertiesProvider.isFriendlyWarnings();
-  }
-
-  public void setFriendlyWarnings(boolean doFriendlyWarnings) {
-    OBPropertiesProvider.setFriendlyWarnings(doFriendlyWarnings);
-  }
-
-  public String getPropertiesFile() {
-    return propertiesFile;
-  }
-
-  public void setPropertiesFile(String propertiesFile) {
-    this.propertiesFile = propertiesFile;
-  }
-
-  public String getSrcGenPath() {
-    return srcGenPath;
-  }
-
-  public void setSrcGenPath(String srcGenPath) {
-    this.srcGenPath = srcGenPath;
-  }
-
-  @Override
-  public void execute() {
-    if (getBasePath() == null) {
-      setBasePath(super.getProject().getBaseDir().getAbsolutePath());
-    }
-
+  private void execute() {
     // the beautifier uses the source.path if it is not set
-    log.debug("initializating dal layer, getting properties from " + getPropertiesFile());
-    OBPropertiesProvider.getInstance().setProperties(getPropertiesFile());
+    log.debug("initializating dal layer, getting properties from " + propertiesFile);
+    OBPropertiesProvider.getInstance().setProperties(propertiesFile);
 
     if (!hasChanged()) {
       log.info("Model has not changed since last run, not re-generating entities");
@@ -129,12 +82,12 @@ public class GenerateEntitiesTask extends Task {
 
     // read and parse template
     String ftlFilename = "org/openbravo/base/gen/entity.ftl";
-    File ftlFile = new File(getBasePath(), ftlFilename);
+    File ftlFile = new File(basePath, ftlFilename);
     freemarker.template.Template template = createTemplateImplementation(ftlFile);
 
     // template for computed columns entities
     String ftlComputedFilename = "org/openbravo/base/gen/entityComputedColumns.ftl";
-    File ftlComputedFile = new File(getBasePath(), ftlComputedFilename);
+    File ftlComputedFile = new File(basePath, ftlComputedFilename);
     freemarker.template.Template templateComputed = createTemplateImplementation(ftlComputedFile);
 
     // process template & write file for each entity
@@ -211,7 +164,6 @@ public class GenerateEntitiesTask extends Task {
     log.info("Generated " + entities.size() + " entities");
   }
 
-
   /**
    * Checks if an entity is set as deprecated
    *
@@ -267,14 +219,14 @@ public class GenerateEntitiesTask extends Task {
     // first check if there is a directory
     // already in the src-gen
     // if not then regenerate anyhow
-    final File modelDir = new File(getSrcGenPath(),
+    final File modelDir = new File(srcGenPath,
         "org" + File.separator + "openbravo" + File.separator + "model" + File.separator + "ad");
     if (!modelDir.exists()) {
       return true;
     }
 
     // check if the logic to generate has changed...
-    final String sourceDir = getBasePath();
+    final String sourceDir = basePath;
     long lastModifiedPackage = 0;
     lastModifiedPackage = getLastModifiedPackage("org.openbravo.base.model", sourceDir,
         lastModifiedPackage);

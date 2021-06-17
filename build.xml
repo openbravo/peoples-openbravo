@@ -510,11 +510,6 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.src}" target="generate.entities.quick" inheritAll="true" inheritRefs="true" />
   </target>
 
-  <!-- build-internal forking helper -->
-  <target name="generate.entities.quick.forked">
-    <ant dir="${base.src}" target="generate.entities.quick.forked" inheritAll="true" inheritRefs="true" />
-  </target>
-
   <target name="compile.test" depends="init">
     <ant dir="${base.src.test}" target="compile.test" inheritAll="true" inheritRefs="true" />
   </target>

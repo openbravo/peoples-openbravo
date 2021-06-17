@@ -188,7 +188,7 @@ build.war: build a war file in the lib directory.
 	-->
   <target name="generate.entities.quick" depends="compile.src.gen">
     <java classname="org.openbravo.base.gen.GenerateEntitiesTask" fork="yes" jvm="${env.JAVA_HOME}/bin/java" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.src}' '${friendlyWarnings}'" />
+      <arg line="'${base.src}' ${base.src.gen} ${base.config}/Openbravo.properties" />
       <classpath refid="project.class.path" />
       <syspropertyset>
          <propertyref name="java.security.egd" />
@@ -210,12 +210,6 @@ build.war: build a war file in the lib directory.
         <classpath refid="project.class.path" />
       </javac>
   </target>
-
-  <!-- build-internal forking helper -->
-  <target name="generate.entities.quick.forked" depends="compile.src.gen">
-    <taskdef name="workflow" classpathref="project.class.path" classname="org.openbravo.base.gen.GenerateEntitiesTask" />
-    <workflow friendlyWarnings="${friendlyWarnings}" srcGenPath="${base.src.gen}" propertiesFile="${base.config}/Openbravo.properties" />
-  </target> 
 
   <path id="my-src-dirs">
     <pathelement path="${basedir}" />
