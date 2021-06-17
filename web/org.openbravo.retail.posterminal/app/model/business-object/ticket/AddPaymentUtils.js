@@ -327,8 +327,22 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       terminalPayment.paymentMethod &&
       terminalPayment.paymentMethod.countPerAmount;
 
+    const isMergeable = ({ payment }) => {
+      // The payment is not included in the nonmergeable ids array
+      if (
+        payload.payment.paymentData &&
+        payload.payment.paymentData.nonmergeable
+      ) {
+        return payload.payment.paymentData.nonmergeable.every(
+          id => id !== payment.id
+        );
+      }
+      return true;
+    };
+
     const paymentIndex = newTicket.payments.findIndex(
       payment =>
+        isMergeable({ payment }) &&
         payment.kind === payload.payment.kind &&
         !payment.isPrePayment &&
         !payment.reversedPaymentId &&
