@@ -119,7 +119,7 @@ describe('Complete Credit ticket action', () => {
           }
         },
         {
-          modelName: '',
+          modelName: 'OBMOBC_PrintTicket',
           service: '',
           type: 'printTicket',
           messageObj: {
@@ -127,7 +127,7 @@ describe('Complete Credit ticket action', () => {
           }
         },
         {
-          modelName: '',
+          modelName: 'OBMOBC_PrintWelcome',
           service: '',
           type: 'printWelcome',
           messageObj: { data: {} }

@@ -42,7 +42,7 @@ describe('Display Total action', () => {
               ticket: { dummy: 'state' }
             }
           },
-          modelName: '',
+          modelName: 'OBPOS_DisplayTotal',
           service: '',
           time: expect.any(Number),
           type: 'displayTotal',
@@ -68,7 +68,7 @@ describe('Display Total action', () => {
               ticket: { dummy: 'payload' }
             }
           },
-          modelName: '',
+          modelName: 'OBPOS_DisplayTotal',
           service: '',
           time: expect.any(Number),
           type: 'displayTotal',

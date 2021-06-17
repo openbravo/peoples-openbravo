@@ -49,7 +49,7 @@ describe('Print action', () => {
               }
             }
           },
-          modelName: '',
+          modelName: 'OBMOBC_PrintTicket',
           service: '',
           time: expect.any(Number),
           type: 'printTicket',
@@ -83,7 +83,7 @@ describe('Print action', () => {
               }
             }
           },
-          modelName: '',
+          modelName: 'OBMOBC_PrintTicket',
           service: '',
           time: expect.any(Number),
           type: 'printTicket',

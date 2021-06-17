@@ -42,7 +42,7 @@ describe('PrintWelcome action', () => {
           messageObj: {
             data: {}
           },
-          modelName: '',
+          modelName: 'OBPOS_PrintWelcome',
           service: '',
           time: expect.any(Number),
           type: 'printWelcome',
