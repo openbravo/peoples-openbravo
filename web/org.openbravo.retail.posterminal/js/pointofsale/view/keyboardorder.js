@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -607,8 +607,11 @@ enyo.kind({
   name: 'OB.UI.BarcodeActionHandler',
   kind: 'OB.UI.AbstractBarcodeActionHandler',
 
-  errorCallback: function(tx, error) {
+  errorCallback: function(error, callback) {
     OB.UTIL.showError(error);
+    if (callback) {
+      callback(false);
+    }
   },
 
   findProductByBarcode: function(code, callback, keyboard, attrs) {
@@ -619,23 +622,67 @@ enyo.kind({
       });
       return true;
     }
-    var me = this;
+    const me = this;
+    const finalCallback = function(product, attrs) {
+      if (product) {
+        callback(product, attrs);
+        if (
+          me.pendingBarcodeToAdd.barcodes &&
+          me.pendingBarcodeToAdd.barcodes.length > 0
+        ) {
+          const pendingBarcodeToAdd = me.pendingBarcodeToAdd.barcodes.shift();
+          me.findProductByBarcode(
+            pendingBarcodeToAdd.code,
+            pendingBarcodeToAdd.callback,
+            pendingBarcodeToAdd.keyboard,
+            {
+              ...pendingBarcodeToAdd.attrs,
+              skipPendingBarcodeToAdd: true
+            }
+          );
+        } else {
+          me.pendingBarcodeToAdd.pending = false;
+        }
+      } else {
+        me.pendingBarcodeToAdd = {};
+      }
+    };
     OB.debug('BarcodeActionHandler - id: ' + code);
     if (code.length > 0) {
+      me.pendingBarcodeToAdd = me.pendingBarcodeToAdd || {};
+      me.pendingBarcodeToAdd.barcodes = me.pendingBarcodeToAdd.barcodes || [];
+      if (
+        me.pendingBarcodeToAdd.pending === true &&
+        !attrs.skipPendingBarcodeToAdd
+      ) {
+        me.pendingBarcodeToAdd.barcodes.push({
+          code,
+          callback,
+          keyboard,
+          attrs
+        });
+        return false;
+      }
+      me.pendingBarcodeToAdd.pending = true;
+      if (attrs) {
+        delete attrs.skipPendingBarcodeToAdd;
+      }
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_BarcodeScan',
         {
           context: me,
           code: code.replace(/\\-/g, '-').replace(/\\+/g, '+'),
-          callback: callback,
+          callback: finalCallback,
           attrs: attrs
         },
         function(args) {
           if (args.cancellation) {
+            args.callback(false);
             return;
           }
 
           if (me.selectPrinter(args.code)) {
+            args.callback(false);
             return;
           }
 
@@ -685,7 +732,9 @@ enyo.kind({
         function(data) {
           me.searchProductCallback(data.models, code, callback, attrs);
         },
-        me.errorCallback
+        function(tx, error) {
+          me.errorCallback(error, callback);
+        }
       );
     } else {
       criteria = new OB.App.Class.Criteria()
@@ -699,7 +748,7 @@ enyo.kind({
         }
         me.searchProductCallback(data, code, callback, attrs);
       } catch (error) {
-        me.errorCallback;
+        me.errorCallback(error, callback);
       }
     }
   },
@@ -719,6 +768,7 @@ enyo.kind({
       },
       function(args) {
         if (args.cancellation) {
+          callback(false);
           return;
         }
         var reproduceErrorSound = function() {
@@ -761,6 +811,7 @@ enyo.kind({
             },
             function(args) {
               if (args.cancellation) {
+                callback(false);
                 return;
               }
               // If the preference to show that the 'UPC/EAN code has not been found is enabled'
@@ -781,6 +832,7 @@ enyo.kind({
                       label: OB.I18N.getLabel('OBMOBC_LblOk'),
                       action: function() {
                         OB.MobileApp.model.set('reproduceErrorSound', false);
+                        callback(false);
                       }
                     }
                   ],
@@ -788,6 +840,7 @@ enyo.kind({
                     defaultAction: false,
                     onHideFunction: function() {
                       OB.MobileApp.model.set('reproduceErrorSound', false);
+                      callback(false);
                     }
                   }
                 );
@@ -796,6 +849,7 @@ enyo.kind({
                 OB.UTIL.showWarning(
                   OB.I18N.getLabel('OBPOS_KbUPCEANCodeNotFound', [args.code])
                 );
+                callback(false);
               }
             }
           );

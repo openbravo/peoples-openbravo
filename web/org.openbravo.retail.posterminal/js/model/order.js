@@ -3547,7 +3547,7 @@
 
             if (callback) {
               callback(
-                true,
+                beforeAddTicket.qty !== afterAddTicket.qty,
                 newLine ? receiptLines.get(newLine.id) : undefined
               );
             }
