@@ -61,9 +61,6 @@ used as model:
   src/org/openbravo/erpCommon/ad_forms        TranslationHandler.java       client/Src/org/compiere/install TranslationHandler.java
   src/org/openbravo/erpCommon/businessUtility AccountTree.java              base/src/org/compiere/model     Account.java
   src/org/openbravo/erpCommon/businessUtility AccountTree_data.xsql         base/src/org/compiere/model     Account.java
-  src/org/openbravo/erpCommon/businessUtility ByteArrayDataSource.java      base/src/org/compiere/util      ByteArrayDataSource.java
-  src/org/openbravo/erpCommon/businessUtility EMail.java                    base/src/org/compiere/util      EMail.java
-  src/org/openbravo/erpCommon/businessUtility EMailAuthenticator.java       base/src/org/compiere/util      EMailAuthenticator.java
 
 PL/SQL Code
 -----------

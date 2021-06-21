@@ -41,11 +41,6 @@
                '' AS AD_ALERTRULE_ID,
                '' AS SQL,
                '' AS NAME,
-               '' AS SMTPHOST,
-               '' AS REQUESTUSER,
-               '' AS REQUESTUSERPW,
-               '' AS MAILTO,
-               '' AS MAILFROM,
                '' AS AD_LANGUAGE
           FROM DUAL
     ]]></Sql>
@@ -86,38 +81,6 @@
     ]]></Sql>
    <Parameter name="alertRuleId"/>
    <Parameter name="sql" type="replace" optional="true" after="(SELECT 1 FROM (" text="SELECT '' AS AD_REFERENCEKEY_ID FROM DUAL"/>
-   </SqlMethod>
-   
-   <SqlMethod name="prepareMails" type="preparedStatement" return="multiple">
-     <Sql><![CDATA[
-        select c.smtphost, c.requestuser, c.requestuserpw, c.requestemail as mailfrom, 
-               u.email as mailto, c.ad_language, c.ad_client_id
-          from ad_alertrecipient  ar, ad_user_roles ur, ad_user u, ad_client c
-          where ar.ad_alertrule_id = ?
-            and ur.ad_role_id = ar.ad_role_id
-            and ur.ad_client_id = ar.ad_client_id
-            and ur.ad_user_id = u.ad_user_id
-            and u.ad_client_id = c.ad_client_id
-            and c.requestuser is not null
-            and c.requestuserpw is not null
-            and u.email is not null
-            and ar.ad_user_id is null
-            and ar.sendemail = 'Y'
-        union
-        select c.smtphost, c.requestuser, c.requestuserpw, c.requestemail as mailfrom, 
-               u.email as mailto, c.ad_language, c.ad_client_id
-          from ad_alertrecipient  ar, ad_user u, ad_client c
-          where ar.ad_alertrule_id = ?
-            and u.ad_client_id = c.ad_client_id
-            and ar.ad_user_id = u.ad_user_id
-            and c.requestuser is not null
-            and c.requestuserpw is not null
-            and u.email is not null
-            and ar.ad_user_id is not null
-            and ar.sendemail = 'Y'
-      ]]></Sql>
-      <Parameter name="alertRuleId"/>
-      <Parameter name="alertRuleId"/>
    </SqlMethod>
    
 </SqlClass>
