@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -356,6 +356,10 @@ OB.RM.RMShipmentSelectionChange = function(grid, record, state) {
                 ? shippedQty.add(movementQuantity.multiply(rate))
                 : shippedQty.add(movementQuantity.divide(rate));
           }
+        } else {
+          shippedQty = shippedQty.add(
+            new BigDecimal(String(editedRecord.movementQuantity))
+          );
         }
       }
     }
