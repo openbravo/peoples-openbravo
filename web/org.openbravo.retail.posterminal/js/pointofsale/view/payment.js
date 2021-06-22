@@ -2849,7 +2849,11 @@ enyo.kind({
             .get('order')
             .get('doCancelAndReplace')))
     ) {
-      this.$.removePayment.hideButton();
+      if (this.model.get('isPrePayment')) {
+        this.$.removePayment.hideButton();
+      } else {
+        this.$.removePayment.show();
+      }
       this.$.reversePayment.hideButton();
     } else if (
       this.model.has('paymentRounding') &&
