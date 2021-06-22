@@ -288,7 +288,6 @@ public class LoginUtils {
       vars.setSessionValue("#Approval_C_Currency_ID", data[0].cCurrencyId);
       vars.setSessionValue("#Approval_Amt", data[0].amtapproval);
       vars.setSessionValue("#Client_Value", data[0].value);
-      vars.setSessionValue("#Client_SMTP", data[0].smtphost);
       data = null;
 
       // Get General Ledger of login organization
