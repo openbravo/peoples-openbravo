@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -92,7 +92,8 @@ public class BusinessPartner extends MasterDataProcessHQLQuery {
         + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND " + "(bp.$incrementalUpdateCriteria) AND "
         + "bp.$readableSimpleClientCriteria AND " + "bp.$naturalOrgCriteria AND "
-        + "(not exists (select 1 from ADUser usr where usr.businessPartner = bp)) ";
+        + "(not exists (select 1 from ADUser usr where usr.businessPartner = bp)) "
+        + "and bp.$paginationByIdCriteria ";
     if (useGroupBy) {
       hql += "GROUP BY " + groupByExpression;
       hql += "HAVING $havingCriteria ";
@@ -113,7 +114,8 @@ public class BusinessPartner extends MasterDataProcessHQLQuery {
         + "WHERE $filtersCriteria AND " //
         + "bp.customer = true AND " + "bp.$readableSimpleClientCriteria AND "
         + "bp.$naturalOrgCriteria AND " + "(bp.$incrementalUpdateCriteria) AND "
-        + "(ulist.id in (select ulist2.id from ADUser as ulist2 where ulist2.oBRETCODefaultPosContact='Y' and ulist2.businessPartner=bp)) ";
+        + "(ulist.id in (select ulist2.id from ADUser as ulist2 where ulist2.oBRETCODefaultPosContact='Y' and ulist2.businessPartner=bp)) "
+        + "and bp.$paginationByIdCriteria ";
     if (useGroupBy) {
       hql2 += "GROUP BY " + groupByExpression;
       hql2 += "HAVING $havingCriteria ";

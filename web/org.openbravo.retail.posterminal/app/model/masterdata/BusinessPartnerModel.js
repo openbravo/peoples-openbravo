@@ -20,6 +20,7 @@
         'email',
         'id'
       ];
+      this.setPaginationById(true);
     }
 
     getName() {

@@ -31,6 +31,7 @@
         })
       ];
       this.searchProperties = ['name', 'postalCode', 'cityName', 'bpartner'];
+      this.setPaginationById(true);
     }
 
     getName() {

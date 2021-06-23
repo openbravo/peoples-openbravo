@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -255,7 +255,7 @@ public class Product extends MasterDataProcessHQLQuery {
     if (isRemote) {
       hql += "order by product.name asc, product.id";
     } else {
-      hql += "order by product.id";
+      hql += "and product.$paginationByIdCriteria order by product.id";
     }
 
     return hql;
@@ -321,7 +321,7 @@ public class Product extends MasterDataProcessHQLQuery {
         + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
         + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
         + " and pli2.obretcoProductlist.id = :productListId)" //
-        + " order by product.id";
+        + " and product.$paginationByIdCriteria order by product.id";
     return genericProductsHqlString;
   }
 
@@ -344,7 +344,7 @@ public class Product extends MasterDataProcessHQLQuery {
     if (isRemote) {
       query.append(" order by p.name asc, p.id");
     } else {
-      query.append(" order by p.id");
+      query.append(" and p.$paginationByIdCriteria order by p.id");
     }
 
     return query.toString();

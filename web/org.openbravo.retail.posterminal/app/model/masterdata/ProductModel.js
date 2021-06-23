@@ -116,6 +116,7 @@
         'ispack',
         'generic_product_id'
       ];
+      this.setPaginationById(true);
     }
 
     getName() {

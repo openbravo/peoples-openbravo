@@ -17,6 +17,7 @@
           properties: [{ property: 'name' }]
         })
       ];
+      this.setPaginationById(true);
     }
 
     getName() {

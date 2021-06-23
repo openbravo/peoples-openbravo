@@ -253,7 +253,8 @@ public class Discount extends MasterDataProcessHQLQuery {
     HQLPropertyList discountHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
         args);
     return Arrays.asList("select" + discountHQLProperties.getHqlSelect()
-        + getPromotionsHQL(jsonsent, true) + "order by priority, id");
+        + getPromotionsHQL(jsonsent, true) + " and p.$paginationByIdCriteria " //
+        + "order by p.id");
   }
 
   @Override
