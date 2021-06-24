@@ -113,7 +113,7 @@ public class CountSafeBoxProcessor {
       }
 
       if (safeboxCount != null) {
-        BigDecimal counted = foreignExpected.subtract(foreignDifference);
+        BigDecimal counted = foreignExpected.add(foreignDifference);
         addSafeboxCountPaymentMethod(safeboxCount, foreignExpected, counted, amountToKeep,
             countSafeBoxObj);
       }
