@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -43,20 +43,23 @@
         grossUnitAmount: receipt.get('priceIncludesTax')
           ? OB.DEC.mul(line.get('grossUnitPrice'), line.get('qty'))
           : OB.DEC.add(
-              OB.DEC.mul(line.get('unitPrice'), line.get('qty')),
+              OB.DEC.mul(line.get('price'), line.get('qty')),
               taxAmount
             ),
-        netUnitAmount: OB.DEC.mul(line.get('unitPrice'), line.get('qty')),
+        netUnitAmount: OB.DEC.mul(
+          line.get('unitPrice') || line.get('price'),
+          line.get('qty')
+        ),
         grossUnitPrice: receipt.get('priceIncludesTax')
           ? line.get('grossUnitPrice')
           : OB.DEC.div(
               OB.DEC.add(
-                OB.DEC.mul(line.get('unitPrice'), line.get('qty')),
+                OB.DEC.mul(line.get('price'), line.get('qty')),
                 taxAmount
               ),
               line.get('qty')
             ),
-        netUnitPrice: line.get('unitPrice'),
+        netUnitPrice: line.get('unitPrice') || line.get('price'),
         taxes,
         taxAmount
       });

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -32,7 +32,7 @@ public class InvoiceLinesProperties extends ModelExtension {
         add(new HQLProperty("invLine.grossUnitPrice", "grossUnitPrice"));
         add(new HQLProperty("invLine.grossListPrice", "grossListPrice"));
         add(new HQLProperty("invLine.grossAmount", "lineGrossAmount"));
-        add(new HQLProperty("invLine.lineNetAmount", "linenetamount"));
+        add(new HQLProperty("invLine.lineNetAmount", "lineNetAmount"));
         add(new HQLProperty("invLine.id", "lineId"));
         add(new HQLProperty("invLine.salesOrderLine.id", "orderlineId"));
         add(new HQLProperty("invLine.salesOrderLine.standardPrice", "baseNetUnitPrice"));
