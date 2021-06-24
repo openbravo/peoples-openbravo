@@ -22,13 +22,11 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBError;
@@ -156,15 +154,19 @@ class GoodsShipmentGenerator {
           final Warehouse warehouse = salesOrderLine.getWarehouse() != null
               ? salesOrderLine.getWarehouse()
               : salesOrderLine.getSalesOrder().getWarehouse();
-          final OBCriteria<Locator> locators = OBDal.getInstance().createCriteria(Locator.class);
-          locators.add(Restrictions.eq(Locator.PROPERTY_WAREHOUSE, warehouse));
-          locators.add(Restrictions.eq(Locator.PROPERTY_ACTIVE, true));
-          locators.add(Restrictions.eqOrIsNull(Locator.PROPERTY_ISVIRTUAL, false));
-          locators.addOrderBy(Locator.PROPERTY_RELATIVEPRIORITY, true);
-          locators.setFilterOnReadableOrganization(false);
-          locators.setMaxResults(1);
-          Locator locator = (Locator) locators.uniqueResult();
-          result.add(createShipmentLine(product, qtyToDeliver, salesOrderLine, locator));
+          final String hqlQuery = " as sb left outer join sb.materialMgmtStorageDetailList ms "
+              + "on ms.product.id = :productId where sb.warehouse.id = :warehouseId and sb.active = 'Y' "
+              + "and sb.isvirtual = 'N' and (ms.reservedQty is null or ms.reservedQty = 0) "
+              + "order by sb.relativePriority";
+          Locator locator = OBDal.getInstance()
+              .createQuery(Locator.class, hqlQuery)
+              .setNamedParameter("warehouseId", warehouse.getId())
+              .setNamedParameter("productId", product.getId())
+              .setMaxResult(1)
+              .uniqueResult();
+          if (locator != null) {
+            result.add(createShipmentLine(product, qtyToDeliver, salesOrderLine, locator));
+          }
         }
       } else {
         result.add(createShipmentLine(product, qtyToDeliver, salesOrderLine, null));
