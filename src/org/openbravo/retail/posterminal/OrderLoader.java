@@ -633,6 +633,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
   }
 
   private void addAlternateAddress(JSONObject address, Order order) throws JSONException {
+    if (address == null) {
+      return;
+    }
     String address1 = address.getString("address1");
     String postalCode = address.getString("postalCode");
     String region = address.getString("region");
@@ -1264,7 +1267,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       order.set("creationDate", new Date(value));
     }
 
-    addAlternateAddress(jsonorder.getJSONObject("alternateAddress"), order);
+    addAlternateAddress(jsonorder.optJSONObject("alternateAddress"), order);
 
     if (jsonorder.has("cashVAT")) {
       order.setCashVAT(jsonorder.getBoolean("cashVAT"));
