@@ -384,7 +384,6 @@ export.database: exports database structure and data to xml files.
 
     <ant dir="${base.src}" target="smartbuild" inheritAll="true" inheritRefs="true" />
 
-    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
     <antcall target="build.deploy" />
     <updatesystemstatuswhennot v="RB51" previous="RB12"/>
   </target>
@@ -625,6 +624,7 @@ export.database: exports database structure and data to xml files.
     <ant dir="${base.db}" target="update.database.java" inheritAll="true" inheritRefs="true" />
     <antcall target="generate.entities.quick" />
     <antcall target="apply.module" />
+    <ant dir="${base.db}" target="setApplied" inheritAll="true" inheritRefs="true" />
   </target>
 
   <target name="create.database.script" depends="init, core.lib">
