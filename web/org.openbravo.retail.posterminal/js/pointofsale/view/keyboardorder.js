@@ -625,24 +625,26 @@ enyo.kind({
     const me = this;
     const finalCallback = function(product, attrs) {
       if (product) {
-        callback(product, attrs);
-        if (
-          me.pendingBarcodeToAdd.barcodes &&
-          me.pendingBarcodeToAdd.barcodes.length > 0
-        ) {
-          const pendingBarcodeToAdd = me.pendingBarcodeToAdd.barcodes.shift();
-          me.findProductByBarcode(
-            pendingBarcodeToAdd.code,
-            pendingBarcodeToAdd.callback,
-            pendingBarcodeToAdd.keyboard,
-            {
-              ...pendingBarcodeToAdd.attrs,
-              skipPendingBarcodeToAdd: true
-            }
-          );
-        } else {
-          me.pendingBarcodeToAdd.pending = false;
-        }
+        callback(product, attrs, function(success) {
+          if (
+            success &&
+            me.pendingBarcodeToAdd.barcodes &&
+            me.pendingBarcodeToAdd.barcodes.length > 0
+          ) {
+            const pendingBarcodeToAdd = me.pendingBarcodeToAdd.barcodes.shift();
+            me.findProductByBarcode(
+              pendingBarcodeToAdd.code,
+              pendingBarcodeToAdd.callback,
+              pendingBarcodeToAdd.keyboard,
+              {
+                ...pendingBarcodeToAdd.attrs,
+                skipPendingBarcodeToAdd: true
+              }
+            );
+          } else {
+            me.pendingBarcodeToAdd = {};
+          }
+        });
       } else {
         me.pendingBarcodeToAdd = {};
       }
@@ -858,15 +860,17 @@ enyo.kind({
     );
   },
 
-  addProductToReceipt: function(keyboard, product, attrs) {
+  addProductToReceipt: function(keyboard, product, attrs, options, callback) {
     keyboard.doAddProduct({
       product: product,
       qty: attrs.unitsToAdd,
       ignoreStockTab: true,
       options: {
+        ...options,
         blockAddProduct: true
       },
-      attrs: attrs
+      attrs: attrs,
+      callback: callback
     });
     keyboard.receipt.trigger('scan');
   }
