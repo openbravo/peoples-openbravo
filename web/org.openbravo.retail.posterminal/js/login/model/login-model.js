@@ -1160,6 +1160,22 @@
           enyo.dispatch(e);
           this.downEvent = e;
         };
+        // hack: to check editbox change on any window
+        const windowView = OB.UI.WindowView.prototype;
+        const origWriteState = windowView.writeState;
+        windowView.writeState = _.wrap(windowView.writeState, function(
+          wrapped,
+          inSender,
+          inEvent
+        ) {
+          if (inEvent.name === 'editbox') {
+            setTerminalLockTimeout(
+              sessionTimeoutMinutes,
+              sessionTimeoutMilliseconds
+            );
+          }
+          _.bind(origWriteState, this, inSender, inEvent)();
+        });
       } else if (
         !this.sessionPing &&
         !OB.MobileApp.model.get('permissions').OBPOS_SessionExpiration
