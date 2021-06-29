@@ -91,11 +91,6 @@ public class InvoiceUtils implements TicketPropertyMapping {
     return invoice;
   }
 
-  private void updateAuditInfo(Invoice invoice, JSONObject jsoninvoice) throws JSONException {
-    Long value = jsoninvoice.getLong("created");
-    invoice.set("creationDate", new Date(value));
-  }
-
   private DocumentType getInvoiceDocumentType(String orderDocTypeId, boolean isFullInvoice) {
     final DocumentType orderDocType = OBDal.getInstance().get(DocumentType.class, orderDocTypeId);
     final DocumentType invoiceDocType = isFullInvoice ? orderDocType.getDocumentTypeForInvoice()
@@ -116,7 +111,6 @@ public class InvoiceUtils implements TicketPropertyMapping {
     createInvoice(invoice, order, jsoninvoice);
     OBDal.getInstance().save(invoice);
     createInvoiceLines(invoice, order, jsoninvoice, invoicelines, invoicelineReferences);
-    updateAuditInfo(invoice, jsoninvoice);
 
     if (POSUtils.isCrossStore(order, order.getObposApplications())) {
       OBContext.setCrossOrgReferenceAdminMode();
