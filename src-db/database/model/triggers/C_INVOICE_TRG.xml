@@ -19,7 +19,7 @@
     * under the License.
     * The Original Code is Openbravo ERP.
     * The Initial Developer of the Original Code is Openbravo SLU
-    * All portions are Copyright (C) 2001-2020 Openbravo SLU
+    * All portions are Copyright (C) 2001-2021 Openbravo SLU
     * All Rights Reserved.
     * Contributor(s):  ______________________________________.
     ************************************************************************/
@@ -29,6 +29,9 @@
    v_n NUMBER;
    v_count NUMBER;
    v_result NUMBER;
+   
+   v_OldOrderPORef C_ORDER.POREFERENCE%TYPE:=null;
+   v_newOrderPORef C_ORDER.POREFERENCE%TYPE:=null;
         
 BEGIN
     
@@ -113,6 +116,30 @@ BEGIN
    IF(:OLD.PROCESSED='Y') THEN
      RAISE_APPLICATION_ERROR(-20000, '@20501@') ;
    END IF;
+  END IF;
+  
+  -- Syncs the poReference from the C_Order_Id only if not manually set by the user
+  IF (UPDATING) THEN
+    IF (COALESCE(:OLD.C_ORDER_ID, '.') <> COALESCE(:NEW.C_ORDER_ID, '.')) THEN
+      IF (:OLD.C_ORDER_ID IS NOT NULL) THEN
+        SELECT poreference INTO v_OldOrderPORef FROM C_ORDER WHERE C_ORDER_ID = :OLD.C_ORDER_ID;
+      END IF;
+
+      IF(COALESCE(:NEW.POREFERENCE, v_OldOrderPORef, '.') = COALESCE(v_OldOrderPORef, '.')) THEN
+        IF (:NEW.C_ORDER_ID IS NULL ) THEN
+          :NEW.POREFERENCE := NULL;
+        ELSE
+          SELECT poreference INTO v_newOrderPORef FROM C_ORDER WHERE C_ORDER_ID = :NEW.C_ORDER_ID;
+          :NEW.POREFERENCE := v_newOrderPORef;
+        END IF;
+      END IF;
+    END IF;
+  END IF;
+  IF (INSERTING) THEN
+    IF (:NEW.C_ORDER_ID IS NOT NULL AND :NEW.POREFERENCE IS NULL) THEN	
+      SELECT poreference INTO v_newOrderPORef FROM C_ORDER WHERE C_ORDER_ID = :NEW.C_ORDER_ID;
+      :NEW.POREFERENCE := v_newOrderPORef;
+    END IF;
   END IF;
 END C_INVOICE_TRG
 ]]></body>
