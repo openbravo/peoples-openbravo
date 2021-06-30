@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -127,7 +127,7 @@ public class Discount extends MasterDataProcessHQLQuery {
       hql += "AND p.id IN (:filterPromotionList) ";
     }
 
-    if (!multiPrices) {
+    if (!multiPrices && (lastUpdated == null || addIncrementalUpdateFilter == false)) {
       // price list
       hql += "and ((includePriceLists='Y' ";
       hql += "  and not exists (select 1 ";
@@ -228,7 +228,30 @@ public class Discount extends MasterDataProcessHQLQuery {
   }
 
   protected List<String> prepareQuery(JSONObject jsonsent) throws JSONException {
-    HQLPropertyList discountHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions);
+    Long lastUpdated = null;
+    if (jsonsent != null) {
+      lastUpdated = jsonsent.has("lastUpdated") && !jsonsent.get("lastUpdated").equals("undefined")
+          && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+    }
+    boolean isMultiPriceList = false;
+    try {
+      isMultiPriceList = "Y".equals(Preferences.getPreferenceValue("OBPOS_EnableMultiPriceList",
+          true, OBContext.getOBContext().getCurrentClient(),
+          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+          OBContext.getOBContext().getRole(), null));
+    } catch (PropertyException e1) {
+      log.error("Error getting Preference: " + e1.getMessage(), e1);
+    }
+
+    Map<String, Object> args = new HashMap<>();
+    args.put("isIncrementalRefresh", lastUpdated != null);
+    args.put("isMultiPriceList", isMultiPriceList);
+    args.put("priceListId",
+        POSUtils.getPriceListByOrgId(OBContext.getOBContext().getCurrentOrganization().getId())
+            .getId());
+
+    HQLPropertyList discountHQLProperties = ModelExtensionUtils.getPropertyExtensions(extensions,
+        args);
     return Arrays.asList("select" + discountHQLProperties.getHqlSelect()
         + getPromotionsHQL(jsonsent, true) + "order by priority, id");
   }
