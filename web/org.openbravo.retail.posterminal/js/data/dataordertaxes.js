@@ -42,14 +42,13 @@
         // FIXME: Do not save grossUnitAmount/grossUnitPrice as zero in price excluding taxes
         grossUnitAmount: receipt.get('priceIncludesTax')
           ? OB.DEC.mul(line.get('grossUnitPrice'), line.get('qty'))
-          : OB.DEC.add(
-              OB.DEC.mul(line.get('price'), line.get('qty')),
-              taxAmount
-            ),
-        netUnitAmount: OB.DEC.mul(
-          line.get('unitPrice') || line.get('price'),
-          line.get('qty')
-        ),
+          : OB.DEC.add(line.get('lineNetAmount'), taxAmount),
+        netUnitAmount: receipt.get('priceIncludesTax')
+          ? OB.DEC.mul(
+              line.get('unitPrice') || line.get('price'),
+              line.get('qty')
+            )
+          : line.get('lineNetAmount'),
         grossUnitPrice: receipt.get('priceIncludesTax')
           ? line.get('grossUnitPrice')
           : OB.DEC.div(

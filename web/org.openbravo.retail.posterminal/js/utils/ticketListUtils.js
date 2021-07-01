@@ -544,7 +544,7 @@
                     const discountRule =
                       OB.Model.Discounts.discountRules[discount.discountType];
                     if (discountRule && discountRule.isManual) {
-                      if (!discountRule.isAmount) {
+                      if (!discountRule.isAmount && iter.lineGrossAmount) {
                         promotion.userAmt = OB.DEC.mul(
                           OB.DEC.div(promotion.amt, iter.lineGrossAmount),
                           new BigDecimal('100')
@@ -599,7 +599,8 @@
                   : OB.DEC.number(iter.listPrice),
                 net: order.get('priceIncludesTax')
                   ? null
-                  : OB.DEC.number(iter.lineNetAmount),
+                  : OB.DEC.number(iter.lineNetAmount) ||
+                    OB.DEC.mul(iter.baseNetUnitPrice, iter.quantity),
                 gross: order.get('priceIncludesTax')
                   ? OB.DEC.number(iter.lineGrossAmount)
                   : null,
