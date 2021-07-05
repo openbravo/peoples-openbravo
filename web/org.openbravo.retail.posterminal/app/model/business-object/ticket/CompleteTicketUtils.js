@@ -58,6 +58,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       return newApproval;
     });
 
+    if (newTicket.isEditable) {
+      newTicket.createdBy = payload.orgUserId;
+    }
+
     return newTicket;
   },
 
