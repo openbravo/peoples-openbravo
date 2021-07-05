@@ -423,6 +423,7 @@
           grossUnitPrice,
           grossUnitAmount,
           baseNetUnitPrice,
+          netUnitPrice,
           netUnitAmount,
           qty
         } = line;
@@ -443,16 +444,22 @@
                 OB.DEC.sub(OB.DEC.mul(baseNetUnitPrice, qty), discounted)
           };
         }
+        const isEditable = !(this.ticket.isEditable === false);
         const discounts = line.skipApplyPromotions
           ? undefined
           : discountsResult.lines.find(l => l.id === line.id);
         const newLine = {
           ...line,
-          promotions: discounts ? discounts.discounts : []
+          // eslint-disable-next-line no-nested-ternary
+          promotions: discounts
+            ? discounts.discounts
+            : isEditable
+            ? []
+            : line.promotions
         };
         const calculateUnitAmountWithoutTicketDiscounts = (
           baseUnitPrice,
-          promotions
+          promotions = []
         ) => {
           const ticketDiscountsDiscountTypeIds = OB.Discounts.Pos.getTicketDiscountsDiscountTypeIds();
           const discountedWithoutTicketDiscounts = promotions.reduce(
@@ -481,12 +488,15 @@
         if (priceIncludesTax) {
           newLine.baseGrossUnitAmount = OB.DEC.mul(baseGrossUnitPrice, qty);
           newLine.baseNetUnitAmount = OB.DEC.Zero;
+          // eslint-disable-next-line no-nested-ternary
           newLine.grossUnitPrice = discounts
             ? discounts.grossUnitPrice
-            : baseGrossUnitPrice;
+            : isEditable
+            ? baseGrossUnitPrice
+            : grossUnitPrice;
           newLine.grossUnitAmount = discounts
             ? discounts.grossUnitAmount
-            : OB.DEC.mul(baseGrossUnitPrice, qty);
+            : OB.DEC.mul(isEditable ? baseGrossUnitPrice : grossUnitPrice, qty);
           // This part is only used for visualization in WebPOS 2.0
           newLine.grossUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
             newLine.baseGrossUnitAmount,
@@ -499,12 +509,15 @@
         } else {
           newLine.baseGrossUnitAmount = OB.DEC.Zero;
           newLine.baseNetUnitAmount = OB.DEC.mul(baseNetUnitPrice, qty);
+          // eslint-disable-next-line no-nested-ternary
           newLine.netUnitPrice = discounts
             ? discounts.netUnitPrice
-            : baseNetUnitPrice;
+            : isEditable
+            ? baseNetUnitPrice
+            : netUnitPrice;
           newLine.netUnitAmount = discounts
             ? discounts.netUnitAmount
-            : OB.DEC.mul(baseNetUnitPrice, qty);
+            : OB.DEC.mul(isEditable ? baseNetUnitPrice : netUnitPrice, qty);
           // This part is only used for visualization in WebPOS 2.0
           newLine.netUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
             newLine.baseNetUnitAmount,
