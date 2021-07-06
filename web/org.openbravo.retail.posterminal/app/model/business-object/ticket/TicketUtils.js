@@ -427,14 +427,20 @@
           qty
         } = line;
         if (line.skipApplyPromotions && hasDiscounts) {
+          const discounted = line.promotions.reduce(
+            (t, p) => OB.DEC.add(t, p.amt),
+            OB.DEC.Zero
+          );
           return {
             ...line,
             grossUnitAmount: priceIncludesTax
-              ? grossUnitAmount || OB.DEC.mul(grossUnitPrice, qty)
+              ? grossUnitAmount ||
+                OB.DEC.sub(OB.DEC.mul(grossUnitPrice, qty), discounted)
               : undefined,
             netUnitAmount: priceIncludesTax
               ? undefined
-              : netUnitAmount || OB.DEC.mul(baseNetUnitPrice, qty)
+              : netUnitAmount ||
+                OB.DEC.sub(OB.DEC.mul(baseNetUnitPrice, qty), discounted)
           };
         }
         const discounts = line.skipApplyPromotions
