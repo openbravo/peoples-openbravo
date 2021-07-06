@@ -62,6 +62,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       newTicket.createdBy = payload.orgUserId;
     }
 
+    newTicket.updatedBy = payload.orgUserId;
     return newTicket;
   },
 
