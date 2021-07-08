@@ -38,9 +38,11 @@ import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchron
 import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonToDataConverter;
@@ -213,6 +215,8 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
      * reason.
      */
     if (historyRecord != null) {
+      boolean safeboxRequiresCounting = safeboxHasPaymentMethodsToBeCounted(safeBox, cashUp);
+      historyRecord.setCounted(!safeboxRequiresCounting);
       historyRecord.setCashUp(cashUp);
       historyRecord.setDateOut(cashUpDate);
     } else {
@@ -220,6 +224,30 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
           "The dateOut property for the history record of the safebox %s has not been set because there are not history records created yet.",
           safeBox.getId()));
     }
+  }
+
+  private boolean safeboxHasPaymentMethodsToBeCounted(OBPOSSafeBox safeBox, OBPOSAppCashup cashUp) {
+    for (OBPOSSafeBoxPaymentMethod safeBoxPaymentMethod : safeBox
+        .getOBPOSSafeBoxPaymentMethodList()) {
+      FIN_PaymentMethod paymentMethod = safeBoxPaymentMethod.getPaymentMethod();
+      Currency currency = safeBoxPaymentMethod.getFINFinancialaccount().getCurrency();
+      TerminalType terminalType = cashUp.getPOSTerminal().getObposTerminaltype();
+      OBCriteria<TerminalTypePaymentMethod> criteria = OBDal.getInstance()
+          .createCriteria(TerminalTypePaymentMethod.class);
+      criteria
+          .add(Restrictions.eq(TerminalTypePaymentMethod.PROPERTY_OBPOSTERMINALTYPE, terminalType));
+      criteria.add(Restrictions.eq(TerminalTypePaymentMethod.PROPERTY_CURRENCY, currency));
+      criteria
+          .add(Restrictions.eq(TerminalTypePaymentMethod.PROPERTY_PAYMENTMETHOD, paymentMethod));
+      criteria.add(Restrictions.eq(TerminalTypePaymentMethod.PROPERTY_COUNTPAYMENTINCASHUP, true));
+      criteria.setMaxResults(1);
+      TerminalTypePaymentMethod paymentMethodToCount = (TerminalTypePaymentMethod) criteria
+          .uniqueResult();
+      if (paymentMethodToCount != null) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
