@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1371,12 +1371,30 @@ isc.OBViewGrid.addProperties({
     }
     for (i = 0; i < filterAuxCache.length; i++) {
       cacheElement = filterAuxCache[i];
-      filterField = this.filterEditor
-        .getEditForm()
-        .getField(cacheElement.fieldName);
-      filterField.filterType = 'id';
-      if (filterField) {
-        filterField.filterAuxCache = cacheElement.cache;
+
+      const filterEditorCreated =
+        this.filterEditor && this.filterEditor.getEditForm();
+
+      if (filterEditorCreated) {
+        // Filter editor is aleady created, we need to add the cache element to the existing instance
+        // in order to properly display identifier instead of uuid.
+        filterField = this.filterEditor
+          .getEditForm()
+          .getField(cacheElement.fieldName);
+        filterField.filterType = 'id';
+        if (filterField) {
+          filterField.filterAuxCache = cacheElement.cache;
+        }
+      } else {
+        // Filter editor is not created, it is in a subtab that has not been visited yet, we store
+        // fkCacheCopy which will be used in OBFKFilterTextItem.init when creating the filter editor instance.
+        this.filterByIdFields = this.filterByIdFields || [];
+        this.filterByIdFields.push(cacheElement.fieldName);
+        this.fkCacheCopy = this.fkCacheCopy || [];
+        this.fkCacheCopy.push({
+          fieldName: cacheElement.fieldName,
+          cache: cacheElement.cache
+        });
       }
     }
   },
@@ -1385,9 +1403,7 @@ isc.OBViewGrid.addProperties({
     return (
       filterAuxCache &&
       isc.isA.Array(filterAuxCache) &&
-      filterAuxCache.length > 0 &&
-      this.filterEditor &&
-      this.filterEditor.getEditForm()
+      filterAuxCache.length > 0
     );
   },
 
