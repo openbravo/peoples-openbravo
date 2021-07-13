@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2020 Openbravo S.L.U.
+ * Copyright (C) 2015-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -108,14 +108,14 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
           + " from OBRETCO_Prol_Product as pli, " //
           + " PricingProductPrice ppp " //
           + " left join  ppp.priceListVersion as plv " //
+          + " left outer join BusinessPartner bp with plv.priceList.id = bp.priceList.id and bp.$readableClientCriteria and bp.customer = 'Y' "
           + " where pli.product.id = ppp.product.id " //
           + " and pli.obretcoProductlist.id = :productListId " //
           + " and plv.active = true " //
           + " and exists ("//
           + "   select 1 " //
-          + "   from PricingPriceListVersion plv, BusinessPartner bp" //
-          + "   where plv.priceList.id = bp.priceList.id" //
-          + "   and plv.active = true" //
+          + "   from PricingPriceListVersion plv" //
+          + "   where plv.active = true" //
           + "   and plv.validFromDate = (" //
           + "     select max(plv2.validFromDate) " //
           + "     from PricingPriceListVersion as plv2" //
@@ -125,13 +125,12 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
           + "   )" //
           + "   and plv.priceList.id <> (:priceList)" //
           + "   and plv.id = ppp.priceListVersion.id" //
-          + "   and bp.customer='Y'"//
           + " )"//
           + " and $filtersCriteria " //
           + " and $hqlCriteria "//
           + " and pli.$naturalOrgCriteria" //
           + " and pli.$readableClientCriteria" //
-          + " and (ppp.$incrementalUpdateCriteria) " //
+          + " and (ppp.$incrementalUpdateCriteria or bp.$incrementalUpdateCriteria) " //
           + " and ppp.$paginationByIdCriteria" //
           + " order by ppp.id asc");
 

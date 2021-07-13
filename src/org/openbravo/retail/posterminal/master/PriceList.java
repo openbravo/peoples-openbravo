@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2020 Openbravo S.L.U.
+ * Copyright (C) 2015-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -76,9 +76,9 @@ public class PriceList extends MasterDataProcessHQLQuery {
     if (multiPrices) {
       hqlQueries.add("select " + priceListHQLProperties.getHqlSelect()
           + " from PricingPriceList pl "
-          + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
-          + "and pl.id <> (:priceList) "
-          + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria) "
+          + "left outer join BusinessPartner bp with pl.id = bp.priceList.id and bp.$readableClientCriteria and bp.customer = 'Y' "
+          + "where pl.id <> (:priceList) "
+          + "and pl.$naturalOrgCriteria and pl.$readableClientCriteria and (pl.$incrementalUpdateCriteria or bp.$incrementalUpdateCriteria) "
           + "and pl.$paginationByIdCriteria order by pl.id asc");
     }
 
