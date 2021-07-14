@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -85,7 +85,6 @@ enyo.kind({
     onShowPopup: ''
   },
   tap: function() {
-    var bp = OB.MobileApp.model.receipt.get('bp');
     if (!this.disabled) {
       this.doShowPopup({
         popup: 'modalcustomeraddress',
@@ -93,7 +92,7 @@ enyo.kind({
           locationButton: true,
           target: 'order',
           clean: true,
-          manageAddress: bp.get('locId') === bp.get('shipLocId'),
+          manageAddress: false,
           navigationPath: []
         }
       });
@@ -879,6 +878,7 @@ enyo.kind({
   },
   create: function() {
     this.inherited(arguments);
+    const bp = this.owner.owner.owner.owner.bPartner;
     this.$.identifier.setContent(this.model.get('name'));
     if (
       this.model.get('id') ===
@@ -886,7 +886,10 @@ enyo.kind({
     ) {
       this.addClass('obUiListSelectorLine_equalLocId');
     }
-    if (this.owner.owner.owner.owner.manageAddress) {
+    if (
+      this.owner.owner.owner.owner.manageAddress ||
+      this.owner.owner.owner.owner.sameAddress
+    ) {
       if (this.model.get('isBillTo') && this.model.get('isShipTo')) {
         this.$.bottomShipIcon.show();
         this.$.bottomBillIcon.show();
@@ -909,9 +912,7 @@ enyo.kind({
       this.$.btnContextMenu.dialog = this.owner.owner.owner.owner;
       this.$.btnContextMenu.dialog.component = this.owner.owner.owner.owner;
       this.$.btnContextMenu.dialog.menuSelected = false;
-      this.$.btnContextMenu.bPartner = new OB.Model.BusinessPartner(
-        this.owner.owner.owner.owner.bPartner
-      );
+      this.$.btnContextMenu.bPartner = new OB.Model.BusinessPartner(bp);
     }
   }
 });
@@ -923,6 +924,7 @@ enyo.kind({
   published: {
     bPartner: null,
     manageAddress: false,
+    sameAddress: false,
     target: 'order',
     initialLoad: true
   },
@@ -958,7 +960,6 @@ enyo.kind({
   searchAction: async function(inSender, inEvent) {
     var execution = OB.UTIL.ProcessController.start('searchCustomerAddress');
     var me = this,
-      criteria = {},
       filter = inEvent.locName;
 
     function errorCallback(tx, error) {
@@ -976,23 +977,24 @@ enyo.kind({
       }
     }
 
-    function successCallbackBPsLoc(dataBps) {
-      if (dataBps && dataBps.length > 0) {
+    function successCallbackBPsLoc(dataBpLocs) {
+      if (dataBpLocs && dataBpLocs.length > 0) {
         if (me.initialLoad) {
           me.initialLoad = false;
-          me.onlyOneAddress = dataBps.length === 1;
+          me.onlyOneAddress = dataBpLocs.length === 1;
         }
-        if (OB.MobileApp.model.hasPermission('OBPOS_remote.customer', true)) {
-          _.each(dataBps.models, function(bp) {
-            bp.set('onlyOneAddress', me.onlyOneAddress);
-          });
-          me.bpsList.reset(dataBps.models);
-        } else {
-          for (const bp of dataBps) {
-            bp.set('onlyOneAddress', me.onlyOneAddress);
-          }
-          me.bpsList.reset(dataBps);
+        let models = OB.UTIL.remoteSearch(OB.Model.BusinessPartner)
+          ? dataBpLocs.models
+          : dataBpLocs;
+        if (!me.manageAddress && me.sameAddress) {
+          models = models.filter(
+            bpLoc => bpLoc.get('isBillTo') || bpLoc.get('isShipTo')
+          );
         }
+        _.each(models, function(bpLoc) {
+          bpLoc.set('onlyOneAddress', me.onlyOneAddress);
+        });
+        me.bpsList.reset(models);
       } else {
         me.bpsList.reset();
       }
@@ -1011,7 +1013,7 @@ enyo.kind({
           isId: true
         };
       var remoteCriteria = [filterIdentifier, bPartnerId];
-      if (!this.manageAddress) {
+      if (!this.manageAddress && !me.sameAddress) {
         remoteCriteria.push({
           columns: ['isBillTo'],
           operator: 'equals',
@@ -1019,7 +1021,7 @@ enyo.kind({
           boolean: true
         });
       }
-      criteria.remoteFilters = remoteCriteria;
+      const criteria = { remoteFilters: remoteCriteria };
 
       OB.Dal.find(
         OB.Model.BPLocation,
@@ -1031,10 +1033,9 @@ enyo.kind({
       try {
         const criteria = new OB.App.Class.Criteria();
         criteria.criterion('bpartner', this.bPartner.get('id'));
-        if (!this.manageAddress) {
+        if (!this.manageAddress && !me.sameAddress) {
           criteria.criterion('isBillTo', true);
         }
-
         criteria.textCriterion('name', filter);
 
         let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
@@ -1049,15 +1050,6 @@ enyo.kind({
         successCallbackBPsLoc(transformedBPLocations);
       } catch (error) {
         errorCallback(error);
-      }
-
-      criteria.name = {
-        operator: OB.Dal.CONTAINS,
-        value: filter
-      };
-      criteria.bpartner = this.bPartner.get('id');
-      if (!this.manageAddress) {
-        criteria.isBillTo = true;
       }
     }
     OB.UTIL.ProcessController.finish('searchCustomerAddress', execution);
@@ -1125,7 +1117,7 @@ enyo.kind({
             );
           }
 
-          if (me.manageAddress) {
+          if (me.manageAddress || me.sameAddress) {
             if (model.get('isBillTo')) {
               dataBps.set('locId', model.get('id'));
               dataBps.set('locName', model.get('name'));
@@ -1228,6 +1220,9 @@ enyo.kind({
       this.selectorHide = false;
       this.changedTitle(this.bPartner);
       this.$.body.$.listBpsLoc.setManageAddress(this.args.manageAddress);
+      this.$.body.$.listBpsLoc.setSameAddress(
+        this.bPartner.get('locId') === this.bPartner.get('shipLocId')
+      );
       this.$.body.$.listBpsLoc.setBPartner(this.bPartner);
       this.$.body.$.listBpsLoc.setTarget(this.args.target);
       this.$.body.$.listBpsLoc.setInitialLoad(true);
@@ -1281,7 +1276,7 @@ enyo.kind({
     }
   },
   changedTitle: async function(bp) {
-    if (this.args.manageAddress) {
+    if (this.args.manageAddress || this.args.sameAddress) {
       if (this.args.locationButton) {
         this.$.header.setContent(
           OB.I18N.getLabel('OBPOS_LblAssignCustomerAddress')
