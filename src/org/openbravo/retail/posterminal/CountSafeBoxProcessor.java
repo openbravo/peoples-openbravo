@@ -350,7 +350,7 @@ public class CountSafeBoxProcessor {
       transaction.setStatus(isInitialCount ? DEPOSITED_NOT_CLEARED : PAYMENT_CLEARED);
     }
     transaction.setProcessed(true);
-    transaction.setDescription("GL Item: " + glItem.getName());
+    transaction.setDescription("GL Item: " + glItem != null ? glItem.getName() : "--");
     transaction.setDateAcct(OBMOBCUtils.stripTime(countSafeBoxDate));
     transaction.setTransactionDate(OBMOBCUtils.stripTime(countSafeBoxDate));
 
@@ -382,8 +382,8 @@ public class CountSafeBoxProcessor {
     }
     transaction.setProcessed(true);
     transaction.setStatus(PAYMENT_CLEARED);
-    transaction.setDescription(
-        String.format("GL Item: %s, Safe Box: %s", glItem.getName(), safeBox.getSearchKey()));
+    transaction.setDescription(String.format("GL Item: %s, Safe Box: %s",
+        glItem != null ? glItem.getName() : "--", safeBox.getSearchKey()));
     transaction.setDateAcct(OBMOBCUtils.stripTime(countSafeBoxDate));
     transaction.setTransactionDate(OBMOBCUtils.stripTime(countSafeBoxDate));
     transaction.setReconciliation(reconciliation);
@@ -458,8 +458,8 @@ public class CountSafeBoxProcessor {
     }
     transaction.setProcessed(true);
     transaction.setStatus("RDNC");
-    transaction.setDescription(
-        String.format("GL Item: %s, Safe Box: %s", glItem.getName(), safeBox.getSearchKey()));
+    transaction.setDescription(String.format("GL Item: %s, Safe Box: %s",
+        glItem != null ? glItem.getName() : "--", safeBox.getSearchKey()));
     transaction.setDateAcct(OBMOBCUtils.stripTime(countSafeBoxDate));
     transaction.setTransactionDate(OBMOBCUtils.stripTime(countSafeBoxDate));
 
