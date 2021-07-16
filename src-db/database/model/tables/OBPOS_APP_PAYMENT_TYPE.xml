@@ -245,6 +245,9 @@
       <foreign-key foreignTable="OBPOS_PAY_METHOD_CATEGORY" name="OBPOS_APPPAYTYPE_CATEGORY_ID">
         <reference local="OBPOS_PAY_METHOD_CATEGORY_ID" foreign="OBPOS_PAY_METHOD_CATEGORY_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="AD_COLOR" name="OBPOS_APPPAYTYPE_CLR">
+        <reference local="AD_COLOR_ID" foreign="AD_COLOR_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="C_CURRENCY" name="OBPOS_APPPAYTYPE_CURR">
         <reference local="C_CURRENCY_ID" foreign="C_CURRENCY_ID"/>
       </foreign-key>
