@@ -29,6 +29,7 @@ import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.retail.posterminal.OBPOSAppPaymentRounding;
 import org.openbravo.retail.posterminal.OBPOSCurrencyRounding;
+import org.openbravo.retail.posterminal.TerminalTypePaymentMethod;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JsonConstants;
@@ -57,7 +58,8 @@ public class Payments extends JSONTerminalProperty {
                          + "  img.mimetype as mimetype, " 
                          + "  providerGroup, "
                          + "  providerGroupImage.bindaryData as pgimage, providerGroupImage.mimetype as pgmimetype, "
-                         + "  paymentType "
+                         + "  paymentType, "
+                         + "  color.hexColor as color "
                          + "from OBPOS_App_Payment as p "
                          + "  left join p.financialAccount as f "
                          + "  left join f.currency as c "
@@ -67,7 +69,8 @@ public class Payments extends JSONTerminalProperty {
                          + "  left outer join pm.obposPaymentgroup as providerGroup "
                          + "  left outer join providerGroup.image as providerGroupImage "
                          + "  left outer join pm.obposPaymentmethodType as paymentType "
-                         + "where p.obposApplications.id = :posID  "
+                         + "  left outer join pm.color as color "
+                        + "where p.obposApplications.id = :posID  "
                          + "  and p.$readableSimpleCriteria "
                          + "  and p.$activeCriteria "
                          + "  and pm.$activeCriteria"
@@ -101,8 +104,8 @@ public class Payments extends JSONTerminalProperty {
         if (preferenveValue) {
           JSONObject payment = new JSONObject();
           JSONObject pay = converter.toJsonObject(appPayment, DataResolvingMode.FULL);
-          JSONObject pMethod = converter.toJsonObject((BaseOBObject) objPayment[1],
-              DataResolvingMode.FULL);
+          TerminalTypePaymentMethod ttPaymentMethod = (TerminalTypePaymentMethod) objPayment[1];
+          JSONObject pMethod = converter.toJsonObject(ttPaymentMethod, DataResolvingMode.FULL);
           if (pay.getBoolean("overrideconfiguration")) {
             pMethod.put("cashDifferences", pay.get("cashDifferences"));
             pMethod.put("cashDifferences$_identifier", pay.get("cashDifferences$_identifier"));
@@ -154,6 +157,8 @@ public class Payments extends JSONTerminalProperty {
             payment.put("paymentType",
                 converter.toJsonObject((BaseOBObject) objPayment[14], DataResolvingMode.FULL));
           }
+          payment.put("color", objPayment[15]);
+          payment.put("imageClass", ttPaymentMethod.getImageClass());
 
           // If the Payment Method is cash, load the rounding properties of the currency
           if (appPayment.getPaymentMethod().isCash()) {
