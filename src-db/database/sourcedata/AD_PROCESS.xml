@@ -1039,78 +1039,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--188-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--188--></AD_PROCESS>
 
-<!--189--><AD_PROCESS>
-<!--189-->  <AD_PROCESS_ID><![CDATA[189]]></AD_PROCESS_ID>
-<!--189-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--189-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--189-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--189-->  <VALUE><![CDATA[PA_ReportColumnSet_Copy]]></VALUE>
-<!--189-->  <NAME><![CDATA[Copy Columns]]></NAME>
-<!--189-->  <DESCRIPTION><![CDATA[Copy Report Columns from other Column Set]]></DESCRIPTION>
-<!--189-->  <HELP><![CDATA[Copy columns at the end of this Column Set]]></HELP>
-<!--189-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--189-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--189-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--189-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--189-->  <CLASSNAME><![CDATA[org.openbravo.process.ReportColumnSet_Copy]]></CLASSNAME>
-<!--189-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--189-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--189-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--189-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--189-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--189-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--189-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--189-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--189--></AD_PROCESS>
-
-<!--190--><AD_PROCESS>
-<!--190-->  <AD_PROCESS_ID><![CDATA[190]]></AD_PROCESS_ID>
-<!--190-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--190-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--190-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--190-->  <VALUE><![CDATA[PA_ReportLineSet_Copy]]></VALUE>
-<!--190-->  <NAME><![CDATA[Copy Lines]]></NAME>
-<!--190-->  <DESCRIPTION><![CDATA[Copy Report Lines from other Line Set]]></DESCRIPTION>
-<!--190-->  <HELP><![CDATA[Copy lines at the end of this Line Set]]></HELP>
-<!--190-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--190-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--190-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--190-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--190-->  <CLASSNAME><![CDATA[org.openbravo.process.ReportLineSet_Copy]]></CLASSNAME>
-<!--190-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--190-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--190-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--190-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--190-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--190-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--190-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--190-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--190--></AD_PROCESS>
-
-<!--192--><AD_PROCESS>
-<!--192-->  <AD_PROCESS_ID><![CDATA[192]]></AD_PROCESS_ID>
-<!--192-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--192-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--192-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--192-->  <VALUE><![CDATA[AD_PrintFormat_Copy]]></VALUE>
-<!--192-->  <NAME><![CDATA[Copy/Create]]></NAME>
-<!--192-->  <DESCRIPTION><![CDATA[Copy existing OR create Print Format from Table]]></DESCRIPTION>
-<!--192-->  <HELP><![CDATA[Select either a table to create a print format [creates initial rough layout]|OR a print format to copy into the current print format [copies layout].]]></HELP>
-<!--192-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--192-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--192-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--192-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--192-->  <CLASSNAME><![CDATA[org.openbravo.print.MPrintFormatProcess]]></CLASSNAME>
-<!--192-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--192-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--192-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--192-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--192-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--192-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--192-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--192--></AD_PROCESS>
-
 <!--193--><AD_PROCESS>
 <!--193-->  <AD_PROCESS_ID><![CDATA[193]]></AD_PROCESS_ID>
 <!--193-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1135,30 +1063,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--193-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--193--></AD_PROCESS>
 
-<!--198--><AD_PROCESS>
-<!--198-->  <AD_PROCESS_ID><![CDATA[198]]></AD_PROCESS_ID>
-<!--198-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--198-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--198-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--198-->  <VALUE><![CDATA[Import_ReportLine]]></VALUE>
-<!--198-->  <NAME><![CDATA[Import Report Line Set]]></NAME>
-<!--198-->  <DESCRIPTION><![CDATA[Import Report Line Set information]]></DESCRIPTION>
-<!--198-->  <HELP><![CDATA[The Parameters are default values for null import record values, they do not overwrite any data.]]></HELP>
-<!--198-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--198-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--198-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--198-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--198-->  <CLASSNAME><![CDATA[org.openbravo.process.ImportReportLine]]></CLASSNAME>
-<!--198-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--198-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--198-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--198-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--198-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--198-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--198-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--198-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--198--></AD_PROCESS>
-
 <!--199--><AD_PROCESS>
 <!--199-->  <AD_PROCESS_ID><![CDATA[199]]></AD_PROCESS_ID>
 <!--199-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1182,126 +1086,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--199-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--199-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--199--></AD_PROCESS>
-
-<!--202--><AD_PROCESS>
-<!--202-->  <AD_PROCESS_ID><![CDATA[202]]></AD_PROCESS_ID>
-<!--202-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--202-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--202-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--202-->  <VALUE><![CDATA[FinReport]]></VALUE>
-<!--202-->  <NAME><![CDATA[Create Report]]></NAME>
-<!--202-->  <DESCRIPTION><![CDATA[Create Financial Report]]></DESCRIPTION>
-<!--202-->  <HELP><![CDATA[The default period is the current period. You can optionally enter other restrictions.]]></HELP>
-<!--202-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--202-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--202-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--202-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--202-->  <CLASSNAME><![CDATA[org.openbravo.report.FinReport]]></CLASSNAME>
-<!--202-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--202-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--202-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--202-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--202-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--202-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--202-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--202--></AD_PROCESS>
-
-<!--203--><AD_PROCESS>
-<!--203-->  <AD_PROCESS_ID><![CDATA[203]]></AD_PROCESS_ID>
-<!--203-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--203-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--203-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--203-->  <VALUE><![CDATA[Balance_Update]]></VALUE>
-<!--203-->  <NAME><![CDATA[Update Accounting Balance]]></NAME>
-<!--203-->  <DESCRIPTION><![CDATA[Update Daily Accounting Balances]]></DESCRIPTION>
-<!--203-->  <HELP><![CDATA[This process is run automatically]]></HELP>
-<!--203-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--203-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--203-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--203-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--203-->  <CLASSNAME><![CDATA[org.openbravo.report.FinBalance]]></CLASSNAME>
-<!--203-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--203-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--203-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--203-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--203-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--203-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--203-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--203--></AD_PROCESS>
-
-<!--204--><AD_PROCESS>
-<!--204-->  <AD_PROCESS_ID><![CDATA[204]]></AD_PROCESS_ID>
-<!--204-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--204-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--204-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--204-->  <VALUE><![CDATA[FinStatement]]></VALUE>
-<!--204-->  <NAME><![CDATA[Statement of Accounts]]></NAME>
-<!--204-->  <DESCRIPTION><![CDATA[Report Account Statement Beginning Balance and Transactions]]></DESCRIPTION>
-<!--204-->  <HELP><![CDATA[Select a Period (current period if empty) or enter a Account Date Range]]></HELP>
-<!--204-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--204-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--204-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--204-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--204-->  <CLASSNAME><![CDATA[org.openbravo.report.FinStatement]]></CLASSNAME>
-<!--204-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--204-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--204-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--204-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--204-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--204-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--204-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--204-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--204--></AD_PROCESS>
-
-<!--205--><AD_PROCESS>
-<!--205-->  <AD_PROCESS_ID><![CDATA[205]]></AD_PROCESS_ID>
-<!--205-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--205-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--205-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--205-->  <VALUE><![CDATA[Cache Reset]]></VALUE>
-<!--205-->  <NAME><![CDATA[Cache Reset]]></NAME>
-<!--205-->  <DESCRIPTION><![CDATA[Reset Cache of the System ** Close all Windows before proceeding **]]></DESCRIPTION>
-<!--205-->  <HELP><![CDATA[To increase performance, Openbravo caches repeatedly used data. This process clears the local cache.]]></HELP>
-<!--205-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--205-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--205-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--205-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--205-->  <CLASSNAME><![CDATA[org.openbravo.process.CacheReset]]></CLASSNAME>
-<!--205-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--205-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--205-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--205-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--205-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--205-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--205-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--205-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--205--></AD_PROCESS>
-
-<!--208--><AD_PROCESS>
-<!--208-->  <AD_PROCESS_ID><![CDATA[208]]></AD_PROCESS_ID>
-<!--208-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--208-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--208-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--208-->  <VALUE><![CDATA[AD_Replication Run]]></VALUE>
-<!--208-->  <NAME><![CDATA[Start Replication Run]]></NAME>
-<!--208-->  <DESCRIPTION><![CDATA[Start Replication with Remote Host]]></DESCRIPTION>
-<!--208-->  <HELP><![CDATA[Start Replication with Remote Host]]></HELP>
-<!--208-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--208-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--208-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--208-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--208-->  <CLASSNAME><![CDATA[org.openbravo.process.ReplicationLocal]]></CLASSNAME>
-<!--208-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--208-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--208-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--208-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--208-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--208-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--208-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--208-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--208--></AD_PROCESS>
 
 <!--210--><AD_PROCESS>
 <!--210-->  <AD_PROCESS_ID><![CDATA[210]]></AD_PROCESS_ID>
@@ -1377,30 +1161,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--212-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--212--></AD_PROCESS>
 
-<!--213--><AD_PROCESS>
-<!--213-->  <AD_PROCESS_ID><![CDATA[213]]></AD_PROCESS_ID>
-<!--213-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--213-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--213-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--213-->  <VALUE><![CDATA[C_Recurring Run]]></VALUE>
-<!--213-->  <NAME><![CDATA[Start Process]]></NAME>
-<!--213-->  <DESCRIPTION><![CDATA[Start Recurring Run]]></DESCRIPTION>
-<!--213-->  <HELP><![CDATA[Start Recurring Run]]></HELP>
-<!--213-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--213-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--213-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--213-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--213-->  <CLASSNAME><![CDATA[org.openbravo.process.Recurring]]></CLASSNAME>
-<!--213-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--213-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--213-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--213-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--213-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--213-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--213-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--213-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--213--></AD_PROCESS>
-
 <!--214--><AD_PROCESS>
 <!--214-->  <AD_PROCESS_ID><![CDATA[214]]></AD_PROCESS_ID>
 <!--214-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1474,78 +1234,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--216-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--216--></AD_PROCESS>
 
-<!--221--><AD_PROCESS>
-<!--221-->  <AD_PROCESS_ID><![CDATA[221]]></AD_PROCESS_ID>
-<!--221-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--221-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--221-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--221-->  <VALUE><![CDATA[Import_BankStatement]]></VALUE>
-<!--221-->  <NAME><![CDATA[Import Bank Statement]]></NAME>
-<!--221-->  <DESCRIPTION><![CDATA[Import Bank Statement]]></DESCRIPTION>
-<!--221-->  <HELP><![CDATA[The Parameters are default values for null import record values, they do not overwrite any data.]]></HELP>
-<!--221-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--221-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--221-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--221-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--221-->  <CLASSNAME><![CDATA[org.openbravo.process.ImportBankStatement]]></CLASSNAME>
-<!--221-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--221-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--221-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--221-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--221-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--221-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--221-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--221-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--221--></AD_PROCESS>
-
-<!--224--><AD_PROCESS>
-<!--224-->  <AD_PROCESS_ID><![CDATA[224]]></AD_PROCESS_ID>
-<!--224-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--224-->  <VALUE><![CDATA[C_Project_Issue]]></VALUE>
-<!--224-->  <NAME><![CDATA[Issue to Project]]></NAME>
-<!--224-->  <DESCRIPTION><![CDATA[Issue Material to Project from Receipt or manual Inventory Location]]></DESCRIPTION>
-<!--224-->  <HELP><![CDATA[Select a Project and either|<BR>- Material Receipt|<BR>- Expense Report|<br<- Inventory Location and Project Line not issued yet|<BR>- Inventory Location, Product and Quantity|The default Movement Date is today's date.]]></HELP>
-<!--224-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--224-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--224-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--224-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--224-->  <CLASSNAME><![CDATA[org.openbravo.process.ProjectIssue]]></CLASSNAME>
-<!--224-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--224-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--224-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--224-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--224-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--224-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--224-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--224-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--224--></AD_PROCESS>
-
-<!--225--><AD_PROCESS>
-<!--225-->  <AD_PROCESS_ID><![CDATA[225]]></AD_PROCESS_ID>
-<!--225-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--225-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--225-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--225-->  <VALUE><![CDATA[C_Project_GeneratePO]]></VALUE>
-<!--225-->  <NAME><![CDATA[Generate PO from Project]]></NAME>
-<!--225-->  <DESCRIPTION><![CDATA[Generate PO from Project Line(s)]]></DESCRIPTION>
-<!--225-->  <HELP><![CDATA[|]]></HELP>
-<!--225-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--225-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--225-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--225-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--225-->  <CLASSNAME><![CDATA[org.openbravo.process.ProjectGenPO]]></CLASSNAME>
-<!--225-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--225-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--225-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--225-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--225-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--225-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--225-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--225--></AD_PROCESS>
-
 <!--227--><AD_PROCESS>
 <!--227-->  <AD_PROCESS_ID><![CDATA[227]]></AD_PROCESS_ID>
 <!--227-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1569,30 +1257,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--227-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--227-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--227--></AD_PROCESS>
-
-<!--230--><AD_PROCESS>
-<!--230-->  <AD_PROCESS_ID><![CDATA[230]]></AD_PROCESS_ID>
-<!--230-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--230-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--230-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--230-->  <VALUE><![CDATA[C_ProjectLine Pricing]]></VALUE>
-<!--230-->  <NAME><![CDATA[Get Price]]></NAME>
-<!--230-->  <DESCRIPTION><![CDATA[Get Price for Project Line based on Project Price List]]></DESCRIPTION>
-<!--230-->  <HELP><![CDATA[Get Price for Project Line based on Project Price List]]></HELP>
-<!--230-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--230-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--230-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--230-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--230-->  <CLASSNAME><![CDATA[org.openbravo.process.ProjectLinePricing]]></CLASSNAME>
-<!--230-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--230-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--230-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--230-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--230-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--230-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--230-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--230-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--230--></AD_PROCESS>
 
 <!--800000--><AD_PROCESS>
 <!--800000-->  <AD_PROCESS_ID><![CDATA[800000]]></AD_PROCESS_ID>
@@ -2563,30 +2227,6 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800099-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--800099-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800099--></AD_PROCESS>
-
-<!--800100--><AD_PROCESS>
-<!--800100-->  <AD_PROCESS_ID><![CDATA[800100]]></AD_PROCESS_ID>
-<!--800100-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800100-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800100-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800100-->  <VALUE><![CDATA[ContractBpartner]]></VALUE>
-<!--800100-->  <NAME><![CDATA[Business Partner Contract]]></NAME>
-<!--800100-->  <DESCRIPTION><![CDATA[Creates business partner contract]]></DESCRIPTION>
-<!--800100-->  <HELP><![CDATA[Creates a PDF report containing the business partner name, address,... And the price list for the customer.]]></HELP>
-<!--800100-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800100-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800100-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800100-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800100-->  <CLASSNAME><![CDATA[ad_process/ContractBpartner.html]]></CLASSNAME>
-<!--800100-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800100-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800100-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800100-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800100-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800100-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800100-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800100-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800100--></AD_PROCESS>
 
 <!--800103--><AD_PROCESS>
 <!--800103-->  <AD_PROCESS_ID><![CDATA[800103]]></AD_PROCESS_ID>
