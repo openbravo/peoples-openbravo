@@ -651,30 +651,6 @@ The Invoices generated are going to be created all of them against the selected 
 <!--154-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--154--></AD_PROCESS>
 
-<!--155--><AD_PROCESS>
-<!--155-->  <AD_PROCESS_ID><![CDATA[155]]></AD_PROCESS_ID>
-<!--155-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--155-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--155-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--155-->  <VALUE><![CDATA[C_PaySelection_Post]]></VALUE>
-<!--155-->  <NAME><![CDATA[Create Payment]]></NAME>
-<!--155-->  <DESCRIPTION><![CDATA[Create Payment]]></DESCRIPTION>
-<!--155-->  <HELP><![CDATA[Create Payment]]></HELP>
-<!--155-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--155-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--155-->  <PROCEDURENAME><![CDATA[C_PaySelection_Post]]></PROCEDURENAME>
-<!--155-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--155-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--155-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--155-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--155-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--155-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--155-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--155-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--155-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--155-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--155--></AD_PROCESS>
-
 <!--162--><AD_PROCESS>
 <!--162-->  <AD_PROCESS_ID><![CDATA[162]]></AD_PROCESS_ID>
 <!--162-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -940,30 +916,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--179-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--179-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--179--></AD_PROCESS>
-
-<!--180--><AD_PROCESS>
-<!--180-->  <AD_PROCESS_ID><![CDATA[180]]></AD_PROCESS_ID>
-<!--180-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--180-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--180-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--180-->  <VALUE><![CDATA[RV_T_InventoryValue]]></VALUE>
-<!--180-->  <NAME><![CDATA[Inventory Valuation Report]]></NAME>
-<!--180-->  <DESCRIPTION><![CDATA[Inventory Valuation Report]]></DESCRIPTION>
-<!--180-->  <HELP><![CDATA[Report lists products with their on-hand quantity and values at the valuation date]]></HELP>
-<!--180-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--180-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--180-->  <PROCEDURENAME><![CDATA[T_InventoryValue_Create]]></PROCEDURENAME>
-<!--180-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--180-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--180-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--180-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--180-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--180-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--180-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--180-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--180-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--180--></AD_PROCESS>
 
 <!--184--><AD_PROCESS>
 <!--184-->  <AD_PROCESS_ID><![CDATA[184]]></AD_PROCESS_ID>

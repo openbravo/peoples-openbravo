@@ -680,82 +680,6 @@
 <!--209-->  <AD_ELEMENT_ID><![CDATA[574]]></AD_ELEMENT_ID>
 <!--209--></AD_PROCESS_PARA>
 
-<!--228--><AD_PROCESS_PARA>
-<!--228-->  <AD_PROCESS_PARA_ID><![CDATA[228]]></AD_PROCESS_PARA_ID>
-<!--228-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--228-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--228-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--228-->  <NAME><![CDATA[Price List Version]]></NAME>
-<!--228-->  <DESCRIPTION><![CDATA[A price list with a specified validity range.]]></DESCRIPTION>
-<!--228-->  <HELP><![CDATA[Each Price List can have multiple versions.  The most common use is to indicate the dates that a Price List is valid for.]]></HELP>
-<!--228-->  <AD_PROCESS_ID><![CDATA[180]]></AD_PROCESS_ID>
-<!--228-->  <SEQNO><![CDATA[30]]></SEQNO>
-<!--228-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--228-->  <COLUMNNAME><![CDATA[M_PriceList_Version_ID]]></COLUMNNAME>
-<!--228-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--228-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--228-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--228-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--228-->  <AD_ELEMENT_ID><![CDATA[450]]></AD_ELEMENT_ID>
-<!--228--></AD_PROCESS_PARA>
-
-<!--229--><AD_PROCESS_PARA>
-<!--229-->  <AD_PROCESS_PARA_ID><![CDATA[229]]></AD_PROCESS_PARA_ID>
-<!--229-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--229-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--229-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--229-->  <NAME><![CDATA[Valuation Date]]></NAME>
-<!--229-->  <DESCRIPTION><![CDATA[Date of valuation]]></DESCRIPTION>
-<!--229-->  <HELP><![CDATA[Date of valuation]]></HELP>
-<!--229-->  <AD_PROCESS_ID><![CDATA[180]]></AD_PROCESS_ID>
-<!--229-->  <SEQNO><![CDATA[40]]></SEQNO>
-<!--229-->  <AD_REFERENCE_ID><![CDATA[15]]></AD_REFERENCE_ID>
-<!--229-->  <COLUMNNAME><![CDATA[DateValue]]></COLUMNNAME>
-<!--229-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--229-->  <FIELDLENGTH><![CDATA[10]]></FIELDLENGTH>
-<!--229-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--229-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--229-->  <AD_ELEMENT_ID><![CDATA[1727]]></AD_ELEMENT_ID>
-<!--229--></AD_PROCESS_PARA>
-
-<!--230--><AD_PROCESS_PARA>
-<!--230-->  <AD_PROCESS_PARA_ID><![CDATA[230]]></AD_PROCESS_PARA_ID>
-<!--230-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--230-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--230-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--230-->  <NAME><![CDATA[Warehouse]]></NAME>
-<!--230-->  <DESCRIPTION><![CDATA[The location where products arrive to or are sent from.]]></DESCRIPTION>
-<!--230-->  <HELP><![CDATA[The Warehouse identifies a unique Warehouse where products are stored or Services are provided.]]></HELP>
-<!--230-->  <AD_PROCESS_ID><![CDATA[180]]></AD_PROCESS_ID>
-<!--230-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--230-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--230-->  <COLUMNNAME><![CDATA[M_Warehouse_ID]]></COLUMNNAME>
-<!--230-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--230-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--230-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--230-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--230-->  <AD_ELEMENT_ID><![CDATA[459]]></AD_ELEMENT_ID>
-<!--230--></AD_PROCESS_PARA>
-
-<!--231--><AD_PROCESS_PARA>
-<!--231-->  <AD_PROCESS_PARA_ID><![CDATA[231]]></AD_PROCESS_PARA_ID>
-<!--231-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--231-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--231-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--231-->  <NAME><![CDATA[Currency]]></NAME>
-<!--231-->  <DESCRIPTION><![CDATA[An accepted medium of monetary exchange that may vary across countries.]]></DESCRIPTION>
-<!--231-->  <HELP><![CDATA[Indicates the currency to be used when processing this document.]]></HELP>
-<!--231-->  <AD_PROCESS_ID><![CDATA[180]]></AD_PROCESS_ID>
-<!--231-->  <SEQNO><![CDATA[20]]></SEQNO>
-<!--231-->  <AD_REFERENCE_ID><![CDATA[19]]></AD_REFERENCE_ID>
-<!--231-->  <COLUMNNAME><![CDATA[C_Currency_ID]]></COLUMNNAME>
-<!--231-->  <ISCENTRALLYMAINTAINED><![CDATA[Y]]></ISCENTRALLYMAINTAINED>
-<!--231-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--231-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--231-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--231-->  <AD_ELEMENT_ID><![CDATA[193]]></AD_ELEMENT_ID>
-<!--231--></AD_PROCESS_PARA>
-
 <!--245--><AD_PROCESS_PARA>
 <!--245-->  <AD_PROCESS_PARA_ID><![CDATA[245]]></AD_PROCESS_PARA_ID>
 <!--245-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1353,27 +1277,6 @@
 <!--300-->  <ISRANGE><![CDATA[N]]></ISRANGE>
 <!--300-->  <AD_ELEMENT_ID><![CDATA[1615]]></AD_ELEMENT_ID>
 <!--300--></AD_PROCESS_PARA>
-
-<!--302--><AD_PROCESS_PARA>
-<!--302-->  <AD_PROCESS_PARA_ID><![CDATA[302]]></AD_PROCESS_PARA_ID>
-<!--302-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--302-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--302-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--302-->  <NAME><![CDATA[Target Payment Rule]]></NAME>
-<!--302-->  <DESCRIPTION><![CDATA[How you pay the invoice]]></DESCRIPTION>
-<!--302-->  <HELP><![CDATA[The Payment Rule indicates the method of invoice payment.]]></HELP>
-<!--302-->  <AD_PROCESS_ID><![CDATA[155]]></AD_PROCESS_ID>
-<!--302-->  <SEQNO><![CDATA[10]]></SEQNO>
-<!--302-->  <AD_REFERENCE_ID><![CDATA[17]]></AD_REFERENCE_ID>
-<!--302-->  <AD_REFERENCE_VALUE_ID><![CDATA[195]]></AD_REFERENCE_VALUE_ID>
-<!--302-->  <AD_VAL_RULE_ID><![CDATA[162]]></AD_VAL_RULE_ID>
-<!--302-->  <COLUMNNAME><![CDATA[PaymentRule]]></COLUMNNAME>
-<!--302-->  <ISCENTRALLYMAINTAINED><![CDATA[N]]></ISCENTRALLYMAINTAINED>
-<!--302-->  <FIELDLENGTH><![CDATA[0]]></FIELDLENGTH>
-<!--302-->  <ISMANDATORY><![CDATA[Y]]></ISMANDATORY>
-<!--302-->  <ISRANGE><![CDATA[N]]></ISRANGE>
-<!--302-->  <AD_ELEMENT_ID><![CDATA[1143]]></AD_ELEMENT_ID>
-<!--302--></AD_PROCESS_PARA>
 
 <!--312--><AD_PROCESS_PARA>
 <!--312-->  <AD_PROCESS_PARA_ID><![CDATA[312]]></AD_PROCESS_PARA_ID>
