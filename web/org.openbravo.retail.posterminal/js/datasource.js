@@ -282,7 +282,7 @@ OB.DS.HWServer.prototype.isDrawerClosed = function(popup, timeout) {
     popupDrawerOpened =
       OB.MobileApp.view.$.confirmationContainer.$.popupDrawerOpened;
 
-  if (timeout && !isNaN(parseInt(timeout, 10))) {
+  if (timeout && OB.I18N.isValidNumber(parseInt(timeout, 10))) {
     beepTimeout = setTimeout(function() {
       sound.loop = true;
       sound.play();

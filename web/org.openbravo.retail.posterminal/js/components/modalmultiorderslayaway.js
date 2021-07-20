@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -84,7 +84,6 @@ enyo.kind({
     var me = this,
       amount = OB.DEC.Zero,
       total = OB.DEC.Zero,
-      tmp,
       currentOrder;
     currentOrder = this.model
       .get('multiOrders')
@@ -96,10 +95,21 @@ enyo.kind({
         .indexOf('%') !== -1
     ) {
       try {
-        tmp = this.popup.$.body.$.formElementBtnModalMultiSearchInput.coreElement
+        let tmp = this.popup.$.body.$.formElementBtnModalMultiSearchInput.coreElement
           .getValue()
           .replace('%', '');
-        amount = OB.DEC.div(OB.DEC.mul(currentOrder.getPending(), tmp), 100);
+        if (!OB.I18N.isValidNumber(tmp)) {
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_notValidInput_header'),
+            OB.I18N.getLabel('OBPOS_notValidQty')
+          );
+          return;
+        } else {
+          amount = OB.DEC.div(
+            OB.DEC.mul(currentOrder.getPending(), OB.I18N.parseNumber(tmp)),
+            100
+          );
+        }
       } catch (ex) {
         OB.UTIL.showConfirmation.display(
           OB.I18N.getLabel('OBPOS_notValidInput_header'),
@@ -134,7 +144,7 @@ enyo.kind({
         return;
       }
     }
-    if (_.isNaN(amount)) {
+    if (isNaN(amount)) {
       currentOrder.setOrderType(null, 0);
       currentOrder.unset('amountToLayaway');
       currentOrder.trigger('amountToLayaway');

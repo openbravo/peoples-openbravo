@@ -96,7 +96,7 @@ OB.UTIL.getPaymentByKey = function(key) {
 OB.UTIL.Math = window.OB.UTIL.Math || {};
 OB.UTIL.Math.sign = function(x) {
   x = +x; // convert to a number
-  if (x === 0 || isNaN(x)) {
+  if (x === 0 || !OB.I18N.isValidNumber(x)) {
     return x;
   }
   return x > 0 ? 1 : -1;
@@ -554,12 +554,14 @@ OB.UTIL.backgroundMasterdataIsEnabled = function() {
     );
     if (
       !preferenceValue ||
-      (preferenceValue && !isNaN(preferenceValue) && preferenceValue >= 1)
+      (preferenceValue &&
+        OB.I18N.isValidNumber(preferenceValue) &&
+        preferenceValue >= 1)
     ) {
       OB.UTIL.backgroundMasterdataRefreshEnabled = true;
     } else {
       OB.UTIL.backgroundMasterdataRefreshEnabled = false;
-      if (isNaN(preferenceValue)) {
+      if (!OB.I18N.isValidNumber(preferenceValue)) {
         OB.warn(
           'OBMOBC_BackgroundMasterdataMaxSize has a value not numeric: ' +
             preferenceValue

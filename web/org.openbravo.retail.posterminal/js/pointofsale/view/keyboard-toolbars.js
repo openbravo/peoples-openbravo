@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -138,7 +138,7 @@ enyo.kind({
     if (_.last(txt) === '%') {
       txtVal = txt.substring(0, txt.length - 1);
     }
-    if (isNaN(txtVal)) {
+    if (!OB.I18N.isValidNumber(txtVal)) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
       return;
     }
@@ -505,7 +505,7 @@ enyo.kind({
                         options.percentaje = true;
                         txtVal = txt.substring(0, txt.length - 1);
                       }
-                      if (isNaN(txtVal)) {
+                      if (!OB.I18N.isValidNumber(txtVal)) {
                         OB.UTIL.showWarning(
                           OB.I18N.getLabel('OBPOS_NotValidNumber', [txt])
                         );
@@ -589,7 +589,7 @@ enyo.kind({
                       options.percentaje = true;
                       txtVal = txt.substring(0, txt.length - 1);
                     }
-                    if (isNaN(txtVal)) {
+                    if (!OB.I18N.isValidNumber(txtVal)) {
                       OB.UTIL.showWarning(
                         OB.I18N.getLabel('OBPOS_NotValidNumber', [txt])
                       );

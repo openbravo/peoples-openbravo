@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -49,7 +49,7 @@ enyo.kind({
       permission: key,
       action: function(keyboard, txt) {
         let amt = OB.I18N.parseNumber(txt);
-        if (isNaN(amt)) {
+        if (!OB.I18N.isValidNumber(amt)) {
           OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_NotValidNumber', [txt]));
           return;
         } else if (amt === 0) {
