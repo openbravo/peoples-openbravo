@@ -76,10 +76,12 @@ public class PriceList extends MasterDataProcessHQLQuery {
     if (multiPrices) {
       hqlQueries.add("select " + priceListHQLProperties.getHqlSelect()
           + " from PricingPriceList pl "
-          + "left outer join BusinessPartner bp with pl.id = bp.priceList.id and bp.$readableClientCriteria and bp.customer = 'Y' "
+          + "join BusinessPartner bp with pl.id = bp.priceList.id and bp.$readableClientCriteria and bp.$naturalOrgCriteria and bp.customer = true "
           + "where pl.id <> (:priceList) "
           + "and pl.$naturalOrgCriteria and pl.$readableClientCriteria and (pl.$incrementalUpdateCriteria or bp.$incrementalUpdateCriteria) "
-          + "and pl.$paginationByIdCriteria order by pl.id asc");
+          + "and pl.$paginationByIdCriteria " //
+          + "group by " + priceListHQLProperties.getHqlGroupBy() //
+          + "order by pl.id asc");
     }
 
     return hqlQueries;
