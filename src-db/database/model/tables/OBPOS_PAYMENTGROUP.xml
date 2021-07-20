@@ -49,8 +49,19 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="IMAGECLASS" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="AD_COLOR_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_PAYMENTGROUP_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_COLOR" name="OBPOS_PAYMENTGROUP_COLOR">
+        <reference local="AD_COLOR_ID" foreign="AD_COLOR_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="OBPOS_PAYMENTGROUP_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>

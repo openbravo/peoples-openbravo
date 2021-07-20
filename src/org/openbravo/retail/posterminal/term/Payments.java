@@ -29,6 +29,7 @@ import org.openbravo.mobile.core.process.SimpleQueryBuilder;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
 import org.openbravo.retail.posterminal.OBPOSAppPaymentRounding;
 import org.openbravo.retail.posterminal.OBPOSCurrencyRounding;
+import org.openbravo.retail.posterminal.OBPOS_PAYMENTGROUP;
 import org.openbravo.retail.posterminal.TerminalTypePaymentMethod;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
@@ -59,7 +60,8 @@ public class Payments extends JSONTerminalProperty {
                          + "  providerGroup, "
                          + "  providerGroupImage.bindaryData as pgimage, providerGroupImage.mimetype as pgmimetype, "
                          + "  paymentType, "
-                         + "  color.hexColor as color "
+                         + "  color.hexColor as color, "
+                         + "  pmg_color.hexColor as pmg_color "
                          + "from OBPOS_App_Payment as p "
                          + "  left join p.financialAccount as f "
                          + "  left join f.currency as c "
@@ -70,6 +72,7 @@ public class Payments extends JSONTerminalProperty {
                          + "  left outer join providerGroup.image as providerGroupImage "
                          + "  left outer join pm.obposPaymentmethodType as paymentType "
                          + "  left outer join pm.color as color "
+                         + "  left outer join providerGroup.color as pmg_color "
                         + "where p.obposApplications.id = :posID  "
                          + "  and p.$readableSimpleCriteria "
                          + "  and p.$activeCriteria "
@@ -143,7 +146,8 @@ public class Payments extends JSONTerminalProperty {
             payment.put("image", objPayment[9]);
           }
           if (objPayment[11] != null) {
-            JSONObject providerGroup = converter.toJsonObject((BaseOBObject) objPayment[11],
+            OBPOS_PAYMENTGROUP providerGroupBO = (OBPOS_PAYMENTGROUP) objPayment[11];
+            JSONObject providerGroup = converter.toJsonObject(providerGroupBO,
                 DataResolvingMode.FULL_TRANSLATABLE);
             if (objPayment[12] != null && objPayment[13] != null) {
               providerGroup.put("image", "data:" + objPayment[13] + ";base64,"
@@ -151,6 +155,8 @@ public class Payments extends JSONTerminalProperty {
             } else {
               providerGroup.put("image", objPayment[12]);
             }
+            providerGroup.put("imageClass", providerGroupBO.getImageClass());
+            providerGroup.put("color", objPayment[16]);
             payment.put("providerGroup", providerGroup);
           }
           if (objPayment[14] != null) {
