@@ -9133,33 +9133,6 @@ Usually, company's internal identifiers for various records (products, customers
 <!--1606-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1606--></AD_ELEMENT>
 
-<!--1613--><AD_ELEMENT>
-<!--1613-->  <AD_ELEMENT_ID><![CDATA[1613]]></AD_ELEMENT_ID>
-<!--1613-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1613-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1613-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1613-->  <COLUMNNAME><![CDATA[PA_ReportColumnSet_ID]]></COLUMNNAME>
-<!--1613-->  <NAME><![CDATA[Report Column Set]]></NAME>
-<!--1613-->  <PRINTNAME><![CDATA[Report Column Set]]></PRINTNAME>
-<!--1613-->  <DESCRIPTION><![CDATA[Collection of Columns for Report]]></DESCRIPTION>
-<!--1613-->  <HELP><![CDATA[The Report Column Set identifies the columns used in a Report.]]></HELP>
-<!--1613-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1613-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1613--></AD_ELEMENT>
-
-<!--1615--><AD_ELEMENT>
-<!--1615-->  <AD_ELEMENT_ID><![CDATA[1615]]></AD_ELEMENT_ID>
-<!--1615-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1615-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1615-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1615-->  <COLUMNNAME><![CDATA[PA_ReportLineSet_ID]]></COLUMNNAME>
-<!--1615-->  <NAME><![CDATA[Report Line Set]]></NAME>
-<!--1615-->  <PRINTNAME><![CDATA[Report Line Set]]></PRINTNAME>
-<!--1615-->  <DESCRIPTION><![CDATA[x not implemented]]></DESCRIPTION>
-<!--1615-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1615-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1615--></AD_ELEMENT>
-
 <!--1622--><AD_ELEMENT>
 <!--1622-->  <AD_ELEMENT_ID><![CDATA[1622]]></AD_ELEMENT_ID>
 <!--1622-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -9805,20 +9778,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1725-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1725--></AD_ELEMENT>
 
-<!--1727--><AD_ELEMENT>
-<!--1727-->  <AD_ELEMENT_ID><![CDATA[1727]]></AD_ELEMENT_ID>
-<!--1727-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1727-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1727-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1727-->  <COLUMNNAME><![CDATA[DateValue]]></COLUMNNAME>
-<!--1727-->  <NAME><![CDATA[Valuation Date]]></NAME>
-<!--1727-->  <PRINTNAME><![CDATA[Valuation Date]]></PRINTNAME>
-<!--1727-->  <DESCRIPTION><![CDATA[Date of valuation]]></DESCRIPTION>
-<!--1727-->  <HELP><![CDATA[Date of valuation]]></HELP>
-<!--1727-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1727-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1727--></AD_ELEMENT>
-
 <!--1738--><AD_ELEMENT>
 <!--1738-->  <AD_ELEMENT_ID><![CDATA[1738]]></AD_ELEMENT_ID>
 <!--1738-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10347,20 +10306,6 @@ If selected, this column will be used in the Search Window as an available filte
 <!--1787-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1787--></AD_ELEMENT>
 
-<!--1790--><AD_ELEMENT>
-<!--1790-->  <AD_ELEMENT_ID><![CDATA[1790]]></AD_ELEMENT_ID>
-<!--1790-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1790-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1790-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1790-->  <COLUMNNAME><![CDATA[AD_PrintFormat_ID]]></COLUMNNAME>
-<!--1790-->  <NAME><![CDATA[Print Format]]></NAME>
-<!--1790-->  <PRINTNAME><![CDATA[Print Format]]></PRINTNAME>
-<!--1790-->  <DESCRIPTION><![CDATA[The structure in which a document will be printed.]]></DESCRIPTION>
-<!--1790-->  <HELP><![CDATA[The print format determines how data is rendered for print.]]></HELP>
-<!--1790-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1790-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1790--></AD_ELEMENT>
-
 <!--1805--><AD_ELEMENT>
 <!--1805-->  <AD_ELEMENT_ID><![CDATA[1805]]></AD_ELEMENT_ID>
 <!--1805-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10628,20 +10573,6 @@ The fact of using a given product type does not mean a different accounting. All
 <!--1920-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1920--></AD_ELEMENT>
 
-<!--1922--><AD_ELEMENT>
-<!--1922-->  <AD_ELEMENT_ID><![CDATA[1922]]></AD_ELEMENT_ID>
-<!--1922-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1922-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1922-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1922-->  <COLUMNNAME><![CDATA[DeleteOldImported]]></COLUMNNAME>
-<!--1922-->  <NAME><![CDATA[Delete old imported records]]></NAME>
-<!--1922-->  <PRINTNAME><![CDATA[Delete old imported]]></PRINTNAME>
-<!--1922-->  <DESCRIPTION><![CDATA[Before processing delete old imported records in the import table]]></DESCRIPTION>
-<!--1922-->  <HELP><![CDATA[Before processing delete old imported records in the import table]]></HELP>
-<!--1922-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1922-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1922--></AD_ELEMENT>
-
 <!--1929--><AD_ELEMENT>
 <!--1929-->  <AD_ELEMENT_ID><![CDATA[1929]]></AD_ELEMENT_ID>
 <!--1929-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10907,18 +10838,6 @@ The fact of using a given product type does not mean a different accounting. All
 <!--1978-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1978-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1978--></AD_ELEMENT>
-
-<!--1981--><AD_ELEMENT>
-<!--1981-->  <AD_ELEMENT_ID><![CDATA[1981]]></AD_ELEMENT_ID>
-<!--1981-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1981-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1981-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1981-->  <COLUMNNAME><![CDATA[IsRecreate]]></COLUMNNAME>
-<!--1981-->  <NAME><![CDATA[IsRecreate]]></NAME>
-<!--1981-->  <PRINTNAME><![CDATA[IsRecreate]]></PRINTNAME>
-<!--1981-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1981-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1981--></AD_ELEMENT>
 
 <!--1988--><AD_ELEMENT>
 <!--1988-->  <AD_ELEMENT_ID><![CDATA[1988]]></AD_ELEMENT_ID>
@@ -11744,20 +11663,6 @@ The fact of using a given product type does not mean a different accounting. All
 <!--2136-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--2136--></AD_ELEMENT>
 
-<!--2153--><AD_ELEMENT>
-<!--2153-->  <AD_ELEMENT_ID><![CDATA[2153]]></AD_ELEMENT_ID>
-<!--2153-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2153-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2153-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2153-->  <COLUMNNAME><![CDATA[IsTest]]></COLUMNNAME>
-<!--2153-->  <NAME><![CDATA[Test]]></NAME>
-<!--2153-->  <PRINTNAME><![CDATA[Test]]></PRINTNAME>
-<!--2153-->  <DESCRIPTION><![CDATA[Execute in Test Mode]]></DESCRIPTION>
-<!--2153-->  <HELP><![CDATA[Execute in Test Mode]]></HELP>
-<!--2153-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2153-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--2153--></AD_ELEMENT>
-
 <!--2159--><AD_ELEMENT>
 <!--2159-->  <AD_ELEMENT_ID><![CDATA[2159]]></AD_ELEMENT_ID>
 <!--2159-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -11840,20 +11745,6 @@ The fact of using a given product type does not mean a different accounting. All
 <!--2181-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--2181--></AD_ELEMENT>
 
-<!--2182--><AD_ELEMENT>
-<!--2182-->  <AD_ELEMENT_ID><![CDATA[2182]]></AD_ELEMENT_ID>
-<!--2182-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2182-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2182-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2182-->  <COLUMNNAME><![CDATA[ConsolidateDocument]]></COLUMNNAME>
-<!--2182-->  <NAME><![CDATA[Consolidate to one Document]]></NAME>
-<!--2182-->  <PRINTNAME><![CDATA[Consolidate]]></PRINTNAME>
-<!--2182-->  <DESCRIPTION><![CDATA[Consolidate Lines into one Document]]></DESCRIPTION>
-<!--2182-->  <HELP><![CDATA[Consolidate Lines into one Document]]></HELP>
-<!--2182-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2182-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--2182--></AD_ELEMENT>
-
 <!--2183--><AD_ELEMENT>
 <!--2183-->  <AD_ELEMENT_ID><![CDATA[2183]]></AD_ELEMENT_ID>
 <!--2183-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -11867,18 +11758,6 @@ The fact of using a given product type does not mean a different accounting. All
 <!--2183-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2183-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--2183--></AD_ELEMENT>
-
-<!--2184--><AD_ELEMENT>
-<!--2184-->  <AD_ELEMENT_ID><![CDATA[2184]]></AD_ELEMENT_ID>
-<!--2184-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--2184-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--2184-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2184-->  <COLUMNNAME><![CDATA[DoPricing]]></COLUMNNAME>
-<!--2184-->  <NAME><![CDATA[Pricing]]></NAME>
-<!--2184-->  <PRINTNAME><![CDATA[Pricing]]></PRINTNAME>
-<!--2184-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--2184-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--2184--></AD_ELEMENT>
 
 <!--800000--><AD_ELEMENT>
 <!--800000-->  <AD_ELEMENT_ID><![CDATA[800000]]></AD_ELEMENT_ID>

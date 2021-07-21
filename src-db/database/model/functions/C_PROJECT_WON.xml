@@ -158,7 +158,7 @@
               PLANNEDPRICE, PLANNEDAMT, PLANNEDMARGINAMT, COMMITTEDAMT,
               M_PRODUCT_ID, M_PRODUCT_CATEGORY_ID, INVOICEDAMT, INVOICEDQTY,
               COMMITTEDQTY, C_PROJECTISSUE_ID, C_ORDER_ID, C_ORDERPO_ID,
-              ISPRINTED, PROCESSED, DOPRICING, PLANNEDPOPRICE,
+              ISPRINTED, PROCESSED, PLANNEDPOPRICE,
               PRODUCT_VALUE, C_TAX_ID, PRODUCT_NAME, PRODUCT_DESCRIPTION
             )
             VALUES
@@ -169,7 +169,7 @@
               Cur_ProjectProposalLine.Price, Cur_ProjectProposalLine.Qty*Cur_ProjectProposalLine.Price, 0, 0,
               Cur_ProjectProposalLine.M_Product_ID, Cur_ProjectProposalLine.M_Product_Category_ID, 0, 0,
               0, NULL, NULL, NULL,
-               'N', 'N', 'N', NULL,
+               'N', 'N', NULL,
               Cur_ProjectProposalLine.Product_Value, NULL, Cur_ProjectProposalLine.Product_Name, Cur_ProjectProposalLine.Product_Description
             )
             ;

@@ -335,29 +335,6 @@
 <!--114-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--114--></AD_PROCESS>
 
-<!--115--><AD_PROCESS>
-<!--115-->  <AD_PROCESS_ID><![CDATA[115]]></AD_PROCESS_ID>
-<!--115-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--115-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--115-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--115-->  <VALUE><![CDATA[M_Product_PO]]></VALUE>
-<!--115-->  <NAME><![CDATA[Vendor Selection]]></NAME>
-<!--115-->  <DESCRIPTION><![CDATA[Products with more than one vendor]]></DESCRIPTION>
-<!--115-->  <HELP><![CDATA[Vendor Selection is initiated when there is a product that is supplied by more than one vendor.  It allows the selection of a specific vendor for a Purchase Order.]]></HELP>
-<!--115-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--115-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--115-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--115-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--115-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--115-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--115-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--115-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--115-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--115-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--115-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--115-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--115--></AD_PROCESS>
-
 <!--116--><AD_PROCESS>
 <!--116-->  <AD_PROCESS_ID><![CDATA[116]]></AD_PROCESS_ID>
 <!--116-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -432,52 +409,6 @@ The Invoices generated are going to be created all of them against the selected 
 <!--119-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--119--></AD_PROCESS>
 
-<!--120--><AD_PROCESS>
-<!--120-->  <AD_PROCESS_ID><![CDATA[120]]></AD_PROCESS_ID>
-<!--120-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--120-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--120-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--120-->  <VALUE><![CDATA[RV_Order_Trx]]></VALUE>
-<!--120-->  <NAME><![CDATA[Order Transactions]]></NAME>
-<!--120-->  <DESCRIPTION><![CDATA[Sales Order Transaction Report]]></DESCRIPTION>
-<!--120-->  <HELP><![CDATA[Sales Order Transaction Report]]></HELP>
-<!--120-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--120-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--120-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--120-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--120-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--120-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--120-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--120-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--120-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--120-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--120-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--120-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--120--></AD_PROCESS>
-
-<!--121--><AD_PROCESS>
-<!--121-->  <AD_PROCESS_ID><![CDATA[121]]></AD_PROCESS_ID>
-<!--121-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--121-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--121-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--121-->  <VALUE><![CDATA[C_Order_Open]]></VALUE>
-<!--121-->  <NAME><![CDATA[Open Orders]]></NAME>
-<!--121-->  <DESCRIPTION><![CDATA[Open Orders]]></DESCRIPTION>
-<!--121-->  <HELP><![CDATA[Open Orders]]></HELP>
-<!--121-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--121-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--121-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--121-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--121-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--121-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--121-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--121-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--121-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--121-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--121-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--121-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--121--></AD_PROCESS>
-
 <!--122--><AD_PROCESS>
 <!--122-->  <AD_PROCESS_ID><![CDATA[122]]></AD_PROCESS_ID>
 <!--122-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -525,190 +456,6 @@ The Invoices generated are going to be created all of them against the selected 
 <!--123-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--123-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--123--></AD_PROCESS>
-
-<!--124--><AD_PROCESS>
-<!--124-->  <AD_PROCESS_ID><![CDATA[124]]></AD_PROCESS_ID>
-<!--124-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--124-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--124-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--124-->  <VALUE><![CDATA[M_Transaction_Sum]]></VALUE>
-<!--124-->  <NAME><![CDATA[Product Transaction Summary]]></NAME>
-<!--124-->  <DESCRIPTION><![CDATA[Product Transaction Summary]]></DESCRIPTION>
-<!--124-->  <HELP><![CDATA[The report shows transaction summary for stored products]]></HELP>
-<!--124-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--124-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--124-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--124-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--124-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--124-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--124-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--124-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--124-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--124-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--124-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--124-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--124--></AD_PROCESS>
-
-<!--127--><AD_PROCESS>
-<!--127-->  <AD_PROCESS_ID><![CDATA[127]]></AD_PROCESS_ID>
-<!--127-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--127-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--127-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--127-->  <VALUE><![CDATA[C_Invoice_Acct]]></VALUE>
-<!--127-->  <NAME><![CDATA[Invoice Transactions]]></NAME>
-<!--127-->  <DESCRIPTION><![CDATA[Invoice Transactions]]></DESCRIPTION>
-<!--127-->  <HELP><![CDATA[Invoice Transactions]]></HELP>
-<!--127-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--127-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--127-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--127-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--127-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--127-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--127-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--127-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--127-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--127-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--127-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--127-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--127--></AD_PROCESS>
-
-<!--128--><AD_PROCESS>
-<!--128-->  <AD_PROCESS_ID><![CDATA[128]]></AD_PROCESS_ID>
-<!--128-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--128-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--128-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--128-->  <VALUE><![CDATA[C_Invoice_Day]]></VALUE>
-<!--128-->  <NAME><![CDATA[Daily Invoice]]></NAME>
-<!--128-->  <DESCRIPTION><![CDATA[Daily Invoice]]></DESCRIPTION>
-<!--128-->  <HELP><![CDATA[Daily Invoice]]></HELP>
-<!--128-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--128-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--128-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--128-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--128-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--128-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--128-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--128-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--128-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--128-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--128-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--128-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--128--></AD_PROCESS>
-
-<!--129--><AD_PROCESS>
-<!--129-->  <AD_PROCESS_ID><![CDATA[129]]></AD_PROCESS_ID>
-<!--129-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--129-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--129-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--129-->  <VALUE><![CDATA[C_Invoice_Month]]></VALUE>
-<!--129-->  <NAME><![CDATA[Monthly Invoice]]></NAME>
-<!--129-->  <DESCRIPTION><![CDATA[Monthly Invoice]]></DESCRIPTION>
-<!--129-->  <HELP><![CDATA[Monthly Invoice]]></HELP>
-<!--129-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--129-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--129-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--129-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--129-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--129-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--129-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--129-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--129-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--129-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--129-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--129-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--129--></AD_PROCESS>
-
-<!--130--><AD_PROCESS>
-<!--130-->  <AD_PROCESS_ID><![CDATA[130]]></AD_PROCESS_ID>
-<!--130-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--130-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--130-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--130-->  <VALUE><![CDATA[C_Invoice_Week]]></VALUE>
-<!--130-->  <NAME><![CDATA[Weekly Invoice]]></NAME>
-<!--130-->  <DESCRIPTION><![CDATA[Weekly Invoice]]></DESCRIPTION>
-<!--130-->  <HELP><![CDATA[Weekly Invoice]]></HELP>
-<!--130-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--130-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--130-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--130-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--130-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--130-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--130-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--130-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--130-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--130-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--130-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--130-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--130--></AD_PROCESS>
-
-<!--131--><AD_PROCESS>
-<!--131-->  <AD_PROCESS_ID><![CDATA[131]]></AD_PROCESS_ID>
-<!--131-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--131-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--131-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--131-->  <VALUE><![CDATA[C_Invoice_ProdWeek]]></VALUE>
-<!--131-->  <NAME><![CDATA[Weekly Product Invoice]]></NAME>
-<!--131-->  <DESCRIPTION><![CDATA[Weekly Product Invoice]]></DESCRIPTION>
-<!--131-->  <HELP><![CDATA[Weekly Product Invoice]]></HELP>
-<!--131-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--131-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--131-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--131-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--131-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--131-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--131-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--131-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--131-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--131-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--131-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--131-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--131--></AD_PROCESS>
-
-<!--132--><AD_PROCESS>
-<!--132-->  <AD_PROCESS_ID><![CDATA[132]]></AD_PROCESS_ID>
-<!--132-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--132-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--132-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--132-->  <VALUE><![CDATA[C_Invoice_ProdMonth]]></VALUE>
-<!--132-->  <NAME><![CDATA[Monthly Product Invoice]]></NAME>
-<!--132-->  <DESCRIPTION><![CDATA[Monthly Product Invoice]]></DESCRIPTION>
-<!--132-->  <HELP><![CDATA[Monthly Product Invoice]]></HELP>
-<!--132-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--132-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--132-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--132-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--132-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--132-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--132-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--132-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--132-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--132-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--132-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--132-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--132--></AD_PROCESS>
-
-<!--133--><AD_PROCESS>
-<!--133-->  <AD_PROCESS_ID><![CDATA[133]]></AD_PROCESS_ID>
-<!--133-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--133-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--133-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--133-->  <VALUE><![CDATA[C_Invoice_VendorMonth]]></VALUE>
-<!--133-->  <NAME><![CDATA[Monthly Vendor Invoice Report]]></NAME>
-<!--133-->  <DESCRIPTION><![CDATA[Monthly Vendor Invoice Report]]></DESCRIPTION>
-<!--133-->  <HELP><![CDATA[Monthly Vendor Invoice Report]]></HELP>
-<!--133-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--133-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--133-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--133-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--133-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--133-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--133-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--133-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--133-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--133-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--133-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--133-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--133--></AD_PROCESS>
 
 <!--134--><AD_PROCESS>
 <!--134-->  <AD_PROCESS_ID><![CDATA[134]]></AD_PROCESS_ID>
@@ -782,52 +529,6 @@ The Invoices generated are going to be created all of them against the selected 
 <!--137-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--137-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--137--></AD_PROCESS>
-
-<!--138--><AD_PROCESS>
-<!--138-->  <AD_PROCESS_ID><![CDATA[138]]></AD_PROCESS_ID>
-<!--138-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--138-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--138-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--138-->  <VALUE><![CDATA[C_Invoice_CustomerProdQtr]]></VALUE>
-<!--138-->  <NAME><![CDATA[Quarterly Customer Invoice by Product]]></NAME>
-<!--138-->  <DESCRIPTION><![CDATA[Quarterly Customer Invoice by Product]]></DESCRIPTION>
-<!--138-->  <HELP><![CDATA[Quarterly Customer Invoice by Product]]></HELP>
-<!--138-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--138-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--138-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--138-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--138-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--138-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--138-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--138-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--138-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--138-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--138-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--138-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--138--></AD_PROCESS>
-
-<!--139--><AD_PROCESS>
-<!--139-->  <AD_PROCESS_ID><![CDATA[139]]></AD_PROCESS_ID>
-<!--139-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--139-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--139-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--139-->  <VALUE><![CDATA[C_Invoice_CustomerVendQtr]]></VALUE>
-<!--139-->  <NAME><![CDATA[Quarterly Customer Invoice by Vendor]]></NAME>
-<!--139-->  <DESCRIPTION><![CDATA[Quarterly Customer Invoice by Vendor]]></DESCRIPTION>
-<!--139-->  <HELP><![CDATA[Quarterly Customer Invoice by Vendor]]></HELP>
-<!--139-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--139-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--139-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--139-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--139-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--139-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--139-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--139-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--139-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--139-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--139-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--139-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--139--></AD_PROCESS>
 
 <!--140--><AD_PROCESS>
 <!--140-->  <AD_PROCESS_ID><![CDATA[140]]></AD_PROCESS_ID>
@@ -925,29 +626,6 @@ The Invoices generated are going to be created all of them against the selected 
 <!--147-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--147--></AD_PROCESS>
 
-<!--151--><AD_PROCESS>
-<!--151-->  <AD_PROCESS_ID><![CDATA[151]]></AD_PROCESS_ID>
-<!--151-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--151-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--151-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--151-->  <VALUE><![CDATA[C_Invoice_V2]]></VALUE>
-<!--151-->  <NAME><![CDATA[Invoice Summary]]></NAME>
-<!--151-->  <DESCRIPTION><![CDATA[Invoice Summary]]></DESCRIPTION>
-<!--151-->  <HELP><![CDATA[Invoice Summary]]></HELP>
-<!--151-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--151-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--151-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--151-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--151-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--151-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--151-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--151-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--151-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--151-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--151-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--151-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--151--></AD_PROCESS>
-
 <!--154--><AD_PROCESS>
 <!--154-->  <AD_PROCESS_ID><![CDATA[154]]></AD_PROCESS_ID>
 <!--154-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -972,99 +650,6 @@ The Invoices generated are going to be created all of them against the selected 
 <!--154-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--154-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--154--></AD_PROCESS>
-
-<!--155--><AD_PROCESS>
-<!--155-->  <AD_PROCESS_ID><![CDATA[155]]></AD_PROCESS_ID>
-<!--155-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--155-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--155-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--155-->  <VALUE><![CDATA[C_PaySelection_Post]]></VALUE>
-<!--155-->  <NAME><![CDATA[Create Payment]]></NAME>
-<!--155-->  <DESCRIPTION><![CDATA[Create Payment]]></DESCRIPTION>
-<!--155-->  <HELP><![CDATA[Create Payment]]></HELP>
-<!--155-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--155-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--155-->  <PROCEDURENAME><![CDATA[C_PaySelection_Post]]></PROCEDURENAME>
-<!--155-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--155-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--155-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--155-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--155-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--155-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--155-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--155-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--155-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--155-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--155--></AD_PROCESS>
-
-<!--159--><AD_PROCESS>
-<!--159-->  <AD_PROCESS_ID><![CDATA[159]]></AD_PROCESS_ID>
-<!--159-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--159-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--159-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--159-->  <VALUE><![CDATA[X_DunningLetter]]></VALUE>
-<!--159-->  <NAME><![CDATA[Dunning Letter]]></NAME>
-<!--159-->  <DESCRIPTION><![CDATA[Dunning Letter]]></DESCRIPTION>
-<!--159-->  <HELP><![CDATA[Dunning Letter]]></HELP>
-<!--159-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--159-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--159-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--159-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--159-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--159-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--159-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--159-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--159-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--159-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--159-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--159-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--159--></AD_PROCESS>
-
-<!--160--><AD_PROCESS>
-<!--160-->  <AD_PROCESS_ID><![CDATA[160]]></AD_PROCESS_ID>
-<!--160-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--160-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--160-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--160-->  <VALUE><![CDATA[X_TIRE_Report]]></VALUE>
-<!--160-->  <NAME><![CDATA[Tire Letter]]></NAME>
-<!--160-->  <DESCRIPTION><![CDATA[Tire Letter]]></DESCRIPTION>
-<!--160-->  <HELP><![CDATA[Tire Letter]]></HELP>
-<!--160-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--160-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--160-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--160-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--160-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--160-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--160-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--160-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--160-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--160-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--160-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--160-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--160--></AD_PROCESS>
-
-<!--161--><AD_PROCESS>
-<!--161-->  <AD_PROCESS_ID><![CDATA[161]]></AD_PROCESS_ID>
-<!--161-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--161-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--161-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--161-->  <VALUE><![CDATA[M_Transaction_V]]></VALUE>
-<!--161-->  <NAME><![CDATA[Product Transaction Value]]></NAME>
-<!--161-->  <DESCRIPTION><![CDATA[Product Transaction Value]]></DESCRIPTION>
-<!--161-->  <HELP><![CDATA[The report shows product transactions with valuation]]></HELP>
-<!--161-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--161-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--161-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--161-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--161-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--161-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--161-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--161-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--161-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--161-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--161-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--161-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--161--></AD_PROCESS>
 
 <!--162--><AD_PROCESS>
 <!--162-->  <AD_PROCESS_ID><![CDATA[162]]></AD_PROCESS_ID>
@@ -1332,30 +917,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--179-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--179--></AD_PROCESS>
 
-<!--180--><AD_PROCESS>
-<!--180-->  <AD_PROCESS_ID><![CDATA[180]]></AD_PROCESS_ID>
-<!--180-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--180-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--180-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--180-->  <VALUE><![CDATA[RV_T_InventoryValue]]></VALUE>
-<!--180-->  <NAME><![CDATA[Inventory Valuation Report]]></NAME>
-<!--180-->  <DESCRIPTION><![CDATA[Inventory Valuation Report]]></DESCRIPTION>
-<!--180-->  <HELP><![CDATA[Report lists products with their on-hand quantity and values at the valuation date]]></HELP>
-<!--180-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--180-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--180-->  <PROCEDURENAME><![CDATA[T_InventoryValue_Create]]></PROCEDURENAME>
-<!--180-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--180-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--180-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--180-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--180-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--180-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--180-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--180-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--180-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--180-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--180--></AD_PROCESS>
-
 <!--184--><AD_PROCESS>
 <!--184-->  <AD_PROCESS_ID><![CDATA[184]]></AD_PROCESS_ID>
 <!--184-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1478,78 +1039,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--188-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--188--></AD_PROCESS>
 
-<!--189--><AD_PROCESS>
-<!--189-->  <AD_PROCESS_ID><![CDATA[189]]></AD_PROCESS_ID>
-<!--189-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--189-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--189-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--189-->  <VALUE><![CDATA[PA_ReportColumnSet_Copy]]></VALUE>
-<!--189-->  <NAME><![CDATA[Copy Columns]]></NAME>
-<!--189-->  <DESCRIPTION><![CDATA[Copy Report Columns from other Column Set]]></DESCRIPTION>
-<!--189-->  <HELP><![CDATA[Copy columns at the end of this Column Set]]></HELP>
-<!--189-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--189-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--189-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--189-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--189-->  <CLASSNAME><![CDATA[org.openbravo.process.ReportColumnSet_Copy]]></CLASSNAME>
-<!--189-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--189-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--189-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--189-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--189-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--189-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--189-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--189-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--189--></AD_PROCESS>
-
-<!--190--><AD_PROCESS>
-<!--190-->  <AD_PROCESS_ID><![CDATA[190]]></AD_PROCESS_ID>
-<!--190-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--190-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--190-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--190-->  <VALUE><![CDATA[PA_ReportLineSet_Copy]]></VALUE>
-<!--190-->  <NAME><![CDATA[Copy Lines]]></NAME>
-<!--190-->  <DESCRIPTION><![CDATA[Copy Report Lines from other Line Set]]></DESCRIPTION>
-<!--190-->  <HELP><![CDATA[Copy lines at the end of this Line Set]]></HELP>
-<!--190-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--190-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--190-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--190-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--190-->  <CLASSNAME><![CDATA[org.openbravo.process.ReportLineSet_Copy]]></CLASSNAME>
-<!--190-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--190-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--190-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--190-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--190-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--190-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--190-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--190-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--190--></AD_PROCESS>
-
-<!--192--><AD_PROCESS>
-<!--192-->  <AD_PROCESS_ID><![CDATA[192]]></AD_PROCESS_ID>
-<!--192-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--192-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--192-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--192-->  <VALUE><![CDATA[AD_PrintFormat_Copy]]></VALUE>
-<!--192-->  <NAME><![CDATA[Copy/Create]]></NAME>
-<!--192-->  <DESCRIPTION><![CDATA[Copy existing OR create Print Format from Table]]></DESCRIPTION>
-<!--192-->  <HELP><![CDATA[Select either a table to create a print format [creates initial rough layout]|OR a print format to copy into the current print format [copies layout].]]></HELP>
-<!--192-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--192-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--192-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--192-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--192-->  <CLASSNAME><![CDATA[org.openbravo.print.MPrintFormatProcess]]></CLASSNAME>
-<!--192-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--192-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--192-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--192-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--192-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--192-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--192-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--192-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--192--></AD_PROCESS>
-
 <!--193--><AD_PROCESS>
 <!--193-->  <AD_PROCESS_ID><![CDATA[193]]></AD_PROCESS_ID>
 <!--193-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1574,30 +1063,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--193-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--193--></AD_PROCESS>
 
-<!--198--><AD_PROCESS>
-<!--198-->  <AD_PROCESS_ID><![CDATA[198]]></AD_PROCESS_ID>
-<!--198-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--198-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--198-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--198-->  <VALUE><![CDATA[Import_ReportLine]]></VALUE>
-<!--198-->  <NAME><![CDATA[Import Report Line Set]]></NAME>
-<!--198-->  <DESCRIPTION><![CDATA[Import Report Line Set information]]></DESCRIPTION>
-<!--198-->  <HELP><![CDATA[The Parameters are default values for null import record values, they do not overwrite any data.]]></HELP>
-<!--198-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--198-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--198-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--198-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--198-->  <CLASSNAME><![CDATA[org.openbravo.process.ImportReportLine]]></CLASSNAME>
-<!--198-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--198-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--198-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--198-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--198-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--198-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--198-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--198-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--198--></AD_PROCESS>
-
 <!--199--><AD_PROCESS>
 <!--199-->  <AD_PROCESS_ID><![CDATA[199]]></AD_PROCESS_ID>
 <!--199-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1621,126 +1086,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--199-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--199-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--199--></AD_PROCESS>
-
-<!--202--><AD_PROCESS>
-<!--202-->  <AD_PROCESS_ID><![CDATA[202]]></AD_PROCESS_ID>
-<!--202-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--202-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--202-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--202-->  <VALUE><![CDATA[FinReport]]></VALUE>
-<!--202-->  <NAME><![CDATA[Create Report]]></NAME>
-<!--202-->  <DESCRIPTION><![CDATA[Create Financial Report]]></DESCRIPTION>
-<!--202-->  <HELP><![CDATA[The default period is the current period. You can optionally enter other restrictions.]]></HELP>
-<!--202-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--202-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--202-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--202-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--202-->  <CLASSNAME><![CDATA[org.openbravo.report.FinReport]]></CLASSNAME>
-<!--202-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--202-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--202-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--202-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--202-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--202-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--202-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--202-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--202--></AD_PROCESS>
-
-<!--203--><AD_PROCESS>
-<!--203-->  <AD_PROCESS_ID><![CDATA[203]]></AD_PROCESS_ID>
-<!--203-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--203-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--203-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--203-->  <VALUE><![CDATA[Balance_Update]]></VALUE>
-<!--203-->  <NAME><![CDATA[Update Accounting Balance]]></NAME>
-<!--203-->  <DESCRIPTION><![CDATA[Update Daily Accounting Balances]]></DESCRIPTION>
-<!--203-->  <HELP><![CDATA[This process is run automatically]]></HELP>
-<!--203-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--203-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--203-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--203-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--203-->  <CLASSNAME><![CDATA[org.openbravo.report.FinBalance]]></CLASSNAME>
-<!--203-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--203-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--203-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--203-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--203-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--203-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--203-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--203-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--203--></AD_PROCESS>
-
-<!--204--><AD_PROCESS>
-<!--204-->  <AD_PROCESS_ID><![CDATA[204]]></AD_PROCESS_ID>
-<!--204-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--204-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--204-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--204-->  <VALUE><![CDATA[FinStatement]]></VALUE>
-<!--204-->  <NAME><![CDATA[Statement of Accounts]]></NAME>
-<!--204-->  <DESCRIPTION><![CDATA[Report Account Statement Beginning Balance and Transactions]]></DESCRIPTION>
-<!--204-->  <HELP><![CDATA[Select a Period (current period if empty) or enter a Account Date Range]]></HELP>
-<!--204-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--204-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--204-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--204-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--204-->  <CLASSNAME><![CDATA[org.openbravo.report.FinStatement]]></CLASSNAME>
-<!--204-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--204-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--204-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--204-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--204-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--204-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--204-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--204-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--204--></AD_PROCESS>
-
-<!--205--><AD_PROCESS>
-<!--205-->  <AD_PROCESS_ID><![CDATA[205]]></AD_PROCESS_ID>
-<!--205-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--205-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--205-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--205-->  <VALUE><![CDATA[Cache Reset]]></VALUE>
-<!--205-->  <NAME><![CDATA[Cache Reset]]></NAME>
-<!--205-->  <DESCRIPTION><![CDATA[Reset Cache of the System ** Close all Windows before proceeding **]]></DESCRIPTION>
-<!--205-->  <HELP><![CDATA[To increase performance, Openbravo caches repeatedly used data. This process clears the local cache.]]></HELP>
-<!--205-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--205-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--205-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--205-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--205-->  <CLASSNAME><![CDATA[org.openbravo.process.CacheReset]]></CLASSNAME>
-<!--205-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--205-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--205-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--205-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--205-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--205-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--205-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--205-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--205--></AD_PROCESS>
-
-<!--208--><AD_PROCESS>
-<!--208-->  <AD_PROCESS_ID><![CDATA[208]]></AD_PROCESS_ID>
-<!--208-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--208-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--208-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--208-->  <VALUE><![CDATA[AD_Replication Run]]></VALUE>
-<!--208-->  <NAME><![CDATA[Start Replication Run]]></NAME>
-<!--208-->  <DESCRIPTION><![CDATA[Start Replication with Remote Host]]></DESCRIPTION>
-<!--208-->  <HELP><![CDATA[Start Replication with Remote Host]]></HELP>
-<!--208-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
-<!--208-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--208-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--208-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--208-->  <CLASSNAME><![CDATA[org.openbravo.process.ReplicationLocal]]></CLASSNAME>
-<!--208-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--208-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--208-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--208-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--208-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--208-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--208-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--208-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--208--></AD_PROCESS>
 
 <!--210--><AD_PROCESS>
 <!--210-->  <AD_PROCESS_ID><![CDATA[210]]></AD_PROCESS_ID>
@@ -1816,30 +1161,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--212-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--212--></AD_PROCESS>
 
-<!--213--><AD_PROCESS>
-<!--213-->  <AD_PROCESS_ID><![CDATA[213]]></AD_PROCESS_ID>
-<!--213-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--213-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--213-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--213-->  <VALUE><![CDATA[C_Recurring Run]]></VALUE>
-<!--213-->  <NAME><![CDATA[Start Process]]></NAME>
-<!--213-->  <DESCRIPTION><![CDATA[Start Recurring Run]]></DESCRIPTION>
-<!--213-->  <HELP><![CDATA[Start Recurring Run]]></HELP>
-<!--213-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--213-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--213-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--213-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--213-->  <CLASSNAME><![CDATA[org.openbravo.process.Recurring]]></CLASSNAME>
-<!--213-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--213-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--213-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--213-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--213-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--213-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--213-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--213-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--213--></AD_PROCESS>
-
 <!--214--><AD_PROCESS>
 <!--214-->  <AD_PROCESS_ID><![CDATA[214]]></AD_PROCESS_ID>
 <!--214-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -1913,193 +1234,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--216-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--216--></AD_PROCESS>
 
-<!--217--><AD_PROCESS>
-<!--217-->  <AD_PROCESS_ID><![CDATA[217]]></AD_PROCESS_ID>
-<!--217-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--217-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--217-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--217-->  <VALUE><![CDATA[Rpt C_Project]]></VALUE>
-<!--217-->  <NAME><![CDATA[Project Print]]></NAME>
-<!--217-->  <DESCRIPTION><![CDATA[** Special **]]></DESCRIPTION>
-<!--217-->  <HELP><![CDATA[** Special **]]></HELP>
-<!--217-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--217-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--217-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--217-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--217-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--217-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--217-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--217-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--217-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--217-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--217-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--217-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--217--></AD_PROCESS>
-
-<!--218--><AD_PROCESS>
-<!--218-->  <AD_PROCESS_ID><![CDATA[218]]></AD_PROCESS_ID>
-<!--218-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--218-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--218-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--218-->  <VALUE><![CDATA[RV_ProjectCycle]]></VALUE>
-<!--218-->  <NAME><![CDATA[Project Cycle Report]]></NAME>
-<!--218-->  <DESCRIPTION><![CDATA[Report Projects based on Project Cycle]]></DESCRIPTION>
-<!--218-->  <HELP><![CDATA[The Project Cycle reports on common project phases of a Cycle Step/Phase. All Report information is weighted by the relative weight of the Cycle Step and converted to the currency of the Project Cycle (e.g. for Sales Funnel Reporting).<p>|The Projects mus]]></HELP>
-<!--218-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--218-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--218-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--218-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--218-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--218-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--218-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--218-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--218-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--218-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--218-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--218-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--218--></AD_PROCESS>
-
-<!--221--><AD_PROCESS>
-<!--221-->  <AD_PROCESS_ID><![CDATA[221]]></AD_PROCESS_ID>
-<!--221-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--221-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--221-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--221-->  <VALUE><![CDATA[Import_BankStatement]]></VALUE>
-<!--221-->  <NAME><![CDATA[Import Bank Statement]]></NAME>
-<!--221-->  <DESCRIPTION><![CDATA[Import Bank Statement]]></DESCRIPTION>
-<!--221-->  <HELP><![CDATA[The Parameters are default values for null import record values, they do not overwrite any data.]]></HELP>
-<!--221-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--221-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--221-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--221-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--221-->  <CLASSNAME><![CDATA[org.openbravo.process.ImportBankStatement]]></CLASSNAME>
-<!--221-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--221-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--221-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--221-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--221-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--221-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--221-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--221-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--221--></AD_PROCESS>
-
-<!--222--><AD_PROCESS>
-<!--222-->  <AD_PROCESS_ID><![CDATA[222]]></AD_PROCESS_ID>
-<!--222-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--222-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--222-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--222-->  <VALUE><![CDATA[RV_Asset_Customer]]></VALUE>
-<!--222-->  <NAME><![CDATA[Customer Assets]]></NAME>
-<!--222-->  <DESCRIPTION><![CDATA[Report Customer Assets with Delivery Count]]></DESCRIPTION>
-<!--222-->  <HELP><![CDATA[Report Customer Assets with Delivery Count]]></HELP>
-<!--222-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--222-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--222-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--222-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--222-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--222-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--222-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--222-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--222-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--222-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--222-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--222-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--222--></AD_PROCESS>
-
-<!--223--><AD_PROCESS>
-<!--223-->  <AD_PROCESS_ID><![CDATA[223]]></AD_PROCESS_ID>
-<!--223-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--223-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--223-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--223-->  <VALUE><![CDATA[RV_Asset_Delivery]]></VALUE>
-<!--223-->  <NAME><![CDATA[Asset Delivery]]></NAME>
-<!--223-->  <DESCRIPTION><![CDATA[Report Asset Deliveries]]></DESCRIPTION>
-<!--223-->  <HELP><![CDATA[Report Asset Deliveries]]></HELP>
-<!--223-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--223-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--223-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--223-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--223-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--223-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--223-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--223-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--223-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--223-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--223-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--223-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--223--></AD_PROCESS>
-
-<!--224--><AD_PROCESS>
-<!--224-->  <AD_PROCESS_ID><![CDATA[224]]></AD_PROCESS_ID>
-<!--224-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--224-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--224-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--224-->  <VALUE><![CDATA[C_Project_Issue]]></VALUE>
-<!--224-->  <NAME><![CDATA[Issue to Project]]></NAME>
-<!--224-->  <DESCRIPTION><![CDATA[Issue Material to Project from Receipt or manual Inventory Location]]></DESCRIPTION>
-<!--224-->  <HELP><![CDATA[Select a Project and either|<BR>- Material Receipt|<BR>- Expense Report|<br<- Inventory Location and Project Line not issued yet|<BR>- Inventory Location, Product and Quantity|The default Movement Date is today's date.]]></HELP>
-<!--224-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--224-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--224-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--224-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--224-->  <CLASSNAME><![CDATA[org.openbravo.process.ProjectIssue]]></CLASSNAME>
-<!--224-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--224-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--224-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--224-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--224-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--224-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--224-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--224-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--224--></AD_PROCESS>
-
-<!--225--><AD_PROCESS>
-<!--225-->  <AD_PROCESS_ID><![CDATA[225]]></AD_PROCESS_ID>
-<!--225-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--225-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--225-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--225-->  <VALUE><![CDATA[C_Project_GeneratePO]]></VALUE>
-<!--225-->  <NAME><![CDATA[Generate PO from Project]]></NAME>
-<!--225-->  <DESCRIPTION><![CDATA[Generate PO from Project Line(s)]]></DESCRIPTION>
-<!--225-->  <HELP><![CDATA[|]]></HELP>
-<!--225-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--225-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--225-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--225-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--225-->  <CLASSNAME><![CDATA[org.openbravo.process.ProjectGenPO]]></CLASSNAME>
-<!--225-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--225-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--225-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--225-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--225-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--225-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--225-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--225-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--225--></AD_PROCESS>
-
-<!--226--><AD_PROCESS>
-<!--226-->  <AD_PROCESS_ID><![CDATA[226]]></AD_PROCESS_ID>
-<!--226-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--226-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--226-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--226-->  <VALUE><![CDATA[RV_Project Accounting]]></VALUE>
-<!--226-->  <NAME><![CDATA[Project Detail Accounting Report]]></NAME>
-<!--226-->  <DESCRIPTION><![CDATA[Project Detail Accounting Report]]></DESCRIPTION>
-<!--226-->  <HELP><![CDATA[Project Detail Accounting Report]]></HELP>
-<!--226-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--226-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--226-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--226-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--226-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--226-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--226-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--226-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--226-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--226-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--226-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--226-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--226--></AD_PROCESS>
-
 <!--227--><AD_PROCESS>
 <!--227-->  <AD_PROCESS_ID><![CDATA[227]]></AD_PROCESS_ID>
 <!--227-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2123,76 +1257,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--227-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--227-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--227--></AD_PROCESS>
-
-<!--228--><AD_PROCESS>
-<!--228-->  <AD_PROCESS_ID><![CDATA[228]]></AD_PROCESS_ID>
-<!--228-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--228-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--228-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--228-->  <VALUE><![CDATA[RV_ProjectLine Not Issued]]></VALUE>
-<!--228-->  <NAME><![CDATA[Project Lines not Issued]]></NAME>
-<!--228-->  <DESCRIPTION><![CDATA[Lists Project Lines of a Work Order or Asset Project, which are not issued to the Project]]></DESCRIPTION>
-<!--228-->  <HELP><![CDATA[Lists Project Lines of a Work Order or Asset Project, which are not issued to the Project]]></HELP>
-<!--228-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--228-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--228-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--228-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--228-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--228-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--228-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--228-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--228-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--228-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--228-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--228-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--228--></AD_PROCESS>
-
-<!--229--><AD_PROCESS>
-<!--229-->  <AD_PROCESS_ID><![CDATA[229]]></AD_PROCESS_ID>
-<!--229-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--229-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--229-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--229-->  <VALUE><![CDATA[RV_ProjectLine Not Received POs]]></VALUE>
-<!--229-->  <NAME><![CDATA[Project POs not Issued]]></NAME>
-<!--229-->  <DESCRIPTION><![CDATA[Lists Project Lines with generated Purchase Orders of a Work Order or Asset Project, which are not issued to the Project]]></DESCRIPTION>
-<!--229-->  <HELP><![CDATA[Lists Project Lines with generated Purchase Orders of a Work Order or Asset Project, which are not issued to the Project]]></HELP>
-<!--229-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--229-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--229-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--229-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--229-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--229-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--229-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--229-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--229-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--229-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--229-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--229-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--229--></AD_PROCESS>
-
-<!--230--><AD_PROCESS>
-<!--230-->  <AD_PROCESS_ID><![CDATA[230]]></AD_PROCESS_ID>
-<!--230-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--230-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--230-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--230-->  <VALUE><![CDATA[C_ProjectLine Pricing]]></VALUE>
-<!--230-->  <NAME><![CDATA[Get Price]]></NAME>
-<!--230-->  <DESCRIPTION><![CDATA[Get Price for Project Line based on Project Price List]]></DESCRIPTION>
-<!--230-->  <HELP><![CDATA[Get Price for Project Line based on Project Price List]]></HELP>
-<!--230-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--230-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--230-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--230-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--230-->  <CLASSNAME><![CDATA[org.openbravo.process.ProjectLinePricing]]></CLASSNAME>
-<!--230-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--230-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--230-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--230-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--230-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--230-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--230-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--230-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--230--></AD_PROCESS>
 
 <!--800000--><AD_PROCESS>
 <!--800000-->  <AD_PROCESS_ID><![CDATA[800000]]></AD_PROCESS_ID>
@@ -2872,29 +1936,6 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800069-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800069--></AD_PROCESS>
 
-<!--800073--><AD_PROCESS>
-<!--800073-->  <AD_PROCESS_ID><![CDATA[800073]]></AD_PROCESS_ID>
-<!--800073-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800073-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800073-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800073-->  <VALUE><![CDATA[ReportPricelistSalesrep]]></VALUE>
-<!--800073-->  <NAME><![CDATA[Sales Rep Pricelist]]></NAME>
-<!--800073-->  <DESCRIPTION><![CDATA[Sales Rep Pricelist]]></DESCRIPTION>
-<!--800073-->  <HELP><![CDATA[Sales Rep Pricelist]]></HELP>
-<!--800073-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800073-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800073-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--800073-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800073-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800073-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800073-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800073-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800073-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800073-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800073-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800073-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800073--></AD_PROCESS>
-
 <!--800075--><AD_PROCESS>
 <!--800075-->  <AD_PROCESS_ID><![CDATA[800075]]></AD_PROCESS_ID>
 <!--800075-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -2992,30 +2033,6 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800079-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--800079-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800079--></AD_PROCESS>
-
-<!--800081--><AD_PROCESS>
-<!--800081-->  <AD_PROCESS_ID><![CDATA[800081]]></AD_PROCESS_ID>
-<!--800081-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800081-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800081-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800081-->  <VALUE><![CDATA[RV_ReportPlanTreasure]]></VALUE>
-<!--800081-->  <NAME><![CDATA[Cashflow Forecast]]></NAME>
-<!--800081-->  <DESCRIPTION><![CDATA[Cashflow Forecast]]></DESCRIPTION>
-<!--800081-->  <HELP><![CDATA[Cashflow Forecast]]></HELP>
-<!--800081-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800081-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800081-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--800081-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800081-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800081-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800081-->  <ISEXTERNALSERVICE><![CDATA[N]]></ISEXTERNALSERVICE>
-<!--800081-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800081-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800081-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800081-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800081-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800081-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800081--></AD_PROCESS>
 
 <!--800082--><AD_PROCESS>
 <!--800082-->  <AD_PROCESS_ID><![CDATA[800082]]></AD_PROCESS_ID>
@@ -3139,29 +2156,6 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800091-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800091--></AD_PROCESS>
 
-<!--800092--><AD_PROCESS>
-<!--800092-->  <AD_PROCESS_ID><![CDATA[800092]]></AD_PROCESS_ID>
-<!--800092-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800092-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800092-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800092-->  <VALUE><![CDATA[RV_ReportProposalQuery]]></VALUE>
-<!--800092-->  <NAME><![CDATA[Proposal Report]]></NAME>
-<!--800092-->  <DESCRIPTION><![CDATA[Report proposal query]]></DESCRIPTION>
-<!--800092-->  <HELP><![CDATA[Report proposal query]]></HELP>
-<!--800092-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800092-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800092-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--800092-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800092-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800092-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800092-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800092-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800092-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800092-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800092-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800092-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800092--></AD_PROCESS>
-
 <!--800094--><AD_PROCESS>
 <!--800094-->  <AD_PROCESS_ID><![CDATA[800094]]></AD_PROCESS_ID>
 <!--800094-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -3233,53 +2227,6 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800099-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--800099-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800099--></AD_PROCESS>
-
-<!--800100--><AD_PROCESS>
-<!--800100-->  <AD_PROCESS_ID><![CDATA[800100]]></AD_PROCESS_ID>
-<!--800100-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800100-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800100-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800100-->  <VALUE><![CDATA[ContractBpartner]]></VALUE>
-<!--800100-->  <NAME><![CDATA[Business Partner Contract]]></NAME>
-<!--800100-->  <DESCRIPTION><![CDATA[Creates business partner contract]]></DESCRIPTION>
-<!--800100-->  <HELP><![CDATA[Creates a PDF report containing the business partner name, address,... And the price list for the customer.]]></HELP>
-<!--800100-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800100-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800100-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800100-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800100-->  <CLASSNAME><![CDATA[ad_process/ContractBpartner.html]]></CLASSNAME>
-<!--800100-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800100-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800100-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800100-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800100-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800100-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800100-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800100-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800100--></AD_PROCESS>
-
-<!--800102--><AD_PROCESS>
-<!--800102-->  <AD_PROCESS_ID><![CDATA[800102]]></AD_PROCESS_ID>
-<!--800102-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800102-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800102-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800102-->  <VALUE><![CDATA[RV_ReportInvoiceDiscount]]></VALUE>
-<!--800102-->  <NAME><![CDATA[Applied Discounts in Invoices]]></NAME>
-<!--800102-->  <DESCRIPTION><![CDATA[Applied Discounts in Invoices]]></DESCRIPTION>
-<!--800102-->  <HELP><![CDATA[Applied Discounts in Invoices]]></HELP>
-<!--800102-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800102-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800102-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--800102-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800102-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800102-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800102-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800102-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800102-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800102-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800102-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800102-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800102--></AD_PROCESS>
 
 <!--800103--><AD_PROCESS>
 <!--800103-->  <AD_PROCESS_ID><![CDATA[800103]]></AD_PROCESS_ID>
@@ -3501,52 +2448,6 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800120-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--800120-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800120--></AD_PROCESS>
-
-<!--800123--><AD_PROCESS>
-<!--800123-->  <AD_PROCESS_ID><![CDATA[800123]]></AD_PROCESS_ID>
-<!--800123-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800123-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800123-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800123-->  <VALUE><![CDATA[RV_ReportGlitem]]></VALUE>
-<!--800123-->  <NAME><![CDATA[G/L Items Report]]></NAME>
-<!--800123-->  <DESCRIPTION><![CDATA[G/L Items Report]]></DESCRIPTION>
-<!--800123-->  <HELP><![CDATA[G/L Items Report]]></HELP>
-<!--800123-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800123-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800123-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--800123-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800123-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800123-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800123-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800123-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800123-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800123-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800123-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800123-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800123--></AD_PROCESS>
-
-<!--800124--><AD_PROCESS>
-<!--800124-->  <AD_PROCESS_ID><![CDATA[800124]]></AD_PROCESS_ID>
-<!--800124-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800124-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800124-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800124-->  <VALUE><![CDATA[RV_ReportCompanyGeneralSight]]></VALUE>
-<!--800124-->  <NAME><![CDATA[Performance Scorecard]]></NAME>
-<!--800124-->  <DESCRIPTION><![CDATA[Performance Scorecard]]></DESCRIPTION>
-<!--800124-->  <HELP><![CDATA[Performance Scorecard]]></HELP>
-<!--800124-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800124-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800124-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800124-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800124-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800124-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800124-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800124-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800124-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800124-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800124-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800124-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800124--></AD_PROCESS>
 
 <!--800125--><AD_PROCESS>
 <!--800125-->  <AD_PROCESS_ID><![CDATA[800125]]></AD_PROCESS_ID>
@@ -3981,29 +2882,6 @@ Depending on the configuration of the Cost Center the process will also calculat
 <!--800144-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800144--></AD_PROCESS>
 
-<!--800145--><AD_PROCESS>
-<!--800145-->  <AD_PROCESS_ID><![CDATA[800145]]></AD_PROCESS_ID>
-<!--800145-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800145-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800145-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800145-->  <VALUE><![CDATA[Rpt C_Settlement]]></VALUE>
-<!--800145-->  <NAME><![CDATA[Remittance printed]]></NAME>
-<!--800145-->  <DESCRIPTION><![CDATA[Remittance printed]]></DESCRIPTION>
-<!--800145-->  <HELP><![CDATA[Remittance printed]]></HELP>
-<!--800145-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800145-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800145-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800145-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800145-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800145-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800145-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800145-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800145-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800145-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800145-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800145-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800145--></AD_PROCESS>
-
 <!--800146--><AD_PROCESS>
 <!--800146-->  <AD_PROCESS_ID><![CDATA[800146]]></AD_PROCESS_ID>
 <!--800146-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -4149,29 +3027,6 @@ This operation can take a long time to complete.]]></HELP>
 <!--800155-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--800155-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800155--></AD_PROCESS>
-
-<!--800156--><AD_PROCESS>
-<!--800156-->  <AD_PROCESS_ID><![CDATA[800156]]></AD_PROCESS_ID>
-<!--800156-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800156-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800156-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800156-->  <VALUE><![CDATA[RptM_Product]]></VALUE>
-<!--800156-->  <NAME><![CDATA[Rpt M_Product]]></NAME>
-<!--800156-->  <DESCRIPTION><![CDATA[**Special**]]></DESCRIPTION>
-<!--800156-->  <HELP><![CDATA[**Special**]]></HELP>
-<!--800156-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800156-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800156-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--800156-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800156-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800156-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800156-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800156-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800156-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800156-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800156-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800156-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800156--></AD_PROCESS>
 
 <!--800159--><AD_PROCESS>
 <!--800159-->  <AD_PROCESS_ID><![CDATA[800159]]></AD_PROCESS_ID>
@@ -4727,29 +3582,6 @@ This operation can take a long time to complete.]]></HELP>
 <!--800185-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--800185-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800185--></AD_PROCESS>
-
-<!--800187--><AD_PROCESS>
-<!--800187-->  <AD_PROCESS_ID><![CDATA[800187]]></AD_PROCESS_ID>
-<!--800187-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800187-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800187-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800187-->  <VALUE><![CDATA[ReportShipmentEditionJR]]></VALUE>
-<!--800187-->  <NAME><![CDATA[ReportShipmentEdition]]></NAME>
-<!--800187-->  <DESCRIPTION><![CDATA[ReportShipmentEdition]]></DESCRIPTION>
-<!--800187-->  <HELP><![CDATA[ReportShipmentEditionJR]]></HELP>
-<!--800187-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800187-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800187-->  <ISREPORT><![CDATA[Y]]></ISREPORT>
-<!--800187-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800187-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800187-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800187-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800187-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800187-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800187-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800187-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800187-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800187--></AD_PROCESS>
 
 <!--800188--><AD_PROCESS>
 <!--800188-->  <AD_PROCESS_ID><![CDATA[800188]]></AD_PROCESS_ID>
@@ -5386,28 +4218,6 @@ Once the Purchase Order is created, it is marked as Completed and its Document N
 <!--1005400001-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
 <!--1005400001-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--1005400001--></AD_PROCESS>
-
-<!--1005400002--><AD_PROCESS>
-<!--1005400002-->  <AD_PROCESS_ID><![CDATA[1005400002]]></AD_PROCESS_ID>
-<!--1005400002-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1005400002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1005400002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1005400002-->  <VALUE><![CDATA[Register]]></VALUE>
-<!--1005400002-->  <NAME><![CDATA[Update Registration]]></NAME>
-<!--1005400002-->  <DESCRIPTION><![CDATA[Register with Openbravo]]></DESCRIPTION>
-<!--1005400002-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--1005400002-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--1005400002-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--1005400002-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--1005400002-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--1005400002-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--1005400002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1005400002-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--1005400002-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--1005400002-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--1005400002-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--1005400002-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--1005400002--></AD_PROCESS>
 
 <!--1005500000--><AD_PROCESS>
 <!--1005500000-->  <AD_PROCESS_ID><![CDATA[1005500000]]></AD_PROCESS_ID>
