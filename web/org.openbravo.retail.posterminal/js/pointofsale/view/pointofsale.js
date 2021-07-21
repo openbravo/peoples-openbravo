@@ -1310,7 +1310,11 @@ enyo.kind({
         target: inEvent.target
       },
       function() {
-        if (inEvent.target === 'order' || inEvent.target === undefined) {
+        if (
+          inEvent.target === 'order' ||
+          inEvent.target === 'filterSelectorButton_receiptProperties' ||
+          inEvent.target === undefined
+        ) {
           if (
             component.model.get('order').get('isEditable') === false &&
             (isBPChange || isInvoicingChange || isShippingChange)
