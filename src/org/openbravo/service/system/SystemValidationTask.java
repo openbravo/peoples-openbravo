@@ -25,7 +25,6 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.ddlutils.Platform;
 import org.apache.ddlutils.PlatformFactory;
 import org.apache.ddlutils.model.Database;
-import org.apache.ddlutils.platform.ExcludeFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -34,8 +33,6 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.ddlutils.util.DBSMOBUtil;
-import org.openbravo.ddlutils.util.ModuleRow;
 import org.openbravo.model.ad.module.Module;
 
 /**
@@ -77,27 +74,6 @@ public class SystemValidationTask extends DalInitializingTask {
       // Validate module
       final SystemValidationResult result = SystemService.getInstance()
           .validateModule(module, null);
-
-      // validate DB for module if there's dbprefixes
-      if (module != null && module.getModuleDBPrefixList() != null
-          && module.getModuleDBPrefixList().size() != 0) {
-        log.info("Validating DB");
-        Platform platform = getPlatform();
-        String dbPrefix = module.getModuleDBPrefixList().get(0).getName();
-
-        ExcludeFilter excludeFilter;
-        excludeFilter = DBSMOBUtil.getInstance().getExcludeFilter(getProject().getBaseDir());
-        DBSMOBUtil.getInstance().getModules(platform, excludeFilter);
-        final ModuleRow row = DBSMOBUtil.getInstance().getRowFromDir(module.getJavaPackage());
-        ExcludeFilter filter = row.filter;
-
-        Database database = platform.loadModelFromDatabase(filter, dbPrefix, true, module.getId());
-        final DatabaseValidator databaseValidator = new DatabaseValidator();
-        databaseValidator.setValidateModule(module);
-        databaseValidator.setDatabase(database);
-        SystemValidationResult resultDb = databaseValidator.validate();
-        result.addAll(resultDb);
-      }
 
       if (result.getErrors().isEmpty() && result.getWarnings().isEmpty()) {
         log.warn("Validation successfull no warnings or errors");
