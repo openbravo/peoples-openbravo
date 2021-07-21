@@ -54,6 +54,48 @@
       }
     }
 
+    async printCashup(message) {
+      const messageData = message.messageObj;
+      const { cashup } = messageData.data;
+      const printSettings = messageData.data.printSettings || {};
+
+      // print cashup
+      await this.doPrintCashup(cashup, printSettings);
+    }
+
+    async doPrintCashup(cashup, printSettings) {
+      try {
+        const prePrintData = await this.controller.executeHooks(
+          'OBPRINT_PrePrint',
+          {
+            forcePrint: printSettings.forcePrint,
+            offline: printSettings.offline,
+            cashup,
+            forcedtemplate: printSettings.forcedtemplate,
+            model: this.legacyPrinter ? this.legacyPrinter.model : null,
+            cancelOperation: false
+          }
+        );
+
+        if (prePrintData.cancelOperation === true) {
+          return;
+        }
+
+        const templateWithData = await OB.App.PrintTemplateStore.get(
+          'printCashup'
+        ).generate({ cashup });
+
+        await this.selectPrinter({
+          isRetry: false,
+          skipSelectPrinters: printSettings.skipSelectPrinters
+        });
+
+        await this.controller.print(templateWithData, cashup);
+      } catch (error) {
+        OB.error(`Error printing cashup: ${error}`);
+      }
+    }
+
     async printTicket(message) {
       const messageData = message.messageObj;
       const { ticket } = messageData.data;
