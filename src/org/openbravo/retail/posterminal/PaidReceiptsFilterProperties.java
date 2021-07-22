@@ -42,6 +42,7 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
         add(new HQLProperty("ord.organization.id", "organization"));
         add(new HQLProperty("ord.organization.name", "organizationName"));
         add(new HQLProperty("ord.obposApplications.organization.id", "trxOrganization"));
+        add(new HQLProperty("ord.delivered", "isdelivered"));
         add(new HQLProperty("ord.externalBusinessPartnerReference",
             "externalBusinessPartnerReference"));
         add(new HQLProperty(
