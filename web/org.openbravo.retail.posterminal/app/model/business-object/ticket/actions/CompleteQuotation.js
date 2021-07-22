@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -20,6 +20,7 @@
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
+      let currentTicket = {};
 
       // Set complete ticket properties
       newTicket.isEditable = false;
@@ -77,7 +78,11 @@
         OB.App.State.Messages.Utils.createPrintWelcomeMessage()
       ];
 
+      // Add Current Ticket to Last Ticket
+      currentTicket = { ...newTicket };
+
       newGlobalState.Ticket = newTicket;
+      newGlobalState.LastTicket = currentTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Cashup = newCashup;
       newGlobalState.Messages = newMessages;

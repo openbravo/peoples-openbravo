@@ -21,6 +21,7 @@
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
+      let currentTicket = {};
 
       payload.multiTicketList.forEach(multiTicket => {
         let newMultiTicket = { ...multiTicket };
@@ -139,6 +140,9 @@
         OB.App.State.Messages.Utils.createPrintWelcomeMessage()
       ];
 
+      // Add Current Ticket to Last Ticket
+      currentTicket = { ...newTicket };
+
       // TicketList update
       ({
         ticketList: newTicketList,
@@ -150,6 +154,7 @@
       ));
 
       newGlobalState.Ticket = newTicket;
+      newGlobalState.LastTicket = currentTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Cashup = newCashup;
       newGlobalState.Messages = newMessages;

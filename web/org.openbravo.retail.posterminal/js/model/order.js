@@ -656,6 +656,13 @@
           );
 
           if (!isDeleteTicket) {
+            // Restore receipt with updated state ticket
+            if (OB.App.State.getState().LastTicket) {
+              receipt = OB.App.StateBackwardCompatibility.getInstance(
+                'Ticket'
+              ).toBackboneObject(OB.App.State.getState().LastTicket);
+            }
+
             // Open drawer
             OB.MobileApp.model.receipt.trigger(
               'checkOpenDrawer',

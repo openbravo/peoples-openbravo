@@ -21,6 +21,7 @@
       let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
+      let currentTicket = {};
 
       // Set complete ticket properties
       newTicket = OB.App.State.Ticket.Utils.processTicket(newTicket, payload);
@@ -77,6 +78,9 @@
         OB.App.State.Messages.Utils.createPrintWelcomeMessage()
       ];
 
+      // Add Current Ticket to Last Ticket
+      currentTicket = { ...newTicket };
+
       // TicketList update
       ({
         ticketList: newTicketList,
@@ -89,6 +93,7 @@
 
       newGlobalState.TicketList = newTicketList;
       newGlobalState.Ticket = newTicket;
+      newGlobalState.LastTicket = currentTicket;
       newGlobalState.DocumentSequence = newDocumentSequence;
       newGlobalState.Cashup = newCashup;
       newGlobalState.Messages = newMessages;
