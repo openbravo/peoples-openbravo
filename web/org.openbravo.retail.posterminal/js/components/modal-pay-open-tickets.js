@@ -387,9 +387,10 @@ enyo.kind({
   disableDoneButton: function(value) {
     this.$.doneMultiOrdersButton.setDisabled(value);
   },
-  doneAction: function() {
+  doneAction: async function() {
     var execution = OB.UTIL.ProcessController.start('payOpenTicketsValidation'),
       selectedMultiOrders = [],
+      loadedOrderThatWereNotLoaded = [],
       alreadyPaidOrders = [],
       alreadyPaidOrdersDocNo = '',
       me = this,
@@ -430,6 +431,9 @@ enyo.kind({
             },
             function(args) {
               if (args && args.cancellation) {
+                _.each(loadedOrderThatWereNotLoaded, order => {
+                  OB.Dal.remove(order, null, null);
+                });
                 OB.UTIL.ProcessController.finish(
                   'payOpenTicketsValidation',
                   execution
@@ -439,10 +443,6 @@ enyo.kind({
               me.doSelectMultiOrders({
                 value: selectedMultiOrders,
                 callback: function() {
-                  OB.UTIL.ProcessController.finish(
-                    'payOpenTicketsValidation',
-                    execution
-                  );
                   OB.POS.terminal.$.containerWindow
                     .getRoot()
                     .$.multiColumn.$.panels.addClass(
@@ -461,7 +461,7 @@ enyo.kind({
       });
     };
 
-    addOrdersToOrderList = _.after(checkedMultiOrders.length, function() {
+    addOrdersToOrderList = function() {
       if (alreadyPaidOrdersDocNo) {
         if (checkedMultiOrders.length === alreadyPaidOrders.length) {
           OB.UTIL.showConfirmation.display(
@@ -517,7 +517,7 @@ enyo.kind({
       } else {
         showSomeOrderIsPaidPopup();
       }
-    });
+    };
 
     this.doHideThisPopup();
     // Check if the selected orders are payable by the 'Pay Open Tickets' flow
@@ -587,97 +587,106 @@ enyo.kind({
       return;
     }
     this.owner.owner.model.deleteMultiOrderList();
-    _.each(checkedMultiOrders, async function(iter) {
-      var idx = OB.App.State.TicketList.Utils.getAllTickets()
-        .map(function(order) {
-          return order.id;
-        })
-        .indexOf(iter.id);
-      if (idx !== -1) {
-        var orderState = OB.App.State.TicketList.Utils.getAllTickets()[idx];
-        var order = OB.App.StateBackwardCompatibility.getInstance(
-          'Ticket'
-        ).toBackboneObject(orderState);
-
-        order.set('checked', true);
-        await OB.App.State.Global.checkTicketForPayOpenTickets({
-          ticketId: orderState.id,
-          checked: true
-        });
-        // order.save();
-        selectedMultiOrders.unshift(order);
-        addOrdersToOrderList();
-      } else {
-        process.exec(
-          {
-            orderid: iter.id,
-            crossStore: OB.UTIL.isCrossStoreReceipt(iter)
-              ? iter.get('organization')
-              : null
-          },
-          function(data) {
-            if (data && data.exception) {
-              OB.UTIL.ProcessController.finish(
-                'payOpenTicketsValidation',
-                execution
-              );
-              OB.UTIL.showLoading(false);
-              OB.UTIL.showConfirmation.display('', data.exception.message);
-            } else if (data) {
-              if (data[0].recordInImportEntry) {
-                OB.UTIL.ProcessController.finish(
-                  'payOpenTicketsValidation',
-                  execution
-                );
-                OB.UTIL.showLoading(false);
-                OB.UTIL.showConfirmation.display(
-                  OB.I18N.getLabel('OBMOBC_Error'),
-                  OB.I18N.getLabel('OBPOS_ReceiptNotSynced', [
-                    data[0].documentNo
-                  ])
-                );
-                return;
-              }
-              OB.UTIL.TicketListUtils.newPaidReceipt(data[0], async function(
-                order
-              ) {
-                if (
-                  (order.get('isPaid') || order.get('isLayaway')) &&
-                  order.getPayment() >= order.getGross()
-                ) {
-                  alreadyPaidOrders.push(order);
-                  alreadyPaidOrdersDocNo = alreadyPaidOrdersDocNo.concat(
-                    ' ' + order.get('documentNo')
-                  );
-                  addOrdersToOrderList();
-                } else {
-                  order.set('loadedFromServer', true);
-                  order.set('checked', iter.get('checked'));
-                  await OB.UTIL.TicketListUtils.addPaidReceipt(order);
-                  OB.DATA.OrderTaxes(order);
-                  order.set('belongsToMultiOrder', true);
-                  order.calculateReceipt(function() {
-                    selectedMultiOrders.unshift(order);
-                    addOrdersToOrderList();
-                  });
+    const loadOrders = async function(iter) {
+      return new Promise((resolve, reject) => {
+        var idx = OB.App.State.TicketList.Utils.getAllTickets()
+          .map(function(order) {
+            return order.id;
+          })
+          .indexOf(iter.id);
+        if (idx !== -1) {
+          var orderState = OB.App.State.TicketList.Utils.getAllTickets()[idx];
+          var order = OB.App.StateBackwardCompatibility.getInstance(
+            'Ticket'
+          ).toBackboneObject(orderState);
+          order.set('checked', true);
+          OB.App.State.Global.checkTicketForPayOpenTickets({
+            ticketId: orderState.id,
+            checked: true
+          });
+          selectedMultiOrders.push(order);
+          resolve();
+        } else {
+          process.exec(
+            {
+              orderid: iter.id,
+              crossStore: OB.UTIL.isCrossStoreReceipt(iter)
+                ? iter.get('organization')
+                : null
+            },
+            function(data) {
+              if (data && data.exception) {
+                reject();
+              } else if (data) {
+                if (data[0].recordInImportEntry) {
+                  reject();
                 }
-              });
-            } else {
-              OB.UTIL.ProcessController.finish(
-                'payOpenTicketsValidation',
-                execution
-              );
+                OB.UTIL.TicketListUtils.newPaidReceipt(
+                  data[0],
+                  function(order) {
+                    if (
+                      (order.get('isPaid') || order.get('isLayaway')) &&
+                      order.getPayment() >= order.getGross()
+                    ) {
+                      alreadyPaidOrders.push(order);
+                      alreadyPaidOrdersDocNo = alreadyPaidOrdersDocNo.concat(
+                        ' ' + order.get('documentNo')
+                      );
+                      resolve();
+                    } else {
+                      order.set('loadedFromServer', true);
+                      order.set('checked', iter.get('checked'));
+                      OB.UTIL.TicketListUtils.addPaidReceipt(order);
+                      OB.DATA.OrderTaxes(order);
+                      order.set('belongsToMultiOrder', true);
+                      order.calculateReceipt(function() {
+                        selectedMultiOrders.push(order);
+                        resolve(order);
+                      });
+                    }
+                  },
+                  function() {
+                    reject();
+                  }
+                );
+              } else {
+                reject();
+              }
+            },
+            function(data) {
+              reject();
             }
-          },
-          function(data) {
-            OB.UTIL.ProcessController.finish(
-              'payOpenTicketsValidation',
-              execution
-            );
-          }
-        );
+          );
+        }
+      });
+    };
+    let error = [];
+    for (let i = 0; i < checkedMultiOrders.length; i++) {
+      const order = checkedMultiOrders[i];
+      try {
+        const result = await loadOrders(order);
+
+        if (result) {
+          loadedOrderThatWereNotLoaded.push(iter);
+        }
+      } catch (e) {
+        error.push(iter.get('documentNo'));
       }
-    });
+    }
+
+    if (error.length > 0) {
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBMOBC_Error'),
+        OB.I18N.getLabel('OBPOS_ReceiptNotLoaded', [error.join(', ')])
+      );
+    }
+
+    if (error.length < checkedMultiOrders.length) {
+      addOrdersToOrderList();
+    }
+
+    OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
+    OB.UTIL.showLoading(false);
   },
   cancelAction: function() {
     this.doHideThisPopup();
