@@ -56,15 +56,16 @@
 
     async printCashup(message) {
       const messageData = message.messageObj;
-      const { cashup } = messageData.data;
+      const { cashupData } = messageData.data;
       const printSettings = messageData.data.printSettings || {};
 
       // print cashup
-      await this.doPrintCashup(cashup, printSettings);
+      await this.doPrintCashup(cashupData, printSettings);
     }
 
     async doPrintCashup(cashup, printSettings) {
       try {
+        const cashupData = cashup;
         const prePrintData = await this.controller.executeHooks(
           'OBPRINT_PrePrint',
           {
@@ -81,16 +82,14 @@
           return;
         }
 
-        const templateWithData = await OB.App.PrintTemplateStore.get(
-          'printCashup'
-        ).generate({ cashup });
+        const template = await OB.App.PrintTemplateStore.get('printCashup');
 
         await this.selectPrinter({
           isRetry: false,
           skipSelectPrinters: printSettings.skipSelectPrinters
         });
 
-        await this.controller.print(templateWithData, cashup);
+        await this.controller.print(template, { cashup: cashupData });
       } catch (error) {
         OB.error(`Error printing cashup: ${error}`);
       }
