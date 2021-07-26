@@ -69,6 +69,9 @@
       return templates[name].printTemplate;
     },
 
+    /** Returns the default resource path for the given template */
+    getDefaultResourcePath: name => templates[name].defaultTemplate,
+
     /**
      * Selects the correct print template to be used to print the provided ticket.
      *

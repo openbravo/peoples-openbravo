@@ -84,13 +84,13 @@ describe('PrintTemplate', () => {
 
     OB.App.Request.get.mockResolvedValue(resourcedata);
 
-    await printTemplate.getData();
+    await printTemplate.generate();
     expect(printTemplate.resource).toBe(resource);
     expect(printTemplate.resourcedata).toBe(resourcedata);
     expect(OB.App.Request.get).toHaveBeenCalledTimes(1);
 
-    // call getData() again, resourcedata is now cached
-    await printTemplate.getData();
+    // call generate() again, resourcedata is now cached
+    await printTemplate.generate();
     expect(printTemplate.resource).toBe(resource);
     expect(printTemplate.resourcedata).toBe(resourcedata);
     // check that now no request to the backend have been performed
@@ -134,6 +134,45 @@ describe('PrintTemplate', () => {
       ticketLine: { id: 'l1' },
       order: { id: 'o1' },
       line: { id: 'ol1' }
+    });
+  });
+
+  describe('initializer', () => {
+    let printTemplate;
+    beforeEach(() => {
+      printTemplate = new OB.App.Class.PrintTemplate(
+        'testTemplate',
+        '../org.openbravo.retail.posterminal/res/template.xml'
+      );
+    });
+
+    it('executes default if none defined', async () => {
+      await printTemplate.generate();
+
+      expect(OB.App.Request.get).toHaveBeenCalledTimes(1);
+    });
+
+    it('is executed when registered', async () => {
+      const initializer = jest.fn();
+      OB.App.PrintTemplate.registerInitializer(initializer);
+
+      await printTemplate.generate();
+
+      expect(initializer).toHaveBeenCalledTimes(1);
+      expect(OB.App.Request.get).not.toHaveBeenCalled();
+    });
+
+    it('last overwrites first', async () => {
+      const initializer1 = jest.fn();
+      const initializer2 = jest.fn();
+
+      OB.App.PrintTemplate.registerInitializer(initializer1);
+      OB.App.PrintTemplate.registerInitializer(initializer2);
+
+      await printTemplate.generate();
+
+      expect(initializer2).toHaveBeenCalledTimes(1);
+      expect(initializer1).not.toHaveBeenCalled();
     });
   });
 });
