@@ -130,7 +130,7 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
           + " and $hqlCriteria "//
           + " and pli.$naturalOrgCriteria" //
           + " and pli.$readableClientCriteria" //
-          + " and (ppp.$incrementalUpdateCriteria or bp.$incrementalUpdateCriteria) " //
+          + " and (pli.$incrementalUpdateCriteria or ppp.$incrementalUpdateCriteria or bp.$incrementalUpdateCriteria) " //
           + " and ppp.$paginationByIdCriteria" //
           + " group by " + priceListHQLProperties.getHqlGroupBy() //
           + " order by ppp.id asc");
