@@ -9,10 +9,13 @@
 package org.openbravo.retail.posterminal.term;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
@@ -29,6 +32,9 @@ import org.openbravo.service.json.JsonConstants;
 public class TerminalProperties extends ModelExtension {
 
   private static Logger log = LogManager.getLogger();
+  private boolean gettingPrintingTemplateProperties = false;
+  private Object gettingPrintingTemplatesLock = new Object();
+  private Set<HQLProperty> printingTemplates;
 
   @Override
   public List<HQLProperty> getHQLProperties(final Object params) {
@@ -144,10 +150,51 @@ public class TerminalProperties extends ModelExtension {
     return propertyName + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
   }
 
+  /**
+   * Returns the list of Template Properties, these are the properties in the Organization entity
+   * that set printing templates. They are defined calling the
+   * {@link #addTemplateProperty(String, String, List)} from the {@link #getHQLProperties(Object)}
+   * method
+   */
+  public Set<HQLProperty> getPrintingTemplateProperties() {
+    if (printingTemplates != null) {
+      return printingTemplates;
+    }
+    synchronized (gettingPrintingTemplatesLock) {
+      try {
+        // flag this instance so that when addTemplateProperty is called the set of templates will
+        // be populated
+        gettingPrintingTemplateProperties = true;
+        if (printingTemplates == null) { // won't be null if already initialized in parallel
+          printingTemplates = new HashSet<>();
+
+          // templates are defined as calls within getHQLProperties, calling it to populate the set
+          // of templates
+          getHQLProperties(null);
+        }
+        return printingTemplates;
+      } finally {
+        gettingPrintingTemplateProperties = false;
+      }
+    }
+  }
+
   protected void addTemplateProperty(final String propertyName, final String alias,
       final List<HQLProperty> list) {
     try {
       OBContext.setAdminMode(false);
+      if (gettingPrintingTemplateProperties) {
+        if (ModelProvider.getInstance()
+            .getEntity(Organization.class)
+            .getProperty(propertyName, false) != null) {
+          printingTemplates.add(new HQLProperty(propertyName, alias));
+        } else {
+          log.warn(
+              "Property {} is set at template property but it is not an Organization's proprety",
+              propertyName);
+        }
+      }
+
       final PrintTemplate value = (PrintTemplate) POSUtils
           .getPropertyInOrgTree(OBContext.getOBContext().getCurrentOrganization(), propertyName);
       if (value != null) {
