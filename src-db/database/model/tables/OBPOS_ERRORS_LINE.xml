@@ -50,6 +50,12 @@
       <foreign-key foreignTable="AD_ORG" name="OBPOS_ERRORS_LINE_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <index name="OBPOS_ERRORSLINE_ERROR_IDX" unique="false">
+        <index-column name="OBPOS_ERRORS_ID"/>
+      </index>
+      <index name="OBPOS_ERRORSLINE_RECORD_IDX" unique="false">
+        <index-column name="RECORD_ID"/>
+      </index>
       <check name="OBPOS_ERRORSLN_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
