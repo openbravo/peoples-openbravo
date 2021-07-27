@@ -19,10 +19,10 @@ global.OB = {
   I18N: { getLabel: jest.fn() }
 };
 
-global.lodash = require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
+global.lodash = require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.21');
 require('../../../../org.openbravo.client.application/web/org.openbravo.client.application/js/utilities/ob-utilities-number.js');
 require('../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3.min.js');
-require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.15');
+require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.21');
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-i18n');
 require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic');
 require('../../../web/org.openbravo.retail.posterminal/app/external-device/printing/PrintUtils');
