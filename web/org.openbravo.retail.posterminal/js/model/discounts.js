@@ -368,7 +368,8 @@
           ? promotion.rule.attributes
           : promotion.rule,
         promotionDefinition = promotion.definition,
-        linesToApply = lines.at ? [...lines.models] : [...lines],
+        linesToApply =
+          lines instanceof Backbone.Collection ? [...lines.models] : [...lines],
         rule = OB.Model.Discounts.discountRules[promotionRule.discountType];
       if (!rule || !rule.addManual) {
         OB.warn('No manual implemetation for rule ' + promotion.discountType);
