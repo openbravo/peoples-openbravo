@@ -45,10 +45,7 @@
      *                  - subReports: an array with the subreports (PDF templates)
      */
     async generate(params) {
-      if (!this.initialized) {
-        await (templateInitializer || defaultTemplateInitializer)(this);
-        this.initialized = true;
-      }
+      await this.initialize();
 
       const templateParams = await this.prepareParams(params);
 
@@ -84,6 +81,13 @@
       };
     }
 
+    async initialize() {
+      if (!this.initialized) {
+        await (templateInitializer || defaultTemplateInitializer)(this);
+        this.initialized = true;
+      }
+    }
+
     /** Reset current template so that next time is used, its initializer will be called. */
     reset() {
       this.initialized = false;
@@ -100,8 +104,9 @@
           new OB.App.Class.PrintTemplate(`${this.name}Subrep${index}`, s)
       );
 
-      const templates = [this, ...this.subreports];
-      const dataRetrievals = templates.map(template => template.getData());
+      const dataRetrievals = this.subreports.map(template =>
+        template.initialize()
+      );
       await Promise.all(dataRetrievals);
     }
 
