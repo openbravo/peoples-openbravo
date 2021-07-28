@@ -285,6 +285,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_ALTERNATE_LOCATION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_BPARTNER_LOCATION" name="C_BPLOCATION_CINVOICE">
         <reference local="C_BPARTNER_LOCATION_ID" foreign="C_BPARTNER_LOCATION_ID"/>
       </foreign-key>
@@ -299,6 +303,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="C_INVOICE_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="C_INVOICE_ALTERNATE_LOCATION">
+        <reference local="C_ALTERNATE_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="A_ASSET" name="C_INVOICE_ASSET">
         <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
