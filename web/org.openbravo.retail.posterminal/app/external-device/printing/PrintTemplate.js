@@ -84,6 +84,11 @@
       };
     }
 
+    /** Reset current template so that next time is used, its initializer will be called. */
+    reset() {
+      this.initialized = false;
+    }
+
     async processPDFTemplate(params) {
       const { printer, subreports } = params;
 

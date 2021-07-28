@@ -97,6 +97,49 @@ describe('PrintTemplate', () => {
     expect(OB.App.Request.get).toHaveBeenCalledTimes(1);
   });
 
+  it('caches xml template', async () => {
+    const resource = '../org.openbravo.retail.posterminal/res/template.xml';
+    const resourcedata = '<output></output>';
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'testTemplate',
+      resource
+    );
+
+    OB.App.Request.get.mockResolvedValue(resourcedata);
+
+    await printTemplate.generate();
+    expect(printTemplate.resource).toBe(resource);
+    expect(printTemplate.resourcedata).toBe(resourcedata);
+    expect(OB.App.Request.get).toHaveBeenCalledTimes(1);
+
+    // call generate() again, resourcedata is now cached
+    await printTemplate.generate();
+    expect(printTemplate.resource).toBe(resource);
+    expect(printTemplate.resourcedata).toBe(resourcedata);
+
+    // No new request has been done as it is already cached
+    expect(OB.App.Request.get).toHaveBeenCalledTimes(1);
+  });
+
+  it('intializes after reset', async () => {
+    const resource = '../org.openbravo.retail.posterminal/res/template.xml';
+    const printTemplate = new OB.App.Class.PrintTemplate(
+      'testTemplate',
+      resource
+    );
+
+    await printTemplate.generate();
+    expect(OB.App.Request.get).toHaveBeenCalledTimes(1);
+
+    printTemplate.reset();
+
+    // call generate() again, resourcedata is now cached
+    await printTemplate.generate();
+
+    // No new request has been done as it is already cached
+    expect(OB.App.Request.get).toHaveBeenCalledTimes(2);
+  });
+
   it('prepare params in standard template', async () => {
     const params = { ticket: { id: 't1' }, ticketLine: { id: 'l1' } };
     const printTemplate = new OB.App.Class.PrintTemplate(
