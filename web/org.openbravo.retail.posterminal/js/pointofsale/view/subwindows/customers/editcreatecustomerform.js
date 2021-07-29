@@ -338,6 +338,12 @@ enyo.kind({
       collectionName: 'greetingsList',
       //Default value for new lines
       defaultValue: function() {
+        var items = this.collection.filter(item => {
+          return item.get('default');
+        });
+        if (items.length > 0) {
+          return items[0].get('id');
+        }
         return undefined;
       },
       retrievedPropertyForValue: 'id',
@@ -352,7 +358,8 @@ enyo.kind({
             var greetingToAdd = new Backbone.Model({
               _identifier: greeting.name,
               name: greeting.name,
-              id: greeting.id
+              id: greeting.id,
+              default: greeting.default
             });
             data.push(greetingToAdd);
           },
