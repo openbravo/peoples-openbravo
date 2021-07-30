@@ -137,6 +137,9 @@
             )
           ];
         }
+
+        // Add Current Ticket to Last Ticket
+        currentTicket = { ...newMultiTicket };
       });
 
       // Welcome message
@@ -144,9 +147,6 @@
         ...newMessages,
         OB.App.State.Messages.Utils.createPrintWelcomeMessage()
       ];
-
-      // Add Current Ticket to Last Ticket
-      currentTicket = { ...newTicket };
 
       // TicketList update
       ({
