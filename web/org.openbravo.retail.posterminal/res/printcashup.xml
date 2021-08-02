@@ -34,105 +34,105 @@
       <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.App.TerminalProperty.get('context').user._identifier) %></text>
     </line>
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblOpenTime') + ': ' + OB.I18N.formatDate(new Date(cashup.report.get('creationDate'))) + ' - ' + OB.I18N.formatHour(new Date(cashup.report.get('creationDate')))) %></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblOpenTime') + ': ' + OB.I18N.formatDate(new Date(cashup.report.creationDate)) + ' - ' + OB.I18N.formatHour(new Date(cashup.report.creationDate))) %></text>
     </line>     
     <line>
-      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblCloseTime') + ': ' + OB.I18N.formatDate(cashup.report.get('time')) + ' - ' + OB.I18N.formatHour(cashup.report.get('time'))) %></text>
+      <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblCloseTime') + ': ' + OB.I18N.formatDate(cashup.report.time) + ' - ' + OB.I18N.formatHour(cashup.report.time)) %></text>
     </line>  
     <line></line>
-    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblNetSales'), 27, OB.App.PrintUtils.printAmount(cashup.report.get('netSales')), 14) %>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblNetSales'), 27, OB.App.PrintUtils.printAmount(cashup.report.netSales), 14) %>
     <%
-    (cashup.report.get('salesTaxes') || []).forEach(function(tax) {
+    (cashup.report.salesTaxes || []).forEach(function(tax) {
     %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(tax.get('name'), 27, OB.App.PrintUtils.printAmount(tax.get('amount')), 14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(tax.name, 27, OB.App.PrintUtils.printAmount(tax.amount), 14) %>
     <%
     });
     %>
-    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblGrossSales'), 27, OB.App.PrintUtils.printAmount(cashup.report.get('grossSales')), 14, true) %>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblGrossSales'), 27, OB.App.PrintUtils.printAmount(cashup.report.grossSales), 14, true) %>
     <line></line>
-    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblNetReturns'), 27, OB.App.PrintUtils.printAmount(cashup.report.get('netReturns')), 14) %>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblNetReturns'), 27, OB.App.PrintUtils.printAmount(cashup.report.netReturns), 14) %>
     <%
-    (cashup.report.get('returnsTaxes') || []).forEach(function(tax) {
+    (cashup.report.returnsTaxes || []).forEach(function(tax) {
     %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(tax.get('name'), 27, OB.App.PrintUtils.printAmount(tax.get('amount')), 14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(tax.name, 27, OB.App.PrintUtils.printAmount(tax.amount), 14) %>
     <%
     });
     %>
-    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblGrossReturns'), 27, OB.App.PrintUtils.printAmount(cashup.report.get('grossReturns')), 14, true) %>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblGrossReturns'), 27, OB.App.PrintUtils.printAmount(cashup.report.grossReturns), 14, true) %>
     <line></line>
-    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel((OB.App.TerminalProperty.get('terminal').ismaster || OB.App.TerminalProperty.get('terminal').isslave) ? 'OBPOS_LblTotalRetailTransLocalPrint' : 'OBPOS_LblTotalRetailTrans'), 27, OB.App.PrintUtils.printAmount(cashup.report.get('totalRetailTransactions')), 14, true) %>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel((OB.App.TerminalProperty.get('terminal').ismaster || OB.App.TerminalProperty.get('terminal').isslave) ? 'OBPOS_LblTotalRetailTransLocalPrint' : 'OBPOS_LblTotalRetailTrans'), 27, OB.App.PrintUtils.printAmount(cashup.report.totalRetailTransactions), 14, true) %>
     <line></line>
     <%
-    (cashup.report.get('startings') || []).forEach(function(starting) {
-      if (starting.get('amount') !== starting.get('origAmount') && starting.get('countInCashup')) {
+    (cashup.report.startings || []).forEach(function(starting) {
+      if (starting.amount !== starting.origAmount && starting.countInCashup) {
     %>
       <line>
-        <text align="left" length="18"><%=OB.UTIL.encodeXMLComponent(starting.get('description')) %></text>
-        <text align="right" length="12"><%= '(' + OB.App.PrintUtils.printAmount(starting.get('amount')) + ' ' + starting.get('isocode') + ')' %></text>
-        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(OB.DEC.mul(starting.get('amount'), starting.get('rate'))) %></text>
+        <text align="left" length="18"><%=OB.UTIL.encodeXMLComponent(starting.description) %></text>
+        <text align="right" length="12"><%= '(' + OB.App.PrintUtils.printAmount(starting.amount) + ' ' + starting.isocode + ')' %></text>
+        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(OB.DEC.mul(starting.amount, starting.rate)) %></text>
       </line>
     <%
-      } else if(starting.get('countInCashup')) {
+      } else if(starting.countInCashup) {
     %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(starting.get('description'), 27, OB.App.PrintUtils.printAmount(OB.DEC.mul(starting.get('amount'), starting.get('rate'))), 14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(starting.description, 27, OB.App.PrintUtils.printAmount(OB.DEC.mul(starting.amount, starting.rate)), 14) %>
     <%
       }
     });
     %>
-    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalStarting'), 27, OB.App.PrintUtils.printAmount(cashup.report.get('totalStartings')), 14, true) %>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalStarting'), 27, OB.App.PrintUtils.printAmount(cashup.report.totalStartings), 14, true) %>
     <line></line>
     <%
-    (cashup.report.get('drops') || []).forEach(function(drop) {
-      if (drop.get('amount') !== drop.get('origAmount') && drop.get('countInCashup')) {
+    (cashup.report.drops || []).forEach(function(drop) {
+      if (drop.amount !== drop.origAmount && drop.countInCashup) {
     %>
       <line>
-        <text align="left" length="15"><%=OB.UTIL.encodeXMLComponent(drop.get('description')) %></text>
-        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(drop.get('amount')) + ' ' + drop.get('isocode') + ')' %></text>
-        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(drop.get('origAmount')) %></text>
+        <text align="left" length="15"><%=OB.UTIL.encodeXMLComponent(drop.description) %></text>
+        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(drop.amount) + ' ' + drop.isocode + ')' %></text>
+        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(drop.origAmount) %></text>
       </line>
     <%
-      } else if(drop.get('countInCashup')){
+      } else if(drop.countInCashup){
     %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(drop.get('description'), 27, OB.App.PrintUtils.printAmount(drop.get('amount')), 14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(drop.description, 27, OB.App.PrintUtils.printAmount(drop.amount), 14) %>
     <%
       }
     });
     %>
-    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalWithdrawals'), 27, OB.App.PrintUtils.printAmount(cashup.report.get('totalDrops')), 14, true) %>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalWithdrawals'), 27, OB.App.PrintUtils.printAmount(cashup.report.totalDrops), 14, true) %>
     <line></line>
     <%
-    (cashup.report.get('deposits') || []).forEach(function(deposit) {
-      if (deposit.get('amount') !== deposit.get('origAmount') && deposit.get('countInCashup')) {
+    (cashup.report.deposits || []).forEach(function(deposit) {
+      if (deposit.amount !== deposit.origAmount && deposit.countInCashup) {
     %>
       <line>
-        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(deposit.get('description')) %></text>
-        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(deposit.get('amount')) + ' ' + deposit.get('isocode') + ')' %></text>
-        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(deposit.get('origAmount')) %></text>
+        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(deposit.description) %></text>
+        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(deposit.amount) + ' ' + deposit.isocode + ')' %></text>
+        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(deposit.origAmount) %></text>
       </line>
     <%
-      } else if(deposit.get('countInCashup')) {
+      } else if(deposit.countInCashup) {
      %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(deposit.get('description'), 27, OB.App.PrintUtils.printAmount(deposit.get('amount')), 14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(deposit.description, 27, OB.App.PrintUtils.printAmount(deposit.amount), 14) %>
     <%
       }
     });
     %>
-    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalDeposits'), 27, OB.App.PrintUtils.printAmount(cashup.report.get('totalDeposits')), 14, true) %>
+    <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalDeposits'), 27, OB.App.PrintUtils.printAmount(cashup.report.totalDeposits), 14, true) %>
     <line>
     </line>
     <%
     (cashup.summary.expectedSummary || []).forEach(function(payment) {
-      if(payment.get('second') && payment.get('second')!==payment.get('value')){
+      if(payment.second && payment.second !== payment.value){
     %>
       <line>
-        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.get('second')) + ' ' + payment.get('isocode') + ')' %></text>
-        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.get('value')) %></text>
+        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.second) + ' ' + payment.isocode + ')' %></text>
+        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.value) %></text>
       </line>
     <%
       } else {
      %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'),27,OB.App.PrintUtils.printAmount(payment.get('value')),14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.name,27,OB.App.PrintUtils.printAmount(payment.value),14) %>
     <%
       }
     });
@@ -143,17 +143,17 @@
     <%
     if (!cashup.summary.isPartialCashup) {
     (cashup.summary.countedSummary || []).forEach(function(payment) {
-      if (payment.get('second') && payment.get('second') !== payment.get('value')) {
+      if (payment.second && payment.second !== payment.value) {
     %>
       <line>
-        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.get('second')) + ' ' + payment.get('isocode') + ')' %></text>
-        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.get('value')) %></text>
+        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.second) + ' ' + payment.isocode + ')' %></text>
+        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.value) %></text>
       </line>
     <%
       } else {
     %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'), 27, OB.App.PrintUtils.printAmount(payment.get('value')), 14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.name, 27, OB.App.PrintUtils.printAmount(payment.value), 14) %>
     <%
       }
     });
@@ -162,17 +162,17 @@
     <line></line>
     <%
     (cashup.summary.differenceSummary || []).forEach(function(payment) {
-      if (payment.get('second') && payment.get('second')!==payment.get('value')) {
+      if (payment.second && payment.second !== payment.value) {
     %>
       <line>
-        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.get('second')) + ' ' + payment.get('isocode') + ')' %></text>
-        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.get('value')) %></text>
+        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.second) + ' ' + payment.isocode + ')' %></text>
+        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.value) %></text>
       </line>
     <% 
       } else {
     %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'), 27, OB.App.PrintUtils.printAmount(payment.get('value')), 14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.name, 27, OB.App.PrintUtils.printAmount(payment.value), 14) %>
     <%
       }
     });
@@ -181,17 +181,17 @@
     <line></line>
     <%
     (cashup.summary.qtyToKeepSummary || []).forEach(function(payment) {
-      if (payment.get('second') && payment.get('second') !== payment.get('value')) {
+      if (payment.second && payment.second !== payment.value) {
     %>
       <line>
-        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.get('second')) + ' ' + payment.get('isocode') + ')' %></text>
-        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.get('value')) %></text>
+        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.second) + ' ' + payment.isocode + ')' %></text>
+        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.value) %></text>
       </line>
     <%
       } else {
     %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'), 27, OB.App.PrintUtils.printAmount(payment.get('value')), 14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.name, 27, OB.App.PrintUtils.printAmount(payment.value), 14) %>
     <%
       }
     });
@@ -200,17 +200,17 @@
     <line></line>
     <%
     (cashup.summary.qtyToDepoSummary || []).forEach(function(payment) {
-      if (payment.get('second') && payment.get('second') !== payment.get('value')) {
+      if (payment.second && payment.second !== payment.value) {
     %>
       <line>
-        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.get('name')) %></text>
-        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.get('second')) + ' ' + payment.get('isocode') + ')' %></text>
-        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.get('value')) %></text>
+        <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+        <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.second) + ' ' + payment.isocode + ')' %></text>
+        <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.value) %></text>
       </line>
     <%
       } else {
     %>
-      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.get('name'), 27, OB.App.PrintUtils.printAmount(payment.get('value')), 14) %>
+      <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(payment.name, 27, OB.App.PrintUtils.printAmount(payment.value), 14) %>
     <%
       }
     });
