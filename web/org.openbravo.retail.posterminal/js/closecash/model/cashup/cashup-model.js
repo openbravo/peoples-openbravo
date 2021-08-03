@@ -618,7 +618,26 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
           }
         }
 
-        this.printCloseCash.print(cashUpReport, countCashSummary, true);
+        // Converting model to JSON to support migrated print template.
+        const convertedCashUpReport = cashUpReport.toJSON();
+        const convertedCountCashSummary = Object.keys(countCashSummary).reduce(
+          (prev, curr) => {
+            return {
+              ...prev,
+              [curr]: Object.values(countCashSummary[curr]).map(summ =>
+                summ.toJSON()
+              )
+            };
+          },
+          {}
+        );
+
+        this.printCloseCash.print(
+          convertedCashUpReport,
+          convertedCountCashSummary,
+          true
+        );
+
         // Remove current safe box at the end of cashup
         OB.UTIL.localStorage.removeItem('currentSafeBox');
       }
