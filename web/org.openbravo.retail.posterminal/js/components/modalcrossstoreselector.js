@@ -39,14 +39,12 @@ enyo.kind({
         });
         this.lastProductType = this.args.productType;
       }
-      this.getFilterSelectorTableHeader().clearFilter();
       this.productId = this.args.productId;
       this.productType = this.args.productType;
       this.productUOM = this.args.productUOM;
       this.$.body.$.crossStoreList.callback = this.args.callback;
-      this.$.body.$.crossStoreList.searchAction(null, {
-        filters: []
-      });
+      // Triggers searchAction after clearing filters
+      this.getFilterSelectorTableHeader().clearFilter();
     }
   },
   executeOnHide: function() {
@@ -168,6 +166,9 @@ enyo.kind({
       remoteFilters = [],
       params = {},
       currentDate = new Date();
+    me.$.csStoreSelector.collection.reset();
+    me.$.csStoreSelector.$.tempty.hide();
+    me.$.renderLoading.show();
     if (OB.MobileApp.model.hasPermission('OBPOS_EnableMultiPriceList', false)) {
       params.currentPriceList = OB.MobileApp.model.receipt
         .get('bp')
