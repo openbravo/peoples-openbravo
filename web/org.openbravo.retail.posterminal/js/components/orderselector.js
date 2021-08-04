@@ -986,7 +986,7 @@ enyo.kind({
               const invoiceList = [];
               Object.keys(
                 _.groupBy(groupedLinesToPrepare, l => l.order)
-              ).forEach(async key => {
+              ).forEach(key => {
                 const order = _.last(
                   groupedLinesToPrepare.filter(l => l.order === key)
                 );
