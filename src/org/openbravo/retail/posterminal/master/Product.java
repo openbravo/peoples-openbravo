@@ -232,14 +232,24 @@ public class Product extends MasterDataProcessHQLQuery {
     final Long lastUpdated = getLastUpdated(jsonsent);
     final boolean filterWithProductEntities = getPreference(
         "OBPOS_FilterProductByEntitiesOnRefresh");
+    final boolean filterWithProductPrice = getPreference("OBPOS_FilterProductByPriceOnRefresh");
+    if (filterWithProductEntities && filterWithProductPrice) {
+      throw new JSONException("Preference \"WebPOS Product filter by entities\" "
+          + "and \"WebPOS Product filter by Price\" should not be set at same time");
+    }
 
     String hql = "select" + regularProductsHQLProperties.getHqlSelect();
     hql += getRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
         allowNoPriceInMainPriceList);
     if (lastUpdated != null) {
-      hql += "AND ((product.$incrementalUpdateCriteria)";
-      if (filterWithProductEntities) {
-        hql += " OR (pli.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)";
+      hql += "AND (";
+      if (filterWithProductPrice) {
+        hql += "(ppp.$incrementalUpdateCriteria)";
+      } else {
+        hql += "(product.$incrementalUpdateCriteria)";
+        if (filterWithProductEntities) {
+          hql += " OR (pli.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)";
+        }
       }
       hql += ") ";
     } else {
