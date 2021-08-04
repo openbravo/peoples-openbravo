@@ -1497,7 +1497,9 @@ describe('addProduct preparation', () => {
             products: [{ product: crossStoreProduct, qty: 1 }]
           }),
         {
-          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList',
+          // eslint-disable-next-line no-underscore-dangle
+          messageParams: [crossStoreProduct._identifier]
         }
       );
     });
@@ -1551,7 +1553,9 @@ describe('addProduct preparation', () => {
             ticket
           ),
         {
-          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList',
+          // eslint-disable-next-line no-underscore-dangle
+          messageParams: [Product.productA._identifier]
         }
       );
     });
@@ -1573,7 +1577,9 @@ describe('addProduct preparation', () => {
             ticket
           ),
         {
-          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList',
+          // eslint-disable-next-line no-underscore-dangle
+          messageParams: [Product.productA._identifier]
         }
       );
     });

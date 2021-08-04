@@ -2960,7 +2960,9 @@
             }
           });
         } else {
-          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          OB.UTIL.showWarning('OBPOS_ProductNotFoundInPriceList', [
+            p.get('_identifier')
+          ]);
           OB.UTIL.ProcessController.finish('addProduct', execution);
           if (callback) {
             callback(false, null);
@@ -2969,7 +2971,9 @@
       }
 
       function errorCallback() {
-        OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+        OB.UTIL.showWarning('OBPOS_ProductNotFoundInPriceList', [
+          p.get('_identifier')
+        ]);
         OB.UTIL.ProcessController.finish('addProduct', execution);
         if (callback) {
           callback(false, null);
@@ -3012,14 +3016,18 @@
             }
           });
           if (OB.UTIL.isNullOrUndefined(p.get('standardPrice'))) {
-            OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+            OB.UTIL.showWarning('OBPOS_ProductNotFoundInPriceList', [
+              p.get('_identifier')
+            ]);
             OB.UTIL.ProcessController.finish('addProduct', execution);
             if (callback) {
               callback(false, null);
             }
           }
         } else {
-          OB.UTIL.showI18NWarning('OBPOS_ProductNotFoundInPriceList');
+          OB.UTIL.showWarning('OBPOS_ProductNotFoundInPriceList', [
+            p.get('_identifier')
+          ]);
           OB.UTIL.ProcessController.finish('addProduct', execution);
           if (callback) {
             callback(false, null);

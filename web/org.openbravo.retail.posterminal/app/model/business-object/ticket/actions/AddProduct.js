@@ -760,12 +760,16 @@
         productPrice = await getProductPrice(ticket, pi);
       } catch (error) {
         throw new OB.App.Class.ActionCanceled({
-          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList',
+          // eslint-disable-next-line no-underscore-dangle
+          messageParams: [pi.product._identifier]
         });
       }
       if (!productPrice) {
         throw new OB.App.Class.ActionCanceled({
-          warningMsg: 'OBPOS_ProductNotFoundInPriceList'
+          warningMsg: 'OBPOS_ProductNotFoundInPriceList',
+          // eslint-disable-next-line no-underscore-dangle
+          messageParams: [pi.product._identifier]
         });
       }
       result.product = { ...result.product, ...productPrice };
