@@ -204,7 +204,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       const multiplyBy = paymentStatus.isReturn
         ? terminalPayment.paymentRounding.returnRoundingMultiple
         : terminalPayment.paymentRounding.saleRoundingMultiple;
-      const rounding = paymentStatus.isReturn
+      const roundingMode = paymentStatus.isReturn
         ? terminalPayment.paymentRounding.returnRoundingMode
         : terminalPayment.paymentRounding.saleRoundingMode;
       const roundingEnabled = paymentStatus.isReturn
@@ -238,6 +238,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             payment.amount >= paymentStatus.pendingAmt &&
             payment.amount >= multiplyBy))
       ) {
+        let rounding = roundingMode;
+        if (rounding === 'FR') {
+          const roundingLimit = paymentStatus.isReturn
+            ? terminalPayment.paymentRounding.returnFullRoundingLimit
+            : terminalPayment.paymentRounding.saleFullRoundingLimit;
+          rounding = roundingAmount < roundingLimit ? 'DR' : 'UR';
+        }
+
         if (rounding === 'UR') {
           if (paymentDifference !== 0) {
             amountDifference = OB.DEC.sub(
