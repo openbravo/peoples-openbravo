@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -570,8 +570,8 @@ public class Entity {
    */
   public Property getProperty(String propertyName, boolean checkIsNotNull) {
     final Property prop = propertiesByName.get(propertyName);
-    if (checkIsNotNull) {
-      Check.isNotNull(prop, "Property " + propertyName + " does not exist for entity " + this);
+    if (checkIsNotNull && prop == null) {
+      throw new CheckException("Property " + propertyName + " does not exist for entity " + this);
     }
     return prop;
   }
@@ -587,7 +587,10 @@ public class Entity {
    */
   public Property getPropertyByColumnName(String columnName) {
     final Property prop = propertiesByColumnName.get(columnName.toLowerCase());
-    Check.isNotNull(prop, "Property with " + columnName + " does not exist for entity " + this);
+    if (prop == null) {
+      throw new CheckException(
+          "Property with " + columnName + " does not exist for entity " + this);
+    }
     return prop;
   }
 
@@ -605,8 +608,8 @@ public class Entity {
    */
   public Property getPropertyByColumnName(String columnName, boolean checkIsNotNull) {
     final Property prop = propertiesByColumnName.get(columnName.toLowerCase());
-    if (checkIsNotNull) {
-      Check.isNotNull(prop, "Property " + columnName + " does not exist for entity " + this);
+    if (checkIsNotNull && prop == null) {
+      throw new CheckException("Property " + columnName + " does not exist for entity " + this);
     }
     return prop;
   }
