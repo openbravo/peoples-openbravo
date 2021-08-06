@@ -189,6 +189,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         newTicket,
         payload
       );
+      paymentStatus.pendingAmt = OB.DEC.mul(
+        paymentStatus.pendingAmt,
+        payment.mulrate
+      );
       let roundingAmount = OB.DEC.sub(paymentStatus.pendingAmt, payment.amount);
       const terminalPaymentRounding = payments.find(
         p =>
