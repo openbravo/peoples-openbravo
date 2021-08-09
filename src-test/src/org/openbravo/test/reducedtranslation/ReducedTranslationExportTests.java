@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2020 Openbravo SLU
+ * All portions are Copyright (C) 2020-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -172,7 +172,7 @@ public class ReducedTranslationExportTests extends OBBaseTest {
   @Test
   public void testAdProcessParaExcludedTranslation() throws IOException {
     testExistInFullAndNotExistsInReduced("lang/sq_AL/AD_PROCESS_PARA_TRL_sq_AL.xml",
-        "Target Payment Rule");
+        "Also mark as ready organization every child organization");
   }
 
   @Test
