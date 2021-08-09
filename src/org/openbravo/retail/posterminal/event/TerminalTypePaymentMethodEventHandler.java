@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2020 Openbravo S.L.U.
+ * Copyright (C) 2017-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -80,7 +80,7 @@ public class TerminalTypePaymentMethodEventHandler extends EntityPersistenceEven
     try {
       if (ttpm.getChangeLessThan() != null && ttpm.getChangePaymentType() != null) {
         String hql = "select cr.id from OBPOS_CurrencyRounding cr "
-            + " where cr.currency.id = :currencyId and OBPOS_CurrencyRounding.active = true "
+            + " where cr.currency.id = :currencyId and cr.active = true "
             + " and ad_isorgincluded(:organizationId, cr.organization.id, :clientId) <> -1";
         Query<String> qry = OBDal.getInstance().getSession().createQuery(hql, String.class);
         qry.setParameter("currencyId", ttpm.getCurrency().getId());
