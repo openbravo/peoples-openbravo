@@ -1181,9 +1181,7 @@
       ] = payload.terminal._identifier;
 
       if (payload.preferences.enableDeliveryModes) {
-        ticket.obrdmDeliveryModeProperty = payload.obrdmDeliveryModeProperty
-          ? payload.obrdmDeliveryModeProperty
-          : 'PickAndCarry';
+        ticket.obrdmDeliveryModeProperty = 'PickAndCarry';
       }
 
       return ticket;
