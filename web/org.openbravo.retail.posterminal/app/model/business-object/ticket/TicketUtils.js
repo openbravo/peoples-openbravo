@@ -54,7 +54,7 @@
 
     createLine(payload) {
       const { product } = payload;
-      const newLine = {
+      let newLine = {
         id: OB.App.UUID.generate(),
         product,
         organization: this.getLineOrganization(payload),
@@ -90,7 +90,7 @@
           ? OB.DEC.Zero
           : OB.DEC.number(product.standardPrice);
       }
-      this.setDeliveryMode(newLine, this.ticket);
+      newLine = this.setDeliveryMode(newLine);
       this.ticket.lines = this.ticket.lines.concat(newLine);
       return newLine;
     }
@@ -116,29 +116,29 @@
       };
     }
 
-    setDeliveryMode(line, ticket) {
+    setDeliveryMode(line) {
       // this is an internal function used to set the delivery mode information on a newly created line
       // therefore we can safely assign properties to the line received as parameter
-      if (line.product.productType !== 'S' && !line.obrdmDeliveryMode) {
+      const newLine = { ...line };
+      if (newLine.product.productType !== 'S' && !newLine.obrdmDeliveryMode) {
         let productDeliveryMode;
         let productDeliveryDate;
         let productDeliveryTime;
 
-        if (OB.App.State.Ticket.Utils.isLayaway(ticket)) {
-          productDeliveryMode = line.product.obrdmDeliveryModeLyw;
+        if (OB.App.State.Ticket.Utils.isLayaway(this.ticket)) {
+          productDeliveryMode = newLine.product.obrdmDeliveryModeLyw;
         } else {
-          productDeliveryMode = line.product.obrdmDeliveryMode;
-          productDeliveryDate = line.product.obrdmDeliveryDate;
-          productDeliveryTime = line.product.obrdmDeliveryTime;
+          productDeliveryMode = newLine.product.obrdmDeliveryMode;
+          productDeliveryDate = newLine.product.obrdmDeliveryDate;
+          productDeliveryTime = newLine.product.obrdmDeliveryTime;
         }
 
         const deliveryMode =
           productDeliveryMode ||
-          ticket.obrdmDeliveryModeProperty ||
+          this.ticket.obrdmDeliveryModeProperty ||
           'PickAndCarry';
 
-        // eslint-disable-next-line no-param-reassign
-        line.obrdmDeliveryMode = deliveryMode;
+        newLine.obrdmDeliveryMode = deliveryMode;
 
         if (
           deliveryMode === 'PickupInStoreDate' ||
@@ -147,40 +147,38 @@
           const currentDate = new Date();
           currentDate.setHours(0, 0, 0, 0);
 
-          // eslint-disable-next-line no-param-reassign
-          line.obrdmDeliveryDate = productDeliveryMode
+          newLine.obrdmDeliveryDate = productDeliveryMode
             ? productDeliveryDate || currentDate
-            : ticket.obrdmDeliveryDateProperty;
+            : this.ticket.obrdmDeliveryDateProperty;
 
           const currentTime = new Date();
           currentTime.setSeconds(0);
           currentTime.setMilliseconds(0);
 
-          // eslint-disable-next-line no-param-reassign
-          line.obrdmDeliveryTime = productDeliveryMode
+          newLine.obrdmDeliveryTime = productDeliveryMode
             ? productDeliveryTime || currentTime
-            : ticket.obrdmDeliveryTimeProperty;
+            : this.ticket.obrdmDeliveryTimeProperty;
         }
       }
 
       let country;
       let region;
-      if (line.obrdmDeliveryMode === 'HomeDelivery') {
-        const { shipLocId } = ticket.businessPartner;
+      if (newLine.obrdmDeliveryMode === 'HomeDelivery') {
+        const { shipLocId } = this.ticket.businessPartner;
         country = shipLocId
-          ? ticket.businessPartner.locationModel.countryId
+          ? this.ticket.businessPartner.locationModel.countryId
           : null;
         region = shipLocId
-          ? ticket.businessPartner.locationModel.regionId
+          ? this.ticket.businessPartner.locationModel.regionId
           : null;
       } else {
-        country = line.organization.country;
-        region = line.organization.region;
+        country = newLine.organization.country;
+        region = newLine.organization.region;
       }
-      // eslint-disable-next-line no-param-reassign
-      line.country = country;
-      // eslint-disable-next-line no-param-reassign
-      line.region = region;
+      newLine.country = country;
+      newLine.region = region;
+
+      return newLine;
     }
 
     deleteLine(lineId) {
@@ -1002,6 +1000,21 @@
     },
 
     /**
+     * Updates information regarding delivery modes
+     *
+     * @param {object} ticket - The ticket whose lines about delivery modes should be updated
+     * @param {settings} line - The line whose delivery modes information should be updated
+     * @returns {object} - A new ticket with the delivery modes information properly updated
+     */
+    setDeliveryMode(ticket, line) {
+      const handler = new TicketHandler(ticket);
+      return {
+        ticket: handler.getTicket(),
+        line: handler.setDeliveryMode(line)
+      };
+    },
+
+    /**
      * Updates information regarding services of a ticket by handling its lines with services and their related lines
      *
      * @param {object} ticket - The ticket whose information about services should be updated
@@ -1447,18 +1460,6 @@
         : payload.terminal.terminalType.documentTypeForReturns;
 
       return newTicket;
-    },
-    /**
-     * Updates information regarding delivery modes
-     *
-     * @param {object} ticket - The ticket whose lines about delivery modes should be updated
-     * @param {settings} line - The line whose delivery modes information should be updated
-     * @returns {object} - A new ticket with the delivery modes information properly updated
-     */
-    setDeliveryMode(line, ticket) {
-      const handler = new TicketHandler(ticket);
-      handler.setDeliveryMode(line, ticket);
-      return handler.getTicket();
     }
   });
 })();

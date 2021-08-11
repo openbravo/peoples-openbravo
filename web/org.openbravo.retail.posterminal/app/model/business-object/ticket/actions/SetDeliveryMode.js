@@ -15,7 +15,8 @@
   OB.App.StateAPI.Ticket.registerAction(
     'setDeliveryMode',
     (ticket, payload) => {
-      let newTicket = { ...ticket };
+      const newTicket = { ...ticket };
+
       if (payload.obrdmDeliveryModeProperty) {
         newTicket.obrdmDeliveryModeProperty = payload.obrdmDeliveryModeProperty;
       }
@@ -32,8 +33,8 @@
         newTicket.obrdmDeliveryTimeProperty = undefined;
       }
 
-      newTicket.lines.forEach(line => {
-        const newLine = { ...line };
+      newTicket.lines = newTicket.lines.map(line => {
+        let newLine = { ...line };
 
         if (payload.obrdmDeliveryModeProperty) {
           newLine.obrdmDeliveryMode = payload.obrdmDeliveryModeProperty;
@@ -50,12 +51,12 @@
         if (payload.obrdmDeliveryTimeProperty === '') {
           newLine.obrdmDeliveryTime = undefined;
         }
-        newTicket = OB.App.State.Ticket.Utils.setDeliveryMode(
-          newLine,
-          newTicket
-        );
-        newTicket.line = newLine;
+        newLine = OB.App.State.Ticket.Utils.setDeliveryMode(newTicket, newLine)
+          .line;
+
+        return newLine;
       });
+
       return newTicket;
     }
   );
