@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2020 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2021 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -38,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.BasicUtility;
@@ -666,8 +667,9 @@ public class TranslationManager {
       final SAXParser parser = factory.newSAXParser();
       parser.parse(in, handler);
       conn.releaseCommitConnection(con);
-      log4j
-          .info("importTrl - Updated=" + handler.getUpdateCount() + " - from file " + in.getName());
+      int updateCount = handler.getUpdateCount();
+      log4j.info("importTrl - Updated={} - from file {}", updateCount, in.getName());
+      onTrlFileImport(fileName, Trl_Table, updateCount);
       return "";
     } catch (final Exception e) {
       log4j.error("importTrlFile - error parsing file: " + fileName, e);
@@ -678,6 +680,12 @@ public class TranslationManager {
       }
       throw new OBException(fileName);
     }
+  }
+
+  private static void onTrlFileImport(String fileName, String trlTable, int updateCount) {
+    WeldUtils.getInstances(TranslationManagerHook.class)
+        .stream()
+        .forEach(hook -> hook.onTrlFileImport(fileName, trlTable, updateCount));
   }
 
   private static TranslationData[] getTrlColumns(ConnectionProvider cp, String Base_Table,
