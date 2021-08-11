@@ -957,7 +957,7 @@ describe('addProduct', () => {
 
     it.each`
       deliveryMode           | productDeliveryDate | expectedDate            | expectedTime
-      ${'PickupInStoreDate'} | ${'productDate'}    | ${'productDate'}        | ${undefined}
+      ${'PickupInStoreDate'} | ${'productDate'}    | ${'productDate'}        | ${'currentTime'}
       ${'HomeDelivery'}      | ${'productDate'}    | ${'productDate'}        | ${'currentTime'}
       ${'Other'}             | ${'productDate'}    | ${undefined}            | ${undefined}
       ${'HomeDelivery'}      | ${undefined}        | ${'currentDate'}        | ${'currentTime'}
