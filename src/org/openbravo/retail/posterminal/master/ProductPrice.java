@@ -86,6 +86,16 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
     OBRETCOProductList productList = POSUtils
         .getProductListByPosterminalId(jsonsent.getString("pos"));
 
+    String incrementalOperator = "and";
+    if (jsonsent != null) {
+      Long lastUpdated = jsonsent.has("lastUpdated")
+          && !jsonsent.get("lastUpdated").equals("undefined")
+          && !jsonsent.get("lastUpdated").equals("null") ? jsonsent.getLong("lastUpdated") : null;
+      if (lastUpdated != null) {
+        incrementalOperator = "or";
+      }
+    }
+
     if (productList == null) {
       throw new JSONException("Product list not found");
     }
@@ -115,6 +125,7 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
           + "   select 1 " //
           + "   from PricingPriceListVersion plv, BusinessPartner bp" //
           + "   where plv.priceList.id = bp.priceList.id" //
+          + "   and bp.$readableClientCriteria and bp.$naturalOrgCriteria" //
           + "   and plv.active = true" //
           + "   and plv.validFromDate = (" //
           + "     select max(plv2.validFromDate) " //
@@ -131,7 +142,11 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
           + " and $hqlCriteria "//
           + " and pli.$naturalOrgCriteria" //
           + " and pli.$readableClientCriteria" //
-          + " and (pli.$incrementalUpdateCriteria or ppp.$incrementalUpdateCriteria) " //
+          + " and (pli.$incrementalUpdateCriteria " //
+          + incrementalOperator //
+          + " plv.priceList.$incrementalUpdateCriteria " //
+          + incrementalOperator //
+          + " ppp.$incrementalUpdateCriteria) " //
           + " and ppp.$paginationByIdCriteria" //
           + " order by ppp.id asc");
 

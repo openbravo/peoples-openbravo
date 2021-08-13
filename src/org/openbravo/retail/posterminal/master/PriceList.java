@@ -76,7 +76,8 @@ public class PriceList extends MasterDataProcessHQLQuery {
     if (multiPrices) {
       hqlQueries.add("select " + priceListHQLProperties.getHqlSelect()
           + " from PricingPriceList pl "
-          + "where pl.id in (select distinct priceList.id from BusinessPartner where customer = 'Y') "
+          + "where pl.id in (select distinct bp.priceList.id from BusinessPartner bp "
+          + "where bp.$readableClientCriteria and bp.$naturalOrgCriteria and bp.customer = 'Y') "
           + "and pl.id <> (:priceList) "
           + "and $naturalOrgCriteria and $readableClientCriteria and ($incrementalUpdateCriteria) "
           + "and pl.$paginationByIdCriteria order by pl.id asc");
