@@ -54,47 +54,6 @@
       }
     }
 
-    async printCashup(message) {
-      const messageData = message.messageObj;
-      const { cashupData } = messageData.data;
-      const printSettings = messageData.data.printSettings || {};
-
-      // print cashup
-      await this.doPrintCashup(cashupData, printSettings);
-    }
-
-    async doPrintCashup(cashup, printSettings) {
-      try {
-        const cashupData = cashup;
-        const prePrintData = await this.controller.executeHooks(
-          'OBPRINT_PrePrint',
-          {
-            forcePrint: printSettings.forcePrint,
-            offline: printSettings.offline,
-            cashup,
-            forcedtemplate: printSettings.forcedtemplate,
-            model: this.legacyPrinter ? this.legacyPrinter.model : null,
-            cancelOperation: false
-          }
-        );
-
-        if (prePrintData.cancelOperation === true) {
-          return;
-        }
-
-        const template = await OB.App.PrintTemplateStore.get('printCashup');
-
-        await this.selectPrinter({
-          isRetry: false,
-          skipSelectPrinters: printSettings.skipSelectPrinters
-        });
-
-        await this.controller.print(template, { cashup: cashupData });
-      } catch (error) {
-        OB.error(`Error printing cashup: ${error}`);
-      }
-    }
-
     async printTicket(message) {
       const messageData = message.messageObj;
       const { ticket } = messageData.data;
@@ -160,7 +119,7 @@
         );
         isPdf = template.ispdf;
 
-        await this.selectPrinter({
+        await this.controller.selectPrinter({
           isPdf,
           isRetry: false,
           skipSelectPrinters: printSettings.skipSelectPrinters
@@ -198,14 +157,14 @@
         message: isPdf ? 'OBPOS_MsgPDFPrintAgain' : 'OBPOS_MsgPrintAgain',
         messageParams: [this.controller.getActiveURLIdentifier()],
         confirmLabel: 'OBPOS_LblRetry',
-        additionalButtons: this.canSelectPrinter(isPdf)
+        additionalButtons: this.controller.canSelectPrinter(isPdf)
           ? [
               {
                 label: isPdf
                   ? 'OBPOS_SelectPDFPrintersTitle'
                   : 'OBPOS_SelectPrintersTitle',
                 action: async () => {
-                  const printer = await this.selectPrinter({
+                  const printer = await this.controller.selectPrinter({
                     isPdf,
                     isRetry: true,
                     forceSelect: true
@@ -220,48 +179,6 @@
       if (retry) {
         await this.doPrintTicket(ticket, printSettings);
       }
-    }
-
-    async selectPrinter(options) {
-      const terminal = OB.App.TerminalProperty.get('terminal');
-      const { isPdf, isRetry, skipSelectPrinters, forceSelect } = options;
-
-      if (
-        !forceSelect &&
-        (!terminal.terminalType.selectprinteralways ||
-          skipSelectPrinters ||
-          !this.canSelectPrinter(isPdf))
-      ) {
-        // skip printer selection
-        return null;
-      }
-
-      const { printer } = await OB.App.View.DialogUIHandler.inputData(
-        isPdf ? 'modalSelectPDFPrinters' : 'modalSelectPrinters',
-        {
-          title: isPdf
-            ? OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle')
-            : OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
-          isRetry
-        }
-      );
-
-      if (printer) {
-        if (isPdf) {
-          this.controller.setActivePDFURL(printer);
-        } else {
-          this.controller.setActiveURL(printer);
-        }
-      }
-
-      return printer;
-    }
-
-    canSelectPrinter(isPdf) {
-      return (
-        OB.App.Security.hasPermission('OBPOS_retail.selectprinter') &&
-        this.controller.hasAvailablePrinter(isPdf)
-      );
     }
 
     async printTicketLine(message) {

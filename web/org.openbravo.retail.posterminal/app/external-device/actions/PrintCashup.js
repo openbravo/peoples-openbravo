@@ -9,16 +9,12 @@
 
 OB.App.StateAPI.Global.registerAction('printCashup', (state, payload) => {
   const newState = { ...state };
-  const data = payload;
 
-  const printCashup = OB.App.State.Messages.Utils.createNewMessage(
-    '',
-    '',
-    data,
-    { type: 'printCashup', consumeOffline: true }
+  const printCashupMsg = OB.App.State.Messages.Utils.createPrintCashupMessage(
+    payload
   );
 
-  newState.Messages = [...newState.Messages, printCashup];
+  newState.Messages = [...newState.Messages, printCashupMsg];
 
   return newState;
 });

@@ -170,6 +170,48 @@
       return isPdf ? this.activePDFURLIdentifier : this.activeIdentifier;
     }
 
+    async selectPrinter(options) {
+      const terminal = OB.App.TerminalProperty.get('terminal');
+      const { isPdf, isRetry, skipSelectPrinters, forceSelect } = options;
+
+      if (
+        !forceSelect &&
+        (!terminal.terminalType.selectprinteralways ||
+          skipSelectPrinters ||
+          !this.canSelectPrinter(isPdf))
+      ) {
+        // skip printer selection
+        return null;
+      }
+
+      const { printer } = await OB.App.View.DialogUIHandler.inputData(
+        isPdf ? 'modalSelectPDFPrinters' : 'modalSelectPrinters',
+        {
+          title: isPdf
+            ? OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle')
+            : OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
+          isRetry
+        }
+      );
+
+      if (printer) {
+        if (isPdf) {
+          this.setActivePDFURL(printer);
+        } else {
+          this.setActiveURL(printer);
+        }
+      }
+
+      return printer;
+    }
+
+    canSelectPrinter(isPdf) {
+      return (
+        OB.App.Security.hasPermission('OBPOS_retail.selectprinter') &&
+        this.hasAvailablePrinter(isPdf)
+      );
+    }
+
     hasAvailablePrinter(isPdf) {
       const urlList = OB.App.TerminalProperty.get('hardwareURL') || [];
       return urlList.some(printer =>
