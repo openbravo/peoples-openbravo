@@ -39,6 +39,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.xml.XMLUtil;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.BasicUtility;
@@ -683,6 +684,11 @@ public class TranslationManager {
   }
 
   private static void onTrlFileImport(String fileName, String trlTable, int updateCount) {
+    if (DalContextListener.getServletContext() == null) {
+      // Can't use WeldUtils when we are outside of a servlet context, for example when importing
+      // translations directly from the command line
+      return;
+    }
     WeldUtils.getInstances(TranslationManagerHook.class)
         .stream()
         .forEach(hook -> hook.onTrlFileImport(fileName, trlTable, updateCount));
