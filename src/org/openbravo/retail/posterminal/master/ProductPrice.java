@@ -108,14 +108,14 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
           + " from OBRETCO_Prol_Product as pli, " //
           + " PricingProductPrice ppp " //
           + " left join  ppp.priceListVersion as plv " //
-          + " join BusinessPartner bp with plv.priceList.id = bp.priceList.id and bp.$readableClientCriteria and bp.$naturalOrgCriteria and bp.customer = true "
           + " where pli.product.id = ppp.product.id " //
           + " and pli.obretcoProductlist.id = :productListId " //
           + " and plv.active = true " //
           + " and exists ("//
           + "   select 1 " //
-          + "   from PricingPriceListVersion plv" //
-          + "   where plv.active = true" //
+          + "   from PricingPriceListVersion plv, BusinessPartner bp" //
+          + "   where plv.priceList.id = bp.priceList.id" //
+          + "   and plv.active = true" //
           + "   and plv.validFromDate = (" //
           + "     select max(plv2.validFromDate) " //
           + "     from PricingPriceListVersion as plv2" //
@@ -125,14 +125,14 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
           + "   )" //
           + "   and plv.priceList.id <> (:priceList)" //
           + "   and plv.id = ppp.priceListVersion.id" //
+          + "   and bp.customer='Y'"//
           + " )"//
           + " and $filtersCriteria " //
           + " and $hqlCriteria "//
           + " and pli.$naturalOrgCriteria" //
           + " and pli.$readableClientCriteria" //
-          + " and (pli.$incrementalUpdateCriteria or ppp.$incrementalUpdateCriteria or bp.$incrementalUpdateCriteria) " //
+          + " and (pli.$incrementalUpdateCriteria or ppp.$incrementalUpdateCriteria) " //
           + " and ppp.$paginationByIdCriteria" //
-          + " group by " + priceListHQLProperties.getHqlGroupBy() //
           + " order by ppp.id asc");
 
     }
