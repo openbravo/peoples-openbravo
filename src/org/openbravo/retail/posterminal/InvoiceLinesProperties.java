@@ -35,6 +35,7 @@ public class InvoiceLinesProperties extends ModelExtension {
         add(new HQLProperty("invLine.lineNetAmount", "lineNetAmount"));
         add(new HQLProperty("invLine.id", "lineId"));
         add(new HQLProperty("invLine.salesOrderLine.id", "orderlineId"));
+        add(new HQLProperty("invLine.salesOrderLine.baseGrossUnitPrice", "baseGrossUnitPrice"));
         add(new HQLProperty("invLine.salesOrderLine.standardPrice", "baseNetUnitPrice"));
         add(new HQLProperty("invLine.salesOrderLine.salesOrder.currency.pricePrecision",
             "pricePrecision"));

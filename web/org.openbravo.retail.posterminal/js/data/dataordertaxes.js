@@ -44,21 +44,30 @@
           ? OB.DEC.mul(line.get('grossUnitPrice'), line.get('qty'))
           : OB.DEC.add(line.get('lineNetAmount'), taxAmount),
         netUnitAmount: receipt.get('priceIncludesTax')
-          ? OB.DEC.mul(
-              line.get('unitPrice') || line.get('price'),
-              line.get('qty')
-            )
+          ? line.get('lineNetAmount') !== undefined
+            ? line.get('lineNetAmount')
+            : OB.DEC.mul(
+                line.get('unitPrice') || line.get('price'),
+                line.get('qty')
+              )
           : line.get('lineNetAmount'),
         grossUnitPrice: receipt.get('priceIncludesTax')
           ? line.get('grossUnitPrice')
           : OB.DEC.div(
-              OB.DEC.add(
-                OB.DEC.mul(line.get('price'), line.get('qty')),
-                taxAmount
-              ),
+              OB.DEC.add(line.get('lineNetAmount'), taxAmount),
               line.get('qty')
             ),
-        netUnitPrice: line.get('unitPrice') || line.get('price'),
+        netUnitPrice: OB.DEC.div(
+          receipt.get('priceIncludesTax')
+            ? line.get('lineNetAmount') !== undefined
+              ? line.get('lineNetAmount')
+              : OB.DEC.mul(
+                  line.get('unitPrice') || line.get('price'),
+                  line.get('qty')
+                )
+            : line.get('lineNetAmount'),
+          line.get('qty')
+        ),
         taxes,
         taxAmount
       });
