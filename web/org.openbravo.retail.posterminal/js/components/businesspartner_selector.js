@@ -1278,11 +1278,7 @@ enyo.kind({
     this.bpsList.on(
       'click',
       async function(model) {
-        if (model.get('customerBlocking') && model.get('salesOrderBlocking')) {
-          OB.UTIL.showError(
-            OB.I18N.getLabel('OBPOS_BPartnerOnHold', [model.get('_identifier')])
-          );
-        } else if (!model.get('ignoreSetBP')) {
+        if (!model.get('ignoreSetBP')) {
           var me = this;
           if (model.get('bpLocactionId')) {
             if (
