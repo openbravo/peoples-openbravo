@@ -170,8 +170,8 @@
      * Return parent rule id if given rule has a parent, otherwise return given rule id
      */
     static getParentTaxId(rule) {
-      if (rule.parentTax) {
-        return rule.parentTax;
+      if (rule.parentTaxRate) {
+        return rule.parentTaxRate;
       }
 
       return rule.id;
