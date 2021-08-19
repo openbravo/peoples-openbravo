@@ -251,7 +251,7 @@ enyo.kind({
     );
   },
 
-  saveCustomerAddr: function(inSender, inEvent) {
+  saveCustomerAddr: async function(inSender, inEvent) {
     var me = this;
 
     function enableButtonsCallback() {
@@ -323,6 +323,31 @@ enyo.kind({
         }
       }
       return true;
+    }
+
+    if (
+      me.$.customerAddrAttributes.$.line_customerAddrShip &&
+      !me.$.customerAddrAttributes.$.line_customerAddrShip.coreElement.checked
+    ) {
+      try {
+        const criteria = new OB.App.Class.Criteria();
+        criteria.criterion('bpartner', inSender.args.businessPartner.get('id'));
+        criteria.criterion('isShipTo', true);
+        let bPLocations = await OB.App.MasterdataModels.BusinessPartnerLocation.find(
+          criteria.build()
+        );
+        if (bPLocations && bPLocations.length === 1) {
+          OB.UTIL.showError(
+            OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddressSave')
+          );
+          enableButtonsCallback();
+          return;
+        }
+      } catch (error) {
+        OB.UTIL.showWarning(
+          OB.I18N.getLabel('OBPOS_BPartnerNoShippingAddressSave')
+        );
+      }
     }
 
     if (this.customerAddr === undefined) {
