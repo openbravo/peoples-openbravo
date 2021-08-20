@@ -135,6 +135,9 @@
       if (updateLocally) {
         customer.set('loaded', OB.I18N.normalizeDate(new Date()));
       }
+      if (customer.get('birthDay')) {
+        customer.set('birthDay', customer.get('birthDay').toISOString());
+      }
       try {
         await OB.App.State.Global.synchronizeBusinessPartner(
           customer.serializeToJSON()

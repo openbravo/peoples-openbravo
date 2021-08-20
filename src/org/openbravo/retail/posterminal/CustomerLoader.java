@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,6 +10,7 @@ package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -202,6 +203,7 @@ public class CustomerLoader extends POSDataSynchronizationProcess
     // customer tab
     customer.setCustomer(true);
     customer.setCreditLimit(BigDecimal.ZERO);
+    customer.setBirthDay(getBirthDate(jsonCustomer));
     customer.setNewOBObject(true);
     setBpLanguage(customer, jsonCustomer);
     setGreetings(customer, jsonCustomer);
@@ -222,24 +224,8 @@ public class CustomerLoader extends POSDataSynchronizationProcess
     customer.setCustomer(true);
     // security
     customer.setCreditLimit(previousCL);
+    customer.setBirthDay(getBirthDate(jsonCustomer));
 
-    // Fixed birth date issue(-1 day) when converted to UTC from client time zone
-    if (jsonCustomer.has("birthDay") && jsonCustomer.get("birthDay") != null
-        && jsonCustomer.get("birthDay") != JSONObject.NULL
-        && !jsonCustomer.getString("birthDay").isEmpty()) {
-      final long timezoneOffset;
-      if (jsonCustomer.has("timezoneOffset")) {
-        timezoneOffset = (long) Double.parseDouble(jsonCustomer.getString("timezoneOffset"));
-      } else {
-        // Using the current timezoneOffset
-        timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET)
-            + Calendar.getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
-      }
-
-      customer.setBirthDay(
-          OBMOBCUtils.calculateServerDate((String) jsonCustomer.get("birthDay"), timezoneOffset));
-
-    }
     setBpLanguage(customer, jsonCustomer);
     setGreetings(customer, jsonCustomer);
     OBDal.getInstance().save(customer);
@@ -442,6 +428,25 @@ public class CustomerLoader extends POSDataSynchronizationProcess
       Language language = (Language) obCriteria.uniqueResult();
       customer.setLanguage(language);
     }
+  }
+
+  private Date getBirthDate(JSONObject jsonCustomer) throws JSONException {
+    // Fixed birth date issue(-1 day) when converted to UTC from client time zone
+    if (jsonCustomer.has("birthDay") && jsonCustomer.get("birthDay") != null
+        && jsonCustomer.get("birthDay") != JSONObject.NULL
+        && !jsonCustomer.getString("birthDay").isEmpty()) {
+      final long timezoneOffset;
+      if (jsonCustomer.has("timezoneOffset")) {
+        timezoneOffset = (long) Double.parseDouble(jsonCustomer.getString("timezoneOffset"));
+      } else {
+        // Using the current timezoneOffset
+        timezoneOffset = -((Calendar.getInstance().get(Calendar.ZONE_OFFSET)
+            + Calendar.getInstance().get(Calendar.DST_OFFSET)) / (60 * 1000));
+      }
+
+      return OBMOBCUtils.calculateServerDate((String) jsonCustomer.get("birthDay"), timezoneOffset);
+    }
+    return null;
   }
 
   private void setGreetings(BusinessPartner customer, final JSONObject jsonCustomer)
