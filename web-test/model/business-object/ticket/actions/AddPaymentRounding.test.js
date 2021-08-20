@@ -90,18 +90,18 @@ const cashWithUpRounding = {
   }
 };
 
-function getCashWithFullRounding(roundingLimit) {
+function getCashWithFullRounding(roundingMultiple, roundingLimit) {
   return {
     ...cash,
     paymentRounding: {
       paymentRoundingType: 'OBPOS_payment.rounding',
       saleRounding: true,
       saleRoundingMode: 'FR',
-      saleRoundingMultiple: 0.05,
+      saleRoundingMultiple: roundingMultiple,
       saleFullRoundingLimit: roundingLimit,
       returnRounding: true,
       returnRoundingMode: 'FR',
-      returnRoundingMultiple: 0.05,
+      returnRoundingMultiple: roundingMultiple,
       returnFullRoundingLimit: roundingLimit
     }
   };
@@ -265,15 +265,15 @@ describe('Ticket.addPaymentRounding action', () => {
   });
 
   it.each`
-    description                                | baseTicket      | payments                                     | roundingAmount
-    ${'sale rounding: down rounding'}          | ${saleTicket}   | ${[cashWithDownRounding, rounding]}          | ${0.03}
-    ${'sale rounding: up rounding'}            | ${saleTicket}   | ${[cashWithUpRounding, rounding]}            | ${-0.02}
-    ${'sale rounding: full rounding (down)'}   | ${saleTicket}   | ${[getCashWithFullRounding(0.04), rounding]} | ${0.03}
-    ${'sale rounding: full rounding (up)'}     | ${saleTicket}   | ${[getCashWithFullRounding(0.03), rounding]} | ${-0.02}
-    ${'return rounding: down rounding'}        | ${returnTicket} | ${[cashWithDownRounding, rounding]}          | ${0.03}
-    ${'return rounding: up rounding'}          | ${returnTicket} | ${[cashWithUpRounding, rounding]}            | ${-0.02}
-    ${'return rounding: full rounding (down)'} | ${returnTicket} | ${[getCashWithFullRounding(0.04), rounding]} | ${0.03}
-    ${'return rounding: full rounding (up)'}   | ${returnTicket} | ${[getCashWithFullRounding(0.03), rounding]} | ${-0.02}
+    description                                | baseTicket      | payments                                           | roundingAmount
+    ${'sale rounding: down rounding'}          | ${saleTicket}   | ${[cashWithDownRounding, rounding]}                | ${0.03}
+    ${'sale rounding: up rounding'}            | ${saleTicket}   | ${[cashWithUpRounding, rounding]}                  | ${-0.02}
+    ${'sale rounding: full rounding (down)'}   | ${saleTicket}   | ${[getCashWithFullRounding(0.05, 0.04), rounding]} | ${0.03}
+    ${'sale rounding: full rounding (up)'}     | ${saleTicket}   | ${[getCashWithFullRounding(0.05, 0.03), rounding]} | ${-0.02}
+    ${'return rounding: down rounding'}        | ${returnTicket} | ${[cashWithDownRounding, rounding]}                | ${0.03}
+    ${'return rounding: up rounding'}          | ${returnTicket} | ${[cashWithUpRounding, rounding]}                  | ${-0.02}
+    ${'return rounding: full rounding (down)'} | ${returnTicket} | ${[getCashWithFullRounding(0.05, 0.04), rounding]} | ${0.03}
+    ${'return rounding: full rounding (up)'}   | ${returnTicket} | ${[getCashWithFullRounding(0.05, 0.03), rounding]} | ${-0.02}
   `('$description', ({ baseTicket, payments, roundingAmount }) => {
     const ticket = deepfreeze(withCashPayment(baseTicket, 150));
     const newTicket = OB.App.StateAPI.Ticket.addPaymentRounding(ticket, {
@@ -284,6 +284,37 @@ describe('Ticket.addPaymentRounding action', () => {
 
     expect(newTicket.payments).toHaveLength(2);
     expect(newTicket.payments[1]).toMatchObject({
+      kind: 'OBPOS_payment.rounding',
+      amount: roundingAmount,
+      origAmount: roundingAmount,
+      paid: roundingAmount
+    });
+  });
+
+  it.each`
+    description                          | grossAmount | payments                                       | roundingAmount
+    ${'pay total: full rounding (down)'} | ${150.5}    | ${[getCashWithFullRounding(1, 0.5), rounding]} | ${-0.5}
+    ${'pay total: full rounding (up)'}   | ${150.49}   | ${[getCashWithFullRounding(1, 0.5), rounding]} | ${0.49}
+  `('$description', ({ grossAmount, payments, roundingAmount }) => {
+    const ticket = deepfreeze({
+      grossAmount,
+      lines: [
+        {
+          id: '1',
+          qty: 1,
+          product: { id: 'p1' },
+          baseGrossUnitPrice: grossAmount
+        }
+      ],
+      payments: []
+    });
+    const newTicket = OB.App.StateAPI.Ticket.addPaymentRounding(ticket, {
+      payments,
+      terminal,
+      payment: getCashPayment(grossAmount)
+    });
+
+    expect(newTicket.payments[0]).toMatchObject({
       kind: 'OBPOS_payment.rounding',
       amount: roundingAmount,
       origAmount: roundingAmount,

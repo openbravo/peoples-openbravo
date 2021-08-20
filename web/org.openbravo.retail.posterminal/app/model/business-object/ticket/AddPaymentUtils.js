@@ -243,7 +243,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           const roundingLimit = paymentStatus.isReturn
             ? terminalPayment.paymentRounding.returnFullRoundingLimit
             : terminalPayment.paymentRounding.saleFullRoundingLimit;
-          rounding = roundingAmount < roundingLimit ? 'DR' : 'UR';
+          const difference =
+            roundingAmount !== 0
+              ? roundingAmount
+              : OB.DEC.div(paymentDifference, pow);
+          rounding = difference < roundingLimit ? 'DR' : 'UR';
         }
 
         if (rounding === 'UR') {
