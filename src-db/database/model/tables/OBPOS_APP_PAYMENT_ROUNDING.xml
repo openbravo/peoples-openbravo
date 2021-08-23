@@ -65,6 +65,14 @@
         <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
+      <column name="SALEFULLROUNDINGLIMIT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="RETURNFULLROUNDINGLIMIT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_APPPAYROUND_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -83,5 +91,7 @@
       <check name="OBPOS_APP_PAYROUND_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_APP_PAYROUND_RETURN_CHK"><![CDATA[RETURNROUNDING IN ('Y', 'N')]]></check>
       <check name="OBPOS_APP_PAYROUND_SALE_CHK"><![CDATA[SALEROUNDING IN ('Y', 'N')]]></check>
+      <check name="OBPOS_APPPAYROUND_RET_FULLRL"><![CDATA[RETURNROUNDINGMODE <> 'FR' OR RETURNFULLROUNDINGLIMIT IS NOT NULL AND RETURNFULLROUNDINGLIMIT > 0 AND RETURNFULLROUNDINGLIMIT < RETURNROUNDINGMULTIPLE]]></check>
+      <check name="OBPOS_APPPAYROUND_SALE_FULLRL"><![CDATA[SALEROUNDINGMODE <> 'FR' OR SALEFULLROUNDINGLIMIT IS NOT NULL AND SALEFULLROUNDINGLIMIT > 0 AND SALEFULLROUNDINGLIMIT < SALEROUNDINGMULTIPLE]]></check>
     </table>
   </database>

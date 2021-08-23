@@ -221,10 +221,14 @@ public class Payments extends JSONTerminalProperty {
             paymentRoundingJSON.put("saleRoundingMode", paymentRounding.getSaleRoundingMode());
             paymentRoundingJSON.put("saleRoundingMultiple",
                 paymentRounding.getSaleRoundingMultiple());
+            paymentRoundingJSON.put("saleFullRoundingLimit",
+                paymentRounding.getSaleFullRoundingLimit());
             paymentRoundingJSON.put("returnRounding", paymentRounding.isReturnRounding());
             paymentRoundingJSON.put("returnRoundingMode", paymentRounding.getReturnRoundingMode());
             paymentRoundingJSON.put("returnRoundingMultiple",
                 paymentRounding.getReturnRoundingMultiple());
+            paymentRoundingJSON.put("returnFullRoundingLimit",
+                paymentRounding.getReturnFullRoundingLimit());
             paymentRoundingJSON.put("paymentRoundingType", roundingPaymentType.getSearchKey());
             payment.put("paymentRounding", paymentRoundingJSON);
           }
