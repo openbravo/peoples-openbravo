@@ -179,28 +179,32 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    */
   addPaymentRounding(ticket, payload) {
     const newTicket = { ...ticket };
-    const { payments, payment } = payload;
+    const newPayload = { ...payload };
+    const { payments, payment: newOriginalPayment } = newPayload;
     const terminalPayment = payments.find(
-      p => p.paymentRounding && p.payment.searchKey === payment.kind
+      p => p.paymentRounding && p.payment.searchKey === newOriginalPayment.kind
     );
 
-    if (terminalPayment !== undefined && !payment.isReversePayment) {
+    if (terminalPayment !== undefined && !newOriginalPayment.isReversePayment) {
       const paymentStatus = OB.App.State.Ticket.Utils.getPaymentStatus(
         newTicket,
-        payload
+        newPayload
       );
       paymentStatus.pendingAmt = OB.DEC.mul(
         paymentStatus.pendingAmt,
-        payment.mulrate
+        newOriginalPayment.mulrate
       );
-      let roundingAmount = OB.DEC.sub(paymentStatus.pendingAmt, payment.amount);
+      let roundingAmount = OB.DEC.sub(
+        paymentStatus.pendingAmt,
+        newOriginalPayment.amount
+      );
       const terminalPaymentRounding = payments.find(
         p =>
           p.payment.searchKey ===
           terminalPayment.paymentRounding.paymentRoundingType
       );
       let amountDifference = null;
-      const precision = this.getPrecision(payment, payments);
+      const precision = this.getPrecision(newOriginalPayment, payments);
       const multiplyBy = paymentStatus.isReturn
         ? terminalPayment.paymentRounding.returnRoundingMultiple
         : terminalPayment.paymentRounding.saleRoundingMultiple;
@@ -218,7 +222,8 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       // rounding amount
       if (paymentStatus.pendingAmt === 0) {
         paymentDifference =
-          OB.DEC.mul(payment.paid, pow) % OB.DEC.mul(multiplyBy, pow);
+          OB.DEC.mul(newOriginalPayment.paid, pow) %
+          OB.DEC.mul(multiplyBy, pow);
       }
 
       // If receipt total amount is less than equal rounding multiple in Sales/Return
@@ -230,13 +235,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       if (
         roundingEnabled &&
         ((roundingAmount !== 0 && OB.DEC.abs(roundingAmount) < multiplyBy) ||
-          (payment.paid !== 0 &&
+          (newOriginalPayment.paid !== 0 &&
             paymentDifference !== 0 &&
             paymentStatus.pendingAmt < multiplyBy) ||
-          (payment.paid === 0 &&
+          (newOriginalPayment.paid === 0 &&
             paymentDifference !== 0 &&
-            payment.amount >= paymentStatus.pendingAmt &&
-            payment.amount >= multiplyBy))
+            newOriginalPayment.amount >= paymentStatus.pendingAmt &&
+            newOriginalPayment.amount >= multiplyBy))
       ) {
         let rounding = roundingMode;
         if (rounding === 'FR') {
@@ -257,28 +262,34 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
               OB.DEC.div(paymentDifference, pow)
             );
             roundingAmount = OB.DEC.mul(amountDifference, -1);
-            if (payment.amount < paymentStatus.pendingAmt) {
+            if (newOriginalPayment.amount < paymentStatus.pendingAmt) {
               amountDifference = OB.DEC.add(
                 amountDifference,
                 OB.DEC.div(paymentDifference, pow)
               );
             }
           }
-          if (payment.amount <= paymentStatus.pendingAmt) {
-            payment.amount = OB.DEC.add(payment.amount, amountDifference);
+          if (newOriginalPayment.amount <= paymentStatus.pendingAmt) {
+            newOriginalPayment.amount = OB.DEC.add(
+              newOriginalPayment.amount,
+              amountDifference
+            );
           }
         } else if (
           paymentDifference !== 0 &&
-          payment.amount >= paymentStatus.pendingAmt
+          newOriginalPayment.amount >= paymentStatus.pendingAmt
         ) {
           roundingAmount = OB.DEC.div(paymentDifference, pow);
           // Substract the rounding amount when the payment totally paid the receipt
-          if (payment.amount === paymentStatus.pendingAmt) {
-            payment.amount = OB.DEC.sub(payment.amount, roundingAmount);
+          if (newOriginalPayment.amount === paymentStatus.pendingAmt) {
+            newOriginalPayment.amount = OB.DEC.sub(
+              newOriginalPayment.amount,
+              roundingAmount
+            );
           }
         }
 
-        payment.index = payments.length;
+        newOriginalPayment.index = payments.length;
         // Create the rounding payment line
 
         const newPayment = {};
@@ -308,14 +319,15 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         newPayment.isPaid = newTicket.isPaid;
         newPayment.isReturnOrder = newTicket.isNegative;
         newPayment.paymentRounding = true;
-        newPayment.roundedPaymentId = payment.id;
+        newPayment.roundedPaymentId = newOriginalPayment.id;
         newPayment.paid = newPayment.origAmount;
         newPayment.precision = precision;
 
         newTicket.payments = [...newTicket.payments, newPayment];
+        newPayload.payment = { ...newOriginalPayment };
       }
     }
-    return newTicket;
+    return { ticket: newTicket, payload: newPayload };
   },
   /**
    * Generates the corresponding payment for the given ticket.

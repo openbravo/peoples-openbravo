@@ -14,15 +14,16 @@
 (function ReversePaymentDefinition() {
   function addPayment(ticket, payload) {
     let newTicket = { ...ticket };
-    newTicket = OB.App.State.Ticket.Utils.addPaymentRounding(
-      newTicket,
-      payload
-    );
+    let newPayload = { ...payload };
+    ({
+      ticket: newTicket,
+      payload: newPayload
+    } = OB.App.State.Ticket.Utils.addPaymentRounding(newTicket, newPayload));
     // Set values defined in actionPreparations
-    if (payload.extraInfo) {
-      newTicket = { ...newTicket, ...payload.extraInfo.ticket };
+    if (newPayload.extraInfo) {
+      newTicket = { ...newTicket, ...newPayload.extraInfo.ticket };
     }
-    newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, payload);
+    newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, newPayload);
     return newTicket;
   }
   OB.App.StateAPI.Ticket.registerAction('reversePayment', (ticket, payload) => {
