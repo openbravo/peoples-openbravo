@@ -177,6 +177,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     const isRemoteProduct = OB.App.Security.hasPermission(
       'OBPOS_remote.product'
     );
+    const { priceIncludesTax } = payload.ticket;
     const getProduct = async line => {
       const getRemoteProduct = async productId => {
         const remoteProduct = await OB.App.DAL.remoteGet('Product', productId);
@@ -259,6 +260,46 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       return service;
     };
 
+    const isBOM = product => {
+      return (
+        OB.Taxes.Pos.taxCategoryBOM.find(
+          taxCategory => taxCategory.id === product.taxCategory
+        ) && !product.productBOM
+      );
+    };
+
+    const getProductBOM = async productId => {
+      const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
+        new OB.App.Class.Criteria().criterion('product', productId).build()
+      );
+
+      if (productBOM.length === 0) {
+        return undefined;
+      }
+
+      if (productBOM.find(bomLine => !bomLine.bomprice)) {
+        throw new OB.App.Class.ActionCanceled({
+          errorConfirmation: 'OBPOS_BOM_NoPrice'
+        });
+      }
+
+      return productBOM.map(bomLine => {
+        return {
+          grossUnitAmount: priceIncludesTax
+            ? OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity)
+            : undefined,
+          netUnitAmount: priceIncludesTax
+            ? undefined
+            : OB.DEC.mul(bomLine.bomprice, bomLine.bomquantity),
+          qty: bomLine.bomquantity,
+          product: {
+            id: bomLine.bomproduct,
+            taxCategory: bomLine.bomtaxcategory
+          }
+        };
+      });
+    };
+
     const lines = await Promise.all(
       payload.ticket.receiptLines.map(async line => {
         if (line.product) {
@@ -271,6 +312,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             ? false
             : await getService(product);
         product.img = undefined;
+
+        if (isBOM(product)) {
+          const productBOM = await getProductBOM(product.id);
+          if (productBOM) {
+            product.productBOM = productBOM;
+          }
+        }
 
         return { ...line, id: line.lineId, product, hasRelatedServices };
       })
