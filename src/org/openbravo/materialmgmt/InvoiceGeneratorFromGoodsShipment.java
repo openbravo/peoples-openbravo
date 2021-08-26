@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018-2020 Openbravo SLU
+ * All portions are Copyright (C) 2018-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -292,13 +292,10 @@ public class InvoiceGeneratorFromGoodsShipment {
       final OrderLine orderLine, final Order order) {
     final String invoiceTerm = order.getInvoiceTerms();
     if (InvoiceTerm.canInvoiceOrderLineIndividually(invoiceTerm)) {
-      final BigDecimal qtyToInvoice = orderLine.getOrderedQuantity()
-          .subtract(orderLine.getInvoicedQuantity())
-          .min(shipmentLine.getMovementQuantity());
-      invoicePendingQtyForShipmentLine(shipmentLine, qtyToInvoice);
+      invoicePendingQtyForShipmentLine(shipmentLine, getQtyToInvoice(orderLine));
     } else {
       if (InvoiceTerm.AFTER_ORDER_DELIVERY.getInvoiceTerm().equals(invoiceTerm)) {
-        if (order.getDeliveryStatus() == 100
+        if (order.getDeliveryStatus() >= 100
             && !ordersWithAfterOrderDeliveryAlreadyInvoiced.contains(order.getId())) {
           invoiceAllOrderLines(order);
           ordersWithAfterOrderDeliveryAlreadyInvoiced.add(order.getId());
@@ -307,6 +304,29 @@ public class InvoiceGeneratorFromGoodsShipment {
         throw new OBException("Not supported Invoice Term: " + invoiceTerm);
       }
     }
+  }
+
+  /**
+   * Usually qtyToInvoice = qtyShip - qtyPreviouslyInvoiced
+   * 
+   * It also controls the corner case when the order line has been invoiced BEFORE the shipment.
+   * Example: qtyOrdered = 5, qtyPreviouslyInvoiced = 4, qtyPreviouslyShipped = 0, qtyInThisShipment
+   * = 3; in this case there is no need to invoice this shipment as it was fully invoiced from the
+   * order in the past. In the future, when the 2 pending units are shipped, the system should
+   * generate an invoice for 1 unit.
+   */
+  private BigDecimal getQtyToInvoice(final OrderLine orderLine) {
+    final BigDecimal qtyShip = orderLine.getDeliveredQuantity(); // Previous shipments + this one
+    final BigDecimal qtyPreviouslyInvoiced = orderLine.getInvoicedQuantity();
+
+    BigDecimal qtyToInvoice = qtyShip.subtract(qtyPreviouslyInvoiced);
+
+    final boolean isTheShipQtyPreviouslyInvoiced = qtyToInvoice.signum() < 0
+        && qtyPreviouslyInvoiced.signum() > 0;
+    if (isTheShipQtyPreviouslyInvoiced) {
+      qtyToInvoice = BigDecimal.ZERO;
+    }
+    return qtyToInvoice;
   }
 
   private void invoiceAllOrderLines(final Order order) {
