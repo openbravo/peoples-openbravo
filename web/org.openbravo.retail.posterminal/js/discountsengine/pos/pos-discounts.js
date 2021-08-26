@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -77,8 +77,22 @@
       'discountCacheInitialization'
     );
 
-    const data = await OB.Discounts.Pos.loadData();
-    Object.assign(OB.Discounts.Pos, data);
+    try {
+      const data = await OB.Discounts.Pos.loadData();
+      Object.assign(OB.Discounts.Pos, data);
+    } catch (e) {
+      callback();
+      OB.UTIL.showConfirmation.display(
+        OB.I18N.getLabel('OBMOBC_LblWarning'),
+        OB.I18N.getLabel('OBPOS_DiscountDataExceedsCacheSize'),
+        null,
+        {
+          autoDismiss: false,
+          hideCloseButton: true,
+          closeOnEscKey: false
+        }
+      );
+    }
 
     OB.UTIL.HookManager.executeHooks(
       'OBPOS_DiscountsCacheInitialization',
