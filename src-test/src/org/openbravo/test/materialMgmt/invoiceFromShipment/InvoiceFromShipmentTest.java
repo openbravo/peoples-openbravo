@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -183,7 +183,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setProductInShipmentLine(shipmentLine, productOne);
       setOrderLineInShipmentLine(shipmentLine, firstLine);
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().refresh(salesOrder); // Necessary to update the delivery status
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
           .createInvoiceConsideringInvoiceTerms(true);
@@ -318,8 +317,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       setOrderLineInShipmentLine(thirdShipmentLine, null);
 
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().refresh(firstSalesOrder); // Necessary to update the delivery status
-      OBDal.getInstance().refresh(secondSalesOrder); // Necessary to update the delivery status
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
           .createInvoiceConsideringInvoiceTerms(true);
@@ -404,8 +401,6 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       updateMovementQuantity(secondShipmentLine, BigDecimal.TEN);
 
       TestUtils.processShipmentReceipt(shipment);
-      OBDal.getInstance().refresh(firstSalesOrder); // Necessary to update the delivery status
-      OBDal.getInstance().refresh(secondSalesOrder); // Necessary to update the delivery status
 
       final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
           .createInvoiceConsideringInvoiceTerms(true);

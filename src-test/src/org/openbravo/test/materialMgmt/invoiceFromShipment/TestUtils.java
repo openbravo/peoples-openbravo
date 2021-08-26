@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2019 Openbravo SLU
+ * All portions are Copyright (C) 2018-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -275,6 +275,15 @@ public class TestUtils {
     parameters.add(shipmentReceipt.getId());
     final String procedureName = "m_inout_post";
     CallStoredProcedure.getInstance().call(procedureName, parameters, null, true, false);
+    OBDal.getInstance().refresh(shipmentReceipt);
+    shipmentReceipt.getMaterialMgmtShipmentInOutLineList()
+        .stream()
+        .filter(l -> l.getSalesOrderLine() != null)
+        .forEach(l -> {
+          final OrderLine orderLine = l.getSalesOrderLine();
+          OBDal.getInstance().refresh(orderLine.getSalesOrder());
+          OBDal.getInstance().refresh(orderLine);
+        });
   }
 
   /**
