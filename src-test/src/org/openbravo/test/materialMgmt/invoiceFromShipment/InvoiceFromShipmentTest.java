@@ -20,6 +20,8 @@
 package org.openbravo.test.materialMgmt.invoiceFromShipment;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -60,6 +62,7 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.test.costing.utils.TestCostingUtils;
 
 /**
  * Test class for Automatic Invoice From Goods Shipment test cases
@@ -101,9 +104,9 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
    * Delivery"
    * <ol>
    * <li>Create a Sales Order with invoice term "After Delivery".</li>
-   * <li>Adds two lines of product. Book the order.</li>
+   * <li>Adds one line of product. Book the order.</li>
    * <li>Create a Goods Shipment.</li>
-   * <li>Adds just one line from the previous order.</li>
+   * <li>Adds the line from the previous order.</li>
    * <li>Complete the document invoicing if possible.</li>
    * <li>Verify an invoice was created and processed containing the line from Goods Shipment.</li>
    * </ol>
@@ -717,6 +720,198 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
     }
   }
 
+  /**
+   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term "Immediate".
+   * The order was fully invoiced before generating the shipment, so no invoice should be created.
+   * <ol>
+   * <li>Create a Sales Order with invoice term "Immediate".</li>
+   * <li>Adds one line of product. Book the order.</li>
+   * <li>Full invoice the sales order</li>
+   * <li>Create a Goods Shipment.</li>
+   * <li>Adds the line from the previous order.</li>
+   * <li>Complete the document invoicing if possible.</li>
+   * <li>Verify an invoice was NOT created.</li>
+   * </ol>
+   */
+  @Test
+  public void testOrderFullyInvoicedSoNoInvoiceIsCreatedFromShipment() {
+    OBContext.setAdminMode();
+    try {
+
+      final Product product = TestUtils.cloneProduct(T_SHIRTS_PRODUCT_ID,
+          "InvoiceFromShipment_011");
+      final Order salesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
+          "InvoiceFromShipment_011", IMMEDIATE);
+      final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
+      setProductInOrderLine(orderLine, product);
+      TestUtils.processOrder(salesOrder);
+
+      Invoice previousInvoice = createInvoiceFromOrder(salesOrder);
+      TestCostingUtils.completeDocument(previousInvoice);
+      assertGeneratedInvoiceLine(previousInvoice, product, orderLine.getOrderedQuantity());
+      OBDal.getInstance().refresh(salesOrder);
+      OBDal.getInstance().refresh(orderLine);
+      assertThat("Sales Order Line is fully invoice", orderLine.getInvoicedQuantity(),
+          equalTo(orderLine.getOrderedQuantity()));
+
+      final ShipmentInOut shipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
+          "InvoiceFromShipment_011");
+      final ShipmentInOutLine shipmentLine = getShipmentLineByLineNo(shipment, 10L);
+      setProductInShipmentLine(shipmentLine, product);
+      setOrderLineInShipmentLine(shipmentLine, orderLine);
+      TestUtils.processShipmentReceipt(shipment);
+
+      final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
+          .createInvoiceConsideringInvoiceTerms(true);
+      assertThat("Invoice has not been generated", invoice, is(nullValue()));
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * Generating invoice from a Goods Shipment linked to a Sales Order with invoice term "Immediate".
+   * The order was partially invoiced before generating the shipment, so the invoice will be created
+   * when shipping more quantity than the previously invoiced
+   * <ol>
+   * <li>Create a Sales Order with invoice term "Immediate".</li>
+   * <li>Adds one line of product. Book the order.</li>
+   * <li>Invoice the sales order minus 1 unit</li>
+   * <li>Create a Goods Shipment.</li>
+   * <li>Adds the line from the previous order. Ship sales order minus 2 units</li>
+   * <li>Complete the document invoicing if possible.</li>
+   * <li>Verify an invoice was NOT created.</li>
+   * <li>Create a Goods Shipment.</li>
+   * <li>Adds the line from the previous order. Ship the pending 2 units</li>
+   * <li>Complete the document invoicing if possible.</li>
+   * <li>Verify an invoice was created for 1 unit.</li>
+   * </ol>
+   */
+  @Test
+  public void testOrderPartiallyInvoicedSoInvoiceIsCreatedFromShipmentWhenNecessary() {
+    OBContext.setAdminMode();
+    try {
+      final Product product = TestUtils.cloneProduct(T_SHIRTS_PRODUCT_ID,
+          "InvoiceFromShipment_012");
+      final Order salesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
+          "InvoiceFromShipment_012", IMMEDIATE);
+      final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
+      setProductInOrderLine(orderLine, product);
+      TestUtils.processOrder(salesOrder);
+
+      Invoice previousInvoice = createInvoiceFromOrder(salesOrder);
+      previousInvoice.getInvoiceLineList()
+          .get(0)
+          .setInvoicedQuantity(orderLine.getOrderedQuantity().subtract(BigDecimal.ONE));
+      TestCostingUtils.completeDocument(previousInvoice);
+      assertGeneratedInvoiceLine(previousInvoice, product,
+          orderLine.getOrderedQuantity().subtract(BigDecimal.ONE));
+      OBDal.getInstance().refresh(salesOrder);
+      OBDal.getInstance().refresh(orderLine);
+      assertThat("Sales Order Line is partially invoice", orderLine.getInvoicedQuantity(),
+          equalTo(orderLine.getOrderedQuantity().subtract(BigDecimal.ONE)));
+
+      final ShipmentInOut shipment1 = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
+          "InvoiceFromShipment_012");
+      final ShipmentInOutLine shipment1Line = getShipmentLineByLineNo(shipment1, 10L);
+      setProductInShipmentLine(shipment1Line, product);
+      setOrderLineInShipmentLine(shipment1Line, orderLine);
+      shipment1Line
+          .setMovementQuantity(orderLine.getOrderedQuantity().subtract(new BigDecimal("2")));
+      TestUtils.processShipmentReceipt(shipment1);
+
+      final Invoice invoice1 = new InvoiceGeneratorFromGoodsShipment(shipment1.getId())
+          .createInvoiceConsideringInvoiceTerms(true);
+      assertThat("Invoice has not been generated", invoice1, is(nullValue()));
+
+      final ShipmentInOut shipment2 = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
+          "InvoiceFromShipment_012");
+      final ShipmentInOutLine shipment2Line = getShipmentLineByLineNo(shipment2, 10L);
+      setProductInShipmentLine(shipment2Line, product);
+      setOrderLineInShipmentLine(shipment2Line, orderLine);
+      shipment2Line.setMovementQuantity(new BigDecimal("2"));
+      TestUtils.processShipmentReceipt(shipment2);
+
+      final Invoice invoice2 = new InvoiceGeneratorFromGoodsShipment(shipment2.getId())
+          .createInvoiceConsideringInvoiceTerms(true);
+      assertGeneratedInvoiceLine(invoice2, product, BigDecimal.ONE);
+      assertInvoiceDatePriceListAndStatus(invoice2, shipment2.getMovementDate(),
+          salesOrder.getPriceList(), "CO");
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Test
+  public void testShipMoreQtyThanOrdered_AfterDelivery() {
+    testShipMoreQtyThanOrdered(AFTER_DELIVERY);
+  }
+
+  @Test
+  public void testShipMoreQtyThanOrdered_Immediate() {
+    testShipMoreQtyThanOrdered(IMMEDIATE);
+  }
+
+  @Test
+  public void testShipMoreQtyThanOrdered_AfterOrderDelivery() {
+    testShipMoreQtyThanOrdered(AFTER_ORDER_DELIVERY);
+  }
+
+  /**
+   * Generating invoice from a Goods Shipment linked to a Sales Order with the given invoice term.
+   * The qty shipped is greater than the qyt ordered, so we must invoice the qty finally shipped
+   * <ol>
+   * <li>Create a Sales Order with the given invoice term.</li>
+   * <li>Adds one line of product declared as quantity variable. Book the order.</li>
+   * <li>Create a Goods Shipment.</li>
+   * <li>Adds the line from the previous order and add 1 unit.</li>
+   * <li>Complete the document invoicing if possible.</li>
+   * <li>Verify an invoice was created and processed containing the line from Goods Shipment. The
+   * quantity invoiced must be the shipped quantity</li>
+   * </ol>
+   */
+  private void testShipMoreQtyThanOrdered(final String invoiceTerms) {
+    OBContext.setAdminMode();
+    try {
+      final Product product = TestUtils.cloneProduct(T_SHIRTS_PRODUCT_ID,
+          "InvoiceFromShipment_013");
+      product.setQuantityvariable(true);
+      final Order salesOrder = createSalesOrderWithInvoiceTerm(SALES_ORDER,
+          "InvoiceFromShipment_013", invoiceTerms);
+      final OrderLine orderLine = getOrderLineByLineNo(salesOrder, 10L);
+      setProductInOrderLine(orderLine, product);
+      TestUtils.processOrder(salesOrder);
+
+      final ShipmentInOut shipment = TestUtils.cloneReceiptShipment(GOODS_SHIPMENT_ID,
+          "InvoiceFromShipment_013");
+      final ShipmentInOutLine shipmentLine = getShipmentLineByLineNo(shipment, 10L);
+      setProductInShipmentLine(shipmentLine, product);
+      setOrderLineInShipmentLine(shipmentLine, orderLine);
+      shipmentLine.setMovementQuantity(orderLine.getOrderedQuantity().add(BigDecimal.ONE));
+      TestUtils.processShipmentReceipt(shipment);
+
+      final Invoice invoice = new InvoiceGeneratorFromGoodsShipment(shipment.getId())
+          .createInvoiceConsideringInvoiceTerms(true);
+      assertGeneratedInvoiceLine(invoice, product,
+          orderLine.getOrderedQuantity().add(BigDecimal.ONE));
+      assertInvoiceDatePriceListAndStatus(invoice, shipment.getMovementDate(),
+          salesOrder.getPriceList(), "CO");
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new OBException(e);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   private Order createSalesOrderWithInvoiceTerm(String salesOrderId, String docNno,
       String invoiceTerm) {
     final Order salesOrder = TestUtils.cloneOrder(salesOrderId, docNno);
@@ -891,6 +1086,64 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
       log.error(e.getMessage());
     }
     return lines;
+  }
+
+  private Invoice createInvoiceFromOrder(final Order order) {
+    final Invoice newInvoice = (Invoice) DalUtil
+        .copy(OBDal.getInstance().get(Invoice.class, SALES_INVOICE), false);
+    newInvoice.setId(SequenceIdData.getUUID());
+    newInvoice.setNewOBObject(true);
+    newInvoice.setAccountingDate(order.getAccountingDate());
+    newInvoice.setInvoiceDate(order.getOrderDate());
+    final String documentNo = Utility.getDocumentNo(OBDal.getInstance().getConnection(false),
+        new DalConnectionProvider(false), RequestContext.get().getVariablesSecureApp(), "",
+        Invoice.TABLE_NAME,
+        newInvoice.getTransactionDocument() == null ? ""
+            : newInvoice.getTransactionDocument().getId(),
+        newInvoice.getDocumentType() == null ? "" : newInvoice.getDocumentType().getId(), false,
+        true);
+    newInvoice.setDocumentNo(documentNo);
+    OBDal.getInstance().save(newInvoice);
+    OBDal.getInstance().flush();
+
+    CreateInvoiceLinesFromProcess createLinesFromProcess = WeldUtils
+        .getInstanceFromStaticBeanManager(CreateInvoiceLinesFromProcess.class);
+    createLinesFromProcess.createInvoiceLinesFromDocumentLines(createSelectedLinesFromOrder(order),
+        newInvoice, OrderLine.class);
+    OBDal.getInstance().getSession().refresh(newInvoice);
+    return newInvoice;
+  }
+
+  private JSONArray createSelectedLinesFromOrder(Order order) {
+    JSONArray selectedLines = new JSONArray();
+    for (int i = 0; i < order.getOrderLineList().size(); i++) {
+      try {
+        OrderLine orderLine = order.getOrderLineList().get(i);
+
+        JSONObject line = new JSONObject();
+        line.put("uOM", orderLine.getUOM().getId());
+        line.put("uOM$_identifier", orderLine.getUOM().getIdentifier());
+        line.put("product", orderLine.getProduct().getId());
+        line.put("product$_identifier", orderLine.getProduct().getIdentifier());
+        line.put("lineNo", orderLine.getLineNo());
+        line.put("orderedQuantity", orderLine.getOrderedQuantity().toString());
+        line.put("operativeQuantity",
+            orderLine.getOperativeQuantity() == null ? orderLine.getOrderedQuantity().toString()
+                : orderLine.getOperativeQuantity().toString());
+        line.put("id", orderLine.getId());
+        line.put("salesOrder", order.getId());
+        line.put("operativeUOM", orderLine.getOperativeUOM() == null ? orderLine.getUOM().getId()
+            : orderLine.getOperativeUOM().getId());
+        line.put("operativeUOM$_identifier",
+            orderLine.getOperativeUOM() == null ? orderLine.getUOM().getIdentifier()
+                : orderLine.getOperativeUOM().getIdentifier());
+        line.put("orderQuantity", "");
+        selectedLines.put(line);
+      } catch (JSONException e) {
+        throw new OBException(e.getMessage());
+      }
+    }
+    return selectedLines;
   }
 
   private void assertInvoiceDatePriceListAndStatus(Invoice invoice, Date invoiceDate,
