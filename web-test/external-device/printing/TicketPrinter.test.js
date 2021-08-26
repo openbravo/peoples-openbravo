@@ -179,7 +179,7 @@ describe('TicketPrinter', () => {
         .fn()
         .mockResolvedValue({ ticket });
       OB.App.State.Ticket.Utils.isNegative.mockReturnValue(false);
-      ticketPrinter.selectPrinter = jest.fn();
+      ticketPrinter.controller.selectPrinter = jest.fn();
 
       await ticketPrinter.doPrintTicket(ticket, {});
 
@@ -188,7 +188,7 @@ describe('TicketPrinter', () => {
         OB.App.PrintTemplateStore.selectTicketPrintTemplate
       ).toHaveBeenCalledTimes(1);
       // printer selection
-      expect(ticketPrinter.selectPrinter).toHaveBeenCalledTimes(1);
+      expect(ticketPrinter.controller.selectPrinter).toHaveBeenCalledTimes(1);
       // print ticket
       expect(ticketPrinter.controller.print).toHaveBeenCalledTimes(times);
       // retry is not called
@@ -219,7 +219,7 @@ describe('TicketPrinter', () => {
       .fn()
       .mockResolvedValue({ ticket });
     OB.App.State.Ticket.Utils.isNegative.mockReturnValue(false);
-    ticketPrinter.selectPrinter = jest.fn();
+    ticketPrinter.controller.selectPrinter = jest.fn();
 
     await ticketPrinter.doPrintTicket(ticket, {});
 
@@ -228,7 +228,7 @@ describe('TicketPrinter', () => {
       OB.App.PrintTemplateStore.selectTicketPrintTemplate
     ).toHaveBeenCalledTimes(1);
     // printer selection
-    expect(ticketPrinter.selectPrinter).toHaveBeenCalledTimes(1);
+    expect(ticketPrinter.controller.selectPrinter).toHaveBeenCalledTimes(1);
     // print ticket (fails)
     expect(ticketPrinter.controller.print).toHaveBeenCalledTimes(1);
     // retry
@@ -252,7 +252,9 @@ describe('TicketPrinter', () => {
       OB.App.View.DialogUIHandler.askConfirmation.mockResolvedValue(
         confirmation
       );
-      ticketPrinter.canSelectPrinter = jest.fn().mockReturnValue(true);
+      ticketPrinter.controller.canSelectPrinter = jest
+        .fn()
+        .mockReturnValue(true);
       ticketPrinter.doPrintTicket = jest.fn();
 
       await ticketPrinter.retryPrintTicket(ticket);
@@ -278,10 +280,12 @@ describe('TicketPrinter', () => {
       OB.App.TerminalProperty.get.mockImplementation(property =>
         property === 'terminal' ? terminalData : {}
       );
-      ticketPrinter.canSelectPrinter = jest.fn().mockReturnValue(canSelect);
+      ticketPrinter.controller.canSelectPrinter = jest
+        .fn()
+        .mockReturnValue(canSelect);
       ticketPrinter.controller.setActiveURL = jest.fn();
 
-      await ticketPrinter.selectPrinter(options);
+      await ticketPrinter.controller.selectPrinter(options);
 
       expect(ticketPrinter.controller.setActiveURL).toHaveBeenCalledTimes(
         times
@@ -293,11 +297,11 @@ describe('TicketPrinter', () => {
     const printer = '1';
 
     OB.App.View.DialogUIHandler.inputData.mockResolvedValue({ printer });
-    ticketPrinter.canSelectPrinter = jest.fn().mockReturnValue(true);
+    ticketPrinter.controller.canSelectPrinter = jest.fn().mockReturnValue(true);
     ticketPrinter.controller.setActiveURL = jest.fn();
     ticketPrinter.controller.setActivePDFURL = jest.fn();
 
-    const result = await ticketPrinter.selectPrinter({});
+    const result = await ticketPrinter.controller.selectPrinter({});
 
     expect(result).toBe(printer);
     expect(ticketPrinter.controller.setActiveURL).toHaveBeenCalledWith(printer);
@@ -308,11 +312,13 @@ describe('TicketPrinter', () => {
     const printer = '1';
 
     OB.App.View.DialogUIHandler.inputData.mockResolvedValue({ printer });
-    ticketPrinter.canSelectPrinter = jest.fn().mockReturnValue(true);
+    ticketPrinter.controller.canSelectPrinter = jest.fn().mockReturnValue(true);
     ticketPrinter.controller.setActiveURL = jest.fn();
     ticketPrinter.controller.setActivePDFURL = jest.fn();
 
-    const result = await ticketPrinter.selectPrinter({ isPdf: true });
+    const result = await ticketPrinter.controller.selectPrinter({
+      isPdf: true
+    });
 
     expect(result).toBe(printer);
     expect(ticketPrinter.controller.setActiveURL).not.toHaveBeenCalled();
@@ -325,11 +331,13 @@ describe('TicketPrinter', () => {
     const printer = '1';
 
     OB.App.View.DialogUIHandler.inputData.mockResolvedValue({ printer });
-    ticketPrinter.canSelectPrinter = jest.fn().mockReturnValue(false);
+    ticketPrinter.controller.canSelectPrinter = jest
+      .fn()
+      .mockReturnValue(false);
     ticketPrinter.controller.setActiveURL = jest.fn();
     ticketPrinter.controller.setActivePDFURL = jest.fn();
 
-    const result = await ticketPrinter.selectPrinter({});
+    const result = await ticketPrinter.controller.selectPrinter({});
 
     expect(result).toBeNull();
   });
@@ -348,7 +356,7 @@ describe('TicketPrinter', () => {
         .fn()
         .mockReturnValue(hasAvailablePrinter);
 
-      expect(ticketPrinter.canSelectPrinter()).toBe(expected);
+      expect(ticketPrinter.controller.canSelectPrinter()).toBe(expected);
     }
   );
 
