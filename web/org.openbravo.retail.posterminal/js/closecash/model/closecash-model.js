@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2020 Openbravo S.L.U.
+ * Copyright (C) 2014-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -261,7 +261,10 @@ OB.OBPOSCloseCash.Model.CloseCash = OB.Model.TerminalWindowModel.extend({
     //First we fix the qty to keep for non-automated payment methods
     _.each(this.get('paymentList').models, function(model) {
       var counted = model.get('foreignCounted') || model.get('counted');
-      if (OB.UTIL.isNullOrUndefined(model.get('qtyToKeep'))) {
+      if (
+        !model.get('isCashToKeepSelected') &&
+        model.get('paymentMethod').allowdontmove
+      ) {
         model.set('qtyToKeep', counted);
       }
       if (counted < 0) {
