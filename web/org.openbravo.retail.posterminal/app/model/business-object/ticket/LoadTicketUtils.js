@@ -320,7 +320,12 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           }
         }
 
-        return { ...line, id: line.lineId, product, hasRelatedServices };
+        return {
+          ...line,
+          id: line.lineId,
+          product,
+          hasRelatedServices
+        };
       })
     );
     return { ...payload, ticket: { ...payload.ticket, receiptLines: lines } };

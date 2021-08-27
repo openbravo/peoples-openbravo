@@ -47,20 +47,54 @@
     }
 
     calculateLineTaxes(line) {
-      const rulesFilteredByLine = OB.Taxes.filterRulesByTicketLine(
-        this.ticket,
-        line,
-        this.rules
-      );
+      let rulesFilteredByLine;
+      const newLine = { ...line };
+
+      const getTaxRulesFromLineTaxes = () => {
+        let taxRules = [];
+        taxRules = newLine.lineTaxes.map(lineTax => ({
+          id: lineTax.taxId,
+          name: lineTax.identifier,
+          rate: lineTax.taxRate,
+          lineNo: lineTax.lineNo,
+          docTaxAmount: lineTax.docTaxAmount,
+          cascade: lineTax.cascade,
+          summaryLevel: lineTax.summaryLevel,
+          isBom: lineTax.isBom,
+          taxExempt: lineTax.taxExempt,
+          default: lineTax.default,
+          withholdingTax: lineTax.withholdingTax,
+          isCashVAT: lineTax.isCashVAT,
+          baseAmount: lineTax.baseAmount,
+          taxBase: lineTax.taxBase ? lineTax.taxBase : null,
+          taxCategory: lineTax.taxCategory
+        }));
+        if (newLine.isProductBOM) {
+          return taxRules.filter(
+            rule => rule.taxCategory === newLine.product.taxCategory
+          );
+        }
+        return taxRules;
+      };
+
+      if (newLine.isVerifiedReturn) {
+        rulesFilteredByLine = getTaxRulesFromLineTaxes();
+      } else {
+        rulesFilteredByLine = OB.Taxes.filterRulesByTicketLine(
+          this.ticket,
+          newLine,
+          this.rules
+        );
+      }
 
       if (rulesFilteredByLine.length === 0) {
         throw new OB.App.Class.TaxEngineError('OBPOS_NoTaxFoundForProduct', [
           // eslint-disable-next-line no-underscore-dangle
-          line.product._identifier
+          newLine.product._identifier
         ]);
       }
 
-      return this.getLineTaxes(line, rulesFilteredByLine);
+      return this.getLineTaxes(newLine, rulesFilteredByLine);
     }
 
     calculateLineBOMTaxes(line) {
@@ -82,6 +116,7 @@
             updatedLine.amount = bomLine.amount;
             updatedLine.quantity = bomLine.quantity;
             updatedLine.product = bomLine.product;
+            updatedLine.isProductBOM = true;
             result.push(updatedLine);
           }
           return result;

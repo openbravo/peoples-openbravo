@@ -282,6 +282,16 @@ public class PaidReceipts extends JSONProcessSimple {
             jsonTax.put("docTaxAmount", tax.getTax().getDocTaxAmount());
             jsonTax.put("lineNo", tax.getTax().getLineNo());
             jsonTax.put("cascade", tax.getTax().isCascade());
+            jsonTax.put("summaryLevel", tax.getTax().isSummaryLevel());
+            jsonTax.put("isBom", tax.getTax().getTaxCategory().isAsbom());
+            jsonTax.put("taxExempt", tax.getTax().isTaxExempt());
+            jsonTax.put("default", tax.getTax().isDefault());
+            jsonTax.put("withholdingTax", tax.getTax().isWithholdingTax());
+            jsonTax.put("isCashVAT", tax.getTax().isCashVAT());
+            jsonTax.put("baseAmount", tax.getTax().getBaseAmount());
+            jsonTax.put("taxBase",
+                tax.getTax().getTaxBase() != null ? tax.getTax().getTaxBase().getId() : null);
+            jsonTax.put("taxCategory", tax.getTax().getTaxCategory().getId());
             taxes.put(jsonTax);
           }
 
