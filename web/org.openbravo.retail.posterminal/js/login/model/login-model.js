@@ -492,8 +492,9 @@
                 }
                 var nextWindow = OB.UTIL.localStorage.getItem('nextWindow');
                 if (nextWindow) {
-                  OB.POS.navigate(nextWindow);
-                  OB.UTIL.localStorage.removeItem('nextWindow');
+                  if (OB.POS.navigate(nextWindow)) {
+                    OB.UTIL.localStorage.removeItem('nextWindow');
+                  }
                 } else {
                   OB.POS.navigate(OB.MobileApp.model.get('defaultWindow'));
                 }
@@ -1683,7 +1684,7 @@
     },
     windows: null,
     navigate: function(route) {
-      OB.MobileApp.model.navigate(route);
+      return OB.MobileApp.model.navigate(route);
     },
     registerWindow: function(window) {
       OB.MobileApp.windowRegistry.registerWindow(window);
