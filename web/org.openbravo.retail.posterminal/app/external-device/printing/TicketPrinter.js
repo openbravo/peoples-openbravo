@@ -119,7 +119,7 @@
         );
         isPdf = template.ispdf;
 
-        await this.selectPrinter({
+        await this.controller.selectPrinter({
           isPdf,
           isRetry: false,
           skipSelectPrinters: printSettings.skipSelectPrinters
@@ -157,14 +157,14 @@
         message: isPdf ? 'OBPOS_MsgPDFPrintAgain' : 'OBPOS_MsgPrintAgain',
         messageParams: [this.controller.getActiveURLIdentifier()],
         confirmLabel: 'OBPOS_LblRetry',
-        additionalButtons: this.canSelectPrinter(isPdf)
+        additionalButtons: this.controller.canSelectPrinter(isPdf)
           ? [
               {
                 label: isPdf
                   ? 'OBPOS_SelectPDFPrintersTitle'
                   : 'OBPOS_SelectPrintersTitle',
                 action: async () => {
-                  const printer = await this.selectPrinter({
+                  const printer = await this.controller.selectPrinter({
                     isPdf,
                     isRetry: true,
                     forceSelect: true
@@ -179,48 +179,6 @@
       if (retry) {
         await this.doPrintTicket(ticket, printSettings);
       }
-    }
-
-    async selectPrinter(options) {
-      const terminal = OB.App.TerminalProperty.get('terminal');
-      const { isPdf, isRetry, skipSelectPrinters, forceSelect } = options;
-
-      if (
-        !forceSelect &&
-        (!terminal.terminalType.selectprinteralways ||
-          skipSelectPrinters ||
-          !this.canSelectPrinter(isPdf))
-      ) {
-        // skip printer selection
-        return null;
-      }
-
-      const { printer } = await OB.App.View.DialogUIHandler.inputData(
-        isPdf ? 'modalSelectPDFPrinters' : 'modalSelectPrinters',
-        {
-          title: isPdf
-            ? OB.I18N.getLabel('OBPOS_SelectPDFPrintersTitle')
-            : OB.I18N.getLabel('OBPOS_SelectPrintersTitle'),
-          isRetry
-        }
-      );
-
-      if (printer) {
-        if (isPdf) {
-          this.controller.setActivePDFURL(printer);
-        } else {
-          this.controller.setActiveURL(printer);
-        }
-      }
-
-      return printer;
-    }
-
-    canSelectPrinter(isPdf) {
-      return (
-        OB.App.Security.hasPermission('OBPOS_retail.selectprinter') &&
-        this.controller.hasAvailablePrinter(isPdf)
-      );
     }
 
     async printTicketLine(message) {

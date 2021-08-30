@@ -242,4 +242,9 @@
     'openDrawerTemplate',
     '../org.openbravo.retail.posterminal/res/opendrawer.xml'
   );
+
+  OB.App.PrintTemplateStore.register(
+    'printCashup',
+    '../org.openbravo.retail.posterminal/res/printcashup.xml'
+  );
 })();
