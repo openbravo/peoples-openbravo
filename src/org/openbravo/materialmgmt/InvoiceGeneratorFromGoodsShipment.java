@@ -316,6 +316,7 @@ public class InvoiceGeneratorFromGoodsShipment {
    * generate an invoice for 1 unit.
    */
   private BigDecimal getQtyToInvoice(final OrderLine orderLine) {
+    OBDal.getInstance().getSession().refresh(orderLine); // Necessary to get updated deliveredQty
     final BigDecimal qtyShip = orderLine.getDeliveredQuantity(); // Previous shipments + this one
     final BigDecimal qtyPreviouslyInvoiced = orderLine.getInvoicedQuantity();
 
