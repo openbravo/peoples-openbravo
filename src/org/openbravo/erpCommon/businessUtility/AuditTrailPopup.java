@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2020 Openbravo SLU
+ * All portions are Copyright (C) 2009-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1061,7 +1061,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   private String getCountRowsDeleted(VariablesSecureApp vars, String tabId, String tableId,
       String fkColumnName, String fkId, int offset, int pageSize, String dateFrom, String dateTo,
-      String userId) {
+      String userId) throws Exception {
     long s1 = System.currentTimeMillis();
     FieldProvider[] rows = AuditTrailDeletedRecords.getDeletedRecords(this, vars, tabId,
         fkColumnName, fkId, 0, 0, true, dateFrom, dateTo, userId);
@@ -1074,7 +1074,7 @@ public class AuditTrailPopup extends HttpSecureAppServlet {
 
   private FieldProvider[] getDataRowsDeleted(VariablesSecureApp vars, String tabId, String tableId,
       String fkColumnName, String fkId, int offset, int pageSize, String dateFrom, String dateTo,
-      String userId) {
+      String userId) throws Exception {
 
     long s1 = System.currentTimeMillis();
     FieldProvider[] rows = AuditTrailDeletedRecords.getDeletedRecords(this, vars, tabId,

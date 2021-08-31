@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,8 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.UtilSql;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.database.SessionInfo;
+import org.openbravo.service.db.QueryTimeOutUtil;
 
 /**
  * @author Fernando Iriazabal
@@ -164,6 +166,7 @@ public class ExecuteQuery {
 
     try {
       st = getPool().getPreparedStatement(strSQL);
+      QueryTimeOutUtil.getInstance().setQueryTimeOut(st, SessionInfo.getQueryProfile());
       Vector<String> params = getParameters();
       if (params != null) {
         for (int iParameter = 0; iParameter < params.size(); iParameter++) {
