@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2020 Openbravo S.L.U.
+ * Copyright (C) 2014-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -618,25 +618,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
           }
         }
 
-        // Converting model to JSON to support migrated print template.
-        const convertedCashUpReport = cashUpReport.toJSON();
-        const convertedCountCashSummary = Object.keys(countCashSummary).reduce(
-          (prev, curr) => {
-            return {
-              ...prev,
-              [curr]: Object.values(countCashSummary[curr]).map(summ =>
-                summ.toJSON()
-              )
-            };
-          },
-          {}
-        );
-
-        this.printCloseCash.print(
-          convertedCashUpReport,
-          convertedCountCashSummary,
-          true
-        );
+        this.printCloseCash.print(cashUpReport, countCashSummary, true);
 
         // Remove current safe box at the end of cashup
         OB.UTIL.localStorage.removeItem('currentSafeBox');

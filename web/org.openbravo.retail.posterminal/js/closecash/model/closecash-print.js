@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -20,12 +20,29 @@
     this.isRetry = false;
   };
 
-  PrintCloseCash.prototype.print = function(report, sumary, closed, callback) {
+  PrintCloseCash.prototype.print = function(report, summary, closed, callback) {
+    // Converting model to JSON to support migrated print template.
+    const convertedCashUpReport = report.toJSON();
+    const convertedCountCashSummary = Object.keys(summary).reduce(
+      (prev, curr) => {
+        return {
+          ...prev,
+          [curr]: Object.values(summary[curr]).map(summ => summ.toJSON())
+        };
+      },
+      {}
+    );
+
     // callbacks definition
     const successfunc = () => {
       const printCloseCash = new OB.PrintCloseCash.Print.CloseCash();
       printCloseCash.isRetry = true;
-      printCloseCash.print(report, sumary, closed, this.cancelOrDismiss);
+      printCloseCash.print(
+        convertedCashUpReport,
+        convertedCountCashSummary,
+        closed,
+        this.cancelOrDismiss
+      );
       return true;
     };
     const cancelfunc = () => {
@@ -39,8 +56,8 @@
         {
           cashup: {
             closed: closed,
-            report: report,
-            summary: sumary
+            report: convertedCashUpReport,
+            summary: convertedCountCashSummary
           }
         },
         result => {
