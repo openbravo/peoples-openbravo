@@ -143,7 +143,9 @@ isc.OBViewGrid.addProperties({
   canMultiSort: false,
 
   emptyMessage: OB.I18N.getLabel('OBUISC_ListGrid.loadingDataMessage'),
-  discardEditsSaveButtonTitle: OB.I18N.getLabel('UINAVBA_Save'),
+  discardEditsSaveButtonTitle: OB.I18N.getLabel(
+    'OBUISC_ListGrid.discardEditsSaveButtonTitle'
+  ),
   editPendingCSSText: null,
 
   // commented out because of: https://issues.openbravo.com/view.php?id=16515
