@@ -2871,18 +2871,16 @@ enyo.kind({
       } else {
         this.$.reversePayment.hideButton();
       }
-    } else if (
-      this.model.get('isPrePayment') &&
-      OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)
-    ) {
+    } else if (this.model.get('isPrePayment')) {
       this.$.removePayment.hideButton();
-      this.$.reversePayment.show();
-    } else if (
-      this.model.get('isPrePayment') &&
-      !OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)
-    ) {
-      this.$.removePayment.hideButton();
-      this.$.reversePayment.hideButton();
+      if (
+        payment.paymentMethod.isreversable &&
+        OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)
+      ) {
+        this.$.reversePayment.show();
+      } else {
+        this.$.reversePayment.hideButton();
+      }
     } else {
       this.$.removePayment.show();
       this.$.reversePayment.hideButton();
