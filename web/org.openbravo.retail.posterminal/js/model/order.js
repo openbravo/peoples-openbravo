@@ -3557,6 +3557,8 @@
               OB.App.State.Global.printTicketLine({
                 line: currentLine
               });
+              const receiptLine = receiptLines.get(currentLine.id);
+              receiptLine.trigger('selected', receiptLine);
             }
             currentReceipt.trigger('updatePending');
 
