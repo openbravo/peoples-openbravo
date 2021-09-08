@@ -23,6 +23,7 @@ global.OB = {
         }
       }
     },
+    Request: { get: jest.fn() },
     TerminalProperty: {
       get: jest.fn().mockImplementation(property => {
         if (property === 'hardwareURL') {
@@ -166,6 +167,7 @@ describe('TicketPrinter', () => {
         'printTicket',
         'res/printTicket.xml'
       );
+      await printTemplate.initialize();
 
       OB.App.PrintTemplateStore.selectTicketPrintTemplate = jest
         .fn()
