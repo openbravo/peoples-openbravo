@@ -429,6 +429,8 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
 
       var me = this;
 
+      const posterminalId = OB.MobileApp.model.get('terminal').id;
+
       const currentSafeBox = JSON.parse(
           OB.UTIL.localStorage.getItem('currentSafeBox')
         ),
@@ -446,7 +448,8 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
         timezoneOffset: now.getTimezoneOffset(),
         approvals: this.get('approvals'),
         userId: OB.MobileApp.model.get('context').user.id,
-        touchpointId: OB.MobileApp.model.get('terminal').id
+        touchpointId: posterminalId,
+        posterminal: posterminalId
       });
 
       let countSafeBoxArray = [];
@@ -475,6 +478,7 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
       countSafeBox.isbeingprocessed = 'Y';
       countSafeBox.creationDate = now;
       countSafeBox.safebox = currentSafeBox.searchKey;
+      countSafeBox.posterminal = posterminalId;
       countSafeBox.userId = OB.MobileApp.model.get('context').user.id;
       countSafeBox.objToSend = JSON.stringify(objToSend);
       countSafeBox.isprocessed = 'Y';

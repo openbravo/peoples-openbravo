@@ -18,7 +18,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -45,6 +44,11 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
     JSONObject jsonData = new JSONObject();
     JSONObject jsonCountSafeBox = new JSONObject(countSafeBox.getString("objToSend"));
     Date countSafeBoxDate = new Date();
+    OBPOSApplications posTerminal = OBDal.getInstance()
+        .get(OBPOSApplications.class,
+            jsonCountSafeBox.has("posTerminal") ? jsonCountSafeBox.getString("posTerminal")
+                : jsonCountSafeBox.getString("posterminal"));
+
     // get and prepare the countSafeBox Date
     if (jsonCountSafeBox.has("countSafeBoxDate") && jsonCountSafeBox.get("countSafeBoxDate") != null
         && StringUtils.isNotEmpty(jsonCountSafeBox.getString("countSafeBoxDate"))) {
@@ -74,8 +78,8 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
         .createCriteria(OBPOSSafeBox.class);
     safeBoxCriteria.add(
         Restrictions.eq(OBPOSSafeBox.PROPERTY_SEARCHKEY, jsonCountSafeBox.getString("safeBox")));
-    safeBoxCriteria.add(Restrictions.eq(OBPOSSafeBox.PROPERTY_ORGANIZATION,
-        OBContext.getOBContext().getCurrentOrganization()));
+    safeBoxCriteria
+        .add(Restrictions.eq(OBPOSSafeBox.PROPERTY_ORGANIZATION, posTerminal.getOrganization()));
 
     OBPOSSafeBox safebox = (OBPOSSafeBox) safeBoxCriteria.uniqueResult();
 
