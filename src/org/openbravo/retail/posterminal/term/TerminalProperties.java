@@ -8,6 +8,9 @@
  */
 package org.openbravo.retail.posterminal.term;
 
+import static org.openbravo.mobile.core.model.HQLProperty.listOfProperties;
+import static org.openbravo.mobile.core.model.HQLProperty.property;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -160,6 +163,7 @@ public class TerminalProperties extends ModelExtension {
     if (printingTemplates != null) {
       return printingTemplates;
     }
+    // there can be requests in parallel while initializing templates, let's synchronize them
     synchronized (gettingPrintingTemplatesLock) {
       try {
         // flag this instance so that when addTemplateProperty is called the set of templates will
@@ -179,15 +183,43 @@ public class TerminalProperties extends ModelExtension {
     }
   }
 
-  protected void addTemplateProperty(final String propertyName, final String alias,
-      final List<HQLProperty> list) {
+  /**
+   * Registers a printing template. Printing templates are linked from Organization entity. In POS1
+   * they are retrieved on login as part of the terminal properties, whereas in POS2 they are
+   * handled as masterdata.
+   * 
+   * <p>
+   * This method mutates its {@code list} parameter adding to the new properties defined within this
+   * method.
+   * 
+   * @implNote As there is no AD definition of which how different templates are defined, it is
+   *           necessary to register them through this method. All the registered templates are
+   *           cached in order to support POS2's masterdata retrieval.
+   * 
+   * @param propertyName
+   *          Property in the {@link Organization} entity that defines the template
+   * @param templateTypeIdentifier
+   *          Identifies the given template. This identifier (ie. {@code printTicketTemplate}) is
+   *          used in POS frontend code to select a given template.
+   * @param props
+   *          Existing List of HQLPropeties to append the template properties defined in this
+   *          method.
+   */
+  protected void addTemplateProperty(final String propertyName, final String templateTypeIdentifier,
+      final List<HQLProperty> props) {
     try {
       OBContext.setAdminMode(false);
       if (gettingPrintingTemplateProperties) {
+        // There is at least a request in the process of initializing templates but we cannot be
+        // sure if that request is invoking us, or some other one in parallel. That's why we not
+        // only initialize but serve the request as usual, also synchronization on printingTemplates
+        // is performed to avoid concurrent additions.
         if (ModelProvider.getInstance()
             .getEntity(Organization.class)
             .getProperty(propertyName, false) != null) {
-          printingTemplates.add(new HQLProperty(propertyName, alias));
+          synchronized (printingTemplates) {
+            printingTemplates.add(property(propertyName, templateTypeIdentifier));
+          }
         } else {
           log.warn(
               "Property {} is set at template property but it is not an Organization's proprety",
@@ -198,20 +230,22 @@ public class TerminalProperties extends ModelExtension {
       final PrintTemplate value = (PrintTemplate) POSUtils
           .getPropertyInOrgTree(OBContext.getOBContext().getCurrentOrganization(), propertyName);
       if (value != null) {
-        list.add(new HQLProperty("'" + value.getTemplatePath() + "'", alias));
-        list.add(new HQLProperty("'" + value.isPdf() + "'", alias + "IsPdf"));
-        list.add(new HQLProperty("'" + value.isLegacy() + "'", alias + "IsLegacy"));
+        props.addAll(
+            listOfProperties(property("'" + value.getTemplatePath() + "'", templateTypeIdentifier),
+                property("'" + value.isPdf() + "'", templateTypeIdentifier + "IsPdf"),
+                property("'" + value.isLegacy() + "'", templateTypeIdentifier + "IsLegacy")));
         if (value.isPdf()) {
-          list.add(new HQLProperty("'" + value.getPrinter() + "'", alias + "Printer"));
+          props.add(property("'" + value.getPrinter() + "'", templateTypeIdentifier + "Printer"));
         }
         int i = 0;
         for (final PrintTemplateSubrep subrep : value.getOBPOSPrintTemplateSubrepList()) {
-          list.add(new HQLProperty("'" + subrep.getTemplatePath() + "'", alias + "Subrep" + i));
+          props.add(property("'" + subrep.getTemplatePath() + "'",
+              templateTypeIdentifier + "Subrep" + i));
           i++;
         }
       }
     } catch (final Exception e) {
-      log.error("Error getting property " + propertyName, e);
+      log.error("Error getting property {}", propertyName, e);
     } finally {
       OBContext.restorePreviousMode();
     }
