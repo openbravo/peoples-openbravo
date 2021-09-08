@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -67,10 +67,8 @@ enyo.kind({
 
       //hide address fields while editing customers
       if (this.args.businessPartner) {
-        this.customer = this.args.businessPartner;
-        this.$.body.$.edit_createcustomers_impl.setCustomer(
-          this.args.businessPartner
-        );
+        this.customer = OB.UTIL.clone(this.args.businessPartner);
+        this.$.body.$.edit_createcustomers_impl.setCustomer(this.customer);
         this.$.body.$.edit_createcustomers_impl.$.invoicingAddrFields.hide();
         this.$.body.$.edit_createcustomers_impl.$.shippingAddrFields.hide();
         this.$.header.setContent(OB.I18N.getLabel('OBPOS_TitleEditCustomer'));
@@ -80,7 +78,7 @@ enyo.kind({
         var anonymousCustomer = OB.MobileApp.model.get('businessPartner').id;
         if (
           OB.MobileApp.model.get('connectedToERP') &&
-          this.args.businessPartner.id !== anonymousCustomer
+          this.customer.id !== anonymousCustomer
         ) {
           var process = new OB.DS.Process(
             'org.openbravo.retail.posterminal.process.CustomerStatistics'
@@ -88,7 +86,7 @@ enyo.kind({
           process.exec(
             {
               organization: OB.MobileApp.model.get('terminal').organization,
-              bpId: this.args.businessPartner.id
+              bpId: this.customer.id
             },
             function(data, message) {
               if (data && data.exception) {

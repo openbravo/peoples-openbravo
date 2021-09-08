@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -30,14 +30,15 @@ enyo.kind({
   executeOnShow: function() {
     var me = this;
     me.pressedBtn = false;
-    me.$.body.$.editcustomers_impl.setCustomer(this.args.businessPartner);
+    me.customer = OB.UTIL.clone(this.args.businessPartner);
+    me.$.body.$.editcustomers_impl.setCustomer(me.customer);
 
     //Statistics
     me.$.body.$.editcustomers_impl.$.statistics.setShowing(false);
     var anonymousCustomer = OB.MobileApp.model.get('businessPartner').id;
     if (
       OB.MobileApp.model.get('connectedToERP') &&
-      this.args.businessPartner.id !== anonymousCustomer
+      me.customer.id !== anonymousCustomer
     ) {
       var process = new OB.DS.Process(
         'org.openbravo.retail.posterminal.process.CustomerStatistics'
@@ -45,7 +46,7 @@ enyo.kind({
       process.exec(
         {
           organization: OB.MobileApp.model.get('terminal').organization,
-          bpId: this.args.businessPartner.id
+          bpId: me.customer.id
         },
         function(data, message) {
           if (data && data.exception) {
@@ -70,7 +71,7 @@ enyo.kind({
           }
         )
       ) {
-        buttonContainer.$[key].customer = me.args.businessPartner;
+        buttonContainer.$[key].customer = me.customer;
         buttonContainer.$[key].navigationPath = me.args.navigationPath;
         buttonContainer.$[key].target = me.args.target;
         if (buttonContainer.$[key].permission) {
