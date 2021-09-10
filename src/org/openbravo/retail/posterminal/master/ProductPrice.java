@@ -125,7 +125,6 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
           + "   select 1 " //
           + "   from PricingPriceListVersion plv, BusinessPartner bp" //
           + "   where plv.priceList.id = bp.priceList.id" //
-          + "   and bp.$readableClientCriteria and bp.$naturalOrgCriteria" //
           + "   and plv.active = true" //
           + "   and plv.validFromDate = (" //
           + "     select max(plv2.validFromDate) " //
