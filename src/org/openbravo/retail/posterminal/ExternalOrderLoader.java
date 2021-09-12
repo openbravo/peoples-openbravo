@@ -1310,6 +1310,7 @@ public class ExternalOrderLoader extends OrderLoader {
   protected void setClientOrg(JSONObject orderJson) throws JSONException {
     final OBPOSApplications posTerminal = getPOSTerminal(orderJson);
     if (!orderJson.has("organization")) {
+      orderJson.put("trxOrganization", posTerminal.getOrganization().getId());
       orderJson.put("organization", posTerminal.getOrganization().getId());
       orderJson.put("client", posTerminal.getClient().getId());
     }
