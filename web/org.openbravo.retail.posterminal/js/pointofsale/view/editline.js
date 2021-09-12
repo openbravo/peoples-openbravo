@@ -1405,11 +1405,13 @@ enyo.kind({
     i18nLabel: 'OBPOS_ReturnReason',
     classes: 'obObposPointOfSaleUiEditLine-msgedit-returnreason',
     change: function(inSender, inEvent) {
-      var reason = this.children[this.getSelected()],
+      var me = this,
+        reason = this.children[this.getSelected()],
         returnReason = reason.getValue(),
         returnReasonName = reason.getContent();
       _.each(this.formElement.owner.selectedModels, function(line) {
         if (returnReason === '') {
+          me.formElement.inputField.nullifyValue();
           line.unset('returnReason');
           line.unset('returnReasonName');
         } else {
