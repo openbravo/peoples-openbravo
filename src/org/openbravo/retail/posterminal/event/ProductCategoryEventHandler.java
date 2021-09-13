@@ -15,16 +15,22 @@ import javax.enterprise.event.Observes;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.plm.ProductCategory;
 import org.openbravo.retail.config.OBRETCOProductList;
 import org.openbravo.retail.config.OBRETCOProductcategory;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class ProductCategoryEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
@@ -87,6 +93,21 @@ public class ProductCategoryEventHandler extends EntityPersistenceEventObserver 
             createAssortmentProductCategory(assortment, productCtgry);
           }
         }
+      }
+    }
+
+    if (!previousSummary && currentSummary) {
+      OBCriteria<org.openbravo.model.pricing.priceadjustment.ProductCategory> prodCategoryDisc = OBDal
+          .getInstance()
+          .createCriteria(org.openbravo.model.pricing.priceadjustment.ProductCategory.class);
+      prodCategoryDisc.add(Restrictions.eq(
+          org.openbravo.model.pricing.priceadjustment.ProductCategory.PROPERTY_PRODUCTCATEGORY,
+          productCtgry));
+      prodCategoryDisc.setMaxResults(1);
+      if (prodCategoryDisc.uniqueResult() != null) {
+        throw new OBException(Utility.messageBD(new DalConnectionProvider(false),
+            "OBPOS_productCategoryIConfiguredInDiscount",
+            OBContext.getOBContext().getLanguage().getLanguage()));
       }
     }
   }
