@@ -618,7 +618,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
           }
         }
 
-        this.printCloseCash.print(cashUpReport, countCashSummary, true);
+        this.printCloseCash.print(cashUpReport, countCashSummary, true, null);
 
         // Remove current safe box at the end of cashup
         OB.UTIL.localStorage.removeItem('currentSafeBox');

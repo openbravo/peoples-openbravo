@@ -39,7 +39,9 @@
           return;
         }
 
-        const template = await OB.App.PrintTemplateStore.get('printCashup');
+        const template = await OB.App.PrintTemplateStore.get(
+          'printCashUpTemplate'
+        );
 
         await this.controller.selectPrinter({
           isRetry: false,

@@ -21,17 +21,19 @@
   };
 
   PrintCloseCash.prototype.print = function(report, summary, closed, callback) {
-    // Converting model to JSON to support migrated print template.
-    const convertedCashUpReport = report.toJSON();
-    const convertedCountCashSummary = Object.keys(summary).reduce(
-      (prev, curr) => {
-        return {
-          ...prev,
-          [curr]: Object.values(summary[curr]).map(summ => summ.toJSON())
-        };
-      },
-      {}
-    );
+    const isLegacyTemplate = OB.App.PrintTemplateStore.get(
+      'printCashUpTemplate'
+    ).isLegacyTemplate();
+    let convertedCashUpReport, convertedCountCashSummary;
+
+    if (isLegacyTemplate) {
+      convertedCashUpReport = report;
+      convertedCountCashSummary = summary;
+    } else {
+      // Converting model to plain JS object to support migrated print template.
+      convertedCashUpReport = JSON.parse(JSON.stringify(report));
+      convertedCountCashSummary = JSON.parse(JSON.stringify(summary));
+    }
 
     // callbacks definition
     const successfunc = () => {

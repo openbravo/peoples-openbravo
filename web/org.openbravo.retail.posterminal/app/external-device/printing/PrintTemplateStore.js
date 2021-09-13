@@ -244,7 +244,7 @@
   );
 
   OB.App.PrintTemplateStore.register(
-    'printCashup',
+    'printCashUpTemplate',
     '../org.openbravo.retail.posterminal/res/printcashup.xml'
   );
 })();
