@@ -37,7 +37,7 @@
 
     // callbacks definition
     const successfunc = () => {
-      const printCloseCash = new OB.PrintCloseCash.Print.CloseCash();
+      const printCloseCash = new OB.OBPOSCloseCash.Print.CloseCash();
       printCloseCash.isRetry = true;
       printCloseCash.print(
         convertedCashUpReport,
