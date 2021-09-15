@@ -1991,19 +1991,20 @@ enyo.kind({
   },
   updateAddPaymentAction: function() {
     if (this.model.get('leftColumnViewManager').isOrder()) {
-      this.receipt.stopAddingPayments = !_.isEmpty(
-        this.getShowingErrorMessages()
+      this.receipt.set(
+        'stopAddingPayments',
+        !_.isEmpty(this.getShowingErrorMessages())
       );
     } else if (this.model.get('leftColumnViewManager').isMultiOrder()) {
-      this.model.get('multiOrders').stopAddingPayments = !_.isEmpty(
-        this.getShowingErrorMessages()
-      );
+      this.model
+        .get('multiOrders')
+        .set('stopAddingPayments', !_.isEmpty(this.getShowingErrorMessages()));
     }
   },
   getAddPaymentAction: function() {
     return this.model.get('leftColumnViewManager').isOrder()
-      ? this.receipt.stopAddingPayments
-      : this.model.get('multiOrders').stopAddingPayments;
+      ? this.receipt.get('stopAddingPayments')
+      : this.model.get('multiOrders').get('stopAddingPayments');
   },
   alignErrorMessages: function() {
     if (

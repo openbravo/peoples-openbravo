@@ -108,7 +108,7 @@ enyo.kind({
   },
   checkNoPaymentsAllowed: function() {
     // Checks to be done BEFORE payment provider is invoked.
-    if (this.getReceiptToPay().stopAddingPayments) {
+    if (this.getReceiptToPay().get('stopAddingPayments')) {
       OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
       return true;
     }

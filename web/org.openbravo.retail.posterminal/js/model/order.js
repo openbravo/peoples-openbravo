@@ -8853,7 +8853,7 @@
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_MsgPaymentAmountError'));
         return;
       }
-      if (this.stopAddingPayments) {
+      if (this.get('stopAddingPayments')) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_CannotAddPayments'));
         return;
       }
