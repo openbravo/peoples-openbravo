@@ -70,7 +70,8 @@ public class CountSafeBoxProcessor {
 
     OBPOS_SafeboxCount safeboxCount = null;
     if (isInitialCount) {
-      initializeSafeboxTerminalHistoryRecord(safeBox, countSafeBoxDate, touchpoint);
+      String userId = jsonCountSafeBox.getString("userId");
+      initializeSafeboxTerminalHistoryRecord(safeBox, countSafeBoxDate, touchpoint, userId);
     } else {
       safeboxCount = createSafeboxCountHistoryRecord(safeBox, countSafeBoxDate, touchpoint,
           jsonCountSafeBox);
@@ -231,13 +232,15 @@ public class CountSafeBoxProcessor {
   }
 
   private void initializeSafeboxTerminalHistoryRecord(OBPOSSafeBox safeBox, Date countSafeBoxDate,
-      OBPOSApplications touchpoint) {
+      OBPOSApplications touchpoint, String userId) {
     OBPOSSafeboxTouchpoint historyRecord = OBProvider.getInstance()
         .get(OBPOSSafeboxTouchpoint.class);
 
     historyRecord.setDateIn(countSafeBoxDate);
     historyRecord.setObposSafebox(safeBox);
     historyRecord.setTouchpoint(touchpoint);
+    User user = OBDal.getInstance().get(User.class, userId);
+    historyRecord.setSafeboxUser(user);
     OBDal.getInstance().save(historyRecord);
   }
 

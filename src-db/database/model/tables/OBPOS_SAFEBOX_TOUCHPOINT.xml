@@ -57,6 +57,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="SAFEBOXUSER" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="OBPOS_SAFEBOX_TOUCHPOINT_APP">
         <reference local="OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
@@ -77,6 +81,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="OBPOS_SAFEBOXHISTORY_UPDATED">
         <reference local="UPDATEDBY" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="OBPOS_SAFEBOXHISTORY_USER">
+        <reference local="SAFEBOXUSER" foreign="AD_USER_ID"/>
       </foreign-key>
       <index name="OBPOS_SAFEBOXHISTORY_CNT_IDX" unique="false">
         <index-column name="ISCOUNTED"/>

@@ -40,6 +40,8 @@ public class SafeBoxes extends JSONProcessSimple {
   public static final String LAST_TERMINAL_IN = "lastIn";
   public static final String LAST_TERMINAL_OUT = "lastOut";
   public static final String LAST_TERMINAL_SEARCHKEY = "searchKey";
+  private static final String SAFE_BOX_CASHIER_NAME = "safeBoxCashierName";
+  private static final String SAFE_BOX_CASHIER_USER_NAME = "safeBoxCashierUserName";
 
   @Inject
   @Any
@@ -106,13 +108,10 @@ public class SafeBoxes extends JSONProcessSimple {
 
         safeBox.putOpt("lastTouchpoint", lastHistoryRecord);
 
-        if (safeBox.has("safeBoxUserId")) {
-          User cashier = OBDal.getInstance().get(User.class, safeBox.get("safeBoxUserId"));
-          if (cashier != null) {
-            safeBox.put("safeBoxCashierName", cashier.getName());
-            safeBox.put("safeBoxCashierUserName", cashier.getUsername());
-          }
-
+        if (lastHistoryRecord != null && lastHistoryRecord.has(SAFE_BOX_CASHIER_NAME)) {
+          safeBox.put(SAFE_BOX_CASHIER_NAME, lastHistoryRecord.get(SAFE_BOX_CASHIER_NAME));
+          safeBox.put(SAFE_BOX_CASHIER_USER_NAME,
+              lastHistoryRecord.get(SAFE_BOX_CASHIER_USER_NAME));
         }
 
         JSONArray safeBoxPaymentMethods = new JSONArray();
@@ -287,6 +286,12 @@ public class SafeBoxes extends JSONProcessSimple {
     result.put(LAST_TERMINAL_IN, lastTouchpoint.getDateIn());
     result.put(LAST_TERMINAL_OUT, lastTouchpoint.getDateOut());
     result.put(LAST_TERMINAL_SEARCHKEY, lastTouchpoint.getTouchpoint().getSearchKey());
+
+    User safeboxUser = lastTouchpoint.getSafeboxUser();
+    if (safeboxUser != null) {
+      result.put(SAFE_BOX_CASHIER_NAME, safeboxUser.getName());
+      result.put(SAFE_BOX_CASHIER_USER_NAME, safeboxUser.getUsername());
+    }
 
     return result;
   }
