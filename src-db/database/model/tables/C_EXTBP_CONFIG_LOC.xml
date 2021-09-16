@@ -100,6 +100,10 @@
       <foreign-key foreignTable="AD_ORG" name="C_EXTBP_LOC_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <unique name="C_EXTBPCONFLOC_NAME_UN">
+        <unique-column name="C_EXTBP_CONFIG_ID"/>
+        <unique-column name="NAME"/>
+      </unique>
       <check name="C_EXTBP_CONF_LOC_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_EXTBP_CONF_LOC_ISBILLTO_CHK"><![CDATA[ISBILLTO IN ('Y', 'N')]]></check>
       <check name="C_EXTBP_CONF_LOC_ISSHIPTO_CHK"><![CDATA[ISSHIPTO IN ('Y', 'N')]]></check>
