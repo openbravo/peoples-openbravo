@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -134,6 +134,8 @@ public class SL_Order_Product extends SimpleCallout {
         PAttributeSetData[] data2 = PAttributeSetData.select(this, dataPAttr[0].mAttributesetId);
         if (PAttributeSet.isInstanceAttributeSet(data2)) {
           info.addResult("inpmAttributesetinstanceId", "");
+          info.addResult("inpattributeset", "");
+          info.addResult("inpattrsetvaluetype", "");
         } else {
           info.addResult("inpmAttributesetinstanceId", dataPAttr[0].mAttributesetinstanceId);
         }
@@ -142,8 +144,6 @@ public class SL_Order_Product extends SimpleCallout {
             FormatUtilities.replaceJS(dataPAttr[0].attrsetvaluetype));
       } else {
         info.addResult("inpmAttributesetinstanceId", "");
-        info.addResult("inpattributeset", "");
-        info.addResult("inpattrsetvaluetype", "");
       }
     }
 
