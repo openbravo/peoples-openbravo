@@ -22,9 +22,17 @@
       newTicket.externalBusinessPartner = businessPartner
         ? businessPartner.getPlainObject()
         : null;
-      const addressConfig = OB.App.TerminalProperty.get('externalBpIntegration').addresses.find(e => e.shippingAddress===true);
-      if (addressConfig && 'HomeDelivery' === newTicket.obrdmDeliveryModeProperty) {
-        newTicket.alternateAddress = OB.App.ExternalBusinessPartnerAPI.getAlternateDeliveryLocation(businessPartner, addressConfig);
+      const addressConfig = OB.App.TerminalProperty.get(
+        'externalBpIntegration'
+      ).addresses.find(e => e.shippingAddress === true);
+      if (
+        addressConfig &&
+        newTicket.obrdmDeliveryModeProperty === 'HomeDelivery'
+      ) {
+        newTicket.alternateAddress = OB.App.ExternalBusinessPartnerAPI.getAlternateDeliveryLocation(
+          businessPartner,
+          addressConfig
+        );
       }
       return newTicket;
     }
