@@ -579,6 +579,7 @@
         line.taxRate = taxLine.taxRate;
         line.tax = taxLine.tax;
         line.taxes = taxLine.taxes;
+        line.bomLinesTaxes = taxLine.bomLinesTaxes;
       });
     }
 

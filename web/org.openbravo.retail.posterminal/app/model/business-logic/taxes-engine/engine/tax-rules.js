@@ -103,26 +103,37 @@
         OB.DEC.Zero
       );
 
-      const bomGroups = line.product.productBOM
-        .reduce((result, bomLine) => {
-          const bomGroup = result.find(
+      const { bomGroupInfo, bomLineInfo } = line.product.productBOM.reduce(
+        (result, bomLine) => {
+          const updatedResult = { ...result };
+          const bomGroup = updatedResult.bomGroupInfo.find(
             group => group.product.taxCategory === bomLine.product.taxCategory
           );
+          const updatedLine = { ...line };
+          updatedLine.id = updatedLine.id || bomLine.id;
+          updatedLine.amount = bomLine.amount;
+          updatedLine.quantity = bomLine.quantity;
+          updatedLine.product = bomLine.product;
+          updatedLine.isProductBOM = true;
+          updatedResult.bomLineInfo = [
+            ...updatedResult.bomLineInfo,
+            updatedLine
+          ];
           if (bomGroup) {
             bomGroup.amount = OB.DEC.add(bomGroup.amount, bomLine.amount);
           } else {
-            const updatedLine = { ...line };
-            updatedLine.id = updatedLine.id || bomLine.id;
-            updatedLine.amount = bomLine.amount;
-            updatedLine.quantity = bomLine.quantity;
-            updatedLine.product = bomLine.product;
-            updatedLine.isProductBOM = true;
-            result.push(updatedLine);
+            updatedResult.bomGroupInfo = [
+              ...updatedResult.bomGroupInfo,
+              { ...updatedLine }
+            ];
           }
-          return result;
-        }, [])
+          return updatedResult;
+        },
+        { bomGroupInfo: [], bomLineInfo: [] }
+      );
+      const bomGroups = bomGroupInfo
         .map(bomGroup => {
-          const bomLine = bomGroup;
+          const bomLine = { ...bomGroup };
           bomLine.amount = OB.DEC.div(
             OB.DEC.mul(bomGroup.amount, line.amount),
             bomTotalAmount
@@ -151,9 +162,49 @@
       const lineBomTaxes = bomGroups.flatMap(bomGroup => {
         return this.calculateLineTaxes(bomGroup);
       });
+      const weightedBomLineInfo = bomLineInfo.map(bomLine => {
+        const updatedBomLine = { ...bomLine };
+        updatedBomLine.amount = OB.DEC.div(
+          OB.DEC.mul(updatedBomLine.amount, line.amount),
+          bomTotalAmount
+        );
+        return updatedBomLine;
+      });
 
+      bomGroups.forEach(bomGroup => {
+        const weightedBomLines = weightedBomLineInfo.filter(
+          l => l.product.taxCategory === bomGroup.product.taxCategory
+        );
+        const bomGroupAdjustment = OB.DEC.sub(
+          bomGroup.amount,
+          weightedBomLines.reduce(
+            (total, weightedBomLine) =>
+              OB.DEC.add(total, weightedBomLine.amount),
+            OB.DEC.Zero
+          )
+        );
+        if (OB.DEC.compare(bomGroupAdjustment) !== 0) {
+          const weightedBomLine = weightedBomLines.reduce(
+            (weightedBomLine1, weightedBomLine2) => {
+              return OB.DEC.abs(weightedBomLine1.amount) >
+                OB.DEC.abs(weightedBomLine2.amount)
+                ? weightedBomLine1
+                : weightedBomLine2;
+            }
+          );
+          weightedBomLine.amount = OB.DEC.add(
+            bomGroupAdjustment,
+            weightedBomLine.amount
+          );
+        }
+      });
+
+      const bomLinesTaxes = weightedBomLineInfo.map(bomLine =>
+        this.calculateLineTaxes(bomLine)
+      );
       lineTaxes.taxes = lineBomTaxes.flatMap(lineBomTax => lineBomTax.taxes);
       lineTaxes.bomLines = lineBomTaxes;
+      lineTaxes.bomLinesTaxes = bomLinesTaxes;
       lineTaxes.grossUnitAmount = lineBomTaxes.reduce(
         (total, bomLine) => OB.DEC.add(total, bomLine.grossUnitAmount),
         OB.DEC.Zero

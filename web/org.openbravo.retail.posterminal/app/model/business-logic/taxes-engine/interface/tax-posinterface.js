@@ -47,6 +47,7 @@
       newTaxes.lines = taxes.lines.map(line => {
         const newLine = { ...line };
         newLine.taxes = translateTaxArray(line.taxes);
+        newLine.bomLinesTaxes = line.bomLinesTaxes;
         return newLine;
       });
       return newTaxes;
