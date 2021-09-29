@@ -1321,7 +1321,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(2))>=0)?"2":"")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-22" style="Detail_Header" x="0" y="1" width="15" height="16" uuid="7ee0eb8d-0409-4e5b-9e55-697d7fe00ab1">
 						<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=1)]]></printWhenExpression>
 					</reportElement>
@@ -1713,7 +1713,7 @@
 		<groupHeader>
 			<band height="18" splitType="Stretch">
 				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=1)]]></printWhenExpression>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level1_Line" stretchType="RelativeToBandHeight" x="0" y="0" width="150" height="18" uuid="e6bf8381-b02d-4792-a429-1b45fad1fcb9"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2087,7 +2087,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level2_Line" stretchType="RelativeToBandHeight" x="15" y="0" width="175" height="18" uuid="1906af41-82cc-4472-b71d-240888b3e2c8"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2461,7 +2461,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level3_Line" stretchType="RelativeToBandHeight" x="30" y="0" width="160" height="18" uuid="784539b9-f5c8-438c-b642-8f021ab52211"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2848,7 +2848,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level4_Line" stretchType="RelativeToBandHeight" x="45" y="0" width="145" height="18" uuid="f626811a-dd3d-4ee1-a33c-f7b09ab0368b"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3248,7 +3248,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level5_Line" stretchType="RelativeToBandHeight" x="60" y="0" width="130" height="18" uuid="55ee30af-7a1a-45f4-92c2-7fd96e3c6db7"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3661,7 +3661,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-66" style="Level6_Line" stretchType="RelativeToBandHeight" x="75" y="0" width="115" height="18" uuid="a17e8e56-85d3-4fee-a173-e1277576c5ea"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -4087,7 +4087,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-75" style="Level7_Line" stretchType="RelativeToBandHeight" x="90" y="0" width="100" height="18" uuid="c3cbb0c8-6921-4453-ad09-2a9d495cd261"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -4526,7 +4526,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-85" style="Level8_Line" stretchType="RelativeToBandHeight" x="105" y="0" width="85" height="18" uuid="a503048b-7150-41c7-9841-c2d00619c8f5"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -4978,7 +4978,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-96" style="Level9_Line" stretchType="RelativeToBandHeight" x="120" y="0" width="70" height="18" uuid="77be46ab-82bd-45ad-8f77-3e8e3b25cf38"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -5443,7 +5443,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-108" style="Level10_Line" stretchType="RelativeToBandHeight" x="135" y="0" width="55" height="18" uuid="71f7cbd1-5269-4e89-9a71-5b7d66dd198e"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6275,7 +6275,7 @@
 					<text><![CDATA[Qty2%]]></text>
 				</staticText>
 			</frame>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Report_Title" x="0" y="0" width="1210" height="26" uuid="dbd041f2-6a5b-44a3-a97a-506e5063f06f"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6308,7 +6308,7 @@
 				</textElement>
 				<text><![CDATA[Grouping Levels:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="105" y="52" width="1105" height="16" uuid="81eaeb3a-cb34-4abe-a839-2a1b248716c2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6340,7 +6340,7 @@
 				</textElement>
 				<text><![CDATA[Secondary Filters:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="179" y="68" width="1030" height="16" uuid="8b64ccc4-ae8e-4f9a-ac0a-268878a093c5"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6353,7 +6353,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ORGANIZATION} + " and any child organization"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="230" y="84" width="980" height="16" uuid="d69a5b37-89fd-4b84-af43-8f40c4f74119">
 					<printWhenExpression><![CDATA[!$P{BPGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -6368,7 +6368,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{BPGROUP}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="190" y="100" width="1020" height="16" printWhenGroupChanges="DocumentType" uuid="bf3c79ec-fa48-4098-af7e-14b0b1fabc78">
 					<printWhenExpression><![CDATA[!$P{PRODUCTGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -6383,7 +6383,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{PRODUCTGROUP}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="105" y="84" width="125" height="16" uuid="fbf59805-2de5-4393-b6d5-3c94f0daa1b9">
 					<printWhenExpression><![CDATA[!$P{BPGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -6398,7 +6398,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Business Partner Group- "]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="105" y="100" width="85" height="16" printWhenGroupChanges="DocumentType" uuid="5106fcd7-ac70-4d7d-8af1-8bc1c5c24573">
 					<printWhenExpression><![CDATA[!$P{PRODUCTGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -6413,7 +6413,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Product Group - "]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="105" y="68" width="74" height="16" uuid="38c33ed1-015f-4b6d-ad09-54769f4aa1bf"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

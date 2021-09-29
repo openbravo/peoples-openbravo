@@ -208,12 +208,12 @@ AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTN
 					</textElement>
 					<textFieldExpression><![CDATA[(($F{status}.compareTo("VO")==0) ? "VOIDED" : " ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-27" x="0" y="94" width="260" height="58" isPrintWhenDetailOverflows="true" uuid="a696b6b6-dd73-414b-8f1a-a55ba587c3cf"/>
 					<textElement textAlignment="Left" verticalAlignment="Top"/>
 					<textFieldExpression><![CDATA[$F{bp_name} + "\n" + $F{bp_data}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-28" x="271" y="94" width="212" height="42" isPrintWhenDetailOverflows="true" uuid="f801d65b-c1c0-44bf-8e6b-af7e36799050">
 						<printWhenExpression><![CDATA[new Boolean($F{showcompanydata}.equalsIgnoreCase("Y"))]]></printWhenExpression>
 					</reportElement>

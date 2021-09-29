@@ -103,7 +103,7 @@
 					</textElement>
 					<text><![CDATA[Work Requirement]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="187" y="0" width="348" height="23" uuid="63f3631b-1f1c-4825-a5d2-bffa597c11b5"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -129,7 +129,7 @@
 						<pen lineWidth="2.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="default" x="353" y="23" width="36" height="16" uuid="fe624cb3-575a-42d1-88f9-89df45f531cb"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -268,7 +268,7 @@
 					</textElement>
 					<text><![CDATA[Operation WR]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="125" y="0" width="410" height="23" uuid="2f91a87b-2be7-428f-b443-71c048ef510b"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -333,7 +333,7 @@
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[($F{WRPLEFT}!=null)?$P{NUMBERFORMAT}.format($F{WRPLEFT}):new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="default" x="75" y="39" width="191" height="16" uuid="4abcb4f4-f5b7-434a-8e9d-0c675b05bcf2"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -366,7 +366,7 @@
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[($F{WRPPT}!=null)?$P{NUMBERFORMAT}.format($F{WRPPT}):new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="default" x="506" y="39" width="27" height="16" uuid="1cb2fe44-d8a5-4b76-bbf4-27c0a4e7e457"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -583,7 +583,7 @@
 	</title>
 	<pageHeader>
 		<band height="49" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="535" height="20" uuid="e2aa239c-b1ea-4d6b-a81c-37c630e1a1fc"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -600,7 +600,7 @@
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Report_Subtitle" x="0" y="20" width="535" height="20" uuid="280e4a31-54e3-412a-99e7-c3c521d48a7f"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -657,7 +657,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[($F{PRNAME}!=null)?$P{NUMBERFORMAT}.format($F{PRNAME}):new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-2" style="default" stretchType="RelativeToBandHeight" x="0" y="0" width="121" height="16" uuid="6be43e95-c260-47fa-b49a-7b5648c930c3"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

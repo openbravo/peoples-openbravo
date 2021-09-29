@@ -99,7 +99,7 @@
 		<groupExpression><![CDATA[$F{CATEGORYNAME}]]></groupExpression>
 		<groupHeader>
 			<band height="44" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="0" y="0" width="535" height="23" uuid="e9b85e2d-640f-4e60-a4b2-53927616e3e2"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -269,7 +269,7 @@
 	</title>
 	<pageHeader>
 		<band height="46" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="535" height="20" uuid="aa628db4-8bef-4028-8377-144e1b9cb07e"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -299,7 +299,7 @@
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-1" style="Detail_Line" stretchType="RelativeToBandHeight" x="10" y="0" width="139" height="16" uuid="9649c031-de81-4495-98e0-3cff0e428da0"/>
 				<box leftPadding="1" rightPadding="1">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -322,7 +322,7 @@
 				<textFieldExpression><![CDATA[($F{MOVEMENTQTY}!=null)?$F{MOVEMENTQTY}:BigDecimal.ZERO]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-3" style="Detail_Line" stretchType="RelativeToBandHeight" x="213" y="0" width="37" height="16" uuid="4250c75d-2558-4b47-a8c7-87583022251f"/>
 				<box leftPadding="1" rightPadding="1">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -333,7 +333,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{UOMMOVEMENTQTY}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-4" style="Detail_Line" stretchType="RelativeToBandHeight" x="250" y="0" width="64" height="16" uuid="c258e713-674a-4a84-82fe-5a69c3f15f37"/>
 				<box leftPadding="1" rightPadding="1">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -344,7 +344,7 @@
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[($F{DESCRIPTION}==null)?new String("  "):$F{DESCRIPTION}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-5" style="Detail_Line" stretchType="RelativeToBandHeight" x="314" y="0" width="12" height="16" uuid="152d12a8-9fc7-4e5a-885b-07fff41947df"/>
 				<box leftPadding="1" rightPadding="1">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -355,7 +355,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{X}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-6" style="Detail_Line" stretchType="RelativeToBandHeight" x="326" y="0" width="12" height="16" uuid="24b7690b-1fb0-4cdd-8162-4f92236416cc"/>
 				<box leftPadding="1" rightPadding="1">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -366,7 +366,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{Y}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-7" style="Detail_Line" stretchType="RelativeToBandHeight" x="338" y="0" width="12" height="16" uuid="13831f7e-8f5f-425b-82ac-d80098510a05"/>
 				<box leftPadding="1" rightPadding="1">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -389,7 +389,7 @@
 				<textFieldExpression><![CDATA[($F{WEIGHT}!=null)?$F{WEIGHT}:BigDecimal.ZERO]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-9" style="Detail_Line" stretchType="RelativeToBandHeight" x="395" y="0" width="22" height="16" uuid="6059b44e-4351-4224-b3ea-01f292055faa"/>
 				<box leftPadding="1" rightPadding="1">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -400,7 +400,7 @@
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[($F{UOMWEIGHT}==null)?new String("  "):$F{UOMWEIGHT}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-10" style="Detail_Line" stretchType="RelativeToBandHeight" x="417" y="0" width="116" height="16" uuid="21c43f78-6a8c-47fe-944e-6d52a4df06dd"/>
 				<box leftPadding="1" rightPadding="1">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

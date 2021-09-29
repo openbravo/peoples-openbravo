@@ -142,7 +142,7 @@
 					</box>
 					<text><![CDATA[PARTNER]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="130" y="0" width="729" height="23" uuid="dfc49501-a35e-4a0e-b2b3-ee16a6d25797"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -211,7 +211,7 @@
 					</textElement>
 					<text><![CDATA[PROJECT NAME]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="130" y="0" width="729" height="23" uuid="f4fbe6fd-5ece-4582-bc26-2832c053c47a"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -537,7 +537,7 @@
 	</title>
 	<pageHeader>
 		<band height="47" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-1" style="Report_Subtitle" x="0" y="24" width="860" height="20" uuid="247fbad5-f5aa-484f-bbfd-2d1bf4536517"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -548,7 +548,7 @@
 				</box>
 				<textFieldExpression><![CDATA[$P{REPORT_SUBTITLE}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-2" style="Report_Title" mode="Transparent" x="0" y="4" width="860" height="20" uuid="84a11df4-8625-4f0f-9f61-e9f4efd2bafa"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -584,7 +584,7 @@
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" x="20" y="0" width="158" height="16" uuid="27cd6901-b576-4220-ad6c-b4c38423fed6"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -625,7 +625,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($F{LINENETAMT}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" x="260" y="0" width="80" height="16" uuid="cc1dec75-609f-4ba8-a5bc-777d5a769a20">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == true]]></printWhenExpression>
 				</reportElement>
@@ -746,7 +746,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{AUMQTY}!=null)?$P{NUMBERFORMAT}.format($F{AUMQTY}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" x="415" y="0" width="80" height="16" uuid="144eb8aa-2621-4dd1-915d-04c8a086108a">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == true]]></printWhenExpression>
 				</reportElement>
@@ -776,7 +776,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{QTYINVOICED}!=null)?$P{NUMBERFORMAT}.format($F{QTYINVOICED}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" x="340" y="0" width="154" height="16" uuid="da88e78e-1a34-4b5d-a06e-6e8eca466883">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == false]]></printWhenExpression>
 				</reportElement>

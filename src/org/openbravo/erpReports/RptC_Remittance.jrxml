@@ -107,7 +107,7 @@
 					</box>
 					<text><![CDATA[Remittance No:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="120" y="0" width="415" height="18" uuid="f8285b0f-61b4-46b0-aad4-dbafd32b9c8f"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -305,7 +305,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Subtitle" x="0" y="26" width="535" height="20" uuid="3688d5bb-35c5-4fcd-a9dc-3bf14f9aed5b"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>

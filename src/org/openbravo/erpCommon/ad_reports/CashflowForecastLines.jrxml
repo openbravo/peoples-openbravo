@@ -352,7 +352,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DUEDATE}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="default" stretchType="RelativeToBandHeight" x="180" y="0" width="125" height="13" uuid="1cb6035b-7e45-4889-a9b0-63cb89b2a3a1"/>
 				<box leftPadding="5" rightPadding="5">
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
@@ -407,7 +407,7 @@
 					<pen lineColor="#959595"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true">
+			<textField textAdjust="StretchHeight">
 				<reportElement style="default" stretchType="RelativeToBandHeight" x="430" y="0" width="65" height="13" uuid="d38dff1d-644c-4aa4-88ce-ac5fead7ed99">
 					<printWhenExpression><![CDATA[!$F{TRXCUR}.equals($F{FACUR})]]></printWhenExpression>
 				</reportElement>
@@ -420,7 +420,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{AMOUNTFORMAT}.format($F{ORIGINALAMOUNT}) + " ("+$F{TRXCUR}+")"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement style="default" stretchType="RelativeToBandHeight" x="120" y="0" width="60" height="13" forecolor="#0000FF" uuid="c33fffb5-ddd3-4dcc-8f5b-a80722d5e59d">
 					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[$P{OUTPUT_FORMAT}.equals("HTML")?"#0000FF":"#000000"]]></propertyExpression>
 				</reportElement>
@@ -435,7 +435,7 @@
 				<hyperlinkReferenceExpression><![CDATA["javascript:top.OB.Utilities.openDirectTab('" + $V{OPEN_INVOICE_TAB} + "', '" + $F{C_INVOICE_ID} + "');"]]></hyperlinkReferenceExpression>
 				<hyperlinkWhenExpression><![CDATA[$P{OUTPUT_FORMAT}.equalsIgnoreCase("HTML")? Boolean.TRUE: Boolean.FALSE]]></hyperlinkWhenExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement style="default" stretchType="RelativeToBandHeight" x="305" y="0" width="125" height="13" forecolor="#0000FF" uuid="1d306d94-1352-4992-beab-49032842f2c5">
 					<propertyExpression name="net.sf.jasperreports.style.forecolor"><![CDATA[$P{OUTPUT_FORMAT}.equals("HTML")?"#0000FF":"#000000"]]></propertyExpression>
 				</reportElement>

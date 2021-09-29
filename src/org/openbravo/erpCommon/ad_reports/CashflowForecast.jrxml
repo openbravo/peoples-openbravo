@@ -107,7 +107,7 @@
 					</textElement>
 					<text><![CDATA[Payment]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-10" style="Detail_Header" x="505" y="0" width="50" height="15" forecolor="#FEFEFE" backcolor="#969696" uuid="438cac5e-1f48-4d03-8cf1-63960e4296f8"/>
 					<box leftPadding="2" rightPadding="5">
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>
@@ -146,7 +146,7 @@
 					</textElement>
 					<text><![CDATA[Income]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-11" style="Detail_Header" x="252" y="0" width="59" height="15" forecolor="#FEFEFE" backcolor="#969696" uuid="565c2eb6-ab2c-413a-a1ef-6baf37e0fd97"/>
 					<box leftPadding="2" rightPadding="5">
 						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#959595"/>

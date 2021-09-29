@@ -213,7 +213,7 @@
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Organization:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="0" y="0" width="940" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#0A0505" backcolor="#FFE79F" uuid="ea37dff9-064d-4031-9f90-196bc35782ee">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -478,7 +478,7 @@
 				<reportElement style="Detail_Line" x="2" y="0" width="4" height="16" uuid="9ec89087-1683-4c0b-87ea-0640e8e67ef6"/>
 				<text><![CDATA[]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" style="Detail_Line" x="844" y="0" width="65" height="16" uuid="4bb1fbe6-d051-46da-9708-319c5468b828">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
@@ -493,7 +493,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{net}!=null)?$P{AMOUNTFORMAT}.format($F{net}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" style="Detail_Line" x="618" y="0" width="65" height="16" forecolor="#000000" uuid="6a1e8208-9d9e-4767-84de-c40789e35df2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -611,7 +611,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" style="Detail_Line" x="772" y="0" width="72" height="16" forecolor="#000000" uuid="afa128ce-becb-4a4e-87b1-3afc11041928">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
@@ -640,7 +640,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" style="Detail_Line" x="683" y="0" width="89" height="16" forecolor="#000000" uuid="7d3564f6-9c74-4192-bcac-293833fcc038"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -743,7 +743,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($V{SUM_FIVE_1}!=null)?$P{AMOUNTFORMAT}.format($V{SUM_FIVE_1}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" mode="Opaque" x="844" y="3" width="65" height="14" forecolor="#060D0A" backcolor="#FFFFFF" uuid="42a52617-5514-4b3e-9b1b-7495a195015a">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
@@ -758,7 +758,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($V{SUM_NET}!=null)?$P{AMOUNTFORMAT}.format($V{SUM_NET}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" mode="Opaque" x="618" y="3" width="65" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="7bc01cd2-39b8-4ddd-917e-12d675836d19"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -904,7 +904,7 @@
 			<line>
 				<reportElement key="line-33" style="Report_Footer" x="690" y="20" width="87" height="1" uuid="34a2622e-2d1a-42e2-bcf6-7fb66f3a33e5"/>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" mode="Opaque" x="683" y="3" width="89" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="5f3548b7-d73a-4dc0-9740-2aad7ffdde62"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -932,7 +932,7 @@
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" pattern="##0.00" isBlankWhenNull="false" hyperlinkType="Reference">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" mode="Opaque" x="772" y="3" width="72" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="1e4dd78d-287b-46e7-8a8c-1faf7e0a67ef">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>

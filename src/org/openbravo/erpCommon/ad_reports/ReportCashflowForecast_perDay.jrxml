@@ -322,7 +322,7 @@
 		<groupExpression><![CDATA[$F{ISRECEIPT}]]></groupExpression>
 		<groupHeader>
 			<band height="16" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-9" style="GroupHeader_Gray" x="1" y="0" width="530" height="13" backcolor="#ECEBFD" uuid="abd1ebd9-0675-4640-9e3e-9b5a80cf81d2"/>
 					<box leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -483,7 +483,7 @@
 				</textElement>
 				<text><![CDATA[Final]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-18" style="Detail_Header" x="157" y="84" width="89" height="12" uuid="ffe7513d-b01e-4c26-8268-e32f6e06220f"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -496,7 +496,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-19" style="Detail_Header" x="446" y="84" width="89" height="12" uuid="a1cbf326-0593-4ad6-8071-38e59b31cf3c"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -532,7 +532,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-3" x="126" y="0" width="79" height="16" uuid="898cac5a-f973-4352-9ba5-824ce1387f74"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -545,7 +545,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{INVOICENO}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="205" y="0" width="133" height="16" uuid="2a2d4ba1-72b1-43f5-9aee-c71e5c275232"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -558,7 +558,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{BPARTNER}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-6" x="338" y="0" width="131" height="16" uuid="6e97d544-b145-4d8b-bad1-60bea965d5c3"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -571,7 +571,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-7" x="469" y="0" width="62" height="16" uuid="afec1cd4-7f12-471c-a1f2-49f3b68f7d6c"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

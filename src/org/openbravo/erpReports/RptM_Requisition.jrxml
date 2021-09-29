@@ -162,7 +162,7 @@
 		</groupHeader>
 		<groupFooter>
 			<band height="20" splitType="Stretch">
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-8" style="Group_Data_Field" x="67" y="0" width="369" height="20" uuid="ed5ba807-412e-4dd0-9923-afd78452f230"/>
 					<box leftPadding="24">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -144,7 +144,7 @@
 		<groupExpression><![CDATA[$F{NAME}]]></groupExpression>
 		<groupHeader>
 			<band height="66" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="1" y="0" width="868" height="23" uuid="e6d28c79-0d54-4667-b908-097cc7d6e075"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -565,7 +565,7 @@
 	</title>
 	<pageHeader>
 		<band height="60" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="7" width="870" height="30" uuid="2dd84320-bf57-44a4-9e62-247caf9bc0f9"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -643,7 +643,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{TOTALLINEDISCOUNT}!=null)?$P{NUMBERFORMAT}.format($F{TOTALLINEDISCOUNT}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="1" y="0" width="155" height="16" uuid="440e77f0-d7f9-48a0-af7c-faa6cafaa2e0">
 					<property name="local_mesure_unitx" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -674,7 +674,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{QTY}!=null)?$P{NUMBERFORMAT}.format($F{QTY}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="207" y="0" width="33" height="16" uuid="db5d5635-6d27-466f-9e8d-407d1c0b61fc">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == true]]></printWhenExpression>
 				</reportElement>
@@ -811,7 +811,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{AUMQTY}!=null)?$P{NUMBERFORMAT}.format($F{AUMQTY}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="295" y="0" width="33" height="16" uuid="ec7fc12c-c238-4f46-863b-1873519f6b91">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == true]]></printWhenExpression>
 				</reportElement>
@@ -841,7 +841,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{QTY}!=null)?$P{NUMBERFORMAT}.format($F{QTY}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="240" y="0" width="88" height="16" uuid="0692ccbf-60e2-4015-acdc-aa9e9607a149">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == false]]></printWhenExpression>
 				</reportElement>

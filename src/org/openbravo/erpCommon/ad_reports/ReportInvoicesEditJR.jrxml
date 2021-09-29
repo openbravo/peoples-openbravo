@@ -702,7 +702,7 @@
 	</title>
 	<pageHeader>
 		<band height="59" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="4" width="869" height="20" uuid="3a2f11d5-d96f-4408-84a0-e82fe8519429"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -719,7 +719,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Subtitle" x="0" y="27" width="870" height="20" uuid="e7111fc3-6f9a-4616-8703-73cb3b16dc89"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>

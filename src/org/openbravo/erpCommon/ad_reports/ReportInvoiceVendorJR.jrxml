@@ -113,7 +113,7 @@
 		<groupExpression><![CDATA[$F{CLIENT_NAME}]]></groupExpression>
 		<groupHeader>
 			<band height="33" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="1" y="0" width="705" height="23" uuid="89af594b-15b0-43e7-80db-e00ce74ccb26"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -198,7 +198,7 @@
 		<groupExpression><![CDATA[$F{DOCUMENTNO}]]></groupExpression>
 		<groupHeader>
 			<band height="64" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="11" y="0" width="695" height="23" uuid="9e66060e-9e1d-475a-ba29-503045475b06"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -221,7 +221,7 @@
 						<pen lineWidth="2.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="Report_Data_Field" x="116" y="28" width="114" height="14" uuid="b00bfedc-f33d-4b8b-9f8f-11e4fab12be7"/>
 					<box topPadding="2" leftPadding="5" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -420,7 +420,7 @@
 	</title>
 	<pageHeader>
 		<band height="42" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="706" height="25" uuid="1cfe2f39-4c27-4af6-be9a-c2e315a4c4c0"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -456,7 +456,7 @@
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-1" style="Detail_Line" x="25" y="0" width="220" height="14" uuid="338755a9-85e4-4b60-b048-eba3b3cb38c4"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -482,7 +482,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{QUANTITYORDER}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITYORDER}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-3" style="Detail_Line" x="315" y="0" width="30" height="14" uuid="7bba713d-af81-4c7d-ae40-caf3e13a46f0"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

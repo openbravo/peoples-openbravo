@@ -157,7 +157,7 @@
 					</box>
 					<text><![CDATA[ORGANIZATION]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="120" y="0" width="661" height="18" uuid="c9d40e63-2800-4db9-b4ee-931795498638"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -209,7 +209,7 @@
 		<groupExpression><![CDATA[$F{C_BPARTNER_ID}]]></groupExpression>
 		<groupHeader>
 			<band height="32" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="130" y="0" width="650" height="18" uuid="61ba6636-3ab2-4969-a45a-35eca98d40d4"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -284,7 +284,7 @@
 		<groupExpression><![CDATA[$F{C_ORDER_ID}]]></groupExpression>
 		<groupHeader>
 			<band height="62" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="default" stretchType="RelativeToTallestObject" x="20" y="18" width="80" height="18" uuid="be6828f1-de5f-468f-994e-5ec39c1b1703"/>
 					<box topPadding="2" leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -337,7 +337,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<text><![CDATA[ORDER DATE]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-4" style="default" x="100" y="18" width="100" height="18" uuid="6a511f90-0860-4e59-b6d7-f191da4ea541"/>
 					<box topPadding="2" leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -698,7 +698,7 @@
 	</title>
 	<pageHeader>
 		<band height="65" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="4" width="782" height="20" uuid="525f85e0-4508-4282-94db-cd647a950875"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -715,7 +715,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Subtitle" x="0" y="27" width="782" height="20" uuid="90f93116-d7ba-4b62-ae0b-b299de25f77c"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>

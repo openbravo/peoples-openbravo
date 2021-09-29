@@ -194,7 +194,7 @@
 					</box>
 					<text><![CDATA[Customer]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" mode="Opaque" x="80" y="0" width="700" height="16" uuid="45e0985f-3d5b-41d4-ab82-dff141e2daf3">
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>

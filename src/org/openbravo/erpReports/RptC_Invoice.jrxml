@@ -162,7 +162,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 		<groupExpression><![CDATA[$F{C_INVOICE_ID}]]></groupExpression>
 		<groupHeader>
 			<band height="255" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="Group_Data_Field" x="-3" y="235" width="149" height="18" uuid="f5f705ea-188f-416b-a161-06f420f09ea8"/>
 					<box topPadding="2" leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -175,7 +175,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					</textElement>
 					<textFieldExpression><![CDATA[$F{DOCUMENTNO}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="default" x="387" y="235" width="96" height="18" uuid="9aa91426-cfd4-4f56-b004-0c34f7f56479"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -229,7 +229,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					</box>
 					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{ORGANIZATIONID})]]></imageExpression>
 				</image>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-9" style="Report_Footer" positionType="Float" x="125" y="169" width="275" height="55" isPrintWhenDetailOverflows="true" forecolor="#FF0000" uuid="a618173f-0bb0-4165-9145-5195ac8c3a80"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -249,7 +249,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					</textElement>
 					<textFieldExpression><![CDATA[$F{NAME} + "\n" + $F{BP_DATA}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-15" style="Report_Footer" x="307" y="93" width="176" height="42" isPrintWhenDetailOverflows="true" uuid="ad3a5f4d-826a-4d10-910b-ba3dd52d5fff">
 						<printWhenExpression><![CDATA[new Boolean($F{SHOWCOMPANYDATA}.equalsIgnoreCase("Y"))]]></printWhenExpression>
 					</reportElement>
@@ -271,7 +271,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					</textElement>
 					<text><![CDATA[Currency]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-16" style="Group_Data_Field" x="210" y="235" width="149" height="18" uuid="bd5b35c6-27d3-432e-9fe3-a11459d12c07"/>
 					<box topPadding="2" leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -225,7 +225,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					</textElement>
 					<textFieldExpression><![CDATA[(($F{STATUS}.compareTo("VO")==0) ? "VOIDED" : " ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-17" x="0" y="93" width="206" height="55" isPrintWhenDetailOverflows="true" uuid="eb2c32ed-5d4f-40bf-b12a-17e87b799f7a"/>
 					<textElement verticalAlignment="Top"/>
 					<textFieldExpression><![CDATA[$F{NAME} + "\n" + $F{BP_DATA}]]></textFieldExpression>

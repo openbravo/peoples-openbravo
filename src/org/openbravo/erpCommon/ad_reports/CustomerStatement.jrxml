@@ -283,7 +283,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 					</textElement>
 					<text><![CDATA[Business Partner Initial Balance :]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Sales / Purchase" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Sales / Purchase" pattern="" isBlankWhenNull="true">
 					<reportElement style="Detail_Line" stretchType="RelativeToTallestObject" mode="Transparent" x="446" y="3" width="110" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="db8ea373-d4a6-4a80-9543-edb9914382c4"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
 						<font fontName="DejaVu Sans" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
@@ -299,7 +299,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 		<groupExpression><![CDATA[$F{issotrx}]]></groupExpression>
 		<groupHeader>
 			<band height="78">
-				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Sales / Purchase" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Sales / Purchase" pattern="" isBlankWhenNull="true">
 					<reportElement style="Detail_Line" stretchType="RelativeToTallestObject" mode="Transparent" x="446" y="56" width="110" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="bab14b42-0911-481b-84b2-200ab637a727">
 						<printWhenExpression><![CDATA[($P{reportType}.equals("cus")) || ($P{reportType}.equals("both") && $F{issotrx}.equals("Y"))]]></printWhenExpression>
 					</reportElement>
@@ -383,7 +383,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 					</textElement>
 					<text><![CDATA[Vendor Statement]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="Sales / Purchase" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="Sales / Purchase" pattern="" isBlankWhenNull="true">
 					<reportElement style="Detail_Line" stretchType="RelativeToTallestObject" mode="Transparent" x="446" y="56" width="110" height="14" forecolor="#000000" backcolor="#FFFFFF" uuid="0af3ed56-3508-44dd-aeb6-4e3ff0c30acd">
 						<printWhenExpression><![CDATA[($P{reportType}.equals("ven")) || ($P{reportType}.equals("both") && $F{issotrx}.equals("N"))]]></printWhenExpression>
 					</reportElement>
@@ -561,7 +561,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 	</pageHeader>
 	<detail>
 		<band height="17">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="47" height="14" uuid="9c631d3f-0a97-4b1a-91da-50e30e36d6f5"/>
 				<box leftPadding="3"/>
 				<textElement verticalAlignment="Middle">
@@ -571,7 +571,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 				<textFieldExpression><![CDATA[DateFormat.getDateInstance(DateFormat.SHORT,
         $P{LOCALE}).format($F{dateacct})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="47" y="0" width="81" height="14" uuid="e2f6368f-f0af-4bf7-83a2-79d74f1f5b6a"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="8"/>
@@ -579,7 +579,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{documenttype}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="128" y="0" width="202" height="14" uuid="67088f29-11e9-4552-8f4f-bf88390a29d8"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="8"/>
@@ -587,7 +587,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="405" y="0" width="75" height="14" uuid="37b11b94-f0ef-4332-a602-0addfc0a8980"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="8"/>
@@ -596,7 +596,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 				<textFieldExpression><![CDATA[$F{credit}.compareTo(BigDecimal.ZERO) < 0 ? $F{credit}.abs() : $F{credit}]]></textFieldExpression>
 				<patternExpression><![CDATA[$F{credit}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="330" y="0" width="75" height="14" uuid="b9cb19fe-6b55-4c0c-9089-a3c3c8e88223"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="8"/>
@@ -605,7 +605,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 				<textFieldExpression><![CDATA[$F{debit}.compareTo(BigDecimal.ZERO) < 0 ? $F{debit}.abs() : $F{debit}]]></textFieldExpression>
 				<patternExpression><![CDATA[$F{debit}.compareTo(BigDecimal.ZERO) < 0 ? ("("+$P{NUMBERFORMAT}.toPattern()+")") : $P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="480" y="0" width="75" height="14" uuid="50a77f9b-8c48-4f56-837c-590c02bf0166"/>
 				<box rightPadding="3"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">

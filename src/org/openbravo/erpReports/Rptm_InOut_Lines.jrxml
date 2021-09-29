@@ -187,7 +187,7 @@
 					<textFieldExpression><![CDATA[" " + $F{uom}]]></textFieldExpression>
 				</textField>
 			</frame>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-1" style="default" x="0" y="0" width="90" height="16" forecolor="#000000" uuid="e1ce06e4-4f0e-492f-9efd-779ae7b116a3"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -200,7 +200,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $F{value}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-2" style="default" x="90" y="0" width="165" height="16" forecolor="#000000" uuid="73641aba-0521-4a97-8337-d2026b604fb3"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -213,7 +213,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{name}==null ? " " : " " + $F{name})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-3" style="default" x="255" y="0" width="130" height="16" forecolor="#000000" uuid="a73b2096-8fd2-4ba9-beef-e1af56e86615"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -226,7 +226,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{lot}==null ? " " : " " + $F{lot})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-4" style="default" x="422" y="0" width="59" height="16" forecolor="#000000" uuid="56c70f0a-3b29-4ea6-a473-e51a62588b70"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

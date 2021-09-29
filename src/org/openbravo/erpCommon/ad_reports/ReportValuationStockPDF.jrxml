@@ -111,7 +111,7 @@ ORDER BY
 			<band height="15" splitType="Stretch">
 				<frame>
 					<reportElement mode="Opaque" x="0" y="0" width="802" height="15" forecolor="#B89F7D" backcolor="#000000" uuid="08ead1a9-1e5b-4b08-9c3b-81cc70dad2a4"/>
-					<textField isStretchWithOverflow="true">
+					<textField textAdjust="StretchHeight">
 						<reportElement style="SubTitle" isPrintRepeatedValues="false" x="0" y="0" width="321" height="15" forecolor="#FFFFFF" uuid="12c443f7-d02c-4051-a5eb-562ceaf58c35">
 							<property name="local_mesure_unitx" value="pixel"/>
 							<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -133,14 +133,14 @@ ORDER BY
 					<reportElement mode="Opaque" x="0" y="0" width="457" height="14" backcolor="#000000" uuid="97a35456-422e-41dd-a155-a9a7fa65f445"/>
 					<text><![CDATA[]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement mode="Opaque" x="457" y="0" width="92" height="14" forecolor="#FFFFFF" backcolor="#000000" uuid="3482cc96-8c64-4dc4-8459-d178264781e9"/>
 					<textElement textAlignment="Right">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{wh_sum_total_cost}!=null)?$P{NUMBERFORMAT}.format($V{wh_sum_total_cost}).toString():new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement mode="Opaque" x="665" y="0" width="137" height="14" forecolor="#FFFFFF" backcolor="#000000" uuid="41a500c1-b6b6-479b-b23e-3331e820bdfd"/>
 					<textElement textAlignment="Right">
 						<font fontName="Bitstream Vera Sans" size="10" isBold="false"/>
@@ -291,21 +291,21 @@ ORDER BY
 	</columnHeader>
 	<detail>
 		<band height="11" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" isPrintRepeatedValues="false" x="0" y="0" width="142" height="11" uuid="93a731d5-547f-40b8-a94d-e09cfb747598"/>
 				<textElement>
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{product_name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="206" y="0" width="67" height="11" uuid="3763dbb1-cb7f-41ad-b5ed-60e4e9d1ce9a"/>
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{qty}!=null)?$P{NUMBERFORMAT}.format($F{qty}).toString():new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="273" y="0" width="92" height="11" uuid="29b07d22-6a5d-4392-baf8-758b1be3250a"/>
 				<box leftPadding="5"/>
 				<textElement>
@@ -313,7 +313,7 @@ ORDER BY
 				</textElement>
 				<textFieldExpression><![CDATA[$F{uom_name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="365" y="0" width="92" height="11" uuid="dda9f7cf-512d-491c-b4ce-03b391c75ddc"/>
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
@@ -321,14 +321,14 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{average_cost}]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{COSTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="457" y="0" width="92" height="11" uuid="2d49f137-0995-419e-a049-44c3ad593fd9"/>
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{total_cost}!=null)?$P{NUMBERFORMAT}.format($F{total_cost}).toString():new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="549" y="0" width="116" height="11" uuid="e3c28d13-cd01-4ab7-9dec-775534eb64bf"/>
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
@@ -336,14 +336,14 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{cost_type}]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{COSTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="665" y="0" width="137" height="11" uuid="13340e9a-95e7-423e-9766-38c455c132cb"/>
 				<textElement textAlignment="Right">
 					<font fontName="Bitstream Vera Sans" size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{valuation_type}!=null)?$P{NUMBERFORMAT}.format($F{valuation_type}).toString():new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement style="Detail" positionType="Float" x="143" y="0" width="62" height="11" uuid="f7d358a2-f264-4552-b306-bd3898c9bb8d"/>
 				<textElement>
 					<font fontName="Bitstream Vera Sans" size="8"/>
@@ -359,21 +359,21 @@ ORDER BY
 		<band height="25" splitType="Stretch">
 			<frame>
 				<reportElement mode="Opaque" x="0" y="1" width="802" height="24" forecolor="#D0B48E" backcolor="#000000" uuid="0448cd20-f79e-4d97-a346-fd8fb013e978"/>
-				<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<textField textAdjust="StretchHeight" evaluationTime="Report">
 					<reportElement style="Column header" x="762" y="0" width="40" height="20" forecolor="#FFFFFF" uuid="97c7b5b1-4057-4af8-9835-cabe97cd7900"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement style="Column header" x="682" y="0" width="80" height="20" forecolor="#FFFFFF" uuid="867c2997-be95-4d76-891f-33db0e60583b"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="8" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="EEEEE dd MMMMM yyyy">
+				<textField textAdjust="StretchHeight" pattern="EEEEE dd MMMMM yyyy">
 					<reportElement style="Column header" x="2" y="1" width="197" height="20" forecolor="#FFFFFF" uuid="3ffc03bf-6c1d-45af-8b38-dff469e58a8c"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Bitstream Vera Sans" size="8" isBold="false"/>

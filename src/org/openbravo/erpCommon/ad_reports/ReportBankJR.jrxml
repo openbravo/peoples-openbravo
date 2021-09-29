@@ -117,7 +117,7 @@ ORDER BY STATEMENTDATE, NAME2]]>
 		<groupExpression><![CDATA[$F{BANKACCOUNT}]]></groupExpression>
 		<groupHeader>
 			<band height="50" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="default" x="131" y="25" width="210" height="24" uuid="7b0b8c73-3170-48d7-a882-b7619a38033f"/>
 					<box topPadding="2" leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -136,7 +136,7 @@ ORDER BY STATEMENTDATE, NAME2]]>
 				<line>
 					<reportElement key="line-3" stretchType="RelativeToBandHeight" x="533" y="25" width="1" height="25" forecolor="#555555" uuid="3a654e4a-97ce-471c-b7f1-2010dde2cbef"/>
 				</line>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="0" y="0" width="535" height="25" uuid="5c010751-dc5e-4c82-9544-0b6d37717f98"/>
 					<box leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -149,7 +149,7 @@ ORDER BY STATEMENTDATE, NAME2]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{NAME}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="default" x="440" y="25" width="91" height="24" uuid="268324c8-c8e2-4426-a5f5-5048257f0415"/>
 					<box topPadding="2" leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -243,7 +243,7 @@ ORDER BY STATEMENTDATE, NAME2]]>
 					</textElement>
 					<text><![CDATA[Accumulated]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="Detail_Header" x="9" y="0" width="526" height="23" uuid="60bb6276-4c2d-4927-82f9-fa55a09810f0"/>
 					<box leftPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -348,7 +348,7 @@ ORDER BY STATEMENTDATE, NAME2]]>
 	</title>
 	<pageHeader>
 		<band height="41" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="535" height="20" uuid="b2454459-3866-4cee-aeb2-0b40bd48d835"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -393,7 +393,7 @@ ORDER BY STATEMENTDATE, NAME2]]>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{TRXAMT}!=null)?$P{NUMBERFORMAT}.format($F{TRXAMT}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-3" style="Detail_Line" x="15" y="0" width="326" height="16" uuid="fcaab249-11c1-4681-b2d9-2fec335b713f"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

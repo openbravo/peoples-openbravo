@@ -178,7 +178,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					</box>
 					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{ORGANIZATIONID})]]></imageExpression>
 				</image>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-9" style="Report_Footer" positionType="Float" x="314" y="18" width="168" height="27" isPrintWhenDetailOverflows="true" forecolor="#FF0000" uuid="daa0dc12-8785-4592-b3ec-da4365b38803"/>
 					<box>
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -434,7 +434,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-22" x="308" y="45" width="89" height="18" isPrintWhenDetailOverflows="true" uuid="5aa4b73a-1ac1-4f94-ba9c-79eba2396a68"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="8"/>

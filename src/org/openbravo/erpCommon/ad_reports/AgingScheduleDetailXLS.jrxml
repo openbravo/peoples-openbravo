@@ -172,7 +172,7 @@ FROM DUAL]]>
 				<line>
 					<reportElement key="line-33" style="Report_Footer" x="883" y="25" width="100" height="1" uuid="7a7db1be-a2df-4635-95c4-8af219c54c52"/>
 				</line>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-22" style="Report_Footer" x="883" y="1" width="100" height="19" uuid="82ec0731-e20c-438b-837f-fc8650a71cc0"/>
 					<box rightPadding="2"/>
 					<textElement textAlignment="Right">
@@ -360,7 +360,7 @@ FROM DUAL]]>
 	</columnHeader>
 	<detail>
 		<band height="16" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Line" x="99" y="0" width="80" height="16" forecolor="#000000" uuid="8152fa9b-67cd-490b-9129-d68a3243800d"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">
@@ -429,7 +429,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-15" style="Detail_Line" x="783" y="0" width="100" height="16" uuid="38ce54c6-d938-46e1-9f9f-49bd5564b90b"/>
 				<box rightPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -448,7 +448,7 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[$F{AMOUNT5} != null ? $F{AMOUNT5} : BigDecimal.ZERO]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Line" x="708" y="0" width="75" height="16" forecolor="#000000" uuid="b7fbaa8e-7cf2-4a3a-83a4-ceb1ff1edd7a"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -516,7 +516,7 @@ FROM DUAL]]>
 			<line>
 				<reportElement key="line-33" style="Report_Footer" x="0" y="29" width="983" height="1" uuid="7907ca16-6f6c-461e-8abb-371b16ddfdc7"/>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" x="783" y="42" width="100" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="2869faa0-1a50-4323-b93a-f4d1c33ee2c4"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -525,7 +525,7 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[$V{SUMNETTOTAL}.add($V{SUMCREDITSTOTAL}==null ? BigDecimal.ZERO : $V{SUMCREDITSTOTAL})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-22" style="Report_Footer" x="883" y="42" width="100" height="16" uuid="90d286d5-7b7c-4513-ae71-643a3eecbde9"/>
 				<box rightPadding="2"/>
 				<textElement textAlignment="Right">
@@ -534,7 +534,7 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[($V{SUMNETTOTAL}==null ? BigDecimal.ZERO : $V{SUMNETTOTAL}).add($V{SUMCREDITSTOTAL}==null ? BigDecimal.ZERO : $V{SUMCREDITSTOTAL})]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" x="708" y="42" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="158ebc81-bb7c-4935-8cb1-abf922a9eff2"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -543,7 +543,7 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[$V{SUMCREDITSTOTAL} != null ? $V{SUMCREDITSTOTAL} : BigDecimal.ZERO]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{AMOUNTFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" x="258" y="42" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="e2c279ce-75ec-48a1-89bf-08ecaf5f229f"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">

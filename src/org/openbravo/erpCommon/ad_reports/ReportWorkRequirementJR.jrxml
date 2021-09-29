@@ -125,7 +125,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]>
 					</textElement>
 					<text><![CDATA[Work Requirement:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="170" y="0" width="365" height="23" uuid="ae4d91ee-0612-4b54-815a-20f0a9fc4f8f"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -148,7 +148,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]>
 						<pen lineWidth="2.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="Group_Data_Field" x="146" y="48" width="296" height="18" uuid="db7998eb-eaf0-4d43-bdba-d49bd7391bbf"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -254,7 +254,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]>
 					</textElement>
 					<text><![CDATA[Phase:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="76" y="0" width="459" height="23" uuid="1a0db58e-e83b-41f8-b93e-a97d52402acd"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -414,7 +414,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]>
 	</title>
 	<pageHeader>
 		<band height="35" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="535" height="25" uuid="5e9808f5-81b4-40c6-a45a-f8a18c4f2323"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -464,7 +464,7 @@ ORDER BY enddate, wr.MA_WorkRequirement_ID, wrp.SeqNo, wrp.MA_WRPHASE_ID]]>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-4" style="Detail_Red" x="1" y="0" width="271" height="14" uuid="3a8b7828-a36b-496b-a271-522017120686"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

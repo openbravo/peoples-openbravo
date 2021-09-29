@@ -107,7 +107,7 @@ table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.addre
 	</background>
 	<title>
 		<band height="250" splitType="Stretch">
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" x="-1" y="64" width="234" height="16" uuid="399b2c33-520d-42c7-9cdc-ecdce012f0df"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -120,7 +120,7 @@ table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.addre
 				</textElement>
 				<textFieldExpression><![CDATA[$F{BPNAME}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" x="-1" y="80" width="234" height="36" uuid="83f87e2f-84f4-4ede-8455-ade097f69848"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

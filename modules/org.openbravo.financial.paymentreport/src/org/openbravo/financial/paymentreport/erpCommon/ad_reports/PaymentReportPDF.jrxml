@@ -119,14 +119,14 @@ FROM DUAL]]>
 					<textElement textAlignment="Right"/>
 					<text><![CDATA[Business Partner Category:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-29" style="Report_Footer" stretchType="RelativeToBandHeight" x="196" y="0" width="179" height="18" uuid="120696b3-3411-4f87-be63-728c76249969"/>
 					<textElement>
 						<font fontName="DejaVu Sans"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{BPARTNER_SHOW}.toString()]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-40" style="Report_Footer" stretchType="RelativeToBandHeight" x="593" y="0" width="179" height="18" uuid="d96991aa-2d41-43c8-a9a6-3f267036cf6f"/>
 					<textFieldExpression><![CDATA[$P{BPGROUP_SHOW}.toString()]]></textFieldExpression>
 				</textField>
@@ -152,14 +152,14 @@ FROM DUAL]]>
 					<textElement textAlignment="Right"/>
 					<text><![CDATA[Status:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-30" style="Report_Footer" stretchType="RelativeToBandHeight" x="196" y="0" width="179" height="18" uuid="1f76ca46-605a-4c84-8f96-12162946408d"/>
 					<textElement>
 						<font fontName="DejaVu Sans"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$P{PROJECT_SHOW}.toString()]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-41" style="Report_Footer" stretchType="RelativeToBandHeight" x="593" y="0" width="179" height="18" uuid="7ca3cfc3-f649-410d-9582-695ce7afbd04"/>
 					<textFieldExpression><![CDATA[$P{STATUS_SHOW}.toString()]]></textFieldExpression>
 				</textField>
@@ -296,7 +296,7 @@ FROM DUAL]]>
 					</textElement>
 					<text><![CDATA[Ordering Criteria:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-34" style="Report_Footer" stretchType="RelativeToBandHeight" x="196" y="0" width="179" height="18" uuid="08074fe1-7323-4ea1-93a8-df013734de39"/>
 					<textElement>
 						<font fontName="DejaVu Sans"/>

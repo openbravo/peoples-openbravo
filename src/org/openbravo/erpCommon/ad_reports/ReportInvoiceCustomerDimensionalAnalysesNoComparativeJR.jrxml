@@ -666,7 +666,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="None"/>
 					<textFieldExpression><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(2))>=0)?"2":"")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-22" style="Detail_Header" x="0" y="1" width="15" height="16" uuid="6a8abcf0-8e56-493b-a8b5-cdedb8a97a37">
 						<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=1)]]></printWhenExpression>
 					</reportElement>
@@ -796,7 +796,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 		<groupHeader>
 			<band height="18" splitType="Stretch">
 				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=1)]]></printWhenExpression>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level1_Line" stretchType="RelativeToBandHeight" x="0" y="0" width="161" height="18" uuid="02d1404a-f76c-4011-b60b-1055a15b3a28"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -911,7 +911,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="Left"/>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level2_Line" stretchType="RelativeToBandHeight" x="15" y="0" width="188" height="18" uuid="09a4d1f3-07fd-4fd6-aa09-f53d834dede2"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1024,7 +1024,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="Left"/>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level3_Line" stretchType="RelativeToBandHeight" x="30" y="0" width="173" height="18" uuid="31dc2a0b-a62d-4c26-aeae-478d20a5133a"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1148,7 +1148,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="Left"/>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level4_Line" stretchType="RelativeToBandHeight" x="45" y="0" width="158" height="18" uuid="72dbb929-f807-475c-98f3-ba4f0faf8866"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1283,7 +1283,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="Left"/>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level5_Line" stretchType="RelativeToBandHeight" x="60" y="0" width="143" height="18" uuid="8160abc6-2b58-4c8d-bb5a-86cdff8694e2"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1429,7 +1429,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="Left"/>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-66" style="Level6_Line" stretchType="RelativeToBandHeight" x="75" y="0" width="128" height="18" uuid="3b5e223c-4f80-48f1-868a-bdbfc07cb057"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1586,7 +1586,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="Left"/>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-75" style="Level7_Line" stretchType="RelativeToBandHeight" x="90" y="0" width="113" height="18" uuid="46699bfc-0109-4ad9-b7d7-cd17a7daccf1"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1754,7 +1754,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="Left"/>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-85" style="Level8_Line" stretchType="RelativeToBandHeight" x="105" y="0" width="98" height="18" uuid="a97b7432-c480-440e-9e42-d6af12d77236"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -1933,7 +1933,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="Left"/>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-96" style="Level9_Line" stretchType="RelativeToBandHeight" x="120" y="0" width="83" height="18" uuid="50e5d317-d97a-4c7a-9c91-c9fb5ee1ed79"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2123,7 +2123,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textElement rotation="Left"/>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-108" style="Level10_Line" stretchType="RelativeToBandHeight" x="135" y="0" width="68" height="18" uuid="f1a90c2c-1a0c-409d-9749-b1e1fe27d01a"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2414,7 +2414,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 					<textFieldExpression><![CDATA[$F{CONVISOSYM}]]></textFieldExpression>
 				</textField>
 			</frame>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Report_Title" x="0" y="0" width="518" height="26" uuid="8f8577e5-0ec1-4ec7-9633-05e52441100a"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2444,7 +2444,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 				</box>
 				<text><![CDATA[Grouping Levels:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="114" y="52" width="404" height="16" uuid="b74fa9ef-1ced-4cd7-935c-9523099d2c32"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2473,7 +2473,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 				</textElement>
 				<text><![CDATA[Secondary Filters:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="209" y="68" width="309" height="16" uuid="e61dff39-311c-4aa2-8753-57754e54d23a"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2487,7 +2487,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ORGANIZATION} + " and any child organization"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="264" y="84" width="254" height="16" uuid="15b89717-7225-48f4-8f5e-34a0cb12917a">
 					<printWhenExpression><![CDATA[!$P{BPGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -2503,7 +2503,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 				</textElement>
 				<textFieldExpression><![CDATA[$P{BPGROUP}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="209" y="100" width="309" height="16" uuid="28bcf592-b1b4-45c7-ab08-da69714abf80">
 					<printWhenExpression><![CDATA[!$P{PRODUCTGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -2519,7 +2519,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 				</textElement>
 				<textFieldExpression><![CDATA[$P{PRODUCTGROUP}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="114" y="68" width="95" height="16" uuid="60e9c200-4190-4098-bf5b-a2dea221228f"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2532,7 +2532,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 				</textElement>
 				<textFieldExpression><![CDATA["Organization- "]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="114" y="84" width="150" height="16" uuid="855e04d3-c93e-4132-a3ed-46702cc8c4ee">
 					<printWhenExpression><![CDATA[!$P{BPGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -2547,7 +2547,7 @@ $V{PROFIT_1}.divide( $V{AMOUNT_SUM1}, 4, BigDecimal.ROUND_HALF_UP ).abs().multip
 				</textElement>
 				<textFieldExpression><![CDATA["Business Partner Group- "]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="113" y="100" width="96" height="16" uuid="4d63a12c-3e32-46d6-b49f-7d685212df84">
 					<printWhenExpression><![CDATA[!$P{PRODUCTGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>

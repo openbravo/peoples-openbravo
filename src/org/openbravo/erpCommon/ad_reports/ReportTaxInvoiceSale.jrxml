@@ -292,7 +292,7 @@ AND 1=1 $P!{aux_org}
 	</title>
 	<pageHeader>
 		<band height="20" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Subtitle" x="1" y="0" width="535" height="20" uuid="2c3c6613-8b9d-42e2-b405-3e878e65d7e2"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -322,7 +322,7 @@ AND 1=1 $P!{aux_org}
 					<pen lineWidth="2.0"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" x="10" y="0" width="90" height="14" uuid="e6806501-bc38-433d-a75f-d27ef8df5684"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -333,7 +333,7 @@ AND 1=1 $P!{aux_org}
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{DOCUMENTNO}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" x="100" y="0" width="70" height="14" uuid="1c91223d-44de-4729-8fad-7850159209a2"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -344,7 +344,7 @@ AND 1=1 $P!{aux_org}
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" x="170" y="0" width="170" height="14" uuid="17f14d8d-a38e-41cb-9e50-4ab126356f80"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

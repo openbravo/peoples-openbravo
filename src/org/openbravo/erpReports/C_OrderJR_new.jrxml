@@ -487,7 +487,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{deliveryterm}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-22" x="298" y="28" width="89" height="18" isPrintWhenDetailOverflows="true" uuid="1a86a25e-c30a-4c87-83a9-307eb6fa5ce0"/>
 				<textElement>
 					<font fontName="DejaVu Sans" size="8"/>

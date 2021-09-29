@@ -388,14 +388,14 @@
 				<textFieldExpression><![CDATA[(($P{DateFrom} == null || $P{DateFrom}.equals("")) ? "" :"From "+new SimpleDateFormat("dd-MM-yyyy").format($P{DateFrom}))
 +(($P{DateTo} == null || $P{DateTo}.equals("")) ? "" : " to "+new SimpleDateFormat("dd-MM-yyyy").format($P{DateTo}))]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="90" y="30" width="1360" height="20" uuid="417d1e3b-0f76-42a2-83c9-5874a3bfdec5"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Status}.getString("identifier")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="90" y="10" width="1360" height="20" uuid="9fbfd6ce-b233-4248-8592-8f6343f7e4d7"/>
 				<textElement>
 					<font size="8"/>
@@ -457,7 +457,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PRODUCT_NAME}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="745" y="-10" width="165" height="14" uuid="4aaa69a4-2338-4464-86e4-c33ad3698487"/>
 				<textElement>
 					<font size="8"/>

@@ -136,7 +136,7 @@
 					</textElement>
 					<text><![CDATA[Tax Type]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="101" y="0" width="433" height="20" uuid="977ffdfc-0370-4699-8da3-023e84fda030"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -313,7 +313,7 @@
 	</title>
 	<pageHeader>
 		<band height="20" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Subtitle" x="0" y="0" width="535" height="20" uuid="f9dbd954-517e-4b85-a3a6-95945ccfcd22"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -344,7 +344,7 @@
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-4" style="Detail_Line" x="10" y="0" width="90" height="14" uuid="38261e4d-ce62-44f3-b965-2efc7c39603f"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -355,7 +355,7 @@
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{REFERENCE}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-5" style="Detail_Line" x="100" y="0" width="70" height="14" uuid="65d8251a-0677-437c-ba2c-58c0698c2db3"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -366,7 +366,7 @@
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{DATEINVOICED}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-6" style="Detail_Line" x="170" y="0" width="170" height="14" uuid="fb633a3e-f4a4-455c-8d6f-fa8e0d494f85"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

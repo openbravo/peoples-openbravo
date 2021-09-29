@@ -177,7 +177,7 @@ WHERE MA_SEQUENCEPRODUCT.MA_SEQUENCE_ID = $P{SEQUENCE_ID}
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-1" style="default" stretchType="RelativeToBandHeight" x="0" y="0" width="175" height="14" uuid="a32a1642-1472-4127-80bd-56ccb6c19913"/>
 					<box leftPadding="3" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -645,7 +645,7 @@ FROM DUAL]]>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{SHOW_NETDUE} == null ? null : ($F{NETDUE} == null
     ? "(" + $P{AMOUNTFORMAT}.format($F{SHOW_NETDUE}) + ")" : $P{AMOUNTFORMAT}.format($F{SHOW_NETDUE}))]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" x="5" y="0" width="50" height="14" forecolor="#000000"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">

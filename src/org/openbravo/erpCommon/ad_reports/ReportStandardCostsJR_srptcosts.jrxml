@@ -233,7 +233,7 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{UNIT_COST}!=null)?$P{NUMBERFORMAT}.format($F{UNIT_COST}):new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-3" style="default" stretchType="RelativeToBandHeight" x="175" y="0" width="65" height="14" uuid="3b99662c-1d71-45d6-9741-8e3f5ff02bac"/>
 					<box leftPadding="5" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -246,7 +246,7 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]>
 					</textElement>
 					<textFieldExpression><![CDATA[($F{QUANTITY}!=null)?$P{NUMBERFORMAT}.format($F{QUANTITY}):new String(" ")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-4" style="default" x="0" y="0" width="175" height="14" uuid="712903b5-23bc-42ac-a533-8fcf8fa6ebcb"/>
 					<box leftPadding="5" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -290,7 +290,7 @@ ORDER BY LINEORDER, QUANTITY DESC, COST DESC]]>
 	</detail>
 	<columnFooter>
 		<band height="16" splitType="Stretch">
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Total_Field" x="370" y="1" width="118" height="15" uuid="2235401d-054f-4060-af6e-13f9fbf33cfd"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>

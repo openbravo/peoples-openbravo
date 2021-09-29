@@ -306,7 +306,7 @@
 	</columnHeader>
 	<detail>
 		<band height="13" splitType="Stretch">
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToBandHeight" x="0" y="0" width="79" height="13" uuid="561a03a6-ef38-455a-9010-2df856ebf833"/>
 				<box topPadding="2" leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -319,7 +319,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ACCOUNT_ID}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="79" y="0" width="200" height="13" uuid="be3921ce-7e22-4d09-8c22-31dfcdd87347"/>
 				<box leftPadding="5" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -388,7 +388,7 @@
 				<textFieldExpression><![CDATA[$F{SALDO_INICIAL}]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="641" y="0" width="189" height="13" uuid="9b147e4b-23d1-4eb4-9e35-ee119ae34967">
 					<printWhenExpression><![CDATA[$P{SHOWBPARTNER}]]></printWhenExpression>
 				</reportElement>
@@ -403,7 +403,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{BPNAME}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="830" y="0" width="200" height="13" uuid="10b853a4-cb37-4021-b744-b9bf92f7c6ce">
 					<printWhenExpression><![CDATA[$P{SHOWPRODUCT}]]></printWhenExpression>
 				</reportElement>
@@ -418,7 +418,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PDNAME}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="1030" y="0" width="200" height="13" uuid="6721adb6-7645-4598-8a4b-4c65196d1e5d">
 					<printWhenExpression><![CDATA[$P{SHOWPROJECT}]]></printWhenExpression>
 				</reportElement>
@@ -433,7 +433,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PJNAME}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" stretchType="RelativeToTallestObject" x="1230" y="0" width="200" height="13" uuid="6721adb6-7645-4598-8a4b-4c65196d1e5d">
 					<printWhenExpression><![CDATA[$P{SHOWCOSTCENTER}]]></printWhenExpression>
 				</reportElement>

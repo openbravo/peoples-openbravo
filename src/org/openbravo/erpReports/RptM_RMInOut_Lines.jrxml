@@ -188,7 +188,7 @@
 					<textFieldExpression><![CDATA[$F{uom}]]></textFieldExpression>
 				</textField>
 			</frame>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-1" style="default" x="0" y="0" width="90" height="16" forecolor="#000000" uuid="715a9803-e468-46ed-8e1e-4abffe833d03"/>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement verticalAlignment="Middle">
@@ -196,7 +196,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{value}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-2" style="default" x="90" y="0" width="165" height="16" forecolor="#000000" uuid="64f7907f-315a-4fca-a38f-9ce027045eb2"/>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement verticalAlignment="Middle">
@@ -204,7 +204,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-3" style="default" x="255" y="0" width="130" height="16" forecolor="#000000" uuid="93834014-9b05-4afc-bc4a-408cd6b40cb8"/>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement verticalAlignment="Middle">
@@ -212,7 +212,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{attributedesc}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-4" style="default" x="420" y="0" width="60" height="16" forecolor="#000000" uuid="46cfb2a8-96fe-474e-bfa5-be6467a48987"/>
 				<box leftPadding="2" rightPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">

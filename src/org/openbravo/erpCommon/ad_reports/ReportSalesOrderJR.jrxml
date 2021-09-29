@@ -139,7 +139,7 @@
 					</box>
 					<text><![CDATA[Client]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-23" style="GroupHeader_DarkGray" mode="Opaque" x="108" y="0" width="673" height="24" uuid="a061dcbf-2de4-42ec-b8c6-b80f94adf0b5">
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -238,7 +238,7 @@
 					</box>
 					<text><![CDATA[Order No.]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-21" style="GroupHeader_DarkGray" x="90" y="5" width="238" height="16" uuid="5a8467d2-5a7f-4971-81c2-e9cebafd0e58"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -249,7 +249,7 @@
 					</box>
 					<textFieldExpression><![CDATA[$F{DOCUMENTNO}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-22" style="GroupHeader_DarkGray" x="418" y="5" width="362" height="16" uuid="97cadd4a-925e-4a69-b305-957147253edb">
 						<property name="local_mesure_unitwidth" value="pixel"/>
 						<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -610,7 +610,7 @@
 	</title>
 	<pageHeader>
 		<band height="59" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="702" height="20" uuid="648d3e39-159d-401e-be6b-6036fc9add2e"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -627,7 +627,7 @@
 					<pen lineWidth="2.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Report_Subtitle" x="0" y="20" width="702" height="20" uuid="9e5de287-6edd-43e5-a89b-0feaaa5ba680"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>

@@ -123,7 +123,7 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 					</box>
 					<text><![CDATA[Process Plan]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="120" y="0" width="415" height="18" uuid="58a26233-79bc-4b64-b2e5-bab6eddf06b3"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -185,7 +185,7 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 					</box>
 					<text><![CDATA[Valid From]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="130" y="0" width="405" height="18" uuid="5f3a49fe-fbd0-4006-b011-5df13895764c"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -290,7 +290,7 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 		<groupExpression><![CDATA[$F{MA_SEQUENCE_ID}]]></groupExpression>
 		<groupHeader>
 			<band height="25" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="140" y="0" width="395" height="18" uuid="4bb3f09a-5737-42cf-89b5-51c105a49efe"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -381,7 +381,7 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 	</title>
 	<pageHeader>
 		<band height="37" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="4" width="535" height="20" uuid="1939e71e-ba6f-49f7-b6cc-c585d8a7f33c"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>

@@ -136,7 +136,7 @@
 					</textElement>
 					<text><![CDATA[Customer]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="108" y="0" width="661" height="24" uuid="a841a9ef-537d-4775-aef1-85ce4b26ba88"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -237,7 +237,7 @@
 			<band height="48" splitType="Stretch">
 				<property name="local_mesure_unitheight" value="pixel"/>
 				<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="Detail_Header" x="178" y="10" width="150" height="16" uuid="ec755524-18cf-4f2b-90c6-12f5cbe7c816"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -254,7 +254,7 @@
 						<pen lineWidth="1.0" lineStyle="Solid"/>
 					</graphicElement>
 				</line>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Detail_Header" x="456" y="10" width="313" height="16" uuid="406d3b5f-83cf-400e-80e8-b9b1bbc8425a"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -548,7 +548,7 @@
 	</title>
 	<pageHeader>
 		<band height="59" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="705" height="20" uuid="32390f88-570b-4577-bf47-21ec09a90d4b"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -565,7 +565,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Subtitle" x="0" y="20" width="705" height="20" uuid="36b7d2c7-b992-4ef0-8682-7d198748f355"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>

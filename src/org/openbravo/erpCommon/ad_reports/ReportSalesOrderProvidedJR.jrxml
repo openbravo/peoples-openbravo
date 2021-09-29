@@ -136,7 +136,7 @@
 					</textElement>
 					<text><![CDATA[Business Partner]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="130" y="0" width="729" height="23" uuid="c366a367-b1d8-4bf5-84ce-b6a4f86effef"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -205,7 +205,7 @@
 					</textElement>
 					<text><![CDATA[PROJECT]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="130" y="0" width="729" height="23" uuid="c4064691-734e-4ef3-87ea-2806289bea88"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -531,7 +531,7 @@
 	</title>
 	<pageHeader>
 		<band height="47" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-1" style="Report_Subtitle" x="0" y="24" width="860" height="20" uuid="80b99832-9465-424c-9094-4d26713489d2"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -542,7 +542,7 @@
 				</box>
 				<textFieldExpression><![CDATA[$P{REPORT_SUBTITLE}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-2" style="Report_Title" mode="Transparent" x="0" y="4" width="860" height="20" uuid="98ef25f3-c809-4d06-9175-7279486da318"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -619,7 +619,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{LINENETAMT}!=null)?$P{NUMBERFORMAT}.format($F{LINENETAMT}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Detail_Line" x="250" y="0" width="70" height="16" uuid="4c3750c7-3d14-43cb-9bee-724bb1d06076">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == true]]></printWhenExpression>
 				</reportElement>
@@ -725,7 +725,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{LINENETAMTSYM}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Detail_Line" x="389" y="0" width="70" height="16" uuid="cd426f05-7496-4351-af39-b72dd2e606c7">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == true]]></printWhenExpression>
 				</reportElement>
@@ -770,7 +770,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{QTYDELIVERED}!=null)?$P{NUMBERFORMAT}.format($F{QTYDELIVERED}):new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" style="Detail_Line" x="320" y="0" width="139" height="16" uuid="cc8b8234-4c76-4ac4-89d4-7d39a6ae82ab">
 					<printWhenExpression><![CDATA[$P{isUomManagementEnabled} == false]]></printWhenExpression>
 				</reportElement>
