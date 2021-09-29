@@ -74,18 +74,6 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.externalBusinessPartnerReference",
             "externalBusinessPartnerReference"));
         add(new HQLProperty("alternateLocation.addressLine1", "alternateLocationName"));
-        add(new HQLProperty(
-            "case when exists (select 1 from OrderLine ol where ord.id = ol.salesOrder.id and ol.obrdmDeliveryMode = 'PickupInStore') then 'PickupInStore' "
-                + "else  case when exists (select 1 from OrderLine ol where ord.id = ol.salesOrder.id and ol.obrdmDeliveryMode = 'PickupInStoreWithDate') then 'PickupInStoreWithDate' "
-                + "else  case when exists (select 1 from OrderLine ol where ord.id = ol.salesOrder.id and ol.obrdmDeliveryMode = 'HomeDelivery') then 'HomeDelivery' "
-                + "else 'PickAndCarry' end end end",
-            "obrdmDeliveryModeProperty"));
-        add(new HQLProperty(
-            "(select max(ol.obrdmDeliveryTime) from OrderLine ol where ord.id = ol.salesOrder.id)",
-            "obrdmDeliveryTimeProperty"));
-        add(new HQLProperty(
-            "(select max(ol.obrdmDeliveryDate) from OrderLine ol where ord.id = ol.salesOrder.id)",
-            "obrdmDeliveryDateProperty"));
       }
     };
 
