@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-  <database name="MODIFIED TABLE M_PRODUCTPRICE">
-    <table name="M_PRODUCTPRICE" primaryKey="M_PRODUCTPRICE_KEY">
-      <index name="EM_OBPOS_PRODPRICE_ACTVE_IDX" unique="false">
-        <index-column name="ISACTIVE"/>
-      </index>
-    </table>
-  </database>
