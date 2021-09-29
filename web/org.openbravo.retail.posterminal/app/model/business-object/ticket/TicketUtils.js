@@ -1193,6 +1193,11 @@
         // eslint-disable-next-line no-underscore-dangle
       ] = payload.terminal._identifier;
 
+      if (payload.preferences.enableDeliveryModes) {
+        ticket.obrdmDeliveryModeProperty =
+          ticket.obrdmDeliveryModeProperty || 'PickAndCarry';
+      }
+
       return ticket;
     },
 
