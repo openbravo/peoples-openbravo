@@ -77,6 +77,7 @@
             // eslint-disable-next-line no-underscore-dangle
             name: terminalPayment.payment._identifier,
             startingCash,
+            initialCounted: startingCash,
             totalSales: OB.DEC.Zero,
             totalReturns: OB.DEC.Zero,
             totalDeposits: deposits,
@@ -107,6 +108,7 @@
         // eslint-disable-next-line no-underscore-dangle
         name: paymentMethodCashUpModel._identifier,
         startingCash: paymentMethodCashUpModel.startingCash,
+        initialCounted: paymentMethodCashUpModel.initialCounted,
         totalSales: paymentMethodCashUpModel.totalSales,
         totalReturns: paymentMethodCashUpModel.totalReturns,
         totalDeposits: paymentMethodCashUpModel.totalDeposits,
@@ -186,6 +188,7 @@
             // eslint-disable-next-line no-underscore-dangle
             name: terminalPayment.payment._identifier,
             startingCash,
+            initialCounted: startingCash,
             totalSales: OB.DEC.Zero,
             totalReturns: OB.DEC.Zero,
             totalDeposits: OB.DEC.Zero,
