@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2020 Openbravo SLU
+ * All portions are Copyright (C) 2011-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,19 +69,18 @@ OB.APRM.validateModifyPaymentPlanAmounts = function(
     allRows = item.grid.data.allRows,
     row,
     allGreen = true,
-    totalExpected = new BigDecimal('0'),
-    totalReceived = new BigDecimal('0'),
     totalOutstanding = new BigDecimal('0'),
     isNumber = isc.isA.Number,
-    contextInfo = item.grid.view.parentWindow.activeView.getContextInfo(
+    // Retrieve this way is safe even when the outstanding amount is hidden
+    invoiceInfo = item.grid.view.parentWindow.views[0].getContextInfo(
       false,
       true,
       true,
       false
     ),
-    invoiceOutstanding = new BigDecimal(String(contextInfo.inpoutstandingamt)),
-    invoiceGrandTotal = new BigDecimal(String(contextInfo.inpgrandtotal)),
-    invoicePaidTotal = new BigDecimal(String(contextInfo.inptotalpaid));
+    invoiceOutstanding = new BigDecimal(String(invoiceInfo.inpoutstandingamt)),
+    invoiceGrandTotal = new BigDecimal(String(invoiceInfo.inpgrandtotal)),
+    invoicePaidTotal = new BigDecimal(String(invoiceInfo.inptotalpaid));
 
   if (
     new BigDecimal(String(value)).compareTo(new BigDecimal('0')) !== 0 &&
@@ -105,12 +104,9 @@ OB.APRM.validateModifyPaymentPlanAmounts = function(
     ) {
       return false;
     }
-
-    totalExpected = totalExpected.add(new BigDecimal(String(row.expected)));
     totalOutstanding = totalOutstanding.add(
       new BigDecimal(String(row.outstanding))
     );
-    totalReceived = totalReceived.add(new BigDecimal(String(row.received)));
   }
   if (
     totalOutstanding
@@ -264,34 +260,34 @@ OB.APRM.validatePaymentProposalPickAndEdit = function(
 OB.APRM.addNew = function(grid) {
   var selectedRecord = grid.view.parentWindow.views[0].getParentRecord(),
     allRows = grid.data.allRows || grid.data.localData,
-    totalExpected = new BigDecimal('0'),
-    totalReceived = new BigDecimal('0');
-  var returnObject = isc.addProperties({}, allRows[0]);
-  var indRow,
+    // Retrieve this way is safe even when the outstanding amount is hidden
+    invoiceInfo = grid.view.parentWindow.views[0].getContextInfo(
+      false,
+      true,
+      true,
+      false
+    ),
+    invoiceOutstandingAmt = new BigDecimal(
+      String(invoiceInfo.inpoutstandingamt)
+    ),
+    returnObject = isc.addProperties({}, allRows[0]),
+    indRow,
     row,
-    totalOutstandingInOthers = new BigDecimal('0');
+    totalOutStandingInRows = new BigDecimal('0');
   for (indRow = 0; indRow < allRows.length; indRow++) {
     row = allRows[indRow];
-    totalOutstandingInOthers = totalOutstandingInOthers.add(
+    totalOutStandingInRows = totalOutStandingInRows.add(
       new BigDecimal(String(row.outstanding))
     );
-    totalExpected = totalExpected.add(new BigDecimal(String(row.expected)));
-    totalReceived = totalReceived.add(new BigDecimal(String(row.received)));
   }
+
   returnObject.outstanding = Number(
-    totalExpected.subtract(totalReceived).subtract(totalOutstandingInOthers)
+    invoiceOutstandingAmt.subtract(totalOutStandingInRows)
   );
+  returnObject.expected = returnObject.outstanding;
   returnObject.received = 0;
-  returnObject.expected = 0;
   returnObject.awaitingExecutionAmount = 0;
   delete returnObject.id;
-  returnObject.paymentMethod = selectedRecord.paymentMethod;
-  returnObject[
-    'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
-  ] =
-    selectedRecord[
-      'paymentMethod' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
-    ];
   returnObject.currency = selectedRecord.currency;
   returnObject[
     'currency' + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
