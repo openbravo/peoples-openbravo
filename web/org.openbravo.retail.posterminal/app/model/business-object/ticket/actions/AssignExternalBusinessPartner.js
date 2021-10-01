@@ -22,16 +22,13 @@
       newTicket.externalBusinessPartner = businessPartner
         ? businessPartner.getPlainObject()
         : null;
-      const addressConfig = OB.App.TerminalProperty.get(
-        'externalBpIntegration'
-      ).addresses.find(e => e.shippingAddress === true);
       if (
-        addressConfig &&
+        payload.addressConfig &&
         newTicket.obrdmDeliveryModeProperty === 'HomeDelivery'
       ) {
         newTicket.alternateAddress = OB.App.ExternalBusinessPartnerAPI.getAlternateDeliveryLocation(
           businessPartner,
-          addressConfig
+          payload.addressConfig
         );
       }
       return newTicket;
