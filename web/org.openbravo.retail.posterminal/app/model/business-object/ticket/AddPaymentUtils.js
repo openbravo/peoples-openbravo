@@ -190,9 +190,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         newTicket,
         newPayload
       );
+      const precision = terminalPayment.obposPosprecision;
       paymentStatus.pendingAmt = OB.DEC.mul(
         paymentStatus.pendingAmt,
-        newOriginalPayment.mulrate
+        newOriginalPayment.mulrate,
+        precision
       );
       let roundingAmount = OB.DEC.sub(
         paymentStatus.pendingAmt,
@@ -204,7 +206,6 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           terminalPayment.paymentRounding.paymentRoundingType
       );
       let amountDifference = null;
-      const precision = this.getPrecision(newOriginalPayment, payments);
       const multiplyBy = paymentStatus.isReturn
         ? terminalPayment.paymentRounding.returnRoundingMultiple
         : terminalPayment.paymentRounding.saleRoundingMultiple;
@@ -251,7 +252,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           const difference =
             roundingAmount !== 0
               ? roundingAmount
-              : OB.DEC.div(paymentDifference, pow);
+              : OB.DEC.div(paymentDifference, pow, precision);
           rounding = difference < roundingLimit ? 'DR' : 'UR';
         }
 
@@ -259,32 +260,36 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           if (paymentDifference !== 0) {
             amountDifference = OB.DEC.sub(
               multiplyBy,
-              OB.DEC.div(paymentDifference, pow)
+              OB.DEC.div(paymentDifference, pow, precision),
+              precision
             );
             roundingAmount = OB.DEC.mul(amountDifference, -1);
             if (newOriginalPayment.amount < paymentStatus.pendingAmt) {
               amountDifference = OB.DEC.add(
                 amountDifference,
-                OB.DEC.div(paymentDifference, pow)
+                OB.DEC.div(paymentDifference, pow, precision),
+                precision
               );
             }
           }
           if (newOriginalPayment.amount <= paymentStatus.pendingAmt) {
             newOriginalPayment.amount = OB.DEC.add(
               newOriginalPayment.amount,
-              amountDifference
+              amountDifference,
+              precision
             );
           }
         } else if (
           paymentDifference !== 0 &&
           newOriginalPayment.amount >= paymentStatus.pendingAmt
         ) {
-          roundingAmount = OB.DEC.div(paymentDifference, pow);
+          roundingAmount = OB.DEC.div(paymentDifference, pow, precision);
           // Substract the rounding amount when the payment totally paid the receipt
           if (newOriginalPayment.amount === paymentStatus.pendingAmt) {
             newOriginalPayment.amount = OB.DEC.sub(
               newOriginalPayment.amount,
-              roundingAmount
+              roundingAmount,
+              precision
             );
           }
         }
