@@ -49,7 +49,7 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
             "(select coalesce(max(ol.obrdmDeliveryMode), 'PickAndCarry') from OrderLine ol where ord.id = ol.salesOrder.id)",
             "deliveryMode"));
         add(new HQLProperty(
-            "(select min(to_timestamp(year(ol.obrdmDeliveryDate) || '-' || month(ol.obrdmDeliveryDate) || '-' || day(ol.obrdmDeliveryDate) || ' ' || hour(ol.obrdmDeliveryTime) || ':' || minute(ol.obrdmDeliveryTime), 'YYYY-MM-DD HH24:MI')) from OrderLine ol where ord.id = ol.salesOrder.id)",
+            "(select min(to_timestamp(to_char(ol.obrdmDeliveryDate, 'YYYY') || '-' || to_char(ol.obrdmDeliveryDate, 'MM') || '-' || to_char(ol.obrdmDeliveryDate, 'DD') || ' ' || to_char(ol.obrdmDeliveryTime, 'HH24') || ':' || to_char(ol.obrdmDeliveryTime, 'MI'), 'YYYY-MM-DD HH24:MI')) from OrderLine ol where ord.id = ol.salesOrder.id)",
             "deliveryDate"));
         String orderTypeFilter = PaidReceiptsFilter.getOrderTypeFilter((JSONObject) params);
         switch (orderTypeFilter) {
