@@ -654,7 +654,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
                          "and l.postalCode = :postalCode " + 
                          "and upper(r.name) = upper(:region) " +
                          "and upper(c.name) = upper(:country) " + 
-                         "and l.client = :client";
+                         "and l.client.id = :clientId";
     // @formatter:on
     return OBDal.getInstance()
         .getSession()
@@ -663,7 +663,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         .setParameter("postalCode", postalCode)
         .setParameter("region", region)
         .setParameter("country", country)
-        .setParameter("client", OBContext.getOBContext().getCurrentClient())
+        .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
         .setMaxResults(1)
         .uniqueResultOptional()
         .orElse(insertLocation(address1, postalCode, region, country));
@@ -687,13 +687,13 @@ public class OrderLoader extends POSDataSynchronizationProcess
     String hqlRegion = "select r " + 
                          "from Region r " + 
                          "where upper(r.name) = upper(:region) " +
-                         "and r.client = :client";
+                         "and r.client.id = :clientId";
     // @formatter:on
     return OBDal.getInstance()
         .getSession()
         .createQuery(hqlRegion, org.openbravo.model.common.geography.Region.class)
         .setParameter("region", region)
-        .setParameter("client", OBContext.getOBContext().getCurrentClient())
+        .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
         .setMaxResults(1)
         .uniqueResultOptional()
         .orElseGet(() -> insertRegion(region, country));
@@ -713,13 +713,13 @@ public class OrderLoader extends POSDataSynchronizationProcess
     String hqlCountry = "select c " + 
                          "from Country c " + 
                          "where upper(c.name) = upper(:country) " +
-                         "and c.client = :client";
+                         "and c.client.id = :clientId";
     // @formatter:on
     return OBDal.getInstance()
         .getSession()
         .createQuery(hqlCountry, org.openbravo.model.common.geography.Country.class)
         .setParameter("country", country)
-        .setParameter("client", OBContext.getOBContext().getCurrentClient())
+        .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
         .setMaxResults(1)
         .uniqueResultOptional()
         .orElseGet(() -> getDefaultCountry(country));
