@@ -20,6 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -632,123 +635,106 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
   }
 
-  private void addAlternateAddress(JSONObject address, Order order) throws JSONException {
+  private void addAlternateAddress(Order order, JSONObject address) {
     if (address == null) {
       return;
     }
-    String address1 = address.getString("address1");
-    String postalCode = address.getString("postalCode");
-    String region = address.getString("region");
-    String country = address.getString("country");
-    order.setAlternateLocation(getLocation(address1, postalCode, region, country));
+    final UnaryOperator<String> getAddressProperty = property -> address.isNull(property) ? null
+        : address.optString(property);
+    String address1 = getAddressProperty.apply("address1");
+    String address2 = getAddressProperty.apply("address2");
+    String postalCode = getAddressProperty.apply("postalCode");
+    String city = getAddressProperty.apply("city");
+    Country country = address.isNull("country") ? getDefaultCountry()
+        : getCountry(address.optString("country"));
+    Region region = address.isNull("region") ? null
+        : getRegion(address.optString("region"), country);
+    order.setAlternateLocation(getLocation(address1, address2, postalCode, city, country, region));
   }
 
-  private org.openbravo.model.common.geography.Location getLocation(String address1,
-      String postalCode, String region, String country) {
-    // @formatter:off
-    String hqlLocation = "select l " + 
-                         "from Location l " + 
-                         "left join l.region r " +
-                         "left join l.country c " +
-                         "where l.addressLine1 = :addressLine1 " +
-                         "and l.postalCode = :postalCode " + 
-                         "and upper(r.name) = upper(:region) " +
-                         "and upper(c.name) = upper(:country) " + 
-                         "and l.client.id = :clientId";
-    // @formatter:on
-    return OBDal.getInstance()
-        .getSession()
-        .createQuery(hqlLocation, org.openbravo.model.common.geography.Location.class)
-        .setParameter("addressLine1", address1)
-        .setParameter("postalCode", postalCode)
-        .setParameter("region", region)
-        .setParameter("country", country)
-        .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
-        .setMaxResults(1)
-        .uniqueResultOptional()
-        .orElse(insertLocation(address1, postalCode, region, country));
-  }
-
-  private org.openbravo.model.common.geography.Location insertLocation(String address1,
-      String postalCode, String region, String country) {
-    org.openbravo.model.common.geography.Location newLocation = OBProvider.getInstance()
-        .get(org.openbravo.model.common.geography.Location.class);
-    Country locationCountry = getCountry(country);
-    Region locationRegion = getRegion(region, locationCountry);
-    newLocation.setAddressLine1(address1);
-    newLocation.setPostalCode(postalCode);
-    newLocation.setCountry(locationCountry);
-    newLocation.setRegion(locationRegion);
-    OBDal.getInstance().save(newLocation);
-    return newLocation;
-  }
-
-  private Region getRegion(String region, Country country) {
-    // @formatter:off
-    String hqlRegion = "select r " + 
-                         "from Region r " + 
-                         "where upper(r.name) = upper(:region) " +
-                         "and r.country.id = :countryId " +
-                         "and r.client.id = :clientId";
-    // @formatter:on
-    return OBDal.getInstance()
-        .getSession()
-        .createQuery(hqlRegion, org.openbravo.model.common.geography.Region.class)
-        .setParameter("region", region)
-        .setParameter("countryId", country.getId())
-        .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
-        .setMaxResults(1)
-        .uniqueResultOptional()
-        .orElseGet(() -> insertRegion(region, country));
-  }
-
-  private Region insertRegion(String region, Country country) {
-    Region newRegion = OBProvider.getInstance().get(Region.class);
-    newRegion.setOrganization(OBDal.getInstance().get(Organization.class, "0"));
-    newRegion.setName(region);
-    newRegion.setCountry(country);
-    OBDal.getInstance().save(newRegion);
-    return newRegion;
-  }
-
-  private Country getCountry(String country) {
-    // @formatter:off
-    String hqlCountry = "select c " + 
-                         "from Country c " + 
-                         "where upper(c.name) = upper(:country) " +
-                         "and c.client.id = :clientId";
-    // @formatter:on
-    return OBDal.getInstance()
-        .getSession()
-        .createQuery(hqlCountry, org.openbravo.model.common.geography.Country.class)
-        .setParameter("country", country)
-        .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
-        .setMaxResults(1)
-        .uniqueResultOptional()
-        .orElseGet(this::getDefaultCountry);
+  private Country getCountry(String countryCode) {
+    return Optional.ofNullable(OBDal.getInstance()
+        .createQuery(Country.class, "iSOCountryCode = :country")
+        .setNamedParameter("country", countryCode)
+        .setMaxResult(1)
+        .uniqueResult()).orElseGet(this::getDefaultCountry);
   }
 
   private Country getDefaultCountry() {
     // If country is not found the default country is taken from the currentOrganization:
     // EM_Obretco_dbp_countryid (Default country for BP creation). If this value is still null we
     // try to get it from the organization location
-    Country defaultCountry = OBContext.getOBContext()
-        .getCurrentOrganization()
-        .getObretcoDbpCountryid();
-    return defaultCountry != null ? defaultCountry : getCountryFromOrganizationLocation();
+    final Function<String, Optional<Country>> getCountry = existsClause -> Optional
+        .ofNullable(OBDal.getInstance()
+            .createQuery(Country.class, "as c where exists (" + existsClause + ")")
+            .setNamedParameter("orgId", OBContext.getOBContext().getCurrentOrganization().getId())
+            .uniqueResult());
+    return getCountry
+        .apply(
+            "select 1 from Organization o where o.id = :orgId and o.obretcoDbpCountryid.id = c.id")
+        .orElseGet(() -> getCountry.apply(
+            "select 1 from OrganizationInformation oi join oi.locationAddress l where oi.organization.id = :orgId and l.country.id = c.id")
+            .orElseThrow(() -> new OBException("OBPOS_OrgLocationConfigured")));
   }
 
-  private Country getCountryFromOrganizationLocation() {
-    try {
-      return OBContext.getOBContext()
-          .getCurrentOrganization()
-          .getOrganizationInformationList()
-          .get(0)
-          .getLocationAddress()
-          .getCountry();
-    } catch (Exception e) {
-      throw new OBException("OBPOS_OrgLocationConfigured");
-    }
+  private Region getRegion(String regionName, Country country) {
+    return OBDal.getInstance()
+        .createQuery(Region.class, "name = :region and country.id = :countryId")
+        .setNamedParameter("region", regionName)
+        .setNamedParameter("countryId", country.getId())
+        .setMaxResult(1)
+        .uniqueResult();
+  }
+
+  private org.openbravo.model.common.geography.Location getLocation(String address1,
+      String address2, String postalCode, String city, Country country, Region region) {
+    final StringBuilder whereClause = new StringBuilder("1=1");
+    final BiFunction<String, Object, StringBuilder> addPropertyFilter = (property,
+        value) -> whereClause
+            .append(" and " + property + (value != null ? " = :" + property : " is null"));
+    addPropertyFilter.apply("addressLine1", address1);
+    addPropertyFilter.apply("addressLine2", address2);
+    addPropertyFilter.apply("postalCode", postalCode);
+    addPropertyFilter.apply("cityName", city);
+    addPropertyFilter.apply("country", country);
+    addPropertyFilter.apply("region", region);
+
+    final OBQuery<org.openbravo.model.common.geography.Location> query = OBDal.getInstance()
+        .createQuery(org.openbravo.model.common.geography.Location.class, whereClause.toString())
+        .setMaxResult(1);
+    @SuppressWarnings("rawtypes")
+    final BiFunction<String, Object, OBQuery> setPropertyParameter = (property,
+        value) -> value != null ? query.setNamedParameter(property, value) : query;
+    setPropertyParameter.apply("addressLine1", address1);
+    setPropertyParameter.apply("addressLine2", address2);
+    setPropertyParameter.apply("postalCode", postalCode);
+    setPropertyParameter.apply("cityName", city);
+    setPropertyParameter.apply("country", country);
+    setPropertyParameter.apply("region", region);
+
+    return Optional.ofNullable(query.uniqueResult())
+        .orElseGet(() -> insertLocation(address1, address2, postalCode, city, country, region));
+  }
+
+  private org.openbravo.model.common.geography.Location insertLocation(String address1,
+      String address2, String postalCode, String city, Country country, Region region) {
+    OBDal.getInstance()
+        .createQuery(org.openbravo.model.common.geography.Location.class,
+            "addressLine1 = :addressLine1 and addressLine2 = :addressLine2")
+        .setNamedParameter("addressLine1", address1)
+        .setNamedParameter("addressLine2", address2)
+        .setMaxResult(1)
+        .uniqueResult();
+    org.openbravo.model.common.geography.Location newLocation = OBProvider.getInstance()
+        .get(org.openbravo.model.common.geography.Location.class);
+    newLocation.setAddressLine1(address1);
+    newLocation.setAddressLine2(address2);
+    newLocation.setPostalCode(postalCode);
+    newLocation.setCityName(city);
+    newLocation.setCountry(country);
+    newLocation.setRegion(region);
+    OBDal.getInstance().save(newLocation);
+    return newLocation;
   }
 
   private FIN_PaymentSchedule getPaymentScheduleOfOrder(final Order order) {
@@ -1269,7 +1255,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
       order.set("creationDate", new Date(value));
     }
 
-    addAlternateAddress(jsonorder.optJSONObject("alternateAddress"), order);
+    addAlternateAddress(order, jsonorder.optJSONObject("alternateAddress"));
 
     if (jsonorder.has("cashVAT")) {
       order.setCashVAT(jsonorder.getBoolean("cashVAT"));
