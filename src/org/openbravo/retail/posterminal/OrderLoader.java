@@ -673,11 +673,12 @@ public class OrderLoader extends POSDataSynchronizationProcess
       String postalCode, String region, String country) {
     org.openbravo.model.common.geography.Location newLocation = OBProvider.getInstance()
         .get(org.openbravo.model.common.geography.Location.class);
+    Country locationCountry = getCountry(country);
+    Region locationRegion = getRegion(region, locationCountry);
     newLocation.setAddressLine1(address1);
     newLocation.setPostalCode(postalCode);
-    Country locationCountry = getCountry(country);
-    newLocation.setRegion(getRegion(region, locationCountry));
     newLocation.setCountry(locationCountry);
+    newLocation.setRegion(locationRegion);
     OBDal.getInstance().save(newLocation);
     return newLocation;
   }
@@ -687,12 +688,14 @@ public class OrderLoader extends POSDataSynchronizationProcess
     String hqlRegion = "select r " + 
                          "from Region r " + 
                          "where upper(r.name) = upper(:region) " +
+                         "and r.country.id = :countryId " +
                          "and r.client.id = :clientId";
     // @formatter:on
     return OBDal.getInstance()
         .getSession()
         .createQuery(hqlRegion, org.openbravo.model.common.geography.Region.class)
         .setParameter("region", region)
+        .setParameter("countryId", country.getId())
         .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
         .setMaxResults(1)
         .uniqueResultOptional()
@@ -722,14 +725,13 @@ public class OrderLoader extends POSDataSynchronizationProcess
         .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
         .setMaxResults(1)
         .uniqueResultOptional()
-        .orElseGet(() -> getDefaultCountry(country));
+        .orElseGet(this::getDefaultCountry);
   }
 
-  private Country getDefaultCountry(String country) {
+  private Country getDefaultCountry() {
     // If country is not found the default country is taken from the currentOrganization:
     // EM_Obretco_dbp_countryid (Default country for BP creation). If this value is still null we
-    // try to get it from the organization
-    // location
+    // try to get it from the organization location
     Country defaultCountry = OBContext.getOBContext()
         .getCurrentOrganization()
         .getObretcoDbpCountryid();
