@@ -72,7 +72,7 @@ describe('Cashup - init cashup State Action - from local', () => {
     deepfreeze(cardPayment);
     cashupAddingCard.cashPaymentMethodInfo = [
       ...cashupAddingCard.cashPaymentMethodInfo,
-      cardPayment
+      { ...cardPayment, initialCounted: 0 }
     ];
     deepfreeze(cashupAddingCard);
     const expectedState = { Cashup: cashupAddingCard };
