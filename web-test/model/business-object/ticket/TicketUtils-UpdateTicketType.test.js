@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -44,8 +44,8 @@ describe('Ticket Utils updateTicketType function', () => {
     });
   });
 
-  it('should not change type for cross store ticket', () => {
-    const ticket = deepfreeze({ organization: 'A' });
+  it('should change order type for cross store ticket', () => {
+    const ticket = deepfreeze({ organization: 'A', lines: [{ qty: -1 }] });
     const newTicket = OB.App.State.Ticket.Utils.updateTicketType(ticket, {
       terminal: {
         organization: 'B',
@@ -53,7 +53,9 @@ describe('Ticket Utils updateTicketType function', () => {
       }
     });
     expect(newTicket).toEqual({
-      organization: 'A'
+      orderType: 1,
+      organization: 'A',
+      lines: [{ qty: -1 }]
     });
   });
 });

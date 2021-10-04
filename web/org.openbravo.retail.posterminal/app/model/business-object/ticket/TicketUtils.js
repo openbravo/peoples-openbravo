@@ -1432,16 +1432,17 @@
         ticket,
         payload
       );
-      if (isCrossStore) {
-        return ticket;
-      }
-
       const newTicket = { ...ticket };
       const isSale =
         payload.isSale != null
           ? payload.isSale
           : OB.App.State.Ticket.Utils.isSale(ticket, payload);
+
       newTicket.orderType = isSale ? 0 : 1;
+      if (isCrossStore) {
+        return newTicket;
+      }
+
       newTicket.documentType = isSale
         ? payload.terminal.terminalType.documentType
         : payload.terminal.terminalType.documentTypeForReturns;
