@@ -636,9 +636,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
   }
 
   private void addAlternateAddress(Order order, JSONObject address) {
-    if (address == null) {
-      return;
-    }
     final UnaryOperator<String> getAddressProperty = property -> address.isNull(property) ? null
         : address.optString(property);
     String address1 = getAddressProperty.apply("address1");
@@ -702,9 +699,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
     final OBQuery<org.openbravo.model.common.geography.Location> query = OBDal.getInstance()
         .createQuery(org.openbravo.model.common.geography.Location.class, whereClause.toString())
         .setMaxResult(1);
-    @SuppressWarnings("rawtypes")
-    final BiFunction<String, Object, OBQuery> setPropertyParameter = (property,
-        value) -> value != null ? query.setNamedParameter(property, value) : query;
+    final BiFunction<String, Object, OBQuery<org.openbravo.model.common.geography.Location>> setPropertyParameter = (
+        property, value) -> value != null ? query.setNamedParameter(property, value) : query;
     setPropertyParameter.apply("addressLine1", address1);
     setPropertyParameter.apply("addressLine2", address2);
     setPropertyParameter.apply("postalCode", postalCode);
@@ -1255,7 +1251,10 @@ public class OrderLoader extends POSDataSynchronizationProcess
       order.set("creationDate", new Date(value));
     }
 
-    addAlternateAddress(order, jsonorder.optJSONObject("alternateAddress"));
+    if (jsonorder.has("alternateAddress")
+        && StringUtils.equals(jsonorder.optString("obrdmDeliveryModeProperty"), "HomeDelivery")) {
+      addAlternateAddress(order, jsonorder.optJSONObject("alternateAddress"));
+    }
 
     if (jsonorder.has("cashVAT")) {
       order.setCashVAT(jsonorder.getBoolean("cashVAT"));

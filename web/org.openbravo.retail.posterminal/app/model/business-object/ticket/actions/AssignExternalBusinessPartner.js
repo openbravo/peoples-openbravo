@@ -22,10 +22,7 @@
       newTicket.externalBusinessPartner = businessPartner
         ? businessPartner.getPlainObject()
         : null;
-      if (
-        payload.addressConfig &&
-        newTicket.obrdmDeliveryModeProperty === 'HomeDelivery'
-      ) {
+      if (payload.addressConfig) {
         newTicket.alternateAddress = OB.App.ExternalBusinessPartnerAPI.getAlternateDeliveryLocation(
           businessPartner,
           payload.addressConfig
