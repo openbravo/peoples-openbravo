@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -646,7 +645,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         : getCountry(address.optString("country"));
     Region region = address.isNull("region") ? null
         : getRegion(address.optString("region"), country);
-    order.setAlternateLocation(getLocation(address1, address2, postalCode, city, country, region));
+    order.setAlternateLocation(getLocation(address1, address2, postalCode, city, region, country));
   }
 
   private Country getCountry(String countryCode) {
@@ -684,36 +683,23 @@ public class OrderLoader extends POSDataSynchronizationProcess
   }
 
   private org.openbravo.model.common.geography.Location getLocation(String address1,
-      String address2, String postalCode, String city, Country country, Region region) {
-    final StringBuilder whereClause = new StringBuilder("1=1");
-    final BiFunction<String, Object, StringBuilder> addPropertyFilter = (property,
-        value) -> whereClause
-            .append(" and " + property + (value != null ? " = :" + property : " is null"));
-    addPropertyFilter.apply("addressLine1", address1);
-    addPropertyFilter.apply("addressLine2", address2);
-    addPropertyFilter.apply("postalCode", postalCode);
-    addPropertyFilter.apply("cityName", city);
-    addPropertyFilter.apply("country", country);
-    addPropertyFilter.apply("region", region);
-
-    final OBQuery<org.openbravo.model.common.geography.Location> query = OBDal.getInstance()
-        .createQuery(org.openbravo.model.common.geography.Location.class, whereClause.toString())
-        .setMaxResult(1);
-    final BiFunction<String, Object, OBQuery<org.openbravo.model.common.geography.Location>> setPropertyParameter = (
-        property, value) -> value != null ? query.setNamedParameter(property, value) : query;
-    setPropertyParameter.apply("addressLine1", address1);
-    setPropertyParameter.apply("addressLine2", address2);
-    setPropertyParameter.apply("postalCode", postalCode);
-    setPropertyParameter.apply("cityName", city);
-    setPropertyParameter.apply("country", country);
-    setPropertyParameter.apply("region", region);
-
-    return Optional.ofNullable(query.uniqueResult())
-        .orElseGet(() -> insertLocation(address1, address2, postalCode, city, country, region));
+      String address2, String postalCode, String city, Region region, Country country) {
+    return Optional.ofNullable(OBDal.getInstance()
+        .createQuery(org.openbravo.model.common.geography.Location.class,
+            "c_location_getidentifier(addressLine1, addressLine2, postalCode, cityName, region.id, country.id) = c_location_getidentifier(:address1, :address2, :postalCode, :city, :regionId, :countryId)")
+        .setNamedParameter("address1", StringUtils.defaultString(address1))
+        .setNamedParameter("address2", StringUtils.defaultString(address2))
+        .setNamedParameter("postalCode", StringUtils.defaultString(postalCode))
+        .setNamedParameter("city", StringUtils.defaultString(city))
+        .setNamedParameter("regionId", region != null ? region.getId() : StringUtils.EMPTY)
+        .setNamedParameter("countryId", country != null ? country.getId() : StringUtils.EMPTY)
+        .setMaxResult(1)
+        .uniqueResult())
+        .orElseGet(() -> insertLocation(address1, address2, postalCode, city, region, country));
   }
 
   private org.openbravo.model.common.geography.Location insertLocation(String address1,
-      String address2, String postalCode, String city, Country country, Region region) {
+      String address2, String postalCode, String city, Region region, Country country) {
     OBDal.getInstance()
         .createQuery(org.openbravo.model.common.geography.Location.class,
             "addressLine1 = :addressLine1 and addressLine2 = :addressLine2")
@@ -727,8 +713,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
     newLocation.setAddressLine2(address2);
     newLocation.setPostalCode(postalCode);
     newLocation.setCityName(city);
-    newLocation.setCountry(country);
     newLocation.setRegion(region);
+    newLocation.setCountry(country);
     OBDal.getInstance().save(newLocation);
     return newLocation;
   }
