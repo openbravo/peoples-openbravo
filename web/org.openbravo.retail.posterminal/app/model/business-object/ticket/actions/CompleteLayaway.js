@@ -23,6 +23,9 @@
       let newMessages = [...newGlobalState.Messages];
       let currentTicket = {};
 
+      // Update orderType when completing the layaway or reopened layaway
+      newTicket.orderType = 2;
+
       // Set complete ticket properties
       newTicket = OB.App.State.Ticket.Utils.processTicket(newTicket, payload);
 
