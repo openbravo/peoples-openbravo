@@ -22,7 +22,10 @@ describe('createCancelTicket', () => {
       payment: 100,
       lines: [{ id: '1', qty: 1, promotions: [], product: {} }]
     });
-    const payload = deepfreeze({ terminal: { terminalType: {} } });
+    const payload = deepfreeze({
+      orgUserId: '1234',
+      terminal: { terminalType: {} }
+    });
     const newTicket = OB.App.StateAPI.Ticket.createCancelTicket(
       ticket,
       payload,
@@ -39,6 +42,7 @@ describe('createCancelTicket', () => {
       },
       creditAmount: 0,
       documentNo: 'O1*R*',
+      createdBy: '1234',
       documentType: undefined,
       fromLayaway: undefined,
       grossAmount: 100,

@@ -33,6 +33,7 @@
         obposAppCashup: globalState.Cashup.id,
         orderDate: new Date(),
         creationDate: null,
+        createdBy: payload.orgUserId,
         timezoneOffset: new Date().getTimezoneOffset(),
         payments: [],
         nettingPayment: OB.DEC.sub(ticket.payment, ticket.grossAmount),
