@@ -6776,7 +6776,7 @@
 <!--800214-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800214-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800214-->  <VALUE><![CDATA[11]]></VALUE>
-<!--800214-->  <NAME><![CDATA[Ship to address]]></NAME>
+<!--800214-->  <NAME><![CDATA[Partner Address]]></NAME>
 <!--800214-->  <AD_REFERENCE_ID><![CDATA[800087]]></AD_REFERENCE_ID>
 <!--800214-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800214--></AD_REF_LIST>
