@@ -16,10 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -878,7 +880,18 @@ public class PaidReceipts extends JSONProcessSimple {
 
   private void executePaidReceiptsHooks(final String orderId, final JSONObject paidReceipt)
       throws Exception {
+    List<PaidReceiptsHook> unsortedHooks = new ArrayList<PaidReceiptsHook>();
+
     for (final PaidReceiptsHook paidReceiptsHook : paidReceiptsHooks) {
+      unsortedHooks.add(paidReceiptsHook);
+    }
+
+    // Less priority means that it is executed before
+    List<PaidReceiptsHook> sortedHooks = unsortedHooks.stream()
+        .sorted(Comparator.comparing(PaidReceiptsHook::getPriority))
+        .collect(Collectors.toList());
+
+    for (final PaidReceiptsHook paidReceiptsHook : sortedHooks) {
       paidReceiptsHook.exec(orderId, paidReceipt);
     }
   }
