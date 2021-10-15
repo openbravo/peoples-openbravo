@@ -923,9 +923,15 @@ enyo.kind({
         );
       }
 
-      OB.UTIL.HookManager.executeHooks('OBPOS_NewReceipt', {
-        newOrder: this.model.get('order')
-      });
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_NewReceipt',
+        {
+          newOrder: this.model.get('order')
+        },
+        function(args) {
+          OB.UTIL.TicketListUtils.triggerTicketLoadEvents();
+        }
+      );
     });
     return true;
   },
