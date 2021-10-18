@@ -1352,6 +1352,17 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
     final BigDecimal gross = getGrossAmount(jsonorder);
     if (payments.length() == 0 && gross.compareTo(BigDecimal.ZERO) == 0) {
+      if (invoice != null && invoice.getGrandTotalAmount().compareTo(BigDecimal.ZERO) != 0) {
+        OBContext.setAdminMode(false);
+        try {
+          order.getBusinessPartner()
+              .setCreditUsed(
+                  order.getBusinessPartner().getCreditUsed().add(invoice.getGrandTotalAmount()));
+          OBDal.getInstance().flush();
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+      }
       jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
       return jsonResponse;
     }
