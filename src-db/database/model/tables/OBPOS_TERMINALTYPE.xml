@@ -161,6 +161,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA[N]]></onCreateDefault>
       </column>
+      <column name="USEBARCODELAYOUT" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_DOCTYPE" name="OBPOS_DOCTYPE_QUOT_ID">
         <reference local="C_DOCTYPEQUOT_ID" foreign="C_DOCTYPE_ID"/>
       </foreign-key>
