@@ -332,11 +332,6 @@
                           .usebarcodescanner
                       );
                       terminalModel.set(
-                        'useBarcodeLayout',
-                        terminalModel.get('terminal').terminalType
-                          .usebarcodelayout
-                      );
-                      terminalModel.set(
                         'useEmbededBarcode',
                         terminalModel.get('terminal').terminalType
                           .useembededbarcodescanner
