@@ -305,27 +305,33 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         if (line.product) {
           return line;
         }
-
-        const product = await getProduct(line);
+        const newLine = { ...line };
+        const product = await getProduct(newLine);
+        if (newLine.obposExtendProductModel) {
+          Object.keys(line.obposExtendProductModel).forEach(prodModelKey => {
+            product[prodModelKey] = line.obposExtendProductModel[prodModelKey];
+          });
+        }
+        delete newLine.obposExtendProductModel;
         const hasRelatedServices =
-          line.qty <= 0 || product.productType === 'S'
+          newLine.qty <= 0 || product.productType === 'S'
             ? false
             : await getService(product);
         product.img = undefined;
 
         if (isBOM(product)) {
-          const productBOM = await getProductBOM(product.id);
-          if (productBOM) {
-            product.productBOM = productBOM;
+          if (!product.productBOM) {
+            const productBOM = await getProductBOM(product.id);
+            if (productBOM) {
+              product.productBOM = productBOM;
+            }
           }
         }
 
-        return {
-          ...line,
-          id: line.lineId,
-          product,
-          hasRelatedServices
-        };
+        newLine.id = newLine.lineId;
+        newLine.product = product;
+        newLine.hasRelatedServices = hasRelatedServices;
+        return newLine;
       })
     );
     return { ...payload, ticket: { ...payload.ticket, receiptLines: lines } };

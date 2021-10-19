@@ -14,7 +14,8 @@ import org.codehaus.jettison.json.JSONObject;
 public interface PaidReceiptsHook {
 
   /**
-   * Executes the hook logic on the Paid Receipts process
+   * Executes the hook logic on the Paid Receipts process. If property obposExtendProductModel is
+   * returned in a line of paidReceipt object it will be injected in product model in the frontend
    */
   public abstract void exec(final String orderId, final JSONObject paidReceipt) throws Exception;
 
