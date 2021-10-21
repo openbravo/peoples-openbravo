@@ -268,6 +268,61 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       );
     };
 
+    const getAttributeDescription = line => {
+      const attributeInfo = {
+        description: '',
+        keyValue: []
+      };
+      if (
+        OB.App.Security.hasPermission(
+          'OBPOS_EnableSupportForProductAttributes'
+        ) &&
+        line.attributeValue
+      ) {
+        let attSetInstanceDescription = '';
+        const attributesList = [];
+        const jsonAttValues = JSON.parse(line.attributeValue);
+        const standardAttributes = ['lot', 'serialno', 'guaranteedate'];
+        Object.keys(jsonAttValues).forEach(key => {
+          if (
+            Object.prototype.hasOwnProperty.call(jsonAttValues, key) &&
+            standardAttributes.indexOf(key) === -1
+          ) {
+            attributesList.push(jsonAttValues[key]);
+          }
+        });
+        attributesList.sort((a, b) => a.name.localeCompare(b.name));
+        standardAttributes.forEach(attribute => {
+          if (
+            Object.prototype.hasOwnProperty.call(jsonAttValues, attribute) &&
+            jsonAttValues[attribute].label
+          ) {
+            attributesList.push(jsonAttValues[attribute]);
+          }
+        });
+        attributesList.forEach(attribute => {
+          if (
+            attribute &&
+            attribute.value &&
+            (typeof attribute.value === 'string' ||
+              attribute.value instanceof String) &&
+            attribute.value.length > 0
+          ) {
+            attributeInfo.keyValue.push(
+              `${attribute.label ? attribute.label : attribute.name}: ${
+                attribute.value
+              }`
+            );
+            attSetInstanceDescription += `_${attribute.value}`;
+          }
+        });
+        if (attributeInfo.keyValue.length > 0) {
+          attributeInfo.description = attSetInstanceDescription.substring(1);
+        }
+      }
+      return attributeInfo;
+    };
+
     const getProductBOM = async productId => {
       const productBOM = await OB.App.MasterdataModels.ProductBOM.find(
         new OB.App.Class.Criteria().criterion('product', productId).build()
@@ -326,6 +381,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
               product.productBOM = productBOM;
             }
           }
+        }
+
+        const attributeInfo = getAttributeDescription(line);
+        if (attributeInfo.description) {
+          newLine.attSetInstanceDesc = attributeInfo.description;
         }
 
         newLine.id = newLine.lineId;
