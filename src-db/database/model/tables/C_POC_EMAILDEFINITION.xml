@@ -41,15 +41,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="BODY" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="ISDEFAULT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="AD_LANGUAGE" primaryKey="false" required="false" type="VARCHAR" size="6" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="BODY" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
