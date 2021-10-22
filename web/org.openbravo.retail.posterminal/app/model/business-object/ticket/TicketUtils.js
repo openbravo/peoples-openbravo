@@ -161,22 +161,40 @@
         }
       }
 
-      let country;
-      let region;
+      const orgLocationCountry = OB.UTIL.localStorage.getItem(
+        'orglocation_countryid'
+      );
+      const country =
+        orgLocationCountry !== null
+          ? orgLocationCountry
+          : newline.organization.country;
+      const region =
+        orgLocationCountry !== null
+          ? OB.UTIL.localStorage.getItem('orglocation_regionid')
+          : newline.organization.country;
+
+      let destinationCountry;
+      let destinationRegion;
       if (newLine.obrdmDeliveryMode === 'HomeDelivery') {
         const { shipLocId } = this.ticket.businessPartner;
-        country = shipLocId
+        destinationCountry = shipLocId
           ? this.ticket.businessPartner.locationModel.countryId
           : null;
-        region = shipLocId
+        destinationRegion = shipLocId
           ? this.ticket.businessPartner.locationModel.regionId
           : null;
       } else {
-        country = newLine.organization.country;
-        region = newLine.organization.region;
+        destinationCountry = country;
+        destinationRegion = region;
       }
+      // eslint-disable-next-line no-param-reassign
       newLine.country = country;
+      // eslint-disable-next-line no-param-reassign
       newLine.region = region;
+      // eslint-disable-next-line no-param-reassign
+      newLine.destinationCountry = destinationCountry;
+      // eslint-disable-next-line no-param-reassign
+      newLine.destinationRegion = destinationRegion;
 
       return newLine;
     }

@@ -861,4 +861,20 @@
       }
     }
   }
+
+  OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
+    async (ticket, payload) => {
+      const newPayload = { ...payload };
+      const orgLocationCountry = OB.UTIL.localStorage.getItem(
+        'orglocation_countryid'
+      );
+      if (orgLocationCountry !== null) {
+        newPayload.orgLocation = {
+          country: orgLocationCountry,
+          region: OB.UTIL.localStorage.getItem('orglocation_regionid')
+        };
+      }
+      return newPayload;
+    }
+  );
 })();

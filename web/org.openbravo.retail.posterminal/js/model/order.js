@@ -4112,9 +4112,22 @@
               );
             }
           }
+          const orgLocationCountry = OB.UTIL.localStorage.getItem(
+            'orglocation_countryid'
+          );
+          const country =
+            orgLocationCountry !== null
+              ? orgLocationCountry
+              : line.organization.country;
+          const region =
+            orgLocationCountry !== null
+              ? OB.UTIL.localStorage.getItem('orglocation_regionid')
+              : line.organization.country;
+          line.set('country', country);
+          line.set('region', region);
           if (line.get('obrdmDeliveryMode') === 'HomeDelivery') {
             line.set(
-              'country',
+              'destinationCountry',
               OB.MobileApp.model.receipt.get('bp').get('shipLocId')
                 ? OB.MobileApp.model.receipt
                     .get('bp')
@@ -4123,7 +4136,7 @@
                 : null
             );
             line.set(
-              'region',
+              'destinationRegion',
               OB.MobileApp.model.receipt.get('bp').get('shipLocId')
                 ? OB.MobileApp.model.receipt
                     .get('bp')
@@ -4132,8 +4145,8 @@
                 : null
             );
           } else {
-            line.set('country', line.get('organization').country);
-            line.set('region', line.get('organization').region);
+            line.set('destinationCountry', country);
+            line.set('destinationRegion', region);
           }
         };
         if (

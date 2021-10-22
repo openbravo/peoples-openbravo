@@ -102,23 +102,6 @@ public class TaxRate extends MasterDataProcessHQLQuery {
         + " or tc.asbom = true)";
     //@formatter:on
 
-    if (fromCountry != null) {
-      hql = hql + " and (tr.country.id = :fromCountryId"
-          + " or (tr.country is null and (not exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id))"
-          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromCountry.id = :fromCountryId)"
-          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromCountry is null)))";
-    } else {
-      hql = hql + " and tr.country is null";
-    }
-    if (fromRegion != null) {
-      hql = hql + " and (tr.region.id = :fromRegionId"
-          + " or (tr.region is null and (not exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id))"
-          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromRegion.id = :fromRegionId)"
-          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromRegion is null)))";
-
-    } else {
-      hql = hql + " and tr.region is null";
-    }
     hql = hql + " order by tr.validFromDate desc, tr.id";
 
     return Arrays.asList(hql);
