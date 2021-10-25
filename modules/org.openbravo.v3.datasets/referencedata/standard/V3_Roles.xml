@@ -1715,18 +1715,6 @@
     <editableField>false</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADProcessAccess>
-  <ADProcessAccess id="FF808181259DADEB01259DDDA4E70250" identifier="Monthly Invoice - Finance">
-    <id>FF808181259DADEB01259DDDA4E70250</id>
-    <process id="129" entity-name="ADProcess" identifier="Monthly Invoice"/>
-    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
-    <active>true</active>
-    <creationDate transient="true">2019-04-23T08:34:13.451Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2019-04-23T08:34:13.451Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADProcessAccess>
   <ADProcessAccess id="FF808181259DADEB01259DDDA4E70251" identifier="Traceability Report - Warehouse">
     <id>FF808181259DADEB01259DDDA4E70251</id>
     <process id="800079" entity-name="ADProcess" identifier="Traceability Report"/>
