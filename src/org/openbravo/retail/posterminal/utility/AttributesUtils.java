@@ -337,7 +337,7 @@ public class AttributesUtils {
       attUseQuery.setNamedParameter("attSetId", attributeSet.getId());
       List<AttributeUse> lstAttUse = attUseQuery.list();
       for (AttributeUse attUse : lstAttUse) {
-        if (attUse.getAttribute().isInstanceAttribute() && attUse.getAttribute().isMandatory()) {
+        if (attUse.getAttribute().isInstanceAttribute() || attUse.getAttribute().isMandatory()) {
           lstAttributes.add(attUse.getAttribute());
         }
       }
