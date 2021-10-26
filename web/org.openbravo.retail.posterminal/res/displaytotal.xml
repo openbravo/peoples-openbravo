@@ -9,42 +9,45 @@
 -->
 <output>
   <display>
-    <% const pendingAmount = OB.App.State.Ticket.Utils.getPendingAmount(ticket); %>
-    <% if(pendingAmount === ticket.grossAmount){ 
+    <%
+    let paidLabel;
+    let paidAmount;
+    let remainingLabel;
+    let remainingAmount;
+    if (ticket.change) {
+      paidLabel = 'OBPOS_Paid';
+      paidAmount = ticket.payment;
+      remainingLabel = 'OBPOS_ticketChange';
+      remainingAmount = ticket.change;
+    } else if (ticket.payment > ticket.grossAmount) {
+      paidLabel = 'OBPOS_Paid';
+      paidAmount = ticket.payment;
+      remainingLabel = 'OBPOS_Overpayment';
+      remainingAmount = OB.DEC.sub(ticket.payment, ticket.grossAmount);
+    } else if (ticket.payment === ticket.grossAmount) {
+      paidLabel = 'OBPOS_Paid';
+      paidAmount = ticket.payment;
+      remainingLabel = 'OBPOS_RemainingToPay';
+      remainingAmount = 0;
+    } else if (ticket.payment > 0) {
+      paidLabel = 'OBPOS_Paid';
+      paidAmount = ticket.payment;
+      remainingLabel = 'OBPOS_RemainingToPay';
+      remainingAmount = OB.App.State.Ticket.Utils.getPendingAmount(ticket);
+    } else {
+      paidLabel = 'OBPOS_display_total';
+      paidAmount = ticket.grossAmount;
+      remainingLabel = 'OBPOS_RemainingToPay';
+      remainingAmount = OB.App.State.Ticket.Utils.getPendingAmount(ticket);
+    }
     %>
-      <line>
-        <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_display_total'))%></text>
-        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(ticket.grossAmount)%></text>
-      </line>
-      <line>
-        <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_RemainingToPay'))%></text>
-        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(pendingAmount)%></text>
-      </line>
-    <% }else{ 
-    %>
-      <% if(!ticket.change){   
-      %>
-      <line>
-        <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_Paid'))%></text>
-        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(OB.DEC.sub(ticket.grossAmount, pendingAmount))%></text>
-      </line>
-      <line>
-        <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_RemainingToPay'))%></text>
-        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(pendingAmount)%></text>
-      </line>
-    <% }else{ 
-    %>
-      <line>
-        <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_Paid'))%></text>
-        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(OB.DEC.add(ticket.grossAmount, ticket.change))%></text>
-      </line>
-      <line>
-        <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_ticketChange'))%></text>
-        <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(ticket.change)%></text>
-      </line>
-    <% } 
-    %>
-    <% } 
-    %>
+    <line>
+      <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel(paidLabel)) %></text>
+      <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(paidAmount) %></text>
+    </line>
+    <line>
+      <text align="left" length="10"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel(remainingLabel)) %></text>
+      <text align="right" length="10"><%= OB.App.PrintUtils.printAmount(remainingAmount) %></text>
+    </line>
   </display>
 </output>
