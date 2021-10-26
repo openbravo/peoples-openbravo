@@ -343,6 +343,7 @@ public class CashCloseProcessor {
     }
 
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
+    Organization cashUpOrganization = cashUp.getPOSTerminal().getOrganization();
     transaction.setCurrency(account.getCurrency());
     transaction.setAccount(account);
     transaction.setLineNo(TransactionsDao.getTransactionMaxLineNo(account) + 10);
@@ -362,6 +363,9 @@ public class CashCloseProcessor {
     transaction.setObposAppCashup(cashUp);
     transaction.setDateAcct(OBMOBCUtils.stripTime(currentDate));
     transaction.setTransactionDate(OBMOBCUtils.stripTime(currentDate));
+    if (cashUpOrganization != null) {
+      transaction.setOrganization(cashUpOrganization);
+    }
 
     return transaction;
   }
