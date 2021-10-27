@@ -35,7 +35,7 @@ public class InitialValidations {
   public static void validateTerminal(OBPOSApplications posTerminal, JSONObject jsonsent)
       throws JSONException {
 
-    validateTerminal(posTerminal, jsonsent.getJSONObject("parameters").optString("appName"));
+    validateTerminal(posTerminal, jsonsent.optString("appName"));
 
     // Check POS Cache Cash up is processed
     final JSONObject jsonCashUp = jsonsent.getJSONObject("parameters").optJSONObject("cashUpId");
