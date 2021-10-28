@@ -138,14 +138,13 @@
         country: attrs.organization.country,
         region: attrs.organization.region
       };
+      newLine.country = extraData.orgLocation
+        ? extraData.orgLocation.country
+        : newLine.organization.country;
+      newLine.region = extraData.orgLocation
+        ? extraData.orgLocation.region
+        : newLine.organization.region;
     }
-
-    newLine.country = extraData.orgLocation
-      ? extraData.orgLocation.country
-      : newLine.organization.country;
-    newLine.region = extraData.orgLocation
-      ? extraData.orgLocation.region
-      : newLine.organization.region;
 
     if (attrs.splitline != null && attrs.originalLine) {
       const originalLine = newTicket.lines.find(
