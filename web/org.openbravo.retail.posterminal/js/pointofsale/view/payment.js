@@ -2875,6 +2875,7 @@ enyo.kind({
     } else if (this.model.get('isPrePayment')) {
       this.$.removePayment.hideButton();
       if (
+        payment &&
         payment.paymentMethod.isreversable &&
         OB.MobileApp.model.hasPermission('OBPOS_EnableReversePayments', true)
       ) {
