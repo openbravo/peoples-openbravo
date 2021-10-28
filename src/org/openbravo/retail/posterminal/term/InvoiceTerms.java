@@ -14,7 +14,6 @@ import java.util.List;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.retail.posterminal.term.QueryTerminalProperty;
 
 public class InvoiceTerms extends QueryTerminalProperty {
 
@@ -34,7 +33,7 @@ public class InvoiceTerms extends QueryTerminalProperty {
     hqlInvoiceTerms += "ORDER BY list.sequenceNumber, name";
     return Arrays.asList(hqlInvoiceTerms);
   }
-  
+
   @Override
   protected boolean bypassPreferenceCheck() {
     return true;

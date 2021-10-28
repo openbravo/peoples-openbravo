@@ -161,6 +161,7 @@
     if (lodash.has(options, 'isDeletable')) {
       newLine.isDeletable = options.isDeletable;
     }
+    newLine.obposCanbedelivered = true;
 
     setLineAttributes(newLine, attrs, productInfo);
 

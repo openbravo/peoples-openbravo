@@ -73,6 +73,7 @@ public class PaidReceiptProperties extends ModelExtension {
         add(new HQLProperty("ord.invoiceTerms", "invoiceTerms"));
         add(new HQLProperty("ord.externalBusinessPartnerReference",
             "externalBusinessPartnerReference"));
+        add(new HQLProperty("alternateLocation.addressLine1", "alternateLocationName"));
       }
     };
 

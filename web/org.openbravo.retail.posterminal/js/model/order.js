@@ -4607,8 +4607,17 @@
           'setExternalBusinessPartner'
         );
         execution.businessPartner = bp || order.get('bp');
+        const externalBpIntegration = OB.App.TerminalProperty.get(
+          'externalBpIntegration'
+        );
         OB.App.State.Ticket.assignExternalBusinessPartner({
-          businessPartner: bp
+          businessPartner: bp,
+          addressConfig:
+            externalBpIntegration && externalBpIntegration.addresses
+              ? externalBpIntegration.addresses.find(
+                  e => e.shippingAddress === true
+                )
+              : undefined
         })
           .then(() => {
             OB.MobileApp.model.receipt.trigger('updateView');

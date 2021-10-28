@@ -18,7 +18,6 @@ import java.util.Set;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.retail.posterminal.term.QueryTerminalProperty;
 
 public class StoreDocumentTypes extends QueryTerminalProperty {
 
@@ -49,7 +48,8 @@ public class StoreDocumentTypes extends QueryTerminalProperty {
   protected Map<String, Object> getParameterValues(JSONObject jsonsent) throws JSONException {
     Map<String, Object> result = new HashMap<>();
     String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-    Set<String> orgIds = OBContext.getOBContext().getOrganizationStructureProvider()
+    Set<String> orgIds = OBContext.getOBContext()
+        .getOrganizationStructureProvider()
         .getNaturalTree(orgId);
     result.put("orgIds", orgIds);
     return result;

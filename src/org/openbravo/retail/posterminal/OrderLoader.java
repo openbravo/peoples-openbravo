@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -63,6 +65,8 @@ import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.geography.Country;
+import org.openbravo.model.common.geography.Region;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -630,6 +634,91 @@ public class OrderLoader extends POSDataSynchronizationProcess
     }
   }
 
+  private void addAlternateAddress(Order order, JSONObject address) {
+    final UnaryOperator<String> getAddressProperty = property -> address.isNull(property) ? null
+        : address.optString(property);
+    String address1 = getAddressProperty.apply("address1");
+    String address2 = getAddressProperty.apply("address2");
+    String postalCode = getAddressProperty.apply("postalCode");
+    String city = getAddressProperty.apply("city");
+    Country country = address.isNull("country") ? getDefaultCountry()
+        : getCountry(address.optString("country"));
+    Region region = address.isNull("region") ? null
+        : getRegion(address.optString("region"), country);
+    order.setAlternateLocation(getLocation(address1, address2, postalCode, city, region, country));
+  }
+
+  private Country getCountry(String countryCode) {
+    return Optional.ofNullable(OBDal.getInstance()
+        .createQuery(Country.class, "iSOCountryCode = :country")
+        .setNamedParameter("country", countryCode)
+        .setMaxResult(1)
+        .uniqueResult()).orElseGet(this::getDefaultCountry);
+  }
+
+  private Country getDefaultCountry() {
+    // If country is not found the default country is taken from the currentOrganization:
+    // EM_Obretco_dbp_countryid (Default country for BP creation). If this value is still null we
+    // try to get it from the organization location
+    final Function<String, Optional<Country>> getCountry = existsClause -> Optional
+        .ofNullable(OBDal.getInstance()
+            .createQuery(Country.class, "as c where exists (" + existsClause + ")")
+            .setNamedParameter("orgId", OBContext.getOBContext().getCurrentOrganization().getId())
+            .uniqueResult());
+    return getCountry
+        .apply(
+            "select 1 from Organization o where o.id = :orgId and o.obretcoDbpCountryid.id = c.id")
+        .orElseGet(() -> getCountry.apply(
+            "select 1 from OrganizationInformation oi join oi.locationAddress l where oi.organization.id = :orgId and l.country.id = c.id")
+            .orElseThrow(() -> new OBException("OBPOS_OrgLocationConfigured")));
+  }
+
+  private Region getRegion(String regionName, Country country) {
+    return OBDal.getInstance()
+        .createQuery(Region.class, "name = :region and country.id = :countryId")
+        .setNamedParameter("region", regionName)
+        .setNamedParameter("countryId", country.getId())
+        .setMaxResult(1)
+        .uniqueResult();
+  }
+
+  private org.openbravo.model.common.geography.Location getLocation(String address1,
+      String address2, String postalCode, String city, Region region, Country country) {
+    return Optional.ofNullable(OBDal.getInstance()
+        .createQuery(org.openbravo.model.common.geography.Location.class,
+            "c_location_getidentifier(addressLine1, addressLine2, postalCode, cityName, region.id, country.id) = c_location_getidentifier(:address1, :address2, :postalCode, :city, :regionId, :countryId)")
+        .setNamedParameter("address1", StringUtils.defaultString(address1))
+        .setNamedParameter("address2", StringUtils.defaultString(address2))
+        .setNamedParameter("postalCode", StringUtils.defaultString(postalCode))
+        .setNamedParameter("city", StringUtils.defaultString(city))
+        .setNamedParameter("regionId", region != null ? region.getId() : StringUtils.EMPTY)
+        .setNamedParameter("countryId", country != null ? country.getId() : StringUtils.EMPTY)
+        .setMaxResult(1)
+        .uniqueResult())
+        .orElseGet(() -> insertLocation(address1, address2, postalCode, city, region, country));
+  }
+
+  private org.openbravo.model.common.geography.Location insertLocation(String address1,
+      String address2, String postalCode, String city, Region region, Country country) {
+    OBDal.getInstance()
+        .createQuery(org.openbravo.model.common.geography.Location.class,
+            "addressLine1 = :addressLine1 and addressLine2 = :addressLine2")
+        .setNamedParameter("addressLine1", address1)
+        .setNamedParameter("addressLine2", address2)
+        .setMaxResult(1)
+        .uniqueResult();
+    org.openbravo.model.common.geography.Location newLocation = OBProvider.getInstance()
+        .get(org.openbravo.model.common.geography.Location.class);
+    newLocation.setAddressLine1(address1);
+    newLocation.setAddressLine2(address2);
+    newLocation.setPostalCode(postalCode);
+    newLocation.setCityName(city);
+    newLocation.setRegion(region);
+    newLocation.setCountry(country);
+    OBDal.getInstance().save(newLocation);
+    return newLocation;
+  }
+
   private FIN_PaymentSchedule getPaymentScheduleOfOrder(final Order order) {
     final OBCriteria<FIN_PaymentSchedule> paymentScheduleCriteria = OBDal.getInstance()
         .createCriteria(FIN_PaymentSchedule.class);
@@ -1146,6 +1235,11 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
       Long value = jsonorder.getLong("created");
       order.set("creationDate", new Date(value));
+    }
+
+    if (jsonorder.has("alternateAddress")
+        && StringUtils.equals(jsonorder.optString("obrdmDeliveryModeProperty"), "HomeDelivery")) {
+      addAlternateAddress(order, jsonorder.optJSONObject("alternateAddress"));
     }
 
     if (jsonorder.has("cashVAT")) {

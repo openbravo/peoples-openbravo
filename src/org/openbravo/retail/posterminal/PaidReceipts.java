@@ -154,6 +154,7 @@ public class PaidReceipts extends JSONProcessSimple {
       String hqlPaidReceipts = "select " + hqlPropertiesReceipts.getHqlSelect()
           + " from Order as ord LEFT OUTER JOIN ord.obposApplications AS pos "
           + " LEFT OUTER JOIN ord.salesRepresentative as salesRepresentative "
+          + " LEFT OUTER JOIN ord.alternateLocation AS alternateLocation "
           + " LEFT OUTER JOIN ord.replacedorder AS replacedOrder where ord.id = :orderId";
       Query<?> paidReceiptsQuery = OBDal.getInstance().getSession().createQuery(hqlPaidReceipts);
       paidReceiptsQuery.setParameter("orderId", orderid);
