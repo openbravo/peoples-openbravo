@@ -79,6 +79,7 @@ import org.openbravo.test.dal.ViewTest;
 import org.openbravo.test.datasource.GridExport;
 import org.openbravo.test.db.model.functions.ADOrgTreeTest;
 import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
+import org.openbravo.test.db.model.functions.CLocationGetIdentifierTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.db.pool.PoolHasNoConnectionsDetection;
 import org.openbravo.test.expression.EvaluationTest;
@@ -348,6 +349,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // AD_IsOrgIncluded
     Ad_isorgincludedTest.class, //
     ADOrgTreeTest.class, //
+
+    // C_Location_GetIdentifier
+    CLocationGetIdentifierTest.class, //
 
     // CopyFromOrders refactor
     CopyLinesFromOrdersTest.class,

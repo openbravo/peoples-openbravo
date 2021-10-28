@@ -269,6 +269,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_ALTERNATE_LOCATION_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_FREIGHTCATEGORY" name="M_FREIGHTCATEGORY_M_INOUT">
         <reference local="M_FREIGHTCATEGORY_ID" foreign="M_FREIGHTCATEGORY_ID"/>
       </foreign-key>
@@ -286,6 +290,9 @@
       </foreign-key>
       <foreign-key foreignTable="AD_USER" name="M_INOUT_AD_USER">
         <reference local="AD_USER_ID" foreign="AD_USER_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_LOCATION" name="M_INOUT_ALTERNATE_LOCATION">
+        <reference local="C_ALTERNATE_LOCATION_ID" foreign="C_LOCATION_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ACTIVITY" name="M_INOUT_C_ACTIVITY">
         <reference local="C_ACTIVITY_ID" foreign="C_ACTIVITY_ID"/>

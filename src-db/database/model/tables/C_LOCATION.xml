@@ -84,6 +84,9 @@
       <foreign-key foreignTable="C_REGION" name="C_REGION_LOCATION">
         <reference local="C_REGION_ID" foreign="C_REGION_ID"/>
       </foreign-key>
+      <index name="C_LOCATION_IDENTIFIER" unique="false">
+        <index-column name="functionBasedColumn" functionExpression="C_LOCATION_GETIDENTIFIER(ADDRESS1,ADDRESS2,POSTAL,CITY,C_REGION_ID,C_COUNTRY_ID)"/>
+      </index>
       <check name="C_LOCATION_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
