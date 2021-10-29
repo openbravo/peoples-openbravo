@@ -57,7 +57,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="BODY" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
+      <column name="BODY" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
