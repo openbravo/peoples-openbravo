@@ -10,6 +10,8 @@
 /* global lodash */
 
 (function PrintTemplateDefinition() {
+  let templateInitializer;
+
   /**
    * Builds the data that is sent to the Hardware Manager to be printed in a particular format.
    */
@@ -24,11 +26,12 @@
      */
     constructor(name, resource, options = {}) {
       this.name = name;
+      this.initialized = false;
+      this.isLegacy = options.isLegacy === true;
+
       this.resource = resource.startsWith('res/')
         ? `../org.openbravo.retail.posterminal/${resource}`
         : resource;
-      this.resourcedata = null;
-      this.isLegacy = options.isLegacy === true;
     }
 
     /**
@@ -42,15 +45,7 @@
      *                  - subReports: an array with the subreports (PDF templates)
      */
     async generate(params) {
-      const terminal = OB.App.TerminalProperty.get('terminal');
-      if (terminal[`${this.name}IsPdf`] === true && !this.ispdf) {
-        await this.processPDFTemplate({
-          printer: terminal[`${this.name}Printer`],
-          subreports: Object.keys(terminal)
-            .filter(key => key.startsWith(`${this.name}Subrep`))
-            .map(key => terminal[key])
-        });
-      }
+      await this.initialize();
 
       const templateParams = await this.prepareParams(params);
 
@@ -86,6 +81,18 @@
       };
     }
 
+    async initialize() {
+      if (!this.initialized) {
+        await (templateInitializer || defaultTemplateInitializer)(this);
+        this.initialized = true;
+      }
+    }
+
+    /** Reset current template so that next time is used, its initializer will be called. */
+    reset() {
+      this.initialized = false;
+    }
+
     async processPDFTemplate(params) {
       const { printer, subreports } = params;
 
@@ -97,31 +104,13 @@
           new OB.App.Class.PrintTemplate(`${this.name}Subrep${index}`, s)
       );
 
-      const templates = [this, ...this.subreports];
-      const dataRetrievals = templates.map(async template => {
-        await template.getData();
-      });
+      const dataRetrievals = this.subreports.map(template =>
+        template.initialize()
+      );
       await Promise.all(dataRetrievals);
     }
 
-    async getData() {
-      if (!this.resourcedata) {
-        // Retrieve the data from backend
-        this.resourcedata = await OB.App.Request.get(
-          this.resource,
-          `hash=${OB.UTIL.localStorage.getItem('templateVersion')}`,
-          {
-            timeout: 20000,
-            type: 'text',
-            options: {
-              headers: {
-                'Content-Type':
-                  'application/x-www-form-urlencoded; charset=utf-8'
-              }
-            }
-          }
-        );
-      }
+    getData() {
       return this.resourcedata;
     }
 
@@ -166,8 +155,60 @@
     }
 
     isLegacyTemplate() {
-      const terminal = OB.App.TerminalProperty.get('terminal');
-      return terminal[`${this.name}IsLegacy`] === true || this.isLegacy;
+      return this.isLegacy;
+    }
+  };
+
+  /** By default template is fetched from the resource URL */
+  async function defaultTemplateInitializer(printTemplate) {
+    const terminal = OB.App.TerminalProperty.get('terminal');
+    const templateName = printTemplate.name;
+
+    // eslint-disable-next-line no-param-reassign
+    printTemplate.ispdf = terminal[`${templateName}IsPdf`] === true;
+    // eslint-disable-next-line no-param-reassign
+    printTemplate.isLegacy =
+      terminal[`${templateName}IsLegacy`] === true || printTemplate.isLegacy;
+
+    if (printTemplate.ispdf) {
+      await printTemplate.processPDFTemplate({
+        printer: terminal[`${templateName}Printer`],
+        subreports: Object.keys(terminal)
+          .filter(key => key.startsWith(`${templateName}Subrep`))
+          .map(key => terminal[key])
+      });
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    printTemplate.resourcedata = await OB.App.Request.get(
+      printTemplate.resource,
+      `hash=${OB.UTIL.localStorage.getItem('templateVersion')}`,
+      {
+        timeout: 20000,
+        type: 'text',
+        options: {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+          }
+        }
+      }
+    );
+  }
+
+  OB.App.PrintTemplate = {
+    /**
+     * Registers a function to get template data. Different modules can define their own function
+     * to retrieve templates, the actual template will be the first result returning data. This allows
+     * to overwrite the behavior in modules deeper in the dependency tree.
+     *
+     * The default function to get the template performs a rquest to the 'resource'.
+     *
+     * @param {function} templateSelector Asynchronous function that, receiving as a parameter a
+     *   PrintTemplate instance, returns its template or a nullish value to execute the next getter in
+     *   the chain.
+     */
+    registerInitializer: newTemplateInitializer => {
+      templateInitializer = newTemplateInitializer;
     }
   };
 })();

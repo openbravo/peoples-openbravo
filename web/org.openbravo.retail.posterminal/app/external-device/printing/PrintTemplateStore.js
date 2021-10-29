@@ -69,6 +69,19 @@
       return templates[name].printTemplate;
     },
 
+    /** Returns the default resource path for the given template */
+    getDefaultResourcePath: name => templates[name].defaultTemplate,
+
+    /**
+     * Resets all registered templates forcing their initializers to be called
+     * before they are used next time.
+     */
+    resetTemplates: () => {
+      Object.values(templates)
+        .filter(t => t.printTemplate)
+        .forEach(t => t.printTemplate.reset());
+    },
+
     /**
      * Selects the correct print template to be used to print the provided ticket.
      *

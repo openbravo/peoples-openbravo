@@ -37,7 +37,8 @@ global.OB = {
     formatRate: jest.fn()
   },
   UTIL: {
-    encodeXMLComponent: jest.fn()
+    encodeXMLComponent: jest.fn(),
+    localStorage: { getItem: jest.fn() }
   }
 };
 

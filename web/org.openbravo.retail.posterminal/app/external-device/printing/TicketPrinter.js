@@ -117,6 +117,7 @@
           printableTicket,
           { forcedtemplate: toPrintTemplate(prePrintData.forcedtemplate) }
         );
+        await template.initialize();
         isPdf = template.ispdf;
 
         await this.controller.selectPrinter({
