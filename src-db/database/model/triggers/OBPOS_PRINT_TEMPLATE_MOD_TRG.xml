@@ -15,7 +15,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2015 Openbravo SLU
+* All portions are Copyright (C) 2008-2021 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -56,29 +56,31 @@ BEGIN
     cuerrentModuleID := :old.AD_Module_ID;
   END IF;
   
-  SELECT M.IsInDevelopment
-    INTO devModule
-    FROM AD_MODULE M
-   WHERE M.AD_MODULE_ID = cuerrentModuleID;
-   
-  IF (UPDATING AND devTemplate=0 AND devModule='N') THEN
-    IF (
-        COALESCE(:NEW.AD_Client_ID , '.') != COALESCE(:OLD.AD_Client_ID , '.') OR
-        COALESCE(:NEW.AD_Org_ID , '.') != COALESCE(:OLD.AD_Org_ID , '.') OR
-        COALESCE(:NEW.IsActive , '.') != COALESCE(:OLD.IsActive , '.') OR
-        COALESCE(:NEW.Name , '.') != COALESCE(:OLD.Name , '.') OR
-        COALESCE(:NEW.Template_Type , '.') != COALESCE(:OLD.Template_Type , '.') OR
-        COALESCE(:NEW.Template_Path , '.') != COALESCE(:OLD.Template_Path , '.') OR
-        COALESCE(:NEW.IsPdf , '.') != COALESCE(:OLD.IsPdf , '.') OR
-        COALESCE(:NEW.Printer , 0) != COALESCE(:OLD.Printer , 0) OR
-        COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.')) THEN      
-      RAISE_APPLICATION_ERROR(-20000, '@20532@');
+  IF cuerrentModuleID IS NOT NULL THEN
+    SELECT M.IsInDevelopment
+      INTO devModule
+      FROM AD_MODULE M
+     WHERE M.AD_MODULE_ID = cuerrentModuleID;
+     
+    IF (UPDATING AND devTemplate=0 AND devModule='N') THEN
+      IF (
+          COALESCE(:NEW.AD_Client_ID , '.') != COALESCE(:OLD.AD_Client_ID , '.') OR
+          COALESCE(:NEW.AD_Org_ID , '.') != COALESCE(:OLD.AD_Org_ID , '.') OR
+          COALESCE(:NEW.IsActive , '.') != COALESCE(:OLD.IsActive , '.') OR
+          COALESCE(:NEW.Name , '.') != COALESCE(:OLD.Name , '.') OR
+          COALESCE(:NEW.Template_Type , '.') != COALESCE(:OLD.Template_Type , '.') OR
+          COALESCE(:NEW.Template_Path , '.') != COALESCE(:OLD.Template_Path , '.') OR
+          COALESCE(:NEW.IsPdf , '.') != COALESCE(:OLD.IsPdf , '.') OR
+          COALESCE(:NEW.Printer , 0) != COALESCE(:OLD.Printer , 0) OR
+          COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.')) THEN      
+        RAISE_APPLICATION_ERROR(-20000, '@20532@');
+      END IF;
     END IF;
-  END IF;
-  
-  IF ((DELETING OR INSERTING) AND devModule='N') THEN
-    RAISE_APPLICATION_ERROR(-20000, '@20533@');
-  END IF;
+    
+    IF ((DELETING OR INSERTING) AND devModule='N') THEN
+      RAISE_APPLICATION_ERROR(-20000, '@20533@');
+    END IF;
+  END IF; 
 END OBPOS_PRINT_TEMPLATE_MOD_TRG
 ]]></body>
     </trigger>
