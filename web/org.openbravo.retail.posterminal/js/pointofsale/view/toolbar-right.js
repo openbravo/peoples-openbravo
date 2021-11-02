@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -627,6 +627,8 @@ enyo.kind({
       return;
     }
     if (OB.MobileApp.model.get('serviceSearchMode')) {
+      const serviceSearchMode = OB.MobileApp.model.get('serviceSearchMode');
+      OB.MobileApp.model.unset('serviceSearchMode');
       this.setLabel(OB.I18N.getLabel('OBPOS_LblEdit'));
       this.removeClass(this.continueClass);
       this.doEnableUserInterface();
@@ -637,12 +639,11 @@ enyo.kind({
       this.doToggleLineSelection({
         status: false
       });
-      if (OB.MobileApp.model.get('serviceSearchMode') === 'mandatory') {
+      if (serviceSearchMode === 'mandatory') {
         this.restoreStatus();
-      } else if (OB.MobileApp.model.get('serviceSearchMode') === 'final') {
+      } else if (serviceSearchMode === 'final') {
         this.previousStatus.callback();
       }
-      OB.MobileApp.model.unset('serviceSearchMode');
     } else {
       var lines = this.model.get('order').get('lines');
       if (!options.isManual) {

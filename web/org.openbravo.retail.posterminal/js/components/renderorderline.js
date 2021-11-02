@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -398,7 +398,10 @@ enyo.kind({
       inEvent.models[0] instanceof OB.Model.OrderLine &&
       this.$.showServicesButton
     ) {
-      if (inEvent.models.length > 1) {
+      if (
+        inEvent.models.length > 1 ||
+        OB.MobileApp.model.get('serviceSearchMode')
+      ) {
         this.$.showServicesButton.hide();
       } else {
         this.$.showServicesButton.show();
