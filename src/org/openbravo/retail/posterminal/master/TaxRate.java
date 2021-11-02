@@ -81,14 +81,6 @@ public class TaxRate extends MasterDataProcessHQLQuery {
       throw new OBException("terminal id is not present in session ");
     }
 
-    // FROM
-    final OrganizationInformation storeInfo = posDetail.getOrganization()
-        .getOrganizationInformationList()
-        .get(0);
-
-    final Country fromCountry = storeInfo.getLocationAddress().getCountry();
-    final Region fromRegion = storeInfo.getLocationAddress().getRegion();
-
     //@formatter:off
     String hql = " select " + ModelExtensionUtils.getPropertyExtensions(extensions).getHqlSelect()
         + " from FinancialMgmtTaxRate as tr"
