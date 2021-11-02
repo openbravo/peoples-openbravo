@@ -97,7 +97,7 @@ public abstract class TemplateEventHandler extends EntityPersistenceEventObserve
 
   private String getPropName(String property) {
     String colId = getObservedEntities()[0].getProperty(property).getColumnId();
-    OBContext.setAdminMode();
+    OBContext.setAdminMode(true);
     try {
       return (String) OBDal.getInstance()
           .get(Column.class, colId)
