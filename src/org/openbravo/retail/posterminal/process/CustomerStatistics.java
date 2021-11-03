@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -17,6 +17,8 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Session;
@@ -32,6 +34,8 @@ import org.openbravo.retail.posterminal.utility.CustomerStatisticsUtils;
 import org.openbravo.service.json.JsonConstants;
 
 public class CustomerStatistics extends JSONProcessSimple {
+  private static final Logger log = LogManager.getLogger();
+
   public static final BigDecimal HOURS = new BigDecimal("24");
   public static final BigDecimal DAYSWEEK = new BigDecimal("7");
   public static final BigDecimal DAYSMONTH = new BigDecimal("30");
@@ -97,7 +101,7 @@ public class CustomerStatistics extends JSONProcessSimple {
       }
       return result;
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("Error while calculating statistics value", e);
       JSONObject jsonError = new JSONObject();
       String errorMsg = "Error while calculating statistics value : " + e.getMessage();
       jsonError.put("message", errorMsg);

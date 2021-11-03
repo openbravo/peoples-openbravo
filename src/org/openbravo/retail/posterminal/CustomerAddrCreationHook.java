@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2016 Openbravo S.L.U.
+ * Copyright (C) 2016-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -33,8 +33,7 @@ public abstract class CustomerAddrCreationHook {
 // @Override
 // public void exec(JSONObject jsonCustomerAddr, BusinessPartner customer, Location location)
 // throws Exception {
-// // TODO Auto-generated method stub
-// System.out.println("somebody is calling me");
+// // your code here
 // }
 //
 // }

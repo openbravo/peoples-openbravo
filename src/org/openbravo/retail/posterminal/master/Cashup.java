@@ -259,8 +259,7 @@ public class Cashup extends JSONProcessSimple {
       }
       this.allPaymentTypes.addAll(executePaymentTypeHook(paymentTypeHookInstance));
     } catch (Exception e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log.error("Error running executePaymentTypeHook", e);
     }
 
     // Get GL Items associated to the payment methods of this terminal
