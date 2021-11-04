@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,8 @@ package org.openbravo.base.session;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
@@ -42,16 +44,14 @@ import org.apache.tools.ant.Task;
  *
  */
 public class HostNameTask extends Task {
+  private static Logger log = LogManager.getLogger();
 
   @Override
   public void execute() throws BuildException {
     try {
-      // using System.out instead of log4j to be able to run this tasks without
-      // having compiled defined appenders
-      System.out.println("Machine name: " + InetAddress.getLocalHost().getHostName());
+      log.info("Machine name: {}", InetAddress.getLocalHost().getHostName());
     } catch (UnknownHostException e) {
-      System.err.println("Could not determine machine name");
-      e.printStackTrace();
+      log.error("Could not determine machine name", e);
     }
   }
 }
