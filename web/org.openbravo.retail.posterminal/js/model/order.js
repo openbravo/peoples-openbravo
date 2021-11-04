@@ -4122,7 +4122,7 @@
           const region =
             orgLocationCountry !== null
               ? OB.UTIL.localStorage.getItem('orglocation_regionid')
-              : line.organization.country;
+              : line.organization.region;
           line.set('country', country);
           line.set('region', region);
           if (line.get('obrdmDeliveryMode') === 'HomeDelivery') {
