@@ -103,7 +103,7 @@ var ReceiptDeliveryModeDefinition = {
         }
         if (model.get('obrdmDeliveryMode') === 'HomeDelivery') {
           model.set(
-            'country',
+            'destinationCountry',
             OB.MobileApp.model.receipt.get('bp').get('shipLocId')
               ? OB.MobileApp.model.receipt
                   .get('bp')
@@ -112,7 +112,7 @@ var ReceiptDeliveryModeDefinition = {
               : null
           );
           model.set(
-            'region',
+            'destinationRegion',
             OB.MobileApp.model.receipt.get('bp').get('shipLocId')
               ? OB.MobileApp.model.receipt
                   .get('bp')
@@ -121,8 +121,8 @@ var ReceiptDeliveryModeDefinition = {
               : null
           );
         } else {
-          model.set('country', model.get('organization').country);
-          model.set('region', model.get('organization').region);
+          model.set('destinationCountry', model.get('country'));
+          model.set('destinationRegion', model.get('region'));
         }
       },
       this
