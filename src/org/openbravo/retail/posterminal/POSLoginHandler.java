@@ -322,8 +322,4 @@ public class POSLoginHandler extends MobileCoreLoginHandler {
         .get(0);
   }
 
-  @Override
-  protected boolean isLoginAccessRestrictedInStoreServer(VariablesSecureApp vars) {
-    return false;
-  }
 }
