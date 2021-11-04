@@ -126,37 +126,32 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
 
       // Update Interrupted Process Instance's End time with current time.
       try (Connection connection = OBDal.getInstance().getConnection()) {
-        if (connection != null) {
-          PreparedStatement ps = null;
-          try {
-            final String schedulerInstanceId = scheduler.getSchedulerInstanceId();
-            //@formatter:off
-            String query = ""
-              + "update ad_process_run"
-              + "  set end_time=NOW(), status='SYR'"
-              + " where status='PRC'"
-              + "   and end_time is null"
-              + "   and scheduler_instance=?";
-            //@formatter:on
-            ps = connection.prepareStatement(query);
-            ps.setString(1, schedulerInstanceId);
-            int n = ps.executeUpdate();
-            if (n > 0) {
-              log.info(
-                  "{} background processes were in execution before Tomcat start, they have been marked as 'System Restarted'",
-                  n);
-            }
-          } finally {
-            if (ps != null && !ps.isClosed()) {
-              ps.close();
-            }
-            OBDal.getInstance().flush();
-            OBDal.getInstance().commitAndClose();
+        PreparedStatement ps = null;
+        try {
+          final String schedulerInstanceId = scheduler.getSchedulerInstanceId();
+          //@formatter:off
+          String query = ""
+            + "update ad_process_run"
+            + "  set end_time=NOW(), status='SYR'"
+            + " where status='PRC'"
+            + "   and end_time is null"
+            + "   and scheduler_instance=?";
+          //@formatter:on
+          ps = connection.prepareStatement(query);
+          ps.setString(1, schedulerInstanceId);
+          int n = ps.executeUpdate();
+          if (n > 0) {
+            log.info(
+                "{} background processes were in execution before Tomcat start, they have been marked as 'System Restarted'",
+                n);
           }
-        } else {
-          System.out.println("Connection Failed!");
+        } finally {
+          if (ps != null && !ps.isClosed()) {
+            ps.close();
+          }
+          OBDal.getInstance().flush();
+          OBDal.getInstance().commitAndClose();
         }
-
       } catch (Exception e) {
         log.error("Error updating Process Instance", e);
       }
