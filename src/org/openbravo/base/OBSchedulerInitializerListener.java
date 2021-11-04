@@ -44,8 +44,7 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
 
   @Override
   public void contextInitialized(ServletContextEvent sce) {
-
-    log.info("Quartz Initializer Servlet loaded, initializing " + "Scheduler...");
+    log.info("Quartz Initializer Servlet loaded, initializing Scheduler...");
 
     final ServletContext servletContext = sce.getServletContext();
     StdSchedulerFactory factory;
@@ -78,20 +77,20 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
         if (startDelayS != null && startDelayS.trim().length() > 0) {
           startDelay = Integer.parseInt(startDelayS);
         }
-      } catch (final Exception e) {
-        log.error("Cannot parse value of 'start-delay-seconds' to an integer: " + startDelayS
-            + ", defaulting to 5 seconds.", e);
+      } catch (NumberFormatException e) {
+        log.error(
+            "Cannot parse value of 'start-delay-seconds' to an integer: {}, defaulting to 5 seconds.",
+            startDelayS, e);
         startDelay = 5;
       }
 
       /*
        * If the "start-scheduler-on-load" init-parameter is not specified, the scheduler will be
-       * started. This is to maintain backwards compatibility.
-       * start-scheduler-on-load controls the starting of the scheduler across all the nodes in
-       * the cluster. The configuration parameter background.policy controls the starting of the
-       * scheduler in a specific instance of the cluster.
-       * Even if the instance is not started on application startup, it can be started later by
-       * using the JMX OBScheduler MBean.
+       * started. This is to maintain backwards compatibility. start-scheduler-on-load controls the
+       * starting of the scheduler across all the nodes in the cluster. The configuration parameter
+       * background.policy controls the starting of the scheduler in a specific instance of the
+       * cluster. Even if the instance is not started on application startup, it can be started
+       * later by using the JMX OBScheduler MBean.
        */
       if ((startOnLoad == null || (Boolean.parseBoolean(startOnLoad)))
           && !OBScheduler.isNoExecuteBackgroundPolicy()) {
@@ -102,10 +101,11 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
         } else {
           // Start delayed
           scheduler.startDelayed(startDelay);
-          log.info("Scheduler will start in " + startDelay + " seconds.");
+          log.info("Scheduler will start in {} seconds.", startDelay);
         }
       } else {
-        log.info("Scheduler has not been started. Start the scheduler calling start() on the OBScheduler MBean");
+        log.info(
+            "Scheduler has not been started. Start the scheduler calling start() on the OBScheduler MBean");
       }
 
       String factoryKey = servletContext.getInitParameter("servlet-context-factory-key");
@@ -116,13 +116,12 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
       /**
        * Openbravo scheduling stuff.
        */
-      log.info("Storing the Quartz Scheduler Factory in the servlet context at key: " + factoryKey);
-      servletContext.setAttribute(factoryKey, factory);
 
-      log.info("Storing ConfigParameters and ConnectionProvider in " + "Scheduler Context.");
+      servletContext.setAttribute(factoryKey, factory);
       scheduler.getContext().put(POOL_ATTRIBUTE, servletContext.getAttribute(POOL_ATTRIBUTE));
       scheduler.getContext().put(CONFIG_ATTRIBUTE, servletContext.getAttribute(CONFIG_ATTRIBUTE));
-      log.info("Initalizing singleton instance of " + OBScheduler.class.getName());
+
+      log.info("Initalizing singleton instance of {}", OBScheduler.class.getName());
       OBScheduler.getInstance().initialize(scheduler);
 
       // Update Interrupted Process Instance's End time with current time.
@@ -143,8 +142,9 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
             ps.setString(1, schedulerInstanceId);
             int n = ps.executeUpdate();
             if (n > 0) {
-              log.info(n
-                  + " background processes were in execution before Tomcat start, they have been marked as 'System Restarted' ");
+              log.info(
+                  "{} background processes were in execution before Tomcat start, they have been marked as 'System Restarted'",
+                  n);
             }
           } finally {
             if (ps != null && !ps.isClosed()) {
@@ -158,16 +158,15 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
         }
 
       } catch (Exception e) {
-        log.error("Error updating Process Instance " + e.toString(), e);
+        log.error("Error updating Process Instance", e);
       }
     } catch (final Exception e) {
-      log.error("Quartz Scheduler failed to initialize: " + e.toString(), e);
+      log.error("Quartz Scheduler failed to initialize", e);
     }
   }
 
   @Override
   public void contextDestroyed(ServletContextEvent sce) {
-
     if (!performShutdown) {
       return;
     }
@@ -176,11 +175,9 @@ public class OBSchedulerInitializerListener implements ServletContextListener {
       if (scheduler != null) {
         scheduler.shutdown();
       }
+      log.info("Quartz Scheduler successful shutdown.");
     } catch (final Exception e) {
-      log.error("Quartz Scheduler failed to shutdown cleanly: " + e.toString(), e);
+      log.error("Quartz Scheduler failed to shutdown cleanly", e);
     }
-
-    log.info("Quartz Scheduler successful shutdown.");
   }
-
 }
