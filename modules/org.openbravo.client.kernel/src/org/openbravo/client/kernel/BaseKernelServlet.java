@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -67,7 +67,7 @@ public abstract class BaseKernelServlet extends HttpSecureAppServlet {
       if (!response.isCommitted()) {
         // get where the request originated
         String referer = RequestContext.get().getRequest().getHeader("referer");
-        // if we can't get where the request originated, redirect to the ERP
+        // if we can't get where the request originated, redirect to the Backoffice
         if (referer == null) {
           referer = localResponse.getRedirectTarget();
         }

@@ -31214,7 +31214,7 @@ If the payment does not have a generated credit amount is the amount of credit u
 <!--9150A393672FD51CE040007F01006877-->  <COLUMNNAME><![CDATA[Instance_Purpose]]></COLUMNNAME>
 <!--9150A393672FD51CE040007F01006877-->  <NAME><![CDATA[Instance Purpose]]></NAME>
 <!--9150A393672FD51CE040007F01006877-->  <PRINTNAME><![CDATA[Instance Purpose]]></PRINTNAME>
-<!--9150A393672FD51CE040007F01006877-->  <HELP><![CDATA[Determines which is the purpose of the Openbravo ERP instance]]></HELP>
+<!--9150A393672FD51CE040007F01006877-->  <HELP><![CDATA[Determines which is the purpose of the Openbravo instance]]></HELP>
 <!--9150A393672FD51CE040007F01006877-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9150A393672FD51CE040007F01006877-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--9150A393672FD51CE040007F01006877--></AD_ELEMENT>
@@ -31774,7 +31774,7 @@ Note that this information is kept only in the instance but not it is not export
 <!--99BD365BE13C2DB2E040A8C0BD065C94-->  <NAME><![CDATA[Enable Custom Queries]]></NAME>
 <!--99BD365BE13C2DB2E040A8C0BD065C94-->  <PRINTNAME><![CDATA[Enable Custom Queries]]></PRINTNAME>
 <!--99BD365BE13C2DB2E040A8C0BD065C94-->  <DESCRIPTION><![CDATA[Send Custom Queries to Heartbeat]]></DESCRIPTION>
-<!--99BD365BE13C2DB2E040A8C0BD065C94-->  <HELP><![CDATA[The Custom Queries are queries that can be sent by the Heartbeat server to be executed on the Openbravo ERP instance. This queries are used the get more extended information about the usage of the instance.
+<!--99BD365BE13C2DB2E040A8C0BD065C94-->  <HELP><![CDATA[The Custom Queries are queries that can be sent by the Heartbeat server to be executed on the Openbravo instance. This queries are used the get more extended information about the usage of the instance.
 
 By disabling this option standard beats will be sent to HeartBeat server, but not these Custom Queries.]]></HELP>
 <!--99BD365BE13C2DB2E040A8C0BD065C94-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
@@ -31921,8 +31921,8 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99-->  <COLUMNNAME><![CDATA[Isrestrictbackend]]></COLUMNNAME>
 <!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99-->  <NAME><![CDATA[Restrict backend access]]></NAME>
 <!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99-->  <PRINTNAME><![CDATA[Restrict backend access]]></PRINTNAME>
-<!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99-->  <DESCRIPTION><![CDATA[If checked, this role will not have access to the backend (ERP). It will however have access to other applications (such as the WebPOS)]]></DESCRIPTION>
-<!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99-->  <HELP><![CDATA[If checked, this role will not have access to the backend (ERP). It will however have access to other applications (such as the WebPOS)]]></HELP>
+<!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99-->  <DESCRIPTION><![CDATA[If checked, this role will not have access to the backend. It will however have access to other applications (such as the WebPOS)]]></DESCRIPTION>
+<!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99-->  <HELP><![CDATA[If checked, this role will not have access to the backend. It will however have access to other applications (such as the WebPOS)]]></HELP>
 <!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--9C8C7BB9DEB84E3A9B8E4A1C3F200F99--></AD_ELEMENT>

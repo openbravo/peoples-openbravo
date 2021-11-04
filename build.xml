@@ -36,7 +36,7 @@ clean: refer to clean target of src.
 trl.clean: refer to trl.clean target of src.
 translate: refer to translate target of src.
 deploy.context: deploy the context into Tomcat using the manager
-install.source: install the ERP from sources (from subversion).
+install.source: install Openbravo from sources.
 create.database: refer to create.database target of database.
 update.database: refer to update.database target of database.
 create.database.script: refer to create.database.script target of database.

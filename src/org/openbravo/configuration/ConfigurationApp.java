@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2019 Openbravo SLU
+ * All portions are Copyright (C) 2014-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -334,7 +334,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
   private void closeExitProgram(Project p) {
     infoCollected.close();
     agreementLicense.close();
-    printMessage("Thanks for using the Openbravo ERP Setup.", p);
+    printMessage("Thanks for using the Openbravo Setup.", p);
   }
 
   /**
@@ -595,7 +595,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    * This method shows all options with their values.
    */
   private void previewConfigurationOptions(Project p) {
-    printMessage("Preview Openbravo ERP configuration", p);
+    printMessage("Preview Openbravo configuration", p);
     // Show questions in order for get user parameters.
     int numberOption = 1;
     // Show all options by order asc
@@ -794,7 +794,7 @@ public class ConfigurationApp extends org.apache.tools.ant.Task {
    */
   private static void showWelcome(Project p1) {
     Scanner inp = new Scanner(System.in);
-    printMessage("Welcome to the Openbravo ERP Setup Wizard.", p1);
+    printMessage("Welcome to the Openbravo Setup Wizard.", p1);
     p1.log(
         "Please read the following License Agreement. You must accept the terms of this\n agreement before continuing with the installation.");
     p1.log("Press [Enter] to continue:");

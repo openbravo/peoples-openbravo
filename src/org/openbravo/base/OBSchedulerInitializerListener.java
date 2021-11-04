@@ -1,7 +1,7 @@
 /*
  *************************************************************************
  * This file is a copy of org.quartz.ee.servlet.QuartzInitializerListener
- * with some minor modifications to accommodate the Openbravo ERP environment.
+ * with some minor modifications to accommodate the Openbravo environment.
  ************************************************************************
  */
 package org.openbravo.base;
@@ -28,7 +28,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * A copy of the QuartzInializerListener with some modifications to initialize the Openbravo
  * scheduling items.
  * 
- * Places Openbravo ERP application resources such as ConnectionProvider and ConfigParameters in the
+ * Places Openbravo application resources such as ConnectionProvider and ConfigParameters in the
  * scheduling context so that OBScheduler singleton instance has access to them.
  * 
  * @author awolski

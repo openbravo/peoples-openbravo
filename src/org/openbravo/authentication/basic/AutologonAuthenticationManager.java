@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2021 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -71,7 +71,7 @@ public class AutologonAuthenticationManager extends AuthenticationManager {
         throw new AuthenticationException("Autologon user emtpy.");
       } else {
         throw new AuthenticationException(
-            "Autologon user is not an Openbravo ERP user: " + m_sAutologonUsername);
+            "Autologon user is not an Openbravo user: " + m_sAutologonUsername);
       }
     } else {
       return m_sUserId;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,8 +36,8 @@ import org.openbravo.erpCommon.ad_process.PinstanceProcedure;
 
 /**
  * A ProcessBundle is a 'container' holding all the relevant information required to execute a
- * process in the Openbravo ERP system, including security/contextual details such as User, Client
- * and Organization, execution parameters, a logger (used by the Process Monitor) and process
+ * process in the Openbravo system, including security/contextual details such as User, Client and
+ * Organization, execution parameters, a logger (used by the Process Monitor) and process
  * implementation specifics. Integrating with Quartz, the ProcessBundle is stored in the
  * JobExecutionContext, which is used by each execution of a particular Job.
  * 
