@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2020 Openbravo S.L.U.
+ * Copyright (C) 2001-2022 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -33,7 +33,6 @@ import org.openbravo.authentication.ChangePasswordException;
 import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
-import org.openbravo.client.application.CachedPreference;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -52,7 +51,6 @@ import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
-import org.openbravo.server.ServerControllerHandler;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.password.PasswordStrengthChecker;
 
@@ -72,12 +70,6 @@ import org.openbravo.service.password.PasswordStrengthChecker;
 public class LoginHandler extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
   public static final String SUCCESS_SESSION_STANDARD = "S";
-
-  @Inject
-  private ServerControllerHandler serverController;
-
-  @Inject
-  private CachedPreference cachedPreference;
 
   @Inject
   private PasswordStrengthChecker passwordStrengthChecker;
@@ -376,22 +368,6 @@ public class LoginHandler extends HttpBaseServlet {
         }
       }
 
-      // checks if the current server is a store server, and in that case, if the access is
-      // restricted
-      vars.removeSessionValue("OnlySystemAdminAccess");
-      if (serverController.isThisAStoreServer() && isLoginAccessRestrictedInStoreServer(vars)) {
-        // sets the onlySystemAdminRoleShouldBeAvailableInErp flag to "Y" to:
-        // * use it in UserInfoWidgetActionHandler.getRoles to make System Admin the only role
-        // available
-        // * use it in index.jsp to make sure the ERP is only available to users with the System
-        // Admin role
-        vars.setSessionValue("onlySystemAdminRoleShouldBeAvailableInErp", "Y");
-        String msg = Utility.messageBD(cp, "BACKEND_LOGIN_RESTRICTED", vars.getLanguage());
-        String title = Utility.messageBD(cp, "BACKEND_LOGIN_RESTRICTED_TITLE", vars.getLanguage());
-        goToRetry(res, vars, msg, title, msgType, action);
-        return;
-      }
-
       RoleDefaults userLoginDefaults;
       try {
         userLoginDefaults = LoginUtils.getLoginDefaults(strUserAuth, "", cp);
@@ -454,25 +430,6 @@ public class LoginHandler extends HttpBaseServlet {
   /** Returns how the successful session will be marked in ad_session. It can be app specific. */
   protected String getSessionType() {
     return SUCCESS_SESSION_STANDARD;
-  }
-
-  /**
-   * Returns true if the access to the current login handler should be restricted in the store
-   * servers
-   */
-  protected boolean isLoginAccessRestrictedInStoreServer(VariablesSecureApp vars) {
-    return isErpAccessRestrictedInStoreServer();
-  }
-
-  /**
-   * Checks if the RestrictErpAccessInStoreServer preference has been set to "Y". In that case, the
-   * access to the ERP will be restricted in store servers and only the System Admin role will be
-   * available
-   */
-  protected boolean isErpAccessRestrictedInStoreServer() {
-    String restrictErpAccessInStoreServer = cachedPreference
-        .getPreferenceValue(CachedPreference.RESTRICT_ERP_ACCESS_IN_STORE_SERVER);
-    return Preferences.YES.equals(restrictErpAccessInStoreServer);
   }
 
   private void updateDBSession(String sessionId, boolean sessionActive, String status) {

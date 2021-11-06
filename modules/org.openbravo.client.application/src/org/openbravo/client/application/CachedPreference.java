@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,12 +51,11 @@ public class CachedPreference implements Serializable {
   public static final String ALLOW_UNPAGED_DS_MANUAL_REQUEST = "OBJSON_AllowUnpagedDatasourceManualRequest";
   public static final String ALLOW_UNSECURED_DS_REQUEST = "OBSERDS_AllowUnsecuredDatasourceRequest";
   public static final String ALLOW_WHERE_PARAMETER = "OBSERDS_AllowWhereParameter";
-  public static final String RESTRICT_ERP_ACCESS_IN_STORE_SERVER = "RestrictErpAccessInStoreServer";
   public static final String RANK_NORMALIZATION = "FullTextSearchRankNormalization";
 
   private List<String> propertyList = new ArrayList<String>(
       Arrays.asList(ALLOW_UNPAGED_DS_MANUAL_REQUEST, ALLOW_UNSECURED_DS_REQUEST,
-          ALLOW_WHERE_PARAMETER, RESTRICT_ERP_ACCESS_IN_STORE_SERVER, RANK_NORMALIZATION));
+          ALLOW_WHERE_PARAMETER, RANK_NORMALIZATION));
   private transient Map<String, String> cachedPreference;
 
   /**
