@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -42,10 +42,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences.QueryFilter;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.mobile.core.MobileServerDefinition;
-import org.openbravo.mobile.core.MobileServerOrganization;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
-import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -585,40 +582,9 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     return result;
   }
 
+  // List of always empty as was only used with obsolete storeserver code
   protected JSONArray getServers(OBPOSApplications terminal) throws JSONException {
-    JSONArray respArray = new JSONArray();
-
-    if (!MobileServerUtils.isMultiServerEnabled()) {
-      return respArray;
-    }
-
-    OBQuery<MobileServerDefinition> servers = OBDal.getInstance()
-        .createQuery(MobileServerDefinition.class,
-            "client.id=:clientId order by " + MobileServerDefinition.PROPERTY_PRIORITY);
-    servers.setFilterOnReadableClients(false);
-    servers.setFilterOnReadableOrganization(false);
-    servers.setNamedParameter("clientId", terminal.getClient().getId());
-
-    List<MobileServerDefinition> serversList = servers.list();
-    for (MobileServerDefinition server : serversList) {
-      if (server.isAllorgs()) {
-        respArray.put(createServerJSON(server));
-      } else {
-        String hql = "select mso from " + MobileServerOrganization.ENTITY_NAME + " as mso " //
-            + "where mso." + MobileServerOrganization.PROPERTY_OBMOBCSERVERDEFINITION
-            + " = :serverDefinition " //
-            + "and mso." + MobileServerOrganization.PROPERTY_SERVERORG + " = :org";
-        Query<Object> query = OBDal.getInstance().getSession().createQuery(hql, Object.class);
-
-        query.setParameter("serverDefinition", server);
-        query.setParameter("org", terminal.getOrganization());
-        if (!query.list().isEmpty()) {
-          respArray.put(createServerJSON(server));
-        }
-      }
-    }
-
-    return respArray;
+    return new JSONArray();
   }
 
   @Override
