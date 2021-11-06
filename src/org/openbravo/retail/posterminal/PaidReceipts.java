@@ -50,9 +50,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.mobile.core.servercontroller.MobileServerController;
-import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
-import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
@@ -117,17 +114,6 @@ public class PaidReceipts extends JSONProcessSimple {
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     OBPOSApplications posTerminal = null;
 
-    if (MobileServerController.getInstance().getCentralServer() != null) {
-      final String ORIGIN_CENTRAL = MobileServerController.getInstance()
-          .getCentralServer()
-          .getName();
-      if (MobileServerController.getInstance().isThisAStoreServer()
-          && ORIGIN_CENTRAL.equals(jsonsent.optString("originServer"))) {
-        return MobileServerRequestExecutor.getInstance()
-            .executeCentralRequest(MobileServerUtils.OBWSPATH + PaidReceipts.class.getName(),
-                jsonsent);
-      }
-    }
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
     try {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -9,8 +9,6 @@
 
 package org.openbravo.retail.posterminal.master;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -23,7 +21,6 @@ import java.util.Map.Entry;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,9 +34,6 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.mobile.core.servercontroller.MobileServerController;
-import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
-import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
 
 /**
@@ -230,34 +224,6 @@ public class PendingOrderLines extends ProcessHQLQuery {
         paramValues.put(column,
             operator.equalsIgnoreCase("contains") ? "%" + valueStr.toUpperCase() + "%" : valueStr);
       }
-    }
-  }
-
-  @Override
-  public void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException {
-    try {
-      // Get originServer parameter
-      JSONObject params = jsonsent.getJSONObject("parameters");
-      String originServer = params.optString("originServer");
-      if (MobileServerController.getInstance().isThisAStoreServer()
-          && "Central".equals(originServer)) {
-        writeJSON(w, jsonsent);
-      } else {
-        super.exec(w, jsonsent);
-      }
-    } catch (JSONException e) {
-      log.error("An error occured when processing JSON {}", jsonsent, e);
-    }
-  }
-
-  private void writeJSON(Writer w, JSONObject jsonsent) {
-    try {
-      final JSONObject result = MobileServerRequestExecutor.getInstance()
-          .executeCentralRequest(MobileServerUtils.OBWSPATH + PendingOrderLines.class.getName(),
-              jsonsent);
-      w.write(result.toString().substring(1, result.toString().length() - 1));
-    } catch (Exception e) {
-      log.error("Error writing JSON {}", jsonsent, e);
     }
   }
 

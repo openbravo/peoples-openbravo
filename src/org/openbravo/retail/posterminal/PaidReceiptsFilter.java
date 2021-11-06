@@ -8,9 +8,6 @@
  */
 package org.openbravo.retail.posterminal;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +15,6 @@ import java.util.List;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -31,9 +27,6 @@ import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.mobile.core.servercontroller.MobileServerController;
-import org.openbravo.mobile.core.servercontroller.MobileServerRequestExecutor;
-import org.openbravo.mobile.core.servercontroller.MobileServerUtils;
 import org.openbravo.model.common.enterprise.Organization;
 
 public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
@@ -185,43 +178,6 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       // Ignored
     }
     return columnValue;
-  }
-
-  @Override
-  public void exec(Writer w, JSONObject jsonsent) throws IOException, ServletException {
-    Writer temporal = new StringWriter();
-    super.exec(temporal, jsonsent);
-    String data = temporal.toString();
-    try {
-      JSONObject result = new JSONObject("{" + w.toString() + "}");
-      if (MobileServerController.getInstance().isThisAStoreServer() && isScanning(jsonsent)
-          && result.optLong("totalRows") == 0) {
-        JSONObject centralResult = MobileServerRequestExecutor.getInstance()
-            .executeCentralRequest(MobileServerUtils.OBWSPATH + PaidReceiptsFilter.class.getName(),
-                jsonsent);
-        data = centralResult.toString().substring(1, centralResult.toString().length() - 1);
-      }
-    } catch (JSONException e) {
-      // Do nothing
-    }
-    w.write(data);
-    return;
-
-  }
-
-  private boolean isScanning(JSONObject jsonsent) {
-    try {
-      if ("documentNo".equals(
-          jsonsent.getJSONArray("remoteFilters").getJSONObject(0).getJSONArray("columns").get(0))
-          && "=".equals(
-              jsonsent.getJSONArray("remoteFilters").getJSONObject(0).getString("operator"))) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (Exception e) {
-      return false;
-    }
   }
 
   @Override
