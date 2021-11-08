@@ -167,11 +167,11 @@
       const country =
         orgLocationCountry !== null
           ? orgLocationCountry
-          : newline.organization.country;
+          : newLine.organization.country;
       const region =
         orgLocationCountry !== null
           ? OB.UTIL.localStorage.getItem('orglocation_regionid')
-          : newline.organization.region;
+          : newLine.organization.region;
 
       let destinationCountry;
       let destinationRegion;
