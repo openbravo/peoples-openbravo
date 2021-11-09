@@ -144,6 +144,10 @@
       newLine.region = extraData.orgLocation
         ? extraData.orgLocation.region
         : newLine.organization.region;
+      if (newLine.obrdmDeliveryMode !== 'HomeDelivery') {
+        newLine.destinationCountry = newLine.country;
+        newLine.destinationRegion = newLine.region;
+      }
     }
 
     if (attrs.splitline != null && attrs.originalLine) {
