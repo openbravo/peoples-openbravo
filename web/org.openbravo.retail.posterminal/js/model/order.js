@@ -4116,11 +4116,11 @@
             'orglocation_countryid'
           );
           const country =
-            orgLocationCountry !== null
+            orgLocationCountry != null
               ? orgLocationCountry
               : line.organization.country;
           const region =
-            orgLocationCountry !== null
+            orgLocationCountry != null
               ? OB.UTIL.localStorage.getItem('orglocation_regionid')
               : line.organization.region;
           line.set('country', country);

@@ -165,11 +165,11 @@
         'orglocation_countryid'
       );
       const country =
-        orgLocationCountry !== null
+        orgLocationCountry != null
           ? orgLocationCountry
           : newLine.organization.country;
       const region =
-        orgLocationCountry !== null
+        orgLocationCountry != null
           ? OB.UTIL.localStorage.getItem('orglocation_regionid')
           : newLine.organization.region;
 
