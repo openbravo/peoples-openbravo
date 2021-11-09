@@ -163,7 +163,7 @@ enyo.kind({
           .filter(line => line.get('obrdmDeliveryMode') === 'HomeDelivery')
           .forEach(line => {
             line.set(
-              'country',
+              'destinationCountry',
               model.get('bp').get('shipLocId')
                 ? model
                     .get('bp')
@@ -172,7 +172,7 @@ enyo.kind({
                 : null
             );
             line.set(
-              'region',
+              'destinationRegion',
               model.get('bp').get('shipLocId')
                 ? model
                     .get('bp')
