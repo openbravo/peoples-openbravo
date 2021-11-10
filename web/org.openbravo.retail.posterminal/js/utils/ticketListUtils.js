@@ -582,6 +582,22 @@
                 }
               }
 
+              const orgLocationCountry = OB.UTIL.localStorage.getItem(
+                'orglocation_countryid'
+              );
+              const country =
+                orgLocationCountry != null
+                  ? orgLocationCountry
+                  : iter.organization
+                  ? iter.organization.country
+                  : OB.MobileApp.model.get('terminal').organizationCountryId;
+              const region =
+                orgLocationCountry != null
+                  ? OB.UTIL.localStorage.getItem('orglocation_regionid')
+                  : iter.organization
+                  ? iter.organization.region
+                  : OB.MobileApp.model.get('terminal').organizationRegionId;
+
               newline = new OB.Model.OrderLine({
                 id: iter.lineId,
                 product: prod,
@@ -621,7 +637,9 @@
                   ? iter.attSetInstanceDesc
                   : null,
                 lineGrossAmount: iter.lineGrossAmount,
-                country:
+                country: country,
+                region: region,
+                destinationCountry:
                   iter.obrdmDeliveryMode === 'HomeDelivery'
                     ? order.get('bp').get('shipLocId')
                       ? order
@@ -629,10 +647,8 @@
                           .get('locationModel')
                           .get('countryId')
                       : null
-                    : iter.organization
-                    ? iter.organization.country
-                    : OB.MobileApp.model.get('terminal').organizationCountryId,
-                region:
+                    : country,
+                destinationRegion:
                   iter.obrdmDeliveryMode === 'HomeDelivery'
                     ? order.get('bp').get('shipLocId')
                       ? order
@@ -640,9 +656,7 @@
                           .get('locationModel')
                           .get('regionId')
                       : null
-                    : iter.organization
-                    ? iter.organization.region
-                    : OB.MobileApp.model.get('terminal').organizationRegionId
+                    : region
               });
 
               // copy verbatim not owned properties -> modular properties.
