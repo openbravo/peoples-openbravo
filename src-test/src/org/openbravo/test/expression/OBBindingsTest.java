@@ -20,7 +20,7 @@ package org.openbravo.test.expression;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

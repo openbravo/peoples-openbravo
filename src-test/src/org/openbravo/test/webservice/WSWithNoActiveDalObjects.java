@@ -20,7 +20,7 @@
 package org.openbravo.test.webservice;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 import org.openbravo.dal.core.OBContext;

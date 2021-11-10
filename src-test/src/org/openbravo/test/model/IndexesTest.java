@@ -20,7 +20,7 @@
 package org.openbravo.test.model;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

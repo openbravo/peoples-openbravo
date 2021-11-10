@@ -21,7 +21,7 @@ package org.openbravo.test.system;
 
 import static org.apache.commons.lang.math.NumberUtils.DOUBLE_ZERO;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;

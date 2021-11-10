@@ -20,7 +20,7 @@
 package org.openbravo.test.datasource;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

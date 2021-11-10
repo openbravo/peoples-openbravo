@@ -25,7 +25,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assume.assumeThat;
 import static org.openbravo.test.base.TestConstants.Orgs.ESP;
 import static org.openbravo.test.base.TestConstants.Orgs.ESP_NORTE;

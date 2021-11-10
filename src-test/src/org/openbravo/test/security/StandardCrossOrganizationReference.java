@@ -20,7 +20,7 @@
 package org.openbravo.test.security;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Ignore;
 import org.junit.Test;

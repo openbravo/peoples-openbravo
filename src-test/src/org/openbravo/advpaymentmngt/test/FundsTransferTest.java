@@ -19,7 +19,7 @@
 package org.openbravo.advpaymentmngt.test;
 
 import static org.hamcrest.Matchers.closeTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 

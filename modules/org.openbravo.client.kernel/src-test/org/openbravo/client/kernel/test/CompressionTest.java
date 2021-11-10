@@ -20,10 +20,10 @@
 package org.openbravo.client.kernel.test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertThat;
 
 import java.io.BufferedReader;
 import java.io.IOException;

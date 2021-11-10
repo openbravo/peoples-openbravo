@@ -20,7 +20,7 @@
 package org.openbravo.test.taxes;
 
 import static org.hamcrest.Matchers.comparesEqualTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
