@@ -19,8 +19,8 @@
 
 package org.openbravo.test.cancelandreplace;
 
-import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.comparesEqualTo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

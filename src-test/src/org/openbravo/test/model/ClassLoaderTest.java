@@ -19,8 +19,8 @@
 package org.openbravo.test.model;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 
 import java.util.ArrayList;
 import java.util.List;

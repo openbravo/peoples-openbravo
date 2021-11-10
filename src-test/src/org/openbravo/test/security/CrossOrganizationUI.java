@@ -19,8 +19,8 @@
 package org.openbravo.test.security;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;

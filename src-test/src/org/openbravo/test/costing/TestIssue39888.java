@@ -18,8 +18,8 @@
  */
 package org.openbravo.test.costing;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;

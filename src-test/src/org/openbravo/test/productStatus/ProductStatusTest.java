@@ -1,7 +1,7 @@
 package org.openbravo.test.productStatus;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
