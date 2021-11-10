@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2018 Openbravo SLU
+ * All portions are Copyright (C) 2011-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.script.ScriptException;
 
@@ -257,7 +258,10 @@ public class OBViewFieldHandler {
     FieldGroup currentADFieldGroup = null;
     int colNum = 1;
     long previousFieldRowSpan = 0, previousFieldColSpan = 0;
-    for (Field field : adFields) {
+
+    List<Field> sortedAdFields = FieldSorter.sortAccordingToFieldGroup(adFields);
+
+    for (Field field : sortedAdFields) {
 
       if ((field.getColumn() == null && field.getClientclass() == null) || !field.isActive()
           || !(field.isDisplayed() || field.isShowInGridView())
@@ -2547,6 +2551,58 @@ public class OBViewFieldHandler {
       Map<String, Optional<GCTab>> tabsGridConfig) {
     this.systemGridConfig = systemGridConfig;
     this.tabsGridConfig = tabsGridConfig;
+  }
+
+  static class FieldSorter {
+    /**
+     * Given a list of fields, sorts them according to their fieldgroup, so that the fields that
+     * belong to the same group will be placed consecutively and respecting their original relative
+     * position
+     * 
+     * For instance the following list of fields (fieldId, fieldGroupId): [{"0", null}, {"1",
+     * "FG0"}, {"2", "FG1"}, {"3", "FG0"}, {"4", NULL}] is sorted like this: [{"0", null}, {"1",
+     * "FG0"}, {"3", "FG0"}, {"4", NULL}, {"2", "FG1"}]
+     * 
+     * 
+     * @param adFields
+     *          the list of fields to sort
+     * @return the sorted list
+     */
+    public static List<Field> sortAccordingToFieldGroup(List<Field> adFields) {
+
+      if (adFields.isEmpty()) {
+        return adFields;
+      }
+
+      List<String> orderedFieldGroups = new ArrayList<>();
+      orderedFieldGroups.add("NONE");
+
+      // using an anonymous class with an ad-hoc field, because we cannot modify a String from
+      // within a stream operation, if the variable is defined outside of that scope
+      var lastFieldGroup = new Object() {
+        String id = "NONE";
+      };
+
+      Map<String, List<Field>> groupedByFieldGroupId = adFields.stream()
+          .collect(Collectors.groupingBy(field -> {
+            FieldGroup fieldGroup = field.getFieldGroup();
+            if (fieldGroup == null) {
+              return lastFieldGroup.id;
+            } else {
+              String fieldGroupId = fieldGroup.getId();
+              lastFieldGroup.id = fieldGroupId;
+              if (!orderedFieldGroups.contains(fieldGroupId)) {
+                orderedFieldGroups.add(fieldGroupId);
+              }
+              return fieldGroupId;
+            }
+          }));
+
+      return orderedFieldGroups.stream()
+          .filter(fieldGroupId -> groupedByFieldGroupId.get(fieldGroupId) != null)
+          .flatMap(fieldGroupId -> groupedByFieldGroupId.get(fieldGroupId).stream())
+          .collect(Collectors.toList());
+    }
   }
 
 }
