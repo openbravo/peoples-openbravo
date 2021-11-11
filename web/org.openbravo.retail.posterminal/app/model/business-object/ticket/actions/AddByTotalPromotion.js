@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -68,13 +68,6 @@
         // eslint-disable-next-line no-underscore-dangle
         bytotalManualPromotionObj._identifier = discount.name;
       }
-      bytotalManualPromotionObj.products = [];
-      bytotalManualPromotionObj.includedProducts = 'Y';
-      bytotalManualPromotionObj.productCategories = [];
-      bytotalManualPromotionObj.includedProductCategories = 'Y';
-      bytotalManualPromotionObj.productCharacteristics = [];
-      bytotalManualPromotionObj.includedCharacteristics = 'Y';
-      bytotalManualPromotionObj.allweekdays = true;
 
       newTicket.discountsFromUser.bytotalManualPromotions = (newTicket
         .discountsFromUser.bytotalManualPromotions
