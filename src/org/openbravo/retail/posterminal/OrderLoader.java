@@ -1463,12 +1463,17 @@ public class OrderLoader extends POSDataSynchronizationProcess
 
     BigDecimal paymentAmt = BigDecimal.valueOf(jsonorder.optDouble("nettingPayment", 0));
     BigDecimal roundingAmt = BigDecimal.ZERO;
+    BigDecimal overPaymentNotReversed = BigDecimal.ZERO;
     for (int i = 0; i < payments.length(); i++) {
       final JSONObject payment = payments.getJSONObject(i);
       paymentAmt = paymentAmt
           .add(BigDecimal.valueOf(payment.getDouble("origAmount"))
               .subtract(BigDecimal.valueOf(payment.optDouble("overpayment", 0))))
           .setScale(pricePrecision, RoundingMode.HALF_UP);
+      if (!payment.has("reversedPaymentId") && payment.has("overpayment")) {
+        overPaymentNotReversed = overPaymentNotReversed
+            .add(BigDecimal.valueOf(payment.getDouble("overpayment")));
+      }
       if (payment.optBoolean("paymentRounding", false)) {
         roundingAmt = roundingAmt.add(BigDecimal.valueOf(payment.getDouble("paid")));
       }
@@ -1513,7 +1518,9 @@ public class OrderLoader extends POSDataSynchronizationProcess
       OBDal.getInstance().save(order);
     }
 
-    BigDecimal writeoffAmt = paymentAmt.subtract(gross);
+    // The total writeoffAmt must include overpayments defined by non reversed payments
+    BigDecimal writeoffAmt = paymentAmt.add(overPaymentNotReversed).subtract(gross);
+
     // If there's not a real over payment, the writeoff is set to zero
     if (!(writeoffAmt.signum() == 1 && !isNegative)
         && !(writeoffAmt.signum() == -1 && isNegative)) {
@@ -1573,6 +1580,8 @@ public class OrderLoader extends POSDataSynchronizationProcess
         BigDecimal tempWriteoffAmt = writeoffAmt;
         if (payment.has("reversedPaymentId")) {
           tempWriteoffAmt = BigDecimal.valueOf(payment.optDouble("overpayment", 0));
+        } else if (payment.has("overpayment")) {
+          tempWriteoffAmt = BigDecimal.valueOf(payment.getDouble("overpayment"));
         } else if (tempWriteoffAmt.compareTo(BigDecimal.ZERO) != 0
             && paymentType.getPaymentMethod().getOverpaymentLimit() != null
             && tempWriteoffAmt.abs()
