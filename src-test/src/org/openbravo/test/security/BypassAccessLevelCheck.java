@@ -21,14 +21,13 @@ package org.openbravo.test.security;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -50,9 +49,6 @@ public class BypassAccessLevelCheck extends OBBaseTest {
   private static final String CURRENCY_WINDOW = "115";
   private static final String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
 
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
-
   @BeforeClass
   public static void createOrgLevelRole() {
     Role role = ExplicitCrossOrganizationReference.createOrgUserLevelRole();
@@ -70,10 +66,10 @@ public class BypassAccessLevelCheck extends OBBaseTest {
     assertThat("doOrgClientAccessCheck", OBContext.getOBContext().doOrgClientAccessCheck(),
         is(true));
 
-    exception.expect(OBSecurityException.class);
-    exception.expectMessage(containsString("Entity Currency is not readable"));
+    OBSecurityException thrown = assertThrows(OBSecurityException.class,
+        () -> OBDal.getInstance().createCriteria(Currency.class));
+    assertThat(thrown.getMessage(), containsString("Entity Currency is not readable"));
 
-    OBDal.getInstance().createCriteria(Currency.class);
   }
 
   /** Default behavior of for access level check can be bypassed */

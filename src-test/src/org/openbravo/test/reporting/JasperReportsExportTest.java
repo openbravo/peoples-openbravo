@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Test that checks a jasper report is correctly exported to all the available export types If no

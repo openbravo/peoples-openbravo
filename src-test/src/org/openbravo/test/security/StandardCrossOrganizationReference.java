@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,9 @@
 
 package org.openbravo.test.security;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,9 +44,7 @@ public class StandardCrossOrganizationReference extends CrossOrganizationReferen
   public void crossOrgRefShouldBeIllegalOnInsert() {
     createOrder(SPAIN_ORG, USA_WAREHOUSE);
 
-    exception.expect(OBSecurityException.class);
-
-    OBDal.getInstance().commitAndClose();
+    assertThrows(OBSecurityException.class, () -> OBDal.getInstance().commitAndClose());
   }
 
   /** References from org Spain to USA should not be allowed on update */
@@ -54,9 +53,7 @@ public class StandardCrossOrganizationReference extends CrossOrganizationReferen
     Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
 
-    exception.expect(OBSecurityException.class);
-
-    OBDal.getInstance().commitAndClose();
+    assertThrows(OBSecurityException.class, () -> OBDal.getInstance().commitAndClose());
   }
 
   @Test

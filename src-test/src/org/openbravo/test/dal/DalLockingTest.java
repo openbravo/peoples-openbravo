@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,8 +21,9 @@ package org.openbravo.test.dal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -43,9 +44,7 @@ import org.hibernate.LazyInitializationException;
 import org.hibernate.LockMode;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
@@ -63,9 +62,6 @@ public class DalLockingTest extends OBBaseTest {
   private static String testingRuleId;
 
   private List<String> executionOrder;
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   @BeforeClass
   public static void createTestEnvironment() {
@@ -97,8 +93,8 @@ public class DalLockingTest extends OBBaseTest {
 
     // originalInstance is now detached from DAL session. If any of its proxies is tried to be
     // initialized, it should fail.
-    thrown.expect(LazyInitializationException.class);
-    originalInstance.getADAlertRecipientList().size();
+    assertThrows(LazyInitializationException.class,
+        () -> originalInstance.getADAlertRecipientList().size());
   }
 
   @Test

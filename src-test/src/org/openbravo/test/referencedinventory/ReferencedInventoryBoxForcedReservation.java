@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,9 @@
 
 package org.openbravo.test.referencedinventory;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
@@ -89,27 +90,21 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
   }
 
   @Test
-  public void testBoxInDifferentBinIsNotPossible() throws Exception {
-    thrown.expect(OBException.class);
-    thrown.expectMessage(equalTo(EXPECTED_ERROR));
-    testBox(BINS[1], PRODUCTS[0][0], PRODUCTS[0][1], params.qtyToBox, params.reservationQty, false,
-        true, false);
+  public void testBoxInDifferentBinIsNotPossible() {
+    assertThrows(EXPECTED_ERROR, OBException.class, () -> testBox(BINS[1], PRODUCTS[0][0],
+        PRODUCTS[0][1], params.qtyToBox, params.reservationQty, false, true, false));
   }
 
   @Test
-  public void testBoxInDifferentBinIsNotPossible2() throws Exception {
-    thrown.expect(OBException.class);
-    thrown.expectMessage(equalTo(EXPECTED_ERROR));
-    testBox(BINS[1], PRODUCTS[1][0], PRODUCTS[1][1], params.qtyToBox, params.reservationQty, true,
-        true, true);
+  public void testBoxInDifferentBinIsNotPossible2() {
+    assertThrows(EXPECTED_ERROR, OBException.class, () -> testBox(BINS[1], PRODUCTS[1][0],
+        PRODUCTS[1][1], params.qtyToBox, params.reservationQty, true, true, true));
   }
 
   @Test
-  public void testBoxInDifferentBinIsNotPossible3() throws Exception {
-    thrown.expect(OBException.class);
-    thrown.expectMessage(equalTo(EXPECTED_ERROR));
-    testBox(BINS[1], PRODUCTS[2][0], PRODUCTS[2][1], params.qtyToBox, params.reservationQty, false,
-        true, true);
+  public void testBoxInDifferentBinIsNotPossible3() {
+    assertThrows(EXPECTED_ERROR, OBException.class, () -> testBox(BINS[1], PRODUCTS[2][0],
+        PRODUCTS[2][1], params.qtyToBox, params.reservationQty, false, true, true));
   }
 
   private void assertsReservation(final ReferencedInventory refInv, boolean isForceBin,
