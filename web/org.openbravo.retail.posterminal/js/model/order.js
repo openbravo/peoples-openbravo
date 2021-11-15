@@ -4118,11 +4118,11 @@
           const country =
             orgLocationCountry != null
               ? orgLocationCountry
-              : line.organization.country;
+              : line.get('organization').country;
           const region =
             orgLocationCountry != null
               ? OB.UTIL.localStorage.getItem('orglocation_regionid')
-              : line.organization.region;
+              : line.get('organization').region;
           line.set('country', country);
           line.set('region', region);
           if (line.get('obrdmDeliveryMode') === 'HomeDelivery') {
