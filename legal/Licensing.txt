@@ -97,7 +97,6 @@ http://people.apache.org/~andyc/neko/doc/html/
 # commons-fileupload-1.4.jar
 # commons-io-2.4.jar
 # commons-lang-2.6.jar
-# commons-lang3-3.4.jar
 # commons-logging-1.2.jar
 # commons-math3-3.6.1.jar
 # commons-pool-1.5.6.jar
@@ -139,10 +138,6 @@ Under the terms of the LGPL 3.0, available at http://www.gnu.org/licenses/lgpl-3
 
 # jasperreports-fonts-6.17.0.jar
 License is contained in the jar file itself (path: net/sf/jasperreports/fonts/dejavu/LICENSE)
-
-# castor-xml-1.4.1.jar
-# castor-core-1.4.1.jar
-All files under Apache 2.0 license(available at https://castor-data-binding.github.io/castor/about/licenses.html)
 
 # poi-4.1.1.jar
 Under the Apache 2.0 license (included as Apache_poi_license.txt in this folder)
