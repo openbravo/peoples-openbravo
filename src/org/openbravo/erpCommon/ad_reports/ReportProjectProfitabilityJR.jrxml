@@ -5,23 +5,23 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10"/>
+	<style name="default" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10"/>
 	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18">
 		<box leftPadding="5"/>
 	</style>
 	<style name="Report_Subtitle" forecolor="#555555" fontName="Bitstream Vera Sans" fontSize="14">
 		<box leftPadding="5"/>
 	</style>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle">
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle">
 		<box leftPadding="5"/>
 	</style>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle">
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle">
 		<box leftPadding="5">
 			<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 			<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 		</box>
 	</style>
-	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="14">
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="14">
 		<box leftPadding="5"/>
 	</style>
 	<style name="GroupHeader_Gray" mode="Opaque" backcolor="#999999"/>
@@ -277,7 +277,7 @@
 		<groupExpression><![CDATA[$F{ORG}]]></groupExpression>
 		<groupHeader>
 			<band height="30" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="109" y="0" width="426" height="24" uuid="ac584319-67c8-4560-8bf4-46965bddc9b1"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -346,7 +346,7 @@
 		<groupExpression><![CDATA[$F{PARTNER}]]></groupExpression>
 		<groupHeader>
 			<band height="25" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="140" y="0" width="394" height="22" uuid="ca2ecb65-f725-42c7-9ea1-466fe2d22de6"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -431,7 +431,7 @@
 	</title>
 	<pageHeader>
 		<band height="30" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="535" height="26" uuid="dd75cfc7-705c-4fa9-a21b-009cf041eea2"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>
@@ -468,7 +468,7 @@
 				</textElement>
 				<text><![CDATA[Currency of the report:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="false">
 				<reportElement key="textField-39" x="135" y="5" width="75" height="16" isPrintWhenDetailOverflows="true" uuid="d7f4016d-eeea-489b-9f24-8de4789cce94"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -503,7 +503,7 @@
 					<pen lineWidth="1.0" lineStyle="Solid"/>
 				</graphicElement>
 			</line>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="false">
 				<reportElement key="textField" x="108" y="6" width="153" height="16" isPrintWhenDetailOverflows="true" uuid="a9fbe738-d61d-4c48-af74-033b2bb21b66"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -516,7 +516,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[($F{PROJECTNAME}!=null)?$F{PROJECTNAME}:new String(" ")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" x="109" y="26" width="151" height="16" isPrintWhenDetailOverflows="true" uuid="c6385665-1fd2-4e79-9abf-8b392c5e52b3"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -555,7 +555,7 @@
 				</textElement>
 				<text><![CDATA[Planned End Date:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" x="373" y="26" width="88" height="16" isPrintWhenDetailOverflows="true" uuid="e07fc5d2-e0bf-495b-826d-ee611cf439e9"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -581,7 +581,7 @@
 				</textElement>
 				<text><![CDATA[Person in Charge:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" x="372" y="6" width="149" height="16" isPrintWhenDetailOverflows="true" uuid="ee1cab9f-873d-4df3-a200-190cd7c785d7"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

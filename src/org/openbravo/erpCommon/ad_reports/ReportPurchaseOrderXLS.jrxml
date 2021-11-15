@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2017-05-25T09:44:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportPurchaseOrder" pageWidth="1450" pageHeight="130" orientation="Landscape" columnWidth="1450" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="d5112654-5616-45aa-ab46-4a7530b995d6">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -8,11 +6,11 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="net.sf.jasperreports.export.xls.detect.cell.type" value="true"/>
 	<import value="net.sf.jasperreports.engine.*"/>
-	<import value="org.openbravo.erpCommon.utility.Utility"/>
 	<import value="java.util.*"/>
+	<import value="org.openbravo.erpCommon.utility.Utility"/>
 	<import value="org.openbravo.dal.core.OBContext"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" vAlign="Middle" fontName="DejaVu Sans" fontSize="8"/>
+	<style name="default" vTextAlign="Middle" vImageAlign="Middle" fontName="DejaVu Sans" fontSize="8"/>
 	<style name="Report_Title" fontName="DejaVu Sans" fontSize="18">
 		<box leftPadding="5"/>
 	</style>
@@ -21,15 +19,15 @@
 	</style>
 	<style name="Report_Data_Label" fontName="DejaVu Sans" fontSize="10" isBold="true"/>
 	<style name="Report_Data_Field" fontName="DejaVu Sans" fontSize="10" isBold="false"/>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="DejaVu Sans" fontSize="11" isBold="true">
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="DejaVu Sans" fontSize="11" isBold="true">
 		<box leftPadding="5"/>
 	</style>
-	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="DejaVu Sans" fontSize="12" isBold="true">
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle" fontName="DejaVu Sans" fontSize="12" isBold="true">
 		<box leftPadding="5"/>
 	</style>
 	<style name="Group_Data_Label" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
 	<style name="Group_Data_Field" fontName="DejaVu Sans" fontSize="11"/>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="DejaVu Sans" fontSize="10" isBold="true">
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vTextAlign="Middle" vImageAlign="Middle" fontName="DejaVu Sans" fontSize="10" isBold="true">
 		<box leftPadding="5">
 			<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 			<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
@@ -45,7 +43,7 @@
 	<style name="Detail_Data_Label" mode="Opaque" backcolor="#CCCCCC" fontName="DejaVu Sans" fontSize="10" isBold="true"/>
 	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="DejaVu Sans" fontSize="10"/>
 	<style name="Group_Footer" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
-	<style name="Report_Footer" isDefault="true" vAlign="Middle" fontName="DejaVu Sans" fontSize="11"/>
+	<style name="Report_Footer" isDefault="true" vTextAlign="Middle" vImageAlign="Middle" fontName="DejaVu Sans" fontSize="11"/>
 	<parameter name="DateFrom" class="java.util.Date" isForPrompting="false"/>
 	<parameter name="AD_Org_ID" class="org.codehaus.jettison.json.JSONObject" isForPrompting="false">
 		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
@@ -388,14 +386,14 @@
 				<textFieldExpression><![CDATA[(($P{DateFrom} == null || $P{DateFrom}.equals("")) ? "" :"From "+new SimpleDateFormat("dd-MM-yyyy").format($P{DateFrom}))
 +(($P{DateTo} == null || $P{DateTo}.equals("")) ? "" : " to "+new SimpleDateFormat("dd-MM-yyyy").format($P{DateTo}))]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="90" y="30" width="1360" height="20" uuid="417d1e3b-0f76-42a2-83c9-5874a3bfdec5"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{Status}.getString("identifier")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="90" y="10" width="1360" height="20" uuid="9fbfd6ce-b233-4248-8592-8f6343f7e4d7"/>
 				<textElement>
 					<font size="8"/>
@@ -457,7 +455,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PRODUCT_NAME}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement x="745" y="-10" width="165" height="14" uuid="4aaa69a4-2338-4464-86e4-c33ad3698487"/>
 				<textElement>
 					<font size="8"/>

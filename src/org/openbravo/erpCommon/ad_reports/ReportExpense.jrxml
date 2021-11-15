@@ -5,23 +5,23 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10"/>
+	<style name="default" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10"/>
 	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18">
 		<box leftPadding="5"/>
 	</style>
 	<style name="Report_Subtitle" forecolor="#555555" fontName="Bitstream Vera Sans" fontSize="14">
 		<box leftPadding="5"/>
 	</style>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle">
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle">
 		<box leftPadding="5"/>
 	</style>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle">
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle">
 		<box leftPadding="5">
 			<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 			<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 		</box>
 	</style>
-	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="14">
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="14">
 		<box leftPadding="5"/>
 	</style>
 	<style name="GroupHeader_Gray" mode="Opaque" backcolor="#999999"/>
@@ -128,7 +128,7 @@
 					</textElement>
 					<text><![CDATA[Customer:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="87" y="0" width="691" height="29" uuid="e3462f33-f8ef-4b24-8a63-8a7cbbd47273"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -199,7 +199,7 @@
 					</textElement>
 					<text><![CDATA[Employees hours:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="PROJECTNAME" pattern="#,##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="PROJECTNAME" pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-21" style="GroupHeader_DarkGray" x="410" y="0" width="108" height="17" uuid="45e19e3f-6437-499d-a00e-4041c40e7d94"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -227,7 +227,7 @@
 					</textElement>
 					<text><![CDATA[Total amount:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="PROJECTNAME" pattern="#,##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="PROJECTNAME" pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-22" style="GroupHeader_DarkGray" x="626" y="0" width="152" height="17" uuid="775030db-4278-4184-9db7-f41f1843eb98"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -241,7 +241,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SumaAmountProject}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="87" y="0" width="189" height="17" uuid="6a06865c-740c-41fa-acc6-d790083567e6"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -289,7 +289,7 @@
 					</textElement>
 					<text><![CDATA[Employee:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-23" style="GroupHeader_DarkGray" x="109" y="0" width="167" height="17" uuid="74bc5dc1-a80e-49b7-99d0-3f42e30e6719"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -317,7 +317,7 @@
 					</textElement>
 					<text><![CDATA[Employee hours:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="EMPLOYEENAME" pattern="#,##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="EMPLOYEENAME" pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-24" style="GroupHeader_DarkGray" x="403" y="0" width="115" height="17" uuid="7e13493d-a222-4ac7-8c24-a52be28120fc"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -345,7 +345,7 @@
 					</textElement>
 					<text><![CDATA[Total amount:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="EMPLOYEENAME" pattern="#,##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="EMPLOYEENAME" pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-25" style="GroupHeader_DarkGray" x="626" y="0" width="152" height="17" uuid="0000fe3e-12d4-47c7-b82e-801e9b9d8e62"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -489,7 +489,7 @@
 					</textElement>
 					<text><![CDATA[Product:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField-26" style="GroupHeader_DarkGray" x="106" y="0" width="169" height="17" uuid="3e5fec43-6483-4653-b6d2-78be0ddf1c4e"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -517,7 +517,7 @@
 					</textElement>
 					<text><![CDATA[Product hours:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="PRODUCTNAME" pattern="#,##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="PRODUCTNAME" pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-27" style="GroupHeader_DarkGray" x="396" y="0" width="122" height="17" uuid="0a9039d6-c4f3-43bb-b414-3c797db0bc7e"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -545,7 +545,7 @@
 					</textElement>
 					<text><![CDATA[Total amount:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" evaluationTime="Group" evaluationGroup="PRODUCTNAME" pattern="#,##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Group" evaluationGroup="PRODUCTNAME" pattern="#,##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-28" style="GroupHeader_DarkGray" x="626" y="0" width="152" height="17" uuid="635a50ae-85f0-4206-ad77-a49e71f269ab"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -627,7 +627,7 @@
 	</title>
 	<pageHeader>
 		<band height="23" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="0" width="778" height="20" uuid="72d5ba5a-76e2-47ed-8ae3-7fbdf84fdb51"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>

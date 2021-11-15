@@ -5,27 +5,27 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
+	<style name="default" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
 	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18"/>
 	<style name="Report_Subtitle" forecolor="#555555" fontName="Bitstream Vera Sans" fontSize="14"/>
 	<style name="Report_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Report_Data_Field" fontName="Bitstream Vera Sans" fontSize="11" isBold="false"/>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true"/>
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true"/>
 	<style name="Group_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Group_Data_Field" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="true"/>
-	<style name="Detail_Line" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8">
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="true"/>
+	<style name="Detail_Line" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
-			<style mode="Opaque" backcolor="#CCCCCC" vAlign="Middle"/>
+			<style mode="Opaque" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle"/>
 		</conditionalStyle>
 	</style>
 	<style name="Total_Gray" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC"/>
 	<style name="Detail_Data_Label" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
 	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10"/>
 	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="Report_Footer" isDefault="true" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
+	<style name="Report_Footer" isDefault="true" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
 	<subDataset name="SubDataset1" uuid="43db9ef4-8f56-4f7b-ac66-414e7b04cde1"/>
 	<parameter name="ATTACH" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="BASE_WEB" class="java.lang.String" isForPrompting="false"/>
@@ -222,7 +222,7 @@
 	</columnHeader>
 	<detail>
 		<band height="16" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="0" y="0" width="40" height="16" uuid="12e7271e-c2ab-4445-89fb-a30f5ba1beb8"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -232,7 +232,7 @@
 				</box>
 				<textFieldExpression><![CDATA[$F{DOCNO}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="40" y="0" width="50" height="16" uuid="51518027-aaab-4535-8f80-9b406e3a2e32"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -242,7 +242,7 @@
 				</box>
 				<textFieldExpression><![CDATA[$F{ORDERED}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="90" y="0" width="50" height="16" uuid="41a51c02-2ad3-4fcb-a944-74184e3a1314"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -252,7 +252,7 @@
 				</box>
 				<textFieldExpression><![CDATA[$F{PROMISED}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="140" y="0" width="105" height="16" uuid="baf7b411-7c80-4ba9-a73c-8a7ba4fc90ec"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -262,7 +262,7 @@
 				</box>
 				<textFieldExpression><![CDATA[$F{BPNAME}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="245" y="0" width="50" height="16" uuid="8e6ee6f5-d802-4dd3-adfe-0620d00040c2"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -272,7 +272,7 @@
 				</box>
 				<textFieldExpression><![CDATA[$F{RNAME}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="295" y="0" width="55" height="16" uuid="64a4bc11-4ba9-4e33-9bd7-1485dd49ac75"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -282,7 +282,7 @@
 				</box>
 				<textFieldExpression><![CDATA[$F{VALUE}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Detail_Line" stretchType="RelativeToBandHeight" x="350" y="0" width="100" height="16" uuid="87a03e44-7ee6-4e54-9fb1-a95556e525a3"/>
 				<box leftPadding="2" rightPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

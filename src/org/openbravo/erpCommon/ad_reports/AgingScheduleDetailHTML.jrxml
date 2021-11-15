@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-11-02T09:12:28 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PaymentReportPDF" pageWidth="1100" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="1040" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="f73cd4f8-17ca-4505-866b-7b88e67c1d99">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -10,16 +8,16 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
+	<style name="default" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
 	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18"/>
 	<style name="Report_Subtitle" forecolor="#555555" fontName="Bitstream Vera Sans" fontSize="14"/>
 	<style name="Report_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Report_Data_Field" fontName="Bitstream Vera Sans" fontSize="11" isBold="false"/>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true"/>
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true"/>
 	<style name="Group_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Group_Data_Field" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
 	<style name="Detail_Line" fontName="Bitstream Vera Sans" fontSize="8">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
@@ -30,7 +28,7 @@
 	<style name="Detail_Data_Label" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
 	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10"/>
 	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="Report_Footer" isDefault="true" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
+	<style name="Report_Footer" isDefault="true" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
 	<parameter name="AMOUNTFORMAT" class="java.text.DecimalFormat"/>
 	<parameter name="DATEFORMATTER" class="java.text.DateFormat">
 		<defaultValueExpression><![CDATA[$P{REPORT_FORMAT_FACTORY}.createDateFormat("", $P{REPORT_LOCALE}, $P{REPORT_TIME_ZONE})]]></defaultValueExpression>
@@ -209,7 +207,7 @@ FROM DUAL]]>
 		</groupHeader>
 		<groupFooter>
 			<band height="29">
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-22" style="Report_Footer" stretchType="RelativeToTallestObject" x="928" y="4" width="91" height="18" uuid="8b6862d7-e3c1-4431-bc4a-12369ab64a99">
 						<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 					</reportElement>
@@ -340,7 +338,7 @@ FROM DUAL]]>
 				<line>
 					<reportElement key="line-33" style="Report_Footer" x="712" y="23" width="72" height="1" uuid="af9b3a1e-aae3-44c5-a968-442fbe34d69c"/>
 				</line>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 					<reportElement key="textField-6" style="Detail_Header" stretchType="RelativeToTallestObject" x="704" y="5" width="74" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4e42bba2-3a96-4c0e-b53b-51325116f3b9"/>
 					<box leftPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -353,7 +351,7 @@ FROM DUAL]]>
 						<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 					</reportElement>
 				</line>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 					<reportElement key="textField-6" style="Detail_Header" stretchType="RelativeToTallestObject" x="778" y="5" width="74" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="4344de4e-2051-41f5-bd81-20008632277a"/>
 					<box leftPadding="2"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -387,7 +385,7 @@ $V{SUMDOUBTFULDEBT} != null ? $P{AMOUNTFORMAT}.format($V{SUMDOUBTFULDEBT}) : $P{
 						<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 					</reportElement>
 				</line>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 					<reportElement key="textField-6" style="Detail_Header" stretchType="RelativeToTallestObject" x="853" y="5" width="74" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="8f1ae3e8-d959-4877-8a43-91b8d37337e7">
 						<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 					</reportElement>
@@ -535,7 +533,7 @@ $V{SUMDOUBTFULDEBT} != null ? $P{AMOUNTFORMAT}.format($V{SUMDOUBTFULDEBT}) : $P{
 			<line>
 				<reportElement key="line-25" style="Report_Footer" stretchType="RelativeToBandHeight" x="836" y="20" width="1" height="19" uuid="3a78123c-2536-4afc-b47b-eee43885fb27"/>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement mode="Opaque" x="0" y="-9" width="940" height="20" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#0A0505" backcolor="#FFE79F" uuid="3496bea0-a67f-48b9-add2-25b9966bb2f5">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -753,7 +751,7 @@ $V{SUMDOUBTFULDEBT} != null ? $P{AMOUNTFORMAT}.format($V{SUMDOUBTFULDEBT}) : $P{
 	</columnHeader>
 	<detail>
 		<band height="16" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-15" style="Detail_Line" stretchType="RelativeToTallestObject" x="928" y="0" width="90" height="16" uuid="c0f6c49d-6a52-4134-9de2-e0be8ed75a31">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
@@ -764,7 +762,7 @@ $V{SUMDOUBTFULDEBT} != null ? $P{AMOUNTFORMAT}.format($V{SUMDOUBTFULDEBT}) : $P{
 				<textFieldExpression><![CDATA[$F{SHOW_NETDUE} == null ? null : ($F{NETDUE} == null
     ? "(" + $P{AMOUNTFORMAT}.format($F{SHOW_NETDUE}) + ")" : $P{AMOUNTFORMAT}.format($F{SHOW_NETDUE}))]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Line" x="107" y="0" width="71" height="16" forecolor="#0000FF" uuid="8b202051-0d80-45d8-afc6-e246e2ec944c"/>
 				<box leftPadding="2"/>
 				<textElement verticalAlignment="Middle">
@@ -838,7 +836,7 @@ $V{SUMDOUBTFULDEBT} != null ? $P{AMOUNTFORMAT}.format($V{SUMDOUBTFULDEBT}) : $P{
 				</textElement>
 				<textFieldExpression><![CDATA[$F{AMOUNT5} != null ? $P{AMOUNTFORMAT}.format($F{AMOUNT5}) : null]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Line" stretchType="RelativeToTallestObject" x="703" y="0" width="75" height="16" forecolor="#000000" uuid="d564af5b-cd53-413a-ab02-45c8d205b89b"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -854,7 +852,7 @@ $V{SUMDOUBTFULDEBT} != null ? $P{AMOUNTFORMAT}.format($V{SUMDOUBTFULDEBT}) : $P{
 				</textElement>
 				<textFieldExpression><![CDATA[$P{DATEFORMATTER}.format($F{INVOICE_DATE})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Line" stretchType="RelativeToTallestObject" x="778" y="0" width="75" height="16" forecolor="#000000" uuid="dc0bca82-f2f1-4268-b25f-74fa3da91e8e"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -865,7 +863,7 @@ $F{DOUBTFUL_DEBT} != null ? $P{AMOUNTFORMAT}.format($F{DOUBTFUL_DEBT}): null
 : $F{SHOW_NETDUE} == null ? null : ($F{NETDUE} == null
     ? "(" + $P{AMOUNTFORMAT}.format($F{SHOW_NETDUE}) + ")" : $P{AMOUNTFORMAT}.format($F{SHOW_NETDUE}))]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Line" stretchType="RelativeToTallestObject" x="853" y="0" width="75" height="16" forecolor="#000000" uuid="3440ccf8-b86b-4808-bc21-2adbf98bf9d4">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
@@ -959,7 +957,7 @@ $F{DOUBTFUL_DEBT} != null ? $P{AMOUNTFORMAT}.format($F{DOUBTFUL_DEBT}): null
 			<line>
 				<reportElement key="line-33" style="Report_Footer" x="488" y="66" width="71" height="1" uuid="d20ad3d5-42ed-4dbc-8a8a-939db2390462"/>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-22" style="Report_Footer" stretchType="RelativeToTallestObject" x="934" y="47" width="85" height="18" uuid="3249c44f-07d1-46c8-9038-8e648b730c34">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
@@ -1030,7 +1028,7 @@ $F{DOUBTFUL_DEBT} != null ? $P{AMOUNTFORMAT}.format($F{DOUBTFUL_DEBT}): null
 			<line>
 				<reportElement key="line-33" style="Report_Footer" x="712" y="66" width="72" height="1" uuid="26131af8-a68f-4fd9-b590-f9f161d0dd7a"/>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" stretchType="RelativeToTallestObject" x="704" y="48" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="7ceab422-9114-492b-89a2-9fde370911d4"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1055,7 +1053,7 @@ $F{DOUBTFUL_DEBT} != null ? $P{AMOUNTFORMAT}.format($F{DOUBTFUL_DEBT}): null
 			<line>
 				<reportElement key="line-33" style="Report_Footer" x="787" y="45" width="72" height="1" uuid="21e6af9d-6024-468d-a1da-d36e5683818a"/>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" stretchType="RelativeToTallestObject" x="779" y="48" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="c48e9e07-2028-40ff-a940-b15d107802c5"/>
 				<box leftPadding="2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -1080,7 +1078,7 @@ $V{SUMDOUBTFULTOTAL} != null ? $P{AMOUNTFORMAT}.format($V{SUMDOUBTFULTOTAL}) : $
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true" hyperlinkType="Reference">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true" hyperlinkType="Reference">
 				<reportElement key="textField-6" style="Detail_Header" stretchType="RelativeToTallestObject" x="854" y="48" width="75" height="16" forecolor="#000000" backcolor="#FFFFFF" uuid="95112442-c842-400d-9860-974919db4399">
 					<printWhenExpression><![CDATA[$P{showDoubtfulDebt}.equals( "true" )]]></printWhenExpression>
 				</reportElement>

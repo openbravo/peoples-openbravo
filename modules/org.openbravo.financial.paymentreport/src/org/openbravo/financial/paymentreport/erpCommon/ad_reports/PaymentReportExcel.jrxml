@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2016-03-11T16:07:53 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PaymentReportExcel" pageWidth="2000" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="1940" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="bd54446c-5f03-492f-9be8-1942e896464a">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -20,16 +18,16 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
+	<style name="default" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
 	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18"/>
 	<style name="Report_Subtitle" forecolor="#555555" fontName="Bitstream Vera Sans" fontSize="14"/>
 	<style name="Report_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Report_Data_Field" fontName="Bitstream Vera Sans" fontSize="11" isBold="false"/>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true"/>
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true"/>
 	<style name="Group_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Group_Data_Field" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
 	<style name="Detail_Line" fontName="Bitstream Vera Sans" fontSize="8">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
@@ -40,7 +38,7 @@
 	<style name="Detail_Data_Label" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
 	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10"/>
 	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="Report_Footer" isDefault="true" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
+	<style name="Report_Footer" isDefault="true" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
 	<parameter name="GROUP_CRIT" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="ORG_SHOW" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="INCL_SUBORG_SHOW" class="java.lang.String" isForPrompting="false"/>
@@ -312,7 +310,7 @@ FROM DUAL]]>
 	</columnHeader>
 	<detail>
 		<band height="25" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-2" style="Report_Footer" x="0" y="0" width="99" height="25" uuid="623fd7b7-741d-4827-bd0d-2477c5b8c01c"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -320,7 +318,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{BPARTNER}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-4" style="Report_Footer" x="607" y="0" width="65" height="25" uuid="ca4dd966-492f-4482-bdce-4092007f90e1"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -328,7 +326,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PAYMENT_DOCNO}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-5" style="Report_Footer" x="419" y="0" width="78" height="25" uuid="fee5d68f-091c-48d6-8226-7802e06dda51"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -336,7 +334,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{SALES_PERSON}==null ? " " : $F{SALES_PERSON})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-6" style="Report_Footer" x="497" y="0" width="55" height="25" uuid="c71a9a7c-65ce-4e62-b94d-849852a6de65"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -344,7 +342,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{INVOICE_NUMBER}==null ? " " : $F{INVOICE_NUMBER}.toString())]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-7" style="Report_Footer" x="552" y="0" width="55" height="25" uuid="3b6da8cb-3613-4c05-9eb9-12ba187d9994"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -352,7 +350,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{INVOICE_DATE}== null ? " " : $F{INVOICE_DATE})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-8" style="Report_Footer" x="1151" y="0" width="62" height="25" uuid="a7c63912-bf1d-4012-a724-e52dd62d334b"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -360,28 +358,28 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{EXPECTED_DATE}== null ? " " : $F{EXPECTED_DATE})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-9" style="Report_Footer" x="1275" y="0" width="33" height="25" uuid="4ade6f38-a30e-4c1a-9fb3-0750d581141e"/>
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{PLANNED_DSO}== null ? " " : $F{PLANNED_DSO}.toString())]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-10" style="Report_Footer" x="1308" y="0" width="33" height="25" uuid="c294add7-2a46-49de-b576-06a6b041a68b"/>
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{CURRENT_DSO}== null ? " " : $F{CURRENT_DSO}.toString())]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-11" style="Report_Footer" x="1341" y="0" width="36" height="25" uuid="2fe53a7d-a2ef-4c76-bc39-8ccf3db0cd6d"/>
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{OVERDUE}== null ? " " : $F{OVERDUE}.toString())]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-13" style="Report_Footer" x="1517" y="0" width="80" height="25" uuid="469ae18b-601a-4111-a91b-c6aed348c9d2"/>
 				<box rightPadding="2"/>
 				<textElement textAlignment="Right">
@@ -390,14 +388,14 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[$F{BASE_AMOUNT}]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-14" style="Report_Footer" x="1597" y="0" width="46" height="25" uuid="5048cde4-f51d-4ce0-8a89-adc9406901c8"/>
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{BASE_CURRENCY}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-15" style="Report_Footer" x="1377" y="0" width="80" height="25" uuid="82a9b6d9-6055-48b8-9766-36fcea5ef399"/>
 				<box rightPadding="2"/>
 				<textElement textAlignment="Right">
@@ -406,14 +404,14 @@ FROM DUAL]]>
 				<textFieldExpression><![CDATA[$F{TRANS_AMOUNT}]]></textFieldExpression>
 				<patternExpression><![CDATA[$P{NUMBERFORMAT}.toPattern()]]></patternExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-16" style="Report_Footer" x="1457" y="0" width="60" height="25" uuid="ff340e8e-63c1-4df9-af58-75c6c7bbabee"/>
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{TRANS_CURRENCY}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-17" style="Report_Footer" x="99" y="0" width="76" height="25" uuid="9ac4381c-d8c0-431f-87b4-aa58f2fe1e03"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -421,7 +419,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{BP_GROUP}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-18" style="Report_Footer" x="259" y="0" width="76" height="25" uuid="656f0e60-baf2-4a38-a9c6-b691546f2ddc"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -429,7 +427,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{STATUS}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-19" style="Report_Footer" x="335" y="0" width="84" height="25" uuid="eb8de9eb-0b8f-4a0c-ad4e-38cb75011387"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -437,7 +435,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PROJECT}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-21" style="Report_Footer" stretchType="RelativeToBandHeight" x="844" y="0" width="227" height="25" uuid="b994b3fe-c40c-4593-b9fa-def60a85e415"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -445,7 +443,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PAYMENT_DESC}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-22" style="Report_Footer" x="1071" y="0" width="80" height="25" uuid="dc82c446-73df-42ca-8bfa-efcc30eb34a2"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -453,28 +451,28 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PAYMENT_DATE}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-14" style="Report_Footer" x="672" y="0" width="172" height="25" uuid="4fcec8ca-50da-4a41-85f5-c0323ecdca1e"/>
 				<textElement textAlignment="Left">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{PAYMENT_METHOD}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-14" style="Report_Footer" x="1643" y="0" width="77" height="25" uuid="9ba8e0c8-323a-4713-92a9-47bf1fe1fba1"/>
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DEPOSIT_WITHDRAW_DATE}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-14" style="Report_Footer" x="1720" y="0" width="77" height="25" uuid="39d37682-307e-45b4-9a5e-4447538e0aa3"/>
 				<textElement textAlignment="Center">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{FINANCIAL_ACCOUNT}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-8" style="Report_Footer" x="1213" y="0" width="62" height="25" uuid="588bddf7-3d9c-4248-a3b4-d1a6ce9ee3c7"/>
 				<box leftPadding="2"/>
 				<textElement>
@@ -482,7 +480,7 @@ FROM DUAL]]>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{DUE_DATE}== null ? " " : $F{DUE_DATE})]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-18" style="Report_Footer" x="175" y="0" width="84" height="25" uuid="31445da0-76ab-4635-a3f9-c1ab47adbd55"/>
 				<box leftPadding="2"/>
 				<textElement>

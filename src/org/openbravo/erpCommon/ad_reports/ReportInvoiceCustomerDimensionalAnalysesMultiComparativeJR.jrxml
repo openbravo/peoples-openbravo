@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.0.0.final using JasperReports Library version 6.0.0  -->
-<!-- 2017-03-02T13:17:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportInvoiceCustomerDimensionalAnalysesMultiComparativeJR" pageWidth="1300" pageHeight="595" orientation="Landscape" columnWidth="1272" leftMargin="14" rightMargin="14" topMargin="56" bottomMargin="28" uuid="3f1d7732-64a5-4b19-b4dd-5f06efe61a6b">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
@@ -11,160 +9,160 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" isDefault="true" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
+	<style name="default" isDefault="true" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
 	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18"/>
 	<style name="Report_Subtitle" forecolor="#555555" fontName="Bitstream Vera Sans" fontSize="14"/>
-	<style name="Report_Data_Label" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
+	<style name="Report_Data_Label" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Report_Data_Field" fontName="Bitstream Vera Sans" fontSize="11" isBold="false"/>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="true"/>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="9" isBold="true"/>
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="true"/>
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="9" isBold="true"/>
 	<style name="Detail_Line" fontName="Bitstream Vera Sans" fontSize="8" isBold="true">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==1)]]></conditionExpression>
 			<style mode="Opaque" backcolor="#CCCCCC"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level1_Line" mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level1_Line" mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==1)&&($V{NIVEL1_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==1)&&($V{NIVEL1_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level2_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level2_Line" mode="Opaque" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==2)&&($V{NIVEL1_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==2)&&($V{NIVEL1_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level3_Line" mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level3_Line" mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==3)&&($V{NIVEL2_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==3)&&($V{NIVEL2_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level4_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level4_Line" mode="Opaque" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==4)&&($V{NIVEL3_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==4)&&($V{NIVEL3_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level5_Line" mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level5_Line" mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==5)&&($V{NIVEL4_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==5)&&($V{NIVEL4_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level6_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level6_Line" mode="Opaque" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==6)&&($V{NIVEL5_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==6)&&($V{NIVEL5_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level7_Line" mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level7_Line" mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==7)&&($V{NIVEL6_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==7)&&($V{NIVEL6_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level8_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level8_Line" mode="Opaque" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==8)&&($V{NIVEL7_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==8)&&($V{NIVEL7_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level9_Line" mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level9_Line" mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==9)&&($V{NIVEL8_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==9)&&($V{NIVEL8_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Level10_Line" mode="Opaque" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
+	<style name="Level10_Line" mode="Opaque" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==10)&&($V{NIVEL9_COUNT}.intValue()%2==0))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#FFFFFF" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#FFFFFF" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($P{DIMENSIONS}.intValue()==10)&&($V{NIVEL9_COUNT}.intValue()%2==1))]]></conditionExpression>
-			<style mode="Opaque" backcolor="#E5E5E5" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
+			<style mode="Opaque" backcolor="#E5E5E5" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8" isBold="false"/>
 		</conditionalStyle>
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean($F{COSTCALCULATED}.intValue()>=1)]]></conditionExpression>
 			<style forecolor="#FF0000"/>
 		</conditionalStyle>
 	</style>
-	<style name="Report_Footer" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
+	<style name="Report_Footer" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
 	<style name="Detail_Border" forecolor="#8A8A8A"/>
 	<parameter name="USER_ORG" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["0,1000000"]]></defaultValueExpression>
@@ -1321,7 +1319,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[(($P{DIMENSIONS}.compareTo(new Integer(2))>=0)?"2":"")]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" evaluationTime="Report" pattern="##0.00" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" evaluationTime="Report" pattern="##0.00" isBlankWhenNull="true">
 					<reportElement key="textField-22" style="Detail_Header" x="0" y="1" width="15" height="16" uuid="7ee0eb8d-0409-4e5b-9e55-697d7fe00ab1">
 						<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=1)]]></printWhenExpression>
 					</reportElement>
@@ -1713,7 +1711,7 @@
 		<groupHeader>
 			<band height="18" splitType="Stretch">
 				<printWhenExpression><![CDATA[new Boolean($P{DIMENSIONS}.intValue()>=1)]]></printWhenExpression>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level1_Line" stretchType="RelativeToBandHeight" x="0" y="0" width="150" height="18" uuid="e6bf8381-b02d-4792-a429-1b45fad1fcb9"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2087,7 +2085,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level2_Line" stretchType="RelativeToBandHeight" x="15" y="0" width="175" height="18" uuid="1906af41-82cc-4472-b71d-240888b3e2c8"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2461,7 +2459,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level3_Line" stretchType="RelativeToBandHeight" x="30" y="0" width="160" height="18" uuid="784539b9-f5c8-438c-b642-8f021ab52211"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -2848,7 +2846,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level4_Line" stretchType="RelativeToBandHeight" x="45" y="0" width="145" height="18" uuid="f626811a-dd3d-4ee1-a33c-f7b09ab0368b"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3248,7 +3246,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField" style="Level5_Line" stretchType="RelativeToBandHeight" x="60" y="0" width="130" height="18" uuid="55ee30af-7a1a-45f4-92c2-7fd96e3c6db7"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -3661,7 +3659,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-66" style="Level6_Line" stretchType="RelativeToBandHeight" x="75" y="0" width="115" height="18" uuid="a17e8e56-85d3-4fee-a173-e1277576c5ea"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -4087,7 +4085,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-75" style="Level7_Line" stretchType="RelativeToBandHeight" x="90" y="0" width="100" height="18" uuid="c3cbb0c8-6921-4453-ad09-2a9d495cd261"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -4526,7 +4524,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-85" style="Level8_Line" stretchType="RelativeToBandHeight" x="105" y="0" width="85" height="18" uuid="a503048b-7150-41c7-9841-c2d00619c8f5"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -4978,7 +4976,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-96" style="Level9_Line" stretchType="RelativeToBandHeight" x="120" y="0" width="70" height="18" uuid="77be46ab-82bd-45ad-8f77-3e8e3b25cf38"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -5443,7 +5441,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement key="textField-108" style="Level10_Line" stretchType="RelativeToBandHeight" x="135" y="0" width="55" height="18" uuid="71f7cbd1-5269-4e89-9a71-5b7d66dd198e"/>
 					<box rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6275,7 +6273,7 @@
 					<text><![CDATA[Qty2%]]></text>
 				</staticText>
 			</frame>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField" style="Report_Title" x="0" y="0" width="1210" height="26" uuid="dbd041f2-6a5b-44a3-a97a-506e5063f06f"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6308,7 +6306,7 @@
 				</textElement>
 				<text><![CDATA[Grouping Levels:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="105" y="52" width="1105" height="16" uuid="81eaeb3a-cb34-4abe-a839-2a1b248716c2"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6340,7 +6338,7 @@
 				</textElement>
 				<text><![CDATA[Secondary Filters:]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="179" y="68" width="1030" height="16" uuid="8b64ccc4-ae8e-4f9a-ac0a-268878a093c5"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -6353,7 +6351,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ORGANIZATION} + " and any child organization"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="230" y="84" width="980" height="16" uuid="d69a5b37-89fd-4b84-af43-8f40c4f74119">
 					<printWhenExpression><![CDATA[!$P{BPGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -6368,7 +6366,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{BPGROUP}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="190" y="100" width="1020" height="16" printWhenGroupChanges="DocumentType" uuid="bf3c79ec-fa48-4098-af7e-14b0b1fabc78">
 					<printWhenExpression><![CDATA[!$P{PRODUCTGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -6383,7 +6381,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{PRODUCTGROUP}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="105" y="84" width="125" height="16" uuid="fbf59805-2de5-4393-b6d5-3c94f0daa1b9">
 					<printWhenExpression><![CDATA[!$P{BPGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -6398,7 +6396,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Business Partner Group- "]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="105" y="100" width="85" height="16" printWhenGroupChanges="DocumentType" uuid="5106fcd7-ac70-4d7d-8af1-8bc1c5c24573">
 					<printWhenExpression><![CDATA[!$P{PRODUCTGROUP}.equals("")]]></printWhenExpression>
 				</reportElement>
@@ -6413,7 +6411,7 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Product Group - "]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField-17" style="Report_Data_Field" x="105" y="68" width="74" height="16" uuid="38c33ed1-015f-4b6d-ad09-54769f4aa1bf"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

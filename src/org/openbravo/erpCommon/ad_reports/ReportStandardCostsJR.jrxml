@@ -5,7 +5,7 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
+	<style name="default" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="8"/>
 	<style name="Report_Title" fontName="Bitstream Vera Sans" fontSize="18">
 		<box leftPadding="5"/>
 	</style>
@@ -14,15 +14,15 @@
 	</style>
 	<style name="Report_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Report_Data_Field" fontName="Bitstream Vera Sans" fontSize="11" isBold="false"/>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true">
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11" isBold="true">
 		<box leftPadding="5"/>
 	</style>
-	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true">
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="12" isBold="true">
 		<box leftPadding="5"/>
 	</style>
 	<style name="Group_Data_Label" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
 	<style name="Group_Data_Field" fontName="Bitstream Vera Sans" fontSize="11"/>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10" isBold="true">
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="10" isBold="true">
 		<box leftPadding="5">
 			<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
 			<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#FFFFFF"/>
@@ -38,7 +38,7 @@
 	<style name="Detail_Data_Label" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10" isBold="true"/>
 	<style name="Detail_Data_Field" mode="Opaque" backcolor="#CCCCCC" fontName="Bitstream Vera Sans" fontSize="10"/>
 	<style name="Group_Footer" fontName="Bitstream Vera Sans" fontSize="11" isBold="true"/>
-	<style name="Report_Footer" isDefault="true" vAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
+	<style name="Report_Footer" isDefault="true" vTextAlign="Middle" vImageAlign="Middle" fontName="Bitstream Vera Sans" fontSize="11"/>
 	<parameter name="ATTACH" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="BASE_WEB" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="BASE_DESIGN" class="java.lang.String" isForPrompting="false">
@@ -123,7 +123,7 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 					</box>
 					<text><![CDATA[Process Plan]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="120" y="0" width="415" height="18" uuid="58a26233-79bc-4b64-b2e5-bab6eddf06b3"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -185,7 +185,7 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 					</box>
 					<text><![CDATA[Valid From]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="130" y="0" width="405" height="18" uuid="5f3a49fe-fbd0-4006-b011-5df13895764c"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -290,7 +290,7 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 		<groupExpression><![CDATA[$F{MA_SEQUENCE_ID}]]></groupExpression>
 		<groupHeader>
 			<band height="25" splitType="Stretch">
-				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" pattern="" isBlankWhenNull="true">
 					<reportElement key="textField" style="GroupHeader_DarkGray" x="140" y="0" width="395" height="18" uuid="4bb3f09a-5737-42cf-89b5-51c105a49efe"/>
 					<box leftPadding="5">
 						<pen lineWidth="0.0"/>
@@ -381,7 +381,7 @@ ORDER BY MA_PROCESSPLAN.MA_PROCESSPLAN_ID, MA_PROCESSPLAN_VERSION.DATEFROM, MA_S
 	</title>
 	<pageHeader>
 		<band height="37" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 				<reportElement key="textField" style="Report_Title" mode="Transparent" x="0" y="4" width="535" height="20" uuid="1939e71e-ba6f-49f7-b6cc-c585d8a7f33c"/>
 				<box leftPadding="5">
 					<pen lineWidth="0.0"/>

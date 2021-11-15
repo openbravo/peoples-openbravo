@@ -8,12 +8,12 @@
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<style name="default" vAlign="Middle" fontName="DejaVu Sans" fontSize="11"/>
+	<style name="default" vTextAlign="Middle" vImageAlign="Middle" fontName="DejaVu Sans" fontSize="11"/>
 	<style name="Report_Title" fontName="DejaVu Sans" fontSize="18"/>
 	<style name="Report_Subtitle" forecolor="#555555" fontName="DejaVu Sans" fontSize="14"/>
-	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vAlign="Middle" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
-	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vAlign="Middle" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
-	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vAlign="Middle" fontName="DejaVu Sans" fontSize="18" isBold="true"/>
+	<style name="Total_Field" mode="Opaque" forecolor="#000000" backcolor="#CCCCCC" vTextAlign="Middle" vImageAlign="Middle" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="Detail_Header" mode="Opaque" forecolor="#FFFFFF" backcolor="#5D5D5D" vTextAlign="Middle" vImageAlign="Middle" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="GroupHeader_DarkGray" mode="Opaque" forecolor="#FFFFFF" backcolor="#555555" vTextAlign="Middle" vImageAlign="Middle" fontName="DejaVu Sans" fontSize="18" isBold="true"/>
 	<style name="GroupHeader_Gray" mode="Opaque" backcolor="#999999"/>
 	<style name="Detail_Line" fontName="DejaVu Sans" fontSize="11">
 		<conditionalStyle>
@@ -110,7 +110,7 @@
 			<line>
 				<reportElement key="line-1" x="0" y="19" width="535" height="1" uuid="6d274fea-1d86-425d-a810-b685c5b00350"/>
 			</line>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement key="textField-4" style="Report_Subtitle" x="0" y="28" width="534" height="43" forecolor="#000000" uuid="f60c908d-d38e-4d28-bf28-48a16d3d75dd"/>
 				<box leftPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -384,7 +384,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{VALUE}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField" x="291" y="0" width="118" height="10" uuid="c4271d45-311d-402a-8dc5-ad0da6a11baf"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -451,7 +451,7 @@
 						</textElement>
 						<textFieldExpression><![CDATA[$F{DATEACCT}]]></textFieldExpression>
 					</textField>
-					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 						<reportElement key="textField" x="129" y="0" width="84" height="10" isPrintWhenDetailOverflows="true" printWhenGroupChanges="JournalEntry" uuid="ff745a00-4227-4ba8-be36-8d11a89414ef"/>
 						<box leftPadding="2" rightPadding="2">
 							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -483,7 +483,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{VALUE}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField" x="291" y="0" width="118" height="10" uuid="f5c7ade9-abed-4a98-8d45-19e8a7120c31"/>
 					<box leftPadding="2" rightPadding="2">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -550,7 +550,7 @@
 						</textElement>
 						<textFieldExpression><![CDATA[$F{DATEACCT}]]></textFieldExpression>
 					</textField>
-					<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 						<reportElement key="textField" x="129" y="0" width="87" height="10" isPrintWhenDetailOverflows="true" printWhenGroupChanges="JournalEntry" uuid="a428eb40-b79e-452b-a7fc-d91224bf392e"/>
 						<box leftPadding="2" rightPadding="2">
 							<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

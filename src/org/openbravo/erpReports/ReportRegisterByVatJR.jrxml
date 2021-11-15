@@ -518,6 +518,9 @@ case
 		<band height="195" splitType="Stretch">
 			<crosstab>
 				<reportElement key="crosstab-1" x="0" y="4" width="321" height="55" uuid="868c276d-cf30-4ea7-9544-a3f46569d0dc"/>
+				<crosstabDataset>
+					<dataset resetType="Report"/>
+				</crosstabDataset>
 				<crosstabHeaderCell>
 					<cellContents mode="Transparent">
 						<box>
