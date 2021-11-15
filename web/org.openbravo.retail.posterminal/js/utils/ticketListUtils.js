@@ -582,21 +582,12 @@
                 }
               }
 
-              const orgLocationCountry = OB.UTIL.localStorage.getItem(
-                'orglocation_countryid'
-              );
-              const country =
-                orgLocationCountry != null
-                  ? orgLocationCountry
-                  : iter.organization
-                  ? iter.organization.country
-                  : OB.MobileApp.model.get('terminal').organizationCountryId;
-              const region =
-                orgLocationCountry != null
-                  ? OB.UTIL.localStorage.getItem('orglocation_regionid')
-                  : iter.organization
-                  ? iter.organization.region
-                  : OB.MobileApp.model.get('terminal').organizationRegionId;
+              const country = iter.organization
+                ? iter.organization.country
+                : OB.MobileApp.model.get('terminal').organizationCountryId;
+              const region = iter.organization
+                ? iter.organization.region
+                : OB.MobileApp.model.get('terminal').organizationRegionId;
 
               newline = new OB.Model.OrderLine({
                 id: iter.lineId,

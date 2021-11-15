@@ -138,12 +138,8 @@
         country: attrs.organization.country,
         region: attrs.organization.region
       };
-      newLine.country = extraData.orgLocation
-        ? extraData.orgLocation.country
-        : newLine.organization.country;
-      newLine.region = extraData.orgLocation
-        ? extraData.orgLocation.region
-        : newLine.organization.region;
+      newLine.country = newLine.organization.country;
+      newLine.region = newLine.organization.region;
       if (newLine.obrdmDeliveryMode !== 'HomeDelivery') {
         newLine.destinationCountry = newLine.country;
         newLine.destinationRegion = newLine.region;

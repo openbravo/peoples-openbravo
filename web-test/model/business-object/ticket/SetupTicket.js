@@ -21,8 +21,7 @@ global.OB = {
     UserNotifier: { notifyWarning: jest.fn() }
   },
   UTIL: {
-    HookManager: { registerHook: jest.fn() },
-    localStorage: { getItem: jest.fn() }
+    HookManager: { registerHook: jest.fn() }
   }
 };
 

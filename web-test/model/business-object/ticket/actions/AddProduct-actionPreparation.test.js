@@ -34,8 +34,7 @@ global.OB = {
     formats: { qtyEdition: '#0.###' }
   },
   UTIL: {
-    HookManager: { registerHook: jest.fn() },
-    localStorage: { getItem: jest.fn() }
+    HookManager: { registerHook: jest.fn() }
   },
   POS: {
     hwserver: {

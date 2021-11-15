@@ -161,17 +161,7 @@
         }
       }
 
-      const orgLocationCountry = OB.UTIL.localStorage.getItem(
-        'orglocation_countryid'
-      );
-      const country =
-        orgLocationCountry != null
-          ? orgLocationCountry
-          : newLine.organization.country;
-      const region =
-        orgLocationCountry != null
-          ? OB.UTIL.localStorage.getItem('orglocation_regionid')
-          : newLine.organization.region;
+      const { country, region } = newLine.organization;
 
       let destinationCountry;
       let destinationRegion;
@@ -187,13 +177,9 @@
         destinationCountry = country;
         destinationRegion = region;
       }
-      // eslint-disable-next-line no-param-reassign
       newLine.country = country;
-      // eslint-disable-next-line no-param-reassign
       newLine.region = region;
-      // eslint-disable-next-line no-param-reassign
       newLine.destinationCountry = destinationCountry;
-      // eslint-disable-next-line no-param-reassign
       newLine.destinationRegion = destinationRegion;
 
       return newLine;

@@ -258,16 +258,10 @@
       groupService: line.product.groupProduct,
       isEditable: true,
       isDeletable: true,
-      // eslint-disable-next-line no-nested-ternary
-      country: payload.orgLocation
-        ? payload.orgLocation.country
-        : line.organization
+      country: line.organization
         ? line.organization.country
         : payload.terminal.organizationCountryId,
-      // eslint-disable-next-line no-nested-ternary
-      region: payload.orgLocation
-        ? payload.orgLocation.region
-        : line.organization
+      region: line.organization
         ? line.organization.region
         : payload.terminal.organizationRegionId,
       destinationCountry:
@@ -276,9 +270,6 @@
           ? ticket.businessPartner.shipLocId
             ? ticket.businessPartner.locationModel.countryId
             : null
-          : // eslint-disable-next-line no-nested-ternary
-          payload.orgLocation
-          ? payload.orgLocation.country
           : line.organization
           ? line.organization.country
           : payload.terminal.organizationCountryId,
@@ -288,9 +279,6 @@
           ? ticket.businessPartner.shipLocId
             ? ticket.businessPartner.locationModel.regionId
             : null
-          : // eslint-disable-next-line no-nested-ternary
-          payload.orgLocation
-          ? payload.orgLocation.region
           : line.organization
           ? line.organization.region
           : payload.terminal.organizationRegionId,
@@ -441,22 +429,4 @@
     });
     return { ...payload, ticket: { ...payload.ticket, isCrossStore } };
   }
-
-  OB.App.StateAPI.Global.loadRemoteTicket.addActionPreparation(
-    async (ticket, payload) => {
-      const orgLocationCountry = OB.UTIL.localStorage.getItem(
-        'orglocation_countryid'
-      );
-      if (orgLocationCountry == null) {
-        return payload;
-      }
-      const newPayload = { ...payload };
-      newPayload.orgLocation = {
-        country: orgLocationCountry,
-        region: OB.UTIL.localStorage.getItem('orglocation_regionid')
-      };
-
-      return newPayload;
-    }
-  );
 })();
