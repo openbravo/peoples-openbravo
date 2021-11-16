@@ -39,7 +39,6 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         MobileCoreConstants.BUSINESSLOGIC_NAME, //
         DiscountsEngineAppComponentProvider.DISCOUNTS_APP, //
         TaxesEngineAppComponentProvider.TAXES_APP));
-
     // Set dependency on Mobile Core app
     BaseComponentProvider.setAppDependencies(POSUtils.APP_NAME, Arrays.asList( //
         MobileCoreConstants.RETAIL_CORE, //
@@ -236,8 +235,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "utils/rfidWebsocket",
 
         // Action Preparation
-        "actionpreparation/AddProductApproval", "actionpreparation/CompleteLayawayApproval",
-        "actionpreparation/CompleteTicketApproval", "actionpreparation/DeleteLineApproval",
+        "actionpreparation/AddPaymentCheck", "actionpreparation/AddProductApproval",
+        "actionpreparation/CompleteLayawayApproval", "actionpreparation/CompleteTicketApproval",
+        "actionpreparation/CompleteTicketCheck", "actionpreparation/DeleteLineApproval",
         "actionpreparation/SetLinePriceApproval", "actionpreparation/ReturnLineApproval",
         "actionpreparation/ReturnBlindTicketApproval", "actionpreparation/ReversePaymentApproval",
 

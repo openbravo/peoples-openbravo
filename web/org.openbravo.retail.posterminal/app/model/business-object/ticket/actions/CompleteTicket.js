@@ -158,10 +158,6 @@
         globalState.Ticket,
         newPayload
       );
-      newPayload = await OB.App.State.Ticket.Utils.checkExtraPayments(
-        globalState.Ticket,
-        newPayload
-      );
       newPayload = await OB.App.State.Ticket.Utils.checkPrePayments(
         globalState.Ticket,
         newPayload

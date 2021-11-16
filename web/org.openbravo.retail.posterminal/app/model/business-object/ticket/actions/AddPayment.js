@@ -58,10 +58,6 @@
         ticket,
         newPayload
       );
-      newPayload = await OB.App.State.Ticket.Utils.checkExactPaid(
-        ticket,
-        newPayload
-      );
       newPayload = await OB.App.State.Ticket.Utils.checkVoidLayaway(
         ticket,
         newPayload
