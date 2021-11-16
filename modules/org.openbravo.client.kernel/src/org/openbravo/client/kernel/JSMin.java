@@ -187,7 +187,9 @@ class JSMin {
           for (;;) {
             out.write(theA);
             theA = get();
-            if (theA == theB) {
+            if (theA == theB || theA == EOF) {
+              // EOF will occur only in case we failed detecting a template literal, let's stop here
+              // to prevent infinite loop anyway.
               break;
             }
             if (!templateLiteral && theA <= '\n') {
@@ -208,9 +210,18 @@ class JSMin {
 
           out.write(theA);
           out.write(theB);
+          boolean matchingSingleChar = false;
           for (;;) {
+            matchingSingleChar = matchingSingleChar || theA == '[';
+            if (matchingSingleChar && theA == ']') {
+              matchingSingleChar = false;
+            }
+
             theA = get();
-            if (theA == '/') {
+            if (theA == '/' && !matchingSingleChar) {
+              // JS regexp accepts any character without escaping including /
+              // so /[/]/ would look for /. If matchingSingleChar continue getting chars even after
+              // the / character.
               break;
             } else if (theA == '\\') {
               out.write(theA);

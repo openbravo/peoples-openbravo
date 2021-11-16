@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,11 +22,13 @@ package org.openbravo.client.kernel.test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
@@ -67,6 +69,34 @@ public class CompressionTest {
         "test-compession-multiline-template-literal.js");
 
     assertThat("Number of lines after compression", compressedResource.getNumberOfLines(), is(8));
+  }
+
+  @Test
+  @Issue("48070")
+  public void regexCompression() {
+    List<String> regexps = List.of( //
+        "/[/`]/", //
+        "/[/\"]/", //
+        "/[/']/", //
+
+        "/[`/]/", //
+        "/[\"/]/", //
+        "/['/]/", //
+
+        "/ [`/]/", //
+        "/ [\"/]/", //
+        "/ ['/]/", //
+
+        "/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$/" //
+    );
+
+    for (String regexp : regexps) {
+      String original = "const regExp = " + regexp + ";";
+      String compressed = new JSCompressor().compress(original);
+      assertThat("Compressed regex " + regexp + " length", compressed.length(),
+          lessThan(original.length()));
+      assertThat("Compressed regexp contains regexp", compressed, containsString(regexp));
+    }
   }
 
   private static class CompressedResource {
