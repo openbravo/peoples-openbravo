@@ -50,6 +50,7 @@ import org.openbravo.client.kernel.reference.materialmgmt.RelevantCharacteristic
 import org.openbravo.client.kernel.test.CompressionTest;
 import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.erpCommon.info.utility.ImageSizeActionTest;
 import org.openbravo.erpCommon.utility.OBDateUtilsTest;
 import org.openbravo.event.CharacteristicEventHandlerTest;
 import org.openbravo.materialmgmt.RelevantCharacteristicFieldTerminologyChecker;
@@ -290,6 +291,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // preferences
     PreferenceTest.class, //
     ClassicSelectorTest.class,
+
+    // utility
+    ImageSizeActionTest.class, //
 
     // Accounting
     RecordID2Test.class, //

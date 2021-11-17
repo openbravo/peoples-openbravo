@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2367,6 +2367,72 @@ public class Utility {
 
     return defaultImagePath;
 
+  }
+
+  /**
+   * Applies a resizing image action to a given image
+   * 
+   * @param imageSizeAction
+   *          Action or restriction that will be performed in the original image. This is one of the
+   *          values available in the "Image Sizes Value Action" list reference
+   * @param imageData
+   *          The original image data
+   * @param maxWidth
+   *          the maximum width allowed for the image
+   * @param maxHeight
+   *          the maximum height allowed for the image
+   * 
+   * @return an {@link ImageResizeResult} containing all the result information of applying the
+   *         resize action to the passed image
+   */
+  public static ImageResizeResult applyImageSizeAction(String imageSizeAction, byte[] imageData,
+      int maxWidth, int maxHeight) throws IOException, UnsupportedFileFormatException {
+
+    String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(imageData);
+    if (!mimeType.contains("image")
+        || (!mimeType.contains("jpeg") && !mimeType.contains("png") && !mimeType.contains("gif")
+            && !mimeType.contains("bmp") && !mimeType.contains("svg+xml"))) {
+      throw new UnsupportedFileFormatException("Unsupported image type: " + mimeType);
+    }
+
+    ImageResizeResult result = new ImageResizeResult();
+    result.setImageData(imageData);
+    result.setMimeType(mimeType);
+
+    if (mimeType.contains("svg+xml")) {
+      // Vector images do not have width nor height
+      result.setSizeActionApplied(false);
+      result.setOldSize(new Long[] { 0L, 0L });
+      result.setNewSize(new Long[] { 0L, 0L });
+      return result;
+    }
+
+    // Bitmap images need to manage width and height
+    if (imageSizeAction.equals("ALLOWED") || imageSizeAction.equals("ALLOWED_MINIMUM")
+        || imageSizeAction.equals("ALLOWED_MAXIMUM") || imageSizeAction.equals("RECOMMENDED")
+        || imageSizeAction.equals("RECOMMENDED_MINIMUM")
+        || imageSizeAction.equals("RECOMMENDED_MAXIMUM")) {
+      result.setOldSize(new Long[] { (long) maxWidth, (long) maxHeight });
+      result.setNewSize(computeImageSize(imageData));
+    } else if (imageSizeAction.equals("RESIZE_NOASPECTRATIO")) {
+      result.setOldSize(computeImageSize(imageData));
+      result.setImageData(resizeImageByte(imageData, maxWidth, maxHeight, false, false));
+      result.setNewSize(computeImageSize(result.getImageData()));
+    } else if (imageSizeAction.equals("RESIZE_ASPECTRATIO")) {
+      result.setOldSize(computeImageSize(imageData));
+      result.setImageData(resizeImageByte(imageData, maxWidth, maxHeight, true, true));
+      result.setNewSize(computeImageSize(result.getImageData()));
+    } else if (imageSizeAction.equals("RESIZE_ASPECTRATIONL")) {
+      result.setOldSize(computeImageSize(imageData));
+      result.setImageData(resizeImageByte(imageData, maxWidth, maxHeight, true, false));
+      result.setNewSize(computeImageSize(result.getImageData()));
+    } else {
+      result.setOldSize(computeImageSize(imageData));
+      result.setNewSize(result.getOldSize());
+    }
+
+    result.setSizeActionApplied(true);
+    return result;
   }
 
   /**

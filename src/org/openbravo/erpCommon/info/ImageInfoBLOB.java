@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -37,7 +37,8 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.MimeTypeUtil;
+import org.openbravo.erpCommon.utility.ImageResizeResult;
+import org.openbravo.erpCommon.utility.UnsupportedFileFormatException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
@@ -74,93 +75,29 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
       String selectorId = vars.getStringParameter("inpSelectorId");
       OBContext.setAdminMode(true);
       try {
-        // Check access to record...
-        String tabId = vars.getStringParameter("inpTabId");
-        String tableId = adcs.getTab(tabId).getTable().getId();
-        Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
-        OBContext.getOBContext().getEntityAccessChecker().checkWritableAccess(entity);
+        checkRecordAccess(vars.getStringParameter("inpTabId"));
 
         byte[] bytea = vars.getMultiFile("inpFile").get();
-        String mimeType = MimeTypeUtil.getInstance().getMimeTypeName(bytea);
-
         String imageSizeAction = vars.getStringParameter("imageSizeAction");
-        String imageId;
-        Long[] sizeOld;
-        Long[] sizeNew;
-        if (!mimeType.contains("image")
-            || (!mimeType.contains("jpeg") && !mimeType.contains("png") && !mimeType.contains("gif")
-                && !mimeType.contains("bmp") && !mimeType.contains("svg+xml"))) {
-          imageId = "";
-          imageSizeAction = "WRONGFORMAT";
-          sizeOld = new Long[] { 0L, 0L };
-          sizeNew = new Long[] { 0L, 0L };
-        } else {
+        String paramWidth = vars.getStringParameter("imageWidthValue");
+        String paramHeight = vars.getStringParameter("imageHeightValue");
 
-          if (mimeType.contains("svg+xml")) {
-            // Vector images do not have width nor height
-            imageSizeAction = "N";
-            sizeOld = new Long[] { 0L, 0L };
-            sizeNew = new Long[] { 0L, 0L };
-          } else {
-            // Bitmap images need to manage width and height
-            String paramWidth = vars.getStringParameter("imageWidthValue");
-            int newWidth = paramWidth == null || paramWidth.isEmpty() ? 0
-                : Integer.parseInt(paramWidth);
+        ImageResizeResult result = Utility.applyImageSizeAction(imageSizeAction, bytea,
+            toInt(paramWidth), toInt(paramHeight));
 
-            String paramHeight = vars.getStringParameter("imageHeightValue");
-            int newHeight = paramHeight == null || paramHeight.isEmpty() ? 0
-                : Integer.parseInt(paramHeight);
+        Image image = saveImage(result.getImageData(), vars.getStringParameter("inpadOrgId"),
+            result.getMimeType(), result.getNewSize());
 
-            if (imageSizeAction.equals("ALLOWED") || imageSizeAction.equals("ALLOWED_MINIMUM")
-                || imageSizeAction.equals("ALLOWED_MAXIMUM")
-                || imageSizeAction.equals("RECOMMENDED")
-                || imageSizeAction.equals("RECOMMENDED_MINIMUM")
-                || imageSizeAction.equals("RECOMMENDED_MAXIMUM")) {
-              sizeOld = new Long[] { (long) newWidth, (long) newHeight };
-              sizeNew = Utility.computeImageSize(bytea);
-            } else if (imageSizeAction.equals("RESIZE_NOASPECTRATIO")) {
-              sizeOld = Utility.computeImageSize(bytea);
-              bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, false, false);
-              sizeNew = Utility.computeImageSize(bytea);
-            } else if (imageSizeAction.equals("RESIZE_ASPECTRATIO")) {
-              sizeOld = Utility.computeImageSize(bytea);
-              bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, true, true);
-              sizeNew = Utility.computeImageSize(bytea);
-            } else if (imageSizeAction.equals("RESIZE_ASPECTRATIONL")) {
-              sizeOld = Utility.computeImageSize(bytea);
-              bytea = Utility.resizeImageByte(bytea, newWidth, newHeight, true, false);
-              sizeNew = Utility.computeImageSize(bytea);
-            } else {
-              sizeOld = Utility.computeImageSize(bytea);
-              sizeNew = sizeOld;
-            }
-          }
-
-          // Using DAL to write the image data to the database
-          Image image = OBProvider.getInstance().get(Image.class);
-          String orgId = vars.getStringParameter("inpadOrgId");
-          Organization org = OBDal.getInstance().get(Organization.class, orgId);
-          image.setOrganization(org);
-          image.setBindaryData(bytea);
-          image.setActive(true);
-          image.setName("Image");
-          image.setWidth(sizeNew[0]);
-          image.setHeight(sizeNew[1]);
-          image.setMimetype(mimeType);
-          OBDal.getInstance().save(image);
-          OBDal.getInstance().flush();
-
-          imageId = image.getId();
-        }
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter writer = response.getWriter();
-        writeRedirectOB3(writer, selectorId, imageId, imageSizeAction, sizeOld, sizeNew, null);
+        writeRedirectOB3(response, selectorId, image.getId(),
+            result.isSizeActionApplied() ? "N" : imageSizeAction, result.getOldSize(),
+            result.getNewSize(), null);
+      } catch (UnsupportedFileFormatException ex) {
+        log4j.error("Error resizing image", ex);
+        writeRedirectOB3(response, selectorId, "", "WRONGFORMAT", new Long[] { 0L, 0L },
+            new Long[] { 0L, 0L }, null);
       } catch (Exception ex) {
         log4j.error("Error uploading image", ex);
-        response.setContentType("text/html; charset=UTF-8");
-        PrintWriter writer = response.getWriter();
-
-        writeRedirectOB3(writer, selectorId, "", "ERROR_UPLOADING", new Long[] { 0L, 0L },
+        writeRedirectOB3(response, selectorId, "", "ERROR_UPLOADING", new Long[] { 0L, 0L },
             new Long[] { 0L, 0L }, ex.getMessage());
       } finally {
         OBContext.restorePreviousMode();
@@ -170,8 +107,37 @@ public class ImageInfoBLOB extends HttpSecureAppServlet {
     }
   }
 
-  private void writeRedirectOB3(PrintWriter writer, String selectorId, String imageId,
-      String imageSizeAction, Long[] sizeOld, Long[] sizeNew, String msg) {
+  private void checkRecordAccess(String tabId) {
+    String tableId = adcs.getTab(tabId).getTable().getId();
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+    OBContext.getOBContext().getEntityAccessChecker().checkWritableAccess(entity);
+  }
+
+  private int toInt(String strParam) {
+    return strParam == null || strParam.isEmpty() ? 0 : Integer.parseInt(strParam);
+  }
+
+  private Image saveImage(byte[] bytea, String orgId, String mimeType, Long[] sizeNew) {
+    // Using DAL to write the image data to the database
+    Image image = OBProvider.getInstance().get(Image.class);
+    Organization org = OBDal.getInstance().getProxy(Organization.class, orgId);
+    image.setOrganization(org);
+    image.setBindaryData(bytea);
+    image.setActive(true);
+    image.setName("Image");
+    image.setWidth(sizeNew[0]);
+    image.setHeight(sizeNew[1]);
+    image.setMimetype(mimeType);
+    OBDal.getInstance().save(image);
+    OBDal.getInstance().flush();
+    return image;
+  }
+
+  private void writeRedirectOB3(HttpServletResponse response, String selectorId, String imageId,
+      String imageSizeAction, Long[] sizeOld, Long[] sizeNew, String msg) throws IOException {
+    response.setContentType("text/html; charset=UTF-8");
+    PrintWriter writer = response.getWriter();
+
     writer.write("<HTML><BODY><script type=\"text/javascript\">");
     writer.write("var selector = top." + selectorId + " || parent." + selectorId + ";\n");
     writer.write("selector.callback('" + imageId + "', '" + imageSizeAction + "', '" + sizeOld[0]
