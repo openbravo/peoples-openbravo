@@ -18,8 +18,19 @@
  */
 package org.openbravo.client.application.process;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +44,7 @@ import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.client.kernel.BaseActionHandler;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBCriteria;
@@ -55,6 +67,92 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
 
   private static final String GRID_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
+  private static final String PARAM_VALUES = "paramValues";
+  private static final String PARAM_FILE = "file";
+  private static final String PARAM_FILENAME = "fileName";
+
+  /**
+   *
+   */
+  @Override
+  public void execute() {
+    HttpServletRequest request = RequestContext.get().getRequest();
+    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    if (isMultipart) {
+      Map<String, Object> parameters = new HashMap<>();
+      parseMultipartParameters(request, parameters);
+      String content = (String) parameters.get(PARAM_VALUES);
+      try {
+        final JSONObject result = execute(parameters, content);
+        printResponse((String) parameters.get("viewId"), result);
+      } catch (IOException e) {
+        throw new IllegalStateException(e);
+      }
+    } else {
+      super.execute();
+    }
+  }
+
+  /**
+   * Builds the response
+   *
+   * @param viewId
+   *          The view where it is going to return the response
+   * @param result
+   *          The response
+   * @throws IOException
+   */
+  private void printResponse(String viewId, JSONObject result) throws IOException {
+    final HttpServletResponse response = RequestContext.get().getResponse();
+
+    response.setContentType("text/html; charset=UTF-8");
+    Writer writer = response.getWriter();
+    writer.write("<HTML><BODY><script type=\"text/javascript\">");
+
+    writer.write("var origView = top.window." + viewId + ";\n");
+    writer.write(
+        "var data = top.isc.JSON.decode('" + result.toString().replace("'", "\\\'") + "');\n");
+    writer.write(
+        "origView.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);\n");
+    writer.write("</SCRIPT></BODY></HTML>");
+    writer.close();
+  }
+
+  /**
+   * Gets the file and puts it with the parameters
+   *
+   * @param request
+   *          Current request
+   * @param parameters
+   *          The parameters defined in the process
+   */
+  private void parseMultipartParameters(HttpServletRequest request,
+      Map<String, Object> parameters) {
+    String fileName;
+    try {
+      FileItemFactory factory = new DiskFileItemFactory();
+      ServletFileUpload upload = new ServletFileUpload(factory);
+      List<FileItem> items = upload.parseRequest(request);
+
+      for (FileItem item : items) {
+        if (item.isFormField()) {
+          String value = item.getString("UTF-8");
+          parameters.put(item.getFieldName(), value);
+          log.debug("Added parameter {} with value: {}", item.getFieldName(), value);
+        } else {
+          fileName = item.getName();
+          if (StringUtils.isNotBlank(fileName)) {
+            parameters.put(PARAM_FILENAME, fileName);
+            parameters.put(PARAM_FILE, item.getInputStream());
+            log.debug("Added file {}", fileName);
+          }
+        }
+      }
+
+    } catch (Exception e) {
+      log.error("There was an error while processing the request", e);
+    }
+  }
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
