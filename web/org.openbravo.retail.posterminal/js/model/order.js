@@ -4112,9 +4112,13 @@
               );
             }
           }
+          const country = line.get('organization').country;
+          const region = line.get('organization').region;
+          line.set('country', country);
+          line.set('region', region);
           if (line.get('obrdmDeliveryMode') === 'HomeDelivery') {
             line.set(
-              'country',
+              'destinationCountry',
               OB.MobileApp.model.receipt.get('bp').get('shipLocId')
                 ? OB.MobileApp.model.receipt
                     .get('bp')
@@ -4123,7 +4127,7 @@
                 : null
             );
             line.set(
-              'region',
+              'destinationRegion',
               OB.MobileApp.model.receipt.get('bp').get('shipLocId')
                 ? OB.MobileApp.model.receipt
                     .get('bp')
@@ -4132,8 +4136,8 @@
                 : null
             );
           } else {
-            line.set('country', line.get('organization').country);
-            line.set('region', line.get('organization').region);
+            line.set('destinationCountry', country);
+            line.set('destinationRegion', region);
           }
         };
         if (

@@ -123,18 +123,6 @@ public class TaxZone extends MasterDataProcessHQLQuery {
         + " and financialMgmtTaxZone.$incrementalUpdateCriteria"
         + " and financialMgmtTaxZone.tax in (" + hqlTax + ")";
 
-    if (fromCountry != null) {
-      hql = hql
-          + " and (financialMgmtTaxZone.fromCountry.id = :fromCountryId or financialMgmtTaxZone.fromCountry is null)";
-    } else {
-      hql = hql + " and financialMgmtTaxZone.fromCountry is null";
-    }
-    if (fromRegion != null) {
-      hql = hql
-          + " and (financialMgmtTaxZone.fromRegion.id = :fromRegionId or financialMgmtTaxZone.fromRegion is null)";
-    } else {
-      hql = hql + " and financialMgmtTaxZone.fromRegion is null";
-    }
     hql = hql + " order by financialMgmtTaxZone.id asc";
 
     return Arrays.asList(hql);

@@ -132,6 +132,13 @@
     const newLine = createdData.line;
 
     if (attrs.organization) {
+      // crosstore,
+      // first it is created the line with the info of the store in which is shell,
+      // and here it is fixed with the info of the store from which the product is located.
+      // Since taxes in crosstore are:
+      // - "from country": the store in which is located the product,
+      // - "to country": the store in which is located the product, or the bp address
+      // in case of home delivery
       newLine.organization = {
         id: attrs.organization.id,
         orgName: attrs.organization.name,
@@ -140,6 +147,11 @@
       };
       newLine.country = newLine.organization.country;
       newLine.region = newLine.organization.region;
+      // in case of home delivery the destination is already set in the line corretly to bp address
+      if (newLine.obrdmDeliveryMode !== 'HomeDelivery') {
+        newLine.destinationCountry = newLine.country;
+        newLine.destinationRegion = newLine.region;
+      }
     }
 
     if (attrs.splitline != null && attrs.originalLine) {

@@ -81,14 +81,6 @@ public class TaxRate extends MasterDataProcessHQLQuery {
       throw new OBException("terminal id is not present in session ");
     }
 
-    // FROM
-    final OrganizationInformation storeInfo = posDetail.getOrganization()
-        .getOrganizationInformationList()
-        .get(0);
-
-    final Country fromCountry = storeInfo.getLocationAddress().getCountry();
-    final Region fromRegion = storeInfo.getLocationAddress().getRegion();
-
     //@formatter:off
     String hql = " select " + ModelExtensionUtils.getPropertyExtensions(extensions).getHqlSelect()
         + " from FinancialMgmtTaxRate as tr"
@@ -102,23 +94,6 @@ public class TaxRate extends MasterDataProcessHQLQuery {
         + " or tc.asbom = true)";
     //@formatter:on
 
-    if (fromCountry != null) {
-      hql = hql + " and (tr.country.id = :fromCountryId"
-          + " or (tr.country is null and (not exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id))"
-          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromCountry.id = :fromCountryId)"
-          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromCountry is null)))";
-    } else {
-      hql = hql + " and tr.country is null";
-    }
-    if (fromRegion != null) {
-      hql = hql + " and (tr.region.id = :fromRegionId"
-          + " or (tr.region is null and (not exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id))"
-          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromRegion.id = :fromRegionId)"
-          + " or exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id and tz.fromRegion is null)))";
-
-    } else {
-      hql = hql + " and tr.region is null";
-    }
     hql = hql + " order by tr.validFromDate desc, tr.id";
 
     return Arrays.asList(hql);

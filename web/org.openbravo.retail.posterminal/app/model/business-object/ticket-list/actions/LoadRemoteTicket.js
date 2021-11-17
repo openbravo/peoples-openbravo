@@ -258,7 +258,13 @@
       groupService: line.product.groupProduct,
       isEditable: true,
       isDeletable: true,
-      country:
+      country: line.organization
+        ? line.organization.country
+        : payload.terminal.organizationCountryId,
+      region: line.organization
+        ? line.organization.region
+        : payload.terminal.organizationRegionId,
+      destinationCountry:
         // eslint-disable-next-line no-nested-ternary
         line.obrdmDeliveryMode === 'HomeDelivery'
           ? ticket.businessPartner.shipLocId
@@ -267,7 +273,7 @@
           : line.organization
           ? line.organization.country
           : payload.terminal.organizationCountryId,
-      region:
+      destinationRegion:
         // eslint-disable-next-line no-nested-ternary
         line.obrdmDeliveryMode === 'HomeDelivery'
           ? ticket.businessPartner.shipLocId

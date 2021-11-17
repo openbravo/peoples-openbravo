@@ -63,11 +63,11 @@ describe('Ticket.setDeliveryMode action', () => {
 
   test.each`
     payload                                               | result
-    ${{}}                                                 | ${{ country: 'SC', region: 'SR' }}
-    ${{ obrdmDeliveryModeProperty: 'PickAndCarry' }}      | ${{ country: 'SC', region: 'SR' }}
-    ${{ obrdmDeliveryModeProperty: 'PickupInStore' }}     | ${{ country: 'SC', region: 'SR' }}
-    ${{ obrdmDeliveryModeProperty: 'PickupInStoreDate' }} | ${{ country: 'SC', region: 'SR' }}
-    ${{ obrdmDeliveryModeProperty: 'HomeDelivery' }}      | ${{ country: 'CC', region: 'CR' }}
+    ${{}}                                                 | ${{ country: 'SC', region: 'SR', destinationCountry: 'SC', destinationRegion: 'SR' }}
+    ${{ obrdmDeliveryModeProperty: 'PickAndCarry' }}      | ${{ country: 'SC', region: 'SR', destinationCountry: 'SC', destinationRegion: 'SR' }}
+    ${{ obrdmDeliveryModeProperty: 'PickupInStore' }}     | ${{ country: 'SC', region: 'SR', destinationCountry: 'SC', destinationRegion: 'SR' }}
+    ${{ obrdmDeliveryModeProperty: 'PickupInStoreDate' }} | ${{ country: 'SC', region: 'SR', destinationCountry: 'SC', destinationRegion: 'SR' }}
+    ${{ obrdmDeliveryModeProperty: 'HomeDelivery' }}      | ${{ country: 'SC', region: 'SR', destinationCountry: 'CC', destinationRegion: 'CR' }}
   `('should add delivery location', ({ payload, result }) => {
     const newTicket = OB.App.StateAPI.Ticket.setDeliveryMode(
       deepfreeze({

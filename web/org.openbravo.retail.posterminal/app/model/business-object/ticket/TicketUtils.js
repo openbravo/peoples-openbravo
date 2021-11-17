@@ -161,22 +161,26 @@
         }
       }
 
-      let country;
-      let region;
+      const { country, region } = newLine.organization;
+
+      let destinationCountry;
+      let destinationRegion;
       if (newLine.obrdmDeliveryMode === 'HomeDelivery') {
         const { shipLocId } = this.ticket.businessPartner;
-        country = shipLocId
+        destinationCountry = shipLocId
           ? this.ticket.businessPartner.locationModel.countryId
           : null;
-        region = shipLocId
+        destinationRegion = shipLocId
           ? this.ticket.businessPartner.locationModel.regionId
           : null;
       } else {
-        country = newLine.organization.country;
-        region = newLine.organization.region;
+        destinationCountry = country;
+        destinationRegion = region;
       }
       newLine.country = country;
       newLine.region = region;
+      newLine.destinationCountry = destinationCountry;
+      newLine.destinationRegion = destinationRegion;
 
       return newLine;
     }
