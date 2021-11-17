@@ -16,6 +16,8 @@
         globalState.Ticket,
         newPayload
       );
-    }
+    },
+    async (state, payload) => payload,
+    99
   );
 })();

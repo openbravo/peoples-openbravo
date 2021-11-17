@@ -13,6 +13,8 @@
       let newPayload = { ...payload };
 
       return OB.App.State.Ticket.Utils.checkExactPaid(ticket, newPayload);
-    }
+    },
+    async (state, payload) => payload,
+    99
   );
 })();
