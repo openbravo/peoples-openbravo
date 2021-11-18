@@ -637,8 +637,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       if (data && data.version) {
                         // Max database string size: 10
                         var hwmVersion =
-                          data.version.length > 10
-                            ? data.version.substring(0, 9)
+                          data.version.length > 20
+                            ? data.version.substring(0, 19)
                             : data.version;
                         OB.UTIL.localStorage.setItem(
                           'hardwareManagerVersion',
@@ -648,8 +648,8 @@ OB.OBPOSPointOfSale.Model.PointOfSale = OB.Model.TerminalWindowModel.extend({
                       if (data && data.revision) {
                         // Max database string size: 15
                         var hwmRevision =
-                          data.revision.length > 15
-                            ? data.version.substring(0, 14)
+                          data.revision.length > 20
+                            ? data.version.substring(0, 19)
                             : data.revision;
                         OB.UTIL.localStorage.setItem(
                           'hardwareManagerRevision',

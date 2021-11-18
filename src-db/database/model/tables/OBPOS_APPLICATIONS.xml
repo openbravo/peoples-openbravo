@@ -173,11 +173,11 @@
         <default><![CDATA[7]]></default>
         <onCreateDefault><![CDATA[7]]></onCreateDefault>
       </column>
-      <column name="TERMINAL_LASTHWMVERSION" primaryKey="false" required="false" type="VARCHAR" size="10" autoIncrement="false">
+      <column name="TERMINAL_LASTHWMVERSION" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="TERMINAL_LASTHWMREVISION" primaryKey="false" required="false" type="VARCHAR" size="15" autoIncrement="false">
+      <column name="TERMINAL_LASTHWMREVISION" primaryKey="false" required="false" type="VARCHAR" size="20" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
