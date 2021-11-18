@@ -28,6 +28,7 @@
     newTicket = OB.App.State.Ticket.Utils.addPayment(newTicket, newPayload);
     return newTicket;
   });
+
   OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
     async (ticket, payload) => {
       let newPayload = { ...payload };
@@ -44,31 +45,58 @@
 
   OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
     async (ticket, payload) => {
-      let newPayload = { ...payload };
+      const newPayload = { ...payload };
 
-      newPayload = await OB.App.State.Ticket.Utils.checkAlreadyPaid(
-        ticket,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.checkNotNumberAmount(
-        ticket,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.checkStopAddingPayments(
-        ticket,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.checkVoidLayaway(
-        ticket,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.managePrePaymentChange(
-        ticket,
-        newPayload
-      );
+      return OB.App.State.Ticket.Utils.checkAlreadyPaid(ticket, newPayload);
+    },
+    async (state, payload) => payload,
+    100
+  );
 
-      return newPayload;
-    }
+  OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
+    async (ticket, payload) => {
+      const newPayload = { ...payload };
+
+      return OB.App.State.Ticket.Utils.checkNotNumberAmount(ticket, newPayload);
+    },
+    async (state, payload) => payload,
+    110
+  );
+
+  OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
+    async (ticket, payload) => {
+      const newPayload = { ...payload };
+
+      return OB.App.State.Ticket.Utils.checkStopAddingPayments(
+        ticket,
+        newPayload
+      );
+    },
+    async (state, payload) => payload,
+    120
+  );
+
+  OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
+    async (ticket, payload) => {
+      const newPayload = { ...payload };
+
+      return OB.App.State.Ticket.Utils.checkVoidLayaway(ticket, newPayload);
+    },
+    async (state, payload) => payload,
+    140
+  );
+
+  OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
+    async (ticket, payload) => {
+      const newPayload = { ...payload };
+
+      return OB.App.State.Ticket.Utils.managePrePaymentChange(
+        ticket,
+        newPayload
+      );
+    },
+    async (state, payload) => payload,
+    150
   );
 
   OB.App.StateAPI.Ticket.addPayment.addPostHook(

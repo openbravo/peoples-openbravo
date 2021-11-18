@@ -10,7 +10,7 @@
 (function() {
   OB.App.StateAPI.Global.completeTicket.addActionPreparation(
     async (globalState, payload) => {
-      let newPayload = { ...payload };
+      const newPayload = { ...payload };
 
       return OB.App.State.Ticket.Utils.checkExtraPayments(
         globalState.Ticket,
@@ -18,6 +18,6 @@
       );
     },
     async (state, payload) => payload,
-    99
+    120
   );
 })();

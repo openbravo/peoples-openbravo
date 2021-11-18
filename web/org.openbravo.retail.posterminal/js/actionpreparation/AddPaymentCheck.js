@@ -10,11 +10,11 @@
 (function() {
   OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
     async (ticket, payload) => {
-      let newPayload = { ...payload };
+      const newPayload = { ...payload };
 
       return OB.App.State.Ticket.Utils.checkExactPaid(ticket, newPayload);
     },
     async (state, payload) => payload,
-    99
+    130
   );
 })();

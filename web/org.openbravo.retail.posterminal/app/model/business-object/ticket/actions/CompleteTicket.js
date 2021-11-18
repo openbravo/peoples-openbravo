@@ -148,30 +148,66 @@
 
   OB.App.StateAPI.Global.completeTicket.addActionPreparation(
     async (globalState, payload) => {
-      let newPayload = { ...payload };
+      const newPayload = { ...payload };
 
-      newPayload = await OB.App.State.Ticket.Utils.checkAnonymousReturn(
+      return OB.App.State.Ticket.Utils.checkAnonymousReturn(
         globalState.Ticket,
         newPayload
       );
-      newPayload = await OB.App.State.Ticket.Utils.checkNegativePayments(
-        globalState.Ticket,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.checkPrePayments(
-        globalState.Ticket,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.checkOverPayments(
-        globalState.Ticket,
-        newPayload
-      );
-      newPayload = await OB.App.State.Ticket.Utils.checkTicketUpdated(
-        globalState.Ticket,
-        newPayload
-      );
+    },
+    async (state, payload) => payload,
+    100
+  );
 
-      return newPayload;
-    }
+  OB.App.StateAPI.Global.completeTicket.addActionPreparation(
+    async (globalState, payload) => {
+      const newPayload = { ...payload };
+
+      return OB.App.State.Ticket.Utils.checkNegativePayments(
+        globalState.Ticket,
+        newPayload
+      );
+    },
+    async (state, payload) => payload,
+    110
+  );
+
+  OB.App.StateAPI.Global.completeTicket.addActionPreparation(
+    async (globalState, payload) => {
+      const newPayload = { ...payload };
+
+      return OB.App.State.Ticket.Utils.checkPrePayments(
+        globalState.Ticket,
+        newPayload
+      );
+    },
+    async (state, payload) => payload,
+    130
+  );
+
+  OB.App.StateAPI.Global.completeTicket.addActionPreparation(
+    async (globalState, payload) => {
+      const newPayload = { ...payload };
+
+      return OB.App.State.Ticket.Utils.checkOverPayments(
+        globalState.Ticket,
+        newPayload
+      );
+    },
+    async (state, payload) => payload,
+    140
+  );
+
+  OB.App.StateAPI.Global.completeTicket.addActionPreparation(
+    async (globalState, payload) => {
+      const newPayload = { ...payload };
+
+      return OB.App.State.Ticket.Utils.checkTicketUpdated(
+        globalState.Ticket,
+        newPayload
+      );
+    },
+    async (state, payload) => payload,
+    150
   );
 })();
