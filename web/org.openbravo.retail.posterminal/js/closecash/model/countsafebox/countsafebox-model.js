@@ -576,11 +576,6 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
           };
 
           const callbackFunc = () => {
-            var synchronizedPreferenceValue;
-            // prevent synchronized mode for cashups
-            synchronizedPreferenceValue = OB.MobileApp.model.setSynchronizedPreference(
-              false
-            );
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_PrePrintCashupHook',
               {
@@ -589,15 +584,9 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
               function(args) {
                 OB.MobileApp.model.runSyncProcess(
                   function() {
-                    OB.MobileApp.model.setSynchronizedPreference(
-                      synchronizedPreferenceValue
-                    );
                     callbackFinishedSuccess();
                   },
                   function() {
-                    OB.MobileApp.model.setSynchronizedPreference(
-                      synchronizedPreferenceValue
-                    );
                     callbackFinishedWrongly();
                   }
                 );

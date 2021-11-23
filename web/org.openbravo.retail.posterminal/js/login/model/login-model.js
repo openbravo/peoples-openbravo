@@ -481,9 +481,6 @@
         if (this.get('terminal').currencyFormat) {
           OB.Format.formats.priceInform = this.get('terminal').currencyFormat;
         }
-        // register models which are cached during synchronized transactions
-        OB.MobileApp.model.addSyncCheckpointModel(OB.Model.Order);
-
         var terminal = this.get('terminal');
 
         const onInitCashupSucess = function() {

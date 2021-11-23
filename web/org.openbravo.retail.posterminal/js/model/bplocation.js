@@ -39,14 +39,8 @@
         return false;
       }
       this.set('_identifier', this.get('name'));
-
-      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-        OB.DATA.executeCustomerAddressSave(this, callback, callbackError);
-      } else {
-        this.trigger('customerAddrSaved');
-        setTimeout(callback, 100);
-      }
-
+      this.trigger('customerAddrSaved');
+      setTimeout(callback, 100);
       return true;
     },
     loadById: async function(CusAddrId, userCallback) {

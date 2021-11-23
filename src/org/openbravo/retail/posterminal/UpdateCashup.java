@@ -150,12 +150,9 @@ public class UpdateCashup {
         || (posTerminal.getMasterterminal() != null && cashUp.getObposParentCashup() == null)) {
       associateMasterSlave(cashUp, posTerminal);
     }
-    // If synchronize mode is active, there is no way to process two cashups with the same id at
-    // the same time.
+
     OBDal.getInstance().flush();
-    if (!POSUtils.isSynchronizedModeEnabled()) {
-      OBDal.getInstance().getConnection(false).commit();
-    }
+    OBDal.getInstance().getConnection(false).commit();
     return cashUp;
   }
 

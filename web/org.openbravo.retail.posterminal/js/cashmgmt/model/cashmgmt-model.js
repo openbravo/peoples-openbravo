@@ -235,33 +235,17 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       'makeDeposits',
       function(receipt) {
         var me = this;
-        if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-          OB.MobileApp.model.setSynchronizedCheckpoint(function() {
-            OB.UTIL.HookManager.executeHooks(
-              'OBPOS_PreSaveCashManagements',
-              {
-                dropsdeps: OB.App.State.Cashup.Utils.getCashManagementsInDraft(
-                  OB.App.State.getState().Cashup.cashPaymentMethodInfo
-                )
-              },
-              function(args) {
-                makeDepositsFunction(me);
-              }
-            );
-          });
-        } else {
-          OB.UTIL.HookManager.executeHooks(
-            'OBPOS_PreSaveCashManagements',
-            {
-              dropsdeps: OB.App.State.Cashup.Utils.getCashManagementsInDraft(
-                OB.App.State.getState().Cashup.cashPaymentMethodInfo
-              )
-            },
-            function(args) {
-              makeDepositsFunction(me);
-            }
-          );
-        }
+        OB.UTIL.HookManager.executeHooks(
+          'OBPOS_PreSaveCashManagements',
+          {
+            dropsdeps: OB.App.State.Cashup.Utils.getCashManagementsInDraft(
+              OB.App.State.getState().Cashup.cashPaymentMethodInfo
+            )
+          },
+          function(args) {
+            makeDepositsFunction(me);
+          }
+        );
       },
       this
     );

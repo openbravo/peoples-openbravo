@@ -522,12 +522,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     const callbackFinishedSuccess = () => {
       OB.UTIL.showLoading(true);
       this.set('finished', true);
-      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-        OB.UTIL.localStorage.setItem(
-          'lastProcessedCashup',
-          cashUp.at(0).get('id')
-        );
-      }
       if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
         let cashUpReport = new OB.Model.CashUp(),
           countCashSummary = this.getCountCashSummary();
@@ -629,11 +623,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     };
 
     const callbackFunc = () => {
-      var synchronizedPreferenceValue;
-      // prevent synchronized mode for cashups
-      synchronizedPreferenceValue = OB.MobileApp.model.setSynchronizedPreference(
-        false
-      );
       OB.UTIL.HookManager.executeHooks(
         'OBPOS_PrePrintCashupHook',
         {
@@ -659,9 +648,6 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
           })
             .then(() => {
               OB.App.State.Cashup.Utils.resetStatisticsIncludedInCashup();
-              OB.MobileApp.model.setSynchronizedPreference(
-                synchronizedPreferenceValue
-              );
               callbackFinishedSuccess();
             })
             .catch(e => {

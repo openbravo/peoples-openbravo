@@ -38,7 +38,6 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.MobileUiConfiguration;
 import org.openbravo.model.ad.module.Module;
@@ -660,22 +659,6 @@ public class POSUtils {
       OBContext.restorePreviousMode();
     }
     return value;
-  }
-
-  public static boolean isSynchronizedModeEnabled() {
-
-    boolean isSynchronizeModeActive;
-    try {
-      isSynchronizeModeActive = "Y".equals(Preferences.getPreferenceValue("OBMOBC_SynchronizedMode",
-          true, OBContext.getOBContext().getCurrentClient(),
-          OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-          OBContext.getOBContext().getRole(), null));
-    } catch (PropertyNotFoundException prop) {
-      isSynchronizeModeActive = false;
-    } catch (PropertyException e) {
-      throw new OBException("Error while reading synchronized preference", e);
-    }
-    return isSynchronizeModeActive;
   }
 
   /**

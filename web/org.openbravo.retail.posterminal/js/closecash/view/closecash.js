@@ -475,11 +475,6 @@ enyo.kind({
     });
     //finishedWrongly
     this.model.on('change:finishedWrongly', model => {
-      // in case of synchronized mode then don't do specific things
-      // message is already displayed
-      if (OB.MobileApp.model.hasPermission('OBMOBC_SynchronizedMode', true)) {
-        return;
-      }
       let message = '';
       if (model.get('errorMessage')) {
         message = OB.I18N.getLabel(model.get('errorMessage'), [

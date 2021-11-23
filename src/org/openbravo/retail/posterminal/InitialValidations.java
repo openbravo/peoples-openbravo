@@ -262,13 +262,6 @@ public class InitialValidations {
       }
     }
 
-    // Login should be disallowed if synchronized mode is enabled, and there are cashup errors in
-    // the current terminal
-    if (POSUtils.isSynchronizedModeEnabled()
-        && POSUtils.cashupErrorsExistInTerminal(posTerminal.getId())) {
-      throw new OBException("OBPOS_CashupErrorsMsg");
-    }
-
     if (posTerminal.getObposTerminaltype().isSafebox()) {
       String whereclause = " as e where e.obposApplications=:terminal and e.paymentMethod.issafebox = true "
           + "and e.active = true and e.paymentMethod.active = true ";

@@ -25,7 +25,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.mobile.core.servercontroller.SynchronizedServerProcessCaller;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.service.importprocess.ImportEntry;
@@ -55,8 +54,7 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
 
   private static List<String> POSTTYPEOFDATA = Arrays.asList("Order", "BusinessPartner",
       "BusinessPartnerLocation", "OBPOS_App_Cashup", "FIN_Finacc_Transaction",
-      "OBPOS_RejectQuotation", "OBPOS_CancelLayaway", "OBPOS_VoidLayaway", "OBPOS_Invoice",
-      SynchronizedServerProcessCaller.SYNCHRONIZED_DATA_TYPE);
+      "OBPOS_RejectQuotation", "OBPOS_CancelLayaway", "OBPOS_VoidLayaway", "OBPOS_Invoice");
 
   @Override
   protected Entity[] getObservedEntities() {
