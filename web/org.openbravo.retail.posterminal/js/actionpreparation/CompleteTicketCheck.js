@@ -8,6 +8,10 @@
  */
 
 (function() {
+  /**
+   * This action preparation verifies if there are more payments than needed to pay the ticket
+   * This check is only done in old POS
+   */
   OB.App.StateAPI.Global.completeTicket.addActionPreparation(
     async (globalState, payload) => {
       const newPayload = { ...payload };
@@ -17,7 +21,7 @@
         newPayload
       );
     },
-    async (state, payload) => payload,
+    async (globalState, payload) => payload,
     120
   );
 })();

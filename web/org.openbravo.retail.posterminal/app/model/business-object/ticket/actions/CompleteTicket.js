@@ -155,7 +155,7 @@
         newPayload
       );
     },
-    async (state, payload) => payload,
+    async (globalState, payload) => payload,
     100
   );
 
@@ -168,9 +168,12 @@
         newPayload
       );
     },
-    async (state, payload) => payload,
+    async (globalState, payload) => payload,
     110
   );
+
+  // We skip priority 120 here because we implement an action
+  // preparation that is only executed in old POS at CompleteTicketCheck file
 
   OB.App.StateAPI.Global.completeTicket.addActionPreparation(
     async (globalState, payload) => {
@@ -181,7 +184,7 @@
         newPayload
       );
     },
-    async (state, payload) => payload,
+    async (globalState, payload) => payload,
     130
   );
 
@@ -194,7 +197,7 @@
         newPayload
       );
     },
-    async (state, payload) => payload,
+    async (globalState, payload) => payload,
     140
   );
 
@@ -207,7 +210,7 @@
         newPayload
       );
     },
-    async (state, payload) => payload,
+    async (globalState, payload) => payload,
     150
   );
 })();
