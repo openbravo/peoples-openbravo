@@ -554,33 +554,27 @@ public class PaidReceipts extends JSONProcessSimple {
             List<Object[]> paymentTypeList = new ArrayList<Object[]>();
             executePaidReceiptsPaymentTypeTerminalHooks(paymentTypeList,
                 objectIn.getString("paymentId"), posTerminal.getId());
-            int paymentTypeCount = paymentTypeList.size();
 
-            if (paymentTypeCount == 0) {
+            if (paymentTypeList.size() == 0) {
               String hqlPaymentType = "select p.paymentMethod.name as name, p.account.id as account, "
                   + "obpos_currency_rate(p.account.currency, p.organization.currency, null, null, p.client.id, p.organization.id) as rate, "
                   + "obpos_currency_rate(p.organization.currency, p.account.currency, null, null, p.client.id, p.organization.id) as mulrate, "
-                  + "p.account.currency.iSOCode as isocode, " //
-                  + "ap.searchKey as kind " + "from FIN_Payment as p "
-                  + "join OBPOS_App_Payment_Type pt with pt.paymentMethod = p.paymentMethod "
-                  + "join OBPOS_App_Payment ap with ap.paymentMethod.id = pt.id "
-                  + "where p.id=:paymentId and ap.obposApplications.id=:posId";
+                  + "p.account.currency.iSOCode as isocode, '' as kind "
+                  + "from FIN_Payment as p where p.id=:paymentId";
               Query<Object[]> paymentTypeQuery = OBDal.getInstance()
                   .getSession()
                   .createQuery(hqlPaymentType, Object[].class);
               paymentTypeQuery.setParameter("paymentId", objectIn.getString("paymentId"));
-              paymentTypeQuery.setParameter("posId", posTerminal.getId());
               paymentTypeList = paymentTypeQuery.list();
             }
 
-            if (paymentTypeCount > 0) {
-
+            if (paymentTypeList.size() > 0) {
               Object objPaymentType = paymentTypeList.get(0);
               Object[] objPaymentsType = (Object[]) objPaymentType;
               JSONObject paymentsType = new JSONObject();
               paymentsType.put("name", objPaymentsType[0]);
               paymentsType.put("account", objPaymentsType[1]);
-              paymentsType.put("kind", paymentTypeCount > 1 ? "" : objPaymentsType[5]);
+              paymentsType.put("kind", objPaymentsType[5]);
               paymentsType.put("rate", objPaymentsType[2]);
               BigDecimal rate = new BigDecimal(objPaymentsType[2].toString());
               BigDecimal mulrate;
