@@ -24,4 +24,21 @@
     async (globalState, payload) => payload,
     120
   );
+
+  /**
+   * This action preparation verifies if there is a non-cash overpayment to show a warning popup
+   * This check is only done in old POS
+   */
+  OB.App.StateAPI.Global.completeTicket.addActionPreparation(
+    async (globalState, payload) => {
+      const newPayload = { ...payload };
+
+      return OB.App.State.Ticket.Utils.checkOverPayments(
+        globalState.Ticket,
+        newPayload
+      );
+    },
+    async (globalState, payload) => payload,
+    140
+  );
 })();

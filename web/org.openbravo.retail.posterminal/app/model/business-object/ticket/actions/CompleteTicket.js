@@ -188,18 +188,8 @@
     130
   );
 
-  OB.App.StateAPI.Global.completeTicket.addActionPreparation(
-    async (globalState, payload) => {
-      const newPayload = { ...payload };
-
-      return OB.App.State.Ticket.Utils.checkOverPayments(
-        globalState.Ticket,
-        newPayload
-      );
-    },
-    async (globalState, payload) => payload,
-    140
-  );
+  // We skip priority 140 here because we implement an action
+  // preparation that is only executed in old POS at CompleteTicketCheck file
 
   OB.App.StateAPI.Global.completeTicket.addActionPreparation(
     async (globalState, payload) => {
