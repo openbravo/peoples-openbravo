@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -72,19 +72,21 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   private static final String PARAM_FILENAME = "fileName";
 
   /**
-   *
+   * This implementation checks whether this request is of type multipart/form-data or
+   * application/x-www-form-urlencoded (the default one). In the former case, parameters and file
+   * are extracted before calling execute(parameters, content). Otherwise, the request is processed
+   * as usual.
    */
   @Override
   public void execute() {
     HttpServletRequest request = RequestContext.get().getRequest();
     boolean isMultipart = ServletFileUpload.isMultipartContent(request);
     if (isMultipart) {
-      Map<String, Object> parameters = new HashMap<>();
-      parseMultipartParameters(request, parameters);
+      Map<String, Object> parameters = this.parseMultipartParameters(request);
       String content = (String) parameters.get(PARAM_VALUES);
       try {
-        final JSONObject result = execute(parameters, content);
-        printResponse((String) parameters.get("viewId"), result);
+        final JSONObject result = this.execute(parameters, content);
+        this.printResponse((String) parameters.get("viewId"), result);
       } catch (IOException e) {
         throw new IllegalStateException(e);
       }
@@ -94,13 +96,10 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   }
 
   /**
-   * Builds the response
-   *
-   * @param viewId
-   *          The view where it is going to return the response
-   * @param result
-   *          The response
-   * @throws IOException
+   * Builds the appropriate response to finish the request on the client side The multipart request
+   * was made by submitting the fileUpload form instead of executing OB.RemoteCallManager.call() in
+   * ob-parameter-window-view.js. This response makes the frontend execute the expected callback
+   * function of OB.RemoteCallManager.call() in order to finish the process properly.
    */
   private void printResponse(String viewId, JSONObject result) throws IOException {
     final HttpServletResponse response = RequestContext.get().getResponse();
@@ -119,15 +118,14 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   }
 
   /**
-   * Gets the file and puts it with the parameters
+   * Extract the multipart parameters from the request and adds it to the parameters Map. File is
+   * also included as an InputStream
    *
    * @param request
    *          Current request
-   * @param parameters
-   *          The parameters defined in the process
    */
-  private void parseMultipartParameters(HttpServletRequest request,
-      Map<String, Object> parameters) {
+  private Map<String, Object> parseMultipartParameters(HttpServletRequest request) {
+    Map<String, Object> parameters = new HashMap<>();
     String fileName;
     try {
       FileItemFactory factory = new DiskFileItemFactory();
@@ -148,10 +146,11 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
           }
         }
       }
-
     } catch (Exception e) {
       log.error("There was an error while processing the request", e);
     }
+
+    return parameters;
   }
 
   @Override
