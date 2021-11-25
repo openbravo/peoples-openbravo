@@ -67,16 +67,22 @@ isc.OBFileUpload.addProperties({
   },
   /**
    * FIXME: Basically this is a copy of ob-parameter-window-view doProcess where we use FileItem's dynamic form to send the
-   * form along with the file. This can be refactored to avoid duplicating so much code.
+   * form along with the file. If this code is refactored to make actionHandlerCall not dependant
+   * on allProperties this function can be passed to doProcess and avoid duplicate this function.
    */
   doProcess: function(btnValue) {
-    var view = this,
-      form = this.theForm,
-      allProperties = view.getUnderLyingRecordContext(false, true, false, true),
+    const view = this,
+      form = this.theForm;
+    let allProperties = view.getUnderLyingRecordContext(
+        false,
+        true,
+        false,
+        true
+      ),
       tab,
       actionHandlerCall,
       clientSideValidationFail;
-    // activeView = view.parentWindow && view.parentWindow.activeView,  ???.
+
     if (view.resultLayout && view.resultLayout.destroy) {
       view.resultLayout.destroy();
       delete view.resultLayout;
@@ -97,7 +103,6 @@ isc.OBFileUpload.addProperties({
 
     actionHandlerCall = function() {
       view.showProcessing(true);
-      // form.updateFileItemForm();
       form
         .getFileItemForm()
         .getItem('paramValues')
