@@ -22,9 +22,6 @@
 isc.ClassFactory.defineClass('OBProcessFileUpload', isc.FileItem);
 
 isc.OBProcessFileUpload.addProperties({
-  multiple: false,
-  canFocus: false,
-
   init() {
     this.Super('init', arguments);
 
@@ -35,7 +32,6 @@ isc.OBProcessFileUpload.addProperties({
     var fileForm = this.canvas;
     var fileFormFields = isc.shallowClone(fileForm.getItems());
     // paramValues has a String representation of a JSONObject with the values of all the metadata values.
-    // Command and hiddenFields are needed in the Request of TabAttachment servlet.
     fileFormFields.addAll([
       {
         name: 'paramValues',

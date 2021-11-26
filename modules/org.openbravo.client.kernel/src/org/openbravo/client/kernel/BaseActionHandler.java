@@ -19,6 +19,7 @@
 package org.openbravo.client.kernel;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -47,38 +48,55 @@ public abstract class BaseActionHandler implements ActionHandler {
    */
   @Override
   public void execute() {
-    final StringBuilder sb = new StringBuilder();
-    String line;
     try {
       final HttpServletRequest request = RequestContext.get().getRequest();
-      final BufferedReader reader = new BufferedReader(
-          new InputStreamReader(request.getInputStream(), "UTF-8"));
-      while ((line = reader.readLine()) != null) {
-        sb.append(line).append("\n");
-      }
-      final String content = (sb.length() > 0 ? sb.toString() : null);
-
-      final Map<String, Object> parameterMap = new HashMap<String, Object>();
-      for (Enumeration<?> keys = request.getParameterNames(); keys.hasMoreElements();) {
-        final String key = (String) keys.nextElement();
-        if (request.getParameterValues(key) != null && request.getParameterValues(key).length > 1) {
-          parameterMap.put(key, request.getParameterValues(key));
-        } else {
-          parameterMap.put(key, request.getParameter(key));
-        }
-      }
+      final Map<String, Object> parameterMap = this.extractParametersFromRequest(request);
+      final String content = this.extractRequestContent(request, parameterMap);
       // also add the Http Stuff
       parameterMap.put(KernelConstants.HTTP_SESSION, request.getSession(false));
       parameterMap.put(KernelConstants.HTTP_REQUEST, request);
 
       final JSONObject result = execute(parameterMap, content);
+
       final HttpServletResponse response = RequestContext.get().getResponse();
-      response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
-      response.setHeader("Content-Type", JsonConstants.JSON_CONTENT_TYPE);
-      response.getWriter().write(result.toString());
+      this.writeResponse(parameterMap, result, request, response);
     } catch (Exception e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  protected String extractRequestContent(HttpServletRequest request,
+      Map<String, Object> requestParameters) throws IOException {
+    final StringBuilder sb = new StringBuilder();
+    String line;
+    final BufferedReader reader = new BufferedReader(
+        new InputStreamReader(request.getInputStream(), "UTF-8"));
+    while ((line = reader.readLine()) != null) {
+      sb.append(line).append("\n");
+    }
+    return (sb.length() > 0 ? sb.toString() : null);
+  }
+
+  protected Map<String, Object> extractParametersFromRequest(HttpServletRequest request)
+      throws IOException {
+    Map<String, Object> parameterMap = new HashMap<>();
+    for (Enumeration<?> keys = request.getParameterNames(); keys.hasMoreElements();) {
+      final String key = (String) keys.nextElement();
+      if (request.getParameterValues(key) != null && request.getParameterValues(key).length > 1) {
+        parameterMap.put(key, request.getParameterValues(key));
+      } else {
+        parameterMap.put(key, request.getParameter(key));
+      }
+    }
+
+    return parameterMap;
+  }
+
+  protected void writeResponse(Map<String, Object> parameters, JSONObject result,
+      HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType(JsonConstants.JSON_CONTENT_TYPE);
+    response.setHeader("Content-Type", JsonConstants.JSON_CONTENT_TYPE);
+    response.getWriter().write(result.toString());
   }
 
   /**

@@ -44,7 +44,6 @@ import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ProcessAccess;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.client.kernel.BaseActionHandler;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.EntityAccessChecker;
 import org.openbravo.dal.service.OBCriteria;
@@ -67,31 +66,41 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
 
   private static final String GRID_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
-  private static final String PARAM_VALUES = "paramValues";
-  private static final String PARAM_FILE = "file";
-  private static final String PARAM_FILENAME = "fileName";
+  protected static final String PARAM_VALUES = "paramValues";
+  protected static final String PARAM_FILE = "file";
+  protected static final String PARAM_FILENAME = "fileName";
 
-  /**
-   * This implementation checks whether this request is of type multipart/form-data or
-   * application/x-www-form-urlencoded (the default one). In the former case, parameters and file
-   * are extracted before calling execute(parameters, content). Otherwise, the request is processed
-   * as usual.
-   */
   @Override
-  public void execute() {
-    HttpServletRequest request = RequestContext.get().getRequest();
+  protected Map<String, Object> extractParametersFromRequest(HttpServletRequest request)
+      throws IOException {
     boolean isMultipart = ServletFileUpload.isMultipartContent(request);
     if (isMultipart) {
-      Map<String, Object> parameters = this.parseMultipartParameters(request);
-      String content = (String) parameters.get(PARAM_VALUES);
-      try {
-        final JSONObject result = this.execute(parameters, content);
-        this.printResponse((String) parameters.get("viewId"), result);
-      } catch (IOException e) {
-        throw new IllegalStateException(e);
-      }
+      return this.parseMultipartParameters(request);
     } else {
-      super.execute();
+      return super.extractParametersFromRequest(request);
+    }
+  }
+
+  @Override
+  protected String extractRequestContent(HttpServletRequest request,
+      Map<String, Object> requestParameters) throws IOException {
+    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    if (isMultipart) {
+      return (String) requestParameters.get(PARAM_VALUES);
+    } else {
+      return super.extractRequestContent(request, requestParameters);
+    }
+
+  }
+
+  @Override
+  protected void writeResponse(Map<String, Object> parameters, JSONObject result,
+      HttpServletRequest request, HttpServletResponse response) throws IOException {
+    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    if (isMultipart) {
+      this.writeMultipartResponse((String) parameters.get("viewId"), result, response);
+    } else {
+      super.writeResponse(parameters, result, request, response);
     }
   }
 
@@ -101,8 +110,8 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
    * ob-parameter-window-view.js. This response makes the frontend execute the expected callback
    * function of OB.RemoteCallManager.call() in order to finish the process properly.
    */
-  private void printResponse(String viewId, JSONObject result) throws IOException {
-    final HttpServletResponse response = RequestContext.get().getResponse();
+  private void writeMultipartResponse(String viewId, JSONObject result,
+      HttpServletResponse response) throws IOException {
 
     response.setContentType("text/html; charset=UTF-8");
     Writer writer = response.getWriter();
