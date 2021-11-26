@@ -118,8 +118,8 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   }
 
   /**
-   * Extract the multipart parameters from the request and adds it to the parameters Map. File is
-   * also included as an InputStream
+   * Extract the multipart parameters from the request and returns it as a Map<String, Object>. File
+   * is also included as an InputStream
    *
    * @param request
    *          Current request

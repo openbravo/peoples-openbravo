@@ -18,8 +18,8 @@
  */
 package org.openbravo.reference.ui;
 
-public class UIFileUpload extends UIReference {
-    public UIFileUpload(String reference, String subreference) {
-        super(reference, subreference);
-    }
+public class UIProcessFileUpload extends UIReference {
+  public UIProcessFileUpload(String reference, String subreference) {
+    super(reference, subreference);
+  }
 }

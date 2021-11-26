@@ -17,11 +17,11 @@
  ************************************************************************
  */
 
-//== OBFileUpload ==
+//== OBProcessFileUpload ==
 //This class is used to upload files to a process definition
-isc.ClassFactory.defineClass('OBFileUpload', isc.FileItem);
+isc.ClassFactory.defineClass('OBProcessFileUpload', isc.FileItem);
 
-isc.OBFileUpload.addProperties({
+isc.OBProcessFileUpload.addProperties({
   multiple: false,
   canFocus: false,
 

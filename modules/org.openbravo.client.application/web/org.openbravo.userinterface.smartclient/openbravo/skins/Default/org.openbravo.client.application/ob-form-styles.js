@@ -640,7 +640,7 @@ isc.OBPickEditGridItem.addProperties({
  * OBFormItem - Process File Upload
  =======================================================================*/
 
-isc.OBFileUpload.addProperties({
+isc.OBProcessFileUpload.addProperties({
   cellStyle: 'OBFormField',
   titleStyle: 'OBFormFieldLabel'
 });
