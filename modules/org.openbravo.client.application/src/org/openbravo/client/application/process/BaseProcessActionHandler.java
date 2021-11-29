@@ -19,13 +19,11 @@
 package org.openbravo.client.application.process;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -67,8 +65,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   private static final String GRID_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
   protected static final String PARAM_VALUES = "paramValues";
-  protected static final String PARAM_FILE = "file";
-  protected static final String PARAM_FILENAME = "fileName";
+  protected static final String PARAM_FILENAME = "_fileName";
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
@@ -210,42 +207,6 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   }
 
-  /**
-   * Overrides the base implementation to customize the response sent back to the client on
-   * multipart requests. See writeMultipartResponse() for more details
-   */
-  @Override
-  protected void writeResponse(Map<String, Object> parameters, JSONObject result,
-      HttpServletRequest request, HttpServletResponse response) throws IOException {
-    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-    if (isMultipart) {
-      this.writeMultipartResponse((String) parameters.get("viewId"), result, response);
-    } else {
-      super.writeResponse(parameters, result, request, response);
-    }
-  }
-
-  /**
-   * Builds the appropriate response to finish the request on the client side The multipart request
-   * was made by submitting the fileUpload form instead of executing OB.RemoteCallManager.call() in
-   * ob-parameter-window-view.js. This response makes the frontend execute the expected callback
-   * function of OB.RemoteCallManager.call() in order to finish the process properly.
-   */
-  private void writeMultipartResponse(String viewId, JSONObject result,
-      HttpServletResponse response) throws IOException {
-
-    response.setContentType("text/html; charset=UTF-8");
-    Writer writer = response.getWriter();
-    writer.write("<HTML><BODY><script type=\"text/javascript\">");
-
-    writer.write("var origView = top.window." + viewId + ";\n");
-    writer.write(
-        "var data = top.isc.JSON.decode('" + result.toString().replace("'", "\\\'") + "');\n");
-    writer.write(
-        "origView.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);\n");
-    writer.write("</SCRIPT></BODY></HTML>");
-    writer.close();
-  }
 
   /**
    * Extract the multipart parameters from the request and returns it as a Map<String, Object>. File
@@ -270,9 +231,9 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
         } else {
           fileName = item.getName();
           if (StringUtils.isNotBlank(fileName)) {
-            parameters.put(PARAM_FILENAME, fileName);
-            parameters.put(PARAM_FILE, item.getInputStream());
-            log.debug("Added file {}", fileName);
+            parameters.put(item.getFieldName(), item.getInputStream());
+            parameters.put(item.getFieldName() + PARAM_FILENAME, fileName);
+            log.debug("Added parameter {} file {}", item.getFieldName(), fileName);
           }
         }
       }
