@@ -472,10 +472,15 @@ isc.OBParameterWindowView.addProperties({
       const form = view.theForm;
       const hasFileItems = view.theForm.getFileItemForm();
       if (hasFileItems) {
-        const fileField = form.getItems()[0]; // assuming a form with only 1 field, being file
-        const htmlFieldElement = fileField.editForm.getItem(0).getDataElement();
-        const formData = new FormData();
-        formData.append(fileField.name, htmlFieldElement.files[0]);
+        const formData = form
+          .getItems()
+          .filter(item => isc.isA.FileItem(item))
+          .reduce((data, item) => {
+            const htmlFieldElement = item.editForm.getItem(0).getDataElement();
+            data.append(item.name, htmlFieldElement.files[0]);
+            return data;
+          }, new FormData());
+
         formData.append('processId', view.processId);
         // FIXME: these values are undefined but should be null
         // formData.append('reportId', view.reportId);
