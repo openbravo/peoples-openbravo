@@ -22,6 +22,7 @@
 isc.ClassFactory.defineClass('OBProcessFileUpload', isc.FileItem);
 
 isc.OBProcessFileUpload.addProperties({
+  multiple: false, // Allows only one file per paramater
   setDisabled: function(disabled) {
     this.setCanEdit(!disabled);
   }
