@@ -511,8 +511,6 @@ isc.OBParameterWindowView.addProperties({
             reportId: view.reportId,
             windowId: view.windowId
           },
-          // This usage of view.handleResponse is duplicated in BaseProcessActionHandler.java to be called when making a
-          // multipart request. If you modify this callback, remember to apply the same change in the ActionHandler
           function(rpcResponse, data, rpcRequest) {
             view.handleResponse(
               !(data && data.refreshParent === false),
