@@ -470,13 +470,33 @@ isc.OBParameterWindowView.addProperties({
       isc.addProperties(allProperties._params, view.externalParams);
 
       const form = view.theForm;
-      const fileItemForm = view.theForm.getFileItemForm();
+      const hasFileItems = view.theForm.getFileItemForm();
+      if (hasFileItems) {
+        const fileField = form.getItems()[0]; // assuming a form with only 1 field, being file
+        const htmlFieldElement = fileField.editForm.getItem(0).getDataElement();
+        const formData = new FormData();
+        formData.append(fileField.name, htmlFieldElement.files[0]);
+        formData.append('processId', view.processId);
+        // FIXME: these values are undefined but should be null
+        // formData.append('reportId', view.reportId);
+        //  formData.append('windowId', view.windowId);
+        formData.append('paramValues', isc.JSON.encode(allProperties));
 
-      if (fileItemForm) {
-        fileItemForm
-          .getItem('paramValues')
-          .setValue(isc.JSON.encode(allProperties));
-        form.getFileItemForm().submitForm();
+        fetch('org.openbravo.client.kernel?_action=' + view.actionHandler, {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.json())
+          // TODO: handle exceptions
+          .then(data =>
+            view.handleResponse(
+              !(data && data.refreshParent === false),
+              data && data.message,
+              data && data.responseActions,
+              data && data.retryExecution,
+              data
+            )
+          );
       } else {
         OB.RemoteCallManager.call(
           view.actionHandler,

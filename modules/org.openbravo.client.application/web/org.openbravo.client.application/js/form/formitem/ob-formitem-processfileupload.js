@@ -22,42 +22,6 @@
 isc.ClassFactory.defineClass('OBProcessFileUpload', isc.FileItem);
 
 isc.OBProcessFileUpload.addProperties({
-  init() {
-    this.Super('init', arguments);
-
-    // To submit the file is needed a DynamicForm that contains a UploadFile item. In this case it
-    // is used the FileItemForm that it is automatically generated for the FileItem. To submit all
-    // the values it is needed to create in this form all the needed hidden inputs.
-    var view = this.view;
-    var fileForm = this.canvas;
-    var fileFormFields = isc.shallowClone(fileForm.getItems());
-    // paramValues has a String representation of a JSONObject with the values of all the metadata values.
-    fileFormFields.addAll([
-      {
-        name: 'paramValues',
-        type: 'hidden',
-        value: ''
-      },
-      {
-        name: 'processId',
-        type: 'hidden',
-        value: view.processId
-      },
-      {
-        name: 'viewId',
-        type: 'hidden',
-        value: view.ID
-      }
-    ]);
-    fileForm.setItems(fileFormFields);
-    // redraw to ensure that the new items are added to the html form. If this not happens then the
-    // values are not included in the submitForm.
-    fileForm.redraw();
-    fileForm.setAction(
-      'org.openbravo.client.kernel?_action=' + view.actionHandler
-    );
-    fileForm.setTarget('background_target');
-  },
   setDisabled: function(disabled) {
     this.setCanEdit(!disabled);
   }
