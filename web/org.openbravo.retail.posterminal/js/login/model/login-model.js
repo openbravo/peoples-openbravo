@@ -370,8 +370,7 @@
                       } else if (
                         OB.MobileApp.model.attributes.loadManifeststatus &&
                         OB.MobileApp.model.attributes.loadManifeststatus
-                          .type === 'error' &&
-                        !OB.RR.RequestRouter.ignoreManifestLoadError()
+                          .type === 'error'
                       ) {
                         var error =
                           OB.MobileApp.model.attributes.loadManifeststatus;
@@ -1070,10 +1069,6 @@
         lastIncRefresh = OB.UTIL.localStorage.getItem('POSLastIncRefresh'),
         now = new Date().getTime(),
         intervalInc;
-
-      if (OB.RR.RequestRouter.isMultiServer()) {
-        OB.UTIL.loginOnCentralServer();
-      }
 
       // lastTotalRefresh should be used to set lastIncRefresh when it is null or minor.
       if (lastIncRefresh === null) {
