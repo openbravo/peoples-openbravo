@@ -398,7 +398,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           result.put("terminalKeyIdentifier", terminal.getTerminalKey());
           result.put("appCaption",
               terminal.getIdentifier() + " - " + terminal.getOrganization().getIdentifier());
-          result.put("servers", getServers(terminal));
           result.put("safeBoxInfo", getTerminalSafeBoxes(terminal));
           result.put("services", getServices());
           result.put("processes", getProcesses());
@@ -519,7 +518,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       List<OBPOSApplications> apps = qApp.list();
       if (apps.size() == 1) {
         terminal = ((OBPOSApplications) apps.get(0));
-        properties.put("servers", getServers(terminal));
         result.put("safeBoxInfo", getTerminalSafeBoxes(terminal));
       }
     }
@@ -580,11 +578,6 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     }
 
     return result;
-  }
-
-  // List of always empty as was only used with obsolete storeserver code
-  protected JSONArray getServers(OBPOSApplications terminal) throws JSONException {
-    return new JSONArray();
   }
 
   @Override

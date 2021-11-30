@@ -1631,7 +1631,7 @@
               new Date().getTime()
             );
           }
-          //Save available servers and services and initialize Request Router layer and Proccess Controller
+          //Save services and initialize Request Router layer and Proccess Controller
           _.each(_.keys(inResponse.properties), function(key) {
             if (inResponse.properties[key]) {
               OB.UTIL.localStorage.setItem(
