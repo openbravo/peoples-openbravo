@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -19,7 +19,8 @@ if (!OB.App.StateBackwardCompatibility) {
       'undo',
       'json',
       'lines[*].product.img',
-      'lines[*].product._filter'
+      'lines[*].product._filter',
+      'payments[*].paymentData.provider.image'
     ],
     resetEvents: ['paintTaxes'],
     mapProperties: {
