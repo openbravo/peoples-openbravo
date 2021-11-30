@@ -22,7 +22,6 @@
         documentType: payload.documentType,
         createdBy: payload.user,
         hasbeenpaid: 'N',
-        skipApplyPromotions: false,
         isPaid: false,
         loaded: undefined,
         isEditable: true,
@@ -43,8 +42,7 @@
         const newLine = {
           ...line,
           id: OB.App.UUID.generate(),
-          priceIncludesTax: newTicket.priceIncludesTax,
-          skipApplyPromotions: payload.firmQuotation
+          priceIncludesTax: newTicket.priceIncludesTax
         };
         // Update line extra properties
         const payloadLine = payloadLines.find(l => l.lineId === line.id);
