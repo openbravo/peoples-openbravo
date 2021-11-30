@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018 Openbravo S.L.U.
+ * Copyright (C) 2018-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -301,8 +301,9 @@ public class Invoices extends JSONProcessSimple {
         // TODO: make this extensible
         String hqlReceiptTaxes = "select invoiceTax.tax.id as taxId, invoiceTax.tax.rate as rate, "
             + "invoiceTax.taxableAmount as taxableamount, invoiceTax.taxAmount as taxamount, invoiceTax.tax.name as name, "
-            + "invoiceTax.tax.cascade as cascade, invoiceTax.tax.docTaxAmount as docTaxAmount, invoiceTax.tax.lineNo as lineNo, invoiceTax.tax.taxBase.id as taxBase "
-            + "from InvoiceTax as invoiceTax where invoiceTax.invoice.id=:invoiceId";
+            + "invoiceTax.tax.cascade as cascade, invoiceTax.tax.docTaxAmount as docTaxAmount, invoiceTax.lineNo as lineNo, invoiceTax.tax.taxBase.id as taxBase "
+            + "from InvoiceTax as invoiceTax where invoiceTax.invoice.id=:invoiceId "
+            + "order by invoiceTax.lineNo ";
         @SuppressWarnings("rawtypes")
         Query ReceiptTaxesQuery = OBDal.getInstance().getSession().createQuery(hqlReceiptTaxes);
         ReceiptTaxesQuery.setParameter("invoiceId", invoiceid);

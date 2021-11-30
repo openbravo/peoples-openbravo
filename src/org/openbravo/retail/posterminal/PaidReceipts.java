@@ -652,7 +652,11 @@ public class PaidReceipts extends JSONProcessSimple {
         paidReceipt.put("receiptPayments", listpaidReceiptsPayments);
 
         // TODO: make this extensible
-        String hqlReceiptTaxes = "select orderTax.tax.id as taxId, orderTax.tax.rate as rate, orderTax.taxableAmount as taxableamount, orderTax.taxAmount as taxamount, orderTax.tax.name as name, orderTax.tax.cascade as cascade, orderTax.tax.docTaxAmount as docTaxAmount, orderTax.tax.lineNo as lineNo, orderTax.tax.taxBase.id as taxBase from OrderTax as orderTax where orderTax.salesOrder.id=:salesOrderId";
+        String hqlReceiptTaxes = "select orderTax.tax.id as taxId, orderTax.tax.rate as rate, "
+            + "orderTax.taxableAmount as taxableamount, orderTax.taxAmount as taxamount, orderTax.tax.name as name, "
+            + "orderTax.tax.cascade as cascade, orderTax.tax.docTaxAmount as docTaxAmount, orderTax.lineNo as lineNo, "
+            + "orderTax.tax.taxBase.id as taxBase from OrderTax as orderTax "
+            + "where orderTax.salesOrder.id=:salesOrderId order by orderTax.lineNo";
         Query<Object[]> ReceiptTaxesQuery = OBDal.getInstance()
             .getSession()
             .createQuery(hqlReceiptTaxes, Object[].class);
