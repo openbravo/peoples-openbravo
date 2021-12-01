@@ -24,6 +24,7 @@
         hasbeenpaid: 'N',
         skipApplyPromotions: false,
         isPaid: false,
+        loaded: undefined,
         isEditable: true,
         orderDate: payload.date,
         posTerminal: payload.terminal.id,

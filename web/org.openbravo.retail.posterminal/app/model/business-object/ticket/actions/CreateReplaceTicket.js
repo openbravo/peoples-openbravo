@@ -26,6 +26,7 @@
         session: payload.session,
         hasbeenpaid: 'N',
         isPaid: false,
+        loaded: undefined,
         isEditable: true,
         doCancelAndReplace: true,
         isLayaway: false,

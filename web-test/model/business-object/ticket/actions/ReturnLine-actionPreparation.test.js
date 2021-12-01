@@ -78,7 +78,7 @@ describe('returnLine action preparation', () => {
     'should throw error if sale with return not allowed',
     async ({ lines, lineIds, notAllowSalesWithReturn, error }) => {
       OB.App.Security.hasPermission.mockReturnValue(notAllowSalesWithReturn);
-      const ticket = deepfreeze({ lines });
+      const ticket = deepfreeze({ isEditable: true, lines });
       const payload = deepfreeze({ lineIds });
       await expectActionPreparationError(
         ticket,
@@ -114,7 +114,12 @@ describe('returnLine action preparation', () => {
     'should throw error if return layaway not allowed',
     async ({ isLayaway, orderType, allowLayawaysNegativeLines, error }) => {
       OB.App.Security.hasPermission.mockReturnValue(allowLayawaysNegativeLines);
-      const ticket = deepfreeze({ isLayaway, orderType, lines: [] });
+      const ticket = deepfreeze({
+        isEditable: true,
+        isLayaway,
+        orderType,
+        lines: []
+      });
       const payload = deepfreeze({ lineIds: [] });
       await expectActionPreparationError(
         ticket,
@@ -141,7 +146,7 @@ describe('returnLine action preparation', () => {
   `(
     'should throw error if return cancel and replace line',
     async ({ replacedorder, lines, lineIds, error }) => {
-      const ticket = deepfreeze({ replacedorder, lines });
+      const ticket = deepfreeze({ isEditable: true, replacedorder, lines });
       const payload = deepfreeze({ lineIds });
       await expectActionPreparationError(
         ticket,
@@ -165,7 +170,7 @@ describe('returnLine action preparation', () => {
   `(
     'should throw error if no returnable product',
     async ({ lines, lineIds, error }) => {
-      const ticket = deepfreeze({ lines });
+      const ticket = deepfreeze({ isEditable: true, lines });
       const payload = deepfreeze({ lineIds });
       await expectActionPreparationError(
         ticket,
@@ -192,7 +197,7 @@ describe('returnLine action preparation', () => {
   `(
     'should throw error if no returnable service',
     async ({ lines, lineIds, error }) => {
-      const ticket = deepfreeze({ lines });
+      const ticket = deepfreeze({ isEditable: true, lines });
       const payload = deepfreeze({ lineIds });
       await expectActionPreparationError(
         ticket,
@@ -220,7 +225,7 @@ describe('returnLine action preparation', () => {
   `(
     'should throw error if no returnable related service',
     async ({ lines, lineIds, error }) => {
-      const ticket = deepfreeze({ lines });
+      const ticket = deepfreeze({ isEditable: true, lines });
       const payload = deepfreeze({ lineIds });
       await expectActionPreparationError(
         ticket,
@@ -253,7 +258,7 @@ describe('returnLine action preparation', () => {
     'should throw error if no stock',
     async ({ lines, lineIds, hasStock, error }) => {
       OB.App.StockChecker.hasStock = jest.fn().mockResolvedValue(hasStock);
-      const ticket = deepfreeze({ lines });
+      const ticket = deepfreeze({ isEditable: true, lines });
       const payload = deepfreeze({ lineIds });
       await expectActionPreparationError(
         ticket,

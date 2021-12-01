@@ -74,7 +74,7 @@ describe('returnBlindTicket action preparations', () => {
   `(
     'should throw error if no returnable product',
     async ({ lines, lineIds, error }) => {
-      const ticket = deepfreeze({ lines });
+      const ticket = deepfreeze({ isEditable: true, lines });
       const payload = deepfreeze({});
       await expectActionPreparationError(
         ticket,

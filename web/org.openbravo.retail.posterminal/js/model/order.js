@@ -5698,6 +5698,7 @@
 
       me.set('hasbeenpaid', 'N');
       me.set('isPaid', false);
+      me.unset('loaded');
       me.set('isEditable', true);
 
       deliveredLine = _.find(me.get('lines').models, function(line) {
@@ -5984,6 +5985,7 @@
                   me.set('skipCalculateReceipt', true);
                   me.preventOrderSave(true);
                   me.set('preventServicesUpdate', true);
+                  me.unset('loaded');
                   me.set('isEditable', true);
                   me.set('cancelLayaway', true);
                   me.set('fromLayaway', me.get('isLayaway'));

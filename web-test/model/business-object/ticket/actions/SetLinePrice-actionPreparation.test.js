@@ -50,6 +50,7 @@ OB.App.StateAPI.Ticket.utilities.forEach(
 );
 
 const basicTicket = {
+  isEditable: true,
   priceIncludesTax: true,
   lines: [
     {
@@ -80,6 +81,7 @@ const basicTicket = {
 };
 
 const basicReturn = {
+  isEditable: true,
   priceIncludesTax: true,
   isPaid: false,
   lines: [
@@ -169,6 +171,7 @@ describe('Ticket.setQuantity action preparation', () => {
           prepareAction(
             { lineIds: ['1'], price: 5 },
             {
+              isEditable: true,
               lines: [
                 {
                   id: '1',
@@ -206,6 +209,7 @@ describe('Ticket.setQuantity action preparation', () => {
           prepareAction(
             { lineIds: ['1'], price: 5 },
             {
+              isEditable: true,
               lines: [
                 {
                   id: '1',
@@ -230,6 +234,7 @@ describe('Ticket.setQuantity action preparation', () => {
           prepareAction(
             { lineIds: ['1'], price: 5 },
             {
+              isEditable: true,
               lines: [
                 {
                   id: '1',

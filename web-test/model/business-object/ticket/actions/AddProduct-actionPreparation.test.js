@@ -113,6 +113,7 @@ const Product = {
 
 const Ticket = {
   empty: {
+    isEditable: true,
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [],
@@ -120,6 +121,7 @@ const Ticket = {
     orderType: 0
   },
   emptyReturn: {
+    isEditable: true,
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [],
@@ -127,6 +129,7 @@ const Ticket = {
     orderType: 1
   },
   emptyLayaway: {
+    isEditable: true,
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [],
@@ -134,6 +137,7 @@ const Ticket = {
     orderType: 2
   },
   returned: {
+    isEditable: true,
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [{ id: '1', product: Product.productB, qty: -1, isEditable: true }],
@@ -141,6 +145,7 @@ const Ticket = {
     orderType: 1
   },
   singleLine: {
+    isEditable: true,
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [{ id: '1', product: Product.productA, qty: 1 }],
@@ -148,6 +153,7 @@ const Ticket = {
     orderType: 0
   },
   returnedLine: {
+    isEditable: true,
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [{ id: '1', product: Product.productA, qty: -1 }],
@@ -155,6 +161,7 @@ const Ticket = {
     orderType: 0
   },
   attributeLine: {
+    isEditable: true,
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [
@@ -164,6 +171,7 @@ const Ticket = {
     orderType: 0
   },
   positiveCancelAndReplace: {
+    isEditable: true,
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [
@@ -179,6 +187,7 @@ const Ticket = {
     orderType: 0
   },
   negativeCancelAndReplace: {
+    isEditable: true,
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [

@@ -17,7 +17,7 @@ describe('Close ticket action', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
       id: 'A',
-      isEditable: false,
+      loaded: '2021-01-01',
       grossAmount: 100,
       netAmount: 80,
       payment: 100,
@@ -100,7 +100,7 @@ describe('Close ticket action', () => {
     const ticketList = deepfreeze([
       {
         id: 'B',
-        isEditable: false,
+        loaded: '2021-01-01',
         grossAmount: 100,
         netAmount: 80,
         payment: 100,
@@ -181,7 +181,7 @@ describe('Close ticket action', () => {
     const ticketList = deepfreeze([
       {
         id: 'B',
-        isEditable: false,
+        loaded: '2021-01-01',
         grossAmount: 100,
         netAmount: 80,
         payment: 100,
@@ -203,7 +203,7 @@ describe('Close ticket action', () => {
     ]);
     const ticket = deepfreeze({
       id: 'A',
-      isEditable: false,
+      loaded: '2021-01-01',
       grossAmount: 100,
       netAmount: 80,
       payment: 100,
@@ -273,11 +273,11 @@ describe('Close ticket action', () => {
     });
   });
 
-  it('should not synchronize ticket not editable with removeTicket preference', () => {
+  it('should not synchronize ticket booked with removeTicket preference', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
       id: 'A',
-      isEditable: false,
+      loaded: '2021-01-01',
       lines: [{}]
     });
     const documentSequence = deepfreeze({

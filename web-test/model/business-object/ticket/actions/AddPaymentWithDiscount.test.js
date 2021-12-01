@@ -9,11 +9,15 @@
 
 /* global global */
 
+require('../SetupTicket');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddPayment');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CalculateTotalsModelHook');
+require('../SetupTicketUtils');
+const deepfreeze = require('deepfreeze');
+
 global.OB = {
-  App: {
-    Class: {},
-    TerminalProperty: { get: jest.fn() }
-  },
+  ...global.OB,
+  App: { ...global.OB.App, TerminalProperty: { get: jest.fn() } },
   Discounts: {
     Pos: {
       ruleImpls: [],
@@ -29,28 +33,6 @@ global.OB = {
   Taxes: {
     Pos: {
       ruleImpls: []
-    }
-  }
-};
-
-global.lodash = require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.21');
-const deepfreeze = require('deepfreeze');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
-require('../../../../../../org.openbravo.client.kernel/web/org.openbravo.client.kernel/js/BigDecimal-all-1.0.3.min.js');
-require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/source/utils/ob-arithmetic.js');
-OB.App.StateAPI.registerModel('Ticket');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/TicketUtils');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CalculateTotalsModelHook');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/AddPayment');
-
-// set Ticket model "calculateTotals" utility function
-OB.App.State = {
-  Ticket: {
-    Utils: {
-      calculateTotals: OB.App.StateAPI.Ticket.utilities
-        .filter(util => util.functionName === 'calculateTotals')
-        .map(util => util.implementation)
-        .pop()
     }
   }
 };
@@ -218,7 +200,7 @@ const result2 = {
   id: '6FD3CDDDBB2A3805895853BB22F2E9F1',
   grossAmount: 540,
   netAmount: 446.28,
-  isEditable: false,
+  loaded: '2021-01-01',
   priceIncludesTax: true,
   isNegative: false,
   qty: 2,
@@ -317,7 +299,7 @@ describe('Add payment on completed ticket with discount', () => {
 
     const nonEditableTicketWitPayment = {
       ...ticket,
-      isEditable: false,
+      loaded: '2021-01-01',
       payment: 10,
       payments: [
         {

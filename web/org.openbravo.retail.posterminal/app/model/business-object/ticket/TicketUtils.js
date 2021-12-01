@@ -324,7 +324,7 @@
     shouldUpdateServices() {
       const hasServices =
         this.ticket.hasServices || this.ticket.lines.some(l => l.relatedLines);
-      return hasServices && this.ticket.isEditable;
+      return hasServices && OB.App.State.Ticket.Utils.isEditable(this.ticket);
     }
 
     getSiblingServicesLines(productId, orderlineId) {
@@ -444,7 +444,7 @@
                 OB.DEC.sub(OB.DEC.mul(baseNetUnitPrice, qty), discounted)
           };
         }
-        const isEditable = !(this.ticket.isEditable === false);
+        const isBooked = OB.App.State.Ticket.Utils.isBooked(this.ticket);
         const discounts = line.skipApplyPromotions
           ? undefined
           : discountsResult.lines.find(l => l.id === line.id);
@@ -453,9 +453,9 @@
           // eslint-disable-next-line no-nested-ternary
           promotions: discounts
             ? discounts.discounts
-            : isEditable
-            ? []
-            : line.promotions
+            : isBooked
+            ? line.promotions
+            : []
         };
         const calculateUnitAmountWithoutTicketDiscounts = (
           baseUnitPrice,
@@ -491,12 +491,12 @@
           // eslint-disable-next-line no-nested-ternary
           newLine.grossUnitPrice = discounts
             ? discounts.grossUnitPrice
-            : isEditable
-            ? baseGrossUnitPrice
-            : grossUnitPrice;
+            : isBooked
+            ? grossUnitPrice
+            : baseGrossUnitPrice;
           newLine.grossUnitAmount = discounts
             ? discounts.grossUnitAmount
-            : OB.DEC.mul(isEditable ? baseGrossUnitPrice : grossUnitPrice, qty);
+            : OB.DEC.mul(isBooked ? grossUnitPrice : baseGrossUnitPrice, qty);
           // This part is only used for visualization in WebPOS 2.0
           newLine.grossUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
             newLine.baseGrossUnitAmount,
@@ -512,12 +512,12 @@
           // eslint-disable-next-line no-nested-ternary
           newLine.netUnitPrice = discounts
             ? discounts.netUnitPrice
-            : isEditable
-            ? baseNetUnitPrice
-            : netUnitPrice;
+            : isBooked
+            ? netUnitPrice
+            : baseNetUnitPrice;
           newLine.netUnitAmount = discounts
             ? discounts.netUnitAmount
-            : OB.DEC.mul(isEditable ? baseNetUnitPrice : netUnitPrice, qty);
+            : OB.DEC.mul(isBooked ? netUnitPrice : baseNetUnitPrice, qty);
           // This part is only used for visualization in WebPOS 2.0
           newLine.netUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
             newLine.baseNetUnitAmount,
@@ -532,8 +532,9 @@
       });
 
       let ticketTaxRules;
-      // Applied Taxes should be used to calculate if ticket is not editable
-      if (this.ticket.isEditable === false) {
+      // Applied Taxes should be used to calculate if ticket is booked
+      const isTicketBooked = OB.App.State.Ticket.Utils.isBooked(this.ticket);
+      if (isTicketBooked) {
         ticketTaxRules = this.ticket.receiptTaxes.map(receiptTax =>
           taxRules.find(taxRule => taxRule.id === receiptTax.taxid)
         );
@@ -543,7 +544,7 @@
       try {
         taxesResult = OB.Taxes.Pos.applyTaxes(
           this.ticket,
-          this.ticket.isEditable ? taxRules : ticketTaxRules
+          isTicketBooked ? ticketTaxRules : taxRules
         );
       } catch (error) {
         if (error instanceof OB.App.Class.TaxEngineError) {
@@ -967,6 +968,28 @@
       return OB.DEC.compare(total) === -1
         ? processedPaymentsAmount >= total
         : processedPaymentsAmount > total;
+    },
+
+    /**
+     * Checks if a ticket is booked
+     *
+     * @param {object} ticket - The ticket to check
+     * @returns {boolean} - True if the given ticket is booked, false if it is draft
+     */
+    isBooked(ticket) {
+      return Boolean(
+        ticket.loaded || (ticket.isQuotation && ticket.hasbeenpaid === 'Y')
+      );
+    },
+
+    /**
+     * Checks if a ticket is editable
+     *
+     * @param {object} ticket - The ticket to check
+     * @returns {boolean} - True if the given ticket is editable, false if it is not editable
+     */
+    isEditable(ticket) {
+      return Boolean(ticket.isEditable) && !ticket.paymentSubtotals;
     },
 
     /**

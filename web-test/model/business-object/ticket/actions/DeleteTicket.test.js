@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -99,7 +99,6 @@ describe('Delete ticket action', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
       id: 'A',
-      isEditable: true,
       grossAmount: 100,
       netAmount: 80,
       payment: 100,
@@ -296,7 +295,6 @@ describe('Delete ticket action', () => {
     const ticketList = deepfreeze([
       {
         id: 'B',
-        isEditable: true,
         grossAmount: 100,
         netAmount: 80,
         payment: 100,
@@ -505,7 +503,6 @@ describe('Delete ticket action', () => {
     const ticketList = deepfreeze([
       {
         id: 'B',
-        isEditable: true,
         grossAmount: 100,
         netAmount: 80,
         payment: 100,
@@ -528,7 +525,6 @@ describe('Delete ticket action', () => {
     ]);
     const ticket = deepfreeze({
       id: 'A',
-      isEditable: true,
       grossAmount: 100,
       netAmount: 80,
       payment: 100,
@@ -666,7 +662,7 @@ describe('Delete ticket action', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
       id: 'A',
-      isEditable: false,
+      loaded: '2021-01-01',
       lines: [{}]
     });
     const documentSequence = deepfreeze({
@@ -738,7 +734,6 @@ describe('Delete ticket action', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
       id: 'A',
-      isEditable: true,
       lines: []
     });
     const documentSequence = deepfreeze({
@@ -810,7 +805,6 @@ describe('Delete ticket action', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
       id: 'A',
-      isEditable: true,
       grossAmount: 100,
       netAmount: 80,
       payment: 100,
@@ -931,7 +925,6 @@ describe('Delete ticket action', () => {
     const ticketList = deepfreeze([]);
     const ticket = deepfreeze({
       id: 'A',
-      isEditable: true,
       grossAmount: 100,
       netAmount: 80,
       payment: 100,

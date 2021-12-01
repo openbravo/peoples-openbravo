@@ -51,7 +51,7 @@
 
       if (
         payload.preferences.removeTicket &&
-        newMultiTicket.isEditable &&
+        !OB.App.State.Ticket.Utils.isBooked(newMultiTicket) &&
         (newMultiTicket.lines.length || newMultiTicket.deletedLines)
       ) {
         newMultiTicket = OB.App.State.Ticket.Utils.updateTicketType(

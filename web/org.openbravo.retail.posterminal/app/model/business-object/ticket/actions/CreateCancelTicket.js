@@ -20,6 +20,7 @@
         ...ticket,
         id: OB.App.UUID.generate(),
         documentNo: `${ticket.documentNo}*R*`,
+        loaded: undefined,
         isEditable: false,
         cancelLayaway: true,
         fromLayaway: ticket.isLayaway,

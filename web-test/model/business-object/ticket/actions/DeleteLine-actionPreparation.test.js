@@ -70,6 +70,7 @@ OB.App.StateAPI.Ticket.utilities.forEach(
 
 let Ticket = {
   empty: {
+    isEditable: true,
     lines: [],
     businessPartner: { id: '1' },
     orderType: 0

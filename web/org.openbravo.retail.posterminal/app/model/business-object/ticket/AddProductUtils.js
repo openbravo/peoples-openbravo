@@ -207,7 +207,7 @@
      * Throws error in case ticket is not editable.
      */
     checkIsEditable(ticket) {
-      if (ticket.isEditable === false) {
+      if (!OB.App.State.Ticket.Utils.isEditable(ticket)) {
         throw new OB.App.Class.ActionCanceled({
           title: 'OBPOS_modalNoEditableHeader',
           errorConfirmation: 'OBPOS_modalNoEditableBody'

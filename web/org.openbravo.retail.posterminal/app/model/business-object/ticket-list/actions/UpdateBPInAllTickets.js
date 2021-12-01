@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -44,11 +44,13 @@
       const newState = { ...state };
       const { customer } = payload;
 
-      if (newState.Ticket.isEditable) {
+      if (OB.App.State.Ticket.Utils.isEditable(newState.Ticket)) {
         newState.Ticket = updateBpInTicket(newState.Ticket, customer);
       }
       newState.TicketList = newState.TicketList.map(ticket =>
-        ticket.isEditable ? updateBpInTicket(ticket, customer) : ticket
+        OB.App.State.Ticket.Utils.isEditable(ticket)
+          ? updateBpInTicket(ticket, customer)
+          : ticket
       );
 
       return newState;

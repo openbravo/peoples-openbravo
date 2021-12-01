@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -169,6 +169,42 @@ describe('TicketUtils', () => {
     ${{ payments: [{ origAmount: -10, isPrePayment: true }], nettingPayment: -80, total: -100 }}  | ${true}
   `("Ticket '$ticket' is negative", async ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isNegative(ticket)).toBe(expected);
+  });
+
+  test.each`
+    ticket                                                            | expected
+    ${{}}                                                             | ${false}
+    ${{ loaded: undefined }}                                          | ${false}
+    ${{ loaded: '2021-01-01' }}                                       | ${true}
+    ${{ isQuotation: false }}                                         | ${false}
+    ${{ isQuotation: true }}                                          | ${false}
+    ${{ hasbeenpaid: 'N' }}                                           | ${false}
+    ${{ hasbeenpaid: 'Y' }}                                           | ${false}
+    ${{ loaded: undefined, isQuotation: false, hasbeenpaid: 'N' }}    | ${false}
+    ${{ loaded: undefined, isQuotation: false, hasbeenpaid: 'Y' }}    | ${false}
+    ${{ loaded: undefined, isQuotation: true, hasbeenpaid: 'N' }}     | ${false}
+    ${{ loaded: undefined, isQuotation: true, hasbeenpaid: 'Y' }}     | ${true}
+    ${{ loaded: '2021-01-01', isQuotation: false, hasbeenpaid: 'N' }} | ${true}
+    ${{ loaded: '2021-01-01', isQuotation: false, hasbeenpaid: 'Y' }} | ${true}
+    ${{ loaded: '2021-01-01', isQuotation: true, hasbeenpaid: 'N' }}  | ${true}
+    ${{ loaded: '2021-01-01', isQuotation: true, hasbeenpaid: 'Y' }}  | ${true}
+  `("Ticket '$ticket' is booked", async ({ ticket, expected }) => {
+    expect(OB.App.State.Ticket.Utils.isBooked(ticket)).toBe(expected);
+  });
+
+  test.each`
+    ticket                                                | expected
+    ${{}}                                                 | ${false}
+    ${{ isEditable: false }}                              | ${false}
+    ${{ isEditable: true }}                               | ${true}
+    ${{ paymentSubtotals: undefined }}                    | ${false}
+    ${{ paymentSubtotals: [] }}                           | ${false}
+    ${{ isEditable: false, paymentSubtotals: undefined }} | ${false}
+    ${{ isEditable: false, paymentSubtotals: [] }}        | ${false}
+    ${{ isEditable: true, paymentSubtotals: undefined }}  | ${true}
+    ${{ isEditable: true, paymentSubtotals: [] }}         | ${false}
+  `("Ticket '$ticket' is editable", async ({ ticket, expected }) => {
+    expect(OB.App.State.Ticket.Utils.isEditable(ticket)).toBe(expected);
   });
 
   test.each`
