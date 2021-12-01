@@ -1989,7 +1989,7 @@ and ((ad_table.accesslevel in ('3','1','7') and exists(select 1 from ad_dataset
 <!--90BF79B11AD84A7092A209A3E78DB589-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--90BF79B11AD84A7092A209A3E78DB589-->  <NAME><![CDATA[Discount filter by type]]></NAME>
 <!--90BF79B11AD84A7092A209A3E78DB589-->  <TYPE><![CDATA[S]]></TYPE>
-<!--90BF79B11AD84A7092A209A3E78DB589-->  <CODE><![CDATA[td0.m_offer_id in (select of.m_offer_id from m_offer of where of.m_offer_type_id =@M_Offer_Offer_Type_ID@)]]></CODE>
+<!--90BF79B11AD84A7092A209A3E78DB589-->  <CODE><![CDATA[td0.m_offer_id <> @M_Offer_ID@ and td0.m_offer_id in (select of.m_offer_id from m_offer of where of.m_offer_type_id =@M_Offer_Incmptibility_Type_ID@)]]></CODE>
 <!--90BF79B11AD84A7092A209A3E78DB589-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--90BF79B11AD84A7092A209A3E78DB589--></AD_VAL_RULE>
 
