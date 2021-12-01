@@ -71,98 +71,6 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   protected static final String PARAM_FILENAME = "fileName";
 
   @Override
-  protected Map<String, Object> extractParametersFromRequest(HttpServletRequest request)
-      throws IOException {
-    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-    if (isMultipart) {
-      return this.parseMultipartParameters(request);
-    } else {
-      return super.extractParametersFromRequest(request);
-    }
-  }
-
-  @Override
-  protected String extractRequestContent(HttpServletRequest request,
-      Map<String, Object> requestParameters) throws IOException {
-    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-    if (isMultipart) {
-      return (String) requestParameters.get(PARAM_VALUES);
-    } else {
-      return super.extractRequestContent(request, requestParameters);
-    }
-
-  }
-
-  @Override
-  protected void writeResponse(Map<String, Object> parameters, JSONObject result,
-      HttpServletRequest request, HttpServletResponse response) throws IOException {
-    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-    if (isMultipart) {
-      this.writeMultipartResponse((String) parameters.get("viewId"), result, response);
-    } else {
-      super.writeResponse(parameters, result, request, response);
-    }
-  }
-
-  /**
-   * Builds the appropriate response to finish the request on the client side The multipart request
-   * was made by submitting the fileUpload form instead of executing OB.RemoteCallManager.call() in
-   * ob-parameter-window-view.js. This response makes the frontend execute the expected callback
-   * function of OB.RemoteCallManager.call() in order to finish the process properly.
-   */
-  private void writeMultipartResponse(String viewId, JSONObject result,
-      HttpServletResponse response) throws IOException {
-
-    response.setContentType("text/html; charset=UTF-8");
-    Writer writer = response.getWriter();
-    writer.write("<HTML><BODY><script type=\"text/javascript\">");
-
-    writer.write("var origView = top.window." + viewId + ";\n");
-    writer.write(
-        "var data = top.isc.JSON.decode('" + result.toString().replace("'", "\\\'") + "');\n");
-    writer.write(
-        "origView.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);\n");
-    writer.write("</SCRIPT></BODY></HTML>");
-    writer.close();
-  }
-
-  /**
-   * Extract the multipart parameters from the request and returns it as a Map<String, Object>. File
-   * is also included as an InputStream
-   *
-   * @param request
-   *          Current request
-   */
-  private Map<String, Object> parseMultipartParameters(HttpServletRequest request) {
-    Map<String, Object> parameters = new HashMap<>();
-    String fileName;
-    try {
-      FileItemFactory factory = new DiskFileItemFactory();
-      ServletFileUpload upload = new ServletFileUpload(factory);
-      List<FileItem> items = upload.parseRequest(request);
-
-      for (FileItem item : items) {
-        if (item.isFormField()) {
-          String value = item.getString("UTF-8");
-          parameters.put(item.getFieldName(), value);
-          log.debug("Added parameter {} with value: {}", item.getFieldName(), value);
-        } else {
-          fileName = item.getName();
-          if (StringUtils.isNotBlank(fileName)) {
-            parameters.put(PARAM_FILENAME, fileName);
-            parameters.put(PARAM_FILE, item.getInputStream());
-            log.debug("Added file {}", fileName);
-          }
-        }
-      }
-    } catch (Exception e) {
-      log.error("There was an error while processing the request", e);
-    }
-
-    return parameters;
-  }
-
-  @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
     String processId = null;
     try {
@@ -271,6 +179,108 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Overrides the base implementation to support extracting the parameters from a multipart request
+   */
+  @Override
+  protected Map<String, Object> extractParametersFromRequest(HttpServletRequest request) {
+    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    if (isMultipart) {
+      return this.parseMultipartParameters(request);
+    } else {
+      return super.extractParametersFromRequest(request);
+    }
+  }
+
+  /**
+   * Overrides the base implementation to support extracting the content object in a multipart
+   * request, that is stored in the PARAM_VALUES parameter
+   */
+  @Override
+  protected String extractRequestContent(HttpServletRequest request,
+      Map<String, Object> requestParameters) throws IOException {
+    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    if (isMultipart) {
+      return (String) requestParameters.get(PARAM_VALUES);
+    } else {
+      return super.extractRequestContent(request, requestParameters);
+    }
+
+  }
+
+  /**
+   * Overrides the base implementation to customize the response sent back to the client on
+   * multipart requests. See writeMultipartResponse() for more details
+   */
+  @Override
+  protected void writeResponse(Map<String, Object> parameters, JSONObject result,
+      HttpServletRequest request, HttpServletResponse response) throws IOException {
+    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    if (isMultipart) {
+      this.writeMultipartResponse((String) parameters.get("viewId"), result, response);
+    } else {
+      super.writeResponse(parameters, result, request, response);
+    }
+  }
+
+  /**
+   * Builds the appropriate response to finish the request on the client side The multipart request
+   * was made by submitting the fileUpload form instead of executing OB.RemoteCallManager.call() in
+   * ob-parameter-window-view.js. This response makes the frontend execute the expected callback
+   * function of OB.RemoteCallManager.call() in order to finish the process properly.
+   */
+  private void writeMultipartResponse(String viewId, JSONObject result,
+      HttpServletResponse response) throws IOException {
+
+    response.setContentType("text/html; charset=UTF-8");
+    Writer writer = response.getWriter();
+    writer.write("<HTML><BODY><script type=\"text/javascript\">");
+
+    writer.write("var origView = top.window." + viewId + ";\n");
+    writer.write(
+        "var data = top.isc.JSON.decode('" + result.toString().replace("'", "\\\'") + "');\n");
+    writer.write(
+        "origView.handleResponse(!(data && data.refreshParent === false), (data && data.message), (data && data.responseActions), (data && data.retryExecution), data);\n");
+    writer.write("</SCRIPT></BODY></HTML>");
+    writer.close();
+  }
+
+  /**
+   * Extract the multipart parameters from the request and returns it as a Map<String, Object>. File
+   * is also included as an InputStream
+   *
+   * @param request
+   *          Current request
+   */
+  private Map<String, Object> parseMultipartParameters(HttpServletRequest request) {
+    Map<String, Object> parameters = new HashMap<>();
+    String fileName;
+    try {
+      FileItemFactory factory = new DiskFileItemFactory();
+      ServletFileUpload upload = new ServletFileUpload(factory);
+      List<FileItem> items = upload.parseRequest(request);
+
+      for (FileItem item : items) {
+        if (item.isFormField()) {
+          String value = item.getString("UTF-8");
+          parameters.put(item.getFieldName(), value);
+          log.debug("Added parameter {} with value: {}", item.getFieldName(), value);
+        } else {
+          fileName = item.getName();
+          if (StringUtils.isNotBlank(fileName)) {
+            parameters.put(PARAM_FILENAME, fileName);
+            parameters.put(PARAM_FILE, item.getInputStream());
+            log.debug("Added file {}", fileName);
+          }
+        }
+      }
+    } catch (Exception e) {
+      log.error("There was an error while processing the request", e);
+    }
+
+    return parameters;
   }
 
   /**

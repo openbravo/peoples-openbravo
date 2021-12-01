@@ -57,66 +57,9 @@ isc.OBProcessFileUpload.addProperties({
       'org.openbravo.client.kernel?_action=' + view.actionHandler
     );
     fileForm.setTarget('background_target');
-
-    // Finally, override form's doProcess to send the request using the file form instead of the process one
-    view.doProcess = this.doProcess;
   },
-  /**
-   * FIXME: Basically this is a copy of ob-parameter-window-view doProcess where we use FileItem's dynamic form to send the
-   * form along with the file. If this code is refactored to make actionHandlerCall not dependant
-   * on allProperties this function can be passed to doProcess and avoid duplicate this function.
-   */
-  doProcess: function(btnValue) {
-    const view = this,
-      form = this.theForm;
-    let allProperties = view.getUnderLyingRecordContext(
-        false,
-        true,
-        false,
-        true
-      ),
-      tab,
-      actionHandlerCall,
-      clientSideValidationFail;
-
-    if (view.resultLayout && view.resultLayout.destroy) {
-      view.resultLayout.destroy();
-      delete view.resultLayout;
-    }
-    // change tab title to show executing...
-    tab = OB.MainView.TabSet.getTab(view.viewTabId);
-    if (tab) {
-      tab.setTitle(
-        OB.I18N.getLabel('OBUIAPP_ProcessTitle_Executing', [view.tabTitle])
-      );
-    }
-
-    allProperties._buttonValue = btnValue || 'DONE';
-    allProperties._params = view.getContextInfo();
-
-    // allow to add external parameters
-    isc.addProperties(allProperties._params, view.externalParams);
-
-    actionHandlerCall = function() {
-      view.showProcessing(true);
-      form
-        .getFileItemForm()
-        .getItem('paramValues')
-        .setValue(isc.JSON.encode(allProperties));
-      form.getFileItemForm().submitForm();
-    };
-
-    if (view.clientSideValidation) {
-      clientSideValidationFail = function() {
-        view.setAllButtonEnabled(view.allRequiredParametersSet());
-      };
-      view.clientSideValidation(
-        view,
-        actionHandlerCall,
-        clientSideValidationFail
-      );
-    } else {
-      actionHandlerCall();
-    }
+  setDisabled: function(disabled) {
+    const inputElement = this.editForm.getField(this.name).getElement();
+    inputElement.disabled = disabled;
   }
 });

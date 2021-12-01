@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -468,26 +468,37 @@ isc.OBParameterWindowView.addProperties({
 
       // allow to add external parameters
       isc.addProperties(allProperties._params, view.externalParams);
-      OB.RemoteCallManager.call(
-        view.actionHandler,
-        allProperties,
-        {
-          processId: view.processId,
-          reportId: view.reportId,
-          windowId: view.windowId
-        },
-        // This usage of view.handleResponse is duplicated in BaseProcessActionHandler.java to be called when making a
-        // multipart request. If you modify this callback, remember to apply the same change in the ActionHandler
-        function(rpcResponse, data, rpcRequest) {
-          view.handleResponse(
-            !(data && data.refreshParent === false),
-            data && data.message,
-            data && data.responseActions,
-            data && data.retryExecution,
-            data
-          );
-        }
-      );
+
+      const form = view.theForm;
+      const fileItemForm = view.theForm.getFileItemForm();
+
+      if (fileItemForm) {
+        fileItemForm
+          .getItem('paramValues')
+          .setValue(isc.JSON.encode(allProperties));
+        form.getFileItemForm().submitForm();
+      } else {
+        OB.RemoteCallManager.call(
+          view.actionHandler,
+          allProperties,
+          {
+            processId: view.processId,
+            reportId: view.reportId,
+            windowId: view.windowId
+          },
+          // This usage of view.handleResponse is duplicated in BaseProcessActionHandler.java to be called when making a
+          // multipart request. If you modify this callback, remember to apply the same change in the ActionHandler
+          function(rpcResponse, data, rpcRequest) {
+            view.handleResponse(
+              !(data && data.refreshParent === false),
+              data && data.message,
+              data && data.responseActions,
+              data && data.retryExecution,
+              data
+            );
+          }
+        );
+      }
     };
 
     if (this.clientSideValidation) {
