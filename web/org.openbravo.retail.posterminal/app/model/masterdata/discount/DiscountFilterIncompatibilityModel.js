@@ -7,27 +7,23 @@
  ************************************************************************************
  */
 
-(function discountFilterDiscountModel() {
-  class DiscountFilterDiscount extends OB.App.Class.MasterdataModel {
+(function discountFilterIncompatibilityModel() {
+  class DiscountFilterIncompatibility extends OB.App.Class.MasterdataModel {
     constructor() {
       super();
       this.indices = [
         new OB.App.Class.Index({
           name: 'priceAdjustment_identifier_id',
-          properties: [
-            { property: 'priceAdjustment' },
-            { property: '_identifier' },
-            { property: 'id' }
-          ]
+          properties: [{ property: 'priceAdjustment' }, { property: 'id' }]
         })
       ];
       this.setPaginationById(true);
     }
 
     getName() {
-      return 'DiscountFilterDiscount';
+      return 'DiscountFilterIncompatibility';
     }
   }
 
-  OB.App.MasterdataController.registerModel(DiscountFilterDiscount);
+  OB.App.MasterdataController.registerModel(DiscountFilterIncompatibility);
 })();

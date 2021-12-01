@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,41 +23,41 @@ import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
 
-@MasterDataModel("DiscountFilterDiscount")
-public class DiscountFilterDiscount extends Discount {
-  public static final String discFilterDiscountPropertyExtension = "PricingAdjustmentDiscount";
+@MasterDataModel("DiscountFilterIncompatibility")
+public class DiscountFilterIncompatibility extends Discount {
+  public static final String discFilterIncompatibilityPropertyExtension = "PricingAdjustmentIncompatibility";
 
   @Inject
   @Any
-  @Qualifier(discFilterDiscountPropertyExtension)
+  @Qualifier(discFilterIncompatibilityPropertyExtension)
   private Instance<ModelExtension> extensions;
 
   @Override
   protected List<String> prepareQuery(final JSONObject jsonsent) throws JSONException {
-    final HQLPropertyList regularDiscFilDiscountPropertyExtensionHQLProperties = ModelExtensionUtils
+    final HQLPropertyList regularDiscountFilterIncompatibilityPropertyExtensionHQLProperties = ModelExtensionUtils
         .getPropertyExtensions(extensions);
 
-    return Arrays.asList(getDiscountFilterDiscountHqlString(
-        regularDiscFilDiscountPropertyExtensionHQLProperties, jsonsent));
+    return Arrays.asList(getDiscountFilterIncompatibilityHqlString(
+        regularDiscountFilterIncompatibilityPropertyExtensionHQLProperties, jsonsent));
   }
 
-  private String getDiscountFilterDiscountHqlString(
-      final HQLPropertyList regularDiscFilDiscountPropertyExtensionHQLProperties,
+  private String getDiscountFilterIncompatibilityHqlString(
+      final HQLPropertyList regularDiscountFilterIncompatibilityPropertyExtensionHQLProperties,
       final JSONObject jsonsent) throws JSONException {
     final String operator = jsonsent.getString("operator");
     final StringBuilder query = new StringBuilder();
     query.append(" select");
-    query.append(regularDiscFilDiscountPropertyExtensionHQLProperties.getHqlSelect());
-    query.append(" from PriceAdjustmentDiscount apd");
-    query.append(" where (apd.$incrementalUpdateCriteria");
-    query.append(" " + operator + " apd.promotionDiscount.$incrementalUpdateCriteria )");
+    query.append(regularDiscountFilterIncompatibilityPropertyExtensionHQLProperties.getHqlSelect());
+    query.append(" from PriceAdjustmentIncompatibility pai");
+    query.append(" where (pai.$incrementalUpdateCriteria");
+    query.append(" " + operator + " pai.promotionDiscount.$incrementalUpdateCriteria )");
     query.append(" and exists (");
     query.append("   select 1");
     query.append("   " + getPromotionsHQL(jsonsent, false));
-    query.append("   and apd.promotionDiscount.id = p.id");
+    query.append("   and pai.promotionDiscount.id = p.id");
     query.append(" )");
-    query.append(" and apd.$paginationByIdCriteria");
-    query.append(" order by apd.id");
+    query.append(" and pai.$paginationByIdCriteria");
+    query.append(" order by pai.id");
     return query.toString();
   }
 

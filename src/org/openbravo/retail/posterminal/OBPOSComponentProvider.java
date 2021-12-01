@@ -327,7 +327,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/masterdata/discount/DiscountFilterPriceListModel"), //
         businesslogic("app/model/masterdata/discount/DiscountFilterProductCategoryModel"), //
         businesslogic("app/model/masterdata/discount/DiscountFilterProductModel"), //
-        businesslogic("app/model/masterdata/discount/DiscountFilterDiscountModel"), //
+        businesslogic("app/model/masterdata/discount/DiscountFilterIncompatibilityModel"), //
         businesslogic("app/model/masterdata/discount/DiscountFilterRoleModel"), //
         businesslogic("app/model/masterdata/discount/DiscountFilterBusinessPartnerExtRef"), //
         businesslogic("app/model/masterdata/discount/DiscountModel"), //

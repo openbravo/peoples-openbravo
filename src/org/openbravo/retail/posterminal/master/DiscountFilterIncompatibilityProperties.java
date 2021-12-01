@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2018 Openbravo S.L.U.
+ * Copyright (C) 2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,12 +18,8 @@ import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.ModelExtension;
 
-/**
- * @author migueldejuana
- * 
- */
-@Qualifier(DiscountFilterDiscount.discFilterDiscountPropertyExtension)
-public class DiscountFilterDiscountProperties extends ModelExtension {
+@Qualifier(DiscountFilterIncompatibility.discFilterIncompatibilityPropertyExtension)
+public class DiscountFilterIncompatibilityProperties extends ModelExtension {
 
   public static final Logger log = LogManager.getLogger();
 
@@ -32,20 +28,16 @@ public class DiscountFilterDiscountProperties extends ModelExtension {
     ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       {
-        add(new HQLProperty("apd.id", "id"));
-        add(new HQLProperty("apd.promotionDiscount.id", "priceAdjustment"));
+        add(new HQLProperty("pai.id", "id"));
+        add(new HQLProperty("pai.promotionDiscount.id", "priceAdjustment"));
 
-        add(new HQLProperty("apd.offerOfferType.id", "discountPromotionType"));
+        add(new HQLProperty("pai.offerIncmptibilityType.id", "incompatibleType"));
         add(new HQLProperty(
-            "(case when apd.priceAdjustmentDiscount is null then null else apd.priceAdjustmentDiscount.id end)",
-            "priceAdjustmentDiscount"));
-
-        add(new HQLProperty(
-            "concat(apd.promotionDiscount.name, ' - ', apd.offerOfferType.commercialName)",
-            "_identifier"));
+            "(case when pai.offerIncmptibilityOffer is null then null else pai.offerIncmptibilityOffer.id end)",
+            "incompatibleDiscount"));
 
         add(new HQLProperty(
-            "(case when apd.active = 'Y' and apd.promotionDiscount.active = 'Y' then true else false end)",
+            "(case when pai.active = 'Y' and pai.promotionDiscount.active = 'Y' then true else false end)",
             "active"));
       }
     };
