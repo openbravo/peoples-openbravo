@@ -59,7 +59,6 @@ isc.OBProcessFileUpload.addProperties({
     fileForm.setTarget('background_target');
   },
   setDisabled: function(disabled) {
-    const inputElement = this.editForm.getField(this.name).getElement();
-    inputElement.disabled = disabled;
+    this.setCanEdit(!disabled);
   }
 });
