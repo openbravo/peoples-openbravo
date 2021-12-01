@@ -534,7 +534,11 @@ isc.OBNumberItem.addProperties({
   },
 
   roundJsNumberUsingTypeInstance: function(jsNumber, typeInstance) {
-    var roundedStringNumber = OB.Utilities.Number.JSToOBMasked(
+    var roundedStringNumber;
+    if (jsNumber === undefined) {
+      return jsNumber;
+    }
+    roundedStringNumber = OB.Utilities.Number.JSToOBMasked(
       jsNumber,
       typeInstance.maskNumeric,
       typeInstance.decSeparator,
