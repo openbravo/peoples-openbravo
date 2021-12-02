@@ -831,13 +831,6 @@ enyo.kind({
       return true;
     }
 
-    // use the central server url
-    _.each(OB.RR.RequestRouter.servers.models, function(server) {
-      if (server.get('mainServer') && server.get('address')) {
-        useURL = server.get('address');
-      }
-    });
-
     this.inherited(arguments); // Manual dropdown menu closure
     if (OB.MobileApp.model.hasPermission(this.permission)) {
       this.doBackOffice({
