@@ -242,7 +242,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       const getLocalService = async () => {
         try {
           const criteria = await OB.App.StandardFilters.Services.apply({
-            productId: product.productId,
+            productId: product.id,
             productCategory: product.productCategory
           });
           const data = await OB.App.MasterdataModels.Product.find(
@@ -369,7 +369,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         }
         delete newLine.obposExtendProductModel;
         const hasRelatedServices =
-          newLine.qty <= 0 || product.productType === 'S'
+          newLine.quantity <= 0 || product.productType === 'S'
             ? false
             : await getService(product);
         product.img = undefined;
