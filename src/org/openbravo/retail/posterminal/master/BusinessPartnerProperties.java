@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -41,7 +41,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("ulist.id", "contactId"));
         add(new HQLProperty("ulist.phone", "phone"));
         add(new HQLProperty("ulist.alternativePhone", "alternativePhone"));
-        add(new HQLProperty("ulist.firstName", "firstName"));
+        add(new HQLProperty("coalesce(ulist.firstName, ulist.name)", "firstName"));
         add(new HQLProperty("ulist.lastName", "lastName"));
         add(new HQLProperty("plist.priceIncludesTax", "priceIncludesTax"));
         add(new HQLProperty("plist.currency.id", "priceListCurrency"));
