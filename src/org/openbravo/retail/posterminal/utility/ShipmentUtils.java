@@ -264,9 +264,9 @@ public class ShipmentUtils implements TicketPropertyMapping {
               binForReturn = returnBinHookResponse.getNewLocator();
             }
           }
-          createdShipmentLines
-              .add(addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                  jsonorder, lineNo, pendingQty.negate(), binForReturn, null, i));
+          createdShipmentLines.add(addShipmentline(shipment, shplineentity,
+              orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, pendingQty.negate(),
+              binForReturn, orderLine.getAttributeSetValue(), i));
         } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
           lineNo += 10;
@@ -288,9 +288,9 @@ public class ShipmentUtils implements TicketPropertyMapping {
               foundSingleBin = singleBinHookResponse.getNewLocator();
             }
           }
-          createdShipmentLines
-              .add(addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
-                  jsonorder, lineNo, pendingQty, foundSingleBin, null, i));
+          createdShipmentLines.add(addShipmentline(shipment, shplineentity,
+              orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, pendingQty, foundSingleBin,
+              orderLine.getAttributeSetValue(), i));
         } else {
           HashMap<String, ShipmentInOutLine> usedBins = new HashMap<String, ShipmentInOutLine>();
           if (pendingQty.compareTo(BigDecimal.ZERO) > 0) {
@@ -418,9 +418,9 @@ public class ShipmentUtils implements TicketPropertyMapping {
                   .setMovementQuantity(objShipmentInOutLine.getMovementQuantity().add(pendingQty));
               OBDal.getInstance().save(objShipmentInOutLine);
             } else {
-              createdShipmentLines
-                  .add(addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i),
-                      orderLine, jsonorder, lineNo, pendingQty, loc, null, i));
+              createdShipmentLines.add(
+                  addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                      jsonorder, lineNo, pendingQty, loc, orderLine.getAttributeSetValue(), i));
             }
           }
         }
@@ -568,7 +568,9 @@ public class ShipmentUtils implements TicketPropertyMapping {
 
     line.setMovementQuantity(qty);
     line.setStorageBin(bin);
-    if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
+    if (attributeSetInstance != null) {
+      line.setAttributeSetValue(attributeSetInstance);
+    } else if (OBMOBCUtils.isJsonObjectPropertyStringPresentNotNullAndNotEmptyString(jsonOrderLine,
         "attSetInstanceDesc")) {
       line.setAttributeSetValue(
           AttributesUtils.fetchAttributeSetValue(jsonOrderLine.get("attSetInstanceDesc").toString(),
@@ -580,8 +582,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
           AttributesUtils.fetchAttributeSetValue(jsonOrderLine.get("attributeValue").toString(),
               jsonOrderLine.getJSONObject("product").get("id").toString(),
               orderLine.getOrganization().getId()));
-    } else {
-      line.setAttributeSetValue(attributeSetInstance);
     }
     shipment.getMaterialMgmtShipmentInOutLineList().add(line);
     OBDal.getInstance().save(line);
