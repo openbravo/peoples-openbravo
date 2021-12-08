@@ -138,13 +138,6 @@ sqlc.queryExecutionStrategy=optimized
 # - org.openbravo.authentication.lam.LamAuthenticationManager (in external 'LAM Authentication Manager' module)
 authentication.class=
 
-###########
-# Add-ons #
-###########
-
-# External Pentaho Services
-pentahoServer=
-
 ##############
 # Validation #
 ##############

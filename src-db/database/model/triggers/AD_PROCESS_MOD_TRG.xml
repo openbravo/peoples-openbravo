@@ -79,9 +79,7 @@ BEGIN
         COALESCE(:NEW.IsBackground , '.') != COALESCE(:OLD.IsBackground , '.') OR
         COALESCE(:NEW.IsJasper , '.') != COALESCE(:OLD.IsJasper , '.') OR
         COALESCE(:NEW.Jrname , '.') != COALESCE(:OLD.Jrname , '.') OR
-        COALESCE(:NEW.Service_Type , '.') != COALESCE(:OLD.Service_Type , '.') OR
         COALESCE(:NEW.Isexternalservice , '.') != COALESCE(:OLD.Isexternalservice , '.') OR
-        COALESCE(:NEW.Service_Source , '.') != COALESCE(:OLD.Service_Source , '.') OR
         COALESCE(:NEW.AD_Module_ID , '.') != COALESCE(:OLD.AD_Module_ID , '.') OR
         COALESCE(:NEW.UIPattern , '.') != COALESCE(:OLD.UIPattern , '.') OR
         COALESCE(:NEW.IsAdvancedFeature , '.') != COALESCE(:OLD.IsAdvancedFeature , '.') OR

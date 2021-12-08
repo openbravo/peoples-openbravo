@@ -85,16 +85,8 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SERVICE_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="ISEXTERNALSERVICE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="SERVICE_SOURCE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
-        <default/>
         <onCreateDefault/>
       </column>
       <column name="AD_MODULE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">

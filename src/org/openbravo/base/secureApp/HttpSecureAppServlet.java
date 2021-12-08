@@ -1130,9 +1130,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     final String sqlDateFormat = properties.getProperty("dateFormat.sql");
     vars.setSessionValue("#AD_SqlDateFormat", sqlDateFormat);
 
-    final String pentahoServer = properties.getProperty("pentahoServer");
-    vars.setSessionValue("#pentahoServer", pentahoServer);
-
     final String sourcePath = properties.getProperty("source.path");
     vars.setSessionValue("#sourcePath", sourcePath);
 
@@ -1141,7 +1138,6 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
       log4j.debug("javaDateTimeFormat: " + javaDateTimeFormat);
       log4j.debug("jsDateFormat: " + jsDateFormat);
       log4j.debug("sqlDateFormat: " + sqlDateFormat);
-      log4j.debug("pentahoServer: " + pentahoServer);
       log4j.debug("sourcePath: " + sourcePath);
     }
   }

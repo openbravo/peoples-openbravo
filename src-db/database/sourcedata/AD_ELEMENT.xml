@@ -19731,34 +19731,6 @@ The causes are The Requisition to Order window or the inclusion of the demand in
 <!--1004400015-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1004400015--></AD_ELEMENT>
 
-<!--1004400016--><AD_ELEMENT>
-<!--1004400016-->  <AD_ELEMENT_ID><![CDATA[1004400016]]></AD_ELEMENT_ID>
-<!--1004400016-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1004400016-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1004400016-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1004400016-->  <COLUMNNAME><![CDATA[Service_Type]]></COLUMNNAME>
-<!--1004400016-->  <NAME><![CDATA[Service Type]]></NAME>
-<!--1004400016-->  <PRINTNAME><![CDATA[Service Type]]></PRINTNAME>
-<!--1004400016-->  <DESCRIPTION><![CDATA[Indicates the type of the external service]]></DESCRIPTION>
-<!--1004400016-->  <HELP><![CDATA[Indicates the type of the external service]]></HELP>
-<!--1004400016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1004400016-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1004400016--></AD_ELEMENT>
-
-<!--1004400017--><AD_ELEMENT>
-<!--1004400017-->  <AD_ELEMENT_ID><![CDATA[1004400017]]></AD_ELEMENT_ID>
-<!--1004400017-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--1004400017-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1004400017-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1004400017-->  <COLUMNNAME><![CDATA[Service_Source]]></COLUMNNAME>
-<!--1004400017-->  <NAME><![CDATA[Service Source]]></NAME>
-<!--1004400017-->  <PRINTNAME><![CDATA[Service Source]]></PRINTNAME>
-<!--1004400017-->  <DESCRIPTION><![CDATA[Indicates where is located the external service. It can be an URL or a path.]]></DESCRIPTION>
-<!--1004400017-->  <HELP><![CDATA[Indicates where is located the external service. It can be an URL or a path.]]></HELP>
-<!--1004400017-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--1004400017-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--1004400017--></AD_ELEMENT>
-
 <!--1005100000--><AD_ELEMENT>
 <!--1005100000-->  <AD_ELEMENT_ID><![CDATA[1005100000]]></AD_ELEMENT_ID>
 <!--1005100000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
