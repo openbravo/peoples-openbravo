@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,49 +41,6 @@
   function ClassicOBCompatibility() {}
 
   ClassicOBCompatibility.prototype = {
-    // ** {{{ openLinkedItem(tabId, recordId) }}} **
-    //
-    // Opens a window from the linked item view.
-    //
-    // Parameters:
-    // * {{{tabId}}} id of the tab to open
-    // * {{{recordId}}} the record to show
-    //
-    openLinkedItem: function(tabId, recordId) {
-      var doOpenClassicWindow;
-      doOpenClassicWindow = function(response, data, request) {
-        if (!data.recordId || data.recordId.length === 0) {
-          L.ViewManager.openView('OBClassicWindow', {
-            tabTitle: data.tabTitle,
-            windowId: data.windowId,
-            tabId: data.tabId,
-            mappingName: data.mappingName,
-            command: 'DEFAULT'
-          });
-        } else {
-          L.ViewManager.openView('OBClassicWindow', {
-            tabTitle: data.tabTitle,
-            windowId: data.windowId,
-            tabId: data.tabId,
-            mappingName: data.mappingName,
-            keyParameter: data.keyParameter,
-            recordId: data.recordId,
-            command: 'DIRECT'
-          });
-        }
-      };
-
-      OB.RemoteCallManager.call(
-        'org.openbravo.client.application.ComputeWindowActionHandler',
-        {},
-        {
-          tabId: tabId,
-          recordId: recordId
-        },
-        doOpenClassicWindow
-      );
-    },
-
     // ** {{{ sendDirectLink(action, form) }}} **
     //
     // Shows a new tab with the clicked link content

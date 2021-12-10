@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,7 +43,6 @@ import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Window;
-import org.openbravo.xmlEngine.XmlDocument;
 
 public class UsedByLink extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
@@ -60,46 +59,21 @@ public class UsedByLink extends HttpSecureAppServlet {
       throws IOException, ServletException {
     final VariablesSecureApp vars = new VariablesSecureApp(request);
 
+    String output;
     if (isLinkedItemsSectionDisabled(vars)) {
-      response.setContentType("application/json;charset=UTF-8");
-      final PrintWriter out = response.getWriter();
-      out.print(getDisabledLinkedItemsSectionResponse(vars.getLanguage()));
-      return;
-    }
-
-    if (vars.commandIn("DEFAULT")) {
-      final String strWindow = vars.getStringParameter("inpwindowId");
-      final String strTabId = vars.getRequiredStringParameter("inpTabId");
-      final String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
-      final String strTableId = vars.getRequiredStringParameter("inpTableId");
-      final String strColumnName = Sqlc.TransformaNombreColumna(strKeyColumn);
-      final String strKeyId = vars.getGlobalVariable("inp" + strColumnName,
-          strWindow + "|" + strKeyColumn);
-      printPage(response, vars, strWindow, strTabId, strKeyColumn, strKeyId, strTableId);
-    } else if (vars.commandIn("LINKS")) {
-      final String strWindow = vars.getStringParameter("inpwindowId");
-      final String strTabId = vars.getRequiredStringParameter("inpTabId");
-      final String strKeyColumn = vars.getRequiredStringParameter("inpkeyColumnId");
-      final String strKeyId = vars
-          .getRequiredStringParameter("inp" + Sqlc.TransformaNombreColumna(strKeyColumn));
-      final String strAD_TAB_ID = vars.getRequiredStringParameter("inpadTabIdKey");
-      final String strTABLENAME = vars.getRequiredStringParameter("inptablename");
-      final String strCOLUMNNAME = vars.getRequiredStringParameter("inpcolumnname");
-      final String strTableId = vars.getRequiredStringParameter("inpTableId");
-      printPageDetail(request, response, vars, strWindow, strTabId, strKeyColumn, strKeyId,
-          strAD_TAB_ID, strTABLENAME, strCOLUMNNAME, strTableId);
+      output = getDisabledLinkedItemsSectionResponse(vars.getLanguage());
     } else if (vars.commandIn("JSONCategory")) {
-      response.setContentType("application/json;charset=UTF-8");
-      final PrintWriter out = response.getWriter();
-      out.print(getJSONCategories(vars));
+      output = getJSONCategories(vars);
     } else if (vars.commandIn("JSONLinkedItem")) {
-      response.setContentType("application/json;charset=UTF-8");
-      final PrintWriter out = response.getWriter();
-      out.print(getJSONLinkedItems(vars));
+      output = getJSONLinkedItems(vars);
     } else {
-      throw new ServletException();
+      throw new ServletException("2.50 commands are no longer supported: " + vars.getCommand());
     }
 
+    try (PrintWriter out = response.getWriter()) {
+      response.setContentType("application/json;charset=UTF-8");
+      out.print(output);
+    }
   }
 
   private boolean isLinkedItemsSectionDisabled(VariablesSecureApp vars) {
@@ -129,123 +103,6 @@ public class UsedByLink extends HttpSecureAppServlet {
       log4j.error("Error trying to generate message for Disabled Linked Items Section");
     }
     return jsonObject.toString();
-  }
-
-  private void printPage(HttpServletResponse response, VariablesSecureApp vars, String strWindow,
-      String TabId, String keyColumn, String keyId, String tableId)
-      throws IOException, ServletException {
-    String localTableId = tableId;
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("Output: UsedBy links for tab: " + TabId);
-    }
-
-    // Special case: convert FinancialMgmtDebtPaymentGenerateV view into its
-    // FinancialMgmtDebtPayment table. Fixes issue #0009973
-    if (localTableId.equals("800021")) {
-      localTableId = "800018";
-    }
-
-    final XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink")
-        .createXmlDocument();
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("tabID", TabId);
-    xmlDocument.setParameter("windowID", strWindow);
-    xmlDocument.setParameter("keyColumn", keyColumn);
-    xmlDocument.setParameter("tableId", localTableId);
-    xmlDocument.setParameter("keyName", "inp" + Sqlc.TransformaNombreColumna(keyColumn));
-    xmlDocument.setParameter("keyId", keyId);
-    xmlDocument.setParameter("recordIdentifier",
-        UsedByLinkData.selectIdentifier(this, keyId, vars.getLanguage(), localTableId));
-
-    final SearchResult searchResult = getLinkedItemCategories(vars, strWindow, keyColumn, keyId,
-        localTableId);
-
-    final UsedByLinkData[] usedByLinkData = searchResult.getUsedByLinkData();
-    final OBError message = searchResult.getMessage();
-
-    if (message != null) {
-      xmlDocument.setParameter("messageType", message.getType());
-      xmlDocument.setParameter("messageTitle", message.getTitle());
-      xmlDocument.setParameter("messageMessage", message.getMessage());
-    }
-
-    xmlDocument.setData("structure1", usedByLinkData);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
-  }
-
-  /**
-   * Prints the details of the chosen linked item category.
-   */
-  private void printPageDetail(HttpServletRequest request, HttpServletResponse response,
-      VariablesSecureApp vars, String strWindow, String TabId, String keyColumn, String keyId,
-      String strAD_TAB_ID, String strTABLENAME, String strCOLUMNNAME, String adTableId)
-      throws IOException, ServletException {
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("Output: UsedBy links for tab: " + TabId);
-    }
-    final XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/erpCommon/utility/UsedByLink_Detail")
-        .createXmlDocument();
-    xmlDocument.setParameter("language", "defaultLang=\"" + vars.getLanguage() + "\";");
-    xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\n");
-    xmlDocument.setParameter("theme", vars.getTheme());
-    xmlDocument.setParameter("tabID", TabId);
-    xmlDocument.setParameter("windowID", strWindow);
-    xmlDocument.setParameter("keyColumn", keyColumn);
-    xmlDocument.setParameter("adTabId", strAD_TAB_ID);
-    xmlDocument.setParameter("tableName", strTABLENAME);
-    xmlDocument.setParameter("tableId", adTableId);
-
-    // We have to check whether we have self reference or not
-    String selfReferenceCount = UsedByLinkData.getCountOfSelfReference(this, adTableId,
-        strTABLENAME);
-    if (selfReferenceCount.equals("0")) {
-      xmlDocument.setParameter("keyName", "inp" + Sqlc.TransformaNombreColumna(keyColumn));
-      xmlDocument.setParameter("keyId", keyId);
-      xmlDocument.setParameter("columnName", strCOLUMNNAME);
-    } else {
-      xmlDocument.setParameter("columnName", keyColumn);
-    }
-
-    xmlDocument.setParameter("recordIdentifier",
-        UsedByLinkData.selectIdentifier(this, keyId, vars.getLanguage(), adTableId));
-    if (vars.getLanguage().equals("en_US")) {
-      xmlDocument.setParameter("paramName", UsedByLinkData.tabName(this, strAD_TAB_ID));
-    } else {
-      xmlDocument.setParameter("paramName",
-          UsedByLinkData.tabNameLanguage(this, vars.getLanguage(), strAD_TAB_ID));
-    }
-
-    final UsedByLinkData[] data = UsedByLinkData.keyColumns(this, strAD_TAB_ID);
-    if (data == null || data.length == 0) {
-      // in order to preserve old behavior we use bdError method to report errors
-      bdError(request, response, "RecordError", vars.getLanguage());
-      return;
-    }
-    appendJScript(xmlDocument, data, strAD_TAB_ID);
-    final SearchResult searchResult = getLinkedItems(vars, data, strWindow, keyColumn, keyId,
-        strAD_TAB_ID, strTABLENAME, strCOLUMNNAME, adTableId);
-
-    final UsedByLinkData[] usedByLinkData = searchResult.getUsedByLinkData();
-    final OBError error = searchResult.getMessage();
-
-    if (error != null) {
-      // in order to preserve old behavior we use bdError method to report errors
-      bdError(request, response, error.getTitle(), vars.getLanguage());
-      return;
-    }
-
-    xmlDocument.setData("structure1", usedByLinkData);
-    response.setContentType("text/html; charset=UTF-8");
-    final PrintWriter out = response.getWriter();
-    out.println(xmlDocument.print());
-    out.close();
   }
 
   /**
@@ -504,61 +361,6 @@ public class UsedByLink extends HttpSecureAppServlet {
         adTableName + "." + strCOLUMNNAME, keyId, whereClause);
 
     return new SearchResult(usedByLinkData);
-  }
-
-  /**
-   * Adds some scripts for the new Layout.
-   */
-  private static void appendJScript(XmlDocument xmlDocument, UsedByLinkData[] data,
-      String strAD_TAB_ID) throws ServletException, IOException {
-
-    final StringBuffer strScript = new StringBuffer();
-    final StringBuffer strHiddens = new StringBuffer();
-    final StringBuffer strSQL = new StringBuffer();
-    strScript.append("function windowSelect() {\n");
-
-    // code added for new Layout
-    strScript.append("var layoutMDI = top.opener.getFrame('LayoutMDI');\n");
-    strScript.append("if (layoutMDI) {\n");
-    strScript.append("\n");
-    strScript.append("var frmMain = document.frmMain;\n");
-    strScript.append("var tabId = frmMain.inpadTabIdKey.value;\n");
-    strScript.append("var recordId = arguments[0];\n");
-    strScript
-        .append("layoutMDI.OB.Layout.ClassicOBCompatibility.openLinkedItem(tabId, recordId);\n");
-    strScript.append("top.close();\n");
-    strScript.append("return true;\n");
-    strScript.append("} else {\n");
-
-    strScript.append("var frm = document.forms[0];\n");
-    for (int i = 0; i < data.length; i++) {
-      if (i > 0) {
-        strSQL.append(" || ', ' || ");
-      }
-      strScript.append("frm.inp")
-          .append(Sqlc.TransformaNombreColumna(data[i].name))
-          .append(".value = arguments[")
-          .append(i)
-          .append("];\n");
-      strSQL.append("'''' || ").append(data[i].name).append(" || ''''");
-      strHiddens.append("<input type=\"hidden\" name=\"inp")
-          .append(Sqlc.TransformaNombreColumna(data[i].name))
-          .append("\">\n");
-    }
-    final String windowRef = Utility.getTabURL(strAD_TAB_ID, "E", true);
-    strScript.append("top.opener.submitFormGetParams('DIRECT', '")
-        .append(windowRef)
-        .append("', getParamsScript(document.forms[0]));\n");
-    strScript.append("top.close();\n");
-    strScript.append("return true;\n");
-    strScript.append("}\n");
-    strScript.append("}\n");
-
-    if (xmlDocument != null) {
-      xmlDocument.setParameter("hiddens", strHiddens.toString());
-      xmlDocument.setParameter("script", strScript.toString());
-    }
-
   }
 
   private static JSONObject buildJsonObject(JSONObject jsonObject, SearchResult searchResult)

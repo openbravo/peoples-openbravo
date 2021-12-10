@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2021 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -120,36 +120,6 @@
   </SqlMethod>
   
   
-  <SqlMethod name="tabName" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT W.NAME || ' - ' || TB.NAME AS NAME 
-        FROM AD_WINDOW W, AD_TAB TB 
-        WHERE W.AD_WINDOW_ID = TB.AD_WINDOW_ID 
-        AND TB.AD_TAB_ID = ?
-      ]]>
-    </Sql>
-    <Parameter name="adTabId"/>
-  </SqlMethod>
-  <SqlMethod name="tabNameLanguage" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT ((case when Wt.NAME IS NULL then W.NAME else Wt.NAME end) || ' - ' || 
-        (case when TBt.NAME IS NULL then TB.NAME else TBt.NAME end)) AS NAME 
-        FROM AD_WINDOW W left join AD_WINDOW_TRL Wt on W.AD_WINDOW_ID = Wt.AD_WINDOW_ID 
-                                                    AND Wt.AD_LANGUAGE  = ? , 
-             AD_TAB TB left join AD_TAB_TRL TBt on TB.AD_TAB_ID = TBt.AD_TAB_ID 
-                                                AND TBt.AD_LANGUAGE  = ? 
-        WHERE W.AD_WINDOW_ID = TB.AD_WINDOW_ID 
-        AND TB.AD_TAB_ID = ? 
-      ]]>
-    </Sql>
-    <Parameter name="adLanguage"/>
-    <Parameter name="adLanguage"/>
-    <Parameter name="adTabId"/>
-  </SqlMethod>
   <SqlMethod name="keyColumns" type="preparedStatement" return="multiple">
     <SqlMethodComment></SqlMethodComment>
     <Sql>
@@ -272,32 +242,6 @@
       ]]>
     </Sql>
     <Parameter name="adTableId"/>
-  </SqlMethod>
-  <SqlMethod name="selectIdentifier" type="preparedStatement" return="String" default="">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT AD_COLUMN_IDENTIFIER(tablename, to_char(?), to_char(?)) as recordidentifier
-        FROM AD_TABLE
-        WHERE AD_TABLE_ID = ? 
-      ]]>
-    </Sql>
-    <Parameter name="keyid"/>
-    <Parameter name="language"/>
-    <Parameter name="adTableId"/>
-  </SqlMethod>
-  <SqlMethod name="getCountOfSelfReference" type="preparedStatement" return="String" default="0">
-    <SqlMethodComment></SqlMethodComment>
-    <Sql>
-      <![CDATA[
-        SELECT count(*) as ID 
-        FROM AD_TABLE 
-        WHERE AD_TABLE_ID = ? 
-        AND TABLENAME = ?
-      ]]>
-    </Sql>
-    <Parameter name="adTableId"/>
-    <Parameter name="tableName"/>
   </SqlMethod>
   
    <SqlMethod name="selectKeyColumnId" type="preparedStatement" return="string">
