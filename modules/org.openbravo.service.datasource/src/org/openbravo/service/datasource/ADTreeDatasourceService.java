@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2021 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -400,7 +400,7 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
       maxSeqNoCriteria.add(Restrictions.eq(TreeNode.PROPERTY_REPORTSET, newParentId));
       maxSeqNoCriteria.setProjection(Projections.max(TreeNode.PROPERTY_SEQUENCENUMBER));
       Long maxSeqNo = (Long) maxSeqNoCriteria.uniqueResult();
-      seqNo = maxSeqNo + 10;
+      seqNo = maxSeqNo == null ? 10L : maxSeqNo + 10;
     } else {
       // Sequence numbers of the nodes that are positioned after the new one needs to be recomputed
       OBCriteria<TreeNode> nextNodeCriteria = OBDal.getInstance().createCriteria(TreeNode.class);
