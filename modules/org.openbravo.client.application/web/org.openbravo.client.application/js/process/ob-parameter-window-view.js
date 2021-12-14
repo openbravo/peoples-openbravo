@@ -492,16 +492,23 @@ isc.OBParameterWindowView.addProperties({
           body: formData
         })
           .then(response => response.json())
-          // TODO: handle exceptions
-          .then(data =>
+          .then(data => {
             view.handleResponse(
               !(data && data.refreshParent === false),
               data && data.message,
               data && data.responseActions,
               data && data.retryExecution,
               data
-            )
-          );
+            );
+          })
+          .catch(error => {
+            view.handleResponse(true, {
+              severity: isc.OBMessageBar.TYPE_ERROR,
+              text: OB.I18N.getLabel('OBUIAPP_ProcessRequestFailed')
+            });
+            // eslint-disable-next-line no-console
+            console.error(error);
+          });
       } else {
         OB.RemoteCallManager.call(
           view.actionHandler,
