@@ -415,6 +415,35 @@
         bpSets
       );
 
+      const calculateUnitAmountWithoutTicketDiscounts = (
+        baseUnitPrice,
+        promotions = []
+      ) => {
+        const ticketDiscountsDiscountTypeIds = OB.Discounts.Pos.getTicketDiscountsDiscountTypeIds();
+        const discountedWithoutTicketDiscounts = promotions.reduce(
+          (discounted, promotion) => {
+            if (
+              ticketDiscountsDiscountTypeIds.indexOf(promotion.discountType) !==
+              -1
+            ) {
+              return discounted;
+            }
+
+            return OB.DEC.add(discounted, promotion.amt);
+          },
+          OB.DEC.Zero
+        );
+
+        return OB.DEC.sub(baseUnitPrice, discountedWithoutTicketDiscounts);
+      };
+
+      const calculateUnitPriceWithoutTicketDiscounts = (
+        unitAmount,
+        quantity
+      ) => {
+        return quantity === 0 ? 0 : OB.DEC.div(unitAmount, quantity);
+      };
+
       // sets line amounts and prices and applies the discount calculation result into the ticket
       this.ticket.lines = this.ticket.lines.map(line => {
         const hasDiscounts = line.promotions && line.promotions.length > 0;
@@ -428,21 +457,43 @@
           qty
         } = line;
         if (line.skipApplyPromotions && hasDiscounts) {
-          const discounted = line.promotions.reduce(
+          const newLine = { ...line };
+          const discounted = newLine.promotions.reduce(
             (t, p) => OB.DEC.add(t, p.amt),
             OB.DEC.Zero
           );
-          return {
-            ...line,
-            grossUnitAmount: priceIncludesTax
-              ? grossUnitAmount ||
-                OB.DEC.sub(OB.DEC.mul(grossUnitPrice, qty), discounted)
-              : undefined,
-            netUnitAmount: priceIncludesTax
-              ? undefined
-              : netUnitAmount ||
-                OB.DEC.sub(OB.DEC.mul(baseNetUnitPrice, qty), discounted)
-          };
+
+          if (priceIncludesTax) {
+            newLine.grossUnitAmount =
+              grossUnitAmount ||
+              OB.DEC.sub(OB.DEC.mul(grossUnitPrice, qty), discounted);
+            newLine.netUnitAmount = undefined;
+            // This part is only used for visualization in WebPOS 2.0
+            newLine.grossUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
+              OB.DEC.mul(baseGrossUnitPrice, qty),
+              newLine.promotions
+            );
+            newLine.grossUnitPriceWithoutTicketDiscounts = calculateUnitPriceWithoutTicketDiscounts(
+              newLine.grossUnitAmountWithoutTicketDiscounts,
+              qty
+            );
+          } else {
+            newLine.netUnitAmount =
+              netUnitAmount ||
+              OB.DEC.sub(OB.DEC.mul(baseNetUnitPrice, qty), discounted);
+            newLine.grossUnitAmount = undefined;
+            // This part is only used for visualization in WebPOS 2.0
+            newLine.netUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
+              OB.DEC.mul(baseNetUnitPrice, qty),
+              newLine.promotions
+            );
+            newLine.netUnitPriceWithoutTicketDiscounts = calculateUnitPriceWithoutTicketDiscounts(
+              newLine.netUnitAmountWithoutTicketDiscounts,
+              qty
+            );
+          }
+
+          return newLine;
         }
         const isBooked = OB.App.State.Ticket.Utils.isBooked(this.ticket);
         const discounts = line.skipApplyPromotions
@@ -457,34 +508,7 @@
             ? line.promotions
             : []
         };
-        const calculateUnitAmountWithoutTicketDiscounts = (
-          baseUnitPrice,
-          promotions = []
-        ) => {
-          const ticketDiscountsDiscountTypeIds = OB.Discounts.Pos.getTicketDiscountsDiscountTypeIds();
-          const discountedWithoutTicketDiscounts = promotions.reduce(
-            (discounted, promotion) => {
-              if (
-                ticketDiscountsDiscountTypeIds.indexOf(
-                  promotion.discountType
-                ) !== -1
-              ) {
-                return discounted;
-              }
 
-              return OB.DEC.add(discounted, promotion.amt);
-            },
-            OB.DEC.Zero
-          );
-
-          return OB.DEC.sub(baseUnitPrice, discountedWithoutTicketDiscounts);
-        };
-        const calculateUnitPriceWithoutTicketDiscounts = (
-          unitAmount,
-          quantity
-        ) => {
-          return quantity === 0 ? 0 : OB.DEC.div(unitAmount, quantity);
-        };
         if (priceIncludesTax) {
           newLine.baseGrossUnitAmount = OB.DEC.mul(baseGrossUnitPrice, qty);
           newLine.baseNetUnitAmount = OB.DEC.Zero;
