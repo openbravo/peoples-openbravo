@@ -33,6 +33,7 @@ isc.OBParameterWindowView.addProperties({
 
   isReport: false,
   reportId: null,
+  windowId: null,
   pdfExport: false,
   xlsExport: false,
   htmlExport: false,
@@ -482,9 +483,8 @@ isc.OBParameterWindowView.addProperties({
           }, new FormData());
 
         formData.append('processId', view.processId);
-        // FIXME: these values are undefined but should be null
-        // formData.append('reportId', view.reportId);
-        //  formData.append('windowId', view.windowId);
+        formData.append('reportId', view.reportId);
+        formData.append('windowId', view.windowId);
         formData.append('paramValues', isc.JSON.encode(allProperties));
 
         fetch('org.openbravo.client.kernel?_action=' + view.actionHandler, {
