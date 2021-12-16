@@ -60,7 +60,6 @@ enyo.kind({
           receipt,
           this.model.get('orderList'),
           this,
-          undefined,
           true
         );
       },

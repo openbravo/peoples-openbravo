@@ -22,7 +22,6 @@ import org.openbravo.service.json.JsonConstants;
 public class OpenRelatedReceipts extends JSONProcessSimple {
 
   private final String ORDERID_PROPERTY = "orderid";
-  private final String ORIGINSERVER_PROPERTY = "originServer";
   private final String TERMINAL_ORGANIZATION_PROPERTY = "organization";
 
   @Override
@@ -35,15 +34,11 @@ public class OpenRelatedReceipts extends JSONProcessSimple {
         .getInstanceFromStaticBeanManager(PaidReceipts.class);
 
     final JSONArray orderIds = jsonsent.getJSONArray("orders");
-    final String originServer = jsonsent.optString("originServer");
 
     for (int i = 0; i < orderIds.length(); i++) {
       final JSONObject args = new JSONObject();
       args.put(ORDERID_PROPERTY, orderIds.getJSONObject(i).getString("id"));
       args.put(TERMINAL_ORGANIZATION_PROPERTY, jsonsent.getString(TERMINAL_ORGANIZATION_PROPERTY));
-      if (originServer != null) {
-        args.put(ORIGINSERVER_PROPERTY, originServer);
-      }
       final JSONObject response = paidReceiptService.exec(args);
       final JSONObject order = getOrderFromResponse(response);
       if (order != null) {

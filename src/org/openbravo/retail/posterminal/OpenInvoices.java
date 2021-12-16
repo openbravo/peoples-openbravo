@@ -20,7 +20,6 @@ import org.openbravo.service.json.JsonConstants;
 public class OpenInvoices extends JSONProcessSimple {
 
   private final String INVOICE_PROPERTY = "invoiceid";
-  private final String ORIGINSERVER_PROPERTY = "originServer";
 
   @Override
   public JSONObject exec(JSONObject jsonsent) throws ServletException, JSONException {
@@ -31,14 +30,10 @@ public class OpenInvoices extends JSONProcessSimple {
     final Invoices invoicesService = WeldUtils.getInstanceFromStaticBeanManager(Invoices.class);
 
     final JSONArray invoicesIds = jsonsent.getJSONArray("invoices");
-    final String originServer = jsonsent.optString("originServer");
 
     for (int i = 0; i < invoicesIds.length(); i++) {
       final JSONObject args = new JSONObject();
       args.put(INVOICE_PROPERTY, invoicesIds.getJSONObject(i).getString("id"));
-      if (originServer != null) {
-        args.put(ORIGINSERVER_PROPERTY, originServer);
-      }
       final JSONObject response = invoicesService.exec(args);
       final JSONObject invoice = getInvoiceFromResponse(response);
       if (invoice != null) {

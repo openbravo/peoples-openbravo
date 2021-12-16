@@ -786,9 +786,7 @@ enyo.kind({
         .get('order')
         .get('bp')
         .get('_identifier');
-      this.$.body.$.listOrders.searchAction(null, {
-        originServer: this.args.originServer
-      });
+      this.$.body.$.listOrders.searchAction(null, {});
       if (!this.notClear) {
         this.$.footer.$.modalAssociateTicketsFooter.$.buttonAssociateSelected.setDisabled(
           true

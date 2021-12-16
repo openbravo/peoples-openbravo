@@ -392,8 +392,7 @@ enyo.kind({
 
     process.exec(
       {
-        invoices: checkedInvoices,
-        originServer: undefined
+        invoices: checkedInvoices
       },
       function(data) {
         if (data && data.exception) {

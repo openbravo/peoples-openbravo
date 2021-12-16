@@ -651,8 +651,7 @@ enyo.kind({
 
     process.exec(
       {
-        invoices: invoiceIds,
-        originServer: undefined
+        invoices: invoiceIds
       },
       function(data) {
         if (data && data.exception) {
@@ -1367,8 +1366,7 @@ enyo.kind({
                   direction: 'asc'
                 },
             parameters: {
-              remoteModel: true,
-              originServer: inEvent.originServer
+              remoteModel: true
             }
           },
           successCallbackOrders,
@@ -1447,8 +1445,7 @@ enyo.kind({
             name: 'lineNo',
             direction: 'asc'
           },
-          advanced: false,
-          originServer: this.args.originServer
+          advanced: false
         });
       }
       if (!this.notClear) {

@@ -14,7 +14,6 @@
     model,
     orderList,
     context,
-    originServer,
     calledFrom,
     callback
   ) {
@@ -26,7 +25,6 @@
         model: model,
         orderList: orderList,
         context: context,
-        originServer: originServer,
         calledFrom: calledFrom,
         callback: callback
       };
@@ -38,7 +36,6 @@
     model,
     orderList,
     context,
-    originServer,
     calledFrom,
     orderCallback
   ) {
@@ -48,7 +45,6 @@
         model,
         orderList,
         context,
-        originServer,
         calledFrom,
         orderCallback
       );
@@ -68,7 +64,6 @@
       recursiveIdx,
       currentModel,
       currentContext,
-      currentOriginServer,
       currentCallback;
 
     checkListCallback = function() {
@@ -85,7 +80,6 @@
           currentReceipt.model,
           currentReceipt.orderList,
           currentReceipt.context,
-          currentReceipt.originServer,
           currentReceipt.calledFrom,
           currentReceipt.callback
         );
@@ -169,7 +163,6 @@
       process.exec(
         {
           orderid: order.get('id'),
-          originServer: currentOriginServer,
           crossStore: OB.UTIL.isCrossStoreReceipt(order)
             ? order.get('organization')
             : null
@@ -218,8 +211,7 @@
               );
               process.exec(
                 {
-                  orders: selectedModels,
-                  originServer: currentOriginServer
+                  orders: selectedModels
                 },
                 function(data) {
                   if (data && data.exception) {
@@ -261,13 +253,11 @@
       model,
       orderList,
       context,
-      originServer,
       calledFrom,
       callback
     ) {
       currentModel = model;
       currentContext = context;
-      currentOriginServer = originServer;
       currentCallback = callback;
 
       if (calledFrom === 'return') {
@@ -294,8 +284,7 @@
             process.exec(
               {
                 orderId: order.get('id'),
-                bp: order.get('businessPartner'),
-                originServer: originServer
+                bp: order.get('businessPartner')
               },
               function(data) {
                 if (data && data.exception) {
@@ -351,13 +340,6 @@
       );
     };
 
-    loadOrdersProcess(
-      model,
-      null,
-      context,
-      originServer,
-      calledFrom,
-      orderCallback
-    );
+    loadOrdersProcess(model, null, context, calledFrom, orderCallback);
   };
 })();
