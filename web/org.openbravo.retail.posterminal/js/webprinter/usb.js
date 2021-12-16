@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2020 Openbravo S.L.U.
+ * Copyright (C) 2018-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -66,12 +66,16 @@
       .open()
       .then(
         function() {
-          return this.device.selectConfiguration(1);
+          return this.device.selectConfiguration(
+            this.device.configuration.configurationValue
+          );
         }.bind(this)
       )
       .then(
         function() {
-          return this.device.claimInterface(0);
+          return this.device.claimInterface(
+            this.device.configuration.interfaces[0].interfaceNumber
+          );
         }.bind(this)
       )
       .then(
@@ -93,8 +97,17 @@
   };
 
   USB.prototype.printChunk = function(chunk) {
+    let out = 1;
+    const endpoints = this.device.configuration.interfaces[0].alternate
+      .endpoints;
+    for (let i = 0; endpoints.length; i++) {
+      if (endpoints[i].direction === 'out') {
+        out = endpoints[i].endpointNumber;
+        break;
+      }
+    }
     return function() {
-      return this.device.transferOut(1, chunk.buffer);
+      return this.device.transferOut(out, chunk.buffer);
     }.bind(this);
   };
 

@@ -47,6 +47,7 @@ enyo.kind({
     '  <line>' + //
     '    <text align="left">Thank you.</text>' + //
     '  </line>' + //
+    '  <line></line>' + //
     '</ticket>' + //
     '</output>',
   checkReceipt: function(ev) {
