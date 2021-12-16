@@ -312,14 +312,6 @@ function checkBrowserCompatibility() {
     ) {
       isValid = true;
     }
-  } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-    if (
-      isValidBrowser('explorer') &&
-      browserVersionToFloat(browserVersion) >=
-        browserVersionToFloat(validBrowserVersions.explorer)
-    ) {
-      isValid = true;
-    }
   } else if (browserName.toUpperCase().indexOf('GOOGLE CHROME') != -1) {
     if (
       isValidBrowser('chrome') &&
@@ -360,14 +352,6 @@ function checkRecommendedBrowser() {
       isRecBrowser('firefox') &&
       browserVersionToFloat(browserVersion) >=
         browserVersionToFloat(recBrowserVersions.firefox)
-    ) {
-      isRecommended = true;
-    }
-  } else if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-    if (
-      isRecBrowser('explorer') &&
-      browserVersionToFloat(browserVersion) >=
-        browserVersionToFloat(recBrowserVersions.explorer)
     ) {
       isRecommended = true;
     }
@@ -414,14 +398,6 @@ function buildValidBrowserMsg() {
       '<br>' +
       ' * Google Chrome ' +
       browserVersionTrim(validBrowserVersions.chrome) +
-      ' ' +
-      validBrowserMsgOrHigher;
-  }
-  if (isValidBrowser('explorer')) {
-    displayValidBrowserMsg +=
-      '<br>' +
-      ' * Microsoft Internet Explorer ' +
-      browserVersionTrim(validBrowserVersions.explorer) +
       ' ' +
       validBrowserMsgOrHigher;
   }
