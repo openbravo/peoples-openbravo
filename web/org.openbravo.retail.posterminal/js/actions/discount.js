@@ -42,6 +42,9 @@
         var selectedReceiptLine = view.state.readCommandState({
           name: 'selectedReceiptLine'
         });
+        if (keyboard.getString() === '') {
+          return;
+        }
         if (
           !OB.MobileApp.model.get('permissions')[
             'OBPOS_retail.discountkeyboard'
@@ -87,6 +90,7 @@
           keyboard.receipt.set('multipleUndo', null);
           keyboard.lastStatus = '';
           keyboard.setStatus('');
+          keyboard.resetString();
         } else {
           if (receipt.get('isEditable') === false) {
             view.doShowPopup({
