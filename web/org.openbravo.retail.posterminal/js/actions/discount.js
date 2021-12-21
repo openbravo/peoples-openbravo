@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -42,9 +42,6 @@
         var selectedReceiptLine = view.state.readCommandState({
           name: 'selectedReceiptLine'
         });
-        if (keyboard.getString() === '') {
-          return;
-        }
         if (
           !OB.MobileApp.model.get('permissions')[
             'OBPOS_retail.discountkeyboard'
