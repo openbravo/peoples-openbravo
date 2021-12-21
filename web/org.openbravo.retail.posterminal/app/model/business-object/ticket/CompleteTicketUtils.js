@@ -416,6 +416,146 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     return newTicket;
   },
 
+  calculateChange(ticket, payload) {
+    // prepare a mutable variable for new ticket since we'll be filling it with new properties later
+    let newTicket = { ...ticket };
+
+    // short circuit out if preference for splitting change is not enabled, terminal is offline or no payments
+    if (!payload.preferences.splitChange) {
+      return ticket;
+    }
+    if (!payload.terminal) {
+      return ticket;
+    }
+    if (!ticket.payments || ticket.payments.length === 0) {
+      return ticket;
+    }
+
+    // find the cash payment method
+    const firstCashPaymentType = payload.payments.find(item => {
+      return item.paymentMethod.iscash;
+    });
+    // find payments that have change using the "overpayment" property for subtotals or just finds cash payment if not present
+    const paymentsWithChange = ticket.paymentSubtotals
+      ? ticket.payments.filter(payment => payment.overpayment)
+      : ticket.payments.filter(payment => payment.isCash && ticket.change);
+
+    // take care of edge cases: short circuit out also if there's no cash payment type or there are no payments with change
+    if (!firstCashPaymentType) {
+      return ticket;
+    }
+    if (!paymentsWithChange.length) {
+      return ticket;
+    }
+
+    // make a couple of holding arrays we will use to dump new properties later
+    const changePayments = [];
+    const positivePayments = [];
+
+    // now, define and attach changePayments so that they'll be converted into full payments on ticket completion
+    paymentsWithChange.forEach(payment => {
+      // get the change from overpayment property or ticket.change if no split payments
+      const change = payment.overpayment || ticket.change;
+      // re-usable logic to find rounded amounts for change
+      const roundChangeAmount = p => {
+        if (p.amountRounded && !Number.isNaN(p.amountRounded)) {
+          return p.amountRounded || OB.DEC.Zero;
+        }
+
+        if (firstCashPaymentType && firstCashPaymentType.changeRounding) {
+          const { obposPosprecision } =
+            firstCashPaymentType || OB.DEC.getScale();
+          const { roundingto, roundingdownlimit } =
+            firstCashPaymentType.changeRounding || OB.DEC.Zero;
+          // Using 5 as rounding precision as a maximum precsion for all currencies before rounding.
+          // And after rounding using Math.trunc using the payment precision.
+          return OB.DEC.mul(
+            roundingto,
+            Math.trunc(
+              OB.DEC.div(
+                OB.DEC.add(
+                  change,
+                  OB.DEC.sub(roundingto, roundingdownlimit, 5),
+                  5
+                ),
+                roundingto,
+                5
+              )
+            ),
+            obposPosprecision
+          );
+        }
+        return change;
+      };
+      // get and format change amount
+      const formattedRounded = OB.I18N.formatCurrencyWithSymbol(
+        roundChangeAmount(payment),
+        firstCashPaymentType.symbol,
+        firstCashPaymentType.currencySymbolAtTheRight
+      );
+      // define the label for the changePayment
+      const paymentLabel =
+        OB.DEC.compare(change) &&
+        OB.DEC.compare(
+          OB.DEC.sub(
+            change,
+            roundChangeAmount(payment),
+            firstCashPaymentType.obposPosprecision || OB.DEC.getScale()
+          )
+        )
+          ? OB.I18N.getLabel('OBPOS_OriginalAmount', [
+              formattedRounded,
+              OB.I18N.formatCurrencyWithSymbol(
+                change,
+                firstCashPaymentType.symbol,
+                firstCashPaymentType.currencySymbolAtTheRight
+              )
+            ])
+          : formattedRounded;
+
+      // if split payment, reset overpayment property to 0 to avoid telling back-end to account for writeoff amount
+      if (payment.overpayment) {
+        // eslint-disable-next-line no-param-reassign
+        payment.overpayment = 0;
+      }
+
+      // hold essential changePayment data for later transfer to payment properties
+      const changePaymentData = {
+        key: firstCashPaymentType.payment.searchKey,
+        amount: OB.DEC.mul(
+          change,
+          firstCashPaymentType.mulrate || OB.DEC.One,
+          firstCashPaymentType.obposPosprecision || OB.DEC.getScale()
+        ),
+        amountRounded: roundChangeAmount(payment),
+        origAmount: change,
+        label: paymentLabel
+      };
+
+      // put in a new positive payment with new properties
+      positivePayments.push({
+        ...payment,
+        paymentData: {
+          ...payment.paymentData,
+          ...changePaymentData
+        }
+      });
+
+      // put in a newly generated change payment
+      changePayments.push({ ...changePaymentData });
+    });
+
+    // now fill new ticket with the data we've collected
+    newTicket = {
+      ...newTicket,
+      payments: [...positivePayments],
+      changePayments: [...changePayments]
+    };
+
+    // if we end up with changePayments, return new ticket with changePayments defined. Return original ticket if not
+    return newTicket.changePayments.length ? newTicket : ticket;
+  },
+
   /**
    * Completes ticket payment generating change payment if needed and converting payment to negative in case of return.
    *

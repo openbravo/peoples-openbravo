@@ -33,6 +33,9 @@
         payload
       );
 
+      // generate changePayments property for payments
+      newTicket = OB.App.State.Ticket.Utils.calculateChange(newTicket, payload);
+
       // Complete ticket payment
       newTicket = OB.App.State.Ticket.Utils.completePayment(newTicket, payload);
 

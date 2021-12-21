@@ -1,1 +1,3 @@
 web/org.openbravo.retail.posterminal/app/.eslintrc.json
+web-test/model/business-object/ticket/test-reports/
+test-reports/
