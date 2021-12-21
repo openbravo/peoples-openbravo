@@ -52,7 +52,10 @@
           }
           keyboard.receipt.set('undo', null);
           keyboard.receipt.set('multipleUndo', true);
-          const percentage = OB.I18N.parseNumber(keyboard.getString());
+          const percentage =
+            keyboard.getString() !== ''
+              ? OB.I18N.parseNumber(keyboard.getString())
+              : OB.DEC.number(0);
           if (
             OB.DEC.compare(percentage) > 0 &&
             OB.DEC.compare(OB.DEC.sub(percentage, OB.DEC.number(100))) <= 0
