@@ -458,15 +458,10 @@
         } = line;
         if (line.skipApplyPromotions && hasDiscounts) {
           const newLine = { ...line };
-          const discounted = newLine.promotions.reduce(
-            (t, p) => OB.DEC.add(t, p.amt),
-            OB.DEC.Zero
-          );
 
           if (priceIncludesTax) {
             newLine.grossUnitAmount =
-              grossUnitAmount ||
-              OB.DEC.sub(OB.DEC.mul(grossUnitPrice, qty), discounted);
+              grossUnitAmount || OB.DEC.mul(grossUnitPrice, qty);
             newLine.netUnitAmount = undefined;
             // This part is only used for visualization in WebPOS 2.0
             newLine.grossUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
@@ -479,8 +474,7 @@
             );
           } else {
             newLine.netUnitAmount =
-              netUnitAmount ||
-              OB.DEC.sub(OB.DEC.mul(baseNetUnitPrice, qty), discounted);
+              netUnitAmount || OB.DEC.mul(baseNetUnitPrice, qty);
             newLine.grossUnitAmount = undefined;
             // This part is only used for visualization in WebPOS 2.0
             newLine.netUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(

@@ -405,4 +405,23 @@ describe('Apply Discounts and Taxes Model Hook', () => {
     const result = hook(deepfreeze(ticketWithNegativeLines), payload());
     expect(result.qty).toEqual(0);
   });
+
+  test.each`
+    payloadTicket                                                                                                                                                                                                                                  | discountsEngineResult | taxEngineResult                                                                         | resultTicket
+    ${{ id: '0', priceIncludesTax: true, lines: [{ id: '1', grossUnitPrice: 0, baseGrossUnitPrice: 100, qty: -1, quantity: 1, skipApplyPromotions: true, promotions: [{ amt: 100, actualAmt: 100, displayedTotalAmount: 100 }] }], payments: [] }} | ${{ lines: [] }}      | ${{ grossAmount: 0, lines: [{ id: '1', grossUnitAmount: 0, grossUnitPrice: 0 }] }}      | ${{ id: '0', grossAmount: 0, lines: [{ id: '1', grossUnitAmount: 0, grossUnitPrice: 0, promotions: [{ amt: 100, actualAmt: 100, displayedTotalAmount: 100 }] }] }}
+    ${{ id: '0', priceIncludesTax: true, lines: [{ id: '1', grossUnitPrice: 90, baseGrossUnitPrice: 100, qty: -1, quantity: 1, skipApplyPromotions: true, promotions: [{ amt: 10, actualAmt: 10, displayedTotalAmount: 10 }] }], payments: [] }}   | ${{ lines: [] }}      | ${{ grossAmount: -90, lines: [{ id: '1', grossUnitAmount: -90, grossUnitPrice: 90 }] }} | ${{ id: '0', grossAmount: -90, lines: [{ id: '1', grossUnitAmount: -90, grossUnitPrice: 90, promotions: [{ amt: 10, actualAmt: 10, displayedTotalAmount: 10 }] }] }}
+  `(
+    'Skip calculate line gross amount if line skipApplyPromotions is true',
+    ({
+      payloadTicket,
+      discountsEngineResult,
+      taxEngineResult,
+      resultTicket
+    }) => {
+      setDiscountsEngineResultAs(discountsEngineResult);
+      setTaxesEngineResultAs(taxEngineResult);
+      const result = hook(deepfreeze(payloadTicket), payload());
+      expect(result).toMatchObject(resultTicket);
+    }
+  );
 });
