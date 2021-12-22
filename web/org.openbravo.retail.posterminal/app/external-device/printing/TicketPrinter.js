@@ -252,6 +252,16 @@
   // Include over-payment amount to total paid amount from change amount
   function includeOverPaymentAmt(ticket) {
     const newTicket = { ...ticket };
+    if (OB.App.Security.hasPermission('OBPOS_SplitChange')) {
+      // In case we already have the change payments as separate payments,
+      // we only need to remove them from the array, but it is not necessary to
+      // add the overpaid amount to the original payment
+      newTicket.payments = newTicket.payments.filter(payment => {
+        const { paymentData } = payment;
+        return !paymentData || !paymentData.changePayment;
+      });
+      return newTicket;
+    }
     const changePrePayments = newTicket.payments.filter(payment => {
       const { paymentData } = payment;
       return paymentData && paymentData.changePayment;
