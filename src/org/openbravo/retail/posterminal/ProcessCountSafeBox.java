@@ -11,6 +11,10 @@ package org.openbravo.retail.posterminal;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +37,10 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
 
   JSONObject jsonResponse = new JSONObject();
   private static final Logger log = LogManager.getLogger();
+
+  @Inject
+  @Any
+  private Instance<InitialCountSafeBoxHook> initialCountSafeboxHooks;
 
   @Override
   protected String getImportQualifier() {
@@ -85,9 +93,17 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
 
     doReconciliation(safebox, jsonCountSafeBox, jsonData, countSafeBoxDate);
 
+    executeHooks(safebox, jsonCountSafeBox);
+
     jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
 
     return jsonData;
+  }
+
+  private void executeHooks(OBPOSSafeBox safebox, JSONObject jsonCountSafeBox) throws Exception {
+    for (InitialCountSafeBoxHook hook : initialCountSafeboxHooks) {
+      hook.exec(safebox, jsonCountSafeBox);
+    }
   }
 
   private void doReconciliation(OBPOSSafeBox safebox, JSONObject jsonCountSafeBox,
