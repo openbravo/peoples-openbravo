@@ -71,13 +71,14 @@ public class Payments extends JSONTerminalProperty {
                          + "  left outer join pm.obposPaymentgroup as providerGroup "
                          + "  left outer join providerGroup.image as providerGroupImage "
                          + "  left outer join pm.obposPaymentmethodType as paymentType "
+                         + "  left outer join pm.paymentMethodCategory as payMethodCategory "
                          + "  left outer join pm.color as color "
                          + "  left outer join providerGroup.color as pmg_color "
                         + "where p.obposApplications.id = :posID  "
                          + "  and p.$readableSimpleCriteria "
                          + "  and p.$activeCriteria "
                          + "  and pm.$activeCriteria"
-                         + "order by p.line, p.commercialName";
+                         + "order by coalesce(payMethodCategory.sequenceNumber, p.line), p.commercialName";
       //@formatter:on
 
       SimpleQueryBuilder querybuilder = new SimpleQueryBuilder(hqlPayments,
