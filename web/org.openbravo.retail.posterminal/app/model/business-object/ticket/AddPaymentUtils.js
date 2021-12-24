@@ -141,14 +141,27 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           newPaidAmount > ticket.obposPrepaymentamt &&
           newPaidAmount < ticket.grossAmount
         ) {
+          const deliveryChange = OB.DEC.sub(
+            newPaidAmount,
+            ticket.obposPrepaymentamt
+          );
+          const deliveryChangeLabel = OB.App.Locale.formatAmount(
+            deliveryChange,
+            {
+              currencySymbol: terminal.symbol,
+              currencySymbolAtTheRight: terminal.currencySymbolAtTheRight
+            }
+          );
           const userResponse = await OB.App.View.DialogUIHandler.inputData(
             'modalDeliveryChange',
             {
+              title: '$OBPOS_LblActionRequired',
+              subTitle: '$OBPOS_DeliveryChangeMsg',
+              subTitleParams: [deliveryChangeLabel],
+              confirmLabel: '$OBMOBC_Continue',
+              hideCancel: true,
               payload: newPayload,
-              deliveryChange: OB.DEC.sub(
-                newPaidAmount,
-                ticket.obposPrepaymentamt
-              )
+              deliveryChange
             }
           );
           newPayload = userResponse.payload;
