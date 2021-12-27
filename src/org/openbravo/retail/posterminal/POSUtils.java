@@ -40,6 +40,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.MobileUiConfiguration;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
 import org.openbravo.model.common.enterprise.Locator;
@@ -507,18 +508,12 @@ public class POSUtils {
 
   /**
    * Gets the value of a given property in Organization entity looking the the org tree and getting
-   * the first not null value
+   * the first not null value. The implementation of this method has been moved to OBMOBCUtils so
+   * that it is available for all mobile.core applications. This method will be soon deprecated, see
+   * https://issues.openbravo.com/view.php?id=48329
    */
   public static Object getPropertyInOrgTree(Organization org, String propertyName) {
-    for (String orgId : OBContext.getOBContext()
-        .getOrganizationStructureProvider()
-        .getParentList(org.getId(), true)) {
-      Organization orgInTree = OBDal.getInstance().get(Organization.class, orgId);
-      if (orgInTree.get(propertyName) != null) {
-        return orgInTree.get(propertyName);
-      }
-    }
-    return null;
+    return OBMOBCUtils.getPropertyInOrgTree(org, propertyName);
   }
 
   public static Boolean hasCurrencyRate(String posTerminalId) {
