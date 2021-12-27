@@ -6,27 +6,27 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+/* eslint-disable no-bitwise */
 
-(function() {
-  let ESCPOSHP = function() {
+(() => {
+  const ESCPOSHP = () => {
     OB.ESCPOS.Standard.call(this);
-    this.transImage = function(imagedata) {
+    this.transImage = imagedata => {
       let line = new Uint8Array();
-      let result = [];
-      let i, j, p, d;
+      const result = [];
+      let p;
 
-      let width = imagedata.width;
-      let height = imagedata.height;
+      const { width, height } = imagedata;
 
       // Raw data
-      for (i = 0; i < height; i = i + 8) {
+      for (let i = 0; i < height; i += 8) {
         result.push(0x1b, 0x4b, width & 255, width >> 8);
-        for (j = 0; j < imagedata.width; j++) {
+        for (let j = 0; j < imagedata.width; j += 1) {
           p = 0x00;
-          for (d = 0; d < 8; d++) {
-            p = p << 1;
+          for (let d = 0; d < 8; d += 1) {
+            p <<= 1;
             if (this.isBlack(imagedata, j, i + d)) {
-              p = p | 0x01;
+              p |= 0x01;
             }
           }
           result.push(p);

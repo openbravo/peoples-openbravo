@@ -1,14 +1,14 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-(function() {
-  var ESCPOSStar = function() {
+(() => {
+  const ESCPOSStar = () => {
     OB.ESCPOS.StandardImageAlt.call(this);
 
     this.CHAR_SIZE_0 = new Uint8Array([0x1b, 0x69, 0x00, 0x00]);
@@ -34,8 +34,8 @@
     this.BAR_HEIGHT = new Uint8Array([0x50]);
     this.BAR_END = new Uint8Array([0x1e]);
 
-    this.transBarcodeParameters = function(code, position) {
-      var line = new Uint8Array();
+    this.transBarcodeParameters = (code, position) => {
+      let line = new Uint8Array();
       if (position === 'none') {
         line = OB.ARRAYS.append(line, this.BAR_POSITIONNONE);
       } else {
@@ -47,9 +47,9 @@
       return line;
     };
 
-    this.transEAN13 = function(code, position) {
-      var line = new Uint8Array();
-      var barcode = code.substring(0, 12);
+    this.transEAN13 = (code, position) => {
+      let line = new Uint8Array();
+      const barcode = code.substring(0, 12);
 
       line = OB.ARRAYS.append(line, this.CENTER_JUSTIFICATION);
       line = OB.ARRAYS.append(line, this.BAR_EAN13);
@@ -63,8 +63,8 @@
       return line;
     };
 
-    this.transCODE128 = function(code, position) {
-      var line = new Uint8Array();
+    this.transCODE128 = (code, position) => {
+      let line = new Uint8Array();
 
       line = OB.ARRAYS.append(line, this.CENTER_JUSTIFICATION);
       line = OB.ARRAYS.append(line, this.BAR_CODE128);

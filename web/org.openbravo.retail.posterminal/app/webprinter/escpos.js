@@ -1,15 +1,16 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2020 Openbravo S.L.U.
+ * Copyright (C) 2018-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+/* eslint-disable no-bitwise */
 
-(function() {
-  var CODE128Encoder = function() {
-    this.encodechar = function(c) {
+(() => {
+  function CODE128Encoder() {
+    this.encodechar = c => {
       switch (c) {
         case '/':
           return 0x2f;
@@ -189,21 +190,19 @@
           return 0x30;
       }
     };
-    this.encode = function(txt) {
+    this.encode = txt => {
       if (txt) {
-        var result = [];
-        var i;
-        for (i = 0; i < txt.length; i++) {
+        const result = [];
+        for (let i = 0; i < txt.length; i += 1) {
           result.push(this.encodechar(txt.charAt(i)));
         }
         return new Uint8Array(result);
-      } else {
-        return new Uint8Array();
       }
+      return new Uint8Array();
     };
-  };
+  }
 
-  var Base = function() {
+  function Base() {
     this.encoderText = new TextEncoder('utf-8');
     this.NEW_LINE = new Uint8Array([0x0d, 0x0a]);
     this.PARTIAL_CUT_1 = new Uint8Array();
@@ -224,24 +223,16 @@
 
     this.DRAWER_OPEN = new Uint8Array();
 
-    this.transEAN13 = function(code, position) {
-      return new Uint8Array();
-    };
+    this.transEAN13 = () => new Uint8Array();
 
-    this.transCODE128 = function(code, position) {
-      return new Uint8Array();
-    };
+    this.transCODE128 = () => new Uint8Array();
 
-    this.transQR = function(code, quality, size) {
-      return new Uint8Array();
-    };
+    this.transQR = () => new Uint8Array();
 
-    this.transImage = function(imagedata) {
-      return new Uint8Array();
-    };
-  };
+    this.transImage = () => new Uint8Array();
+  }
 
-  var Standard = function() {
+  function Standard() {
     Base.call(this);
 
     this.DRAWER_OPEN = new Uint8Array([0x1b, 0x70, 0x00, 0x32, -0x06]);
@@ -299,12 +290,12 @@
     ]);
     this.encoderQR = new TextEncoder('utf-8');
 
-    this.isBlack = function(imagedata, x, y) {
+    this.isBlack = (imagedata, x, y) => {
       if (x < 0 || x >= imagedata.width || y < 0 || y >= imagedata.height) {
         return false;
       }
-      var index = y * imagedata.width * 4 + x * 4;
-      var luminosity = 0;
+      const index = y * imagedata.width * 4 + x * 4;
+      let luminosity = 0;
       luminosity += 0.3 * imagedata.data[index]; // RED luminosity
       luminosity += 0.59 * imagedata.data[index + 1]; // GREEN luminosity
       luminosity += 0.11 * imagedata.data[index + 2]; // BLUE luminosity
@@ -313,13 +304,13 @@
       return luminosity >= 0.5;
     };
 
-    this.transImage = function(imagedata) {
-      var line = new Uint8Array();
-      var result = [];
-      var i, j, p, d;
+    this.transImage = imagedata => {
+      let line = new Uint8Array();
+      const result = [];
+      let p;
 
-      var width = (imagedata.width + 7) / 8;
-      var height = imagedata.height;
+      const width = (imagedata.width + 7) / 8;
+      const { height } = imagedata;
 
       result.push(width & 255);
       result.push(width >> 8);
@@ -327,13 +318,13 @@
       result.push(height >> 8);
 
       // Raw data
-      for (i = 0; i < imagedata.height; i++) {
-        for (j = 0; j < imagedata.width; j = j + 8) {
+      for (let i = 0; i < imagedata.height; i += 1) {
+        for (let j = 0; j < imagedata.width; j += 8) {
           p = 0x00;
-          for (d = 0; d < 8; d++) {
-            p = p << 1;
+          for (let d = 0; d < 8; d += 1) {
+            p <<= 1;
             if (this.isBlack(imagedata, j + d, i)) {
-              p = p | 0x01;
+              p |= 0x01;
             }
           }
           result.push(p);
@@ -347,8 +338,8 @@
       return line;
     };
 
-    this.transBarcodeHeader = function(code, position) {
-      var line = new Uint8Array();
+    this.transBarcodeHeader = (code, position) => {
+      let line = new Uint8Array();
       line = OB.ARRAYS.append(line, this.CENTER_JUSTIFICATION);
       line = OB.ARRAYS.append(line, this.NEW_LINE);
 
@@ -372,16 +363,16 @@
       return line;
     };
 
-    this.transBarcodeFooter = function(code, position) {
-      var line = new Uint8Array();
+    this.transBarcodeFooter = () => {
+      let line = new Uint8Array();
       line = OB.ARRAYS.append(line, this.NEW_LINE);
       line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
       return line;
     };
 
-    this.transEAN13 = function(code, position) {
-      var line = new Uint8Array();
-      var barcode = code.substring(0, 12);
+    this.transEAN13 = (code, position) => {
+      let line = new Uint8Array();
+      const barcode = code.substring(0, 12);
 
       line = OB.ARRAYS.append(line, this.transBarcodeHeader(code, position));
 
@@ -393,12 +384,12 @@
       return line;
     };
 
-    this.transCODE128 = function(code, position) {
-      var line = new Uint8Array();
+    this.transCODE128 = (code, position) => {
+      let line = new Uint8Array();
       line = OB.ARRAYS.append(line, this.transBarcodeHeader(code, position));
 
       line = OB.ARRAYS.append(line, this.BAR_CODE128);
-      var barcode128 = this.encoderCODE128.encode(code);
+      const barcode128 = this.encoderCODE128.encode(code);
       line = OB.ARRAYS.append(
         line,
         new Uint8Array([this.BAR_CODE128TYPE.length + barcode128.length])
@@ -411,10 +402,10 @@
       return line;
     };
 
-    this.transQR = function(code, quality, size) {
-      var line = new Uint8Array();
-      var qrcode = this.encoderQR.encode(code);
-      var codeLENGTH = new Uint8Array([
+    this.transQR = (code, quality, size) => {
+      let line = new Uint8Array();
+      const qrcode = this.encoderQR.encode(code);
+      const codeLENGTH = new Uint8Array([
         (qrcode.length + 3) & 255,
         (qrcode.length + 3) >> 8
       ]);
@@ -435,17 +426,17 @@
       line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
       return new Uint8Array(line);
     };
-  };
+  }
 
-  var StandardImageAlt = function() {
+  function StandardImageAlt() {
     Standard.call(this);
-    this.transImage = function(imagedata) {
-      var line = new Uint8Array();
-      var result = [];
-      var i, j, p, d;
+    this.transImage = imagedata => {
+      let line = new Uint8Array();
+      const result = [];
+      let p;
 
-      var width = (imagedata.width + 7) / 8;
-      var height = imagedata.height;
+      const width = (imagedata.width + 7) / 8;
+      const { height } = imagedata;
 
       result.push(width & 255);
       result.push(width >> 8);
@@ -453,13 +444,13 @@
       result.push(height >> 8);
 
       // Raw data
-      for (i = 0; i < imagedata.height; i++) {
-        for (j = 0; j < imagedata.width; j = j + 8) {
+      for (let i = 0; i < imagedata.height; i += 1) {
+        for (let j = 0; j < imagedata.width; j += 8) {
           p = 0x00;
-          for (d = 0; d < 8; d++) {
-            p = p << 1;
+          for (let d = 0; d < 8; d += 1) {
+            p <<= 1;
             if (this.isBlack(imagedata, j + d, i)) {
-              p = p | 0x01;
+              p |= 0x01;
             }
           }
           result.push(p);
@@ -472,18 +463,17 @@
       line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
       return line;
     };
-  };
+  }
 
-  window.OB = window.OB || {};
   OB.ESCPOS = {
     // Basic ESCPOS codes with limited functionality. No images, No cut paper, No drawer.
-    Base: Base,
+    Base,
     // Full featured. Standard EPSON ESCPOS codes.
-    Standard: Standard,
+    Standard,
     // Full featured. Standard EPSON ESCPOS codes with alternative image method.
-    StandardImageAlt: StandardImageAlt,
+    StandardImageAlt,
     // Singleton for Standard EPSON ESCPOS codes
     standardinst: new Standard(),
-    CODE128Encoder: CODE128Encoder
+    CODE128Encoder
   };
 })();

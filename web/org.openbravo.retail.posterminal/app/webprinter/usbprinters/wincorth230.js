@@ -1,16 +1,16 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-(function() {
-  var WincorCODE128Encoder = function() {
+(() => {
+  const WincorCODE128Encoder = () => {
     OB.ESCPOS.CODE128Encoder.call(this);
-    this.encodechar = function(c) {
+    this.encodechar = c => {
       switch (c) {
         case '/':
           return 0x0f;
@@ -164,19 +164,19 @@
     };
   };
 
-  var ESCPOSWincor = function() {
+  const ESCPOSWincor = () => {
     OB.ESCPOS.StandardImageAlt.call(this);
 
     this.PARTIAL_CUT_1 = new Uint8Array([0x1d, 0x56, 0x41, 0x30]);
     this.BAR_CODE128TYPE = new Uint8Array([0x68]);
     this.encoderCODE128 = new WincorCODE128Encoder();
 
-    this.transCODE128 = function(code, position) {
-      var line = new Uint8Array();
+    this.transCODE128 = (code, position) => {
+      let line = new Uint8Array();
       line = OB.ARRAYS.append(line, this.transBarcodeHeader(code, position));
 
       line = OB.ARRAYS.append(line, this.BAR_CODE128);
-      var barcode128 = this.encoderCODE128.encode(code);
+      const barcode128 = this.encoderCODE128.encode(code);
       line = OB.ARRAYS.append(
         line,
         new Uint8Array([this.BAR_CODE128TYPE.length + barcode128.length])

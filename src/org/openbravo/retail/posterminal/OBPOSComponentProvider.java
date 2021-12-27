@@ -91,19 +91,10 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         // "model/user",
         "utils/ob-utilitiesuipos", "utils/externalBpUtils", "model/bpartnerfilter",
         "model/orderfilter", "model/crossstorefilter", "model/orders-for-verified-returns-filter",
-        "model/bplocation", "webprinter/bluetooth", "webprinter/usb", "webprinter/webprinter",
-        "webprinter/escpos", "webprinter/standardprinters", "webprinter/typedarrays",
-        "webprinter/testprinter",
-
-        "webprinter/usbprinters/epsontmt20", "webprinter/usbprinters/epsontmt20ii",
-        "webprinter/usbprinters/epsontmt88v", "webprinter/usbprinters/ncr7197",
-        "webprinter/usbprinters/startsp100", "webprinter/usbprinters/wincorth230",
-        "webprinter/usbprinters/hpa799", "webprinter/btprinters/genericBTPrinter",
-        "webprinter/btprinters/zebraZQ320",
-
-        "model/productcharacteristicvalue", "model/characteristicvalue", "model/characteristic",
-        "model/terminal-model", "model/paymentmethodcashup", "model/taxcashup",
-        "model/orderassociationsfilter", "model/product-servicelinked", "model/prepaymentrules",
+        "model/bplocation", "model/productcharacteristicvalue", "model/characteristicvalue",
+        "model/characteristic", "model/terminal-model", "model/paymentmethodcashup",
+        "model/taxcashup", "model/orderassociationsfilter", "model/product-servicelinked",
+        "model/prepaymentrules",
 
         "components/modalcancel", "components/subwindow", "components/leftsubwindow",
         "components/modalreceiptproperties", "components/modalreceiptlineproperties",
@@ -111,6 +102,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         "components/modalmodulesindev", "components/modalselectprinters",
         "components/modalmorepaymentmethods", "components/modalDeliveryChange",
         "components/obpos-gridkeyboard",
+
+        // WebPrinter test menu entry
+        "webprinter/testprinter",
 
         // Web POS window
         "utils/eventbus", "utils/attributeUtils", "utils/cashUpReportUtils",
@@ -332,6 +326,24 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/masterdata/discount/DiscountFilterRoleModel"), //
         businesslogic("app/model/masterdata/discount/DiscountFilterBusinessPartnerExtRef"), //
         businesslogic("app/model/masterdata/discount/DiscountModel"), //
+
+        // WebPrinter. WebUSB and WebBluetooth
+        businesslogic("app/webprinter/bluetooth"), //
+        businesslogic("app/webprinter/usb"), //
+        businesslogic("app/webprinter/webprinter"), //
+        businesslogic("app/webprinter/escpos"), //
+        businesslogic("app/webprinter/standardprinters"), //
+        businesslogic("app/webprinter/typedarrays"), //
+        businesslogic("app/webprinter/usbprinters/epsontmt20"), //
+        businesslogic("app/webprinter/usbprinters/epsontmt20ii"), //
+        businesslogic("app/webprinter/usbprinters/epsontmt88v"), //
+        businesslogic("app/webprinter/usbprinters/ncr7197"), //
+        businesslogic("app/webprinter/usbprinters/startsp100"), //
+        businesslogic("app/webprinter/usbprinters/wincorth230"), //
+        businesslogic("app/webprinter/usbprinters/hpa799"), //
+        businesslogic("app/webprinter/btprinters/genericBTPrinter"), //
+        businesslogic("app/webprinter/btprinters/zebraZQ320"), //
+
         // Business-Logic
         businesslogic("app/model/business-logic/currency/CurrencyConversion"), //
         businesslogic("app/model/business-logic/stock/StockChecker"), //

@@ -1,33 +1,34 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2021 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
+/* eslint-disable no-bitwise */
 
-(function() {
-  var ESCPOSNCR = function() {
+(() => {
+  const ESCPOSNCR = () => {
     OB.ESCPOS.Standard.call(this);
 
-    this.transImage = function(imagedata) {
-      var line = new Uint8Array();
-      var result = [];
-      var i, j, p, d;
+    this.transImage = imagedata => {
+      let line = new Uint8Array();
+      const result = [];
+      let p;
 
-      var width = (imagedata.width + 7) / 8;
-      var height = imagedata.height;
+      const width = (imagedata.width + 7) / 8;
+      const { height } = imagedata;
 
       // Raw data
-      for (i = 0; i < height; i++) {
+      for (let i = 0; i < height; i += 1) {
         result.push(0x1b, 0x4b, width & 255, width >> 8);
-        for (j = 0; j < imagedata.width; j = j + 8) {
+        for (let j = 0; j < imagedata.width; j += 8) {
           p = 0x00;
-          for (d = 0; d < 8; d++) {
-            p = p << 1;
+          for (let d = 0; d < 8; d += 1) {
+            p <<= 1;
             if (this.isBlack(imagedata, j + d, i)) {
-              p = p | 0x01;
+              p |= 0x01;
             }
           }
           result.push(p);
