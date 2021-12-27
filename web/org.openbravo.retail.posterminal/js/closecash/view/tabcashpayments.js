@@ -177,6 +177,7 @@ enyo.kind({
   numberChange: function(inSender, inEvent) {
     if (this.model.get('numberOfCoins') !== inEvent.value) {
       inEvent.originator = this;
+      inEvent.lineNo = this.model.get('lineNo');
       this.doUpdateUnit(inEvent);
     }
   },
@@ -425,23 +426,33 @@ enyo.kind({
       // This function also resets the status
       this.addUnitToCollection(
         this.originator.model.get('coinValue'),
-        parseInt(args.txt, 10)
+        parseInt(args.txt, 10),
+        this.originator.model.get('lineNo')
       );
     }
   },
   addUnit: function(inSender, inEvent) {
-    this.addUnitToCollection(inEvent.originator.model.get('coinValue'), 'add');
+    this.addUnitToCollection(
+      inEvent.originator.model.get('coinValue'),
+      'add',
+      inEvent.originator.model.get('lineNo')
+    );
   },
   subUnit: function(inSender, inEvent) {
-    this.addUnitToCollection(inEvent.originator.model.get('coinValue'), 'sub');
+    this.addUnitToCollection(
+      inEvent.originator.model.get('coinValue'),
+      'sub',
+      inEvent.originator.model.get('lineNo')
+    );
   },
   updateUnit: function(inSender, inEvent) {
     this.addUnitToCollection(
       inEvent.originator.model.get('coinValue'),
-      inEvent.value
+      inEvent.value,
+      inEvent.lineNo
     );
   },
-  addUnitToCollection: function(coinValue, amount) {
+  addUnitToCollection: function(coinValue, amount, lineNo) {
     const collection = this.$.paymentsList.collection;
     let lAmount, resetAmt, newAmount;
 
@@ -458,7 +469,10 @@ enyo.kind({
 
     let totalCounted = 0;
     collection.forEach(coin => {
-      if (coin.get('coinValue') === coinValue) {
+      if (
+        coin.get('coinValue') === coinValue &&
+        coin.get('lineNo') === lineNo
+      ) {
         if (resetAmt) {
           newAmount = lAmount;
         } else {
