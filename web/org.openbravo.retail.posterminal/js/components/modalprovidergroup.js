@@ -230,6 +230,13 @@ enyo.kind({
           if (cardlogo === payment.paymentType.searchKey) {
             addResponseToPayment(payment);
             return; // Success
+          } else if (
+            'SEARCHKEY' === payment.paymentType.searchKey &&
+            cardlogo === payment.paymentMethod.searchKey
+          ) {
+            // Payment Connector by SEARCHKEY
+            addResponseToPayment(payment);
+            return; // Success
           } else if ('UNDEFINED' === payment.paymentType.searchKey) {
             undefinedPayment = payment;
           }
