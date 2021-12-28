@@ -313,6 +313,10 @@ isc.OBBaseParameterWindowView.addProperties({
       params = this.theForm.getItems();
       for (i = 0; i < params.length; i++) {
         if (params[i].disable) {
+          // make sure disabled form items do not keep the focus
+          if (params[i].hasFocus) {
+            params[i].blurItem();
+          }
           params[i].disable();
         }
       }
