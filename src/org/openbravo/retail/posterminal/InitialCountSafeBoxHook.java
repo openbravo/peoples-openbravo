@@ -9,8 +9,11 @@
 
 package org.openbravo.retail.posterminal;
 
+import java.util.Date;
+
 import org.codehaus.jettison.json.JSONObject;
 
 public interface InitialCountSafeBoxHook {
-  public void exec(OBPOSSafeBox safebox, JSONObject jsonCountSafeBox) throws Exception;
+  public void exec(OBPOSSafeBox safebox, OBPOSApplications touchpoint, Date countSafeBoxDate,
+      JSONObject jsonCountSafeBox) throws Exception;
 }

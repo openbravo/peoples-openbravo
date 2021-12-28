@@ -93,16 +93,17 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
 
     doReconciliation(safebox, jsonCountSafeBox, jsonData, countSafeBoxDate);
 
-    executeHooks(safebox, jsonCountSafeBox);
+    executeHooks(safebox, posTerminal, countSafeBoxDate, jsonCountSafeBox);
 
     jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
 
     return jsonData;
   }
 
-  private void executeHooks(OBPOSSafeBox safebox, JSONObject jsonCountSafeBox) throws Exception {
+  private void executeHooks(OBPOSSafeBox safebox, OBPOSApplications touchpoint,
+      Date countSafeBoxDate, JSONObject jsonCountSafeBox) throws Exception {
     for (InitialCountSafeBoxHook hook : initialCountSafeboxHooks) {
-      hook.exec(safebox, jsonCountSafeBox);
+      hook.exec(safebox, touchpoint, countSafeBoxDate, jsonCountSafeBox);
     }
   }
 
