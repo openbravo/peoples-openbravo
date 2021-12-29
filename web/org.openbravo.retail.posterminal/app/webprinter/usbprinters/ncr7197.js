@@ -9,7 +9,7 @@
 /* eslint-disable no-bitwise */
 
 (() => {
-  const ESCPOSNCR = () => {
+  function ESCPOSNCR() {
     OB.ESCPOS.Standard.call(this);
 
     this.transImage = imagedata => {
@@ -42,7 +42,7 @@
       line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
       return line;
     };
-  };
+  }
 
   OB.PRINTERTYPES.GENERICUSB.register({
     name: 'NCR 7197',

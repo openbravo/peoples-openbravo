@@ -8,7 +8,7 @@
  */
 
 (() => {
-  const WincorCODE128Encoder = () => {
+  function WincorCODE128Encoder() {
     OB.ESCPOS.CODE128Encoder.call(this);
     this.encodechar = c => {
       switch (c) {
@@ -162,9 +162,9 @@
           return 0x00;
       }
     };
-  };
+  }
 
-  const ESCPOSWincor = () => {
+  function ESCPOSWincor() {
     OB.ESCPOS.StandardImageAlt.call(this);
 
     this.PARTIAL_CUT_1 = new Uint8Array([0x1d, 0x56, 0x41, 0x30]);
@@ -187,7 +187,7 @@
       line = OB.ARRAYS.append(line, this.transBarcodeFooter(code, position));
       return line;
     };
-  };
+  }
 
   OB.PRINTERTYPES.GENERICUSB.register({
     name: 'Wincor Nixdorf TH230+',

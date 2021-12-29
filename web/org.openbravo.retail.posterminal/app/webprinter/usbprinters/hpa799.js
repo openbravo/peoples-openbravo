@@ -9,7 +9,7 @@
 /* eslint-disable no-bitwise */
 
 (() => {
-  const ESCPOSHP = () => {
+  function ESCPOSHP() {
     OB.ESCPOS.Standard.call(this);
     this.transImage = imagedata => {
       let line = new Uint8Array();
@@ -39,7 +39,8 @@
       line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
       return line;
     };
-  };
+  }
+
   OB.PRINTERTYPES.GENERICUSB.register({
     name: 'HP A799',
     vendorId: 0x05d9,

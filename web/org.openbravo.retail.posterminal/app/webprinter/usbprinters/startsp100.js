@@ -8,7 +8,7 @@
  */
 
 (() => {
-  const ESCPOSStar = () => {
+  function ESCPOSStar() {
     OB.ESCPOS.StandardImageAlt.call(this);
 
     this.CHAR_SIZE_0 = new Uint8Array([0x1b, 0x69, 0x00, 0x00]);
@@ -77,7 +77,7 @@
       line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
       return line;
     };
-  };
+  }
 
   OB.PRINTERTYPES.GENERICUSB.register({
     name: 'Star TSP 100',
