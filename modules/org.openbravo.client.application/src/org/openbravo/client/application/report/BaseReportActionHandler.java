@@ -370,7 +370,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   private String getResultTabTitle(ReportDefinition report) {
     Process processDefinition = report.getProcessDefintion();
     return (String) processDefinition.get(Process.PROPERTY_NAME,
-        OBContext.getOBContext().getLanguage());
+        OBContext.getOBContext().getLanguage(), processDefinition.getId());
   }
 
   /**
