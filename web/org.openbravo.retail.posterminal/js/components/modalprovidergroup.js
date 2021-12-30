@@ -186,9 +186,11 @@ enyo.kind({
           )}`
         );
 
-        const processedAmount = response.properties.processedAmount
-          ? response.properties.processedAmount
-          : amount;
+        const properties = response.properties || {};
+        const processedAmount =
+          response.processedAmount || properties.processedAmount
+            ? response.processedAmount || properties.processedAmount
+            : amount;
         const addResponseToPayment = payment => {
           // We found the payment method that applies.
           const paymentline = {
@@ -205,10 +207,17 @@ enyo.kind({
             paymentData: {
               provider: providerGroup.provider,
               voidConfirmation: false,
+              properties: properties,
               // Is the void provider in charge of defining confirmation.
+              // Connector Payment common properties
+              receiptno: response.receiptno,
               transaction: response.transaction,
               authorization: response.authorization,
-              properties: response.properties
+              timestamp: response.timestamp,
+              processedAmount: response.processedAmount,
+              cardlogo: response.cardlogo,
+              voidAction: response.voidAction,
+              data: response.data
             }
           };
           OB.info(
@@ -223,7 +232,7 @@ enyo.kind({
           response.showPopupMessage === false ? false : true;
 
         // First attempt. Find an exact match.
-        const cardlogo = response.properties.cardlogo;
+        const cardlogo = response.cardlogo || properties.cardlogo;
         let undefinedPayment = null;
         for (i = 0; i < providerGroup._payments.length; i++) {
           const payment = providerGroup._payments[i];
