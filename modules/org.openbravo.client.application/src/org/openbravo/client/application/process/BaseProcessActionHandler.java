@@ -35,6 +35,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.ParameterUtils;
@@ -207,7 +208,6 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   }
 
-
   /**
    * Extract the multipart parameters from the request and returns it as a Map<String, Object>. File
    * is also included as an InputStream
@@ -231,17 +231,37 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
         } else {
           fileName = item.getName();
           if (StringUtils.isNotBlank(fileName)) {
-            parameters.put(item.getFieldName(), item.getInputStream());
-            parameters.put(item.getFieldName() + PARAM_FILENAME, fileName);
+            this.checkFileSizeLimit(item);
+            Map<String, Object> fileInfo = Map.of( //
+                "content", item.getInputStream(), //
+                "filename", fileName, //
+                "size", item.getSize() //
+            );
+            parameters.put(item.getFieldName(), fileInfo);
             log.debug("Added parameter {} file {}", item.getFieldName(), fileName);
           }
         }
       }
     } catch (Exception e) {
-      log.error("There was an error while processing the request", e);
+      throw new OBException("Request failed while parsing multipart parameters", e);
     }
 
     return parameters;
+  }
+
+  private void checkFileSizeLimit(FileItem fileItem) {
+    try {
+      long fileSizeMB = fileItem.getSize() / 1000000;
+      long processFileSizeLimitMB = Long.parseLong(Preferences.getPreferenceValue(
+          "OBUIAPP_ProcessFileUploadMaxSize", true, null, null, null, null, (String) null));
+
+      if (fileSizeMB > processFileSizeLimitMB) {
+        throw new OBException("File " + fileItem.getName() + " size exceeds our limits. Limit: "
+            + processFileSizeLimitMB + "MB");
+      }
+    } catch (PropertyException e) {
+      // If property is not present, assume there is no limit
+    }
   }
 
   /**

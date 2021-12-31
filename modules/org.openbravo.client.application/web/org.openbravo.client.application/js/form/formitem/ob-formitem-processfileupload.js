@@ -22,8 +22,40 @@
 isc.ClassFactory.defineClass('OBProcessFileUpload', isc.FileItem);
 
 isc.OBProcessFileUpload.addProperties({
-  multiple: false, // Allows only one file per paramater
+  multiple: false, // Allows only one file per parameter
   setDisabled: function(disabled) {
-    this.setCanEdit(!disabled);
-  }
+    // this.setCanEdit(!disabled);
+  },
+  fileSizeIsAboveMax: function(fileItem) {
+    const maxFileSize = OB.PropertyStore.get(
+      'OBUIAPP_ProcessFileUploadMaxSize'
+    );
+
+    return maxFileSize && fileItem && fileItem.size / 1000000 > maxFileSize;
+  },
+  validators: [
+    {
+      type: 'custom',
+      condition: function(item) {
+        const fileItem = item.form
+          .getItem(item.name)
+          .editForm.getItem(0)
+          .getElement().files[0];
+
+        if (item.fileSizeIsAboveMax(fileItem)) {
+          item.view.messageBar.setMessage(
+            isc.OBMessageBar.TYPE_ERROR,
+            null,
+            OB.I18N.getLabel('OBUIAPP_ProcessFileMaxSizeExceeded', [
+              fileItem.name,
+              OB.PropertyStore.get('OBUIAPP_ProcessFileUploadMaxSize')
+            ])
+          );
+          return false;
+        }
+
+        return true;
+      }
+    }
+  ]
 });
