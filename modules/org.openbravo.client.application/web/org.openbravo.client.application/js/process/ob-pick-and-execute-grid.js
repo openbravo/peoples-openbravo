@@ -165,8 +165,6 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.lazyFiltering = this.gridProperties.lazyFiltering;
     this.filterName = this.gridProperties.filterName;
 
-    this.sortField = this.gridProperties.sortField;
-
     this.orderByClause = this.gridProperties.orderByClause;
     this.sqlOrderByClause = this.gridProperties.sqlOrderByClause;
     this.alwaysFilterFksByIdentifier = this.gridProperties.alwaysFilterFksByIdentifier;
