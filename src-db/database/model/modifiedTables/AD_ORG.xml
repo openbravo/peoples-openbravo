@@ -185,6 +185,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_KEPTCASH_TEMPLATE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_CLOSINV_TEMPLATE_ID">
         <reference local="EM_OBPOS_CLOSINV_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
