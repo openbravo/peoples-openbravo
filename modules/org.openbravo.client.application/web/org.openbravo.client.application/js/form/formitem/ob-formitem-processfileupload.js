@@ -17,14 +17,25 @@
  ************************************************************************
  */
 
+isc.ClassFactory.defineClass('UnredrawableDynamicForm', isc.DynamicForm);
+isc.UnredrawableDynamicForm.addProperties({
+  // Override redraw implementation to prevent FileItem content to be lost on redraws
+  redraw: function() {}
+});
+
 //== OBProcessFileUpload ==
 //This class is used to upload files to a process definition
 isc.ClassFactory.defineClass('OBProcessFileUpload', isc.FileItem);
 
 isc.OBProcessFileUpload.addProperties({
   multiple: false, // Allows only one file per parameter
+  editFormConstructor: 'UnredrawableDynamicForm',
   setDisabled: function(disabled) {
-    // this.setCanEdit(!disabled);
+    // Disable the UploadItem contained within this component
+    this.form
+      .getItem(this.name)
+      .editForm.getItem(0)
+      .setDisabled(disabled);
   },
   fileSizeIsAboveMax: function(fileItem) {
     const maxFileSize = OB.PropertyStore.get(
