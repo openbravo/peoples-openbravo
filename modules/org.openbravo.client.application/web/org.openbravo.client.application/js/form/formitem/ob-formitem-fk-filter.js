@@ -120,6 +120,15 @@ isc.OBFKFilterTextItem.addProperties({
           // used for displaying table references properly. Refer issue https://issues.openbravo.com/view.php?id=26696
           if (this.formItem && this.formItem.displayProperty) {
             requestProperties.params.displayProperty = this.formItem.displayProperty;
+            if (
+              this.formItem.keyProperty &&
+              requestProperties.params[OB.Constants.SELECTED_PROPERTIES]
+            ) {
+              requestProperties.params[OB.Constants.SELECTED_PROPERTIES] =
+                requestProperties.params[OB.Constants.SELECTED_PROPERTIES] +
+                ',' +
+                this.formItem.keyProperty;
+            }
           }
           delete me.forceReload;
         },
