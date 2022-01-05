@@ -1306,17 +1306,6 @@ OB.ViewFormProperties = {
       columnValue.value === 0 ||
       columnValue.value === false
     ) {
-      // make sure that the form notices a change if record is edited and FIC is
-      // providing a value for a field that used to be empty
-      // see issue https://issues.openbravo.com/view.php?id=48153
-      if (
-        mode === 'EDIT' &&
-        oldValue !== false &&
-        oldValue !== 0 &&
-        !oldValue
-      ) {
-        this.setHasChanged(true);
-      }
       isDate =
         field.type &&
         (typeInstance.inheritsFrom === 'date' ||
