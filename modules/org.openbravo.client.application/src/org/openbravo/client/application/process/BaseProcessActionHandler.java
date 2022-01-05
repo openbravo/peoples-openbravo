@@ -66,7 +66,6 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   private static final String GRID_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
   protected static final String PARAM_VALUES = "paramValues";
-  protected static final String PARAM_FILENAME = "_fileName";
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
