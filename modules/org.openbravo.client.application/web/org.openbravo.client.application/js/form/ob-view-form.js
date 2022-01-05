@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2021 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1306,6 +1306,18 @@ OB.ViewFormProperties = {
       columnValue.value === 0 ||
       columnValue.value === false
     ) {
+      // make sure that the form notices a change if record is edited and FIC is
+      // providing a value for a field that used to be empty
+      // see issue https://issues.openbravo.com/view.php?id=48153
+      if (
+        !this.view.isShowingForm &&
+        mode === 'EDIT' &&
+        oldValue !== false &&
+        oldValue !== 0 &&
+        !oldValue
+      ) {
+        this.setHasChanged(true);
+      }
       isDate =
         field.type &&
         (typeInstance.inheritsFrom === 'date' ||
