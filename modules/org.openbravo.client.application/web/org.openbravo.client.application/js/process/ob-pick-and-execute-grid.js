@@ -165,6 +165,8 @@ isc.OBPickAndExecuteGrid.addProperties({
     this.lazyFiltering = this.gridProperties.lazyFiltering;
     this.filterName = this.gridProperties.filterName;
 
+    this.sortField = this.gridProperties.sortField;
+
     this.orderByClause = this.gridProperties.orderByClause;
     this.sqlOrderByClause = this.gridProperties.sqlOrderByClause;
     this.alwaysFilterFksByIdentifier = this.gridProperties.alwaysFilterFksByIdentifier;
@@ -236,6 +238,18 @@ isc.OBPickAndExecuteGrid.addProperties({
         me.data.localData = [];
         me.data.setRangeLoading(dsRequest.startRow, dsRequest.endRow);
       }
+
+      // due to a bug in smartclient, the sortBy property of the request might reference a field that does not belong to this grid
+      // this only happens if this grid does not define a sort field, so in that case just remove the sortBy property from the request
+      if (
+        dsRequest.sortBy &&
+        dsRequest.sortBy.length > 0 &&
+        this.fields &&
+        !this.fields[dsRequest.sortBy[0]]
+      ) {
+        delete dsRequest.sortBy;
+      }
+
       return this.Super('transformRequest', arguments);
     };
     filterableProperties = this.getFields().findAll('canFilter', true);
