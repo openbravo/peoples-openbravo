@@ -13,8 +13,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.client.kernel.ApplicationComponent;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.retail.posterminal.POSUtils;
 
 /**
  * Overrides methods in ApplicationComponent to get specific POS formats
@@ -25,7 +25,7 @@ import org.openbravo.retail.posterminal.POSUtils;
 public class POSApplicationFormatComponent extends ApplicationComponent {
   @Override
   public String getDefaultDecimalSymbol() {
-    String decimalSymbol = (String) POSUtils.getPropertyInOrgTree(
+    String decimalSymbol = (String) OBMOBCUtils.getPropertyInOrgTree(
         OBContext.getOBContext().getCurrentOrganization(),
         Organization.PROPERTY_OBPOSFORMATDECIMAL);
     if (StringUtils.isEmpty(decimalSymbol)) {
@@ -37,7 +37,7 @@ public class POSApplicationFormatComponent extends ApplicationComponent {
 
   @Override
   public String getDefaultGroupingSymbol() {
-    String groupSymbol = (String) POSUtils.getPropertyInOrgTree(
+    String groupSymbol = (String) OBMOBCUtils.getPropertyInOrgTree(
         OBContext.getOBContext().getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATGROUP);
     if (StringUtils.isEmpty(groupSymbol)) {
       return super.getDefaultGroupingSymbol();
@@ -48,7 +48,7 @@ public class POSApplicationFormatComponent extends ApplicationComponent {
 
   @Override
   public String getDateFormat() {
-    String dateFormat = (String) POSUtils.getPropertyInOrgTree(
+    String dateFormat = (String) OBMOBCUtils.getPropertyInOrgTree(
         OBContext.getOBContext().getCurrentOrganization(), Organization.PROPERTY_OBPOSDATEFORMAT);
     if (StringUtils.isEmpty(dateFormat)) {
       return super.getDateFormat();

@@ -43,6 +43,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.mobile.core.login.MobileCoreLoginUtilsServlet;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.FormAccess;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -582,7 +583,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
   @Override
   public String getDefaultDecimalSymbol() {
-    String decimalSymbol = (String) POSUtils.getPropertyInOrgTree(
+    String decimalSymbol = (String) OBMOBCUtils.getPropertyInOrgTree(
         OBContext.getOBContext().getCurrentOrganization(),
         Organization.PROPERTY_OBPOSFORMATDECIMAL);
     if (StringUtils.isEmpty(decimalSymbol)) {
@@ -594,7 +595,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
   @Override
   public String getDefaultGroupingSymbol() {
-    String groupSymbol = (String) POSUtils.getPropertyInOrgTree(
+    String groupSymbol = (String) OBMOBCUtils.getPropertyInOrgTree(
         OBContext.getOBContext().getCurrentOrganization(), Organization.PROPERTY_OBPOSFORMATGROUP);
     if (StringUtils.isEmpty(groupSymbol)) {
       return super.getDefaultGroupingSymbol();
@@ -605,7 +606,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
 
   @Override
   public String getDateFormat() {
-    String dateFormat = (String) POSUtils.getPropertyInOrgTree(
+    String dateFormat = (String) OBMOBCUtils.getPropertyInOrgTree(
         OBContext.getOBContext().getCurrentOrganization(), Organization.PROPERTY_OBPOSDATEFORMAT);
     if (StringUtils.isEmpty(dateFormat)) {
       return super.getDateFormat();

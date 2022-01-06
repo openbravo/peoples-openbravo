@@ -40,6 +40,7 @@ import org.openbravo.mobile.core.process.JSONRowConverter;
 import org.openbravo.mobile.core.process.RequestTimeoutException;
 import org.openbravo.mobile.core.process.RequestTimeoutWithMessageException;
 import org.openbravo.mobile.core.process.SimpleQueryBuilder;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.domain.ModelImplementation;
 import org.openbravo.model.ad.domain.ModelImplementationParameter;
 import org.openbravo.model.common.enterprise.Organization;
@@ -171,7 +172,7 @@ public class Terminal extends JSONProcessSimple {
 
       serverTimeout = getSessionTimeoutFromDatabase();
 
-      Object currencyFormat = POSUtils.getPropertyInOrgTree(
+      Object currencyFormat = OBMOBCUtils.getPropertyInOrgTree(
           OBContext.getOBContext().getCurrentOrganization(),
           Organization.PROPERTY_OBPOSCURRENCYFORMAT);
 
