@@ -299,7 +299,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     BigDecimal amount = totalSales.add(totalDeposits).subtract(totalReturns).subtract(totalDrops);
 
     // Avoid to create transaction if the amount to move is 0
-    if (amount == BigDecimal.ZERO) {
+    if (amount.compareTo(BigDecimal.ZERO) == 0) {
       return;
     }
 
