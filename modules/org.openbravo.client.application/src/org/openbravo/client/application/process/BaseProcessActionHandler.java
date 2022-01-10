@@ -65,7 +65,11 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   private static final Logger log = LogManager.getLogger();
 
   private static final String GRID_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
+  private static final String FILE_UPLOAD_REF_ID = "715C53D4FEA74B28B74F14AE65BC5C16";
   protected static final String PARAM_VALUES = "paramValues";
+  protected static final String PARAM_FILE_CONTENT = "content";
+  protected static final String PARAM_FILE_NAME = "fileName";
+  protected static final String PARAM_FILE_SIZE = "size";
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
@@ -106,6 +110,32 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
                 ParameterUtils.getParameterFixedValue(fixRequestMap(parameters, context), param));
           } else {
             parameters.put(param.getDBColumnName(), param.getFixedValue());
+          }
+        }
+
+        // Check file size if process has file upload parameters
+        if (FILE_UPLOAD_REF_ID.equals(param.getReference().getId())) {
+          String paramName = param.getName();
+          if (parameters.containsKey(paramName) && parameters.get(paramName) instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> fileParams = (Map<String, Object>) parameters.get(paramName);
+
+            if (!isFileSizeWithinLimit(fileParams)) {
+              log.error("File validation error in process " + processDefinition + ": File "
+                  + fileParams.get(PARAM_FILE_NAME) + " in parameter " + paramName
+                  + " is larger that our size limit");
+              JSONObject errorResponse = new JSONObject();
+
+              JSONObject err = new JSONObject();
+              err.put("severity", "error");
+              err.put("text",
+                  OBMessageUtils.getI18NMessage("OBUIAPP_ProcessFileMaxSizeExceeded",
+                      new String[] { (String) fileParams.get(PARAM_FILE_NAME),
+                          this.getMaximumUploadedFileSize() }));
+              errorResponse.put("message", err);
+
+              return errorResponse;
+            }
           }
         }
       }
@@ -178,6 +208,25 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     }
   }
 
+  private boolean isFileSizeWithinLimit(Map<String, Object> fileParam) {
+    String maximumFileSize = this.getMaximumUploadedFileSize();
+    if (maximumFileSize != null) {
+      long fileSizeMB = (long) fileParam.get(PARAM_FILE_SIZE) / 1000000;
+      return fileSizeMB <= Long.parseLong(maximumFileSize);
+    }
+    return true;
+  }
+
+  private String getMaximumUploadedFileSize() {
+    try {
+      return Preferences.getPreferenceValue("OBUIAPP_ProcessFileUploadMaxSize", true, null, null,
+          null, null, (String) null);
+    } catch (PropertyException e) {
+      // If property is not present, assume there is no limit
+      return null;
+    }
+  }
+
   /**
    * Overrides the base implementation to support extracting the parameters from a multipart request
    */
@@ -230,11 +279,10 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
         } else {
           fileName = item.getName();
           if (StringUtils.isNotBlank(fileName)) {
-            this.checkFileSizeLimit(item);
             Map<String, Object> fileInfo = Map.of( //
-                "content", item.getInputStream(), //
-                "filename", fileName, //
-                "size", item.getSize() //
+                PARAM_FILE_CONTENT, item.getInputStream(), //
+                PARAM_FILE_NAME, fileName, //
+                PARAM_FILE_SIZE, item.getSize() //
             );
             parameters.put(item.getFieldName(), fileInfo);
             log.debug("Added parameter {} file {}", item.getFieldName(), fileName);
@@ -246,21 +294,6 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     }
 
     return parameters;
-  }
-
-  private void checkFileSizeLimit(FileItem fileItem) {
-    try {
-      long fileSizeMB = fileItem.getSize() / 1000000;
-      long processFileSizeLimitMB = Long.parseLong(Preferences.getPreferenceValue(
-          "OBUIAPP_ProcessFileUploadMaxSize", true, null, null, null, null, (String) null));
-
-      if (fileSizeMB > processFileSizeLimitMB) {
-        throw new OBException("File " + fileItem.getName() + " size exceeds our limits. Limit: "
-            + processFileSizeLimitMB + "MB");
-      }
-    } catch (PropertyException e) {
-      // If property is not present, assume there is no limit
-    }
   }
 
   /**
