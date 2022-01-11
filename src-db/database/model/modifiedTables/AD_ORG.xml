@@ -228,6 +228,9 @@
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_INVOICETEMP">
         <reference local="EM_OBPOS_INVOICE_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_KEPTCASHTEMP">
+        <reference local="EM_OBPOS_KEPTCASH_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
+      </foreign-key>
       <foreign-key foreignTable="OBPOS_PRINT_TEMPLATE" name="EM_OBPOS_ORG_LAYAWAYTEMP">
         <reference local="EM_OBPOS_LAYAWAY_TEMPLATE_ID" foreign="OBPOS_PRINT_TEMPLATE_ID"/>
       </foreign-key>
