@@ -66,7 +66,7 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   private static final String GRID_REFERENCE_ID = "FF80818132D8F0F30132D9BC395D0038";
   private static final String FILE_UPLOAD_REF_ID = "715C53D4FEA74B28B74F14AE65BC5C16";
-  protected static final String PARAM_VALUES = "paramValues";
+  protected static final String PARAM_MULTIPART_VALUES = "paramValues";
   protected static final String PARAM_FILE_CONTENT = "content";
   protected static final String PARAM_FILE_NAME = "fileName";
   protected static final String PARAM_FILE_SIZE = "size";
@@ -242,14 +242,14 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
 
   /**
    * Overrides the base implementation to support extracting the content object in a multipart
-   * request, that is stored in the PARAM_VALUES parameter
+   * request, that is stored in the PARAM_MULTIPART_VALUES parameter
    */
   @Override
   protected String extractRequestContent(HttpServletRequest request,
       Map<String, Object> requestParameters) throws IOException {
     boolean isMultipart = ServletFileUpload.isMultipartContent(request);
     if (isMultipart) {
-      return (String) requestParameters.get(PARAM_VALUES);
+      return (String) requestParameters.get(PARAM_MULTIPART_VALUES);
     } else {
       return super.extractRequestContent(request, requestParameters);
     }
