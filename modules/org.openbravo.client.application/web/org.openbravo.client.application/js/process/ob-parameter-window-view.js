@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ isc.OBParameterWindowView.addProperties({
 
   isReport: false,
   reportId: null,
+  windowId: null,
   pdfExport: false,
   xlsExport: false,
   htmlExport: false,
@@ -468,24 +469,66 @@ isc.OBParameterWindowView.addProperties({
 
       // allow to add external parameters
       isc.addProperties(allProperties._params, view.externalParams);
-      OB.RemoteCallManager.call(
-        view.actionHandler,
-        allProperties,
-        {
-          processId: view.processId,
-          reportId: view.reportId,
-          windowId: view.windowId
-        },
-        function(rpcResponse, data, rpcRequest) {
-          view.handleResponse(
-            !(data && data.refreshParent === false),
-            data && data.message,
-            data && data.responseActions,
-            data && data.retryExecution,
-            data
-          );
-        }
-      );
+
+      const form = view.theForm;
+      const hasFileItems = view.theForm.getFileItemForm();
+      if (hasFileItems) {
+        const formData = form
+          .getItems()
+          .filter(item => isc.isA.FileItem(item))
+          .reduce((data, item) => {
+            const htmlFieldElement = item.editForm.getItem(0).getDataElement();
+            data.append(item.name, htmlFieldElement.files[0]);
+            return data;
+          }, new FormData());
+
+        formData.append('processId', view.processId);
+        formData.append('reportId', view.reportId);
+        formData.append('windowId', view.windowId);
+        formData.append('paramValues', isc.JSON.encode(allProperties));
+
+        fetch('org.openbravo.client.kernel?_action=' + view.actionHandler, {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            view.handleResponse(
+              !(data && data.refreshParent === false),
+              data && data.message,
+              data && data.responseActions,
+              data && data.retryExecution,
+              data
+            );
+          })
+          .catch(error => {
+            view.handleResponse(true, {
+              severity: isc.OBMessageBar.TYPE_ERROR,
+              text: OB.I18N.getLabel('OBUIAPP_ProcessRequestFailed')
+            });
+            // eslint-disable-next-line no-console
+            console.error(error);
+          });
+      } else {
+        OB.RemoteCallManager.call(
+          view.actionHandler,
+          allProperties,
+          {
+            processId: view.processId,
+            reportId: view.reportId,
+            windowId: view.windowId
+          },
+          function(rpcResponse, data, rpcRequest) {
+            view.handleResponse(
+              !(data && data.refreshParent === false),
+              data && data.message,
+              data && data.responseActions,
+              data && data.retryExecution,
+              data
+            );
+          }
+        );
+      }
     };
 
     if (this.clientSideValidation) {
