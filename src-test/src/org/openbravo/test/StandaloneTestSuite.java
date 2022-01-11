@@ -88,6 +88,7 @@ import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.expression.OBBindingsTest;
 import org.openbravo.test.generalsetup.enterprise.organization.ADOrgPersistInfoTestSuite;
 import org.openbravo.test.inventoryStatus.InventoryStatusTest;
+import org.openbravo.test.matchers.json.JSONMatchersTest;
 import org.openbravo.test.materialMgmt.invoiceFromShipment.InvoiceFromShipmentTest;
 import org.openbravo.test.materialMgmt.iscompletelyinvoicedshipment.IsCompletelyInvoicedShipment;
 import org.openbravo.test.model.ClassLoaderTest;
@@ -204,6 +205,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     EvaluationTest.class, //
     OBBindingsTest.class, //
     ExpressionsTest.class,
+
+    // matchers
+    JSONMatchersTest.class,
 
     // model
     RuntimeModelTest.class, //
