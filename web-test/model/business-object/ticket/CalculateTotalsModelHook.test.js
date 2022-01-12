@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -407,9 +407,11 @@ describe('Apply Discounts and Taxes Model Hook', () => {
   });
 
   test.each`
-    payloadTicket                                                                                                                                                                                                                                  | discountsEngineResult | taxEngineResult                                                                         | resultTicket
-    ${{ id: '0', priceIncludesTax: true, lines: [{ id: '1', grossUnitPrice: 0, baseGrossUnitPrice: 100, qty: -1, quantity: 1, skipApplyPromotions: true, promotions: [{ amt: 100, actualAmt: 100, displayedTotalAmount: 100 }] }], payments: [] }} | ${{ lines: [] }}      | ${{ grossAmount: 0, lines: [{ id: '1', grossUnitAmount: 0, grossUnitPrice: 0 }] }}      | ${{ id: '0', grossAmount: 0, lines: [{ id: '1', grossUnitAmount: 0, grossUnitPrice: 0, promotions: [{ amt: 100, actualAmt: 100, displayedTotalAmount: 100 }] }] }}
-    ${{ id: '0', priceIncludesTax: true, lines: [{ id: '1', grossUnitPrice: 90, baseGrossUnitPrice: 100, qty: -1, quantity: 1, skipApplyPromotions: true, promotions: [{ amt: 10, actualAmt: 10, displayedTotalAmount: 10 }] }], payments: [] }}   | ${{ lines: [] }}      | ${{ grossAmount: -90, lines: [{ id: '1', grossUnitAmount: -90, grossUnitPrice: 90 }] }} | ${{ id: '0', grossAmount: -90, lines: [{ id: '1', grossUnitAmount: -90, grossUnitPrice: 90, promotions: [{ amt: 10, actualAmt: 10, displayedTotalAmount: 10 }] }] }}
+    payloadTicket                                                                                                                                                                                             | discountsEngineResult | taxEngineResult                                                         | resultTicket
+    ${{ id: '0', priceIncludesTax: true, lines: [{ id: '1', grossUnitPrice: 0, baseGrossUnitPrice: 100, qty: -1, quantity: 1, skipApplyPromotions: true, promotions: [{ amt: -100 }] }], payments: [] }}      | ${{ lines: [] }}      | ${{ grossAmount: 0, lines: [{ id: '1', grossUnitAmount: 0 }] }}         | ${{ id: '0', grossAmount: 0, lines: [{ id: '1', qty: -1, grossUnitAmount: 0, promotions: [{ amt: -100 }] }] }}
+    ${{ id: '0', priceIncludesTax: true, lines: [{ id: '1', grossUnitPrice: 90, baseGrossUnitPrice: 100, qty: -1, quantity: 1, skipApplyPromotions: true, promotions: [{ amt: -10 }] }], payments: [] }}      | ${{ lines: [] }}      | ${{ grossAmount: -90, lines: [{ id: '1', grossUnitAmount: -90 }] }}     | ${{ id: '0', grossAmount: -90, lines: [{ id: '1', qty: -1, grossUnitAmount: -90, promotions: [{ amt: -10 }] }] }}
+    ${{ id: '0', priceIncludesTax: true, lines: [{ id: '1', grossUnitPrice: 3.56, baseGrossUnitPrice: 3.95, qty: -2, quantity: 2, skipApplyPromotions: true, promotions: [{ amt: -0.79 }] }], payments: [] }} | ${{ lines: [] }}      | ${{ grossAmount: -7.11, lines: [{ id: '1', grossUnitAmount: -7.11 }] }} | ${{ id: '0', grossAmount: -7.11, lines: [{ id: '1', qty: -2, grossUnitAmount: -7.11, promotions: [{ amt: -0.79 }] }] }}
+    ${{ id: '0', priceIncludesTax: false, lines: [{ id: '1', netUnitPrice: 3.56, baseNetUnitPrice: 3.95, qty: -2, quantity: 2, skipApplyPromotions: true, promotions: [{ amt: -0.79 }] }], payments: [] }}    | ${{ lines: [] }}      | ${{ grossAmount: -7.11, lines: [{ id: '1', netUnitAmount: -7.11 }] }}   | ${{ id: '0', grossAmount: -7.11, lines: [{ id: '1', qty: -2, netUnitAmount: -7.11, promotions: [{ amt: -0.79 }] }] }}
   `(
     'Skip calculate line gross amount if line skipApplyPromotions is true',
     ({
@@ -419,7 +421,12 @@ describe('Apply Discounts and Taxes Model Hook', () => {
       resultTicket
     }) => {
       setDiscountsEngineResultAs(discountsEngineResult);
-      setTaxesEngineResultAs(taxEngineResult);
+      OB.Taxes.Pos.translateTaxes = jest.fn().mockReturnValue(taxEngineResult);
+      OB.Taxes.Pos.applyTaxes = jest.fn().mockImplementation(ticket => {
+        expect(ticket.lines).toMatchObject(resultTicket.lines);
+        return taxEngineResult;
+      });
+
       const result = hook(deepfreeze(payloadTicket), payload());
       expect(result).toMatchObject(resultTicket);
     }

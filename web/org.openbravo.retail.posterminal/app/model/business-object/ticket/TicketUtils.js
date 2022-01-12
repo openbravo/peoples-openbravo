@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -450,18 +450,22 @@
         const {
           baseGrossUnitPrice,
           grossUnitPrice,
-          grossUnitAmount,
           baseNetUnitPrice,
           netUnitPrice,
-          netUnitAmount,
           qty
         } = line;
         if (line.skipApplyPromotions && hasDiscounts) {
           const newLine = { ...line };
+          const discountAmt = line.promotions.reduce(
+            (t, p) => OB.DEC.add(t, p.amt),
+            OB.DEC.Zero
+          );
 
           if (priceIncludesTax) {
-            newLine.grossUnitAmount =
-              grossUnitAmount || OB.DEC.mul(grossUnitPrice, qty);
+            newLine.grossUnitAmount = OB.DEC.sub(
+              OB.DEC.mul(baseGrossUnitPrice, qty),
+              discountAmt
+            );
             newLine.netUnitAmount = undefined;
             // This part is only used for visualization in WebPOS 2.0
             newLine.grossUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
@@ -473,8 +477,10 @@
               qty
             );
           } else {
-            newLine.netUnitAmount =
-              netUnitAmount || OB.DEC.mul(baseNetUnitPrice, qty);
+            newLine.netUnitAmount = OB.DEC.sub(
+              OB.DEC.mul(baseNetUnitPrice, qty),
+              discountAmt
+            );
             newLine.grossUnitAmount = undefined;
             // This part is only used for visualization in WebPOS 2.0
             newLine.netUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
