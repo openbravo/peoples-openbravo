@@ -85,7 +85,6 @@ export.database: exports database structure and data to xml files.
   <property name="rd" value="false" />
   <property name="local" value="true" />
   <property name="stopOnWadError" value="false"/>
-  <property name="friendlyWarnings" value="false"/>
   <property name="checkTranslationConsistency" value="true"/>
   <property name="buildValidation" value="true"/>
   <property name="modules" value=""/> 
@@ -652,7 +651,7 @@ export.database: exports database structure and data to xml files.
   -->
   <target name="apply.module" depends="compile.apply.module">
     <java classname="org.openbravo.erpCommon.modules.ApplyModuleTask" fork="true" maxmemory="${build.maxmemory}" failonerror="true">
-      <arg line="'${base.src}' '${friendlyWarnings}' '${forceRefData}'" />
+      <arg line="'${base.src}' '${forceRefData}'" />
       <classpath refid="apply.module.runtime.classpath" />
     </java>
    <delete includeEmptyDirs="true"  dir="${build.apply.module}" />

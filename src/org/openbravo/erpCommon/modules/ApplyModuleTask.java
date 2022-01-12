@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,7 +26,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.BuildException;
 import org.openbravo.base.AntExecutor;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.DalInitializingTask;
 import org.openbravo.database.CPStandAlone;
 
@@ -43,16 +42,13 @@ public class ApplyModuleTask extends DalInitializingTask {
   public static void main(String[] args) {
     Boolean lforceRefData = false;
     final String srcPath = args[0];
-    String friendlyWarnings = "false";
-    if (args.length >= 2) {
-      friendlyWarnings = args[1];
-      lforceRefData = args[2].equalsIgnoreCase("true") || args[2].equalsIgnoreCase("yes");
+    if (args.length >= 1) {
+      lforceRefData = args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("yes");
     }
     final File srcDir = new File(srcPath);
     final File baseDir = srcDir.getParentFile();
     try {
       final AntExecutor antExecutor = new AntExecutor(baseDir.getAbsolutePath());
-      antExecutor.setProperty("friendlyWarnings", friendlyWarnings);
       antExecutor.setProperty("forceRefData", lforceRefData.toString());
       antExecutor.runTask("apply.module.forked");
     } catch (final Exception e) {
@@ -62,11 +58,6 @@ public class ApplyModuleTask extends DalInitializingTask {
 
   @Override
   public void execute() {
-    // always do friendly warnings for the dal layer during apply module
-    // the unfriendly warnings are shown in generate.entities anyway
-    // if the correct property is not set.
-    OBPropertiesProvider.setFriendlyWarnings(true);
-
     // Initialize DAL only in case it is needed: modules have refrence data to be loaded
     CPStandAlone pool = new CPStandAlone(propertiesFile);
     ApplyModuleData[] ds = null;
@@ -98,14 +89,6 @@ public class ApplyModuleTask extends DalInitializingTask {
       }
       // do not execute if not reference data nor translations present
     }
-  }
-
-  public boolean getFriendlyWarnings() {
-    return OBPropertiesProvider.isFriendlyWarnings();
-  }
-
-  public void setFriendlyWarnings(boolean doFriendlyWarnings) {
-    OBPropertiesProvider.setFriendlyWarnings(doFriendlyWarnings);
   }
 
   @Override

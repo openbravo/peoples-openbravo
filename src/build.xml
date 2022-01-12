@@ -138,7 +138,7 @@ build.war: build a war file in the lib directory.
          <propertyref name="java.security.egd" />
       </syspropertyset>
     </java>
-    <javac includes="org/openbravo/erpCommon/modules/ApplyModuleTask.java" destdir="${build.apply.module}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" verbose="false" nowarn="${friendlyWarnings}" includeantruntime="false" >
+    <javac includes="org/openbravo/erpCommon/modules/ApplyModuleTask.java" destdir="${build.apply.module}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" verbose="false" includeantruntime="false" >
       <src path="${base.src}"/>
       <src path="../build/javasqlc/src"/>
       <src path="../src-gen"/>
@@ -228,16 +228,16 @@ build.war: build a war file in the lib directory.
   </path>
  
   <target name="compileSqlc" depends="sqlc">
-    <javac excludes="*/src-wad/**,*/src-util/**,**/org/openbravo/erpWindows/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}" includeantruntime="false">
+    <javac excludes="*/src-wad/**,*/src-util/**,**/org/openbravo/erpWindows/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <src refid="my-src-dirs"/>
       <classpath refid="project.class.path" />
     </javac>
 
-    <javac srcdir="${build.sqlc}/srcAD" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}" includeantruntime="false">
+    <javac srcdir="${build.sqlc}/srcAD" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="project.class.path" />
     </javac>
 
-    <javac srcdir="${build.AD}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" nowarn="${friendlyWarnings}" includeantruntime="false">
+    <javac srcdir="${build.AD}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="project.class.path" />
     </javac>
   </target>
@@ -282,8 +282,7 @@ build.war: build a war file in the lib directory.
         
         <WADValidation propertiesFile="${base.config}/Openbravo.properties"
                        modules="${module}"
-                       stoponerror="${stopOnWadError}"
-                       friendlyWarnings="${friendlyWarnings}"/>
+                       stoponerror="${stopOnWadError}"/>
   </target>
   
   <target name="wad" depends="init, wadvalidation">

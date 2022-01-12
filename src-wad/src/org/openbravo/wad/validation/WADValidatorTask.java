@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,16 +26,13 @@ public class WADValidatorTask extends Task {
   private String propertiesFile;
   private String modules;
   private boolean stoponerror;
-  private boolean friendlyWarnings;
 
   @Override
   public void execute() throws BuildException {
     CPStandAlone conn = new CPStandAlone(propertiesFile);
-    WADValidator val = new WADValidator(conn, modules, friendlyWarnings);
+    WADValidator val = new WADValidator(conn, modules);
     WADValidationResult result = val.validate();
-    if (!friendlyWarnings) {
-      result.printLog(stoponerror);
-    }
+    result.printLog(stoponerror);
     result.printFriendlyLog();
     if (result.hasErrors() && stoponerror) {
       throw new BuildException("WAD verification has errors");
@@ -64,14 +61,6 @@ public class WADValidatorTask extends Task {
 
   public void setStoponerror(boolean failonerror) {
     this.stoponerror = failonerror;
-  }
-
-  public boolean isFriendlyWarnings() {
-    return friendlyWarnings;
-  }
-
-  public void setFriendlyWarnings(boolean friendlyWarnings) {
-    this.friendlyWarnings = friendlyWarnings;
   }
 
 }

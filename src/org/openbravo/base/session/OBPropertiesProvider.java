@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,16 +45,6 @@ public class OBPropertiesProvider {
   private final Logger log = LogManager.getLogger();
 
   private static OBPropertiesProvider instance = new OBPropertiesProvider();
-
-  private static boolean friendlyWarnings = false;
-
-  public static boolean isFriendlyWarnings() {
-    return friendlyWarnings;
-  }
-
-  public static void setFriendlyWarnings(boolean doFriendlyWarnings) {
-    friendlyWarnings = doFriendlyWarnings;
-  }
 
   private Properties obProperties = null;
   private Document formatXML;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.Reference;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.validation.ValidationException;
 
 /**
@@ -52,18 +51,10 @@ public abstract class BaseForeignKeyDomainType extends BaseDomainType
           .getPrimaryKeyColumns()
           .get(0);
     } catch (final Exception e) {
-      if (OBPropertiesProvider.isFriendlyWarnings()) {
-        // won't be logged
-        throw new IllegalArgumentException(
-            "Reference column for " + columnName + " not found in runtime model [ref: "
-                + getReference().getId() + ", encountered exception " + e.getMessage(),
-            e);
-      } else {
-        throw new OBException(
-            "Reference column for " + columnName + " not found in runtime model [ref: "
-                + getReference().getId() + ", encountered exception " + e.getMessage(),
-            e);
-      }
+      throw new OBException(
+          "Reference column for " + columnName + " not found in runtime model [ref: "
+              + getReference().getId() + ", encountered exception " + e.getMessage(),
+          e);
     }
   }
 

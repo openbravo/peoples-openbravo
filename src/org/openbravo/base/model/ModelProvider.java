@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -599,10 +599,8 @@ public class ModelProvider implements OBSingleton {
         log.debug("Setting targetEntity and reference Property for " + thisProp);
         final Column thatColumn = c.getReferenceType();
         if (thatColumn == null) {
-          if (!OBPropertiesProvider.isFriendlyWarnings()) {
-            log.error("Property " + thisProp
-                + " is mapped incorrectly, there is no referenced column for it, removing from the mapping");
-          }
+          log.error("Property " + thisProp
+              + " is mapped incorrectly, there is no referenced column for it, removing from the mapping");
           thisProp.getEntity().getProperties().remove(thisProp);
           if (thisProp.getEntity().getIdProperties().remove(thisProp)) {
             Check.fail("Incorrect mapping for property " + thisProp
@@ -925,13 +923,7 @@ public class ModelProvider implements OBSingleton {
   public Table getTable(String tableName) throws CheckException {
     final Table table = getTableWithoutCheck(tableName);
     if (table == null) {
-      if (OBPropertiesProvider.isFriendlyWarnings()) {
-        // this error won't be logged...
-        throw new IllegalArgumentException(
-            "Table: " + tableName + " not found in runtime model, is it maybe inactive?");
-      } else {
-        Check.fail("Table: " + tableName + " not found in runtime model, is it maybe inactive?");
-      }
+      Check.fail("Table: " + tableName + " not found in runtime model, is it maybe inactive?");
     }
     return table;
   }

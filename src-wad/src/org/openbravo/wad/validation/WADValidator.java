@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,9 +31,6 @@ class WADValidator {
   private String modules;
   private ConnectionProvider conn;
   private String checkAll;
-  @SuppressWarnings("unused")
-  // maybe planned some day, so lets keep
-  private boolean friendlyWarnings;
 
   /**
    * Constructor
@@ -43,12 +40,11 @@ class WADValidator {
    * @param modules
    *          Module to check
    */
-  public WADValidator(ConnectionProvider conn, String modules, boolean friendlyWarnings) {
+  public WADValidator(ConnectionProvider conn, String modules) {
     checkAll = (modules == null || modules.equals("%") || modules.equals("")) ? "Y" : "N";
     this.modules = "'"
         + (checkAll.equals("Y") ? "%" : modules.replace(", ", ",").replace(",", "', '")) + "'";
     this.conn = conn;
-    this.friendlyWarnings = friendlyWarnings;
   }
 
   /**

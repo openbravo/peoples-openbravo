@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,7 +31,6 @@ import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
-import org.openbravo.base.session.OBPropertiesProvider;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Column table in the application
@@ -285,10 +284,8 @@ public class Column extends ModelObject {
       setReferenceType(
           ((ForeignKeyDomainType) getDomainType()).getForeignKeyColumn(getColumnName()));
     } catch (final Exception e) {
-      if (!OBPropertiesProvider.isFriendlyWarnings()) {
-        log.error("No referenced column found: error >> tableName: " + table.getTableName()
-            + " - columnName: " + getColumnName(), e);
-      }
+      log.error("No referenced column found: error >> tableName: " + table.getTableName()
+          + " - columnName: " + getColumnName(), e);
     }
   }
 
