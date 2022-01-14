@@ -71,4 +71,18 @@
       <Parameter name="startingTime"/>
       <Parameter name="endingTime"/>
   </SqlMethod>
+  <SqlMethod name="setWeekAndWeekDaysAsEmpty" type="preparedStatement" return="rowcount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+      	UPDATE m_offer SET monday = 'N', tuesday = 'N', wednesday = 'N', thursday = 'N', friday = 'N', saturday = 'N', sunday = 'N', allweekdays = 'Y',
+      	startingtime = null, startingtimemonday = null, startingtimetuesday = null, startingtimewednesday = null, 
+      	startingtimethursday = null, startingtimefriday = null, startingtimesaturday = null, startingtimesunday = null,
+      	endingtime = null, endingtimemonday = null, endingtimetuesday = null, endingtimewednesday = null, 
+      	endingtimethursday = null, endingtimefriday = null, endingtimesaturday = null, endingtimesunday = null
+      	WHERE m_offer_id = ?
+		
+      ]]></Sql>
+      <Parameter name="mOfferId"/> 
+  </SqlMethod>
  </SqlClass>
