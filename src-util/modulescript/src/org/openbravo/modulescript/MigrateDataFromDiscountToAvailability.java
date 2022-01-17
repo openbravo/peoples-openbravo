@@ -26,8 +26,8 @@ public class MigrateDataFromDiscountToAvailability extends ModuleScript {
   public void execute() { 
     try {
       ConnectionProvider cp = getConnectionProvider(); 
-      boolean isADOrgTreeDataCreated = MigrateDataFromDiscountToAvailabilityData.isDataInOfferAvailabilityTableInserted(cp); 
-      if (!isADOrgTreeDataCreated) {
+      boolean isDataInOfferAvailabilityTableInserted = MigrateDataFromDiscountToAvailabilityData.isDataInOfferAvailabilityTableInserted(cp); 
+      if (!isDataInOfferAvailabilityTableInserted) {
         MigrateDataFromDiscountToAvailabilityData[] results = MigrateDataFromDiscountToAvailabilityData.select(cp);
         
         for (int i = 0; i < results.length; i++) { 
@@ -89,5 +89,12 @@ public class MigrateDataFromDiscountToAvailability extends ModuleScript {
     } catch (Exception e) {
       handleError(e);
     }
+  }
+  
+  
+  @Override
+  protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
+    return new ModuleScriptExecutionLimits("0", null, 
+        new OpenbravoVersion(3,0,222000));
   }
 }
