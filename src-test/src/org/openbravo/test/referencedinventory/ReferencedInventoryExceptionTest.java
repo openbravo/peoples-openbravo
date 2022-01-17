@@ -54,8 +54,10 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
-    assertThrows(OBMessageUtils.messageBD("NotSelected"), OBException.class,
-        () -> new BoxProcessor(refInv, null, null).createAndProcessGoodsMovement());
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv, null, null).createAndProcessGoodsMovement();
+    });
+    assertThat(thrown.getMessage(), containsString(OBMessageUtils.messageBD("NotSelected")));
   }
 
   @Test
@@ -154,9 +156,12 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final StorageDetail storageDetail = ReferencedInventoryTestUtils
         .getUniqueStorageDetail(product);
 
-    assertThrows(OBMessageUtils.messageBD("NewStorageBinParameterMandatory"), OBException.class,
-        () -> new BoxProcessor(refInv, ReferencedInventoryTestUtils
-            .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE), null)
-                .createAndProcessGoodsMovement());
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv,
+          ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE),
+          null).createAndProcessGoodsMovement();
+    });
+    assertThat(thrown.getMessage(),
+        containsString(OBMessageUtils.messageBD("NewStorageBinParameterMandatory")));
   }
 }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2020 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,10 +89,11 @@ public class DalPersistanceEventTest extends ObserverBaseTest {
 
       // expecting exception thrown by by persistance observer, it will be thrown only if it is
       // executed
-      assertThrows(OBMessageUtils.messageBD("InvalidDateFormat"), OBException.class, () -> {
+      OBException thrown = assertThrows(OBException.class, () -> {
         OBDal.getInstance().save(newCountry);
         OBDal.getInstance().flush();
       });
+      assertThat(thrown.getMessage(), containsString(OBMessageUtils.messageBD("InvalidDateFormat")));
     } finally {
       OBDal.getInstance().rollbackAndClose();
     }
