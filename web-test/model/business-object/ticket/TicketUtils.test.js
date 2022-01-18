@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -193,16 +193,20 @@ describe('TicketUtils', () => {
   });
 
   test.each`
-    ticket                                                | expected
-    ${{}}                                                 | ${false}
-    ${{ isEditable: false }}                              | ${false}
-    ${{ isEditable: true }}                               | ${true}
-    ${{ paymentSubtotals: undefined }}                    | ${false}
-    ${{ paymentSubtotals: [] }}                           | ${false}
-    ${{ isEditable: false, paymentSubtotals: undefined }} | ${false}
-    ${{ isEditable: false, paymentSubtotals: [] }}        | ${false}
-    ${{ isEditable: true, paymentSubtotals: undefined }}  | ${true}
-    ${{ isEditable: true, paymentSubtotals: [] }}         | ${false}
+    ticket                                                          | expected
+    ${{}}                                                           | ${false}
+    ${{ isEditable: false }}                                        | ${false}
+    ${{ isEditable: true }}                                         | ${true}
+    ${{ payments: undefined }}                                      | ${false}
+    ${{ payments: [] }}                                             | ${false}
+    ${{ payments: [{}] }}                                           | ${false}
+    ${{ paymentSubtotals: undefined }}                              | ${false}
+    ${{ paymentSubtotals: [] }}                                     | ${false}
+    ${{ paymentSubtotals: [{}] }}                                   | ${false}
+    ${{ isEditable: true, payments: [], paymentSubtotals: [] }}     | ${true}
+    ${{ isEditable: true, payments: [], paymentSubtotals: [{}] }}   | ${true}
+    ${{ isEditable: true, payments: [{}], paymentSubtotals: [] }}   | ${true}
+    ${{ isEditable: true, payments: [{}], paymentSubtotals: [{}] }} | ${false}
   `("Ticket '$ticket' is editable", async ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isEditable(ticket)).toBe(expected);
   });

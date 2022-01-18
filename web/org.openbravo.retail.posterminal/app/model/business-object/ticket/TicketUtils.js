@@ -1017,7 +1017,9 @@
      * @returns {boolean} - True if the given ticket is editable, false if it is not editable
      */
     isEditable(ticket) {
-      return Boolean(ticket.isEditable) && !ticket.paymentSubtotals;
+      const { isEditable, payments = [], paymentSubtotals = [] } = ticket;
+      const subtotalsWithPayments = payments.length && paymentSubtotals.length;
+      return Boolean(isEditable) && !subtotalsWithPayments;
     },
 
     /**
