@@ -530,15 +530,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
             ])
           : formattedRounded;
 
-      // if split payment, reset overpayment property to 0 to avoid telling back-end to account for writeoff amount
-      if (payment.overpayment) {
-        // eslint-disable-next-line no-param-reassign
-        payment.overpayment = 0;
-      }
-
       // hold essential changePayment data for later transfer to payment properties
       const changePaymentData = {
-        key: firstCashPaymentType.payment.searchKey,
+        key: payment.overpayment
+          ? payment.kind
+          : firstCashPaymentType.payment.searchKey,
         amount: OB.DEC.mul(
           change,
           firstCashPaymentType.mulrate || OB.DEC.One,
@@ -548,6 +544,12 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         origAmount: change,
         label: paymentLabel
       };
+
+      // if split payment, reset overpayment property to 0 to avoid telling back-end to account for writeoff amount
+      if (payment.overpayment) {
+        // eslint-disable-next-line no-param-reassign
+        payment.overpayment = 0;
+      }
 
       // put in a new positive payment with new properties
       positivePayments.push({
