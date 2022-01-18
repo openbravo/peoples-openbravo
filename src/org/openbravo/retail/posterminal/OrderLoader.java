@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -2030,10 +2030,21 @@ public class OrderLoader extends POSDataSynchronizationProcess
   private void verifyCashupStatus(JSONObject jsonorder) throws JSONException, OBException {
     OBContext.setAdminMode(false);
     try {
-      if (jsonorder.has("obposAppCashup") && jsonorder.getString("obposAppCashup") != null
-          && !jsonorder.getString("obposAppCashup").equals("")) {
+      // the jsonorder has two cashup id's:
+      // - obposAppCashup : it is the cashup id linked to the order in the tables
+      // - cashUpReportInformation[id] : it is the cashup information of the pos when sending the
+      // ticket to the backend
+      //
+      // If loading a order from a previous cashup, the cashUpReportInformation[id] will point to
+      // the current cashup, but the obposAppCashup will point to the cashup when the orded was
+      // created
+      if (jsonorder.has("cashUpReportInformation")
+          && jsonorder.getJSONObject("cashUpReportInformation") != null
+          && jsonorder.getJSONObject("cashUpReportInformation").has("id")
+          && !jsonorder.getJSONObject("cashUpReportInformation").getString("id").equals("")) {
         OBPOSAppCashup cashUp = OBDal.getInstance()
-            .get(OBPOSAppCashup.class, jsonorder.getString("obposAppCashup"));
+            .get(OBPOSAppCashup.class,
+                jsonorder.getJSONObject("cashUpReportInformation").getString("id"));
         if (cashUp != null && cashUp.isProcessedbo()) {
           // Additional check to verify that the cashup related to the order has not been processed
           throw new OBException("The cashup related to this order has been processed");
