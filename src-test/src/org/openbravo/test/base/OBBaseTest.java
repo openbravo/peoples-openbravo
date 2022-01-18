@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2020 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -265,11 +265,6 @@ public class OBBaseTest {
    * Record ID of the "Admin" user of QA Test client
    */
   protected static final String QA_TEST_ADMIN_USER_ID = "4028E6C72959682B01295A0735CB0120";
-
-  /**
-   * Record ID of the "Admin" role of QA Test client
-   */
-  protected static final String QA_TEST_ADMIN_ROLE_ID = "4028E6C72959682B01295A071429011E";
 
   /**
    * Record ID of the "Customer" Business Partner Category
