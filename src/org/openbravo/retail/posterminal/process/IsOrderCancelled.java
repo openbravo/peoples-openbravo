@@ -18,17 +18,17 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.mobile.core.process.JSONProcessSimple;
 import org.openbravo.mobile.core.process.OutDatedDataChangeException;
-import org.openbravo.mobile.core.servercontroller.MultiServerJSONProcess;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
 
-public class IsOrderCancelled extends MultiServerJSONProcess {
+public class IsOrderCancelled extends JSONProcessSimple {
   @Override
-  public JSONObject execute(JSONObject jsonData) {
+  public JSONObject exec(JSONObject jsonData) {
     JSONObject result = new JSONObject();
 
     OBContext.setAdminMode(true);
@@ -122,22 +122,41 @@ public class IsOrderCancelled extends MultiServerJSONProcess {
     } finally {
       OBContext.restorePreviousMode();
     }
-    return result;
+    return createSuccessResponse(jsonData, result);
   }
 
   @Override
-  protected String getImportEntryDataType() {
+  public String getImportEntryId() {
     return null;
   }
 
   @Override
-  protected void createArchiveEntry(String id, JSONObject json) throws JSONException {
+  public void setImportEntryId(String importEntryId) {
     // We don't want to create any import entry in these transactions.
   }
 
   @Override
   protected String getProperty() {
     return "OBPOS_receipt.cancelreplace";
+  }
+
+  private JSONObject createSuccessResponse(JSONObject jsonSent, JSONObject result) {
+    try {
+      final JSONObject response = new JSONObject();
+      if (jsonSent.has("messageId")) {
+        response.put("messageId", jsonSent.getString("messageId"));
+      }
+      if (jsonSent.has("posTerminal")) {
+        response.put("posTerminal", jsonSent.getString("posTerminal"));
+      }
+      if (!response.has(JsonConstants.RESPONSE_STATUS)) {
+        response.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
+      }
+      response.put(JsonConstants.RESPONSE_DATA, result);
+      return response;
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
   }
 
 }
