@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2021 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2150,7 +2150,8 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    if (this.getSelectedRecord()) {
+    // selected record filter refresh is unsupported when grouping by
+    if (this.getSelectedRecord() && !this.isGrouped) {
       // this property is used to prevent an unneeded request in OBViewGridBody.redraw
       this.refreshingWithSelectedRecord = true;
       // obtain a range that contains the selected record
