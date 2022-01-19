@@ -19,8 +19,8 @@
 package org.openbravo.test.system;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 
 import java.util.Arrays;
 import java.util.Collections;

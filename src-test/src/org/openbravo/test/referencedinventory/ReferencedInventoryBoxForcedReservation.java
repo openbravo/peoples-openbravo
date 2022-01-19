@@ -91,20 +91,23 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
 
   @Test
   public void testBoxInDifferentBinIsNotPossible() {
-    assertThrows(EXPECTED_ERROR, OBException.class, () -> testBox(BINS[1], PRODUCTS[0][0],
+    OBException thrown = assertThrows(OBException.class, () -> testBox(BINS[1], PRODUCTS[0][0],
         PRODUCTS[0][1], params.qtyToBox, params.reservationQty, false, true, false));
+    assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
   }
 
   @Test
   public void testBoxInDifferentBinIsNotPossible2() {
-    assertThrows(EXPECTED_ERROR, OBException.class, () -> testBox(BINS[1], PRODUCTS[1][0],
+    OBException thrown = assertThrows(OBException.class, () -> testBox(BINS[1], PRODUCTS[1][0],
         PRODUCTS[1][1], params.qtyToBox, params.reservationQty, true, true, true));
+    assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
   }
 
   @Test
   public void testBoxInDifferentBinIsNotPossible3() {
-    assertThrows(EXPECTED_ERROR, OBException.class, () -> testBox(BINS[1], PRODUCTS[2][0],
+    OBException thrown = assertThrows(OBException.class, () -> testBox(BINS[1], PRODUCTS[2][0],
         PRODUCTS[2][1], params.qtyToBox, params.reservationQty, false, true, true));
+    assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
   }
 
   private void assertsReservation(final ReferencedInventory refInv, boolean isForceBin,

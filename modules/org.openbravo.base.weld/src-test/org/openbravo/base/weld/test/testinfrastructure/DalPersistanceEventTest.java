@@ -20,6 +20,7 @@
 package org.openbravo.base.weld.test.testinfrastructure;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -93,7 +94,8 @@ public class DalPersistanceEventTest extends ObserverBaseTest {
         OBDal.getInstance().save(newCountry);
         OBDal.getInstance().flush();
       });
-      assertThat(thrown.getMessage(), containsString(OBMessageUtils.messageBD("InvalidDateFormat")));
+      assertThat(thrown.getMessage(),
+          containsString(OBMessageUtils.messageBD("InvalidDateFormat")));
     } finally {
       OBDal.getInstance().rollbackAndClose();
     }

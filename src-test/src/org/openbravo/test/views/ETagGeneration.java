@@ -20,8 +20,8 @@
 package org.openbravo.test.views;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assume.assumeThat;
 
 import java.net.HttpURLConnection;
