@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2021 Openbravo SLU
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import org.openbravo.authentication.hashing.PasswordHashing;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
+import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdiWithSkip;
 import org.openbravo.client.application.test.ADCSInitialization;
 import org.openbravo.client.application.test.ADCSTest;
 import org.openbravo.client.application.test.ApplicationTest;
@@ -294,6 +295,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // cdi
     CdiInfrastructure.class, //
     ParameterizedCdi.class, //
+    ParameterizedCdiWithSkip.class, //
     DalPersistanceEventTest.class, //
 
     // client application

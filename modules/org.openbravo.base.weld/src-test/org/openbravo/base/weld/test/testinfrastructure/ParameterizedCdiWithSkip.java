@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2022 Openbravo SLU
+ * All portions are Copyright (C) 2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,52 +35,45 @@ import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
 
 /**
- * Test cases checking test case parameterization with cdi.
- * 
- * @author alostale
- *
+ * Test cases checking test case parameterization with cdi and parameter skipping.
  */
-public class ParameterizedCdi extends WeldBaseTest {
-  private static final List<String> PARAMS = Arrays.asList("param1", "param2", "param3");
+public class ParameterizedCdiWithSkip extends WeldBaseTest {
+  private static final List<String> PARAMS = Arrays.asList("param1", "param2", "param3", "param4");
+  private static final List<String> SKIP = Arrays.asList("param2", "param4");
 
   /** defines the values the parameter will take. */
   @Rule
-  public ParameterCdiTestRule<String> parameterValuesRule = new ParameterCdiTestRule<>(PARAMS);
+  public ParameterCdiTestRule<String> parameterValuesRule = new ParameterCdiTestRule<>(PARAMS,
+      SKIP::contains);
 
   /** this field will take the values defined by parameterValuesRule field. */
   private @ParameterCdiTest String parameter;
 
-  private static int counterTest1 = 0;
-  private static int counterTest2 = 0;
-  private static String test1Execution = "";
-  private static String test2Execution = "";
+  private static int counterTest = 0;
+  private static String testExecution = "";
 
-  /** Test case to be executed once per parameter value */
-  @Test
-  public void test1() {
-    assertThat("parameter value", parameter, equalTo(PARAMS.get(counterTest1)));
-    counterTest1++;
-    test1Execution += parameter;
+  private static List<String> getNonSkippedParams() {
+    return PARAMS.stream().filter(p -> !SKIP.contains(p)).collect(Collectors.toList());
   }
 
-  /** Test case to be executed once per parameter value */
+  /** Test case to be executed once per non skipped parameter value */
   @Test
-  public void test2() {
-    assertThat("parameter value", parameter, equalTo(PARAMS.get(counterTest2)));
-
-    counterTest2++;
-    test2Execution += parameter;
+  public void test() {
+    assertThat("parameter value", parameter, equalTo(getNonSkippedParams().get(counterTest)));
+    counterTest++;
+    testExecution += parameter;
   }
 
-  /** Checks the previous test cases were executed as many times as parameter values in the list. */
+  /**
+   * Checks the previous test cases were executed as many times as non skipped parameter values in
+   * the list.
+   */
   @AfterClass
-  public static void testsShouldBeExecutedOncePerParameter() {
-    String expectedValue = PARAMS.stream().collect(Collectors.joining(""));
+  public static void testsShouldBeExecutedOncePerNonSkippedParameter() {
+    List<String> nonSkippedParams = getNonSkippedParams();
+    String expectedValue = nonSkippedParams.stream().collect(Collectors.joining(""));
 
-    assertThat("# of executions for test 1", PARAMS.size(), is(counterTest1));
-    assertThat("# of executions for test 2", PARAMS.size(), is(counterTest2));
-
-    assertThat("test 1 result", test1Execution, equalTo(expectedValue));
-    assertThat("test 2 result", test2Execution, equalTo(expectedValue));
+    assertThat("# of executions for test", nonSkippedParams.size(), is(counterTest));
+    assertThat("test result", testExecution, equalTo(expectedValue));
   }
 }
