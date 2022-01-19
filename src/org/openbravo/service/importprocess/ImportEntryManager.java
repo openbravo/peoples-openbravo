@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2021 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,12 +22,15 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -142,6 +145,10 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
   private Map<String, ImportEntryProcessor> importEntryProcessors = new HashMap<String, ImportEntryProcessor>();
 
   private Map<String, ImportStatistics> stats = new HashMap<String, ImportEntryManager.ImportStatistics>();
+
+  // create a concurrent HashSet using util method
+  private Set<String> scheduledImportEntryIds = Collections
+      .newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
   private boolean threadsStarted = false;
 
@@ -495,12 +502,26 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
     return "Import Entry Manager\n" + //
         "* Active threads: " + getNumberOfActiveTasks() + "/" + numberOfThreads + "\n" + //
         "* Processor queue size: " + getNumberOfQueuedTasks() + "/" + maxTaskQueueSize + "\n" + //
+        "* Scheduled entries: (" + scheduledImportEntryIds.size() + "): " + scheduledImportEntryIds
+        + "\n" + //
         "* Processors:\n" + //
         importEntryProcessors.entrySet()
             .stream()
             .map(e -> " " + e.getKey() + " - " + e.getValue())
             .collect(Collectors.joining("\n"))
         + "\n" + clusterService;
+  }
+
+  public boolean isScheduled(String importEntryId) {
+    return scheduledImportEntryIds.contains(importEntryId);
+  }
+
+  public void setScheduled(String importEntryId) {
+    scheduledImportEntryIds.add(importEntryId);
+  }
+
+  public void setProcessed(String importEntryId) {
+    scheduledImportEntryIds.remove(importEntryId);
   }
 
   private static class ImportEntryManagerThread implements Runnable {
