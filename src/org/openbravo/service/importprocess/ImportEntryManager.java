@@ -166,8 +166,16 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
 
   private boolean isShutDown = false;
 
+  /**
+   * @return {@code true} if the ImportEntryManager is shut down. Otherwise {@code false} is
+   *         returned. The ImportEntryManager can be shut down because of any of these reasons:
+   * 
+   *         1- The {@link #shutdown()} method has been invoked<br>
+   *         2- In a clustered environment, the current node is not in charge of handling import
+   *         entries
+   */
   public boolean isShutDown() {
-    return isShutDown;
+    return isShutDown || !isHandlingImportEntries();
   }
 
   @PostConstruct
@@ -271,6 +279,15 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    */
   public void notifyEndProcessingInCluster() {
     clusterService.endProcessing();
+  }
+
+  /**
+   * @return {@code true} if the current cluster node is handling import entries, {@code false}
+   *         otherwise. Note that if we are not in a clustered environment, this method is always
+   *         returning {@code true}.
+   */
+  boolean isHandlingImportEntries() {
+    return clusterService.isHandledInCurrentNode();
   }
 
   /**
@@ -406,9 +423,18 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
 
   /**
    * Set the ImportEntry to status Processed in the same transaction as the caller.
+   * 
+   * @throws OBException
+   *           if the import entry can't be set as processed because the current cluster node is not
+   *           in charge of processing import entries
    */
   public void setImportEntryProcessed(String importEntryId) {
     ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
+    if (!isHandlingImportEntries()) {
+      throw new OBException("Import entry " + importEntryId + " could not be processed in node "
+          + clusterService.getNodeIdentifier() + " because active node is "
+          + clusterService.getIdentifierOfNodeHandlingService());
+    }
     if (importEntry != null && !"Processed".equals(importEntry.getImportStatus())) {
       importEntry.setImportStatus("Processed");
       importEntry.setImported(new Date());
@@ -500,7 +526,9 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
             .stream()
             .map(e -> " " + e.getKey() + " - " + e.getValue())
             .collect(Collectors.joining("\n"))
-        + "\n" + clusterService;
+        + "\n" + //
+        "* Shut Down: " + isShutDown + "\n" //
+        + clusterService;
   }
 
   private static class ImportEntryManagerThread implements Runnable {
@@ -704,7 +732,7 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
     }
 
     private boolean isHandlingImportEntries() {
-      return manager.clusterService.isHandledInCurrentNode();
+      return manager.isHandlingImportEntries();
     }
 
     public boolean isRunning() {

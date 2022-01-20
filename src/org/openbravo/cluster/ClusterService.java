@@ -176,7 +176,11 @@ public abstract class ClusterService {
     return nodeId.equals(nodeHandlingServiceId);
   }
 
-  protected String getIdentifierOfNodeHandlingService() {
+  /**
+   * @return a {@code String} with the identifier of the cluster node currently handling the
+   *         service.
+   */
+  public String getIdentifierOfNodeHandlingService() {
     return nodeHandlingServiceName + " - " + nodeHandlingServiceId;
   }
 
@@ -310,7 +314,10 @@ public abstract class ClusterService {
     }
   }
 
-  private String getNodeIdentifier() {
+  /**
+   * @return a {@code String} with the identifier of the current cluster node.
+   */
+  public String getNodeIdentifier() {
     return nodeName + " - " + nodeId;
   }
 

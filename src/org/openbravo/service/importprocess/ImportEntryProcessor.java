@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2021 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -196,7 +196,7 @@ public abstract class ImportEntryProcessor {
    * If an entry was added false is returned and the thread continues.
    */
   private synchronized boolean tryDeregisterProcessThread(ImportEntryProcessRunnable runnable) {
-    if (!runnable.getImportEntryQueue().isEmpty()) {
+    if (!runnable.getImportEntryQueue().isEmpty() && importEntryManager.isHandlingImportEntries()) {
       log.debug("Not deregistering process thread as new entries have been added to it");
       // a new entry was entered while we tried to deregister
       return false;
@@ -304,6 +304,7 @@ public abstract class ImportEntryProcessor {
           importEntryManager.notifyStartProcessingInCluster();
           try {
             if (importEntryManager.isShutDown()) {
+              logger.info("Import entries should not be processed: {}", importEntryManager);
               return;
             }
             doRunCycle();
@@ -353,6 +354,7 @@ public abstract class ImportEntryProcessor {
       while ((queuedImportEntry = importEntries.poll()) != null) {
         try {
           if (importEntryManager.isShutDown()) {
+            logger.info("Import entries should not be processed: {}", importEntryManager);
             return;
           }
           final long t0 = System.currentTimeMillis();
