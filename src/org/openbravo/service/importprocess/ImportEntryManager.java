@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2021 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,8 +24,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -52,6 +54,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.jmx.MBeanRegistry;
+import org.openbravo.service.importprocess.ImportEntryProcessor.ImportEntryProcessRunnable;
 import org.openbravo.service.json.JsonUtils;
 
 /**
@@ -177,6 +180,18 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
   public boolean isShutDown() {
     return isShutDown || !isHandlingImportEntries();
   }
+
+  /**
+   * Keeps track of the current IEM's cycle. Each cycle queries for entries to process and schedules
+   * them.
+   */
+  private static int currentCycle = 0;
+
+  /*
+   * During current cycle, new entries for the given type + key won't be accepted. This object is
+   * accessed always from the main thread, there is not need it to be thread safe.
+   */
+  private static Set<String> blockedNewEntriesForKey = new HashSet<>();
 
   @PostConstruct
   private void init() {
@@ -525,6 +540,9 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
     return "Import Entry Manager\n" + //
         "* Active threads: " + getNumberOfActiveTasks() + "/" + numberOfThreads + "\n" + //
         "* Processor queue size: " + getNumberOfQueuedTasks() + "/" + maxTaskQueueSize + "\n" + //
+        "* Current cycle: " + currentCycle + "\n" + //
+        "* Blocked type keys in this cycle (" + blockedNewEntriesForKey.size() + "): "
+        + blockedNewEntriesForKey + "\n" + //
         "* Processors:\n" + //
         importEntryProcessors.entrySet()
             .stream()
@@ -613,6 +631,8 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
               continue;
             }
 
+            currentCycle += 1;
+
             // obcontext cleared or wrong obcontext, repair
             if (OBContext.getOBContext() == null
                 || !"0".equals(OBContext.getOBContext().getUser().getId())) {
@@ -675,6 +695,11 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
               ImportProcessUtils.logError(log, t);
             } finally {
               OBDal.getInstance().commitAndClose();
+
+              log.debug("cycle {} completed {}", currentCycle, manager);
+
+              // we're done with current cycle, remove any blocked entry there might be
+              blockedNewEntriesForKey.clear();
             }
 
             if (entryCount > 0) {
@@ -827,5 +852,54 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
       }
       setDaemon(true);
     }
+  }
+
+  /**
+   * {@link ImportEntryManager} runs in cycles. On each cycle it queries in batches the import
+   * entries pending to be processed and schedules them to be handled by an
+   * {@link ImportEntryProcessRunnable}.
+   * 
+   * @return The identifier of the currently running cycle.
+   */
+  int getCurrentCycle() {
+    return currentCycle;
+  }
+
+  /**
+   * Determines whether new entries for the given {@code typeOfData} and {@code key} are accepted in
+   * the current cycle.
+   * 
+   * @param typeOfData
+   *          Import Entry's type of data
+   * @param key
+   *          Import Entry's key
+   * @return {@code true} in case new entries are accepted in the current cycle
+   * 
+   * @see #getCurrentCycle
+   * @see #stopAcceptingEntries
+   * @see ImportEntryProcessor#getProcessSelectionKey
+   */
+  boolean isAcceptingEntries(String typeOfData, String key) {
+    return !blockedNewEntriesForKey.contains(typeOfData + "_" + key);
+  }
+
+  /**
+   * After this method is invoked, new import entries for the given {@code typeOfData} and
+   * {@code key} will not be accepted during the current running cycle. This method is invoked from
+   * {@link ImportEntryProcessor#assignEntryToThread} when it is detected there are still queued
+   * entries pending to be processed for the same {@code typeOfData} and {@code key}. Preventing, in
+   * this way, to schedule new entries in an {@link ImportEntryProcessRunnable} that was created in
+   * a previous cycle.
+   * 
+   * @param typeOfData
+   *          Import Entry's type of data
+   * @param key
+   *          Import Entry's key
+   * 
+   * @see #isAcceptingEntries
+   * @see ImportEntryProcessor#assignEntryToThread
+   */
+  void stopAcceptingEntries(String typeOfData, String key) {
+    blockedNewEntriesForKey.add(typeOfData + "_" + key);
   }
 }

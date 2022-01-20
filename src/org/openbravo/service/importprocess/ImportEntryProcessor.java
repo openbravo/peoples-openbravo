@@ -154,6 +154,14 @@ public abstract class ImportEntryProcessor {
   // itself at the same time
   protected synchronized void assignEntryToThread(String key, ImportEntry importEntry) {
 
+    int currentCycle = importEntryManager.getCurrentCycle();
+    if (!importEntryManager.isAcceptingEntries(importEntry.getTypeofdata(), key)) {
+      log.trace(
+          "Not accepting new entries of type {} key {} in this cycle ({}) as a runnable for them spanned from a previous cycle",
+          importEntry.getTypeofdata(), key, currentCycle);
+      return;
+    }
+
     // runnables is a concurrent hashmap
     ImportEntryProcessRunnable runnable = runnables.get(key);
 
@@ -161,18 +169,32 @@ public abstract class ImportEntryProcessor {
     // as runnable can already be in a queue of the executorservice
     // waiting to be processed, but not yet started
     if (runnable != null) {
-      // give it to the runnable, the addEntry checks if the import entry
-      // is not already being handled, if so it is skipped
-      runnable.addEntry(importEntry);
+      if (currentCycle == runnable.getCycle()) {
+        // give it to the runnable, the addEntry checks if the import entry
+        // is not already being handled, if so it is skipped
+        runnable.addEntry(importEntry);
+      } else {
+        // This runnable was created in a previous cycle and spanned to current, we should not
+        // accept this entry to prevent it to take the processing threads that might be used by
+        // other types of data with more priority.
+        // We also mark it not to accept any other entry for this type and key. This cover the case
+        // the runnable completed while we were assigning entries from this batch.
+        importEntryManager.stopAcceptingEntries(importEntry.getTypeofdata(), key);
 
+        log.debug("Not assigning {}-{} current cycle {} running since cycle {} size {}",
+            importEntry.getTypeofdata(), key, currentCycle, runnable.getCycle(),
+            runnable.getImportEntryQueue().size());
+      }
       // done
       return;
     }
 
-    log.debug("Created new runnable for key " + key);
-
     // no runnable, create a new one
     runnable = createImportEntryProcessRunnable();
+    log.debug("Created new runnable for type {} key {} cycle {}", importEntry.getTypeofdata(), key,
+        currentCycle);
+
+    runnable.setCycle(currentCycle);
 
     // give it the entry
     runnable.setImportEntryManager(importEntryManager);
@@ -242,9 +264,9 @@ public abstract class ImportEntryProcessor {
   public String toString() {
     return getClass().getSimpleName() + "\n"
         + (runnables.isEmpty() ? "  No runnables"
-            : runnables.entrySet()
+            : runnables.values()
                 .stream()
-                .map(e -> "  " + e.getKey() + "\n" + e.getValue())
+                .map(ImportEntryProcessRunnable::toString)
                 .collect(Collectors.joining("\n")));
 
   }
@@ -271,6 +293,10 @@ public abstract class ImportEntryProcessor {
    * <li>subclasses implement the {@link #processEntry(ImportEntry)} method.
    * </ul>
    * 
+   * ImportEntryProcessRunnables are linked to a ImportEntryManager's execution cycle. After they
+   * complete the execution of all the import entries that were scheduled in their cycle it is
+   * disposed.
+   * 
    * @author mtaal
    *
    */
@@ -292,6 +318,8 @@ public abstract class ImportEntryProcessor {
 
     private String currentProcessingEntry;
     private long currentProcessingEntryStarted;
+
+    private int cycle;
 
     public ImportEntryProcessRunnable() {
       logger = LogManager.getLogger();
@@ -589,6 +617,25 @@ public abstract class ImportEntryProcessor {
       return key;
     }
 
+    /**
+     * Associates this {@link ImportEntryProcessRunnable} with the current
+     * {@link ImportEntryManager}'s execution cycle.
+     * 
+     * @param currentCycle
+     *          The current cycle {@link ImportEntryManager} is executing.
+     */
+    private void setCycle(int currentCycle) {
+      cycle = currentCycle;
+    }
+
+    /**
+     * @return The {@link ImportEntryManager}'s cycle this {@link ImportEntryProcessRunnable} is
+     *         associated with.
+     */
+    private int getCycle() {
+      return cycle;
+    }
+
     @Override
     public String toString() {
       String currentProcessing = currentProcessingEntry == null ? "none"
@@ -603,7 +650,7 @@ public abstract class ImportEntryProcessor {
       // Let's log them in case they are not in sync.
       boolean queuAndIdsInSync = idsSize == queueSize || idsSize == queueSize + 1;
 
-      return "   processing: " + currentProcessing + "\n" + //
+      return "  key:" + key + " cycle: " + cycle + " processing: " + currentProcessing + "\n" + //
           "   queue: (" + importEntries.size() + ") - " + importEntries + //
           (queuAndIdsInSync ? "" : "\n   ids: (" + importEntryIds.size() + ") - " + importEntryIds);
     }
