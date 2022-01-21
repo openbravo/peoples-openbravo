@@ -249,9 +249,7 @@ enyo.kind({
         );
       })
       .catch(exception => {
-        OB.warn(
-          `ModalProviderGroup: exception thrown: ${JSON.stringify(exception)}`
-        );
+        OB.warn(`ModalProviderGroup: exception thrown: ${exception}`);
         this.showPopupMessage =
           exception.showPopupMessage === false ? false : true;
         this.showMessageAndClose(

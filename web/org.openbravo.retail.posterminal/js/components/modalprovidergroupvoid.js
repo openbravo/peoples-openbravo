@@ -142,11 +142,7 @@ enyo.kind({
       )
       .catch(
         function(exception) {
-          OB.warn(
-            `ModalProviderGroupVoid: exception thrown: ${JSON.stringify(
-              exception
-            )}`
-          );
+          OB.warn(`ModalProviderGroupVoid: exception thrown: ${exception}`);
           this.showPopupMessage =
             exception.showPopupMessage === false ? false : true;
           this.showMessageAndClose(
