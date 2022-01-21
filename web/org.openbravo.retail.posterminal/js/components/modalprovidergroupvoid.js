@@ -130,12 +130,23 @@ enyo.kind({
       })
       .then(
         function(response) {
+          OB.info(
+            `ModalProviderGroupVoid: processVoid response: ${JSON.stringify(
+              response
+            )}`
+          );
+
           removeTransaction();
           window.setTimeout(this.doHideThisPopup.bind(this), 0);
         }.bind(this)
       )
       .catch(
         function(exception) {
+          OB.warn(
+            `ModalProviderGroupVoid: exception thrown: ${JSON.stringify(
+              exception
+            )}`
+          );
           this.showPopupMessage =
             exception.showPopupMessage === false ? false : true;
           this.showMessageAndClose(

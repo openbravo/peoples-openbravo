@@ -180,6 +180,12 @@ enyo.kind({
         providerGroup: providerGroup
       })
       .then(response => {
+        OB.info(
+          `ModalProviderGroup: processPayment response: ${JSON.stringify(
+            response
+          )}`
+        );
+
         const processedAmount = response.properties.processedAmount
           ? response.properties.processedAmount
           : amount;
@@ -205,6 +211,9 @@ enyo.kind({
               properties: response.properties
             }
           };
+          OB.info(
+            `ModalProviderGroup: addPayment ${JSON.stringify(paymentline)}`
+          );
           receipt.addPayment(
             new OB.Model.PaymentLine(Object.assign(paymentline, attributes))
           );
@@ -233,11 +242,16 @@ enyo.kind({
         }
 
         // Fail. Cannot find payment to assign response
+        OB.warn(`ModalProviderGroup: Cannot find payment method: ${cardlogo}`);
+
         this.showMessageAndClose(
           OB.I18N.getLabel('OBPOS_CannotFindPaymentMethod')
         );
       })
       .catch(exception => {
+        OB.warn(
+          `ModalProviderGroup: exception thrown: ${JSON.stringify(exception)}`
+        );
         this.showPopupMessage =
           exception.showPopupMessage === false ? false : true;
         this.showMessageAndClose(
