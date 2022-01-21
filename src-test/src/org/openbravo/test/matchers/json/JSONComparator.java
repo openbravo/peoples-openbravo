@@ -51,12 +51,16 @@ class JSONComparator {
     if (json1.length() != json2.length()) {
       return false;
     }
-    return allMatch(json1, key -> propertiesAreEqual(json1.opt(key), json2.opt(key)));
+    return allMatch(json1, key -> propertiesAreEqual(json1.opt(key), json2.opt(key), true));
   }
 
   static boolean objectsMatch(JSONObject json, JSONObject subset) {
     if (subset.length() > json.length()) {
       return false;
+    }
+
+    if (subset.length() == 0 && json.length() == 0) {
+      return true;
     }
 
     JSONObject common = getCommonProperties(json, subset);
@@ -66,7 +70,7 @@ class JSONComparator {
       return false;
     }
 
-    return allMatch(common, key -> propertiesAreEqual(common.opt(key), subset.opt(key)));
+    return allMatch(common, key -> propertiesAreEqual(common.opt(key), subset.opt(key), false));
   }
 
   static boolean arrayContains(JSONArray array, List<Object> objects) {
@@ -94,7 +98,7 @@ class JSONComparator {
     return stream.allMatch(keyPredicate::test);
   }
 
-  private static boolean propertiesAreEqual(Object prop1, Object prop2) {
+  private static boolean propertiesAreEqual(Object prop1, Object prop2, boolean strict) {
     if (prop1 == null || prop2 == null) {
       return prop1 == null && prop2 == null;
     }
@@ -107,6 +111,9 @@ class JSONComparator {
         return ((Matcher<?>) prop2).matches(prop1);
       }
       return false;
+    }
+    if (!strict && prop1 instanceof JSONObject && prop2 instanceof JSONObject) {
+      return objectsMatch((JSONObject) prop1, (JSONObject) prop2);
     }
     if (prop1 instanceof JSONObject) {
       return objectsAreEquivalent(prop1, prop2);

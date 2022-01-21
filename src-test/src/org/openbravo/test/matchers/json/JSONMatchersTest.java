@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -49,6 +50,14 @@ public class JSONMatchersTest {
     JSONObject json1 = BaseJSON.base();
     JSONObject json2 = BaseJSON.base();
 
+    assertThat("JSON objects are equal", json1, equal(json2));
+  }
+
+  @Test
+  public void innerObjectsAreEqual() {
+    JSONObject json1 = BaseJSON.base();
+    JSONObject json2 = BaseJSON.withProp("key6", new JSONObject(
+        Map.of("key6a", new JSONObject(Map.of("key6a2", 2, "key6a1", 1)), "key6b", 2)));
     assertThat("JSON objects are equal", json1, equal(json2));
   }
 
@@ -121,6 +130,14 @@ public class JSONMatchersTest {
   }
 
   @Test
+  public void innerObjectsAreNotEqual() {
+    JSONObject json1 = BaseJSON.base();
+    JSONObject json2 = BaseJSON.withProp("key6",
+        new JSONObject(Map.of("key6a", new JSONObject(Map.of("key6a1", 1)), "key6b", 2)));
+    assertThat("JSON objects are not equal", json1, not(equal(json2)));
+  }
+
+  @Test
   public void withMatherAreNotEqual() {
     JSONObject json1 = BaseJSON.base();
     JSONObject json2 = BaseJSON.withProp("key2", greaterThan(2.6));
@@ -148,6 +165,15 @@ public class JSONMatchersTest {
   public void matchWithSubset() {
     JSONObject json1 = BaseJSON.base();
     JSONObject json2 = BaseJSON.withoutProp("key3");
+
+    assertThat("JSON objects are matching", json1, matchesObject(json2));
+  }
+
+  @Test
+  public void matchWithSubset2() {
+    JSONObject json1 = BaseJSON.base();
+    JSONObject json2 = new JSONObject(Map.of("key6",
+        new JSONObject(Map.of("key6a", new JSONObject(Map.of("key6a1", greaterThan(1)))))));
 
     assertThat("JSON objects are matching", json1, matchesObject(json2));
   }
@@ -318,6 +344,8 @@ public class JSONMatchersTest {
         inner.put("key4a", Integer.valueOf(2));
         json.getJSONArray("key4").put(inner);
         json.put("key5", new Timestamp(formatter.parse("2015-08-24 00:00:00.0").getTime()));
+        json.put("key6", new JSONObject(
+            Map.of("key6a", new JSONObject(Map.of("key6a1", 1, "key6a2", 2)), "key6b", 2)));
       } catch (JSONException | ParseException ignore) {
         // should not fail
       }
