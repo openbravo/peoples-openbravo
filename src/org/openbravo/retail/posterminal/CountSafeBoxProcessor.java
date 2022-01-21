@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -58,7 +58,7 @@ public class CountSafeBoxProcessor {
   private Instance<CountSafeboxHook> countSafeboxHooks;
 
   public JSONObject processCountSafeBox(OBPOSSafeBox safeBox, JSONObject jsonCountSafeBox,
-      Date countSafeBoxDate) throws Exception {
+      Date countSafeBoxDate, ProcessCountSafeBox procSafeBox) throws Exception {
 
     long t0 = System.currentTimeMillis();
 
@@ -132,6 +132,8 @@ public class CountSafeBoxProcessor {
 
       arrayReconciliations.add(reconciliation);
       OBDal.getInstance().save(reconciliation);
+      FIN_FinaccTransaction paymentTransaction = null;
+      FIN_FinaccTransaction depositTransaction = null;
 
       BigDecimal reconciliationTotal = foreignExpected.add(foreignDifference);
       if (reconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
@@ -140,17 +142,19 @@ public class CountSafeBoxProcessor {
           reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
         }
         if (reconciliationTotal.compareTo(BigDecimal.ZERO) != 0) {
-          FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(safeBox,
-              reconciliation, paymentType, reconciliationTotal, countSafeBoxDate);
+          paymentTransaction = createTotalTransferTransactionPayment(safeBox, reconciliation,
+              paymentType, reconciliationTotal, countSafeBoxDate);
           OBDal.getInstance().save(paymentTransaction);
-
-          FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(safeBox,
-              reconciliation, paymentType, reconciliationTotal, countSafeBoxDate);
+          depositTransaction = createTotalTransferTransactionDeposit(safeBox, reconciliation,
+              paymentType, reconciliationTotal, countSafeBoxDate);
           OBDal.getInstance().save(depositTransaction);
         }
       }
 
       associateTransactions(paymentType, reconciliation);
+      procSafeBox.executeHooksCountSafeBoxProcesses(jsonCountSafeBox, countSafeBoxObj, safeBox,
+          paymentType, paymentTransaction, depositTransaction);
+
     }
 
     for (FIN_Reconciliation reconciliation : arrayReconciliations) {

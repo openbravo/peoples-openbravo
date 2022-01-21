@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,6 +10,11 @@ package org.openbravo.retail.posterminal;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -24,12 +29,17 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.mobile.core.process.DataSynchronizationImportProcess;
 import org.openbravo.mobile.core.process.DataSynchronizationProcess.DataSynchronization;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
+import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_Reconciliation;
 import org.openbravo.service.json.JsonConstants;
 
 @DataSynchronization(entity = "OBPOS_SafeBox")
 public class ProcessCountSafeBox extends POSDataSynchronizationProcess
     implements DataSynchronizationImportProcess {
+
+  @Inject
+  @Any
+  private Instance<ProcessCountSafeBoxHook> countSafeBoxProcesses;
 
   JSONObject jsonResponse = new JSONObject();
   private static final Logger log = LogManager.getLogger();
@@ -115,8 +125,8 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
     TriggerHandler.getInstance().disable();
     try {
       CountSafeBoxProcessor processor = getCountSafeBoxProcessor();
-      JSONObject result = processor.processCountSafeBox(safebox, jsonCountSafeBox,
-          countSafeBoxDate);
+      JSONObject result = processor.processCountSafeBox(safebox, jsonCountSafeBox, countSafeBoxDate,
+          this);
       // add the messages returned by processCashClose...
       jsonData.put("messages", result.opt("messages"));
       jsonData.put("next", result.opt("next"));
@@ -141,4 +151,25 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
   protected String getProperty() {
     return "OBPOS_retail.cashup";
   }
+
+  protected void executeHooks(Instance<? extends Object> hooks, JSONObject jsonCountSafeBox,
+      JSONObject jsonCurrentSafeBox, OBPOSSafeBox safeBox, OBPOSSafeBoxPaymentMethod paymentMethod,
+      FIN_FinaccTransaction finAccPaymentTransaction,
+      FIN_FinaccTransaction finAccDepositTransaction) throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      ((ProcessCountSafeBoxHook) proc).exec(jsonCountSafeBox, jsonCurrentSafeBox, safeBox,
+          paymentMethod, finAccPaymentTransaction, finAccDepositTransaction);
+    }
+  }
+
+  public void executeHooksCountSafeBoxProcesses(JSONObject jsonCountSafeBox,
+      JSONObject jsonCurrentSafeBox, OBPOSSafeBox safeBox, OBPOSSafeBoxPaymentMethod paymentMethod,
+      FIN_FinaccTransaction finAccPaymentTransaction,
+      FIN_FinaccTransaction finAccDepositTransaction) throws Exception {
+    executeHooks(countSafeBoxProcesses, jsonCountSafeBox, jsonCurrentSafeBox, safeBox,
+        paymentMethod, finAccPaymentTransaction, finAccDepositTransaction);
+  }
+
 }
