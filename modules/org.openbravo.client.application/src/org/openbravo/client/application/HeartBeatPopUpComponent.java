@@ -11,35 +11,23 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application;
 
-import java.io.File;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
-import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.SessionDynamicTemplateComponent;
-import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBCriteria;
-import org.openbravo.dal.service.OBDal;
-import org.openbravo.ddlutils.util.DBSMOBUtil;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess;
 import org.openbravo.erpCommon.ad_process.HeartbeatProcess.HeartBeatOrRegistration;
-import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.PropertyException;
-import org.openbravo.model.ad.module.Module;
 import org.openbravo.service.db.DalConnectionProvider;
 
 /**
@@ -50,7 +38,6 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
 
   private static final Logger log = LogManager.getLogger();
-  private static final String APRM_MIGRATION_TOOL_ID = "4BD3D4B262B048518FE62496EF09D549";
   private static final String COMPONENT_ID = "HeartbeatRegistration";
   private static final String TEMPLATE_ID = "EE5CEC203AEA4B039CCDAD0BE8E07E3C";
 
@@ -66,27 +53,6 @@ public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
 
   public String getHeartBeatRegistrationFunction() {
     try {
-      if (isUpgrading()) {
-        if (!isSystemAdmin()) {
-          return "OB.Layout.ClassicOBCompatibility.Popup.standardUpgrading()";
-        } else {
-          boolean usingAprm = true;
-          if (OBDal.getInstance().exists(Module.ENTITY_NAME, APRM_MIGRATION_TOOL_ID)) {
-            usingAprm = new AdvPaymentMngtDao().existsAPRMReadyPreference();
-          }
-          if (!usingAprm) {
-            return "OB.Layout.ClassicOBCompatibility.Popup.openAPRMPopup()";
-          }
-          String oldScripts = getConfigScriptsNotExported();
-          if (!oldScripts.isEmpty()) {
-            return "OB.Layout.ClassicOBCompatibility.Popup.openConfigScriptPopup(" + oldScripts
-                + ")";
-          } else {
-            return "OB.Layout.ClassicOBCompatibility.Popup.openSuccessUpgradePopup()";
-          }
-        }
-      }
-
       switch (getPopUpToShow()) {
         case InstancePurpose:
           return "OB.Layout.ClassicOBCompatibility.Popup.openInstancePurpose()";
@@ -98,45 +64,6 @@ public class HeartBeatPopUpComponent extends SessionDynamicTemplateComponent {
     } catch (Exception e) {
       throw new OBException(e);
     }
-  }
-
-  private boolean isUpgrading() {
-    boolean isUpgrading;
-    try {
-      isUpgrading = Preferences.YES
-          .equals(Preferences.getPreferenceValue("isUpgrading", true, "0", "0", null, null, null));
-    } catch (PropertyException ignore) {
-      isUpgrading = false;
-    }
-    return isUpgrading;
-  }
-
-  private boolean isSystemAdmin() {
-    return "S".equals(OBContext.getOBContext().getRole().getUserLevel());
-  }
-
-  private String getConfigScriptsNotExported() {
-    // Get all applied configuration scripts which are not exported in 3.0
-    OBCriteria<Module> qMod = OBDal.getInstance().createCriteria(Module.class);
-    qMod.add(Restrictions.eq(Module.PROPERTY_TYPE, "T"));
-    qMod.add(Restrictions.eq(Module.PROPERTY_ENABLED, true));
-    qMod.add(Restrictions.eq(Module.PROPERTY_APPLYCONFIGURATIONSCRIPT, true));
-    String obDir = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("source.path");
-    String oldScripts = "";
-    for (Module mod : qMod.list()) {
-      File cfScript = new File(obDir + "/modules/" + mod.getJavaPackage() + "/src-db/database",
-          "configScript.xml");
-      if (cfScript.exists() && DBSMOBUtil.isOldConfigScript(cfScript)) {
-        if (!oldScripts.isEmpty()) {
-          oldScripts += ", ";
-        }
-        oldScripts += "'" + mod.getName() + "'";
-        log.info(mod.getName() + " config script is not exported in 3.0");
-      }
-    }
-    return oldScripts;
   }
 
   private HeartBeatOrRegistration getPopUpToShow() throws ServletException {
