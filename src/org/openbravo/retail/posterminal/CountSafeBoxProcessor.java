@@ -186,12 +186,9 @@ public class CountSafeBoxProcessor {
       List<FIN_FinaccTransaction> depositTransactions) throws Exception {
     for (CountSafeboxHook hook : countSafeboxHooks) {
       if (hook instanceof CountSafeBookAbstractHook) {
-        for (FIN_FinaccTransaction paymentTransaction : paymentTransactions) {
-          ((CountSafeBookAbstractHook) hook).setPaymentTransaction(paymentTransaction);
-        }
-        for (FIN_FinaccTransaction depositTransaction : depositTransactions) {
-          ((CountSafeBookAbstractHook) hook).setDepositTransaction(depositTransaction);
-        }
+        ((CountSafeBookAbstractHook) hook).setPaymentTransactions(paymentTransactions);
+        ((CountSafeBookAbstractHook) hook).setDepositTransactions(depositTransactions);
+
       }
       hook.exec(safeboxCount, jsonCountSafeBox);
     }

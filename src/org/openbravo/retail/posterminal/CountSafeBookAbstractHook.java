@@ -9,27 +9,29 @@
 
 package org.openbravo.retail.posterminal;
 
+import java.util.List;
+
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 
 public abstract class CountSafeBookAbstractHook implements CountSafeboxHook {
 
-  protected FIN_FinaccTransaction paymentTransaction;
-  protected FIN_FinaccTransaction depositTransaction;
+  protected List<FIN_FinaccTransaction> paymentTransactions;
+  protected List<FIN_FinaccTransaction> depositTransactions;
 
-  public FIN_FinaccTransaction getPaymentTransaction() {
-    return paymentTransaction;
+  public List<FIN_FinaccTransaction> getPaymentTransactions() {
+    return paymentTransactions;
   }
 
-  public void setPaymentTransaction(FIN_FinaccTransaction paymentTransaction) {
-    this.paymentTransaction = paymentTransaction;
+  public void setPaymentTransactions(List<FIN_FinaccTransaction> paymentTransactions) {
+    this.paymentTransactions = paymentTransactions;
   }
 
-  public FIN_FinaccTransaction getDepositTransaction() {
-    return depositTransaction;
+  public List<FIN_FinaccTransaction> getDepositTransactions() {
+    return depositTransactions;
   }
 
-  public void setDepositTransaction(FIN_FinaccTransaction depositTransaction) {
-    this.depositTransaction = depositTransaction;
+  public void setDepositTransactions(List<FIN_FinaccTransaction> depositTransactions) {
+    this.depositTransactions = depositTransactions;
   }
 
 }
