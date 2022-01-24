@@ -58,7 +58,7 @@ public class CountSafeBoxProcessor {
   private Instance<CountSafeboxHook> countSafeboxHooks;
 
   public JSONObject processCountSafeBox(OBPOSSafeBox safeBox, JSONObject jsonCountSafeBox,
-      Date countSafeBoxDate, ProcessCountSafeBox procSafeBox) throws Exception {
+      Date countSafeBoxDate) throws Exception {
 
     long t0 = System.currentTimeMillis();
 
@@ -78,7 +78,8 @@ public class CountSafeBoxProcessor {
     }
 
     ArrayList<FIN_Reconciliation> arrayReconciliations = new ArrayList<FIN_Reconciliation>();
-
+    List<FIN_FinaccTransaction> paymentTransactions = new ArrayList<FIN_FinaccTransaction>();
+    List<FIN_FinaccTransaction> depositTransactions = new ArrayList<FIN_FinaccTransaction>();
     for (int i = 0; i < countSafeBoxInfo.length(); i++) {
 
       JSONObject countSafeBoxObj = countSafeBoxInfo.getJSONObject(i);
@@ -132,8 +133,6 @@ public class CountSafeBoxProcessor {
 
       arrayReconciliations.add(reconciliation);
       OBDal.getInstance().save(reconciliation);
-      FIN_FinaccTransaction paymentTransaction = null;
-      FIN_FinaccTransaction depositTransaction = null;
 
       BigDecimal reconciliationTotal = foreignExpected.add(foreignDifference);
       if (reconciliationTotal.compareTo(new BigDecimal(0)) != 0) {
@@ -142,18 +141,19 @@ public class CountSafeBoxProcessor {
           reconciliationTotal = reconciliationTotal.subtract(amountToKeep);
         }
         if (reconciliationTotal.compareTo(BigDecimal.ZERO) != 0) {
-          paymentTransaction = createTotalTransferTransactionPayment(safeBox, reconciliation,
-              paymentType, reconciliationTotal, countSafeBoxDate);
+          FIN_FinaccTransaction paymentTransaction = createTotalTransferTransactionPayment(safeBox,
+              reconciliation, paymentType, reconciliationTotal, countSafeBoxDate);
           OBDal.getInstance().save(paymentTransaction);
-          depositTransaction = createTotalTransferTransactionDeposit(safeBox, reconciliation,
-              paymentType, reconciliationTotal, countSafeBoxDate);
+          paymentTransactions.add(paymentTransaction);
+          FIN_FinaccTransaction depositTransaction = createTotalTransferTransactionDeposit(safeBox,
+              reconciliation, paymentType, reconciliationTotal, countSafeBoxDate);
           OBDal.getInstance().save(depositTransaction);
+          depositTransactions.add(depositTransaction);
+
         }
       }
 
       associateTransactions(paymentType, reconciliation);
-      procSafeBox.executeHooksCountSafeBoxProcesses(jsonCountSafeBox, countSafeBoxObj, safeBox,
-          paymentType, paymentTransaction, depositTransaction);
 
     }
 
@@ -172,7 +172,7 @@ public class CountSafeBoxProcessor {
         + ". Flush: " + (t2 - t1));
 
     if (!isInitialCount) {
-      executeHooks(safeboxCount, jsonCountSafeBox);
+      executeHooks(safeboxCount, jsonCountSafeBox, paymentTransactions, depositTransactions);
       flagSafeboxCashupsAsCounted(safeBox);
     }
 
@@ -181,11 +181,21 @@ public class CountSafeBoxProcessor {
     return result;
   }
 
-  private void executeHooks(OBPOS_SafeboxCount safeboxCount, JSONObject jsonCountSafeBox)
-      throws Exception {
+  private void executeHooks(OBPOS_SafeboxCount safeboxCount, JSONObject jsonCountSafeBox,
+      List<FIN_FinaccTransaction> paymentTransactions,
+      List<FIN_FinaccTransaction> depositTransactions) throws Exception {
     for (CountSafeboxHook hook : countSafeboxHooks) {
+      if (hook instanceof CountSafeBookAbstractHook) {
+        for (FIN_FinaccTransaction paymentTransaction : paymentTransactions) {
+          ((CountSafeBookAbstractHook) hook).setPaymentTransaction(paymentTransaction);
+        }
+        for (FIN_FinaccTransaction depositTransaction : depositTransactions) {
+          ((CountSafeBookAbstractHook) hook).setDepositTransaction(depositTransaction);
+        }
+      }
       hook.exec(safeboxCount, jsonCountSafeBox);
     }
+
   }
 
   private void addSafeboxCountPaymentMethod(OBPOS_SafeboxCount safeboxCount,
