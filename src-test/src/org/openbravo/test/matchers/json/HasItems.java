@@ -18,37 +18,48 @@
  */
 package org.openbravo.test.matchers.json;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
 
 /**
  * A matcher to check whether a JSONArray contains all the objects of a list
  */
-class HasItems extends TypeSafeMatcher<JSONArray> {
+class HasItems extends JSONMatcher<JSONArray> {
 
   private List<Object> items;
+  private List<Object> missingObjects;
 
   HasItems(List<Object> items) {
     this.items = items;
+    missingObjects = new ArrayList<>();
   }
 
   @Override
   protected boolean matchesSafely(JSONArray item) {
-    return JSONComparator.arrayContains(item, items);
+    missingObjects = getMissingObjects(item, items);
+    return missingObjects.isEmpty();
   }
 
   @Override
   public void describeTo(Description description) {
-    String itemsDesc = items.stream().map(Object::toString).collect(Collectors.joining(","));
-    description.appendText("has items <[").appendText(itemsDesc).appendText("]>");
+    description.appendText("has items <[").appendText(toText(items)).appendText("]>");
   }
 
   @Override
   public void describeMismatchSafely(JSONArray item, Description description) {
-    description.appendText("missing items in ").appendValue(item);
+    description.appendText("there are missing items: ")
+        .appendText("<[")
+        .appendText(toText(missingObjects))
+        .appendText("]>")
+        .appendText(" in ")
+        .appendValue(item);
+  }
+
+  private String toText(List<Object> list) {
+    return list.stream().map(Object::toString).collect(Collectors.joining(","));
   }
 }

@@ -18,25 +18,30 @@
  */
 package org.openbravo.test.matchers.json;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.codehaus.jettison.json.JSONObject;
 import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
 
 /**
  * A matcher to check whether a JSONObjects includes all the properties and with the same value of
  * another JSONObject.
  */
-class IsMatchingJSONObject extends TypeSafeMatcher<JSONObject> {
+class IsMatchingJSONObject extends JSONMatcher<JSONObject> {
 
   private JSONObject subset;
+  private Set<String> nonMatchingProperties;
 
   IsMatchingJSONObject(JSONObject subset) {
     this.subset = subset;
+    nonMatchingProperties = new HashSet<>();
   }
 
   @Override
   protected boolean matchesSafely(JSONObject item) {
-    return JSONComparator.objectsMatch(item, subset);
+    nonMatchingProperties = getNonMatchingProperties(item, subset);
+    return nonMatchingProperties.isEmpty();
   }
 
   @Override
@@ -46,6 +51,7 @@ class IsMatchingJSONObject extends TypeSafeMatcher<JSONObject> {
 
   @Override
   public void describeMismatchSafely(JSONObject item, Description description) {
-    description.appendText("was ").appendValue(item);
+    addDifferencesToDescription(nonMatchingProperties, item, subset, description);
+    description.appendText(" in ").appendValue(item);
   }
 }

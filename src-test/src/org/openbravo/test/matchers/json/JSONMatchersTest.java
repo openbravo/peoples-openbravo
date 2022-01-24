@@ -88,7 +88,7 @@ public class JSONMatchersTest {
   @Test
   public void withAdditionalPropsAreNotEqual() {
     JSONObject json1 = BaseJSON.base();
-    JSONObject json2 = BaseJSON.withProp("key6", "1234");
+    JSONObject json2 = BaseJSON.withProp("newKey", "1234");
 
     assertThat("JSON objects are not equal", json1, not(equal(json2)));
   }
@@ -174,6 +174,14 @@ public class JSONMatchersTest {
     JSONObject json1 = BaseJSON.base();
     JSONObject json2 = new JSONObject(Map.of("key6",
         new JSONObject(Map.of("key6a", new JSONObject(Map.of("key6a1", greaterThan(0)))))));
+
+    assertThat("JSON objects are matching", json1, matchesObject(json2));
+  }
+
+  @Test
+  public void emptyJSONObjectsMatch() {
+    JSONObject json1 = new JSONObject();
+    JSONObject json2 = new JSONObject();
 
     assertThat("JSON objects are matching", json1, matchesObject(json2));
   }
