@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -433,6 +433,7 @@ isc.OBGrid.addProperties({
   recomputeCanvasComponents: function(rowNum) {
     var i,
       fld,
+      recordComponent,
       length = this.getFields().length;
 
     // remove client record components in edit mode
@@ -440,6 +441,10 @@ isc.OBGrid.addProperties({
       fld = this.getFields()[i];
       if (fld.clientClass) {
         this.refreshRecordComponent(rowNum, i);
+        recordComponent = this.getRecordComponent(rowNum, i);
+        if (recordComponent) {
+          recordComponent.rowNum = null;
+        }
       }
     }
   },
