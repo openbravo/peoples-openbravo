@@ -52,6 +52,6 @@ class IsEqualJSONObject extends JSONMatcher<JSONObject> {
   @Override
   public void describeMismatchSafely(JSONObject item, Description description) {
     addDifferencesToDescription(differentProperties, item, expected, description);
-    description.appendText(" in ").appendValue(item);
+    description.appendText(", actual is ").appendValue(item);
   }
 }
