@@ -22,65 +22,55 @@
         </line>
         <line>
             <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' +
-                OB.POS.modelterminal.get('terminal').organization$_identifier) %>
+                OB.App.TerminalProperty.get('terminal').organization$_identifier) %>
             </text>
         </line>
         <line>
             <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': '
-                + OB.POS.modelterminal.get('terminal')._identifier) %>
+                + OB.App.TerminalProperty.get('terminal')._identifier) %>
             </text>
         </line>
         <line>
             <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' +
-                OB.POS.modelterminal.get('context').user._identifier) %>
+                OB.App.TerminalProperty.get('context').user._identifier) %>
             </text>
         </line>
         <line>
             <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' +
-                OB.I18N.formatDate(cashup.report.get('time')) + ' - ' + OB.I18N.formatHour(cashup.report.get('time')))
+                OB.I18N.formatDate(cashup.report.time) + ' - ' + OB.I18N.formatHour(cashup.report.time))
                 %>
             </text>
         </line>
         <line>
         </line>
         <%
-        _.each(cashup.summary.qtyToKeepSummary, function(payment) {
-        if(printablePaymentMethods.includes(payment.get('searchKey'))) {
-        const paymentMethodName = currentSafeBoxName && safeBoxPaymentMethods.includes(payment.get('searchKey')) ?
-        OB.I18N.getLabel('OBPOS_PaymentMethodOnSafebox', [payment.get('name'), currentSafeBoxName]) :
-        payment.get('name');
-        if (payment.get('second') && payment.get('second') !== payment.get('value')) {
+        (cashup.summary.qtyToKeepSummary || []).forEach(payment => {
+        if(printablePaymentMethods.includes(payment.searchKey)) {
+        const paymentMethodName = currentSafeBoxName && safeBoxPaymentMethods.includes(payment.searchKey) ?
+        OB.I18N.getLabel('OBPOS_PaymentMethodOnSafebox', [payment.name, currentSafeBoxName]) :
+        payment.name;
+        if (payment.second && payment.second !== payment.value) {
         %>
         <line>
-            <text align="left" length="18"><%= OB.UTIL.encodeXMLComponent(paymentMethodName) %>
+            <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(paymentMethodName) %>
             </text>
-            <text align="right" length="11"><%= '(' + OB.I18N.formatCurrency(payment.get('second')) + ' ' +
-                payment.get('isocode') + ')' %>
+            <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.second) + ' ' +
+                payment.isocode + ')' %>
             </text>
-            <text align="right" length="10"><%= OB.I18N.formatCurrency(payment.get('value')) %>
+            <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.value) %>
             </text>
         </line>
         <%
         }else{
         %>
-        <line>
-            <text align="left" length="25"><%= OB.UTIL.encodeXMLComponent(paymentMethodName) %>
-            </text>
-            <text align="right" length="14"><%= OB.I18N.formatCurrency(payment.get('value')) %>
-            </text>
-        </line>
+        <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(paymentMethodName, 27,
+        OB.App.PrintUtils.printAmount(payment.value), 14) %>
         <%
         }
-        }
-        });
+        }});
         %>
-        <line>
-            <text align="left" length="25" bold="true"><%=
-                OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTotalQtyToKeep')) %>
-            </text>
-            <text align="right" length="14" bold="true"><%= OB.I18N.formatCurrency(cashup.summary.totalQtyToKeep) %>
-            </text>
-        </line>
+        <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalQtyToKeep'), 27,
+        OB.App.PrintUtils.printAmount(cashup.summary.totalQtyToKeep), 14, true) %>
         <line>
         </line>
     </ticket>

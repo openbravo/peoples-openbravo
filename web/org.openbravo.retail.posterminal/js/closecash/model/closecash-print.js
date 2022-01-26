@@ -13,6 +13,11 @@
     this.templateCloseCash = new OB.DS.HWResource(
       terminal.printCashUpTemplate || OB.OBPOSPointOfSale.Print.CashUpTemplate
     );
+    this.templateKeptCash = new OB.DS.HWResource(
+      terminal.printCashupKeptCashTemplate ||
+        OB.OBPOSPointOfSale.Print.CashUpKeptCashTemplate
+    );
+
     this.cancelOrDismiss = () => {
       OB.POS.navigate('retail.pointofsale');
       OB.MobileApp.view.$.confirmationContainer.setAttribute('openedPopup', '');
@@ -36,7 +41,7 @@
     }
 
     // callbacks definition
-    const successfunc = () => {
+    const retryPrintCashup = () => {
       const printCloseCash = new OB.OBPOSCloseCash.Print.CloseCash();
       printCloseCash.isRetry = true;
       printCloseCash.print(
@@ -51,7 +56,66 @@
       this.cancelOrDismiss();
       return true;
     };
-    const printProcess = () => {
+    const printKeptCash = () => {
+      const cashUpReport = JSON.parse(JSON.stringify(report));
+      const countCashSummary = JSON.parse(JSON.stringify(summary));
+      const paymentMethods = OB.MobileApp.model.get('payments');
+      const numberOfCopies =
+        OB.MobileApp.model.get('terminal').terminalType
+          .keptcashNumberofcopies || 0;
+
+      const printablePaymentMethods = paymentMethods
+        .filter(pm => pm.paymentMethod.printcashupkeptamount)
+        .map(pm => pm.payment.searchKey);
+
+      const printablePaymentsCounted = countCashSummary.qtyToKeepSummary.some(
+        pm => printablePaymentMethods.includes(pm.searchKey)
+      );
+
+      // Print kept cash tickets when the cashup process counts at least one printable payment method
+      // printable = having the printcashupkeptamount flag enabled
+      if (printablePaymentsCounted) {
+        const currentSafeBox = JSON.parse(
+          OB.UTIL.localStorage.getItem('currentSafeBox')
+        );
+        const safeBoxPaymentMethods = paymentMethods
+          .filter(pm => pm.paymentMethod.issafebox)
+          .map(pm => pm.paymentMethod.searchKey);
+        for (let i = 0; i < numberOfCopies; i++) {
+          OB.POS.hwserver.cleanDisplay();
+          OB.POS.hwserver.print(
+            this.templateKeptCash,
+            {
+              cashup: {
+                report: cashUpReport,
+                summary: countCashSummary
+              },
+              currentSafeBoxName: currentSafeBox && currentSafeBox.name,
+              safeBoxPaymentMethods,
+              printablePaymentMethods
+            },
+            result => {
+              if (result && result.exception) {
+                OB.OBPOS.showSelectPrinterDialog(
+                  retryPrintCashup, // Retry kept cash
+                  cancelfunc,
+                  cancelfunc,
+                  false,
+                  'OBPOS_MsgPrintAgainCashUp'
+                );
+              } else {
+                if (callback) {
+                  callback();
+                }
+              }
+            }
+          );
+        }
+      } else if (callback) {
+        callback();
+      }
+    };
+    const printCashup = () => {
       OB.POS.hwserver.cleanDisplay();
       OB.POS.hwserver.print(
         this.templateCloseCash,
@@ -65,7 +129,7 @@
         result => {
           if (result && result.exception) {
             OB.OBPOS.showSelectPrinterDialog(
-              successfunc,
+              retryPrintCashup,
               cancelfunc,
               cancelfunc,
               false,
@@ -78,6 +142,10 @@
           }
         }
       );
+    };
+    const printProcess = () => {
+      printCashup();
+      printKeptCash();
     };
     if (OB.MobileApp.model.get('terminal').terminalType.selectprinteralways) {
       OB.OBPOS.showSelectPrintersWindow(
