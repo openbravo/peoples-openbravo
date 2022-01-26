@@ -30,7 +30,7 @@ enyo.kind({
   executeOnShow: function() {
     var me = this;
     me.pressedBtn = false;
-    me.customer = OB.UTIL.clone(this.args.businessPartner);
+    me.customer = OB.UTIL.clone(this.args.businessPartner || me.customer);
     me.$.body.$.editcustomers_impl.setCustomer(me.customer);
 
     //Statistics
