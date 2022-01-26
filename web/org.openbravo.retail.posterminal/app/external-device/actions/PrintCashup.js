@@ -10,9 +10,6 @@
 OB.App.StateAPI.Global.registerAction('printCashup', (state, payload) => {
   const newState = { ...state };
 
-  console.log('have payload?');
-  console.log(payload);
-
   const printCashupMsg = OB.App.State.Messages.Utils.createPrintCashupMessage(
     payload
   );

@@ -17,7 +17,7 @@ OB.App.StateAPI.Messages.registerUtilityFunctions({
    */
   // terminalPayments: OB.MobileApp.model.get('payments'),
   // terminalName: OB.MobileApp.model.get('terminal').searchKey,
-  createPrintCashupKeptCashMessages(cashupData, printSettings) {
+  createPrintCashupKeptCashMessages() {
     return [];
     // return OB.App.State.Messages.Utils.createNewMessage(
     //   'OBMOBC_PrintCashupKeptCash',
