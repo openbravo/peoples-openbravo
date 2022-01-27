@@ -21,8 +21,8 @@ package org.openbravo.base.structure;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -31,6 +31,11 @@ import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBCriteria;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.domain.List;
+import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.system.Language;
 
 /**
@@ -46,6 +51,7 @@ import org.openbravo.model.ad.system.Language;
 public class IdentifierProvider implements OBSingleton {
 
   public static final String SEPARATOR = " - ";
+  private static final String LIST_REFERENCE_ID = "17";
   private static IdentifierProvider instance;
 
   public static synchronized IdentifierProvider getInstance() {
@@ -85,7 +91,7 @@ public class IdentifierProvider implements OBSingleton {
     final StringBuilder sb = new StringBuilder();
     final DynamicEnabled dob = (DynamicEnabled) o;
     final String entityName = ((Identifiable) dob).getEntityName();
-    final List<Property> identifiers = ModelProvider.getInstance()
+    final java.util.List<Property> identifiers = ModelProvider.getInstance()
         .getEntity(entityName)
         .getIdentifierProperties();
 
@@ -95,6 +101,9 @@ public class IdentifierProvider implements OBSingleton {
       }
       Property property = ((BaseOBObject) dob).getEntity().getProperty(identifier.getName());
       Object value;
+
+      Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
+      Reference ref = column.getReference();
 
       if (property.hasDisplayColumn()) {
         Property displayColumnProperty = DalUtil.getPropertyFromPath(
@@ -115,7 +124,6 @@ public class IdentifierProvider implements OBSingleton {
         } else {
           value = referencedObject.get(property.getDisplayPropertyName(), language);
         }
-
         // Assign displayColumnProperty to apply formatting if needed
         property = displayColumnProperty;
       } else if (property.isTranslatable()) {
@@ -142,6 +150,28 @@ public class IdentifierProvider implements OBSingleton {
         } else {
           value = "";
         }
+      } else if (ref.getId().equals(LIST_REFERENCE_ID)) {
+
+        Reference refSearchKey = column.getReferenceSearchKey();
+
+        List refListValue;
+        try {
+
+          OBContext.setAdminMode(true);
+
+          OBCriteria<List> criteria = OBDal.getInstance().createCriteria(List.class);
+          criteria.add(Restrictions.eq(List.PROPERTY_REFERENCE, refSearchKey));
+          criteria.add(Restrictions.eq(List.PROPERTY_SEARCHKEY, dob.get(property.getName())));
+          refListValue = (List) criteria.uniqueResult();
+
+        } finally {
+          OBContext.restorePreviousMode();
+        }
+        if (refListValue != null) {
+          value = refListValue.getName();
+        } else {
+          value = dob.get(identifier.getName());
+        }
       } else {
         value = dob.get(identifier.getName());
       }
@@ -160,6 +190,7 @@ public class IdentifierProvider implements OBSingleton {
         sb.append(value);
       }
     }
+
     if (identifiers.size() == 0) {
       return entityName + " (" + ((Identifiable) dob).getId() + ")";
     }
