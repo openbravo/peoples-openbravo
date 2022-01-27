@@ -82,7 +82,7 @@ public class RemoveRebuildAppender extends BuildValidation {
 
   protected ExecutionLimits getBuildValidationLimits() {
     return new ExecutionLimits("0",
-               new OpenbravoVersion("3.0.35325"), // 19Q1 (log4j2 was included)
+               new OpenbravoVersion("3.0.35324"), // version right before 19Q1 (log4j2 was included)
                new OpenbravoVersion("3.0.211000")); // 21Q1
   }
 }
