@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.test.base.TestConstants.Clients;
 
 /**
  * Test case for role access generation when a new role is created
@@ -47,7 +48,7 @@ public class RoleAccessGeneration extends WeldBaseTest {
   /**
    * F&B Client
    */
-  private final static String CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
+  private final static String CLIENT_ID = Clients.FB_GRP;
   /**
    * zero organization id
    */

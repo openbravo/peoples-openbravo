@@ -24,6 +24,10 @@ import org.openbravo.model.common.plm.ProductStatus;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
 
 /**
  * Tests cases to check the PLM-Status development
@@ -32,13 +36,13 @@ public class ProductStatusTest extends OBBaseTest {
   final static private Logger log = LogManager.getLogger();
 
   // User Openbravo
-  private static final String USER_ID = "100";
+  private static final String USER_ID = Users.OPENBRAVO;
   // Client QA Testing
-  private static String CLIENT_ID = "4028E6C72959682B01295A070852010D";
+  private static String CLIENT_ID = Clients.QA_CLIENT;
   // Organization Spain
-  private static final String ORGANIZATION_ID = "357947E87C284935AD1D783CF6F099A1";
+  private static final String ORGANIZATION_ID = Orgs.SPAIN;
   // Role QA Testing Admin
-  private static final String ROLE_ID = "4028E6C72959682B01295A071429011E";
+  private static final String ROLE_ID = Roles.QA_ADMIN_ROLE;
   // Sales Order: 50012
   private final String SALESORDER_ID = "8B53B7E6CF3B4D8D9BCF3A49EED6FCB4";
   // Ramp-Down status

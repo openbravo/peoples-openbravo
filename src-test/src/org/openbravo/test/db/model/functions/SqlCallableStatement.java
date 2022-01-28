@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.openbravo.erpCommon.utility.DocumentNoData;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.Issue;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Clients;
 
 /**
  * Test cases for sqlc callable statements.
@@ -58,7 +59,7 @@ public class SqlCallableStatement extends OBBaseTest {
     Connection conn = OBDal.getInstance().getConnection(false);
     for (int i = 0; i < 200; i++) {
       DocumentNoData.nextDocTypeConnection(conn, cp, "466AF4B0136A4A3F9F84129711DA8BD3",
-          "23C59575B9CF467C9620760EB255B389", "Y");
+          Clients.FB_GRP, "Y");
     }
 
     assertOpenCursors();
@@ -73,8 +74,7 @@ public class SqlCallableStatement extends OBBaseTest {
     assumeThat("Executing only in Oracle", cp.getRDBMS(), is(equalTo("ORACLE")));
 
     for (int i = 0; i < 200; i++) {
-      DocumentNoData.nextDocType(cp, "466AF4B0136A4A3F9F84129711DA8BD3",
-          "23C59575B9CF467C9620760EB255B389", "Y");
+      DocumentNoData.nextDocType(cp, "466AF4B0136A4A3F9F84129711DA8BD3", Clients.FB_GRP, "Y");
     }
 
     assertOpenCursors();

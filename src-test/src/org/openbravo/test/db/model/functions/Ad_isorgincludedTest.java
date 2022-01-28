@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2017 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,8 @@ import java.util.List;
 import org.junit.Test;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
 
 public class Ad_isorgincludedTest extends OBBaseTest {
 
@@ -40,57 +42,57 @@ public class Ad_isorgincludedTest extends OBBaseTest {
   /**
    * QA Testing Client
    */
-  protected static final String CLIENT_QA = "4028E6C72959682B01295A070852010D";
+  protected static final String CLIENT_QA = Clients.QA_CLIENT;
 
   /**
    * Main Organization
    */
-  protected static final String ORG_QA_MAIN = "43D590B4814049C6B85C6545E8264E37";
+  protected static final String ORG_QA_MAIN = Orgs.QA_ORG;
 
   /**
    * Spain Organization
    */
-  protected static final String ORG_QA_SPAIN = "357947E87C284935AD1D783CF6F099A1";
+  protected static final String ORG_QA_SPAIN = Orgs.SPAIN;
 
   /**
    * F&amp;B International Group Client
    */
-  protected static final String CLIENT_FB = "23C59575B9CF467C9620760EB255B389";
+  protected static final String CLIENT_FB = Clients.FB_GRP;
 
   /**
    * F&amp;B International Group Organization
    */
-  protected static final String ORG_FB_FBGROUP = "19404EAD144C49A0AF37D54377CF452D";
+  protected static final String ORG_FB_FBGROUP = Orgs.FB_GROUP;
 
   /**
    * F&amp;B US, Inc.
    */
-  protected static final String ORG_FB_US = "2E60544D37534C0B89E765FE29BC0B43";
+  protected static final String ORG_FB_US = Orgs.US;
 
   /**
    * F&amp;B US East Coast
    */
-  protected static final String ORG_FB_EAST = "7BABA5FF80494CAFA54DEBD22EC46F01";
+  protected static final String ORG_FB_EAST = Orgs.US_EST;
 
   /**
    * F&amp;B US West Coast
    */
-  protected static final String ORG_FB_WEST = "BAE22373FEBE4CCCA24517E23F0C8A48";
+  protected static final String ORG_FB_WEST = Orgs.US_WEST;
 
   /**
    * F&amp;B España, S.A.
    */
-  protected static final String ORG_FB_SPAIN = "B843C30461EA4501935CB1D125C9C25A";
+  protected static final String ORG_FB_SPAIN = Orgs.ESP;
 
   /**
    * F&amp;B España - Región Norte
    */
-  protected static final String ORG_FB_NORTE = "E443A31992CB4635AFCAEABE7183CE85";
+  protected static final String ORG_FB_NORTE = Orgs.ESP_NORTE;
 
   /**
    * F&amp;B España - Región Sur
    */
-  protected static final String ORG_FB_SUR = "DC206C91AA6A4897B44DA897936E0EC3";
+  protected static final String ORG_FB_SUR = Orgs.ESP_SUR;
 
   /**
    * Case I: Distinct Organization in the same branch with different levels.

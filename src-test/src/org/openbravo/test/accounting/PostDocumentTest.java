@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,9 @@ import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.financial.ResetAccounting;
 import org.openbravo.model.financialmgmt.accounting.AccountingFact;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Users;
 
 /**
  * Tests cases to check taxes computation
@@ -59,13 +62,13 @@ import org.openbravo.test.base.OBBaseTest;
 public class PostDocumentTest extends OBBaseTest {
   final static private Logger log = LogManager.getLogger();
   // User Openbravo
-  private final String USER_ID = "100";
+  private final String USER_ID = Users.OPENBRAVO;
   // Client QA Testing
-  private static final String CLIENT_ID = "4028E6C72959682B01295A070852010D";
+  private static final String CLIENT_ID = Clients.QA_CLIENT;
   // Organization Spain
-  private static final String ORGANIZATION_SPAIN_ID = "357947E87C284935AD1D783CF6F099A1";
+  private static final String ORGANIZATION_SPAIN_ID = Orgs.SPAIN;
   // Organization USA
-  private static final String ORGANIZATION_USA_ID = "5EFF95EB540740A3B10510D9814EFAD5";
+  private static final String ORGANIZATION_USA_ID = Orgs.USA;
   // Table INVOICE
   private static final String TABLE_INVOICE = "318";
   // Table GL_JOURNAL

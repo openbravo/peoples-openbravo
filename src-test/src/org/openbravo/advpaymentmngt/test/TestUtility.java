@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -73,6 +73,10 @@ import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
 
 public class TestUtility extends OBBaseTest {
 
@@ -551,8 +555,7 @@ public class TestUtility extends OBBaseTest {
     // Role = F&B International Group Admin
     // Client = F&B International Group
     // Org = F&B US, Inc.
-    OBContext.setOBContext("100", "42D0EEB1C66F497A90DD526DC597E6F0",
-        "23C59575B9CF467C9620760EB255B389", "2E60544D37534C0B89E765FE29BC0B43");
+    OBContext.setOBContext(Users.OPENBRAVO, Roles.FB_GRP_ADMIN, Clients.FB_GRP, Orgs.US);
   }
 
   public static void setTestContextSpain() {
@@ -560,8 +563,7 @@ public class TestUtility extends OBBaseTest {
     // Role = F&B International Group Admin
     // Client = F&B International Group
     // Org = F&B España, S.A
-    OBContext.setOBContext("100", "42D0EEB1C66F497A90DD526DC597E6F0",
-        "23C59575B9CF467C9620760EB255B389", "B843C30461EA4501935CB1D125C9C25A");
+    OBContext.setOBContext(Users.OPENBRAVO, Roles.FB_GRP_ADMIN, Clients.FB_GRP, Orgs.ESP);
   }
 
   private static ConnectionProvider getConnectionProviderMy() {

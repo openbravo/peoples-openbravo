@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,7 +56,9 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.test.base.TestConstants.Languages;
 import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Windows;
 
 /**
  * Test cases covering special cases for cross organization references, where they are allowed based
@@ -66,7 +68,7 @@ import org.openbravo.test.base.TestConstants.Roles;
  *
  */
 public class ExplicitCrossOrganizationReference extends CrossOrganizationReference {
-  private static final String SALES_ORDER_WINDOW = "143";
+  private static final String SALES_ORDER_WINDOW = Windows.SALES_ORDER;
   private static String QA_ONLY_SPAIN_ROLE;
   private static final String CORE = "0";
   private static final String ORDER_WAREHOUSE_COLUMN = "2202";
@@ -437,7 +439,7 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     });
     OBDal.getInstance().commitAndClose();
 
-    changeProfile(roleId, "192", SPAIN_ORG, SPAIN_WAREHOUSE);
+    changeProfile(roleId, Languages.EN_US_LANG_ID, SPAIN_ORG, SPAIN_WAREHOUSE);
 
     Map<String, String> params = new HashMap<String, String>();
 

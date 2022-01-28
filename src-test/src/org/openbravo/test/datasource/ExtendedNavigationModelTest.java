@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,10 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.WareHouses;
 
 /**
  * Test cases for ExtendedNavigationModel
@@ -37,16 +41,16 @@ import org.junit.Test;
 public class ExtendedNavigationModelTest extends BaseDataSourceTestDal {
 
   // Role QA Testing Admin
-  private static String ROLE_ID = "4028E6C72959682B01295A071429011E";
+  private static String ROLE_ID = Roles.QA_ADMIN_ROLE;
 
   // Language English (USA)
-  private static String LANGUAGE_ID = "192";
+  private static String LANGUAGE_ID = Languages.EN_US_LANG_ID;
 
   // Organization Spain
-  private static String ORGANIZATION_ID = "357947E87C284935AD1D783CF6F099A1";
+  private static String ORGANIZATION_ID = Orgs.SPAIN;
 
   // Warehouse with name: Spain warehouse
-  private static String WAREHOUSE1_ID = "4028E6C72959682B01295ECFEF4502A0";
+  private static String WAREHOUSE1_ID = WareHouses.SPAIN;
 
   // Sales order's lines row
   private static String row1 = "16A91C971E0F4E4E93F3D46587E6A02B";

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,6 +52,7 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.test.base.TestConstants.Clients;
 
 /**
  * This class provides some utility methods used to test the Role Inheritance functionality
@@ -61,7 +62,7 @@ public class RoleInheritanceTestUtils {
   /**
    * F&amp;B International Group client id
    */
-  public final static String CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
+  public final static String CLIENT_ID = Clients.FB_GRP;
   /**
    * zero organization id
    */

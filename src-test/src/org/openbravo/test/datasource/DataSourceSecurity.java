@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2021 Openbravo SLU
+ * All portions are Copyright (C) 2016-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,6 +53,11 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.WareHouses;
 
 /**
  * Test cases to ensure that mechanism of security DataSource access is working properly.
@@ -65,15 +70,15 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
   private static final Logger log = LogManager.getLogger();
   private static final String ASTERISK_ORG_ID = "0";
   private static final String CONTEXT_USER = "100";
-  private static final String LANGUAGE_ID = "192";
-  private static final String WAREHOUSE_ID = "B2D40D8A5D644DD89E329DC297309055";
-  private static final String ROLE_INTERNATIONAL_ADMIN = "42D0EEB1C66F497A90DD526DC597E6F0";
+  private static final String LANGUAGE_ID = Languages.EN_US_LANG_ID;
+  private static final String WAREHOUSE_ID = WareHouses.ESP_NORTE;
+  private static final String ROLE_INTERNATIONAL_ADMIN = Roles.FB_GRP_ADMIN;
   private static final String ROLE_NO_ACCESS = "1";
   private static final String ROLE_SYSTEM_ADMIN = "0";
   private static final String ROLE_EMPLOYEE = "D615084948E046E3A439915008F464A6";
 
-  private static final String ESP_ORG = "E443A31992CB4635AFCAEABE7183CE85";
-  private static final String CLIENT = "23C59575B9CF467C9620760EB255B389";
+  private static final String ESP_ORG = Orgs.ESP_NORTE;
+  private static final String CLIENT = Clients.FB_GRP;
 
   private static final String TABLE_WINDOWS_TABS_FIELDS_ID = "105";
   private static final String RECORD_OF_WINDOWS_TABS_FIELDS_ID = "283";
@@ -134,9 +139,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
         dataObject.put("_entityName", "FinancialMgmtElementValue");
         dataObject.put("$ref", "FinancialMgmtElementValue/C3FE5804602E481FAEDCA5D4D71B6CF3");
         dataObject.put("id", "C3FE5804602E481FAEDCA5D4D71B6CF3");
-        dataObject.put("client", "23C59575B9CF467C9620760EB255B389");
+        dataObject.put("client", Clients.FB_GRP);
         dataObject.put("parentId", "-1");
-        dataObject.put("organization", "B843C30461EA4501935CB1D125C9C25A");
+        dataObject.put("organization", Orgs.ESP);
         dataObject.put("searchKey", "A");
         dataObject.put("accountingElement", "56E65CF592BD4DAF8A8A879810646266");
         dataObject.put("nodeId", "A45B7570F9BE4A69A3BF53CFEBB29FC0");
@@ -146,9 +151,9 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
         oldValuesJSON.put("_entityName", "FinancialMgmtElementValue");
         oldValuesJSON.put("$ref", "FinancialMgmtElementValue/A45B7570F9BE4A69A3BF53CFEBB29FC0");
         oldValuesJSON.put("id", "A45B7570F9BE4A69A3BF53CFEBB29FC0");
-        oldValuesJSON.put("client", "23C59575B9CF467C9620760EB255B389");
-        oldValuesJSON.put("organization", "B843C30461EA4501935CB1D125C9C25A");
-        oldValuesJSON.put("organization", "B843C30461EA4501935CB1D125C9C25A");
+        oldValuesJSON.put("client", Clients.FB_GRP);
+        oldValuesJSON.put("organization", Orgs.ESP);
+        oldValuesJSON.put("organization", Orgs.ESP);
         oldValuesJSON.put("searchKey", "A");
         oldValuesJSON.put("name", "ACTIVO");
         oldValuesJSON.put("accountingElement", "56E65CF592BD4DAF8A8A879810646266");
@@ -287,7 +292,7 @@ public class DataSourceSecurity extends BaseDataSourceTestDal {
             put("_selectedProperties", selectedPro);
             put("@FinancialMgmtElement.client@", CLIENT);
             put("@FinancialMgmtElement.id@", "56E65CF592BD4DAF8A8A879810646266");
-            put("@FinancialMgmtElement.organization@", "B843C30461EA4501935CB1D125C9C25A");
+            put("@FinancialMgmtElement.organization@", Orgs.ESP);
           }
         }), //
     StockReservations("2F5B70D7F12E4F5C8FE20D6F17D69ECF", JSONObjectURL.NO_APPLIED, OPERATION_FETCH,

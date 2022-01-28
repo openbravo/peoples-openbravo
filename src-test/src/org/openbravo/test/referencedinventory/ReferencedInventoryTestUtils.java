@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,6 +58,9 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.WareHouses;
 
 /**
  * Utils class for Referenced Inventory tests
@@ -74,10 +77,10 @@ class ReferencedInventoryTestUtils {
   // Reservations preference
   private static final String RESERVATIONS_PREFERENCE = "StockReservations";
 
-  static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
-  static final String QA_SPAIN_WAREHOUSE_ID = "4028E6C72959682B01295ECFEF4502A0";
+  static final String QA_SPAIN_ORG_ID = Orgs.SPAIN;
+  static final String QA_SPAIN_WAREHOUSE_ID = WareHouses.SPAIN;
   static final String ORG_STAR_ID = "0";
-  static final String QA_CLIENT_ID = "4028E6C72959682B01295A070852010D";
+  static final String QA_CLIENT_ID = Clients.QA_CLIENT;
   static final String PRODUCT_TSHIRT_ID = "0CF7C882B8BD4D249F3BCC8727A736D1";
   static final String PRODUCT_BALL_COLORATTRIBUTE = "EBCD272DC37B4ABBB12B96139E5837BF";
   static final String ATTRIBUTE_COLOR_YELLOW = "BC4F469EE90445AA8D6F41DE8523FA63";

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.Issue;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.Users;
 
 /**
  * Tests the {@link OBContext} class.
@@ -56,7 +58,8 @@ public class OBContextTest extends OBBaseTest {
    */
   @Test
   public void testWarehouseInContext() {
-    OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID, null, TEST_WAREHOUSE_ID);
+    OBContext.setOBContext(Users.OPENBRAVO, "0", TEST_CLIENT_ID, TEST_ORG_ID, null,
+        TEST_WAREHOUSE_ID);
     assertTrue(OBContext.getOBContext().getWarehouse().getId().equals(TEST_WAREHOUSE_ID));
   }
 
@@ -65,8 +68,9 @@ public class OBContextTest extends OBBaseTest {
    */
   @Test
   public void testLanguageInContext() {
-    OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID, "en_US");
-    assertTrue(OBContext.getOBContext().getLanguage().getId().equals("192"));
+    OBContext.setOBContext(Users.OPENBRAVO, "0", TEST_CLIENT_ID, TEST_ORG_ID,
+        Languages.EN_US_ISOCODE);
+    assertTrue(OBContext.getOBContext().getLanguage().getId().equals(Languages.EN_US_LANG_ID));
   }
 
   /**
@@ -80,7 +84,8 @@ public class OBContextTest extends OBBaseTest {
       deactivatedOrg.setActive(false);
       OBDal.getInstance().flush();
 
-      OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID, "en_US");
+      OBContext.setOBContext(Users.OPENBRAVO, "0", TEST_CLIENT_ID, TEST_ORG_ID,
+          Languages.EN_US_ISOCODE);
       assertThat(Arrays.asList(OBContext.getOBContext().getReadableOrganizations()),
           hasItem(TEST_US_ORG_ID));
     } finally {

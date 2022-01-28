@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,11 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class InventoryStatusTest extends WeldBaseTest {
@@ -66,17 +71,17 @@ public class InventoryStatusTest extends WeldBaseTest {
   final static private Logger log = LogManager.getLogger();
 
   // Client QA Testing
-  private static final String CLIENT_ID = "4028E6C72959682B01295A070852010D";
+  private static final String CLIENT_ID = Clients.QA_CLIENT;
   // Organization *
   private static final String ORG_STAR_ID = "0";
   // Organization USA
-  private static final String ORG_ID = "5EFF95EB540740A3B10510D9814EFAD5";
+  private static final String ORG_ID = Orgs.USA;
   // User Openbravo
-  private static final String USER_ID = "100";
+  private static final String USER_ID = Users.OPENBRAVO;
   // Role QA Administrator
-  private static final String ROLE_ID = "4028E6C72959682B01295A071429011E";
+  private static final String ROLE_ID = Roles.QA_ADMIN_ROLE;
   // Language encoding English US
-  private static final String LANGUAGE_CODE = "en_US";
+  private static final String LANGUAGE_CODE = Languages.EN_US_ISOCODE;
 
   // StorageBin USA111
   private static final String LOCATOR_USA111_ID = "4028E6C72959682B01295ECFE4E50273";

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,6 +44,14 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.ConnectionProviderImpl;
 import org.openbravo.exception.PoolNotFoundException;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.test.base.TestConstants.BusinessPartnerCategories;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Locations;
+import org.openbravo.test.base.TestConstants.Orders;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
+import org.openbravo.test.base.TestConstants.WareHouses;
 
 import junit.framework.TestCase;
 import junit.framework.TestResult;
@@ -71,32 +79,32 @@ public class BaseTest extends TestCase {
   /**
    * Record ID of Client "F&amp;B International Group"
    */
-  protected static final String TEST_CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
+  protected static final String TEST_CLIENT_ID = Clients.FB_GRP;
 
   /**
    * Record ID of Organization "F&amp;B España - Región Norte"
    */
-  protected static final String TEST_ORG_ID = "E443A31992CB4635AFCAEABE7183CE85";
+  protected static final String TEST_ORG_ID = Orgs.ESP_NORTE;
 
   /**
    * Record ID of Organization "F&amp;B US West Coast"
    */
-  protected static final String TEST_US_ORG_ID = "BAE22373FEBE4CCCA24517E23F0C8A48";
+  protected static final String TEST_US_ORG_ID = Orgs.US_WEST;;
 
   /**
    * Record ID of Warehouse "España Región Norte"
    */
-  protected static final String TEST_WAREHOUSE_ID = "B2D40D8A5D644DD89E329DC297309055";
+  protected static final String TEST_WAREHOUSE_ID = WareHouses.ESP_NORTE;
 
   /**
    * Record ID of User "F&amp;BAdmin"
    */
-  protected static final String TEST_USER_ID = "A530AAE22C864702B7E1C22D58E7B17B";
+  protected static final String TEST_USER_ID = Users.FB_ADMIN;
 
   /**
    * Record ID of User "F&amp;BESRNUser" - Any user with less privileges than {@link #TEST_USER_ID}
    */
-  protected static final String TEST2_USER_ID = "75449AFBAE7F46029F26C85C4CCF714B";
+  protected static final String TEST2_USER_ID = Users.FB_USER;
 
   /**
    * Record IDs of available users different than {@link #TEST_USER_ID} Note: Initialized to null,
@@ -107,17 +115,17 @@ public class BaseTest extends TestCase {
   /**
    * Record ID of Role "F&amp;B International Group Admin"
    */
-  protected static final String TEST_ROLE_ID = "42D0EEB1C66F497A90DD526DC597E6F0";
+  protected static final String TEST_ROLE_ID = Roles.FB_GRP_ADMIN;
 
   /**
    * Record ID of a Order in Draft status
    */
-  protected static final String TEST_ORDER_ID = "F8492493E92C4EE5B5251AC4574778B7";
+  protected static final String TEST_ORDER_ID = Orders.DRAFT_ORDER;
 
   /**
    * Record ID of Product "Zumo de Fresa Bio 0,33L"
    */
-  protected static final String TEST_PRODUCT_ID = "61047A6B06B3452B85260C7BCF08E78D";
+  protected static final String TEST_PRODUCT_ID = Orders.FRESA_BIO_ORDER;
 
   /**
    * Map representation of current Organization tree for Client {@link #TEST_CLIENT_ID}
@@ -127,40 +135,40 @@ public class BaseTest extends TestCase {
   static {
 
     // "F&B International Group"
-    TEST_ORG_TREE.put("19404EAD144C49A0AF37D54377CF452D", new String[] { "" });
+    TEST_ORG_TREE.put(Orgs.FB_GROUP, new String[] { "" });
 
     // "F&B España, S.A."
-    TEST_ORG_TREE.put("B843C30461EA4501935CB1D125C9C25A", new String[] { "" });
+    TEST_ORG_TREE.put(Orgs.ESP, new String[] { "" });
 
     // "F&B US, Inc."
-    TEST_ORG_TREE.put("B843C30461EA4501935CB1D125C9C25A", new String[] { "" });
+    TEST_ORG_TREE.put(Orgs.US, new String[] { "" });
 
   }
 
   /**
    * Record ID of the QA Test client
    */
-  protected static final String QA_TEST_CLIENT_ID = "4028E6C72959682B01295A070852010D";
+  protected static final String QA_TEST_CLIENT_ID = Clients.QA_CLIENT;
 
   /**
    * Record ID of the Main organization of QA Test client
    */
-  protected static final String QA_TEST_ORG_ID = "43D590B4814049C6B85C6545E8264E37";
+  protected static final String QA_TEST_ORG_ID = Orgs.QA_ORG;
 
   /**
    * Record ID of the "Admin" user of QA Test client
    */
-  protected static final String QA_TEST_ADMIN_USER_ID = "4028E6C72959682B01295A0735CB0120";
+  protected static final String QA_TEST_ADMIN_USER_ID = Users.QA_ADMIN;
 
   /**
    * Record ID of the "Customer" Business Partner Category
    */
-  protected static final String TEST_BP_CATEGORY_ID = "4028E6C72959682B01295F40C38C02EB";
+  protected static final String TEST_BP_CATEGORY_ID = BusinessPartnerCategories.CUSTOMER;
 
   /**
    * Record ID of the geographical location "c\ de la Costa 54, San Sebastián 12784"
    */
-  protected static final String TEST_LOCATION_ID = "A21EF1AB822149BEB65D055CD91F261B";
+  protected static final String TEST_LOCATION_ID = Locations.COSTA_SS;
 
   /**
    * Overridden to initialize the Dal layer, sets the current user to the the User:

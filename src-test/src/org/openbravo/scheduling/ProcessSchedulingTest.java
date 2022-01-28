@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,6 +38,7 @@ import org.openbravo.model.ad.ui.ProcessRun;
 import org.openbravo.service.db.DalBaseProcess;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.Issue;
+import org.openbravo.test.base.TestConstants.Users;
 
 /**
  * Test cases for process schedule and process runner
@@ -47,7 +48,7 @@ import org.openbravo.test.base.Issue;
  */
 public class ProcessSchedulingTest extends WeldBaseTest {
   private static final String anyProcessID = "800170";
-  private static final String USER_ID = "100";
+  private static final String USER_ID = Users.OPENBRAVO;
   private static final String ROLE_ID = "0";
   private static final String CLIENT_ID = "0";
   private static final String ORG_ID = "0";

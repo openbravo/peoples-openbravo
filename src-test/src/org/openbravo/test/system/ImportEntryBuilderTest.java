@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,6 +43,10 @@ import org.openbravo.service.importprocess.ImportEntry;
 import org.openbravo.service.importprocess.ImportEntryAlreadyExistsException;
 import org.openbravo.service.importprocess.ImportEntryArchive;
 import org.openbravo.service.importprocess.ImportEntryBuilder;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
 
 /**
  * Test the ImportEntryBuilder under various scenarios
@@ -52,11 +56,11 @@ import org.openbravo.service.importprocess.ImportEntryBuilder;
 public class ImportEntryBuilderTest extends WeldBaseTest {
 
   private static final Organization SPAIN_ORG = OBDal.getInstance()
-      .getProxy(Organization.class, "357947E87C284935AD1D783CF6F099A1");
+      .getProxy(Organization.class, Orgs.SPAIN);
   private static final Client QA_TESTING_CLIENT = OBDal.getInstance()
-      .getProxy(Client.class, "4028E6C72959682B01295A070852010D");
+      .getProxy(Client.class, Clients.QA_CLIENT);
   private static final Role QA_TESTING_ADMIN_ROLE = OBDal.getInstance()
-      .getProxy(Role.class, "4028E6C72959682B01295A071429011E");
+      .getProxy(Role.class, Roles.QA_ADMIN_ROLE);
   private static final String JSON_DATA = "{\"custom\":\"data\"}";
   private static final String IMPORT_STATUS = "Initial";
   private static final String TYPE_OF_DATA = "Order";
@@ -71,7 +75,7 @@ public class ImportEntryBuilderTest extends WeldBaseTest {
    */
   @BeforeClass
   public static void createImportEntries() {
-    OBContext.setOBContext("100", "0", TEST_CLIENT_ID, TEST_ORG_ID);
+    OBContext.setOBContext(Users.OPENBRAVO, "0", TEST_CLIENT_ID, TEST_ORG_ID);
 
     existingImportEntry = createImportEntry();
     existingImportEntryArchive = createImportEntryArchive();

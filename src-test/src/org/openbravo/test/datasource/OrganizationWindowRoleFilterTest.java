@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,9 @@ import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.Orgs;
 
 /**
  * Test class to verify that Organization Window shows only the readable organizations for a role,
@@ -42,13 +45,14 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 public class OrganizationWindowRoleFilterTest extends BaseDataSourceTestDal {
   private static final String F_B_SPAIN_EMPLOYEE_ROLE = "D615084948E046E3A439915008F464A6";
-  private static final String NORTH_ZONE_ORGANIZATION = "E443A31992CB4635AFCAEABE7183CE85";
-  private static final String F_B_INTL_GROUP_CLIENT = "23C59575B9CF467C9620760EB255B389";
+  private static final String NORTH_ZONE_ORGANIZATION = Orgs.ESP_NORTE;
+  private static final String F_B_INTL_GROUP_CLIENT = Clients.FB_GRP;
   private static final String ASTERISK_ORGANIZATION = "0";
   private static final String ORGANIZATION_WINDOW = "110";
-  private static final String EN_US_LANG = "192";
+  private static final String EN_US_LANG = Languages.EN_US_LANG_ID;
   private String windowAccessId;
 
+  @Override
   @Before
   public void setUp() throws Exception {
     super.setUp();

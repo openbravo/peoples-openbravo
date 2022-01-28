@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -44,18 +44,21 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.WareHouses;
 
 public class TestNoteDatasource extends BaseDataSourceTestDal {
   private static final String CONTEXT_USER = "100";
   private static final String CONTEXT_ROLE = "45C861D70874409D86AE1CC7007AB43A";
-  private static final String CLIENT = "23C59575B9CF467C9620760EB255B389";
-  private static final String AMERICAN_ORGANIZATION = "BAE22373FEBE4CCCA24517E23F0C8A48";
-  private static final String SPANISH_ORGANIZATION = "DC206C91AA6A4897B44DA897936E0EC3";
+  private static final String CLIENT = Clients.FB_GRP;
+  private static final String AMERICAN_ORGANIZATION = Orgs.US_WEST;
+  private static final String SPANISH_ORGANIZATION = Orgs.ESP_SUR;
   private static final String DATASOURCE_ID = "090A37D22E61FE94012E621729090048";
   private static final String TABLE_ID = "259";
   private static final String RECORD_ID = "3EFF470687024F099FB40438AAB20BED";
   private static final String LANGUAGE_ID = "192";
-  private static final String WAREHOUSE_ID = "4D45FE4C515041709047F51D139A21AC";
+  private static final String WAREHOUSE_ID = WareHouses.US_WEST;
 
   /**
    * Required in order to have the CSRF token available

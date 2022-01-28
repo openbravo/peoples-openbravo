@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2021 Openbravo SLU
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -62,6 +62,10 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.DalConnectionProvider;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
 import org.openbravo.test.costing.utils.TestCostingUtils;
 
 /**
@@ -73,10 +77,10 @@ public class InvoiceFromShipmentTest extends WeldBaseTest {
 
   private static final Logger log = LogManager.getLogger();
 
-  private static final String CLIENT_ID = "4028E6C72959682B01295A070852010D"; // QA Testing
-  private static final String ORG_ID = "357947E87C284935AD1D783CF6F099A1"; // Spain
-  private static final String USER_ID = "100"; // Openbravo
-  private static final String ROLE_ID = "4028E6C72959682B01295A071429011E"; // QA Testing Admin
+  private static final String CLIENT_ID = Clients.QA_CLIENT; // QA Testing
+  private static final String ORG_ID = Orgs.SPAIN; // Spain
+  private static final String USER_ID = Users.OPENBRAVO; // Openbravo
+  private static final String ROLE_ID = Roles.QA_ADMIN_ROLE; // QA Testing Admin
 
   private static final String GOODS_SHIPMENT_ID = "8BEAC8CAFFCE444FA15D0170F897B641";
   private static final String SALES_ORDER = "5B29AF263D004CD3830D4F9B23C17DFD";
