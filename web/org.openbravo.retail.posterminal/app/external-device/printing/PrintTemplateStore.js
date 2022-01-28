@@ -260,4 +260,9 @@
     'printCashUpTemplate',
     '../org.openbravo.retail.posterminal/res/printcashup.xml'
   );
+
+  OB.App.PrintTemplateStore.register(
+    'printCashUpKeptCashTemplate',
+    '../org.openbravo.retail.posterminal/res/printcashupkeptcash.xml'
+  );
 })();

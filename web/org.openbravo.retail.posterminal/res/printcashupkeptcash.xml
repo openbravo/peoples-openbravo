@@ -14,12 +14,9 @@
             <image>ticket-image.png</image>
         </line>
         <line>
-            <text align="center" length="42"><%=
-                OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_CashUpKeptCash_Title')) %>
-            </text>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_CashUpKeptCash_Title')) %></text>
         </line>
-        <line>
-        </line>
+        <line></line>
         <line>
             <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' +
                 OB.App.TerminalProperty.get('terminal').organization$_identifier) %>
@@ -52,13 +49,9 @@
         if (payment.second && payment.second !== payment.value) {
         %>
         <line>
-            <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(paymentMethodName) %>
-            </text>
-            <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.second) + ' ' +
-                payment.isocode + ')' %>
-            </text>
-            <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.value) %>
-            </text>
+            <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+            <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.second) + ' ' + payment.isocode + ')' %></text>
+            <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.value) %></text>
         </line>
         <%
         }else{

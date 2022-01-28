@@ -15,18 +15,26 @@ OB.App.StateAPI.Messages.registerUtilityFunctions({
    * Returns a list of messages to print kept cash tickets. One per copy set for
    * the current terminal. It returns [] if no ticket should be printed
    */
-  // terminalPayments: OB.MobileApp.model.get('payments'),
-  // terminalName: OB.MobileApp.model.get('terminal').searchKey,
-  createPrintCashupKeptCashMessages() {
+  createPrintCashupKeptCashMessages(cashupData, keptCashData, printSettings) {
+    if (keptCashData.printablePaymentsCounted) {
+      const keptCashupMessages = [];
+      [...Array(keptCashData.numberOfCopies).keys()].forEach(() => {
+        keptCashupMessages.push(
+          OB.App.State.Messages.Utils.createNewMessage(
+            'OBMOBC_PrintCashupKeptCash',
+            '',
+            { cashupData, keptCashData, printSettings },
+            {
+              type: 'printKeptCash',
+              consumeOffline: true
+            }
+          )
+        );
+      });
+
+      return keptCashupMessages;
+    }
+
     return [];
-    // return OB.App.State.Messages.Utils.createNewMessage(
-    //   'OBMOBC_PrintCashupKeptCash',
-    //   '',
-    //   { cashupData, printSettings },
-    //   {
-    //     type: 'printCashup',
-    //     consumeOffline: true
-    //   }
-    // );
   }
 });
