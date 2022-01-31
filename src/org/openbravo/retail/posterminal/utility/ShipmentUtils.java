@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2021 Openbravo S.L.U.
+ * Copyright (C) 2018-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -238,8 +238,8 @@ public class ShipmentUtils implements TicketPropertyMapping {
 
         if (negativeLine && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           OrderLoaderPreAddShipmentLineHook_Response returnBinHookResponse;
-          lineNo += 10;
           Locator binForReturn = null;
+          AttributeSetInstance attributeSetInstance = orderLine.getAttributeSetValue();
           if (orderLine.getWarehouse() != null
               && orderLine.getWarehouse().getReturnlocator() != null) {
             binForReturn = orderLine.getWarehouse().getReturnlocator();
@@ -264,9 +264,36 @@ public class ShipmentUtils implements TicketPropertyMapping {
               binForReturn = returnBinHookResponse.getNewLocator();
             }
           }
-          createdShipmentLines.add(addShipmentline(shipment, shplineentity,
-              orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, pendingQty.negate(),
-              binForReturn, orderLine.getAttributeSetValue(), i));
+          if (attributeSetInstance == null && orderlines.getJSONObject(i).has("originalOrderLineId")
+              && orderlines.getJSONObject(i).has("shipmentlines")) {
+            JSONArray jsonShipmentLines = orderlines.getJSONObject(i).getJSONArray("shipmentlines");
+            BigDecimal pendingShipmentQty = new BigDecimal(pendingQty.abs().toString());
+            for (int j = 0; j < jsonShipmentLines.length()
+                && pendingShipmentQty.compareTo(BigDecimal.ZERO) > 0; j++) {
+              JSONObject origShipmentLine = jsonShipmentLines.getJSONObject(j);
+              ShipmentInOutLine shipmentInOutLine = OBDal.getInstance()
+                  .get(ShipmentInOutLine.class, origShipmentLine.getString("shipLineId"));
+              BigDecimal shipmentRemaningQty = new BigDecimal(
+                  origShipmentLine.getString("remainingQty"));
+              BigDecimal qtyToCreate = new BigDecimal(pendingShipmentQty.abs().toString());
+              if (pendingShipmentQty.compareTo(shipmentRemaningQty) >= 0) {
+                qtyToCreate = shipmentRemaningQty;
+                pendingShipmentQty = pendingShipmentQty.subtract(shipmentRemaningQty);
+              } else {
+                pendingShipmentQty = BigDecimal.ZERO;
+              }
+              attributeSetInstance = shipmentInOutLine.getAttributeSetValue();
+              lineNo += 10;
+              createdShipmentLines.add(addShipmentline(shipment, shplineentity,
+                  orderlines.getJSONObject(i), orderLine, jsonorder, lineNo, qtyToCreate.negate(),
+                  binForReturn, attributeSetInstance, i));
+            }
+          } else {
+            lineNo += 10;
+            createdShipmentLines.add(
+                addShipmentline(shipment, shplineentity, orderlines.getJSONObject(i), orderLine,
+                    jsonorder, lineNo, pendingQty.negate(), binForReturn, attributeSetInstance, i));
+          }
         } else if (useSingleBin && pendingQty.compareTo(BigDecimal.ZERO) > 0) {
           OrderLoaderPreAddShipmentLineHook_Response singleBinHookResponse = null;
           lineNo += 10;
