@@ -80,7 +80,7 @@
         );
         const safeBoxPaymentMethods = paymentMethods
           .filter(pm => pm.paymentMethod.issafebox)
-          .map(pm => pm.paymentMethod.searchKey);
+          .map(pm => pm.payment.searchKey);
         for (let i = 0; i < numberOfCopies; i++) {
           OB.POS.hwserver.cleanDisplay();
           OB.POS.hwserver.print(
@@ -90,7 +90,7 @@
                 report: cashUpReport,
                 summary: countCashSummary
               },
-              currentSafeBoxName: currentSafeBox && currentSafeBox.name,
+              currentSafeBoxName: currentSafeBox && currentSafeBox.searchKey,
               safeBoxPaymentMethods,
               printablePaymentMethods
             },
