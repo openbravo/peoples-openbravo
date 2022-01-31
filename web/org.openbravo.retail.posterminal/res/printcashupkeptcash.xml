@@ -18,25 +18,16 @@
         </line>
         <line></line>
         <line>
-            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' +
-                OB.App.TerminalProperty.get('terminal').organization$_identifier) %>
-            </text>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.App.TerminalProperty.get('terminal').organization$_identifier) %></text>
         </line>
         <line>
-            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': '
-                + OB.App.TerminalProperty.get('terminal')._identifier) %>
-            </text>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.App.TerminalProperty.get('terminal')._identifier) %></text>
         </line>
         <line>
-            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' +
-                OB.App.TerminalProperty.get('context').user._identifier) %>
-            </text>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.App.TerminalProperty.get('context').user._identifier) %></text>
         </line>
         <line>
-            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' +
-                OB.I18N.formatDate(cashup.report.time) + ' - ' + OB.I18N.formatHour(cashup.report.time))
-                %>
-            </text>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(cashup.report.time) + ' - ' + OB.I18N.formatHour(cashup.report.time)) %></text>
         </line>
         <line>
         </line>
