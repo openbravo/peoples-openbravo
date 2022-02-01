@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -111,17 +111,28 @@ public class OBBaseTest {
     }
 
     private boolean isDisabled(Description description) {
-      boolean fullClassDisabled = disabledTestCases.contains(description.getClassName());
-      if (fullClassDisabled) {
+
+      String className = description.getClassName();
+      if (isExcluded(className) || packageIsExcluded(className)) {
         return true;
       }
+
       String methodName = description.getMethodName();
       if (methodName.endsWith("]")) {
         // parameterized tests cases suffix [desc] to method name, let's remove it
         methodName = methodName.substring(0, methodName.indexOf("["));
 
       }
-      return disabledTestCases.contains(description.getClassName() + "." + methodName);
+      return isExcluded(className + "." + methodName);
+    }
+
+    private boolean isExcluded(String className) {
+      return disabledTestCases.contains(className);
+    }
+
+    private boolean packageIsExcluded(String className) {
+      return disabledTestCases.stream()
+          .anyMatch(element -> ((className).startsWith(element+ ".")));
     }
 
     @Override
