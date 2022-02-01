@@ -326,6 +326,7 @@ public class PaidReceipts extends JSONProcessSimple {
             jsonPromo.put("actualAmt", promotion.getTotalAmount());
             jsonPromo.put("hidden", BigDecimal.ZERO.equals(displayedAmount));
             jsonPromo.put("displayedTotalAmount", promotion.getDisplayedTotalAmount());
+            jsonPromo.put("unitDiscount", promotion.getPriceAdjustmentAmt());
             jsonPromo.put("qtyOffer", promotion.getObdiscQtyoffer());
             if (promotion.getObdiscIdentifier() != null) {
               jsonPromo.put("identifier", promotion.getObdiscIdentifier());
