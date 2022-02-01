@@ -112,6 +112,7 @@ import org.openbravo.test.reporting.AllJrxmlCompilation;
 import org.openbravo.test.reporting.CompiledReportsCacheTest;
 import org.openbravo.test.reporting.JasperReportsCompilation;
 import org.openbravo.test.reporting.JasperReportsExportTest;
+import org.openbravo.test.reporting.ReportingUtilsTest;
 import org.openbravo.test.role.RoleTestSuite;
 import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
 import org.openbravo.test.security.AccessLevelTest;
@@ -341,7 +342,8 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     JasperReportsCompilation.class, //
     AllJrxmlCompilation.class, //
     CompiledReportsCacheTest.class, //
-    JasperReportsExportTest.class,
+    JasperReportsExportTest.class, //
+    ReportingUtilsTest.class, //
 
     // Product Services
     ServicesTest.class, //
