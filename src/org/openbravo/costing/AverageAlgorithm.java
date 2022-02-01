@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -83,7 +83,7 @@ public class AverageAlgorithm extends CostingAlgorithm {
     final Costing currentCosting = getProductCost();
     if (currentCosting == null) {
       throw new OBException("@NoAvgCostDefined@ @Organization@: " + costOrg.getName()
-          + ", @Product@: " + transaction.getProduct().getName() + ", @Date@: "
+          + ", @Product@: " + transaction.getProduct().getIdentifier() + ", @Date@: "
           + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     BigDecimal cost = currentCosting.getCost();

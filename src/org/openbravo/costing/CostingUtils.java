@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -153,7 +153,7 @@ public class CostingUtils {
     if (stdCost == null && pp == null) {
       throw new OBException(
           "@NoPriceListOrStandardCostForProduct@ @Organization@: " + org.getName() + ", @Product@: "
-              + product.getSearchKey() + ", @Date@: " + OBDateUtils.formatDate(costDate));
+              + product.getIdentifier() + ", @Date@: " + OBDateUtils.formatDate(costDate));
     } else if (stdCost != null && pp == null) {
       BigDecimal standardCost = getStandardCost(product, org, costDate, costDimensions, currency);
       return qty.abs().multiply(standardCost);
@@ -218,8 +218,9 @@ public class CostingUtils {
         recheckWithoutDimensions);
     if (stdCost == null) {
       // If no standard cost is found throw an exception.
-      throw new OBException("@NoStandardCostDefined@ @Organization@:" + org.getName()
-          + ", @Product@: " + product.getName() + ", @Date@: " + OBDateUtils.formatDate(date));
+      throw new OBException(
+          "@NoStandardCostDefined@ @Organization@:" + org.getName() + ", @Product@: "
+              + product.getIdentifier() + ", @Date@: " + OBDateUtils.formatDate(date));
     }
     return FinancialUtils.getConvertedAmount(stdCost.getCost(), stdCost.getCurrency(), convCurrency,
         date, org, FinancialUtils.PRECISION_COSTING);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -291,7 +291,7 @@ public abstract class CostingAlgorithm {
 
     if (stdCost == null && pp == null && orderLine == null) {
       throw new OBException("@NoPriceListOrStandardCostForProduct@ @Organization@: "
-          + costOrg.getName() + ", @Product@: " + transaction.getProduct().getSearchKey()
+          + costOrg.getName() + ", @Product@: " + transaction.getProduct().getIdentifier()
           + ", @Date@: " + OBDateUtils.formatDate(transaction.getTransactionProcessDate()));
     }
     Date stdCostDate = new Date(0L);

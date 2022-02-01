@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2021 Openbravo SLU
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -144,9 +144,9 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
     final Costing costing = AverageAlgorithm.getProductCost(trxDate, basetrx.getProduct(),
         getCostDimensions(), getCostOrg());
     if (costing == null) {
-      throw new OBException(
-          "@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName() + ", @Product@: "
-              + basetrx.getProduct().getName() + ", @Date@: " + OBDateUtils.formatDate(trxDate));
+      throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
+          + ", @Product@: " + basetrx.getProduct().getIdentifier() + ", @Date@: "
+          + OBDateUtils.formatDate(trxDate));
     }
     BigDecimal cost = null;
     // If current stock is zero the cost is not modified until a related transaction that modifies
@@ -471,7 +471,7 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           getCostDimensions(), getCostOrg());
       if (currentCosting == null) {
         throw new OBException("@NoAvgCostDefined@ @Organization@: " + getCostOrg().getName()
-            + ", @Product@: " + basetrx.getProduct().getName() + ", @Date@: "
+            + ", @Product@: " + basetrx.getProduct().getIdentifier() + ", @Date@: "
             + OBDateUtils.formatDate(new Date()));
       }
 
@@ -614,8 +614,8 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
 
     if (costing == null) {
       String errorMessage = OBMessageUtils.parseTranslation("@NoAvgCostDefined@ @Organization@: "
-          + getCostOrg().getName() + ", @Product@: " + trx.getProduct().getName() + ", @Date@: "
-          + OBDateUtils.formatDate(trx.getMovementDate()));
+          + getCostOrg().getName() + ", @Product@: " + trx.getProduct().getIdentifier()
+          + ", @Date@: " + OBDateUtils.formatDate(trx.getMovementDate()));
       throw new OBException(errorMessage);
     }
     BigDecimal cost = costing.getCost();
