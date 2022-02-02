@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2020 Openbravo SLU
+ * All portions are Copyright (C) 2011-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -86,7 +86,7 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
           }
         } else {
           info.addResult("inpfinaccTxnConvertRate", finAccConvertRate);
-          info.addResult("inpfinaccTxnAmount", strAmount);
+          info.addResult("inpfinaccTxnAmount", new BigDecimal(strAmount));
         }
       }
 
