@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019-2020 Openbravo SLU
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -128,6 +128,10 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       // Create or update the needed services relations
       updateServicesRelations();
 
+      // Refresh documents
+      oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
+      inverseOrder = OBDal.getInstance().get(Order.class, inverseOrder.getId());
+
       // Close inverse order
       closeOrder(inverseOrder);
       closeOrder(oldOrder);
@@ -145,10 +149,6 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       if (jsonOrder != null) {
         newOrders.stream().forEach(this::createNewReservations);
       }
-
-      // Refresh documents
-      oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
-      inverseOrder = OBDal.getInstance().get(Order.class, inverseOrder.getId());
 
       OBDal.getInstance().flush();
 
