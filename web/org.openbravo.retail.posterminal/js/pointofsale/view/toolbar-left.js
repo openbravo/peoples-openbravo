@@ -856,7 +856,11 @@ enyo.kind({
                               showPaymentTab();
                             }
                           });
+                        } else {
+                          showPaymentTab();
                         }
+                      } else {
+                        showPaymentTab();
                       }
                     }
                   );
