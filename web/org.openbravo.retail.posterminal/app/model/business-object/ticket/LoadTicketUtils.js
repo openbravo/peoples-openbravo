@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2021 Openbravo S.L.U.
+ * Copyright (C) 2021-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -25,7 +25,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
         orderid: payload.ticket.id,
         // If action was called without order id, we can specify the docNo to load the ticket
         documentNo: payload.ticket.id ? undefined : payload.ticket.documentNo,
-        crossStore: payload.ticket.isCrossStore
+        crossStore: payload.ticket.isCrossStore,
+        parameters: {
+          terminalTime: new Date(),
+          terminalTimeOffset: {
+            value: new Date().getTimezoneOffset(),
+            type: 'long'
+          }
+        }
       }
     );
 

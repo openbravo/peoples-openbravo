@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2021 Openbravo S.L.U.
+ * Copyright (C) 2017-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -679,7 +679,14 @@ enyo.kind({
               orderid: model.get('id'),
               crossStore: OB.UTIL.isCrossStoreReceipt(model)
                 ? model.get('organization')
-                : null
+                : null,
+              parameters: {
+                terminalTime: new Date(),
+                terminalTimeOffset: {
+                  value: new Date().getTimezoneOffset(),
+                  type: 'long'
+                }
+              }
             },
             function(data) {
               if (data && data[0]) {

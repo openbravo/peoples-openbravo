@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -50,6 +50,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
@@ -135,6 +136,22 @@ public class PaidReceipts extends JSONProcessSimple {
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posId);
       }
 
+      org.openbravo.model.common.order.Order order = OBDal.getInstance()
+          .get(org.openbravo.model.common.order.Order.class, orderid);
+
+      // Get PriceListVersion from Order PriceList
+      String priceListVersionId = null;
+      if (order != null) {
+        priceListVersionId = POSUtils.getPriceListVersionForPriceList(order.getPriceList().getId(),
+            jsonsent.has("parameters") ? OBMOBCUtils.calculateServerDate(
+                jsonsent.getJSONObject("parameters").getString("terminalTime"),
+                jsonsent.getJSONObject("parameters")
+                    .getJSONObject("terminalTimeOffset")
+                    .getLong("value"))
+                : new Date())
+            .getId();
+      }
+
       // get the orderId
       HQLPropertyList hqlPropertiesReceipts = ModelExtensionUtils.getPropertyExtensions(extensions);
       String hqlPaidReceipts = "select " + hqlPropertiesReceipts.getHqlSelect()
@@ -156,6 +173,7 @@ public class PaidReceipts extends JSONProcessSimple {
 
         paidReceipt.put("orderid", orderid);
         paidReceipt.put("trxOrganization", jsonsent.optString("organization"));
+        paidReceipt.put("priceListVersionId", priceListVersionId);
 
         // get the Invoice for the Order
         final Invoice invoice = OBDal.getInstance()
