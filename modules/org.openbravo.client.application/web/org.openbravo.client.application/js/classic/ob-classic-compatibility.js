@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2021 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -399,27 +399,14 @@
         if (show !== false) {
           show = true;
         }
-        var _htmlCode,
-          _navUserAgent = navigator.userAgent.toUpperCase();
-        if (OB.Utilities.isIE9Strict || _navUserAgent.indexOf('MSIE') === -1) {
-          // IE >= 9 (Strict) or any other browser
-          _htmlCode =
-            '<html><head></head><body style="margin: 0; padding: 0; border: none;">' +
-            '<iframe id="MDIPopupContainer" name="MDIPopupContainer" style="margin: 0; padding: 0; border: none; width: 100%; height: 100%;"></iframe>' +
-            '<iframe name="frameMenu" scrolling="no" src="' +
-            OB.Application.contextUrl +
-            'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading" style="margin: 0px; padding: 0px; border: 0px; height: 0px; width: 0px;"></iframe>' +
-            '</body></html>';
-        } else {
-          // IE <= 8
-          _htmlCode =
-            '<html><head></head><frameset cols="*, 0%" rows="*" frameborder="no" border="0" framespacing="0">' +
-            '<frame id="MDIPopupContainer" name="MDIPopupContainer"></frame>' +
-            '<frame name="frameMenu" scrolling="no" src="' +
-            OB.Application.contextUrl +
-            'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading"></frame>' +
-            '</frameset><body></body></html>';
-        }
+        var _htmlCode;
+        _htmlCode =
+          '<html><head></head><body style="margin: 0; padding: 0; border: none;">' +
+          '<iframe id="MDIPopupContainer" name="MDIPopupContainer" style="margin: 0; padding: 0; border: none; width: 100%; height: 100%;"></iframe>' +
+          '<iframe name="frameMenu" scrolling="no" src="' +
+          OB.Application.contextUrl +
+          'utility/VerticalMenu.html?Command=HIDE" id="paramFrameMenuLoading" style="margin: 0px; padding: 0px; border: 0px; height: 0px; width: 0px;"></iframe>' +
+          '</body></html>';
         var cPopup = isc.OBClassicPopup.create({
           ID: name + '_' + cobcomp.Popup.secString,
           width: width,
@@ -469,25 +456,6 @@
           }, 50);
           return true;
         }
-        if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
-          //  In IE (non-Strict) if window.open is executed against a frame, the target frame doesn't know which is its opener
-          if (
-            typeof cPopup.getIframeHtmlObj().contentWindow.frames[0].opener ===
-            'undefined'
-          ) {
-            cPopup.getIframeHtmlObj().contentWindow.frames[0].opener =
-              cPopup.theOpener;
-            if (
-              typeof cPopup.getIframeHtmlObj().contentWindow.frames[0]
-                .opener === 'undefined'
-            ) {
-              setTimeout(function() {
-                cobcomp.Popup.postOpen(cPopup, postParams);
-              }, 50);
-              return true;
-            }
-          }
-        }
         var wName = cPopup.ID;
         wName = wName.substring(
           0,
@@ -497,40 +465,6 @@
           if (!postParams) {
             cPopup.getIframeHtmlObj().contentWindow.frames[0].location.href =
               cPopup.popupURL;
-            if (OB.Utilities.isIE9Strict || OB.Utilities.isEdge) {
-              // In IE9 Strict and Edge, when the location.href or .src is defined, the previous defined opener is lost, and it should be defined again
-              cPopup.getIframeHtmlObj().contentWindow.frames[0].opener =
-                cPopup.theOpener;
-              var setOpenerInterval;
-              setOpenerInterval = setInterval(function() {
-                if (!cPopup.getIframeHtmlObj()) {
-                  clearInterval(setOpenerInterval);
-                } else if (
-                  cPopup.getIframeHtmlObj().contentWindow.frames[0].document
-                    .readyState === 'complete'
-                ) {
-                  if (
-                    !cPopup.getIframeHtmlObj().contentWindow.frames[0].opener
-                  ) {
-                    cPopup.getIframeHtmlObj().contentWindow.frames[0].opener =
-                      cPopup.theOpener;
-                  }
-                  if (
-                    cPopup.getIframeHtmlObj().contentWindow.frames[0].window
-                      .MDIPopupId !== wName
-                  ) {
-                    cPopup
-                      .getIframeHtmlObj()
-                      .contentWindow.document.getElementById(
-                        'MDIPopupContainer'
-                      ).name = wName;
-                    cPopup
-                      .getIframeHtmlObj()
-                      .contentWindow.frames[0].window.checkWindowInMDIPopup();
-                  }
-                }
-              }, 100);
-            }
           } else {
             // Create a form and POST parameters as input hidden values
             var doc = cPopup.getIframeHtmlObj().contentWindow.frames[0]

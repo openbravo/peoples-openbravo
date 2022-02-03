@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.mail.internet.MimeUtility;
@@ -174,16 +173,10 @@ public class TabAttachments extends HttpSecureAppServlet {
         }
 
         response.setCharacterEncoding("UTF-8");
-        String userAgent = request.getHeader("user-agent");
-        if (userAgent.contains("MSIE")) {
-          response.setHeader("Content-Disposition", "attachment; filename=\""
-              + URLEncoder.encode(attachment.getName().replace("\"", "\\\""), "utf-8") + "\"");
-        } else {
-          response.setHeader("Content-Disposition",
-              "attachment; filename=\""
-                  + MimeUtility.encodeWord(attachment.getName().replace("\"", "\\\""), "utf-8", "Q")
-                  + "\"");
-        }
+        response.setHeader("Content-Disposition",
+            "attachment; filename=\""
+                + MimeUtility.encodeWord(attachment.getName().replace("\"", "\\\""), "utf-8", "Q")
+                + "\"");
 
         response.getOutputStream().write(os.toByteArray());
         response.getOutputStream().flush();

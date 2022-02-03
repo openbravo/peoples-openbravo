@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2021 Openbravo SLU
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -435,12 +435,6 @@ function buildRecBrowserMsgText() {
       browserVersionTrim(recBrowserVersions.firefox) +
       ', ';
   }
-  if (isRecBrowser('explorer')) {
-    xxReplaceMsg +=
-      'Internet Explorer ' +
-      browserVersionTrim(recBrowserVersions.explorer) +
-      ', ';
-  }
   if (isRecBrowser('edge')) {
     xxReplaceMsg +=
       'Microsoft Edge ' + browserVersionTrim(recBrowserVersions.edge) + ', ';
@@ -748,8 +742,7 @@ function submitXmlHttpRequest(
   extraParams,
   paramXMLReq
 ) {
-  var XMLHttpRequestObj = null;
-  XMLHttpRequestObj = getXMLHttpRequest();
+  var XMLHttpRequestObj = new XMLHttpRequest();
   if (formObject === null) {
     formObject = document.forms[0];
   }
@@ -800,36 +793,6 @@ function submitXmlHttpRequest(
   XMLHttpRequestObj.send(sendText);
 
   return true;
-}
-
-function getXMLHttpRequest() {
-  // Create XMLHttpRequest object in non-Microsoft browsers
-  var XMLHttpRequestObj = null;
-
-  try {
-    XMLHttpRequestObj = new XMLHttpRequest();
-  } catch (e) {
-    XMLHttpRequestObj = false;
-  }
-
-  if (window.ActiveXObject) {
-    try {
-      // Try to create XMLHttpRequest in later versions
-      // of Internet Explorer
-      XMLHttpRequestObj = new ActiveXObject('Msxml2.XMLHTTP');
-    } catch (e1) {
-      // Failed to create required ActiveXObject
-      try {
-        // Try version supported by older versions
-        // of Internet Explorer
-        XMLHttpRequestObj = new ActiveXObject('Microsoft.XMLHTTP');
-      } catch (e2) {
-        // Unable to create an XMLHttpRequest by any means
-        XMLHttpRequestObj = false;
-      }
-    }
-  }
-  return XMLHttpRequestObj;
 }
 
 function getReadyStateHandler(req, responseXmlHandler, notifyError) {

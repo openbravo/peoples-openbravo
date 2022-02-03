@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -66,14 +66,10 @@ OB.Utilities.Style.getSheet = function(position, type) {
 OB.Utilities.Style.addRule = function(selector, declaration) {
   var stylesheet = OB.Utilities.Style.getSheet();
   if (typeof stylesheet === 'object') {
-    if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
-      stylesheet.addRule(selector, declaration);
-    } else {
-      stylesheet.insertRule(
-        selector + ' { ' + declaration + ' }',
-        stylesheet.cssRules.length
-      );
-    }
+    stylesheet.insertRule(
+      selector + ' { ' + declaration + ' }',
+      stylesheet.cssRules.length
+    );
   }
 };
 
@@ -87,11 +83,7 @@ OB.Utilities.Style.removeRule = function(selectorIndex) {
   var stylesheet = OB.Utilities.Style.getSheet();
 
   if (typeof stylesheet === 'object') {
-    if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
-      stylesheet.removeRule(selectorIndex);
-    } else {
-      stylesheet.deleteRule(selectorIndex);
-    }
+    stylesheet.deleteRule(selectorIndex);
   }
 };
 
@@ -109,24 +101,13 @@ OB.Utilities.Style.getRulePosition = function(selector) {
     i;
 
   if (typeof stylesheet === 'object') {
-    if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
-      for (i = 0; i < stylesheet.rules.length; i++) {
-        if (
-          stylesheet.rules[i].selectorText.toLowerCase() ===
+    for (i = 0; i < stylesheet.cssRules.length; i++) {
+      if (
+        typeof stylesheet.cssRules[i].selectorText !== 'undefined' &&
+        stylesheet.cssRules[i].selectorText.toLowerCase() ===
           selector.toLowerCase()
-        ) {
-          position.push(i);
-        }
-      }
-    } else {
-      for (i = 0; i < stylesheet.cssRules.length; i++) {
-        if (
-          typeof stylesheet.cssRules[i].selectorText !== 'undefined' &&
-          stylesheet.cssRules[i].selectorText.toLowerCase() ===
-            selector.toLowerCase()
-        ) {
-          position.push(i);
-        }
+      ) {
+        position.push(i);
       }
     }
   }

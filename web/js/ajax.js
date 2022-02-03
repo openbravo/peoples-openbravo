@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,31 +26,12 @@ var xmlreq = false; //Deprecated in 2.50
 var paramXMLRequest = null; //Deprecated in 2.50
 
 function getXMLHttpRequest() {
-  // Create XMLHttpRequest object in non-Microsoft browsers
   var XMLHttpRequestObj = null;
 
   try {
     XMLHttpRequestObj = new XMLHttpRequest();
   } catch (e) {
     XMLHttpRequestObj = false;
-  }
-
-  if (window.ActiveXObject) {
-    try {
-      // Try to create XMLHttpRequest in later versions
-      // of Internet Explorer
-      XMLHttpRequestObj = new ActiveXObject("Msxml2.XMLHTTP");
-    } catch (e1) {
-      // Failed to create required ActiveXObject
-      try {
-        // Try version supported by older versions
-        // of Internet Explorer
-        XMLHttpRequestObj = new ActiveXObject("Microsoft.XMLHTTP");
-      } catch (e2) {
-        // Unable to create an XMLHttpRequest by any means
-        XMLHttpRequestObj = false;
-      }
-    }
   }
   return XMLHttpRequestObj;
 }

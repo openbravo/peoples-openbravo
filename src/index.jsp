@@ -32,7 +32,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -107,25 +107,6 @@ try {
   OBContext.restorePreviousMode();
 }
 
-String ua = request.getHeader( "User-Agent" );
-boolean isMSIE = ( ua != null && ua.indexOf( "MSIE" ) != -1 );
-int verMSIE = 0;
-String verMSIEtmp = "";
-if (isMSIE) {
-  verMSIEtmp = ua.substring(ua.indexOf("MSIE") + 5);
-  verMSIEtmp = verMSIEtmp.substring(0, verMSIEtmp.indexOf("."));
-  if (ua.indexOf("MSIE 7.0") != -1 && ua.indexOf("Trident/4") != -1) {
-    //In case IE8 runs in "IE8 Compatibility mode, look for Trident/4.0 to know that is IE8 although MSIE string is MSIE 7.0
-    verMSIEtmp = "8";
-  } else if (ua.indexOf("MSIE 7.0") != -1 && ua.indexOf("Trident/5") != -1) {
-    // In case IE9 runs in "IE8 Compatibility mode, look for Trident/5.0 to know that is IE9 although MSIE string is MSIE 7.0
-    verMSIEtmp = "9";
-  } else if (ua.indexOf("MSIE 7.0") != -1 && ua.indexOf("Trident/") != -1) {
-    // For hypothetic future IE versions in case IEX runs in "IEX Compatibility mode, look for Trident/ to know that is IEX although MSIE string is MSIE 7.0
-    verMSIEtmp = "10"; //If this 'if' statement is not updated, could be 10 or 11 or anything... but set 10 just to ensure it is not in IE7
-  }
-  verMSIE = Integer.parseInt(verMSIEtmp);
-}
 response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 response.addHeader("Pragma", "no-cache");
 response.addHeader("Expires", "0");
@@ -143,7 +124,7 @@ response.addHeader("Expires", "0");
 <meta name="keywords" content="openbravo">
 <meta name="description" content="Openbravo S.L.U.">
 <link rel="shortcut icon" href="./web/images/favicon.ico" />
-<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_appName=OB3&_skinVersion=Default&_cssDataUri=<%=(!isMSIE || (isMSIE && verMSIE >=8))%>"/>
+<link rel="stylesheet" type="text/css" href="./org.openbravo.client.kernel/OBCLKER_Kernel/StyleSheetResources?_appName=OB3&_skinVersion=Default&_cssDataUri=true"/>
 
 <title>Openbravo</title>
 <%

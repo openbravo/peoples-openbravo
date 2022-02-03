@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ package org.openbravo.client.application.report;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -203,16 +202,8 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
       response.setContentType(expType.getContentType());
       response.setCharacterEncoding("UTF-8");
       if (includeReportAsAttachment) {
-        // TODO: Compatibility code with IE8. To be reviewed when its support is stopped.
-        // see issue #29109
-        String userAgent = request.getHeader("user-agent");
-        if (userAgent.contains("MSIE")) {
-          response.setHeader("Content-Disposition",
-              "attachment; filename=\"" + URLEncoder.encode(strFileName, "utf-8") + "\"");
-        } else {
-          response.setHeader("Content-Disposition",
-              "attachment; filename=\"" + MimeUtility.encodeWord(strFileName, "utf-8", "Q") + "\"");
-        }
+        response.setHeader("Content-Disposition",
+            "attachment; filename=\"" + MimeUtility.encodeWord(strFileName, "utf-8", "Q") + "\"");
       }
       fileUtil.dumpFile(response.getOutputStream());
       response.getOutputStream().flush();

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2015 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,23 +38,7 @@ var baseDirectory = "../../../../../web/";
   <script language="javascript">
     function onLoadDo() {
       moreOnLoadDoFunctions();
-      if (isIE9Strict || isEdge) {
-        var i=0;
-        var setOpenerInterval = setInterval(
-          function() {
-            if (window.opener) {
-              clearInterval(setOpenerInterval);
-              window.opener.setPopupLoadingWindowLoaded(true);
-            } else if (i === 400) {
-              clearInterval(setOpenerInterval);
-              console.log('Error: Timeout. window.opener not found');
-            } else {
-              i++;
-            }
-          }, 20);
-      } else {
-        window.opener.setPopupLoadingWindowLoaded(true);
-      }
+      window.opener.setPopupLoadingWindowLoaded(true);
       return true;
     }
   </script>

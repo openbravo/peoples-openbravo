@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2013 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -318,20 +318,7 @@ function callBackGrid(paramXMLParticular, XMLHttpRequestObj) {
         strText = XMLHttpRequestObj.responseText;
         var aux = strText.substring(30, strText.length-9);
         var tableBody = document.getElementById('sectionGrid');
-        var browserName = getBrowserInfo('name');
-        if (browserName.toUpperCase().indexOf('INTERNET EXPLORER') != -1) {
-          var temp = document.createElement("span");
-          temp.id = 'temp';
-          temp.style.display = 'none';
-          var newRows = '<table><tbody id=\"sectionGrid\">'+ aux;
-          temp.innerHTML = newRows;
-          tableBody.parentNode.replaceChild(temp.firstChild.firstChild, tableBody);
-          if (temp.parentNode) {
-            temp.parentNode.removeChild(temp);
-          }
-        } else {
-          tableBody.innerHTML = aux;
-        }
+        tableBody.innerHTML = aux;
         
         //initialize_MessageBox('messageBoxID');
         if (document.frmMain.inpIsFirstLoad.value == "true") {

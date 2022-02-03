@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2012 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -421,10 +421,7 @@
     if (typeof node != "undefined") {
       var nodeId = node.getAttribute('id').replace('node_','');
       if (document.getElementById('inpNodes_' + nodeId)) {
-        if (isClick == true && navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && !isIE9Strict) {
-          gt_setActiveUninstall('buttonUninstall');
-          gt_setActiveUninstall('buttonDisable');
-        } else if (isClick == true) {
+        if (isClick == true) {
           setTimeout(function () {
             document.getElementById('inpNodes_' + nodeId).checked = !document.getElementById('inpNodes_' + nodeId).checked;
             gt_setActiveUninstall('buttonUninstall');
@@ -485,9 +482,6 @@
   }
 
   function gt_adjustTreeWidth() {
-    /*if (navigator.userAgent.toUpperCase().indexOf("MSIE")!=-1) {
-      return true;
-    }*/
     var gt_cont = document.getElementById('genericTreeRowContainer');
     var width_old = document.getElementById('genericTree').clientWidth;
     var height_old = gt_cont.clientHeight;

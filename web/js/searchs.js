@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -522,13 +522,8 @@ function calculateNumRows() {
    var grid_row = document.getElementById("grid_sample_row");
    var grid_header_height, grid_row_height;
 
-   if (isIE9Strict) {
-     grid_header_height = parseInt(getComputedStyle(grid_header, null).getPropertyValue("height").replace('px', ''), 10) + 4;
-     grid_row_height = parseInt(getComputedStyle(grid_row, null).getPropertyValue("height").replace('px', ''), 10) + 1;
-   } else {
-     grid_header_height = grid_header.clientHeight + 1;
-     grid_row_height = grid_row.clientHeight + 1;
-   }
+   grid_header_height = grid_header.clientHeight + 1;
+   grid_row_height = grid_row.clientHeight + 1;
 
    if (getBrowserInfo('name').toUpperCase().indexOf("CHROME") != -1 || getBrowserInfo('name').toUpperCase().indexOf("SAFARI") != -1) {
      grid_header_height = grid_header_height + 1;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2020 Openbravo SLU
+ * All portions are Copyright (C) 2011-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,13 +23,6 @@
 OB.Utilities = {};
 
 OB.Utilities.isIE9Strict = false;
-if (
-  (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1 ||
-    navigator.userAgent.toUpperCase().indexOf('TRIDENT') !== -1) &&
-  (document.documentMode && document.documentMode >= 9)
-) {
-  OB.Utilities.isIE9Strict = true;
-}
 
 OB.Utilities.isEdge = false;
 if (navigator.userAgent.toUpperCase().indexOf('EDGE') !== -1) {
@@ -309,43 +302,13 @@ OB.Utilities.determineViewOfFormItem = function(item) {
 OB.Utilities.callAction = function(action) {
   var response;
 
-  function IEApplyHack(method, object, parameters) {
-    if (!object) {
-      object = window;
-    }
-    if (!parameters) {
-      parameters = [];
-    }
-
-    object.customApplyMethod = method;
-
-    var argsString = [],
-      i,
-      length = parameters.length;
-    for (i = 0; i < length; i++) {
-      argsString[i] = 'parameters[' + i + ']';
-    }
-
-    var argsList = argsString.join(',');
-
-    var result = eval('object.customApplyMethod(' + argsList + ');');
-
-    delete object.customApplyMethod;
-
-    return result;
-  }
-
   if (!action || !action.method) {
     return;
   }
   if (action.callback) {
     action.callback();
   } else {
-    if (navigator.userAgent.toUpperCase().indexOf('MSIE') !== -1) {
-      response = IEApplyHack(action.method, action.target, action.parameters);
-    } else {
-      response = action.method.apply(action.target, action.parameters);
-    }
+    response = action.method.apply(action.target, action.parameters);
   }
   return response;
 };

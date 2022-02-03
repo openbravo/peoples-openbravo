@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo SLU
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,7 +55,6 @@ function getStyle(id, isId) {
 }
 
 function changeState(evt, element) {
-  if (window.navigator.userAgent.indexOf("MSIE")!=-1) onFocusMenu();
   if(element == null) {
     element = (!document.all) ? evt.target : event.srcElement;
   } else if (evt == null) {

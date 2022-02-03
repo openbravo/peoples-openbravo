@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2009 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -262,9 +262,6 @@ function mouseClickLogic(evt, obj) {
 function cursorFocus(obj, event) {
   isContextMenuOpened = false;
   if (obj == null || obj == 'null' || obj == '') { return false; }
-  if (navigator.userAgent.toUpperCase().indexOf("MSIE") != -1 && obj.getAttribute('type') == 'checkbox' && (obj.getAttribute('readonly') == 'true' || obj.readOnly)) {
-    return false;
-  }
   if (event == 'onmousedown') {
     if (obj == drawnWindowElement) return true;
     if(!isClickOnGrid==true) blurGrid();
@@ -463,11 +460,9 @@ function drawWindowElementFocus(obj) {
       }
       isFirstTime = false;
     } else if (obj.tagName == 'SELECT') {
-      if (navigator.userAgent.toUpperCase().indexOf('MSIE') == -1) {
-        if (obj.className.indexOf(' Combo_focus') == -1) {
-          obj.className = obj.className.replace('Login_Combo', 'Login_Combo_focus');
-          obj.className = obj.className + ' Combo_focus';
-        }
+      if (obj.className.indexOf(' Combo_focus') == -1) {
+        obj.className = obj.className.replace('Login_Combo', 'Login_Combo_focus');
+        obj.className = obj.className + ' Combo_focus';
       }
       isFirstTime = false;
     } else if (obj.tagName == 'INPUT') {
@@ -554,7 +549,7 @@ function putWindowElementFocus(obj, event) {
         obj.focusLogic('focus');
       }
     } else {
-      if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown" && navigator.userAgent.toUpperCase().indexOf("MSIE") == -1) {
+      if (obj.tagName.toLowerCase() == 'input' && obj.type.toLowerCase() == 'text' && event == "onmousedown") {
       } else {
         obj.focus();
       }
