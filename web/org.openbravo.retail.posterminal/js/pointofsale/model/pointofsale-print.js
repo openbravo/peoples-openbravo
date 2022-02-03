@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2021 Openbravo S.L.U.
+ * Copyright (C) 2013-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -425,6 +425,8 @@
     '../org.openbravo.retail.posterminal/res/displayreceipt.xml';
   OB.OBPOSPointOfSale.Print.CashUpTemplate =
     '../org.openbravo.retail.posterminal/res/printcashup.xml';
+  OB.OBPOSPointOfSale.Print.CashUpKeptCashTemplate =
+    '../org.openbravo.retail.posterminal/res/printcashupkeptcash.xml';
   OB.OBPOSPointOfSale.Print.CashMgmTemplate =
     '../org.openbravo.retail.posterminal/res/printcashmgmt.xml';
   OB.OBPOSPointOfSale.Print.GoodByeTemplate =

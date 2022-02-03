@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ************************************************************************************
+ * Copyright (C) 2022 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+-->
+
+<output>
+    <ticket>
+        <line>
+            <image>ticket-image.png</image>
+        </line>
+        <line>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_CashUpKeptCash_Title')) %></text>
+        </line>
+        <line></line>
+        <line>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblStore') + ': ' + OB.App.TerminalProperty.get('terminal').organization$_identifier) %></text>
+        </line>
+        <line>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTerminal') + ': ' + OB.App.TerminalProperty.get('terminal')._identifier) %></text>
+        </line>
+        <line>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblUser') + ': ' + OB.App.TerminalProperty.get('context').user._identifier) %></text>
+        </line>
+        <line>
+            <text align="center" length="42"><%= OB.UTIL.encodeXMLComponent(OB.I18N.getLabel('OBPOS_LblTime') + ': ' + OB.I18N.formatDate(cashup.report.time) + ' - ' + OB.I18N.formatHour(cashup.report.time)) %></text>
+        </line>
+        <line>
+        </line>
+        <%
+        (cashup.summary.qtyToKeepSummary || []).forEach(payment => {
+        if(printablePaymentMethods.includes(payment.searchKey)) {
+        const paymentMethodName = currentSafeBoxName && safeBoxPaymentMethods.includes(payment.searchKey) ?
+        OB.I18N.getLabel('OBPOS_PaymentMethodOnSafebox', [payment.name, currentSafeBoxName]) :
+        payment.name;
+        if (payment.second && payment.second !== payment.value) {
+        %>
+        <line>
+            <text align="left" length="15"><%= OB.UTIL.encodeXMLComponent(payment.name) %></text>
+            <text align="right" length="15"><%= '(' + OB.App.PrintUtils.printAmount(payment.second) + ' ' + payment.isocode + ')' %></text>
+            <text align="right" length="11"><%= OB.App.PrintUtils.printAmount(payment.value) %></text>
+        </line>
+        <%
+        }else{
+        %>
+        <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(paymentMethodName, 27,
+        OB.App.PrintUtils.printAmount(payment.value), 14) %>
+        <%
+        }
+        }});
+        %>
+        <%= OB.UTIL.encodeXMLMultiLineComponentWithValue(OB.I18N.getLabel('OBPOS_LblTotalQtyToKeep'), 27,
+        OB.App.PrintUtils.printAmount(cashup.summary.totalQtyToKeep), 14, true) %>
+        <line>
+        </line>
+    </ticket>
+</output>

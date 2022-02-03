@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2021 Openbravo S.L.U.
+ * Copyright (C) 2013-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -422,6 +422,9 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-object/cashup/actions/InitCashup"), //
         businesslogic("app/model/business-object/cashup/actions/ProcessCashManagements"), //
 
+        // Messages
+        businesslogic("app/model/business-object/messages/MessagesUtils"), //
+
         // ticket list model
         businesslogic("app/model/business-object/ticket-list/TicketList"), //
         businesslogic("app/model/business-object/ticket-list/TicketListUtils"), //
@@ -450,7 +453,8 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/external-device/printing/PrintTemplateStore"), //
         businesslogic("app/external-device/printing/PrintUtils"), //
         businesslogic("app/external-device/printing/TicketPrinter"), //
-        businesslogic("app/external-device/printing/CashupPrinter")));
+        businesslogic("app/external-device/printing/CashupPrinter"), //
+        businesslogic("app/external-device/printing/CashupKeptCashPrinter")));
 
     for (final String resource : resourceDependency) {
       globalResources.add(createComponentResource(ComponentResourceType.Static,
