@@ -398,7 +398,7 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       for (String additionalProp : additionalProps) {
         final Property property = DalUtil.getPropertyFromPath(entity, additionalProp);
         if (property == null) {
-          log4j.info("Couldn't find property from additional property " + additionalProp
+          log4j.debug("Couldn't find property from additional property " + additionalProp
               + " in entity " + entity);
           continue;
         }
