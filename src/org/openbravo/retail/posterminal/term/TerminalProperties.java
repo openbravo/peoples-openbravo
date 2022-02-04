@@ -105,7 +105,8 @@ public class TerminalProperties extends ModelExtension {
     list.add(new HQLProperty("org.oBPOSApplytckdiscatorder", "obposApplyTicketDiscountsToOrder"));
 
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHUPTEMPLATE, "printCashUpTemplate", list);
-    addTemplateProperty(Organization.PROPERTY_OBPOSKEPTCASHTEMPLATE, "printCashupKeptCashTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSKEPTCASHTEMPLATE, "printCashupKeptCashTemplate",
+        list);
     addTemplateProperty(Organization.PROPERTY_OBPOSCASHMGMTEMPLATE, "printCashMgmTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSTICKETTEMPLATE, "printTicketTemplate", list);
     addTemplateProperty(Organization.PROPERTY_OBPOSRETURNTEMPLATE, "printReturnTemplate", list);
@@ -129,6 +130,7 @@ public class TerminalProperties extends ModelExtension {
     addTemplateProperty(Organization.PROPERTY_OBPOSCANCLAYAWAYTMPLT, "printCanceledLayawayTemplate",
         list);
     addTemplateProperty(Organization.PROPERTY_OBPOSWELCOMETEMPLATE, "printWelcomeTemplate", list);
+    addTemplateProperty(Organization.PROPERTY_OBPOSGOODBYETEMPLATE, "printGoodByeTemplate", list);
 
     // Legal Organization Tax ID
     Organization org = OBDal.getInstance()

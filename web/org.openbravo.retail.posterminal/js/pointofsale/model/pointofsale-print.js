@@ -449,4 +449,30 @@
   OB.OBPOSPointOfSale.Print.printWelcome = function() {
     OB.App.State.Global.printWelcome();
   };
+  OB.OBPOSPointOfSale.Print.printGoodBye = callback => {
+    // Print GoodBye message (Hardware Manager)
+    const templategoodbye = new OB.DS.HWResource(
+      OB.MobileApp.model.get('terminal').printGoodByeTemplate ||
+        OB.OBPOSPointOfSale.Print.GoodByeTemplate
+    );
+    OB.POS.hwserver.print(
+      templategoodbye,
+      {},
+      data => {
+        if (data && data.exception) {
+          OB.UTIL.showError(
+            OB.I18N.getLabel('OBPOS_MsgHardwareServerNotAvailable')
+          );
+          if (callback) {
+            callback(false);
+          }
+        } else {
+          if (callback) {
+            callback(true);
+          }
+        }
+      },
+      OB.DS.HWServer.DISPLAY
+    );
+  };
 })();
