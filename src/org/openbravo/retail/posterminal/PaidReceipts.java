@@ -50,7 +50,6 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
-import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.OrganizationInformation;
@@ -142,13 +141,8 @@ public class PaidReceipts extends JSONProcessSimple {
       // Get PriceListVersion from Order PriceList
       String priceListVersionId = null;
       if (order != null) {
-        priceListVersionId = POSUtils.getPriceListVersionForPriceList(order.getPriceList().getId(),
-            jsonsent.has("parameters") ? OBMOBCUtils.calculateServerDate(
-                jsonsent.getJSONObject("parameters").getString("terminalTime"),
-                jsonsent.getJSONObject("parameters")
-                    .getJSONObject("terminalTimeOffset")
-                    .getLong("value"))
-                : new Date())
+        priceListVersionId = POSUtils
+            .getPriceListVersionForPriceList(order.getPriceList().getId(), order.getOrderDate())
             .getId();
       }
 
