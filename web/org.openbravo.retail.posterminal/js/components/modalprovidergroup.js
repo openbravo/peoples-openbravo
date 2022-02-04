@@ -180,11 +180,7 @@ enyo.kind({
         providerGroup: providerGroup
       })
       .then(response => {
-        OB.info(
-          `ModalProviderGroup: processPayment response: ${JSON.stringify(
-            response
-          )}`
-        );
+        OB.info(`ModalProviderGroup: processPayment response: ${response}`);
 
         const properties = response.properties || {};
         const processedAmount =

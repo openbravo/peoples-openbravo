@@ -130,11 +130,7 @@ enyo.kind({
       })
       .then(
         function(response) {
-          OB.info(
-            `ModalProviderGroupVoid: processVoid response: ${JSON.stringify(
-              response
-            )}`
-          );
+          OB.info(`ModalProviderGroupVoid: processVoid response: ${response}`);
 
           removeTransaction();
           window.setTimeout(this.doHideThisPopup.bind(this), 0);
