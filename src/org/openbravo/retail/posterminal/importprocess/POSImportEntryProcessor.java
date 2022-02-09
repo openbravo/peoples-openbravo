@@ -52,9 +52,10 @@ public class POSImportEntryProcessor extends EntityPersistenceEventObserver {
   private static final Property ORGANIZATION_PROPERTY = IMPORT_ENTRY_ENTITY
       .getProperty(ImportEntry.PROPERTY_ORGANIZATION);
 
-  private static List<String> POSTTYPEOFDATA = Arrays.asList("Order", "BusinessPartner",
+  private static final List<String> POSTTYPEOFDATA = Arrays.asList("Order", "BusinessPartner",
       "BusinessPartnerLocation", "OBPOS_App_Cashup", "FIN_Finacc_Transaction",
-      "OBPOS_RejectQuotation", "OBPOS_CancelLayaway", "OBPOS_VoidLayaway", "OBPOS_Invoice");
+      "OBPOS_RejectQuotation", "OBPOS_CancelLayaway", "OBPOS_VoidLayaway", "OBPOS_Invoice",
+      "OBPOS_SafeBox");
 
   @Override
   protected Entity[] getObservedEntities() {
