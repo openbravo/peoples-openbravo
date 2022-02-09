@@ -265,8 +265,19 @@ public class ShipmentUtils implements TicketPropertyMapping {
             }
           }
           if (attributeSetInstance == null && orderlines.getJSONObject(i).has("originalOrderLineId")
-              && orderlines.getJSONObject(i).has("shipmentlines")) {
-            JSONArray jsonShipmentLines = orderlines.getJSONObject(i).getJSONArray("shipmentlines");
+              && (orderlines.getJSONObject(i).has("shipmentlines")
+                  || orderlines.getJSONObject(i).has("shipmentlineId"))) {
+            JSONArray jsonShipmentLines = new JSONArray();
+            if (orderlines.getJSONObject(i).has("shipmentlines")) {
+              jsonShipmentLines = orderlines.getJSONObject(i).getJSONArray("shipmentlines");
+            } else if (orderlines.getJSONObject(i).has("shipmentlineId")) {
+              JSONObject shipmentLine = new JSONObject();
+              shipmentLine.put("shipLineId",
+                  orderlines.getJSONObject(i).getString("shipmentlineId"));
+              shipmentLine.put("remainingQty",
+                  orderlines.getJSONObject(i).getString("remainingQuantity"));
+              jsonShipmentLines.put(shipmentLine);
+            }
             BigDecimal pendingShipmentQty = new BigDecimal(pendingQty.abs().toString());
             for (int j = 0; j < jsonShipmentLines.length()
                 && pendingShipmentQty.compareTo(BigDecimal.ZERO) > 0; j++) {
