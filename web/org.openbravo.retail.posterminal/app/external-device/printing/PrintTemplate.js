@@ -121,15 +121,32 @@
         const defaultLanguage = OB.App.TerminalProperty.get('terminal')
           .language_string;
 
-        newParams.getOrgVariable = (searchKey, language) => {
+        newParams.getOrgVariable = (
+          searchKey,
+          language,
+          currentDate = new Date().setHours(0, 0, 0, 0)
+        ) => {
           const lang = language || defaultLanguage;
 
-          const orgVariable = orgVariables.find(
-            p =>
-              p.variable === searchKey &&
-              (!p.translatable || p.langCode === lang)
-          );
-
+          const orgVariable = orgVariables
+            .filter(
+              p =>
+                p.variable === searchKey &&
+                (!p.translatable || p.langCode === lang)
+            )
+            .filter(p => {
+              const initialDate = new Date(p.initialdate);
+              const endDate = p.enddate ? new Date(p.enddate) : currentDate;
+              return initialDate <= currentDate && endDate >= currentDate;
+            })
+            .reduce((closer, obj) => {
+              if (!closer) {
+                return obj;
+              }
+              return new Date(closer.initialdate) > new Date(obj.initialdate)
+                ? closer
+                : obj;
+            }, undefined);
           return orgVariable && orgVariable.value;
         };
 
