@@ -63,6 +63,10 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     }
 
     newTicket.updatedBy = payload.orgUserId;
+    // Set flag isLayawayReceipt to identify the receipt is originally a layaway
+    if (newTicket.orderType === 2 || newTicket.isLayaway) {
+      newTicket.isLayawayReceipt = true;
+    }
     return newTicket;
   },
 
