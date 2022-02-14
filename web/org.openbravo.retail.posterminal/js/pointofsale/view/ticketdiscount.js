@@ -678,7 +678,10 @@ enyo.kind({
       }
     }
     if (this.amt) {
-      this.setContent(this.originalText + ' - ' + this.amt + ' ' + this.units);
+      const unitsSeparator = this.units === '%' ? '' : ' ';
+      this.setContent(
+        this.originalText + ' - ' + this.amt + unitsSeparator + this.units
+      );
     } else {
       this.setContent(this.originalText);
     }
