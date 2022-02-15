@@ -1061,6 +1061,12 @@
     },
 
     postLoginActions: function() {
+      if (OB.UTIL.localStorage.getItem('benchmarkScore')) {
+        OB.info(
+          'Performance test result: ' +
+            OB.UTIL.localStorage.getItem('benchmarkScore')
+        );
+      }
       OB.debug('next process: renderTerminalMain');
       //MASTER DATA REFRESH
       var minIncRefresh = this.get('terminal').terminalType
