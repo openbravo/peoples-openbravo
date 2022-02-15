@@ -135,7 +135,7 @@
                 (!p.translatable || p.langCode === lang)
             )
             .filter(p => {
-              const initialDate = new Date(p.initialdate);
+              const initialDate = p.initialdate ? new Date(p.initialdate) : new Date(null);
               const endDate = p.enddate ? new Date(p.enddate) : currentDate;
               return initialDate <= currentDate && endDate >= currentDate;
             })
