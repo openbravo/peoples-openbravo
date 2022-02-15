@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -28,6 +28,11 @@ public class CrossStoreInfoProperties extends ModelExtension {
     + "  COALESCE(l.addressLine1, ''), "
     + "  CASE WHEN l.addressLine2 IS NOT NULL THEN "
     + "    CONCAT(' - ',l.addressLine2,',') "
+    + "    ELSE"
+    + "      CASE WHEN l.addressLine1 IS NOT NULL THEN "
+    + "         CONCAT(',') "
+    + "         ELSE '' "
+    + "      END"
     + "  END, "
     + "  ' ', "
     + "  COALESCE(l.postalCode, ''), "
@@ -35,6 +40,7 @@ public class CrossStoreInfoProperties extends ModelExtension {
     + "  COALESCE(l.cityName, ''), "
     + "  CASE WHEN r.name IS NOT NULL THEN "
     + "    CONCAT(' (',trim(r.name),'),') "
+    + "    ELSE '' "
     + "  END, "
     + "  ' ', "
     + "  COALESCE(c.name, '')"
