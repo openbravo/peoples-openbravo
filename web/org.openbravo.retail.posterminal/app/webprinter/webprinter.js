@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2021 Openbravo S.L.U.
+ * Copyright (C) 2018-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -32,8 +32,13 @@
   const getImageData = data => {
     return new Promise((resolve, reject) => {
       const img = new Image();
+      const rejectTimeOut = setTimeout(() => {
+        img.onload = null;
+        reject();
+      }, 2000);
       img.src = data.image;
       img.onload = () => {
+        clearTimeout(rejectTimeOut);
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
@@ -44,7 +49,10 @@
         data.imagedata = ctx.getImageData(0, 0, canvas.width, canvas.height);
         resolve(data);
       };
-      img.onerror = reject;
+      img.onerror = () => {
+        clearTimeout(rejectTimeOut);
+        reject();
+      };
     });
   };
 
