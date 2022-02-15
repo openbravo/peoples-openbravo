@@ -126,6 +126,7 @@
         result = result
           .then(() => this.processLine(el))
           .then(output => {
+            printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.CODE_TABLE);
             printerdoc = OB.ARRAYS.append(printerdoc, output);
             printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
           });

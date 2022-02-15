@@ -251,6 +251,7 @@
     this.BAR_CODE02 = new Uint8Array([0x1d, 0x6b, 0x02]);
     this.BAR_CODE128 = new Uint8Array([0x1d, 0x6b, 0x49]);
     this.BAR_CODE128TYPE = new Uint8Array([0x7b, 0x42]);
+    this.CODE_TABLE = new Uint8Array();
     this.encoderEAN13 = new TextEncoder('utf-8');
     this.encoderCODE128 = new CODE128Encoder();
 
