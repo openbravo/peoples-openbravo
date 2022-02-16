@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2021 Openbravo S.L.U.
+ * Copyright (C) 2014-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -459,6 +459,13 @@ OB.OBPOSCloseCash.Model.CloseCash = OB.Model.TerminalWindowModel.extend({
         activePaymentsList.push(payment);
       }
     });
+
+    if (activePaymentsList.length === 0) {
+      this.stepsDefinition.forEach(step => {
+        step.active =
+          step.name !== 'OB.CloseCash.PostPrintAndClose' ? false : true;
+      });
+    }
 
     activePaymentsList.forEach((payment, index) => {
       let expected = 0;
