@@ -82,7 +82,7 @@ public class SE_Payment_MultiCurrency extends SimpleCallout {
             finAccTxnAmount = converted;
             info.addResult("inpfinaccTxnAmount", finAccTxnAmount);
           } else {
-            info.addResult("inpfinaccTxnAmount", strAmount);
+            info.addResult("inpfinaccTxnAmount", new BigDecimal(strAmount));
           }
         } else {
           info.addResult("inpfinaccTxnConvertRate", finAccConvertRate);
