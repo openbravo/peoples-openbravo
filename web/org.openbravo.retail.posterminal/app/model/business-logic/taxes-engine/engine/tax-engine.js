@@ -106,16 +106,16 @@
       return 0;
     };
     const joinRuleAndZone = rule => {
-      const updatedRule = rule.taxZones
-        ? rule.taxZones.map(zone => ({ ...zone, ...rule }))
-        : rule;
-      updatedRule.zoneCountry = rule.zoneCountry || rule.country;
-      updatedRule.zoneRegion = rule.zoneRegion || rule.region;
-      updatedRule.zoneDestinationCountry =
-        rule.zoneDestinationCountry || rule.destinationCountry;
-      updatedRule.zoneDestinationRegion =
-        rule.zoneDestinationRegion || rule.destinationRegion;
-      return updatedRule;
+      return (rule.taxZones || [rule]).map(zone => {
+        const updatedRule = { ...zone, ...rule };
+        updatedRule.zoneCountry = zone.zoneCountry || rule.country;
+        updatedRule.zoneRegion = zone.zoneRegion || rule.region;
+        updatedRule.zoneDestinationCountry =
+          zone.zoneDestinationCountry || rule.destinationCountry;
+        updatedRule.zoneDestinationRegion =
+          zone.zoneDestinationRegion || rule.destinationRegion;
+        return updatedRule;
+      });
     };
     const checkDestinationCountry = rule => {
       return (
