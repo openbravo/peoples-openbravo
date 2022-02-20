@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -149,7 +149,11 @@ isc.OBToolbar.addClassProperties({
         selectedRecords = view.viewGrid.getSelectedRecords(),
         form = view.viewGrid.getEditForm(),
         allFieldsSet = form && form.allRequiredFieldsSet(),
-        isNew = form && form.isNew;
+        isNew = form && form.isNew,
+        gridIsLoading,
+        gridData;
+      gridData = view.viewGrid.getData();
+      gridIsLoading = isc.isA.ResultSet(gridData) && !gridData.lengthIsKnown();
       this.setDisabled(
         view.viewGrid.isGrouped ||
           view.isShowingForm ||
@@ -160,6 +164,7 @@ isc.OBToolbar.addClassProperties({
           (selectedRecords && selectedRecords.length > 1) ||
           view.isShowingTree ||
           !view.roleCanCreateRecords() ||
+          gridIsLoading ||
           (isNew && !allFieldsSet)
       );
     },
@@ -176,7 +181,11 @@ isc.OBToolbar.addClassProperties({
     prompt: OB.I18N.getLabel('OBUIAPP_NewDoc'),
     updateState: function() {
       var view = this.view,
-        form = view.viewForm;
+        form = view.viewForm,
+        gridIsLoading,
+        gridData;
+      gridData = view.viewGrid.getData();
+      gridIsLoading = isc.isA.ResultSet(gridData) && !gridData.lengthIsKnown();
       if (view.isShowingForm) {
         this.setDisabled(
           form.isSaving ||
@@ -184,6 +193,7 @@ isc.OBToolbar.addClassProperties({
             view.singleRecord ||
             !view.hasValidState() ||
             view.editOrDeleteOnly ||
+            gridIsLoading ||
             !view.roleCanCreateRecords()
         );
       } else {
@@ -192,6 +202,7 @@ isc.OBToolbar.addClassProperties({
             view.singleRecord ||
             !view.hasValidState() ||
             view.editOrDeleteOnly ||
+            gridIsLoading ||
             !view.roleCanCreateRecords()
         );
       }

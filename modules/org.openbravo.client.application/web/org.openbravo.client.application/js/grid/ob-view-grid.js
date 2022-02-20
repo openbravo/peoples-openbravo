@@ -209,6 +209,10 @@ isc.OBViewGrid.addProperties({
       this.context.params = this.grid.getFetchRequestParams(
         requestProperties.params
       );
+      if (this.grid.view.toolBar) {
+        // Update the toolbar buttons to let them react to the grid being loaded
+        this.grid.view.toolBar.updateButtonState(true);
+      }
       if (this.grid.isFilteringExternally) {
         // requests triggered by filtering the grid should always load the first page
         // if after that the user scrolls down, the isFilteringExternally flag will be false and
