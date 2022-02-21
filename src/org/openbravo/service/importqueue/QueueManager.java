@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -15,11 +16,19 @@ import javax.inject.Inject;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
+import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.importprocess.ImportEntry;
 import org.openbravo.service.importprocess.ImportEntryPreProcessor;
-import org.openbravo.service.importqueue.impl.NoQueue;
+import org.openbravo.service.importqueue.impl.RabbitQueue;
 
 @ApplicationScoped
 public class QueueManager implements ImportEntryProcessor {
@@ -32,8 +41,14 @@ public class QueueManager implements ImportEntryProcessor {
 
   @PostConstruct
   private void init() {
-    queue = new NoQueue();
+    // queue = new NoQueue();
+    queue = new RabbitQueue();
     queue.start(this);
+  }
+
+  @PreDestroy
+  private void close() {
+    queue.close();
   }
 
   /**
@@ -43,33 +58,37 @@ public class QueueManager implements ImportEntryProcessor {
    * 
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
-  public void publishImportEntry(String qualifier, String json) {
-    queue.publish(qualifier, json);
+  public void publishImportEntry(String qualifier, String data) {
+    queue.publish(qualifier, data);
   }
 
   @Override
-  public void processImportEntry(String qualifier, String json) throws QueueException {
-
-    OBContext cnx = OBContext.getOBContext();
-    String originalUser = cnx.getUser().getId();
-    String originalRole = cnx.getRole().getId();
-    String originalClient = cnx.getCurrentClient().getId();
-    String originalOrg = cnx.getCurrentOrganization().getId();
+  public void processImportEntry(String qualifier, String data) throws QueueException {
 
     RecordProcessor processor = queueProcessorsList.select(new QueueManager.Selector(qualifier))
         .get();
 
     OBContext.setAdminMode(false);
     try {
-      JSONObject jsonObject = new JSONObject(json);
-      JSONArray data = jsonObject.getJSONArray("data");
-      for (int i = 0; i < data.length(); i++) {
+      JSONObject jsonObject = new JSONObject(data);
+      JSONArray datalist = jsonObject.getJSONArray("data");
+      for (int i = 0; i < datalist.length(); i++) {
         try {
-          JSONObject record = data.getJSONObject(i);
-          final String orgId = getOrganizationId(record, originalOrg);
-          final String userId = getUserId(record, originalUser);
-          OBContext.setOBContext(userId, originalRole, originalClient, orgId);
+          JSONObject record = datalist.getJSONObject(i);
+
+          String orgId = getOrganizationId(record);
+          Organization org = OBDal.getInstance().get(Organization.class, orgId);
+          Client client = org.getClient();
+          String clientId = client.getId();
+          String userId = getUserId(record);
+          User user = OBDal.getInstance().get(User.class, userId);
+          Role role = user.getDefaultRole();
+          String roleId = role.getId();
+          initOBContext(userId, roleId, clientId, orgId);
+
           processor.processRecord(record);
+          OBDal.getInstance().commitAndClose();
+
         } catch (Exception e) {
           throw new QueueException(e.getMessage(), e);
         }
@@ -77,24 +96,69 @@ public class QueueManager implements ImportEntryProcessor {
     } catch (JSONException e) {
       throw new QueueException(e.getMessage(), e);
     } finally {
-      OBContext.setOBContext(originalUser, originalRole, originalClient, originalOrg);
+      OBContext.setOBContext((OBContext) null);
+      OBContext.restorePreviousMode();
+      ensureConnectionRelease();
+    }
+  }
+
+  private void ensureConnectionRelease() {
+    // bit rough but ensures that the connection is released/closed
+    try {
+      OBDal.getInstance().rollbackAndClose();
+    } catch (Exception ignored) {
+    }
+
+    try {
+      if (TriggerHandler.getInstance().isDisabled()) {
+        TriggerHandler.getInstance().enable();
+      }
+      OBDal.getInstance().commitAndClose();
+    } catch (Exception ignored) {
+    }
+  }
+
+  private void initOBContext(String userId, String roleId, String clientId, String orgId) {
+
+    OBContext.setOBContext(userId, roleId, clientId, orgId);
+    OBContext context = OBContext.getOBContext();
+    context.getEntityAccessChecker(); // forcing access checker initialization
+    context.getOrganizationStructureProvider().reInitialize();
+
+    setVariablesSecureApp(context);
+
+    OBDal.getInstance().getSession().clear();
+
+    SessionInfo.setUserId(userId);
+    SessionInfo.setProcessType(SessionInfo.IMPORT_ENTRY_PROCESS);
+    SessionInfo.setProcessId(SessionInfo.IMPORT_ENTRY_PROCESS);
+  }
+
+  private void setVariablesSecureApp(OBContext obContext) {
+    OBContext.setAdminMode(true);
+    try {
+      final VariablesSecureApp variablesSecureApp = new VariablesSecureApp(
+          obContext.getUser().getId(), obContext.getCurrentClient().getId(),
+          obContext.getCurrentOrganization().getId(), obContext.getRole().getId(),
+          obContext.getLanguage().getLanguage());
+      RequestContext.get().setVariableSecureApp(variablesSecureApp);
+    } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  private String getOrganizationId(final JSONObject jsonRecord, final String currentOrg)
-      throws JSONException {
+  private String getOrganizationId(final JSONObject jsonRecord)
+      throws QueueException, JSONException {
     if (jsonRecord.has("trxOrganization")) {
       return jsonRecord.getString("trxOrganization");
     }
     if (jsonRecord.has("organization")) {
       return jsonRecord.getString("organization");
     }
-    return currentOrg;
+    throw new QueueException("Cannot find Organization");
   }
 
-  private String getUserId(final JSONObject jsonRecord, final String currentUserId)
-      throws JSONException {
+  private String getUserId(final JSONObject jsonRecord) throws QueueException, JSONException {
     if (jsonRecord.has("updatedBy") && !"null".equals(jsonRecord.getString("updatedBy"))) {
       return jsonRecord.getString("updatedBy");
     }
@@ -104,7 +168,7 @@ public class QueueManager implements ImportEntryProcessor {
     if (jsonRecord.has("userId") && !"null".equals(jsonRecord.getString("userId"))) {
       return jsonRecord.getString("userId");
     }
-    return currentUserId;
+    throw new QueueException("Cannot find User");
   }
 
   /**

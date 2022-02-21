@@ -14,9 +14,13 @@ public class NoQueue implements QueueImplementation {
   }
 
   @Override
-  public void publish(String qualifier, String json) {
+  public void close() {
+  }
+
+  @Override
+  public void publish(String qualifier, String data) {
     try {
-      processor.processImportEntry(qualifier, json);
+      processor.processImportEntry(qualifier, data);
     } catch (QueueException e) {
       // PROTOTYPE:
       throw new RuntimeException(e);
