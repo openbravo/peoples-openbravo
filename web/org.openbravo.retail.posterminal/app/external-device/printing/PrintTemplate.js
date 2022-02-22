@@ -118,37 +118,18 @@
       const newParams = { ...params };
       if (!this.isLegacyTemplate()) {
         const orgVariables = await OB.App.OrgVariables.getAll();
-        const defaultLanguage = OB.App.TerminalProperty.get('terminal')
-          .language_string;
 
-        newParams.getOrgVariable = (searchKey, language, date) => {
-          const lang = language || defaultLanguage;
-          const today = new Date();
-          today.setHours(0, 0, 0);
-          const currentDate = date || today;
-
-          const orgVariable = orgVariables
-            .filter(
-              p =>
-                p.variable === searchKey &&
-                (!p.translatable || p.langCode === lang)
-            )
-            .filter(p => {
-              const initialDate = p.initialdate
-                ? new Date(p.initialdate)
-                : new Date(null);
-              const endDate = p.enddate ? new Date(p.enddate) : currentDate;
-              return initialDate <= currentDate && endDate >= currentDate;
-            })
-            .reduce((closer, obj) => {
-              if (!closer) {
-                return obj;
-              }
-              return new Date(closer.initialdate) > new Date(obj.initialdate)
-                ? closer
-                : obj;
-            }, undefined);
-          return orgVariable && orgVariable.value;
+        newParams.getOrgVariable = (
+          searchKey,
+          language,
+          currentDate = new Date()
+        ) => {
+          return OB.App.OrgVariables.getOrgVariable.get(
+            searchKey,
+            language,
+            currentDate,
+            orgVariables
+          );
         };
 
         return newParams;
