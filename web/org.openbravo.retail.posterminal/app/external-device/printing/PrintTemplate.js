@@ -121,12 +121,11 @@
         const defaultLanguage = OB.App.TerminalProperty.get('terminal')
           .language_string;
 
-        newParams.getOrgVariable = (
-          searchKey,
-          language,
-          currentDate = new Date().setHours(0, 0, 0, 0)
-        ) => {
+        newParams.getOrgVariable = (searchKey, language, date) => {
           const lang = language || defaultLanguage;
+          const today = new Date();
+          today.setHours(0, 0, 0);
+          const currentDate = date || today;
 
           const orgVariable = orgVariables
             .filter(
