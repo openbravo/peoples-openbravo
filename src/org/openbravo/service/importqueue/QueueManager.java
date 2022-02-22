@@ -58,43 +58,55 @@ public class QueueManager implements ImportEntryProcessor {
    * 
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
-  public void publishImportEntry(String qualifier, String data) {
-    queue.publish(qualifier, data);
+  public void publishImportEntry(JSONObject importentry) {
+    queue.publish(importentry);
   }
 
   @Override
-  public void processImportEntry(String qualifier, String data) throws QueueException {
-
-    RecordProcessor processor = queueProcessorsList.select(new QueueManager.Selector(qualifier))
-        .get();
+  public void processImportEntry(JSONObject message) throws QueueException, JSONException {
 
     OBContext.setAdminMode(false);
+
+    // {
+    // "messageId":"D06E6D14FE94540620C1155521EB3E9B",
+    // "entrykey":"Order"
+    // "csrfToken":"F84D68997AD7450F83B52ED7EB366028",
+    // "appName":"WebPOS",
+    // "client":"39363B0921BB4293B48383844325E84C",
+    // "organization":"D270A5AC50874F8BA67A88EE977F8E3B",
+    // "pos":"9104513C2D0741D4850AE8493998A7C8",
+    // "terminalName":"VBS-1",
+    // "timeout":10000,
+    // "parameters":{
+    // "terminalTime":"2022-02-21T23:07:10.489Z",
+    // "terminalTimeOffset":{
+    // "value":-60
+    // }
+    // },
+    // "data":[
+
     try {
-      JSONObject jsonObject = new JSONObject(data);
-      JSONArray datalist = jsonObject.getJSONArray("data");
+      RecordProcessor processor = queueProcessorsList
+          .select(new QueueManager.Selector(message.getString("entrykey")))
+          .get();
+
+      JSONArray datalist = message.getJSONArray("data");
       for (int i = 0; i < datalist.length(); i++) {
-        try {
-          JSONObject record = datalist.getJSONObject(i);
+        JSONObject record = datalist.getJSONObject(i);
+        String orgId = getOrganizationId(record);
+        Organization org = OBDal.getInstance().get(Organization.class, orgId);
+        Client client = org.getClient();
+        String clientId = client.getId();
+        String userId = getUserId(record);
+        User user = OBDal.getInstance().get(User.class, userId);
+        Role role = user.getDefaultRole();
+        String roleId = role.getId();
+        initOBContext(userId, roleId, clientId, orgId);
 
-          String orgId = getOrganizationId(record);
-          Organization org = OBDal.getInstance().get(Organization.class, orgId);
-          Client client = org.getClient();
-          String clientId = client.getId();
-          String userId = getUserId(record);
-          User user = OBDal.getInstance().get(User.class, userId);
-          Role role = user.getDefaultRole();
-          String roleId = role.getId();
-          initOBContext(userId, roleId, clientId, orgId);
-
-          processor.processRecord(record);
-          OBDal.getInstance().commitAndClose();
-
-        } catch (Exception e) {
-          throw new QueueException(e.getMessage(), e);
-        }
+        processor.processRecord(record);
       }
-    } catch (JSONException e) {
-      throw new QueueException(e.getMessage(), e);
+      OBDal.getInstance().commitAndClose();
+
     } finally {
       OBContext.setOBContext((OBContext) null);
       OBContext.restorePreviousMode();

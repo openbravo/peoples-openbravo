@@ -87,8 +87,7 @@ public class RabbitQueue implements QueueImplementation {
 
     try {
       JSONObject jsonmessage = new JSONObject(message);
-      processor.processImportEntry(jsonmessage.getString("qualifier"),
-          jsonmessage.getString("data"));
+      processor.processImportEntry(jsonmessage);
     } catch (QueueException | JSONException e) {
       // TODO PROTOTYPE:
       log.warn("Error processing Import Entry", e);
@@ -99,13 +98,12 @@ public class RabbitQueue implements QueueImplementation {
   }
 
   @Override
-  public void publish(String qualifier, String data) {
+  public void publish(JSONObject message) {
     try {
-      String message = new JSONObject().put("qualifier", qualifier).put("data", data).toString();
       // Publishs to the DEFAULT EXCHANGE, ROUTING KEY is the QUEUE NAME
       exchangeChannel.basicPublish(exchangeName, "", null,
-          message.getBytes(StandardCharsets.UTF_8));
-    } catch (IOException | JSONException e) {
+          message.toString().getBytes(StandardCharsets.UTF_8));
+    } catch (IOException e) {
       // TODO PROTOTYPE:
       log.warn("Cannot publish message", e);
     }
