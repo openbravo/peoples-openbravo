@@ -9,7 +9,7 @@
 
 package org.openbravo.retail.posterminal.master;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,21 +25,13 @@ public class DiscountFilterAvailabilityProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
-      private static final long serialVersionUID = 1L;
-      {
-        add(new HQLProperty("pav.id", "id"));
-        add(new HQLProperty("pav.promotionDiscount.id", "priceAdjustment"));
-
-        add(new HQLProperty("pav.day", "day"));
-        add(new HQLProperty("pav.startingTime", "startingTime"));
-        add(new HQLProperty("pav.endingTime", "endingTime"));
-
-        add(new HQLProperty(
+    List<HQLProperty> list = Arrays.asList(new HQLProperty("pav.id", "id"),
+        new HQLProperty("pav.promotionDiscount.id", "priceAdjustment"),
+        new HQLProperty("pav.day", "day"), new HQLProperty("pav.startingTime", "startingTime"),
+        new HQLProperty("pav.endingTime", "endingTime"),
+        new HQLProperty(
             "(case when pav.active = 'Y' and pav.promotionDiscount.active = 'Y' then true else false end)",
             "active"));
-      }
-    };
     return list;
   }
 }

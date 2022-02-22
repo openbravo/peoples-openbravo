@@ -45,20 +45,21 @@ public class DiscountFilterAvailability extends Discount {
       final HQLPropertyList regularDiscountFilterAvailabilityPropertyExtensionHQLProperties,
       final JSONObject jsonsent) throws JSONException {
     final String operator = jsonsent.getString("operator");
-    final StringBuilder query = new StringBuilder();
-    query.append(" select");
-    query.append(regularDiscountFilterAvailabilityPropertyExtensionHQLProperties.getHqlSelect());
-    query.append(" from PriceAdjustmentAvailability pav");
-    query.append(" where (pav.$incrementalUpdateCriteria");
-    query.append(" " + operator + " pav.promotionDiscount.$incrementalUpdateCriteria )");
-    query.append(" and exists (");
-    query.append("   select 1");
-    query.append("   " + getPromotionsHQL(jsonsent, false));
-    query.append("   and pav.promotionDiscount.id = p.id");
-    query.append(" )");
-    query.append(" and pav.$paginationByIdCriteria");
-    query.append(" order by pav.id");
-    return query.toString();
+
+    // @formatter:off
+    String query = " select " +
+                     regularDiscountFilterAvailabilityPropertyExtensionHQLProperties.getHqlSelect() + 
+                   " from PriceAdjustmentAvailability pav " +
+                   " where (pav.$incrementalUpdateCriteria " +
+                     operator + " pav.promotionDiscount.$incrementalUpdateCriteria ) " +
+                   " and exists ( " +
+                   "   select 1 " +
+                       getPromotionsHQL(jsonsent, false) +
+                   "   and pav.promotionDiscount.id = p.id " +
+                   " )" +
+                   " and pav.$paginationByIdCriteria " +
+                   " order by pav.id";
+    return query;
   }
 
   @Override
