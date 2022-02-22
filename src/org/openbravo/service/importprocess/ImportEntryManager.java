@@ -430,7 +430,11 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    */
   public void setImportEntryProcessed(String importEntryId) {
     ImportEntry importEntry = OBDal.getInstance().get(ImportEntry.class, importEntryId);
-    if (!isHandlingImportEntries()) {
+    // If the import entry is being processed through one of the threads of the ImportEntryManager
+    // and we are in cluster but the current node currently is not in charge of managing import
+    // entries, we don't allow to set the import entry status as processed to avoid potential
+    // duplicated executions
+    if (!isHandlingImportEntries() && Thread.currentThread() instanceof ImportEntryThread) {
       throw new OBException("Import entry " + importEntryId + " could not be processed in node "
           + clusterService.getNodeIdentifier() + " because active node is "
           + clusterService.getIdentifierOfNodeHandlingService());
@@ -807,16 +811,21 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
 
     @Override
     public Thread newThread(Runnable runnable) {
+      return new ImportEntryThread(group, runnable, threadNumber.getAndIncrement());
+    }
+  }
 
-      final Thread thread = new Thread(group, runnable,
-          "Import Entry - " + threadNumber.getAndIncrement(), 0);
-
-      if (thread.getPriority() != Thread.NORM_PRIORITY) {
-        thread.setPriority(Thread.NORM_PRIORITY);
+  /**
+   * A Thread wrapper used to identify the threads used by the ImportEntryManager for processing the
+   * import entries
+   */
+  private static class ImportEntryThread extends Thread {
+    private ImportEntryThread(ThreadGroup group, Runnable runnable, int threadNumber) {
+      super(group, runnable, "Import Entry - " + threadNumber, 0);
+      if (getPriority() != Thread.NORM_PRIORITY) {
+        setPriority(Thread.NORM_PRIORITY);
       }
-
-      thread.setDaemon(true);
-      return thread;
+      setDaemon(true);
     }
   }
 }
