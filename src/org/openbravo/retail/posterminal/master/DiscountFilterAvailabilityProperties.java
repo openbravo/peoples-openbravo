@@ -25,10 +25,12 @@ public class DiscountFilterAvailabilityProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    List<HQLProperty> list = Arrays.asList(new HQLProperty("pav.id", "id"),
-        new HQLProperty("pav.promotionDiscount.id", "priceAdjustment"),
-        new HQLProperty("pav.day", "day"), new HQLProperty("pav.startingTime", "startingTime"),
-        new HQLProperty("pav.endingTime", "endingTime"),
+    List<HQLProperty> list = Arrays.asList(//
+        new HQLProperty("pav.id", "id"), //
+        new HQLProperty("pav.promotionDiscount.id", "priceAdjustment"), //
+        new HQLProperty("pav.day", "day"), //
+        new HQLProperty("pav.startingTime", "startingTime"), //
+        new HQLProperty("pav.endingTime", "endingTime"), //
         new HQLProperty(
             "(case when pav.active = 'Y' and pav.promotionDiscount.active = 'Y' then true else false end)",
             "active"));
