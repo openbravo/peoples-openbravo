@@ -45,6 +45,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="COUNT_ON_REMOVE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBPOS_SAFEBOX_ERR_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -58,6 +62,7 @@
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="VALUE"/>
       </unique>
+      <check name="OBPOS_SAFEBOX_COUNTREMOVE_CHK"><![CDATA[COUNT_ON_REMOVE IN ('Y', 'N')]]></check>
       <check name="OBPOS_SAFEBOX_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
