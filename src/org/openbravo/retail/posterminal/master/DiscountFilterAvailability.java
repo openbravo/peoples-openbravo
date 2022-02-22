@@ -49,7 +49,7 @@ public class DiscountFilterAvailability extends Discount {
     // @formatter:off
     String query = " select " +
                      regularDiscountFilterAvailabilityPropertyExtensionHQLProperties.getHqlSelect() + 
-                   " from PriceAdjustmentAvailability pav " +
+                   " from PricingAdjustmentAvailability pav " +
                    " where (pav.$incrementalUpdateCriteria " +
                      operator + " pav.promotionDiscount.$incrementalUpdateCriteria ) " +
                    " and exists ( " +
@@ -59,6 +59,8 @@ public class DiscountFilterAvailability extends Discount {
                    " )" +
                    " and pav.$paginationByIdCriteria " +
                    " order by pav.id";
+    // @formatter:on
+
     return query;
   }
 
