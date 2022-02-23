@@ -632,7 +632,41 @@ enyo.kind({
         true
       );
       this.model.set('cashUpSent', true);
-      this.model.processAndFinishCloseCash();
+
+      const currentSafeBox = JSON.parse(
+        OB.UTIL.localStorage.getItem('currentSafeBox')
+      );
+      if (
+        this.name === 'cashUp' &&
+        currentSafeBox != null &&
+        currentSafeBox.countOnRemove
+      ) {
+        const me = this;
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBPOS_CountOnRemoveSafeBoxTitle'),
+          OB.I18N.getLabel('OBPOS_CountOnRemoveSafeBoxText'),
+          [
+            {
+              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              isConfirmButton: true,
+              action: function() {
+                OB.UTIL.localStorage.getItem('currentSafeBox', currentSafeBox);
+                OB.POS.navigate('retail.countSafeBox');
+              }
+            },
+            {
+              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+            }
+          ],
+          {
+            onHideFunction: function() {
+              me.model.processAndFinishCloseCash();
+            }
+          }
+        );
+      } else {
+        this.model.processAndFinishCloseCash();
+      }
     } else if (nextsubstep < 0) {
       // jump to previous step
       const previous = this.model.getPreviousStep();
