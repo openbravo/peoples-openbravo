@@ -454,6 +454,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
           final JSONObject jsonSafeBoxObject = new JSONObject();
           jsonSafeBoxObject.put("name", safeBox.getCommercialName());
           jsonSafeBoxObject.put("searchKey", safeBox.getSearchKey());
+          jsonSafeBoxObject.put("countOnRemove", safeBox.isCountOnRemove());
           if (safeBox.getUser() != null) {
             jsonSafeBoxObject.put("userId", safeBox.getUser().getId());
             jsonSafeBoxObject.put("userName", safeBox.getUser().getName());
