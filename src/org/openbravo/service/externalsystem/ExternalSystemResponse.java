@@ -23,13 +23,95 @@ package org.openbravo.service.externalsystem;
  */
 public class ExternalSystemResponse {
 
-  private String data;
+  /**
+   * Defines the supported external system response types after a communication with an external
+   * system:<br>
+   * - SUCCESS: when the communication was correct<br>
+   * - ERROR: to indicate that there were errors during the communication with the external system
+   */
+  public enum Type {
+    SUCESS, ERROR
+  }
 
-  public ExternalSystemResponse(String data) {
+  private Object data;
+  private int statusCode;
+  private Type type;
+  private String error;
+
+  /**
+   * Creates a new ExternalSystemResponse. Instance of this class must be created with a
+   * {@link ExternalSystemResponseBuilder}.
+   */
+  ExternalSystemResponse() {
+  }
+
+  /**
+   * @return the data received in the external system response
+   */
+  public Object getData() {
+    return data;
+  }
+
+  /**
+   * Sets the data received from the external system response
+   * 
+   * @param data
+   *          the data received in the external system response
+   */
+  void setData(Object data) {
     this.data = data;
   }
 
-  public String getData() {
-    return data;
+  /**
+   * @return the type of the external system response
+   * @see Type
+   */
+  public Type getType() {
+    return type;
+  }
+
+  /**
+   * Sets the type of the external system response
+   * 
+   * @param type
+   *          the response type
+   * @see Type
+   */
+  void setType(Type type) {
+    this.type = type;
+  }
+
+  /**
+   * @return the status code of the external system response
+   */
+  public int getStatusCode() {
+    return statusCode;
+  }
+
+  /**
+   * Sets the status code of the external system response
+   * 
+   * @param statusCode
+   *          the status code of the response
+   */
+  void setStatusCode(int statusCode) {
+    this.statusCode = statusCode;
+  }
+
+  /**
+   * @return the error information of the external system response
+   */
+  public String getError() {
+    return error;
+  }
+
+  /**
+   * Sets the error information of the external system response
+   * 
+   * @param error
+   *          the error information
+   */
+  void setError(String error) {
+    this.error = error;
   }
 }

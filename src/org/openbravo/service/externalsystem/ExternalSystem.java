@@ -20,26 +20,41 @@ package org.openbravo.service.externalsystem;
 
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 /**
  * Used to define the communication with an external system
  */
-public abstract class ExternalSystem {
-
-  public ExternalSystem() {
-    // TODO: set config from DB model
-  }
+public interface ExternalSystem {
 
   /**
-   * Push information into the external system
+   * Configures the external system instance with the provided configuration
    * 
-   * @param inputStreamSupplier
-   *          Supplies the input stream with the data to be pushed
+   * @param configuration
+   *          Provides the configuration data of the external system
+   * @throws ExternalSystemConfigurationError
+   *           in case the external system can not be properly configured
+   */
+  public void configure(ExternalSystemData configuration);
+
+  /**
+   * Sends information to the external system
+   * 
+   * @param inputStream
+   *          The input stream with the data to be sent
    * 
    * @return a completable future with an ExternalSystemResponse containing the response data coming
    *         from the external system
    */
-  public abstract CompletableFuture<ExternalSystemResponse> push(
-      Supplier<? extends InputStream> inputStreamSupplier);
+  public CompletableFuture<ExternalSystemResponse> send(InputStream inputStream);
+
+  /**
+   * Tests the connectivity with the external system
+   * 
+   * @param inputStream
+   *          The input stream with the data to be sent for testing
+   * 
+   * @return a completable future with an ExternalSystemResponse containing the response data coming
+   *         from the external system
+   */
+  public CompletableFuture<ExternalSystemResponse> test(InputStream inputStream);
 }

@@ -18,10 +18,64 @@
  */
 package org.openbravo.service.externalsystem;
 
-/**
- * Retrieves the {@ExternalSystem} instances used to communicate with an external system in
- * particular
- */
-public class ExternalSystemFactory {
+import java.util.Optional;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openbravo.dal.service.OBDal;
+
+/**
+ * Retrieves {@ExternalSystem} instances used to communicate with different external systems
+ */
+@ApplicationScoped
+public class ExternalSystemFactory {
+  private static final Logger log = LogManager.getLogger();
+
+  @Inject
+  @Any
+  private Instance<ExternalSystem> externalSystems;
+
+  /**
+   * Retrieves an {@link ExternalSystem} instance configured with the provided configuration
+   * 
+   * @param configurationId
+   *          The ID of the configuration of the external system
+   * @return an Optional with the external system instance or an empty Optional in case it is not
+   *         possible to create it for example due to a configuration problem
+   */
+  public Optional<ExternalSystem> getExternalSystem(String configurationId) {
+    ExternalSystemData configuration = OBDal.getInstance()
+        .get(ExternalSystemData.class, configurationId);
+    return getExternalSystem(configuration);
+  }
+
+  /**
+   * Retrieves an {@link ExternalSystem} instance configured with the provided configuration
+   * 
+   * @param configuration
+   *          The configuration of the external system
+   * @return an Optional with the external system instance or an empty Optional in case it is not
+   *         possible to create it for example due to a configuration problem
+   */
+  public Optional<ExternalSystem> getExternalSystem(ExternalSystemData configuration) {
+    String protocol = configuration.getProtocol();
+    return externalSystems.select(new ProtocolSelector(protocol))
+        .stream()
+        .findFirst()
+        .map(externalSystem -> {
+          try {
+            externalSystem.configure(configuration);
+            return externalSystem;
+          } catch (Exception ex) {
+            log.error("Could not configure an external system with configuration {}",
+                configuration.getId(), ex);
+            return null;
+          }
+        });
+  }
 }
