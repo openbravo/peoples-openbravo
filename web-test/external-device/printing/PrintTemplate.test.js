@@ -6,7 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-/* global global __dirname */
+/* global global  */
 
 global.OB = {
   App: {
@@ -37,7 +37,8 @@ global.OB = {
           langCode: 'en_US',
           active: true
         }
-      ])
+      ]),
+      getOrgVariable: jest.fn()
     }
   },
   I18N: { getLabel: jest.fn() },
@@ -51,19 +52,13 @@ global.OB = {
 global.lodash = require('../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/lib/vendor/lodash-4.17.21');
 require('../../../web/org.openbravo.retail.posterminal/app/external-device/printing/PrintTemplate');
 const getPrintTemplateMock = require('./PrintTemplateMock');
-const fs = require('fs');
-const path = require('path');
-
-function getFileContent(fileName) {
-  return fs.readFileSync(path.resolve(__dirname, './', fileName), 'utf-8');
-}
 
 describe('PrintTemplate', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('generate', async () => {
+  it('should getOrgVariable being called twice', async () => {
     const ticket = { grossAmount: 23 };
     const printTemplate = getPrintTemplateMock('template.xml');
 
@@ -71,7 +66,7 @@ describe('PrintTemplate', () => {
     OB.I18N.getLabel.mockReturnValue('Total');
 
     const result = await printTemplate.generate({ ticket });
-    expect(result).toStrictEqual({ data: getFileContent('printResult.txt') });
+    expect(OB.App.OrgVariables.getOrgVariable).toHaveBeenCalledTimes(2);
   });
 
   it('get template data', async () => {

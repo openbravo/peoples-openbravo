@@ -124,7 +124,7 @@
           language,
           currentDate = new Date()
         ) => {
-          return OB.App.OrgVariables.getOrgVariable.get(
+          return OB.App.OrgVariables.getOrgVariable(
             searchKey,
             language,
             currentDate,
