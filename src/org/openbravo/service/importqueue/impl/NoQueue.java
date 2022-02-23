@@ -1,31 +1,33 @@
 package org.openbravo.service.importqueue.impl;
 
+import javax.enterprise.context.ApplicationScoped;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.service.importqueue.ImportEntryProcessor;
+import org.openbravo.service.importqueue.MessageDispatcher;
 import org.openbravo.service.importqueue.QueueException;
-import org.openbravo.service.importqueue.QueueImplementation;
+import org.openbravo.service.importqueue.QueuePublication;
+import org.openbravo.service.importqueue.QueueSubscription;
 
-public class NoQueue implements QueueImplementation {
+@ApplicationScoped
+public class NoQueue implements QueuePublication, QueueSubscription {
+  private static final Logger log = LogManager.getLogger();
 
-  private ImportEntryProcessor processor;
-
-  @Override
-  public void start(ImportEntryProcessor p) {
-    processor = p;
-  }
-
-  @Override
-  public void close() {
-  }
+  private MessageDispatcher messagedispatcher;
 
   @Override
   public void publish(JSONObject message) {
     try {
-      processor.processImportEntry(message);
+      messagedispatcher.dispatchMessage(message);
     } catch (QueueException | JSONException e) {
-      // PROTOTYPE:
-      throw new RuntimeException(e);
+      log.error("Error processing import entry. ", e);
     }
+  }
+
+  @Override
+  public void subscribe(MessageDispatcher dispatcher) {
+    messagedispatcher = dispatcher;
   }
 }
