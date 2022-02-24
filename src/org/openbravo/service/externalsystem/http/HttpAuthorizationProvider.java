@@ -24,8 +24,8 @@ import org.openbravo.service.externalsystem.HttpExternalSystemData;
 
 /**
  * Provides the information required to authenticate an HTTP request with an authorization method in
- * particular. Classes implementing this interface must be annotated with
- * {@link HttpAuthorizationMethod} to declare the authorization it implements.
+ * particular. Classes extending this class must be annotated with {@link HttpAuthorizationMethod}
+ * to declare the authorization it implements.
  */
 public abstract class HttpAuthorizationProvider {
 

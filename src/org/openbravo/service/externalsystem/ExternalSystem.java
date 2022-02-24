@@ -22,7 +22,8 @@ import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Used to define the communication with an external system
+ * Used to define the communication with an external system. Classes extending this class must be
+ * annotated with {@link Protocol} to declare the communication protocol it uses.
  */
 public interface ExternalSystem {
 
