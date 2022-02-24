@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -100,6 +100,14 @@ OB.UTIL.Math.sign = function(x) {
     return x;
   }
   return x > 0 ? 1 : -1;
+};
+
+OB.UTIL.stringify = function(obj) {
+  try {
+    return JSON.stringify(obj);
+  } catch (e) {
+    return `${obj}`;
+  }
 };
 
 OB.UTIL.getPriceList = async function(priceListId, callback) {

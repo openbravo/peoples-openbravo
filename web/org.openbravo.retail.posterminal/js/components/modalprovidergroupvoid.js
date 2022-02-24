@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2020 Openbravo S.L.U.
+ * Copyright (C) 2018-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -130,7 +130,11 @@ enyo.kind({
       })
       .then(
         function(response) {
-          OB.info(`ModalProviderGroupVoid: processVoid response: ${response}`);
+          OB.info(
+            `ModalProviderGroupVoid: processVoid response: ${OB.UTIL.stringify(
+              response
+            )}`
+          );
 
           removeTransaction();
           window.setTimeout(this.doHideThisPopup.bind(this), 0);
