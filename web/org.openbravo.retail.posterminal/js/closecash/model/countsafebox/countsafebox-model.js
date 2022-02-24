@@ -593,7 +593,17 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
               }
             );
           };
-          callbackFunc();
+
+          if (OB.UTIL.localStorage.getItem('isCountOnRemoveOfSafeBox')) {
+            OB.UTIL.localStorage.removeItem('currentSafeBox');
+            OB.UTIL.HookManager.executeHooks(
+              'OBPOS_AfterCashUpSent',
+              {},
+              callbackFunc
+            );
+          } else {
+            callbackFunc();
+          }
         })
         .catch(error => OB.error(error));
     }
