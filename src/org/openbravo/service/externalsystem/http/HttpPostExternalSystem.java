@@ -46,7 +46,7 @@ import org.openbravo.service.externalsystem.Protocol;
  * Allows to communicate with an external system through HTTP POST requests
  */
 @Protocol("HTTP_POST")
-public class HttpPostExternalSystem implements ExternalSystem {
+public class HttpPostExternalSystem extends ExternalSystem {
 
   private static final Duration TIMEOUT = Duration.ofSeconds(5);
 

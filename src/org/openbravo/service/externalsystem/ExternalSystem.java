@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
  * Used to define the communication with an external system. Classes extending this class must be
  * annotated with {@link Protocol} to declare the communication protocol it uses.
  */
-public interface ExternalSystem {
+public abstract class ExternalSystem {
 
   /**
    * Configures the external system instance with the provided configuration
@@ -35,7 +35,8 @@ public interface ExternalSystem {
    * @throws ExternalSystemConfigurationError
    *           in case the external system can not be properly configured
    */
-  public void configure(ExternalSystemData configuration);
+  protected void configure(ExternalSystemData configuration) {
+  }
 
   /**
    * Sends information to the external system
@@ -46,7 +47,7 @@ public interface ExternalSystem {
    * @return a completable future with an ExternalSystemResponse containing the response data coming
    *         from the external system
    */
-  public CompletableFuture<ExternalSystemResponse> send(InputStream inputStream);
+  public abstract CompletableFuture<ExternalSystemResponse> send(InputStream inputStream);
 
   /**
    * Tests the connectivity with the external system
@@ -57,5 +58,5 @@ public interface ExternalSystem {
    * @return a completable future with an ExternalSystemResponse containing the response data coming
    *         from the external system
    */
-  public CompletableFuture<ExternalSystemResponse> test(InputStream inputStream);
+  public abstract CompletableFuture<ExternalSystemResponse> test(InputStream inputStream);
 }
