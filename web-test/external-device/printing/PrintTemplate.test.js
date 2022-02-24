@@ -65,6 +65,7 @@ describe('PrintTemplate', () => {
     OB.UTIL.encodeXMLComponent.mockImplementation(value => value);
     OB.I18N.getLabel.mockReturnValue('Total');
 
+    await printTemplate.generate({ ticket });
     expect(OB.App.OrgVariables.getOrgVariable).toHaveBeenCalledTimes(2);
   });
 
