@@ -46,7 +46,8 @@ public class ExternalSystemFactory {
    * @param configurationId
    *          The ID of the configuration of the external system
    * @return an Optional with the external system instance or an empty Optional in case it is not
-   *         possible to create it for example due to a configuration problem
+   *         possible to create it for example due to a configuration problem or because the
+   *         provided configuration can not be found
    */
   public Optional<ExternalSystem> getExternalSystem(String configurationId) {
     ExternalSystemData configuration = OBDal.getInstance()
@@ -60,9 +61,13 @@ public class ExternalSystemFactory {
    * @param configuration
    *          The configuration of the external system
    * @return an Optional with the external system instance or an empty Optional in case it is not
-   *         possible to create it for example due to a configuration problem
+   *         possible to create it for example due to a configuration problem or because the
+   *         provided configuration can not be found
    */
   public Optional<ExternalSystem> getExternalSystem(ExternalSystemData configuration) {
+    if (configuration == null) {
+      return Optional.empty();
+    }
     String protocol = configuration.getProtocol();
     return externalSystems.select(new ProtocolSelector(protocol))
         .stream()
