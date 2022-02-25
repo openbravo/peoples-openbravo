@@ -102,6 +102,15 @@ OB.UTIL.Math.sign = function(x) {
   return x > 0 ? 1 : -1;
 };
 
+/**
+ * Converts a data object to an string suitable for logging puposes.
+ * This function stringify the objet to JSON if possible, otherwise converts the
+ *  object using a template string. This is a convenient way to display the
+ * information inside a general object.
+ *
+ * @param {Object} obj - An arbitrary object.
+ * @returns {string}
+ */
 OB.UTIL.stringify = function(obj) {
   try {
     return JSON.stringify(obj);
