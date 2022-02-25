@@ -65,7 +65,7 @@ public class HttpPostExternalSystem extends ExternalSystem {
         .filter(HttpExternalSystemData::isActive)
         .findFirst()
         .orElseThrow(() -> new ExternalSystemConfigurationError(
-            "No HTTP configuration found for external system {}" + configuration.getSearchKey()));
+            "No HTTP configuration found for external system " + configuration.getSearchKey()));
     url = httpConfig.getURL();
     testURL = httpConfig.getTestURL();
     authorizationProvider = authorizationProviders
@@ -73,7 +73,7 @@ public class HttpPostExternalSystem extends ExternalSystem {
         .stream()
         .findFirst()
         .orElseThrow(() -> new ExternalSystemConfigurationError(
-            "No HTTP authorization provider found for authorization method {}"
+            "No HTTP authorization provider found for authorization method "
                 + httpConfig.getAuthorizationType()));
     authorizationProvider.init(httpConfig);
   }
