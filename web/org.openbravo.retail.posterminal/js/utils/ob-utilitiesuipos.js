@@ -103,9 +103,9 @@ OB.UTIL.Math.sign = function(x) {
 };
 
 /**
- * Converts a data object to an string suitable for logging puposes.
- * This function stringify the objet to JSON if possible, otherwise converts the
- *  object using a template string. This is a convenient way to display the
+ * Converts a data object to an string suitable for logging purposes.
+ * This function stringifies the object to JSON if possible. Otherwise, converts
+ * the object using a template string. This is a convenient way to display the
  * information inside a general object.
  *
  * @param {Object} obj - An arbitrary object.
