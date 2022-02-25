@@ -489,7 +489,7 @@ enyo.kind({
           OB.I18N.getLabel('OBPOS_CountOnRemoveSafeBoxText'),
           [
             {
-              label: OB.I18N.getLabel('OBMOBC_LblOk'),
+              label: OB.I18N.getLabel('OBMOBC_LblYes'),
               isConfirmButton: true,
               action: function() {
                 OB.UTIL.localStorage.setItem(
@@ -506,7 +506,7 @@ enyo.kind({
               }
             },
             {
-              label: OB.I18N.getLabel('OBMOBC_LblCancel')
+              label: OB.I18N.getLabel('OBMOBC_LblNo')
             }
           ],
           {
