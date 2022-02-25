@@ -21,13 +21,19 @@ package org.openbravo.service.externalsystem.http;
 import java.util.Base64;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.service.externalsystem.HttpExternalSystemData;
+import org.openbravo.utils.FormatUtilities;
 
 /**
  * Used to authenticate an HTTP request with the Basic HTTP authorization method
  */
 @HttpAuthorizationMethod("BASIC")
 public class BasicHttpAuthorizationProvider extends HttpAuthorizationProvider {
+  private static final Logger log = LogManager.getLogger();
 
   private String userName;
   private String password;
@@ -35,7 +41,12 @@ public class BasicHttpAuthorizationProvider extends HttpAuthorizationProvider {
   @Override
   protected void init(HttpExternalSystemData configuration) {
     userName = configuration.getUsername();
-    password = configuration.getPassword();
+    try {
+      password = FormatUtilities.encryptDecrypt(configuration.getPassword(), false);
+    } catch (ServletException ex) {
+      log.error("Error decrypting password of HTTP configuration {}", configuration.getId());
+      password = null;
+    }
   }
 
   @Override
