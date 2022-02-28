@@ -49,6 +49,7 @@ import org.openbravo.service.externalsystem.Protocol;
 @Protocol("HTTP_POST")
 public class HttpPostExternalSystem extends ExternalSystem {
 
+  // Fixed timeout, this can be moved to an HTTP configuration setting if needed
   private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
   private String url;
@@ -114,6 +115,8 @@ public class HttpPostExternalSystem extends ExternalSystem {
     HttpRequest.Builder request = HttpRequest.newBuilder()
         .uri(URI.create(postURL))
         .timeout(TIMEOUT)
+        // sent JSON content by default, if any other content type needs to be posted then this
+        // should be moved to a new HTTP configuration setting
         .header("Content-Type", "application/json")
         .POST(BodyPublishers.ofInputStream(() -> inputStream));
 
