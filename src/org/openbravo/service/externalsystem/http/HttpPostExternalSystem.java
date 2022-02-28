@@ -28,6 +28,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -69,14 +70,29 @@ public class HttpPostExternalSystem extends ExternalSystem {
 
     url = httpConfig.getURL();
     testURL = httpConfig.getTestURL();
-    authorizationProvider = authorizationProviders
-        .select(new HttpAuthorizationMethodSelector(httpConfig.getAuthorizationType()))
+    authorizationProvider = getHttpAuthorizationProvider(httpConfig);
+  }
+
+  private HttpAuthorizationProvider getHttpAuthorizationProvider(
+      HttpExternalSystemData httpConfig) {
+    String authorizationType = httpConfig.getAuthorizationType();
+    return authorizationProviders.select(new HttpAuthorizationMethodSelector(authorizationType))
         .stream()
-        .findFirst()
-        .orElseThrow(() -> new ExternalSystemConfigurationError(
-            "No HTTP authorization provider found for authorization method "
-                + httpConfig.getAuthorizationType()));
-    authorizationProvider.init(httpConfig);
+        .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+          if (list.isEmpty()) {
+            throw new ExternalSystemConfigurationError(
+                "No HTTP authorization provider found for method " + authorizationType);
+          }
+          if (list.size() > 1) {
+            // For the moment it is only supported to have one HttpAuthorizationProvider instance
+            // per authorization type
+            throw new ExternalSystemConfigurationError(
+                "Found multiple HTTP authorization providers for method " + authorizationType);
+          }
+          HttpAuthorizationProvider provider = list.get(0);
+          provider.init(httpConfig);
+          return provider;
+        }));
   }
 
   @Override
