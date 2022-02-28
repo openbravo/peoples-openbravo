@@ -66,6 +66,7 @@ public class HttpPostExternalSystem extends ExternalSystem {
         .findFirst()
         .orElseThrow(() -> new ExternalSystemConfigurationError(
             "No HTTP configuration found for external system " + configuration.getSearchKey()));
+
     url = httpConfig.getURL();
     testURL = httpConfig.getTestURL();
     authorizationProvider = authorizationProviders
@@ -111,11 +112,19 @@ public class HttpPostExternalSystem extends ExternalSystem {
   }
 
   private ExternalSystemResponse buildResponse(HttpResponse<String> response) {
+    boolean requestSuccess = response.statusCode() >= 200 && response.statusCode() <= 299;
+    if (requestSuccess) {
+      return ExternalSystemResponseBuilder.newBuilder()
+          .withData(response.body())
+          .withStatusCode(response.statusCode())
+          .withType(Type.SUCESS)
+          .build();
+    }
+    String error = response.body();
     return ExternalSystemResponseBuilder.newBuilder()
-        .withData(response.body())
+        .withError(error != null ? error : "Response Status Code: " + response.statusCode())
         .withStatusCode(response.statusCode())
-        .withType(
-            response.statusCode() >= 200 && response.statusCode() <= 299 ? Type.SUCESS : Type.ERROR)
+        .withType(Type.ERROR)
         .build();
   }
 

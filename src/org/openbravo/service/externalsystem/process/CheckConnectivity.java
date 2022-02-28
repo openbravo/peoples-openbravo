@@ -71,10 +71,7 @@ public class CheckConnectivity extends BaseProcessActionHandler {
 
   private JSONObject handleResponse(ExternalSystemResponse response) {
     if (Type.ERROR.equals(response.getType())) {
-      if (response.getError() != null) {
-        return buildError("C_ConnCheckFailed", response.getError());
-      }
-      return buildError("C_ConnCheckRequestFailed", response.getStatusCode() + "");
+      return buildError("C_ConnCheckFailed", response.getError());
     }
     return getResponseBuilder()
         .showMsgInProcessView(MessageType.SUCCESS, OBMessageUtils.getI18NMessage("OBUIAPP_Success"),
