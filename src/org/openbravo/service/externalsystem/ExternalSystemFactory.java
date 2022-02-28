@@ -19,6 +19,7 @@
 package org.openbravo.service.externalsystem;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 
 /**
@@ -71,16 +73,23 @@ public class ExternalSystemFactory {
     String protocol = configuration.getProtocol();
     return externalSystems.select(new ProtocolSelector(protocol))
         .stream()
-        .findFirst()
-        .map(externalSystem -> {
+        .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+          if (list.size() > 1) {
+            // For the moment it is only supported to have one ExternalSystem instance per protocol
+            throw new OBException("Found multiple external systems for protocol " + protocol);
+          }
+          if (list.isEmpty()) {
+            return Optional.empty();
+          }
           try {
+            ExternalSystem externalSystem = list.get(0);
             externalSystem.configure(configuration);
-            return externalSystem;
+            return Optional.of(externalSystem);
           } catch (Exception ex) {
             log.error("Could not configure an external system with configuration {}",
                 configuration.getId(), ex);
-            return null;
+            return Optional.empty();
           }
-        });
+        }));
   }
 }
