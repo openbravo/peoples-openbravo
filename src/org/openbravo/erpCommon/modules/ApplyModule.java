@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.modules;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.CallableStatement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.database.ConnectionProvider;
@@ -185,6 +187,8 @@ public class ApplyModule {
           log4j.error("Error running verify language process", ex);
         }
 
+        updateDBStats();
+
         // Import language modules
         for (int i = 0; i < data.length; i++) {
           String folder = obDir + "/modules/" + data[i].javapackage + "/referencedata/translation";
@@ -268,5 +272,26 @@ public class ApplyModule {
         new CPStandAlone("/ws/modularity/openbravo/config/Openbravo.properties"),
         "/ws/modularity/openbravo");
     am.execute();
+  }
+
+  private void updateDBStats() {
+    if (!"ORACLE".equals(pool.getRDBMS())) {
+      // We need to update DB stats before inserting translation only in Oracle
+      return;
+    }
+
+    long t = System.currentTimeMillis();
+    String userName = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("bbdd.user");
+    log4j.info("Updating statistics for {}...", userName);
+    try (CallableStatement updateStatsStmt = pool
+        .getCallableStatement("{call dbms_stats.gather_schema_stats(?, cascade=>TRUE)}")) {
+      updateStatsStmt.setString(1, userName);
+      updateStatsStmt.execute();
+      log4j.info("Statistics updated in {} ms", System.currentTimeMillis() - t);
+    } catch (Exception e) {
+      log4j.error("Could not update statistics", e);
+    }
   }
 }
