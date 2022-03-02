@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2021 Openbravo S.L.U.
+ * Copyright (C) 2018-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -237,7 +237,8 @@ public class Invoices extends JSONProcessSimple {
                       .multiply(new BigDecimal((String) objectType.get("mulrate").toString())));
               invoicePayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
-                invoicePayment.put("paymentData", objectIn.get("paymentData"));
+                invoicePayment.put("paymentData",
+                    new JSONObject((String) objectIn.get("paymentData")));
               }
               invoicePayment.put("name", objectType.get("name"));
               invoicePayment.put("kind", objectType.get("kind"));
@@ -281,7 +282,8 @@ public class Invoices extends JSONProcessSimple {
                       .multiply(new BigDecimal((String) paymentsType.get("mulrate").toString())));
               invoicePayment.put("paymentDate", objectIn.get("paymentDate"));
               if (objectIn.has("paymentData")) {
-                invoicePayment.put("paymentData", objectIn.get("paymentData"));
+                invoicePayment.put("paymentData",
+                    new JSONObject((String) objectIn.get("paymentData")));
               }
               invoicePayment.put("name", paymentsType.get("name"));
               invoicePayment.put("kind", paymentsType.get("kind"));
