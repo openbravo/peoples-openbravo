@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2018 Openbravo SLU
+ * All portions are Copyright (C) 2013-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.materialmgmt;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -150,6 +151,7 @@ public class VariantAutomaticGenerationProcess implements Process {
           variant.setImage(newPrImage);
         }
 
+        variant.setCreationDate(new Date());
         variant.setGenericProduct(product);
         variant.setProductAccountsList(Collections.<ProductAccounts> emptyList());
         variant.setGeneric(false);
