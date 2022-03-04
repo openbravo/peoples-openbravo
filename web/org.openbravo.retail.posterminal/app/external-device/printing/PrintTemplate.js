@@ -20,7 +20,8 @@
      * Creates a new PrintTemplate instance
      *
      * @param name {string} - the name that identifies the template
-     * @param resource {string} - the resource relative path used to retrieve the template data
+     * @param resource {string} - the resource relative path used to retrieve the template data.
+     *                            If not provided, initializer must handle the retrieval of the resourcedata
      * @param options {object} - additional configuration options:
      *                           - isLegacy: whether this is a legacy template or not
      */
@@ -28,10 +29,11 @@
       this.name = name;
       this.initialized = false;
       this.isLegacy = options.isLegacy === true;
-
-      this.resource = resource.startsWith('res/')
-        ? `../org.openbravo.retail.posterminal/${resource}`
-        : resource;
+      if (resource) {
+        this.resource = resource.startsWith('res/')
+          ? `../org.openbravo.retail.posterminal/${resource}`
+          : resource;
+      }
     }
 
     /**
