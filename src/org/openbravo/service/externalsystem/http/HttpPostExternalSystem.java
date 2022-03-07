@@ -34,6 +34,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.openbravo.base.exception.OBException;
 import org.openbravo.service.externalsystem.ExternalSystem;
 import org.openbravo.service.externalsystem.ExternalSystemConfigurationError;
 import org.openbravo.service.externalsystem.ExternalSystemData;
@@ -44,9 +45,9 @@ import org.openbravo.service.externalsystem.HttpExternalSystemData;
 import org.openbravo.service.externalsystem.Protocol;
 
 /**
- * Allows to communicate with an external system through HTTP POST requests
+ * Allows to communicate with an external system through HTTP requests
  */
-@Protocol("HTTP_POST")
+@Protocol("HTTP")
 public class HttpPostExternalSystem extends ExternalSystem {
 
   // Fixed timeout, this can be moved to an HTTP configuration setting if needed
@@ -56,6 +57,7 @@ public class HttpPostExternalSystem extends ExternalSystem {
   private String testURL;
   private HttpClient client;
   private HttpAuthorizationProvider authorizationProvider;
+  private String method;
 
   @Inject
   @Any
@@ -72,6 +74,7 @@ public class HttpPostExternalSystem extends ExternalSystem {
 
     url = httpConfig.getURL();
     testURL = httpConfig.getTestURL();
+    method = httpConfig.getRequestMethod();
     authorizationProvider = getHttpAuthorizationProvider(httpConfig);
     client = HttpClient.newBuilder().version(Version.HTTP_1_1).connectTimeout(TIMEOUT).build();
   }
@@ -100,12 +103,18 @@ public class HttpPostExternalSystem extends ExternalSystem {
 
   @Override
   public CompletableFuture<ExternalSystemResponse> send(InputStream inputStream) {
-    return post(url, inputStream);
+    if ("POST".equals(method)) {
+      return post(url, inputStream);
+    }
+    throw new OBException("Unsupported HTTP request method " + method);
   }
 
   @Override
   public CompletableFuture<ExternalSystemResponse> test(InputStream inputStream) {
-    return post(testURL, inputStream);
+    if ("POST".equals(method)) {
+      return post(testURL, inputStream);
+    }
+    throw new OBException("Unsupported HTTP request method " + method);
   }
 
   private CompletableFuture<ExternalSystemResponse> post(String postURL, InputStream inputStream) {
