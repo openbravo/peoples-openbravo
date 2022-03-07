@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -47,8 +47,16 @@
     OB.Taxes.Pos.isCalculatingCache = true;
     const execution = OB.UTIL.ProcessController.start('taxCacheInitialization');
 
-    const data = await OB.Taxes.Pos.loadData();
-    Object.assign(OB.Taxes.Pos, data);
+    try {
+      const data = await OB.Taxes.Pos.loadData();
+      Object.assign(OB.Taxes.Pos, data);
+    } catch (e) {
+      OB.App.View.DialogUIHandler.askConfirmation({
+        title: '$OBMOBC_LblWarning',
+        message: `$${e.message}`,
+        hideCancel: true
+      });
+    }
 
     OB.UTIL.ProcessController.finish('taxCacheInitialization', execution);
     callback();

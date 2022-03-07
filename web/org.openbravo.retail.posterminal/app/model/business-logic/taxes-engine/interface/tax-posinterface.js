@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -10,6 +10,13 @@
 (() => {
   OB.Taxes = OB.Taxes || {};
   OB.Taxes.Pos = OB.Taxes.Pos || {};
+
+  const getTaxesCacheSize = () => {
+    const value = OB.App.Security.hasPermission('OBPOS_TaxesCacheSize')
+      ? OB.DEC.abs(OB.App.Security.hasPermission('OBPOS_TaxesCacheSize'))
+      : Number.MAX_SAFE_INTEGER - 1;
+    return value;
+  };
 
   /**
    * Finds the list of taxes that apply to given ticket.
@@ -64,14 +71,19 @@
    * @see {@link OB.Taxes.Pos.initCache}
    */
   OB.Taxes.Pos.loadData = async () => {
+    const cacheSize = getTaxesCacheSize();
     const data = {};
 
     const taxRates = await OB.App.MasterdataModels.TaxRate.find(
-      new OB.App.Class.Criteria().limit(10000).build()
+      new OB.App.Class.Criteria().limit(cacheSize + 1).build()
     );
     const taxZones = await OB.App.MasterdataModels.TaxZone.find(
-      new OB.App.Class.Criteria().limit(10000).build()
+      new OB.App.Class.Criteria().limit(cacheSize + 1).build()
     );
+
+    if (taxRates.length > cacheSize || taxZones.length > cacheSize) {
+      throw new Error('OBPOS_TaxesDataExceedsCacheSize');
+    }
 
     const taxZonesByTaxRateId = OB.App.ArrayUtils.groupBy(
       taxZones,
@@ -86,16 +98,23 @@
     data.taxCategory = await OB.App.MasterdataModels.TaxCategory.find(
       new OB.App.Class.Criteria()
         .orderBy(['default', 'name'], ['desc', 'asc'])
-        .limit(10000)
+        .limit(cacheSize + 1)
         .build()
     );
 
     data.taxCategoryBOM = await OB.App.MasterdataModels.TaxCategoryBOM.find(
       new OB.App.Class.Criteria()
         .orderBy(['default', 'name'], ['desc', 'asc'])
-        .limit(10000)
+        .limit(cacheSize + 1)
         .build()
     );
+
+    if (
+      data.taxCategory.length > cacheSize ||
+      data.taxCategoryBOM.length > cacheSize
+    ) {
+      throw new Error('OBPOS_TaxesDataExceedsCacheSize');
+    }
 
     return data;
   };
