@@ -54,6 +54,7 @@ public class HttpPostExternalSystem extends ExternalSystem {
 
   private String url;
   private String testURL;
+  private HttpClient client;
   private HttpAuthorizationProvider authorizationProvider;
 
   @Inject
@@ -72,6 +73,7 @@ public class HttpPostExternalSystem extends ExternalSystem {
     url = httpConfig.getURL();
     testURL = httpConfig.getTestURL();
     authorizationProvider = getHttpAuthorizationProvider(httpConfig);
+    client = HttpClient.newBuilder().version(Version.HTTP_1_1).connectTimeout(TIMEOUT).build();
   }
 
   private HttpAuthorizationProvider getHttpAuthorizationProvider(
@@ -107,11 +109,6 @@ public class HttpPostExternalSystem extends ExternalSystem {
   }
 
   private CompletableFuture<ExternalSystemResponse> post(String postURL, InputStream inputStream) {
-    HttpClient client = HttpClient.newBuilder()
-        .version(Version.HTTP_1_1)
-        .connectTimeout(TIMEOUT)
-        .build();
-
     HttpRequest.Builder request = HttpRequest.newBuilder()
         .uri(URI.create(postURL))
         .timeout(TIMEOUT)
