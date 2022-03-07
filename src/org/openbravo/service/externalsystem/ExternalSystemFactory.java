@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 
@@ -43,18 +44,20 @@ public class ExternalSystemFactory {
   private Instance<ExternalSystem> externalSystems;
 
   /**
-   * Retrieves an {@link ExternalSystem} instance configured with the provided configuration
+   * Retrieves the {@link ExternalSystem} identified by the given search key
    * 
-   * @param configurationId
-   *          The ID of the configuration of the external system
+   * @param searchKey
+   *          The search key that identifies the external system
    * @return an Optional with the external system instance or an empty Optional in case it is not
-   *         possible to create it for example due to a configuration problem or because the
-   *         provided configuration can not be found
+   *         possible to create it for example due to a configuration problem or because an external
+   *         system with the provided search key can not be found
    */
-  public Optional<ExternalSystem> getExternalSystem(String configurationId) {
-    ExternalSystemData configuration = OBDal.getInstance()
-        .get(ExternalSystemData.class, configurationId);
-    return getExternalSystem(configuration);
+  public Optional<ExternalSystem> getExternalSystem(String searchKey) {
+    ExternalSystemData configuration = (ExternalSystemData) OBDal.getInstance()
+        .createCriteria(ExternalSystemData.class)
+        .add(Restrictions.eq(ExternalSystemData.PROPERTY_SEARCHKEY, searchKey))
+        .uniqueResult();
+    return configuration != null ? getExternalSystem(configuration) : Optional.empty();
   }
 
   /**
