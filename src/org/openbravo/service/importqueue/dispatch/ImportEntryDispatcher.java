@@ -17,17 +17,25 @@
  ************************************************************************
  */
 
-package org.openbravo.service.importqueue;
+package org.openbravo.service.importqueue.dispatch;
 
-public class QueueException extends Exception {
+import javax.inject.Inject;
 
-  private static final long serialVersionUID = 1L;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.service.importprocess.ImportEntryManager;
+import org.openbravo.service.importqueue.MessageDispatcher;
+import org.openbravo.service.importqueue.QueueException;
 
-  public QueueException(String message, Throwable cause) {
-    super(message, cause);
-  }
+public class ImportEntryDispatcher implements MessageDispatcher {
 
-  public QueueException(String message) {
-    super(message);
+  @Inject
+  private ImportEntryManager importEntryManager;
+
+  @Override
+  public void dispatchMessage(JSONObject message) throws QueueException, JSONException {
+    String id = message.getString("messageId");
+    String qualifier = message.getString("entrykey");
+    importEntryManager.createImportEntry(id, qualifier, message.toString());
   }
 }

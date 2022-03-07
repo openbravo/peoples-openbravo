@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.service.importqueue;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -21,64 +40,55 @@ public class DataListProcessor {
     public JSONObject save(JSONObject jsonorder) throws Exception;
   }
 
-  public static JSONObject processMessage(JSONObject message, ImportEntryRecord saveRecord)
+  public static JSONObject processMessageArray(JSONObject message, ImportEntryRecord saveRecord)
       throws QueueException, JSONException {
 
-    // try {
-    // return saveRecord(record);
-    // } catch (Exception e) {
-    // throw new QueueException(e.getMessage(), e);
-    // }
-
     OBContext.setAdminMode(false);
-
-    // {
-    // "messageId":"D06E6D14FE94540620C1155521EB3E9B",
-    // "entrykey":"Order"
-    // "csrfToken":"F84D68997AD7450F83B52ED7EB366028",
-    // "appName":"WebPOS",
-    // "client":"39363B0921BB4293B48383844325E84C",
-    // "organization":"D270A5AC50874F8BA67A88EE977F8E3B",
-    // "pos":"9104513C2D0741D4850AE8493998A7C8",
-    // "terminalName":"VBS-1",
-    // "timeout":10000,
-    // "parameters":{
-    // "terminalTime":"2022-02-21T23:07:10.489Z",
-    // "terminalTimeOffset":{
-    // "value":-60
-    // }
-    // },
-    // "data":[
-
     try {
-
       JSONArray datalist = message.getJSONArray("data");
       for (int i = 0; i < datalist.length(); i++) {
-        JSONObject record = datalist.getJSONObject(i);
-        String orgId = getOrganizationId(record);
-        Organization org = OBDal.getInstance().get(Organization.class, orgId);
-        Client client = org.getClient();
-        String clientId = client.getId();
-        String userId = getUserId(record);
-        User user = OBDal.getInstance().get(User.class, userId);
-        Role role = user.getDefaultRole();
-        String roleId = role.getId();
-        initOBContext(userId, roleId, clientId, orgId);
-
-        try {
-          saveRecord.save(record);
-        } catch (Exception e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+        processRecord(datalist.getJSONObject(i), saveRecord);
       }
       OBDal.getInstance().commitAndClose();
-
       return new JSONObject();
     } finally {
       OBContext.setOBContext((OBContext) null);
       OBContext.restorePreviousMode();
       ensureConnectionRelease();
+    }
+  }
+
+  public static JSONObject processMessage(JSONObject message, ImportEntryRecord saveRecord)
+      throws QueueException, JSONException {
+
+    OBContext.setAdminMode(false);
+    try {
+      processRecord(message.getJSONObject("data"), saveRecord);
+      OBDal.getInstance().commitAndClose();
+      return new JSONObject();
+    } finally {
+      OBContext.setOBContext((OBContext) null);
+      OBContext.restorePreviousMode();
+      ensureConnectionRelease();
+    }
+  }
+
+  private static void processRecord(JSONObject record, ImportEntryRecord saveRecord)
+      throws QueueException, JSONException {
+    String orgId = getOrganizationId(record);
+    Organization org = OBDal.getInstance().get(Organization.class, orgId);
+    Client client = org.getClient();
+    String clientId = client.getId();
+    String userId = getUserId(record);
+    User user = OBDal.getInstance().get(User.class, userId);
+    Role role = user.getDefaultRole();
+    String roleId = role.getId();
+    initOBContext(userId, roleId, clientId, orgId);
+
+    try {
+      saveRecord.save(record);
+    } catch (Exception e) {
+      throw new QueueException(e.getMessage(), e);
     }
   }
 

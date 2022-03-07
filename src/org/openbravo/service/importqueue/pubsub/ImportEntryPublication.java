@@ -17,17 +17,35 @@
  ************************************************************************
  */
 
-package org.openbravo.service.importqueue;
+package org.openbravo.service.importqueue.pubsub;
 
-public class QueueException extends Exception {
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
-  private static final long serialVersionUID = 1L;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.service.importprocess.ImportEntryManager;
+import org.openbravo.service.importqueue.QueuePublication;
 
-  public QueueException(String message, Throwable cause) {
-    super(message, cause);
-  }
+@ApplicationScoped
+public class ImportEntryPublication implements QueuePublication {
 
-  public QueueException(String message) {
-    super(message);
+  private static final Logger log = LogManager.getLogger();
+
+  @Inject
+  private ImportEntryManager importEntryManager;
+
+  @Override
+  public void publish(JSONObject message) {
+    try {
+      String id = message.getString("messageId");
+      String qualifier = message.getString("entrykey");
+      importEntryManager.createImportEntry(id, qualifier, message.toString());
+    } catch (JSONException e) {
+      log.error(e);
+      throw new RuntimeException(e);
+    }
   }
 }

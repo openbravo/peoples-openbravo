@@ -17,17 +17,12 @@
  ************************************************************************
  */
 
-package org.openbravo.service.importqueue;
+package org.openbravo.service.importqueue.dispatch;
 
-public class QueueException extends Exception {
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.service.importqueue.QueueException;
 
-  private static final long serialVersionUID = 1L;
-
-  public QueueException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public QueueException(String message) {
-    super(message);
-  }
+public interface LoaderProcessor {
+  public JSONObject processMessage(JSONObject message) throws QueueException, JSONException;
 }
