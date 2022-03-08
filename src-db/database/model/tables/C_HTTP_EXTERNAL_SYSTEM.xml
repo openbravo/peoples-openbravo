@@ -75,6 +75,7 @@
       </index>
       <index name="C_HTTP_EXT_SYS_UNIQ_EXT_SYS" unique="true">
         <index-column name="C_EXTERNAL_SYSTEM_ID"/>
+        <index-column name="ISACTIVE"/>
         <whereClause><![CDATA[ISACTIVE='Y']]></whereClause>
       </index>
       <check name="C_HTTP_EXT_SYSTEM_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
