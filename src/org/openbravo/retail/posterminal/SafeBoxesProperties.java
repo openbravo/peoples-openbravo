@@ -18,6 +18,7 @@ public class SafeBoxesProperties extends ModelExtension {
         add(new HQLProperty("sf.id", "safeBoxId"));
         add(new HQLProperty("sf.commercialName", "safeBoxName"));
         add(new HQLProperty("sf.searchKey", "safeBoxSearchKey"));
+        add(new HQLProperty("sf.countOnRemove", "safeBoxCountOnRemove"));
         add(new HQLProperty("coalesce(u.id, null)", "safeBoxUserId"));
         add(new HQLProperty("coalesce(u.name, null)", "safeBoxUserName"));
       }
