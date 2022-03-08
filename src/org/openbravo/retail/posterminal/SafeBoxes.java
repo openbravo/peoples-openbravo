@@ -73,6 +73,12 @@ public class SafeBoxes extends JSONProcessSimple {
       if (jsonsent.has("safeBoxSearchKey")) {
         optSafeBoxSearchKey = jsonsent.getString("safeBoxSearchKey");
       }
+
+      if (!isSafeboxCountInfoReadyInBackend(optSafeBoxSearchKey)) {
+        result.put(JsonConstants.RESPONSE_DATA, "safeboxCountInfoNotReady");
+        result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_VALIDATION_ERROR);
+        return result;
+      }
       // get the safe boxes
       HQLPropertyList hqlPropertiesSafeBox = ModelExtensionUtils.getPropertyExtensions(extensions);
       String hqlSafeBoxes = "SELECT " + hqlPropertiesSafeBox.getHqlSelect()
@@ -294,6 +300,30 @@ public class SafeBoxes extends JSONProcessSimple {
     }
 
     return result;
+  }
+
+  private static boolean isSafeboxCountInfoReadyInBackend(String safeBoxSearchKey)
+      throws JSONException {
+    if (safeBoxSearchKey == null) {
+      return true;
+    }
+    //@formatter:off
+    String hql =
+            " select count(1) " +
+            " from OBPOS_Safebox_Touchpoint as sbh " +
+            " join sbh.obposSafebox sb " +
+            " left join sbh.cashUp c " +
+            " where sbh.iscounted = false " +
+            " and (c is null or c.isProcessed = 'N') " +
+            " and sb.searchKey = :safeBoxSearchKey ";
+    //@formatter:on
+
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Long.class)
+        .setParameter("safeBoxSearchKey", safeBoxSearchKey)
+        .setMaxResults(1)
+        .uniqueResult() == 0;
   }
 
 }
