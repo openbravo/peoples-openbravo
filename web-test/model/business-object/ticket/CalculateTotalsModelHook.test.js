@@ -431,4 +431,40 @@ describe('Apply Discounts and Taxes Model Hook', () => {
       expect(result).toMatchObject(resultTicket);
     }
   );
+
+  it('Skip tax calculation if ticket has skipTaxCalculation flag', () => {
+    const ticket = {
+      id: '0',
+      priceIncludesTax: true,
+      skipTaxCalculation: true,
+      grossAmount: 100,
+      lines: [
+        {
+          id: '1',
+          baseGrossUnitPrice: 100,
+          qty: 1,
+          quantity: 1,
+          tax: undefined,
+          taxRate: undefined
+        }
+      ],
+      payments: [],
+      taxes: {}
+    };
+    setDiscountsEngineResultAs({ lines: [] });
+    setTaxesEngineResultAs({
+      grossAmount: 10,
+      lines: [
+        {
+          id: '1',
+          grossUnitAmount: 100,
+          tax: '1',
+          taxRate: 1,
+          taxes: { '1': { id: '1' } }
+        }
+      ]
+    });
+    const result = hook(deepfreeze(ticket), payload());
+    expect(result).toMatchObject(ticket);
+  });
 });

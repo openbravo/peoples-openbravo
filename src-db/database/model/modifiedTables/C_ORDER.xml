@@ -61,6 +61,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_SKIP_TAX_CALCULATION" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="OBPOS_APPLICATIONS" name="EM_OBPOS_APP_ID">
         <reference local="EM_OBPOS_APPLICATIONS_ID" foreign="OBPOS_APPLICATIONS_ID"/>
       </foreign-key>
@@ -92,5 +96,6 @@
       </index>
       <check name="EM_OBPOS_ISDELETED_CHECK"><![CDATA[EM_OBPOS_ISDELETED IN ('Y', 'N')]]></check>
       <check name="EM_OBPOS_ISLAYAWAY_CHK"><![CDATA[EM_OBPOS_ISLAYAWAY IN ('Y', 'N')]]></check>
+      <check name="EM_OBPOS_SKIPTAX_CHECK"><![CDATA[EM_OBPOS_SKIP_TAX_CALCULATION IN ('Y', 'N')]]></check>
     </table>
   </database>

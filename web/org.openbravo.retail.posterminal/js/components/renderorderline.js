@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2021 Openbravo S.L.U.
+ * Copyright (C) 2013-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -613,6 +613,9 @@ enyo.kind({
     this.$.totaltax.setContent(
       OB.I18N.formatCurrency(this.model.get('amount'))
     );
+    if (this.model.get('hidden')) {
+      this.parent.hide();
+    }
   }
 });
 

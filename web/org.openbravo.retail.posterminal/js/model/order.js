@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2021 Openbravo S.L.U.
+ * Copyright (C) 2013-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -539,6 +539,7 @@
         this.set('sendEmail', attributes.sendEmail);
         this.set('isPaid', attributes.isPaid);
         this.set('isLayaway', attributes.isLayaway);
+        this.set('skipTaxCalculation', false);
         this.set('isEditable', attributes.isEditable);
         this.set('openDrawer', attributes.openDrawer);
         this.set('isBeingDiscounted', false);
@@ -1679,6 +1680,7 @@
       this.set('paidPartiallyOnCredit', false);
       this.set('paidOnCredit', false);
       this.set('isLayaway', false);
+      this.set('skipTaxCalculation', false);
       this.set('isEditable', true);
       this.set('openDrawer', false);
       this.set('totalamount', null);
@@ -1725,6 +1727,7 @@
       this.set('paidPartiallyOnCredit', _order.get('paidPartiallyOnCredit'));
       this.set('paidOnCredit', _order.get('paidOnCredit'));
       this.set('isLayaway', _order.get('isLayaway'));
+      this.set('skipTaxCalculation', _order.get('skipTaxCalculation'));
       this.set('isPartiallyDelivered', _order.get('isPartiallyDelivered'));
       this.set('isModified', _order.get('isModified'));
       this.set('payment', _order.get('payment'));
@@ -5718,6 +5721,7 @@
         });
       }
       me.set('isLayaway', false);
+      me.set('skipTaxCalculation', false);
 
       me.get('lines').each(function(line) {
         idMap[line.get('id')] = OB.UTIL.get_UUID();
@@ -5990,6 +5994,7 @@
                   me.set('cancelLayaway', true);
                   me.set('fromLayaway', me.get('isLayaway'));
                   me.set('isLayaway', false);
+                  me.set('skipTaxCalculation', false);
                   me.set('isPaid', false);
                   // Set the order type
                   context.doShowDivText({
@@ -8603,6 +8608,7 @@
         this.set('isLayaway', false);
         this.set('orderType', 2);
       }
+      this.set('skipTaxCalculation', false);
       this.unset('skipApplyPromotions');
       this.save(callback);
     },

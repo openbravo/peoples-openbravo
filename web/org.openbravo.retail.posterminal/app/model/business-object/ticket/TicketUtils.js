@@ -555,6 +555,10 @@
         return newLine;
       });
 
+      if (this.ticket.skipTaxCalculation) {
+        return;
+      }
+
       let ticketTaxRules;
       // Applied Taxes should be used to calculate if ticket is booked
       const isTicketBooked = OB.App.State.Ticket.Utils.isBooked(this.ticket);

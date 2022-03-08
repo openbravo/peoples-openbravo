@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -359,6 +359,7 @@
     order.set('paidOnCredit', false);
     order.set('session', OB.MobileApp.model.get('session'));
     order.set('skipApplyPromotions', true);
+    order.set('skipTaxCalculation', false);
     if (model.isQuotation) {
       order.set('isQuotation', true);
       order.set('oldId', model.orderid);
