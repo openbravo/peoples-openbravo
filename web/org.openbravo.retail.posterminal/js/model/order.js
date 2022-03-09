@@ -4336,9 +4336,6 @@
             });
           }
         });
-        if (callback) {
-          callback(true, newline);
-        }
         return newline;
       }
 
