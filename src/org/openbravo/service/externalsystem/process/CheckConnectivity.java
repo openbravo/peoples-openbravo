@@ -32,7 +32,7 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.externalsystem.ExternalSystem;
-import org.openbravo.service.externalsystem.ExternalSystemFactory;
+import org.openbravo.service.externalsystem.ExternalSystemProvider;
 import org.openbravo.service.externalsystem.ExternalSystemResponse;
 import org.openbravo.service.externalsystem.ExternalSystemResponse.Type;
 
@@ -44,14 +44,14 @@ public class CheckConnectivity extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
 
   @Inject
-  private ExternalSystemFactory externalSystemFactory;
+  private ExternalSystemProvider externalSystemProvider;
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     try {
       JSONObject data = new JSONObject(content);
-      String searchKey = data.getString("inpcExternalSystemId");
-      Optional<ExternalSystem> externalSystem = externalSystemFactory.getExternalSystem(searchKey);
+      String id = data.getString("inpcExternalSystemId");
+      Optional<ExternalSystem> externalSystem = externalSystemProvider.getExternalSystem(id);
       if (externalSystem.isPresent()) {
         return externalSystem.get().test(getDataToSend()).thenApply(this::handleResponse).get();
       } else {

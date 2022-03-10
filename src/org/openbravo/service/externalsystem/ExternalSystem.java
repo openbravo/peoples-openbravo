@@ -24,6 +24,8 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Used to define the communication with an external system. Classes extending this class must be
  * annotated with {@link Protocol} to declare the communication protocol it uses.
+ * 
+ * The {@ExternalSystemProvider} class must be used to retrieve instances of this class.
  */
 public abstract class ExternalSystem {
 

@@ -18,7 +18,9 @@
  */
 package org.openbravo.service.externalsystem;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -32,15 +34,19 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 
 /**
- * Retrieves {@ExternalSystem} instances used to communicate with different external systems
+ * Retrieves {@ExternalSystem} instances used to communicate with different external systems. Note
+ * that for a given {@ExternalSystemData} configuration it always retrieves the same
+ * {@ExternalSystem} instance.
  */
 @ApplicationScoped
-public class ExternalSystemFactory {
+public class ExternalSystemProvider {
   private static final Logger log = LogManager.getLogger();
 
   @Inject
   @Any
   private Instance<ExternalSystem> externalSystems;
+
+  private Map<String, ExternalSystem> configuredExternalSystems = new ConcurrentHashMap<>();
 
   /**
    * Retrieves the {@link ExternalSystem} identified by the given search key
@@ -54,7 +60,7 @@ public class ExternalSystemFactory {
   public Optional<ExternalSystem> getExternalSystem(String externalSystemId) {
     ExternalSystemData configuration = OBDal.getInstance()
         .get(ExternalSystemData.class, externalSystemId);
-    return configuration != null ? getExternalSystem(configuration) : Optional.empty();
+    return getExternalSystem(configuration);
   }
 
   /**
@@ -70,6 +76,9 @@ public class ExternalSystemFactory {
     if (configuration == null) {
       return Optional.empty();
     }
+    if (configuredExternalSystems.containsKey(configuration.getId())) {
+      return Optional.of(configuredExternalSystems.get(configuration.getId()));
+    }
     String protocol = configuration.getProtocol();
     return externalSystems.select(new ProtocolSelector(protocol))
         .stream()
@@ -84,6 +93,7 @@ public class ExternalSystemFactory {
           try {
             ExternalSystem externalSystem = list.get(0);
             externalSystem.configure(configuration);
+            configuredExternalSystems.putIfAbsent(configuration.getId(), externalSystem);
             return Optional.of(externalSystem);
           } catch (Exception ex) {
             log.error("Could not configure an external system with configuration {}",
