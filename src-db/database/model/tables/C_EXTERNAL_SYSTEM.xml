@@ -37,15 +37,15 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="VALUE" primaryKey="false" required="true" type="VARCHAR" size="40" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="DESCRIPTION" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
       <column name="CONNECTIVITY_PROCESS" primaryKey="false" required="false" type="VARCHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="NAME" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -55,10 +55,6 @@
       <foreign-key foreignTable="AD_ORG" name="C_EXTERNAL_SYSTEM_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="C_EXTERNAL_SYSTEM_VALUE">
-        <unique-column name="AD_CLIENT_ID"/>
-        <unique-column name="VALUE"/>
-      </unique>
       <check name="C_EXTERNAL_SYSTEM_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
