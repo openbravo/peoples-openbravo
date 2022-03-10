@@ -9,7 +9,7 @@
 <!--0AC22A49717042D6985D824585705508-->  <NAME><![CDATA[Check Connectivity]]></NAME>
 <!--0AC22A49717042D6985D824585705508-->  <DESCRIPTION><![CDATA[A process that checks the connectivity with an external system]]></DESCRIPTION>
 <!--0AC22A49717042D6985D824585705508-->  <HELP><![CDATA[A process that checks the connectivity with an external system. It is used to validate the configuration data of an external system.]]></HELP>
-<!--0AC22A49717042D6985D824585705508-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
+<!--0AC22A49717042D6985D824585705508-->  <ACCESSLEVEL><![CDATA[6]]></ACCESSLEVEL>
 <!--0AC22A49717042D6985D824585705508-->  <CLASSNAME><![CDATA[org.openbravo.service.externalsystem.process.CheckConnectivity]]></CLASSNAME>
 <!--0AC22A49717042D6985D824585705508-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
 <!--0AC22A49717042D6985D824585705508-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
