@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -283,7 +283,9 @@ public class FIN_Utility {
       dt.setFilterOnReadableOrganization(false);
       dt.setMaxResult(1);
       dt.setNamedParameter("orgIdList",
-          new OrganizationStructureProvider().getParentTree(org.getId(), true));
+          OBContext.getOBContext()
+              .getOrganizationStructureProvider()
+              .getParentTree(org.getId(), true));
       dt.setNamedParameter("clientId", client.getId());
       dt.setNamedParameter("docCategory", docCategory);
       dt.setNamedParameter("orgId", org.getId());
