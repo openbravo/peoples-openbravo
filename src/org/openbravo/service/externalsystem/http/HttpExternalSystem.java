@@ -28,6 +28,8 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
@@ -50,8 +52,9 @@ import org.openbravo.service.externalsystem.Protocol;
 @Protocol("HTTP")
 public class HttpExternalSystem extends ExternalSystem {
 
+  private static final int FIVE = 5;
   // Fixed timeout, this can be moved to an HTTP configuration setting if needed
-  private static final Duration TIMEOUT = Duration.ofSeconds(5);
+  private static final Duration TIMEOUT = Duration.ofSeconds(FIVE);
 
   private String url;
   private String testURL;
@@ -133,6 +136,7 @@ public class HttpExternalSystem extends ExternalSystem {
 
     return client.sendAsync(request.build(), BodyHandlers.ofString())
         .thenApply(this::buildResponse)
+        .orTimeout(FIVE, TimeUnit.SECONDS)
         .exceptionally(this::buildErrorResponse);
   }
 
@@ -154,6 +158,10 @@ public class HttpExternalSystem extends ExternalSystem {
   }
 
   private ExternalSystemResponse buildErrorResponse(Throwable error) {
-    return ExternalSystemResponseBuilder.newBuilder().withError(error.getMessage()).build();
+    String errorMessage = error.getMessage();
+    if (errorMessage == null && error instanceof TimeoutException) {
+      errorMessage = "Operation exceeded the maximum " + TIMEOUT.toSeconds() + " seconds allowed";
+    }
+    return ExternalSystemResponseBuilder.newBuilder().withError(errorMessage).build();
   }
 }
