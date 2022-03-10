@@ -50,7 +50,7 @@ public class CheckConnectivity extends BaseProcessActionHandler {
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
     try {
       JSONObject data = new JSONObject(content);
-      String searchKey = data.getString("inpvalue");
+      String searchKey = data.getString("inpcExternalSystemId");
       Optional<ExternalSystem> externalSystem = externalSystemFactory.getExternalSystem(searchKey);
       if (externalSystem.isPresent()) {
         return externalSystem.get().test(getDataToSend()).thenApply(this::handleResponse).get();
