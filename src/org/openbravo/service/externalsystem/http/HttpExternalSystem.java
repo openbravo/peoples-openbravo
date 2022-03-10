@@ -48,7 +48,7 @@ import org.openbravo.service.externalsystem.Protocol;
  * Allows to communicate with an external system through HTTP requests
  */
 @Protocol("HTTP")
-public class HttpPostExternalSystem extends ExternalSystem {
+public class HttpExternalSystem extends ExternalSystem {
 
   // Fixed timeout, this can be moved to an HTTP configuration setting if needed
   private static final Duration TIMEOUT = Duration.ofSeconds(5);
@@ -70,7 +70,7 @@ public class HttpPostExternalSystem extends ExternalSystem {
         .filter(HttpExternalSystemData::isActive)
         .findFirst()
         .orElseThrow(() -> new ExternalSystemConfigurationError(
-            "No HTTP configuration found for external system " + configuration.getSearchKey()));
+            "No HTTP configuration found for external system with ID " + configuration.getId()));
 
     url = httpConfig.getURL();
     testURL = httpConfig.getTestURL();
