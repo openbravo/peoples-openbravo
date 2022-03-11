@@ -34,29 +34,31 @@
   };
 
   OB.Taxes.filterRulesByTicket = (ticket, rules) => {
-    const ticketLinesTaxCategories = [
-      ...new Set(
-        ticket.lines.flatMap(line =>
-          [line.product.taxCategory].concat(
-            (line.product.productBOM || []).map(
-              bomLine => bomLine.product.taxCategory
+    const ticketLinesSet = ticket.lines.reduce(
+      (obj, line) => ({
+        taxCategory: new Set([
+          ...obj.taxCategory,
+          ...new Set(
+            [line.product.taxCategory].concat(
+              (line.product.productBOM || []).map(
+                bomLine => bomLine.product.taxCategory
+              )
             )
           )
-        )
-      )
-    ];
-    const ticketLinesCountries = [
-      ...new Set(ticket.lines.map(line => line.country))
-    ];
-    const ticketLinesRegions = [
-      ...new Set(ticket.lines.map(line => line.region))
-    ];
-    const ticketLinesDestinationCountries = [
-      ...new Set(ticket.lines.map(line => line.destinationCountry))
-    ];
-    const ticketLinesDestinationRegions = [
-      ...new Set(ticket.lines.map(line => line.destinationRegion))
-    ];
+        ]),
+        country: obj.country.add(line.country),
+        destinationCountry: obj.destinationCountry.add(line.destinationCountry),
+        region: obj.region.add(line.region),
+        destinationRegion: obj.destinationRegion.add(line.destinationRegion)
+      }),
+      {
+        taxCategory: new Set(),
+        country: new Set(ticket.country),
+        destinationCountry: new Set(ticket.destinationCountry),
+        region: new Set(ticket.region),
+        destinationRegion: new Set(ticket.destinationRegion)
+      }
+    );
     const checkTaxCategory = rule => {
       return (
         (rule.taxExempt ||
@@ -64,9 +66,7 @@
             rule.businessPartnerTaxCategory,
             ticket.businessPartner.taxCategory
           )) &&
-        ticketLinesTaxCategories.some(taxCategory =>
-          equals(taxCategory, rule.taxCategory)
-        )
+        ticketLinesSet.taxCategory.has(rule.taxCategory)
       );
     };
     const checkValidFromDate = rule => {
@@ -80,6 +80,46 @@
         equals(rule.isCashVAT, ticket.cashVAT) ||
         (!rule.isCashVAT && (rule.withholdingTax || equals(rule.rate, 0)))
       );
+    };
+    const checkandUpdateLocation = rule => {
+      const matchLocation = (
+        ruleOrZone,
+        ruleOrZoneLocationProperty,
+        lineLocationProperty
+      ) => {
+        // Rules apply if they match for each location property or if location property is empty
+        const ruleLocation = ruleOrZone[ruleOrZoneLocationProperty];
+        const lineLocation = ticketLinesSet[lineLocationProperty];
+        return !ruleLocation || lineLocation.has(ruleLocation);
+      };
+
+      // If rule matches any line country and region we keep the rule as it is
+      if (
+        matchLocation(rule, 'country', 'country') &&
+        matchLocation(rule, 'destinationCountry', 'destinationCountry') &&
+        matchLocation(rule, 'region', 'region') &&
+        matchLocation(rule, 'destinationRegion', 'destinationRegion')
+      ) {
+        return rule;
+      }
+
+      // If rule includes a zone that matches any line country and region we keep the zone
+      const taxZones = (rule.taxZones || []).filter(
+        zone =>
+          matchLocation(zone, 'zoneCountry', 'country') &&
+          matchLocation(zone, 'zoneDestinationCountry', 'destinationCountry') &&
+          matchLocation(zone, 'zoneRegion', 'region') &&
+          matchLocation(zone, 'zoneDestinationRegion', 'destinationRegion')
+      );
+      if (taxZones.length) {
+        return {
+          ...rule,
+          taxZones
+        };
+      }
+
+      // If no match we remove the rule
+      return [];
     };
     const sortByDate = (rule1, rule2) => {
       return new Date(rule2.validFromDate) - new Date(rule1.validFromDate);
@@ -105,94 +145,6 @@
       }
       return 0;
     };
-    const joinRuleAndZone = rule => {
-      return (rule.taxZones || [rule]).map(zone => {
-        const updatedRule = { ...zone, ...rule };
-        updatedRule.zoneCountry = zone.zoneCountry || rule.country;
-        updatedRule.zoneRegion = zone.zoneRegion || rule.region;
-        updatedRule.zoneDestinationCountry =
-          zone.zoneDestinationCountry || rule.destinationCountry;
-        updatedRule.zoneDestinationRegion =
-          zone.zoneDestinationRegion || rule.destinationRegion;
-        return updatedRule;
-      });
-    };
-    const checkDestinationCountry = rule => {
-      return (
-        equals(rule.destinationCountry, ticket.destinationCountry) ||
-        equals(rule.zoneDestinationCountry, ticket.destinationCountry) ||
-        ticketLinesDestinationCountries.some(country =>
-          equals(country, rule.destinationCountry)
-        ) ||
-        ticketLinesDestinationCountries.some(country =>
-          equals(country, rule.zoneDestinationCountry)
-        ) ||
-        (!rule.destinationCountry && !rule.zoneDestinationCountry)
-      );
-    };
-    const checkFromCountry = rule => {
-      return (
-        equals(rule.country, ticket.country) ||
-        equals(rule.zoneCountry, ticket.country) ||
-        ticketLinesCountries.some(country => equals(country, rule.country)) ||
-        ticketLinesCountries.some(country =>
-          equals(country, rule.zoneCountry)
-        ) ||
-        (!rule.country && !rule.zoneCountry)
-      );
-    };
-    const checkCountry = rule => {
-      return checkFromCountry(rule) && checkDestinationCountry(rule);
-    };
-    const checkFromRegion = rule => {
-      return (
-        equals(rule.region, ticket.region) ||
-        equals(rule.zoneRegion, ticket.region) ||
-        ticketLinesRegions.some(region => equals(region, rule.region)) ||
-        ticketLinesRegions.some(region => equals(region, rule.zoneRegion)) ||
-        (!rule.region && !rule.zoneRegion)
-      );
-    };
-    const checkDestinationRegion = rule => {
-      return (
-        equals(rule.destinationRegion, ticket.destinationRegion) ||
-        equals(rule.zoneDestinationRegion, ticket.destinationRegion) ||
-        ticketLinesDestinationRegions.some(region =>
-          equals(region, rule.destinationRegion)
-        ) ||
-        ticketLinesDestinationRegions.some(region =>
-          equals(region, rule.zoneDestinationRegion)
-        ) ||
-        (!rule.destinationRegion && !rule.zoneDestinationRegion)
-      );
-    };
-    const checkRegion = rule => {
-      return checkFromRegion(rule) && checkDestinationRegion(rule);
-    };
-    const sortByRegionFrom = (rule1, rule2) => {
-      const checkRegionFrom = rule => {
-        return rule.region || rule.zoneRegion;
-      };
-      if (checkRegionFrom(rule1) && !checkRegionFrom(rule2)) {
-        return -1;
-      }
-      if (!checkRegionFrom(rule1) && checkRegionFrom(rule2)) {
-        return 1;
-      }
-      return 0;
-    };
-    const sortByCountryFrom = (rule1, rule2) => {
-      const checkCountryFrom = rule => {
-        return rule.country || rule.zoneCountry;
-      };
-      if (checkCountryFrom(rule1) && !checkCountryFrom(rule2)) {
-        return -1;
-      }
-      if (!checkCountryFrom(rule1) && checkCountryFrom(rule2)) {
-        return 1;
-      }
-      return 0;
-    };
 
     return rules
       .filter(
@@ -202,6 +154,7 @@
           checkSummary(rule) &&
           checkIsCashVAT(rule)
       )
+      .flatMap(rule => checkandUpdateLocation(rule))
       .sort(
         (rule1, rule2) =>
           sortByDate(rule1, rule2) ||
@@ -209,62 +162,10 @@
           sortByLineno(rule1, rule2) ||
           sortByCascade(rule1, rule2) ||
           sortByTaxBase(rule1, rule2)
-      )
-      .flatMap(rule => joinRuleAndZone(rule))
-      .filter(rule => checkCountry(rule) && checkRegion(rule))
-      .sort(
-        (rule1, rule2) =>
-          sortByRegionFrom(rule1, rule2) || sortByCountryFrom(rule1, rule2)
       );
   };
 
   OB.Taxes.filterRulesByTicketLine = (ticket, line, rules) => {
-    const checkFromCountry = rule => {
-      return (
-        equals(rule.country, line.country || ticket.country) ||
-        equals(rule.zoneCountry, line.country || ticket.country) ||
-        (!rule.country && !rule.zoneCountry)
-      );
-    };
-    const checkDestinationCountry = rule => {
-      return (
-        equals(
-          rule.destinationCountry,
-          line.destinationCountry || ticket.destinationCountry
-        ) ||
-        equals(
-          rule.zoneDestinationCountry,
-          line.destinationCountry || ticket.destinationCountry
-        ) ||
-        (!rule.destinationCountry && !rule.zoneDestinationCountry)
-      );
-    };
-    const checkCountry = rule => {
-      return checkFromCountry(rule) && checkDestinationCountry(rule);
-    };
-    const checkFromRegion = rule => {
-      return (
-        equals(rule.region, line.region || ticket.region) ||
-        equals(rule.zoneRegion, line.region || ticket.region) ||
-        (!rule.region && !rule.zoneRegion)
-      );
-    };
-    const checkDestinationRegion = rule => {
-      return (
-        equals(
-          rule.destinationRegion,
-          line.destinationRegion || ticket.destinationRegion
-        ) ||
-        equals(
-          rule.zoneDestinationRegion,
-          line.destinationRegion || ticket.destinationRegion
-        ) ||
-        (!rule.destinationRegion && !rule.zoneDestinationRegion)
-      );
-    };
-    const checkRegion = rule => {
-      return checkFromRegion(rule) && checkDestinationRegion(rule);
-    };
     const checkTaxCategory = rule => {
       const isTaxExempt = line.taxExempt || ticket.businessPartner.taxExempt;
       return (
@@ -282,120 +183,91 @@
         (line.originalOrderDate ? new Date(line.originalOrderDate) : new Date())
       );
     };
-    const sortByRegionTo = (rule1, rule2) => {
-      const checkRegionTo = rule => {
-        return (
-          equals(
-            rule.destinationRegion,
-            line.destinationRegion || ticket.destinationRegion
-          ) ||
-          equals(
-            rule.zoneDestinationRegion,
-            line.destinationRegion || ticket.destinationRegion
-          )
-        );
+    const checkandUpdateLocation = rule => {
+      const matchLocation = (
+        ruleOrZone,
+        ruleOrZoneLocationProperty,
+        lineLocationProperty
+      ) => {
+        // Rules apply if they match for each location property or if location property is empty
+        const ruleLocation = ruleOrZone[ruleOrZoneLocationProperty];
+        const lineLocation =
+          line[lineLocationProperty] || ticket[lineLocationProperty];
+        return !ruleLocation || equals(ruleLocation, lineLocation);
       };
-      if (checkRegionTo(rule1) && !checkRegionTo(rule2)) {
-        return -1;
+
+      // If rule matches line country and region we keep the rule as it is
+      if (
+        matchLocation(rule, 'country', 'country') &&
+        matchLocation(rule, 'destinationCountry', 'destinationCountry') &&
+        matchLocation(rule, 'region', 'region') &&
+        matchLocation(rule, 'destinationRegion', 'destinationRegion')
+      ) {
+        return { ...rule, taxZones: undefined };
       }
-      if (!checkRegionTo(rule1) && checkRegionTo(rule2)) {
-        return 1;
+
+      // If rule includes a zone that matches line country and region we update rule with zone information
+      const taxZone = (rule.taxZones || []).find(
+        zone =>
+          matchLocation(zone, 'zoneCountry', 'country') &&
+          matchLocation(zone, 'zoneDestinationCountry', 'destinationCountry') &&
+          matchLocation(zone, 'zoneRegion', 'region') &&
+          matchLocation(zone, 'zoneDestinationRegion', 'destinationRegion')
+      );
+      if (taxZone) {
+        return {
+          ...rule,
+          country: taxZone.zoneCountry,
+          destinationCountry: taxZone.zoneDestinationCountry,
+          region: taxZone.zoneRegion,
+          destinationRegion: taxZone.zoneDestinationRegion,
+          taxZones: undefined
+        };
       }
-      return 0;
+
+      // If no match we remove the rule
+      return [];
     };
-    const sortByCountryTo = (rule1, rule2) => {
-      const checkCountryTo = rule => {
-        return (
-          equals(
-            rule.destinationCountry,
-            line.destinationCountry || ticket.destinationCountry
-          ) ||
-          equals(
-            rule.zoneDestinationCountry,
-            line.destinationCountry || ticket.destinationCountry
-          )
-        );
+    const sortByLocation = (rule1, rule2) => {
+      const sortLocation = ruleLocationProperty => {
+        if (rule1[ruleLocationProperty] && !rule2[ruleLocationProperty]) {
+          return -1;
+        }
+        if (!rule1[ruleLocationProperty] && rule2[ruleLocationProperty]) {
+          return 1;
+        }
+        return 0;
       };
-      if (checkCountryTo(rule1) && !checkCountryTo(rule2)) {
-        return -1;
-      }
-      if (!checkCountryTo(rule1) && checkCountryTo(rule2)) {
-        return 1;
-      }
-      return 0;
-    };
-    const updateRuleLocation = rule => {
-      const updatedRule = { ...rule };
-      updatedRule.country = equals(rule.country, line.country || ticket.country)
-        ? rule.country
-        : rule.zoneCountry;
-      updatedRule.region = equals(rule.region, line.region || ticket.region)
-        ? rule.region
-        : rule.zoneRegion;
-      updatedRule.destinationCountry = equals(
-        rule.destinationCountry,
-        line.destinationCountry || ticket.destinationCountry
-      )
-        ? rule.destinationCountry
-        : rule.zoneDestinationCountry;
-      updatedRule.destinationRegion = equals(
-        rule.destinationRegion,
-        line.destinationRegion || ticket.destinationRegion
-      )
-        ? rule.destinationRegion
-        : rule.zoneDestinationRegion;
-      return updatedRule;
-    };
-    const checkLocationAndDate = (rule, rulesFilteredByLine) => {
+
+      // Rules with defined country and region have more priority than rules with empty country and region
       return (
-        equals(
-          rule.destinationCountry,
-          rulesFilteredByLine[0].destinationCountry
-        ) &&
-        equals(
-          rule.destinationRegion,
-          rulesFilteredByLine[0].destinationRegion
-        ) &&
-        equals(rule.country, rulesFilteredByLine[0].country) &&
-        equals(rule.region, rulesFilteredByLine[0].region) &&
-        equals(rule.validFromDate, rulesFilteredByLine[0].validFromDate)
+        sortLocation('destinationRegion') ||
+        sortLocation('region') ||
+        sortLocation('destinationCountry') ||
+        sortLocation('country')
       );
     };
-    const groupRuleAndZone = (rulesAndZones, rule) => {
-      const updatedRule = { ...rule };
-      delete updatedRule.taxRateId;
-      delete updatedRule.zoneCountry;
-      delete updatedRule.zoneRegion;
-      delete updatedRule.zoneDestinationCountry;
-      delete updatedRule.zoneDestinationRegion;
-      delete updatedRule.taxZones;
-
-      return rulesAndZones.find(
-        ruleAndZone => ruleAndZone.id === updatedRule.id
-      )
-        ? rulesAndZones
-        : [...rulesAndZones, updatedRule];
+    const checkDateAndLocationWithFirstMatchingRule = (
+      rule,
+      rulesFilteredByLine
+    ) => {
+      // We return every rule with the same match for date property and for each location property
+      const firstMatchingRule = rulesFilteredByLine[0];
+      return (
+        equals(rule.validFromDate, firstMatchingRule.validFromDate) &&
+        equals(rule.country, firstMatchingRule.country) &&
+        equals(rule.destinationCountry, firstMatchingRule.destinationCountry) &&
+        equals(rule.region, firstMatchingRule.region) &&
+        equals(rule.destinationRegion, firstMatchingRule.destinationRegion)
+      );
     };
 
     return rules
-      .filter(
-        rule =>
-          checkCountry(rule) &&
-          checkRegion(rule) &&
-          checkTaxCategory(rule) &&
-          checkValidFromDate(rule)
-      )
-      .sort(
-        (rule1, rule2) =>
-          sortByRegionTo(rule1, rule2) || sortByCountryTo(rule1, rule2)
-      )
-      .map(rule => updateRuleLocation(rule))
-      .reduce(
-        (rulesAndZones, rule) => groupRuleAndZone(rulesAndZones, rule),
-        []
-      )
+      .filter(rule => checkTaxCategory(rule) && checkValidFromDate(rule))
+      .flatMap(rule => checkandUpdateLocation(rule))
+      .sort((rule1, rule2) => sortByLocation(rule1, rule2))
       .filter((rule, index, rulesFilteredByLine) =>
-        checkLocationAndDate(rule, rulesFilteredByLine)
+        checkDateAndLocationWithFirstMatchingRule(rule, rulesFilteredByLine)
       );
   };
 })();
