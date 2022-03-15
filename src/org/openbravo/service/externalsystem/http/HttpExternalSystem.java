@@ -75,7 +75,7 @@ public class HttpExternalSystem extends ExternalSystem {
     url = httpConfig.getURL();
     method = httpConfig.getRequestMethod();
     timeout = getTimeoutValue(httpConfig);
-    authorizationProvider = getHttpAuthorizationProvider(httpConfig);
+    authorizationProvider = newHttpAuthorizationProvider(httpConfig);
     client = HttpClient.newBuilder()
         .version(Version.HTTP_1_1)
         .connectTimeout(Duration.ofSeconds(timeout))
@@ -90,10 +90,11 @@ public class HttpExternalSystem extends ExternalSystem {
     return configTimeout.intValue();
   }
 
-  private HttpAuthorizationProvider getHttpAuthorizationProvider(
+  private HttpAuthorizationProvider newHttpAuthorizationProvider(
       HttpExternalSystemData httpConfig) {
     String authorizationType = httpConfig.getAuthorizationType();
-    return authorizationProviders.select(new HttpAuthorizationMethodSelector(authorizationType))
+    HttpAuthorizationProvider provider = authorizationProviders
+        .select(new HttpAuthorizationMethodSelector(authorizationType))
         .stream()
         .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
           if (list.isEmpty()) {
@@ -106,10 +107,10 @@ public class HttpExternalSystem extends ExternalSystem {
             throw new ExternalSystemConfigurationError(
                 "Found multiple HTTP authorization providers for method " + authorizationType);
           }
-          HttpAuthorizationProvider provider = list.get(0);
-          provider.init(httpConfig);
-          return provider;
+          return list.get(0);
         }));
+    provider.init(httpConfig);
+    return provider;
   }
 
   @Override
