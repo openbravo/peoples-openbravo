@@ -9,8 +9,6 @@
 
 package org.openbravo.retail.posterminal.event;
 
-import java.math.BigDecimal;
-
 import javax.enterprise.event.Observes;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +32,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class PreferenceEventHandler extends EntityPersistenceEventObserver {
   private static final String sessionTimeout = "OBPOS_SessionTimeout";
-  private static final BigDecimal minValue = new BigDecimal("120");
+  private static final int minValue = 2; // 2 minutes
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(Preference.ENTITY_NAME) };
@@ -63,8 +61,8 @@ public class PreferenceEventHandler extends EntityPersistenceEventObserver {
 
   private void checkOfflineSessionTimeExpiration(Preference preference) {
     if (sessionTimeout.equals(preference.getProperty())) {
-      BigDecimal value = new BigDecimal((String) preference.getSearchKey());
-      if (value.compareTo(minValue) <= 0) {
+      int value = Integer.parseInt(preference.getSearchKey());
+      if (value <= minValue) {
         ConnectionProvider conn = new DalConnectionProvider(false);
         String language = OBContext.getOBContext().getLanguage().getLanguage();
         throw new OBException(Utility.messageBD(conn, "OBPOS_InvalidSessionTimeout", language));

@@ -9,8 +9,6 @@
 
 package org.openbravo.retail.posterminal.event;
 
-import java.math.BigDecimal;
-
 import javax.enterprise.event.Observes;
 
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +32,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 
 public class ModelImplementationParameterEventHandler extends EntityPersistenceEventObserver {
   private static final String modelObjectId = "E090F1D1A9B945B79F46939EAD138861";
-  private static final BigDecimal minValue = new BigDecimal("120");
+  private static final int minValue = 2; // 2 minutes
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(ModelImplementationParameter.ENTITY_NAME) };
@@ -66,8 +64,8 @@ public class ModelImplementationParameterEventHandler extends EntityPersistenceE
   private void checkModelImplementationParameter(ModelImplementationParameter parameter) {
     if (modelObjectId.equals(parameter.getModelObject().getId())
         && "timeout".equals(parameter.getName())) {
-      BigDecimal value = new BigDecimal((String) parameter.getSearchKey());
-      if (value.compareTo(minValue) <= 0) {
+      int value = Integer.parseInt(parameter.getSearchKey());
+      if (value <= minValue) {
         ConnectionProvider conn = new DalConnectionProvider(false);
         String language = OBContext.getOBContext().getLanguage().getLanguage();
         throw new OBException(Utility.messageBD(conn, "OBPOS_InvalidADMappingTimeout", language));
