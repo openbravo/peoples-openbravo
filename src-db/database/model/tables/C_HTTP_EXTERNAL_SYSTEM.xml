@@ -61,6 +61,10 @@
         <default><![CDATA[POST]]></default>
         <onCreateDefault/>
       </column>
+      <column name="TIMEOUT" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default><![CDATA[10]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_HTTP_EXT_SYSTEM_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -78,6 +82,7 @@
         <index-column name="ISACTIVE"/>
         <whereClause><![CDATA[ISACTIVE='Y']]></whereClause>
       </index>
+      <check name="C_HTTP_EXT_SYS_MIN_TIMEOUT"><![CDATA[TIMEOUT > 0]]></check>
       <check name="C_HTTP_EXT_SYSTEM_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_HTTP_EXT_SYSTEM_BASIC_AUTH"><![CDATA[AUTHORIZATION_TYPE <> 'BASIC' OR USERNAME IS NOT NULL AND PASSWORD IS NOT NULL]]></check>
     </table>

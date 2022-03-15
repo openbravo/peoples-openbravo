@@ -51,16 +51,14 @@ import org.openbravo.service.externalsystem.Protocol;
  */
 @Protocol("HTTP")
 public class HttpExternalSystem extends ExternalSystem {
-
-  private static final int FIVE = 5;
-  // Fixed timeout, this can be moved to an HTTP configuration setting if needed
-  private static final Duration TIMEOUT = Duration.ofSeconds(FIVE);
+  public static final int MAX_TIMEOUT = 30;
 
   private String url;
+  private String method;
+  private int timeout;
   private String testURL;
   private HttpClient client;
   private HttpAuthorizationProvider authorizationProvider;
-  private String method;
 
   @Inject
   @Any
@@ -78,8 +76,20 @@ public class HttpExternalSystem extends ExternalSystem {
     url = httpConfig.getURL();
     testURL = httpConfig.getTestURL();
     method = httpConfig.getRequestMethod();
+    timeout = getTimeoutValue(httpConfig);
     authorizationProvider = getHttpAuthorizationProvider(httpConfig);
-    client = HttpClient.newBuilder().version(Version.HTTP_1_1).connectTimeout(TIMEOUT).build();
+    client = HttpClient.newBuilder()
+        .version(Version.HTTP_1_1)
+        .connectTimeout(Duration.ofSeconds(timeout))
+        .build();
+  }
+
+  private int getTimeoutValue(HttpExternalSystemData httpConfig) {
+    Long configTimeout = httpConfig.getTimeout();
+    if (configTimeout > MAX_TIMEOUT) {
+      return MAX_TIMEOUT;
+    }
+    return configTimeout.intValue();
   }
 
   private HttpAuthorizationProvider getHttpAuthorizationProvider(
@@ -123,7 +133,7 @@ public class HttpExternalSystem extends ExternalSystem {
   private CompletableFuture<ExternalSystemResponse> post(String postURL, InputStream inputStream) {
     HttpRequest.Builder request = HttpRequest.newBuilder()
         .uri(URI.create(postURL))
-        .timeout(TIMEOUT)
+        .timeout(Duration.ofSeconds(timeout))
         // sent JSON content by default, if any other content type needs to be posted then this
         // should be moved to a new HTTP configuration setting
         .header("Content-Type", "application/json")
@@ -136,7 +146,7 @@ public class HttpExternalSystem extends ExternalSystem {
 
     return client.sendAsync(request.build(), BodyHandlers.ofString())
         .thenApply(this::buildResponse)
-        .orTimeout(FIVE, TimeUnit.SECONDS)
+        .orTimeout(timeout, TimeUnit.SECONDS)
         .exceptionally(this::buildErrorResponse);
   }
 
@@ -160,7 +170,7 @@ public class HttpExternalSystem extends ExternalSystem {
   private ExternalSystemResponse buildErrorResponse(Throwable error) {
     String errorMessage = error.getMessage();
     if (errorMessage == null && error instanceof TimeoutException) {
-      errorMessage = "Operation exceeded the maximum " + TIMEOUT.toSeconds() + " seconds allowed";
+      errorMessage = "Operation exceeded the maximum " + timeout + " seconds allowed";
     }
     return ExternalSystemResponseBuilder.newBuilder().withError(errorMessage).build();
   }
