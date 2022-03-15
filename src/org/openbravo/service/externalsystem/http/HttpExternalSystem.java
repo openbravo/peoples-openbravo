@@ -56,7 +56,6 @@ public class HttpExternalSystem extends ExternalSystem {
   private String url;
   private String method;
   private int timeout;
-  private String testURL;
   private HttpClient client;
   private HttpAuthorizationProvider authorizationProvider;
 
@@ -74,7 +73,6 @@ public class HttpExternalSystem extends ExternalSystem {
             "No HTTP configuration found for external system with ID " + configuration.getId()));
 
     url = httpConfig.getURL();
-    testURL = httpConfig.getTestURL();
     method = httpConfig.getRequestMethod();
     timeout = getTimeoutValue(httpConfig);
     authorizationProvider = getHttpAuthorizationProvider(httpConfig);
@@ -118,14 +116,6 @@ public class HttpExternalSystem extends ExternalSystem {
   public CompletableFuture<ExternalSystemResponse> send(InputStream inputStream) {
     if ("POST".equals(method)) {
       return post(url, inputStream);
-    }
-    throw new OBException("Unsupported HTTP request method " + method);
-  }
-
-  @Override
-  public CompletableFuture<ExternalSystemResponse> test(InputStream inputStream) {
-    if ("POST".equals(method)) {
-      return post(testURL, inputStream);
     }
     throw new OBException("Unsupported HTTP request method " + method);
   }

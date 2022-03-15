@@ -50,15 +50,4 @@ public abstract class ExternalSystem {
    *         from the external system
    */
   public abstract CompletableFuture<ExternalSystemResponse> send(InputStream inputStream);
-
-  /**
-   * Tests the connectivity with the external system
-   * 
-   * @param inputStream
-   *          The input stream with the data to be sent for testing
-   * 
-   * @return a completable future with an ExternalSystemResponse containing the response data coming
-   *         from the external system
-   */
-  public abstract CompletableFuture<ExternalSystemResponse> test(InputStream inputStream);
 }

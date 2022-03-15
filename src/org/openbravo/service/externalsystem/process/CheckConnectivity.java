@@ -53,7 +53,7 @@ public class CheckConnectivity extends BaseProcessActionHandler {
       String id = data.getString("inpcExternalSystemId");
       Optional<ExternalSystem> externalSystem = externalSystemProvider.getExternalSystem(id);
       if (externalSystem.isPresent()) {
-        return externalSystem.get().test(getDataToSend()).thenApply(this::handleResponse).get();
+        return externalSystem.get().send(getDataToSend()).thenApply(this::handleResponse).get();
       } else {
         return buildError("C_ConnCheckProcessError");
       }
