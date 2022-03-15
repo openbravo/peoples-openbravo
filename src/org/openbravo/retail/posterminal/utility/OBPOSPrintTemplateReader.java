@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2019 Openbravo S.L.U.
+ * Copyright (C) 2018-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -44,10 +44,12 @@ public class OBPOSPrintTemplateReader {
       criteria.addOrderBy(PrintTemplate.PROPERTY_ID, true);
       for (PrintTemplate template : criteria.list()) {
         try {
-          sb.append(readTemplateFile(template.getTemplatePath()));
-          if (template.isPdf()) {
-            for (PrintTemplateSubrep subreport : template.getOBPOSPrintTemplateSubrepList()) {
-              sb.append(readTemplateFile(subreport.getTemplatePath()));
+          if (template.getTemplatePath() != null || !template.getTemplatePath().isEmpty()) {
+            sb.append(readTemplateFile(template.getTemplatePath()));
+            if (template.isPdf()) {
+              for (PrintTemplateSubrep subreport : template.getOBPOSPrintTemplateSubrepList()) {
+                sb.append(readTemplateFile(subreport.getTemplatePath()));
+              }
             }
           }
         } catch (Exception e) {
@@ -69,5 +71,4 @@ public class OBPOSPrintTemplateReader {
     }
     return FileUtils.readFileToString(file, "UTF-8");
   }
-
 }
