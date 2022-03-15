@@ -127,7 +127,7 @@
             INNER JOIN AD_ROLE role
               ON userRoles.AD_ROLE_ID = role.AD_ROLE_ID
          WHERE userRoles.AD_USER_ID = ?
-           AND role.ISACTIVE = 'Y' and role.isrestrictbackend='N'
+           AND role.ISACTIVE = 'Y' and role.isrestrictbackend='N' and userRoles.isactive='Y'
            ]]></Sql>
       <Parameter name="aduserid"/>
    </SqlMethod>
