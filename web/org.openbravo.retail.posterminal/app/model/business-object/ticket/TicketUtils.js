@@ -1011,6 +1011,16 @@
     },
 
     /**
+     * Checks if a payment is booked
+     *
+     * @param {object} payment - The payment to check
+     * @returns {boolean} - True if the given payment is booked, false otherwise
+     */
+    isPaymentBooked(payment) {
+      return Boolean(payment.isPrePayment);
+    },
+
+    /**
      * Checks if a ticket is editable
      *
      * @param {object} ticket - The ticket to check
