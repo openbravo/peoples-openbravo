@@ -61,11 +61,13 @@
     );
     const checkTaxCategory = rule => {
       return (
-        (rule.taxExempt ||
-          equals(
-            rule.businessPartnerTaxCategory,
-            ticket.businessPartner.taxCategory
-          )) &&
+        (ticket.businessPartner.taxExempt
+          ? equals(rule.taxExempt, true)
+          : true) &&
+        equals(
+          rule.businessPartnerTaxCategory,
+          ticket.businessPartner.taxCategory
+        ) &&
         ticketLinesSet.taxCategory.has(rule.taxCategory)
       );
     };
@@ -167,14 +169,9 @@
 
   OB.Taxes.filterRulesByTicketLine = (ticket, line, rules) => {
     const checkTaxCategory = rule => {
-      const isTaxExempt = line.taxExempt || ticket.businessPartner.taxExempt;
       return (
-        (isTaxExempt
-          ? equals(rule.taxExempt, isTaxExempt)
-          : equals(
-              rule.businessPartnerTaxCategory,
-              ticket.businessPartner.taxCategory
-            )) && equals(rule.taxCategory, line.product.taxCategory)
+        (line.taxExempt ? equals(rule.taxExempt, true) : true) &&
+        equals(rule.taxCategory, line.product.taxCategory)
       );
     };
     const checkValidFromDate = rule => {
