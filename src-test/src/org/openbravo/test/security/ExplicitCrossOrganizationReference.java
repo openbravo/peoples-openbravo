@@ -86,7 +86,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   public void shouldBeIllegalOnInsert() {
     createOrder(SPAIN_ORG, USA_WAREHOUSE);
 
-    assertThrows(OBSecurityException.class, () -> OBDal.getInstance().commitAndClose());
+    assertThrows(OBSecurityException.class, () -> {
+      OBDal.getInstance().commitAndClose();
+    });
   }
 
   /**
@@ -98,7 +100,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
 
-    assertThrows(OBSecurityException.class, () -> OBDal.getInstance().commitAndClose());
+    assertThrows(OBSecurityException.class, () -> {
+      OBDal.getInstance().commitAndClose();
+    });
   }
 
   /**
@@ -151,7 +155,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
         }
       });
 
-      assertThrows(OBSecurityException.class, () -> OBDal.getInstance().commitAndClose());
+      assertThrows(OBSecurityException.class, () -> {
+        OBDal.getInstance().commitAndClose();
+      });
     } finally {
       OBContext.restorePreviousCrossOrgReferenceMode();
     }
@@ -168,7 +174,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     try {
       order.setCancelledorder(OBDal.getInstance().getProxy(Order.class, USA_ORDER));
 
-      assertThrows(OBSecurityException.class, () -> OBDal.getInstance().commitAndClose());
+      assertThrows(OBSecurityException.class, () -> {
+        OBDal.getInstance().commitAndClose();
+      });
     } finally {
       OBContext.restorePreviousCrossOrgReferenceMode();
     }
@@ -179,7 +187,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   public void shouldBeIllegalOnChildInsert() {
     createCrossOrgOrderOrderLine();
 
-    assertThrows(OBSecurityException.class, () -> OBDal.getInstance().commitAndClose());
+    assertThrows(OBSecurityException.class, () -> {
+      OBDal.getInstance().commitAndClose();
+    });
   }
 
   @Test
@@ -189,7 +199,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
     ol.setOrganization(OBDal.getInstance().getProxy(Organization.class, USA_ORG));
 
-    assertThrows(OBSecurityException.class, () -> OBDal.getInstance().commitAndClose());
+    assertThrows(OBSecurityException.class, () -> {
+      OBDal.getInstance().commitAndClose();
+    });
   }
 
   @Test
@@ -408,7 +420,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
       Column orderCreatedBy = OBDal.getInstance().get(Column.class, ORDER_CREATEDBY_COLUMN);
       orderCreatedBy.setAllowedCrossOrganizationReference(true);
 
-      assertThrows(Exception.class, () -> OBDal.getInstance().commitAndClose());
+      assertThrows(Exception.class, () -> {
+        OBDal.getInstance().commitAndClose();
+      });
     } finally {
       OBDal.getInstance().rollbackAndClose();
       OBContext.setOBContext(prevCtxt);

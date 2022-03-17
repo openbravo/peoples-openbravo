@@ -19,7 +19,7 @@
 package org.openbravo.test.reporting;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.net.URISyntaxException;

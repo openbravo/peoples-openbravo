@@ -73,8 +73,9 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final JSONArray storageDetailsJS = new JSONArray();
     storageDetailsJS.put(storageDetailJS);
 
-    OBException thrown = assertThrows(OBException.class,
-        () -> new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement());
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement();
+    });
     assertThat(thrown.getMessage(),
         containsString(String.format(OBMessageUtils.messageBD("RefInv_NegativeQty"), "")));
   }
@@ -92,8 +93,9 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final JSONArray storageDetailsJS = new JSONArray();
     storageDetailsJS.put(storageDetailJS);
 
-    OBException thrown = assertThrows(OBException.class,
-        () -> new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement());
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement();
+    });
     assertThat(thrown.getMessage(),
         containsString(String.format(OBMessageUtils.messageBD("RefInv_NegativeQty"), "")));
   }
@@ -102,8 +104,9 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
   public void testBoxQtyGreaterThanQtyOnHand() throws Exception {
     final BigDecimal TWO_HUNDRED = new BigDecimal("200");
 
-    OBException thrown = assertThrows(OBException.class,
-        () -> testBox(null, ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, TWO_HUNDRED));
+    OBException thrown = assertThrows(OBException.class, () -> {
+      testBox(null, ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, TWO_HUNDRED);
+    });
     assertThat(thrown.getMessage(), containsString("(" + TWO_HUNDRED + ")"));
   }
 
@@ -118,8 +121,9 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
         .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE);
 
-    OBException thrown = assertThrows(OBException.class,
-        () -> new BoxProcessor(refInv2, storageDetailsJS, null).createAndProcessGoodsMovement());
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv2, storageDetailsJS, null).createAndProcessGoodsMovement();
+    });
     assertThat(thrown.getMessage(),
         containsString(" is already linked to the referenced inventory "));
   }
@@ -134,9 +138,10 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
         .getStorageDetailsToBoxJSArray(storageDetails.get(1), new BigDecimal("3"));
 
-    OBException thrown = assertThrows(OBException.class,
-        () -> new BoxProcessor(refInv, storageDetailsJS, ReferencedInventoryTestUtils.BIN_SPAIN_L03)
-            .createAndProcessGoodsMovement());
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv, storageDetailsJS, ReferencedInventoryTestUtils.BIN_SPAIN_L03)
+          .createAndProcessGoodsMovement();
+    });
     assertThat(thrown.getMessage(),
         containsString(" referenced inventory is also located in bin: "));
   }

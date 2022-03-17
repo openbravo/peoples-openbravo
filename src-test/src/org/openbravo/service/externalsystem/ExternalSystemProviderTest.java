@@ -20,7 +20,7 @@ package org.openbravo.service.externalsystem;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 
 import javax.inject.Inject;
