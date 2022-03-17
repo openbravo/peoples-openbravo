@@ -193,6 +193,16 @@ describe('TicketUtils', () => {
   });
 
   test.each`
+    payment                        | expected
+    ${{}}                          | ${false}
+    ${{ isPrePayment: undefined }} | ${false}
+    ${{ isPrePayment: false }}     | ${false}
+    ${{ isPrePayment: true }}      | ${true}
+  `("Payment '$payment' is booked", async ({ payment, expected }) => {
+    expect(OB.App.State.Ticket.Utils.isPaymentBooked(payment)).toBe(expected);
+  });
+
+  test.each`
     ticket                                                          | expected
     ${{}}                                                           | ${false}
     ${{ isEditable: false }}                                        | ${false}
