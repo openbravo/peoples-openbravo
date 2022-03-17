@@ -75,7 +75,7 @@ describe('TicketUtils', () => {
     ticket                    | expected
     ${{ isQuotation: false }} | ${false}
     ${{ isQuotation: true }}  | ${true}
-  `("Ticket '$ticket' is a quotation", async ({ ticket, expected }) => {
+  `("Ticket '$ticket' is a quotation", ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isQuotation(ticket)).toBe(expected);
   });
 
@@ -85,7 +85,7 @@ describe('TicketUtils', () => {
     ${{ orderType: 2 }}    | ${true}
     ${{ orderType: 3 }}    | ${true}
     ${{ isLayaway: true }} | ${true}
-  `("Ticket '$ticket' is a layaway", async ({ ticket, expected }) => {
+  `("Ticket '$ticket' is a layaway", ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isLayaway(ticket)).toBe(expected);
   });
 
@@ -94,7 +94,7 @@ describe('TicketUtils', () => {
     ${{ orderType: 0 }} | ${false}
     ${{ orderType: 1 }} | ${true}
     ${{ orderType: 2 }} | ${false}
-  `("Ticket '$ticket' is a return", async ({ ticket, expected }) => {
+  `("Ticket '$ticket' is a return", ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isReturn(ticket)).toBe(expected);
   });
 
@@ -110,7 +110,7 @@ describe('TicketUtils', () => {
     ${{ lines: [{ qty: 1 }, { qty: -1 }] }} | ${undefined}                                                     | ${true}
     ${{ lines: [{ qty: 1 }, { qty: -1 }] }} | ${{ preferences: { salesWithOneLineNegativeAsReturns: false } }} | ${true}
     ${{ lines: [{ qty: 1 }, { qty: -1 }] }} | ${{ preferences: { salesWithOneLineNegativeAsReturns: true } }}  | ${false}
-  `("Ticket '$ticket' is a sale", async ({ ticket, payload, expected }) => {
+  `("Ticket '$ticket' is a sale", ({ ticket, payload, expected }) => {
     expect(OB.App.State.Ticket.Utils.isSale(ticket, payload)).toBe(expected);
   });
 
@@ -121,14 +121,11 @@ describe('TicketUtils', () => {
     ${{ organization: 'A' }} | ${undefined}                           | ${false}
     ${{ organization: 'A' }} | ${{ terminal: { organization: 'A' } }} | ${false}
     ${{ organization: 'A' }} | ${{ terminal: { organization: 'B' } }} | ${true}
-  `(
-    "Ticket '$ticket' is cross store",
-    async ({ ticket, payload, expected }) => {
-      expect(OB.App.State.Ticket.Utils.isCrossStore(ticket, payload)).toBe(
-        expected
-      );
-    }
-  );
+  `("Ticket '$ticket' is cross store", ({ ticket, payload, expected }) => {
+    expect(OB.App.State.Ticket.Utils.isCrossStore(ticket, payload)).toBe(
+      expected
+    );
+  });
 
   test.each`
     ticket                             | expected
@@ -138,7 +135,7 @@ describe('TicketUtils', () => {
     ${{ grossAmount: 1, payment: 1 }}  | ${true}
     ${{ grossAmount: -1, payment: 0 }} | ${false}
     ${{ grossAmount: -1, payment: 1 }} | ${true}
-  `("Ticket '$ticket' is fully paid", async ({ ticket, expected }) => {
+  `("Ticket '$ticket' is fully paid", ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isFullyPaid(ticket)).toBe(expected);
   });
 
@@ -167,7 +164,7 @@ describe('TicketUtils', () => {
     ${{ payments: [{ origAmount: -10, isPrePayment: true }], nettingPayment: -100, total: -100 }} | ${false}
     ${{ payments: [{ origAmount: -10, isPrePayment: true }], nettingPayment: -90, total: -100 }}  | ${true}
     ${{ payments: [{ origAmount: -10, isPrePayment: true }], nettingPayment: -80, total: -100 }}  | ${true}
-  `("Ticket '$ticket' is negative", async ({ ticket, expected }) => {
+  `("Ticket '$ticket' is negative", ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isNegative(ticket)).toBe(expected);
   });
 
@@ -188,7 +185,7 @@ describe('TicketUtils', () => {
     ${{ loaded: '2021-01-01', isQuotation: false, hasbeenpaid: 'Y' }} | ${true}
     ${{ loaded: '2021-01-01', isQuotation: true, hasbeenpaid: 'N' }}  | ${true}
     ${{ loaded: '2021-01-01', isQuotation: true, hasbeenpaid: 'Y' }}  | ${true}
-  `("Ticket '$ticket' is booked", async ({ ticket, expected }) => {
+  `("Ticket '$ticket' is booked", ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isBooked(ticket)).toBe(expected);
   });
 
@@ -198,7 +195,7 @@ describe('TicketUtils', () => {
     ${{ isPrePayment: undefined }} | ${false}
     ${{ isPrePayment: false }}     | ${false}
     ${{ isPrePayment: true }}      | ${true}
-  `("Payment '$payment' is booked", async ({ payment, expected }) => {
+  `("Payment '$payment' is booked", ({ payment, expected }) => {
     expect(OB.App.State.Ticket.Utils.isPaymentBooked(payment)).toBe(expected);
   });
 
@@ -217,7 +214,7 @@ describe('TicketUtils', () => {
     ${{ isEditable: true, payments: [], paymentSubtotals: [{}] }}   | ${true}
     ${{ isEditable: true, payments: [{}], paymentSubtotals: [] }}   | ${true}
     ${{ isEditable: true, payments: [{}], paymentSubtotals: [{}] }} | ${false}
-  `("Ticket '$ticket' is editable", async ({ ticket, expected }) => {
+  `("Ticket '$ticket' is editable", ({ ticket, expected }) => {
     expect(OB.App.State.Ticket.Utils.isEditable(ticket)).toBe(expected);
   });
 
@@ -227,7 +224,7 @@ describe('TicketUtils', () => {
     ${{ prepaymentChangeMode: true, payments: [{ origAmount: 50 }, { origAmount: 60 }], grossAmount: 150.5 }} | ${40.5}
   `(
     "Pending amount for ticket '$ticket' is $expected",
-    async ({ ticket, expected }) => {
+    ({ ticket, expected }) => {
       expect(OB.App.State.Ticket.Utils.getPendingAmount(ticket)).toBe(expected);
     }
   );
