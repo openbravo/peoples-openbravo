@@ -34,9 +34,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 
 /**
- * Retrieves {@ExternalSystem} instances used to communicate with different external systems. Note
- * that for a given {@ExternalSystemData} configuration it always retrieves the same
- * {@ExternalSystem} instance.
+ * Provides {@ExternalSystem} instances used to communicate with different external systems and that
+ * are kept in an in memory cache to favor its reuse. Note that for a given
+ * {@ExternalSystemData} configuration it always retrieves the same {@ExternalSystem} instance.
  */
 @ApplicationScoped
 public class ExternalSystemProvider {
@@ -49,10 +49,12 @@ public class ExternalSystemProvider {
   private Map<String, ExternalSystem> configuredExternalSystems = new ConcurrentHashMap<>();
 
   /**
-   * Retrieves the {@link ExternalSystem} identified by the given search key
+   * Retrieves the {@link ExternalSystem} instance configured with the {@link ExternalSystemData}
+   * whose ID is received as parameter
    * 
    * @param externalSystemId
    *          The ID of the {@link ExternalSystemData} that contains the configuration data
+   * 
    * @return an Optional with the external system instance or an empty Optional in case it is not
    *         possible to create it for example due to a configuration problem or because an external
    *         system with the provided search key can not be found
@@ -68,6 +70,7 @@ public class ExternalSystemProvider {
    * 
    * @param configuration
    *          The configuration of the external system
+   * 
    * @return an Optional with the external system instance or an empty Optional in case it is not
    *         possible to create it for example due to a configuration problem or because the
    *         provided configuration can not be found
@@ -101,5 +104,16 @@ public class ExternalSystemProvider {
             return Optional.empty();
           }
         }));
+  }
+
+  /**
+   * Removes from the provider the cached {@link ExternalSystem} instance that is configured with
+   * the {@link ExternalSystemData} whose ID is received as parameter
+   *
+   * @param externalSystemId
+   *          The ID of the {@link ExternalSystemData}
+   */
+  public void removeExternalSystem(String externalSystemId) {
+    configuredExternalSystems.remove(externalSystemId);
   }
 }
