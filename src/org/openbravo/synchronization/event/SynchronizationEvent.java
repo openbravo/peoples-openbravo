@@ -63,7 +63,7 @@ public class SynchronizationEvent {
     if (optTrigger.isPresent()) {
       optTrigger.get().triggerEvent(event, recordId);
     } else {
-      log.debug("No trigger found for event {}, recordId {}", event, recordId);
+      log.trace("No trigger found for event {}, recordId {}", event, recordId);
     }
   }
 
