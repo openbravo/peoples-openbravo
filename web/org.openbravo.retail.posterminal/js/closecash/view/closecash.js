@@ -443,81 +443,35 @@ enyo.kind({
         content = OB.I18N.getLabel(this.finishCloseDialogLabel);
       }
 
-      const excuteCashupSentHooks = () => {
-        OB.UTIL.HookManager.executeHooks(this.cashupSentHook, {}, () => {
-          if (
-            OB.MobileApp.view.$.confirmationContainer.getAttribute(
-              'openedPopup'
-            ) !== OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp')
-          ) {
-            // Only display the good job message if there are no components displayed
-            OB.UTIL.showConfirmation.display(
-              OB.I18N.getLabel('OBPOS_LblGoodjob'),
-              content,
-              [
-                {
-                  label: OB.I18N.getLabel('OBMOBC_LblOk'),
-                  isConfirmButton: true,
-                  action: () => {
-                    this.finalAction();
-                    return true;
-                  }
-                }
-              ],
+      OB.UTIL.HookManager.executeHooks(this.cashupSentHook, {}, () => {
+        if (
+          OB.MobileApp.view.$.confirmationContainer.getAttribute(
+            'openedPopup'
+          ) !== OB.I18N.getLabel('OBPOS_MsgPrintAgainCashUp')
+        ) {
+          // Only display the good job message if there are no components displayed
+          OB.UTIL.showConfirmation.display(
+            OB.I18N.getLabel('OBPOS_LblGoodjob'),
+            content,
+            [
               {
-                autoDismiss: false,
-                onHideFunction: () => {
+                label: OB.I18N.getLabel('OBMOBC_LblOk'),
+                isConfirmButton: true,
+                action: () => {
                   this.finalAction();
+                  return true;
                 }
               }
-            );
-          }
-        });
-      };
-
-      OB.UTIL.localStorage.removeItem('isCountOnRemoveOfSafeBox');
-      const currentSafeBox = JSON.parse(
-        OB.UTIL.localStorage.getItem('currentSafeBox')
-      );
-      if (
-        this.name === 'cashUp' &&
-        currentSafeBox != null &&
-        currentSafeBox.countOnRemove
-      ) {
-        OB.UTIL.showConfirmation.display(
-          OB.I18N.getLabel('OBPOS_CountOnRemoveSafeBoxTitle'),
-          OB.I18N.getLabel('OBPOS_CountOnRemoveSafeBoxText'),
-          [
+            ],
             {
-              label: OB.I18N.getLabel('OBMOBC_LblYes'),
-              isConfirmButton: true,
-              action: function() {
-                OB.UTIL.localStorage.setItem(
-                  'isCountOnRemoveOfSafeBox',
-                  'true'
-                );
-                // we have just remove the safe box, if we want to navigate to the count safe box,
-                // we need to set again the safe box
-                OB.UTIL.localStorage.setItem(
-                  'currentSafeBox',
-                  JSON.stringify(currentSafeBox)
-                );
-                OB.POS.navigate('retail.countSafeBox');
+              autoDismiss: false,
+              onHideFunction: () => {
+                this.finalAction();
               }
-            },
-            {
-              label: OB.I18N.getLabel('OBMOBC_LblNo')
             }
-          ],
-          {
-            onHideFunction: function() {
-              excuteCashupSentHooks();
-            }
-          }
-        );
-      } else {
-        excuteCashupSentHooks();
-      }
+          );
+        }
+      });
     });
     //finishedWrongly
     this.model.on('change:finishedWrongly', model => {

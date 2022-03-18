@@ -396,60 +396,17 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
       const process = new OB.DS.Process(
         'org.openbravo.retail.posterminal.SafeBoxes'
       );
-      const me = this;
       process.exec(
         params,
         data => {
           if (data && data.exception) {
-            if (
-              data.exception.status &&
-              data.exception.status.data &&
-              data.exception.status.data === 'safeboxCountInfoNotReady'
-            ) {
-              OB.UTIL.showConfirmation.display(
-                OB.I18N.getLabel('OBPOS_RetryCheckCountSafeBoxTitle'),
-                OB.I18N.getLabel('OBPOS_RetryCheckCountSafeBoxText'),
-                [
-                  {
-                    label: OB.I18N.getLabel('OBPOS_LblRetry'),
-                    isConfirmButton: true,
-                    action: function() {
-                      me.loadSafeBoxesInformation(
-                        successCallback,
-                        errorCallback
-                      );
-                    }
-                  },
-                  {
-                    label: OB.I18N.getLabel('OBMOBC_LblCancel')
-                  }
-                ],
-                {
-                  onHideFunction: function() {
-                    if (
-                      OB.UTIL.localStorage.getItem('isCountOnRemoveOfSafeBox')
-                    ) {
-                      OB.UTIL.localStorage.removeItem('currentSafeBox');
-                      OB.UTIL.HookManager.executeHooks(
-                        'OBPOS_AfterCashUpSent',
-                        {},
-                        () => OB.POS.navigate('retail.pointofsale')
-                      );
-                    } else {
-                      OB.POS.navigate('retail.pointofsale');
-                    }
-                  }
-                }
-              );
-            } else {
-              OB.UTIL.showError(
-                OB.I18N.getLabel('OBPOS_ExceptionGettingSafeBoxes', [
-                  data.exception.message
-                ])
-              );
-              errorCallback();
-              return;
-            }
+            OB.UTIL.showError(
+              OB.I18N.getLabel('OBPOS_ExceptionGettingSafeBoxes', [
+                data.exception.message
+              ])
+            );
+            errorCallback();
+            return;
           }
 
           if (data && data.length === 0) {
@@ -636,17 +593,7 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
               }
             );
           };
-
-          if (OB.UTIL.localStorage.getItem('isCountOnRemoveOfSafeBox')) {
-            OB.UTIL.localStorage.removeItem('currentSafeBox');
-            OB.UTIL.HookManager.executeHooks(
-              'OBPOS_AfterCashUpSent',
-              {},
-              callbackFunc
-            );
-          } else {
-            callbackFunc();
-          }
+          callbackFunc();
         })
         .catch(error => OB.error(error));
     }
