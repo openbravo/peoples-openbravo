@@ -59,11 +59,13 @@ public class SynchronizationEvent {
    *          event payload.
    */
   public void triggerEvent(String event, String recordId) {
+    log.trace("Triggering event {} for record ID {}", event, recordId);
     Optional<EventTrigger> optTrigger = getEventTrigger(event);
     if (optTrigger.isPresent()) {
       optTrigger.get().triggerEvent(event, recordId);
+      log.trace("Triggered event {} for record ID {}", event, recordId);
     } else {
-      log.trace("No trigger found for event {}, recordId {}", event, recordId);
+      log.trace("No trigger found for event {}, record ID {}", event, recordId);
     }
   }
 
