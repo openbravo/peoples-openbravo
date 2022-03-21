@@ -36,6 +36,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.service.externalsystem.ExternalSystem;
 import org.openbravo.service.externalsystem.ExternalSystemConfigurationError;
@@ -145,17 +147,25 @@ public class HttpExternalSystem extends ExternalSystem {
     boolean requestSuccess = response.statusCode() >= 200 && response.statusCode() <= 299;
     if (requestSuccess) {
       return ExternalSystemResponseBuilder.newBuilder()
-          .withData(response.body())
+          .withData(parseBody(response.body()))
           .withStatusCode(response.statusCode())
           .withType(Type.SUCESS)
           .build();
     }
-    String error = response.body();
+    Object error = parseBody(response.body());
     return ExternalSystemResponseBuilder.newBuilder()
         .withError(error != null ? error : "Response Status Code: " + response.statusCode())
         .withStatusCode(response.statusCode())
         .withType(Type.ERROR)
         .build();
+  }
+
+  private Object parseBody(String body) {
+    try {
+      return new JSONObject(body);
+    } catch (JSONException ex) {
+      return body;
+    }
   }
 
   private ExternalSystemResponse buildErrorResponse(Throwable error) {

@@ -36,7 +36,7 @@ public class ExternalSystemResponse {
   private Object data;
   private int statusCode;
   private Type type;
-  private String error;
+  private Object error;
 
   /**
    * Creates a new ExternalSystemResponse. Instance of this class must be created with a
@@ -101,7 +101,7 @@ public class ExternalSystemResponse {
   /**
    * @return the error information of the external system response
    */
-  public String getError() {
+  public Object getError() {
     return error;
   }
 
@@ -111,7 +111,7 @@ public class ExternalSystemResponse {
    * @param error
    *          the error information
    */
-  void setError(String error) {
+  void setError(Object error) {
     this.error = error;
   }
 }

@@ -79,7 +79,7 @@ public class ExternalSystemResponseBuilder {
    * @param error
    *          the error information
    */
-  public ExternalSystemResponseBuilder withError(String error) {
+  public ExternalSystemResponseBuilder withError(Object error) {
     response.setType(Type.ERROR);
     response.setError(error);
     return this;
