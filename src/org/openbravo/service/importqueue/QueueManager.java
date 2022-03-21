@@ -38,25 +38,34 @@ public class QueueManager implements ApplicationInitializer {
   @Override
   public void initialize() {
 
-    // Dispatcher LoaderDispatcher/LoaderProcessor
-    MessageDispatcher dispatcher = WeldUtils
-        .getInstanceFromStaticBeanManager(LoaderDispatcher.class);
-    // // Dispatcher LoaderDispatcher/LoaderProcessor
-    // MessageDispatcher dispatcher = WeldUtils
-    // .getInstanceFromStaticBeanManager(ImportEntryDispatcher.class);
+    MessageDispatcher dispatcher = configureDispatcher();
 
-    // Uses Rabbit MQ for publication and subscription.
+    // Message Queue (RabbitMQ)
     queuesub = WeldUtils.getInstanceFromStaticBeanManager(RabbitSubscription.class);
     queuesub.subscribe(dispatcher);
     queuepub = WeldUtils.getInstanceFromStaticBeanManager(RabbitPublication.class);
 
-    // // Uses direct invokation. MemoryQueue
+    // // Publishing to the Import Entry Manager
+    // queuepub = WeldUtils.getInstanceFromStaticBeanManager(ImportEntryPublication.class);
+
+    // // MemoryQueue
     // queuesub = WeldUtils.getInstanceFromStaticBeanManager(MemoryQueue.class);
-    // queuesub.subscribe(messagedispatcher);
+    // queuesub.subscribe(dispatcher);
     // queuepub = WeldUtils.getInstanceFromStaticBeanManager(MemoryQueue.class);
 
-    // // Uses ImportEntryManager, no subscription needed
+    // // Import Entry Manager and RabbitMQ Combined
+    // queuesub = WeldUtils.getInstanceFromStaticBeanManager(RabbitSubscription.class);
+    // queuesub.subscribe(dispatcher);
     // queuepub = WeldUtils.getInstanceFromStaticBeanManager(ImportEntryPublication.class);
+  }
+
+  private MessageDispatcher configureDispatcher() {
+
+    // Dispatcher LoaderDispatcher/LoaderProcessor
+    return WeldUtils.getInstanceFromStaticBeanManager(LoaderDispatcher.class);
+
+    // // Dispatcher createImportEntry
+    // return WeldUtils.getInstanceFromStaticBeanManager(ImportEntryDispatcher.class);
   }
 
   public void publishMessage(JSONObject message) throws JSONException {
