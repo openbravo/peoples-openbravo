@@ -55,7 +55,7 @@ public class CheckConnectivity extends BaseProcessActionHandler {
       if (externalSystem.isPresent()) {
         return externalSystem.get().send(getDataToSend()).thenApply(this::handleResponse).get();
       } else {
-        return buildError("C_ConnCheckProcessError");
+        return buildError("C_ConnCheckMissingConfig");
       }
     } catch (Exception ex) {
       log.error("Connectivity check failed", ex);
@@ -70,7 +70,11 @@ public class CheckConnectivity extends BaseProcessActionHandler {
 
   private JSONObject handleResponse(ExternalSystemResponse response) {
     if (Type.ERROR.equals(response.getType())) {
-      return buildError("C_ConnCheckFailed", response.getError());
+      int statusCode = response.getStatusCode();
+      if (statusCode == 0) {
+        return buildError("C_ConnCheckCouldNotConnect", response.getError());
+      }
+      return buildError("C_ConnCheckFailed", response.getStatusCode() + "", response.getError());
     }
     return getResponseBuilder()
         .showMsgInProcessView(MessageType.SUCCESS, OBMessageUtils.getI18NMessage("OBUIAPP_Success"),
