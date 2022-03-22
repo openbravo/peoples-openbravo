@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2021 Openbravo SLU
+ * All portions are Copyright (C) 2021-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,9 +50,11 @@ const production = process.env.NODE_ENV === 'production';
 
 validateDependencies();
 // prepares folder where links to openbravo node modules will be linked
-fs.rmdirSync(globalModulesPath, {
-  recursive: true
-});
+if (fs.existsSync(globalModulesPath)) {
+  fs.rmSync(globalModulesPath, {
+    recursive: true
+  });
+}
 fs.mkdirSync(globalModulesPath, {
   recursive: true
 });
