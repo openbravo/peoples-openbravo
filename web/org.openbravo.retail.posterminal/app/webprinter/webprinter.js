@@ -264,7 +264,13 @@
 
   WEBPrinter.prototype.processImage = function processImage(el) {
     const image = el.textContent;
-    const imageurl = this.images[image] || image;
+    const imagetype = el.getAttribute('type');
+    let imageurl = this.images[image] || image;
+    if (imagetype === 'data') {
+      imageurl = `data:png;base64,${image}`;
+    } else {
+      imageurl = this.images[image] || image;
+    }
 
     return getImageData({
       image: imageurl
