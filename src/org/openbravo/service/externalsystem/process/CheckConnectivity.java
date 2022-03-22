@@ -70,12 +70,12 @@ public class CheckConnectivity extends BaseProcessActionHandler {
 
   private JSONObject handleResponse(ExternalSystemResponse response) {
     if (Type.ERROR.equals(response.getType())) {
-      int statusCode = response.getStatusCode();
-      if (statusCode == 0) {
-        return buildError("C_ConnCheckCouldNotConnect", response.getError().toString());
+      String error = response.getError() != null ? response.getError().toString() : "";
+      String statusCode = response.getStatusCode() + "";
+      if ("0".equals(statusCode)) {
+        return buildError("C_ConnCheckCouldNotConnect", error);
       }
-      return buildError("C_ConnCheckFailed", response.getStatusCode() + "",
-          response.getError().toString());
+      return buildError("C_ConnCheckFailed", statusCode, error);
     }
     return getResponseBuilder()
         .showMsgInProcessView(MessageType.SUCCESS, OBMessageUtils.getI18NMessage("OBUIAPP_Success"),
