@@ -16,9 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.test.base.util;
+package org.openbravo.base.util;
 
 import static org.junit.Assert.assertEquals;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 import com.github.benmanes.caffeine.cache.Ticker;
 import org.junit.Before;
@@ -26,11 +30,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.util.TimeInvalidatedCache;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
 
 public class TimeInvalidatedCacheTest {
 

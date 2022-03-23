@@ -18,15 +18,16 @@
  */
 package org.openbravo.base.util;
 
+import java.time.Duration;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.Ticker;
 import org.openbravo.base.exception.OBException;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Cache API that allows creating a cache that will be invalidated after a period of time
@@ -129,10 +130,10 @@ public class TimeInvalidatedCache<T, V> {
    * Returns a map of Key-Value of all the given keys
    * 
    * @param keys
-   *          - List of keys to retrieve values from
+   *          - Collection of keys to retrieve values from
    * @return - map of Key-Value of all the given keys
    */
-  public Map<T, V> getAll(List<T> keys) {
+  public Map<T, V> getAll(Collection<T> keys) {
     checkCacheBuilt();
     return cache.getAll(keys);
   }
@@ -164,7 +165,7 @@ public class TimeInvalidatedCache<T, V> {
    * @param ticker
    *          - Ticker to be used instead of the default system one
    */
-  public TimeInvalidatedCache<T, V> ticker(Ticker ticker) {
+  TimeInvalidatedCache<T, V> ticker(Ticker ticker) {
     this.ticker = ticker;
     return this;
   }
