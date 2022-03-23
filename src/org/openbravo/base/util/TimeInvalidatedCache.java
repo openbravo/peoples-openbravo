@@ -1,0 +1,148 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2022 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+package org.openbravo.base.util;
+
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import org.openbravo.base.exception.OBException;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Cache API that allows creating a cache that will be invalidated after a period of time
+ * 
+ * This Cache will be invalidated after a period x of time after a write action on the cache due to
+ * a read key. That means this cache is lazy, it will only compute a value of a given key if this
+ * key is accessed.
+ * 
+ * Use the newInstance static function to create a new cache and then follow their builder
+ * structure.
+ * 
+ * @param <T>
+ *          - Key used by the Cache(for example String for a UUID)
+ * @param <V>
+ *          - Value used by the Cache
+ */
+public class TimeInvalidatedCache<T, V> {
+  private LoadingCache<T, V> cache;
+  private Duration expireDuration;
+
+  /**
+   * Creates a new instance of TimeInvalidatedCache with the types provided. Usage as follows:
+   * 
+   * <pre>
+   * TimeInvalidatedCache<KeyType, ValueType>
+   *   .newInstance()
+   *   .expireAfterDuration(Duration.ofMinutes(5)) // Could be any Duration, not necessarily in minutes. If not executed, 1 minute default is assumed
+   *   .build(key -> generateKeyValue(key)) // This is a lambda that initializes the key if it expired or is the first time is read
+   * </pre>
+   * 
+   * @return this object, to be followed by an expireAfterDuration or build calls.
+   */
+  public static TimeInvalidatedCache<Object, Object> newInstance() {
+    return new TimeInvalidatedCache<>();
+  }
+
+  /**
+   * Sets the expiration duration, after this period the key is considered expired and reloaded on
+   * the next access
+   * 
+   * @param duration
+   *          - Duration of time after which is considered expired
+   * @return this object, to follow with build() call
+   */
+  public TimeInvalidatedCache<T, V> expireAfterDuration(Duration duration) {
+    this.expireDuration = duration;
+    return this;
+  }
+
+  /**
+   * Builds the TimeInvalidatedCache and initializes it. Expects to be called as follows:
+   *
+   * <pre>
+   * TimeInvalidatedCache<KeyType, ValueType>
+   *   .newInstance()
+   *   .expireAfterDuration(Duration.ofMinutes(5)) // Could be any Duration, not necessarily in minutes. If not executed, 1 minute default is assumed
+   *   .build(key -> generateKeyValue(key)) // This is a lambda that initializes the key if it expired or is the first time is read
+   * </pre>
+   * 
+   * @param loader
+   *          - lambda that initializes the key if it expired or is the first time it is read. It
+   *          should receive a key and return the value corresponding to it
+   * @return this object
+   */
+  public TimeInvalidatedCache<T, V> build(CacheLoader<? super T, V> loader) {
+    if (expireDuration == null) {
+      this.expireDuration = Duration.ofMinutes(1);
+    }
+    cache = Caffeine.newBuilder().expireAfterWrite(expireDuration).build(loader);
+    return this;
+  }
+
+  private TimeInvalidatedCache() {
+  }
+
+  /**
+   * Returns a value from the cache associated to a given key
+   * 
+   * @param key
+   *          - Key to retrieve corresponding value
+   * @return - Value corresponding to given key
+   */
+  public V get(T key) {
+    checkCacheBuilt();
+    return cache.get(key);
+  }
+
+  /**
+   * Returns a map of Key-Value of all the given keys
+   * 
+   * @param keys
+   *          - List of keys to retrieve values from
+   * @return - map of Key-Value of all the given keys
+   */
+  public Map<T, V> getAll(List<T> keys) {
+    checkCacheBuilt();
+    return cache.getAll(keys);
+  }
+
+  /**
+   * Invalidates all the keys in the cache
+   */
+  public void invalidate() {
+    checkCacheBuilt();
+    cache.invalidateAll();
+  }
+
+  /**
+   * Checks if the cache has been build, if not, it will throw an Exception
+   * 
+   * @throws OBException
+   *           - if the cache has not been build yet
+   */
+  private void checkCacheBuilt() throws OBException {
+    if (this.cache == null) {
+      throw new OBException(
+          "TimeInvalidatedCache has been accessed before being properly built. build() is required before accessing it.");
+    }
+  }
+}
