@@ -21,12 +21,27 @@ package org.openbravo.test.base.util;
 import static org.junit.Assert.assertEquals;
 
 import com.github.benmanes.caffeine.cache.Ticker;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.TimeInvalidatedCache;
 
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 
 public class TimeInvalidatedCacheTest {
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
+  @Before
+  public void setUp() {
+    ValueTest.value = null;
+  }
+
   @Test
   public void CacheShouldBeCorrectlyInitialized() {
     TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
@@ -36,7 +51,7 @@ public class TimeInvalidatedCacheTest {
   }
 
   @Test
-  public void CacheShouldBeInvalidatedAndValueChange() {
+  public void CacheShouldBeInvalidatedAfterTimeAndValueChange() {
     FakeTicker ticker = new FakeTicker();
     ValueTest.value = "oldValue";
 
@@ -53,7 +68,46 @@ public class TimeInvalidatedCacheTest {
     assertEquals("newValue", cache.get("testKey"));
   }
 
-  private static class ValueTest{
+  @Test
+  public void CacheShouldBeInvalidatedDirectlyAndValueChange() {
+    ValueTest.value = "oldValue";
+
+    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
+        .expireAfterDuration(Duration.ofSeconds(5))
+        .build(key -> ValueTest.value);
+    assertEquals("oldValue", cache.get("testKey"));
+    ValueTest.value = "newValue";
+    // Make sure second all to .get still gets the same value
+    assertEquals("oldValue", cache.get("testKey"));
+
+    cache.invalidate();
+    assertEquals("newValue", cache.get("testKey"));
+  }
+
+  @Test
+  public void CacheShouldBeAbleToRetrieveSeveralValues() {
+    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
+        .expireAfterDuration(Duration.ofSeconds(5))
+        .build(key -> key + "Value");
+    assertEquals("oldKeyValue", cache.get("oldKey"));
+    assertEquals("testKeyValue", cache.get("testKey"));
+
+    Map<String, String> expectedValues = Map.of( //
+        "testKey", "testKeyValue", //
+        "someKey", "someKeyValue");
+    assertEquals(expectedValues, cache.getAll(List.of("testKey", "someKey")));
+  }
+
+  @Test
+  public void CacheShouldThrowExceptionIfNotInitialized() {
+    TimeInvalidatedCache<Object, Object> cache = TimeInvalidatedCache.newInstance();
+    thrown.expect(OBException.class);
+    thrown.expectMessage("TimeInvalidatedCache has been accessed before being properly built.");
+
+    cache.get("testKey");
+  }
+
+  private static class ValueTest {
     public static String value;
   }
 
