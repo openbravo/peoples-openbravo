@@ -70,7 +70,10 @@ public class SynchronizationEvent {
   }
 
   /**
-   * Selects the EvenTrigger instance with most priority that is able to trigger the provided event
+   * Selects the EvenTrigger instance with most priority that is able to trigger the provided event.
+   *
+   * @apiNote For internal use only. This method is not private but package protected just for
+   *          testing purposes.
    * 
    * @param event
    *          The unique identifier of a synchronization event
