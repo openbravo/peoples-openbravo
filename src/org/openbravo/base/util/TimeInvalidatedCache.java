@@ -21,6 +21,7 @@ package org.openbravo.base.util;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Ticker;
 import org.openbravo.base.exception.OBException;
 
 import java.time.Duration;
@@ -45,6 +46,8 @@ import java.util.Map;
 public class TimeInvalidatedCache<T, V> {
   private LoadingCache<T, V> cache;
   private Duration expireDuration;
+  // Internal ticker, do not use
+  private Ticker ticker;
 
   /**
    * Creates a new instance of TimeInvalidatedCache with the types provided. Usage as follows:
@@ -90,12 +93,21 @@ public class TimeInvalidatedCache<T, V> {
    *          should receive a key and return the value corresponding to it
    * @return this object
    */
-  public TimeInvalidatedCache<T, V> build(CacheLoader<? super T, V> loader) {
+  public <T1 extends T, V1 extends V> TimeInvalidatedCache<T1, V1> build(
+      CacheLoader<? super T1, V1> loader) {
     if (expireDuration == null) {
       this.expireDuration = Duration.ofMinutes(1);
     }
-    cache = Caffeine.newBuilder().expireAfterWrite(expireDuration).build(loader);
-    return this;
+    @SuppressWarnings("unchecked")
+    TimeInvalidatedCache<T1, V1> self = (TimeInvalidatedCache<T1, V1>) this;
+    Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
+    cacheBuilder.expireAfterWrite(expireDuration);
+    if (this.ticker != null) {
+      cacheBuilder.ticker(ticker);
+    }
+    self.cache = cacheBuilder.build(loader);
+
+    return self;
   }
 
   private TimeInvalidatedCache() {
@@ -144,5 +156,16 @@ public class TimeInvalidatedCache<T, V> {
       throw new OBException(
           "TimeInvalidatedCache has been accessed before being properly built. build() is required before accessing it.");
     }
+  }
+
+  /**
+   * Internal API, used only for testing
+   * 
+   * @param ticker
+   *          - Ticker to be used instead of the default system one
+   */
+  public TimeInvalidatedCache<T, V> ticker(Ticker ticker) {
+    this.ticker = ticker;
+    return this;
   }
 }
