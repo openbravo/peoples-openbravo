@@ -19,10 +19,12 @@
 package org.openbravo.base.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.github.benmanes.caffeine.cache.Ticker;
 import org.junit.Before;
@@ -31,6 +33,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBException;
 
+/**
+ * Tests for TimeInvalidatedCache
+ */
 public class TimeInvalidatedCacheTest {
 
   @Rule
@@ -84,6 +89,14 @@ public class TimeInvalidatedCacheTest {
   }
 
   @Test
+  public void CacheShouldGetNullIfNotComputableValue() {
+    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
+            .expireAfterDuration(Duration.ofSeconds(5))
+            .build(key -> null);
+    assertNull(cache.get("testKey"));
+  }
+
+  @Test
   public void CacheShouldBeAbleToRetrieveSeveralValues() {
     TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
         .expireAfterDuration(Duration.ofSeconds(5))
@@ -104,6 +117,43 @@ public class TimeInvalidatedCacheTest {
     thrown.expectMessage("TimeInvalidatedCache has been accessed before being properly built.");
 
     cache.get("testKey");
+  }
+
+  @Test
+  public void CacheShouldBeAbleToRetrieveDefaultValue() {
+    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
+        .expireAfterDuration(Duration.ofSeconds(5))
+        .build(key -> null);
+    assertNull(cache.get("testKey"));
+    assertEquals("testDefaultValue", cache.get("testKey", (key) -> "testDefaultValue"));
+  }
+
+  @Test
+  public void CacheShouldRetrieveCachedValueInsteadOfDefaultValueIfExists() {
+    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
+        .expireAfterDuration(Duration.ofSeconds(5))
+        .build(key -> "testValue");
+    assertEquals("testValue", cache.get("testKey", (key) -> "testDefaultValue"));
+  }
+
+  @Test
+  public void CacheShouldBeAbleToRetrieveDefaultAndCachedValues() {
+    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
+        .expireAfterDuration(Duration.ofSeconds(5))
+        .build(key -> {
+          if (key.equals("testKey2")) {
+            return "testKey2CachedValue";
+          }
+          return null;
+        });
+    List<String> testKeys = List.of("testKey", "testKey2", "testKey3");
+
+    Map<String, String> expectedValues = Map.of( //
+        "testKey", "testKeyValue", //
+        "testKey2", "testKey2CachedValue", //
+        "testKey3", "testKey3Value");
+    assertEquals(expectedValues, cache.getAll(testKeys,
+        (keys) -> keys.stream().collect(Collectors.toMap(key -> key, key -> key + "Value"))));
   }
 
   private static class ValueTest {
