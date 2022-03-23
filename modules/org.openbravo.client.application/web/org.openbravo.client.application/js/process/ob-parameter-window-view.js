@@ -315,6 +315,8 @@ isc.OBParameterWindowView.addProperties({
     this.setAllButtonEnabled(this.allRequiredParametersSet());
     this.showProcessing(false);
     if (message) {
+      // do not automatically remove this message (i.e. when child tabs are refreshed)
+      this.buttonOwnerView.messageBar.keepOnAutomaticRefresh = true;
       if (this.popup) {
         if (!retryExecution) {
           if (message.title) {
