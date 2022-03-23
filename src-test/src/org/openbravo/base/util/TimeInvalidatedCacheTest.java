@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Ticker;
 import org.junit.Before;
 import org.junit.Rule;
@@ -59,10 +60,7 @@ public class TimeInvalidatedCacheTest {
     FakeTicker ticker = new FakeTicker();
     ValueTest.value = "oldValue";
 
-    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
-        .expireAfterDuration(Duration.ofSeconds(5))
-        .ticker(ticker)
-        .build(key -> ValueTest.value);
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> ValueTest.value, ticker);
     assertEquals("oldValue", cache.get("testKey"));
     ValueTest.value = "newValue";
     // Make sure second all to .get still gets the same value
@@ -76,9 +74,7 @@ public class TimeInvalidatedCacheTest {
   public void CacheShouldBeInvalidatedDirectlyAndValueChange() {
     ValueTest.value = "oldValue";
 
-    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
-        .expireAfterDuration(Duration.ofSeconds(5))
-        .build(key -> ValueTest.value);
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> ValueTest.value);
     assertEquals("oldValue", cache.get("testKey"));
     ValueTest.value = "newValue";
     // Make sure second all to .get still gets the same value
@@ -90,17 +86,13 @@ public class TimeInvalidatedCacheTest {
 
   @Test
   public void CacheShouldGetNullIfNotComputableValue() {
-    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
-            .expireAfterDuration(Duration.ofSeconds(5))
-            .build(key -> null);
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> null);
     assertNull(cache.get("testKey"));
   }
 
   @Test
   public void CacheShouldBeAbleToRetrieveSeveralValues() {
-    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
-        .expireAfterDuration(Duration.ofSeconds(5))
-        .build(key -> key + "Value");
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> key + "Value");
     assertEquals("oldKeyValue", cache.get("oldKey"));
     assertEquals("testKeyValue", cache.get("testKey"));
 
@@ -121,31 +113,25 @@ public class TimeInvalidatedCacheTest {
 
   @Test
   public void CacheShouldBeAbleToRetrieveDefaultValue() {
-    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
-        .expireAfterDuration(Duration.ofSeconds(5))
-        .build(key -> null);
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> null);
     assertNull(cache.get("testKey"));
     assertEquals("testDefaultValue", cache.get("testKey", (key) -> "testDefaultValue"));
   }
 
   @Test
   public void CacheShouldRetrieveCachedValueInsteadOfDefaultValueIfExists() {
-    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
-        .expireAfterDuration(Duration.ofSeconds(5))
-        .build(key -> "testValue");
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> "testValue");
     assertEquals("testValue", cache.get("testKey", (key) -> "testDefaultValue"));
   }
 
   @Test
   public void CacheShouldBeAbleToRetrieveDefaultAndCachedValues() {
-    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
-        .expireAfterDuration(Duration.ofSeconds(5))
-        .build(key -> {
-          if (key.equals("testKey2")) {
-            return "testKey2CachedValue";
-          }
-          return null;
-        });
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> {
+      if (key.equals("testKey2")) {
+        return "testKey2CachedValue";
+      }
+      return null;
+    });
     List<String> testKeys = List.of("testKey", "testKey2", "testKey3");
 
     Map<String, String> expectedValues = Map.of( //
@@ -154,6 +140,21 @@ public class TimeInvalidatedCacheTest {
         "testKey3", "testKey3Value");
     assertEquals(expectedValues, cache.getAll(testKeys,
         (keys) -> keys.stream().collect(Collectors.toMap(key -> key, key -> key + "Value"))));
+  }
+
+  private TimeInvalidatedCache<String, String> initializeCache(
+      CacheLoader<? super String, String> buildMethod) {
+    return TimeInvalidatedCache.newInstance()
+        .expireAfterDuration(Duration.ofSeconds(5))
+        .build(buildMethod);
+  }
+
+  private TimeInvalidatedCache<String, String> initializeCache(
+      CacheLoader<? super String, String> buildMethod, Ticker ticker) {
+    return TimeInvalidatedCache.newInstance()
+        .expireAfterDuration(Duration.ofSeconds(5))
+        .ticker(ticker)
+        .build(buildMethod);
   }
 
   private static class ValueTest {
