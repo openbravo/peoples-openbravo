@@ -48,6 +48,7 @@ import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
 import org.openbravo.scheduling.trigger.TriggerProviderTest;
+import org.openbravo.service.externalsystem.ExternalSystemProviderTest;
 import org.openbravo.synchronization.event.EventTriggerSelectionTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
@@ -346,6 +347,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     CompiledReportsCacheTest.class, //
     JasperReportsExportTest.class, //
     ReportingUtilsTest.class, //
+
+    // external system
+    ExternalSystemProviderTest.class, //
 
     // synchronization events
     EventTriggerSelectionTest.class, //
