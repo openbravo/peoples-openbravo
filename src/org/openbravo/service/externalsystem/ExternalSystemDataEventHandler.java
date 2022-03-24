@@ -90,6 +90,6 @@ class ExternalSystemDataEventHandler extends EntityPersistenceEventObserver {
     BaseOBObject bob = event.getTargetInstance();
     ExternalSystemData config = bob instanceof ExternalSystemData ? ((ExternalSystemData) bob)
         : ((ExternalSystemData) bob.get(externalSystemProperty));
-    externalSystemProvider.removeExternalSystem(config.getId());
+    externalSystemProvider.invalidateExternalSystem(config.getId());
   }
 }

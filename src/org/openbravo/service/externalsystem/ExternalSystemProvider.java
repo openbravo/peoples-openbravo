@@ -18,11 +18,11 @@
  */
 package org.openbravo.service.externalsystem;
 
-import java.util.Map;
+import java.time.Duration;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -31,6 +31,8 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.cache.TimeInvalidatedCache;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 
 /**
@@ -46,7 +48,47 @@ public class ExternalSystemProvider {
   @Any
   private Instance<ExternalSystem> externalSystems;
 
-  private Map<String, ExternalSystem> configuredExternalSystems = new ConcurrentHashMap<>();
+  private TimeInvalidatedCache<String, ExternalSystem> configuredExternalSystems;
+
+  @PostConstruct
+  private void init() {
+    configuredExternalSystems = TimeInvalidatedCache.newBuilder()
+        .name("External System")
+        .expireAfterDuration(Duration.ofMinutes(10))
+        .build(this::loadExternalSystem);
+  }
+
+  private ExternalSystem loadExternalSystem(String externalSystemDataId) {
+    try {
+      OBContext.setAdminMode(true);
+      ExternalSystemData externalSystemData = OBDal.getInstance()
+          .get(ExternalSystemData.class, externalSystemDataId);
+      String protocol = externalSystemData.getProtocol();
+      return externalSystems.select(new ProtocolSelector(protocol))
+          .stream()
+          .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+            if (list.size() > 1) {
+              // For the moment it is only supported to have one ExternalSystem instance per
+              // protocol
+              throw new OBException("Found multiple external systems for protocol " + protocol);
+            }
+            if (list.isEmpty()) {
+              return null;
+            }
+            try {
+              ExternalSystem externalSystem = list.get(0);
+              externalSystem.configure(externalSystemData);
+              return externalSystem;
+            } catch (Exception ex) {
+              log.error("Could not configure an external system with configuration {}",
+                  externalSystemDataId, ex);
+              return null;
+            }
+          }));
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
 
   /**
    * Retrieves the {@link ExternalSystem} instance configured with the {@link ExternalSystemData}
@@ -80,31 +122,7 @@ public class ExternalSystemProvider {
     if (externalSystemData == null || !externalSystemData.isActive()) {
       return Optional.empty();
     }
-    if (configuredExternalSystems.containsKey(externalSystemData.getId())) {
-      return Optional.of(configuredExternalSystems.get(externalSystemData.getId()));
-    }
-    String protocol = externalSystemData.getProtocol();
-    return externalSystems.select(new ProtocolSelector(protocol))
-        .stream()
-        .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
-          if (list.size() > 1) {
-            // For the moment it is only supported to have one ExternalSystem instance per protocol
-            throw new OBException("Found multiple external systems for protocol " + protocol);
-          }
-          if (list.isEmpty()) {
-            return Optional.empty();
-          }
-          try {
-            ExternalSystem externalSystem = list.get(0);
-            externalSystem.configure(externalSystemData);
-            configuredExternalSystems.putIfAbsent(externalSystemData.getId(), externalSystem);
-            return Optional.of(externalSystem);
-          } catch (Exception ex) {
-            log.error("Could not configure an external system with configuration {}",
-                externalSystemData.getId(), ex);
-            return Optional.empty();
-          }
-        }));
+    return Optional.ofNullable(configuredExternalSystems.get(externalSystemData.getId()));
   }
 
   /**
@@ -114,7 +132,7 @@ public class ExternalSystemProvider {
    * @param externalSystemId
    *          The ID of the {@link ExternalSystemData}
    */
-  public void removeExternalSystem(String externalSystemId) {
-    configuredExternalSystems.remove(externalSystemId);
+  public void invalidateExternalSystem(String externalSystemId) {
+    configuredExternalSystems.invalidate(externalSystemId);
   }
 }
