@@ -21,6 +21,7 @@ package org.openbravo.service.externalsystem.http;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
+import static org.openbravo.test.matchers.json.JSONMatchers.equal;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -105,8 +106,12 @@ public class HttpExternalSystemTest extends WeldBaseTest {
 
     ExternalSystemResponse response = externalSystem.send(getRequestData()).join();
 
-    assertThat(response.getType(), equalTo(ExternalSystemResponse.Type.SUCESS));
-    assertThat(response.getStatusCode(), equalTo(HttpServletResponse.SC_OK));
+    assertThat("Is Successful Response", response.getType(),
+        equalTo(ExternalSystemResponse.Type.SUCESS));
+    assertThat("Expected Response Status Code", response.getStatusCode(),
+        equalTo(HttpServletResponse.SC_OK));
+    assertThat("Expected Response Data", (JSONObject) response.getData(),
+        equal(getExpectedResponseData()));
   }
 
   @Test
@@ -117,13 +122,24 @@ public class HttpExternalSystemTest extends WeldBaseTest {
         .orElseThrow();
     ExternalSystemResponse response = externalSystem.send(getRequestData()).join();
 
-    assertThat(response.getType(), equalTo(ExternalSystemResponse.Type.ERROR));
-    assertThat(response.getStatusCode(), equalTo(HttpServletResponse.SC_UNAUTHORIZED));
+    assertThat("Is Erroneous Response", response.getType(),
+        equalTo(ExternalSystemResponse.Type.ERROR));
+    assertThat("Expected Response Status Code", response.getStatusCode(),
+        equalTo(HttpServletResponse.SC_UNAUTHORIZED));
   }
 
   private InputStream getRequestData() throws JSONException {
     JSONObject requestData = new JSONObject();
     requestData.put("data", new JSONArray());
     return new ByteArrayInputStream(requestData.toString().getBytes());
+  }
+
+  private JSONObject getExpectedResponseData() throws JSONException {
+    JSONObject expectedResponse = new JSONObject();
+    JSONObject response = new JSONObject();
+    response.put("status", 0);
+    response.put("data", new JSONArray());
+    expectedResponse.put("response", response);
+    return expectedResponse;
   }
 }
