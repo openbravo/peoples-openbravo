@@ -29,8 +29,22 @@ import java.util.concurrent.CompletableFuture;
  */
 public abstract class ExternalSystem {
 
+  private String name;
+
   /**
-   * Configures the external system instance with the provided configuration
+   * Sends information to the external system
+   *
+   * @param inputStream
+   *          The input stream with the data to be sent
+   *
+   * @return a CompletableFuture<ExternalSystemResponse> containing the response data coming from
+   *         the external system
+   */
+  public abstract CompletableFuture<ExternalSystemResponse> send(InputStream inputStream);
+
+  /**
+   * Configures the external system instance with the provided configuration. The extensions of this
+   * class must use this method to initialize their own configuration fields.
    * 
    * @param configuration
    *          Provides the configuration data of the external system
@@ -38,16 +52,13 @@ public abstract class ExternalSystem {
    *           in case the external system can not be properly configured
    */
   protected void configure(ExternalSystemData configuration) {
+    name = configuration.getName();
   }
 
   /**
-   * Sends information to the external system
-   * 
-   * @param inputStream
-   *          The input stream with the data to be sent
-   * 
-   * @return a completable future with an ExternalSystemResponse containing the response data coming
-   *         from the external system
+   * @return the name of the external system
    */
-  public abstract CompletableFuture<ExternalSystemResponse> send(InputStream inputStream);
+  protected String getName() {
+    return name;
+  }
 }

@@ -36,6 +36,8 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -53,6 +55,7 @@ import org.openbravo.service.externalsystem.Protocol;
  */
 @Protocol("HTTP")
 public class HttpExternalSystem extends ExternalSystem {
+  private static final Logger log = LogManager.getLogger();
   public static final int MAX_TIMEOUT = 30;
 
   private String url;
@@ -67,6 +70,8 @@ public class HttpExternalSystem extends ExternalSystem {
 
   @Override
   public void configure(ExternalSystemData configuration) {
+    super.configure(configuration);
+
     HttpExternalSystemData httpConfig = configuration.getHttpExternalSystemList()
         .stream()
         .filter(HttpExternalSystemData::isActive)
@@ -117,6 +122,7 @@ public class HttpExternalSystem extends ExternalSystem {
 
   @Override
   public CompletableFuture<ExternalSystemResponse> send(InputStream inputStream) {
+    log.trace("Sending {} request to URL {} of external system {}", method, url, getName());
     if ("POST".equals(method)) {
       return post(url, inputStream);
     }
