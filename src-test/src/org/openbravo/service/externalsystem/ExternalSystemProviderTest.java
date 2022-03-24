@@ -21,6 +21,7 @@ package org.openbravo.service.externalsystem;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
+import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 
 import java.util.Optional;
 
@@ -48,7 +49,8 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
   @Before
   public void initExternalSystemData() {
     externalSystemData = OBProvider.getInstance().get(ExternalSystemData.class);
-    externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+    externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
+    externalSystemData.setName("Test");
     externalSystemData.setProtocol("HTTP");
     OBDal.getInstance().save(externalSystemData);
   }
@@ -89,7 +91,7 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
   private void addHttpConfig(boolean isActive) {
     HttpExternalSystemData httpExternalSystemData = OBProvider.getInstance()
         .get(HttpExternalSystemData.class);
-    httpExternalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+    httpExternalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
     httpExternalSystemData.setAuthorizationType("NOAUTH");
     httpExternalSystemData.setExternalSystem(externalSystemData);
     httpExternalSystemData.setActive(isActive);
