@@ -38,7 +38,7 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
  * Clears the cached information kept in the {@ExternalSystemProvider} when the configuration of an
  * external system information changes
  */
-class HttpExternalSystemDataEventHandler extends EntityPersistenceEventObserver {
+class ExternalSystemDataEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = getExternalSystemConfigurationEntities();
   private static final String externalSystemProperty = "externalSystem";
 
