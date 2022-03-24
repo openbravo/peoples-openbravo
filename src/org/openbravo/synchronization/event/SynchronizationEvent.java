@@ -71,14 +71,11 @@ public class SynchronizationEvent {
 
   /**
    * Selects the EvenTrigger instance with most priority that is able to trigger the provided event.
-   *
-   * @apiNote For internal use only. This method is not private but package protected just for
-   *          testing purposes.
    * 
    * @param event
    *          The unique identifier of a synchronization event
    */
-  Optional<EventTrigger> getEventTrigger(String event) {
+  private Optional<EventTrigger> getEventTrigger(String event) {
     return eventTriggers.stream()
         .filter(trigger -> trigger.handlesEvent(event))
         .sorted(Comparator.comparingInt(EventTrigger::getPriority))
