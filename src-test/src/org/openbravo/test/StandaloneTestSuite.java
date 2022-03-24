@@ -63,6 +63,7 @@ import org.openbravo.service.externalsystem.http.HttpExternalSystemDataCreationT
 import org.openbravo.service.json.AdvancedQueryBuilderTest;
 import org.openbravo.service.json.JsonUtilsTest;
 import org.openbravo.synchronization.event.EventTriggeringTest;
+import org.openbravo.synchronization.event.SynchronizationEventTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.authentication.AuthenticationManagerTest;
@@ -388,6 +389,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     HttpExternalSystemDataCreationTest.class,
 
     // synchronization events
+    SynchronizationEventTest.class, //
     EventTriggeringTest.class,
 
     // Product Services
