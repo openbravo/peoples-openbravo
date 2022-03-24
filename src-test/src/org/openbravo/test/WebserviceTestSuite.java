@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.service.externalsystem.http.HttpExternalSystemTest;
 import org.openbravo.test.datasource.DataSourceSecurity;
 import org.openbravo.test.datasource.DataSourceWhereParameter;
 import org.openbravo.test.datasource.EmptyStringWhereAndFilterClauseParameter;
@@ -110,7 +111,8 @@ import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
     ETagGeneration.class, //
     TestSelectorDefaultFilterActionHandler.class, //
     SummaryFieldRequestTest.class, //
-    CSRFAttackTest.class //
+    CSRFAttackTest.class, //
+    HttpExternalSystemTest.class //
 })
 public class WebserviceTestSuite {
 }

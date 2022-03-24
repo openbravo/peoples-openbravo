@@ -1,0 +1,129 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+package org.openbravo.service.externalsystem.http;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Properties;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.externalsystem.ExternalSystem;
+import org.openbravo.service.externalsystem.ExternalSystemData;
+import org.openbravo.service.externalsystem.ExternalSystemProvider;
+import org.openbravo.service.externalsystem.ExternalSystemResponse;
+import org.openbravo.service.externalsystem.HttpExternalSystemData;
+import org.openbravo.utils.FormatUtilities;
+
+/**
+ * Tests to cover the sending of data with {@link HttpExternalSystem}. Note: these tests expect to
+ * have the server running as they execute HTTP requests and evaluate the responses.
+ */
+public class HttpExternalSystemTest extends WeldBaseTest {
+
+  @Inject
+  private ExternalSystemProvider externalSystemProvider;
+
+  private ExternalSystemData externalSystemData;
+  private HttpExternalSystemData httpExternalSystemData;
+
+  @Before
+  public void init() {
+    setTestAdminContext();
+
+    externalSystemData = OBProvider.getInstance().get(ExternalSystemData.class);
+    externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
+    externalSystemData.setName("Test");
+    externalSystemData.setProtocol("HTTP");
+    OBDal.getInstance().save(externalSystemData);
+    httpExternalSystemData = OBProvider.getInstance().get(HttpExternalSystemData.class);
+    httpExternalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
+    httpExternalSystemData.setURL(getURL());
+    httpExternalSystemData.setExternalSystem(externalSystemData);
+    httpExternalSystemData.setActive(true);
+    externalSystemData.getHttpExternalSystemList().add(httpExternalSystemData);
+    OBDal.getInstance().save(httpExternalSystemData);
+  }
+
+  private String getURL() {
+    Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
+    String obURL = props.getProperty("context.url");
+    if (StringUtils.isEmpty(obURL)) {
+      throw new OBException("context.url is not set in Openbravo.properties");
+    }
+    return obURL + "/org.openbravo.service.json.jsonrest/Country";
+  }
+
+  @After
+  public void cleanUp() {
+    OBDal.getInstance().rollbackAndClose();
+  }
+
+  @Test
+  public void send() throws JSONException, ServletException {
+    httpExternalSystemData.setAuthorizationType("BASIC");
+    httpExternalSystemData.setUsername("Openbravo");
+    httpExternalSystemData.setPassword(FormatUtilities.encryptDecrypt("openbravo", true));
+
+    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
+        .orElseThrow();
+
+    ExternalSystemResponse response = externalSystem.send(getRequestData()).join();
+
+    assertThat(response.getType(), equalTo(ExternalSystemResponse.Type.SUCESS));
+    assertThat(response.getStatusCode(), equalTo(HttpServletResponse.SC_OK));
+  }
+
+  @Test
+  public void sendUnauthorized() throws JSONException {
+    httpExternalSystemData.setAuthorizationType("NOAUTH");
+
+    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
+        .orElseThrow();
+    ExternalSystemResponse response = externalSystem.send(getRequestData()).join();
+
+    assertThat(response.getType(), equalTo(ExternalSystemResponse.Type.ERROR));
+    assertThat(response.getStatusCode(), equalTo(HttpServletResponse.SC_UNAUTHORIZED));
+  }
+
+  private InputStream getRequestData() throws JSONException {
+    JSONObject requestData = new JSONObject();
+    requestData.put("data", new JSONArray());
+    return new ByteArrayInputStream(requestData.toString().getBytes());
+  }
+}
