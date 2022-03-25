@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  ************************************************************************
@@ -46,6 +46,9 @@ public class ModuleDependency {
 
   /** Marshals json from central repository service into a module dependency array instance */
   public static ModuleDependency[] fromJson(JSONArray jsonArray) {
+    if (jsonArray == null) {
+      return new ModuleDependency[0];
+    }
     ModuleDependency[] deps = new ModuleDependency[jsonArray.length()];
     try {
       for (int i = 0; i < jsonArray.length(); i++) {
