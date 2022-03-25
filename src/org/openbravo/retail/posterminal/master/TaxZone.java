@@ -82,6 +82,9 @@ public class TaxZone extends MasterDataProcessHQLQuery {
       throw new OBException("terminal id is not present in session ");
     }
 
+    final boolean organizationWithMultipleLocations = POSUtils
+        .getPreference("OBPOS_organizationWithMultipleLocations");
+
     // FROM
     final OrganizationInformation storeInfo = posDetail.getOrganization()
         .getOrganizationInformationList()
@@ -123,6 +126,20 @@ public class TaxZone extends MasterDataProcessHQLQuery {
         + " and financialMgmtTaxZone.$incrementalUpdateCriteria"
         + " and financialMgmtTaxZone.tax in (" + hqlTax + ")";
 
+    if (!organizationWithMultipleLocations) {
+      if (fromCountry != null) {
+        hql = hql
+            + " and (financialMgmtTaxZone.fromCountry.id = :fromCountryId or financialMgmtTaxZone.fromCountry is null)";
+      } else {
+        hql = hql + " and financialMgmtTaxZone.fromCountry is null";
+      }
+      if (fromRegion != null) {
+        hql = hql
+            + " and (financialMgmtTaxZone.fromRegion.id = :fromRegionId or financialMgmtTaxZone.fromRegion is null)";
+      } else {
+        hql = hql + " and financialMgmtTaxZone.fromRegion is null";
+      }
+    }
     hql = hql + " order by financialMgmtTaxZone.id asc";
 
     return Arrays.asList(hql);
