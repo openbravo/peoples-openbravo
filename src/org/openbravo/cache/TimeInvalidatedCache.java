@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.base.util;
+package org.openbravo.cache;
 
 import java.time.Duration;
 import java.util.Collection;

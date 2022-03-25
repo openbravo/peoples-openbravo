@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.base.util;
+package org.openbravo.cache;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
