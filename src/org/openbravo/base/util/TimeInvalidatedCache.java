@@ -24,11 +24,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openbravo.base.exception.OBException;
+
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.Ticker;
-import org.openbravo.base.exception.OBException;
 
 /**
  * Cache API that allows creating a cache that will be invalidated after a period of time
@@ -46,25 +49,30 @@ import org.openbravo.base.exception.OBException;
  *          - Value used by the Cache
  */
 public class TimeInvalidatedCache<T, V> {
+  private static Logger logger = LogManager.getLogger();
+
   private LoadingCache<T, V> cache;
   private Duration expireDuration;
   // Internal ticker, do not use
   private Ticker ticker;
+  private final String name;
 
   /**
    * Creates a new instance of TimeInvalidatedCache with the types provided. Usage as follows:
    * 
    * <pre>
    * TimeInvalidatedCache<KeyType, ValueType>
-   *   .newInstance()
+   *   .newInstance(cacheName)
    *   .expireAfterDuration(Duration.ofMinutes(5)) // Could be any Duration, not necessarily in minutes. If not executed, 1 minute default is assumed
    *   .build(key -> generateKeyValue(key)) // This is a lambda that initializes the key if it expired or is the first time is read
    * </pre>
    * 
+   * @param name
+   *          - Name of the Cache, will be used in the logging processes
    * @return this object, to be followed by an expireAfterDuration or build calls.
    */
-  public static TimeInvalidatedCache<Object, Object> newInstance() {
-    return new TimeInvalidatedCache<>();
+  public static TimeInvalidatedCache<Object, Object> newInstance(String name) {
+    return new TimeInvalidatedCache<>(name);
   }
 
   /**
@@ -74,8 +82,22 @@ public class TimeInvalidatedCache<T, V> {
    * @param duration
    *          - Duration of time after which is considered expired
    * @return this object, to follow with build() call
+   * @throws IllegalArgumentException
+   *           – if duration is negative (thrown when executing build method)
+   * @throws IllegalStateException
+   *           – if the time to live or variable expiration was already set (thrown when executing
+   *           build method)
+   * @throws ArithmeticException
+   *           – for durations greater than +/- approximately 292 year (thrown when executing build
+   *           method)
    */
   public TimeInvalidatedCache<T, V> expireAfterDuration(Duration duration) {
+    if (this.cache != null) {
+      // If cache was already built, throw exception, as this function would not change the duration
+      throw new OBException(String.format(
+          "Cache %s has already been built, it is not possible to set expireAfterDuration after initialization.",
+          name));
+    }
     this.expireDuration = duration;
     return this;
   }
@@ -85,7 +107,7 @@ public class TimeInvalidatedCache<T, V> {
    *
    * <pre>
    * TimeInvalidatedCache<KeyType, ValueType>
-   *   .newInstance()
+   *   .newInstance(cacheName)
    *   .expireAfterDuration(Duration.ofMinutes(5)) // Could be any Duration, not necessarily in minutes. If not executed, 1 minute default is assumed
    *   .build(key -> generateKeyValue(key)) // This is a lambda that initializes the key if it expired or is the first time is read
    * </pre>
@@ -108,11 +130,13 @@ public class TimeInvalidatedCache<T, V> {
       cacheBuilder.ticker(ticker);
     }
     self.cache = cacheBuilder.build(loader);
-
+    logger.trace("Cache {} has been built with expireDuration {} ms.", name,
+        expireDuration.toMillis());
     return self;
   }
 
-  private TimeInvalidatedCache() {
+  private TimeInvalidatedCache(String name) {
+    this.name = name;
   }
 
   /**
@@ -121,9 +145,12 @@ public class TimeInvalidatedCache<T, V> {
    * @param key
    *          - Key to retrieve corresponding value
    * @return - Value corresponding to given key
+   * @throws NullPointerException
+   *           – if the specified key is null (not the value associated with the key)
    */
   public V get(T key) {
     checkCacheBuilt();
+    logger.trace("Cache {} get key {} has been executed.", name, key);
     return cache.get(key);
   }
 
@@ -136,10 +163,13 @@ public class TimeInvalidatedCache<T, V> {
    * @param mappingFunction
    *          - Mapping function that will compute the value of the key if not present in the cache
    * @return - Value corresponding to given key
+   * @throws NullPointerException
+   *           – if the specified key is null (not the value associated with the key)
    */
   public V get(T key, Function<? super T, ? extends V> mappingFunction) {
     checkCacheBuilt();
     V result = cache.get(key);
+    logger.trace("Cache {} getAll with mappingFunction, has been executed with key {}.", name, key);
     if (result != null) {
       return result;
     }
@@ -152,9 +182,12 @@ public class TimeInvalidatedCache<T, V> {
    * @param keys
    *          - Collection of keys to retrieve values from
    * @return - map of Key-Value of all the given keys
+   * @throws NullPointerException
+   *           – if any of the specified keys is null (not the value associated with the key)
    */
   public Map<T, V> getAll(Collection<T> keys) {
     checkCacheBuilt();
+    logger.trace("Cache {} getAll keys {} has been executed.", name, keys);
     return cache.getAll(keys);
   }
 
@@ -169,11 +202,15 @@ public class TimeInvalidatedCache<T, V> {
    *          - Mapping function that will compute the values of the keys if not present in the
    *          cache
    * @return - map of Key-Value of all the given keys
+   * @throws NullPointerException
+   *           – if any of the specified keys is null (not the value associated with the key)
    */
   public Map<T, V> getAll(Collection<T> keys,
       Function<? super Set<? extends T>, ? extends Map<? extends T, ? extends V>> mappingFunction) {
     checkCacheBuilt();
     Map<T, V> cachedKeys = cache.getAll(keys);
+    logger.trace("Cache {} getAll with mappingFunction, has been executed with keys {}.", name,
+        keys);
     if (cachedKeys.keySet().containsAll(keys)) {
       return cachedKeys;
     }
@@ -181,11 +218,25 @@ public class TimeInvalidatedCache<T, V> {
   }
 
   /**
+   * Invalidates given key in the cache
+   */
+  public void invalidate(T key) {
+    checkCacheBuilt();
+    cache.invalidate(key);
+    logger.trace("{} key in cache {} has been invalidated.", key, name);
+  }
+
+  /**
    * Invalidates all the keys in the cache
    */
-  public void invalidate() {
+  public void invalidateAll() {
     checkCacheBuilt();
     cache.invalidateAll();
+    logger.trace("Cache {} has been invalidated(all keys).", name);
+  }
+
+  public String getName() {
+    return name;
   }
 
   /**
@@ -204,11 +255,17 @@ public class TimeInvalidatedCache<T, V> {
   /**
    * Internal API, used only for testing
    * 
-   * @param ticker
+   * @param tickerToSet
    *          - Ticker to be used instead of the default system one
    */
-  TimeInvalidatedCache<T, V> ticker(Ticker ticker) {
-    this.ticker = ticker;
+  TimeInvalidatedCache<T, V> ticker(Ticker tickerToSet) {
+    if (this.cache != null) {
+      // If cache was already built, throw exception, as this function would not change the duration
+      throw new OBException(String.format(
+          "Cache %s has already been built, it is not possible to set ticker after initialization.",
+          name));
+    }
+    this.ticker = tickerToSet;
     return this;
   }
 }

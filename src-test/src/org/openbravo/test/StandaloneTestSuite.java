@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.advpaymentmngt.test.DocumentNumberGeneration;
 import org.openbravo.authentication.hashing.PasswordHashing;
+import org.openbravo.base.util.TimeInvalidatedCacheTest;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
@@ -353,7 +354,8 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // others
     DocumentNumberGeneration.class, //
     GridExport.class, //
-    ViewGeneration.class,
+    ViewGeneration.class, //
+    TimeInvalidatedCacheTest.class,
 
     // Cancel and Replace Tests
     CancelAndReplaceTest.class, //
