@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  ************************************************************************
@@ -19,6 +19,8 @@
 
 package org.openbravo.service.centralrepository;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
@@ -28,6 +30,7 @@ import org.openbravo.base.exception.OBException;
  * requests
  */
 public class ModuleInstallDetail {
+  private static final Logger log = LogManager.getLogger();
   private String[] dependencyErrors;
   private Module[] modulesToInstall;
   private Module[] modulesToUpdate;
@@ -61,6 +64,7 @@ public class ModuleInstallDetail {
       return new ModuleInstallDetail(dependencyErrors, modulesToInstall, modulesToUpdate,
           validConfing);
     } catch (Exception e) {
+      log.error("Error getting module details from {}", jsonResponse, e);
       throw new OBException(e);
     }
   }
