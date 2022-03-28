@@ -32,7 +32,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.openbravo.base.exception.OBException;
 
 /**
  * Tests for TimeInvalidatedCache
@@ -118,15 +117,6 @@ public class TimeInvalidatedCacheTest {
   }
 
   @Test
-  public void cacheShouldThrowExceptionIfNotInitialized() {
-    TimeInvalidatedCache<Object, Object> cache = TimeInvalidatedCache.newInstance("TestCache");
-    thrown.expect(OBException.class);
-    thrown.expectMessage("TimeInvalidatedCache has been accessed before being properly built.");
-
-    cache.get("testKey");
-  }
-
-  @Test
   public void cacheShouldBeAbleToRetrieveDefaultValue() {
     TimeInvalidatedCache<String, String> cache = initializeCache(key -> null);
     assertNull(cache.get("testKey"));
@@ -159,14 +149,16 @@ public class TimeInvalidatedCacheTest {
 
   private TimeInvalidatedCache<String, String> initializeCache(
       CacheLoader<? super String, String> buildMethod) {
-    return TimeInvalidatedCache.newInstance("TestCache")
+    return TimeInvalidatedCache.newInstance()
+        .setName("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
         .build(buildMethod);
   }
 
   private TimeInvalidatedCache<String, String> initializeCache(
       CacheLoader<? super String, String> buildMethod, Ticker ticker) {
-    return TimeInvalidatedCache.newInstance("TestCache")
+    return TimeInvalidatedCache.newInstance()
+        .setName("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
         .ticker(ticker)
         .build(buildMethod);
