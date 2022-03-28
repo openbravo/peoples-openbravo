@@ -290,7 +290,8 @@ isc.OBParameterWindowView.addProperties({
     var tab = OB.MainView.TabSet.getTab(this.viewTabId),
       i,
       afterRefreshCallback,
-      me = this;
+      me = this,
+      view;
 
     // change title to done
     if (tab) {
@@ -315,37 +316,36 @@ isc.OBParameterWindowView.addProperties({
     this.setAllButtonEnabled(this.allRequiredParametersSet());
     this.showProcessing(false);
     if (message) {
-      // do not automatically remove this message (i.e. when child tabs are refreshed)
-      this.buttonOwnerView.messageBar.keepOnAutomaticRefresh = true;
       if (this.popup) {
+        view = this.buttonOwnerView;
         if (!retryExecution) {
           if (message.title) {
-            this.buttonOwnerView.messageBar.setMessage(
+            view.messageBar.setMessage(
               message.severity,
               message.title,
               message.text
             );
           } else {
-            this.buttonOwnerView.messageBar.setMessage(
-              message.severity,
-              message.text
-            );
+            view.messageBar.setMessage(message.severity, message.text);
           }
         } else {
           // Popup has no message bar, showing the message in a warn popup
           isc.warn(message.text);
         }
       } else {
+        view = this;
         if (message.title) {
-          this.messageBar.setMessage(
+          view.messageBar.setMessage(
             message.severity,
             message.title,
             message.text
           );
         } else {
-          this.messageBar.setMessage(message.severity, message.text);
+          view.messageBar.setMessage(message.severity, message.text);
         }
       }
+      // do not automatically remove this message (i.e. when child tabs are refreshed)
+      view.messageBar.keepOnAutomaticRefresh = true;
     }
 
     if (!retryExecution) {
