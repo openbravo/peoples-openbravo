@@ -27,11 +27,12 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.github.benmanes.caffeine.cache.Ticker;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import com.github.benmanes.caffeine.cache.Ticker;
 
 /**
  * Tests for TimeInvalidatedCache

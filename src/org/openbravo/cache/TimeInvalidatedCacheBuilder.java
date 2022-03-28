@@ -3,11 +3,12 @@ package org.openbravo.cache;
 import java.time.Duration;
 import java.util.function.Function;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 class TimeInvalidatedCacheBuilder<T, V> {
   private static Logger logger = LogManager.getLogger();
@@ -42,7 +43,6 @@ class TimeInvalidatedCacheBuilder<T, V> {
     if (expireDuration == null) {
       this.expireDuration = Duration.ofMinutes(1);
     }
-    @SuppressWarnings("unchecked")
     Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
     cacheBuilder.expireAfterWrite(expireDuration);
     if (this.ticker != null) {

@@ -24,9 +24,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.github.benmanes.caffeine.cache.LoadingCache;
 
 /**
  * Cache API that allows creating a cache that will be invalidated after a period of time
