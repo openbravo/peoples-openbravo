@@ -165,7 +165,7 @@ public class TimeInvalidatedCacheTest {
   @Test
   public void cacheShouldHasNameSet() {
     TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newBuilder()
-        .setName("TestCache")
+        .name("TestCache")
         .build(key -> null);
     assertEquals("TestCache", cache.getName());
   }
@@ -182,7 +182,7 @@ public class TimeInvalidatedCacheTest {
   private TimeInvalidatedCache<String, String> initializeCache(
       Function<? super String, String> buildMethod) {
     return TimeInvalidatedCache.newBuilder()
-        .setName("TestCache")
+        .name("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
         .build(buildMethod);
   }
@@ -190,7 +190,7 @@ public class TimeInvalidatedCacheTest {
   private TimeInvalidatedCache<String, String> initializeCache(
       Function<? super String, String> buildMethod, Ticker ticker) {
     return TimeInvalidatedCache.newBuilder()
-        .setName("TestCache")
+        .name("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
         .ticker(ticker)
         .build(buildMethod);

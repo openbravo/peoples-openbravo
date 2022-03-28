@@ -19,7 +19,7 @@ import com.github.benmanes.caffeine.cache.Ticker;
  *
  * <pre>
  * TimeInvalidatedCache.newBuilder()
- *     .setName("CacheName")
+ *     .name("CacheName")
  *     .expireAfterDuration(Duration.ofMinutes(5)) // Could be any Duration, not necessarily in
  *                                                 // minutes. If not executed, 1 minute default
  *                                                 // is assumed
@@ -54,6 +54,14 @@ public class TimeInvalidatedCacheBuilder<T, V> {
    * @return {@link TimeInvalidatedCache} fully built object
    * @throws OBException
    *           - If name has not been set previous to executing the build function
+   * @throws IllegalArgumentException
+   *           – if duration is negative (previously executing expireDuration())
+   * @throws IllegalStateException
+   *           – if the time to live or variable expiration was already set (previously executing
+   *           expireDuration())
+   * @throws ArithmeticException
+   *           – for durations greater than +/- approximately 292 year (previously executing
+   *           expireDuration())
    */
   public <T1 extends T, V1 extends V> TimeInvalidatedCache<T1, V1> build(
       Function<? super T1, V1> loader) {
@@ -92,7 +100,7 @@ public class TimeInvalidatedCacheBuilder<T, V> {
    *          - Cache name
    * @return this object
    */
-  public TimeInvalidatedCacheBuilder<T, V> setName(String name) {
+  public TimeInvalidatedCacheBuilder<T, V> name(String name) {
     this.name = name;
     return this;
   }
@@ -104,14 +112,6 @@ public class TimeInvalidatedCacheBuilder<T, V> {
    * @param duration
    *          - Duration of time after which is considered expired
    * @return this object, to follow with build() call
-   * @throws IllegalArgumentException
-   *           – if duration is negative (thrown when executing build method)
-   * @throws IllegalStateException
-   *           – if the time to live or variable expiration was already set (thrown when executing
-   *           build method)
-   * @throws ArithmeticException
-   *           – for durations greater than +/- approximately 292 year (thrown when executing build
-   *           method)
    */
   public TimeInvalidatedCacheBuilder<T, V> expireAfterDuration(Duration duration) {
     this.expireDuration = duration;
