@@ -38,9 +38,9 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
  * Use the newBuilder static function to create a new cache and then follow the builder structure.
  * 
  * @param <T>
- *          - Key used by the Cache(for example String for a UUID)
+ *          Key used by the Cache(for example String for a UUID)
  * @param <V>
- *          - Value used by the Cache
+ *          Value used by the Cache
  */
 public class TimeInvalidatedCache<T, V> {
   private static Logger logger = LogManager.getLogger();
@@ -58,6 +58,13 @@ public class TimeInvalidatedCache<T, V> {
     return new TimeInvalidatedCacheBuilder<>();
   }
 
+  /**
+   * Initialize through builder {@link TimeInvalidatedCacheBuilder}
+   * 
+   * Internal API
+   * 
+   * @see #newBuilder()
+   */
   TimeInvalidatedCache(String name, LoadingCache<T, V> cache) {
     this.name = name;
     this.cache = cache;
@@ -67,10 +74,10 @@ public class TimeInvalidatedCache<T, V> {
    * Returns a value from the cache associated to a given key
    * 
    * @param key
-   *          - Key to retrieve corresponding value
-   * @return - Value corresponding to given key
+   *          Key to retrieve corresponding value
+   * @return Value corresponding to given key
    * @throws NullPointerException
-   *           – if the specified key is null (not the value associated with the key)
+   *           if the specified key is null (not the value associated with the key)
    */
   public V get(T key) {
     logger.trace("Cache {} get key {} has been executed.", name, key);
@@ -79,19 +86,20 @@ public class TimeInvalidatedCache<T, V> {
 
   /**
    * Returns a value from the cache associated to a given key. If the key is not in the cache and is
-   * not computable, it will return the result of executing the provided mappingFunction.
+   * not computable using the loader function, it will return the result of executing the provided
+   * mappingFunction.
    *
    * @param key
-   *          - Key to retrieve corresponding value
+   *          Key to retrieve corresponding value
    * @param mappingFunction
-   *          - Mapping function that will compute the value of the key if not present in the cache
-   * @return - Value corresponding to given key
+   *          Mapping function that will compute the value of the key if not present in the cache
+   * @return Value corresponding to given key
    * @throws NullPointerException
-   *           – if the specified key is null (not the value associated with the key)
+   *           if the specified key is null (not the value associated with the key)
    */
   public V get(T key, Function<? super T, ? extends V> mappingFunction) {
     V result = cache.get(key);
-    logger.trace("Cache {} getAll with mappingFunction, has been executed with key {}.", name, key);
+    logger.trace("Cache {} get with mappingFunction, has been executed with key {}.", name, key);
     if (result != null) {
       return result;
     }
@@ -102,10 +110,10 @@ public class TimeInvalidatedCache<T, V> {
    * Returns a map of Key-Value of all the given keys
    * 
    * @param keys
-   *          - Collection of keys to retrieve values from
-   * @return - map of Key-Value of all the given keys
+   *          Collection of keys to retrieve values from
+   * @return map of Key-Value of all the given keys
    * @throws NullPointerException
-   *           – if any of the specified keys is null (not the value associated with the key)
+   *           if any of the specified keys is null (not the value associated with the key)
    */
   public Map<T, V> getAll(Collection<T> keys) {
     logger.trace("Cache {} getAll keys {} has been executed.", name, keys);
@@ -114,17 +122,23 @@ public class TimeInvalidatedCache<T, V> {
 
   /**
    * Returns a map of Key-Value of all the given keys. If the keys are not in the cache and some are
-   * not computable, it will return the result of executing the provided mappingFunction for those
-   * keys.
+   * not computable using the loader function, it will return the result of executing the provided
+   * mappingFunction for those keys.
+   * 
+   * A single request to {@code mappingFunction} is performed for all keys which are not already
+   * present in the cache
+   * 
+   * The returned map contains entries that were already cached, combined with the newly loaded
+   * entries. It will never contain null keys or values. If a key is not computable to a value, it
+   * will not appear in the resulting Map.
    *
    * @param keys
-   *          - Collection of keys to retrieve values from
+   *          Collection of keys to retrieve values from
    * @param mappingFunction
-   *          - Mapping function that will compute the values of the keys if not present in the
-   *          cache
-   * @return - map of Key-Value of all the given keys
+   *          Mapping function that will compute the values of the keys if not present in the cache
+   * @return map of Key-Value of all the given keys
    * @throws NullPointerException
-   *           – if any of the specified keys is null (not the value associated with the key)
+   *           if any of the specified keys is null (not the value associated with the key)
    */
   public Map<T, V> getAll(Collection<T> keys,
       Function<? super Set<? extends T>, ? extends Map<? extends T, ? extends V>> mappingFunction) {
