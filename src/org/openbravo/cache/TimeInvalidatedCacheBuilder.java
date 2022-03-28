@@ -1,6 +1,7 @@
 package org.openbravo.cache;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -37,7 +38,7 @@ class TimeInvalidatedCacheBuilder<T, V> {
    * @return this object
    */
   public <T1 extends T, V1 extends V> TimeInvalidatedCache<T1, V1> build(
-      CacheLoader<? super T1, V1> loader) {
+      Function<? super T1, V1> loader) {
     if (expireDuration == null) {
       this.expireDuration = Duration.ofMinutes(1);
     }
@@ -47,8 +48,16 @@ class TimeInvalidatedCacheBuilder<T, V> {
     if (this.ticker != null) {
       cacheBuilder.ticker(ticker);
     }
+
+    CacheLoader<T1, V1> cacheLoader = new CacheLoader<>() {
+      @Override
+      public V1 load(T1 key) {
+        return loader.apply(key);
+      }
+    };
+
     TimeInvalidatedCache<T1, V1> cache = new TimeInvalidatedCache<>(name,
-        cacheBuilder.build(loader), expireDuration);
+        cacheBuilder.build(cacheLoader), expireDuration);
     logger.trace("Cache {} has been built with expireDuration {} ms.", name,
         expireDuration.toMillis());
     return cache;

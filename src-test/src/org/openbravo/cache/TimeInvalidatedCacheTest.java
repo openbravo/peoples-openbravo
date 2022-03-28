@@ -24,9 +24,9 @@ import static org.junit.Assert.assertNull;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Ticker;
 import org.junit.Before;
 import org.junit.Rule;
@@ -148,7 +148,7 @@ public class TimeInvalidatedCacheTest {
   }
 
   private TimeInvalidatedCache<String, String> initializeCache(
-      CacheLoader<? super String, String> buildMethod) {
+      Function<? super String, String> buildMethod) {
     return TimeInvalidatedCache.newInstance()
         .setName("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
@@ -156,7 +156,7 @@ public class TimeInvalidatedCacheTest {
   }
 
   private TimeInvalidatedCache<String, String> initializeCache(
-      CacheLoader<? super String, String> buildMethod, Ticker ticker) {
+      Function<? super String, String> buildMethod, Ticker ticker) {
     return TimeInvalidatedCache.newInstance()
         .setName("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
