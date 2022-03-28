@@ -18,7 +18,6 @@
  */
 package org.openbravo.cache;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +35,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
  * a read key. That means this cache is lazy, it will only compute a value of a given key if this
  * key is accessed.
  * 
- * Use the newInstance static function to create a new cache and then follow the builder structure.
+ * Use the newBuilder static function to create a new cache and then follow the builder structure.
  * 
  * @param <T>
  *          - Key used by the Cache(for example String for a UUID)
@@ -47,32 +46,21 @@ public class TimeInvalidatedCache<T, V> {
   private static Logger logger = LogManager.getLogger();
 
   private LoadingCache<T, V> cache;
-  private Duration expireDuration;
   private String name;
 
   /**
-   * Creates a new instance of TimeInvalidatedCache with the types provided. Usage as follows:
+   * Creates a new instance of {@link TimeInvalidatedCacheBuilder}, class contains instructions on
+   * building a TimeInvalidatedCache.
    * 
-   * <pre>
-   * TimeInvalidatedCache.newInstance()
-   *     .setName("nameOfCache")
-   *     .expireAfterDuration(Duration.ofMinutes(5)) // Could be any Duration, not necessarily in
-   *                                                 // minutes. If not executed, 1 minute default
-   *                                                 // is assumed
-   *     .build(key -> generateKeyValue(key)) // This is a lambda that initializes the key if it
-   *                                          // expired or is the first time is read
-   * </pre>
-   * 
-   * @return this object, to be followed by an expireAfterDuration or build calls.
+   * @return a new {@link TimeInvalidatedCacheBuilder} object
    */
-  public static TimeInvalidatedCacheBuilder<Object, Object> newInstance() {
+  public static TimeInvalidatedCacheBuilder<Object, Object> newBuilder() {
     return new TimeInvalidatedCacheBuilder<>();
   }
 
-  TimeInvalidatedCache(String name, LoadingCache<T, V> cache, Duration expireDuration) {
+  TimeInvalidatedCache(String name, LoadingCache<T, V> cache) {
     this.name = name;
     this.cache = cache;
-    this.expireDuration = expireDuration;
   }
 
   /**
@@ -174,12 +162,4 @@ public class TimeInvalidatedCache<T, V> {
     return name;
   }
 
-  /**
-   * Returns the expire duration. Duration of time after which all keys be evicted from the cache.
-   * 
-   * @return Expire time duration
-   */
-  public Duration getExpireDuration() {
-    return this.expireDuration;
-  }
 }

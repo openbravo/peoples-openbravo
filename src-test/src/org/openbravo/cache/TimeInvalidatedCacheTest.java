@@ -32,6 +32,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.openbravo.base.exception.OBException;
 
 import com.github.benmanes.caffeine.cache.Ticker;
 
@@ -162,18 +163,25 @@ public class TimeInvalidatedCacheTest {
   }
 
   @Test
-  public void cacheShouldHaveNameAndDefaultExpireDurationIfNotSet() {
-    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
+  public void cacheShouldHasNameSet() {
+    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newBuilder()
         .setName("TestCache")
         .build(key -> null);
-    ;
     assertEquals("TestCache", cache.getName());
-    assertEquals(Duration.ofMinutes(1), cache.getExpireDuration());
+  }
+
+  @Test
+  public void cacheShouldThrowExceptionIfNameNotSet() {
+    thrown.expect(OBException.class);
+    thrown.expectMessage(
+        "Name must be set prior to executing TimeInvalidatedCacheBuilder build function.");
+
+    TimeInvalidatedCache.newBuilder().build(key -> null);
   }
 
   private TimeInvalidatedCache<String, String> initializeCache(
       Function<? super String, String> buildMethod) {
-    return TimeInvalidatedCache.newInstance()
+    return TimeInvalidatedCache.newBuilder()
         .setName("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
         .build(buildMethod);
@@ -181,7 +189,7 @@ public class TimeInvalidatedCacheTest {
 
   private TimeInvalidatedCache<String, String> initializeCache(
       Function<? super String, String> buildMethod, Ticker ticker) {
-    return TimeInvalidatedCache.newInstance()
+    return TimeInvalidatedCache.newBuilder()
         .setName("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
         .ticker(ticker)
