@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -146,6 +147,28 @@ public class TimeInvalidatedCacheTest {
         "testKey3", "testKey3Value");
     assertEquals(expectedValues, cache.getAll(testKeys,
         keys -> keys.stream().collect(Collectors.toMap(key -> key, key -> key + "Value"))));
+  }
+
+  @Test
+  public void cacheShouldBeAbleToRetrieveCachedValuesIfAlreadyComputable() {
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> key + "Value");
+    List<String> testKeys = List.of("testKey", "testKey2", "testKey3");
+
+    Map<String, String> expectedValues = Map.of( //
+        "testKey", "testKeyValue", //
+        "testKey2", "testKey2Value", //
+        "testKey3", "testKey3Value");
+    assertEquals(expectedValues, cache.getAll(testKeys, keys -> Collections.emptyMap()));
+  }
+
+  @Test
+  public void cacheShouldHaveNameAndDefaultExpireDurationIfNotSet() {
+    TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newInstance()
+        .setName("TestCache")
+        .build(key -> null);
+    ;
+    assertEquals("TestCache", cache.getName());
+    assertEquals(Duration.ofMinutes(1), cache.getExpireDuration());
   }
 
   private TimeInvalidatedCache<String, String> initializeCache(
