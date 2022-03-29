@@ -55,7 +55,7 @@ import org.openbravo.utils.FormatUtilities;
  * Tests to cover the sending of data with {@link HttpExternalSystem}. Note: these tests expect to
  * have the server running as they execute HTTP requests and evaluate the responses.
  */
-public class HttpExternalSystemTest extends WeldBaseTest {
+public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   @Inject
   private ExternalSystemProvider externalSystemProvider;
