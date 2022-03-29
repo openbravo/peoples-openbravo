@@ -126,7 +126,7 @@ public class TaxZone extends MasterDataProcessHQLQuery {
         + " and financialMgmtTaxZone.$incrementalUpdateCriteria"
         + " and financialMgmtTaxZone.tax in (" + hqlTax + ")";
 
-    if (!organizationWithMultipleLocations) {
+    if (!organizationWithMultipleLocations && !POSUtils.isCrossStoreEnabled(posDetail)) {
       if (fromCountry != null) {
         hql = hql
             + " and (financialMgmtTaxZone.fromCountry.id = :fromCountryId or financialMgmtTaxZone.fromCountry is null)";

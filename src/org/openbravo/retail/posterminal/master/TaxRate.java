@@ -104,7 +104,7 @@ public class TaxRate extends MasterDataProcessHQLQuery {
         + " and (tr.summaryLevel = false"
         + " or tc.asbom = true)";
     //@formatter:on
-    if (!organizationWithMultipleLocations) {
+    if (!organizationWithMultipleLocations && !POSUtils.isCrossStoreEnabled(posDetail)) {
       if (fromCountry != null) {
         hql = hql + " and (tr.country.id = :fromCountryId"
             + " or (tr.country is null and (not exists (select 1 from FinancialMgmtTaxZone as tz where tz.tax.id = tr.id))"
