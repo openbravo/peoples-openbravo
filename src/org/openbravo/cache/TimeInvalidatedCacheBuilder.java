@@ -34,7 +34,7 @@ import com.github.benmanes.caffeine.cache.Ticker;
  * use {@link TimeInvalidatedCache#newBuilder()} method to create a new instance of this class.
  *
  * Expects to be called as follows:
- *
+ * 
  * <pre>
  * TimeInvalidatedCache.newBuilder()
  *     .name("CacheName") // Required name of the cache
@@ -46,12 +46,12 @@ import com.github.benmanes.caffeine.cache.Ticker;
  *  *                                           // required.
  * </pre>
  * 
- * @param <T>
+ * @param <K>
  *          Key type used in cache
  * @param <V>
  *          Value type used in cache
  */
-public class TimeInvalidatedCacheBuilder<T, V> {
+public class TimeInvalidatedCacheBuilder<K, V> {
   private static Logger logger = LogManager.getLogger();
 
   private Duration expireDuration;
@@ -65,13 +65,14 @@ public class TimeInvalidatedCacheBuilder<T, V> {
   }
 
   /**
-   * Builds the TimeInvalidatedCache and initializes it. Expects to be called as follows:
+   * Builds the TimeInvalidatedCache
    *
    * @param loader
-   *          - lambda that initializes the key if it expired or is the first time it is read. It
+   *          lambda that initializes the key if it expired or is the first time it is read. It
    *          should receive a key and return the value corresponding to it
    *
    * @return {@link TimeInvalidatedCache} fully built object
+   * @see TimeInvalidatedCacheBuilder
    * @throws OBException
    *           If name or loader have not been set previous to executing the build function
    * @throws IllegalArgumentException
@@ -83,30 +84,30 @@ public class TimeInvalidatedCacheBuilder<T, V> {
    *           for durations greater than +/- approximately 292 year (previously executing
    *           expireDuration())
    */
-  public <T1 extends T, V1 extends V> TimeInvalidatedCache<T1, V1> build(
-      Function<? super T1, V1> loader) {
+  public <K1 extends K, V1 extends V> TimeInvalidatedCache<K1, V1> build(
+      Function<? super K1, V1> loader) {
     if (name == null) {
       throw new OBException(
           "Name must be set prior to executing TimeInvalidatedCacheBuilder build function.");
     }
     if (expireDuration == null) {
-      this.expireDuration = Duration.ofMinutes(1);
+      expireDuration = Duration.ofMinutes(1);
     }
 
     Caffeine<Object, Object> cacheBuilder = Caffeine.newBuilder();
     cacheBuilder.expireAfterWrite(expireDuration);
-    if (this.ticker != null) {
+    if (ticker != null) {
       cacheBuilder.ticker(ticker);
     }
 
-    CacheLoader<T1, V1> cacheLoader = new CacheLoader<>() {
+    CacheLoader<K1, V1> cacheLoader = new CacheLoader<>() {
       @Override
-      public V1 load(T1 key) {
+      public V1 load(K1 key) {
         return loader.apply(key);
       }
     };
 
-    TimeInvalidatedCache<T1, V1> cache = new TimeInvalidatedCache<>(name,
+    TimeInvalidatedCache<K1, V1> cache = new TimeInvalidatedCache<>(name,
         cacheBuilder.build(cacheLoader));
     logger.trace("Cache {} has been built with expireDuration {} ms.", name,
         expireDuration.toMillis());
@@ -120,7 +121,7 @@ public class TimeInvalidatedCacheBuilder<T, V> {
    *          Cache name
    * @return this object
    */
-  public TimeInvalidatedCacheBuilder<T, V> name(String nameToSet) {
+  public TimeInvalidatedCacheBuilder<K, V> name(String nameToSet) {
     this.name = nameToSet;
     return this;
   }
@@ -133,7 +134,7 @@ public class TimeInvalidatedCacheBuilder<T, V> {
    *          Duration of time after which is considered expired
    * @return this object
    */
-  public TimeInvalidatedCacheBuilder<T, V> expireAfterDuration(Duration duration) {
+  public TimeInvalidatedCacheBuilder<K, V> expireAfterDuration(Duration duration) {
     this.expireDuration = duration;
     return this;
   }
@@ -145,7 +146,7 @@ public class TimeInvalidatedCacheBuilder<T, V> {
    *          Ticker to be used instead of the default system one
    * @return this object
    */
-  TimeInvalidatedCacheBuilder<T, V> ticker(Ticker tickerToSet) {
+  TimeInvalidatedCacheBuilder<K, V> ticker(Ticker tickerToSet) {
     this.ticker = tickerToSet;
     return this;
   }

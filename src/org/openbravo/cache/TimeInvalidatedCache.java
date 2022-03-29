@@ -29,23 +29,26 @@ import org.apache.logging.log4j.Logger;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 
 /**
- * Cache API that allows creating a cache that will be invalidated after a period of time
+ * Cache API that allows creating a cache whose entries will be invalidated after a period of time
  * 
- * This Cache will be invalidated after a period x of time after a write action on the cache due to
- * a read key. That means this cache is lazy, it will only compute a value of a given key if this
- * key is accessed.
+ * Entries will be invalidated after a period of time defined by the cache user, starting from the
+ * moment the value of a given key has last been computed. That means this cache is lazy, it will
+ * only compute a value of a given key if the key is accessed.
+ *
+ * An invalidated entry means that on the next read of that entry on the cache, the value will be
+ * recomputed with the previously provided loader function.
  * 
  * Use the newBuilder static function to create a new cache and then follow the builder structure.
  * 
- * @param <T>
- *          Key used by the Cache(for example String for a UUID)
+ * @param <K>
+ *          Key class type used by the Cache(for example String for a UUID)
  * @param <V>
- *          Value used by the Cache
+ *          Value class type used by the Cache
  */
-public class TimeInvalidatedCache<T, V> {
+public class TimeInvalidatedCache<K, V> {
   private static Logger logger = LogManager.getLogger();
 
-  private LoadingCache<T, V> cache;
+  private LoadingCache<K, V> cache;
   private String name;
 
   /**
@@ -65,7 +68,7 @@ public class TimeInvalidatedCache<T, V> {
    * 
    * @see #newBuilder()
    */
-  TimeInvalidatedCache(String name, LoadingCache<T, V> cache) {
+  TimeInvalidatedCache(String name, LoadingCache<K, V> cache) {
     this.name = name;
     this.cache = cache;
   }
@@ -79,7 +82,7 @@ public class TimeInvalidatedCache<T, V> {
    * @throws NullPointerException
    *           if the specified key is null (not the value associated with the key)
    */
-  public V get(T key) {
+  public V get(K key) {
     logger.trace("Cache {} get key {} has been executed.", name, key);
     return cache.get(key);
   }
@@ -97,7 +100,7 @@ public class TimeInvalidatedCache<T, V> {
    * @throws NullPointerException
    *           if the specified key is null (not the value associated with the key)
    */
-  public V get(T key, Function<? super T, ? extends V> mappingFunction) {
+  public V get(K key, Function<? super K, ? extends V> mappingFunction) {
     V result = cache.get(key);
     logger.trace("Cache {} get with mappingFunction, has been executed with key {}.", name, key);
     if (result != null) {
@@ -109,13 +112,16 @@ public class TimeInvalidatedCache<T, V> {
   /**
    * Returns a map of Key-Value of all the given keys
    * 
+   * It will never contain null keys or values. If a key is not computable to a value, it will not
+   * appear in the resulting Map.
+   * 
    * @param keys
    *          Collection of keys to retrieve values from
    * @return map of Key-Value of all the given keys
    * @throws NullPointerException
    *           if any of the specified keys is null (not the value associated with the key)
    */
-  public Map<T, V> getAll(Collection<T> keys) {
+  public Map<K, V> getAll(Collection<K> keys) {
     logger.trace("Cache {} getAll keys {} has been executed.", name, keys);
     return cache.getAll(keys);
   }
@@ -140,9 +146,9 @@ public class TimeInvalidatedCache<T, V> {
    * @throws NullPointerException
    *           if any of the specified keys is null (not the value associated with the key)
    */
-  public Map<T, V> getAll(Collection<T> keys,
-      Function<? super Set<? extends T>, ? extends Map<? extends T, ? extends V>> mappingFunction) {
-    Map<T, V> cachedKeys = cache.getAll(keys);
+  public Map<K, V> getAll(Collection<K> keys,
+      Function<? super Set<? extends K>, ? extends Map<? extends K, ? extends V>> mappingFunction) {
+    Map<K, V> cachedKeys = cache.getAll(keys);
     logger.trace("Cache {} getAll with mappingFunction, has been executed with keys {}.", name,
         keys);
     if (cachedKeys.keySet().containsAll(keys)) {
@@ -154,7 +160,7 @@ public class TimeInvalidatedCache<T, V> {
   /**
    * Invalidates given key in the cache
    */
-  public void invalidate(T key) {
+  public void invalidate(K key) {
     cache.invalidate(key);
     logger.trace("{} key in cache {} has been invalidated.", key, name);
   }

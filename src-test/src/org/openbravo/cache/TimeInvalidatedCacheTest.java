@@ -108,6 +108,12 @@ public class TimeInvalidatedCacheTest {
   }
 
   @Test
+  public void cacheShouldGetNullIfNotComputableAndNoDefaultValue() {
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> null);
+    assertNull(cache.get("testKey", key -> null));
+  }
+
+  @Test
   public void cacheShouldBeAbleToRetrieveSeveralValues() {
     TimeInvalidatedCache<String, String> cache = initializeCache(key -> key + "Value");
     assertEquals("oldKeyValue", cache.get("oldKey"));
@@ -163,6 +169,22 @@ public class TimeInvalidatedCacheTest {
   }
 
   @Test
+  public void cacheShouldNotRetrieveValueIfNotComputableInGetAll() {
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> {
+      if ("testKey2".equals(key)) {
+        return null;
+      }
+      return key + "Value";
+    });
+    List<String> testKeys = List.of("testKey", "testKey2", "testKey3");
+
+    Map<String, String> expectedValues = Map.of( //
+        "testKey", "testKeyValue", //
+        "testKey3", "testKey3Value");
+    assertEquals(expectedValues, cache.getAll(testKeys, keys -> Collections.emptyMap()));
+  }
+
+  @Test
   public void cacheShouldHasNameSet() {
     TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newBuilder()
         .name("TestCache")
@@ -197,33 +219,5 @@ public class TimeInvalidatedCacheTest {
 
   private static class ValueTest {
     public static String value;
-  }
-
-  /**
-   * Fake ticker implementation that allows testing ticker sensitive cache. Includes a current time
-   * in nanoseconds and allows advancing it by a given amount of time.
-   */
-  public class FakeTicker implements Ticker {
-    // Current time, set in nanoseconds
-    private long currentTime = 0;
-
-    public FakeTicker() {
-      super();
-    }
-
-    @Override
-    public long read() {
-      return currentTime;
-    }
-
-    /**
-     * Advances the fake timer by a given duration. The duration is transformed into nanoseconds
-     * 
-     * @param duration
-     *          - Duration to advance the fake timer
-     */
-    public void advance(Duration duration) {
-      currentTime += duration.toNanos();
-    }
   }
 }
