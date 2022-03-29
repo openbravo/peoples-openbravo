@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
@@ -63,6 +64,19 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
     OBDal.getInstance().save(httpExternalSystemData);
 
     OBDal.getInstance().flush();
+
+    // Add new protocol and authorization type testing values into their corresponding list
+    // references
+    StringEnumerateDomainType protocolDomainType = (StringEnumerateDomainType) externalSystemData
+        .getEntity()
+        .getProperty("protocol")
+        .getDomainType();
+    protocolDomainType.addEnumerateValue("TEST");
+    StringEnumerateDomainType authTypeDomainType = (StringEnumerateDomainType) httpExternalSystemData
+        .getEntity()
+        .getProperty("authorizationType")
+        .getDomainType();
+    authTypeDomainType.addEnumerateValue("TEST");
   }
 
   @After
@@ -88,9 +102,35 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
   }
 
   @Test
+  public void cannotGetConfigurationForUnknownExternalSystem() {
+    assertThat(externalSystemProvider.getExternalSystem("UNKNOWN_ID").isEmpty(), equalTo(true));
+  }
+
+  @Test
+  public void cannotGetConfigurationForUnknownProtocol() {
+    setConfigurationProtocol("TEST");
+
+    assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isEmpty(),
+        equalTo(true));
+  }
+
+  @Test
+  public void cannotGetHttpConfigurationForUnknownAuthorizationType() {
+    setHttpConfigurationAuthorizationType("TEST");
+
+    assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isEmpty(),
+        equalTo(true));
+  }
+
+  @Test
   public void providedInstanceIsUpdated() {
     ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
         .orElseThrow();
+    assertThat(externalSystem.getName(), equalTo("Test"));
+    assertThat(((HttpExternalSystem) externalSystem).getURL(), equalTo("https://dummy"));
+
+    // get configuration again (this time from cache)
+    externalSystem = externalSystemProvider.getExternalSystem(externalSystemData).orElseThrow();
     assertThat(externalSystem.getName(), equalTo("Test"));
     assertThat(((HttpExternalSystem) externalSystem).getURL(), equalTo("https://dummy"));
 
@@ -125,8 +165,18 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
     OBDal.getInstance().flush();
   }
 
+  private void setConfigurationProtocol(String protocol) {
+    externalSystemData.setProtocol(protocol);
+    OBDal.getInstance().flush();
+  }
+
   private void setHttpConfigurationURL(String url) {
     externalSystemData.getHttpExternalSystemList().get(0).setURL(url);
+    OBDal.getInstance().flush();
+  }
+
+  private void setHttpConfigurationAuthorizationType(String authType) {
+    externalSystemData.getHttpExternalSystemList().get(0).setAuthorizationType(authType);
     OBDal.getInstance().flush();
   }
 

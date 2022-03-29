@@ -37,8 +37,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -63,6 +66,9 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
   private ExternalSystemData externalSystemData;
   private HttpExternalSystemData httpExternalSystemData;
 
+  @Rule
+  public ExpectedException exceptionRule = ExpectedException.none();
+
   @Before
   public void init() {
     setTestAdminContext();
@@ -79,6 +85,14 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
     httpExternalSystemData.setActive(true);
     externalSystemData.getHttpExternalSystemList().add(httpExternalSystemData);
     OBDal.getInstance().save(httpExternalSystemData);
+
+    // Add a new request method into the list reference, to avoid failing when checking if the
+    // property value is valid after setting the "requestMethod" property value with it
+    StringEnumerateDomainType domainType = (StringEnumerateDomainType) httpExternalSystemData
+        .getEntity()
+        .getProperty("requestMethod")
+        .getDomainType();
+    domainType.addEnumerateValue("TEST");
   }
 
   private String getURL() {
@@ -126,6 +140,34 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
         equalTo(ExternalSystemResponse.Type.ERROR));
     assertThat("Expected Response Status Code", response.getStatusCode(),
         equalTo(HttpServletResponse.SC_UNAUTHORIZED));
+  }
+
+  @Test
+  public void cannotSendWithUnsupportedRequestMethod() throws JSONException {
+    exceptionRule.expect(OBException.class);
+    exceptionRule.expectMessage("Unsupported HTTP request method TEST");
+
+    httpExternalSystemData.setAuthorizationType("NOAUTH");
+    httpExternalSystemData.setRequestMethod("TEST");
+
+    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
+        .orElseThrow();
+    externalSystem.send(getRequestData()).join();
+  }
+
+  @Test
+  public void sendFailingRequest() throws JSONException {
+    httpExternalSystemData.setURL("http://localhost:8000/dummy");
+    httpExternalSystemData.setAuthorizationType("NOAUTH");
+
+    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
+        .orElseThrow();
+    ExternalSystemResponse response = externalSystem.send(getRequestData()).join();
+
+    assertThat("Is Erroneous Response", response.getType(),
+        equalTo(ExternalSystemResponse.Type.ERROR));
+    assertThat("Expected Response Status Code", response.getError(),
+        equalTo("java.net.ConnectException: Connection refused"));
   }
 
   private InputStream getRequestData() throws JSONException {
