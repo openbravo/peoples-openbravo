@@ -181,4 +181,11 @@ public class HttpExternalSystem extends ExternalSystem {
     }
     return ExternalSystemResponseBuilder.newBuilder().withError(errorMessage).build();
   }
+
+  /**
+   * @return the URL that this HTTP external system communicates with
+   */
+  public String getURL() {
+    return url;
+  }
 }

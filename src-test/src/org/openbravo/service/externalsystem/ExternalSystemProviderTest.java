@@ -23,8 +23,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 
-import java.util.Optional;
-
 import javax.inject.Inject;
 
 import org.junit.After;
@@ -47,12 +45,24 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
   private ExternalSystemData externalSystemData;
 
   @Before
-  public void initExternalSystemData() {
+  public void createExternalSystem() {
     externalSystemData = OBProvider.getInstance().get(ExternalSystemData.class);
     externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
     externalSystemData.setName("Test");
     externalSystemData.setProtocol("HTTP");
     OBDal.getInstance().save(externalSystemData);
+
+    HttpExternalSystemData httpExternalSystemData = OBProvider.getInstance()
+        .get(HttpExternalSystemData.class);
+    httpExternalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
+    httpExternalSystemData.setURL("https://dummy");
+    httpExternalSystemData.setAuthorizationType("NOAUTH");
+    httpExternalSystemData.setExternalSystem(externalSystemData);
+    httpExternalSystemData.setActive(true);
+    externalSystemData.getHttpExternalSystemList().add(httpExternalSystemData);
+    OBDal.getInstance().save(httpExternalSystemData);
+
+    OBDal.getInstance().flush();
   }
 
   @After
@@ -62,8 +72,6 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
 
   @Test
   public void getExternalSystemForHttpProtocol() {
-    addHttpConfig(true);
-
     ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
         .orElseThrow();
 
@@ -71,31 +79,65 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
   }
 
   @Test
-  public void cannotGetExternalSystemWithoutActiveConfigurations() {
-    addHttpConfig(false);
+  public void getExternalSystemForHttpProtocolById() {
+    ExternalSystem externalSystem = externalSystemProvider
+        .getExternalSystem(externalSystemData.getId())
+        .orElseThrow();
 
-    Optional<ExternalSystem> externalSystem = externalSystemProvider
-        .getExternalSystem(externalSystemData);
-
-    assertThat(externalSystem.isPresent(), equalTo(false));
+    assertThat(externalSystem, instanceOf(HttpExternalSystem.class));
   }
 
   @Test
-  public void cannotGetExternalSystemForIncompleteConfiguration() {
-    Optional<ExternalSystem> externalSystem = externalSystemProvider
-        .getExternalSystem(externalSystemData);
+  public void providedInstanceIsUpdated() {
+    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
+        .orElseThrow();
+    assertThat(externalSystem.getName(), equalTo("Test"));
+    assertThat(((HttpExternalSystem) externalSystem).getURL(), equalTo("https://dummy"));
 
-    assertThat(externalSystem.isPresent(), equalTo(false));
+    // update configuration
+    setConfigurationName("New Name");
+    externalSystem = externalSystemProvider.getExternalSystem(externalSystemData).orElseThrow();
+    assertThat(externalSystem.getName(), equalTo("New Name"));
+
+    // update child HTTP configuration
+    setHttpConfigurationURL("https://new");
+    externalSystem = externalSystemProvider.getExternalSystem(externalSystemData).orElseThrow();
+    assertThat(((HttpExternalSystem) externalSystem).getURL(), equalTo("https://new"));
+
+    // deactivate child HTTP configuration
+    setHttpConfigurationActive(false);
+    assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isPresent(),
+        equalTo(false));
+
+    // reactivate child HTTP configuration
+    setHttpConfigurationActive(true);
+    assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isPresent(),
+        equalTo(true));
+
+    // remove child HTTP configuration
+    deleteHttpConfiguration();
+    assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isPresent(),
+        equalTo(false));
   }
 
-  private void addHttpConfig(boolean isActive) {
-    HttpExternalSystemData httpExternalSystemData = OBProvider.getInstance()
-        .get(HttpExternalSystemData.class);
-    httpExternalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
-    httpExternalSystemData.setAuthorizationType("NOAUTH");
-    httpExternalSystemData.setExternalSystem(externalSystemData);
-    httpExternalSystemData.setActive(isActive);
-    externalSystemData.getHttpExternalSystemList().add(httpExternalSystemData);
-    OBDal.getInstance().save(httpExternalSystemData);
+  private void setConfigurationName(String name) {
+    externalSystemData.setName(name);
+    OBDal.getInstance().flush();
+  }
+
+  private void setHttpConfigurationURL(String url) {
+    externalSystemData.getHttpExternalSystemList().get(0).setURL(url);
+    OBDal.getInstance().flush();
+  }
+
+  private void setHttpConfigurationActive(boolean isActive) {
+    externalSystemData.getHttpExternalSystemList().get(0).setActive(isActive);
+    OBDal.getInstance().flush();
+  }
+
+  private void deleteHttpConfiguration() {
+    OBDal.getInstance().remove(externalSystemData.getHttpExternalSystemList().get(0));
+    externalSystemData.getHttpExternalSystemList().clear();
+    OBDal.getInstance().flush();
   }
 }
