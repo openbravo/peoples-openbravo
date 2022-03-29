@@ -166,8 +166,7 @@ public class TimeInvalidatedCacheTest {
   public void cacheShouldHasNameSet() {
     TimeInvalidatedCache<String, String> cache = TimeInvalidatedCache.newBuilder()
         .name("TestCache")
-        .loader(key -> null)
-        .build();
+        .build(key -> null);
     assertEquals("TestCache", cache.getName());
   }
 
@@ -175,26 +174,16 @@ public class TimeInvalidatedCacheTest {
   public void cacheShouldThrowExceptionIfNameNotSet() {
     thrown.expect(OBException.class);
     thrown.expectMessage(
-        "Name and loader must be set prior to executing TimeInvalidatedCacheBuilder build function.");
+        "Name must be set prior to executing TimeInvalidatedCacheBuilder build function.");
 
-    TimeInvalidatedCache.newBuilder().loader(key -> null).build();
-  }
-
-  @Test
-  public void cacheShouldThrowExceptionIfLoaderNotSet() {
-    thrown.expect(OBException.class);
-    thrown.expectMessage(
-        "Name and loader must be set prior to executing TimeInvalidatedCacheBuilder build function.");
-
-    TimeInvalidatedCache.newBuilder().name("Cache").build();
+    TimeInvalidatedCache.newBuilder().build(key -> null);
   }
 
   private TimeInvalidatedCache<String, String> initializeCache(UnaryOperator<String> buildMethod) {
     return TimeInvalidatedCache.newBuilder()
         .name("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
-        .loader(buildMethod)
-        .build();
+        .build(buildMethod);
   }
 
   private TimeInvalidatedCache<String, String> initializeCache(UnaryOperator<String> buildMethod,
@@ -203,8 +192,7 @@ public class TimeInvalidatedCacheTest {
         .name("TestCache")
         .expireAfterDuration(Duration.ofSeconds(5))
         .ticker(ticker)
-        .loader(buildMethod)
-        .build();
+        .build(buildMethod);
   }
 
   private static class ValueTest {

@@ -41,10 +41,9 @@ import com.github.benmanes.caffeine.cache.Ticker;
  *     .expireAfterDuration(Duration.ofMinutes(5)) // Could be any Duration, not necessarily in
  *                                                 // minutes. If not executed, 1 minute default
  *                                                 // is assumed
- *     .loader(key -> generateKeyValue(key)) // This is a lambda that initializes the key if it
- *                                           // expired or is the first time reading it. It is
- *                                           // required.
- *     .build() // Generates the TimeInvalidatedCache with the previously provided configuration
+ *     .build(key -> generateKeyValue(key))     // This is a lambda that initializes the key if it
+ *  *                                           // expired or is the first time reading it. It is
+ *  *                                           // required.
  * </pre>
  * 
  * @param <T>
@@ -58,7 +57,6 @@ public class TimeInvalidatedCacheBuilder<T, V> {
   private Duration expireDuration;
   private Ticker ticker;
   private String name;
-  private Function<T, V> loader;
 
   /**
    * Instantiate through {@link TimeInvalidatedCache#newBuilder()} method
@@ -68,6 +66,10 @@ public class TimeInvalidatedCacheBuilder<T, V> {
 
   /**
    * Builds the TimeInvalidatedCache and initializes it. Expects to be called as follows:
+   *
+   * @param loader
+   *          - lambda that initializes the key if it expired or is the first time it is read. It
+   *          should receive a key and return the value corresponding to it
    *
    * @return {@link TimeInvalidatedCache} fully built object
    * @throws OBException
@@ -81,10 +83,11 @@ public class TimeInvalidatedCacheBuilder<T, V> {
    *           for durations greater than +/- approximately 292 year (previously executing
    *           expireDuration())
    */
-  public <T1 extends T, V1 extends V> TimeInvalidatedCache<T1, V1> build() {
-    if (this.name == null || this.loader == null) {
+  public <T1 extends T, V1 extends V> TimeInvalidatedCache<T1, V1> build(
+      Function<? super T1, V1> loader) {
+    if (name == null) {
       throw new OBException(
-          "Name and loader must be set prior to executing TimeInvalidatedCacheBuilder build function.");
+          "Name must be set prior to executing TimeInvalidatedCacheBuilder build function.");
     }
     if (expireDuration == null) {
       this.expireDuration = Duration.ofMinutes(1);
@@ -99,9 +102,7 @@ public class TimeInvalidatedCacheBuilder<T, V> {
     CacheLoader<T1, V1> cacheLoader = new CacheLoader<>() {
       @Override
       public V1 load(T1 key) {
-        @SuppressWarnings("unchecked")
-        V1 value = (V1) loader.apply(key);
-        return value;
+        return loader.apply(key);
       }
     };
 
@@ -134,19 +135,6 @@ public class TimeInvalidatedCacheBuilder<T, V> {
    */
   public TimeInvalidatedCacheBuilder<T, V> expireAfterDuration(Duration duration) {
     this.expireDuration = duration;
-    return this;
-  }
-
-  /**
-   * @param loaderToSet
-   *          lambda that initializes the key if it expired or is the first time it is read. It
-   *          should receive a key and return the value corresponding to it
-   * @return this object
-   */
-  @SuppressWarnings("unchecked")
-  public <T1 extends T, V1 extends V> TimeInvalidatedCacheBuilder<T, V> loader(
-      Function<T1, V1> loaderToSet) {
-    this.loader = (Function<T, V>) loaderToSet;
     return this;
   }
 
