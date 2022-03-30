@@ -155,7 +155,7 @@ public class HttpExternalSystem extends ExternalSystem {
       return ExternalSystemResponseBuilder.newBuilder()
           .withData(parseBody(response.body()))
           .withStatusCode(response.statusCode())
-          .withType(Type.SUCESS)
+          .withType(Type.SUCCESS)
           .build();
     }
     Object error = parseBody(response.body());

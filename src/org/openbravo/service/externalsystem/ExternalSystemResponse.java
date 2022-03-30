@@ -30,7 +30,7 @@ public class ExternalSystemResponse {
    * - ERROR: to indicate that there were errors during the communication with the external system
    */
   public enum Type {
-    SUCESS, ERROR
+    SUCCESS, ERROR
   }
 
   private Object data;

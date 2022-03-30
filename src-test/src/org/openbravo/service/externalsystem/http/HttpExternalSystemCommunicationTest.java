@@ -121,7 +121,7 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
     ExternalSystemResponse response = externalSystem.send(getRequestData()).join();
 
     assertThat("Is Successful Response", response.getType(),
-        equalTo(ExternalSystemResponse.Type.SUCESS));
+        equalTo(ExternalSystemResponse.Type.SUCCESS));
     assertThat("Expected Response Status Code", response.getStatusCode(),
         equalTo(HttpServletResponse.SC_OK));
     assertThat("Expected Response Data", (JSONObject) response.getData(),
