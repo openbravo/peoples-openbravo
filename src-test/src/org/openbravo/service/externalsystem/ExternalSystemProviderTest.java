@@ -102,12 +102,19 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
   }
 
   @Test
-  public void cannotGetConfigurationForUnknownExternalSystem() {
+  public void cannotGetExternalSystemForInactiveConfiguration() {
+    setConfigurationActive(false);
+    assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isEmpty(),
+        equalTo(true));
+  }
+
+  @Test
+  public void cannotGetUnknownExternalSystem() {
     assertThat(externalSystemProvider.getExternalSystem("UNKNOWN_ID").isEmpty(), equalTo(true));
   }
 
   @Test
-  public void cannotGetConfigurationForUnknownProtocol() {
+  public void cannotGetExternalSystemForUnknownProtocol() {
     setConfigurationProtocol("TEST");
 
     assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isEmpty(),
@@ -115,7 +122,7 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
   }
 
   @Test
-  public void cannotGetHttpConfigurationForUnknownAuthorizationType() {
+  public void cannotGetHttpExternalSystemForUnknownAuthorizationType() {
     setHttpConfigurationAuthorizationType("TEST");
 
     assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isEmpty(),
@@ -158,6 +165,11 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
     deleteHttpConfiguration();
     assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isPresent(),
         equalTo(false));
+  }
+
+  private void setConfigurationActive(boolean isActive) {
+    externalSystemData.setActive(isActive);
+    OBDal.getInstance().flush();
   }
 
   private void setConfigurationName(String name) {

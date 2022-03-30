@@ -57,7 +57,7 @@ public class ExternalSystemProvider {
    * 
    * @return an Optional with the external system instance or an empty Optional in case it is not
    *         possible to create it for example due to a configuration problem or because an external
-   *         system with the provided search key can not be found
+   *         system configuration with the provided ID can not be found or is not active
    */
   public Optional<ExternalSystem> getExternalSystem(String externalSystemId) {
     ExternalSystemData configuration = OBDal.getInstance()
@@ -73,10 +73,10 @@ public class ExternalSystemProvider {
    * 
    * @return an Optional with the external system instance or an empty Optional in case it is not
    *         possible to create it for example due to a configuration problem or because the
-   *         provided configuration can not be found
+   *         provided configuration can not be found or is not active
    */
   public Optional<ExternalSystem> getExternalSystem(ExternalSystemData configuration) {
-    if (configuration == null) {
+    if (configuration == null || !configuration.isActive()) {
       return Optional.empty();
     }
     if (configuredExternalSystems.containsKey(configuration.getId())) {
