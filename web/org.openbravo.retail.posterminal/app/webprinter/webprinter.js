@@ -43,7 +43,7 @@
         canvas.width = img.width;
         canvas.height = img.height;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, img.width, img.height);
+        ctx.drawImage(img, 0, 0, img.width, img.height * data.factor);
         img.style.display = 'none'; // This inline style is permited
         // eslint-disable-next-line no-param-reassign
         data.imagedata = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -273,7 +273,8 @@
     }
 
     return getImageData({
-      image: imageurl
+      image: imageurl,
+      factor: this.escpos.factor
     })
       .then(result => this.escpos.transImage(result.imagedata))
       .catch(() => {

@@ -234,6 +234,7 @@
     this.encoderCODE128 = new CODE128EncoderHP();
     this.CODE_TABLE = new Uint8Array([0x1b, 0x74, 0x08]);
     this.SELECT_PRINTER = new Uint8Array([0x1b, 0x3d, 0x02]);
+    this.factor = 0.7;
   }
 
   OB.PRINTERTYPES.GENERICUSB.register({

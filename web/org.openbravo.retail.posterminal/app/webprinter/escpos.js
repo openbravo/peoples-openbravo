@@ -503,6 +503,7 @@
     this.transQR = () => new Uint8Array();
 
     this.transImage = () => new Uint8Array();
+    this.factor = 1;
   }
 
   function Standard() {
