@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2021 Openbravo S.L.U.
+ * Copyright (C) 2019-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -30,6 +31,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.ServiceDeliverUtility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -70,10 +72,13 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
       final JSONArray deliveredOrders = new JSONArray();
       for (int i = 0; i < ordersFromJson.length(); i++) {
         final JSONObject orderFromJson = (JSONObject) ordersFromJson.get(i);
-        JSONArray linesFromJson = orderFromJson.getJSONArray("lines");
+        JSONArray linesFromJson = new JSONArray(orderFromJson.getJSONArray("lines").toString());
         shipmentGenerator = WeldUtils
             .getInstanceFromStaticBeanManager(GoodsShipmentGenerator.class);
         ShipmentInOut shipment = createNewShipment(orderFromJson);
+
+        addLinesForIndependentService(orderFromJson.getString("order"), linesFromJson);
+
         Set<String> orders = new HashSet<>();
         for (int j = 0; j < linesFromJson.length(); j++) {
           JSONObject jsonLine = linesFromJson.getJSONObject(j);
@@ -167,6 +172,59 @@ public class IssueSalesOrderLines extends JSONProcessSimple {
     final OrderLine orderLine = OBDal.getInstance().get(OrderLine.class, orderLineId);
     OBDal.getInstance().refresh(orderLine);
     return orderLine.getDeliveredQuantity();
+  }
+
+  private void addLinesForIndependentService(final String orderId, final JSONArray linesFromJson)
+      throws JSONException {
+    // Check Independent Service Exists
+    OBQuery<OrderLine> serviceQuery = OBDal.getInstance()
+        .createQuery(OrderLine.class,
+            " e where e.salesOrder.id=:orderId and e.product.productType = 'S' and e.product.linkedToProduct is false order by lineNo");
+    serviceQuery.setNamedParameter("orderId", orderId);
+    List<OrderLine> serviceList = serviceQuery.list();
+    if (serviceList.isEmpty()) {
+      return;
+    }
+
+    // Check Item Products are delivered
+    OBQuery<OrderLine> productQuery = OBDal.getInstance()
+        .createQuery(OrderLine.class,
+            " e where e.salesOrder.id=:orderId and e.product.productType = 'I' order by e.lineNo");
+    productQuery.setNamedParameter("orderId", orderId);
+    List<OrderLine> productList = productQuery.list();
+    for (OrderLine orderLine : productList) {
+      if (orderLine.getOrderedQuantity().equals(orderLine.getDeliveredQuantity())) {
+        continue;
+      }
+      boolean lineExistsForDelivery = false;
+      boolean hasPendingDelivery = true;
+      for (int j = 0; j < linesFromJson.length(); j++) {
+        JSONObject jsonLine = linesFromJson.getJSONObject(j);
+        BigDecimal qtyToDeliver = new BigDecimal(jsonLine.getString("toPrepare"));
+        if (jsonLine.getString("lineId").equals(orderLine.getId())) {
+          lineExistsForDelivery = true;
+          if (!orderLine.getOrderedQuantity()
+              .equals(orderLine.getDeliveredQuantity().add(qtyToDeliver))) {
+            hasPendingDelivery = false;
+          }
+        }
+      }
+      if (!lineExistsForDelivery || !hasPendingDelivery) {
+        return;
+      }
+    }
+
+    // Add Lines for Delivery
+    for (OrderLine orderLine : serviceList) {
+      JSONObject json = new JSONObject();
+      json.put("lineId", orderLine.getId());
+      json.put("orderId", orderLine.getSalesOrder().getId());
+      json.put("productId", orderLine.getProduct().getId());
+      json.put("qtyOrdered", orderLine.getOrderedQuantity());
+      json.put("qtyDelivered", orderLine.getDeliveredQuantity());
+      json.put("toPrepare", orderLine.getOrderedQuantity());
+      linesFromJson.put(json);
+    }
   }
 
   /**

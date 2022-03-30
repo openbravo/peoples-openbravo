@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -169,6 +169,12 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       ticket,
       payload
     );
+    const hasLineWithOutDelivery = !!ticket.lines.some(
+      line =>
+        line.product.productType !== 'S' &&
+        line.obrdmDeliveryMode &&
+        line.obrdmDeliveryMode !== 'PickAndCarry'
+    );
 
     newTicket.lines = ticket.lines.map(line => {
       const newLine = { ...line };
@@ -223,6 +229,12 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
           newLine.obposQtytodeliver = newLine.qty;
           newLine.obposCanbedelivered = true;
         }
+      } else if (
+        newLine.product.productType === 'S' &&
+        !newLine.product.isLinkedToProduct &&
+        hasLineWithOutDelivery
+      ) {
+        newLine.obposQtytodeliver = newLine.deliveredQuantity || OB.DEC.Zero;
       } else if (
         newLine.obposCanbedelivered &&
         (!newLine.obrdmDeliveryMode ||
