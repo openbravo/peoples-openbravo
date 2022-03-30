@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2021 Openbravo S.L.U.
+ * Copyright (C) 2018-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -200,6 +200,279 @@
       }
       return new Uint8Array();
     };
+  }
+  class Latin1Encoder {
+    constructor(encoder) {
+      this.originalEncoderText = encoder;
+    }
+
+    encodechar(c) {
+      switch (c) {
+        // 8
+        case '\u20AC': // €
+          return 0x80;
+        case '\u201A': // ‚
+          return 0x82;
+        case '\u0192': // ƒ
+          return 0x83;
+        case '\u201E': // „
+          return 0x84;
+        case '\u2026': // …
+          return 0x85;
+        case '\u2020': // †
+          return 0x86;
+        case '\u2021': // ‡
+          return 0x87;
+        case '\u02C6': // ˆ
+          return 0x88;
+        case '\u2030': // ‰
+          return 0x89;
+        case '\u0160': // Š
+          return 0x8a;
+        case '\u2039': // ‹
+          return 0x8b;
+        case '\u0152': // Œ
+          return 0x8c;
+        case '\u017D': // Ž
+          return 0x8e;
+        // 9
+        case '\u2018': // ‘
+          return 0x91;
+        case '\u2019': // ’
+          return 0x92;
+        case '\u201C': // “
+          return 0x93;
+        case '\u201D': // ”
+          return 0x94;
+        case '\u2022': // •
+          return 0x95;
+        case '\u2013': // –
+          return 0x96;
+        case '\u2014': // —
+          return 0x97;
+        case '\u02DC': // ˜
+          return 0x98;
+        case '\u2122': // ™
+          return 0x99;
+        case '\u0161': // š
+          return 0x9a;
+        case '\u203A': // ›
+          return 0x9b;
+        case '\u0153': // œ
+          return 0x9c;
+        case '\u017E': // ž
+          return 0x9e;
+        case '\u0178': // Ÿ
+          return 0x9f;
+        // a
+        case '\u00A1': // ¡
+          return 0xa1;
+        case '\u00A2': // ¢
+          return 0xa2;
+        case '\u00A3': // £
+          return 0xa3;
+        case '\u00A4': // ¤
+          return 0xa4;
+        case '\u00A5': // ¥
+          return 0xa5;
+        case '\u00A6': // ¦
+          return 0xa6;
+        case '\u00A7': // §
+          return 0xa7;
+        case '\u00A8': // ¨
+          return 0xa8;
+        case '\u00A9': // ©
+          return 0xa9;
+        case '\u00AA': // ª
+          return 0xaa;
+        case '\u00AB': // «
+          return 0xab;
+        case '\u00AC': // ¬
+          return 0xac;
+        case '\u00AE': // ®
+          return 0xae;
+        case '\u00AF': // ¯
+          return 0xaf;
+        // b
+        case '\u00B0': // °
+          return 0xb0;
+        case '\u00B1': // ±
+          return 0xb1;
+        case '\u00B2': // ²
+          return 0xb2;
+        case '\u00B3': // ³
+          return 0xb3;
+        case '\u00B4': // ´
+          return 0xb4;
+        case '\u00B5': // µ
+          return 0xb5;
+        case '\u00B6': // ¶
+          return 0xb6;
+        case '\u00B7': // ·
+          return 0xb7;
+        case '\u00B8': // ¸
+          return 0xb8;
+        case '\u00B9': // ¹
+          return 0xb9;
+        case '\u00BA': // º
+          return 0xba;
+        case '\u00BB': // »
+          return 0xbb;
+        case '\u00BC': // ¼
+          return 0xbc;
+        case '\u00BD': // ½
+          return 0xbd;
+        case '\u00BE': // ¾
+          return 0xbe;
+        case '\u00BF': // ¿
+          return 0xbf;
+        // c
+        case '\u00C0': // À
+          return 0xc0;
+        case '\u00C1': // Á
+          return 0xc1;
+        case '\u00C2': // Â
+          return 0xc2;
+        case '\u00C3': // Ã
+          return 0xc3;
+        case '\u00C4': // Ä
+          return 0xc4;
+        case '\u00C5': // Å
+          return 0xc5;
+        case '\u00C6': // Æ
+          return 0xc6;
+        case '\u00C7': // Ç
+          return 0xc7;
+        case '\u00C8': // È
+          return 0xc8;
+        case '\u00C9': // É
+          return 0xc9;
+        case '\u00CA': // Ê
+          return 0xca;
+        case '\u00CB': // Ë
+          return 0xcb;
+        case '\u00CC': // Ì
+          return 0xcc;
+        case '\u00CD': // Í
+          return 0xcd;
+        case '\u00CE': // Î
+          return 0xce;
+        case '\u00CF': // Ï
+          return 0xcf;
+        // d
+        case '\u00D0': // Ð
+          return 0xd0;
+        case '\u00D1': // Ñ
+          return 0xd1;
+        case '\u00D2': // Ò
+          return 0xd2;
+        case '\u00D3': // Ó
+          return 0xd3;
+        case '\u00D4': // Ô
+          return 0xd4;
+        case '\u00D5': // Õ
+          return 0xd5;
+        case '\u00D6': // Ö
+          return 0xd6;
+        case '\u00D7': // ×
+          return 0xd7;
+        case '\u00D8': // Ø
+          return 0xd8;
+        case '\u00D9': // Ù
+          return 0xd9;
+        case '\u00DA': // Ú
+          return 0xda;
+        case '\u00DB': // Û
+          return 0xdb;
+        case '\u00DC': // Ü
+          return 0xdc;
+        case '\u00DD': // Ý
+          return 0xdd;
+        case '\u00DE': // Þ
+          return 0xde;
+        case '\u00DF': // ß
+          return 0xdf;
+        // e
+        case '\u00E0': // à
+          return 0xe0;
+        case '\u00E1': // á
+          return 0xe1;
+        case '\u00E2': // â
+          return 0xe2;
+        case '\u00E3': // ã
+          return 0xe3;
+        case '\u00E4': // ä
+          return 0xe4;
+        case '\u00E5': // å
+          return 0xe5;
+        case '\u00E6': // æ
+          return 0xe6;
+        case '\u00E7': // ç
+          return 0xe7;
+        case '\u00E8': // è
+          return 0xe8;
+        case '\u00E9': // é
+          return 0xe9;
+        case '\u00EA': // ê
+          return 0xea;
+        case '\u00EB': // ë
+          return 0xeb;
+        case '\u00EC': // ì
+          return 0xec;
+        case '\u00ED': // í
+          return 0xed;
+        case '\u00EE': // î
+          return 0xee;
+        case '\u00EF': // ï
+          return 0xef;
+        // f
+        case '\u00F0': // ð
+          return 0xf0;
+        case '\u00F1': // ñ
+          return 0xf1;
+        case '\u00F2': // ò
+          return 0xf2;
+        case '\u00F3': // ó
+          return 0xf3;
+        case '\u00F4': // ô
+          return 0xf4;
+        case '\u00F5': // õ
+          return 0xf5;
+        case '\u00F6': // õ
+          return 0xf6;
+        case '\u00F7': // ÷
+          return 0xf7;
+        case '\u00F8': // ø
+          return 0xf8;
+        case '\u00F9': // ù
+          return 0xf9;
+        case '\u00FA': // ú
+          return 0xfa;
+        case '\u00FB': // û
+          return 0xfb;
+        case '\u00FC': // ü
+          return 0xfc;
+        case '\u00FD': // ý
+          return 0xfd;
+        case '\u00FE': // þ
+          return 0xfe;
+        case '\u00FF': // ÿ
+          return 0xff;
+        default:
+          return this.originalEncoderText.encode(c);
+      }
+    }
+
+    encode(txt) {
+      if (txt) {
+        const result = [];
+        for (let i = 0; i < txt.length; i += 1) {
+          result.push(this.encodechar(txt.charAt(i)));
+        }
+        return new Uint8Array(result);
+      }
+      return new Uint8Array();
+    }
   }
 
   function Base() {
@@ -475,6 +748,7 @@
     StandardImageAlt,
     // Singleton for Standard EPSON ESCPOS codes
     standardinst: new Standard(),
-    CODE128Encoder
+    CODE128Encoder,
+    Latin1Encoder
   };
 })();
