@@ -737,4 +737,15 @@ public class POSUtils {
 
     return Math.max(maxNumberInTerminal, maxNumberInErrors);
   }
+
+  /**
+   * by default are loaded only the taxes in which the from match with the store location, but if
+   * the store has multiple locations, or the store support cross store, then is needed to load all
+   * the taxes
+   */
+  public static boolean filterTaxesFromStoreLocation(OBPOSApplications store) {
+    final boolean organizationWithMultipleLocations = getPreference(
+        "OBPOS_organizationWithMultipleLocations");
+    return !organizationWithMultipleLocations && !isCrossStoreEnabled(store);
+  }
 }
