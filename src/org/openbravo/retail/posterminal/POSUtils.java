@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -743,9 +743,9 @@ public class POSUtils {
    * the store has multiple locations, or the store support cross store, then is needed to load all
    * the taxes
    */
-  public static boolean filterTaxesFromStoreLocation(OBPOSApplications store) {
+  public static boolean filterTaxesFromStoreLocation(OBPOSApplications pos) {
     final boolean organizationWithMultipleLocations = getPreference(
-        "OBPOS_organizationWithMultipleLocations");
-    return !organizationWithMultipleLocations && !isCrossStoreEnabled(store);
+        "OBPOS_allowMultipleLocationsPerStore");
+    return !organizationWithMultipleLocations && !isCrossStoreEnabled(pos);
   }
 }
