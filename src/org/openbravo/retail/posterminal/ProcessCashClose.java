@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,6 +39,7 @@ import org.openbravo.mobile.core.process.PropertyByType;
 import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
@@ -305,6 +306,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
 
     // Prepare some information for cash up event
     String isoCode = jsonPayment.getString("isocode");
+    Organization organization = POSUtils.getOrganization(cashup.getOrganization().getId());
     FIN_FinancialAccount account = paymentMethod.getFinancialAccount();
     FIN_FinancialAccount safeBoxAccount = safeBoxPaymentMethod.getFINFinancialaccount();
     FIN_FinaccTransaction transaction = OBProvider.getInstance().get(FIN_FinaccTransaction.class);
@@ -327,6 +329,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     paymentcashupEvent.setType("drop");
     paymentcashupEvent.setCurrency(isoCode);
     paymentcashupEvent.setRate(paymentmethodcashup.getRate());
+    paymentcashupEvent.setOrganization(organization);
     OBDal.getInstance().save(paymentcashupEvent);
 
     // Create withdrawal movement from POS payment financial account
@@ -344,6 +347,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     transaction.setProcessed(true);
     transaction.setDateAcct(cashMgmtTrxDate);
     transaction.setTransactionDate(cashMgmtTrxDate);
+    transaction.setOrganization(organization);
 
     OBDal.getInstance().save(transaction);
     paymentcashupEvent.setFINFinaccTransaction(transaction);
@@ -366,6 +370,7 @@ public class ProcessCashClose extends POSDataSynchronizationProcess
     safeBoxTransaction.setProcessed(true);
     safeBoxTransaction.setDateAcct(cashMgmtTrxDate);
     safeBoxTransaction.setTransactionDate(cashMgmtTrxDate);
+    safeBoxTransaction.setOrganization(organization);
 
     OBDal.getInstance().save(safeBoxTransaction);
     paymentcashupEvent.setRelatedTransaction(safeBoxTransaction);
