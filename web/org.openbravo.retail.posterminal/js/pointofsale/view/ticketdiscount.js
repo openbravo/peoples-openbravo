@@ -242,7 +242,13 @@ enyo.kind({
       });
       return;
     }
-    comp.setContent(comp.originalText + ' - ' + inEvent.qty + ' ' + comp.units);
+    comp.setContent(
+      comp.originalText +
+        ' - ' +
+        OB.I18N.formatCurrency(inEvent.qty) +
+        ' ' +
+        comp.units
+    );
     this.$.formElementDiscountsList.amt = inEvent.qty;
     this.$.formElementDiscountsList.amtChanged = true;
   },

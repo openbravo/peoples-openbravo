@@ -331,7 +331,11 @@
           ) {
             manualPromoObj.identifier = `${promotionDefinition.name ||
               promotionRule.printName ||
-              promotionRule.name} - ${promotionDefinition.userAmt} %`;
+              promotionRule.name} - ${
+              OB.Format.defaultDecimalSymbol === '.'
+                ? promotionDefinition.userAmt
+                : OB.I18N.formatCurrency(promotionDefinition.userAmt)
+            } %`;
           }
         } else if (
           manualPromoObj.discountType === 'F3B0FB45297844549D9E6B5F03B23A82'
