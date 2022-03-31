@@ -524,17 +524,6 @@ SELECT to_number(a.value) AS value
   WHERE a.value <= 1024
 /-- END
 
---Inserts an alert recipient for available updates
---See issue:  https://issues.openbravo.com/view.php?id=11743
-BEGIN
-    INSERT INTO ad_alertrecipient(ad_client_id, ad_org_id, isactive, created, createdby,
-                              updated, updatedby, ad_alertrecipient_id, ad_alertrule_id,
-                              ad_role_id, sendemail)
-         VALUES('0', '0', 'Y', now(), '100', now(), '100', '8CC1347628D148FABA1FC26622F4B070', '1005400000', '0', 'N');
-EXCEPTION WHEN OTHERS THEN NULL;
-END;
-/-- END
-
 --update parent reference for old modules
 BEGIN
    EXECUTE IMMEDIATE 'alter trigger ad_reference_mod_trg disable';

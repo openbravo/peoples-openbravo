@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,20 +29,15 @@ import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -51,7 +46,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.utility.Alert;
 import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.SystemInfo;
 import org.openbravo.erpCommon.utility.Utility;
@@ -138,14 +132,9 @@ public class HeartbeatProcess implements Process {
       }
 
       String queryStr = createQueryStr(beatType);
-      String response = sendInfo(queryStr);
+      sendInfo(queryStr);
       logSystemInfo(beatType);
       updateHeartbeatStatus(beatType);
-
-      if (!(DEFERRING_BEAT.equals(beatType) || DECLINING_BEAT.equals(beatType))) {
-        // Parse response for all standard beats, but not for non-skippable ones
-        parseResponse(response);
-      }
 
     } catch (Exception e) {
       handleException(e);
@@ -448,61 +437,6 @@ public class HeartbeatProcess implements Process {
       OBDal.getInstance().save(hbLog);
     } finally {
       OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
-   * @param response
-   */
-  private void parseResponse(String response) {
-    logger.logln(logger.messageDb("HB_UPDATES", ctx.getLanguage()));
-    if (response == null) {
-      return;
-    }
-
-    OBContext.setAdminMode();
-    try {
-      JSONObject json = new JSONObject(response);
-      String alertsResponse = (String) json.get("alerts");
-      parseAlerts(alertsResponse);
-    } catch (JSONException e) {
-      log.error(e.getMessage(), e);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  private void parseAlerts(String alertsResponse) {
-    String[] updates = alertsResponse.split("::");
-    List<Alert> alerts = new ArrayList<Alert>();
-    Pattern pattern = Pattern.compile("\\[recordId=\\d+\\]");
-    for (String update : updates) {
-      String recordId = null;
-      String description = update;
-      Matcher matcher = pattern.matcher(update);
-      if (matcher.find()) {
-        String s = matcher.group();
-        recordId = s.substring(s.indexOf('=') + 1, s.indexOf(']'));
-        description = update.substring(update.indexOf(']') + 1);
-      }
-      Alert alert = new Alert(1005400000, recordId);
-      alert.setDescription(description);
-      alerts.add(alert);
-    }
-    saveUpdateAlerts(alerts);
-
-  }
-
-  /**
-   * @param updates
-   */
-  private void saveUpdateAlerts(List<Alert> updates) {
-    if (updates == null) {
-      logger.logln("No Updates found...");
-      return;
-    }
-    for (Alert update : updates) {
-      update.save(connection);
     }
   }
 

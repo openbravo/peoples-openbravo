@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -69,7 +69,7 @@ public class HorizontalInheritance extends WeldBaseTest {
   private final List<String> TABLES = Arrays.asList("AD_User", "C_Order", "FIN_Payment",
       "M_Warehouse", "OBUIAPP_Note");
   private final List<String> ALERTS = Arrays.asList("Alert Taxes: Inversión del Sujeto Pasivo",
-      "CUSTOMER WITHOUT ACCOUNTING", "Process Execution Failed", "Updates Available",
+      "CUSTOMER WITHOUT ACCOUNTING", "G/L ITEM WITHOUT ACCOUNTING", "Process Execution Failed",
       "Wrong Purchase Order Payment Plan");
   private final List<String> PREFERENCES = Arrays.asList("AllowAttachment", "AllowDelete",
       "AllowMultiTab", "OBSERDS_CSVTextEncoding", "StartPage");

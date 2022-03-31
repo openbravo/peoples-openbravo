@@ -272,40 +272,6 @@ END;   $BODY$
   LANGUAGE 'plpgsql' STABLE
 /-- END
 
--- Inserts an alert recipient for available updates
--- See issue:  https://issues.openbravo.com/view.php?id=11743
-CREATE OR REPLACE FUNCTION pg_temp.insert_recipient()
-  RETURNS void AS
-$BODY$ DECLARE
-/*************************************************************************
-* The contents of this file are subject to the Openbravo  Public  License
-* Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
-* Version 1.1  with a permitted attribution clause; you may not  use this
-* file except in compliance with the License. You  may  obtain  a copy of
-* the License at http://www.openbravo.com/legal/license.html
-* Software distributed under the License  is  distributed  on  an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific  language  governing  rights  and  limitations
-* under the License.
-* The Original Code is Openbravo ERP.
-* The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2009 Openbravo SLU
-* All Rights Reserved.
-* Contributor(s):  ______________________________________.
-************************************************************************/
-BEGIN
-  INSERT INTO ad_alertrecipient(ad_client_id, ad_org_id, isactive, created, createdby,
-                              updated, updatedby, ad_alertrecipient_id, ad_alertrule_id,
-                              ad_role_id, sendemail)
-       VALUES('0', '0', 'Y', now(), '100', now(), '100', '8CC1347628D148FABA1FC26622F4B070', '1005400000', '0', 'N');
-EXCEPTION
-WHEN OTHERS THEN
---do nothing
-END;   $BODY$
-  LANGUAGE 'plpgsql' VOLATILE;
-SELECT pg_temp.insert_recipient();
-/-- END
-
 --update parent reference for old modules
 alter table ad_reference disable trigger ad_reference_mod_trg;
 /-- END
