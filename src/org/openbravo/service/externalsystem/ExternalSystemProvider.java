@@ -52,37 +52,38 @@ public class ExternalSystemProvider {
    * Retrieves the {@link ExternalSystem} instance configured with the {@link ExternalSystemData}
    * whose ID is received as parameter
    * 
-   * @param externalSystemId
+   * @param externalSystemDataId
    *          The ID of the {@link ExternalSystemData} that contains the configuration data
    * 
    * @return an Optional with the external system instance or an empty Optional in case it is not
    *         possible to create it for example due to a configuration problem or because an external
    *         system configuration with the provided ID can not be found or is not active
    */
-  public Optional<ExternalSystem> getExternalSystem(String externalSystemId) {
+  public Optional<ExternalSystem> getExternalSystem(String externalSystemDataId) {
     ExternalSystemData configuration = OBDal.getInstance()
-        .get(ExternalSystemData.class, externalSystemId);
+        .get(ExternalSystemData.class, externalSystemDataId);
     return getExternalSystem(configuration);
   }
 
   /**
-   * Retrieves an {@link ExternalSystem} instance configured with the provided configuration
+   * Retrieves an {@link ExternalSystem} instance configured with the data included in the provided
+   * {@link ExternalSystemData}
    * 
-   * @param configuration
-   *          The configuration of the external system
+   * @param externalSystemData
+   *          The {@link ExternalSystemData} instance that contains the configuration data
    * 
    * @return an Optional with the external system instance or an empty Optional in case it is not
    *         possible to create it for example due to a configuration problem or because the
    *         provided configuration can not be found or is not active
    */
-  public Optional<ExternalSystem> getExternalSystem(ExternalSystemData configuration) {
-    if (configuration == null || !configuration.isActive()) {
+  public Optional<ExternalSystem> getExternalSystem(ExternalSystemData externalSystemData) {
+    if (externalSystemData == null || !externalSystemData.isActive()) {
       return Optional.empty();
     }
-    if (configuredExternalSystems.containsKey(configuration.getId())) {
-      return Optional.of(configuredExternalSystems.get(configuration.getId()));
+    if (configuredExternalSystems.containsKey(externalSystemData.getId())) {
+      return Optional.of(configuredExternalSystems.get(externalSystemData.getId()));
     }
-    String protocol = configuration.getProtocol();
+    String protocol = externalSystemData.getProtocol();
     return externalSystems.select(new ProtocolSelector(protocol))
         .stream()
         .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
@@ -95,12 +96,12 @@ public class ExternalSystemProvider {
           }
           try {
             ExternalSystem externalSystem = list.get(0);
-            externalSystem.configure(configuration);
-            configuredExternalSystems.putIfAbsent(configuration.getId(), externalSystem);
+            externalSystem.configure(externalSystemData);
+            configuredExternalSystems.putIfAbsent(externalSystemData.getId(), externalSystem);
             return Optional.of(externalSystem);
           } catch (Exception ex) {
             log.error("Could not configure an external system with configuration {}",
-                configuration.getId(), ex);
+                externalSystemData.getId(), ex);
             return Optional.empty();
           }
         }));
