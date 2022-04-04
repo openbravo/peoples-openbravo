@@ -72,7 +72,13 @@ enyo.kind({
     };
     if (OB.MobileApp.model.hasPermission('EnableMultiPriceList', true)) {
       OB.UTIL.getPriceList(this.order.get('priceList'), function(priceList) {
-        content += ' - ' + (priceList ? priceList.get('name') : '');
+        content +=
+          ' - ' +
+          (priceList
+            ? priceList.get('name')
+            : me.order.get('bp')
+            ? me.order.get('bp').get('priceListName')
+            : '');
         setContentHookFn();
       });
     } else {
