@@ -27,6 +27,7 @@ import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdiWithSkip;
+import org.openbravo.cache.TimeInvalidatedCacheTest;
 import org.openbravo.client.application.test.ADCSInitialization;
 import org.openbravo.client.application.test.ADCSTest;
 import org.openbravo.client.application.test.ApplicationTest;
@@ -353,7 +354,8 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // others
     DocumentNumberGeneration.class, //
     GridExport.class, //
-    ViewGeneration.class,
+    ViewGeneration.class, //
+    TimeInvalidatedCacheTest.class,
 
     // Cancel and Replace Tests
     CancelAndReplaceTest.class, //
