@@ -473,10 +473,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     }
 
     // find payments without change if there are split payments and some are exact
-    const exactPayments =
-      ticket.paymentSubtotals && paymentsWithChange
-        ? ticketPayments.filter(payment => !payment.overpayment)
-        : null;
+    const exactPayments = ticket.paymentSubtotals
+      ? ticketPayments.filter(payment => !payment.overpayment)
+      : ticketPayments.filter(payment => !payment.isCash && !payment.change);
 
     // make a holding array for change payments we will use to dump new properties later
     const changePayments = [];
