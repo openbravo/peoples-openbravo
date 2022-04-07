@@ -21,17 +21,16 @@ package org.openbravo.service.externalsystem.process;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.service.externalsystem.ExternalSystem;
 import org.openbravo.service.externalsystem.ExternalSystemProvider;
 import org.openbravo.service.externalsystem.ExternalSystemResponse;
 import org.openbravo.service.externalsystem.ExternalSystemResponse.Type;
@@ -48,19 +47,20 @@ public class CheckConnectivity extends BaseProcessActionHandler {
 
   @Override
   protected JSONObject doExecute(Map<String, Object> parameters, String content) {
+    String id = null;
     try {
       JSONObject data = new JSONObject(content);
-      String id = data.getString("inpcExternalSystemId");
-      Optional<ExternalSystem> externalSystem = externalSystemProvider.getExternalSystem(id);
-      if (externalSystem.isPresent()) {
-        return externalSystem.get().send(getDataToSend()).thenApply(this::handleResponse).get();
-      } else {
-        return buildError("C_ConnCheckMissingConfig");
-      }
-    } catch (Exception ex) {
-      log.error("Connectivity check failed", ex);
+      id = data.getString("inpcExternalSystemId");
+    } catch (JSONException ex) {
+      log.error("Could not retrieve external system ID", ex);
       return buildError("C_ConnCheckProcessError");
     }
+
+    return externalSystemProvider.getExternalSystem(id)
+        .map(externalSystem -> externalSystem.send(getDataToSend())
+            .thenApply(this::handleResponse)
+            .join())
+        .orElse(buildError("C_ConnCheckMissingConfig"));
   }
 
   private InputStream getDataToSend() {
