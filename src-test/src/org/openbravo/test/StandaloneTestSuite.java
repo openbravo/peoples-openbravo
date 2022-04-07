@@ -48,6 +48,8 @@ import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
 import org.openbravo.scheduling.trigger.TriggerProviderTest;
+import org.openbravo.service.externalsystem.ExternalSystemProviderTest;
+import org.openbravo.service.externalsystem.http.HttpExternalSystemDataCreationTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.authentication.AuthenticationManagerTest;
@@ -346,6 +348,10 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     JasperReportsExportTest.class, //
     ReportingUtilsTest.class, //
 
+    // external system
+    ExternalSystemProviderTest.class, //
+    HttpExternalSystemDataCreationTest.class,
+
     // Product Services
     ServicesTest.class, //
     ServicesTest2.class, //
@@ -389,5 +395,6 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     ConversionRateDocUniqueTestSuite.class
 
 })
+
 public class StandaloneTestSuite {
 }
