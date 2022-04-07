@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -530,6 +530,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
     String maxAllowedTimeInOfflineValue = "";
     String offlineSessionTimeExpirationValue = "";
     String currentPropertyToLaunchError = "";
+    final String clientId = terminal != null ? terminal.getClient().getId() : null;
 
     try {
       // Get terminal terminalAuthentication
@@ -555,7 +556,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.CLIENT, false);
       maxAllowedTimeInOfflineQueryFilters.put(QueryFilter.ORGANIZATION, false);
       maxAllowedTimeInOfflineValue = Preferences.getPreferenceValue("OBPOS_MaxTimeInOffline", true,
-          null, null, null, null, (String) null, maxAllowedTimeInOfflineQueryFilters);
+          clientId, null, null, null, (String) null, maxAllowedTimeInOfflineQueryFilters);
       result.put("maxTimeInOffline", maxAllowedTimeInOfflineValue);
     } catch (PropertyException e) {
       // Preference is not defined, max time in offline will not be set
@@ -570,7 +571,7 @@ public class LoginUtilsServlet extends MobileCoreLoginUtilsServlet {
       offlineSessionTimeExpirationQueryFilters.put(QueryFilter.CLIENT, false);
       offlineSessionTimeExpirationQueryFilters.put(QueryFilter.ORGANIZATION, false);
       offlineSessionTimeExpirationValue = Preferences.getPreferenceValue(
-          "OBPOS_offlineSessionTimeExpiration", true, null, null, null, null, (String) null,
+          "OBPOS_offlineSessionTimeExpiration", true, clientId, null, null, null, (String) null,
           offlineSessionTimeExpirationQueryFilters);
       result.put("offlineSessionTimeExpiration", offlineSessionTimeExpirationValue);
     } catch (PropertyException e) {
