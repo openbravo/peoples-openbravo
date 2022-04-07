@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2021 Openbravo S.L.U.
+ * Copyright (C) 2014-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -39,6 +39,7 @@ import org.openbravo.retail.posterminal.ExtendsCashManagementPaymentTypeHook;
 import org.openbravo.retail.posterminal.JSONProcessSimple;
 import org.openbravo.retail.posterminal.OBPOSAppCashup;
 import org.openbravo.retail.posterminal.OBPOSAppPayment;
+import org.openbravo.retail.posterminal.OBPOSApplications;
 import org.openbravo.retail.posterminal.OBPOSPaymentMethodCashup;
 import org.openbravo.retail.posterminal.OBPOSTaxCashup;
 import org.openbravo.retail.posterminal.OBPOS_PaymentMethodCashCountPerAmount;
@@ -81,11 +82,31 @@ public class Cashup extends JSONProcessSimple {
   public JSONObject exec(JSONObject jsonsent) throws JSONException, ServletException {
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
-
     try {
-
       JSONArray respArray = new JSONArray();
-      String posId = jsonsent.getString("pos");
+      String posId = jsonsent.optString("pos", "");
+      if (posId.equals("")) {
+        final String terminalSearchKey = jsonsent.getString("terminalName");
+        OBCriteria<OBPOSApplications> qApp = OBDal.getInstance()
+            .createCriteria(OBPOSApplications.class);
+        qApp.add(Restrictions.eq(OBPOSApplications.PROPERTY_SEARCHKEY, terminalSearchKey));
+        qApp.setFilterOnReadableOrganization(false);
+        qApp.setFilterOnReadableClients(false);
+        List<OBPOSApplications> lstPosTerminals = qApp.list();
+        if (lstPosTerminals.isEmpty()) {
+          String errorMsg = "Terminal not found";
+          JSONObject jsonError = new JSONObject();
+          jsonError.put("message", errorMsg);
+          result.put(JsonConstants.RESPONSE_ERROR, jsonError);
+          result.put(JsonConstants.RESPONSE_ERRORMESSAGE, errorMsg);
+          result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+          return result;
+        }
+        if (lstPosTerminals.size() == 1) {
+          OBPOSApplications posTerminal = lstPosTerminals.get(0);
+          posId = posTerminal.getId();
+        }
+      }
 
       if (POSUtils.cashupErrorsExistInTerminal(posId)) {
         String errorMsg = "There are cashup errors in this terminal";
