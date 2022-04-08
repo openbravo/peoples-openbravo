@@ -116,26 +116,26 @@
             payload.preferences &&
             payload.preferences.autoPrintReceipts)
         ) {
-          newMessages = [
-            ...newMessages,
-            OB.App.State.Messages.Utils.createPrintTicketMessage(
-              newMultiTicket,
-              {
-                skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
-              }
-            )
-          ];
+          newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+            newMultiTicket,
+            {
+              skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+            },
+            payload.deliverAction,
+            payload.deliverService,
+            newMessages
+          );
         }
         if (newMultiTicket.calculatedInvoice) {
-          newMessages = [
-            ...newMessages,
-            OB.App.State.Messages.Utils.createPrintTicketMessage(
-              newMultiTicket.calculatedInvoice,
-              {
-                skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
-              }
-            )
-          ];
+          newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+            newMultiTicket.calculatedInvoice,
+            {
+              skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+            },
+            payload.deliverAction,
+            payload.deliverService,
+            newMessages
+          );
         }
 
         // Add Current Ticket to Last Ticket

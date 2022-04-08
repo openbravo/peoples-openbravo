@@ -104,19 +104,23 @@
           payload.preferences &&
           payload.preferences.autoPrintReceipts)
       ) {
-        newMessages = [
-          ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket)
-        ];
+        newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+          newTicket,
+          {},
+          payload.deliverAction,
+          payload.deliverService,
+          newMessages
+        );
       }
 
       if (newTicket.calculatedInvoice) {
-        newMessages = [
-          ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(
-            newTicket.calculatedInvoice
-          )
-        ];
+        newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+          newTicket.calculatedInvoice,
+          {},
+          payload.deliverAction,
+          payload.deliverService,
+          newMessages
+        );
       }
 
       // Welcome message

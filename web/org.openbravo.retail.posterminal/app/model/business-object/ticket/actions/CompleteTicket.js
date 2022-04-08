@@ -18,7 +18,9 @@
       const newGlobalState = { ...globalState };
       let newTicketList = [...newGlobalState.TicketList];
       let newTicket = { ...newGlobalState.Ticket };
-      let newDocumentSequence = { ...newGlobalState.DocumentSequence };
+      let newDocumentSequence = {
+        ...newGlobalState.DocumentSequence
+      };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
       let currentTicket = {};
@@ -100,23 +102,26 @@
           payload.preferences &&
           payload.preferences.autoPrintReceipts)
       ) {
-        newMessages = [
-          ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket, {
+        newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+          newTicket,
+          {
             forcedtemplate: payload.forcedtemplate
-          })
-        ];
+          },
+          payload.deliverAction,
+          payload.deliverService,
+          newMessages
+        );
       }
       if (newTicket.calculatedInvoice) {
-        newMessages = [
-          ...newMessages,
-          OB.App.State.Messages.Utils.createPrintTicketMessage(
-            newTicket.calculatedInvoice,
-            {
-              forcedtemplate: payload.forcedtemplate
-            }
-          )
-        ];
+        newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+          newTicket.calculatedInvoice,
+          {
+            forcedtemplate: payload.forcedtemplate
+          },
+          payload.deliverAction,
+          payload.deliverService,
+          newMessages
+        );
       }
 
       // Welcome message

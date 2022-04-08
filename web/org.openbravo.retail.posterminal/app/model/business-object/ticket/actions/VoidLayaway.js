@@ -47,10 +47,13 @@
       ];
 
       // Ticket print message
-      newMessages = [
-        ...newMessages,
-        OB.App.State.Messages.Utils.createPrintTicketMessage(newTicket)
-      ];
+      newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+        newTicket,
+        {},
+        payload.deliverAction,
+        payload.deliverService,
+        newMessages
+      );
 
       // Welcome message
       newMessages = [
