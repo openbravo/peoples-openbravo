@@ -19,6 +19,7 @@
 package org.openbravo.service.externalsystem.http;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 import static org.openbravo.test.matchers.json.JSONMatchers.equal;
@@ -166,8 +167,9 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
     assertThat("Is Erroneous Response", response.getType(),
         equalTo(ExternalSystemResponse.Type.ERROR));
-    assertThat("Expected Response Status Code", response.getError(),
-        equalTo("java.net.ConnectException: Connection refused"));
+    assertThat("Expected Response Status Code", response.getStatusCode(), equalTo(0));
+    assertThat("Expected Response Error", response.getError().toString(),
+        startsWith("java.net.ConnectException"));
   }
 
   private InputStream getRequestData() throws JSONException {
