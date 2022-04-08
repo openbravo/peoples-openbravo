@@ -28539,8 +28539,8 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--782667B3832D49D9AC6BB213030A78F1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--782667B3832D49D9AC6BB213030A78F1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--782667B3832D49D9AC6BB213030A78F1-->  <COLUMNNAME><![CDATA[Connectivity_Process]]></COLUMNNAME>
-<!--782667B3832D49D9AC6BB213030A78F1-->  <NAME><![CDATA[Check Connectivity]]></NAME>
-<!--782667B3832D49D9AC6BB213030A78F1-->  <PRINTNAME><![CDATA[Check Connectivity]]></PRINTNAME>
+<!--782667B3832D49D9AC6BB213030A78F1-->  <NAME><![CDATA[Test]]></NAME>
+<!--782667B3832D49D9AC6BB213030A78F1-->  <PRINTNAME><![CDATA[Test]]></PRINTNAME>
 <!--782667B3832D49D9AC6BB213030A78F1-->  <DESCRIPTION><![CDATA[A process that checks the connectivity with an external system]]></DESCRIPTION>
 <!--782667B3832D49D9AC6BB213030A78F1-->  <HELP><![CDATA[A process that checks the connectivity with an external system. It is used to validate the configuration data of an external system.]]></HELP>
 <!--782667B3832D49D9AC6BB213030A78F1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
