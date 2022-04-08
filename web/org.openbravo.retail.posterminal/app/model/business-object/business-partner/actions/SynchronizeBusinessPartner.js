@@ -17,22 +17,15 @@ OB.App.StateAPI.Global.registerAction(
   (state, payload) => synchronizeBusinessPartner(state, payload)
 );
 
-OB.App.StateAPI.Global.registerAction(
-  'saveBusinessPartner',
-  (state, payload) => saveBusinessPartner(state, payload)
+OB.App.StateAPI.Global.registerAction('saveBusinessPartner', (state, payload) =>
+  saveBusinessPartner(state, payload)
 );
 
 OB.App.StateAPI.Global.registerAction(
   'saveAndSynchronizeBusinessPartner',
   (state, payload) => {
-    const saveState = OB.App.StateAPI.Global.saveBusinessPartner(
-      state,
-      payload
-    );
-    const newState = OB.App.StateAPI.Global.synchronizeBusinessPartner(
-      saveState,
-      payload
-    );
+    const saveState = saveBusinessPartner(state, payload);
+    const newState = synchronizeBusinessPartner(saveState, payload);
 
     return newState;
   }
