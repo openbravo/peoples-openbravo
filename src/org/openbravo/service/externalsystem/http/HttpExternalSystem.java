@@ -143,27 +143,37 @@ public class HttpExternalSystem extends ExternalSystem {
         .stream()
         .forEach(entry -> request.header(entry.getKey(), entry.getValue()));
 
+    long requestStartTime = System.currentTimeMillis();
     return client.sendAsync(request.build(), BodyHandlers.ofString())
         .thenApply(this::buildResponse)
         .orTimeout(timeout, TimeUnit.SECONDS)
-        .exceptionally(this::buildErrorResponse);
+        .exceptionally(this::buildErrorResponse)
+        .whenComplete((response, action) -> log.trace("HTTP POST request to {} completed in {} ms",
+            postURL, System.currentTimeMillis() - requestStartTime));
   }
 
   private ExternalSystemResponse buildResponse(HttpResponse<String> response) {
+    long buildResponseStartTime = System.currentTimeMillis();
     boolean requestSuccess = response.statusCode() >= 200 && response.statusCode() <= 299;
     if (requestSuccess) {
-      return ExternalSystemResponseBuilder.newBuilder()
+      ExternalSystemResponse externalSystemResponse = ExternalSystemResponseBuilder.newBuilder()
           .withData(parseBody(response.body()))
           .withStatusCode(response.statusCode())
           .withType(Type.SUCCESS)
           .build();
+      log.trace("HTTP successful response processed in {} ms",
+          () -> (System.currentTimeMillis() - buildResponseStartTime));
+      return externalSystemResponse;
     }
     Object error = parseBody(response.body());
-    return ExternalSystemResponseBuilder.newBuilder()
+    ExternalSystemResponse externalSystemResponse = ExternalSystemResponseBuilder.newBuilder()
         .withError(error != null ? error : "Response Status Code: " + response.statusCode())
         .withStatusCode(response.statusCode())
         .withType(Type.ERROR)
         .build();
+    log.trace("HTTP error response processed in {} ms",
+        () -> (System.currentTimeMillis() - buildResponseStartTime));
+    return externalSystemResponse;
   }
 
   private Object parseBody(String body) {
@@ -175,11 +185,17 @@ public class HttpExternalSystem extends ExternalSystem {
   }
 
   private ExternalSystemResponse buildErrorResponse(Throwable error) {
+    long buildErrorResponseStartTime = System.currentTimeMillis();
     String errorMessage = error.getMessage();
     if (errorMessage == null && error instanceof TimeoutException) {
       errorMessage = "Operation exceeded the maximum " + timeout + " seconds allowed";
     }
-    return ExternalSystemResponseBuilder.newBuilder().withError(errorMessage).build();
+    ExternalSystemResponse externalSystemResponse = ExternalSystemResponseBuilder.newBuilder()
+        .withError(errorMessage)
+        .build();
+    log.trace("HTTP error response processed in {} ms",
+        () -> (System.currentTimeMillis() - buildErrorResponseStartTime));
+    return externalSystemResponse;
   }
 
   /**
