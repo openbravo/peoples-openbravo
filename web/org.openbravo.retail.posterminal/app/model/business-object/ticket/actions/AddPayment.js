@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -89,18 +89,8 @@
     140
   );
 
-  OB.App.StateAPI.Ticket.addPayment.addActionPreparation(
-    async (ticket, payload) => {
-      const newPayload = { ...payload };
-
-      return OB.App.State.Ticket.Utils.managePrePaymentChange(
-        ticket,
-        newPayload
-      );
-    },
-    async (ticket, payload) => payload,
-    150
-  );
+  // We skip priority 150 here because we implement an action
+  // preparation that is only executed in old POS at AddPaymentCheck file
 
   OB.App.StateAPI.Ticket.addPayment.addPostHook(
     (ticket, payload, options) => {
