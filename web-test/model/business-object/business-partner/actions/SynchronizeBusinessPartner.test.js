@@ -65,4 +65,88 @@ describe('SynchronizeBusinessPartner action', () => {
     };
     expect(newState).toMatchObject(expectedState);
   });
+
+  it('Expected state after Save BusinessPartner', () => {
+    const customer = { id: '1', name: 'test' };
+    const state = { Messages: [] };
+
+    deepfreeze(state);
+    const newState = OB.App.StateAPI.Global.saveBusinessPartner(
+      state,
+      customer
+    );
+    const expectedState = {
+      Messages: [
+        {
+          id: expect.stringMatching(/^[0-9A-F]{32}$/),
+          messageObj: {
+            data: {
+              id: '1',
+              name: 'test'
+            }
+          },
+          modelName: 'BusinessPartner',
+          service: '',
+          time: expect.any(Number),
+          type: 'masterdata'
+        }
+      ]
+    };
+    expect(newState).toMatchObject(expectedState);
+  });
+
+  it('Expected state after Save and Synchronize BusinessPartner', () => {
+    const customer = { id: '1', name: 'test' };
+    const state = { Messages: [] };
+
+    deepfreeze(state);
+    const newState = OB.App.StateAPI.Global.saveAndSynchronizeBusinessPartner(
+      state,
+      customer
+    );
+    const expectedState = {
+      Messages: [
+        {
+          id: expect.stringMatching(/^[0-9A-F]{32}$/),
+          messageObj: {
+            data: {
+              id: '1',
+              name: 'test'
+            }
+          },
+          modelName: 'BusinessPartner',
+          service: '',
+          time: expect.any(Number),
+          type: 'masterdata'
+        },
+        {
+          id: expect.stringMatching(/^[0-9A-F]{32}$/),
+          messageObj: {
+            data: {
+              id: '1',
+              name: 'test'
+            }
+          },
+          modelName: 'BusinessPartner',
+          service: '',
+          time: expect.any(Number),
+          type: 'masterdata'
+        },
+        {
+          id: expect.stringMatching(/^[0-9A-F]{32}$/),
+          messageObj: {
+            data: {
+              id: '1',
+              name: 'test'
+            }
+          },
+          modelName: 'OBPOS_BusinessPartner',
+          service: 'org.openbravo.retail.posterminal.CustomerLoader',
+          time: expect.any(Number),
+          type: 'backend'
+        }
+      ]
+    };
+    expect(newState).toMatchObject(expectedState);
+  });
 });
