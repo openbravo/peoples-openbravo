@@ -84,7 +84,7 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
     httpExternalSystemData.setURL(getURL());
     httpExternalSystemData.setExternalSystem(externalSystemData);
     httpExternalSystemData.setActive(true);
-    externalSystemData.getHttpExternalSystemList().add(httpExternalSystemData);
+    externalSystemData.getExternalSystemHttpList().add(httpExternalSystemData);
     OBDal.getInstance().save(httpExternalSystemData);
 
     // Add a new request method into the list reference, to avoid failing when checking if the

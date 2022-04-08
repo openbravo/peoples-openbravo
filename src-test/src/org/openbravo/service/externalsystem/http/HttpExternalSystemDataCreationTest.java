@@ -97,7 +97,7 @@ public class HttpExternalSystemDataCreationTest extends WeldBaseTest {
     httpExternalSystemData.setAuthorizationType("NOAUTH");
     httpExternalSystemData.setExternalSystem(externalSystemData);
     httpExternalSystemData.setTimeout(timeout);
-    externalSystemData.getHttpExternalSystemList().add(httpExternalSystemData);
+    externalSystemData.getExternalSystemHttpList().add(httpExternalSystemData);
     OBDal.getInstance().save(httpExternalSystemData);
     return httpExternalSystemData;
   }

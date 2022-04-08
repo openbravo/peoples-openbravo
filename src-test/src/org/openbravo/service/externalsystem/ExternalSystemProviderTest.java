@@ -60,7 +60,7 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
     httpExternalSystemData.setAuthorizationType("NOAUTH");
     httpExternalSystemData.setExternalSystem(externalSystemData);
     httpExternalSystemData.setActive(true);
-    externalSystemData.getHttpExternalSystemList().add(httpExternalSystemData);
+    externalSystemData.getExternalSystemHttpList().add(httpExternalSystemData);
     OBDal.getInstance().save(httpExternalSystemData);
 
     OBDal.getInstance().flush();
@@ -183,23 +183,23 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
   }
 
   private void setHttpConfigurationURL(String url) {
-    externalSystemData.getHttpExternalSystemList().get(0).setURL(url);
+    externalSystemData.getExternalSystemHttpList().get(0).setURL(url);
     OBDal.getInstance().flush();
   }
 
   private void setHttpConfigurationAuthorizationType(String authType) {
-    externalSystemData.getHttpExternalSystemList().get(0).setAuthorizationType(authType);
+    externalSystemData.getExternalSystemHttpList().get(0).setAuthorizationType(authType);
     OBDal.getInstance().flush();
   }
 
   private void setHttpConfigurationActive(boolean isActive) {
-    externalSystemData.getHttpExternalSystemList().get(0).setActive(isActive);
+    externalSystemData.getExternalSystemHttpList().get(0).setActive(isActive);
     OBDal.getInstance().flush();
   }
 
   private void deleteHttpConfiguration() {
-    OBDal.getInstance().remove(externalSystemData.getHttpExternalSystemList().get(0));
-    externalSystemData.getHttpExternalSystemList().clear();
+    OBDal.getInstance().remove(externalSystemData.getExternalSystemHttpList().get(0));
+    externalSystemData.getExternalSystemHttpList().clear();
     OBDal.getInstance().flush();
   }
 }

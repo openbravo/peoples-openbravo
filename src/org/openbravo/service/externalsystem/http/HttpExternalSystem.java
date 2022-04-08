@@ -72,7 +72,7 @@ public class HttpExternalSystem extends ExternalSystem {
   public void configure(ExternalSystemData configuration) {
     super.configure(configuration);
 
-    HttpExternalSystemData httpConfig = configuration.getHttpExternalSystemList()
+    HttpExternalSystemData httpConfig = configuration.getExternalSystemHttpList()
         .stream()
         .filter(HttpExternalSystemData::isActive)
         .findFirst()
