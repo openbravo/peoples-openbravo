@@ -411,6 +411,14 @@ public class PaidReceipts extends JSONProcessSimple {
               checkStockReservationForLine(paidReceiptLine.getString("lineId")));
 
           listpaidReceiptsLines.put(paidReceiptLine);
+
+          if (!paidReceipt.has("invoiceCreated")) {
+            BigDecimal invoiceQty = new BigDecimal(
+                paidReceiptLine.optString("invoicedQuantity", "0"));
+            if (invoiceQty.compareTo(BigDecimal.ZERO) > 0) {
+              paidReceipt.put("invoiceCreated", true);
+            }
+          }
         }
         paidReceipt.put("receiptLines", listpaidReceiptsLines);
 
