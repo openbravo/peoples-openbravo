@@ -18,13 +18,10 @@
  */
 package org.openbravo.service.importprocess;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -279,10 +276,6 @@ public abstract class ImportEntryProcessor {
 
     private Logger logger;
 
-    // create concurrent hashset using util method
-    private Set<String> importEntryIds = Collections
-        .newSetFromMap(new ConcurrentHashMap<String, Boolean>());
-
     private ImportEntryManager importEntryManager;
     private ImportEntryProcessor importEntryProcessor;
     private String key = null;
@@ -333,7 +326,6 @@ public abstract class ImportEntryProcessor {
             // no more entries and deregistered, if so go away
             if (importEntryProcessor.tryDeregisterProcessThread(this)) {
               logger.debug("All entries processed, exiting thread");
-              importEntryIds.clear();
               cachedOBContexts.clear();
               return;
             }
@@ -390,20 +382,21 @@ public abstract class ImportEntryProcessor {
             logger.debug("Processing entry {} {}", localImportEntry.getIdentifier(), typeOfData);
           }
 
-          processEntry(localImportEntry);
+          try {
+            processEntry(localImportEntry);
 
-          if (logger.isDebugEnabled()) {
-            logger.debug("Finished Processing entry {} {} in {} ms",
-                localImportEntry.getIdentifier(), typeOfData, System.currentTimeMillis() - t0);
+            if (logger.isDebugEnabled()) {
+              logger.debug("Finished Processing entry {} {} in {} ms",
+                  localImportEntry.getIdentifier(), typeOfData, System.currentTimeMillis() - t0);
+            }
+          } finally {
+            // don't use the import entry anymore, touching methods on it
+            // may re-open a session
+            localImportEntry = null;
+
+            // processed so can be removed
+            importEntryManager.setProcessed(queuedImportEntry.importEntryId);
           }
-
-          // don't use the import entry anymore, touching methods on it
-          // may re-open a session
-          localImportEntry = null;
-
-          // processed so can be removed
-          importEntryIds.remove(queuedImportEntry.importEntryId);
-
           // keep some stats
           cnt++;
           final long timeForEntry = (System.currentTimeMillis() - t0);
@@ -568,10 +561,10 @@ public abstract class ImportEntryProcessor {
         return;
       }
 
-      if (!importEntryIds.contains(importEntry.getId())) {
+      if (!importEntryManager.isScheduled(importEntry.getId())) {
         logger.debug("Adding entry to runnable with key {} - {}", importEntry.getTypeofdata(), key);
 
-        importEntryIds.add(importEntry.getId());
+        importEntryManager.setScheduled(importEntry.getId());
         // cache a queued entry as it has a much lower mem foot print than the import
         // entry itself
         importEntries.add(new QueuedEntry(importEntry));
@@ -595,17 +588,8 @@ public abstract class ImportEntryProcessor {
           : (currentProcessingEntry + " - "
               + (System.currentTimeMillis() - currentProcessingEntryStarted) + "ms");
 
-      int queueSize = importEntries.size();
-      int idsSize = importEntryIds.size();
-
-      // IDs should always be in sync with queue (or 1 item more while synchronizing as it gets
-      // first dequeued when processing starts and then removed from the IDs when it finishes).
-      // Let's log them in case they are not in sync.
-      boolean queuAndIdsInSync = idsSize == queueSize || idsSize == queueSize + 1;
-
       return "   processing: " + currentProcessing + "\n" + //
-          "   queue: (" + importEntries.size() + ") - " + importEntries + //
-          (queuAndIdsInSync ? "" : "\n   ids: (" + importEntryIds.size() + ") - " + importEntryIds);
+          "   queue: (" + importEntries.size() + ") - " + importEntries;
     }
 
     // Local cache to make sure that there is a much lower mem foot print in the queue
