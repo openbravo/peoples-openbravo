@@ -21,7 +21,6 @@ package org.openbravo.service.externalsystem.http;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
@@ -83,10 +82,7 @@ public class HttpExternalSystem extends ExternalSystem {
     method = httpConfig.getRequestMethod();
     timeout = getTimeoutValue(httpConfig);
     authorizationProvider = newHttpAuthorizationProvider(httpConfig);
-    client = HttpClient.newBuilder()
-        .version(Version.HTTP_1_1)
-        .connectTimeout(Duration.ofSeconds(timeout))
-        .build();
+    client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(timeout)).build();
   }
 
   private int getTimeoutValue(HttpExternalSystemData httpConfig) {
