@@ -21,20 +21,17 @@ package org.openbravo.dal.security;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.query.NativeQuery;
 import org.openbravo.base.provider.OBNotSingleton;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationNodeCache.OrgNode;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
@@ -52,68 +49,31 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 
 public class OrganizationStructureProvider implements OBNotSingleton {
+
   final static Logger log = LogManager.getLogger();
 
-  private boolean isInitialized = false;
-  private Map<String, OrgNode> orgNodes;
   private String clientId;
 
   /**
-   * Set initialized to false and recompute the organization structures
+   * Map orgId -> orgNode that contains the information of the organization nodes related to the
+   * client of this OrganizationStructureProvider
+   * 
+   * This map is initialized in an instance of OrganizationStructureProvider the first time an org
+   * node is retrieved, if there are later changes on the organization structure an
+   * OrganizationStructureProvider will not see them unless the reinitialize method is invoked
+   */
+  private Map<String, OrgNode> orgNodes;
+
+  /**
+   * Forces the reinitialization of the organization cache. This method should not be used unless
+   * the invoker just updated the organization structure and needs to retrieve the updated
+   * information. The organization structure is seldom updated and the organization cache is
+   * reinitialized periodically every few minutes, most users of OrganizationStructureProvider do
+   * not need to reinitialize it each time the use it
    */
   public void reInitialize() {
-    isInitialized = false;
-    initialize();
-  }
-
-  private synchronized void initialize() {
-    if (isInitialized) {
-      return;
-    }
-
-    long t = System.nanoTime();
-
-    if (getClientId() == null) {
-      setClientId(OBContext.getOBContext().getCurrentClient().getId());
-    }
-
-    // Read all org tree of any client: bypass DAL to prevent security checks and Hibernate to make
-    // it in a single query. Using direct SQL managed by Hibernate as in this point SQLC is not
-    // allowed because this code is used while generating entities.
-    //@formatter:off
-    String sql = 
-            "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, o.isperiodcontrolallowed" +
-            "  from ad_tree t, ad_treenode n, ad_org o, ad_orgtype ot" +
-            " where n.node_id = o.ad_org_id " +
-            "   and o.ad_orgtype_id = ot.ad_orgtype_id" +
-            "   and n.ad_tree_id = t.ad_tree_id" +
-            "   and t.ad_table_id = '155'" +
-            "   and t.ad_client_id = :clientId";
-    //@formatter:on
-
-    @SuppressWarnings("rawtypes")
-    NativeQuery qry = OBDal.getInstance()
-        .getSession()
-        .createNativeQuery(sql)
-        .setParameter("clientId", getClientId());
-
-    @SuppressWarnings("unchecked")
-    List<Object[]> treeNodes = qry.list();
-
-    orgNodes = new HashMap<>(treeNodes.size());
-    for (Object[] nodeDef : treeNodes) {
-      final OrgNode on = new OrgNode(nodeDef);
-      String nodeId = (String) nodeDef[0];
-      orgNodes.put(nodeId, on);
-    }
-
-    for (Entry<String, OrgNode> nodeEntry : orgNodes.entrySet()) {
-      nodeEntry.getValue().resolve(nodeEntry.getKey());
-    }
-
-    log.debug("Client {} initialized in {} ms", getClientId(),
-        String.format("%.3f", (System.nanoTime() - t) / 1_000_000d));
-    isInitialized = true;
+    orgNodes = null;
+    OrganizationNodeCache.getInstance().clear();
   }
 
   /**
@@ -124,9 +84,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return the natural tree of the organization.
    */
   public Set<String> getNaturalTree(String orgId) {
-    initialize();
     long t = System.nanoTime();
-    OrgNode node = orgNodes.get(orgId);
+    OrgNode node = getNode(orgId);
     if (node == null) {
       return new HashSet<>(Arrays.asList(orgId));
     } else {
@@ -150,7 +109,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return true if org2 is in the natural tree of org1, false otherwise
    */
   public boolean isInNaturalTree(Organization org1, Organization org2) {
-    initialize();
     final String id1 = org1.getId();
     final String id2 = org2.getId();
 
@@ -175,7 +133,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return the parent organization tree of the organization.
    */
   public Set<String> getParentTree(String orgId, boolean includeOrg) {
-    initialize();
     String parentOrg = getParentOrg(orgId);
     Set<String> result = new HashSet<String>();
 
@@ -201,7 +158,6 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return the parent organization tree of the organization.
    */
   public List<String> getParentList(String orgId, boolean includeOrg) {
-    initialize();
     long t = System.nanoTime();
     String parentOrg = getParentOrg(orgId);
     List<String> result = new ArrayList<String>();
@@ -229,9 +185,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return the parent organization.
    */
   public String getParentOrg(String orgId) {
-    initialize();
-
-    OrgNode node = orgNodes.get(orgId);
+    OrgNode node = getNode(orgId);
     return node == null ? null : node.getParentNodeId();
   }
 
@@ -257,9 +211,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return the child organization tree of the organization.
    */
   public Set<String> getChildTree(String orgId, boolean includeOrg) {
-    initialize();
-
-    OrgNode node = orgNodes.get(orgId);
+    OrgNode node = getNode(orgId);
     Set<String> result = new HashSet<>();
     if (includeOrg) {
       result.add(orgId);
@@ -285,9 +237,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * @return the child organizations
    */
   public Set<String> getChildOrg(String orgId) {
-    initialize();
-
-    OrgNode node = orgNodes.get(orgId);
+    OrgNode node = getNode(orgId);
 
     if (node == null) {
       return new HashSet<>(0);
@@ -301,10 +251,17 @@ public class OrganizationStructureProvider implements OBNotSingleton {
   }
 
   public String getClientId() {
+    if (clientId == null) {
+      clientId = OBContext.getOBContext().getCurrentClient().getId();
+    }
     return clientId;
   }
 
   public void setClientId(String clientId) {
+    if (this.clientId != null && !this.clientId.equals(clientId)) {
+      // if the client is changed, ensure the list of nodes is reinitialized
+      orgNodes = null;
+    }
     this.clientId = clientId;
   }
 
@@ -346,7 +303,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     OBContext.setAdminMode(true);
     try {
       for (final String orgId : getParentList(org.getId(), true)) {
-        OrgNode node = orgNodes.get(orgId);
+        OrgNode node = getNode(orgId);
         if (node != null && node.isLegalEntity) {
           return OBDal.getInstance().get(Organization.class, orgId);
         }
@@ -370,7 +327,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     List<Organization> childLegalEntitiesList = new ArrayList<Organization>();
     try {
       for (final String orgId : getChildTree(org.getId(), false)) {
-        OrgNode node = orgNodes.get(orgId);
+        OrgNode node = getNode(orgId);
         if (node != null && node.isLegalEntity) {
           childLegalEntitiesList.add(OBDal.getInstance().get(Organization.class, orgId));
         }
@@ -393,7 +350,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     OBContext.setAdminMode(true);
     try {
       for (final String orgId : getParentList(org.getId(), true)) {
-        OrgNode node = orgNodes.get(orgId);
+        OrgNode node = getNode(orgId);
         if (node != null && (node.isLegalEntity || node.isBusinessUnit)) {
           return OBDal.getInstance().get(Organization.class, orgId);
         }
@@ -416,7 +373,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     OBContext.setAdminMode(true);
     try {
       for (final String orgId : getParentList(org.getId(), true)) {
-        OrgNode node = orgNodes.get(orgId);
+        OrgNode node = getNode(orgId);
         if (node != null && node.isPeriodControlAllowed) {
           return OBDal.getInstance().get(Organization.class, orgId);
         }
@@ -455,54 +412,24 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     }
   }
 
+  private OrgNode getNode(String nodeId) {
+    if (clientId == null) {
+      setClientId(OBContext.getOBContext().getCurrentClient().getId());
+    }
+    if (orgNodes == null) {
+      orgNodes = OrganizationNodeCache.getInstance().getNodes(clientId);
+    }
+    return orgNodes.get(nodeId);
+  }
+
   private List<String> getTransactionAllowedOrgs(List<String> orgIds) {
-    initialize();
     List<String> trxAllowedOrgs = new ArrayList<>(orgIds.size());
     for (String orgId : orgIds) {
-      OrgNode node = orgNodes.get(orgId);
+      OrgNode node = getNode(orgId);
       if (node != null && node.isReady && node.isTransactionsAllowed) {
         trxAllowedOrgs.add(orgId);
       }
     }
     return trxAllowedOrgs;
-  }
-
-  private class OrgNode {
-    private String parentNodeId;
-    private boolean isReady;
-    private boolean isLegalEntity;
-    private boolean isBusinessUnit;
-    private boolean isTransactionsAllowed;
-    private boolean isPeriodControlAllowed;
-
-    private List<String> children = new ArrayList<>();
-
-    private void addChild(String childId) {
-      children.add(childId);
-    }
-
-    private OrgNode(Object[] nodeDef) {
-      parentNodeId = (String) nodeDef[1];
-      isReady = Objects.equals('Y', nodeDef[2]);
-      isLegalEntity = Objects.equals('Y', nodeDef[3]);
-      isBusinessUnit = Objects.equals('Y', nodeDef[4]);
-      isTransactionsAllowed = Objects.equals('Y', nodeDef[5]);
-      isPeriodControlAllowed = Objects.equals('Y', nodeDef[6]);
-    }
-
-    private void resolve(String nodeId) {
-      OrgNode parentNode = parentNodeId != null ? orgNodes.get(parentNodeId) : null;
-      if (parentNode != null) {
-        parentNode.addChild(nodeId);
-      }
-    }
-
-    private String getParentNodeId() {
-      return parentNodeId;
-    }
-
-    private List<String> getChildren() {
-      return children;
-    }
   }
 }

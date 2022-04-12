@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2018 Openbravo SLU
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -87,7 +87,6 @@ public class InitialOrgSetup extends HttpSecureAppServlet {
       OrganizationStructureProvider osp = OBContext.getOBContext()
           .getOrganizationStructureProvider(vars.getClient());
       osp.reInitialize();
-
       vars.setSessionValue("#AccessibleOrgTree", StringCollectionUtils
           .commaSeparated(OBContext.getOBContext().getReadableOrganizations()));
       printPageResult(response, vars, ios.getLog(), obeResult);

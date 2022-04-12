@@ -519,7 +519,6 @@ public abstract class ImportEntryProcessor {
 
         // initialize several things so that they are not initialized during the processing
         obContext.getEntityAccessChecker(); // forcing access checker initialization
-        obContext.getOrganizationStructureProvider().reInitialize();
       }
       setVariablesSecureApp(obContext);
 
