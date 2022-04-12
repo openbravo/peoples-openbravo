@@ -144,7 +144,7 @@ public class HttpExternalSystem extends ExternalSystem {
         .thenApply(this::buildResponse)
         .orTimeout(timeout, TimeUnit.SECONDS)
         .exceptionally(this::buildErrorResponse)
-        .whenComplete((response, action) -> log.trace("HTTP POST request to {} completed in {} ms",
+        .whenComplete((response, action) -> log.debug("HTTP POST request to {} completed in {} ms",
             postURL, System.currentTimeMillis() - requestStartTime));
   }
 
@@ -181,17 +181,12 @@ public class HttpExternalSystem extends ExternalSystem {
   }
 
   private ExternalSystemResponse buildErrorResponse(Throwable error) {
-    long buildErrorResponseStartTime = System.currentTimeMillis();
     String errorMessage = error.getMessage();
     if (errorMessage == null && error instanceof TimeoutException) {
+      log.warn("Operation exceeded the maximum {} seconds allowed", timeout, error);
       errorMessage = "Operation exceeded the maximum " + timeout + " seconds allowed";
     }
-    ExternalSystemResponse externalSystemResponse = ExternalSystemResponseBuilder.newBuilder()
-        .withError(errorMessage)
-        .build();
-    log.trace("HTTP error response processed in {} ms",
-        () -> (System.currentTimeMillis() - buildErrorResponseStartTime));
-    return externalSystemResponse;
+    return ExternalSystemResponseBuilder.newBuilder().withError(errorMessage).build();
   }
 
   /**
