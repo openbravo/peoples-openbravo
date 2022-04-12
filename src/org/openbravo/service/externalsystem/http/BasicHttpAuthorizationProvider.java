@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.service.externalsystem.ExternalSystemConfigurationError;
 import org.openbravo.service.externalsystem.HttpExternalSystemData;
 import org.openbravo.utils.FormatUtilities;
 
@@ -45,7 +46,8 @@ public class BasicHttpAuthorizationProvider extends HttpAuthorizationProvider {
       password = FormatUtilities.encryptDecrypt(configuration.getPassword(), false);
     } catch (ServletException ex) {
       log.error("Error decrypting password of HTTP configuration {}", configuration.getId());
-      password = null;
+      throw new ExternalSystemConfigurationError(
+          "Error decrypting password of HTTP configuration " + configuration.getId());
     }
   }
 
