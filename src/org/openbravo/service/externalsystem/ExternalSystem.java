@@ -49,7 +49,7 @@ public abstract class ExternalSystem {
    * @param configuration
    *          Provides the configuration data of the external system
    * @throws ExternalSystemConfigurationError
-   *           in case the external system can not be properly configured
+   *           in case the external system cannot be properly configured
    */
   protected void configure(ExternalSystemData configuration) {
     name = configuration.getName();

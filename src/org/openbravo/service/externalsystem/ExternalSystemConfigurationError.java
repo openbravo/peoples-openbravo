@@ -21,7 +21,7 @@ package org.openbravo.service.externalsystem;
 import org.openbravo.base.exception.OBException;
 
 /**
- * Used to handle errors when an {@link ExternalSystem} can not be properly configured
+ * Used to handle errors when an {@link ExternalSystem} cannot be properly configured
  */
 @SuppressWarnings("serial")
 public class ExternalSystemConfigurationError extends OBException {
