@@ -20,6 +20,7 @@ package org.openbravo.service.externalsystem;
 
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 /**
  * Used to define the communication with an external system. Classes extending this class must be
@@ -34,13 +35,14 @@ public abstract class ExternalSystem {
   /**
    * Sends information to the external system
    *
-   * @param inputStream
-   *          The input stream with the data to be sent
+   * @param inputStreamSupplier
+   *          A supplier of the input stream with the data to be sent
    *
    * @return a CompletableFuture<ExternalSystemResponse> containing the response data coming from
    *         the external system
    */
-  public abstract CompletableFuture<ExternalSystemResponse> send(InputStream inputStream);
+  public abstract CompletableFuture<ExternalSystemResponse> send(
+      Supplier<? extends InputStream> inputStreamSupplier);
 
   /**
    * Configures the external system instance with the provided configuration. The extensions of this

@@ -18,8 +18,6 @@
  */
 package org.openbravo.service.externalsystem.http;
 
-import java.util.Map;
-
 import org.openbravo.service.externalsystem.HttpExternalSystemData;
 
 /**
@@ -27,7 +25,7 @@ import org.openbravo.service.externalsystem.HttpExternalSystemData;
  * particular. Classes extending this class must be annotated with {@link HttpAuthorizationMethod}
  * to declare the authorization it implements.
  */
-public abstract class HttpAuthorizationProvider {
+public interface HttpAuthorizationProvider {
 
   /**
    * Initializes the required information based on the provided configuration
@@ -35,15 +33,5 @@ public abstract class HttpAuthorizationProvider {
    * @param configuration
    *          Provides the configuration data of an HTTP protocol based external system
    */
-  protected void init(HttpExternalSystemData configuration) {
-  }
-
-  /**
-   * Retrieves the HTTP headers to be included into the HTTP request to authenticate it with the
-   * authorization method
-   * 
-   * @return a map with the security headers where for each entry the key is the header name and the
-   *         values is the header value
-   */
-  public abstract Map<String, String> getHeaders();
+  public void init(HttpExternalSystemData configuration);
 }

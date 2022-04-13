@@ -27,6 +27,7 @@ import static org.openbravo.test.matchers.json.JSONMatchers.equal;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -119,7 +120,7 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
     ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
         .orElseThrow();
 
-    ExternalSystemResponse response = externalSystem.send(getRequestData()).join();
+    ExternalSystemResponse response = externalSystem.send(getRequestDataSupplier()).join();
 
     assertThat("Is Successful Response", response.getType(),
         equalTo(ExternalSystemResponse.Type.SUCCESS));
@@ -135,7 +136,7 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
     ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
         .orElseThrow();
-    ExternalSystemResponse response = externalSystem.send(getRequestData()).join();
+    ExternalSystemResponse response = externalSystem.send(getRequestDataSupplier()).join();
 
     assertThat("Is Erroneous Response", response.getType(),
         equalTo(ExternalSystemResponse.Type.ERROR));
@@ -153,17 +154,17 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
     ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
         .orElseThrow();
-    externalSystem.send(getRequestData()).join();
+    externalSystem.send(getRequestDataSupplier()).join();
   }
 
   @Test
-  public void sendFailingRequest() throws JSONException {
+  public void sendRequestToUnknownResource() throws JSONException {
     httpExternalSystemData.setURL("http://localhost:8000/dummy");
     httpExternalSystemData.setAuthorizationType("NOAUTH");
 
     ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
         .orElseThrow();
-    ExternalSystemResponse response = externalSystem.send(getRequestData()).join();
+    ExternalSystemResponse response = externalSystem.send(getRequestDataSupplier()).join();
 
     assertThat("Is Erroneous Response", response.getType(),
         equalTo(ExternalSystemResponse.Type.ERROR));
@@ -172,10 +173,10 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
         startsWith("java.net.ConnectException"));
   }
 
-  private InputStream getRequestData() throws JSONException {
+  private Supplier<InputStream> getRequestDataSupplier() throws JSONException {
     JSONObject requestData = new JSONObject();
     requestData.put("data", new JSONArray());
-    return new ByteArrayInputStream(requestData.toString().getBytes());
+    return () -> new ByteArrayInputStream(requestData.toString().getBytes());
   }
 
   private JSONObject getExpectedResponseData() throws JSONException {

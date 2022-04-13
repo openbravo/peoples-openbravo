@@ -19,6 +19,7 @@
 package org.openbravo.service.externalsystem.http;
 
 import java.io.InputStream;
+import java.net.Authenticator;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -29,6 +30,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
@@ -61,7 +63,6 @@ public class HttpExternalSystem extends ExternalSystem {
   private String method;
   private int timeout;
   private HttpClient client;
-  private HttpAuthorizationProvider authorizationProvider;
 
   @Inject
   @Any
@@ -81,8 +82,7 @@ public class HttpExternalSystem extends ExternalSystem {
     url = httpConfig.getURL();
     method = httpConfig.getRequestMethod();
     timeout = getTimeoutValue(httpConfig);
-    authorizationProvider = newHttpAuthorizationProvider(httpConfig);
-    client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(timeout)).build();
+    client = buildClient(httpConfig);
   }
 
   private int getTimeoutValue(HttpExternalSystemData httpConfig) {
@@ -91,6 +91,16 @@ public class HttpExternalSystem extends ExternalSystem {
       return MAX_TIMEOUT;
     }
     return configTimeout.intValue();
+  }
+
+  private HttpClient buildClient(HttpExternalSystemData httpConfig) {
+    HttpClient.Builder builder = HttpClient.newBuilder()
+        .connectTimeout(Duration.ofSeconds(timeout));
+    HttpAuthorizationProvider authProvider = newHttpAuthorizationProvider(httpConfig);
+    if (authProvider instanceof Authenticator) {
+      builder.authenticator((Authenticator) authProvider);
+    }
+    return builder.build();
   }
 
   private HttpAuthorizationProvider newHttpAuthorizationProvider(
@@ -117,27 +127,24 @@ public class HttpExternalSystem extends ExternalSystem {
   }
 
   @Override
-  public CompletableFuture<ExternalSystemResponse> send(InputStream inputStream) {
+  public CompletableFuture<ExternalSystemResponse> send(
+      Supplier<? extends InputStream> inputStreamSupplier) {
     log.trace("Sending {} request to URL {} of external system {}", method, url, getName());
     if ("POST".equals(method)) {
-      return post(url, inputStream);
+      return post(url, inputStreamSupplier);
     }
     throw new OBException("Unsupported HTTP request method " + method);
   }
 
-  private CompletableFuture<ExternalSystemResponse> post(String postURL, InputStream inputStream) {
+  private CompletableFuture<ExternalSystemResponse> post(String postURL,
+      Supplier<? extends InputStream> inputStreamSupplier) {
     HttpRequest.Builder request = HttpRequest.newBuilder()
         .uri(URI.create(postURL))
         .timeout(Duration.ofSeconds(timeout))
         // sent JSON content by default, if any other content type needs to be posted then this
         // should be moved to a new HTTP configuration setting
         .header("Content-Type", "application/json")
-        .POST(BodyPublishers.ofInputStream(() -> inputStream));
-
-    authorizationProvider.getHeaders()
-        .entrySet()
-        .stream()
-        .forEach(entry -> request.header(entry.getKey(), entry.getValue()));
+        .POST(BodyPublishers.ofInputStream(inputStreamSupplier));
 
     long requestStartTime = System.currentTimeMillis();
     return client.sendAsync(request.build(), BodyHandlers.ofString())
