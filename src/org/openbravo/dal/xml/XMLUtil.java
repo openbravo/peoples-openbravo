@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,8 @@ import java.io.StringWriter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -105,6 +107,22 @@ public class XMLUtil implements OBSingleton {
     reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
     reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
     return reader;
+  }
+
+  /**
+   * @return a new secure {@link SAXParser}
+   * @throws SAXException,
+   *           ParserConfigurationException
+   */
+  public SAXParser newSAXParser() throws SAXException, ParserConfigurationException {
+    final SAXParserFactory factory = SAXParserFactory.newInstance();
+    final SAXParser parser = factory.newSAXParser();
+    factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+    factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+    parser.getXMLReader()
+        .setFeature("http://xml.org/sax/features/external-general-entities", false);
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+    return parser;
   }
 
   /**

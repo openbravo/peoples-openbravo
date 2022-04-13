@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2021 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2022 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -638,8 +637,7 @@ public class TranslationManager {
     }
     try {
       final TranslationHandler handler = new TranslationHandler(cp);
-      final SAXParserFactory factory = SAXParserFactory.newInstance();
-      final SAXParser parser = factory.newSAXParser();
+      final SAXParser parser = XMLUtil.getInstance().newSAXParser();
       parser.parse(in, handler);
       return "";
     } catch (final Exception e) {
@@ -663,9 +661,7 @@ public class TranslationManager {
     try {
       con = conn.getTransactionConnection();
       final TranslationHandler handler = new TranslationHandler(AD_Client_ID, conn, con);
-      final SAXParserFactory factory = SAXParserFactory.newInstance();
-      // factory.setValidating(true);
-      final SAXParser parser = factory.newSAXParser();
+      final SAXParser parser = XMLUtil.getInstance().newSAXParser();
       parser.parse(in, handler);
       conn.releaseCommitConnection(con);
       int updateCount = handler.getUpdateCount();
