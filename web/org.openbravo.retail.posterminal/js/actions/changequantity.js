@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2020 Openbravo S.L.U.
+ * Copyright (C) 2019-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -236,7 +236,7 @@
               var toadd = this.calculateToAdd(receipt, line.get('qty'), value);
               if (toadd !== 0) {
                 var newqty = line.get('qty') + toadd;
-                if (newqty === 0) {
+                if (receipt.get('orderType') !== 1 && newqty === 0) {
                   // If final quantity will be 0 then request approval
                   selection.pop();
                   deletedlines.push(line);
