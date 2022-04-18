@@ -24,6 +24,8 @@
         "packageDir": [ packageDirPlaceholder ],
         "devDependencies": [
           "**/*.stories.*",
+          "**/__tests__/**",
+          "**/setupTests.js",
           "**/?(*.)+(test).[jt]s?(x)",
           "**/src-test/**"
         ]
