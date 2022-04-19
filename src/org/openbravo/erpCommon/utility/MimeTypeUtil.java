@@ -11,13 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.erpCommon.utility;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -25,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -101,6 +104,10 @@ public class MimeTypeUtil {
     try {
       String mimeType = URLConnection.guessContentTypeFromStream(is);
       if (mimeType == null) {
+        // Check if it is an image, if so, it will be a binary image(.bmp)
+        if (isImage(is)) {
+          return "image/bmp";
+        }
         return NULL_MIME_TYPE;
       }
       if ("application/xml".equals(mimeType)) {
@@ -113,6 +120,22 @@ public class MimeTypeUtil {
     } catch (IOException ex) {
       logger.error("Failed to detect MimeType.", ex);
       return NULL_MIME_TYPE;
+    }
+  }
+
+  /**
+   * Returns if the input stream is an image or not
+   * 
+   * @param is
+   *          Provided input stream
+   * @return true if it is readable as an image, false otherwise
+   */
+  private boolean isImage(InputStream is) {
+    try {
+      BufferedImage bi = ImageIO.read(is);
+      return bi != null;
+    } catch (IOException e) {
+      return false; // not an image
     }
   }
 }
