@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2020 Openbravo SLU
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ var OB = (OBLayoutMDI && OBLayoutMDI.OB) ? OBLayoutMDI.shallowClone(OBLayoutMDI.
     Application : {
         testEnvironment: ${data.testEnvironment?string},
         contextUrl: '${data.contextUrl}',
+        logoutRedirect: '${data.logoutRedirect?js_string}',
         communityBrandingStaticUrl: '${data.communityBrandingStaticUrl?js_string}',
         butlerUtilsUrl: '${data.butlerUtilsUrl?js_string}'
     },

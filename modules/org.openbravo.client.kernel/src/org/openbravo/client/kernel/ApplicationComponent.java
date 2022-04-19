@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.User;
@@ -139,6 +140,17 @@ public class ApplicationComponent extends BaseTemplateComponent {
 
   public String getButlerUtilsUrl() {
     return Utility.BUTLER_UTILS_URL;
+  }
+
+  public String getLogoutRedirect() {
+    String logoutRedirectUrl;
+    try {
+      logoutRedirectUrl = Preferences.getPreferenceValue("LogoutRedirectURL", true, (Client) null,
+          null, null, null, null);
+    } catch (Exception e) {
+      logoutRedirectUrl = "";
+    }
+    return logoutRedirectUrl;
   }
 
   public static class ModuleVersionParameter {
