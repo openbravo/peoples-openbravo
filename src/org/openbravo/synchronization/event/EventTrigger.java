@@ -18,6 +18,8 @@
  */
 package org.openbravo.synchronization.event;
 
+import java.util.Map;
+
 /**
  * Provides the ability of triggering synchronization events
  */
@@ -33,6 +35,17 @@ public interface EventTrigger {
    *          event payload.
    */
   void triggerEvent(String event, String recordId);
+
+  /**
+   * Triggers a multiple record synchronization event
+   * 
+   * @param event
+   *          The unique identifier of the multiple record synchronization event
+   * @param params
+   *          The map of parameters used to obtain the records that will be related to the event.
+   *          The keys are the parameter name and the map values are the values for each parameter.
+   */
+  void triggerEvent(String event, Map<String, Object> params);
 
   /**
    * @return true if the EventTrigger is able to handle the provided event. Otherwise, false is
