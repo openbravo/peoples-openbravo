@@ -19,9 +19,9 @@
 package org.openbravo.service.externalsystem.http;
 
 import java.io.InputStream;
+import java.net.Authenticator;
 import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
@@ -30,6 +30,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
@@ -62,7 +63,6 @@ public class HttpExternalSystem extends ExternalSystem {
   private String method;
   private int timeout;
   private HttpClient client;
-  private HttpAuthorizationProvider authorizationProvider;
 
   @Inject
   @Any
@@ -72,7 +72,7 @@ public class HttpExternalSystem extends ExternalSystem {
   public void configure(ExternalSystemData configuration) {
     super.configure(configuration);
 
-    HttpExternalSystemData httpConfig = configuration.getHttpExternalSystemList()
+    HttpExternalSystemData httpConfig = configuration.getExternalSystemHttpList()
         .stream()
         .filter(HttpExternalSystemData::isActive)
         .findFirst()
@@ -82,11 +82,7 @@ public class HttpExternalSystem extends ExternalSystem {
     url = httpConfig.getURL();
     method = httpConfig.getRequestMethod();
     timeout = getTimeoutValue(httpConfig);
-    authorizationProvider = newHttpAuthorizationProvider(httpConfig);
-    client = HttpClient.newBuilder()
-        .version(Version.HTTP_1_1)
-        .connectTimeout(Duration.ofSeconds(timeout))
-        .build();
+    client = buildClient(httpConfig);
   }
 
   private int getTimeoutValue(HttpExternalSystemData httpConfig) {
@@ -95,6 +91,16 @@ public class HttpExternalSystem extends ExternalSystem {
       return MAX_TIMEOUT;
     }
     return configTimeout.intValue();
+  }
+
+  private HttpClient buildClient(HttpExternalSystemData httpConfig) {
+    HttpClient.Builder builder = HttpClient.newBuilder()
+        .connectTimeout(Duration.ofSeconds(timeout));
+    HttpAuthorizationProvider authProvider = newHttpAuthorizationProvider(httpConfig);
+    if (authProvider instanceof Authenticator) {
+      builder.authenticator((Authenticator) authProvider);
+    }
+    return builder.build();
   }
 
   private HttpAuthorizationProvider newHttpAuthorizationProvider(
@@ -121,49 +127,56 @@ public class HttpExternalSystem extends ExternalSystem {
   }
 
   @Override
-  public CompletableFuture<ExternalSystemResponse> send(InputStream inputStream) {
+  public CompletableFuture<ExternalSystemResponse> send(
+      Supplier<? extends InputStream> inputStreamSupplier) {
     log.trace("Sending {} request to URL {} of external system {}", method, url, getName());
     if ("POST".equals(method)) {
-      return post(url, inputStream);
+      return post(url, inputStreamSupplier);
     }
     throw new OBException("Unsupported HTTP request method " + method);
   }
 
-  private CompletableFuture<ExternalSystemResponse> post(String postURL, InputStream inputStream) {
+  private CompletableFuture<ExternalSystemResponse> post(String postURL,
+      Supplier<? extends InputStream> inputStreamSupplier) {
     HttpRequest.Builder request = HttpRequest.newBuilder()
         .uri(URI.create(postURL))
         .timeout(Duration.ofSeconds(timeout))
         // sent JSON content by default, if any other content type needs to be posted then this
         // should be moved to a new HTTP configuration setting
         .header("Content-Type", "application/json")
-        .POST(BodyPublishers.ofInputStream(() -> inputStream));
+        .POST(BodyPublishers.ofInputStream(inputStreamSupplier));
 
-    authorizationProvider.getHeaders()
-        .entrySet()
-        .stream()
-        .forEach(entry -> request.header(entry.getKey(), entry.getValue()));
-
+    long requestStartTime = System.currentTimeMillis();
     return client.sendAsync(request.build(), BodyHandlers.ofString())
         .thenApply(this::buildResponse)
         .orTimeout(timeout, TimeUnit.SECONDS)
-        .exceptionally(this::buildErrorResponse);
+        .exceptionally(this::buildErrorResponse)
+        .whenComplete((response, action) -> log.debug("HTTP POST request to {} completed in {} ms",
+            postURL, System.currentTimeMillis() - requestStartTime));
   }
 
   private ExternalSystemResponse buildResponse(HttpResponse<String> response) {
+    long buildResponseStartTime = System.currentTimeMillis();
     boolean requestSuccess = response.statusCode() >= 200 && response.statusCode() <= 299;
     if (requestSuccess) {
-      return ExternalSystemResponseBuilder.newBuilder()
+      ExternalSystemResponse externalSystemResponse = ExternalSystemResponseBuilder.newBuilder()
           .withData(parseBody(response.body()))
           .withStatusCode(response.statusCode())
           .withType(Type.SUCCESS)
           .build();
+      log.trace("HTTP successful response processed in {} ms",
+          () -> (System.currentTimeMillis() - buildResponseStartTime));
+      return externalSystemResponse;
     }
     Object error = parseBody(response.body());
-    return ExternalSystemResponseBuilder.newBuilder()
+    ExternalSystemResponse externalSystemResponse = ExternalSystemResponseBuilder.newBuilder()
         .withError(error != null ? error : "Response Status Code: " + response.statusCode())
         .withStatusCode(response.statusCode())
         .withType(Type.ERROR)
         .build();
+    log.trace("HTTP error response processed in {} ms",
+        () -> (System.currentTimeMillis() - buildResponseStartTime));
+    return externalSystemResponse;
   }
 
   private Object parseBody(String body) {
@@ -177,6 +190,7 @@ public class HttpExternalSystem extends ExternalSystem {
   private ExternalSystemResponse buildErrorResponse(Throwable error) {
     String errorMessage = error.getMessage();
     if (errorMessage == null && error instanceof TimeoutException) {
+      log.warn("Operation exceeded the maximum {} seconds allowed", timeout, error);
       errorMessage = "Operation exceeded the maximum " + timeout + " seconds allowed";
     }
     return ExternalSystemResponseBuilder.newBuilder().withError(errorMessage).build();

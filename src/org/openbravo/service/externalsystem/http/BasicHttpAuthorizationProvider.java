@@ -18,13 +18,14 @@
  */
 package org.openbravo.service.externalsystem.http;
 
-import java.util.Base64;
-import java.util.Map;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 
 import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.service.externalsystem.ExternalSystemConfigurationError;
 import org.openbravo.service.externalsystem.HttpExternalSystemData;
 import org.openbravo.utils.FormatUtilities;
 
@@ -32,27 +33,27 @@ import org.openbravo.utils.FormatUtilities;
  * Used to authenticate an HTTP request with the Basic HTTP authorization method
  */
 @HttpAuthorizationMethod("BASIC")
-public class BasicHttpAuthorizationProvider extends HttpAuthorizationProvider {
+public class BasicHttpAuthorizationProvider extends Authenticator
+    implements HttpAuthorizationProvider {
   private static final Logger log = LogManager.getLogger();
 
   private String userName;
   private String password;
 
   @Override
-  protected void init(HttpExternalSystemData configuration) {
+  public void init(HttpExternalSystemData configuration) {
     userName = configuration.getUsername();
     try {
       password = FormatUtilities.encryptDecrypt(configuration.getPassword(), false);
     } catch (ServletException ex) {
       log.error("Error decrypting password of HTTP configuration {}", configuration.getId());
-      password = null;
+      throw new ExternalSystemConfigurationError(
+          "Error decrypting password of HTTP configuration " + configuration.getId());
     }
   }
 
   @Override
-  public Map<String, String> getHeaders() {
-    String basicAuth = "Basic "
-        + Base64.getEncoder().encodeToString((userName + ":" + password).getBytes());
-    return Map.of("Authorization", basicAuth);
+  protected PasswordAuthentication getPasswordAuthentication() {
+    return new PasswordAuthentication(userName, password.toCharArray());
   }
 }

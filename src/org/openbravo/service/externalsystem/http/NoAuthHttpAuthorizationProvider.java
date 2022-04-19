@@ -18,17 +18,16 @@
  */
 package org.openbravo.service.externalsystem.http;
 
-import java.util.Collections;
-import java.util.Map;
+import org.openbravo.service.externalsystem.HttpExternalSystemData;
 
 /**
  * Used when no HTTP authorization is required
  */
 @HttpAuthorizationMethod("NOAUTH")
-public class NoAuthHttpAuthorizationProvider extends HttpAuthorizationProvider {
+public class NoAuthHttpAuthorizationProvider implements HttpAuthorizationProvider {
 
   @Override
-  public Map<String, String> getHeaders() {
-    return Collections.emptyMap();
+  public void init(HttpExternalSystemData configuration) {
+    // NOOP
   }
 }

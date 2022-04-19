@@ -61,7 +61,7 @@ class HttpExternalSystemDataEventHandler extends EntityPersistenceEventObserver 
 
     int maxTimeout = HttpExternalSystem.MAX_TIMEOUT;
     if (config.getTimeout() > maxTimeout) {
-      throw new OBException(OBMessageUtils.getI18NMessage("C_HTTP_EXT_SYS_MAX_TIMEOUT",
+      throw new OBException(OBMessageUtils.getI18NMessage("C_EXT_HTTP_SYS_MAX_TIMEOUT",
           new String[] { maxTimeout + "" }));
     }
   }

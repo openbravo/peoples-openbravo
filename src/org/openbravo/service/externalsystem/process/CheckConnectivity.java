@@ -19,7 +19,6 @@
 package org.openbravo.service.externalsystem.process;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -56,16 +55,13 @@ public class CheckConnectivity extends BaseProcessActionHandler {
       return buildError("C_ConnCheckProcessError");
     }
 
+    JSONObject dataToSend = new JSONObject();
     return externalSystemProvider.getExternalSystem(id)
-        .map(externalSystem -> externalSystem.send(getDataToSend())
+        .map(externalSystem -> externalSystem
+            .send(() -> new ByteArrayInputStream(dataToSend.toString().getBytes()))
             .thenApply(this::handleResponse)
             .join())
         .orElse(buildError("C_ConnCheckMissingConfig"));
-  }
-
-  private InputStream getDataToSend() {
-    JSONObject data = new JSONObject();
-    return new ByteArrayInputStream(data.toString().getBytes());
   }
 
   private JSONObject handleResponse(ExternalSystemResponse response) {

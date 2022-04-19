@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE C_HTTP_EXTERNAL_SYSTEM">
-    <table name="C_HTTP_EXTERNAL_SYSTEM" primaryKey="C_HTTP_EXT_SYSTEM_KEY">
-      <column name="C_HTTP_EXTERNAL_SYSTEM_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE C_EXTERNAL_SYSTEM_HTTP">
+    <table name="C_EXTERNAL_SYSTEM_HTTP" primaryKey="C_EXT_SYSTEM_HTTP_KEY">
+      <column name="C_EXTERNAL_SYSTEM_HTTP_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -61,25 +61,25 @@
         <default><![CDATA[10]]></default>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="C_HTTP_EXT_SYSTEM_AD_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_EXT_SYSTEM_HTTP_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="C_HTTP_EXT_SYSTEM_AD_ORG">
+      <foreign-key foreignTable="AD_ORG" name="C_EXT_SYSTEM_HTTP_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_EXTERNAL_SYSTEM" name="C_HTTP_EXT_SYSTEM_EXT_SYSTEM">
+      <foreign-key foreignTable="C_EXTERNAL_SYSTEM" name="C_EXT_SYSTEM_HTTP_EXT_SYSTEM">
         <reference local="C_EXTERNAL_SYSTEM_ID" foreign="C_EXTERNAL_SYSTEM_ID"/>
       </foreign-key>
-      <index name="C_HTTP_EXT_SYS_EXT_SYS" unique="false">
+      <index name="C_EXT_SYS_HTTP_EXT_SYS" unique="false">
         <index-column name="C_EXTERNAL_SYSTEM_ID"/>
       </index>
-      <index name="C_HTTP_EXT_SYS_UNIQ_EXT_SYS" unique="true">
+      <index name="C_EXT_SYS_HTTP_UNIQ_EXT_SYS" unique="true">
         <index-column name="C_EXTERNAL_SYSTEM_ID"/>
         <index-column name="ISACTIVE"/>
         <whereClause><![CDATA[ISACTIVE='Y']]></whereClause>
       </index>
-      <check name="C_HTTP_EXT_SYS_MIN_TIMEOUT"><![CDATA[TIMEOUT > 0]]></check>
-      <check name="C_HTTP_EXT_SYSTEM_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_HTTP_EXT_SYSTEM_BASIC_AUTH"><![CDATA[AUTHORIZATION_TYPE <> 'BASIC' OR USERNAME IS NOT NULL AND PASSWORD IS NOT NULL]]></check>
+      <check name="C_EXT_HTTP_SYS_MIN_TIMEOUT"><![CDATA[TIMEOUT > 0]]></check>
+      <check name="C_EXT_HTTP_SYSTEM_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_EXT_HTTP_SYSTEM_BASIC_AUTH"><![CDATA[AUTHORIZATION_TYPE <> 'BASIC' OR USERNAME IS NOT NULL AND PASSWORD IS NOT NULL]]></check>
     </table>
   </database>
