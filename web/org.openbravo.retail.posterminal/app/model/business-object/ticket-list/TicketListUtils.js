@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -88,6 +88,27 @@
       return OB.App.State.TicketList.Utils.getAllTickets().filter(
         ticket => ticket.session !== session
       );
+    },
+
+    /**
+     * Brings tickets present in the list to a session
+     *
+     * @param {object[]} ticketList - The ticket list
+     * @param {object} payload - Additional information: Ids of ticket to brings, Target session and user.
+     * @returns {object[]} - the resulting ticket list after brings the tickets to the session
+     */
+    bringTicketListToSession(ticketList, payload) {
+      return ticketList.map(ticket => {
+        if (payload.ticketIds.some(id => id === ticket.id)) {
+          return {
+            ...ticket,
+            session: payload.session,
+            createdBy: payload.userId,
+            updatedBy: payload.userId
+          };
+        }
+        return ticket;
+      });
     }
   });
 })();

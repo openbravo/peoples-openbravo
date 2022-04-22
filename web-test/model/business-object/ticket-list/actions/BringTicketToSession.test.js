@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -18,7 +18,9 @@ const {
 
 require('../../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/application-state/StateAPI');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketList');
+require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/TicketListUtils');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket-list/actions/BringTicketToSession');
+require('../SetupTicketListUtils');
 
 describe('Bring Ticket To Session', () => {
   describe('Bring Ticket To Session action preparation', () => {

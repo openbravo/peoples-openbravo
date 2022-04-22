@@ -1213,6 +1213,18 @@
           rr.exec(ajaxRequest2.url);
         }, serverPingMilliseconds);
       }
+      if (
+        OB.MobileApp.model.hasPermission(
+          'OBPOS_AutoBringAllPendingReceipts',
+          true
+        )
+      ) {
+        // Bring tickets to the current session
+        OB.App.State.Global.bringAllTicketsToSession({
+          session: OB.MobileApp.model.get('session'),
+          userId: OB.MobileApp.model.get('orgUserId')
+        });
+      }
     },
 
     cleanSessionInfo: function() {
