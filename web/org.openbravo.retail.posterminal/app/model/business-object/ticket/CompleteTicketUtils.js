@@ -409,6 +409,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     invoice.orderId = ticket.id;
     invoice.id = OB.App.UUID.generate();
     invoice.isInvoice = true;
+    invoice.creationDate = new Date().toISOString();
     invoice.documentNo = undefined;
     invoice.obposSequencename = undefined;
     invoice.obposSequencenumber = undefined;
