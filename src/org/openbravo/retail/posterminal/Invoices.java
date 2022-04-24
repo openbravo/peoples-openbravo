@@ -340,9 +340,4 @@ public class Invoices extends JSONProcessSimple {
     }
     return result;
   }
-
-  @Override
-  protected String getProperty() {
-    return "OBPOS_print.receipt";
-  }
 }
