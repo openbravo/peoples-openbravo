@@ -33,7 +33,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.database.ExternalConnectionPool;
 
 /**
- * Helper class used to determine if a report should use the read-only pool to retrieve data
+ * Helper class used to determine if a entity should use the read-only pool to retrieve data
  */
 public class DataPoolChecker implements OBSingleton {
   private static final Logger log = LogManager.getLogger();
@@ -57,7 +57,7 @@ public class DataPoolChecker implements OBSingleton {
   }
 
   /**
-   * Initializes the checker caching the list of reports with a database pool assigned and the
+   * Initializes the checker caching the list of entities with a database pool assigned and the
    * default preference as well
    */
   private void initialize() {
@@ -119,25 +119,24 @@ public class DataPoolChecker implements OBSingleton {
   }
 
   /**
-   * Verifies whether the current report should use the default pool. Reports can be defined either
-   * in Report and Process or in Process Definition.
+   * Verifies whether the current entity should use the default pool.
    *
-   * @return true if the current report should use the default pool
+   * @return true if the current entity should use the default pool
    */
-  boolean shouldUseDefaultPool(String processId, String dataType) {
+  boolean shouldUseDefaultPool(String entityId, String dataType) {
     String configPool = null;
-    if (!StringUtils.isBlank(processId) && !confPoolMap.containsKey(dataType + " - " + processId)) {
-      configPool = confPoolMap.get("REPORT - " + processId);
-    } else if (!StringUtils.isBlank(processId)) {
-      configPool = confPoolMap.get(dataType + " - " + processId);
+    if (!StringUtils.isBlank(entityId) && !confPoolMap.containsKey(dataType + " - " + entityId)) {
+      configPool = confPoolMap.get("REPORT - " + entityId);
+    } else if (!StringUtils.isBlank(entityId)) {
+      configPool = confPoolMap.get(dataType + " - " + entityId);
     }
 
     String poolUsedForEntity = configPool != null ? configPool
         : !confPoolMap.containsKey(dataType) ? defaultReadOnlyPool.get(DEFAULT_TYPE)
             : defaultReadOnlyPool.get(dataType);
 
-    if (processId != null) {
-      log.debug("Using pool {} for report with id {}", poolUsedForEntity, processId);
+    if (entityId != null) {
+      log.debug("Using pool {} for entity with id {}", poolUsedForEntity, entityId);
     }
 
     return ExternalConnectionPool.DEFAULT_POOL.equals(poolUsedForEntity);
