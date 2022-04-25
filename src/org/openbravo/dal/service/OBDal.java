@@ -110,8 +110,8 @@ public class OBDal implements OBNotSingleton {
    * @return the singleton instance related to the name passed as parameter
    */
   public static OBDal getInstance(String pool) {
-    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool)
-        || getDataPoolChecker().shouldUseDefaultPool(SessionInfo.getProcessId())) {
+    if (ExternalConnectionPool.DEFAULT_POOL.equals(pool) || getDataPoolChecker()
+        .shouldUseDefaultPool(SessionInfo.getProcessId(), SessionInfo.getProcessType())) {
       return getInstance();
     }
 

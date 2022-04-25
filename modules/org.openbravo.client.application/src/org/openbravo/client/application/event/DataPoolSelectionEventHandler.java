@@ -88,7 +88,7 @@ class DataPoolSelectionEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    getDataPoolChecker().refreshDataPoolProcesses();
+    getDataPoolChecker().refreshDataPoolEntities();
   }
 
   private static DataPoolChecker getDataPoolChecker() {

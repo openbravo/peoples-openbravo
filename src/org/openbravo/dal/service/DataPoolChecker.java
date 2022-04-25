@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.database.ExternalConnectionPool;
 
 /**
@@ -36,13 +37,14 @@ import org.openbravo.database.ExternalConnectionPool;
  */
 public class DataPoolChecker implements OBSingleton {
   private static final Logger log = LogManager.getLogger();
-  private static final int REPORT_ID = 0;
-  private static final int DATA_POOL = 1;
 
-  private Map<String, String> reportPoolMap = new HashMap<>();
+  private Map<String, String> confPoolMap = new HashMap<>();
   private final List<String> validPoolValues = Arrays.asList(ExternalConnectionPool.DEFAULT_POOL,
       ExternalConnectionPool.READONLY_POOL);
-  private String defaultReadOnlyPool = ExternalConnectionPool.READONLY_POOL;
+  private Map<String, String> defaultReadOnlyPool = new HashMap<>();
+  private final List<DataPoolConfiguration> dataPoolConfigurations = WeldUtils
+      .getInstances(DataPoolConfiguration.class);
+  private final String DEFAULT_TYPE = "REPORT";
 
   private static DataPoolChecker instance;
 
@@ -59,46 +61,33 @@ public class DataPoolChecker implements OBSingleton {
    * default preference as well
    */
   private void initialize() {
-    refreshDefaultPoolPreference();
-    refreshDataPoolProcesses();
-  }
-
-  /**
-   * Reload from DB the reports that should use the Read-only pool
-   */
-  public void refreshDataPoolProcesses() {
-    reportPoolMap = findActiveDataPoolSelection();
-  }
-
-  /**
-   * Queries for all active entries of DataPoolSelection and returns them in a new map object. This
-   * avoids concurrency issues dealing with the cached Report-Pool mapping.
-   * 
-   * @return a new Map object with the mapping (Report_ID, POOL)
-   */
-  private Map<String, String> findActiveDataPoolSelection() {
-    //@formatter:off
-    String hql = 
-            "select dps.report.id, dps.dataPool " +
-            "  from OBUIAPP_Data_Pool_Selection dps " +
-            " where dps.active = true";
-    //@formatter:on
-    Query<Object[]> query = OBDal.getInstance().getSession().createQuery(hql, Object[].class);
-    List<Object[]> queryResults = query.list();
-
-    Map<String, String> selection = new HashMap<>(queryResults.size());
-    for (Object[] values : queryResults) {
-      selection.put(values[REPORT_ID].toString(), values[DATA_POOL].toString());
+    dataPoolConfigurations.add(new ReportDataPoolConfiguration());
+    for (DataPoolConfiguration config : dataPoolConfigurations) {
+      refreshDefaultPoolPreference(config);
+      refreshDataPoolEntitiesValues(config);
     }
-    return selection;
   }
 
-  private void refreshDefaultPoolPreference() {
+  /**
+   * Reload from DB the entities that should use the Read-only pool
+   */
+  public void refreshDataPoolEntities() {
+    for (DataPoolConfiguration config : dataPoolConfigurations) {
+      refreshDataPoolEntitiesValues(config);
+    }
+  }
+
+  private void refreshDataPoolEntitiesValues(DataPoolConfiguration config) {
+    config.getDataPoolSelection()
+        .forEach((k, v) -> confPoolMap.put(config.getDataType() + " - " + k, v));
+  }
+
+  private void refreshDefaultPoolPreference(DataPoolConfiguration config) {
     //@formatter:off
     String hql = 
             "select p.searchKey " +
             "  from ADPreference p " +
-            " where p.property='OBUIAPP_DefaultDBPoolForReports' " +
+            " where p.property='"+ config.getPreferenceName() +"' " +
             "   and p.active = true " +
             "   and p.visibleAtClient.id = '0' " +
             "   and p.visibleAtOrganization.id = '0' ";
@@ -107,7 +96,7 @@ public class DataPoolChecker implements OBSingleton {
         .getSession()
         .createQuery(hql, String.class)
         .setMaxResults(1);
-    setDefaultReadOnlyPool(defaultPoolQuery.uniqueResult());
+    setDefaultReadOnlyPool(config.getDataType(), defaultPoolQuery.uniqueResult());
   }
 
   /**
@@ -116,11 +105,12 @@ public class DataPoolChecker implements OBSingleton {
    * @param defaultPool
    *          the ID of the default pool returned when requesting a read-only instance
    */
-  private void setDefaultReadOnlyPool(String defaultPool) {
+  private void setDefaultReadOnlyPool(String configType, String defaultPool) {
     if (validPoolValues.contains(defaultPool)) {
-      log.debug("Pool {} is set as the default to use with reports", defaultPool);
-      defaultReadOnlyPool = defaultPool;
+      log.debug("Pool {} is set as the default to use with {}", defaultPool, configType);
+      defaultReadOnlyPool.put(configType, defaultPool);
     } else {
+      defaultReadOnlyPool.put(configType, ExternalConnectionPool.READONLY_POOL);
       log.warn(
           "Preference value {} is not a valid Database pool. Using READONLY_POOL as the default value",
           defaultPool);
@@ -133,19 +123,23 @@ public class DataPoolChecker implements OBSingleton {
    *
    * @return true if the current report should use the default pool
    */
-  boolean shouldUseDefaultPool(String processId) {
-    String poolForProcess = null;
-    if (!StringUtils.isBlank(processId)) {
-      poolForProcess = reportPoolMap.get(processId);
+  boolean shouldUseDefaultPool(String processId, String dataType) {
+    String configPool = null;
+    if (!StringUtils.isBlank(processId) && !confPoolMap.containsKey(dataType)) {
+      configPool = confPoolMap.get("REPORT - " + processId);
+    } else if (!StringUtils.isBlank(processId)) {
+      configPool = confPoolMap.get(dataType + " - " + processId);
     }
 
-    String poolUsedForProcess = poolForProcess != null ? poolForProcess : defaultReadOnlyPool;
+    String poolUsedForEntity = configPool != null ? configPool
+        : !confPoolMap.containsKey(dataType) ? defaultReadOnlyPool.get(DEFAULT_TYPE)
+            : defaultReadOnlyPool.get(dataType);
 
     if (processId != null) {
-      log.debug("Using pool {} for report with id {}", poolUsedForProcess, processId);
+      log.debug("Using pool {} for report with id {}", poolUsedForEntity, processId);
     }
 
-    return ExternalConnectionPool.DEFAULT_POOL.equals(poolUsedForProcess);
+    return ExternalConnectionPool.DEFAULT_POOL.equals(poolUsedForEntity);
   }
 
 }
