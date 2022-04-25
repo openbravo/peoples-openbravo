@@ -13,8 +13,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -482,7 +485,11 @@ public class ExternalOrderLoader extends OrderLoader {
         // set the pos terminal to be sure
         final JSONObject order = data.getJSONObject(i);
         if (!order.has("posTerminal")) {
-          order.put("posTerminal", posTerminal.getId());
+          if (order.has("terminal")) {
+            order.put("posTerminal", order.getString("terminal"));
+          } else {
+            order.put("posTerminal", posTerminal.getId());
+          }
         }
 
         // In case of cancel layaway, validate and transform canceledorder
@@ -602,6 +609,16 @@ public class ExternalOrderLoader extends OrderLoader {
         || ALL.equals(orderJson.getString("step")) || CANCEL.equals(orderJson.getString("step"))
         || CANCEL_REPLACE.equals(orderJson.getString("step"))) {
       setBusinessPartnerInformation(orderJson);
+      // Transform order array to object
+      JSONArray orderTaxes = orderJson.optJSONArray("taxes");
+      if (orderTaxes != null) {
+        JSONObject orderTax = new JSONObject();
+        for (int i = 0; i < orderTaxes.length(); i++) {
+          JSONObject ordTax = orderTaxes.getJSONObject(i);
+          orderTax.put(ordTax.getString("tax"), ordTax);
+        }
+        orderJson.put("taxes", orderTax);
+      }
       transformTaxes(orderJson.getJSONObject("taxes"));
       transformLines(orderJson);
     }
@@ -697,7 +714,11 @@ public class ExternalOrderLoader extends OrderLoader {
       lineJson.put("id", SequenceIdData.getUUID());
     }
 
-    copyPropertyValue(lineJson, "quantity", "qty");
+    if (lineJson.has("orderedQuantity")) {
+      copyPropertyValue(lineJson, "orderedQuantity", "qty");
+    } else if (lineJson.has("quantity")) {
+      copyPropertyValue(lineJson, "quantity", "qty");
+    }
 
     if (lineJson.has("warehouse")) {
       final String warehouseId = resolveJsonValue(Warehouse.ENTITY_NAME,
@@ -716,11 +737,26 @@ public class ExternalOrderLoader extends OrderLoader {
     writePropertyValue(lineJson, "promotionMessages", new JSONArray());
     writePropertyValue(lineJson, "promotionCandidates", new JSONArray());
 
-    if (!lineJson.has("taxLines")) {
-      lineJson.put("taxLines", new JSONObject());
-    } else {
+    if (lineJson.has("taxLines")) {
       transformTaxes(lineJson.getJSONObject("taxLines"));
+    } else if (lineJson.has("taxes")) {
+      // Transform order array to object
+      JSONArray lineTaxes = lineJson.optJSONArray("taxes");
+      if (lineTaxes != null) {
+        JSONObject taxLines = new JSONObject();
+        for (int i = 0; i < lineTaxes.length(); i++) {
+          JSONObject lineTax = lineTaxes.getJSONObject(i);
+          taxLines.put(lineTax.getString("tax"), lineTax);
+        }
+        lineJson.put("taxLines", taxLines);
+      } else {
+        lineJson.put("taxLines", lineJson.getJSONObject("taxes"));
+      }
+      transformTaxes(lineJson.getJSONObject("taxLines"));
+    } else {
+      lineJson.put("taxLines", new JSONObject());
     }
+
     setLineTaxInformation(lineJson);
     transformPriceInformation(lineJson);
   }
@@ -735,6 +771,9 @@ public class ExternalOrderLoader extends OrderLoader {
   private void setQuantityToDeliver(JSONObject orderJson, JSONObject lineJson, String step)
       throws JSONException {
     if (CREATE.equals(step) || PAY.equals(step) || CANCEL_REPLACE.equals(step)) {
+      if (lineJson.has("shippedQuantity")) {
+        copyPropertyValue(lineJson, "shippedQuantity", "deliveredQuantity");
+      }
       if (lineJson.has("deliveredQuantity")) {
         copyPropertyValue(lineJson, "deliveredQuantity", "obposQtytodeliver");
       } else if (!lineJson.has("obposQtytodeliver")) {
@@ -799,7 +838,8 @@ public class ExternalOrderLoader extends OrderLoader {
         lineJson.getDouble("grossAmount") / lineJson.getDouble("qty"));
     copyPropertyValue(lineJson, "netAmount", "discountedNet");
     copyPropertyValue(lineJson, "netPrice", "discountedLinePrice");
-    writePropertyValue(lineJson, "discountPercentage", 0);
+    writePropertyValue(lineJson, "discountPercentage",
+        lineJson.has("discount") ? lineJson.getDouble("discount") : 0);
     copyPropertyValue(lineJson, "netListPrice", "listPrice");
     copyPropertyValue(lineJson, "grossListPrice", "priceList");
     copyPropertyValue(lineJson, "listPrice", "standardPrice");
@@ -808,6 +848,21 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(lineJson, "grossAmount", "gross");
     BigDecimal grossAmountAbs = BigDecimal.valueOf(lineJson.getDouble("grossAmount")).abs();
     lineJson.put("lineGrossAmount", grossAmountAbs);
+  }
+
+  protected String convertToUTCDate(String dateStr, int timezoneOffset) {
+    final SimpleDateFormat dateFormatWithTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    final SimpleDateFormat dateFormatISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    try {
+      Date parsedDate = new Timestamp(dateFormatWithTime.parse(dateStr).getTime());
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(parsedDate);
+      calendar.add(Calendar.MINUTE, timezoneOffset);
+      return dateFormatISO.format(calendar.getTime());
+    } catch (ParseException e) {
+      log.error("Error parsing Date", e);
+      return null;
+    }
   }
 
   protected void transformPayments(JSONObject orderJson) throws JSONException {
@@ -821,6 +876,13 @@ public class ExternalOrderLoader extends OrderLoader {
           payment.put("obposAppCashup", orderJson.get("obposAppCashup"));
         }
       }
+      if (payment.has("paymentDate")) {
+        String paymentDateStr = convertToUTCDate(payment.getString("paymentDate"),
+            orderJson.getInt("timezoneOffset"));
+        if (paymentDateStr != null) {
+          payment.put("paymentDate", paymentDateStr);
+        }
+      }
       if (!payment.has("currency")) {
         payment.put("currency", orderJson.get("currency"));
       }
@@ -830,10 +892,24 @@ public class ExternalOrderLoader extends OrderLoader {
 
       // check payment kind
       boolean found = false;
-      for (OBPOSAppPayment paymentType : posTerminal.getOBPOSAppPaymentList()) {
-        if (paymentType.getSearchKey().equals(payment.getString("kind"))) {
-          found = true;
-          break;
+
+      if (!payment.has("kind")) {
+        for (OBPOSAppPayment paymentType : posTerminal.getOBPOSAppPaymentList()) {
+          if (paymentType.getPaymentMethod()
+              .getPaymentMethod()
+              .getName()
+              .equals(payment.getString("name"))) {
+            payment.put("kind", paymentType.getSearchKey());
+            found = true;
+            break;
+          }
+        }
+      } else {
+        for (OBPOSAppPayment paymentType : posTerminal.getOBPOSAppPaymentList()) {
+          if (paymentType.getSearchKey().equals(payment.getString("kind"))) {
+            found = true;
+            break;
+          }
         }
       }
       if (!found) {
@@ -940,7 +1016,11 @@ public class ExternalOrderLoader extends OrderLoader {
               .doubleValue());
     }
     if (!payment.has("date")) {
-      payment.put("date", JsonUtils.createDateTimeFormat().format(new Date()));
+      if (payment.has("paymentDate")) {
+        payment.put("date", payment.getString("paymentDate"));
+      } else {
+        payment.put("date", JsonUtils.createDateTimeFormat().format(new Date()));
+      }
     }
     payment.put("isocode", payment.getString("currency"));
   }
@@ -1036,8 +1116,17 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   protected void transformPromotion(JSONObject promotionJson) throws JSONException {
+    if (promotionJson.has("amountPerUnit")) {
+      copyPropertyValue(promotionJson, "amountPerUnit", "unitDiscount");
+    }
+    if (promotionJson.has("totalAmount")) {
+      copyPropertyValue(promotionJson, "totalAmount", "amount");
+    }
     validatePromotion(promotionJson);
 
+    if (promotionJson.has("name")) {
+      copyPropertyValue(promotionJson, "name", "identifier");
+    }
     copyPropertyValue(promotionJson, "amount", "amt");
     copyPropertyValue(promotionJson, "amount", "fullAmt");
     copyPropertyValue(promotionJson, "amount", "displayedTotalAmount");
@@ -1055,6 +1144,9 @@ public class ExternalOrderLoader extends OrderLoader {
     final DataToJsonConverter jsonConverter = new DataToJsonConverter();
     final JSONObject productJson = jsonConverter.toJsonObject(product, DataResolvingMode.FULL);
     lineJson.put("product", productJson);
+    if (lineJson.has("uOM")) {
+      lineJson.put("uom", lineJson.getString("uOM"));
+    }
     if (lineJson.has("uom")) {
       lineJson.put("uOM", resolveJsonValue(UOM.ENTITY_NAME, lineJson.getString("uom"),
           new String[] { "id", "name", "eDICode", "symbol" }));
@@ -1093,6 +1185,10 @@ public class ExternalOrderLoader extends OrderLoader {
     for (int i = 0; i < names.length(); i++) {
       final String name = names.getString(i);
       final JSONObject taxValue = taxes.getJSONObject(name);
+
+      if (taxValue.has("taxableAmount")) {
+        copyPropertyValue(taxValue, "taxableAmount", "netAmount");
+      }
 
       validateTax(taxValue);
       if (!taxValue.has("rate") && taxValue.getDouble("net") > 0) {
@@ -1163,7 +1259,9 @@ public class ExternalOrderLoader extends OrderLoader {
     defaultJson.put("generateInvoice", false);
 
     final SimpleDateFormat dtFormat = createOrderLoaderDateTimeFormat();
-    defaultJson.put("orderDate", dtFormat.format(new Date()));
+    if (!orderJson.has("orderDate")) {
+      defaultJson.put("orderDate", dtFormat.format(new Date()));
+    }
     defaultJson.put("creationDate", dtFormat.format(new Date()));
     defaultJson.put("obposCreatedabsolute", dtFormat.format(new Date()));
 
@@ -1242,6 +1340,35 @@ public class ExternalOrderLoader extends OrderLoader {
     final JSONObject bpJson = jsonConverter.toJsonObject(bp, DataResolvingMode.FULL);
     String addressId = null;
     String shipAddressId = null;
+    JSONObject locationDetails;
+    String locationId = null;
+    if (orderJson.has("invoiceAddress")) {
+      locationDetails = orderJson.optJSONObject("invoiceAddress");
+      if (locationDetails != null && locationDetails.has("name")) {
+        locationId = getAddressIdFromAddressName(bpId, locationDetails.getString("name"));
+        if (locationId != null) {
+          orderJson.put("locId", locationId);
+        }
+      } else {
+        copyPropertyValue(orderJson, "invoiceAddress", "locId");
+      }
+      // Removing invoiceAddress as in OrderLoader error occurs in fillBobFromJSON as id property is
+      // not available to getReferencedProperty
+      orderJson.remove("invoiceAddress");
+    }
+    if (orderJson.has("shipmentAddress")) {
+      locationDetails = orderJson.optJSONObject("shipmentAddress");
+      if (locationDetails != null && locationDetails.has("name")) {
+        locationId = getAddressIdFromAddressName(bpId, locationDetails.getString("name"));
+        if (locationId != null) {
+          orderJson.put("shipLocId", locationId);
+        }
+      } else {
+        copyPropertyValue(orderJson, "shipmentAddress", "shipLocId");
+      }
+      orderJson.remove("shipmentAddress");
+    }
+
     if (orderJson.has("locId") && orderJson.has("shipLocId")) {
       addressId = orderJson.getString("locId");
       shipAddressId = orderJson.getString("shipLocId");
@@ -1320,6 +1447,30 @@ public class ExternalOrderLoader extends OrderLoader {
 
   }
 
+  protected String getAddressIdFromAddressName(String bpId, String locName) {
+    String bpLocationId = null;
+   // @formatter:off
+    String qryStr =
+        "select bpl.id"
+      + "  from BusinessPartnerLocation bpl"
+      + "  where bpl.businessPartner.id = :bpId"
+      + "  and bpl.name = :bpName" 
+      + "  order by bpl.creationDate desc";
+    // @formatter:on
+
+    final Query<String> qry = OBDal.getInstance()
+        .getSession()
+        .createQuery(qryStr, String.class)
+        .setParameter("bpId", bpId)
+        .setParameter("bpName", locName);
+
+    final List<String> values = qry.list();
+    if (values.size() > 1) {
+      bpLocationId = values.get(0);
+    }
+    return bpLocationId;
+  }
+
   protected String getAddressIdFromBP(String bpId) {
     final BusinessPartner bp = OBDal.getInstance().get(BusinessPartner.class, bpId);
     for (Location location : bp.getBusinessPartnerLocationList()) {
@@ -1353,6 +1504,9 @@ public class ExternalOrderLoader extends OrderLoader {
       if (entry != null && entry.getOBPOSPOSTerminal() != null) {
         return entry.getOBPOSPOSTerminal();
       }
+    }
+    if (jsonObject.has("terminal")) {
+      copyPropertyValue(jsonObject, "terminal", "posTerminal");
     }
     if (!jsonObject.has("posTerminal")) {
       new OBException("Property posTerminal not found in json " + jsonObject);
