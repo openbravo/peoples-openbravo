@@ -72,6 +72,7 @@ public class DataPoolChecker implements OBSingleton {
    * Reload from DB the entities that should use the Read-only pool
    */
   public void refreshDataPoolEntities() {
+    confPoolMap = new HashMap<>();
     for (DataPoolConfiguration config : dataPoolConfigurations) {
       refreshDataPoolEntitiesValues(config);
     }
@@ -125,7 +126,7 @@ public class DataPoolChecker implements OBSingleton {
    */
   boolean shouldUseDefaultPool(String processId, String dataType) {
     String configPool = null;
-    if (!StringUtils.isBlank(processId) && !confPoolMap.containsKey(dataType)) {
+    if (!StringUtils.isBlank(processId) && !confPoolMap.containsKey(dataType + " - " + processId)) {
       configPool = confPoolMap.get("REPORT - " + processId);
     } else if (!StringUtils.isBlank(processId)) {
       configPool = confPoolMap.get(dataType + " - " + processId);
