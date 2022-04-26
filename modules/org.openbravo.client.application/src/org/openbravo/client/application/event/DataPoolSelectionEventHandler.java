@@ -22,6 +22,7 @@ import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.application.DataPoolSelection;
@@ -32,6 +33,7 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.client.kernel.event.TransactionBeginEvent;
 import org.openbravo.client.kernel.event.TransactionCompletedEvent;
 import org.openbravo.dal.service.DataPoolChecker;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 
 /**
  * Refreshes DataPoolChecker report-pool mapping when DataPoolSelection changes.
@@ -61,6 +63,7 @@ class DataPoolSelectionEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     final DataPoolSelection dataPoolSelection = (DataPoolSelection) event.getTargetInstance();
+    checkConfiguration(dataPoolSelection);
     dataPoolSelectionValueUpdated.set(dataPoolSelection.getId());
   }
 
@@ -69,6 +72,7 @@ class DataPoolSelectionEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     final DataPoolSelection dataPoolSelection = (DataPoolSelection) event.getTargetInstance();
+    checkConfiguration(dataPoolSelection);
     dataPoolSelectionValueUpdated.set(dataPoolSelection.getId());
   }
 
@@ -97,6 +101,12 @@ class DataPoolSelectionEventHandler extends EntityPersistenceEventObserver {
     }
 
     return dataPoolChecker;
+  }
+
+  private void checkConfiguration(DataPoolSelection conf) {
+    if (conf.getDataType().equals("REPORT") && conf.getReport() == null) {
+      throw new OBException(OBMessageUtils.getI18NMessage("OBUIAPP_ReportPoolSelConfError"));
+    }
   }
 
 }
