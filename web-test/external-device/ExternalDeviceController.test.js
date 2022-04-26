@@ -17,8 +17,7 @@ global.OB = {
       subscribe: jest.fn()
     },
     TerminalProperty: { get: jest.fn() },
-    UserNotifier: { notifyError: jest.fn() },
-    View: { DialogUIHandler: { askConfirmation: jest.fn() } }
+    UserNotifier: { notifyError: jest.fn() }
   },
   I18N: { getLabel: jest.fn() },
   UTIL: {
@@ -245,25 +244,6 @@ describe('ExternalDeviceController', () => {
     );
   });
 
-  it('print with web printer', async () => {
-    const ticket = { id: '1' };
-    const controller = new OB.App.Class.ExternalDeviceController();
-    // simulate controller has webPrinter configured and connected
-    controller.webPrinter = { connected: () => true, print: jest.fn() };
-    controller.requestWebPrinter = jest.fn();
-    controller.storeData = jest.fn();
-
-    await controller.print(printTemplate, { ticket });
-
-    expect(controller.requestWebPrinter.mock.calls[0][0]).toBe(
-      '<output></output>'
-    );
-    expect(controller.storeData.mock.calls[0][0]).toBe('<output></output>');
-    expect(controller.storeData.mock.calls[0][1]).toBe(
-      controller.devices.PRINTER
-    );
-  });
-
   it('print request', async () => {
     const controller = new OB.App.Class.ExternalDeviceController();
 
@@ -330,15 +310,14 @@ describe('ExternalDeviceController', () => {
     const controller = new OB.App.Class.ExternalDeviceController();
     // simulate controller has webPrinter configured and not yet connected
     controller.webPrinter = {
-      connected: () => false,
-      print: jest.fn(),
-      request: jest.fn()
+      request: jest.fn().mockResolvedValue(),
+      print: jest.fn().mockResolvedValue()
     };
 
-    OB.App.View.DialogUIHandler.askConfirmation.mockResolvedValue(true);
     await controller.print(printTemplate, { ticket });
 
     expect(controller.webPrinter.request).toHaveBeenCalled();
+    expect(controller.webPrinter.print).toHaveBeenCalled();
     expect(controller.webPrinter.print.mock.calls[0][0]).toBe(
       '<output></output>'
     );
@@ -348,27 +327,15 @@ describe('ExternalDeviceController', () => {
     const ticket = { id: '1' };
     const controller = new OB.App.Class.ExternalDeviceController();
     controller.webPrinter = {
-      connected: () => false,
-      print: jest.fn(),
-      request: jest.fn()
+      request: jest.fn().mockRejectedValue(new Error('Cancelled by the user.')),
+      print: jest.fn().mockRejectedValue()
     };
 
-    OB.App.View.DialogUIHandler.askConfirmation.mockResolvedValue(false);
-    await controller.print(printTemplate, { ticket });
-
-    expect(controller.webPrinter.request).not.toHaveBeenCalled();
-    expect(controller.webPrinter.print).not.toHaveBeenCalled();
-  });
-
-  it('request to connected web printer', async () => {
-    const ticket = { id: '1' };
-    const controller = new OB.App.Class.ExternalDeviceController();
-    controller.webPrinter = { connected: () => true, print: jest.fn() };
-
-    await controller.print(printTemplate, { ticket });
-
-    expect(controller.webPrinter.print.mock.calls[0][0]).toBe(
-      '<output></output>'
+    await expect(controller.print(printTemplate, { ticket })).rejects.toThrow(
+      Error
     );
+
+    expect(controller.webPrinter.request).toHaveBeenCalled();
+    expect(controller.webPrinter.print).not.toHaveBeenCalled();
   });
 });

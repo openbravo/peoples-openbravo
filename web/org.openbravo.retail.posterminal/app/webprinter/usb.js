@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2021 Openbravo S.L.U.
+ * Copyright (C) 2018-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -21,34 +21,56 @@
     }
   }
 
-  USB.prototype.connected = function connected() {
-    return this.device !== null;
-  };
-
-  USB.prototype.request = function request() {
-    if (!navigator.usb || !navigator.usb.requestDevice) {
-      return Promise.reject(new Error('USB not supported.'));
+  USB.prototype.request = async function request() {
+    if (
+      !navigator.usb ||
+      !navigator.usb.requestDevice ||
+      !navigator.usb.getDevices
+    ) {
+      throw new Error('USB not supported.');
     }
 
-    const filters = [];
-    this.printertype.devices.forEach(item => {
-      filters.push({
-        vendorId: item.vendorId,
-        productId: item.productId
-      });
-    });
+    // Find supported usb device already paired
+    const usbdevices = await navigator.usb.getDevices();
+    this.device = usbdevices.find(device =>
+      this.printertype.devices.some(
+        info =>
+          device.vendorId === info.vendorId &&
+          device.productId === info.productId
+      )
+    );
 
-    return navigator.usb
-      .requestDevice({
-        filters
-      })
-      .then(device => {
-        this.device = device;
-        return this.printertype.devices.find(
-          d =>
-            d.vendorId === device.vendorId && d.productId === device.productId
-        );
+    if (!this.device) {
+      // Not found paired device, ask the user gesture to pair
+      if (
+        !(await OB.App.View.DialogUIHandler.askConfirmation({
+          title: 'OBPOS_WebPrinter',
+          message: 'OBPOS_WebPrinterPair'
+        }))
+      ) {
+        // To unify behaviour with navigator.usb.requestDevice
+        // that fails if cancelled by the user
+        throw new Error('Cancelled by the user.');
+      }
+      // Request the device
+      const filters = [];
+      this.printertype.devices.forEach(item => {
+        filters.push({
+          vendorId: item.vendorId,
+          productId: item.productId
+        });
       });
+      // Fails if cancelled by the user or not possible to pair device.
+      this.device = await navigator.usb.requestDevice({
+        filters
+      });
+    }
+
+    return this.printertype.devices.find(
+      d =>
+        d.vendorId === this.device.vendorId &&
+        d.productId === this.device.productId
+    );
   };
 
   USB.prototype.print = function print(data) {

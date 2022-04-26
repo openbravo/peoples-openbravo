@@ -62,16 +62,11 @@
     this.escpos = null;
   }
 
-  WEBPrinter.prototype.connected = function connected() {
-    return this.webdevice.connected();
-  };
-
-  WEBPrinter.prototype.request = function request() {
-    return this.webdevice.request().then(deviceinfo => {
-      this.escpos = deviceinfo.ESCPOS
-        ? new deviceinfo.ESCPOS()
-        : OB.ESCPOS.standardinst;
-    });
+  WEBPrinter.prototype.request = async function request() {
+    const deviceinfo = await this.webdevice.request();
+    this.escpos = deviceinfo.ESCPOS
+      ? new deviceinfo.ESCPOS()
+      : OB.ESCPOS.standardinst;
   };
 
   WEBPrinter.prototype.print = function print(doc) {

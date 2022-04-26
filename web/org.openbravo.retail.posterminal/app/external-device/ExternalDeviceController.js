@@ -381,18 +381,7 @@
     }
 
     async requestWebPrinter(data) {
-      if (!this.webPrinter.connected()) {
-        const confirmation = await OB.App.View.DialogUIHandler.askConfirmation({
-          title: 'OBPOS_WebPrinter',
-          message: 'OBPOS_WebPrinterPair'
-        });
-
-        if (!confirmation) {
-          return;
-        }
-
-        await this.webPrinter.request();
-      }
+      await this.webPrinter.request();
       await this.webPrinter.print(data);
     }
   };

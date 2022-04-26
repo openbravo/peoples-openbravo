@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -511,26 +511,10 @@ OB.DS.HWServer.prototype._template = function(templatedata, params) {
 };
 
 OB.DS.HWServer.prototype._sendWebPrinter = function() {
-  return function(data) {
-    if (this.webprinter.connected()) {
-      return this.webprinter.print(data);
-    } else {
-      return OB.UTIL.confirm(
-        OB.I18N.getLabel('OBPOS_WebPrinter'),
-        OB.I18N.getLabel('OBPOS_WebPrinterPair')
-      )
-        .then(
-          function() {
-            return this.webprinter.request();
-          }.bind(this)
-        )
-        .then(
-          function() {
-            return this.webprinter.print(data);
-          }.bind(this)
-        );
-    }
-  }.bind(this);
+  return async data => {
+    await this.webprinter.request();
+    await this.webprinter.print(data);
+  };
 };
 
 OB.DS.HWServer.prototype._sendHWMPrinter = function(sendurl) {
