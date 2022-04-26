@@ -1694,14 +1694,18 @@ public class ExternalOrderLoader extends OrderLoader {
       try {
         // @formatter:off
         String qryStr =
-            "select id"
+            "select e.id"
           + "  from " + entityName
-          + " where " + property + " = :value"
-          + "   and client.id in :clients";
+          + " e where e." + property + " = :value"
+          + "   and e.client.id in :clients";
         // @formatter:on
 
         if (addOrgFilter) {
-          qryStr += " and organization.id in (:orgs)";
+          qryStr += " and e.organization.id in (:orgs)";
+
+          qryStr += " order by ";
+          qryStr += "to_number(ad_isorgincluded(:orgId, e.organization.id, e.client.id)) asc, ";
+          qryStr += "e.organization.name asc";
         }
 
         final Query<String> qry = OBDal.getInstance()
@@ -1714,13 +1718,13 @@ public class ExternalOrderLoader extends OrderLoader {
               .getOrganizationStructureProvider();
           qry.setParameterList("orgs",
               osp.getNaturalTree(OBContext.getOBContext().getCurrentOrganization().getId()));
+          qry.setParameter("orgId", OBContext.getOBContext().getCurrentOrganization().getId());
         }
         final List<String> values = qry.list();
-        if (values.isEmpty() || values.size() > 1) {
+        if (values.isEmpty()) {
           return null;
         }
-        final String result = values.get(0);
-        return result;
+        return values.get(0);
       } catch (Throwable t) {
         final Throwable cause = DbUtility.getUnderlyingSQLException(t);
         log.error(cause.getMessage(), cause);
