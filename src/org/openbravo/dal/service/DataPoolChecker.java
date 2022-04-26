@@ -62,10 +62,10 @@ public class DataPoolChecker implements OBSingleton {
    */
   private void initialize() {
     dataPoolConfigurations.add(new ReportDataPoolConfiguration());
-    for (DataPoolConfiguration config : dataPoolConfigurations) {
+    dataPoolConfigurations.stream().forEach(config -> {
       refreshDefaultPoolPreference(config);
       refreshDataPoolEntitiesValues(config);
-    }
+    });
   }
 
   /**
@@ -73,9 +73,9 @@ public class DataPoolChecker implements OBSingleton {
    */
   public void refreshDataPoolEntities() {
     confPoolMap = new HashMap<>();
-    for (DataPoolConfiguration config : dataPoolConfigurations) {
+    dataPoolConfigurations.stream().forEach(config -> {
       refreshDataPoolEntitiesValues(config);
-    }
+    });
   }
 
   private void refreshDataPoolEntitiesValues(DataPoolConfiguration config) {
@@ -132,7 +132,7 @@ public class DataPoolChecker implements OBSingleton {
     }
 
     String poolUsedForEntity = configPool != null ? configPool
-        : !confPoolMap.containsKey(dataType) ? defaultReadOnlyPool.get(DEFAULT_TYPE)
+        : !defaultReadOnlyPool.containsKey(dataType) ? defaultReadOnlyPool.get(DEFAULT_TYPE)
             : defaultReadOnlyPool.get(dataType);
 
     if (entityId != null) {
