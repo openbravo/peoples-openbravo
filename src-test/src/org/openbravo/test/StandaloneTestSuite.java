@@ -52,6 +52,7 @@ import org.openbravo.scheduling.trigger.MisfirePolicyTest;
 import org.openbravo.scheduling.trigger.TriggerProviderTest;
 import org.openbravo.service.externalsystem.ExternalSystemProviderTest;
 import org.openbravo.service.externalsystem.http.HttpExternalSystemDataCreationTest;
+import org.openbravo.synchronization.event.EventTriggeringTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
 import org.openbravo.test.authentication.AuthenticationManagerTest;
@@ -166,7 +167,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
  * This test class is called from the ant task run.all.tests by the CI server. It contains all the
  * test cases which are runnable and valid and do not require Tomcat to be running.
  * 
- * Test cases requiring Tomcat (ie. testing web service requests) should be inclued in
+ * Test cases requiring Tomcat (ie. testing web service requests) should be included in
  * {@link WebserviceTestSuite}.
  *
  * @see WebserviceTestSuite
@@ -357,6 +358,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // external system
     ExternalSystemProviderTest.class, //
     HttpExternalSystemDataCreationTest.class,
+
+    // synchronization events
+    EventTriggeringTest.class,
 
     // Product Services
     ServicesTest.class, //
