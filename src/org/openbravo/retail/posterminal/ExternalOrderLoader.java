@@ -65,6 +65,7 @@ import org.openbravo.model.common.enterprise.Warehouse;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.common.order.ReturnReason;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
@@ -726,6 +727,12 @@ public class ExternalOrderLoader extends OrderLoader {
       final JSONObject whJson = new JSONObject();
       whJson.put("id", warehouseId);
       lineJson.put("warehouse", whJson);
+    }
+
+    if (lineJson.has("returnReason")) {
+      final String returnReasonId = resolveJsonValue(ReturnReason.ENTITY_NAME,
+          lineJson.getString("returnReason"), new String[] { "id", "name", "searchKey" });
+      lineJson.put("returnReason", returnReasonId);
     }
 
     if (!lineJson.has("promotions")) {
