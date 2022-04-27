@@ -62,7 +62,9 @@ fs.mkdirSync(globalModulesPath, {
 // install modules in openbravo root rolder
 // ignore scripts to avoid a infinite loop caused by this script already being executed as part of a npm script
 const environment = production ? '--production' : '';
-execSync(`npm ci --ignore-scripts ${environment}`, { stdio: 'inherit' });
+execSync(`npm ci --ignore-scripts ${environment} --legacy-peer-deps`, {
+  stdio: 'inherit'
+});
 
 getModules()
   .filter(module => moduleContainsPackageJson(module))
@@ -78,7 +80,7 @@ getModules()
       .forEach(packageJsonPath => {
         console.log(`Installing node modules in ${packageJsonPath}`);
         console.log(`npm ci...`);
-        execSync(`npm ci ${environment}`, {
+        execSync(`npm ci ${environment} --legacy-peer-deps`, {
           stdio: 'inherit',
           cwd: packageJsonPath
         });
