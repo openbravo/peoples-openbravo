@@ -124,19 +124,7 @@ public class DataPoolChecker implements OBSingleton {
    * @return true if the current entity should use the default pool
    */
   boolean shouldUseDefaultPool(String entityId, String dataType, String poolExtraProperty) {
-    String configPool = null;
-
-    if (!StringUtils.isBlank(entityId) && !StringUtils.isBlank(dataType)
-        && !StringUtils.isBlank(poolExtraProperty)) {
-      configPool = confPoolMap.get(dataType + " - " + entityId + " - " + poolExtraProperty);
-    } else if (!StringUtils.isBlank(entityId) && !StringUtils.isBlank(dataType)) {
-      configPool = confPoolMap.get(dataType + " - " + entityId);
-      if (configPool == null) {
-        configPool = confPoolMap.get(DEFAULT_TYPE + " - " + entityId);
-      }
-    } else if (!StringUtils.isBlank(entityId)) {
-      configPool = confPoolMap.get(DEFAULT_TYPE + " - " + entityId);
-    }
+    String configPool = getConfiguredPool(entityId, dataType, poolExtraProperty);
 
     String poolUsedForEntity = configPool != null ? configPool
         : !defaultReadOnlyPool.containsKey(dataType) ? defaultReadOnlyPool.get(DEFAULT_TYPE)
@@ -147,6 +135,19 @@ public class DataPoolChecker implements OBSingleton {
     }
 
     return ExternalConnectionPool.DEFAULT_POOL.equals(poolUsedForEntity);
+  }
+
+  private String getConfiguredPool(String entityId, String dataType, String poolExtraProperty) {
+    String configPool = null;
+    if (!StringUtils.isBlank(entityId) && !StringUtils.isBlank(dataType)
+        && !StringUtils.isBlank(poolExtraProperty)) {
+      configPool = confPoolMap.get(dataType + " - " + entityId + " - " + poolExtraProperty);
+    } else if (!StringUtils.isBlank(entityId) && !StringUtils.isBlank(dataType)) {
+      configPool = confPoolMap.get(dataType + " - " + entityId);
+    }
+    return configPool == null && !StringUtils.isBlank(poolExtraProperty)
+        ? getConfiguredPool(entityId, dataType, null)
+        : configPool == null ? confPoolMap.get(DEFAULT_TYPE + " - " + entityId) : configPool;
   }
 
 }
