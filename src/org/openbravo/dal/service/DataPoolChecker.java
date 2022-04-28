@@ -123,12 +123,19 @@ public class DataPoolChecker implements OBSingleton {
    *
    * @return true if the current entity should use the default pool
    */
-  boolean shouldUseDefaultPool(String entityId, String dataType) {
+  boolean shouldUseDefaultPool(String entityId, String dataType, String poolExtraProperty) {
     String configPool = null;
-    if (!StringUtils.isBlank(entityId) && !confPoolMap.containsKey(dataType + " - " + entityId)) {
-      configPool = confPoolMap.get("REPORT - " + entityId);
-    } else if (!StringUtils.isBlank(entityId)) {
+
+    if (!StringUtils.isBlank(entityId) && !StringUtils.isBlank(dataType)
+        && !StringUtils.isBlank(poolExtraProperty)) {
+      configPool = confPoolMap.get(dataType + " - " + entityId + " - " + poolExtraProperty);
+    } else if (!StringUtils.isBlank(entityId) && !StringUtils.isBlank(dataType)) {
       configPool = confPoolMap.get(dataType + " - " + entityId);
+      if (configPool == null) {
+        configPool = confPoolMap.get(DEFAULT_TYPE + " - " + entityId);
+      }
+    } else if (!StringUtils.isBlank(entityId)) {
+      configPool = confPoolMap.get(DEFAULT_TYPE + " - " + entityId);
     }
 
     String poolUsedForEntity = configPool != null ? configPool

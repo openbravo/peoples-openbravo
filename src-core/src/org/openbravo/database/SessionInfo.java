@@ -23,6 +23,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,6 +58,7 @@ public class SessionInfo {
   private static ThreadLocal<String> processId = new ThreadLocal<String>();
   private static ThreadLocal<String> command = new ThreadLocal<String>();
   private static ThreadLocal<String> queryProfile = new ThreadLocal<String>();
+  private static ThreadLocal<Map<String, Object>> additionalInfo = new ThreadLocal<Map<String, Object>>();
 
   /*
    * To optimize updating of the AD_CONTEXT_INFO information, getConnection() is changed to return
@@ -88,6 +91,7 @@ public class SessionInfo {
     command.set(null);
     queryProfile.set(null);
     auditThisThread.set(true);
+    additionalInfo.set(new HashMap<String, Object>());
     // if there is an open connection associated to get current request, close it
     Connection conn = sessionConnection.get();
     try {
@@ -399,6 +403,14 @@ public class SessionInfo {
 
   public static void setQueryProfile(String profile) {
     queryProfile.set(profile);
+  }
+
+  public static Object getAdditionalInfoProperty(String property) {
+    return additionalInfo.get().get(property);
+  }
+
+  public static void setAddionalInfoProperty(String property, Object value) {
+    additionalInfo.get().put(property, value);
   }
 
   public static String getSessionId() {

@@ -72,6 +72,7 @@ import org.openbravo.service.db.DalConnectionProvider;
 public class OBDal implements OBNotSingleton {
   private static final Logger log = LogManager.getLogger();
   private static final String ACTIVE_FILTER = "activeFilter";
+  private static final String CHECKER_PROPERTY = "poolExtraProperty";
 
   private static OBDal instance;
 
@@ -111,7 +112,8 @@ public class OBDal implements OBNotSingleton {
    */
   public static OBDal getInstance(String pool) {
     if (ExternalConnectionPool.DEFAULT_POOL.equals(pool) || getDataPoolChecker()
-        .shouldUseDefaultPool(SessionInfo.getProcessId(), SessionInfo.getProcessType())) {
+        .shouldUseDefaultPool(SessionInfo.getProcessId(), SessionInfo.getProcessType(),
+            (String) SessionInfo.getAdditionalInfoProperty(CHECKER_PROPERTY))) {
       return getInstance();
     }
 
