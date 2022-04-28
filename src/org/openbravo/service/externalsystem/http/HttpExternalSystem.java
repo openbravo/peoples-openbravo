@@ -63,6 +63,7 @@ public class HttpExternalSystem extends ExternalSystem {
   private String method;
   private int timeout;
   private HttpClient client;
+  HttpAuthorizationProvider authorizationProvider;
 
   @Inject
   @Any
@@ -82,7 +83,8 @@ public class HttpExternalSystem extends ExternalSystem {
     url = httpConfig.getURL();
     method = httpConfig.getRequestMethod();
     timeout = getTimeoutValue(httpConfig);
-    client = buildClient(httpConfig);
+    authorizationProvider = newHttpAuthorizationProvider(httpConfig);
+    client = buildClient();
   }
 
   private int getTimeoutValue(HttpExternalSystemData httpConfig) {
@@ -93,12 +95,12 @@ public class HttpExternalSystem extends ExternalSystem {
     return configTimeout.intValue();
   }
 
-  private HttpClient buildClient(HttpExternalSystemData httpConfig) {
+  private HttpClient buildClient() {
     HttpClient.Builder builder = HttpClient.newBuilder()
         .connectTimeout(Duration.ofSeconds(timeout));
-    HttpAuthorizationProvider authProvider = newHttpAuthorizationProvider(httpConfig);
-    if (authProvider instanceof Authenticator) {
-      builder.authenticator((Authenticator) authProvider);
+
+    if (authorizationProvider instanceof Authenticator) {
+      builder.authenticator((Authenticator) authorizationProvider);
     }
     return builder.build();
   }
@@ -145,6 +147,13 @@ public class HttpExternalSystem extends ExternalSystem {
         // should be moved to a new HTTP configuration setting
         .header("Content-Type", "application/json")
         .POST(BodyPublishers.ofInputStream(inputStreamSupplier));
+
+    if (authorizationProvider instanceof HttpAuthorizationRequestHeaderProvider) {
+      ((HttpAuthorizationRequestHeaderProvider) authorizationProvider).getHeaders()
+          .entrySet()
+          .stream()
+          .forEach(entry -> request.header(entry.getKey(), entry.getValue()));
+    }
 
     long requestStartTime = System.currentTimeMillis();
     return client.sendAsync(request.build(), BodyHandlers.ofString())

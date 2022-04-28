@@ -54,6 +54,7 @@ import org.openbravo.service.externalsystem.ExternalSystemData;
 import org.openbravo.service.externalsystem.ExternalSystemProvider;
 import org.openbravo.service.externalsystem.ExternalSystemResponse;
 import org.openbravo.service.externalsystem.HttpExternalSystemData;
+import org.openbravo.test.base.Issue;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -112,15 +113,8 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
   }
 
   @Test
-  public void send() throws JSONException, ServletException {
-    httpExternalSystemData.setAuthorizationType("BASIC");
-    httpExternalSystemData.setUsername("Openbravo");
-    httpExternalSystemData.setPassword(FormatUtilities.encryptDecrypt("openbravo", true));
-
-    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
-        .orElseThrow();
-
-    ExternalSystemResponse response = externalSystem.send(getRequestDataSupplier()).join();
+  public void sendWithBasicAuth() throws JSONException, ServletException {
+    ExternalSystemResponse response = sendWithBasicCredentials("BASIC");
 
     assertThat("Is Successful Response", response.getType(),
         equalTo(ExternalSystemResponse.Type.SUCCESS));
@@ -128,6 +122,31 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
         equalTo(HttpServletResponse.SC_OK));
     assertThat("Expected Response Data", (JSONObject) response.getData(),
         equal(getExpectedResponseData()));
+  }
+
+  @Test
+  @Issue("49159")
+  public void sendWithBasicAuthAlwaysInHeader() throws JSONException, ServletException {
+    ExternalSystemResponse response = sendWithBasicCredentials("BASIC_ALWAYS_HEADER");
+
+    assertThat("Is Successful Response", response.getType(),
+        equalTo(ExternalSystemResponse.Type.SUCCESS));
+    assertThat("Expected Response Status Code", response.getStatusCode(),
+        equalTo(HttpServletResponse.SC_OK));
+    assertThat("Expected Response Data", (JSONObject) response.getData(),
+        equal(getExpectedResponseData()));
+  }
+
+  private ExternalSystemResponse sendWithBasicCredentials(String authorizationType)
+      throws JSONException, ServletException {
+    httpExternalSystemData.setAuthorizationType(authorizationType);
+    httpExternalSystemData.setUsername("Openbravo");
+    httpExternalSystemData.setPassword(FormatUtilities.encryptDecrypt("openbravo", true));
+
+    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
+        .orElseThrow();
+
+    return externalSystem.send(getRequestDataSupplier()).join();
   }
 
   @Test

@@ -18,8 +18,9 @@
  */
 package org.openbravo.service.externalsystem.http;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -30,19 +31,20 @@ import org.openbravo.service.externalsystem.HttpExternalSystemData;
 import org.openbravo.utils.FormatUtilities;
 
 /**
- * Used to authenticate an HTTP request with the standard Basic HTTP authorization method
+ * Used to authenticate an HTTP request by providing the basic authorization information always in
+ * the header
  */
-@HttpAuthorizationMethod("BASIC")
-public class BasicHttpAuthorizationProvider extends Authenticator
-    implements HttpAuthorizationProvider {
+@HttpAuthorizationMethod("BASIC_ALWAYS_HEADER")
+public class BasicHttpAlwaysInHeaderAuthorizationProvider
+    implements HttpAuthorizationProvider, HttpAuthorizationRequestHeaderProvider {
   private static final Logger log = LogManager.getLogger();
 
-  private String userName;
-  private String password;
+  private Map<String, String> headers;
 
   @Override
   public void init(HttpExternalSystemData configuration) {
-    userName = configuration.getUsername();
+    String userName = configuration.getUsername();
+    String password;
     try {
       password = FormatUtilities.encryptDecrypt(configuration.getPassword(), false);
     } catch (ServletException ex) {
@@ -50,10 +52,13 @@ public class BasicHttpAuthorizationProvider extends Authenticator
       throw new ExternalSystemConfigurationError(
           "Error decrypting password of HTTP configuration " + configuration.getId());
     }
+    String basicAuth = "Basic " + Base64.getEncoder()
+        .encodeToString((userName + ":" + password).getBytes(StandardCharsets.ISO_8859_1));
+    headers = Map.of("Authorization", basicAuth);
   }
 
   @Override
-  protected PasswordAuthentication getPasswordAuthentication() {
-    return new PasswordAuthentication(userName, password.toCharArray());
+  public Map<String, String> getHeaders() {
+    return headers;
   }
 }
