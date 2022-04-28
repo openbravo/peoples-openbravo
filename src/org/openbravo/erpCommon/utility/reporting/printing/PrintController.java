@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2021 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2022 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -242,9 +242,6 @@ public class PrintController extends HttpSecureAppServlet {
             e.getStackTrace();
           }
           savedReports.add(report);
-          if (multiReports) {
-            reportManager.saveTempReport(report, vars);
-          }
         }
         printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
       } else if (vars.commandIn("ARCHIVE")) {
