@@ -191,12 +191,20 @@ abstract class JSONMatcher<T extends Object> extends TypeSafeMatcher<T> {
       } else if (canCompareTimestampValues(actual, expected)) {
         return areEqualStringValues(actual, expected);
       } else if (expected instanceof Matcher<?>) {
-        return ((Matcher<?>) expected).matches(actual);
+        try {
+          return ((Matcher<?>) expected).matches(actual);
+        } catch (ClassCastException ex) {
+          // trying to match an actual of unexpected type
+          return false;
+        }
       }
       return false;
     }
     if (!strict && actual instanceof JSONObject && expected instanceof JSONObject) {
       return objectsMatch((JSONObject) actual, (JSONObject) expected);
+    }
+    if (!strict && actual instanceof JSONArray && expected instanceof JSONArray) {
+      return arraysMatch((JSONArray) actual, (JSONArray) expected);
     }
     if (actual instanceof JSONObject) {
       return objectsAreEqual(actual, expected);
@@ -212,6 +220,12 @@ abstract class JSONMatcher<T extends Object> extends TypeSafeMatcher<T> {
       return false;
     }
     return arrayContains(array1, asStream(array2).collect(Collectors.toList()));
+  }
+
+  private boolean arraysMatch(JSONArray array1, JSONArray array2) {
+    return asStream(array2)
+        .filter(obj -> asStream(array1).noneMatch(o -> propertiesAreEqual(o, obj, false)))
+        .count() == 0;
   }
 
   private boolean areEqualNumericValues(Number number1, Number number2) {

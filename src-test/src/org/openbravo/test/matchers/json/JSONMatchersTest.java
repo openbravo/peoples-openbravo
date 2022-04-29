@@ -215,6 +215,106 @@ public class JSONMatchersTest {
   }
 
   @Test
+  public void compareMatchingArrayProperties() {
+    JSONArray array1 = new JSONArray();
+    array1.put(new JSONObject(Map.of("p1", "A", "p2", "A")));
+    array1.put(new JSONObject(Map.of("p1", "B", "p2", "B")));
+    JSONArray array2 = new JSONArray();
+    array2.put(new JSONObject(Map.of("p1", "A")));
+    array2.put(new JSONObject(Map.of("p2", "B")));
+
+    JSONObject actual = new JSONObject(Map.of("array", array1));
+    JSONObject expected = new JSONObject(Map.of("array", array2));
+
+    assertThat("JSON objects are matching", actual, matchesObject(expected));
+    assertThat("JSON objects are not equal", actual, not(equal(expected)));
+  }
+
+  @Test
+  public void compareMatchingArrayPropertiesWithDifferenTypes() {
+    JSONArray array1 = new JSONArray();
+    array1.put(new JSONObject(Map.of("p1", "A", "p2", "A")));
+    array1.put(1234);
+    JSONArray array2 = new JSONArray();
+    array2.put(1234);
+    array2.put(new JSONObject(Map.of("p2", "A")));
+
+    JSONObject actual = new JSONObject(Map.of("array", array1));
+    JSONObject expected = new JSONObject(Map.of("array", array2));
+
+    assertThat("JSON objects are matching", actual, matchesObject(expected));
+    assertThat("JSON objects are not equal", actual, not(equal(expected)));
+  }
+
+  @Test
+  public void compareMatchingArrayPropertiesWithMatchers() {
+    JSONArray array1 = new JSONArray();
+    array1.put(new JSONObject(Map.of("p1", "A", "p2", "A")));
+    array1.put("abcde");
+    array1.put(1234);
+    JSONArray array2 = new JSONArray();
+    array2.put(greaterThan(1000));
+    array2.put(new JSONObject(Map.of("p2", "A")));
+    array2.put(startsWith("abc"));
+
+    JSONObject actual = new JSONObject(Map.of("array", array1));
+    JSONObject expected = new JSONObject(Map.of("array", array2));
+
+    assertThat("JSON objects are matching", actual, matchesObject(expected));
+    assertThat("JSON objects are not equal", actual, not(equal(expected)));
+  }
+
+  @Test
+  public void compareNonMatchingArrayProperties() {
+    JSONArray array1 = new JSONArray();
+    array1.put(new JSONObject(Map.of("p1", "A", "p2", "A")));
+    array1.put(new JSONObject(Map.of("p1", "B", "p2", "B")));
+    JSONArray array2 = new JSONArray();
+    array2.put(new JSONObject(Map.of("p1", "A")));
+    array2.put(new JSONObject(Map.of("p2", "C")));
+
+    JSONObject actual = new JSONObject(Map.of("array", array1));
+    JSONObject expected = new JSONObject(Map.of("array", array2));
+
+    assertThat("JSON objects are not matching", actual, not(matchesObject(expected)));
+    assertThat("JSON objects are not equal", actual, not(equal(expected)));
+  }
+
+  @Test
+  public void compareNonMatchingArrayPropertiesWithDifferentTypes() {
+    JSONArray array1 = new JSONArray();
+    array1.put(new JSONObject(Map.of("p1", "A", "p2", "A")));
+    array1.put(1234);
+    JSONArray array2 = new JSONArray();
+    array2.put(5678);
+    array2.put(new JSONObject(Map.of("p2", "A")));
+
+    JSONObject actual = new JSONObject(Map.of("array", array1));
+    JSONObject expected = new JSONObject(Map.of("array", array2));
+
+    assertThat("JSON objects are not matching", actual, not(matchesObject(expected)));
+    assertThat("JSON objects are not equal", actual, not(equal(expected)));
+  }
+
+  @Test
+  public void compareNonMatchingArrayPropertiesWithMatchers() {
+    JSONArray array1 = new JSONArray();
+    array1.put(new JSONObject(Map.of("p1", "A", "p2", "A")));
+    array1.put("abcde");
+    array1.put(1234);
+    JSONArray array2 = new JSONArray();
+    array2.put(greaterThan(1000));
+    array2.put(new JSONObject(Map.of("p2", "A")));
+    array2.put(startsWith("efg"));
+
+    JSONObject actual = new JSONObject(Map.of("array", array1));
+    JSONObject expected = new JSONObject(Map.of("array", array2));
+
+    assertThat("JSON objects are not matching", actual, not(matchesObject(expected)));
+    assertThat("JSON objects are not equal", actual, not(equal(expected)));
+  }
+
+  @Test
   public void arrayHasItems() {
     JSONArray array = Items.baseArray();
     List<JSONObject> items = Items.base();
