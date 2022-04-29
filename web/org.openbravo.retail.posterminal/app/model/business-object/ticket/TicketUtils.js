@@ -520,7 +520,12 @@
             : baseGrossUnitPrice;
           newLine.grossUnitAmount = discounts
             ? discounts.grossUnitAmount
-            : OB.DEC.mul(isBooked ? grossUnitPrice : baseGrossUnitPrice, qty);
+            : OB.DEC.mul(
+                isBooked
+                  ? grossUnitPrice || line.grossListPrice
+                  : baseGrossUnitPrice,
+                qty
+              );
           // This part is only used for visualization in WebPOS 2.0
           newLine.grossUnitAmountWithoutTicketDiscounts = calculateUnitAmountWithoutTicketDiscounts(
             newLine.baseGrossUnitAmount,
