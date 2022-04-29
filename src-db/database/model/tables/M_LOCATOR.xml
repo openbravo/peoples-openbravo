@@ -128,6 +128,10 @@
         <index-column name="PARENT_LOCATOR_ID"/>
         <whereClause><![CDATA[PARENT_LOCATOR_ID IS NOT NULL]]></whereClause>
       </index>
+      <unique name="M_LOCATOR_VALUE_WAREHOUSE">
+        <unique-column name="VALUE"/>
+        <unique-column name="M_WAREHOUSE_ID"/>
+      </unique>
       <check name="M_LOCATOR_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_LOCATOR_ISVIRTUAL_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_LOCATOR_VIRTUAL_EMPTY_CHECK"><![CDATA[ISVIRTUAL = 'Y' AND PARENT_LOCATOR_ID IS NOT NULL OR ISVIRTUAL = 'N' AND PARENT_LOCATOR_ID IS NULL]]></check>
