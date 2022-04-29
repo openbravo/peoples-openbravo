@@ -42,7 +42,7 @@
         <onCreateDefault/>
       </column>
       <column name="DATA_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
+        <default><![CDATA[REPORT]]></default>
         <onCreateDefault><![CDATA['REPORT']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUIAPP_DPS_CLIENT">
