@@ -30,20 +30,20 @@ public interface DataPoolConfiguration {
    *
    * @return configured values
    */
-  public abstract Map<String, String> getDataPoolSelection();
+  public Map<String, String> getDataPoolSelection();
 
   /**
    * Provides the preference name of the default database pool for an specific type of data
    *
    * @return preference name
    */
-  public abstract String getPreferenceName();
+  public String getPreferenceName();
 
   /**
    * Provides the name of the specific type of data implemented for this class
    *
    * @return data type name
    */
-  public abstract String getDataType();
+  public String getDataType();
 
 }
