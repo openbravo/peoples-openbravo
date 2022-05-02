@@ -87,7 +87,7 @@ public class DataPoolChecker implements OBSingleton {
     String hql = 
             "select p.searchKey " +
             "  from ADPreference p " +
-            " where p.property=':preferenceName' " +
+            " where p.property= :preferenceName " +
             "   and p.active = true " +
             "   and p.visibleAtClient.id = '0' " +
             "   and p.visibleAtOrganization.id = '0' ";
@@ -95,7 +95,7 @@ public class DataPoolChecker implements OBSingleton {
     String defaultPool = OBDal.getInstance()
         .getSession()
         .createQuery(hql, String.class)
-        .setParameter("preferenceName", config.getPreferenceName())
+        .setParameter("preferenceName", "'" + config.getPreferenceName() + "'")
         .setMaxResults(1)
         .uniqueResult();
 
