@@ -32,6 +32,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.database.ExternalConnectionPool;
+import org.openbravo.database.SessionInfo;
 
 /**
  * Helper class used to determine if the read-only pool should be used to retrieve data according to
@@ -47,6 +48,7 @@ public class DataPoolChecker implements OBSingleton {
   private final List<DataPoolConfiguration> dataPoolConfigurations = WeldUtils
       .getInstances(DataPoolConfiguration.class);
   private static final String DEFAULT_TYPE = "REPORT";
+  private static final String CHECKER_PROPERTY = "poolExtraProperty";
 
   private static DataPoolChecker instance;
 
@@ -125,7 +127,11 @@ public class DataPoolChecker implements OBSingleton {
    *
    * @return true if the current entity should use the default pool
    */
-  boolean shouldUseDefaultPool(String entityId, String dataType, String poolExtraProperty) {
+  boolean shouldUseDefaultPool() {
+    String entityId = SessionInfo.getProcessId();
+    String dataType = SessionInfo.getProcessType();
+    String poolExtraProperty = (String) SessionInfo.getAdditionalInfo(CHECKER_PROPERTY);
+
     String configPool = getConfiguredPool(entityId, dataType, poolExtraProperty);
 
     String poolUsedForEntity = configPool != null ? configPool
