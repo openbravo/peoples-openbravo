@@ -91,7 +91,7 @@ public class SessionInfo {
     command.set(null);
     queryProfile.set(null);
     auditThisThread.set(true);
-    additionalInfo.set(new HashMap<String, Object>());
+    additionalInfo.set(new HashMap<>());
     // if there is an open connection associated to get current request, close it
     Connection conn = sessionConnection.get();
     try {
@@ -405,11 +405,19 @@ public class SessionInfo {
     queryProfile.set(profile);
   }
 
-  public static Object getAdditionalInfoProperty(String property) {
+  /**
+   * Provides an object related to an specific property name
+   *
+   * @return object
+   */
+  public static Object getAdditionalInfo(String property) {
     return additionalInfo.get().get(property);
   }
 
-  public static void setAddionalInfoProperty(String property, Object value) {
+  /**
+   * Save the provided object related to the provided property name
+   */
+  public static void setAddionalInfo(String property, Object value) {
     additionalInfo.get().put(property, value);
   }
 

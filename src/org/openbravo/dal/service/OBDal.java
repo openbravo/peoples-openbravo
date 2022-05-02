@@ -113,7 +113,7 @@ public class OBDal implements OBNotSingleton {
   public static OBDal getInstance(String pool) {
     if (ExternalConnectionPool.DEFAULT_POOL.equals(pool) || getDataPoolChecker()
         .shouldUseDefaultPool(SessionInfo.getProcessId(), SessionInfo.getProcessType(),
-            (String) SessionInfo.getAdditionalInfoProperty(CHECKER_PROPERTY))) {
+            (String) SessionInfo.getAdditionalInfo(CHECKER_PROPERTY))) {
       return getInstance();
     }
 
