@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.weld.WeldUtils;
@@ -66,10 +65,9 @@ public class DataPoolChecker implements OBSingleton {
    * pool to be used on each case
    */
   private void initialize() {
-    dataPoolConfigurations.add(new ReportDataPoolConfiguration());
-    dataPoolConfigurations.stream().forEach(config -> {
-      refreshDefaultPoolPreference(config);
-    });
+    defaultReadOnlyPool = dataPoolConfigurations.stream()
+        .map(c -> Map.entry(c.getDataType(), getDefaultPoolPreference(c)))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     refreshDataPoolProcesses();
   }
 
@@ -81,13 +79,11 @@ public class DataPoolChecker implements OBSingleton {
         .flatMap(c -> c.getDataPoolSelection()
             .entrySet()
             .stream()
-            .collect(Collectors.toMap(e -> c.getDataType() + e.getKey(), Map.Entry::getValue))
-            .entrySet()
-            .stream())
+            .map(e -> Map.entry(c.getDataType() + " - " + e.getKey(), e.getValue())))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private void refreshDefaultPoolPreference(DataPoolConfiguration config) {
+  private String getDefaultPoolPreference(DataPoolConfiguration config) {
     //@formatter:off
     String hql = 
             "select p.searchKey " +
@@ -97,30 +93,24 @@ public class DataPoolChecker implements OBSingleton {
             "   and p.visibleAtClient.id = '0' " +
             "   and p.visibleAtOrganization.id = '0' ";
     //@formatter:on
-    Query<String> defaultPoolQuery = OBDal.getInstance()
+    String defaultPool = OBDal.getInstance()
         .getSession()
         .createQuery(hql, String.class)
         .setParameter("preferenceName", config.getPreferenceName())
-        .setMaxResults(1);
-    setDefaultReadOnlyPool(config.getDataType(), defaultPoolQuery.uniqueResult());
-  }
+        .setMaxResults(1)
+        .uniqueResult();
 
-  /**
-   * Set the default pool used when requesting the read-only pool
-   *
-   * @param defaultPool
-   *          the ID of the default pool returned when requesting a read-only instance
-   */
-  private void setDefaultReadOnlyPool(String configType, String defaultPool) {
-    if (validPoolValues.contains(defaultPool)) {
-      log.debug("Pool {} is set as the default to use with {}", defaultPool, configType);
-      defaultReadOnlyPool.put(configType, defaultPool);
+    boolean isValid = validPoolValues.contains(defaultPool);
+    if (isValid) {
+      log.debug("Pool {} is set as the default to use with {}", defaultPool, config.getDataType());
     } else {
-      defaultReadOnlyPool.put(configType, ExternalConnectionPool.READONLY_POOL);
       log.warn(
-          "Preference value {} is not a valid Database pool. Using READONLY_POOL as the default value",
-          defaultPool);
+          "Preference value {} is not a valid Database pool to use with {}. Using READONLY_POOL as the default value",
+          defaultPool, config.getDataType());
     }
+
+    return isValid ? defaultPool : ExternalConnectionPool.READONLY_POOL;
+
   }
 
   /**
