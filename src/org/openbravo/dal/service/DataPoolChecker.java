@@ -46,7 +46,7 @@ public class DataPoolChecker implements OBSingleton {
   private Map<String, String> defaultReadOnlyPool = new HashMap<>();
   private final List<DataPoolConfiguration> dataPoolConfigurations = WeldUtils
       .getInstances(DataPoolConfiguration.class);
-  private final String DEFAULT_TYPE = "REPORT";
+  private static final String DEFAULT_TYPE = "REPORT";
 
   private static DataPoolChecker instance;
 
