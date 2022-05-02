@@ -28,7 +28,7 @@ public interface DataPoolConfiguration {
   /**
    * Provides a map with all the configured values for an specific type of data
    *
-   * @return configured values
+   * @return configured values defined on a map with the following format <Entity ID, Database Pool>
    */
   public Map<String, String> getDataPoolSelection();
 
