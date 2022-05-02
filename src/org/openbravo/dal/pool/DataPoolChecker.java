@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.dal.service;
+package org.openbravo.dal.pool;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,6 +31,7 @@ import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 
@@ -127,7 +128,7 @@ public class DataPoolChecker implements OBSingleton {
    *
    * @return true if the current entity should use the default pool
    */
-  boolean shouldUseDefaultPool() {
+  public boolean shouldUseDefaultPool() {
     String entityId = SessionInfo.getProcessId();
     String dataType = SessionInfo.getProcessType();
     String poolExtraProperty = (String) SessionInfo.getAdditionalInfo(CHECKER_PROPERTY);

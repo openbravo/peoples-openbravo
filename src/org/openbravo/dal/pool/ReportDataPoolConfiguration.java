@@ -16,13 +16,14 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.dal.service;
+package org.openbravo.dal.pool;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.query.Query;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * Class used to define the database pool configurations for application reports
