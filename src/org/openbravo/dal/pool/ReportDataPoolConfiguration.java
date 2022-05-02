@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.query.Query;
+import org.openbravo.dal.service.DataPoolConfiguration;
 import org.openbravo.dal.service.OBDal;
 
 /**

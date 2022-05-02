@@ -32,7 +32,7 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.client.kernel.event.TransactionBeginEvent;
 import org.openbravo.client.kernel.event.TransactionCompletedEvent;
-import org.openbravo.dal.pool.DataPoolChecker;
+import org.openbravo.dal.service.DataPoolChecker;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 
 /**

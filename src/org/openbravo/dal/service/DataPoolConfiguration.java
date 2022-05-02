@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.dal.pool;
+package org.openbravo.dal.service;
 
 import java.util.Map;
 
