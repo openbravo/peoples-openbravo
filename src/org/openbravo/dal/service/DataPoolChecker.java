@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -65,23 +66,22 @@ public class DataPoolChecker implements OBSingleton {
     dataPoolConfigurations.add(new ReportDataPoolConfiguration());
     dataPoolConfigurations.stream().forEach(config -> {
       refreshDefaultPoolPreference(config);
-      refreshDataPoolConfiguration(config);
     });
+    refreshDataPoolProcesses();
   }
 
   /**
    * Reload from DB the database pool configurations to be used on each case
    */
   public void refreshDataPoolProcesses() {
-    confPoolMap = new HashMap<>();
-    dataPoolConfigurations.stream().forEach(config -> {
-      refreshDataPoolConfiguration(config);
-    });
-  }
-
-  private void refreshDataPoolConfiguration(DataPoolConfiguration config) {
-    config.getDataPoolSelection()
-        .forEach((k, v) -> confPoolMap.put(config.getDataType() + " - " + k, v));
+    confPoolMap = dataPoolConfigurations.stream()
+        .flatMap(c -> c.getDataPoolSelection()
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(e -> c.getDataType() + e.getKey(), Map.Entry::getValue))
+            .entrySet()
+            .stream())
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   private void refreshDefaultPoolPreference(DataPoolConfiguration config) {
