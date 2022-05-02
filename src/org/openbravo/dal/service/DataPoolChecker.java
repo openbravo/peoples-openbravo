@@ -33,7 +33,8 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.database.ExternalConnectionPool;
 
 /**
- * Helper class used to determine if a entity should use the read-only pool to retrieve data
+ * Helper class used to determine if the read-only pool should be used to retrieve data according to
+ * the data pool configuration
  */
 public class DataPoolChecker implements OBSingleton {
   private static final Logger log = LogManager.getLogger();
@@ -57,28 +58,28 @@ public class DataPoolChecker implements OBSingleton {
   }
 
   /**
-   * Initializes the checker caching the list of entities with a database pool assigned and the
-   * default preference as well
+   * Initializes the checker by caching the database pool configurations and the default read-only
+   * pool to be used on each case
    */
   private void initialize() {
     dataPoolConfigurations.add(new ReportDataPoolConfiguration());
     dataPoolConfigurations.stream().forEach(config -> {
       refreshDefaultPoolPreference(config);
-      refreshDataPoolEntitiesValues(config);
+      refreshDataPoolConfiguration(config);
     });
   }
 
   /**
-   * Reload from DB the entities that should use the Read-only pool
+   * Reload from DB the database pool configurations to be used on each case
    */
-  public void refreshDataPoolEntities() {
+  public void refreshDataPoolProcesses() {
     confPoolMap = new HashMap<>();
     dataPoolConfigurations.stream().forEach(config -> {
-      refreshDataPoolEntitiesValues(config);
+      refreshDataPoolConfiguration(config);
     });
   }
 
-  private void refreshDataPoolEntitiesValues(DataPoolConfiguration config) {
+  private void refreshDataPoolConfiguration(DataPoolConfiguration config) {
     config.getDataPoolSelection()
         .forEach((k, v) -> confPoolMap.put(config.getDataType() + " - " + k, v));
   }
