@@ -20,12 +20,30 @@ package org.openbravo.dal.service;
 
 import java.util.Map;
 
-public abstract class DataPoolConfiguration {
+/**
+ * Interface used to define the database pool configurations for a specific type of data
+ */
+public interface DataPoolConfiguration {
 
-  protected abstract Map<String, String> getDataPoolSelection();
+  /**
+   * Provides a map with all the configured values for an specific type of data
+   *
+   * @return configured values
+   */
+  public abstract Map<String, String> getDataPoolSelection();
 
-  protected abstract String getPreferenceName();
+  /**
+   * Provides the preference name of the default database pool for an specific type of data
+   *
+   * @return preference name
+   */
+  public abstract String getPreferenceName();
 
-  protected abstract String getDataType();
+  /**
+   * Provides the name of the specific type of data implemented for this class
+   *
+   * @return data type name
+   */
+  public abstract String getDataType();
 
 }

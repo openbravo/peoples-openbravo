@@ -24,12 +24,15 @@ import java.util.Map;
 
 import org.hibernate.query.Query;
 
-public class ReportDataPoolConfiguration extends DataPoolConfiguration {
+/**
+ * Class used to define the database pool configurations for application reports
+ */
+public class ReportDataPoolConfiguration implements DataPoolConfiguration {
   private static final int REPORT_ID = 0;
   private static final int DATA_POOL = 1;
 
   @Override
-  protected Map<String, String> getDataPoolSelection() {
+  public Map<String, String> getDataPoolSelection() {
     //@formatter:off
     String hql =
             "select dps.report.id, dps.dataPool " +
@@ -47,12 +50,12 @@ public class ReportDataPoolConfiguration extends DataPoolConfiguration {
   }
 
   @Override
-  protected String getPreferenceName() {
+  public String getPreferenceName() {
     return "OBUIAPP_DefaultDBPoolForReports";
   }
 
   @Override
-  protected String getDataType() {
+  public String getDataType() {
     return "REPORT";
   }
 
