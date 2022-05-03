@@ -53,6 +53,7 @@
       </foreign-key>
       <index name="OBUIAPP_DPS_REPORT_V_ID_UNIQUE" unique="true">
         <index-column name="OBUIAPP_POOL_REPORT_V_ID"/>
+        <whereClause><![CDATA[DATA_TYPE='REPORT']]></whereClause>
       </index>
       <check name="OBUIAPP_DPS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
