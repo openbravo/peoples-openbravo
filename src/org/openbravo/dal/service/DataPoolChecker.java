@@ -95,7 +95,7 @@ public class DataPoolChecker implements OBSingleton {
     String defaultPool = OBDal.getInstance()
         .getSession()
         .createQuery(hql, String.class)
-        .setParameter("preferenceName", "'" + config.getPreferenceName() + "'")
+        .setParameter("preferenceName", config.getPreferenceName())
         .setMaxResults(1)
         .uniqueResult();
 
