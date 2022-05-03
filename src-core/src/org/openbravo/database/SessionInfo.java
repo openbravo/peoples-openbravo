@@ -406,18 +406,33 @@ public class SessionInfo {
   }
 
   /**
-   * Provides an object related to an specific property name
+   * Retrieves the value of an additional session info property which has been previously saved with
+   * {@link SessionInfo#setAddionalInfo(String, Object)}.
    *
-   * @return object
+   * @param property
+   *          The name of the additional session info property
+   *
+   * @return the value stored for the given property or null in case a value can not be found
    */
   public static Object getAdditionalInfo(String property) {
+    if (additionalInfo.get() == null) {
+      return null;
+    }
     return additionalInfo.get().get(property);
   }
 
   /**
-   * Save the provided object related to the provided property name
+   * Sets the value of an additional session info property.
+   *
+   * @param property
+   *          The name of the additional session info property
+   * @param value
+   *          The value to be assigned to the property
    */
   public static void setAddionalInfo(String property, Object value) {
+    if (additionalInfo.get() == null) {
+      additionalInfo.set(new HashMap<>());
+    }
     additionalInfo.get().put(property, value);
   }
 
