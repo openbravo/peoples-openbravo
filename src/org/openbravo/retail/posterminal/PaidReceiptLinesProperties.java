@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2014-2020 Openbravo S.L.U.
+ * Copyright (C) 2014-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -29,12 +29,20 @@ public class PaidReceiptLinesProperties extends ModelExtension {
 
   @Override
   public List<HQLProperty> getHQLProperties(Object params) {
-    ArrayList<HQLProperty> list = new ArrayList<HQLProperty>() {
+    return new ArrayList<HQLProperty>() {
       private static final long serialVersionUID = 1L;
       private final String currentLanguage = OBContext.getOBContext().getLanguage().getId();
       {
+        String trlName;
+        if (OBContext.hasTranslationInstalled()) {
+          trlName = "coalesce((select pt.name from ProductTrl AS pt where pt.language='"
+              + OBContext.getOBContext().getLanguage().getLanguage()
+              + "' and pt.product=product), product.name)";
+        } else {
+          trlName = "product.name";
+        }
         add(new HQLProperty("product.id", "id"));
-        add(new HQLProperty("product.name", "name"));
+        add(new HQLProperty(trlName, "name"));
         add(new HQLProperty("product.uOM.id", "uOM"));
         add(new HQLProperty("ordLine.lineGrossAmount", "lineGrossAmount"));
         add(new HQLProperty("ordLine.lineNetAmount", "lineNetAmount"));
@@ -86,7 +94,5 @@ public class PaidReceiptLinesProperties extends ModelExtension {
             "quotationDocumentTypeId"));
       }
     };
-
-    return list;
   }
 }
