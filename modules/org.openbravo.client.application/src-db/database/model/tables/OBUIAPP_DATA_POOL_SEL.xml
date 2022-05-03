@@ -56,5 +56,6 @@
         <whereClause><![CDATA[DATA_TYPE='REPORT']]></whereClause>
       </index>
       <check name="OBUIAPP_DPS_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBUIAPP_DPS_REPORT_CONF_CHK"><![CDATA[DATA_TYPE = 'REPORT' AND OBUIAPP_POOL_REPORT_V_ID IS NOT NULL OR DATA_TYPE <> 'REPORT' AND OBUIAPP_POOL_REPORT_V_ID IS NULL]]></check>
     </table>
   </database>
