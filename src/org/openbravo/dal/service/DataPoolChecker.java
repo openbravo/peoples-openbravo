@@ -87,7 +87,7 @@ public class DataPoolChecker implements OBSingleton {
             .map(e -> Map.entry(c.getDataType() + " - " + e.getKey(), e.getValue())))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-    log.info("Data pool configuration refreshed:\n{}",
+    log.debug("Data pool configuration refreshed:\n{}",
         () -> confPoolMap.entrySet()
             .stream()
             .map(e -> e.getKey() + ": " + e.getValue())
