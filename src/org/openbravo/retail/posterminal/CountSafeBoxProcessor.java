@@ -282,6 +282,7 @@ public class CountSafeBoxProcessor {
         .createCriteria(FIN_FinaccTransaction.class);
     query.add(Restrictions.eq(FIN_FinaccTransaction.PROPERTY_ACCOUNT + ".id",
         paymentType.getFINFinancialaccount().getId()));
+    query.add(Restrictions.isNull(FIN_FinaccTransaction.PROPERTY_RECONCILIATION));
 
     return query;
   }
