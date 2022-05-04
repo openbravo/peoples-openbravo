@@ -44,6 +44,7 @@ import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTe
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.client.kernel.test.CompressionTest;
+import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
@@ -204,6 +205,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     DatasourceEventObserver.class, //
     PersistanceObserver.class, //
     ImageTest.class, //
+    DataPoolCheckerTest.class, //
 
     // expression
     EvaluationTest.class, //
