@@ -33,7 +33,8 @@ public interface DataPoolConfiguration {
    *
    * @see DataPoolChecker#shouldUseDefaultPool
    *
-   * @return configured values defined on a map with the following format <Entry ID, Database Pool>
+   * @return configured values defined on a map with the IDs of the different entries as keys and
+   *         the database pool name to be used by each key as values.
    */
   public Map<String, String> getDataPoolSelection();
 
