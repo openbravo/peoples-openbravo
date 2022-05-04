@@ -27,7 +27,8 @@ import org.openbravo.dal.service.DataPoolConfiguration;
 import org.openbravo.dal.service.OBDal;
 
 /**
- * Class used to define the database pool configurations for application reports
+ * Retrieves the database pool configurations for the application reports, i.e., the information
+ * about which database pool must be used to retrieve the information for each report.
  */
 public class ReportDataPoolConfiguration implements DataPoolConfiguration {
   private static final int REPORT_ID = 0;

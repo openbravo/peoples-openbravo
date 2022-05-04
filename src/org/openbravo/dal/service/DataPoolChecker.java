@@ -19,6 +19,7 @@
 package org.openbravo.dal.service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,15 +40,14 @@ import org.openbravo.database.SessionInfo;
  */
 public class DataPoolChecker implements OBSingleton {
   private static final Logger log = LogManager.getLogger();
+  private static final String DEFAULT_TYPE = "REPORT";
+  private static final String CHECKER_PROPERTY = "poolExtraProperty";
 
   private Map<String, String> confPoolMap = new HashMap<>();
   private final List<String> validPoolValues = Arrays.asList(ExternalConnectionPool.DEFAULT_POOL,
       ExternalConnectionPool.READONLY_POOL);
-  private Map<String, String> defaultReadOnlyPool = new HashMap<>();
-  private final List<DataPoolConfiguration> dataPoolConfigurations = WeldUtils
-      .getInstances(DataPoolConfiguration.class);
-  private static final String DEFAULT_TYPE = "REPORT";
-  private static final String CHECKER_PROPERTY = "poolExtraProperty";
+  private Map<String, String> defaultReadOnlyPools = new HashMap<>();
+  private List<DataPoolConfiguration> dataPoolConfigurations;
 
   private static DataPoolChecker instance;
 
@@ -64,10 +64,16 @@ public class DataPoolChecker implements OBSingleton {
    * pool to be used on each case
    */
   private void initialize() {
-    defaultReadOnlyPool = dataPoolConfigurations.stream()
-        .map(c -> Map.entry(c.getDataType(), getDefaultPoolPreference(c)))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    refreshDataPoolProcesses();
+    try {
+      dataPoolConfigurations = WeldUtils.getInstances(DataPoolConfiguration.class);
+      defaultReadOnlyPools = dataPoolConfigurations.stream()
+          .map(c -> Map.entry(c.getDataType(), getDefaultPoolPreference(c)))
+          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      refreshDataPoolProcesses();
+    } catch (Exception ex) {
+      log.error("Error initializing the data pool configurations", ex);
+      confPoolMap = Collections.emptyMap();
+    }
   }
 
   /**
@@ -80,6 +86,12 @@ public class DataPoolChecker implements OBSingleton {
             .stream()
             .map(e -> Map.entry(c.getDataType() + " - " + e.getKey(), e.getValue())))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    log.info("Data pool configuration refreshed:\n{}",
+        () -> confPoolMap.entrySet()
+            .stream()
+            .map(e -> e.getKey() + ": " + e.getValue())
+            .collect(Collectors.joining(",\n")));
   }
 
   private String getDefaultPoolPreference(DataPoolConfiguration config) {
@@ -101,15 +113,15 @@ public class DataPoolChecker implements OBSingleton {
 
     boolean isValid = validPoolValues.contains(defaultPool);
     if (isValid) {
-      log.debug("Pool {} is set as the default to use with {}", defaultPool, config.getDataType());
+      log.debug("Pool {} is set as the default to use with {} data type", defaultPool,
+          config.getDataType());
     } else {
       log.warn(
-          "Preference value {} is not a valid Database pool to use with {}. Using READONLY_POOL as the default value",
+          "Preference value {} is not a valid Database pool to use with {} data type. Using READONLY_POOL as the default value",
           defaultPool, config.getDataType());
     }
 
     return isValid ? defaultPool : ExternalConnectionPool.READONLY_POOL;
-
   }
 
   /**
@@ -118,34 +130,35 @@ public class DataPoolChecker implements OBSingleton {
    * @return true if the current entity should use the default pool
    */
   boolean shouldUseDefaultPool() {
-    String entityId = SessionInfo.getProcessId();
-    String dataType = SessionInfo.getProcessType();
+    String processId = SessionInfo.getProcessId();
+    String dataType = StringUtils.isBlank(SessionInfo.getProcessType()) ? DEFAULT_TYPE
+        : SessionInfo.getProcessType();
     String poolExtraProperty = (String) SessionInfo.getAdditionalInfo(CHECKER_PROPERTY);
 
-    String configPool = getConfiguredPool(entityId, dataType, poolExtraProperty);
+    String configPool = StringUtils.isBlank(processId) ? null
+        : getConfiguredPool(processId, dataType, poolExtraProperty);
+    String poolToUse = configPool == null ? getDefaultPoolForType(dataType) : configPool;
 
-    String poolUsedForEntity = configPool != null ? configPool
-        : !defaultReadOnlyPool.containsKey(dataType) ? defaultReadOnlyPool.get(DEFAULT_TYPE)
-            : defaultReadOnlyPool.get(dataType);
-
-    if (entityId != null) {
-      log.debug("Using pool {} for entity with id {}", poolUsedForEntity, entityId);
+    if (processId != null) {
+      log.debug("Using pool {} for process with id {} and data type {}", poolToUse, processId,
+          dataType);
     }
-
-    return ExternalConnectionPool.DEFAULT_POOL.equals(poolUsedForEntity);
+    return ExternalConnectionPool.DEFAULT_POOL.equals(poolToUse);
   }
 
-  private String getConfiguredPool(String entityId, String dataType, String poolExtraProperty) {
+  private String getDefaultPoolForType(String dataType) {
+    return defaultReadOnlyPools.containsKey(dataType) ? defaultReadOnlyPools.get(dataType)
+        : defaultReadOnlyPools.get(DEFAULT_TYPE);
+  }
+
+  private String getConfiguredPool(String processId, String dataType, String poolExtraProperty) {
     String configPool = null;
-    if (!StringUtils.isBlank(entityId) && !StringUtils.isBlank(dataType)
-        && !StringUtils.isBlank(poolExtraProperty)) {
-      configPool = confPoolMap.get(dataType + " - " + entityId + " - " + poolExtraProperty);
-    } else if (!StringUtils.isBlank(entityId) && !StringUtils.isBlank(dataType)) {
-      configPool = confPoolMap.get(dataType + " - " + entityId);
+    if (!StringUtils.isBlank(poolExtraProperty)) {
+      configPool = confPoolMap.get(dataType + " - " + processId + " - " + poolExtraProperty);
     }
-    return configPool == null && !StringUtils.isBlank(poolExtraProperty)
-        ? getConfiguredPool(entityId, dataType, null)
-        : configPool == null ? confPoolMap.get(DEFAULT_TYPE + " - " + entityId) : configPool;
+    if (configPool == null) {
+      configPool = confPoolMap.get(dataType + " - " + processId);
+    }
+    return configPool;
   }
-
 }

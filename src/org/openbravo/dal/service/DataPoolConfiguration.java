@@ -21,28 +21,34 @@ package org.openbravo.dal.service;
 import java.util.Map;
 
 /**
- * Interface used to define the database pool configurations for a specific type of data
+ * Used by the {@link DataPoolChecker} to retrieve the database pool configuration for a specific
+ * type of data
  */
 public interface DataPoolConfiguration {
 
   /**
-   * Provides a map with all the configured values for an specific type of data
+   * Provides a map that contains the data pool to be used for each entry of this configuration. The
+   * entries (keys of the map) should be built according to the format expected by the
+   * {@DataPoolChecker} to ensure that it is able to find the configuration correctly.
    *
-   * @return configured values defined on a map with the following format <Entity ID, Database Pool>
+   * @see DataPoolChecker#shouldUseDefaultPool
+   *
+   * @return configured values defined on a map with the following format <Entry ID, Database Pool>
    */
   public Map<String, String> getDataPoolSelection();
 
   /**
-   * Provides the preference name of the default database pool for an specific type of data
+   * Provides the name of the preference that specifies the default database pool to be used by the
+   * elements of this configuration when there is no an specific configuration form them
    *
-   * @return preference name
+   * @return The preference name
    */
   public String getPreferenceName();
 
   /**
-   * Provides the name of the specific type of data implemented for this class
+   * Provides the name of the type of data for this configuration
    *
-   * @return data type name
+   * @return The name of the data type
    */
   public String getDataType();
 
