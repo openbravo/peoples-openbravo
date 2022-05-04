@@ -142,7 +142,16 @@
       if (receipt.get('replacedorder')) {
         selectedReceiptLines.forEach(function(line) {
           var oldqty = line.get('qty');
-          var newqty = oldqty + this.calculateToAdd(receipt, oldqty, value);
+          const newqty = OB.DEC.add(
+            oldqty,
+            this.calculateToAdd(
+              receipt,
+              oldqty,
+              value,
+              line.get('product').get('uOMstandardPrecision')
+            ),
+            line.get('product').get('uOMstandardPrecision')
+          );
 
           if (oldqty > 0 && newqty < line.get('remainingQuantity')) {
             cancelQtyChange = true;
@@ -183,8 +192,16 @@
       // Validate based new quantity of the selected line
       if (
         receipt.validateAllowSalesWithReturn(
-          selectedReceiptLine.get('qty') +
-            this.calculateToAdd(receipt, selectedReceiptLine.get('qty'), value),
+          OB.DEC.add(
+            selectedReceiptLine.get('qty'),
+            this.calculateToAdd(
+              receipt,
+              selectedReceiptLine.get('qty'),
+              value,
+              selectedReceiptLine.get('product').get('uOMstandardPrecision')
+            ),
+            selectedReceiptLine.get('product').get('uOMstandardPrecision')
+          ),
           false,
           selectedReceiptLines
         )
@@ -233,9 +250,18 @@
             }
             selectedReceiptLines.forEach(function(line) {
               selection.push(line);
-              var toadd = this.calculateToAdd(receipt, line.get('qty'), value);
+              const toadd = this.calculateToAdd(
+                receipt,
+                line.get('qty'),
+                value,
+                line.get('product').get('uOMstandardPrecision')
+              );
               if (toadd !== 0) {
-                var newqty = line.get('qty') + toadd;
+                const newqty = OB.DEC.add(
+                  line.get('qty'),
+                  toadd,
+                  line.get('product').get('uOMstandardPrecision')
+                );
                 if (receipt.get('orderType') !== 1 && newqty === 0) {
                   // If final quantity will be 0 then request approval
                   selection.pop();
@@ -295,8 +321,10 @@
       properties: {
         i18nContent: 'OBMOBC_KbQuantity'
       },
-      calculateToAdd: function(receipt, qty, value) {
-        return receipt.get('orderType') === 1 ? value + qty : value - qty;
+      calculateToAdd: function(receipt, qty, value, scale) {
+        return receipt.get('orderType') === 1
+          ? OB.DEC.add(value, qty, scale)
+          : OB.DEC.sub(value, qty, scale);
       }
     })
   );
