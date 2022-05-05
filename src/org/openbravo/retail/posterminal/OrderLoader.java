@@ -1123,6 +1123,18 @@ public class OrderLoader extends POSDataSynchronizationProcess
             String discountinstance = jsonPromotion.getString("discountinstance");
             promotion.setObposDiscountinstance(discountinstance);
           }
+          if (jsonPromotion.has("extraProperties")
+              && jsonPromotion.getString("extraProperties").length() > 0
+              && !("null".equals(jsonPromotion.getString("extraProperties")))) {
+            // ensure that it is a valid JSON Object prior to save it
+            try {
+              JSONObject jsonExtraProperties = jsonPromotion.getJSONObject("extraProperties");
+              promotion.setObposExtraproperties(jsonExtraProperties.toString());
+            } catch (Exception e) {
+              throw new OBException("extraProperties attached to promotion "
+                  + promotion.getIdentifier() + " is not a valid JSON.");
+            }
+          }
           if (promotion.getDisplayedTotalAmount() == null
               && promotion.getTotalAmount().compareTo(BigDecimal.ZERO) == 0) {
             promotion.setDisplayedTotalAmount(BigDecimal.ZERO);

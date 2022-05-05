@@ -350,6 +350,9 @@ public class PaidReceipts extends JSONProcessSimple {
             if (promotion.getObdiscQtyoffer() != null) {
               jsonPromo.put("obdiscQtyoffer", promotion.getObdiscQtyoffer());
             }
+            if (promotion.getObposExtraproperties() != null) {
+              jsonPromo.put("extraProperties", new JSONObject(promotion.getObposExtraproperties()));
+            }
             setPromotionExtraFieldValues(jsonPromo, promotion, promoExtraFields);
             promotions.put(jsonPromo);
             hasPromotions = true;
