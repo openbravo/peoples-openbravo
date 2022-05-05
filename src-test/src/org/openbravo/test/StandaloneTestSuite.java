@@ -36,6 +36,7 @@ import org.openbravo.client.application.test.DynamicExpressionParserTest;
 import org.openbravo.client.application.test.GenerateTypesJSTest;
 import org.openbravo.client.application.test.MenuTemplateTest;
 import org.openbravo.client.application.test.MenuTest;
+import org.openbravo.client.application.test.SelectionPoolConfigurationTest;
 import org.openbravo.client.application.test.event.DatasourceEventObserver;
 import org.openbravo.client.application.test.event.PersistanceObserver;
 import org.openbravo.client.application.window.OBViewFieldHandlerFieldSorterTest;
@@ -205,7 +206,10 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     DatasourceEventObserver.class, //
     PersistanceObserver.class, //
     ImageTest.class, //
+
+    // database pool
     DataPoolCheckerTest.class, //
+    SelectionPoolConfigurationTest.class,
 
     // expression
     EvaluationTest.class, //
