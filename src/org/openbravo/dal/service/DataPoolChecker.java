@@ -143,7 +143,7 @@ public class DataPoolChecker implements OBSingleton {
 
     String configPool = StringUtils.isBlank(processId) ? null
         : getConfiguredPool(processId, dataType, poolExtraProperty);
-    String poolToUse = configPool == null ? getDefaultPoolForType(dataType) : configPool;
+    String poolToUse = configPool == null ? defaultReadOnlyPools.get(dataType) : configPool;
 
     if (processId != null) {
       log.debug("Using pool {} for process with id {} and data type {}", poolToUse, processId,
@@ -154,11 +154,6 @@ public class DataPoolChecker implements OBSingleton {
 
   private boolean isUnknownType(String dataType) {
     return StringUtils.isBlank(dataType) || !defaultReadOnlyPools.containsKey(dataType);
-  }
-
-  private String getDefaultPoolForType(String dataType) {
-    return defaultReadOnlyPools.containsKey(dataType) ? defaultReadOnlyPools.get(dataType)
-        : defaultReadOnlyPools.get(DEFAULT_TYPE);
   }
 
   private String getConfiguredPool(String processId, String dataType, String poolExtraProperty) {
