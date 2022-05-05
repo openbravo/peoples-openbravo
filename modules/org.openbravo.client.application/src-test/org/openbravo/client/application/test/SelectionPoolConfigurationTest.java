@@ -116,6 +116,7 @@ public class SelectionPoolConfigurationTest extends WeldBaseTest {
       OBContext.setAdminMode(false);
       DataPoolSelection dataPoolConf1 = newDataPoolSelectionConf();
       OBDal.getInstance().save(dataPoolConf1);
+      OBDal.getInstance().flush();
       DataPoolSelection dataPoolConf2 = newDataPoolSelectionConf();
       OBDal.getInstance().save(dataPoolConf2);
       OBDal.getInstance().flush();
@@ -137,8 +138,8 @@ public class SelectionPoolConfigurationTest extends WeldBaseTest {
       dataPoolConf2
           .setReport(OBDal.getInstance().getProxy(DataPoolReport.class, REPORT_CASHFLOW_ID));
       OBDal.getInstance().save(dataPoolConf2);
+      OBDal.getInstance().flush();
       dataPoolConf2.setReport(OBDal.getInstance().getProxy(DataPoolReport.class, REPORT_AGILE_ID));
-      OBDal.getInstance().save(dataPoolConf2);
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();

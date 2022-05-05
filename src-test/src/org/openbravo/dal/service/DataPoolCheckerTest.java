@@ -84,10 +84,11 @@ public class DataPoolCheckerTest extends WeldBaseTest {
   }
 
   @Test
-  public void usePoolFromPreferenceWithUnknownType() {
+  public void usePoolFromPreferenceWithUnknownDataType() {
     SessionInfo.setProcessId(REPORT_USING_DEFAULT_POOL);
-    SessionInfo.setProcessType("UNKNOWN");
-    assertPoolFromPreferenceIsUsed();
+    // reports executed from process definitions set "PD" process type
+    SessionInfo.setProcessType("PD");
+    assertFalse(isReadOnlyPoolUsed());
   }
 
   @Test
