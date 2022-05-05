@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2021 Openbravo SLU
+ * All portions are Copyright (C) 2021-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,9 +50,11 @@ const production = process.env.NODE_ENV === 'production';
 
 validateDependencies();
 // prepares folder where links to openbravo node modules will be linked
-fs.rmdirSync(globalModulesPath, {
-  recursive: true
-});
+if (fs.existsSync(globalModulesPath)) {
+  fs.rmSync(globalModulesPath, {
+    recursive: true
+  });
+}
 fs.mkdirSync(globalModulesPath, {
   recursive: true
 });
@@ -60,7 +62,9 @@ fs.mkdirSync(globalModulesPath, {
 // install modules in openbravo root rolder
 // ignore scripts to avoid a infinite loop caused by this script already being executed as part of a npm script
 const environment = production ? '--production' : '';
-execSync(`npm ci --ignore-scripts ${environment}`, { stdio: 'inherit' });
+execSync(`npm ci --ignore-scripts ${environment} --legacy-peer-deps`, {
+  stdio: 'inherit'
+});
 
 getModules()
   .filter(module => moduleContainsPackageJson(module))
@@ -76,7 +80,7 @@ getModules()
       .forEach(packageJsonPath => {
         console.log(`Installing node modules in ${packageJsonPath}`);
         console.log(`npm ci...`);
-        execSync(`npm ci ${environment}`, {
+        execSync(`npm ci ${environment} --legacy-peer-deps`, {
           stdio: 'inherit',
           cwd: packageJsonPath
         });
