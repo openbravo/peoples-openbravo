@@ -110,7 +110,7 @@ http://people.apache.org/~andyc/neko/doc/html/
 # quartz-2.3.2.jar
 # servlet-api.jar 
 # wstx-asl-3.0.2.jar
-# xercesImpl-2.9.0-patched.jar
+# xercesImpl-2.12.3.jar
 
 All files under Apache Software License 2.0, available at
 http://www.apache.org/licenses/LICENSE-2.0
