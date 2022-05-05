@@ -94,6 +94,11 @@ abstract class JSONMatcher<T extends Object> extends TypeSafeMatcher<T> {
       if (common.length() == 0) {
         // not any common property
         nonMatchingProperties = getKeySet(subset);
+      } else if (subset.length() > common.length()) {
+        // subset and actual have the same number of properties but there are missing properties in
+        // actual that are in subset
+        nonMatchingProperties = getKeySet(subset);
+        nonMatchingProperties.removeAll(getKeySet(common));
       } else {
         nonMatchingProperties = getKeySet(common).stream()
             .filter(key -> !propertiesAreEqual(common.opt(key), subset.opt(key), false))

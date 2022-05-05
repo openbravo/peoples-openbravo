@@ -215,6 +215,14 @@ public class JSONMatchersTest {
   }
 
   @Test
+  public void withSameNumberOfPropsButDifferentShouldNotMatch() {
+    JSONObject actual = new JSONObject(Map.of("p1", 1, "p2", 2, "p4", 4));
+    JSONObject expected = new JSONObject(Map.of("p1", 1, "p2", 2, "p3", 3));
+
+    assertThat("JSON objects are not matching", actual, not(matchesObject(expected)));
+  }
+
+  @Test
   public void compareMatchingArrayProperties() {
     JSONArray array1 = new JSONArray();
     array1.put(new JSONObject(Map.of("p1", "A", "p2", "A")));
