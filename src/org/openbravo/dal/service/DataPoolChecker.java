@@ -137,9 +137,8 @@ public class DataPoolChecker implements OBSingleton {
    */
   boolean shouldUseDefaultPool() {
     String processId = SessionInfo.getProcessId();
-    String dataType = StringUtils.isBlank(SessionInfo.getProcessType())
-        || !defaultReadOnlyPools.containsKey(SessionInfo.getProcessType()) ? DEFAULT_TYPE
-            : SessionInfo.getProcessType();
+    String dataType = isUnknownType(SessionInfo.getProcessType()) ? DEFAULT_TYPE
+        : SessionInfo.getProcessType();
     String poolExtraProperty = (String) SessionInfo.getAdditionalInfo(CHECKER_PROPERTY);
 
     String configPool = StringUtils.isBlank(processId) ? null
@@ -151,6 +150,10 @@ public class DataPoolChecker implements OBSingleton {
           dataType);
     }
     return ExternalConnectionPool.DEFAULT_POOL.equals(poolToUse);
+  }
+
+  private boolean isUnknownType(String dataType) {
+    return StringUtils.isBlank(dataType) || !defaultReadOnlyPools.containsKey(dataType);
   }
 
   private String getDefaultPoolForType(String dataType) {
