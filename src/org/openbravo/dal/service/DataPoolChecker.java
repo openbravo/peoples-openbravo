@@ -65,8 +65,7 @@ public class DataPoolChecker implements OBSingleton {
    */
   private void initialize() {
     try {
-      dataPoolConfigurations = WeldUtils.getInstances(DataPoolConfiguration.class);
-      defaultReadOnlyPools = dataPoolConfigurations.stream()
+      defaultReadOnlyPools = getDataPoolConfigurations().stream()
           .map(c -> Map.entry(c.getDataType(), getDefaultPoolPreference(c)))
           .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       refreshDataPoolProcesses();
@@ -80,7 +79,7 @@ public class DataPoolChecker implements OBSingleton {
    * Reload from DB the database pool configurations to be used on each case
    */
   public void refreshDataPoolProcesses() {
-    confPoolMap = dataPoolConfigurations.stream()
+    confPoolMap = getDataPoolConfigurations().stream()
         .flatMap(c -> c.getDataPoolSelection()
             .entrySet()
             .stream()
@@ -92,6 +91,13 @@ public class DataPoolChecker implements OBSingleton {
             .stream()
             .map(e -> e.getKey() + ": " + e.getValue())
             .collect(Collectors.joining(",\n")));
+  }
+
+  private List<DataPoolConfiguration> getDataPoolConfigurations() {
+    if (dataPoolConfigurations == null) {
+      dataPoolConfigurations = WeldUtils.getInstances(DataPoolConfiguration.class);
+    }
+    return dataPoolConfigurations;
   }
 
   private String getDefaultPoolPreference(DataPoolConfiguration config) {
