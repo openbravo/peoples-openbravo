@@ -10,6 +10,7 @@ package org.openbravo.retail.posterminal;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -93,17 +94,22 @@ public class ProcessCountSafeBox extends POSDataSynchronizationProcess
 
     doReconciliation(safebox, jsonCountSafeBox, jsonData, countSafeBoxDate);
 
-    executeHooks(safebox, posTerminal, countSafeBoxDate, jsonCountSafeBox);
+    executeHooks(initialCountSafeboxHooks, safebox, posTerminal, countSafeBoxDate,
+        jsonCountSafeBox);
 
     jsonData.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
 
     return jsonData;
   }
 
-  private void executeHooks(OBPOSSafeBox safebox, OBPOSApplications touchpoint,
-      Date countSafeBoxDate, JSONObject jsonCountSafeBox) throws Exception {
-    for (InitialCountSafeBoxHook hook : initialCountSafeboxHooks) {
-      hook.exec(safebox, touchpoint, countSafeBoxDate, jsonCountSafeBox);
+  protected void executeHooks(Instance<? extends Object> hooks, OBPOSSafeBox safebox,
+      OBPOSApplications touchpoint, Date countSafeBoxDate, JSONObject jsonCountSafeBox)
+      throws Exception {
+
+    for (Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+      Object proc = procIter.next();
+      ((InitialCountSafeBoxHook) proc).exec(safebox, touchpoint, countSafeBoxDate,
+          jsonCountSafeBox);
     }
   }
 
