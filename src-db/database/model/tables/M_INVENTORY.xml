@@ -138,8 +138,7 @@
       <foreign-key foreignTable="USER2" name="M_INVENTORY_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
-      <index name="M_INVENTORY_NAME_MVMTDATE" unique="false">
-        <index-column name="NAME"/>
+      <index name="M_INVENTORY_MVMTDATE" unique="false">
         <index-column name="MOVEMENTDATE"/>
       </index>
       <index name="M_INVENTORY_POSTED" unique="false">
