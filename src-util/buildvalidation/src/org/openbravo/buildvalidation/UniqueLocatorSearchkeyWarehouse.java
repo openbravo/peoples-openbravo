@@ -35,15 +35,13 @@ public class UniqueLocatorSearchkeyWarehouse extends BuildValidation {
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
     try {
-      if (UniqueLocatorSearchkeyWarehouseData.existsUniqueLocatorSearchkeyWarehouse(cp)) {
-        UniqueLocatorSearchkeyWarehouseData[] duplicateLoc = UniqueLocatorSearchkeyWarehouseData
-            .getDuplicateLocatorSeachkeyWarehouse(cp);
-        if (duplicateLoc.length > 0) {
-          errors.add("Due to a database constraint modification, is no longer allowed "
-              + "to create two locators with same searchKey and same warehouse. "
-              + "There exists data in your database that do not fit this new constraint. Please review following:- ");
+      UniqueLocatorSearchkeyWarehouseData[] duplicateLoc = UniqueLocatorSearchkeyWarehouseData
+          .getDuplicateLocatorSeachkeyWarehouse(cp);
+      if (duplicateLoc.length > 0) {
+        errors.add("Due to a database constraint modification, is no longer allowed "
+            + "to create two locators with same searchKey and same warehouse. "
+            + "There exists data in your database that do not fit this new constraint. Please review following:- ");
 
-        }
         for (int i = 0; i < duplicateLoc.length; i++) {
           errors.add(" Warehouse : " + duplicateLoc[i].warehouse + ", Locator: "
               + duplicateLoc[i].searchkey);
