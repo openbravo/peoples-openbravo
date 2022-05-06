@@ -28,26 +28,33 @@ import org.openbravo.modulescript.OpenbravoVersion;
 /**
  * This validation is to verify searchKey and Warehouse is unique in Locator
  */
-public class DuplicatedInventory extends BuildValidation {
+public class UniqueLocatorSearchkeyWarehouse extends BuildValidation {
 
   @Override
   public List<String> execute() {
     ConnectionProvider cp = getConnectionProvider();
     ArrayList<String> errors = new ArrayList<String>();
     try {
-      if (DuplicatedInventoryData.existsDuplicatedInventory(cp)) {
-        errors.add("Due to a database constraint modification, is no longer allowed "
-            + "to create two locators with same searchKey and same warehouse. "
-            + "There exists data in your database that do not fit this new constraint. "
-            + "Please fix it in M_LOCATOR table as M_WAREHOUSE_ID AND "
-            + "VALUE columns have not got duplicated values");
+      if (UniqueLocatorSearchkeyWarehouseData.existsUniqueLocatorSearchkeyWarehouse(cp)) {
+        UniqueLocatorSearchkeyWarehouseData[] duplicateLoc = UniqueLocatorSearchkeyWarehouseData
+            .getDuplicateLocatorSeachkeyWarehouse(cp);
+        if (duplicateLoc.length > 0) {
+          errors.add("Due to a database constraint modification, is no longer allowed "
+              + "to create two locators with same searchKey and same warehouse. "
+              + "There exists data in your database that do not fit this new constraint. Please review following:- ");
+
+        }
+        for (int i = 0; i < duplicateLoc.length; i++) {
+          errors.add(" Warehouse : " + duplicateLoc[i].warehouse + ", Locator: "
+              + duplicateLoc[i].searchkey);
+        }
       }
     } catch (Exception e) {
       return handleError(e);
     }
     return errors;
   }
-  
+
   @Override
   protected ExecutionLimits getBuildValidationLimits() {
     return new ExecutionLimits("0", null, new OpenbravoVersion(3, 0, 223000));

@@ -18,8 +18,22 @@
  ************************************************************************
 -->
 
-<SqlClass name="DuplicatedInventoryData" package="org.openbravo.buildvalidation">
-  <SqlMethod name="existsDuplicatedInventory" type="preparedStatement" return="boolean">
+<SqlClass name="UniqueLocatorSearchkeyWarehouseData" package="org.openbravo.buildvalidation">
+  <SqlMethod name="getDuplicateLocatorSeachkeyWarehouse" type="preparedStatement" return="multiple">
+      <Sql><![CDATA[
+      		SELECT distinct loc.value AS searchkey, 
+            wh.name AS warehouse
+            FROM m_locator loc 
+            JOIN m_warehouse wh ON wh.m_warehouse_id=loc.m_warehouse_id
+            WHERE EXISTS (SELECT 1 FROM m_locator loc2
+			WHERE loc2.m_locator_id <> loc.m_locator_id 
+			AND loc2.value = loc.value 
+			AND loc2.m_warehouse_id = loc.m_warehouse_id)
+            ORDER BY wh.name, loc.value
+        ]]>
+      </Sql>
+  </SqlMethod>
+  <SqlMethod name="existsUniqueLocatorSearchkeyWarehouse" type="preparedStatement" return="boolean">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
          SELECT count(*) AS EXISTING
