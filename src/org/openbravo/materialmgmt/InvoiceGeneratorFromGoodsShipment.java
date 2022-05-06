@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018-2021 Openbravo SLU
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -48,6 +48,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
@@ -428,7 +429,7 @@ public class InvoiceGeneratorFromGoodsShipment {
     newInvoice.setTaxDate(getInvoiceDate());
     newInvoice.setSalesTransaction(true);
     newInvoice.setBusinessPartner(shipment.getBusinessPartner());
-    newInvoice.setPartnerAddress(shipment.getPartnerAddress());
+    newInvoice.setPartnerAddress(getInvoiceAddress(shipment));
     newInvoice.setPriceList(getPriceList());
     newInvoice.setCurrency(getCurrency());
     newInvoice.setSummedLineAmount(BigDecimal.ZERO);
@@ -441,6 +442,22 @@ public class InvoiceGeneratorFromGoodsShipment {
 
     OBDal.getInstance().save(newInvoice);
     return newInvoice;
+  }
+
+  /**
+   * @param shipment
+   * @return The invoice address of the Sales Order
+   */
+  private Location getInvoiceAddress(final ShipmentInOut shipment) {
+    try {
+      return shipment.getMaterialMgmtShipmentInOutLineList()
+          .get(0)
+          .getSalesOrderLine()
+          .getSalesOrder()
+          .getInvoiceAddress();
+    } catch (Exception e) {
+      return shipment.getPartnerAddress();
+    }
   }
 
   private DocumentType getDocumentTypeForARI(final Organization org) {
