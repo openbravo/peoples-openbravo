@@ -57,13 +57,9 @@
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="COST" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="ALGORITHM" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default><![CDATA[S]]></default>
-        <onCreateDefault/>
+      <column name="PPRICE_EXC_ORG_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA[AD_ORG_ID]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCTPRICE_EXC_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
@@ -73,6 +69,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCTPRICE" name="M_PRODUCTPRICE_EXC_M_PPRICE" onDelete="cascade">
         <reference local="M_PRODUCTPRICE_ID" foreign="M_PRODUCTPRICE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_ORG" name="M_PRODUCTPRICE_EXC_PPRICE_ORG">
+        <reference local="PPRICE_EXC_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="M_PPRICE_EXC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
