@@ -9,12 +9,20 @@
 package org.openbravo.retail.posterminal;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -34,6 +42,8 @@ import org.openbravo.model.common.invoice.InvoiceLineOffer;
 import org.openbravo.service.json.JsonConstants;
 
 public class Invoices extends JSONProcessSimple {
+  public static final Logger log = LogManager.getLogger();
+
   public static final String invoicesPropertyExtension = "InvoiceExtension";
   public static final String invoicesLinesPropertyExtension = "InvoiceExtensionLines";
   public static final String invoicesShipLinesPropertyExtension = "InvoiceExtensionShipLines";
@@ -66,6 +76,15 @@ public class Invoices extends JSONProcessSimple {
     JSONObject result = new JSONObject();
     OBContext.setAdminMode(true);
     try {
+      final DateFormat parseDateFormat = (DateFormat) POSUtils.dateFormatUTC.clone();
+      parseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+      final DateFormat orderDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      orderDateFormat
+          .setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone().getID()));
+      final DateFormat paymentDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      paymentDateFormat
+          .setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone().getID()));
+
       JSONArray respArray = new JSONArray();
 
       String invoiceid = jsonsent.getString("invoiceid");
@@ -87,6 +106,13 @@ public class Invoices extends JSONProcessSimple {
         Organization org = OBDal.getInstance().get(Organization.class, invoice.get("organization"));
         invoice.put("orderid", invoiceid);
         invoice.put("generateInvoice", true);
+
+        try {
+          Date date = parseDateFormat.parse(invoice.getString("orderDate"));
+          invoice.put("orderDate", orderDateFormat.format(date));
+        } catch (ParseException e) {
+          log.error(e.getMessage(), e);
+        }
 
         JSONArray listinvoicesLines = new JSONArray();
 
@@ -235,7 +261,12 @@ public class Invoices extends JSONProcessSimple {
               invoicePayment.put("amount",
                   new BigDecimal((String) objectIn.get("amount").toString())
                       .multiply(new BigDecimal((String) objectType.get("mulrate").toString())));
-              invoicePayment.put("paymentDate", objectIn.get("paymentDate"));
+              try {
+                Date date = parseDateFormat.parse((String) objectIn.get("paymentDate"));
+                invoicePayment.put("paymentDate", paymentDateFormat.format(date));
+              } catch (ParseException e) {
+                log.error(e.getMessage(), e);
+              }
               if (objectIn.has("paymentData")) {
                 invoicePayment.put("paymentData",
                     new JSONObject((String) objectIn.get("paymentData")));
@@ -280,7 +311,12 @@ public class Invoices extends JSONProcessSimple {
               invoicePayment.put("amount",
                   new BigDecimal((String) objectIn.get("amount").toString())
                       .multiply(new BigDecimal((String) paymentsType.get("mulrate").toString())));
-              invoicePayment.put("paymentDate", objectIn.get("paymentDate"));
+              try {
+                Date date = parseDateFormat.parse((String) objectIn.get("paymentDate"));
+                invoicePayment.put("paymentDate", paymentDateFormat.format(date));
+              } catch (ParseException e) {
+                log.error(e.getMessage(), e);
+              }
               if (objectIn.has("paymentData")) {
                 invoicePayment.put("paymentData",
                     new JSONObject((String) objectIn.get("paymentData")));

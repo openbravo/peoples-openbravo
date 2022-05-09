@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2018-2021 Openbravo S.L.U.
+ * Copyright (C) 2018-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -415,7 +415,8 @@ public class InvoiceUtils implements TicketPropertyMapping {
         Long.parseLong(jsoninvoice.getString("timezoneOffset")));
     Date now = new Date();
     invoice.set("creationDate", orderDate.after(now) ? now : orderDate);
-    final Date invoiceDate = OBMOBCUtils.stripTime(orderDate);
+    final Date invoiceDate = OBMOBCUtils.calculateServerDate(jsoninvoice.getString("orderDate"),
+        Long.parseLong(jsoninvoice.getString("timezoneOffset")));
     invoice.setAccountingDate(invoiceDate);
     invoice.setInvoiceDate(invoiceDate);
     invoice.setSalesTransaction(true);

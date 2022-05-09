@@ -122,7 +122,10 @@ public class PaidReceipts extends JSONProcessSimple {
 
       final DateFormat parseDateFormat = (DateFormat) POSUtils.dateFormatUTC.clone();
       parseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-      final DateFormat paymentDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      final DateFormat orderDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+      orderDateFormat
+          .setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone().getID()));
+      final DateFormat paymentDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
       paymentDateFormat
           .setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone().getID()));
 
@@ -163,6 +166,13 @@ public class PaidReceipts extends JSONProcessSimple {
         JSONObject paidReceipt = paidReceipts.getJSONObject(receipt);
         if (orderIds.indexOf(orderid) == -1) {
           orderIds.add(orderid);
+        }
+
+        try {
+          Date date = parseDateFormat.parse(paidReceipt.getString("orderDate"));
+          paidReceipt.put("orderDate", orderDateFormat.format(date));
+        } catch (ParseException e) {
+          log.error(e.getMessage(), e);
         }
 
         paidReceipt.put("orderid", orderid);
