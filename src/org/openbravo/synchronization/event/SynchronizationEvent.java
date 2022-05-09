@@ -19,6 +19,7 @@
 package org.openbravo.synchronization.event;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -66,6 +67,26 @@ public class SynchronizationEvent {
       log.trace("Triggered event {} for record ID {}", event, recordId);
     } else {
       log.trace("No trigger found for event {}, record ID {}", event, recordId);
+    }
+  }
+
+  /**
+   * Triggers a multiple record synchronization event
+   * 
+   * @param event
+   *          The unique identifier of the multiple record synchronization event
+   * @param params
+   *          The map of parameters used to obtain the records that will be related to the event.
+   *          The keys are the parameter name and the map values are the values for each parameter.
+   */
+  public void triggerEvent(String event, Map<String, Object> params) {
+    log.trace("Triggering multiple record event {} with params {}", event, params);
+    Optional<EventTrigger> optTrigger = getEventTrigger(event);
+    if (optTrigger.isPresent()) {
+      optTrigger.get().triggerEvent(event, params);
+      log.trace("Triggered multiple record event {} with params {}", event, params);
+    } else {
+      log.trace("No trigger found for multiple record event {}, params {}", event, params);
     }
   }
 
