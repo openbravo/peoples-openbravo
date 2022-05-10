@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
+import org.openbravo.dal.core.DalThreadCleaner;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.externalsystem.ExternalSystemProvider;
 import org.openbravo.service.externalsystem.ExternalSystemResponse;
@@ -59,7 +60,14 @@ public class CheckConnectivity extends BaseProcessActionHandler {
     return externalSystemProvider.getExternalSystem(id)
         .map(externalSystem -> externalSystem
             .send(() -> new ByteArrayInputStream(dataToSend.toString().getBytes()))
-            .thenApply(this::handleResponse)
+            .thenApply(response -> {
+              try {
+                return handleResponse(response);
+              } finally {
+                // close the DAL session used to get the messages of the response
+                DalThreadCleaner.getInstance().cleanWithRollback();
+              }
+            })
             .join())
         .orElse(buildError("C_ConnCheckMissingConfig"));
   }
