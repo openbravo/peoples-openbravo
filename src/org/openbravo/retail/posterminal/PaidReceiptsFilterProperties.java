@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2021 Openbravo S.L.U.
+ * Copyright (C) 2017-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -69,6 +69,12 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
             add(new HQLProperty("(case when ord.documentType.return = true then 'RET'"
                 + " when ord.documentType.sOSubType = 'OB' then 'QT'"
                 + " when ord.obposIslayaway = true then 'LAY' else 'ORD' end)", "orderType"));
+        }
+        String invoiceFilterHql = PaidReceiptsFilter.getInvoiceDocumentNo((JSONObject) params);
+        if (!"".equalsIgnoreCase(invoiceFilterHql)) {
+          add(new HQLProperty(
+              "( select hqlaggdist(i.documentNo)  from InvoiceLine iL  join iL.invoice i  join iL.salesOrderLine oL  join oL.salesOrder o  where o.id = ord.id )",
+              "invoiceDocumentNo"));
         }
       }
     };

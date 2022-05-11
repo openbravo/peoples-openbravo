@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2020 Openbravo S.L.U.
+ * Copyright (C) 2017-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -162,6 +162,13 @@
       remoteEntity: true,
       applyUIRestrictions: true,
       disableSorting: true
+    },
+    {
+      name: 'invoiceDocumentNo',
+      column: 'invoiceDocumentNo',
+      filter: true,
+      type: 'TEXT',
+      caption: 'OBPOS_InvoiceDocumentNo'
     }
   ]);
 
@@ -318,6 +325,13 @@
       remoteEntity: true,
       applyUIRestrictions: true,
       disableSorting: true
+    },
+    {
+      name: 'invoiceDocumentNo',
+      column: 'invoiceDocumentNo',
+      filter: true,
+      type: 'TEXT',
+      caption: 'OBPOS_InvoiceDocumentNo'
     }
   ]);
 })();
