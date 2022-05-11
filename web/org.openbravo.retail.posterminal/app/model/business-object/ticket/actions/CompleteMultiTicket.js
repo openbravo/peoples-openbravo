@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -116,10 +116,19 @@
             payload.preferences &&
             payload.preferences.autoPrintReceipts)
         ) {
+          const printSettings = {
+            skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+          };
+          const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
+            newMultiTicket,
+            printSettings
+          );
+
           newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
             newMultiTicket,
             {
-              skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+              ...printSettings,
+              templateName
             },
             payload.deliverAction,
             payload.deliverService,
@@ -127,10 +136,19 @@
           );
         }
         if (newMultiTicket.calculatedInvoice) {
+          const printSettings = {
+            skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+          };
+          const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
+            newMultiTicket.calculatedInvoice,
+            printSettings
+          );
+
           newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
             newMultiTicket.calculatedInvoice,
             {
-              skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+              ...printSettings,
+              templateName
             },
             payload.deliverAction,
             payload.deliverService,

@@ -1535,6 +1535,21 @@
         : payload.terminal.terminalType.documentTypeForReturns;
 
       return newTicket;
+    },
+
+    /**
+     * Get the template name for a ticket
+     *
+     * @param {object} ticket - The ticket to search its correspondant template name
+     * @param {object} printSettings - settings used for print the template
+     *
+     * @returns {string} The template name for that ticket and print settings
+     */
+    getTicketTemplateName(ticket, printSettings) {
+      return OB.App.PrintTemplateStore.selectTicketPrintTemplateName(
+        ticket,
+        printSettings
+      );
     }
   });
 })();
