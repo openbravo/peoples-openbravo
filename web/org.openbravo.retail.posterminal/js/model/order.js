@@ -704,6 +704,7 @@
 
           // Check if masterdata needs to be refreshed
           OB.UTIL.checkRefreshMasterData();
+          return receipt;
         } catch (error) {
           OB.App.View.ActionCanceledUIHandler.handle(error);
         }
@@ -740,31 +741,40 @@
       const afterPreOrderSave = _.after(
         receiptsForPreOrderSave.length,
         async function() {
-          const receipt = OB.UTIL.clone(me);
-          await runCompleteTicketAction(receipt);
-
-          OB.UTIL.HookManager.executeHooks(
-            isMultiTicket
-              ? 'OBPOS_PostSyncMultiReceipt'
-              : 'OBPOS_PostSyncReceipt',
-            isMultiTicket
-              ? {
-                  receipts: OB.MobileApp.model.multiOrders.get(
-                    'multiOrdersList'
-                  ).models,
-                  syncSuccess: true
-                }
-              : { receipt, syncSuccess: true },
-            function(args) {
+          await runCompleteTicketAction(OB.UTIL.clone(me)).then(receipt => {
+            if (!receipt) {
               OB.UTIL.ProcessController.finish(
                 actionName,
                 completeTicketExecution
               );
               if (callback) {
-                callback();
+                callback(false);
               }
+              return;
             }
-          );
+            OB.UTIL.HookManager.executeHooks(
+              isMultiTicket
+                ? 'OBPOS_PostSyncMultiReceipt'
+                : 'OBPOS_PostSyncReceipt',
+              isMultiTicket
+                ? {
+                    receipts: OB.MobileApp.model.multiOrders.get(
+                      'multiOrdersList'
+                    ).models,
+                    syncSuccess: true
+                  }
+                : { receipt, syncSuccess: true },
+              function(args) {
+                OB.UTIL.ProcessController.finish(
+                  actionName,
+                  completeTicketExecution
+                );
+                if (callback) {
+                  callback(true);
+                }
+              }
+            );
+          });
         }
       );
 
