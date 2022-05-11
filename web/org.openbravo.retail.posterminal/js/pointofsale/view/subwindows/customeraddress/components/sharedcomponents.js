@@ -221,6 +221,55 @@ enyo.kind({
       });
     };
 
+    function checkFields(items) {
+      let errors = '';
+      _.each(items, function(item) {
+        if (item.coreElement && item.coreElement.mandatory) {
+          var value = item.coreElement.getValue();
+          if (!value) {
+            item.setMessage(OB.I18N.getLabel('OBMOBC_LblMandatoryField'), true);
+            if (errors) {
+              errors += ', ';
+            }
+            errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
+          } else {
+            item.setMessage();
+          }
+        }
+        if (
+          item.getError() &&
+          !OB.UTIL.isNullOrUndefined(item.$.msg.content) &&
+          item.$.msg.content !== '' &&
+          item.$.msg.content !== OB.I18N.getLabel('OBMOBC_LblMandatoryField')
+        ) {
+          if (errors) {
+            errors += ', ';
+          }
+          errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
+        }
+      });
+      return errors;
+    }
+
+    function validateForm(form) {
+      if (inEvent.validations) {
+        let items = form.$.customerAddrAttributes.children,
+          errors = checkFields(items);
+        if (errors) {
+          OB.UTIL.showWarning(
+            OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors])
+          );
+          return false;
+        }
+      }
+      return true;
+    }
+
+    if (!validateForm(this)) {
+      errorCallback();
+      return;
+    }
+
     //Validate anonymous customer Address edit allowed
     if (
       this.customer &&
@@ -288,51 +337,6 @@ enyo.kind({
       });
     }
 
-    function checkFields(items, customerAddr) {
-      let errors = '';
-      _.each(items, function(item) {
-        if (item.coreElement && item.coreElement.mandatory) {
-          var value = customerAddr.get(item.coreElement.modelProperty);
-          if (!value) {
-            item.setMessage(OB.I18N.getLabel('OBMOBC_LblMandatoryField'), true);
-            if (errors) {
-              errors += ', ';
-            }
-            errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
-          } else {
-            item.setMessage();
-          }
-        }
-        if (
-          item.getError() &&
-          !OB.UTIL.isNullOrUndefined(item.$.msg.content) &&
-          item.$.msg.content !== '' &&
-          item.$.msg.content !== OB.I18N.getLabel('OBMOBC_LblMandatoryField')
-        ) {
-          if (errors) {
-            errors += ', ';
-          }
-          errors += OB.I18N.getLabel(item.coreElement.i18nLabel);
-        }
-      });
-      return errors;
-    }
-
-    function validateForm(form) {
-      if (inEvent.validations) {
-        let customerAddr = form.model.get('customerAddr'),
-          items = form.$.customerAddrAttributes.children,
-          errors = checkFields(items, customerAddr);
-        if (errors) {
-          OB.UTIL.showWarning(
-            OB.I18N.getLabel('OBPOS_BPartnerRequiredFields', [errors])
-          );
-          return false;
-        }
-      }
-      return true;
-    }
-
     if (
       me.$.customerAddrAttributes.$.line_customerAddrShip &&
       !me.$.customerAddrAttributes.$.line_customerAddrShip.coreElement.checked
@@ -364,34 +368,30 @@ enyo.kind({
       this.waterfall('onSaveChange', {
         customerAddr: this.model.get('customerAddr')
       });
-      if (validateForm(this)) {
-        OB.UTIL.HookManager.executeHooks(
-          'OBPOS_BeforeCustomerAddrSave',
-          {
-            customerAddr: this.model.get('customerAddr'),
-            isNew: true,
-            windowComponent: me
-          },
-          function(args) {
-            if (args && args.cancellation && args.cancellation === true) {
-              enableButtonsCallback();
-              return true;
-            }
-            var callback = function() {
-              enableButtonsCallback();
-              goToViewWindow({
-                customer: OB.UTIL.clone(me.customer),
-                customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
-              });
-            };
-            me.model
-              .get('customerAddr')
-              .saveCustomerAddr(callback, enableButtonsCallback);
+      OB.UTIL.HookManager.executeHooks(
+        'OBPOS_BeforeCustomerAddrSave',
+        {
+          customerAddr: this.model.get('customerAddr'),
+          isNew: true,
+          windowComponent: me
+        },
+        function(args) {
+          if (args && args.cancellation && args.cancellation === true) {
+            enableButtonsCallback();
+            return true;
           }
-        );
-      } else {
-        enableButtonsCallback();
-      }
+          var callback = function() {
+            enableButtonsCallback();
+            goToViewWindow({
+              customer: OB.UTIL.clone(me.customer),
+              customerAddr: OB.UTIL.clone(me.model.get('customerAddr'))
+            });
+          };
+          me.model
+            .get('customerAddr')
+            .saveCustomerAddr(callback, enableButtonsCallback);
+        }
+      );
     } else {
       this.model
         .get('customerAddr')
@@ -535,97 +535,93 @@ enyo.kind({
                 );
                 enableButtonsCallback();
               } else {
-                if (validateForm(me)) {
-                  if (
-                    OB.MobileApp.model.receipt.get('lines').length > 0 &&
-                    OB.MobileApp.model.receipt.get('bp').get('shipLocId') ===
-                      customerAddr.get('id') &&
-                    !customerAddr.get('isShipTo')
-                  ) {
-                    OB.UTIL.showConfirmation.display(
-                      OB.I18N.getLabel('OBPOS_InformationTitle'),
-                      OB.I18N.getLabel('OBPOS_UncheckShipToText'),
-                      [
-                        {
-                          label: OB.I18N.getLabel('OBPOS_LblOk'),
-                          isConfirmButton: true,
-                          action: function() {
-                            OB.UTIL.HookManager.executeHooks(
-                              'OBPOS_BeforeCustomerAddrSave',
-                              {
-                                customerAddr: me.model.get('customerAddr'),
-                                isNew: false,
-                                windowComponent: me
-                              },
-                              function(args) {
-                                var receipt = OB.MobileApp.model.receipt,
-                                  orderlines = [];
-                                if (
-                                  args &&
-                                  args.cancellation &&
-                                  args.cancellation === true
-                                ) {
-                                  enableButtonsCallback();
-                                  return true;
-                                }
-                                _.each(receipt.get('lines').models, function(
-                                  line
-                                ) {
-                                  orderlines.push(line);
-                                });
-                                receipt.deleteLinesFromOrder(
-                                  orderlines,
-                                  function() {
-                                    args.customerAddr.saveCustomerAddr(
-                                      callback,
-                                      enableButtonsCallback
-                                    );
-                                  }
-                                );
+                if (
+                  OB.MobileApp.model.receipt.get('lines').length > 0 &&
+                  OB.MobileApp.model.receipt.get('bp').get('shipLocId') ===
+                    customerAddr.get('id') &&
+                  !customerAddr.get('isShipTo')
+                ) {
+                  OB.UTIL.showConfirmation.display(
+                    OB.I18N.getLabel('OBPOS_InformationTitle'),
+                    OB.I18N.getLabel('OBPOS_UncheckShipToText'),
+                    [
+                      {
+                        label: OB.I18N.getLabel('OBPOS_LblOk'),
+                        isConfirmButton: true,
+                        action: function() {
+                          OB.UTIL.HookManager.executeHooks(
+                            'OBPOS_BeforeCustomerAddrSave',
+                            {
+                              customerAddr: me.model.get('customerAddr'),
+                              isNew: false,
+                              windowComponent: me
+                            },
+                            function(args) {
+                              var receipt = OB.MobileApp.model.receipt,
+                                orderlines = [];
+                              if (
+                                args &&
+                                args.cancellation &&
+                                args.cancellation === true
+                              ) {
+                                enableButtonsCallback();
+                                return true;
                               }
-                            );
-                          }
-                        },
-                        {
-                          label: OB.I18N.getLabel('OBMOBC_LblCancel'),
-                          action: function() {
-                            enableButtonsCallback();
-                          }
+                              _.each(receipt.get('lines').models, function(
+                                line
+                              ) {
+                                orderlines.push(line);
+                              });
+                              receipt.deleteLinesFromOrder(
+                                orderlines,
+                                function() {
+                                  args.customerAddr.saveCustomerAddr(
+                                    callback,
+                                    enableButtonsCallback
+                                  );
+                                }
+                              );
+                            }
+                          );
                         }
-                      ],
-                      {
-                        autoDismiss: false,
-                        onHideFunction: function() {
-                          return;
-                        }
-                      }
-                    );
-                  } else {
-                    OB.UTIL.HookManager.executeHooks(
-                      'OBPOS_BeforeCustomerAddrSave',
-                      {
-                        customerAddr: me.model.get('customerAddr'),
-                        isNew: false,
-                        windowComponent: me
                       },
-                      function(args) {
-                        if (
-                          args &&
-                          args.cancellation &&
-                          args.cancellation === true
-                        ) {
+                      {
+                        label: OB.I18N.getLabel('OBMOBC_LblCancel'),
+                        action: function() {
                           enableButtonsCallback();
-                          return true;
                         }
-                        args.customerAddr.saveCustomerAddr(
-                          callback,
-                          enableButtonsCallback
-                        );
                       }
-                    );
-                  }
+                    ],
+                    {
+                      autoDismiss: false,
+                      onHideFunction: function() {
+                        return;
+                      }
+                    }
+                  );
                 } else {
-                  enableButtonsCallback();
+                  OB.UTIL.HookManager.executeHooks(
+                    'OBPOS_BeforeCustomerAddrSave',
+                    {
+                      customerAddr: me.model.get('customerAddr'),
+                      isNew: false,
+                      windowComponent: me
+                    },
+                    function(args) {
+                      if (
+                        args &&
+                        args.cancellation &&
+                        args.cancellation === true
+                      ) {
+                        enableButtonsCallback();
+                        return true;
+                      }
+                      args.customerAddr.saveCustomerAddr(
+                        callback,
+                        enableButtonsCallback
+                      );
+                    }
+                  );
                 }
               }
             },
