@@ -45,6 +45,22 @@
       "**/web-test/**/?(*.)+(test).[jt]s?(x)",
       "**/web-jspack/**/?(*.)+(test).[jt]s?(x)"
     ],
+    "collectCoverageFrom": [
+      "**/web-jspack/**/*.js?(x)",
+      "**/web/*/app/**/*.js",
+      "!**/build/**",
+      "!**/generated/**",
+      "!**/vendor/**",
+      "!**/stories/**",
+      "!**/__mock__/**",
+      "!**/__test__/**",
+      "!**/src-test/**",
+      "!**/ob-init.js",
+      "!**/index.js?(x)",
+      "!**/WebContent/**",
+      "!**/storybook/**",
+      "!**/.storybook/**"
+    ],
     "moduleNameMapper": {
       "\\.(scss)$": "identity-obj-proxy",
       "\\.(css)$": "identity-obj-proxy",
