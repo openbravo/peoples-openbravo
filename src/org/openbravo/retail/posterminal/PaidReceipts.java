@@ -583,8 +583,10 @@ public class PaidReceipts extends JSONProcessSimple {
           if (!added) {
             // The payment type of the current payment is not configured for the webpos
             List<Object[]> paymentTypeList = new ArrayList<Object[]>();
-            executePaidReceiptsPaymentTypeTerminalHooks(paymentTypeList,
-                objectIn.getString("paymentId"), posTerminal.getId());
+            if (posTerminal != null) {
+              executePaidReceiptsPaymentTypeTerminalHooks(paymentTypeList,
+                  objectIn.getString("paymentId"), posTerminal.getId());
+            }
 
             if (paymentTypeList.size() == 0) {
               String hqlPaymentType = "select p.paymentMethod.name as name, p.account.id as account, "
