@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.service.json.JsonConstants;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Users;
 
 /**
  * This test evaluates if some expected values are get when a filter is applied and if some
@@ -49,7 +51,7 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
 
   // Expected
 
-  private static final String USER_EXPECTED_VALUE = "A530AAE22C864702B7E1C22D58E7B17B";
+  private static final String USER_EXPECTED_VALUE = Users.FB_ADMIN;
   private static final String ALERT_EXPECTED_VALUE = "D0CB68A7ADDD462E8B46438E2B9F58F6";
   private static final String CUSTOM_QUERY_SELECTOR_EXPECTED_VALUE = "C0D9FAD1047343BAA53AF6F60D572DD0";
   private static final String PRODUCT_SELECTOR_DATASOURCE_EXPECTED_VALUE = "B2D40D8A5D644DD89E329DC29730905541732EFCA6374148BFD8B08C8B12DB73";
@@ -108,7 +110,7 @@ public class DataSourceWhereParameter extends BaseDataSourceTestDal {
         PRODUCT_SELECTOR_DATASOURCE_EXPECTED_VALUE, PRODUCT_SELECTOR_DATASOURCE_UNEXPECTED_VALUE,
         false, new HashMap<String, String>() {
           {
-            put("_org", "E443A31992CB4635AFCAEABE7183CE85");
+            put("_org", Orgs.ESP_NORTE);
             put("_startRow", "0");
             put("_endRow", "75");
             put("_selectorDefinitionId", "2E64F551C7C4470C80C29DBA24B34A5F");

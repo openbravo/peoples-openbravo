@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.test.base.Issue;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.Users;
 
 /**
  * Test to check that an Organization selector (both normal and custom query based) applies the
@@ -52,9 +54,9 @@ import org.openbravo.test.base.Issue;
 @Issue("36151")
 @Issue("36863")
 public class OrganizationSelectorDataSourceTest extends BaseDataSourceTestDal {
-  private static final String USER_ID = "100";
+  private static final String USER_ID = Users.OPENBRAVO;
   private static final String ROLE_ID = "9D320A774FCD4E47801DF5E03AA11F2D";
-  private static final String LANGUAGE_ID = "192";
+  private static final String LANGUAGE_ID = Languages.EN_US_LANG_ID;
   private OBContext initialContext;
   private boolean organizationSelected;
 

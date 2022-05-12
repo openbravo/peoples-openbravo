@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,6 +51,10 @@ import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
 import org.openbravo.test.taxes.data.OrderLineRelTestData;
 import org.openbravo.test.taxes.data.OrderLineTestData;
 import org.openbravo.test.taxes.data.OrderTestData;
@@ -60,11 +64,11 @@ public class ModifyTaxesTest extends OBBaseTest {
 
   private final static DateFormat DF = new SimpleDateFormat("yyyy-MM-dd");
 
-  private final static String USER_OPENBRAVO = "100"; // User Openbravo
-  private final static String CLIENT_QA_TESTING = "4028E6C72959682B01295A070852010D"; // Client QA
-                                                                                      // // Testing
-  private final static String ORGANIZATION_SPAIN = "357947E87C284935AD1D783CF6F099A1"; // Organization
-  private final static String ROLE_QA_ADMIN = "4028E6C72959682B01295A071429011E";
+  private final static String USER_OPENBRAVO = Users.OPENBRAVO; // User Openbravo
+  private final static String CLIENT_QA_TESTING = Clients.QA_CLIENT; // Client QA
+                                                                     // // Testing
+  private final static String ORGANIZATION_SPAIN = Orgs.SPAIN; // Organization
+  private final static String ROLE_QA_ADMIN = Roles.QA_ADMIN_ROLE;
   private final static String PRICELIST_SALES = "4028E6C72959682B01295ADC1D55022B";
   private final static String PRICELIST_INCTAXES = "62C67BFD306C4BEF9F2738C27353380B";
   private final static String WAREHOUSE_SPAIN = "4D7B97565A024DB7B4C61650FA2B9560";

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.openbravo.test.base.TestConstants.Languages;
 
 /** Covers different datasource requests */
 public class OtherDatasourceRequests extends BaseDataSourceTestDal {
@@ -55,7 +56,7 @@ public class OtherDatasourceRequests extends BaseDataSourceTestDal {
   }
 
   private JSONObject performRequest() throws Exception {
-    changeProfile(TEST_ROLE_ID, "192", TEST_ORG_ID, TEST_WAREHOUSE_ID);
+    changeProfile(TEST_ROLE_ID, Languages.EN_US_LANG_ID, TEST_ORG_ID, TEST_WAREHOUSE_ID);
 
     Map<String, String> params = new HashMap<String, String>();
     params.put("inpwindowId", GOODS_MVNT);

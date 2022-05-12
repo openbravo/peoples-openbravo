@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2021 Openbravo SLU
+ * All portions are Copyright (C) 2016-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,6 +52,7 @@ import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.payment.PaymentTerm;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.pricing.pricelist.PriceList;
+import org.openbravo.test.base.TestConstants.Orgs;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
 
 /**
@@ -61,10 +62,10 @@ import org.openbravo.test.datasource.BaseDataSourceTestDal;
  *
  */
 public class CrossOrganizationReference extends BaseDataSourceTestDal {
-  protected static final String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
+  protected static final String SPAIN_ORG = Orgs.SPAIN;
   protected static final String SPAIN_WAREHOUSE = "4D7B97565A024DB7B4C61650FA2B9560";
 
-  protected static final String USA_ORG = "5EFF95EB540740A3B10510D9814EFAD5";
+  protected static final String USA_ORG = Orgs.USA;
   protected static final String USA_WAREHOUSE = "4028E6C72959682B01295ECFE2E20270";
   protected static final String USA_ORDER = "6394CC7B913240CCB6A54FB9C22477AF";
   protected static final String USA_BP = "4028E6C72959682B01295F40D4D20333";

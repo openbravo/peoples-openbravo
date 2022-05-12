@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,6 +27,10 @@ import java.util.Map;
 
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.WareHouses;
 
 /**
  * Test Product Complete Selector DataSource
@@ -58,8 +62,8 @@ public class ProductSelectorDataSourceTest extends BaseDataSourceTestNoDal {
 
   private JSONObject performRequest(boolean addFilter) throws Exception {
     if (!defaultRoleSet) {
-      changeProfile("42D0EEB1C66F497A90DD526DC597E6F0", "192", "E443A31992CB4635AFCAEABE7183CE85",
-          "B2D40D8A5D644DD89E329DC297309055");
+      changeProfile(Roles.FB_GRP_ADMIN, Languages.EN_US_LANG_ID, Orgs.ESP_NORTE,
+          WareHouses.ESP_NORTE);
       defaultRoleSet = true;
     }
 

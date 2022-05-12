@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Orgs;
 
 /**
  * By default access level in entity and role is checked preventing reading data if role's user
@@ -48,7 +49,7 @@ import org.openbravo.test.base.OBBaseTest;
 public class BypassAccessLevelCheck extends OBBaseTest {
   private static String ORG_LEVEL_ROLE;
   private static final String CURRENCY_WINDOW = "115";
-  private static final String SPAIN_ORG = "357947E87C284935AD1D783CF6F099A1";
+  private static final String SPAIN_ORG = Orgs.SPAIN;
 
   @Rule
   public ExpectedException exception = ExpectedException.none();

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2018 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,21 +48,25 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
 
 public class M_inoutlinetrgTest extends OBBaseTest {
 
   private static Logger log = LogManager.getLogger();
   // User Openbravo
-  private static String USER_ID = "100";
+  private static String USER_ID = Users.OPENBRAVO;
 
   // Role QA Testing Admin
-  private static String ROLE_ID = "4028E6C72959682B01295A071429011E";
+  private static String ROLE_ID = Roles.QA_ADMIN_ROLE;
 
   // QA Testing Client
-  private static final String ClientId = "4028E6C72959682B01295A070852010D";
+  private static final String ClientId = Clients.QA_CLIENT;
 
   // Spain Organization
-  private static final String OrganizationId = "357947E87C284935AD1D783CF6F099A1";
+  private static final String OrganizationId = Orgs.SPAIN;
 
   // Movement Quantity: 10
   private static BigDecimal MovementQty = BigDecimal.TEN;

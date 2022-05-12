@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Orgs;
 
 /**
  * Test cases covering Preferences visibility and conflict resolution handling.
@@ -74,27 +75,27 @@ public class PreferenceTest extends OBBaseTest {
   /**
    * F&B International Group
    */
-  private static final String ORG_B = "19404EAD144C49A0AF37D54377CF452D";
+  private static final String ORG_B = Orgs.FB_GROUP;
 
   /**
    * F&B US, Inc.
    */
-  private static final String ORG_B1 = "2E60544D37534C0B89E765FE29BC0B43";
+  private static final String ORG_B1 = Orgs.US;
 
   /**
    * F&B US East Coast
    */
-  private static final String ORG_B11 = "7BABA5FF80494CAFA54DEBD22EC46F01";
+  private static final String ORG_B11 = Orgs.US_EST;
 
   /**
    * F&B US West Coast
    */
-  private static final String ORG_B12 = "BAE22373FEBE4CCCA24517E23F0C8A48";
+  private static final String ORG_B12 = Orgs.US_WEST;
 
   /**
    * F&B España, S.A.
    */
-  private static final String ORG_B2 = "B843C30461EA4501935CB1D125C9C25A";
+  private static final String ORG_B2 = Orgs.ESP;
 
   @Test
   public void test00CreatePreference() {

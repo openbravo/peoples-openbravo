@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,8 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.test.base.Issue;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.WareHouses;
 
 /**
  * Test case for 'Allow Unpaged Datasource In Manual Request' preference
@@ -60,8 +62,8 @@ public class TestAllowUnpagedDatasourcePreference extends BaseDataSourceTestDal 
 
   private static final String ROLE_SYSTEM = "0";
   private static final String ORGANIZATION = "0";
-  private static final String LANGUAGE_ID = "192";
-  private static final String WAREHOUSE_ID = "B2D40D8A5D644DD89E329DC297309055";
+  private static final String LANGUAGE_ID = Languages.EN_US_LANG_ID;
+  private static final String WAREHOUSE_ID = WareHouses.ESP_NORTE;
 
   /**
    * @param preferenceValue

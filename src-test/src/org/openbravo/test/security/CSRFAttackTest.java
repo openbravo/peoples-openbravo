@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,8 @@ import org.junit.After;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
 
 /**
@@ -95,14 +97,14 @@ public class CSRFAttackTest extends BaseDataSourceTestDal {
       data.put("sale", true);
       data.put("stocked", true);
       data.put("active", true);
-      data.put("organization", "E443A31992CB4635AFCAEABE7183CE85");
+      data.put("organization", Orgs.ESP_NORTE);
       data.put("searchKey", FAKE_PRODUCT_SEARCHKEY);
       data.put("name", "Fake Product");
       data.put("productCategory", "8C9876258C064B7CB6B98EEBCCF7823E");
       data.put("taxCategory", "57B9430EE6DA49EEBEF1AC05B8B4A54C");
       data.put("productType", "I");
-      data.put("Product_Org", "E443A31992CB4635AFCAEABE7183CE85");
-      data.put("client", "23C59575B9CF467C9620760EB255B389");
+      data.put("Product_Org", Orgs.ESP_NORTE);
+      data.put("client", Clients.FB_GRP);
       data.put("uOM", "100");
 
       params.put("data", data);

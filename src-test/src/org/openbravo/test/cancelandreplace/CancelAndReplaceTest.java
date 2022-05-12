@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -51,6 +51,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderReplacement;
+import org.openbravo.test.base.TestConstants.Orgs;
 import org.openbravo.test.base.TestConstants.Roles;
 import org.openbravo.test.base.TestConstants.Users;
 import org.openbravo.test.cancelandreplace.data.CancelAndReplaceOrderTestData;
@@ -89,7 +90,7 @@ public class CancelAndReplaceTest extends WeldBaseTest {
   private Logger log = LogManager.getLogger();
 
   // Organization Spain
-  private static final String ORGANIZATION_ID = "357947E87C284935AD1D783CF6F099A1";
+  private static final String ORGANIZATION_ID = Orgs.SPAIN;
   // Goods Shipment: 500014
   private static final String M_INOUT_ID = "09658144E1AF40AC81A3E5F5C3D0F132";
 

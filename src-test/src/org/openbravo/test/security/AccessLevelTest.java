@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Orders;
 
 /**
  * Tests/checks the accesslevel of an entity. See the {@link AccessLevelChecker}.
@@ -249,7 +250,7 @@ public class AccessLevelTest extends OBBaseTest {
   public void testAccessLevelOrganization() {
     setSystemAdministratorContext();
     final Organization o = OBDal.getInstance().get(Organization.class, "0");
-    final Order c = OBDal.getInstance().get(Order.class, "F8492493E92C4EE5B5251AC4574778B7");
+    final Order c = OBDal.getInstance().get(Order.class, Orders.DRAFT_ORDER);
     c.setOrganization(o);
 
     try {

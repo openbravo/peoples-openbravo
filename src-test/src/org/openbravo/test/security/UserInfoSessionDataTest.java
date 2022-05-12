@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,8 @@ import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
 import org.openbravo.test.datasource.BaseDataSourceTestDal;
 
 /**
@@ -64,11 +66,11 @@ public class UserInfoSessionDataTest extends BaseDataSourceTestDal {
   // Role: F&B US, Inc. - Employee
   private static final String US_EMPLOYEE_ROLE_ID = "19AE26382A674FE8946D2B8070D10122";
   // Role: F&B US, Inc. - Employee
-  private static final String QA_TESTING_ADMIN_ROLE_ID = "4028E6C72959682B01295A071429011E";
+  private static final String QA_TESTING_ADMIN_ROLE_ID = Roles.QA_ADMIN_ROLE;
   // User Role for Openbravo User - F&B US, Inc. - Employee Role
   private static final String US_EMPLOYEE_USER_ROLE_ID = "3B960D8A87CA4F77907DF2B7F9A77366";
   // Organization for Role: F&B US East Coast
-  private static final String US_EASTCOAST_ORG_ID = "7BABA5FF80494CAFA54DEBD22EC46F01";
+  private static final String US_EASTCOAST_ORG_ID = Orgs.US_EST;
   // * Organization
   private static final String ZERO_ORG = "0";
   // Warehouse for Role: F&B US East Coast

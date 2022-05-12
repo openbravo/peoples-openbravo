@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,11 @@ import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.scheduling.ProcessContext;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.test.base.OBBaseTest;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
+import org.openbravo.test.base.TestConstants.WareHouses;
 
 /**
  * Test cases used to ensure the correct JSON serialization of different objects.
@@ -90,10 +95,9 @@ public class JSONSerialization extends OBBaseTest {
         processContext.getJsDateFormat(), processContext.getSqlDateFormat(),
         processContext.getAccessLevel(), processContext.isRoleSecurity());
 
-    assertThat(collection, contains("100", "4028E6C72959682B01295A071429011E", "en_US",
-        "ltr/org.openbravo.userinterface.skin.250to300Comp/250to300Comp",
-        "4028E6C72959682B01295A070852010D", "0", "4028E6C72959682B01295ECFEF4502A0",
-        "SAVE_BUTTONProcessing100", "'4028E6C72959682B01295A070852010D'",
+    assertThat(collection, contains(Users.OPENBRAVO, Roles.QA_ADMIN_ROLE, Languages.EN_US_ISOCODE,
+        "ltr/org.openbravo.userinterface.skin.250to300Comp/250to300Comp", Clients.QA_CLIENT, "0",
+        WareHouses.SPAIN, "SAVE_BUTTONProcessing100", "'4028E6C72959682B01295A070852010D'",
         "'5EFF95EB540740A3B10510D9814EFAD5','43D590B4814049C6B85C6545E8264E37','0','357947E87C284935AD1D783CF6F099A1'",
         "A9220D77CB54469A99320051BB0D74C5", "dd-MM-yyyy", "dd-MM-yyyy HH:mm:ss", "%d-%m-%Y",
         "DD-MM-YYYY", "3", true));

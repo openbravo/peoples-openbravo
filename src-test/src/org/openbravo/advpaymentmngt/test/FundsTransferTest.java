@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016 Openbravo SLU
+ * All portions are Copyright (C) 2016-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,6 +46,10 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.payment.FIN_FinaccTransaction;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
+import org.openbravo.test.base.TestConstants.Clients;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
+import org.openbravo.test.base.TestConstants.Users;
 
 public class FundsTransferTest extends WeldBaseTest {
   final private static String BP_DEPOSIT = "BPD";
@@ -53,13 +57,13 @@ public class FundsTransferTest extends WeldBaseTest {
   final private static String BANK_FEE = "BF";
   private static final String REACTIVATE = "R";
   // User Openbravo
-  private final String USER_ID = "100";
+  private final String USER_ID = Users.OPENBRAVO;
   // Client F&B International Group
-  private final String CLIENT_ID = "23C59575B9CF467C9620760EB255B389";
+  private final String CLIENT_ID = Clients.FB_GRP;
   // Organization F&B España, S.A
-  private final String ORGANIZATION_ID = "B843C30461EA4501935CB1D125C9C25A";
+  private final String ORGANIZATION_ID = Orgs.ESP;
   // Role F&B International Group Admin
-  private final String ROLE_ID = "42D0EEB1C66F497A90DD526DC597E6F0";
+  private final String ROLE_ID = Roles.FB_GRP_ADMIN;
 
   // Today
   private final Date TODAY = new Date();
