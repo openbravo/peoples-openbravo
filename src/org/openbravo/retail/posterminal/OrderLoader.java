@@ -364,7 +364,6 @@ public class OrderLoader extends POSDataSynchronizationProcess
           orderLineCriteria.add(Restrictions.eq(OrderLine.PROPERTY_OBPOSISDELETED, false));
           for (final OrderLine cancelledOrderLine : orderLineCriteria.list()) {
             cancelledOrderLine.setObposIspaid(true);
-            cancelledOrderLine.setDeliveredQuantity(cancelledOrderLine.getOrderedQuantity());
             OBDal.getInstance().save(cancelledOrderLine);
           }
 
@@ -1022,9 +1021,13 @@ public class OrderLoader extends POSDataSynchronizationProcess
         orderline.setReturnline("Y");
       }
 
-      orderline.setDeliveredQuantity(jsonOrderLine.has("obposQtytodeliver")
-          ? (BigDecimal.valueOf(jsonOrderLine.getDouble("obposQtytodeliver")).stripTrailingZeros())
-          : orderline.getOrderedQuantity());
+      if (!doCancelLayaway) {
+        orderline.setDeliveredQuantity(
+            jsonOrderLine.has("obposQtytodeliver")
+                ? (BigDecimal.valueOf(jsonOrderLine.getDouble("obposQtytodeliver"))
+                    .stripTrailingZeros())
+                : orderline.getOrderedQuantity());
+      }
 
       lineReferences.add(orderline);
       orderline.setLineNo((long) ((i + 1) * 10));

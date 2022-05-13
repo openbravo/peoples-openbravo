@@ -84,6 +84,10 @@
         this.set('description', attributes.description);
         this.set('attributeValue', attributes.attributeValue);
         this.set('obposCanbedelivered', attributes.obposCanbedelivered);
+        this.set(
+          'obposQtytodeliver',
+          attributes.deliveredQuantity || OB.DEC.Zero
+        );
         this.set('loaded', attributes.loaded);
         if (attributes.relatedLines && _.isArray(attributes.relatedLines)) {
           this.set('relatedLines', attributes.relatedLines);
