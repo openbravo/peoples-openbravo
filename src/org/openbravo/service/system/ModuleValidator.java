@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,7 +28,6 @@ import java.util.Map;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.modules.VersionUtility;
@@ -36,14 +35,6 @@ import org.openbravo.erpCommon.modules.VersionUtility.VersionComparator;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDependency;
-import org.openbravo.model.ad.ui.Element;
-import org.openbravo.model.ad.ui.Field;
-import org.openbravo.model.ad.ui.Form;
-import org.openbravo.model.ad.ui.Menu;
-import org.openbravo.model.ad.ui.Message;
-import org.openbravo.model.ad.ui.Tab;
-import org.openbravo.model.ad.ui.TextInterface;
-import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
 
@@ -118,8 +109,6 @@ public class ModuleValidator implements SystemValidator {
 
     checkJavaPackages(module, result);
 
-    checkHasUIArtifact(module, result);
-
     checkTableName(module, result);
 
     checkHasReferenceData(module, result);
@@ -181,26 +170,6 @@ public class ModuleValidator implements SystemValidator {
       }
       curDir = partDir;
     }
-  }
-
-  private void checkHasUIArtifact(Module module, SystemValidationResult result) {
-    if (module.isTranslationRequired()) {
-      return;
-    }
-    final boolean reportError = hasArtifact(Window.class, module) || hasArtifact(Tab.class, module)
-        || hasArtifact(Field.class, module) || hasArtifact(Element.class, module)
-        || hasArtifact(TextInterface.class, module) || hasArtifact(Message.class, module)
-        || hasArtifact(Form.class, module) || hasArtifact(Menu.class, module);
-    if (reportError) {
-      result.addError(SystemValidationType.MODULE_ERROR, "Module " + module.getName()
-          + " has UI Artifacts, " + "translation required should be set to 'Y', it is now 'N'.");
-    }
-  }
-
-  private <T extends BaseOBObject> boolean hasArtifact(Class<T> clz, Module module) {
-    final OBCriteria<T> obc = OBDal.getInstance().createCriteria(clz);
-    obc.add(Restrictions.eq("module", module));
-    return obc.count() > 0;
   }
 
   /**
