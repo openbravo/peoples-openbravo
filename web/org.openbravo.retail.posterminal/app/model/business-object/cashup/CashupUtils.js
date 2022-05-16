@@ -375,10 +375,7 @@
         amount = lodash.isNumber(orderPayment.amountRounded)
           ? orderPayment.amountRounded
           : orderPayment.amount;
-        if (
-          amount < 0 ||
-          (orderPayment.paymentRounding && orderPayment.isReturnOrder)
-        ) {
+        if (amount < 0) {
           cashupPayment.totalReturns = OB.DEC.sub(
             cashupPayment.totalReturns,
             amount,
