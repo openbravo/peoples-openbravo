@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2017 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
@@ -35,6 +36,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.currency.Currency;
@@ -109,6 +111,13 @@ public class FIN_PaymentProposalProcess implements org.openbravo.scheduling.Proc
           parameters.add(isReceipt ? "ARR" : "APP");
           String strDocTypeId = (String) CallStoredProcedure.getInstance()
               .call("AD_GET_DOCTYPE", parameters, null);
+
+          // If we don't find the document type for the receipt or payment throw an exception
+          if (StringUtils.isEmpty(strDocTypeId)) {
+            throw new OBException(
+                String.format(OBMessageUtils.messageBD("PaymentProposal_PaymentDocType_Undefined"),
+                    isReceipt ? "AR Receipt" : "AP Payment"));
+          }
 
           BigDecimal paymentTotal = BigDecimal.ZERO;
           String strBusinessPartner_old = "-1";
