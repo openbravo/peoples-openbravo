@@ -118,32 +118,22 @@
             payload.preferences &&
             payload.preferences.autoPrintReceipts)
         ) {
-          const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
+          newMessages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+            newMessages,
             newMultiTicket,
-            {}
-          );
-
-          newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
-            newMultiTicket,
-            { templateName },
+            {},
             payload.deliverAction,
-            payload.deliverService,
-            newMessages
+            payload.deliverService
           );
         }
 
         if (newMultiTicket.calculatedInvoice) {
-          const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
+          newMessages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+            newMessages,
             newMultiTicket.calculatedInvoice,
-            {}
-          );
-
-          newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
-            newMultiTicket.calculatedInvoice,
-            { templateName },
+            {},
             payload.deliverAction,
-            payload.deliverService,
-            newMessages
+            payload.deliverService
           );
         }
 

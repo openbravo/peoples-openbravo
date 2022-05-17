@@ -15,19 +15,13 @@
 OB.App.StateAPI.Global.registerAction('printTicket', (state, payload) => {
   const newState = { ...state };
   const ticket = payload.ticket || { ...newState.Ticket };
-  const { printSettings = {} } = payload;
 
-  const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
+  newState.Messages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+    newState.Messages,
     ticket,
-    printSettings
-  );
-
-  newState.Messages = OB.App.State.Messages.Utils.createPrintTicketMessage(
-    ticket,
-    { ...printSettings, templateName },
+    payload.printSettings,
     payload.deliverAction,
-    payload.deliverService,
-    [...newState.Messages]
+    payload.deliverService
   );
 
   return newState;

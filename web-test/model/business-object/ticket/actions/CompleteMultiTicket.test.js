@@ -8,14 +8,8 @@
  */
 
 require('../../global/SetupGlobal');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/CompleteMultiTicketUtils');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/AddPaymentUtils');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/CompleteMultiTicket');
-require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/CompleteMultiTicket');
-
 require('../../global/SetupGlobalUtils');
-require('../SetupMockPrintTemplateStore');
-
 const deepfreeze = require('deepfreeze');
 
 describe('Complete Multi ticket action', () => {

@@ -47,17 +47,12 @@
       ];
 
       // Ticket print message
-      const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
+      newMessages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+        newMessages,
         newTicket,
-        {}
-      );
-
-      newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
-        newTicket,
-        { templateName },
+        {},
         payload.deliverAction,
-        payload.deliverService,
-        newMessages
+        payload.deliverService
       );
 
       // Welcome message

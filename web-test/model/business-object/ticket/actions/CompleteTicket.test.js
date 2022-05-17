@@ -10,7 +10,6 @@
 require('../../global/SetupGlobal');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/CompleteTicket');
 require('../../global/SetupGlobalUtils');
-require('../SetupMockPrintTemplateStore');
 const deepfreeze = require('deepfreeze');
 
 describe('Complete ticket action', () => {

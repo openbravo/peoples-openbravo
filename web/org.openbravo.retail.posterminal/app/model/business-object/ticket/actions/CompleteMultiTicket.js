@@ -116,43 +116,25 @@
             payload.preferences &&
             payload.preferences.autoPrintReceipts)
         ) {
-          const printSettings = {
-            skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
-          };
-          const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
-            newMultiTicket,
-            printSettings
-          );
-
-          newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+          newMessages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+            newMessages,
             newMultiTicket,
             {
-              ...printSettings,
-              templateName
+              skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
             },
             payload.deliverAction,
-            payload.deliverService,
-            newMessages
+            payload.deliverService
           );
         }
         if (newMultiTicket.calculatedInvoice) {
-          const printSettings = {
-            skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
-          };
-          const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
-            newMultiTicket.calculatedInvoice,
-            printSettings
-          );
-
-          newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+          newMessages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+            newMessages,
             newMultiTicket.calculatedInvoice,
             {
-              ...printSettings,
-              templateName
+              skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
             },
             payload.deliverAction,
-            payload.deliverService,
-            newMessages
+            payload.deliverService
           );
         }
 

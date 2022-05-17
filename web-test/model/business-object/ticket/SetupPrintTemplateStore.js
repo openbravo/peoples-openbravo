@@ -11,5 +11,7 @@
 
 OB.App = OB.App || {};
 OB.App.PrintTemplateStore = {
-  selectTicketPrintTemplateName: jest.fn(() => 'MockTicketTemplate')
+  selectTicketPrintTemplateName: jest.fn(
+    (ticket, printSettings) => printSettings.templateName
+  )
 };

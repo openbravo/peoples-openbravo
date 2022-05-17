@@ -18,9 +18,7 @@
       const newGlobalState = { ...globalState };
       let newTicketList = [...newGlobalState.TicketList];
       let newTicket = { ...newGlobalState.Ticket };
-      let newDocumentSequence = {
-        ...newGlobalState.DocumentSequence
-      };
+      let newDocumentSequence = { ...newGlobalState.DocumentSequence };
       let newCashup = { ...newGlobalState.Cashup };
       let newMessages = [...newGlobalState.Messages];
       let currentTicket = {};
@@ -102,40 +100,25 @@
           payload.preferences &&
           payload.preferences.autoPrintReceipts)
       ) {
-        const printSettings = {
-          forcedtemplate: payload.forcedtemplate
-        };
-        const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
-          newTicket,
-          printSettings
-        );
-
-        newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
+        newMessages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+          newMessages,
           newTicket,
           {
-            ...printSettings,
-            templateName
+            forcedtemplate: payload.forcedtemplate
           },
           payload.deliverAction,
-          payload.deliverService,
-          newMessages
+          payload.deliverService
         );
       }
       if (newTicket.calculatedInvoice) {
-        const printSettings = {
-          forcedtemplate: payload.forcedtemplate
-        };
-        const templateName = OB.App.State.Ticket.Utils.getTicketTemplateName(
+        newMessages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+          newMessages,
           newTicket.calculatedInvoice,
-          printSettings
-        );
-
-        newMessages = OB.App.State.Messages.Utils.createPrintTicketMessage(
-          newTicket.calculatedInvoice,
-          { ...printSettings, templateName },
+          {
+            forcedtemplate: payload.forcedtemplate
+          },
           payload.deliverAction,
-          payload.deliverService,
-          newMessages
+          payload.deliverService
         );
       }
 

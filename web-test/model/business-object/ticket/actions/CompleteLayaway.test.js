@@ -10,7 +10,6 @@
 require('../../global/SetupGlobal');
 require('../../../../../web/org.openbravo.retail.posterminal/app/model/business-object/ticket/actions/CompleteLayaway');
 require('../../global/SetupGlobalUtils');
-require('../SetupMockPrintTemplateStore');
 const deepfreeze = require('deepfreeze');
 
 describe('Complete Layaway action', () => {
