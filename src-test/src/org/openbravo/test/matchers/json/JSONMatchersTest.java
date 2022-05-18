@@ -444,6 +444,24 @@ public class JSONMatchersTest {
         not(hasItems(equal(item1), matchesObject(item2), greaterThan(item3))));
   }
 
+  @Test
+  public void nonEmptyJSONMatchesWithEmptyJSON() {
+    assertThat("non empty JSON matches with empty JSON", BaseJSON.base(),
+        matchesObject(BaseJSON.empty()));
+  }
+
+  @Test
+  public void emptyJSONDoesNotMatchWithNonEmptyJSON() {
+    assertThat("empty JSON does not match with non empty JSON", BaseJSON.empty(),
+        not(matchesObject(BaseJSON.base())));
+  }
+
+  @Test
+  public void nonEmptyJSONNotEqualToEmptyJSON() {
+    assertThat("non empty JSON not equal to empty JSON", BaseJSON.base(),
+        not(equal(BaseJSON.empty())));
+  }
+
   private static class BaseJSON {
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private JSONObject json;
@@ -491,6 +509,10 @@ public class JSONMatchersTest {
         json.remove(property);
       }
       return json;
+    }
+
+    static JSONObject empty() {
+      return new JSONObject();
     }
   }
 
