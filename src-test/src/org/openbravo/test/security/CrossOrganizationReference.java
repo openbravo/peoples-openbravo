@@ -30,8 +30,6 @@ import java.util.Map.Entry;
 
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
@@ -79,9 +77,6 @@ public class CrossOrganizationReference extends BaseDataSourceTestDal {
   private static final String TAX = "3271411A5AFB490A91FB618B6B789C24";
 
   protected static List<BaseOBObject> createdObjects = new ArrayList<BaseOBObject>();
-
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
 
   /** Creates a default order */
   protected Order createOrder(String orgId) {

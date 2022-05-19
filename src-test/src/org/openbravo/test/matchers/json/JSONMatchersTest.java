@@ -18,10 +18,10 @@
  */
 package org.openbravo.test.matchers.json;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.assertThat;
 import static org.openbravo.test.matchers.json.JSONMatchers.equal;
 import static org.openbravo.test.matchers.json.JSONMatchers.hasItems;
 import static org.openbravo.test.matchers.json.JSONMatchers.matchesObject;

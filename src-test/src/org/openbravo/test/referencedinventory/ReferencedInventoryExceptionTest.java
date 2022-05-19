@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,9 @@
 
 package org.openbravo.test.referencedinventory;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,9 +54,10 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
-    thrown.expect(OBException.class);
-    thrown.expectMessage(equalTo(OBMessageUtils.messageBD("NotSelected")));
-    new BoxProcessor(refInv, null, null).createAndProcessGoodsMovement();
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv, null, null).createAndProcessGoodsMovement();
+    });
+    assertThat(thrown.getMessage(), containsString(OBMessageUtils.messageBD("NotSelected")));
   }
 
   @Test
@@ -71,10 +73,11 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final JSONArray storageDetailsJS = new JSONArray();
     storageDetailsJS.put(storageDetailJS);
 
-    thrown.expect(OBException.class);
-    thrown.expectMessage(
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement();
+    });
+    assertThat(thrown.getMessage(),
         containsString(String.format(OBMessageUtils.messageBD("RefInv_NegativeQty"), "")));
-    new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement();
   }
 
   @Test
@@ -90,18 +93,21 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final JSONArray storageDetailsJS = new JSONArray();
     storageDetailsJS.put(storageDetailJS);
 
-    thrown.expect(OBException.class);
-    thrown.expectMessage(
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement();
+    });
+    assertThat(thrown.getMessage(),
         containsString(String.format(OBMessageUtils.messageBD("RefInv_NegativeQty"), "")));
-    new BoxProcessor(refInv, storageDetailsJS, null).createAndProcessGoodsMovement();
   }
 
   @Test
   public void testBoxQtyGreaterThanQtyOnHand() throws Exception {
     final BigDecimal TWO_HUNDRED = new BigDecimal("200");
-    thrown.expect(OBException.class);
-    thrown.expectMessage(containsString("(" + TWO_HUNDRED + ")"));
-    testBox(null, ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, TWO_HUNDRED);
+
+    OBException thrown = assertThrows(OBException.class, () -> {
+      testBox(null, ReferencedInventoryTestUtils.PRODUCT_TSHIRT_ID, null, TWO_HUNDRED);
+    });
+    assertThat(thrown.getMessage(), containsString("(" + TWO_HUNDRED + ")"));
   }
 
   @Test
@@ -115,9 +121,11 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
         .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE);
 
-    thrown.expect(OBException.class);
-    thrown.expectMessage(containsString(" is already linked to the referenced inventory "));
-    new BoxProcessor(refInv2, storageDetailsJS, null).createAndProcessGoodsMovement();
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv2, storageDetailsJS, null).createAndProcessGoodsMovement();
+    });
+    assertThat(thrown.getMessage(),
+        containsString(" is already linked to the referenced inventory "));
   }
 
   @Test
@@ -130,10 +138,12 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
         .getStorageDetailsToBoxJSArray(storageDetails.get(1), new BigDecimal("3"));
 
-    thrown.expect(OBException.class);
-    thrown.expectMessage(containsString(" referenced inventory is also located in bin: "));
-    new BoxProcessor(refInv, storageDetailsJS, ReferencedInventoryTestUtils.BIN_SPAIN_L03)
-        .createAndProcessGoodsMovement();
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv, storageDetailsJS, ReferencedInventoryTestUtils.BIN_SPAIN_L03)
+          .createAndProcessGoodsMovement();
+    });
+    assertThat(thrown.getMessage(),
+        containsString(" referenced inventory is also located in bin: "));
   }
 
   @Test
@@ -151,10 +161,12 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final StorageDetail storageDetail = ReferencedInventoryTestUtils
         .getUniqueStorageDetail(product);
 
-    thrown.expect(OBException.class);
-    thrown.expectMessage(equalTo(OBMessageUtils.messageBD("NewStorageBinParameterMandatory")));
-    new BoxProcessor(refInv,
-        ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE),
-        null).createAndProcessGoodsMovement();
+    OBException thrown = assertThrows(OBException.class, () -> {
+      new BoxProcessor(refInv,
+          ReferencedInventoryTestUtils.getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE),
+          null).createAndProcessGoodsMovement();
+    });
+    assertThat(thrown.getMessage(),
+        containsString(OBMessageUtils.messageBD("NewStorageBinParameterMandatory")));
   }
 }

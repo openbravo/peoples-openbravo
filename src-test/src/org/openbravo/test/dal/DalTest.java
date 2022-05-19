@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  *   Martin Taal <martin.taal@openbravo.com>,
@@ -25,13 +25,14 @@ package org.openbravo.test.dal;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeThat;
@@ -46,9 +47,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.criterion.Restrictions;
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Property;
@@ -84,9 +83,6 @@ import org.openbravo.test.base.OBBaseTest;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DalTest extends OBBaseTest {
   private static final Logger log = LogManager.getLogger();
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   /**
    * Test to assert save false in a null char(1) column - Part I.
@@ -461,9 +457,8 @@ public class DalTest extends OBBaseTest {
   public void populatingProxyOfInexistentObjShouldFail() {
     BusinessPartner bpProxy = OBDal.getInstance().getProxy(BusinessPartner.class, "DummyId");
 
-    thrown.expect(ObjectNotFoundException.class);
     // getting any property causes proxy population from db
-    bpProxy.getName();
+    assertThrows(ObjectNotFoundException.class, bpProxy::getName);
   }
 
   @Test

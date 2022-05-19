@@ -18,18 +18,18 @@
  */
 package org.openbravo.client.application.test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.openbravo.test.base.TestConstants.Clients.SYSTEM;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 
 import javax.persistence.PersistenceException;
 
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.DataPoolReport;
@@ -48,9 +48,6 @@ public class SelectionPoolConfigurationTest extends WeldBaseTest {
   private static final String REPORT_CASHFLOW_ID = "1B0BF927933A4F41A73739CB6E4A9AD0";
 
   private static final String MESSAGE_EXCEPTION = "org.hibernate.exception.ConstraintViolationException: could not execute batch";
-
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
 
   @After
   public void cleanUp() {
@@ -88,73 +85,78 @@ public class SelectionPoolConfigurationTest extends WeldBaseTest {
 
   @Test
   public void creatingSelectionPoolConfigurationWithoutReportShouldFail() {
-    exceptionRule.expect(PersistenceException.class);
-    exceptionRule.expectMessage(MESSAGE_EXCEPTION);
+    PersistenceException exceptionRule = assertThrows(PersistenceException.class, () -> {
+      try {
+        OBContext.setAdminMode(false);
+        DataPoolSelection dataPoolConf = newDataPoolSelectionConf();
+        dataPoolConf.setReport(null);
+        OBDal.getInstance().save(dataPoolConf);
+        OBDal.getInstance().flush();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    });
 
-    try {
-      OBContext.setAdminMode(false);
-      DataPoolSelection dataPoolConf = newDataPoolSelectionConf();
-      dataPoolConf.setReport(null);
-      OBDal.getInstance().save(dataPoolConf);
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    assertThat(exceptionRule.getMessage(), containsString(MESSAGE_EXCEPTION));
   }
 
   @Test
   public void updatingSelectionPoolConfigurationWithoutReportShouldFail() {
-    exceptionRule.expect(PersistenceException.class);
-    exceptionRule.expectMessage(MESSAGE_EXCEPTION);
+    PersistenceException exceptionRule = assertThrows(PersistenceException.class, () -> {
+      try {
+        OBContext.setAdminMode(false);
+        DataPoolSelection dataPoolConf = newDataPoolSelectionConf();
+        OBDal.getInstance().save(dataPoolConf);
+        dataPoolConf.setReport(null);
+        OBDal.getInstance().flush();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    });
 
-    try {
-      OBContext.setAdminMode(false);
-      DataPoolSelection dataPoolConf = newDataPoolSelectionConf();
-      OBDal.getInstance().save(dataPoolConf);
-      dataPoolConf.setReport(null);
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    assertThat(exceptionRule.getMessage(), containsString(MESSAGE_EXCEPTION));
   }
 
   @Test
   public void creatingSelectionPoolConfigurationNotUniqueShouldFail() {
-    exceptionRule.expect(PersistenceException.class);
-    exceptionRule.expectMessage(MESSAGE_EXCEPTION);
+    PersistenceException exceptionRule = assertThrows(PersistenceException.class, () -> {
+      try {
+        OBContext.setAdminMode(false);
+        DataPoolSelection dataPoolConf1 = newDataPoolSelectionConf();
+        OBDal.getInstance().save(dataPoolConf1);
+        OBDal.getInstance().flush();
+        DataPoolSelection dataPoolConf2 = newDataPoolSelectionConf();
+        OBDal.getInstance().save(dataPoolConf2);
+        OBDal.getInstance().flush();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    });
 
-    try {
-      OBContext.setAdminMode(false);
-      DataPoolSelection dataPoolConf1 = newDataPoolSelectionConf();
-      OBDal.getInstance().save(dataPoolConf1);
-      OBDal.getInstance().flush();
-      DataPoolSelection dataPoolConf2 = newDataPoolSelectionConf();
-      OBDal.getInstance().save(dataPoolConf2);
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    assertThat(exceptionRule.getMessage(), containsString(MESSAGE_EXCEPTION));
   }
 
   @Test
   public void updatingSelectionPoolConfigurationNotUniqueShouldFail() {
-    exceptionRule.expect(PersistenceException.class);
-    exceptionRule.expectMessage(MESSAGE_EXCEPTION);
+    PersistenceException exceptionRule = assertThrows(PersistenceException.class, () -> {
+      try {
+        OBContext.setAdminMode(false);
+        DataPoolSelection dataPoolConf1 = newDataPoolSelectionConf();
+        OBDal.getInstance().save(dataPoolConf1);
+        DataPoolSelection dataPoolConf2 = newDataPoolSelectionConf();
+        dataPoolConf2
+            .setReport(OBDal.getInstance().getProxy(DataPoolReport.class, REPORT_CASHFLOW_ID));
+        OBDal.getInstance().save(dataPoolConf2);
+        OBDal.getInstance().flush();
+        dataPoolConf2
+            .setReport(OBDal.getInstance().getProxy(DataPoolReport.class, REPORT_AGILE_ID));
+        OBDal.getInstance().flush();
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    });
 
-    try {
-      OBContext.setAdminMode(false);
-      DataPoolSelection dataPoolConf1 = newDataPoolSelectionConf();
-      OBDal.getInstance().save(dataPoolConf1);
-      DataPoolSelection dataPoolConf2 = newDataPoolSelectionConf();
-      dataPoolConf2
-          .setReport(OBDal.getInstance().getProxy(DataPoolReport.class, REPORT_CASHFLOW_ID));
-      OBDal.getInstance().save(dataPoolConf2);
-      OBDal.getInstance().flush();
-      dataPoolConf2.setReport(OBDal.getInstance().getProxy(DataPoolReport.class, REPORT_AGILE_ID));
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    assertThat(exceptionRule.getMessage(), containsString(MESSAGE_EXCEPTION));
   }
 
   private DataPoolSelection newDataPoolSelectionConf() {

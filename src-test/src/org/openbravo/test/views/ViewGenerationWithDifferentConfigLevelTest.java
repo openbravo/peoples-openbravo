@@ -20,8 +20,8 @@
 package org.openbravo.test.views;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
 import org.codehaus.jettison.json.JSONObject;

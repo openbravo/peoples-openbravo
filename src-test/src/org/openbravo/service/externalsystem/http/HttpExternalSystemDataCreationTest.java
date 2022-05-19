@@ -18,14 +18,15 @@
  */
 package org.openbravo.service.externalsystem.http;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -42,9 +43,6 @@ public class HttpExternalSystemDataCreationTest extends WeldBaseTest {
   private static final String MAX_TIMEOUT_ERROR_MSG = "Timeout must be a value lower than 30 seconds";
 
   private ExternalSystemData externalSystemData;
-
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
 
   @Before
   public void init() {
@@ -71,22 +69,23 @@ public class HttpExternalSystemDataCreationTest extends WeldBaseTest {
 
   @Test
   public void cannotCreateConfigurationThatExceedsMaxTimeout() {
-    exceptionRule.expect(OBException.class);
-    exceptionRule.expectMessage(MAX_TIMEOUT_ERROR_MSG);
+    OBException exceptionRule = assertThrows(OBException.class, () -> {
+      createHttpConfiguration(HttpExternalSystem.MAX_TIMEOUT + 1L);
+    });
 
-    createHttpConfiguration(HttpExternalSystem.MAX_TIMEOUT + 1L);
+    assertThat(exceptionRule.getMessage(), containsString(MAX_TIMEOUT_ERROR_MSG));
   }
 
   @Test
   public void cannotUpdateConfigurationToExceedMaxTimeout() {
-    exceptionRule.expect(OBException.class);
-    exceptionRule.expectMessage(MAX_TIMEOUT_ERROR_MSG);
+    OBException exceptionRule = assertThrows(OBException.class, () -> {
+      HttpExternalSystemData configuration = createHttpConfiguration(5L);
+      OBDal.getInstance().flush();
+      configuration.setTimeout(HttpExternalSystem.MAX_TIMEOUT + 1L);
+      OBDal.getInstance().flush();
+    });
 
-    HttpExternalSystemData configuration = createHttpConfiguration(5L);
-    OBDal.getInstance().flush();
-
-    configuration.setTimeout(HttpExternalSystem.MAX_TIMEOUT + 1L);
-    OBDal.getInstance().flush();
+    assertThat(exceptionRule.getMessage(), containsString(MAX_TIMEOUT_ERROR_MSG));
   }
 
   private HttpExternalSystemData createHttpConfiguration(long timeout) {

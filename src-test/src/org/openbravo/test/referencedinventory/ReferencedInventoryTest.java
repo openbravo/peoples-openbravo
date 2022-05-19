@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,8 +20,8 @@
 package org.openbravo.test.referencedinventory;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
 import java.math.BigDecimal;
@@ -30,8 +30,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.kernel.KernelUtils;
@@ -58,13 +56,11 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
           ReferencedInventoryTestUtils.ATTRIBUTE_LAPTOP_SERIALNO } };
   protected final boolean[] ISALLOCATED = { false, true };
 
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
-
   private boolean isAwoInstalled() {
     try {
       OBContext.setAdminMode(true);
-      return KernelUtils.getInstance().isModulePresent("org.openbravo.warehouse.advancedwarehouseoperations");
+      return KernelUtils.getInstance()
+          .isModulePresent("org.openbravo.warehouse.advancedwarehouseoperations");
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -73,7 +69,8 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
   @Before
   public void initialize() {
     boolean awoIsInstalled = isAwoInstalled();
-    assumeThat("Auto-Disabled test case as incompatible with AWO (found to be installed) ", awoIsInstalled, is(false));
+    assumeThat("Auto-Disabled test case as incompatible with AWO (found to be installed) ",
+        awoIsInstalled, is(false));
 
     setUserContext(QA_TEST_ADMIN_USER_ID);
     VariablesSecureApp vsa = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),

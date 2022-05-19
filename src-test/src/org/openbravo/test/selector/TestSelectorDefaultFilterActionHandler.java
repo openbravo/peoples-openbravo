@@ -20,7 +20,7 @@
 package org.openbravo.test.selector;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.openbravo.userinterface.selector.SelectorConstants.PARAM_FILTER_EXPRESSION;
 
 import org.codehaus.jettison.json.JSONException;

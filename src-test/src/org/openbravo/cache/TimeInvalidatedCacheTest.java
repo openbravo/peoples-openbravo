@@ -18,8 +18,11 @@
  */
 package org.openbravo.cache;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -29,9 +32,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBException;
 
 import com.github.benmanes.caffeine.cache.Ticker;
@@ -40,9 +41,6 @@ import com.github.benmanes.caffeine.cache.Ticker;
  * Tests for TimeInvalidatedCache and TimeInvalidatedCacheBuilder
  */
 public class TimeInvalidatedCacheTest {
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   @Before
   public void setUp() {
@@ -194,11 +192,12 @@ public class TimeInvalidatedCacheTest {
 
   @Test
   public void cacheShouldThrowExceptionIfNameNotSet() {
-    thrown.expect(OBException.class);
-    thrown.expectMessage(
-        "Name must be set prior to executing TimeInvalidatedCacheBuilder build function.");
+    OBException thrown = assertThrows(OBException.class, () -> {
+      TimeInvalidatedCache.newBuilder().build(key -> null);
+    });
 
-    TimeInvalidatedCache.newBuilder().build(key -> null);
+    assertThat(thrown.getMessage(), containsString(
+        "Name must be set prior to executing TimeInvalidatedCacheBuilder build function."));
   }
 
   private TimeInvalidatedCache<String, String> initializeCache(UnaryOperator<String> buildMethod) {

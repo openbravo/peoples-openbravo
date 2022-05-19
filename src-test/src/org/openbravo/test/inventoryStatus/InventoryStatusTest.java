@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,9 +19,10 @@
 
 package org.openbravo.test.inventoryStatus;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,9 +35,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
@@ -120,9 +119,6 @@ public class InventoryStatusTest extends WeldBaseTest {
   // Global variables needed to share data between IS004 Tests
   private static String binIS004ID;
   private static String productIS004ID;
-
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   @Before
   public void initialize() {
@@ -252,10 +248,9 @@ public class InventoryStatusTest extends WeldBaseTest {
       assertThatBinHasBackflushStatus(storageBin);
 
       // Expect to throw an exception in the next Status change
-      thrown.expect(Exception.class);
-      thrown.expectMessage(containsString(ERROR_MESSAGE_NEGATIVESTOCK));
-      changeBinToAvailableStatus(storageBin);
-
+      Exception thrown = assertThrows(Exception.class,
+          () -> changeBinToAvailableStatus(storageBin));
+      assertThat(thrown.getMessage(), containsString(ERROR_MESSAGE_NEGATIVESTOCK));
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new OBException(e);

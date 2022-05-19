@@ -20,7 +20,9 @@ package org.openbravo.service.externalsystem.http;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThrows;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 import static org.openbravo.test.matchers.json.JSONMatchers.equal;
 
@@ -39,9 +41,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
@@ -68,9 +68,6 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   private ExternalSystemData externalSystemData;
   private HttpExternalSystemData httpExternalSystemData;
-
-  @Rule
-  public ExpectedException exceptionRule = ExpectedException.none();
 
   @Before
   public void init() {
@@ -165,15 +162,15 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   @Test
   public void cannotSendWithUnsupportedRequestMethod() throws JSONException {
-    exceptionRule.expect(OBException.class);
-    exceptionRule.expectMessage("Unsupported HTTP request method TEST");
+    OBException exceptionRule = assertThrows(OBException.class, () -> {
+      httpExternalSystemData.setAuthorizationType("NOAUTH");
+      httpExternalSystemData.setRequestMethod("TEST");
+      ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
+          .orElseThrow();
+      externalSystem.send(getRequestDataSupplier()).join();
+    });
 
-    httpExternalSystemData.setAuthorizationType("NOAUTH");
-    httpExternalSystemData.setRequestMethod("TEST");
-
-    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
-        .orElseThrow();
-    externalSystem.send(getRequestDataSupplier()).join();
+    assertThat(exceptionRule.getMessage(), containsString("Unsupported HTTP request method TEST"));
   }
 
   @Test

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2020 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,15 +19,15 @@
 
 package org.openbravo.base.weld.test.testinfrastructure;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import org.jboss.arquillian.junit.InSequence;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.application.test.event.ObserverBaseTest;
@@ -49,8 +49,6 @@ import org.openbravo.test.base.TestConstants;
  *
  */
 public class DalPersistanceEventTest extends ObserverBaseTest {
-  @Rule
-  public ExpectedException exception = ExpectedException.none();
 
   @Test
   @InSequence(1)
@@ -92,11 +90,12 @@ public class DalPersistanceEventTest extends ObserverBaseTest {
 
       // expecting exception thrown by by persistance observer, it will be thrown only if it is
       // executed
-      exception.expect(OBException.class);
-      exception.expectMessage(OBMessageUtils.messageBD("InvalidDateFormat"));
-
-      OBDal.getInstance().save(newCountry);
-      OBDal.getInstance().flush();
+      OBException thrown = assertThrows(OBException.class, () -> {
+        OBDal.getInstance().save(newCountry);
+        OBDal.getInstance().flush();
+      });
+      assertThat(thrown.getMessage(),
+          containsString(OBMessageUtils.messageBD("InvalidDateFormat")));
     } finally {
       OBDal.getInstance().rollbackAndClose();
     }

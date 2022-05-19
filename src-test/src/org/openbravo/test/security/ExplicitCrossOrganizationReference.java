@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,11 @@
 package org.openbravo.test.security;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -85,9 +86,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   public void shouldBeIllegalOnInsert() {
     createOrder(SPAIN_ORG, USA_WAREHOUSE);
 
-    exception.expect(OBSecurityException.class);
-
-    OBDal.getInstance().commitAndClose();
+    assertThrows(OBSecurityException.class, () -> {
+      OBDal.getInstance().commitAndClose();
+    });
   }
 
   /**
@@ -99,9 +100,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     order.setWarehouse(OBDal.getInstance().getProxy(Warehouse.class, USA_WAREHOUSE));
 
-    exception.expect(OBSecurityException.class);
-
-    OBDal.getInstance().commitAndClose();
+    assertThrows(OBSecurityException.class, () -> {
+      OBDal.getInstance().commitAndClose();
+    });
   }
 
   /**
@@ -154,9 +155,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
         }
       });
 
-      exception.expect(OBSecurityException.class);
-
-      OBDal.getInstance().commitAndClose();
+      assertThrows(OBSecurityException.class, () -> {
+        OBDal.getInstance().commitAndClose();
+      });
     } finally {
       OBContext.restorePreviousCrossOrgReferenceMode();
     }
@@ -171,10 +172,11 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
     Order order = createOrder(SPAIN_ORG, SPAIN_WAREHOUSE);
     OBContext.setCrossOrgReferenceAdminMode();
     try {
-      exception.expect(OBSecurityException.class);
-
       order.setCancelledorder(OBDal.getInstance().getProxy(Order.class, USA_ORDER));
-      OBDal.getInstance().commitAndClose();
+
+      assertThrows(OBSecurityException.class, () -> {
+        OBDal.getInstance().commitAndClose();
+      });
     } finally {
       OBContext.restorePreviousCrossOrgReferenceMode();
     }
@@ -185,9 +187,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
   public void shouldBeIllegalOnChildInsert() {
     createCrossOrgOrderOrderLine();
 
-    exception.expect(OBSecurityException.class);
-
-    OBDal.getInstance().commitAndClose();
+    assertThrows(OBSecurityException.class, () -> {
+      OBDal.getInstance().commitAndClose();
+    });
   }
 
   @Test
@@ -197,9 +199,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
 
     ol.setOrganization(OBDal.getInstance().getProxy(Organization.class, USA_ORG));
 
-    exception.expect(OBSecurityException.class);
-
-    OBDal.getInstance().commitAndClose();
+    assertThrows(OBSecurityException.class, () -> {
+      OBDal.getInstance().commitAndClose();
+    });
   }
 
   @Test
@@ -418,8 +420,9 @@ public class ExplicitCrossOrganizationReference extends CrossOrganizationReferen
       Column orderCreatedBy = OBDal.getInstance().get(Column.class, ORDER_CREATEDBY_COLUMN);
       orderCreatedBy.setAllowedCrossOrganizationReference(true);
 
-      exception.expect(Exception.class);
-      OBDal.getInstance().commitAndClose();
+      assertThrows(Exception.class, () -> {
+        OBDal.getInstance().commitAndClose();
+      });
     } finally {
       OBDal.getInstance().rollbackAndClose();
       OBContext.setOBContext(prevCtxt);

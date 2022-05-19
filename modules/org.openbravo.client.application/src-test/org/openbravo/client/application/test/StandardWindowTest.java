@@ -18,8 +18,8 @@
  */
 package org.openbravo.client.application.test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isEmptyString;
-import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
