@@ -65,20 +65,20 @@ class ProductPriceExceptionObserver extends EntityPersistenceEventObserver {
     final ProductPriceException pppe = (ProductPriceException) event.getTargetInstance();
     if (existsRecord(pppe.getId(), pppe.getClient(), pppe.getOrganization(), pppe.getProductPrice(),
         pppe.getValidFromDate(), pppe.getValidToDate())) {
-      throw new OBException(OBMessageUtils.messageBD("20504"));
+      throw new OBException(OBMessageUtils.getI18NMessage("ProductPriceExceptionExists"));
     }
-
   }
 
   // Check if exists another record using this validFromDate - validToDate in the same dates
-  private boolean existsRecord(final String id, final Client client,
+  private boolean existsRecord(final String exceptionId, final Client client,
       final Organization organization, final ProductPrice productPrice, final Date validFrom,
       final Date validTo) {
     //@formatter:off
     final String hql =
                   "select pppe.id" +
                   "  from PricingProductPriceException as pppe" +
-                  " where pppe.client.id = :clientId" +
+                  " where pppe.id != :exceptionId" +
+                  "   and pppe.client.id = :clientId" +
                   "   and pppe.organization.id = :orgId" +
                   "   and pppe.productPrice.id = :productPriceId" +
                   "   and" +
@@ -98,6 +98,7 @@ class ProductPriceExceptionObserver extends EntityPersistenceEventObserver {
     final Query<String> query = OBDal.getInstance()
         .getSession()
         .createQuery(hql, String.class)
+        .setParameter("exceptionId", exceptionId)
         .setParameter("clientId", client.getId())
         .setParameter("orgId", organization.getId())
         .setParameter("productPriceId", productPrice.getId())
