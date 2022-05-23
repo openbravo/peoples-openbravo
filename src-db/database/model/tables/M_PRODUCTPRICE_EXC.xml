@@ -45,15 +45,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PRICELIST" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="PRICESTD" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[0]]></default>
-        <onCreateDefault/>
-      </column>
-      <column name="PRICELIMIT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
@@ -66,9 +58,6 @@
       <foreign-key foreignTable="M_PRODUCTPRICE" name="M_PRODUCTPRICE_EXC_M_PPRICE" onDelete="cascade">
         <reference local="M_PRODUCTPRICE_ID" foreign="M_PRODUCTPRICE_ID"/>
       </foreign-key>
-      <index name="M_PRODUCTPRICE_EXC_ORG" unique="false">
-        <index-column name="AD_ORG_ID"/>
-      </index>
       <index name="M_PRODUCTPRICE_EXC_PP" unique="false">
         <index-column name="M_PRODUCTPRICE_ID"/>
       </index>
