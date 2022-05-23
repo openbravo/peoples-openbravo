@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2021 Openbravo S.L.U.
+ * Copyright (C) 2013-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -2482,28 +2482,22 @@ enyo.kind({
   tap: function() {
     let me = this;
     let isMultiOrder = !this.owner.model.get('leftColumnViewManager').isOrder();
-    let orderDesc = '';
     let payments;
 
     //*** Avoid double click ***
     if (this.getContent() === OB.I18N.getLabel('OBPOS_LblDone')) {
-      if (this.owner.receipt && this.owner.receipt.getOrderDescription) {
-        orderDesc = this.owner.receipt.getOrderDescription();
-      }
       OB.info(
         'Time: ' +
           new Date() +
           '. Payment Button Pressed ( Status: ' +
           this.disabled +
-          ') ' +
-          orderDesc
+          ') '
       );
       if (me.blocked) {
         OB.error(
           'Time: ' +
             new Date() +
-            '. Done button has been pressed 2 times and second execution is discarded ' +
-            orderDesc
+            '. Done button has been pressed 2 times and second execution is discarded'
         );
         return;
       } else {
