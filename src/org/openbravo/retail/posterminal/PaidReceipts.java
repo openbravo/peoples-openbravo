@@ -118,7 +118,20 @@ public class PaidReceipts extends JSONProcessSimple {
     OBContext.setAdminMode(true);
     try {
       JSONArray respArray = new JSONArray();
-      List<String> orderIds = new ArrayList<String>();
+
+      org.openbravo.model.common.order.Order order = getOrder(jsonsent);
+      if (order == null) {
+        final String errorMsg = OBMessageUtils.getI18NMessage("OBPOS_PaidReceiptNotFound");
+        final JSONObject error = new JSONObject();
+        error.put("message", errorMsg);
+        result.put(JsonConstants.RESPONSE_ERROR, error);
+        result.put(JsonConstants.RESPONSE_ERRORMESSAGE, errorMsg);
+        result.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+        return result;
+      }
+
+      final String orderid = order.getId();
+      List<String> orderIds = new ArrayList<>();
 
       final DateFormat parseDateFormat = (DateFormat) POSUtils.dateFormatUTC.clone();
       parseDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -129,17 +142,10 @@ public class PaidReceipts extends JSONProcessSimple {
       paymentDateFormat
           .setTimeZone(TimeZone.getTimeZone(Calendar.getInstance().getTimeZone().getID()));
 
-      String orderid = jsonsent.has("documentNo")
-          ? getOrderIdFromDocNo(jsonsent.getString("documentNo"))
-          : jsonsent.getString("orderid");
-
       if (jsonsent.has("pos") && jsonsent.getString("pos") != null) {
         String posId = jsonsent.getString("pos");
         posTerminal = OBDal.getInstance().get(OBPOSApplications.class, posId);
       }
-
-      org.openbravo.model.common.order.Order order = OBDal.getInstance()
-          .get(org.openbravo.model.common.order.Order.class, orderid);
 
       // Get PriceListVersion from Order PriceList
       String priceListVersionId = null;
@@ -773,19 +779,20 @@ public class PaidReceipts extends JSONProcessSimple {
     }
   }
 
-  private String getOrderIdFromDocNo(String documentNo) {
-    OBCriteria<org.openbravo.model.common.order.Order> queryOrder = OBDal.getInstance()
-        .createCriteria(org.openbravo.model.common.order.Order.class);
-    queryOrder.add(
-        Restrictions.eq(org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO, documentNo));
-    queryOrder.setMaxResults(1);
-    org.openbravo.model.common.order.Order order = (org.openbravo.model.common.order.Order) queryOrder
-        .uniqueResult();
-    if (order == null) {
-      throw new OBException(
-          "Can not be found any order with the provided document No: " + documentNo);
+  private org.openbravo.model.common.order.Order getOrder(JSONObject jsonsent) {
+    final String documentNo = jsonsent.optString("documentNo");
+    final String orderId = jsonsent.optString("orderid");
+    if (!StringUtils.isEmpty(documentNo)) {
+      OBCriteria<org.openbravo.model.common.order.Order> queryOrder = OBDal.getInstance()
+          .createCriteria(org.openbravo.model.common.order.Order.class);
+      queryOrder.add(
+          Restrictions.eq(org.openbravo.model.common.order.Order.PROPERTY_DOCUMENTNO, documentNo));
+      queryOrder.setMaxResults(1);
+      return (org.openbravo.model.common.order.Order) queryOrder.uniqueResult();
+    } else if (!StringUtils.isEmpty(orderId)) {
+      return OBDal.getInstance().get(org.openbravo.model.common.order.Order.class, orderId);
     }
-    return order.getId();
+    return null;
   }
 
   private void setOverpayment(JSONObject objectIn, JSONObject paidReceiptPayment)
