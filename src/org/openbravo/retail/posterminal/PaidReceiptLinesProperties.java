@@ -42,6 +42,7 @@ public class PaidReceiptLinesProperties extends ModelExtension {
           trlName = "product.name";
         }
         add(new HQLProperty("product.id", "id"));
+        add(new HQLProperty("product.searchKey", "productSearchKey"));
         add(new HQLProperty(trlName, "name"));
         add(new HQLProperty("product.uOM.id", "uOM"));
         add(new HQLProperty("ordLine.lineGrossAmount", "lineGrossAmount"));
