@@ -31,6 +31,7 @@ import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.pricing.pricelist.PriceExceptionsUtil;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 
@@ -78,6 +79,8 @@ class UpdatePricesAndAmounts implements CopyFromOrdersProcessImplementationInter
     // Price List, Price Standard and discount
     BigDecimal priceActual = productPrice.getStandardPrice()
         .setScale(pricePrecision, RoundingMode.HALF_UP);
+    priceActual = PriceExceptionsUtil.getStandardPriceException(productPrice,
+        newOrderLine.getOrganization(), null, priceActual);
     BigDecimal priceList = productPrice.getListPrice()
         .setScale(pricePrecision, RoundingMode.HALF_UP);
     BigDecimal priceLimit = productPrice.getPriceLimit()

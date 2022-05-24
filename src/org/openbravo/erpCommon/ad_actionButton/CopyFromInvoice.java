@@ -54,6 +54,7 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
+import org.openbravo.model.pricing.pricelist.PriceExceptionsUtil;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -180,6 +181,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 priceStd = (StringUtils.isEmpty(invoicelineprice[j].pricestd) ? BigDecimal.ZERO
                     : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
                         RoundingMode.HALF_UP);
+                priceStd = PriceExceptionsUtil.getStandardPriceException(strInvPriceList,
+                    dataInvoice[0].adOrgId, strmProductId, dataInvoice[0].dateinvoiced, priceStd);
                 priceListGross = BigDecimal.ZERO;
                 priceStdGross = BigDecimal.ZERO;
 
@@ -194,7 +197,9 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                       invoice.getPriceList(), false);
                   if (prices != null) {
                     priceListGross = prices.getListPrice();
-                    priceStdGross = prices.getStandardPrice();
+                    priceStdGross = PriceExceptionsUtil.getStandardPriceException(prices,
+                        invoice.getOrganization(), invoice.getInvoiceDate(),
+                        prices.getStandardPrice());
                   }
                 } else {
                   // Calculate price adjustments (offers)

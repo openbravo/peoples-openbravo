@@ -50,6 +50,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
+import org.openbravo.model.pricing.pricelist.PriceExceptionsUtil;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -261,12 +262,15 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         try {
           final ProductPrice pp = FinancialUtils.getProductPrice(product, order.getOrderDate(),
               isSOTrx, order.getPriceList());
-          unitPrice = pp.getStandardPrice();
+          unitPrice = PriceExceptionsUtil.getStandardPriceException(pp, order.getOrganization(),
+              order.getOrderDate(), pp.getStandardPrice());
           limitPrice = pp.getPriceLimit();
           netListPrice = pp.getListPrice();
           grossListPrice = pp.getListPrice();
-          stdPrice = pp.getStandardPrice();
-          baseGrossUnitPrice = pp.getStandardPrice();
+          stdPrice = PriceExceptionsUtil.getStandardPriceException(pp, order.getOrganization(),
+              order.getOrderDate(), pp.getStandardPrice());
+          baseGrossUnitPrice = PriceExceptionsUtil.getStandardPriceException(pp,
+              order.getOrganization(), order.getOrderDate(), pp.getStandardPrice());
         } catch (OBException e) {
           // Product not found in price list. Prices default to ZERO
           unitPrice = limitPrice = netListPrice = grossListPrice = stdPrice = BigDecimal.ZERO;

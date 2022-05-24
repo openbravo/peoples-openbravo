@@ -46,6 +46,7 @@ import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.pricing.pricelist.PriceExceptionsUtil;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -157,14 +158,16 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           }
         }
 
-        priceStd = new BigDecimal(CopyFromOrderData.getOffersStdPrice(this, strLastpriceso, strKey));
+        priceStd = new BigDecimal(
+            CopyFromOrderData.getOffersStdPrice(this, strLastpriceso, strKey));
         ProductPrice prices = FinancialUtils.getProductPrice(
             OBDal.getInstance().get(Product.class, strmProductId), order.getOrderDate(),
             order.isSalesTransaction(), order.getPriceList(), false);
         if (prices != null) {
           priceLimit = prices.getPriceLimit();
           priceList = prices.getListPrice();
-          pricestdgross = prices.getStandardPrice();
+          pricestdgross = PriceExceptionsUtil.getStandardPriceException(prices,
+              order.getOrganization(), order.getOrderDate(), prices.getStandardPrice());
         } else {
           priceLimit = BigDecimal.ZERO;
           priceList = BigDecimal.ZERO;
