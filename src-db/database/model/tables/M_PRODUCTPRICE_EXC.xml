@@ -3,7 +3,7 @@
     <table name="M_PRODUCTPRICE_EXC" primaryKey="M_PRODUCTPRICE_EXC_KEY">
       <column name="M_PRODUCTPRICE_EXC_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
-        <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
+        <onCreateDefault/>
       </column>
       <column name="M_PRODUCTPRICE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
