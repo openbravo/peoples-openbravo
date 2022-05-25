@@ -710,7 +710,7 @@ enyo.kind({
         keyboard.execCommand(status, null);
       } else {
         me.bubble('onClearPaymentSelect');
-        var amount = me.model.getPending(),
+        var amount = OB.DEC.abs(me.model.getPending()),
           pendingPrepayment,
           setAmountIfPrepayment = function() {
             var reminingPrepayment;
@@ -943,13 +943,25 @@ enyo.kind({
       sideButton,
       paymentCommand,
       keyboard = this.owner.owner,
-      paymentMethodCategory = {},
-      isReturnReceipt =
-        keyboard.model.get('leftColumnViewManager').isOrder() &&
-        me.receipt &&
-        me.receipt.getPaymentStatus().isNegative
-          ? true
-          : false;
+      paymentMethodCategory = {};
+    const calculateMultiOrderTotal = () => {
+      let multiOrderTotal = OB.DEC.Zero;
+      keyboard.model
+        .get('multiOrders')
+        .get('multiOrdersList')
+        .models.forEach(order => {
+          multiOrderTotal = OB.DEC.add(multiOrderTotal, order.getGross());
+        });
+      return multiOrderTotal;
+    };
+    let isReturnReceipt =
+      keyboard.model.get('leftColumnViewManager').isOrder() &&
+      me.receipt &&
+      me.receipt.getPaymentStatus().isNegative
+        ? true
+        : calculateMultiOrderTotal() < 0
+        ? true
+        : false;
 
     keyboard.disableCommandKey(this, {
       commands: ['%'],

@@ -1303,6 +1303,23 @@
       return pending;
     },
 
+    getPendingWithSymbol: function() {
+      var pending;
+      if (this.get('prepaymentChangeMode')) {
+        var paymentsAmt = _.reduce(
+          this.get('payments').models,
+          function(memo, payment) {
+            return OB.DEC.add(memo, payment.get('origAmount'));
+          },
+          OB.DEC.Zero
+        );
+        pending = OB.DEC.sub(this.getGross(), paymentsAmt);
+      } else {
+        pending = OB.DEC.sub(this.getGross(), this.getPaymentWithSign());
+      }
+      return pending;
+    },
+
     getDeliveredQuantityAmount: function() {
       return this.get('deliveredQuantityAmount')
         ? this.get('deliveredQuantityAmount')
@@ -8761,8 +8778,8 @@
           OB.DEC.compare(OB.DEC.sub(pay, total)) > 0
             ? OB.DEC.sub(pay, total)
             : null,
-        isReturn: this.get('gross') < 0 ? true : false,
-        isNegative: this.get('gross') < 0 ? true : false,
+        isReturn: this.get('total') < 0 ? true : false,
+        isNegative: this.get('total') < 0 ? true : false,
         totalAmt: total,
         pendingAmt:
           OB.DEC.compare(OB.DEC.sub(pay, total)) >= 0
@@ -8975,6 +8992,7 @@
       if (
         !payment.get('isReversePayment') &&
         this.getPending() <= 0 &&
+        !this.getPaymentStatus().isReturn &&
         payment.get('amount') > 0
       ) {
         OB.UTIL.showWarning(OB.I18N.getLabel('OBPOS_PaymentsExact'));
@@ -9106,7 +9124,7 @@
                 order.set('openDrawer', payment.get('openDrawer'));
               }
               payment.set('date', new Date());
-              payment.set('isReturnOrder', false);
+              payment.set('isReturnOrder', order.getPaymentStatus().isReturn);
               payment.set('id', OB.UTIL.get_UUID());
               if (payment.has('paymentRoundingLine')) {
                 payment

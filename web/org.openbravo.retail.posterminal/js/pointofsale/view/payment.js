@@ -151,7 +151,11 @@ enyo.kind({
       } else if (!_.isNull(pending) && pending) {
         this.calculateChangeReset();
         this.setTotalPending(
-          OB.DEC.mul(pending, payment.mulrate, payment.obposPosprecision),
+          this.model.isValidMultiOrderState()
+            ? OB.DEC.abs(
+                OB.DEC.mul(pending, payment.mulrate, payment.obposPosprecision)
+              )
+            : OB.DEC.mul(pending, payment.mulrate, payment.obposPosprecision),
           payment.symbol,
           payment.currencySymbolAtTheRight
         );
@@ -1178,6 +1182,8 @@ enyo.kind({
         multiOrders.get('payment')
       );
 
+    let absoluteMultiOrderTotal = OB.DEC.abs(multiOrders.get('total'));
+
     this.updateExtraInfo('');
     this.$.layawayaction.hide();
     if (_.isEmpty(OB.MobileApp.model.paymentnames)) {
@@ -1368,9 +1374,9 @@ enyo.kind({
 
     if (
       multiOrders.get('multiOrdersList').length > 0 &&
-      OB.DEC.compare(multiOrders.get('total')) >= 0 &&
+      OB.DEC.compare(absoluteMultiOrderTotal) >= 0 &&
       OB.DEC.compare(
-        OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))
+        OB.DEC.sub(multiOrders.get('payment'), absoluteMultiOrderTotal)
       ) >= 0
     ) {
       this.$.totalpending.hide();
@@ -1395,7 +1401,7 @@ enyo.kind({
       }
       this.setTotalPending(
         OB.DEC.mul(
-          OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')),
+          OB.DEC.sub(absoluteMultiOrderTotal, multiOrders.get('payment')),
           rate,
           precision
         ),
@@ -1403,6 +1409,11 @@ enyo.kind({
         symbolAtRight
       );
       this.$.totalpending.show();
+      this.$.totalpendinglbl.setContent(
+        paymentStatus.isNegative
+          ? OB.I18N.getLabel('OBPOS_ReturnRemaining')
+          : OB.I18N.getLabel('OBPOS_PaymentsRemaining')
+      );
       if (
         receiptHasPrepaymentAmount &&
         OB.DEC.compare(
@@ -1442,9 +1453,9 @@ enyo.kind({
     this.$.layawayaction.hide();
     if (
       multiOrders.get('multiOrdersList').length > 0 &&
-      OB.DEC.compare(multiOrders.get('total')) >= 0 &&
+      OB.DEC.compare(absoluteMultiOrderTotal) >= 0 &&
       (OB.DEC.compare(
-        OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))
+        OB.DEC.sub(multiOrders.get('payment'), absoluteMultiOrderTotal)
       ) >= 0 ||
         multiOrders.get('total') === 0)
     ) {
@@ -1462,13 +1473,13 @@ enyo.kind({
     }
     if (
       multiOrders.get('multiOrdersList').length > 0 &&
-      OB.DEC.compare(multiOrders.get('total')) >= 0 &&
+      OB.DEC.compare(absoluteMultiOrderTotal) >= 0 &&
       OB.DEC.compare(
-        OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))
+        OB.DEC.sub(multiOrders.get('payment'), absoluteMultiOrderTotal)
       ) >= 0 &&
       !multiOrders.getChange() &&
       OB.DEC.compare(
-        OB.DEC.sub(multiOrders.get('payment'), multiOrders.get('total'))
+        OB.DEC.sub(multiOrders.get('payment'), absoluteMultiOrderTotal)
       ) <= 0
     ) {
       if (multiOrders.get('total') === 0) {
@@ -1476,7 +1487,11 @@ enyo.kind({
         this.$.donezerolbl.show();
       } else {
         this.$.donezerolbl.hide();
-        this.$.exactlbl.setContent(OB.I18N.getLabel('OBPOS_PaymentsExact'));
+        this.$.exactlbl.setContent(
+          multiOrders.getPaymentStatus().isNegative
+            ? OB.I18N.getLabel('OBPOS_ReturnExact')
+            : OB.I18N.getLabel('OBPOS_PaymentsExact')
+        );
         this.$.exactlbl.show();
       }
     } else {

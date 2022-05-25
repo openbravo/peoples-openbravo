@@ -128,7 +128,6 @@ enyo.kind({
     totalData.forEach(function(order) {
       if (
         order.lines.length === 0 ||
-        order.grossAmount < 0 ||
         order.isPaid ||
         order.isQuotation ||
         order.orderType === 3

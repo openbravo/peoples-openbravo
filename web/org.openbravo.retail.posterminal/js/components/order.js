@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2021 Openbravo S.L.U.
+ * Copyright (C) 2013-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1789,7 +1789,7 @@ enyo.kind({
           }
           order.getPrepaymentAmount(function() {
             if (OB.UTIL.isNullOrUndefined(order.get('amountToLayaway'))) {
-              total = OB.DEC.add(total, order.getPending());
+              total = OB.DEC.add(total, order.getPendingWithSymbol());
             } else {
               total = OB.DEC.add(total, order.get('amountToLayaway'));
               amountToLayaway = OB.DEC.add(

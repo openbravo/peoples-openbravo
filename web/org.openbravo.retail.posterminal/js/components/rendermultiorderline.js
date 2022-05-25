@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2020 Openbravo S.L.U.
+ * Copyright (C) 2013-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -78,7 +78,7 @@ enyo.kind({
                     ? OB.I18N.formatCurrency(
                         this.owner.owner.model.get('amountToLayaway')
                       )
-                    : this.owner.owner.model.printPending()
+                    : this.owner.owner.model.getPendingWithSymbol()
                 );
               }
             }
@@ -142,7 +142,10 @@ enyo.kind({
     }
   ],
   tap: function() {
-    if (OB.MobileApp.model.hasPermission('OBPOS_receipt.layawayReceipt')) {
+    if (
+      OB.MobileApp.model.hasPermission('OBPOS_receipt.layawayReceipt') &&
+      this.owner.model.getPendingWithSymbol() > 0
+    ) {
       this.doShowPopup({
         popup: 'modalmultiorderslayaway',
         args: this.owner.model

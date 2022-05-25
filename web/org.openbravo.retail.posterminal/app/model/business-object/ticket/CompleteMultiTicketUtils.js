@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -27,13 +27,93 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    */
 
   sharePaymentsBetweenTickets(multiTicketList, payload) {
-    const newTicketList = [...multiTicketList];
+    let newTicketList = [...multiTicketList];
     const { payments, changePayments } = payload.multiTickets;
     const considerPrepaymentAmount =
       payload.considerPrepaymentAmount != null
         ? payload.considerPrepaymentAmount
         : true;
     let index;
+
+    // Preprocess logic to handle mixed Open Tickets
+    const createDefaultPaymentLine = amount => {
+      const findCashPaymentMethod = () => {
+        // Find the cash method that is default and refundable. Otherwise the first cash payment method
+        return (
+          OB.MobileApp.model.get('payments').find(payment => {
+            return (
+              payment.paymentMethod.iscash &&
+              !payment.paymentMethod.isRounding &&
+              payment.paymentMethod.refundable &&
+              payment.paymentMethod.defaultCashPaymentMethod
+            );
+          }) ||
+          OB.MobileApp.model.get('payments').find(payment => {
+            return (
+              payment.paymentMethod.iscash &&
+              payment.paymentMethod.refundable &&
+              !payment.paymentMethod.isRounding
+            );
+          })
+        );
+      };
+
+      const cashPaymentMethod = findCashPaymentMethod();
+      return {
+        kind: cashPaymentMethod.payment.searchKey,
+        name: cashPaymentMethod.paymentMethod.name,
+        amount: OB.DEC.abs(OB.DEC.number(amount)),
+        origAmount: OB.DEC.abs(OB.DEC.number(amount)),
+        paid: OB.DEC.abs(OB.DEC.number(amount)),
+        rate: cashPaymentMethod.rate,
+        mulrate: cashPaymentMethod.mulrate,
+        isocode: cashPaymentMethod.isocode,
+        isCash: cashPaymentMethod.paymentMethod.iscash,
+        allowOpenDrawer: cashPaymentMethod.paymentMethod.allowopendrawer,
+        openDrawer: cashPaymentMethod.paymentMethod.openDrawer,
+        printtwice: cashPaymentMethod.paymentMethod.printtwice
+      };
+    };
+
+    const addPaymentToPreprocessedOrder = order => {
+      // Adding to the paymentList the inverse to the one we have just used for paying
+      payments.push(createDefaultPaymentLine(OB.DEC.abs(order.grossAmount)));
+
+      // Generate the payment for the order we want to pay before keep going
+      return OB.App.State.Ticket.Utils.addPayment(order, {
+        ...payload,
+        payment: createDefaultPaymentLine(OB.DEC.abs(order.grossAmount))
+      });
+    };
+
+    // Allow the payment of mixed tickets
+    const positiveOrders = [];
+    const negativeOrders = [];
+    const processedOrders = [];
+    const isNegativeMultiOrders = payload.multiTickets.total < 0;
+
+    multiTicketList.forEach(order => {
+      if (order.isNegative) {
+        negativeOrders.push(order);
+      } else {
+        positiveOrders.push(order);
+      }
+    });
+
+    const orderToPreprocess = isNegativeMultiOrders
+      ? positiveOrders
+      : negativeOrders;
+
+    orderToPreprocess.forEach(order =>
+      processedOrders.push(addPaymentToPreprocessedOrder(order))
+    );
+
+    if (isNegativeMultiOrders) {
+      newTicketList = [...processedOrders, ...negativeOrders];
+    } else {
+      newTicketList = [...processedOrders, ...positiveOrders];
+    }
+
     let ticketListWithPayments = newTicketList.map(function iterateTickets(
       ticket
     ) {

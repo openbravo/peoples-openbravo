@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2021 Openbravo S.L.U.
+ * Copyright (C) 2019-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -2093,11 +2093,11 @@ enyo.kind({
   },
   selectMultiOrders: function(inSender, inEvent) {
     var me = this;
-    me.model.get('leftColumnViewManager').setMultiOrderMode();
     me.model
       .get('multiOrders')
       .get('multiOrdersList')
       .reset(inEvent.value);
+    me.model.get('leftColumnViewManager').setMultiOrderMode();
     me.model
       .get('multiOrders')
       .get('multiOrdersList')
