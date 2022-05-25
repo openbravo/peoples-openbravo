@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,11 +36,11 @@ import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.pricing.pricelist.PriceExceptionsUtil;
 import org.openbravo.utils.FormatUtilities;
 
 public class SL_Invoice_Product extends SimpleCallout {
@@ -69,8 +69,8 @@ public class SL_Invoice_Product extends SimpleCallout {
     String strUOMProduct = info.getStringParameter("inpmProductUomId", IsIDFilter.instance);
     String strPriceListId = info.getStringParameter("inpmPricelistId");
     String strDate = info.getStringParameter("inpdateinvoiced");
-    priceStd = PriceExceptionsUtil.getStandardPriceException(strPriceListId, strADOrgID,
-        strMProductID, strDate, priceStd);
+    priceStd = FinancialUtils.getStandardPriceException(strPriceListId, strADOrgID, strMProductID,
+        strDate, priceStd);
     // Warehouse
     String strWarehouseOrg = SLOrderProductData.getWarehouseOrg(this, strWarehouse);
     String strWarehouseForOrg = "";

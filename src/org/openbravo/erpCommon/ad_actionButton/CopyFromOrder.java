@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,7 +46,6 @@ import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.pricing.pricelist.PriceExceptionsUtil;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
@@ -166,8 +165,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         if (prices != null) {
           priceLimit = prices.getPriceLimit();
           priceList = prices.getListPrice();
-          pricestdgross = PriceExceptionsUtil.getStandardPriceException(prices,
-              order.getOrganization(), order.getOrderDate(), prices.getStandardPrice());
+          pricestdgross = FinancialUtils.getStandardPriceException(prices, order.getOrganization(),
+              order.getOrderDate(), prices.getStandardPrice());
         } else {
           priceLimit = BigDecimal.ZERO;
           priceList = BigDecimal.ZERO;

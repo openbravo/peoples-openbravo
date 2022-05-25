@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -54,7 +54,6 @@ import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
-import org.openbravo.model.pricing.pricelist.PriceExceptionsUtil;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -181,7 +180,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 priceStd = (StringUtils.isEmpty(invoicelineprice[j].pricestd) ? BigDecimal.ZERO
                     : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
                         RoundingMode.HALF_UP);
-                priceStd = PriceExceptionsUtil.getStandardPriceException(strInvPriceList,
+                priceStd = FinancialUtils.getStandardPriceException(strInvPriceList,
                     dataInvoice[0].adOrgId, strmProductId, dataInvoice[0].dateinvoiced, priceStd);
                 priceListGross = BigDecimal.ZERO;
                 priceStdGross = BigDecimal.ZERO;
@@ -197,7 +196,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                       invoice.getPriceList(), false);
                   if (prices != null) {
                     priceListGross = prices.getListPrice();
-                    priceStdGross = PriceExceptionsUtil.getStandardPriceException(prices,
+                    priceStdGross = FinancialUtils.getStandardPriceException(prices,
                         invoice.getOrganization(), invoice.getInvoiceDate(),
                         prices.getStandardPrice());
                   }

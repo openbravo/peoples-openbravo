@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2021 Openbravo SLU
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,10 +34,10 @@ import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.pricing.pricelist.PriceExceptionsUtil;
 import org.openbravo.utils.FormatUtilities;
 
 public class SL_Order_Product extends SimpleCallout {
@@ -69,8 +69,8 @@ public class SL_Order_Product extends SimpleCallout {
     BigDecimal priceStd = info.getBigDecimalParameter("inpmProductId_PSTD");
     String strPriceListId = info.getStringParameter("inpmPricelistId");
     String strDate = info.getStringParameter("inpdateordered");
-    priceStd = PriceExceptionsUtil.getStandardPriceException(strPriceListId, strADOrgID,
-        strMProductID, strDate, priceStd);
+    priceStd = FinancialUtils.getStandardPriceException(strPriceListId, strADOrgID, strMProductID,
+        strDate, priceStd);
     BigDecimal priceLimit = info.getBigDecimalParameter("inpmProductId_PLIM");
     BigDecimal netPriceList = priceList;
     BigDecimal grossPriceList = priceList;
