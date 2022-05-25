@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,6 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang.StringUtils;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.utils.FormatUtilities;
 
 public class SL_User_Name extends SimpleCallout {
 
@@ -49,7 +48,7 @@ public class SL_User_Name extends SimpleCallout {
 
     // do not change the name field, if the user just left it
     if (!StringUtils.equals(strChanged, "inpname")) {
-      strName = FormatUtilities.replaceJS(strFirstname + strLastname);
+      strName = strFirstname + strLastname;
       if (strName.length() > maxChar) {
         strName = strName.substring(0, maxChar);
       }
@@ -66,16 +65,14 @@ public class SL_User_Name extends SimpleCallout {
         strUserName = strFirstname + strLastname;
       }
     }
-    strUserName = FormatUtilities.replaceJS(strUserName);
     if (strUserName.length() > maxChar) {
       strUserName = strUserName.substring(0, maxChar);
     }
     info.addResult("inpusername", strUserName);
 
     // informs about characters cut
-    if (FormatUtilities.replaceJS(strFirstname + strLastname).length() > maxChar) {
-      info.showMessage(FormatUtilities
-          .replaceJS(Utility.messageBD(this, "NameUsernameLengthCut", info.vars.getLanguage())));
+    if ((strFirstname + strLastname).length() > maxChar) {
+      info.showMessage(Utility.messageBD(this, "NameUsernameLengthCut", info.vars.getLanguage()));
     }
   }
 }
