@@ -38,6 +38,8 @@
     100
   );
 
+  OB.App.StateAPI.Ticket.registerUtilityFunctions({ prepareRelatedServices });
+
   // main action preparations of the products to be added which may include validations
   OB.App.StateAPI.Ticket.addProduct.addActionPreparation(
     async (ticket, payload) => {
