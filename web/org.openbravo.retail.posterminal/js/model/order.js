@@ -1320,6 +1320,10 @@
       return pending;
     },
 
+    printPendingWithSymbol: function() {
+      return OB.I18N.formatCurrency(this.getPendingWithSymbol());
+    },
+
     getDeliveredQuantityAmount: function() {
       return this.get('deliveredQuantityAmount')
         ? this.get('deliveredQuantityAmount')

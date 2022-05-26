@@ -78,7 +78,7 @@ enyo.kind({
                     ? OB.I18N.formatCurrency(
                         this.owner.owner.model.get('amountToLayaway')
                       )
-                    : this.owner.owner.model.getPendingWithSymbol()
+                    : this.owner.owner.model.printPendingWithSymbol()
                 );
               }
             }
