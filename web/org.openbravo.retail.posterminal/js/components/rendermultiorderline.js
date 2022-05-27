@@ -124,7 +124,9 @@ enyo.kind({
           classes: 'obUiRenderMultiOrdersLineValues-line-multiBottonLine',
           initComponents: function() {
             this.setContent(
-              OB.I18N.getLabel('OBPOS_RemainingToPay') +
+              (this.owner.owner.model.getPendingWithSymbol() < 0
+                ? OB.I18N.getLabel('OBPOS_RemainingToReturn')
+                : OB.I18N.getLabel('OBPOS_RemainingToPay')) +
                 ': ' +
                 this.owner.owner.model.printPending() +
                 ' - (' +

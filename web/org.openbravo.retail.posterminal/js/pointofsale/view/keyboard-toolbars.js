@@ -955,11 +955,10 @@ enyo.kind({
       return multiOrderTotal;
     };
     let isReturnReceipt =
-      keyboard.model.get('leftColumnViewManager').isOrder() &&
-      me.receipt &&
-      me.receipt.getPaymentStatus().isNegative
-        ? true
-        : calculateMultiOrderTotal() < 0
+      (keyboard.model.get('leftColumnViewManager').isOrder() &&
+        me.receipt &&
+        me.receipt.getPaymentStatus().isNegative) ||
+      calculateMultiOrderTotal() < 0
         ? true
         : false;
 

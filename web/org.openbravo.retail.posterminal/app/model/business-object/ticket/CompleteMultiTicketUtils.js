@@ -36,29 +36,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     let index;
 
     // Preprocess logic to handle mixed Open Tickets
-    const createDefaultPaymentLine = amount => {
-      const findCashPaymentMethod = () => {
-        // Find the cash method that is default and refundable. Otherwise the first cash payment method
-        return (
-          OB.MobileApp.model.get('payments').find(payment => {
-            return (
-              payment.paymentMethod.iscash &&
-              !payment.paymentMethod.isRounding &&
-              payment.paymentMethod.refundable &&
-              payment.paymentMethod.defaultCashPaymentMethod
-            );
-          }) ||
-          OB.MobileApp.model.get('payments').find(payment => {
-            return (
-              payment.paymentMethod.iscash &&
-              payment.paymentMethod.refundable &&
-              !payment.paymentMethod.isRounding
-            );
-          })
-        );
-      };
-
-      const cashPaymentMethod = findCashPaymentMethod();
+    const createDefaultPaymentLine = (amount, cashPaymentMethod) => {
       return {
         kind: cashPaymentMethod.payment.searchKey,
         name: cashPaymentMethod.paymentMethod.name,
@@ -75,14 +53,24 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       };
     };
 
+    const cashPaymentMethod = OB.UTIL.getDefaultCashPaymentMethod();
+
     const addPaymentToPreprocessedOrder = order => {
       // Adding to the paymentList the inverse to the one we have just used for paying
-      payments.push(createDefaultPaymentLine(OB.DEC.abs(order.grossAmount)));
+      payments.push(
+        createDefaultPaymentLine(
+          OB.DEC.abs(order.grossAmount),
+          cashPaymentMethod
+        )
+      );
 
       // Generate the payment for the order we want to pay before keep going
       return OB.App.State.Ticket.Utils.addPayment(order, {
         ...payload,
-        payment: createDefaultPaymentLine(OB.DEC.abs(order.grossAmount))
+        payment: createDefaultPaymentLine(
+          OB.DEC.abs(order.grossAmount),
+          cashPaymentMethod
+        )
       });
     };
 
