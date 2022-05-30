@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2017-2018 Openbravo S.L.U.
+ * Copyright (C) 2017-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -49,15 +49,17 @@ public class AttributesUtils {
               .generateValidAttSetInstanceDescription(attributeValue, product);
           String stDetailWhereClause = " as e WHERE e.attributeSetValue.id "
               + " in (select id from AttributeSetInstance attseti "
-              + " where attseti.description = :attsetdescription) "
+              + " where attseti.attributeSet.id = :attributeSetId and attseti.description = :attsetdescription) "
               + " AND e.product.id = :productId AND e.storageBin.warehouse.id "
               + " in (select warehouse.id from OrganizationWarehouse orgwh "
               + " where orgwh.organization.id = :orgid) ORDER BY e.quantityOnHand desc, e.attributeSetValue.id ";
           OBQuery<StorageDetail> querySdetail = OBDal.getInstance()
               .createQuery(StorageDetail.class, stDetailWhereClause);
+          querySdetail.setFilterOnReadableOrganization(false);
           querySdetail.setNamedParameter("attsetdescription",
               validatedAttributeSetInstanceDescription);
           querySdetail.setNamedParameter("productId", productId);
+          querySdetail.setNamedParameter("attributeSetId", product.getAttributeSet().getId());
           querySdetail.setNamedParameter("orgid", posTerminalOrganizationId);
           querySdetail.setMaxResult(1);
           StorageDetail lstSDResults = querySdetail.uniqueResult();
@@ -66,8 +68,19 @@ public class AttributesUtils {
             attrSetInst = lstSDResults.getAttributeSetValue();
           } else {
             // There is no stock. Use the first one found in Att Set instance table
-            attrSetInst = AttributesUtils
-                .createAttributeSetValue(validatedAttributeSetInstanceDescription, product);
+            OBQuery<AttributeSetInstance> queryAttrSetInst = OBDal.getInstance()
+                .createQuery(AttributeSetInstance.class,
+                    " as e WHERE e.attributeSet.id = :attributeSetId AND e.description = :attsetdescription");
+            queryAttrSetInst.setFilterOnReadableOrganization(false);
+            queryAttrSetInst.setNamedParameter("attsetdescription",
+                validatedAttributeSetInstanceDescription);
+            queryAttrSetInst.setNamedParameter("attributeSetId", product.getAttributeSet().getId());
+            queryAttrSetInst.setMaxResult(1);
+            attrSetInst = queryAttrSetInst.uniqueResult();
+            if (attrSetInst == null) {
+              attrSetInst = AttributesUtils
+                  .createAttributeSetValue(validatedAttributeSetInstanceDescription, product);
+            }
           }
           return attrSetInst;
         } else {
@@ -311,11 +324,12 @@ public class AttributesUtils {
                 true);
           }
 
-          OBDal.getInstance().flush();
           newAttrSetInst.setExpirationDate(receivedExpirationDate);
           currentPart += 1;
         }
 
+        OBDal.getInstance().save(newAttrSetInst);
+        OBDal.getInstance().flush();
         return newAttrSetInst;
       } catch (Exception e) {
         throw new OBException(e.getMessage(), e);
