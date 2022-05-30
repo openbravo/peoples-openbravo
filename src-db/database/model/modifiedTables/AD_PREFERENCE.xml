@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE AD_PREFERENCE">
+    <table name="AD_PREFERENCE" primaryKey="AD_PREFERENCE_KEY">
+      <check name="EM_OBPOS_INVALIDSESSIONTIMEOUT"><![CDATA[PROPERTY IS NULL OR PROPERTY <> 'OBPOS_SessionTimeout' OR PROPERTY = 'OBPOS_SessionTimeout' AND (TO_NUMBER(VALUE) = 0 OR TO_NUMBER(VALUE) > 2)]]></check>
+    </table>
+  </database>

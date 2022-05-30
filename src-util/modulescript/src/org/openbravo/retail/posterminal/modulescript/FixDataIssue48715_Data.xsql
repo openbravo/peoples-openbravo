@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+/*
+ ************************************************************************************
+ * Copyright (C) 2022 Openbravo S.L.U.
+ * Licensed under the Openbravo Commercial License version 1.0
+ * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
+ * or in the legal folder of this module distribution.
+ ************************************************************************************
+ */
+-->
+<SqlClass name="FixDataIssue48715Data" package="org.openbravo.retail.posterminal.modulescript">
+  <SqlClassComment></SqlClassComment>
+  <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT '' AS dummy
+      FROM DUAL
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixModelObjectPara" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE ad_model_object_para 
+        SET value = '3' 
+        WHERE name = 'timeout' AND (TO_NUMBER(VALUE) = 1 OR TO_NUMBER(VALUE) = 2)
+      ]]>
+    </Sql>
+  </SqlMethod>
+  <SqlMethod name="fixPreference" type="preparedStatement" return="rowCount">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        UPDATE ad_preference 
+        SET value = '3' 
+        WHERE property = 'OBPOS_SessionTimeout' AND (TO_NUMBER(VALUE) = 1 OR TO_NUMBER(VALUE) = 2)
+      ]]>
+    </Sql>
+  </SqlMethod>
+</SqlClass>

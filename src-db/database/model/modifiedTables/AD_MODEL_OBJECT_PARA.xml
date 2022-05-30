@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+  <database name="MODIFIED TABLE AD_MODEL_OBJECT_PARA">
+    <table name="AD_MODEL_OBJECT_PARA" primaryKey="AD_MODEL_OBJECT_PARA_KEY">
+      <check name="EM_OBPOS_ERRADMAPPINGTIMEOUT"><![CDATA[NAME <> 'timeout' OR TO_NUMBER(VALUE) = 0 OR TO_NUMBER(VALUE) > 2]]></check>
+    </table>
+  </database>
