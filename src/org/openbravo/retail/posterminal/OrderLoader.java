@@ -566,6 +566,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
                 POSUtils.isCrossStore(canceledOrder, inverseOrder.getObposApplications()));
             CancelAndReplaceUtils.cancelOrder(jsonorder.getString("orderid"),
                 paymentOrganization.getId(), jsonorder, false);
+            order = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
           } catch (Exception ex) {
             OBDal.getInstance().rollbackAndClose();
             throw new OBException("Error in OrderLoader : " + ex.getMessage(), ex);
