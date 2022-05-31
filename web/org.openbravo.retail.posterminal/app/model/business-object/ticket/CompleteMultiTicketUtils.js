@@ -56,10 +56,13 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     const cashPaymentMethod = OB.UTIL.getDefaultCashPaymentMethod();
 
     const addPaymentToPreprocessedOrder = order => {
+      const amountToPayDuringPreProcessing = OB.App.State.Ticket.Utils.getPendingAmount(
+        order
+      );
       // Adding to the paymentList the inverse to the one we have just used for paying
       payments.push(
         createDefaultPaymentLine(
-          OB.DEC.abs(order.grossAmount),
+          amountToPayDuringPreProcessing,
           cashPaymentMethod
         )
       );
@@ -68,7 +71,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       return OB.App.State.Ticket.Utils.addPayment(order, {
         ...payload,
         payment: createDefaultPaymentLine(
-          OB.DEC.abs(order.grossAmount),
+          amountToPayDuringPreProcessing,
           cashPaymentMethod
         )
       });

@@ -1183,6 +1183,11 @@ enyo.kind({
       );
 
     let absoluteMultiOrderTotal = OB.DEC.abs(multiOrders.get('total'));
+    const containsNegativeMultiOrder = multiOrders
+      .get('multiOrdersList')
+      .find(order => {
+        return order.getGross() < 0;
+      });
 
     this.updateExtraInfo('');
     this.$.layawayaction.hide();
@@ -1257,7 +1262,8 @@ enyo.kind({
       multiOrders.get('amountToLayaway') === 0 &&
       pendingPrepayment > 0 &&
       pendingPrepayment !==
-        OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment'))
+        OB.DEC.sub(multiOrders.get('total'), multiOrders.get('payment')) &&
+      !containsNegativeMultiOrder
     ) {
       this.setPrepaymentTotalPending(
         OB.DEC.mul(pendingPrepayment, rate, precision),
@@ -1336,6 +1342,7 @@ enyo.kind({
 
       if (
         !receiptHasPrepaymentAmount ||
+        containsNegativeMultiOrder ||
         !OB.MobileApp.model.get('terminal').terminalType.calculateprepayments
       ) {
         this.$.prepaymentsbuttons.hide();
