@@ -34,7 +34,6 @@ import org.openbravo.erpCommon.businessUtility.PriceAdjustment;
 import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.plm.Product;
@@ -67,10 +66,6 @@ public class SL_Order_Product extends SimpleCallout {
     BigDecimal qtyOrdered = info.getBigDecimalParameter("inpqtyordered");
     BigDecimal priceList = info.getBigDecimalParameter("inpmProductId_PLIST");
     BigDecimal priceStd = info.getBigDecimalParameter("inpmProductId_PSTD");
-    String strPriceListId = info.getStringParameter("inpmPricelistId");
-    String strDate = info.getStringParameter("inpdateordered");
-    priceStd = FinancialUtils.getStandardPriceException(strPriceListId, strADOrgID, strMProductID,
-        strDate, priceStd);
     BigDecimal priceLimit = info.getBigDecimalParameter("inpmProductId_PLIM");
     BigDecimal netPriceList = priceList;
     BigDecimal grossPriceList = priceList;

@@ -36,7 +36,6 @@ import org.openbravo.erpCommon.businessUtility.Tax;
 import org.openbravo.erpCommon.utility.AccDefUtility;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
@@ -67,10 +66,6 @@ public class SL_Invoice_Product extends SimpleCallout {
     String strWarehouse = Utility.getContext(this, info.vars, "#M_Warehouse_ID",
         info.getWindowId());
     String strUOMProduct = info.getStringParameter("inpmProductUomId", IsIDFilter.instance);
-    String strPriceListId = info.getStringParameter("inpmPricelistId");
-    String strDate = info.getStringParameter("inpdateinvoiced");
-    priceStd = FinancialUtils.getStandardPriceException(strPriceListId, strADOrgID, strMProductID,
-        strDate, priceStd);
     // Warehouse
     String strWarehouseOrg = SLOrderProductData.getWarehouseOrg(this, strWarehouse);
     String strWarehouseForOrg = "";

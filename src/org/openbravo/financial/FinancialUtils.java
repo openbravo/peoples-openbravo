@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -35,6 +34,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
@@ -52,7 +52,6 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
-import org.openbravo.model.pricing.pricelist.ProductPriceException;
 import org.openbravo.service.db.CallStoredProcedure;
 
 public class FinancialUtils {
@@ -436,77 +435,71 @@ public class FinancialUtils {
         .scroll(ScrollMode.SCROLL_SENSITIVE);
   }
 
-  private static BigDecimal getStandardPriceException(ProductPrice productPrice, String orgId,
-      Date date, BigDecimal standardPrice) {
-
-    List<String> strTreeOrgs = OBContext.getOBContext()
-        .getOrganizationStructureProvider()
-        .getParentList(orgId, true);
-    BigDecimal stdPrice = standardPrice;
-
-    List<Organization> treeOrgs = new LinkedList<Organization>();
-    for (String strOrgId : strTreeOrgs) {
-      treeOrgs.add(OBDal.getInstance().get(Organization.class, strOrgId));
-    }
-
-    OBCriteria<ProductPriceException> critProductPrice = OBDal.getInstance()
-        .createCriteria(ProductPriceException.class);
-    critProductPrice
-        .add(Restrictions.eq(ProductPriceException.PROPERTY_PRODUCTPRICE, productPrice));
-    critProductPrice.add(Restrictions.in(ProductPriceException.PROPERTY_ORGANIZATION, treeOrgs));
-    critProductPrice.add(Restrictions.le(ProductPriceException.PROPERTY_VALIDFROMDATE, date));
-    critProductPrice.add(Restrictions.ge(ProductPriceException.PROPERTY_VALIDTODATE, date));
-
-    if (!critProductPrice.list().isEmpty()) {
-      ProductPriceException newProductPrice = (ProductPriceException) critProductPrice
-          .uniqueResult();
-      stdPrice = newProductPrice.getStandardPrice();
-    }
-
-    return stdPrice;
-
-  }
-
   public static BigDecimal getStandardPriceException(String priceListId, String orgId,
-      String productId, String strDate, BigDecimal standardPrice) {
+      String productId, String strDate, Integer pricePrecision) {
 
-    BigDecimal stdPrice = standardPrice;
     Date date = null;
     try {
       date = new SimpleDateFormat("dd-MM-yyyy").parse(strDate);
     } catch (ParseException e) {
       e.printStackTrace();
     }
+
+    PriceList priceList = OBDal.getInstance().get(PriceList.class, priceListId);
+    Organization org = OBDal.getInstance().get(Organization.class, orgId);
+    Product product = OBDal.getInstance().get(Product.class, productId);
+
     OBCriteria<PriceListVersion> critPriceListVersion = OBDal.getInstance()
         .createCriteria(PriceListVersion.class);
-    critPriceListVersion.add(Restrictions.eq(PriceListVersion.PROPERTY_PRICELIST,
-        OBDal.getInstance().get(PriceList.class, priceListId)));
-    critPriceListVersion.add(Restrictions.eq(PriceListVersion.PROPERTY_ACTIVE, true));
-    critPriceListVersion.addOrder(Order.asc(PriceListVersion.PROPERTY_VALIDFROMDATE));
+    critPriceListVersion.add(Restrictions.eq(PriceListVersion.PROPERTY_PRICELIST, priceList));
+    critPriceListVersion.addOrder(Order.desc(PriceListVersion.PROPERTY_VALIDFROMDATE));
+    critPriceListVersion.setMaxResults(1);
 
-    if (!critPriceListVersion.list().isEmpty()) {
-      OBCriteria<ProductPrice> critProductPrice = OBDal.getInstance()
-          .createCriteria(ProductPrice.class);
-      critProductPrice.add(Restrictions.eq(ProductPrice.PROPERTY_PRICELISTVERSION,
-          critPriceListVersion.list().get(0)));
-      critProductPrice.add(Restrictions.eq(ProductPrice.PROPERTY_PRODUCT,
-          OBDal.getInstance().get(Product.class, productId)));
-      if (!critProductPrice.list().isEmpty()) {
-        ProductPrice productPrice = (ProductPrice) critProductPrice.uniqueResult();
-        stdPrice = getStandardPriceException(productPrice, orgId, date, stdPrice);
-      }
+    PriceListVersion priceListVersion = (PriceListVersion) critPriceListVersion.uniqueResult();
+
+    return getStandardPriceException(date, product, priceListVersion, org, pricePrecision);
+  }
+
+  public static BigDecimal getStandardPriceException(Date date, Product product,
+      PriceListVersion priceListVersion, Organization org, Integer pricePrecision) {
+
+    BigDecimal stdPrice = null;
+    // @formatter:off
+    final String hql = 
+        "select coalesce (ppe.standardPrice,pp.standardPrice) as pricestd" +
+        " from PricingProductPrice pp" + 
+          " join pp.product p" + 
+          " join pp.priceListVersion pv" + 
+          " join pv.priceList pl" +
+          " left join PricingProductPriceException ppe on ppe.productPrice=pp" +
+            " and ppe.validFromDate <= :date and ppe.validToDate >=:date" + 
+        " where p.id = :productId" +
+          " and pp.priceListVersion.id = :priceListVersionId" +
+          " or ppe.organization.id = (select ot.organization.id from OrganizationTree ot "+
+                                       " where ot.organization.id = ppe.organization.id and ot.parentOrganization.id =:organizationId)" +
+        " order by ppe.validFromDate desc";
+    //@formatter:on
+    Query<BigDecimal> query = OBDal.getInstance().getSession().createQuery(hql, BigDecimal.class);
+    query.setParameter("date", date);
+    query.setParameter("productId", product.getId());
+    query.setParameter("priceListVersionId", priceListVersion.getId());
+    query.setParameter("organizationId", org.getId());
+    stdPrice = query.uniqueResult();
+
+    if (pricePrecision != null) {
+      stdPrice = stdPrice.setScale(pricePrecision, RoundingMode.HALF_UP);
     }
-
     return stdPrice;
   }
 
   public static BigDecimal getStandardPriceException(ProductPrice productPrice, Organization org,
-      Date date, BigDecimal standardPrice) {
+      Date date, Integer pricePrecision) {
     Date calculatedDate = new Date();
     if (date != null) {
       calculatedDate = date;
     }
-    return getStandardPriceException(productPrice, org.getId(), calculatedDate, standardPrice);
+    return getStandardPriceException(calculatedDate, productPrice.getProduct(),
+        productPrice.getPriceListVersion(), org, pricePrecision);
   }
 
 }
