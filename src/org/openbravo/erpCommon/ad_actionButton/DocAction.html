@@ -11,7 +11,7 @@
 * under the License. 
 * The Original Code is Openbravo ERP. 
 * The Initial Developer of the Original Code is Openbravo SLU 
-* All portions are Copyright (C) 2001-2018 Openbravo SLU 
+* All portions are Copyright (C) 2001-2022 Openbravo SLU 
 * All Rights Reserved. 
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -95,13 +95,15 @@
           purchaseInvoiceWindow = '183',
           goodsReceiptWindow = '184',
           displayVoidDates = (frm.inpdocaction.value === 'RC'),
-          goodsShipmentWindow = '169';
+          goodsShipmentWindow = '169',
+          returnToVendorShipmentWindow = '273673D2ED914C399A6C51DB758BE0F9';
       if (inputValue(frm.inpdocaction) == null || inputValue(frm.inpdocaction) == "") {
         setWindowElementFocus(frm.inpdocaction);
         showJSMessage(1);
         return false;
       }
-      if ((purchaseInvoiceWindow === frm.inpwindowId.value || goodsReceiptWindow === frm.inpwindowId.value) && displayVoidDates) {
+      if ((purchaseInvoiceWindow === frm.inpwindowId.value || goodsReceiptWindow === frm.inpwindowId.value
+    		  || returnToVendorShipmentWindow === frm.inpwindowId.value) && displayVoidDates) {
         if (inputValue(frm.inpVoidedDocumentDate) == null || inputValue(frm.inpVoidedDocumentDate) == "") {
           setWindowElementFocus(frm.inpVoidedDocumentDate);
           showJSMessage(1);
@@ -141,7 +143,7 @@
         setWindowElementFocus(frm.inpInvoiceDate);
         showJSMessage('InvalidDateFormat');        
         return false;
-      }      
+      }
       
       setProcessingMode('popup', true);
       return true;
@@ -172,10 +174,13 @@
           displayVoidDates = (frm.inpdocaction.value === 'RC'),
           purchaseInvoiceWindow = '183',
           goodsReceiptWindow = '184',
+          returnToVendorShipmentWindow = '273673D2ED914C399A6C51DB758BE0F9',
           currentWindowId = frm.inpwindowId.value;
       
-      displayLogicElement('voidedDocumentDateRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId || goodsReceiptWindow === currentWindowId));
-      displayLogicElement('voidedDocumentDateAcctRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId || goodsReceiptWindow === currentWindowId));
+      displayLogicElement('voidedDocumentDateRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId ||
+    		  goodsReceiptWindow === currentWindowId || returnToVendorShipmentWindow === currentWindowId));
+      displayLogicElement('voidedDocumentDateAcctRow', displayVoidDates && (purchaseInvoiceWindow === currentWindowId ||
+    		  goodsReceiptWindow === currentWindowId || returnToVendorShipmentWindow === currentWindowId));
     }
     
     function applyInvoiceIfPossibleDisplayLogic() {

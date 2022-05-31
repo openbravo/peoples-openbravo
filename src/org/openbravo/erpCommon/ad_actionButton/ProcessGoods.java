@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -70,6 +70,7 @@ public class ProcessGoods extends HttpSecureAppServlet {
   private static final String M_INOUT_TABLE_ID = "319";
   private static final String GOODS_DOCUMENT_ACTION = "135";
   private static final String GOODS_RECEIPT_WINDOW = "184";
+  private static final String RETURN_TO_VENDOR_SHIPMENT_WINDOW = "273673D2ED914C399A6C51DB758BE0F9";
 
   @Override
   public void doPost(final HttpServletRequest request, final HttpServletResponse response)
@@ -373,7 +374,8 @@ public class ProcessGoods extends HttpSecureAppServlet {
     }
 
     xmlDocument.setParameter("docstatus", strdocstatus);
-    if (strWindowId.equals(GOODS_RECEIPT_WINDOW)) {
+    if (strWindowId.equals(GOODS_RECEIPT_WINDOW)
+        || strWindowId.equals(RETURN_TO_VENDOR_SHIPMENT_WINDOW)) {
       // VOID action: Reverse goods receipt/shipment by default inherits the document date and
       // accounting date from the voided document
       final String movementDate = OBDateUtils.formatDate(shipmentInOut.getMovementDate());
