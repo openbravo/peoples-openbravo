@@ -223,7 +223,9 @@ OB.OBPOSCashMgmt.Model.CashManagement = OB.Model.TerminalWindowModel.extend({
       }).then(function() {
         OB.UTIL.showLoading(false);
         me.set('finished', true);
-        if (OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')) {
+        if (
+          OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement', true)
+        ) {
           me.printCashMgmt.print(cashManagementsToPrint);
         }
       });

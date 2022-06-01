@@ -181,7 +181,10 @@
           .then(function() {
             if (optionsObj.printTicket) {
               if (
-                OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')
+                OB.MobileApp.model.hasPermission(
+                  'OBPOS_print.cashmanagement',
+                  true
+                )
               ) {
                 var toPrint = new Backbone.Collection();
                 toPrint.add(cashManagementTransactionToAdd);
@@ -210,7 +213,10 @@
             });
             if (optionsObj.printTicket) {
               if (
-                OB.MobileApp.model.hasPermission('OBPOS_print.cashmanagement')
+                OB.MobileApp.model.hasPermission(
+                  'OBPOS_print.cashmanagement',
+                  true
+                )
               ) {
                 var toPrint = new Backbone.Collection();
                 toPrint.add(cashManagementTransactionToAdd);

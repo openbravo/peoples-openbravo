@@ -522,7 +522,7 @@ OB.OBPOSCashUp.Model.CashUp = OB.OBPOSCloseCash.Model.CloseCash.extend({
     const callbackFinishedSuccess = () => {
       OB.UTIL.showLoading(true);
       this.set('finished', true);
-      if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+      if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup', true)) {
         let cashUpReport = new OB.Model.CashUp(),
           countCashSummary = this.getCountCashSummary();
         OB.UTIL.clone(this.get('closeCashReport').at(0), cashUpReport);
@@ -709,7 +709,7 @@ OB.OBPOSCashUp.Model.CashUpPartial = OB.OBPOSCashUp.Model.CashUp.extend({
   isPartialCashup: true,
 
   processAndFinish: function() {
-    if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+    if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup', true)) {
       this.printCloseCash.print(
         this.get('closeCashReport').at(0),
         this.getCountCashSummary(),

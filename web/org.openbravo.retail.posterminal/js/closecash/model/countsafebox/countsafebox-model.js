@@ -488,7 +488,7 @@ OB.OBPOSCountSafeBox.Model.CountSafeBox = OB.OBPOSCloseCash.Model.CloseCash.exte
           const callbackFinishedSuccess = () => {
             OB.UTIL.showLoading(true);
             me.set('finished', true);
-            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup')) {
+            if (OB.MobileApp.model.hasPermission('OBPOS_print.cashup', true)) {
               var cashUpReport = new OB.Model.CashUp(),
                 countCashSummary = me.getCountCashSummary();
               OB.UTIL.clone(me.get('closeCashReport').at(0), cashUpReport);
