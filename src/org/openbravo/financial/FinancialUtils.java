@@ -52,6 +52,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
+import org.openbravo.model.pricing.pricelist.ProductPriceException;
 import org.openbravo.service.db.CallStoredProcedure;
 
 public class FinancialUtils {
@@ -500,6 +501,39 @@ public class FinancialUtils {
     }
     return getStandardPriceException(calculatedDate, productPrice.getProduct(),
         productPrice.getPriceListVersion(), org, pricePrecision);
+  }
+
+  /**
+   * 
+   * @param productPrice
+   * @param organization
+   * @param date
+   * @return priceStd
+   * @throws OBException
+   */
+  public static BigDecimal getProductStdPrice(final ProductPrice productPrice,
+      final Organization organization, final Date date) throws OBException {
+    //@formatter:off
+    final String hql =
+            "as ppe, OrganizationTree ot" +
+            " where ppe.productPrice.id = :productPriceId" +
+            "   and ppe.organization.id = ot.parentOrganization.id" +
+            "   and ot.organization.id = :orgId" +
+            "   and ppe.validFromDate <= :date" +
+            "   and ppe.validToDate >= :date" +
+            " order by ot.levelno";
+    //@formatter:on
+
+    final ProductPriceException productPriceException = OBDal.getInstance()
+        .createQuery(ProductPriceException.class, hql)
+        .setNamedParameter("productPriceId", productPrice.getId())
+        .setNamedParameter("orgId", organization.getId())
+        .setNamedParameter("date", date)
+        .setMaxResult(1)
+        .uniqueResult();
+
+    return productPriceException != null ? productPriceException.getStandardPrice()
+        : productPrice.getStandardPrice();
   }
 
 }
