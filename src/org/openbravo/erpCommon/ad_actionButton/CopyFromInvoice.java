@@ -180,10 +180,6 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 priceStd = (StringUtils.isEmpty(invoicelineprice[j].pricestd) ? BigDecimal.ZERO
                     : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
                         RoundingMode.HALF_UP);
-                priceStd = FinancialUtils.getStandardPriceException(strInvPriceList,
-                    dataInvoice[0].adOrgId, strmProductId, dataInvoice[0].dateinvoiced,
-                    pricePrecision);
-                priceListGross = BigDecimal.ZERO;
                 priceStdGross = BigDecimal.ZERO;
 
                 if (invoice.getPriceList().isPriceIncludesTax()) {
@@ -197,8 +193,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                       invoice.getPriceList(), false);
                   if (prices != null) {
                     priceListGross = prices.getListPrice();
-                    priceStdGross = FinancialUtils.getStandardPriceException(prices,
-                        invoice.getOrganization(), invoice.getInvoiceDate(), stdPrecision);
+                    priceStdGross = FinancialUtils.getProductStdPrice(prices,
+                        invoice.getOrganization(), invoice.getInvoiceDate());
                   }
                 } else {
                   // Calculate price adjustments (offers)

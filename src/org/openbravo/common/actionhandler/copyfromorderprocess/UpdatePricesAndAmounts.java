@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,9 +77,8 @@ class UpdatePricesAndAmounts implements CopyFromOrdersProcessImplementationInter
     int pricePrecision = orderCurrency.getPricePrecision().intValue();
 
     // Price List, Price Standard and discount
-    BigDecimal priceActual = FinancialUtils.getStandardPriceException(newOrderLine.getOrderDate(),
-        productPrice.getProduct(), productPrice.getPriceListVersion(),
-        newOrderLine.getOrganization(), pricePrecision);
+    BigDecimal priceActual = FinancialUtils.getProductStdPrice(productPrice,
+        newOrderLine.getOrganization(), newOrderLine.getOrderDate());
     BigDecimal priceList = productPrice.getListPrice()
         .setScale(pricePrecision, RoundingMode.HALF_UP);
     BigDecimal priceLimit = productPrice.getPriceLimit()

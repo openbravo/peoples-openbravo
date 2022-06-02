@@ -158,7 +158,8 @@ public class CostingUtils {
       BigDecimal standardCost = getStandardCost(product, org, costDate, costDimensions, currency);
       return qty.abs().multiply(standardCost);
     } else if (stdCost == null && pp != null) {
-      BigDecimal cost = pp.getStandardPrice().multiply(qty.abs());
+      BigDecimal cost = FinancialUtils.getProductStdPrice(pp, org, movementDate)
+          .multiply(qty.abs());
       if (pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
         // no conversion needed
         return cost;
@@ -169,7 +170,8 @@ public class CostingUtils {
 
     } else if (stdCost != null && pp != null
         && stdCost.getStartingDate().before(pp.getPriceListVersion().getValidFromDate())) {
-      BigDecimal cost = pp.getStandardPrice().multiply(qty.abs());
+      BigDecimal cost = FinancialUtils.getProductStdPrice(pp, org, movementDate)
+          .multiply(qty.abs());
       if (pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
         // no conversion needed
         return cost;

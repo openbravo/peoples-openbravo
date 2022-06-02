@@ -261,15 +261,15 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         try {
           final ProductPrice pp = FinancialUtils.getProductPrice(product, order.getOrderDate(),
               isSOTrx, order.getPriceList());
-          unitPrice = FinancialUtils.getStandardPriceException(order.getOrderDate(), product,
-              pp.getPriceListVersion(), order.getOrganization(), stdPrecision);
+          unitPrice = FinancialUtils.getProductStdPrice(pp, order.getOrganization(),
+              order.getOrderDate());
           limitPrice = pp.getPriceLimit();
           netListPrice = pp.getListPrice();
           grossListPrice = pp.getListPrice();
-          stdPrice = FinancialUtils.getStandardPriceException(order.getOrderDate(), product,
-              pp.getPriceListVersion(), order.getOrganization(), stdPrecision);
-          baseGrossUnitPrice = FinancialUtils.getStandardPriceException(order.getOrderDate(),
-              product, pp.getPriceListVersion(), order.getOrganization(), stdPrecision);
+          stdPrice = FinancialUtils.getProductStdPrice(pp, order.getOrganization(),
+              order.getOrderDate());
+          baseGrossUnitPrice = FinancialUtils.getProductStdPrice(pp, order.getOrganization(),
+              order.getOrderDate());
         } catch (OBException e) {
           // Product not found in price list. Prices default to ZERO
           unitPrice = limitPrice = netListPrice = grossListPrice = stdPrice = BigDecimal.ZERO;

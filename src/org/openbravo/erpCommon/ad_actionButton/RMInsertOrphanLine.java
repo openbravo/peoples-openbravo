@@ -147,24 +147,19 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
     if (strUnitPrice.isEmpty()) {
       final ProductPrice productPrice = getProductPrice(product, order.getOrderDate(),
           order.isSalesTransaction(), order.getPriceList());
-      newOrderLine.setUnitPrice(
-          FinancialUtils.getStandardPriceException(productPrice, order.getOrganization(),
-              order.getOrderDate(), order.getCurrency().getPricePrecision().intValue()));
+      newOrderLine.setUnitPrice(FinancialUtils.getProductStdPrice(productPrice,
+          order.getOrganization(), order.getOrderDate()));
       newOrderLine.setListPrice(productPrice.getListPrice());
       newOrderLine.setPriceLimit(productPrice.getPriceLimit());
-      newOrderLine.setStandardPrice(
-          FinancialUtils.getStandardPriceException(productPrice, order.getOrganization(),
-              order.getOrderDate(), order.getCurrency().getPricePrecision().intValue()));
+      newOrderLine.setStandardPrice(FinancialUtils.getProductStdPrice(productPrice,
+          order.getOrganization(), order.getOrderDate()));
       if (order.getPriceList().isPriceIncludesTax()) {
-        newOrderLine.setGrossUnitPrice(
-            FinancialUtils.getStandardPriceException(productPrice, order.getOrganization(),
-                order.getOrderDate(), order.getCurrency().getPricePrecision().intValue()));
-        newOrderLine
-            .setLineGrossAmount(FinancialUtils
-                .getStandardPriceException(productPrice, order.getOrganization(),
-                    order.getOrderDate(), order.getCurrency().getPricePrecision().intValue())
-                .multiply(returnedQty)
-                .negate());
+        newOrderLine.setGrossUnitPrice(FinancialUtils.getProductStdPrice(productPrice,
+            order.getOrganization(), order.getOrderDate()));
+        newOrderLine.setLineGrossAmount(FinancialUtils
+            .getProductStdPrice(productPrice, order.getOrganization(), order.getOrderDate())
+            .multiply(returnedQty)
+            .negate());
         newOrderLine.setUnitPrice(BigDecimal.ZERO);
       }
     } else {

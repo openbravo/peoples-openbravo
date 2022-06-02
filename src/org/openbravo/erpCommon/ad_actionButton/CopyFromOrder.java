@@ -165,8 +165,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
         if (prices != null) {
           priceLimit = prices.getPriceLimit();
           priceList = prices.getListPrice();
-          pricestdgross = FinancialUtils.getStandardPriceException(prices, order.getOrganization(),
-              order.getOrderDate(), order.getCurrency().getPricePrecision().intValue());
+          pricestdgross = FinancialUtils.getProductStdPrice(prices, order.getOrganization(),
+              order.getOrderDate());
         } else {
           priceLimit = BigDecimal.ZERO;
           priceList = BigDecimal.ZERO;
