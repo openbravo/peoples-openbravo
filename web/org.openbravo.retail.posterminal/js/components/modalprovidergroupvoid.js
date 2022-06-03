@@ -123,6 +123,11 @@ enyo.kind({
         .render();
     }
 
+    const beforeunload = e => {
+      e.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', beforeunload);
     providerinstance
       .processVoid({
         receipt: receipt,
@@ -130,6 +135,7 @@ enyo.kind({
       })
       .then(
         function(response) {
+          window.removeEventListener('beforeunload', beforeunload);
           OB.info(
             `ModalProviderGroupVoid: processVoid response: ${OB.UTIL.stringify(
               response
@@ -142,6 +148,7 @@ enyo.kind({
       )
       .catch(
         function(exception) {
+          window.removeEventListener('beforeunload', beforeunload);
           OB.warn(`ModalProviderGroupVoid: exception thrown: ${exception}`);
           this.showPopupMessage =
             exception.showPopupMessage === false ? false : true;

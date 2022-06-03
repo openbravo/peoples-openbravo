@@ -171,6 +171,11 @@ enyo.kind({
       }
     }
 
+    const beforeunload = e => {
+      e.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', beforeunload);
     providerinstance
       .processPayment({
         receipt: receipt,
@@ -180,6 +185,7 @@ enyo.kind({
         providerGroup: providerGroup
       })
       .then(response => {
+        window.removeEventListener('beforeunload', beforeunload);
         OB.info(
           `ModalProviderGroup: processPayment response: ${OB.UTIL.stringify(
             response
@@ -265,6 +271,7 @@ enyo.kind({
         );
       })
       .catch(exception => {
+        window.removeEventListener('beforeunload', beforeunload);
         OB.warn(`ModalProviderGroup: exception thrown: ${exception}`);
         this.showPopupMessage =
           exception.showPopupMessage === false ? false : true;
