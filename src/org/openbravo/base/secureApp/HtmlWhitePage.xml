@@ -11,6 +11,6 @@
  ************************************************************************************
 -->
 <REPORT>
-	<template file="HtmlWhitePage.html"/>
-	<PARAMETER id="paramBody" name="body" attribute="onload"/>
+  <template file="HtmlWhitePage.html"/>
+  <PARAMETER id="paramBody" name="body" replaceCharacters="html" attribute="onload"/>
 </REPORT>
