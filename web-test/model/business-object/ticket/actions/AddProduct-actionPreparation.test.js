@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -125,8 +125,19 @@ const Ticket = {
     priceIncludesTax: true,
     priceList: '5D47B13F42A44352B09C97A72EE42ED8',
     lines: [],
-    businessPartner: { id: '1', priceList: '5D47B13F42A44352B09C97A72EE42ED8' },
+    businessPartner: {
+      id: '1',
+      priceList: '5D47B13F42A44352B09C97A72EE42ED8'
+    },
     orderType: 1
+  },
+  emptyExternalBP: {
+    isEditable: true,
+    priceIncludesTax: true,
+    priceList: '5D47B13F42A44352B09C97A72EE42ED8',
+    lines: [],
+    externalBusinessPartner: { email: 'test@test.com' },
+    orderType: 0
   },
   emptyLayaway: {
     isEditable: true,
@@ -426,6 +437,27 @@ describe('addProduct preparation', () => {
           errorConfirmation: 'OBPOS_AnonymousSaleNotAllowedDeferredSale'
         }
       );
+    });
+
+    it('sell product with do not allow anonymous sale flag using external BP', async () => {
+      const newPayload = await prepareAction(
+        {
+          products: [
+            {
+              product: Product.productA,
+              oBPOSAllowAnonymousSale: false
+            }
+          ]
+        },
+        Ticket.emptyExternalBP
+      );
+
+      expect(newPayload.products).toMatchObject([
+        {
+          product: Product.productA,
+          qty: 1
+        }
+      ]);
     });
 
     it('not returnable check (1)', async () => {
