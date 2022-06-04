@@ -6629,6 +6629,93 @@
       }
     },
 
+    calculateChange: function(firstpayment, firstchange) {
+      // payment is the first payment to use in the change calculation
+      // change is > 0 and is in the document currency
+      // Result vars...
+      var paymentchange = new OB.Payments.Change(),
+        usedpaymentsids = {};
+
+      // Recursive function to calculate changes, payment by payment
+      function calculateNextChange(payment, change) {
+        var precision,
+          changeLessThan,
+          linkedSearchKey,
+          changePayment,
+          changePaymentRounded,
+          linkedPayment;
+
+        usedpaymentsids[payment.paymentMethod.id] = true; // mark this payment as used to avoid cycles.
+        precision = payment.obposPosprecision;
+        changeLessThan = payment.paymentMethod.changeLessThan;
+        if (changeLessThan) {
+          linkedSearchKey = payment.paymentMethod.changePaymentType;
+          if (linkedSearchKey && !usedpaymentsids[linkedSearchKey]) {
+            linkedPayment = OB.MobileApp.model
+              .get('payments')
+              .find(function(p) {
+                return p.paymentMethod.id === linkedSearchKey;
+              });
+            if (linkedPayment) {
+              changePayment = OB.DEC.mul(change, payment.mulrate, precision);
+              // Using 5 as rounding precision as a maximum precsion for all currencies
+              changePaymentRounded = OB.DEC.mul(
+                changeLessThan,
+                Math.trunc(OB.DEC.div(changePayment, changeLessThan, 5)),
+                precision
+              );
+              paymentchange.add({
+                payment: payment,
+                amount: changePaymentRounded,
+                origAmount: OB.DEC.div(changePaymentRounded, payment.mulrate)
+              });
+              calculateNextChange(
+                linkedPayment,
+                OB.DEC.sub(
+                  change,
+                  OB.DEC.div(changePaymentRounded, payment.mulrate)
+                )
+              );
+              return;
+            }
+          }
+        }
+        // No changeLessThan and no linked payment to continue,
+        // Then add add change payment for the remaining change and exit
+        paymentchange.add({
+          payment: payment,
+          amount: OB.DEC.mul(change, payment.mulrate, precision),
+          origAmount: change
+        });
+      }
+
+      // Ensure first payment is a cash payment
+      if (!firstpayment.paymentMethod.iscash) {
+        firstpayment = OB.MobileApp.model.get('payments').find(function(item) {
+          return item.paymentMethod.iscash;
+        });
+      }
+
+      if (firstpayment) {
+        if (OB.MobileApp.model.get('terminal').multiChange) {
+          // Here goes the logic to implement multi currency change
+          calculateNextChange(firstpayment, firstchange);
+        } else {
+          // No multi currency change logic, add a simple change item and return
+          paymentchange.add({
+            payment: firstpayment,
+            amount: OB.DEC.mul(
+              firstchange,
+              firstpayment.mulrate,
+              firstpayment.obposPosprecision
+            ),
+            origAmount: firstchange
+          });
+        }
+      }
+      return paymentchange;
+    },
+
     addPayment: function(payment, callback) {
       var execution = OB.UTIL.ProcessController.start('addPayment');
       var me = this,
