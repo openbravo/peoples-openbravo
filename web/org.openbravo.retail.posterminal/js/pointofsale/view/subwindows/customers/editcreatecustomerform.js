@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -442,6 +442,38 @@ enyo.kind({
       displayLogic: function() {
         return OB.MobileApp.model.get('terminal').bp_showcategoryselector;
       }
+    },
+    {
+      kind: 'OB.UI.CustomerComboProperty',
+      name: 'legalCustomerType',
+      classes:
+        'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerType',
+      //Required: property where the selected value will be get and where the value will be saved
+      modelProperty: 'legalCustomerType',
+      //optional: When saving, the property which will store the selected text
+      modelPropertyText: 'legalCustomerType_name',
+      collectionName: 'customerTypeList',
+      //Default value for new lines
+      defaultValue: function() {
+        return 'EM';
+      },
+      //property of the retrieved model to get the value of the combo item
+      retrievedPropertyForValue: 'id',
+      //property of the retrieved model to get the text of the combo item
+      retrievedPropertyForText: 'name',
+      //function to retrieve the data
+      fetchDataFunction: async function(args) {
+        let me = this;
+        const dataCustomerTypes = OB.App.TerminalProperty.get(
+          'legalCustomerType'
+        );
+        setTimeout(function() {
+          me.dataReadyFunction(dataCustomerTypes, args);
+        }, 0);
+      },
+      i18nLabel: 'OBPOS_CustomerType',
+      fgSection: 'OBPOS_FG_OthersInformation',
+      mandatory: true
     },
     {
       kind: 'OB.UI.CustomerTextProperty',

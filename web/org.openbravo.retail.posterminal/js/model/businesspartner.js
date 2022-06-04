@@ -694,6 +694,11 @@
       name: 'viasms',
       column: 'viasms',
       type: 'TEXT'
+    },
+    {
+      name: 'legalCustomerType',
+      column: 'legal_customer_type',
+      type: 'TEXT'
     }
   ]);
 

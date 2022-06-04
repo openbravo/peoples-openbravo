@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -464,6 +464,27 @@ enyo.kind({
         return OB.MobileApp.model.get('terminal').bp_showcategoryselector;
       }
     },
+    {
+      kind: 'OB.UI.CustomerTextProperty',
+      name: 'customerType',
+      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerType',
+      modelProperty: 'legalCustomerType',
+      i18nLabel: 'OBPOS_CustomerType',
+      fgSection: 'OBPOS_FG_OthersInformation',
+      readOnly: true,
+      loadValue: function(inSender, inEvent) {
+        const dataCustomerTypes = OB.App.TerminalProperty.get(
+          'legalCustomerType'
+        );
+
+        const element = dataCustomerTypes.find(
+          element =>
+            element.id === inEvent.customer.attributes.legalCustomerType
+        );
+        this.setValue(element ? element.name : null);
+      }
+    },
+
     {
       kind: 'OB.UI.CustomerTextProperty',
       name: 'customerTaxId',
