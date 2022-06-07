@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import javax.enterprise.context.Dependent;
 import org.apache.commons.lang.ArrayUtils;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
@@ -198,11 +199,15 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     if (bomPrices.length == 0) {
       return null;
     }
+
+    final BigDecimal standardPrice = FinancialUtils.getProductStdPrice(product, new Date(), true,
+        priceList, getInvoice().getCurrency(), getInvoice().getOrganization());
     PriceInformation priceInformation = new PriceInformation();
-    priceInformation.setStandardPrice((BigDecimal) bomPrices[0]);
-    priceInformation.setListPrice((BigDecimal) bomPrices[1]);
-    priceInformation.setPriceLimit((BigDecimal) bomPrices[2]);
-    priceInformation.setOffersPriceInvoice((BigDecimal) bomPrices[3]);
+    priceInformation.setStandardPrice(standardPrice);
+    priceInformation.setOffersPriceInvoice(standardPrice
+        .setScale(getInvoice().getCurrency().getPricePrecision().intValue(), RoundingMode.HALF_UP));
+    priceInformation.setListPrice((BigDecimal) bomPrices[0]);
+    priceInformation.setPriceLimit((BigDecimal) bomPrices[1]);
     return priceInformation;
   }
 
@@ -211,10 +216,8 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
     //@formatter:off
     String hql =
             " select " +
-            "   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), " +
             "   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), " +
-            "   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), " +
-            "   TO_NUMBER(ROUND(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), :pricePrecision)) " +
+            "   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)) " +
             " from PricingProductPrice pp " +
             "   join pp.priceListVersion plv " +
             " where pp.product.id = :productID" +
@@ -230,7 +233,6 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
         .setParameter("productID", product.getId())
         .setParameter("priceListID", priceList.getId())
         .setParameter("validFromDate", new Date())
-        .setParameter("pricePrecision", getInvoice().getCurrency().getPricePrecision())
         .setMaxResults(1)
         .getResultList();
 
