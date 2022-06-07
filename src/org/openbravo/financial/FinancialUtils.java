@@ -94,6 +94,19 @@ public class FinancialUtils {
       final Organization organization) throws OBException {
     final ProductPrice pp = getProductPrice(product, date, useSalesPriceList, pricelist);
     BigDecimal price = getProductStdPrice(pp, organization, date);
+
+    // In case of verified BOM with zero price, the price will be the sum of material product prices
+    if (product.isBOMVerified().booleanValue() && price.compareTo(BigDecimal.ZERO) == 0) {
+      price = product.getProductBOMList()
+          .stream()
+          .map(
+              pb -> FinancialUtils
+                  .getProductStdPrice(pb.getBOMProduct(), date, useSalesPriceList, pricelist,
+                      currency, organization)
+                  .multiply(pb.getBOMQuantity()))
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
     if (!pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
       // Conversion is needed.
       price = getConvertedAmount(price, pp.getPriceListVersion().getPriceList().getCurrency(),
