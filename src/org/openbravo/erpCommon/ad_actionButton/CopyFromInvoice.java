@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -49,11 +50,14 @@ import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.businesspartner.Location;
+import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.invoice.InvoiceLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.gl.GLItem;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
+import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -170,6 +174,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
 
             CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(this,
                 strmProductId, strInvPriceList);
+
             for (int j = 0; invoicelineprice != null && j < invoicelineprice.length; j++) {
               if (invoicelineprice[j].validfrom == null
                   || StringUtils.isEmpty(invoicelineprice[j].validfrom)
@@ -177,9 +182,12 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                       invoicelineprice[j].validfrom), "-1")) {
                 priceList = new BigDecimal(invoicelineprice[j].pricelist);
                 priceLimit = new BigDecimal(invoicelineprice[j].pricelimit);
-                priceStd = (StringUtils.isEmpty(invoicelineprice[j].pricestd) ? BigDecimal.ZERO
-                    : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
-                        RoundingMode.HALF_UP);
+                priceStd = FinancialUtils
+                    .getProductStdPrice(OBDal.getInstance().get(Product.class, strmProductId),
+                        new Date(), true, OBDal.getInstance().get(PriceList.class, strInvPriceList),
+                        OBDal.getInstance().get(Currency.class, dataInvoice[0].cCurrencyId),
+                        OBDal.getInstance().get(Organization.class, dataInvoice[0].adOrgId))
+                    .setScale(pricePrecision, RoundingMode.HALF_UP);
                 priceStdGross = BigDecimal.ZERO;
 
                 if (invoice.getPriceList().isPriceIncludesTax()) {
