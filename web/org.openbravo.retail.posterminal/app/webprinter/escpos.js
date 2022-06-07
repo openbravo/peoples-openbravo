@@ -640,7 +640,6 @@
 
     this.transBarcodeFooter = () => {
       let line = new Uint8Array();
-      line = OB.ARRAYS.append(line, this.NEW_LINE);
       line = OB.ARRAYS.append(line, this.LEFT_JUSTIFICATION);
       return line;
     };

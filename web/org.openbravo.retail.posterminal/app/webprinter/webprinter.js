@@ -41,7 +41,7 @@
         clearTimeout(rejectTimeOut);
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.height = img.height * data.factor;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, img.width, img.height * data.factor);
         img.style.display = 'none'; // This inline style is permited
@@ -155,10 +155,6 @@
     });
 
     return result.then(() => {
-      printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
-      printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
-      printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
-      printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.NEW_LINE);
       printerdoc = OB.ARRAYS.append(printerdoc, this.escpos.PARTIAL_CUT_1);
       return printerdoc;
     });

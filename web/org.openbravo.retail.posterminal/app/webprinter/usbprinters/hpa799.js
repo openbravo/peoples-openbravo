@@ -228,7 +228,6 @@
     this.UNDERLINE_RESET = new Uint8Array([0x1b, 0x2d, 0x00]);
     this.DRAWER_OPEN = new Uint8Array([0x1b, 0x70, 0x00, 0x32, -0x06]);
     this.PARTIAL_CUT_1 = new Uint8Array([0x1d, 0x56, 0x41, 0x30]);
-    this.IMAGE_HEADER = new Uint8Array([0x1b, 0x4b]);
     this.BAR_CODE128TYPE = new Uint8Array([0x68]);
     this.encoderText = new OB.ESCPOS.Latin1Encoder(this.encoderText);
     this.encoderCODE128 = new CODE128EncoderHP();
