@@ -3588,7 +3588,13 @@
               const receiptLine = receiptLines.get(currentLine.id);
               receiptLine.trigger('selected', receiptLine);
             }
-            currentReceipt.trigger('updatePending');
+            if (OB.MobileApp.model.get('lastPaneShown') === 'payment') {
+              currentReceipt.getPrepaymentAmount(() => {
+                currentReceipt.trigger('updatePending');
+              }, true);
+            } else {
+              currentReceipt.trigger('updatePending');
+            }
 
             if (callback) {
               callback(
