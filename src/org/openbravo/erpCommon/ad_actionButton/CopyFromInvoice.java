@@ -138,6 +138,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           BigDecimal lineNetAmt, lineGrossAmt;
           lineNetAmt = lineGrossAmt = BigDecimal.ZERO;
           final String orgId = dataInvoice[0].adOrgId;
+          final String dateInvoiced = dataInvoice[0].dateinvoiced;
           strInvPriceList = dataInvoice[0].mPricelistId;
           strmProductId = data[i].productId;
 
@@ -170,7 +171,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           if (StringUtils.equals(strPriceListCheck, "Y") || forcePriceList) {
 
             CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(this,
-                orgId, strmProductId, strInvPriceList);
+                orgId, dateInvoiced, strmProductId, strInvPriceList);
             for (int j = 0; invoicelineprice != null && j < invoicelineprice.length; j++) {
               if (invoicelineprice[j].validfrom == null
                   || StringUtils.isEmpty(invoicelineprice[j].validfrom)
