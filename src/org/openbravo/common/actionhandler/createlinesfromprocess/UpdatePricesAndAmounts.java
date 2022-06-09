@@ -29,8 +29,8 @@ import javax.enterprise.context.Dependent;
 import org.apache.commons.lang.ArrayUtils;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -195,29 +195,27 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
    * @return The product price defined for the product in the price list or NULL if any.
    */
   private PriceInformation getBOMPrices(Product product, PriceList priceList) {
-    Object[] bomPrices = selectBOMPrices(product, priceList);
+    Object[] bomPrices = selectBOMPrices(product, priceList, getInvoice().getOrganization());
     if (bomPrices.length == 0) {
       return null;
     }
-
-    final BigDecimal standardPrice = FinancialUtils.getProductStdPrice(product, new Date(), true,
-        priceList, getInvoice().getCurrency(), getInvoice().getOrganization());
     PriceInformation priceInformation = new PriceInformation();
-    priceInformation.setStandardPrice(standardPrice);
-    priceInformation.setOffersPriceInvoice(standardPrice
-        .setScale(getInvoice().getCurrency().getPricePrecision().intValue(), RoundingMode.HALF_UP));
-    priceInformation.setListPrice((BigDecimal) bomPrices[0]);
-    priceInformation.setPriceLimit((BigDecimal) bomPrices[1]);
+    priceInformation.setStandardPrice((BigDecimal) bomPrices[0]);
+    priceInformation.setListPrice((BigDecimal) bomPrices[1]);
+    priceInformation.setPriceLimit((BigDecimal) bomPrices[2]);
+    priceInformation.setOffersPriceInvoice((BigDecimal) bomPrices[3]);
     return priceInformation;
   }
 
   @SuppressWarnings("unchecked")
-  private Object[] selectBOMPrices(Product product, PriceList priceList) {
+  private Object[] selectBOMPrices(Product product, PriceList priceList, Organization org) {
     //@formatter:off
     String hql =
             " select " +
+            "   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id, :orgId)), " +
             "   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), " +
-            "   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)) " +
+            "   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), " +
+            "   TO_NUMBER(ROUND(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id, :orgId)), :pricePrecision)) " +
             " from PricingProductPrice pp " +
             "   join pp.priceListVersion plv " +
             " where pp.product.id = :productID" +
@@ -231,8 +229,10 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
         .getSession()
         .createQuery(hql)
         .setParameter("productID", product.getId())
+        .setParameter("orgId", org.getId())
         .setParameter("priceListID", priceList.getId())
         .setParameter("validFromDate", new Date())
+        .setParameter("pricePrecision", getInvoice().getCurrency().getPricePrecision())
         .setMaxResults(1)
         .getResultList();
 
