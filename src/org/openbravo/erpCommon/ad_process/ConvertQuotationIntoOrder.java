@@ -47,7 +47,6 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBErrorBuilder;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderDiscount;
@@ -312,9 +311,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     String strPriceVersionId = getPriceListVersion(quotation.getPriceList().getId(),
         quotation.getClient().getId(), newSalesOrder.getOrderDate());
     BigDecimal bdPriceList = getPriceList(quotationLine.getProduct().getId(), strPriceVersionId);
-    BigDecimal bdPriceStd = FinancialUtils.getProductStdPrice(newSalesOrderLine.getProduct(),
-        newSalesOrder.getOrderDate(), true, newSalesOrder.getPriceList(),
-        newSalesOrder.getCurrency(), newSalesOrder.getOrganization());
+    BigDecimal bdPriceStd = getPriceStd(quotationLine.getProduct().getId(), strPriceVersionId,
+        newSalesOrder.getOrganization().getId(), newSalesOrder.getOrderDate());
 
     if (bdPriceList != null && bdPriceList.compareTo(BigDecimal.ZERO) != 0) {
       // List Price
@@ -416,6 +414,28 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
       parameters.add(strProductID);
       parameters.add(strPriceVersionId);
       final String procedureName = "M_BOM_PriceList";
+      bdPriceList = (BigDecimal) CallStoredProcedure.getInstance()
+          .call(procedureName, parameters, null);
+    } catch (Exception e) {
+      throw new OBException(e);
+    }
+
+    return bdPriceList;
+  }
+
+  /**
+   * Call Database Procedure to get the Standard Price of a Product
+   */
+  private BigDecimal getPriceStd(String strProductID, String strPriceVersionId, String orgId,
+      Date orderDate) {
+    BigDecimal bdPriceList = null;
+    try {
+      final List<Object> parameters = new ArrayList<Object>();
+      parameters.add(strProductID);
+      parameters.add(strPriceVersionId);
+      parameters.add(orgId);
+      parameters.add(orderDate);
+      final String procedureName = "M_BOM_PriceStd";
       bdPriceList = (BigDecimal) CallStoredProcedure.getInstance()
           .call(procedureName, parameters, null);
     } catch (Exception e) {
