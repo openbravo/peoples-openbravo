@@ -195,7 +195,8 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
    * @return The product price defined for the product in the price list or NULL if any.
    */
   private PriceInformation getBOMPrices(Product product, PriceList priceList) {
-    Object[] bomPrices = selectBOMPrices(product, priceList, getInvoice().getOrganization());
+    Object[] bomPrices = selectBOMPrices(product, priceList, getInvoice().getOrganization(),
+        getInvoice().getInvoiceDate());
     if (bomPrices.length == 0) {
       return null;
     }
@@ -208,14 +209,15 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
   }
 
   @SuppressWarnings("unchecked")
-  private Object[] selectBOMPrices(Product product, PriceList priceList, Organization org) {
+  private Object[] selectBOMPrices(Product product, PriceList priceList, Organization org,
+      Date invoiceDate) {
     //@formatter:off
     String hql =
             " select " +
-            "   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id, :orgId)), " +
+            "   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id, :orgId, :invoiceDate)), " +
             "   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), " +
             "   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), " +
-            "   TO_NUMBER(ROUND(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id, :orgId)), :pricePrecision)) " +
+            "   TO_NUMBER(ROUND(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id, :orgId, :invoiceDate)), :pricePrecision)) " +
             " from PricingProductPrice pp " +
             "   join pp.priceListVersion plv " +
             " where pp.product.id = :productID" +
@@ -230,6 +232,7 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
         .createQuery(hql)
         .setParameter("productID", product.getId())
         .setParameter("orgId", org.getId())
+        .setParameter("invoiceDate", invoiceDate)
         .setParameter("priceListID", priceList.getId())
         .setParameter("validFromDate", new Date())
         .setParameter("pricePrecision", getInvoice().getCurrency().getPricePrecision())
