@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2008-2019 Openbravo SLU
+* All portions are Copyright (C) 2008-2022 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -232,15 +232,29 @@ BEGIN
       Ad_Sequence_Next('C_OrderLine', v_Client_ID, v_COrderLine_ID);
 
       SELECT pp.PRICELIST, pp.PRICELIMIT, pp.PRICESTD,
-             ROUND(COALESCE(Cur_Lines.PRICEACTUAL, pp.PRICESTD),CUR.PRICEPRECISION), 
+             ROUND(COALESCE(Cur_Lines.PRICEACTUAL,pp.PRICESTD),CUR.PRICEPRECISION), 
              pp.Gross
         INTO v_PriceList, v_PriceLimit, v_PriceStd, v_PriceActual, v_Gross
       FROM
         (SELECT COALESCE(Cur_Lines.PRICELIST, MAX(M_PRODUCTPRICE.PRICELIST), Cur_Lines.PRICEACTUAL) AS PRICELIST,
              COALESCE(MAX(M_PRODUCTPRICE.PRICELIMIT), Cur_Lines.PRICEACTUAL) AS PRICELIMIT,
-             COALESCE(Cur_Lines.PRICEACTUAL, MAX(M_PRODUCTPRICE.PRICESTD)) AS PRICESTD,
+             COALESCE(Cur_Lines.PRICEACTUAL, MAX(coalesce(ppe.pricestd,M_PRODUCTPRICE.PRICESTD))) AS PRICESTD,
              COALESCE(Cur_Lines.Gross_Unit_Price, 0) as Gross
          FROM M_PRODUCTPRICE
+         LEFT JOIN M_PRODUCTPRICE_EXC ppe
+         ON (
+			  M_PRODUCTPRICE.m_productprice_id = ppe.m_productprice_id
+			  and exists (select 1 from ad_org_tree ot where ppe.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = p_Org_ID)
+			  and ppe.validfrom <= p_OrderDate
+			  and ppe.validto >= p_OrderDate
+			  and ppe.orgdepth = (
+			    select max(ppe2.orgdepth)
+			    from m_productprice_exc ppe2
+			    where ppe2.m_productprice_id = ppe.m_productprice_id
+			    and exists (select 1 from ad_org_tree ot where ppe2.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = p_Org_ID)
+			    and ppe2.validfrom <= p_OrderDate
+			    and ppe2.validto >= p_OrderDate
+			  ))
          WHERE M_PRICELIST_VERSION_ID = M_GET_PRICELIST_VERSION(Cur_Lines.PRICELIST_ID, p_OrderDate)
            AND M_PRODUCT_ID = Cur_Lines.M_PRODUCT_ID) pp, (SELECT PRICEPRECISION, STDPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = v_Currency_ID) CUR;
 
