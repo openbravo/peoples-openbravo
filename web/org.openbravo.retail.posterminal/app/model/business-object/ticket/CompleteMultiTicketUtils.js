@@ -147,9 +147,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
               amountToPay = newTicket.amountToLayaway;
             } else if (considerPrepaymentAmount) {
               amountToPay = OB.DEC.sub(
-                newTicket.obposPrepaymentamt
-                  ? newTicket.obposPrepaymentamt
-                  : newTicket.grossAmount,
+                OB.DEC.abs(
+                  newTicket.obposPrepaymentamt
+                    ? newTicket.obposPrepaymentamt
+                    : newTicket.grossAmount
+                ),
                 newTicket.payment
               );
             } else {
