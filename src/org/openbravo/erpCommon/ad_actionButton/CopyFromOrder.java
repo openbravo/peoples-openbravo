@@ -267,7 +267,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     CopyFromOrderRecordData[] dataOrder = CopyFromOrderRecordData.select(this, strKey);
     Order order = OBDal.getInstance().get(Order.class, strKey);
     CopyFromOrderData[] data = CopyFromOrderData.select(this, strBpartner, strmPricelistId,
-        dataOrder[0].dateordered, order.getPriceList().isPriceIncludesTax() ? "Y" : "N", strSOTrx,
+        dataOrder[0].dateordered, dataOrder[0].adOrgId,
+        order.getPriceList().isPriceIncludesTax() ? "Y" : "N", strSOTrx,
         dataOrder[0].lastDays.equals("") ? "0" : dataOrder[0].lastDays);
     FieldProvider[][] dataAUM = new FieldProvider[data.length][];
     for (int i = 0; i < data.length; i++) {
