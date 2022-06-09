@@ -7,6 +7,12 @@
       <parameter name="pricelist_version_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
+      <parameter name="org_id" type="VARCHAR" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
+      <parameter name="p_date" type="TIMESTAMP" mode="in">
+        <default><![CDATA[NULL]]></default>
+      </parameter>
       <body><![CDATA[/******************************************************************************
 * The contents of this file are subject to the   Compiere License  Version 1.1
 * ("License"); You may not use this file except in compliance with the License
@@ -19,7 +25,7 @@
 * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
 * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
 * Contributor(s): Openbravo SLU
-* Contributions are Copyright (C) 2001-2019 Openbravo S.L.U.
+* Contributions are Copyright (C) 2001-2022 Openbravo S.L.U.
 ******************************************************************************/
   v_Price        NUMBER;
   v_ProductPrice NUMBER;
@@ -35,9 +41,25 @@
     from ad_client left join M_Product on ad_client.ad_client_id= m_product.ad_client_id
     where m_product.m_product_id=product_id;
     -- Try to get price from pricelist directly
-    SELECT COALESCE(SUM(PriceStd), 0)
+    SELECT COALESCE(SUM(COALESCE(ppe.PriceStd, pp.PriceStd)), 0)
     INTO v_Price
-    FROM M_ProductPrice
+    FROM M_ProductPrice pp
+    LEFT JOIN M_ProductPrice_Exc ppe
+    ON (
+      pp.m_productprice_id = ppe.m_productprice_id
+      AND org_id IS NOT NULL
+      AND EXISTS (SELECT 1 FROM ad_org_tree ot WHERE ppe.ad_org_id = ot.ad_parent_org_id AND ot.ad_org_id = org_id)
+      AND ppe.validfrom <= COALESCE(p_date, now())
+      AND ppe.validto >= COALESCE(p_date, now())
+      AND ppe.orgdepth = (
+        SELECT max(ppe2.orgdepth)
+        FROM M_ProductPrice_Exc ppe2
+        WHERE ppe2.m_productprice_id = ppe.m_productprice_id
+        AND EXISTS (SELECT 1 FROM ad_org_tree ot WHERE ppe2.ad_org_id = ot.ad_parent_org_id AND ot.ad_org_id = org_id)
+        AND ppe2.validfrom <= COALESCE(p_date, now())
+        AND ppe2.validto >= COALESCE(p_date, now())
+      )
+    )
     WHERE M_PriceList_Version_ID=PriceList_Version_ID
       AND M_Product_ID=Product_ID;
     SELECT ISVERIFIED INTO v_IsVerified FROM M_PRODUCT WHERE M_PRODUCT_ID=Product_ID;  
