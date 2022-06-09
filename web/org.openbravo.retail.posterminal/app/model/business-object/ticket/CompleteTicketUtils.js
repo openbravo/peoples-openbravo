@@ -657,7 +657,7 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       });
     }
 
-    // Convert return payments in negative
+    // Convert return payments in negative This code might be needed to be replicate for OpenTickets
     if (newTicket.isNegative) {
       newTicket.payments = newTicket.payments.map(payment => {
         const newPayment = { ...payment };
@@ -755,14 +755,14 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    * Checks if given ticket includes negative payments.
    */
   async checkNegativePayments(ticket, payload) {
-    const isReturnTicket = payload.multiTicketList ? false : ticket.isNegative;
     if (
+      !payload.multiTicketList &&
       ticket.payments
         .filter(payment => payment.isReturnOrder !== undefined)
-        .some(payment => payment.isReturnOrder !== isReturnTicket)
+        .some(payment => payment.isReturnOrder !== ticket.isNegative)
     ) {
       throw new OB.App.Class.ActionCanceled({
-        errorConfirmation: isReturnTicket
+        errorConfirmation: ticket.isNegative
           ? 'OBPOS_PaymentOnReturnReceipt'
           : 'OBPOS_NegativePaymentOnReceipt'
       });

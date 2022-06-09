@@ -128,7 +128,6 @@ enyo.kind({
     totalData.forEach(function(order) {
       if (
         order.lines.length === 0 ||
-        order.grossAmount < 0 ||
         order.isPaid ||
         order.isQuotation ||
         order.orderType === 3
@@ -413,10 +412,27 @@ enyo.kind({
       firstCheck = true,
       cancellingOrdersToCheck = OB.App.State.TicketList.Utils.getAllTickets(),
       showSomeOrderIsPaidPopup;
+    let transactionSign;
 
     if (checkedMultiOrders.length === 0) {
       OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
       return true;
+    }
+
+    for (const multiOrder of checkedMultiOrders) {
+      if (OB.UTIL.isNullOrUndefined(transactionSign)) {
+        transactionSign = multiOrder.get('totalamount') < 0;
+      } else if (
+        transactionSign !== multiOrder.get('totalamount') < 0 &&
+        !OB.UTIL.getDefaultCashPaymentMethod()
+      ) {
+        OB.UTIL.showConfirmation.display(
+          OB.I18N.getLabel('OBMOBC_Error'),
+          OB.I18N.getLabel('OBPOS_MissingCashRefundPayment')
+        );
+        OB.UTIL.ProcessController.finish('payOpenTicketsValidation', execution);
+        return;
+      }
     }
 
     showSomeOrderIsPaidPopup = function() {

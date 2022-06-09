@@ -1417,7 +1417,9 @@
               ? OB.DEC.Zero
               : OB.DEC.sub(ticket.total, ticket.payment),
           overpayment:
-            OB.DEC.compare(OB.DEC.sub(ticket.payment, ticket.total)) > 0
+            OB.DEC.compare(
+              OB.DEC.sub(ticket.payment, OB.DEC.abs(ticket.total))
+            ) > 0
               ? OB.DEC.sub(ticket.payment, ticket.total)
               : OB.DEC.Zero,
           isReturn: ticket.gross < 0,

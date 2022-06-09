@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -27,13 +27,84 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
    */
 
   sharePaymentsBetweenTickets(multiTicketList, payload) {
-    const newTicketList = [...multiTicketList];
+    let newTicketList = [...multiTicketList];
     const { payments, changePayments } = payload.multiTickets;
     const considerPrepaymentAmount =
       payload.considerPrepaymentAmount != null
         ? payload.considerPrepaymentAmount
         : true;
     let index;
+
+    // Preprocess logic to handle mixed Open Tickets
+    const createDefaultPaymentLine = (amount, cashPaymentMethod) => {
+      return {
+        kind: cashPaymentMethod.payment.searchKey,
+        name: cashPaymentMethod.paymentMethod.name,
+        amount: OB.DEC.abs(OB.DEC.number(amount)),
+        origAmount: OB.DEC.abs(OB.DEC.number(amount)),
+        paid: OB.DEC.abs(OB.DEC.number(amount)),
+        rate: cashPaymentMethod.rate,
+        mulrate: cashPaymentMethod.mulrate,
+        isocode: cashPaymentMethod.isocode,
+        isCash: cashPaymentMethod.paymentMethod.iscash,
+        allowOpenDrawer: cashPaymentMethod.paymentMethod.allowopendrawer,
+        openDrawer: cashPaymentMethod.paymentMethod.openDrawer,
+        printtwice: cashPaymentMethod.paymentMethod.printtwice
+      };
+    };
+
+    const cashPaymentMethod = OB.UTIL.getDefaultCashPaymentMethod();
+
+    const addPaymentToPreprocessedOrder = order => {
+      const amountToPayDuringPreProcessing = OB.App.State.Ticket.Utils.getPendingAmount(
+        order
+      );
+      // Adding to the paymentList the inverse to the one we have just used for paying
+      payments.push(
+        createDefaultPaymentLine(
+          amountToPayDuringPreProcessing,
+          cashPaymentMethod
+        )
+      );
+
+      // Generate the payment for the order we want to pay before keep going
+      return OB.App.State.Ticket.Utils.addPayment(order, {
+        ...payload,
+        payment: createDefaultPaymentLine(
+          amountToPayDuringPreProcessing,
+          cashPaymentMethod
+        )
+      });
+    };
+
+    // Allow the payment of mixed tickets
+    const positiveOrders = [];
+    const negativeOrders = [];
+    const processedOrders = [];
+    const isNegativeMultiOrders = payload.multiTickets.total < 0;
+
+    multiTicketList.forEach(order => {
+      if (order.isNegative) {
+        negativeOrders.push(order);
+      } else {
+        positiveOrders.push(order);
+      }
+    });
+
+    const orderToPreprocess = isNegativeMultiOrders
+      ? positiveOrders
+      : negativeOrders;
+
+    orderToPreprocess.forEach(order =>
+      processedOrders.push(addPaymentToPreprocessedOrder(order))
+    );
+
+    if (isNegativeMultiOrders) {
+      newTicketList = [...processedOrders, ...negativeOrders];
+    } else {
+      newTicketList = [...processedOrders, ...positiveOrders];
+    }
+
     let ticketListWithPayments = newTicketList.map(function iterateTickets(
       ticket
     ) {
@@ -76,9 +147,11 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
               amountToPay = newTicket.amountToLayaway;
             } else if (considerPrepaymentAmount) {
               amountToPay = OB.DEC.sub(
-                newTicket.obposPrepaymentamt
-                  ? newTicket.obposPrepaymentamt
-                  : newTicket.grossAmount,
+                OB.DEC.abs(
+                  newTicket.obposPrepaymentamt
+                    ? newTicket.obposPrepaymentamt
+                    : newTicket.grossAmount
+                ),
                 newTicket.payment
               );
             } else {
