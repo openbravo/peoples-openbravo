@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,7 +50,7 @@
     <Sql>
       SELECT M_BOM_PRICELIMIT(?, ?) AS pricelimit,
              M_BOM_PRICELIST(?, ?) AS pricelist,
-             M_BOM_PRICESTD(?, ?) AS pricestd
+             M_BOM_PRICESTD(?, ?, ?, TO_DATE(?)) AS pricestd
       FROM DUAL
     </Sql>
     <Parameter name="mProductId"/>
@@ -59,6 +59,8 @@
     <Parameter name="mPriceListVersionId"/>
     <Parameter name="mProductId"/>
     <Parameter name="mPriceListVersionId"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="dueDate"/>
   </SqlMethod>
   <SqlMethod name="hasSecondaryUOM" type="preparedStatement" return="String" default="0">
     <SqlMethodComment></SqlMethodComment>
