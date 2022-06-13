@@ -1130,5 +1130,25 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
     return showCompleteCreditTicketConfirmation(
       data ? undefined : 'OBPOS_Unabletocheckcredit'
     );
+  },
+  getDefaultCashPaymentMethod(payments) {
+    // Find the cash method that is default and refundable. Otherwise the first cash payment method
+    return (
+      payments.find(p => {
+        return (
+          p.paymentMethod.iscash &&
+          !p.paymentMethod.isRounding &&
+          p.paymentMethod.refundable &&
+          p.paymentMethod.defaultCashPaymentMethod
+        );
+      }) ||
+      payments.find(p => {
+        return (
+          p.paymentMethod.iscash &&
+          p.paymentMethod.refundable &&
+          !p.paymentMethod.isRounding
+        );
+      })
+    );
   }
 });

@@ -53,7 +53,9 @@ OB.App.StateAPI.Ticket.registerUtilityFunctions({
       };
     };
 
-    const cashPaymentMethod = OB.UTIL.getDefaultCashPaymentMethod();
+    const cashPaymentMethod = OB.App.State.Ticket.Utils.getDefaultCashPaymentMethod(
+      payload.payments
+    );
 
     const addPaymentToPreprocessedOrder = order => {
       const amountToPayDuringPreProcessing = OB.App.State.Ticket.Utils.getPendingAmount(

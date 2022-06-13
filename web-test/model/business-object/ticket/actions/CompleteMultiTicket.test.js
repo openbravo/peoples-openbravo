@@ -20,8 +20,12 @@ const deepfreeze = require('deepfreeze');
 describe('Complete Multi ticket action', () => {
   beforeAll(() => {
     OB = OB || {};
-    OB.UTIL = OB.UTIL || {};
-    OB.UTIL.getDefaultCashPaymentMethod = jest.fn().mockReturnValue({});
+    OB.App = OB.App || {};
+    OB.App.State = OB.App.State || {};
+    OB.App.State.Ticket.Utils = OB.App.State.Ticket.Utils || {};
+    OB.App.State.Ticket.Utils.getDefaultCashPaymentMethod = jest
+      .fn()
+      .mockReturnValue({});
   });
   it('should complete nulti ticket, print it and synchronize it', () => {
     const ticketList = deepfreeze([]);
