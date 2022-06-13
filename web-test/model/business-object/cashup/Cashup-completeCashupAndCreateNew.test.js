@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -72,10 +72,11 @@ describe('Cashup - complete cashup and create new', () => {
       .mockReturnValueOnce('582637FC4A84DBC7F3E3BCBEA385BF30')
       .mockReturnValueOnce('718C1EC40B8A629F4DA732C46DB2709E');
 
-    const mockDate = new Date(1593182307146);
-    const spy = jest.spyOn(global, 'Date').mockImplementation(() => mockDate);
+    jest
+      .useFakeTimers('modern')
+      .setSystemTime(new Date(1593182307146).getTime());
     const result = compleateCashupAndCreateNew(initialState, payload);
-    spy.mockRestore();
+    jest.useRealTimers();
     expect(result).toEqual(expectedState);
   });
 
@@ -116,12 +117,10 @@ describe('Cashup - complete cashup and create new', () => {
       .mockReturnValueOnce('3CF92A24A63491CFCD674FC032AD9CE5')
       .mockReturnValueOnce('254D0D182905168F76FB9ADCB7C7EC81');
 
-    const mockDate1 = new Date(1593182307146);
-    const mockDate2 = new Date(1593184229010);
     const spy = jest
-      .spyOn(global, 'Date')
-      .mockImplementationOnce(() => mockDate1)
-      .mockImplementationOnce(() => mockDate2);
+      .spyOn(global.Date, 'now')
+      .mockImplementationOnce(() => 1593182307146)
+      .mockImplementationOnce(() => 1593184229010);
     const result = compleateCashupAndCreateNew(initialState, payload);
     spy.mockRestore();
     expect(result).toEqual(expectedState);

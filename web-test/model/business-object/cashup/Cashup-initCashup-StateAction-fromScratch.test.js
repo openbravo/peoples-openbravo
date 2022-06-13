@@ -1,13 +1,12 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
 
-/*global global*/
 require('./SetupCashup');
 const deepfreeze = require('deepfreeze');
 require('../../../../../org.openbravo.mobile.core/web/org.openbravo.mobile.core/app/model/business-object/messages/Messages.js');
@@ -126,10 +125,11 @@ describe('Cashup - init cashup State Action - from scratch', () => {
       .mockReturnValueOnce('25B643330792E8785B10AAB95FC8BB66')
       .mockReturnValueOnce('45C13AA2C79EAD7D766C99ECAAAB6D89');
 
-    const mockDate = new Date(1593117791040);
-    const spy = jest.spyOn(global, 'Date').mockImplementation(() => mockDate);
+    jest
+      .useFakeTimers('modern')
+      .setSystemTime(new Date(1593117791040).getTime());
     const result = initCashup(initialState, payloadFromScratchSharedPayments);
-    spy.mockRestore();
+    jest.useRealTimers();
     expect(result).toEqual(expectedState);
   });
 });
