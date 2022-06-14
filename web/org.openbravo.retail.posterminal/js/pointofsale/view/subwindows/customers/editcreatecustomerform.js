@@ -455,7 +455,7 @@ enyo.kind({
       collectionName: 'customerTypeList',
       //Default value for new lines
       defaultValue: function() {
-        return 'EM';
+        return undefined;
       },
       //property of the retrieved model to get the value of the combo item
       retrievedPropertyForValue: 'id',
@@ -464,16 +464,20 @@ enyo.kind({
       //function to retrieve the data
       fetchDataFunction: async function(args) {
         let me = this;
-        const dataCustomerTypes = OB.App.TerminalProperty.get(
+        let dataCustomerTypes = OB.App.TerminalProperty.get(
           'legalCustomerType'
         );
+        dataCustomerTypes = [
+          { id: undefined, name: undefined },
+          ...dataCustomerTypes
+        ];
         setTimeout(function() {
           me.dataReadyFunction(dataCustomerTypes, args);
         }, 0);
       },
       i18nLabel: 'OBPOS_CustomerType',
       fgSection: 'OBPOS_FG_OthersInformation',
-      mandatory: true
+      mandatory: false
     },
     {
       kind: 'OB.UI.CustomerTextProperty',
