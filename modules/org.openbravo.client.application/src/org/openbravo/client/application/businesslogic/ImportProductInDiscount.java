@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):
  ************************************************************************
@@ -113,7 +113,10 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
 
   @SuppressWarnings("unchecked")
   protected List<String> getProductIds(String clientId, String orgId, String productKey) {
-    String sql = "SELECT m_product_id from m_product where ad_client_id=:clientId and ad_org_id=:orgId and value=:value";
+    String sql = "SELECT p.m_product_id from m_product p "
+        + "where p.ad_client_id=:clientId and p.value=:value and "
+        + "((ad_isorgincluded(:orgId, p.ad_org_id, :clientId) <> -1) or "
+        + "(ad_isorgincluded( p.ad_org_id,:orgId, :clientId) <> -1))";
     Session session = OBDal.getInstance().getSession();
     @SuppressWarnings("rawtypes")
     NativeQuery qry = session.createNativeQuery(sql);
