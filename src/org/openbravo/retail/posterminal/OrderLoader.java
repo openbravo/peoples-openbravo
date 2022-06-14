@@ -1953,6 +1953,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
         try {
           JSONObject jsonPaymentData = payment.getJSONObject("paymentData");
           finPayment.setObposPaymentdata(jsonPaymentData.toString());
+          // finPayment.set
         } catch (Exception e) {
           throw new OBException("paymentData attached to payment " + finPayment.getIdentifier()
               + " is not a valid JSON.");
