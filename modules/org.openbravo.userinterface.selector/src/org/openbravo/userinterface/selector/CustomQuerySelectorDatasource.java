@@ -689,7 +689,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         transformer = nextTransformer;
       } else if (nextTransformer.getPriority(parameters) == transformer.getPriority(parameters)) {
         log.warn(
-            "Trying to get hql query transformer for the table with id {}, there are more than one instance with same priority",
+            "Trying to get hql query transformer for the selector with record id {}, there are more than one instance with same priority",
             sel.getId());
       }
     }
