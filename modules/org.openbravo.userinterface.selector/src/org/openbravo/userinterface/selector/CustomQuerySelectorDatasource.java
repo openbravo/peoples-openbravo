@@ -234,6 +234,10 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       SimpleDateFormat xmlDateFormat, List<Object> typedParameters,
       Map<String, Object> namedParameters) {
     String hql = sel.getHQL();
+
+    // if the is any HQL Query transformer defined for this selector, use it to transform the query
+    hql = transFormQuery(hql, namedParameters, parameters, sel);
+
     if (!hql.contains(ADDITIONAL_FILTERS)) {
       return hql;
     }
@@ -329,9 +333,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       additionalFilter += defaultExpressionsFilter;
     }
     hql = hql.replace(ADDITIONAL_FILTERS, additionalFilter);
-
-    // if the is any HQL Query transformer defined for this table, use it to transform the query
-    hql = transFormQuery(hql, namedParameters, parameters, sel);
 
     return hql;
   }
@@ -670,8 +671,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   }
 
   /**
-   * Returns, if defined, an HQL Query Transformer for this table. If the are several transformers
-   * defined, the one with the lowest priority will be chosen
+   * Returns, if defined, an HQL Query Transformer for this selector. If the are several
+   * transformers defined, the one with the lowest priority will be chosen
    * 
    * @param parameters
    *          the parameters of the request
