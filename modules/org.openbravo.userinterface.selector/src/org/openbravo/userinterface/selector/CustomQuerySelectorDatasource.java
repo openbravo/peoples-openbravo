@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.persistence.Tuple;
 import javax.persistence.TupleElement;
 
@@ -54,6 +57,7 @@ import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.model.domaintype.UniqueIdDomainType;
 import org.openbravo.client.application.ParameterUtils;
+import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -61,6 +65,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
+import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
@@ -70,6 +75,10 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   private static Logger log = LogManager.getLogger();
   private static final String ADDITIONAL_FILTERS = "@additional_filters@";
   public static final String ALIAS_PREFIX = "alias_";
+
+  @Inject
+  @Any
+  private Instance<HqlQueryTransformer> hqlQueryTransformers;
 
   @Override
   protected int getCount(Map<String, String> parameters) {
@@ -114,9 +123,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       String sortBy = parameters.get("_sortBy");
       hql += getSortClause(sortBy, sel);
 
-      Query<Tuple> selQuery = OBDal.getInstance()
-          .getSession()
-          .createQuery(hql, Tuple.class);
+      Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
 
       selQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
       if (namedParameters.containsKey("orgs")) {
@@ -322,6 +329,10 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       additionalFilter += defaultExpressionsFilter;
     }
     hql = hql.replace(ADDITIONAL_FILTERS, additionalFilter);
+
+    // if the is any HQL Query transformer defined for this table, use it to transform the query
+    hql = transFormQuery(hql, namedParameters, parameters, sel);
+
     return hql;
   }
 
@@ -657,4 +668,54 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     typedParameters.add(value);
     return alias;
   }
+
+  /**
+   * Returns, if defined, an HQL Query Transformer for this table. If the are several transformers
+   * defined, the one with the lowest priority will be chosen
+   * 
+   * @param parameters
+   *          the parameters of the request
+   * @return the HQL Query transformer that will be used to transform the query
+   */
+  private HqlQueryTransformer getTransformer(Map<String, String> parameters, Selector sel) {
+    HqlQueryTransformer transformer = null;
+
+    for (HqlQueryTransformer nextTransformer : hqlQueryTransformers
+        .select(new ComponentProvider.Selector(sel.getId()))) {
+      if (transformer == null) {
+        transformer = nextTransformer;
+      } else if (nextTransformer.getPriority(parameters) < transformer.getPriority(parameters)) {
+        transformer = nextTransformer;
+      } else if (nextTransformer.getPriority(parameters) == transformer.getPriority(parameters)) {
+        log.warn(
+            "Trying to get hql query transformer for the table with id {}, there are more than one instance with same priority",
+            sel.getId());
+      }
+    }
+    return transformer;
+  }
+
+  /**
+   * If there is any HQL Query Transformer defined, uses its transformHqlQuery to transform the
+   * query
+   * 
+   * @param hqlQuery
+   *          the original HQL query
+   * @param queryNamedParameters
+   *          the named parameters that will be used in the query
+   * @param parameters
+   *          the parameters of the request
+   * @return the transformed query
+   */
+  private String transFormQuery(String hqlQuery, Map<String, Object> queryNamedParameters,
+      Map<String, String> parameters, Selector sel) {
+    String transformedHqlQuery = hqlQuery;
+    HqlQueryTransformer hqlQueryTransformer = getTransformer(parameters, sel);
+    if (hqlQueryTransformer != null) {
+      transformedHqlQuery = hqlQueryTransformer.transformHqlQuery(transformedHqlQuery, parameters,
+          queryNamedParameters);
+    }
+    return transformedHqlQuery;
+  }
+
 }
