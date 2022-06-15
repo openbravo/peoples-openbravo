@@ -57,7 +57,6 @@ import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.model.domaintype.UniqueIdDomainType;
 import org.openbravo.client.application.ParameterUtils;
-import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
@@ -235,104 +234,104 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       Map<String, Object> namedParameters) {
     String hql = sel.getHQL();
 
-    // if the is any HQL Query transformer defined for this selector, use it to transform the query
-    hql = transFormQuery(hql, namedParameters, parameters, sel);
-
-    if (!hql.contains(ADDITIONAL_FILTERS)) {
-      return hql;
-    }
-    final String requestType = parameters.get(SelectorConstants.DS_REQUEST_TYPE_PARAMETER);
-    final String entityAlias = sel.getEntityAlias();
-    // Client filter
-    String additionalFilter = entityAlias + ".client.id in :clients";
-    final String[] clients = { "0", OBContext.getOBContext().getCurrentClient().getId() };
-    namedParameters.put("clients", clients);
-    if (includeOrgFilter(parameters)) {
-      // Organization filter
-      boolean isOrgSelector = sel.getTable().getName().equals("Organization");
-      String orgs;
-      if (isOrgSelector) {
-        // Just retrieve the list of readable organizations in the current context
-        orgs = DataSourceUtils.getOrgs(parameters.get(""));
-      } else {
-        orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
-      }
-      if (StringUtils.isNotEmpty(orgs)) {
-        additionalFilter += " and " + entityAlias;
+    if (hql.contains(ADDITIONAL_FILTERS)) {
+      final String requestType = parameters.get(SelectorConstants.DS_REQUEST_TYPE_PARAMETER);
+      final String entityAlias = sel.getEntityAlias();
+      // Client filter
+      String additionalFilter = entityAlias + ".client.id in :clients";
+      final String[] clients = { "0", OBContext.getOBContext().getCurrentClient().getId() };
+      namedParameters.put("clients", clients);
+      if (includeOrgFilter(parameters)) {
+        // Organization filter
+        boolean isOrgSelector = sel.getTable().getName().equals("Organization");
+        String orgs;
         if (isOrgSelector) {
-          additionalFilter += ".id in :orgs";
+          // Just retrieve the list of readable organizations in the current context
+          orgs = DataSourceUtils.getOrgs(parameters.get(""));
         } else {
-          additionalFilter += ".organization.id in :orgs";
+          orgs = DataSourceUtils.getOrgs(parameters.get(JsonConstants.ORG_PARAMETER));
         }
-        namedParameters.put("orgs", orgs.replaceAll("'", "").split(","));
-      }
-    }
-    additionalFilter += getDefaultFilterExpression(sel, parameters);
-
-    String defaultExpressionsFilter = "";
-    boolean hasFilter = false;
-    List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
-        Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
-    HashMap<String, String[]> criteria = getCriteria(parameters);
-    for (SelectorField field : fields) {
-      if (StringUtils.isEmpty(field.getClauseLeftPart())) {
-        continue;
-      }
-      String operator = null;
-      String value = null;
-      String[] operatorvalue = null;
-      if (criteria != null) {
-        operatorvalue = criteria.get(field.getDisplayColumnAlias());
-        if (operatorvalue != null) {
-          operator = operatorvalue[0];
-          value = operatorvalue[1];
-        }
-      }
-      if (StringUtils.isEmpty(value)) {
-        value = parameters.get(field.getDisplayColumnAlias());
-      }
-      // Add field default expression on picklist if it is not already filtered. Default expressions
-      // on selector popup are already evaluated and their values came in the parameters object.
-      if (field.getDefaultExpression() != null && !"Window".equals(requestType)
-          && StringUtils.isEmpty(value)) {
-        try {
-          String defaultValue = "";
-          Object defaultValueObject = ParameterUtils.getJSExpressionResult(parameters,
-              RequestContext.get().getSession(), field.getDefaultExpression());
-          if (defaultValueObject != null) {
-            defaultValue = defaultValueObject.toString();
-          }
-          if (StringUtils.isNotEmpty(defaultValue)) {
-            defaultExpressionsFilter += " and " + getWhereClause(operator, defaultValue, field,
-                xmlDateFormat, operatorvalue, typedParameters);
-          }
-        } catch (Exception e) {
-          log.error("Error evaluating filter expression: " + e.getMessage(), e);
-        }
-      }
-      if (field.isFilterable() && StringUtils.isNotEmpty(value)) {
-        String whereClause = getWhereClause(operator, value, field, xmlDateFormat, operatorvalue,
-            typedParameters);
-        if (!hasFilter) {
-          additionalFilter += " and (";
-          hasFilter = true;
-        } else {
-          if ("Window".equals(requestType)) {
-            additionalFilter += " and ";
+        if (StringUtils.isNotEmpty(orgs)) {
+          additionalFilter += " and " + entityAlias;
+          if (isOrgSelector) {
+            additionalFilter += ".id in :orgs";
           } else {
-            additionalFilter += " or ";
+            additionalFilter += ".organization.id in :orgs";
+          }
+          namedParameters.put("orgs", orgs.replaceAll("'", "").split(","));
+        }
+      }
+      additionalFilter += getDefaultFilterExpression(sel, parameters);
+
+      String defaultExpressionsFilter = "";
+      boolean hasFilter = false;
+      List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
+          Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
+      HashMap<String, String[]> criteria = getCriteria(parameters);
+      for (SelectorField field : fields) {
+        if (StringUtils.isEmpty(field.getClauseLeftPart())) {
+          continue;
+        }
+        String operator = null;
+        String value = null;
+        String[] operatorvalue = null;
+        if (criteria != null) {
+          operatorvalue = criteria.get(field.getDisplayColumnAlias());
+          if (operatorvalue != null) {
+            operator = operatorvalue[0];
+            value = operatorvalue[1];
           }
         }
-        additionalFilter += whereClause;
+        if (StringUtils.isEmpty(value)) {
+          value = parameters.get(field.getDisplayColumnAlias());
+        }
+        // Add field default expression on picklist if it is not already filtered. Default
+        // expressions
+        // on selector popup are already evaluated and their values came in the parameters object.
+        if (field.getDefaultExpression() != null && !"Window".equals(requestType)
+            && StringUtils.isEmpty(value)) {
+          try {
+            String defaultValue = "";
+            Object defaultValueObject = ParameterUtils.getJSExpressionResult(parameters,
+                RequestContext.get().getSession(), field.getDefaultExpression());
+            if (defaultValueObject != null) {
+              defaultValue = defaultValueObject.toString();
+            }
+            if (StringUtils.isNotEmpty(defaultValue)) {
+              defaultExpressionsFilter += " and " + getWhereClause(operator, defaultValue, field,
+                  xmlDateFormat, operatorvalue, typedParameters);
+            }
+          } catch (Exception e) {
+            log.error("Error evaluating filter expression: " + e.getMessage(), e);
+          }
+        }
+        if (field.isFilterable() && StringUtils.isNotEmpty(value)) {
+          String whereClause = getWhereClause(operator, value, field, xmlDateFormat, operatorvalue,
+              typedParameters);
+          if (!hasFilter) {
+            additionalFilter += " and (";
+            hasFilter = true;
+          } else {
+            if ("Window".equals(requestType)) {
+              additionalFilter += " and ";
+            } else {
+              additionalFilter += " or ";
+            }
+          }
+          additionalFilter += whereClause;
+        }
       }
+      if (hasFilter) {
+        additionalFilter += ")";
+      }
+      if (defaultExpressionsFilter.length() > 0) {
+        additionalFilter += defaultExpressionsFilter;
+      }
+      hql = hql.replace(ADDITIONAL_FILTERS, additionalFilter);
     }
-    if (hasFilter) {
-      additionalFilter += ")";
-    }
-    if (defaultExpressionsFilter.length() > 0) {
-      additionalFilter += defaultExpressionsFilter;
-    }
-    hql = hql.replace(ADDITIONAL_FILTERS, additionalFilter);
+    // if the is any HQL Query transformer defined for this selector, use it to transform the query
+    hql = HqlQueryTransformer.transFormQuery(hql, namedParameters, parameters, sel,
+        hqlQueryTransformers);
 
     return hql;
   }
@@ -668,55 +667,6 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     String alias = ":" + ALIAS_PREFIX + (typedParameters.size());
     typedParameters.add(value);
     return alias;
-  }
-
-  /**
-   * Returns, if defined, an HQL Query Transformer for this selector. If the are several
-   * transformers defined, the one with the lowest priority will be chosen
-   * 
-   * @param parameters
-   *          the parameters of the request
-   * @return the HQL Query transformer that will be used to transform the query
-   */
-  private HqlQueryTransformer getTransformer(Map<String, String> parameters, Selector sel) {
-    HqlQueryTransformer transformer = null;
-
-    for (HqlQueryTransformer nextTransformer : hqlQueryTransformers
-        .select(new ComponentProvider.Selector(sel.getId()))) {
-      if (transformer == null) {
-        transformer = nextTransformer;
-      } else if (nextTransformer.getPriority(parameters) < transformer.getPriority(parameters)) {
-        transformer = nextTransformer;
-      } else if (nextTransformer.getPriority(parameters) == transformer.getPriority(parameters)) {
-        log.warn(
-            "Trying to get hql query transformer for the selector with record id {}, there are more than one instance with same priority",
-            sel.getId());
-      }
-    }
-    return transformer;
-  }
-
-  /**
-   * If there is any HQL Query Transformer defined, uses its transformHqlQuery to transform the
-   * query
-   * 
-   * @param hqlQuery
-   *          the original HQL query
-   * @param queryNamedParameters
-   *          the named parameters that will be used in the query
-   * @param parameters
-   *          the parameters of the request
-   * @return the transformed query
-   */
-  private String transFormQuery(String hqlQuery, Map<String, Object> queryNamedParameters,
-      Map<String, String> parameters, Selector sel) {
-    String transformedHqlQuery = hqlQuery;
-    HqlQueryTransformer hqlQueryTransformer = getTransformer(parameters, sel);
-    if (hqlQueryTransformer != null) {
-      transformedHqlQuery = hqlQueryTransformer.transformHqlQuery(transformedHqlQuery, parameters,
-          queryNamedParameters);
-    }
-    return transformedHqlQuery;
   }
 
 }
