@@ -193,7 +193,7 @@ public class ShipmentUtils implements TicketPropertyMapping {
     int lineNo = 0;
     Locator foundSingleBin = null;
     Entity shplineentity = ModelProvider.getInstance().getEntity(ShipmentInOutLine.class);
-
+    List<ShipmentInOutLine> recordsOfShipmentInOutLine = new ArrayList<ShipmentInOutLine>();
     for (int i = 0; i < orderlines.length(); i++) {
 
       OrderLine orderLine = lineReferences.get(i);
@@ -357,7 +357,6 @@ public class ShipmentUtils implements TicketPropertyMapping {
                 if (!stock.getStorageDetail().getStorageBin().getWarehouse().isActive()) {
                   continue;
                 }
-
                 BigDecimal qty;
                 OrderLoaderPreAddShipmentLineHook_Response standardSaleBinHookResponse = null;
 
@@ -372,6 +371,7 @@ public class ShipmentUtils implements TicketPropertyMapping {
                       "An error happened executing hook OrderLoaderPreAddShipmentLineHook for SimpleSale action "
                           + e.getMessage());
                   standardSaleBinHookResponse = null;
+
                 }
                 if (standardSaleBinHookResponse != null) {
                   if (!standardSaleBinHookResponse.isValid()) {
@@ -381,10 +381,32 @@ public class ShipmentUtils implements TicketPropertyMapping {
                     continue;
                   }
                 }
-
                 Object stockQty = stock.get("quantity");
+                List<ShipmentInOutLine> previousShipmentInOutLine = new ArrayList<ShipmentInOutLine>();
+                for (ShipmentInOutLine shipmentInOutLine : recordsOfShipmentInOutLine) {
+                  if (shipmentInOutLine.getProduct().getId().equals(orderLine.getProduct().getId())
+                      && shipmentInOutLine.getStorageBin()
+                          .getId()
+                          .equals(stock.getStorageDetail().getStorageBin().getId())
+                      && shipmentInOutLine.getAttributeSetValue()
+                          .equals(stock.getStorageDetail().getAttributeSetValue())) {
+                    previousShipmentInOutLine.add(shipmentInOutLine);
+                  }
+                }
                 if (stockQty instanceof Long) {
                   stockQty = new BigDecimal((Long) stockQty);
+                }
+
+                if (!previousShipmentInOutLine.isEmpty()) {
+                  BigDecimal mvQty = BigDecimal.ZERO;
+                  for (ShipmentInOutLine shipmentInOutLine : previousShipmentInOutLine) {
+                    mvQty = mvQty.add(shipmentInOutLine.getMovementQuantity());
+                  }
+                  if (((BigDecimal) stockQty).compareTo(mvQty) <= 0) {
+                    continue;
+                  } else {
+                    stockQty = ((BigDecimal) stockQty).subtract(mvQty);
+                  }
                 }
                 if (pendingQty.compareTo((BigDecimal) stockQty) > 0) {
                   qty = (BigDecimal) stockQty;
@@ -402,7 +424,7 @@ public class ShipmentUtils implements TicketPropertyMapping {
                     stock.getStorageDetail().getStorageBin(),
                     stock.getStorageDetail().getAttributeSetValue(), i);
                 createdShipmentLines.add(objShipmentLine);
-
+                recordsOfShipmentInOutLine.add(objShipmentLine);
                 usedBins.put(stock.getStorageDetail().getStorageBin().getId(), objShipmentLine);
 
                 if (lineNo == 10 && !stock.getStorageDetail()
