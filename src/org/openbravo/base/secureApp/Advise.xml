@@ -13,7 +13,7 @@
 <REPORT>
 	<template file="Advise.html"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default" default="Default"/>
-  <PARAMETER id="paramTipo" name="ParamTipo" replace="ERROR" replaceCharacters="html" attribute="class" />
-	<PARAMETER id="paramTitulo" name="ParamTitulo" replaceCharacters="html"/>
-	<PARAMETER id="messageBoxIDMessage" name="ParamTexto" replaceCharacters="html"/>
+  <PARAMETER id="paramTipo" name="ParamTipo" replace="ERROR" attribute="class" />
+	<PARAMETER id="paramTitulo" name="ParamTitulo"/>
+	<PARAMETER id="messageBoxIDMessage" name="ParamTexto"/>
 </REPORT>

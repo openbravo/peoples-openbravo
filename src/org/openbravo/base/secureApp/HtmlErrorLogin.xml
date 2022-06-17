@@ -13,8 +13,8 @@
 <REPORT>
     <template file="HtmlErrorLogin.html"/>
     <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default"/>
-    <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" replaceCharacters="html" default="HIDDEN"/>
-    <PARAMETER id="messageBoxIDTitle" name="messageTitle" replaceCharacters="html" default=""/>
-    <PARAMETER id="messageBoxIDMessage" name="messageMessage" replaceCharacters="html" default=""/>
+    <PARAMETER id="messageBoxID" name="messageType" attribute="class" replace="yy" default="HIDDEN"/>
+    <PARAMETER id="messageBoxIDTitle" name="messageTitle" default=""/>
+    <PARAMETER id="messageBoxIDMessage" name="messageMessage" default=""/>
     <PARAMETER id="form" name="action" attribute="action" default="../security/Login_FS.html"/>
 </REPORT>

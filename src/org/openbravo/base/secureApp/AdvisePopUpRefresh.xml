@@ -13,8 +13,8 @@
 <REPORT>
 	<template file="AdvisePopUpRefresh.html"/>
   <PARAMETER id="paramCSS" name="theme" attribute="href" replace="Default" default="Default"/>
-	<PARAMETER id="paramType" name="ParamType" replace="ERROR" replaceCharacters="html" attribute="class" />
-	<PARAMETER id="paramTitle" name="ParamTitle" replaceCharacters="html"/>
-	<PARAMETER id="messageBoxIDTitle" name="ParamTitle" replaceCharacters="html"/>
-	<PARAMETER id="messageBoxIDMessage" name="ParamText" replaceCharacters="html"/>
+	<PARAMETER id="paramType" name="ParamType" replace="ERROR" attribute="class" />
+	<PARAMETER id="paramTitle" name="ParamTitle"/>
+	<PARAMETER id="messageBoxIDTitle" name="ParamTitle"/>
+	<PARAMETER id="messageBoxIDMessage" name="ParamText"/>
 </REPORT>
