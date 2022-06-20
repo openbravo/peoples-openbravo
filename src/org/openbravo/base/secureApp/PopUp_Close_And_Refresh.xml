@@ -11,6 +11,6 @@
  ************************************************************************************
 -->
 <REPORT>
-	<template file="PopUp_Close_And_Refresh.html"/>
-	<PARAMETER id="paramLanguage" name="language"/>
+  <template file="PopUp_Close_And_Refresh.html"/>
+  <PARAMETER id="paramLanguage" name="language" replaceCharacters="html"/>
 </REPORT>

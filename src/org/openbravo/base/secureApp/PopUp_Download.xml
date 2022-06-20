@@ -11,6 +11,6 @@
  ************************************************************************************
 -->
 <REPORT>
-	<TEMPLATE file="PopUp_Download.html"/>
-	<PARAMETER id="paramHref" name="href" attribute="onload" replace="xx"/>
+  <TEMPLATE file="PopUp_Download.html"/>
+  <PARAMETER id="paramHref" name="href" attribute="onload" replace="xx" replaceCharacters="html"/>
 </REPORT>
