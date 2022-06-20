@@ -14,5 +14,5 @@
   <template file="PopUp_Response.html"/>
   <PARAMETER id="paramLanguage" name="language" replaceCharacters="html"/>
   <PARAMETER id="paramHref" name="href" attribute="onload" replace="xx" replaceCharacters="html"/>
-  <PARAMETER id="newTabParams" name="details" replaceCharacters="html" />
+  <PARAMETER id="newTabParams" name="details"/>
 </REPORT>
