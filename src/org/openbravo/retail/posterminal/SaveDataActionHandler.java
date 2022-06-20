@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2020 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -90,20 +90,23 @@ public class SaveDataActionHandler extends BaseActionHandler {
 
         JSONObject result = syncProcess.exec(data, true);
 
-        if (result.get(JsonConstants.RESPONSE_STATUS)
+        if (result != null && result.get(JsonConstants.RESPONSE_STATUS)
             .equals(JsonConstants.RPCREQUEST_STATUS_FAILURE)) {
           errorb = true;
-
-          updateErrorStatus(Arrays.asList(error), false);
-        } else {
-          // Execute post process hooks.
-          for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
-              .select(new ImportEntryProcessorSelector(type))) {
-            importEntryPostProcessor.afterProcessing(entry);
+          if (data.has("data") && result.has("errorids")) {
+            JSONObject jsonData = new JSONObject();
+            jsonData.put("data", new JSONArray());
+            entry.setJsonInfo(jsonData.toString());
           }
-
-          updateErrorStatus(Arrays.asList(error), true);
         }
+
+        // Execute post process hooks.
+        for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
+            .select(new ImportEntryProcessorSelector(type))) {
+          importEntryPostProcessor.afterProcessing(entry);
+        }
+
+        updateErrorStatus(Arrays.asList(error), !errorb);
       }
 
       if (errorb) {
