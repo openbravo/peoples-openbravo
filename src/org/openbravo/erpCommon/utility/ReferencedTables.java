@@ -40,11 +40,29 @@ class ReferencedTables {
     if (_adTableId == null || _adTableId.equals("") || _keyName == null || _keyName.equals("")) {
       throw new ServletException("ReferenceTables() - Missing arguments");
     }
+    // validate _adTableId (table_name), _keyName (columnName), _keyId
     adTableId = _adTableId;
     keyName = _keyName;
     keyId = _keyId;
     conn = _conn;
+    if (!validateParameters(_adTableId, _keyName)) {
+      throw new ServletException("ReferenceTables() - Invalid arguments");
+    }
     process();
+  }
+
+  private boolean validateParameters(String tableId, String columnName) throws ServletException {
+    return isTableId(tableId) && isColumnName(columnName);
+  }
+
+  private boolean isTableId(String tableId) throws ServletException {
+    String tableName = ReferencedTablesData.selectTableName(conn, adTableId);
+    return tableName != null;
+  }
+
+  private boolean isColumnName(String columnId) throws ServletException {
+    String columnName = ReferencedTablesData.selectColumnName(conn, columnId);
+    return columnName != null;
   }
 
   private void process() throws ServletException {

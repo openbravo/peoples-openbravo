@@ -71,10 +71,21 @@
       <![CDATA[
         SELECT TABLENAME
         FROM AD_TABLE 
-        WHERE AD_TABLE_ID = ?
+        WHERE lower(AD_TABLE_ID) = lower(?)
       ]]>
     </Sql>
     <Parameter name="adTableId"/>
+  </SqlMethod>
+  <SqlMethod name="selectColumnName" type="preparedStatement" return="String" default="">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql>
+      <![CDATA[
+        SELECT COLUMNNAME
+        FROM AD_COLUMN 
+        WHERE lower(COLUMNNAME) = lower(?)
+      ]]>
+    </Sql>
+    <Parameter name="adColumnId"/>
   </SqlMethod>
   <SqlMethod name="selectTableId" type="preparedStatement" return="String" default="">
     <SqlMethodComment></SqlMethodComment>
