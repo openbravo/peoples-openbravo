@@ -118,9 +118,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       // Parse the hql in case that optional filters are required
       String hql = parseOptionalFilters(parameters, sel, xmlDateFormat, typedParameters,
           namedParameters);
-
       String sortBy = parameters.get("_sortBy");
-      hql += getSortClause(sortBy, sel);
+      hql += getSortClause(sortBy, sel, hql);
 
       Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
 
@@ -470,7 +469,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    *          the selector that it is being displayed.
    * @return a String with the HQL Sort By clause.
    */
-  private String getSortClause(String sortBy, Selector sel) {
+  private String getSortClause(String sortBy, Selector sel, String hql) {
     StringBuffer sortByClause = new StringBuffer();
     boolean sortByDesc = false;
     if (sortBy != null && sortBy.startsWith("-")) {
@@ -484,7 +483,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
           if (sortByDesc) {
             fieldName = fieldName.substring(1, fieldName.length());
           }
-          int fieldSortIndex = getFieldSortIndex(fieldName, sel);
+          int fieldSortIndex = getFieldSortIndex(fieldName, hql);
           if (fieldSortIndex > 0) {
             if (sortByClause.length() > 0) {
               sortByClause.append(", ");
@@ -503,7 +502,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         } else {
           fieldName = sortBy;
         }
-        int fieldSortIndex = getFieldSortIndex(fieldName, sel);
+        int fieldSortIndex = getFieldSortIndex(fieldName, hql);
         if (fieldSortIndex > 0) {
           if (sortByDesc) {
             sortByClause.append(fieldSortIndex + " desc");
@@ -521,7 +520,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
           Restrictions.eq(SelectorField.PROPERTY_SHOWINGRID, true));
       selFieldsCrit.addOrderBy(SelectorField.PROPERTY_SORTNO, true);
       for (SelectorField selField : selFieldsCrit.list()) {
-        int fieldSortIndex = getFieldSortIndex(selField.getDisplayColumnAlias(), sel);
+        int fieldSortIndex = getFieldSortIndex(selField.getDisplayColumnAlias(), hql);
         if (fieldSortIndex > 0) {
           sortByClause.append(fieldSortIndex + ", ");
         }
@@ -580,11 +579,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * @return The index of the query column related to the field. Note that 0 will be returned if
    *         there is no query column with an alias equal to the provided field name.
    */
-  private int getFieldSortIndex(String fieldName, Selector sel) {
+  private int getFieldSortIndex(String fieldName, String hql) {
     @SuppressWarnings("deprecation")
     final String[] queryAliases = OBDal.getInstance()
         .getSession()
-        .createQuery(sel.getHQL().replace(ADDITIONAL_FILTERS, "1=1"))
+        .createQuery(hql.replace(ADDITIONAL_FILTERS, "1=1"))
         .getReturnAliases();
 
     for (int i = 0; i < queryAliases.length; i++) {
