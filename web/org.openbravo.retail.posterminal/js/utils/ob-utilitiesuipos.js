@@ -1509,7 +1509,7 @@ OB.UTIL.getChangeLabelFromReceipt = function(receipt) {
 
 OB.UTIL.getDefaultCashPaymentMethod = () => {
   // Find the cash method that is default and refundable. Otherwise the first cash payment method
-  OB.App.State.Ticket.Utils.getDefaultCashPaymentMethod(
+  return OB.App.State.Ticket.Utils.getDefaultCashPaymentMethod(
     OB.MobileApp.model.get('payments')
   );
 };
