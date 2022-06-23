@@ -64,6 +64,24 @@ enyo.kind({
     if (this.onFocusValue === this.getValue()) {
       return;
     }
+    setTimeout(() => {
+      this.validateValue(inSender, inEvent);
+    }, 50);
+  },
+  validateValue: function(inSender, inEvent) {
+    const value = this.getValue();
+    if (
+      this.lastSuggestionList &&
+      this.lastSuggestionList.length > 0 &&
+      this.lastSuggestionList.find(data => {
+        if (data instanceof Object) {
+          return value === data.displayedInfo;
+        }
+        return value === data;
+      })
+    ) {
+      return;
+    }
     let provider = OB.DQMController.getProviderForField(
       this.modelProperty,
       OB.DQMController.Validate
@@ -100,6 +118,7 @@ enyo.kind({
           this.modelProperty,
           value,
           function(result) {
+            me.lastSuggestionList = result;
             me.formElement.$.scrim.show();
             me.formElement.$.suggestionList.createSuggestionList(result, value);
           },
@@ -108,6 +127,7 @@ enyo.kind({
       } else {
         me.formElement.$.suggestionList.$.suggestionListtbody.destroyComponents();
         me.formElement.$.suggestionList.addClass('u-hideFromUI');
+        me.lastSuggestionList = null;
       }
     }
   },
