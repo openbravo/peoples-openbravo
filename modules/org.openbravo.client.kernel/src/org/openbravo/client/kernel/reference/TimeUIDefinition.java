@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -159,6 +159,10 @@ public class TimeUIDefinition extends UIDefinition {
         String columnValue = rq.getRequestParameter(
             "inp" + Sqlc.TransformaNombreColumna(field.getColumn().getDBColumnName()));
         if (StringUtils.isEmpty(columnValue)) {
+          String inpColName = getPropertyFieldParameterName(field);
+          columnValue = rq.getRequestParameter(inpColName);
+        }
+        if (StringUtils.isEmpty(columnValue)) {
           // If the date is empty, it does not have to be converted
           return result;
         }
@@ -171,6 +175,12 @@ public class TimeUIDefinition extends UIDefinition {
       throw new OBException("Exception when parsing date ", e);
     }
     return result;
+  }
+
+  private String getPropertyFieldParameterName(Field field) {
+    return "inp_propertyField_"
+        + Sqlc.TransformaNombreColumna(field.getName()).replace(" ", "") + "_"
+        + field.getColumn().getDBColumnName();
   }
 
   @Override
