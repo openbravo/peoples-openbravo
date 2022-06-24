@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -411,8 +411,14 @@ enyo.kind({
       processExecution
     );
   },
+  focus: function(inSender, inEvent) {
+    this.onFocusValue = this.getValue();
+  },
   blur: function() {
     var me = this;
+    if (this.onFocusValue === this.getValue()) {
+      return;
+    }
     if (
       this.bpProperty.mandatory &&
       (OB.UTIL.isNullOrUndefined(this.getValue()) || this.getValue() === '')

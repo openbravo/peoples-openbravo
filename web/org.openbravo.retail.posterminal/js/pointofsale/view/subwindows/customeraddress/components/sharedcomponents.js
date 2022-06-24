@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -56,8 +56,14 @@ enyo.kind({
     onRetrieveCustomer: '',
     onSetValues: ''
   },
+  focus: function(inSender, inEvent) {
+    this.onFocusValue = this.getValue();
+  },
   blur: function(inSender, inEvent) {
     this.inherited(arguments);
+    if (this.onFocusValue === this.getValue()) {
+      return;
+    }
     let provider = OB.DQMController.getProviderForField(
       this.modelProperty,
       OB.DQMController.Validate
