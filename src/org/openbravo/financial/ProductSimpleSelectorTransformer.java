@@ -23,6 +23,7 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
+import org.openbravo.service.json.JsonUtils;
 
 @ComponentProvider.Qualifier("EB3C41F0973A4EDA91E475833792A6D4")
 public class ProductSimpleSelectorTransformer extends HqlQueryTransformer {
@@ -41,7 +42,8 @@ public class ProductSimpleSelectorTransformer extends HqlQueryTransformer {
 
   private String getDocumentDate(Map<String, String> requestParameters) {
     String documentDate = requestParameters.containsKey("documentDate")
-        ? "TO_DATE('" + requestParameters.get("documentDate") + "','YYYY-MM-DD')"
+        ? "TO_DATE('" + requestParameters.get("documentDate") + "','"
+            + JsonUtils.createDateFormat().toPattern() + "')"
         : "null";
     return documentDate;
   }
