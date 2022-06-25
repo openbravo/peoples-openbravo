@@ -40,9 +40,9 @@ public class ProductSimpleSelectorTransformer extends HqlQueryTransformer {
   }
 
   private String getDocumentDate(Map<String, String> requestParameters) {
-    String documentDate = requestParameters.get("inpdateinvoiced") != null
-        ? "TO_DATE('" + requestParameters.get("inpdateinvoiced") + "','YYYY-MM-DD')"
-        : "TO_DATE('" + requestParameters.get("inpdateordered") + "','YYYY-MM-DD')";
+    String documentDate = requestParameters.containsKey("documentDate")
+        ? "TO_DATE('" + requestParameters.get("documentDate") + "','YYYY-MM-DD')"
+        : "null";
     return documentDate;
   }
 

@@ -1189,13 +1189,14 @@ from PricingProductPrice pp
 left join PricingProductPriceException ppe
 on (
   pp.id = ppe.productPrice.id
+  and @documentDate@ is not null
   and ppe.organization.id in (@orgList@)
   and ppe.validFromDate <= @documentDate@
   and ppe.validToDate >= @documentDate@
   and ppe.orgdepth = ( 
     select max(ppe2.orgdepth)
     from PricingProductPriceException ppe2
-    where ppe2.id = ppe.id
+    where ppe.productPrice.id = ppe2.productPrice.id
     and ppe2.organization.id in (@orgList@)
     and ppe2.validFromDate <= @documentDate@
     and ppe2.validToDate >= @documentDate@
