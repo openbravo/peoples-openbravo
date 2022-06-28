@@ -8472,6 +8472,7 @@
         { ticketIds: [this.id] }
       );
 
+      OB.MobileApp.view.restoreOriginalScanMode();
       if (callback && callback instanceof Function) {
         callback();
       }
