@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -51,22 +51,61 @@
      * @throws {Error} in case the template can not be retrieved
      */
     get: name => {
-      if (!templates[name]) {
-        throw new Error(`Unknown template with name ${name}`);
+      return OB.App.PrintTemplateStore.getPrintTemplateByName(name);
+    },
+
+    /**
+     * Retrieves a print template by resource. The template resource is retrieved as follows:
+     *   If there is no template name with provided resource path, launches an error
+     *   If there is a terminal property equal to the provided name, the resource is taken from that property value.
+     *   If not, the template default resource is used.
+     *
+     * @param resource {string} - the name that identifies the print template.
+     * @return {PrintTemplate} - the PrintTemplate identified with the provided name
+     * @throws {Error} in case the template can not be retrieved
+     */
+    getByResource: resource => {
+      const templateName = Object.keys(templates).find(
+        name =>
+          templates[name].defaultTemplate === resource ||
+          templates[name].printTemplate === resource
+      );
+
+      if (!templateName) {
+        throw new Error(`Unknown template with resource path ${resource}`);
       }
-      if (!templates[name].printTemplate) {
+
+      return OB.App.PrintTemplateStore.getPrintTemplateByName(templateName);
+    },
+
+    /**
+     * IMPORTANT: This is a private function and should not be used directly. Use 'get' or 'getByResource' methods instead
+     *
+     * Retrieves a print template. The template resource is retrieved as follows:
+     *   If there is a terminal property equal to the provided name, the resource is taken from that property value.
+     *   If not, the template default resource is used.
+     *
+     * @param name {string} - the name that identifies the print template.
+     * @return {PrintTemplate} - the PrintTemplate identified with the provided name
+     * @throws {Error} in case the template can not be retrieved
+     */
+    getPrintTemplateByName: name => {
+      const template = templates[name];
+
+      if (!template.printTemplate) {
         const terminal = OB.App.TerminalProperty.get('terminal');
         if (!terminal) {
           throw new Error('Missing terminal information');
         }
 
-        templates[name].printTemplate = new OB.App.Class.PrintTemplate(
+        template.printTemplate = new OB.App.Class.PrintTemplate(
           name,
           terminal[name] ? terminal[name] : templates[name].defaultTemplate,
           templates[name].options
         );
       }
-      return templates[name].printTemplate;
+
+      return template.printTemplate;
     },
 
     /** Returns the default resource path for the given template */

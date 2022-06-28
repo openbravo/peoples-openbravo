@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2021 Openbravo S.L.U.
+ * Copyright (C) 2021-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -38,6 +38,49 @@ describe('PrintTemplateStore', () => {
     const template = OB.App.PrintTemplateStore.get(templateName);
 
     expect(template.resource).toBe(resource);
+  });
+
+  it('template registry, get template from terminal resource', async () => {
+    const templateName = 'testPrintFromTerminalResourceTemplate';
+    const resource =
+      '../org.openbravo.retail.posterminal/res/resourceTerminalTemplate.xml';
+    const defaultResource =
+      '../org.openbravo.retail.posterminal/res/defaultResourceTerminalTemplate.xml';
+
+    OB.App.TerminalProperty.get.mockReturnValue({
+      testPrintTemplate: resource
+    });
+
+    OB.App.PrintTemplateStore.register(templateName, defaultResource);
+    const template = OB.App.PrintTemplateStore.getByResource(defaultResource);
+
+    expect(template.name).toBe(templateName);
+  });
+
+  it('template registry, get template from resource', async () => {
+    const templateName = 'testPrintFromResourceTemplate';
+    const resource =
+      '../org.openbravo.retail.posterminal/res/resourceTemplate.xml';
+    const defaultResource =
+      '../org.openbravo.retail.posterminal/res/defaultResourceTemplate.xml';
+
+    OB.App.TerminalProperty.get.mockReturnValue({
+      testPrintTemplate: resource
+    });
+
+    OB.App.PrintTemplateStore.register(templateName, defaultResource);
+    const template = OB.App.PrintTemplateStore.getByResource(defaultResource);
+
+    expect(template.name).toBe(templateName);
+  });
+
+  it('throws an error if get by resource function does not found any template', async () => {
+    const resource =
+      '../org.openbravo.retail.posterminal/res/nonExistingTemplate.xml';
+
+    expect(() => OB.App.PrintTemplateStore.getByResource(resource)).toThrow(
+      'Unknown template with resource path ../org.openbravo.retail.posterminal/res/nonExistingTemplate.xml'
+    );
   });
 
   it('can not register a template with an already registered name', async () => {
