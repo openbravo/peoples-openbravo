@@ -1001,9 +1001,46 @@ where @additional_filters@]]></HQL>
 <!--D47A3616483E46C18A09794B9B276B37-->  <FILTER_EXPRESSION><![CDATA[if (OB.getParameters().get('inpmProductCategoryId')){ " e.product.productCategory.id = '" + OB.getParameters().get('inpmProductCategoryId') + "'" }]]></FILTER_EXPRESSION>
 <!--D47A3616483E46C18A09794B9B276B37-->  <OBCLKER_TEMPLATE_ID><![CDATA[9314DE8599AD44E7BFC4CC50699042AB]]></OBCLKER_TEMPLATE_ID>
 <!--D47A3616483E46C18A09794B9B276B37-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--D47A3616483E46C18A09794B9B276B37-->  <VALUEFIELD_ID><![CDATA[9330D8F89976472FBC743A45D16DD4DD]]></VALUEFIELD_ID>
+<!--D47A3616483E46C18A09794B9B276B37-->  <DISPLAYFIELD_ID><![CDATA[8DF3799E5ECD4DDF8AEE168D67F74507]]></DISPLAYFIELD_ID>
 <!--D47A3616483E46C18A09794B9B276B37-->  <SUGGESTIONTEXTMATCHSTYLE><![CDATA[substring]]></SUGGESTIONTEXTMATCHSTYLE>
 <!--D47A3616483E46C18A09794B9B276B37-->  <POPUPTEXTMATCHSTYLE><![CDATA[substring]]></POPUPTEXTMATCHSTYLE>
-<!--D47A3616483E46C18A09794B9B276B37-->  <CUSTOM_QUERY><![CDATA[N]]></CUSTOM_QUERY>
+<!--D47A3616483E46C18A09794B9B276B37-->  <HQL><![CDATA[SELECT e.id as id,
+    e.product as product,
+    e.product.searchKey as searchKey,
+    e.productPrice.priceListVersion as priceListVersion,
+    e.available as available,
+    e.warehouse as warehouse,
+    e.productPrice.priceListVersion.priceList.currency as currency,
+    e.priceLimit as priceLimit,
+    e.product.name as name,
+    e.qtyOnHand as qtyOnHand,
+    e.product.uOM as UOM,
+    e.product.characteristicDescription as characteristicDescription,
+    e.qtyOrdered as qtyOrdered,
+    coalesce(ppe.standardPrice,e.standardPrice) as Pricestd,
+    e.netListPrice as Pricelist
+  FROM ProductByPriceAndWarehouse e
+  left join PricingProductPriceException ppe
+    on (
+        e.productPrice.id = ppe.productPrice.id
+        and @documentDate@ is not null
+        and ppe.organization.id in (@orgList@)
+        and ppe.validFromDate <= @documentDate@
+        and ppe.validToDate >= @documentDate@
+        and ppe.orgdepth = ( 
+            select max(ppe2.orgdepth)
+            from PricingProductPriceException ppe2
+            where ppe.productPrice.id = ppe2.productPrice.id
+            and ppe2.organization.id in (@orgList@)
+            and ppe2.validFromDate <= @documentDate@
+            and ppe2.validToDate >= @documentDate@
+        )
+    )
+  WHERE e.active='Y'
+  AND @additional_filters@]]></HQL>
+<!--D47A3616483E46C18A09794B9B276B37-->  <ENTITY_ALIAS><![CDATA[e]]></ENTITY_ALIAS>
+<!--D47A3616483E46C18A09794B9B276B37-->  <CUSTOM_QUERY><![CDATA[Y]]></CUSTOM_QUERY>
 <!--D47A3616483E46C18A09794B9B276B37--></OBUISEL_SELECTOR>
 
 <!--D4F428CFB0FD42A6998BF377BA4212AB--><OBUISEL_SELECTOR>
