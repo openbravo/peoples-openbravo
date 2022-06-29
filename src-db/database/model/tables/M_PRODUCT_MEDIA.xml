@@ -49,6 +49,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SIZE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="PREVIEW_MEDIA_URL" primaryKey="false" required="true" type="VARCHAR" size="500" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_MEDIA_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -60,7 +68,7 @@
       </foreign-key>
       <unique name="M_PRODUCT_MEDIA_UNIQUE">
         <unique-column name="M_PRODUCT_ID"/>
-        <unique-column name="MEDIA_TYPE"/>
+        <unique-column name="SIZE"/>
         <unique-column name="SEQNO"/>
       </unique>
       <check name="M_PRODUCT_MEDIA_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
