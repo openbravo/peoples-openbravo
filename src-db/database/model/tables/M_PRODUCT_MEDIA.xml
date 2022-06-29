@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="PREVIEW_MEDIA_URL" primaryKey="false" required="false" type="VARCHAR" size="500" autoIncrement="false">
+      <column name="PREVIEW_MEDIA_URL" primaryKey="false" required="true" type="VARCHAR" size="500" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

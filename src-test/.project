@@ -26,36 +26,6 @@
 			<locationURI>MODULES/org.openbravo.client.kernel/src-test</locationURI>
 		</link>
 		<link>
-			<name>org.openbravo.pos2</name>
-			<type>2</type>
-			<locationURI>MODULES/org.openbravo.pos2/src-test</locationURI>
-		</link>
-		<link>
-			<name>org.openbravo.retail.discounts</name>
-			<type>2</type>
-			<locationURI>MODULES/org.openbravo.retail.discounts/src-test</locationURI>
-		</link>
-		<link>
-			<name>org.openbravo.retail.discounts.bytotal</name>
-			<type>2</type>
-			<locationURI>MODULES/org.openbravo.retail.discounts.bytotal/src-test</locationURI>
-		</link>
-		<link>
-			<name>org.openbravo.retail.posterminal</name>
-			<type>2</type>
-			<locationURI>MODULES/org.openbravo.retail.posterminal/src-test</locationURI>
-		</link>
-		<link>
-			<name>org.openbravo.service.datasource</name>
-			<type>2</type>
-			<locationURI>MODULES/org.openbravo.service.datasource/src-test</locationURI>
-		</link>
-		<link>
-			<name>org.openbravo.service.json</name>
-			<type>2</type>
-			<locationURI>MODULES/org.openbravo.service.json/src-test</locationURI>
-		</link>
-		<link>
 			<name>test-lib</name>
 			<type>2</type>
 			<locationURI>MODULES/org.openbravo.base.weld/lib/test</locationURI>
@@ -71,17 +41,6 @@
 			<locationURI>MODULES/org.openbravo.base.weld/src-test</locationURI>
 		</link>
 	</linkedResources>
-	<filteredResources>
-		<filter>
-			<id>1656402759501</id>
-			<name></name>
-			<type>30</type>
-			<matcher>
-				<id>org.eclipse.core.resources.regexFilterMatcher</id>
-				<arguments>node_modules|.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
-			</matcher>
-		</filter>
-	</filteredResources>
 	<variableList>
 		<variable>
 			<name>MODULES</name>
