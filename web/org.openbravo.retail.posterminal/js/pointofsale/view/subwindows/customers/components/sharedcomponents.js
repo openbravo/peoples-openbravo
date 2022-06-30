@@ -162,8 +162,8 @@ enyo.kind({
           suggestionList.setInactiveElement(index);
         }
       }
-      //Enter
-      if (inEvent.keyCode === 13) {
+      //Enter and Tab
+      if (inEvent.keyCode === 13 || inEvent.keyCode === 9) {
         let activeElement =
           suggestionList.$.suggestionListtbody.children[
             suggestionList.getActiveElement()
@@ -179,6 +179,7 @@ enyo.kind({
           suggestionList.addClass('u-hideFromUI');
           suggestionList.owner.$.scrim.hide();
         }
+        return true;
       }
     }
   }
