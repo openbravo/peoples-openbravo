@@ -717,6 +717,7 @@ public class ExternalOrderLoader extends OrderLoader {
       }
     }
 
+    lineJson.put("orderStep", orderJson.get("step"));
     setProduct(lineJson);
 
     if (!lineJson.has("id")) {
@@ -897,8 +898,11 @@ public class ExternalOrderLoader extends OrderLoader {
     copyPropertyValue(lineJson, "netPrice", "unitPrice");
     copyPropertyValue(lineJson, "netAmount", "net");
     copyPropertyValue(lineJson, "grossAmount", "gross");
-    BigDecimal grossAmountAbs = BigDecimal.valueOf(lineJson.getDouble("grossAmount")).abs();
-    lineJson.put("lineGrossAmount", grossAmountAbs);
+    if (CANCEL.equals(lineJson.getString("orderStep"))) {
+      lineJson.put("lineGrossAmount", BigDecimal.valueOf(lineJson.getDouble("grossAmount")).abs());
+    } else {
+      copyPropertyValue(lineJson, "grossAmount", "lineGrossAmount");
+    }
   }
 
   protected String convertToUTCDate(String dateStr, int timezoneOffset) {
