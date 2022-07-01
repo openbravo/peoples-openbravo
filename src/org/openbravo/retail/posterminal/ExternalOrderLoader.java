@@ -37,6 +37,9 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.LockOptions;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBException;
@@ -47,6 +50,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -71,6 +75,7 @@ import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.importprocess.ImportEntry;
@@ -727,6 +732,47 @@ public class ExternalOrderLoader extends OrderLoader {
       final JSONObject whJson = new JSONObject();
       whJson.put("id", warehouseId);
       lineJson.put("warehouse", whJson);
+    }
+    
+    if (!lineJson.has("originalOrderLineId") && lineJson.has("originalSalesOrderDocumentNumber") && lineJson.has("uPCEAN")) {
+     // getOriginalOrderLineId based on originalSalesOrderDocumentNumber and product uPCEAN
+      String strOriginalSalesOrderDocumentNumber = lineJson.getString("originalSalesOrderDocumentNumber");
+      String strProductUPCEAN = lineJson.getString("uPCEAN");
+      //@formatter:off
+      final String hql =
+                     " select ol.id as originalOrderLineId "
+                     + " from OrderLine as ol join ol.salesOrder as o "
+                     + " where o.documentNo = :documentNo "
+                     + " and ol.product.uPCEAN = :uPCEAN "
+                     + " and o.processed = true "
+                     + " and o.documentStatus <> 'VO'";
+      //@formatter:on
+
+      final ScrollableResults originalOrderLineQuery = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, Object[].class)
+          .setParameter("documentNo", strOriginalSalesOrderDocumentNumber)
+          .setParameter("uPCEAN", strProductUPCEAN)
+          .scroll(ScrollMode.FORWARD_ONLY);
+
+      try {
+        while (originalOrderLineQuery.next()) {
+          final Object[] originalOrderLineObj = originalOrderLineQuery.get();
+          final String originalOrderLineId = (String) originalOrderLineObj[0];
+          if(isOriginalOrderLineValidForReturn(originalOrderLineId)) {
+            lineJson.put("originalOrderLineId", originalOrderLineId);
+          }
+        }
+       } finally {
+         originalOrderLineQuery.close();
+       }
+
+    }
+    
+    if (lineJson.has("originalOrderLineId")) {
+      if (!isOriginalOrderLineValidForReturn(lineJson.getString("originalOrderLineId"))) {
+        lineJson.remove("originalOrderLineId");
+      }
     }
 
     if (lineJson.has("returnReason")) {
@@ -1778,5 +1824,45 @@ public class ExternalOrderLoader extends OrderLoader {
       protected void processEntry(ImportEntry importEntry) throws Exception {
       }
     }
+  }
+  
+  private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId) {
+   // validate Whether originalOrderLine has completely returned in others
+    OrderLine originalOrderLine = OBDal.getInstance()
+        .get(OrderLine.class, originalOrderLineId);
+
+    OBCriteria<ShipmentInOutLine> inOutCriteria = OBDal.getInstance()
+        .createCriteria(ShipmentInOutLine.class);
+    inOutCriteria
+        .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, originalOrderLine));
+    ShipmentInOutLine inOutLine = (ShipmentInOutLine) inOutCriteria.uniqueResult();
+    
+    //@formatter:off
+    final String hql =
+                   " select coalesce(sum(ol.orderedQuantity), 0)*-1 as returnedQty "
+                   + " from OrderLine as ol join ol.salesOrder as o "
+                   + " where ol.goodsShipmentLine.id = :inOutLineId "
+                   + " and o.processed = true "
+                   + " and o.documentStatus <> 'VO' ";
+    //@formatter:on
+
+    final ScrollableResults returnedQtyInOthersQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Object[].class)
+        .setParameter("inOutLineId", inOutLine.getId())
+        .scroll(ScrollMode.FORWARD_ONLY);
+
+    try {
+      while (returnedQtyInOthersQry.next()) {
+        final Object[] returnedQuantityObj = returnedQtyInOthersQry.get();
+        final BigDecimal returnedQuantityInOthers = (BigDecimal) returnedQuantityObj[0];
+        if(originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) == 1) {
+          return true;
+        }
+      }
+     } finally {
+       returnedQtyInOthersQry.close();
+     }
+    return false;
   }
 }
