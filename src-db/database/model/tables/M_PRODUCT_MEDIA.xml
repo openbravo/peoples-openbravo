@@ -49,7 +49,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SIZE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="MEDIA_SIZE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -68,7 +68,7 @@
       </foreign-key>
       <unique name="M_PRODUCT_MEDIA_UNIQUE">
         <unique-column name="M_PRODUCT_ID"/>
-        <unique-column name="SIZE"/>
+        <unique-column name="MEDIA_SIZE"/>
         <unique-column name="SEQNO"/>
       </unique>
       <check name="M_PRODUCT_MEDIA_ISACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
