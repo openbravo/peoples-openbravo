@@ -352,6 +352,7 @@ public class OBPOSComponentProvider extends BaseComponentProvider {
         businesslogic("app/model/business-logic/pack/ProductPackProvider"), //
         businesslogic("app/model/business-logic/pack/Pack"), //
         businesslogic("app/model/business-logic/service/ServicesFilter"), //
+        businesslogic("app/model/business-logic/utils/Util"), //
         // Business-Object
         businesslogic("app/model/business-object/document-sequence/DocumentSequence"), //
         businesslogic("app/model/business-object/document-sequence/DocumentSequenceUtils"), //

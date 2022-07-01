@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -14,13 +14,15 @@
 
 OB.App.StateAPI.Global.registerAction('printTicket', (state, payload) => {
   const newState = { ...state };
+  const ticket = payload.ticket || { ...newState.Ticket };
 
-  const printTicketMsg = OB.App.State.Messages.Utils.createPrintTicketMessage(
-    payload.ticket || { ...newState.Ticket },
-    payload.printSettings
+  newState.Messages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+    newState.Messages,
+    ticket,
+    payload.printSettings,
+    payload.deliverAction,
+    payload.deliverService
   );
-
-  newState.Messages = [...newState.Messages, printTicketMsg];
 
   return newState;
 });

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2020-2021 Openbravo S.L.U.
+ * Copyright (C) 2020-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -116,26 +116,26 @@
             payload.preferences &&
             payload.preferences.autoPrintReceipts)
         ) {
-          newMessages = [
-            ...newMessages,
-            OB.App.State.Messages.Utils.createPrintTicketMessage(
-              newMultiTicket,
-              {
-                skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
-              }
-            )
-          ];
+          newMessages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+            newMessages,
+            newMultiTicket,
+            {
+              skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+            },
+            payload.deliverAction,
+            payload.deliverService
+          );
         }
         if (newMultiTicket.calculatedInvoice) {
-          newMessages = [
-            ...newMessages,
-            OB.App.State.Messages.Utils.createPrintTicketMessage(
-              newMultiTicket.calculatedInvoice,
-              {
-                skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
-              }
-            )
-          ];
+          newMessages = OB.App.State.Messages.Utils.generateDeliverTicketMessages(
+            newMessages,
+            newMultiTicket.calculatedInvoice,
+            {
+              skipSelectPrinters: multiTicketList.indexOf(multiTicket) !== 0
+            },
+            payload.deliverAction,
+            payload.deliverService
+          );
         }
 
         // Add Current Ticket to Last Ticket
