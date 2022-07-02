@@ -733,19 +733,21 @@ public class ExternalOrderLoader extends OrderLoader {
       whJson.put("id", warehouseId);
       lineJson.put("warehouse", whJson);
     }
-    
-    if (!lineJson.has("originalOrderLineId") && lineJson.has("originalSalesOrderDocumentNumber") && lineJson.has("uPCEAN")) {
-     // getOriginalOrderLineId based on originalSalesOrderDocumentNumber and product uPCEAN
-      String strOriginalSalesOrderDocumentNumber = lineJson.getString("originalSalesOrderDocumentNumber");
+
+    if (!lineJson.has("originalOrderLineId") && lineJson.has("originalSalesOrderDocumentNumber")
+        && lineJson.has("uPCEAN")) {
+      // getOriginalOrderLineId based on originalSalesOrderDocumentNumber and product uPCEAN
+      String strOriginalSalesOrderDocumentNumber = lineJson
+          .getString("originalSalesOrderDocumentNumber");
       String strProductUPCEAN = lineJson.getString("uPCEAN");
       //@formatter:off
       final String hql =
-                     " select ol.id as originalOrderLineId "
-                     + " from OrderLine as ol join ol.salesOrder as o "
-                     + " where o.documentNo = :documentNo "
-                     + " and ol.product.uPCEAN = :uPCEAN "
-                     + " and o.processed = true "
-                     + " and o.documentStatus <> 'VO'";
+        " select ol.id as originalOrderLineId "
+      + " from OrderLine as ol join ol.salesOrder as o "
+      + " where o.documentNo = :documentNo "
+      + " and ol.product.uPCEAN = :uPCEAN "
+      + " and o.processed = true "
+      + " and o.documentStatus <> 'VO'";
       //@formatter:on
 
       final ScrollableResults originalOrderLineQuery = OBDal.getInstance()
@@ -759,16 +761,16 @@ public class ExternalOrderLoader extends OrderLoader {
         while (originalOrderLineQuery.next()) {
           final Object[] originalOrderLineObj = originalOrderLineQuery.get();
           final String originalOrderLineId = (String) originalOrderLineObj[0];
-          if(isOriginalOrderLineValidForReturn(originalOrderLineId)) {
+          if (isOriginalOrderLineValidForReturn(originalOrderLineId)) {
             lineJson.put("originalOrderLineId", originalOrderLineId);
           }
         }
-       } finally {
-         originalOrderLineQuery.close();
-       }
+      } finally {
+        originalOrderLineQuery.close();
+      }
 
     }
-    
+
     if (lineJson.has("originalOrderLineId")) {
       if (!isOriginalOrderLineValidForReturn(lineJson.getString("originalOrderLineId"))) {
         lineJson.remove("originalOrderLineId");
@@ -1825,18 +1827,17 @@ public class ExternalOrderLoader extends OrderLoader {
       }
     }
   }
-  
+
   private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId) {
-   // validate Whether originalOrderLine has completely returned in others
-    OrderLine originalOrderLine = OBDal.getInstance()
-        .get(OrderLine.class, originalOrderLineId);
+    // validate Whether originalOrderLine has completely returned in others
+    OrderLine originalOrderLine = OBDal.getInstance().get(OrderLine.class, originalOrderLineId);
 
     OBCriteria<ShipmentInOutLine> inOutCriteria = OBDal.getInstance()
         .createCriteria(ShipmentInOutLine.class);
     inOutCriteria
         .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, originalOrderLine));
     ShipmentInOutLine inOutLine = (ShipmentInOutLine) inOutCriteria.uniqueResult();
-    
+
     //@formatter:off
     final String hql =
                    " select coalesce(sum(ol.orderedQuantity), 0)*-1 as returnedQty "
@@ -1856,13 +1857,13 @@ public class ExternalOrderLoader extends OrderLoader {
       while (returnedQtyInOthersQry.next()) {
         final Object[] returnedQuantityObj = returnedQtyInOthersQry.get();
         final BigDecimal returnedQuantityInOthers = (BigDecimal) returnedQuantityObj[0];
-        if(originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) == 1) {
+        if (originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) == 1) {
           return true;
         }
       }
-     } finally {
-       returnedQtyInOthersQry.close();
-     }
+    } finally {
+      returnedQtyInOthersQry.close();
+    }
     return false;
   }
 }
