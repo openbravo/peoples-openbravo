@@ -734,20 +734,22 @@ public class ExternalOrderLoader extends OrderLoader {
       lineJson.put("warehouse", whJson);
     }
 
-    if (!lineJson.has("originalOrderLineId") && lineJson.has("originalSalesOrderDocumentNumber")
-        && lineJson.has("uPCEAN")) {
+    final Boolean isReturn = orderJson.has("isReturn") && orderJson.getBoolean("isReturn");
+    final Boolean isLineQtyNegative = lineJson.getDouble("qty") < 0;
+    if ((isReturn || isLineQtyNegative) && !lineJson.has("originalOrderLineId")
+        && lineJson.has("originalSalesOrderDocumentNumber") && lineJson.has("uPCEAN")) {
       // getOriginalOrderLineId based on originalSalesOrderDocumentNumber and product uPCEAN
       String strOriginalSalesOrderDocumentNumber = lineJson
           .getString("originalSalesOrderDocumentNumber");
       String strProductUPCEAN = lineJson.getString("uPCEAN");
       //@formatter:off
       final String hql =
-        " select ol.id as originalOrderLineId "
-      + " from OrderLine as ol join ol.salesOrder as o "
-      + " where o.documentNo = :documentNo "
-      + " and ol.product.uPCEAN = :uPCEAN "
-      + " and o.processed = true "
-      + " and o.documentStatus <> 'VO'";
+          " select ol.id as originalOrderLineId "
+        + " from OrderLine as ol join ol.salesOrder as o "
+        + " where o.documentNo = :documentNo "
+        + " and ol.product.uPCEAN = :uPCEAN "
+        + " and o.processed = true "
+        + " and o.documentStatus <> 'VO'";
       //@formatter:on
 
       final ScrollableResults originalOrderLineQuery = OBDal.getInstance()
@@ -763,21 +765,22 @@ public class ExternalOrderLoader extends OrderLoader {
           final String originalOrderLineId = (String) originalOrderLineObj[0];
           if (isOriginalOrderLineValidForReturn(originalOrderLineId)) {
             lineJson.put("originalOrderLineId", originalOrderLineId);
+            break;
           }
         }
       } finally {
         originalOrderLineQuery.close();
       }
-
     }
 
-    if (lineJson.has("originalOrderLineId")) {
-      if (!isOriginalOrderLineValidForReturn(lineJson.getString("originalOrderLineId"))) {
-        lineJson.remove("originalOrderLineId");
-      }
+    if (lineJson.has("originalOrderLineId")
+        && !isOriginalOrderLineValidForReturn(lineJson.getString("originalOrderLineId"))) {
+      lineJson.remove("originalOrderLineId");
     }
 
-    if (lineJson.has("returnReason")) {
+    if (lineJson.has("returnReason"))
+
+    {
       final String returnReasonId = resolveJsonValue(ReturnReason.ENTITY_NAME,
           lineJson.getString("returnReason"), new String[] { "id", "name", "searchKey" });
       lineJson.put("returnReason", returnReasonId);
@@ -1840,11 +1843,11 @@ public class ExternalOrderLoader extends OrderLoader {
 
     //@formatter:off
     final String hql =
-                   " select coalesce(sum(ol.orderedQuantity), 0)*-1 as returnedQty "
-                   + " from OrderLine as ol join ol.salesOrder as o "
-                   + " where ol.goodsShipmentLine.id = :inOutLineId "
-                   + " and o.processed = true "
-                   + " and o.documentStatus <> 'VO' ";
+        " select coalesce(sum(ol.orderedQuantity), 0)*-1 as returnedQty "
+      + " from OrderLine as ol join ol.salesOrder as o "
+      + " where ol.goodsShipmentLine.id = :inOutLineId "
+      + " and o.processed = true "
+      + " and o.documentStatus <> 'VO' ";
     //@formatter:on
 
     final ScrollableResults returnedQtyInOthersQry = OBDal.getInstance()
