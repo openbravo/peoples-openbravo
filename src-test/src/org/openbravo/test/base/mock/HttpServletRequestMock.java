@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -379,7 +379,10 @@ public class HttpServletRequestMock implements HttpServletRequest {
 
   @Override
   public HttpSession getSession(boolean arg0) {
-    return null;
+    if (session == null && !arg0) {
+      return null;
+    }
+    return getSession();
   }
 
   @Override
