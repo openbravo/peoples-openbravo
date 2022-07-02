@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -749,7 +750,8 @@ public class ExternalOrderLoader extends OrderLoader {
         + " where o.documentNo = :documentNo "
         + " and ol.product.uPCEAN = :uPCEAN "
         + " and o.processed = true "
-        + " and o.documentStatus <> 'VO'";
+        + " and o.documentStatus <> 'VO'"
+        + " order by ol.orderedQuantity asc, ol.id ";
       //@formatter:on
 
       final ScrollableResults originalOrderLineQuery = OBDal.getInstance()
@@ -763,7 +765,7 @@ public class ExternalOrderLoader extends OrderLoader {
         while (originalOrderLineQuery.next()) {
           final Object[] originalOrderLineObj = originalOrderLineQuery.get();
           final String originalOrderLineId = (String) originalOrderLineObj[0];
-          if (isOriginalOrderLineValidForReturn(originalOrderLineId)) {
+          if (isOriginalOrderLineValidForReturn(originalOrderLineId, orderJson)) {
             lineJson.put("originalOrderLineId", originalOrderLineId);
             break;
           }
@@ -774,13 +776,12 @@ public class ExternalOrderLoader extends OrderLoader {
     }
 
     if (lineJson.has("originalOrderLineId")
-        && !isOriginalOrderLineValidForReturn(lineJson.getString("originalOrderLineId"))) {
+        && !isOriginalOrderLineValidForReturn(lineJson.getString("originalOrderLineId"),
+            orderJson)) {
       lineJson.remove("originalOrderLineId");
     }
 
-    if (lineJson.has("returnReason"))
-
-    {
+    if (lineJson.has("returnReason")) {
       final String returnReasonId = resolveJsonValue(ReturnReason.ENTITY_NAME,
           lineJson.getString("returnReason"), new String[] { "id", "name", "searchKey" });
       lineJson.put("returnReason", returnReasonId);
@@ -1831,8 +1832,10 @@ public class ExternalOrderLoader extends OrderLoader {
     }
   }
 
-  private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId) {
-    // validate Whether originalOrderLine has completely returned in others
+  private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId,
+      JSONObject orderJson) {
+    // validate Whether originalOrderLine has completely returned in others or in the current Order
+    HashMap<String, BigDecimal> consumedOriginalOrderLineQtyInSameReturnOrder = new HashMap<String, BigDecimal>();
     OrderLine originalOrderLine = OBDal.getInstance().get(OrderLine.class, originalOrderLineId);
 
     OBCriteria<ShipmentInOutLine> inOutCriteria = OBDal.getInstance()
@@ -1860,7 +1863,27 @@ public class ExternalOrderLoader extends OrderLoader {
       while (returnedQtyInOthersQry.next()) {
         final Object[] returnedQuantityObj = returnedQtyInOthersQry.get();
         final BigDecimal returnedQuantityInOthers = (BigDecimal) returnedQuantityObj[0];
-        if (originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) == 1) {
+        final BigDecimal returnQuantityInSameOrder = consumedOriginalOrderLineQtyInSameReturnOrder
+            .containsKey(originalOrderLineId)
+                ? consumedOriginalOrderLineQtyInSameReturnOrder.get("originalOrderLineId")
+                : BigDecimal.ZERO;
+        final BigDecimal totalReturnQuantity = returnedQuantityInOthers
+            .add(returnQuantityInSameOrder);
+        if (originalOrderLine.getOrderedQuantity().compareTo(totalReturnQuantity) == 1) {
+          if (consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
+            consumedOriginalOrderLineQtyInSameReturnOrder.put("originalOrderLineId",
+                consumedOriginalOrderLineQtyInSameReturnOrder.get(originalOrderLineId)
+                    .add(originalOrderLine.getOrderedQuantity()));
+          } else {
+            consumedOriginalOrderLineQtyInSameReturnOrder.put("originalOrderLineId",
+                originalOrderLine.getOrderedQuantity());
+          }
+          try {
+            orderJson.put("consumedOriginalOrderLineQtyInSameReturnOrder",
+                consumedOriginalOrderLineQtyInSameReturnOrder);
+          } catch (JSONException e) {
+            throw new OBException(e);
+          }
           return true;
         }
       }
