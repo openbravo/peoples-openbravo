@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2015 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,10 @@ package org.openbravo.erpCommon.utility;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -272,6 +276,34 @@ public class OBDateUtils {
     calendar.add(Calendar.MILLISECOND, -gmtMillisecondOffset);
 
     return calendar.getTime();
+  }
+
+  /**
+   * Returns a new Date with the time truncated
+   *
+   * @param date
+   *          Date to be truncated
+   * @return Date truncated.
+   */
+  public static Date truncate(Date date) {
+    return truncate(date, ChronoUnit.DAYS);
+  }
+
+  /**
+   * Returns a new Date truncated with the value in the specified unit
+   *
+   * @param date
+   *          Date to be truncated
+   * @param unit
+   *          the unit to truncate to, not null
+   * @return Date truncated.
+   */
+  public static Date truncate(Date date, ChronoUnit unit) {
+    Instant instant = date.toInstant();
+    ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
+    ZonedDateTime truncatedZonedDateTime = zonedDateTime.truncatedTo(unit);
+    Instant truncatedInstant = truncatedZonedDateTime.toInstant();
+    return Date.from(truncatedInstant);
   }
 
 }

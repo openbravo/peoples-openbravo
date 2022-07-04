@@ -47,6 +47,7 @@ import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.client.kernel.test.CompressionTest;
 import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
+import org.openbravo.erpCommon.utility.OBDateUtilsTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
 import org.openbravo.scheduling.trigger.TriggerProviderTest;
@@ -402,7 +403,10 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     OrderProcessTest.class,
 
     // Conversion Rate Document Unique constraint refactor
-    ConversionRateDocUniqueTestSuite.class
+    ConversionRateDocUniqueTestSuite.class,
+
+    // Utilities to manage dates
+    OBDateUtilsTest.class
 
 })
 
