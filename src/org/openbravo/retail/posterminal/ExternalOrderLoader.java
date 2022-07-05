@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -109,8 +108,7 @@ public class ExternalOrderLoader extends OrderLoader {
   public static final String CANCEL = "cancel";
   public static final String CANCEL_REPLACE = "cancel_replace";
   public static final String ALL = "all";
-  Random random = new Random();
-  Boolean considerSameOriginalOrderLineInMultipleReturnLines = consumeOriginalOrderLineQtyFromSameLine();
+  private Boolean considerOriginalOrderLineInMultipleReturnLines;
   HashMap<String, BigDecimal> consumedOriginalOrderLineQtyInSameReturnOrder = new HashMap<String, BigDecimal>();
 
   private static ThreadLocal<JSONArray> processedOrders = new ThreadLocal<JSONArray>();
@@ -574,6 +572,18 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   protected void transformOrder(JSONObject orderJson) throws JSONException {
+
+    try {
+      considerOriginalOrderLineInMultipleReturnLines = Preferences
+          .getPreferenceValue("OBPOS_ConsiderOriginalOrderLineInMultipleReturnLine", true,
+              OBContext.getOBContext().getCurrentClient(),
+              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
+              OBContext.getOBContext().getRole(), null)
+          .equals(Preferences.YES);
+    } catch (PropertyException e1) {
+      considerOriginalOrderLineInMultipleReturnLines = false;
+    }
+
     handleOrderSteps(orderJson);
 
     setDefaults(orderJson);
@@ -1838,7 +1848,7 @@ public class ExternalOrderLoader extends OrderLoader {
 
   private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId,
       JSONObject orderJson, BigDecimal qtyReturned) {
-    if (!considerSameOriginalOrderLineInMultipleReturnLines
+    if (!considerOriginalOrderLineInMultipleReturnLines
         && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
       return false;
     }
@@ -1870,7 +1880,7 @@ public class ExternalOrderLoader extends OrderLoader {
       while (returnedQtyInOthersQry.next()) {
         final Object[] returnedQuantityObj = returnedQtyInOthersQry.get();
         BigDecimal returnedQuantityInOthers = (BigDecimal) returnedQuantityObj[0];
-        if (considerSameOriginalOrderLineInMultipleReturnLines
+        if (considerOriginalOrderLineInMultipleReturnLines
             && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
           BigDecimal returnQuantityInSameOrder = consumedOriginalOrderLineQtyInSameReturnOrder
               .get(originalOrderLineId);
@@ -1878,7 +1888,7 @@ public class ExternalOrderLoader extends OrderLoader {
         }
 
         if (originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) > 0) {
-          if (considerSameOriginalOrderLineInMultipleReturnLines
+          if (considerOriginalOrderLineInMultipleReturnLines
               && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
             consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId,
                 consumedOriginalOrderLineQtyInSameReturnOrder.get(originalOrderLineId)
@@ -1940,9 +1950,5 @@ public class ExternalOrderLoader extends OrderLoader {
       returnedQtyInOthersQry.close();
     }
     return false;
-  }
-
-  public boolean consumeOriginalOrderLineQtyFromSameLine() {
-    return random.nextBoolean();
   }
 }
