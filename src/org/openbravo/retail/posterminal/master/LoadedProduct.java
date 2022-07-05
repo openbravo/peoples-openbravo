@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2015-2019 Openbravo S.L.U.
+ * Copyright (C) 2015-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -63,7 +63,10 @@ public class LoadedProduct extends ProcessHQLQuery {
         .add(new HQLProperty("coalesce(ppp.listPrice, ollist.listPrice)", "listPrice", 10));
     final String hql = "select" + regularProductsHQLProperties.getHqlSelect()
         + "FROM Product product left outer join product.uOM uom "
-        + "left outer join product.pricingProductPriceList ppp with ppp.priceListVersion.id=:priceListVersionId "
+        + "inner join product.pricingProductPriceList ppp "
+        + "left outer join product.pricingProductPriceList ppp with ppp.priceListVersion.id=:priceListVersionId and "
+        + "pppe.orgdepth = ( select max(pre.orgdepth) from PricingProductPriceException pre where pre.productPrice.id = ppp.id and "
+        + "pre.validFromDate <= :terminalDate AND pre.validToDate >= :terminalDate and pre.$naturalOrgCriteria and pre.$activeCriteria) "
         + "left outer join product.orderLineList ollist with ollist.id=:salesOrderLineId "
         + "WHERE product.id=:productId ";
     products.add(hql);

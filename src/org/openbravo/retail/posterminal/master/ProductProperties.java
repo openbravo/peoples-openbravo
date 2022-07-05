@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2019 Openbravo S.L.U.
+ * Copyright (C) 2013-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -61,19 +61,21 @@ public class ProductProperties extends ModelExtension {
           add(new HQLProperty("pli.bestseller", "bestseller"));
           add(new HQLProperty("pli.productStatus.id", "productAssortmentStatus"));
           add(new HQLProperty("ppp.listPrice", "listPrice"));
-          add(new HQLProperty("ppp.standardPrice", "standardPrice"));
+          add(new HQLProperty("coalesce(pppe.standardPrice,ppp.standardPrice)", "standardPrice"));
           add(new HQLProperty("ppp.priceLimit", "priceLimit"));
           add(new HQLProperty("ppp.cost", "cost"));
+
           Entity productPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
           if (productPrice.hasProperty("algorithm")) {
             add(new HQLProperty("ppp.algorithm", "algorithm"));
           }
-          add(new HQLProperty(
-              "case when product.active = 'Y' and coalesce(pli.active, 'Y') = 'Y' and coalesce(ppp.active, 'Y') = 'Y' then true else false end",
-              "active"));
+          add(new HQLProperty("case when product.active = 'Y' and "
+              + " coalesce(pli.active, 'Y') = 'Y' and coalesce(ppp.active, 'Y') = 'Y' and "
+              + " coalesce(pppe.active, 'Y') = 'Y' then true else false end", "active"));
         }
         add(new HQLProperty("product.obposEditablePrice", "obposEditablePrice"));
-        add(new HQLProperty("'false'", "ispack"));
+        add(new HQLProperty("'false'", "ispack", false));
+
         add(new HQLProperty("case when product.attributeSet is not null then true else false end",
             "hasAttributes"));
         add(new HQLProperty("case when attrset.serialNo = 'Y' then true else false end",

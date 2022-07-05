@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2021 Openbravo S.L.U.
+ * Copyright (C) 2019-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -177,6 +177,13 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append("     and plv3.validFromDate <= :terminalDate");
     hql.append("   )");
     hql.append(" )");
+    hql.append(" left join pp.pricingProductPriceExceptionList ppe ");
+    hql.append(" with (ppe.validFromDate <= :terminalDate AND ppe.validToDate >= :terminalDate) ");
+    hql.append(" and ppe.orgdepth = ( select max(pre.orgdepth) ");
+    hql.append(" from PricingProductPriceException pre where pre.productPrice.id = pp.id and ");
+    hql.append(" pre.validFromDate <= :terminalDate and pre.validToDate >= :terminalDate ");
+    hql.append(" and pre.$naturalOrgCriteria and pre.$activeCriteria) ");
+
     hql.append(" where o.id in :crossStoreOrgIds");
     hql.append(" and $filtersCriteria");
     hql.append(" and ls.oBRETCOAvailableCrossStore = true");
@@ -199,6 +206,7 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append(" and l.active = true");
     hql.append(" group by " + crossStoreHQLProperties.getHqlGroupBy());
     hql.append(" having w.id = min(wh.id)");
+
     if (filterByStock) {
       hql.append(" and coalesce(sum(sd.quantityOnHand - sd.reservedQty), 0) > 0");
     }

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2012-2021 Openbravo S.L.U.
+ * Copyright (C) 2012-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -101,6 +102,8 @@ public class Product extends MasterDataProcessHQLQuery {
       OBContext.setAdminMode(true);
       final Date terminalDate = getTerminalDate(jsonsent);
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final String clientId = OBContext.getOBContext().getCurrentClient().getId();
+
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final boolean isMultiPriceListSearch = isMultiPriceListSearch(jsonsent);
       final boolean isMultipricelist = getPreference("OBPOS_EnableMultiPriceList");
@@ -117,6 +120,7 @@ public class Product extends MasterDataProcessHQLQuery {
       paramValues.put("productListId", productListId);
       paramValues.put("priceListVersionId", priceListVersionId);
       paramValues.put("orgId", orgId);
+      paramValues.put("clientId", clientId);
       paramValues.put("orgIds", orgIds);
       paramValues.put("startingDate", now.getTime());
       paramValues.put("endingDate", now.getTime());
@@ -127,10 +131,22 @@ public class Product extends MasterDataProcessHQLQuery {
                 jsonsent.getJSONObject("remoteParams").getString("currentPriceList"), terminalDate)
                 .getId());
       }
+      paramValues.put("lastUpdtd",
+          getLastUpdated(jsonsent) != null ? new Date(getLastUpdated(jsonsent)) : new Date(0));
+
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  @Override
+  protected JSONObject getResponseParameters(JSONObject jsonsent) throws JSONException {
+    JSONObject objResponseParameters = new JSONObject();
+    if (hasPriceListVersionChanged(jsonsent)) {
+      objResponseParameters.put("forceModelFullRefresh", true);
+    }
+    return objResponseParameters;
   }
 
   public static Map<String, Object> createRegularProductValues(JSONObject jsonsent)
@@ -140,6 +156,7 @@ public class Product extends MasterDataProcessHQLQuery {
       final Date terminalDate = getTerminalDate(jsonsent);
       final boolean isCrossStoreSearch = isCrossStoreSearch(jsonsent);
       final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final String clientId = OBContext.getOBContext().getCurrentClient().getId();
       final String posId = getTerminalId(jsonsent);
       final List<String> orgIds = POSUtils.getOrgListCrossStore(posId, isCrossStoreSearch);
       final String productListId = POSUtils.getProductListByPosterminalId(posId).getId();
@@ -150,8 +167,10 @@ public class Product extends MasterDataProcessHQLQuery {
       paramValues.put("productListId", productListId);
       paramValues.put("priceListVersionId", priceListVersionId);
       paramValues.put("orgId", orgId);
+      paramValues.put("clientId", clientId);
       paramValues.put("orgIds", orgIds);
       paramValues.put("terminalDate", terminalDate);
+
       return paramValues;
     } finally {
       OBContext.restorePreviousMode();
@@ -180,6 +199,7 @@ public class Product extends MasterDataProcessHQLQuery {
     final boolean executeGenericProductQry = getPreference("OBPOS_ExecuteGenericProductQuery");
     final boolean allowNoPriceInMainPriceList = getPreference(
         "OBPOS_allowProductsNoPriceInMainPricelist");
+    final boolean hasPriceListVersionChanged = hasPriceListVersionChanged(jsonsent);
 
     Map<String, Object> args = new HashMap<>();
     args.put("posPrecision", posPrecision);
@@ -197,6 +217,11 @@ public class Product extends MasterDataProcessHQLQuery {
         ? ModelExtensionUtils.getPropertyExtensions(extensions, args)
         : null;
 
+    // if Price List Version changes, reset lastUpdated value to do a full refresh
+    if (hasPriceListVersionChanged) {
+      jsonsent.remove("lastUpdated");
+      jsonsent.put("lastUpdatedRemoved", true);
+    }
     // Regular products
     final String regularProductHqlString = getRegularProductHqlString(jsonsent, isRemote,
         useGetForProductImages, isMultipricelist, allowNoPriceInMainPriceList,
@@ -248,7 +273,10 @@ public class Product extends MasterDataProcessHQLQuery {
       } else {
         hql += "(product.$incrementalUpdateCriteria)";
         if (filterWithProductEntities) {
-          hql += " OR (pli.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria)";
+          hql += " OR (pli.$incrementalUpdateCriteria) OR (product.uOM.$incrementalUpdateCriteria) OR (ppp.$incrementalUpdateCriteria) "
+              + " OR (pppe.validFromDate > :lastUpdtd OR pppe.validToDate < :lastUpdtd OR pppe.$incrementalUpdateCriteria "
+              + " OR (pppe is null AND exists (select 1 from PricingProductPriceException ppre where ppre.productPrice.id = ppp.id "
+              + " and ppre.validFromDate <= :lastUpdtd AND ppre.validToDate >= :lastUpdtd) ) )";
         }
       }
       hql += ") ";
@@ -262,6 +290,7 @@ public class Product extends MasterDataProcessHQLQuery {
       }
       hql += ") ";
     }
+
     if (isRemote) {
       hql += "order by product.name asc, product.id";
     } else {
@@ -269,6 +298,7 @@ public class Product extends MasterDataProcessHQLQuery {
     }
 
     return hql;
+
   }
 
   protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
@@ -299,6 +329,10 @@ public class Product extends MasterDataProcessHQLQuery {
     } else {
       hql += "inner join product.pricingProductPriceList ppp ";
     }
+    hql += "left join ppp.pricingProductPriceExceptionList pppe with (pppe.$parentOrgCriteria and pppe.validFromDate <= :terminalDate AND pppe.validToDate >= :terminalDate and "
+        + " pppe.orgdepth = ( select max(pre.orgdepth) from PricingProductPriceException pre where pre.productPrice.id = ppp.id and "
+        + " pre.validFromDate <= :terminalDate AND pre.validToDate >= :terminalDate and pre.$naturalOrgCriteria and pre.$activeCriteria)) ";
+    ;
 
     if (isRemote && isMultipricelist && isMultiPriceListSearch(jsonsent)) {
       hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";
@@ -327,11 +361,15 @@ public class Product extends MasterDataProcessHQLQuery {
       genericProductsHqlString += "left outer join product.image img ";
     }
     genericProductsHqlString += "left join product.attributeSet as attrset ";
-    genericProductsHqlString += "left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp "
-        + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, "
-        + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId "
-        + " and pli2.obretcoProductlist.id = :productListId)" //
-        + " and product.$paginationByIdCriteria order by product.id";
+    genericProductsHqlString += "left join product.oBRETCOProlProductList as pli left outer join product.pricingProductPriceList ppp " //
+        + " left join ppp.pricingProductPriceExceptionList pppe with (pppe.$parentOrgCriteria and pppe.validFromDate <= :terminalDate AND pppe.validToDate >= :terminalDate and " //
+        + " pppe.orgdepth = ( select max(pre.orgdepth) from PricingProductPriceException pre where pre.productPrice.id = ppp.id and " //
+        + " pre.validFromDate <= :terminalDate AND pre.validToDate >= :terminalDate and pre.$naturalOrgCriteria and pre.$activeCriteria)) " //
+        + " where $filtersCriteria AND ppp.priceListVersion.id = :priceListVersionId AND product.isGeneric = 'Y' AND (product.$incrementalUpdateCriteria) and " //
+        + " exists (select 1 from Product product2 left join product2.oBRETCOProlProductList as pli2, " //
+        + " PricingProductPrice ppp2 where product.id = product2.genericProduct.id and product2 = ppp2.product and ppp2.priceListVersion.id = :priceListVersionId and " //
+        + " pli2.obretcoProductlist.id = :productListId) and " //
+        + " product.$paginationByIdCriteria order by product.id";
     return genericProductsHqlString;
   }
 
@@ -573,6 +611,38 @@ public class Product extends MasterDataProcessHQLQuery {
       log.error("Error while getting crossStoreSearch " + e.getMessage(), e);
     }
     return crossStoreSearch;
+  }
+
+  /**
+   * Check if the Price List Version for terminal Date is different from the Price List Version of
+   * the last update
+   *
+   * @param jsonsent
+   *          The json of the request with the terminalDate and lastUpdate
+   *
+   * @return true or false depending if the Price List Version changed or not
+   */
+  private boolean hasPriceListVersionChanged(final JSONObject jsonsent) {
+    boolean hasPriceListVersionChanged = false;
+    try {
+      final Date terminalDate = getTerminalDate(jsonsent);
+      final String orgId = OBContext.getOBContext().getCurrentOrganization().getId();
+      final String currentPriceListVersionId = POSUtils
+          .getPriceListVersionByOrgId(orgId, terminalDate)
+          .getId();
+      Long lastUpdated = getLastUpdated(jsonsent);
+      final String lastPriceListVersionId = lastUpdated != null
+          ? POSUtils.getPriceListVersionByOrgId(orgId, new Date(lastUpdated)).getId()
+          : null;
+      if (lastPriceListVersionId != null
+          && !Objects.equals(currentPriceListVersionId, lastPriceListVersionId)
+          || (jsonsent.has("lastUpdatedRemoved") && jsonsent.getBoolean("lastUpdatedRemoved"))) {
+        hasPriceListVersionChanged = true;
+      }
+    } catch (JSONException e) {
+      log.error(String.format("Error while evaluating Price List Versions %s", e.getMessage()), e);
+    }
+    return hasPriceListVersionChanged;
   }
 
   private boolean isRemoteSearch(final JSONObject jsonsent) {
