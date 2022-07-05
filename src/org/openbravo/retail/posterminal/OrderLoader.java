@@ -1951,8 +1951,7 @@ public class OrderLoader extends POSDataSynchronizationProcess
           && !("null".equals(payment.getString("paymentData")))) {
         // ensure that it is a valid JSON Object prior to save it
         try {
-          JSONObject jsonPaymentData = payment.getJSONObject("paymentData");
-          finPayment.setObposPaymentdata(jsonPaymentData.toString());
+          processPaymentData(finPayment, payment.getJSONObject("paymentData"));
         } catch (Exception e) {
           throw new OBException("paymentData attached to payment " + finPayment.getIdentifier()
               + " is not a valid JSON.");
@@ -2019,6 +2018,31 @@ public class OrderLoader extends POSDataSynchronizationProcess
       OBContext.restorePreviousMode();
     }
 
+  }
+
+  private void processPaymentData(FIN_Payment finPayment, JSONObject paymentData)
+      throws JSONException {
+
+    // Set common transaction field values
+    finPayment.setObposPaymentdata(paymentData.toString());
+    finPayment.setObposTxtransaction(paymentData.optString("transaction"));
+    finPayment.setObposTxauthorization(paymentData.optString("authorization"));
+
+    // Set informationValues field values
+    JSONArray informationValues = paymentData.optJSONArray("informationValues");
+    if (informationValues != null) {
+      for (int i = 0; i < informationValues.length(); i++) {
+        JSONObject entry = informationValues.getJSONObject(i);
+        String name = entry.optString("name");
+        String value = entry.optString("value");
+        try {
+          finPayment.set(name, value);
+        } catch (Exception e) {
+          // Ignore if the information value do not have a finpayment valid field
+          log.warn("Cannot find field {} to store {} in FIN_PAYMENT.", name, value);
+        }
+      }
+    }
   }
 
   protected Organization getPaymentOrganization(final OBPOSApplications posTerminal,

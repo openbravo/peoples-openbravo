@@ -17,6 +17,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EM_OBPOS_TXTRANSACTION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EM_OBPOS_TXAUTHORIZATION" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="OBPOS_APP_CASHUP" name="EM_OBPOS_APP_CASHUP_FINPAYMENT">
         <reference local="EM_OBPOS_APP_CASHUP_ID" foreign="OBPOS_APP_CASHUP_ID"/>
       </foreign-key>
