@@ -123,7 +123,7 @@ public class OrderCreatePOLines extends BaseProcessActionHandler {
           && "D".equals(product.getUseAttributeSetValueAs())) {
         newOrderLine.setAttributeSetValue(product.getAttributeSetValue());
       }
-      UOM uom = OBDal.getInstance().get(UOM.class, selectedLine.get("product$uOM"));
+      UOM uom = OBDal.getInstance().get(UOM.class, selectedLine.get("uOM"));
       UOM aum = OBDal.getInstance().get(UOM.class, selectedLine.get("aum"));
 
       newOrderLine.setProduct(product);
