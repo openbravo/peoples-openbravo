@@ -178,11 +178,12 @@ public class CrossStoreFilter extends ProcessHQLQueryValidated {
     hql.append("   )");
     hql.append(" )");
     hql.append(" left join pp.pricingProductPriceExceptionList ppe ");
-    hql.append(" with (ppe.validFromDate <= :terminalDate AND ppe.validToDate >= :terminalDate) ");
+    hql.append(
+        " with (ppe.validFromDate <= :terminalDate AND ppe.validToDate >= :terminalDate) and ppe.organization.id = o.id");
     hql.append(" and ppe.orgdepth = ( select max(pre.orgdepth) ");
     hql.append(" from PricingProductPriceException pre where pre.productPrice.id = pp.id and ");
     hql.append(" pre.validFromDate <= :terminalDate and pre.validToDate >= :terminalDate ");
-    hql.append(" and pre.$naturalOrgCriteria and pre.$activeCriteria) ");
+    hql.append(" and pre.organization.id = o.id and pre.$activeCriteria) ");
 
     hql.append(" where o.id in :crossStoreOrgIds");
     hql.append(" and $filtersCriteria");

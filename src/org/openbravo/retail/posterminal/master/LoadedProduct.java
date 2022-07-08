@@ -29,6 +29,7 @@ import org.openbravo.mobile.core.model.HQLProperty;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.retail.posterminal.POSUtils;
 import org.openbravo.retail.posterminal.ProcessHQLQuery;
@@ -64,9 +65,10 @@ public class LoadedProduct extends ProcessHQLQuery {
     final String hql = "select" + regularProductsHQLProperties.getHqlSelect()
         + "FROM Product product left outer join product.uOM uom "
         + "inner join product.pricingProductPriceList ppp "
-        + "left outer join product.pricingProductPriceList ppp with ppp.priceListVersion.id=:priceListVersionId and "
-        + "pppe.orgdepth = ( select max(pre.orgdepth) from PricingProductPriceException pre where pre.productPrice.id = ppp.id and "
-        + "pre.validFromDate <= :terminalDate AND pre.validToDate >= :terminalDate and pre.$naturalOrgCriteria and pre.$activeCriteria) "
+        + " left join ppp.pricingProductPriceExceptionList pppe with (pppe.$parentOrgCriteria and pppe.validFromDate <= :terminalDate AND pppe.validToDate >= :terminalDate and "
+        + " pppe.orgdepth = ( select max(pre.orgdepth) from PricingProductPriceException pre where pre.productPrice.id = ppp.id and "
+        + " pre.validFromDate <= :terminalDate AND pre.validToDate >= :terminalDate and pre.$naturalOrgCriteria and pre.$activeCriteria)) "
+        + "left outer join product.pricingProductPriceList ppp with ppp.priceListVersion.id=:priceListVersionId "
         + "left outer join product.orderLineList ollist with ollist.id=:salesOrderLineId "
         + "WHERE product.id=:productId ";
     products.add(hql);
@@ -79,11 +81,15 @@ public class LoadedProduct extends ProcessHQLQuery {
     Map<String, Object> paramValues = new HashMap<String, Object>();
     final PriceListVersion priceListVersion = POSUtils.getPriceListVersionByOrgId(
         OBContext.getOBContext().getCurrentOrganization().getId(), new Date());
+    Date terminalDate = OBMOBCUtils.calculateServerDate(
+        jsonsent.getJSONObject("parameters").getString("terminalTime"),
+        jsonsent.getJSONObject("parameters").getJSONObject("terminalTimeOffset").getLong("value"));
     paramValues.put("productId", jsonsent.getString("productId"));
     paramValues.put("orgId", OBContext.getOBContext().getCurrentOrganization().getId());
     paramValues.put("priceListVersionId", priceListVersion.getId());
     paramValues.put("salesOrderLineId",
         jsonsent.has("salesOrderLineId") ? jsonsent.getString("salesOrderLineId") : "");
+    paramValues.put("terminalDate", terminalDate);
     return paramValues;
   }
 }

@@ -304,17 +304,35 @@ public class Product extends MasterDataProcessHQLQuery {
   protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
       JSONObject jsonsent, boolean useGetForProductImages) {
     return createRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
-        false);
+        false, true);
   }
 
   protected String getRegularProductHql(boolean isRemote, boolean isMultipricelist,
       JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
     return createRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
-        allowNoPriceInMainPriceList);
+        allowNoPriceInMainPriceList, true);
+  }
+
+  /**
+   * Creates Hql for regular products without adding unneeded joins
+   *
+   * @param jsonsent
+   *          json with the info to create the query
+   * @return the simplified hql query for regular products
+   */
+  public static String createSimplifiedProductHql(JSONObject jsonsent) {
+    return createRegularProductHql(false, false, jsonsent, false, false, false);
   }
 
   public static String createRegularProductHql(boolean isRemote, boolean isMultipricelist,
       JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList) {
+    return createRegularProductHql(isRemote, isMultipricelist, jsonsent, useGetForProductImages,
+        allowNoPriceInMainPriceList, true);
+  }
+
+  private static String createRegularProductHql(boolean isRemote, boolean isMultipricelist,
+      JSONObject jsonsent, boolean useGetForProductImages, boolean allowNoPriceInMainPriceList,
+      boolean usePriceExceptions) {
 
     String hql = "FROM OBRETCO_Prol_Product as pli ";
     hql += "inner join pli.product as product ";
@@ -329,10 +347,11 @@ public class Product extends MasterDataProcessHQLQuery {
     } else {
       hql += "inner join product.pricingProductPriceList ppp ";
     }
-    hql += "left join ppp.pricingProductPriceExceptionList pppe with (pppe.$parentOrgCriteria and pppe.validFromDate <= :terminalDate AND pppe.validToDate >= :terminalDate and "
-        + " pppe.orgdepth = ( select max(pre.orgdepth) from PricingProductPriceException pre where pre.productPrice.id = ppp.id and "
-        + " pre.validFromDate <= :terminalDate AND pre.validToDate >= :terminalDate and pre.$naturalOrgCriteria and pre.$activeCriteria)) ";
-    ;
+    if (usePriceExceptions) {
+      hql += "left join ppp.pricingProductPriceExceptionList pppe with (pppe.$parentOrgCriteria and pppe.validFromDate <= :terminalDate AND pppe.validToDate >= :terminalDate and "
+          + " pppe.orgdepth = ( select max(pre.orgdepth) from PricingProductPriceException pre where pre.productPrice.id = ppp.id and "
+          + " pre.validFromDate <= :terminalDate AND pre.validToDate >= :terminalDate and pre.$naturalOrgCriteria and pre.$activeCriteria)) ";
+    }
 
     if (isRemote && isMultipricelist && isMultiPriceListSearch(jsonsent)) {
       hql += ", PricingProductPrice pp WHERE pp.product=pli.product and pp.priceListVersion.id= :multipriceListVersionId ";

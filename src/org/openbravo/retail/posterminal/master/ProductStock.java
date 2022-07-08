@@ -53,8 +53,7 @@ public class ProductStock extends ProcessHQLQuery {
 
     try {
       OBContext.setAdminMode(false);
-      String regularProductHql = Product.createRegularProductHql(false, false, jsonsent, false,
-          false);
+      String regularProductHql = Product.createSimplifiedProductHql(jsonsent);
       HQLPropertyList regularProductStockHQLProperties = ModelExtensionUtils
           .getPropertyExtensions(extensions);
       return Collections.singletonList("SELECT " + regularProductStockHQLProperties.getHqlSelect() //

@@ -29,7 +29,7 @@ public class ProductPriceProperties extends ModelExtension {
         add(new HQLProperty("plv.priceList.id", "m_pricelist_id"));
         add(new HQLProperty("ppp.product.id", "m_product_id"));
         add(new HQLProperty("ppp.listPrice", "pricelist"));
-        add(new HQLProperty("coalesce(pppe.standardPrice,ppp.standardPrice)", "standardPrice"));
+        add(new HQLProperty("coalesce(pppe.standardPrice,ppp.standardPrice)", "pricestd"));
         add(new HQLProperty("ppp.priceLimit", "pricelimit"));
         add(new HQLProperty("plv.validFromDate", "validFromDate"));
         add(new HQLProperty("ppp.active", "active"));

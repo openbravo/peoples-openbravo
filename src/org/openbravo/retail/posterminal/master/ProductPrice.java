@@ -73,6 +73,7 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
       Map<String, Object> paramValues = new HashMap<String, Object>();
       paramValues.put("productListId", productList.getId());
       paramValues.put("validFromDate", terminalDate);
+      paramValues.put("terminalDate", terminalDate);
       paramValues.put("priceList", pricelist);
       return paramValues;
     } finally {
@@ -117,6 +118,9 @@ public class ProductPrice extends MasterDataProcessHQLQuery {
           + priceListHQLProperties.getHqlSelect() //
           + " from OBRETCO_Prol_Product as pli, " //
           + " PricingProductPrice ppp " //
+          + " left join ppp.pricingProductPriceExceptionList pppe with (pppe.$parentOrgCriteria and pppe.validFromDate <= :terminalDate AND pppe.validToDate >= :terminalDate and "
+          + " pppe.orgdepth = ( select max(pre.orgdepth) from PricingProductPriceException pre where pre.productPrice.id = ppp.id and "
+          + " pre.validFromDate <= :terminalDate AND pre.validToDate >= :terminalDate and pre.$naturalOrgCriteria and pre.$activeCriteria)) "
           + " left join  ppp.priceListVersion as plv " //
           + " where pli.product.id = ppp.product.id " //
           + " and pli.obretcoProductlist.id = :productListId " //

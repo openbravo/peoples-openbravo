@@ -51,7 +51,7 @@ public class ProductServiceLinked extends MasterDataProcessHQLQuery {
             + ModelExtensionUtils.getPropertyExtensions(extensions).getHqlSelect() //
             + "from M_PRODUCT_SERVICELINKED psl " //
             + "where exists (select 1 " //
-            + Product.createRegularProductHql(false, false, jsonsent, false, false) //
+            + Product.createSimplifiedProductHql(jsonsent) //
             + " and pli.product.id = psl.product.id) " //
             + "and psl.$filtersCriteria and psl.$naturalOrgCriteria and psl.$incrementalUpdateCriteria "
             + "and psl.$paginationByIdCriteria order by psl.id asc");
