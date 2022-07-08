@@ -108,7 +108,6 @@ public class ExternalOrderLoader extends OrderLoader {
   public static final String CANCEL = "cancel";
   public static final String CANCEL_REPLACE = "cancel_replace";
   public static final String ALL = "all";
-  private Boolean considerOriginalOrderLineInMultipleReturnLines;
   HashMap<String, BigDecimal> consumedOriginalOrderLineQtyInSameReturnOrder = new HashMap<String, BigDecimal>();
 
   private static ThreadLocal<JSONArray> processedOrders = new ThreadLocal<JSONArray>();
@@ -573,17 +572,6 @@ public class ExternalOrderLoader extends OrderLoader {
 
   protected void transformOrder(JSONObject orderJson) throws JSONException {
 
-    try {
-      considerOriginalOrderLineInMultipleReturnLines = Preferences
-          .getPreferenceValue("OBPOS_ConsiderOriginalOrderLineInMultipleReturnLine", true,
-              OBContext.getOBContext().getCurrentClient(),
-              OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
-              OBContext.getOBContext().getRole(), null)
-          .equals(Preferences.YES);
-    } catch (PropertyException e1) {
-      considerOriginalOrderLineInMultipleReturnLines = false;
-    }
-
     handleOrderSteps(orderJson);
 
     setDefaults(orderJson);
@@ -753,8 +741,9 @@ public class ExternalOrderLoader extends OrderLoader {
     final Boolean isLineQtyNegative = lineJson.getDouble("qty") < 0;
     final BigDecimal qtyReturned = BigDecimal.valueOf(lineJson.getDouble("qty")).negate();
     if ((isReturn || isLineQtyNegative) && !lineJson.has("originalOrderLineId")
-        && lineJson.has("originalSalesOrderDocumentNumber") && lineJson.has("uPCEAN")) {
-      // getOriginalOrderLineId based on originalSalesOrderDocumentNumber and product uPCEAN
+        && lineJson.has("originalSalesOrderDocumentNumber")) {
+      // getOriginalOrderLineId based on originalSalesOrderDocumentNumber and productId set by
+      // setProduct using getProductIdFromJson
       String strOriginalSalesOrderDocumentNumber = lineJson
           .getString("originalSalesOrderDocumentNumber");
       String strProductId = lineJson.getJSONObject("product").getString("id");
@@ -1843,10 +1832,6 @@ public class ExternalOrderLoader extends OrderLoader {
 
   private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId,
       BigDecimal qtyReturned, Boolean computeIncludingCurrentOrder) {
-    if (!considerOriginalOrderLineInMultipleReturnLines && computeIncludingCurrentOrder
-        && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
-      return false;
-    }
     // validate Whether originalOrderLine has completely returned in others or in the current Order
     OrderLine originalOrderLine = OBDal.getInstance().get(OrderLine.class, originalOrderLineId);
 
@@ -1873,36 +1858,32 @@ public class ExternalOrderLoader extends OrderLoader {
         .createQuery(hql, BigDecimal.class)
         .setParameterList("inOutLineIds", shipmentLines);
     BigDecimal returnedQuantityInOthers = returnedQtyInOthersQry.uniqueResult();
-    if (!computeIncludingCurrentOrder) {
-      return originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) > 0;
-    } else {
-      // In case same original Order line Id is to be returned in the multiple lines
-      // compute the returnQuantity in same order as well as those in the Other orders
+    returnedQuantityInOthers = returnedQuantityInOthers.add(qtyReturned);
+    // In case same original Order line Id is to be returned in the multiple lines
+    // compute the returnQuantity in same order as well as those in the Other orders
 
-      // Sum of these both quantity should not exceed than original ordered quantity
+    // Sum of these both quantity should not exceed than original ordered quantity
 
-      // Sum could be even equal to original ordered quantity taking into consideration the quantity
-      // from other orders (from DB)
-      // and the current order (it is not from DB but computed in this scenario )
+    // Sum could be even equal to original ordered quantity taking into consideration the quantity
+    // from other orders (from DB)
+    // and the current order (it is not from DB but computed in this scenario )
 
-      if (considerOriginalOrderLineInMultipleReturnLines
-          && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
-        BigDecimal returnQuantityInSameOrder = consumedOriginalOrderLineQtyInSameReturnOrder
-            .get(originalOrderLineId);
-        returnedQuantityInOthers = returnedQuantityInOthers.add(returnQuantityInSameOrder);
-      }
-      if (originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) >= 0) {
-        if (considerOriginalOrderLineInMultipleReturnLines
-            && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
-          consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId,
-              consumedOriginalOrderLineQtyInSameReturnOrder.get(originalOrderLineId)
-                  .add(qtyReturned));
-        } else {
-          consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId, qtyReturned);
-        }
-        return true;
-      }
-      return false;
+    if (consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
+      BigDecimal returnQuantityInSameOrder = consumedOriginalOrderLineQtyInSameReturnOrder
+          .get(originalOrderLineId);
+      returnedQuantityInOthers = returnedQuantityInOthers.add(returnQuantityInSameOrder);
     }
+
+    if (originalOrderLine.getDeliveredQuantity().compareTo(returnedQuantityInOthers) >= 0) {
+      if (consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
+        consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId,
+            consumedOriginalOrderLineQtyInSameReturnOrder.get(originalOrderLineId)
+                .add(qtyReturned));
+      } else {
+        consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId, qtyReturned);
+      }
+      return true;
+    }
+    return returnedQuantityInOthers.compareTo(originalOrderLine.getDeliveredQuantity()) <= 0;
   }
 }
