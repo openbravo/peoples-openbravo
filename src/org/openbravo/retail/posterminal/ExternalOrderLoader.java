@@ -22,8 +22,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -38,8 +40,6 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.LockOptions;
-import org.hibernate.ScrollMode;
-import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.authentication.AuthenticationManager;
@@ -749,7 +749,7 @@ public class ExternalOrderLoader extends OrderLoader {
       lineJson.put("warehouse", whJson);
     }
 
-    final Boolean isReturn = orderJson.has("isReturn") && orderJson.getBoolean("isReturn");
+    final Boolean isReturn = orderJson.optBoolean("isReturn", false);
     final Boolean isLineQtyNegative = lineJson.getDouble("qty") < 0;
     final BigDecimal qtyReturned = BigDecimal.valueOf(lineJson.getDouble("qty")).negate();
     if ((isReturn || isLineQtyNegative) && !lineJson.has("originalOrderLineId")
@@ -757,41 +757,36 @@ public class ExternalOrderLoader extends OrderLoader {
       // getOriginalOrderLineId based on originalSalesOrderDocumentNumber and product uPCEAN
       String strOriginalSalesOrderDocumentNumber = lineJson
           .getString("originalSalesOrderDocumentNumber");
-      String strProductUPCEAN = lineJson.getString("uPCEAN");
+      String strProductId = lineJson.getJSONObject("product").getString("id");
+
       //@formatter:off
       final String hql =
           " select ol.id as originalOrderLineId "
         + " from OrderLine as ol join ol.salesOrder as o "
         + " where o.documentNo = :documentNo "
-        + " and ol.product.uPCEAN = :uPCEAN "
+        + " and ol.product.id = :productId "
         + " and o.processed = true "
         + " and o.documentStatus <> 'VO'"
         + " order by ol.orderedQuantity asc, ol.id ";
       //@formatter:on
 
-      final ScrollableResults originalOrderLineQuery = OBDal.getInstance()
+      final Query<String> originalOrderLineQuery = OBDal.getInstance()
           .getSession()
-          .createQuery(hql, Object[].class)
+          .createQuery(hql, String.class)
           .setParameter("documentNo", strOriginalSalesOrderDocumentNumber)
-          .setParameter("uPCEAN", strProductUPCEAN)
-          .scroll(ScrollMode.FORWARD_ONLY);
+          .setParameter("productId", strProductId);
 
-      try {
-        while (originalOrderLineQuery.next()) {
-          final Object[] originalOrderLineObj = originalOrderLineQuery.get();
-          final String originalOrderLineId = (String) originalOrderLineObj[0];
-          if (isOriginalOrderLineValidForReturn(originalOrderLineId, orderJson, qtyReturned)) {
-            lineJson.put("originalOrderLineId", originalOrderLineId);
-            break;
-          }
+      for (String originalOrderLineId : originalOrderLineQuery.list()) {
+        if (isOriginalOrderLineValidForReturn(originalOrderLineId, qtyReturned, true)) {
+          lineJson.put("originalOrderLineId", originalOrderLineId);
+          break;
         }
-      } finally {
-        originalOrderLineQuery.close();
       }
     }
 
     if (lineJson.has("originalOrderLineId")
-        && !isOriginalOrderLineValidForReturn(lineJson.getString("originalOrderLineId"))) {
+        && !isOriginalOrderLineValidForReturn(lineJson.getString("originalOrderLineId"),
+            BigDecimal.ZERO, false)) {
       lineJson.remove("originalOrderLineId");
     }
 
@@ -1847,8 +1842,8 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId,
-      JSONObject orderJson, BigDecimal qtyReturned) {
-    if (!considerOriginalOrderLineInMultipleReturnLines
+      BigDecimal qtyReturned, Boolean computeIncludingCurrentOrder) {
+    if (!considerOriginalOrderLineInMultipleReturnLines && computeIncludingCurrentOrder
         && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
       return false;
     }
@@ -1859,96 +1854,55 @@ public class ExternalOrderLoader extends OrderLoader {
         .createCriteria(ShipmentInOutLine.class);
     inOutCriteria
         .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, originalOrderLine));
-    ShipmentInOutLine inOutLine = (ShipmentInOutLine) inOutCriteria.uniqueResult();
+    Set<String> shipmentLines = new HashSet<String>();
+    for (ShipmentInOutLine inOutLine : inOutCriteria.list()) {
+      shipmentLines.add(inOutLine.getId());
+    }
 
     //@formatter:off
     final String hql =
         " select coalesce(sum(ol.orderedQuantity), 0)*-1 as returnedQty "
       + " from OrderLine as ol join ol.salesOrder as o "
-      + " where ol.goodsShipmentLine.id = :inOutLineId "
+      + " where ol.goodsShipmentLine.id in :inOutLineIds "
       + " and o.processed = true "
       + " and o.documentStatus <> 'VO' ";
     //@formatter:on
 
-    final ScrollableResults returnedQtyInOthersQry = OBDal.getInstance()
+    final Query<BigDecimal> returnedQtyInOthersQry = OBDal.getInstance()
         .getSession()
-        .createQuery(hql, Object[].class)
-        .setParameter("inOutLineId", inOutLine.getId())
-        .scroll(ScrollMode.FORWARD_ONLY);
+        .createQuery(hql, BigDecimal.class)
+        .setParameterList("inOutLineIds", shipmentLines);
+    BigDecimal returnedQuantityInOthers = returnedQtyInOthersQry.uniqueResult();
+    if (!computeIncludingCurrentOrder) {
+      return originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) > 0;
+    } else {
+      // In case same original Order line Id is to be returned in the multiple lines
+      // compute the returnQuantity in same order as well as those in the Other orders
 
-    try {
-      while (returnedQtyInOthersQry.next()) {
-        final Object[] returnedQuantityObj = returnedQtyInOthersQry.get();
-        BigDecimal returnedQuantityInOthers = (BigDecimal) returnedQuantityObj[0];
+      // Sum of these both quantity should not exceed than original ordered quantity
+
+      // Sum could be even equal to original ordered quantity taking into consideration the quantity
+      // from other orders (from DB)
+      // and the current order (it is not from DB but computed in this scenario )
+
+      if (considerOriginalOrderLineInMultipleReturnLines
+          && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
+        BigDecimal returnQuantityInSameOrder = consumedOriginalOrderLineQtyInSameReturnOrder
+            .get(originalOrderLineId);
+        returnedQuantityInOthers = returnedQuantityInOthers.add(returnQuantityInSameOrder);
+      }
+      if (originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) >= 0) {
         if (considerOriginalOrderLineInMultipleReturnLines
             && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
-          BigDecimal returnQuantityInSameOrder = consumedOriginalOrderLineQtyInSameReturnOrder
-              .get(originalOrderLineId);
-          returnedQuantityInOthers = returnedQuantityInOthers.add(returnQuantityInSameOrder);
+          consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId,
+              consumedOriginalOrderLineQtyInSameReturnOrder.get(originalOrderLineId)
+                  .add(qtyReturned));
+        } else {
+          consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId, qtyReturned);
         }
-
-        if (originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) > 0) {
-          if (considerOriginalOrderLineInMultipleReturnLines
-              && consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
-            consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId,
-                consumedOriginalOrderLineQtyInSameReturnOrder.get(originalOrderLineId)
-                    .add(qtyReturned));
-          } else {
-            consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId, qtyReturned);
-          }
-          try {
-            orderJson.put("consumedOriginalOrderLineQtyInSameReturnOrder",
-                consumedOriginalOrderLineQtyInSameReturnOrder);
-          } catch (JSONException e) {
-            throw new OBException(e);
-          }
-          return true;
-        }
+        return true;
       }
-    } finally
-
-    {
-      returnedQtyInOthersQry.close();
+      return false;
     }
-    return false;
-  }
-
-  private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId) {
-    // validate Whether originalOrderLine has completely returned in others
-    OrderLine originalOrderLine = OBDal.getInstance().get(OrderLine.class, originalOrderLineId);
-
-    OBCriteria<ShipmentInOutLine> inOutCriteria = OBDal.getInstance()
-        .createCriteria(ShipmentInOutLine.class);
-    inOutCriteria
-        .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, originalOrderLine));
-    ShipmentInOutLine inOutLine = (ShipmentInOutLine) inOutCriteria.uniqueResult();
-
-    //@formatter:off
-    final String hql =
-        " select coalesce(sum(ol.orderedQuantity), 0)*-1 as returnedQty "
-      + " from OrderLine as ol join ol.salesOrder as o "
-      + " where ol.goodsShipmentLine.id = :inOutLineId "
-      + " and o.processed = true "
-      + " and o.documentStatus <> 'VO' ";
-    //@formatter:on
-
-    final ScrollableResults returnedQtyInOthersQry = OBDal.getInstance()
-        .getSession()
-        .createQuery(hql, Object[].class)
-        .setParameter("inOutLineId", inOutLine.getId())
-        .scroll(ScrollMode.FORWARD_ONLY);
-
-    try {
-      while (returnedQtyInOthersQry.next()) {
-        final Object[] returnedQuantityObj = returnedQtyInOthersQry.get();
-        BigDecimal returnedQuantityInOthers = (BigDecimal) returnedQuantityObj[0];
-        if (originalOrderLine.getOrderedQuantity().compareTo(returnedQuantityInOthers) >= 0) {
-          return true;
-        }
-      }
-    } finally {
-      returnedQtyInOthersQry.close();
-    }
-    return false;
   }
 }
