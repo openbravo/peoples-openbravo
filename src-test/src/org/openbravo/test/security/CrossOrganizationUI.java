@@ -24,19 +24,21 @@ import static org.hamcrest.Matchers.hasItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.openbravo.base.weld.test.ParameterCdiTest;
+import org.openbravo.base.weld.test.ParameterCdiTestRule;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
@@ -44,7 +46,6 @@ import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.datasource.BaseDataSourceService;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.json.JsonConstants;
-import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
 import org.openbravo.test.base.mock.VariablesSecureAppMock;
 import org.openbravo.userinterface.selector.CustomQuerySelectorDatasource;
@@ -54,8 +55,7 @@ import org.openbravo.userinterface.selector.SelectorConstants;
  * Tests to ensure different references don't apply organization filter when applied in a field that
  * allows cross organization references and apply them if it does not allow it.
  */
-@RunWith(Parameterized.class)
-public class CrossOrganizationUI extends OBBaseTest {
+public class CrossOrganizationUI extends WeldBaseTest {
   private static final String ORDER_PRICELIST_FIELD = "1077";
   private static final String ORDER_ORGTRX_FIELD = "7038";
 
@@ -66,17 +66,14 @@ public class CrossOrganizationUI extends OBBaseTest {
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays
       .asList(ORDER_PRICELIST_COLUMN, ORDER_ORGTRX_COLUMN, ORDER_BP_COLUMN);
 
-  private boolean useCrossOrgColumns;
+  @Rule
+  public ParameterCdiTestRule<Boolean> parameterValuesRule = new ParameterCdiTestRule<Boolean>(
+      Arrays.asList(true, false));
 
-  public CrossOrganizationUI(boolean useCrossOrgColumns) {
-    this.useCrossOrgColumns = useCrossOrgColumns;
-  }
+  private @ParameterCdiTest Boolean useCrossOrgColumns;
 
-  @Parameters(name = "Cross org refrence:{0}")
-  public static Collection<Object[]> params() {
-    return Arrays.asList(new Object[][] { //
-        { true }, { false } });
-  }
+  @Inject
+  private CustomQuerySelectorDatasource customQuerySelectorDatasource;
 
   @Test
   public void tableDirShouldAlwaysShowReferenceableOrgs() throws Exception {
@@ -156,7 +153,7 @@ public class CrossOrganizationUI extends OBBaseTest {
 
   private List<String> getSelectorValues() throws JSONException {
     HttpServletRequestMock.setRequestMockInRequestContext();
-    BaseDataSourceService selectorDatasorce = new CustomQuerySelectorDatasource();
+    BaseDataSourceService selectorDatasorce = customQuerySelectorDatasource;
     @SuppressWarnings("serial")
     String r = selectorDatasorce.fetch(new HashMap<String, String>() {
       {
