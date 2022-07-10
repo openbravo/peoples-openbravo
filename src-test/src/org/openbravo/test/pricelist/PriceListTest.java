@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,6 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
@@ -52,6 +53,7 @@ import org.openbravo.model.pricing.pricelist.PriceListSchema;
 import org.openbravo.model.pricing.pricelist.PriceListSchemeLine;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
+import org.openbravo.model.pricing.pricelist.ProductPriceException;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.pricelist.data.PriceListSchemaLineTestData;
@@ -218,6 +220,37 @@ public class PriceListTest extends OBBaseTest {
       generateProductPriceList(priceListVersion);
       validateGeneratedPrices(priceListVersion);
 
+      deletePriceList(priceList);
+      deletePriceListSchema(priceListSchema);
+
+      log.info("Test Completed successfully");
+    }
+
+    catch (Exception e) {
+      log.error("Error when executing testPriceListProductPrices", e);
+      assertFalse(true);
+    }
+
+  }
+
+  @Test
+  public void testPriceListProductPricesException() {
+
+    log.info("Test Started {}: {} ", this.testNumber, this.testDescription);
+
+    // Set QA context
+    OBContext.setOBContext(USER_ID, ROLE_ID, CLIENT_ID, ORGANIZATION_ID);
+
+    try {
+      PriceListSchema priceListSchema = createPriceListSchema();
+      addPriceListSchemeLines(priceListSchema);
+
+      PriceList priceList = createPriceList();
+      PriceListVersion priceListVersion = addPriceListVersion(priceList, priceListSchema);
+
+      generateProductPriceList(priceListVersion);
+      generateProductPriceExceptions(priceListVersion);
+      validateGeneratedPricesExceptions(priceListVersion);
       deletePriceList(priceList);
       deletePriceListSchema(priceListSchema);
 
@@ -488,6 +521,26 @@ public class PriceListTest extends OBBaseTest {
   }
 
   /**
+   * Generate the Product Price Exceptions List according the Price List Version passed.
+   * 
+   * @param priceListVersion
+   *          The Price List Version from the product prices will be generated
+   */
+  private void generateProductPriceExceptions(PriceListVersion priceListVersion) {
+    Date date = new Date();
+    for (ProductPrice productPrice : priceListVersion.getPricingProductPriceList()) {
+      ProductPriceException productPriceException = OBProvider.getInstance()
+          .get(ProductPriceException.class);
+      productPriceException.setProductPrice(productPrice);
+      productPriceException.setOrganization(productPrice.getOrganization());
+      productPriceException.setStandardPrice(productPrice.getStandardPrice().add(BigDecimal.TEN));
+      productPriceException.setValidFromDate(date);
+      productPriceException.setValidToDate(date);
+      OBDal.getInstance().save(productPriceException);
+    }
+  }
+
+  /**
    * Verifies that generated Product Prices List are the expected
    * 
    * @param priceListVersion
@@ -522,6 +575,32 @@ public class PriceListTest extends OBBaseTest {
                 + ") for product (" + productName + "). Was expected " + expectedListPrice,
             new BigDecimal(expectedListPrice), comparesEqualTo(productPrice.getListPrice()));
       }
+    }
+  }
+
+  /**
+   * Verifies that generated Product Prices Exceptions List are the expected
+   * 
+   * @param priceListVersion
+   *          The Price List Version to be verified
+   */
+  private void validateGeneratedPricesExceptions(PriceListVersion priceListVersion) {
+
+    int productPriceListCount = priceListVersion.getPricingProductPriceList().size();
+    assertThat(
+        testNumber + ". Number of lines obtained(" + productPriceListCount
+            + ") different than expected (" + expectedProductPricesData.size() + ")",
+        expectedProductPricesData.size(), comparesEqualTo(productPriceListCount));
+
+    for (ProductPrice productPrice : priceListVersion.getPricingProductPriceList()) {
+      for (ProductPriceException productPriceException : productPrice
+          .getPricingProductPriceExceptionList()) {
+        BigDecimal price = FinancialUtils.getProductStdPrice(productPrice,
+            productPrice.getOrganization(), productPriceException.getValidFromDate());
+        assertTrue(testNumber + ". Product " + productPrice.getProduct().getName()
+            + " with price exceptions", productPriceException.getStandardPrice().equals(price));
+      }
+
     }
   }
 }
