@@ -739,9 +739,9 @@ public class ExternalOrderLoader extends OrderLoader {
 
     final Boolean isReturn = orderJson.optBoolean("isReturn", false);
     final Boolean isLineQtyNegative = lineJson.getDouble("qty") < 0;
-    final BigDecimal qtyReturned = BigDecimal.valueOf(lineJson.getDouble("qty")).negate();
     if ((isReturn || isLineQtyNegative) && !lineJson.has("originalOrderLineId")
         && lineJson.has("originalSalesOrderDocumentNumber")) {
+      final BigDecimal qtyReturned = BigDecimal.valueOf(lineJson.getDouble("qty")).negate();
       // getOriginalOrderLineId based on originalSalesOrderDocumentNumber and productId set by
       // setProduct using getProductIdFromJson
       String strOriginalSalesOrderDocumentNumber = lineJson
@@ -766,17 +766,11 @@ public class ExternalOrderLoader extends OrderLoader {
           .setParameter("productId", strProductId);
 
       for (String originalOrderLineId : originalOrderLineQuery.list()) {
-        if (isOriginalOrderLineValidForReturn(originalOrderLineId, qtyReturned, true)) {
+        if (isOriginalOrderLineValidForReturn(originalOrderLineId, qtyReturned)) {
           lineJson.put("originalOrderLineId", originalOrderLineId);
           break;
         }
       }
-    }
-
-    if (lineJson.has("originalOrderLineId")
-        && !isOriginalOrderLineValidForReturn(lineJson.getString("originalOrderLineId"),
-            BigDecimal.ZERO, false)) {
-      lineJson.remove("originalOrderLineId");
     }
 
     if (lineJson.has("returnReason")) {
@@ -1831,7 +1825,7 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId,
-      BigDecimal qtyReturned, Boolean computeIncludingCurrentOrder) {
+      BigDecimal qtyReturned) {
     // validate Whether originalOrderLine has completely returned in others or in the current Order
     OrderLine originalOrderLine = OBDal.getInstance().get(OrderLine.class, originalOrderLineId);
 
