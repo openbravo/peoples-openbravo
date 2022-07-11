@@ -182,6 +182,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                 priceStd = (StringUtils.isEmpty(invoicelineprice[j].pricestd) ? BigDecimal.ZERO
                     : (new BigDecimal(invoicelineprice[j].pricestd))).setScale(pricePrecision,
                         RoundingMode.HALF_UP);
+                priceListGross = BigDecimal.ZERO;
                 priceStdGross = BigDecimal.ZERO;
 
                 if (invoice.getPriceList().isPriceIncludesTax()) {
