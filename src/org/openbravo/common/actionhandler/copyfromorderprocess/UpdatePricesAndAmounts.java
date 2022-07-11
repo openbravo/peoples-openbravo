@@ -77,8 +77,10 @@ class UpdatePricesAndAmounts implements CopyFromOrdersProcessImplementationInter
     int pricePrecision = orderCurrency.getPricePrecision().intValue();
 
     // Price List, Price Standard and discount
-    BigDecimal priceActual = FinancialUtils.getProductStdPrice(productPrice,
-        newOrderLine.getOrganization(), newOrderLine.getOrderDate());
+    BigDecimal priceActual = FinancialUtils
+        .getProductStdPrice(productPrice, newOrderLine.getOrganization(),
+            newOrderLine.getOrderDate())
+        .setScale(pricePrecision, RoundingMode.HALF_UP);
     BigDecimal priceList = productPrice.getListPrice()
         .setScale(pricePrecision, RoundingMode.HALF_UP);
     BigDecimal priceLimit = productPrice.getPriceLimit()
