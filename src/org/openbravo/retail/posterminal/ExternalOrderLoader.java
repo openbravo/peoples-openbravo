@@ -21,8 +21,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -37,6 +40,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.LockOptions;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.authentication.AuthenticationManager;
 import org.openbravo.base.exception.OBException;
@@ -47,6 +51,7 @@ import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
@@ -71,6 +76,7 @@ import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentSchedule;
 import org.openbravo.model.financialmgmt.tax.TaxRate;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.importprocess.ImportEntry;
@@ -102,6 +108,7 @@ public class ExternalOrderLoader extends OrderLoader {
   public static final String CANCEL = "cancel";
   public static final String CANCEL_REPLACE = "cancel_replace";
   public static final String ALL = "all";
+  HashMap<String, BigDecimal> consumedOriginalOrderLineQtyInSameReturnOrder = new HashMap<String, BigDecimal>();
 
   private static ThreadLocal<JSONArray> processedOrders = new ThreadLocal<JSONArray>();
   private static ThreadLocal<Throwable> exception = new ThreadLocal<Throwable>();
@@ -564,6 +571,7 @@ public class ExternalOrderLoader extends OrderLoader {
   }
 
   protected void transformOrder(JSONObject orderJson) throws JSONException {
+
     handleOrderSteps(orderJson);
 
     setDefaults(orderJson);
@@ -727,6 +735,42 @@ public class ExternalOrderLoader extends OrderLoader {
       final JSONObject whJson = new JSONObject();
       whJson.put("id", warehouseId);
       lineJson.put("warehouse", whJson);
+    }
+
+    final Boolean isReturn = orderJson.optBoolean("isReturn", false);
+    final Boolean isLineQtyNegative = lineJson.getDouble("qty") < 0;
+    if ((isReturn || isLineQtyNegative) && !lineJson.has("originalOrderLineId")
+        && lineJson.has("originalSalesOrderDocumentNumber")) {
+      final BigDecimal qtyReturned = BigDecimal.valueOf(lineJson.getDouble("qty")).negate();
+      // getOriginalOrderLineId based on originalSalesOrderDocumentNumber and productId set by
+      // setProduct using getProductIdFromJson
+      String strOriginalSalesOrderDocumentNumber = lineJson
+          .getString("originalSalesOrderDocumentNumber");
+      String strProductId = lineJson.getJSONObject("product").getString("id");
+
+      //@formatter:off
+      final String hql =
+          " select ol.id as originalOrderLineId "
+        + " from OrderLine as ol join ol.salesOrder as o "
+        + " where o.documentNo = :documentNo "
+        + " and ol.product.id = :productId "
+        + " and o.processed = true "
+        + " and o.documentStatus <> 'VO'"
+        + " order by ol.orderedQuantity asc, ol.id ";
+      //@formatter:on
+
+      final Query<String> originalOrderLineQuery = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql, String.class)
+          .setParameter("documentNo", strOriginalSalesOrderDocumentNumber)
+          .setParameter("productId", strProductId);
+
+      for (String originalOrderLineId : originalOrderLineQuery.list()) {
+        if (isOriginalOrderLineValidForReturn(originalOrderLineId, qtyReturned)) {
+          lineJson.put("originalOrderLineId", originalOrderLineId);
+          break;
+        }
+      }
     }
 
     if (lineJson.has("returnReason")) {
@@ -1778,5 +1822,62 @@ public class ExternalOrderLoader extends OrderLoader {
       protected void processEntry(ImportEntry importEntry) throws Exception {
       }
     }
+  }
+
+  private Boolean isOriginalOrderLineValidForReturn(String originalOrderLineId,
+      BigDecimal qtyReturned) {
+    // validate Whether originalOrderLine has completely returned in others or in the current Order
+    OrderLine originalOrderLine = OBDal.getInstance().get(OrderLine.class, originalOrderLineId);
+
+    OBCriteria<ShipmentInOutLine> inOutCriteria = OBDal.getInstance()
+        .createCriteria(ShipmentInOutLine.class);
+    inOutCriteria
+        .add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, originalOrderLine));
+    Set<String> shipmentLines = new HashSet<String>();
+    for (ShipmentInOutLine inOutLine : inOutCriteria.list()) {
+      shipmentLines.add(inOutLine.getId());
+    }
+
+    //@formatter:off
+    final String hql =
+        " select coalesce(sum(ol.orderedQuantity), 0)*-1 as returnedQty "
+      + " from OrderLine as ol join ol.salesOrder as o "
+      + " where ol.goodsShipmentLine.id in :inOutLineIds "
+      + " and o.processed = true "
+      + " and o.documentStatus <> 'VO' ";
+    //@formatter:on
+
+    final Query<BigDecimal> returnedQtyInOthersQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, BigDecimal.class)
+        .setParameterList("inOutLineIds", shipmentLines);
+    BigDecimal returnedQuantityInOthers = returnedQtyInOthersQry.uniqueResult();
+    returnedQuantityInOthers = returnedQuantityInOthers.add(qtyReturned);
+    // In case same original Order line Id is to be returned in the multiple lines
+    // compute the returnQuantity in same order as well as those in the Other orders
+
+    // Sum of these both quantity should not exceed than original ordered quantity
+
+    // Sum could be even equal to original ordered quantity taking into consideration the quantity
+    // from other orders (from DB)
+    // and the current order (it is not from DB but computed in this scenario )
+
+    if (consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
+      BigDecimal returnQuantityInSameOrder = consumedOriginalOrderLineQtyInSameReturnOrder
+          .get(originalOrderLineId);
+      returnedQuantityInOthers = returnedQuantityInOthers.add(returnQuantityInSameOrder);
+    }
+
+    if (originalOrderLine.getDeliveredQuantity().compareTo(returnedQuantityInOthers) >= 0) {
+      if (consumedOriginalOrderLineQtyInSameReturnOrder.containsKey(originalOrderLineId)) {
+        consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId,
+            consumedOriginalOrderLineQtyInSameReturnOrder.get(originalOrderLineId)
+                .add(qtyReturned));
+      } else {
+        consumedOriginalOrderLineQtyInSameReturnOrder.put(originalOrderLineId, qtyReturned);
+      }
+      return true;
+    }
+    return returnedQuantityInOthers.compareTo(originalOrderLine.getDeliveredQuantity()) <= 0;
   }
 }
