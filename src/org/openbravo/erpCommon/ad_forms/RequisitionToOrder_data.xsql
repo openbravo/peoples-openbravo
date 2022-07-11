@@ -207,25 +207,17 @@
     <Parameter name="warehouse"/>
     <Parameter name="billto"/>
     <Parameter name="shipto"/>
-    
     <Parameter name="currency"/>
     <Parameter name="currency"/>
-    
     <Parameter name="pricelistversion"/>
     <Parameter name="parRequisitionLines" optional="true" type="argument" after="WHERE 1=1" text=" AND M_RequisitionLine_ID IN"/>
-    
     <Parameter name="org"/>
     <Parameter name="orderdate"/>
     <Parameter name="orderdate"/>
-     
     <Parameter name="org"/>
     <Parameter name="orderdate"/>
     <Parameter name="orderdate"/>
-    
     <Parameter name="currency"/>
-    
-     
-    
   </SqlMethod>
   <SqlMethod name="selectVendor" type="preparedStatement" return="Multiple">
     <SqlMethodComment></SqlMethodComment>
