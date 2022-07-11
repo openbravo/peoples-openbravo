@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,10 +43,12 @@ import org.openbravo.base.weld.test.ParameterCdiTestRule;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.financialmgmt.assetmgmt.Asset;
+import org.openbravo.service.datasource.BaseDataSourceService;
 import org.openbravo.service.datasource.DataSourceService;
 import org.openbravo.service.datasource.DataSourceServiceProvider;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
+import org.openbravo.userinterface.selector.CustomQuerySelectorDatasource;
 import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
@@ -56,11 +59,16 @@ import org.openbravo.userinterface.selector.SelectorConstants;
 public class CrossOrganizationUICDI extends WeldBaseTest {
 
   private static final String ORDER_ASSET_COLUMN = "1E2CDC6A59BF4277B0E0A5EA45332EE9";
+  private static final String ORDER_BP_COLUMN = "2762";
 
-  private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(ORDER_ASSET_COLUMN);
+  private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays.asList(ORDER_ASSET_COLUMN,
+      ORDER_BP_COLUMN);
 
   @Inject
   private DataSourceServiceProvider dataSourceServiceProvider;
+
+  @Inject
+  private CustomQuerySelectorDatasource customQuerySelectorDatasource;
 
   /** defines the values the parameter will take. */
   @Rule
@@ -102,6 +110,48 @@ public class CrossOrganizationUICDI extends WeldBaseTest {
       assertThat("Asset selector not allowing cross org", values,
           allOf(hasItem("Coche"), not(hasItem("Car"))));
     }
+  }
+
+  @Test
+  public void customQuerySelectorAlwaysShowReferenceableOrgs() throws Exception {
+    List<String> rows = getSelectorValues();
+    assertThat(rows, hasItem("Bebidas Alegres, S.L."));
+  }
+
+  @Test
+  public void customQuerySelectorShouldShowNonReferenceableOrgsIfAllowed() throws Exception {
+    List<String> rows = getSelectorValues();
+    if (useCrossOrgColumns) {
+      assertThat(rows, hasItem("Be Soft Drinker, Inc."));
+    } else {
+      assertThat(rows, not(hasItem("Be Soft Drinker, Inc.")));
+    }
+  }
+
+  private List<String> getSelectorValues() throws JSONException {
+    HttpServletRequestMock.setRequestMockInRequestContext();
+    BaseDataSourceService selectorDatasorce = customQuerySelectorDatasource;
+    @SuppressWarnings("serial")
+    String r = selectorDatasorce.fetch(new HashMap<String, String>() {
+      {
+        put(JsonConstants.STARTROW_PARAMETER, "0");
+        put(JsonConstants.ENDROW_PARAMETER, "75");
+        put(JsonConstants.NOCOUNT_PARAMETER, "true");
+        put(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER, "F132874BE0954A9B8C1301BE20704730");
+        put(JsonConstants.ORG_PARAMETER, TEST_ORG_ID);
+        put("inpTableId", "259");
+        put("targetProperty", "businessPartner");
+      }
+    });
+
+    List<String> values = new ArrayList<>();
+    JSONObject o = new JSONObject(r);
+    JSONArray data = o.getJSONObject("response").getJSONArray("data");
+    for (int i = 0; i < data.length(); i++) {
+      JSONObject row = data.getJSONObject(i);
+      values.add(row.getString("name"));
+    }
+    return values;
   }
 
   @Before

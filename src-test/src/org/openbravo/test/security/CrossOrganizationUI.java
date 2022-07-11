@@ -24,56 +24,51 @@ import static org.hamcrest.Matchers.hasItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.openbravo.base.weld.test.ParameterCdiTest;
-import org.openbravo.base.weld.test.ParameterCdiTestRule;
-import org.openbravo.base.weld.test.WeldBaseTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.model.ad.ui.Field;
-import org.openbravo.service.datasource.BaseDataSourceService;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.service.json.JsonConstants;
+import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
 import org.openbravo.test.base.mock.VariablesSecureAppMock;
-import org.openbravo.userinterface.selector.CustomQuerySelectorDatasource;
-import org.openbravo.userinterface.selector.SelectorConstants;
 
 /**
  * Tests to ensure different references don't apply organization filter when applied in a field that
  * allows cross organization references and apply them if it does not allow it.
  */
-public class CrossOrganizationUI extends WeldBaseTest {
+@RunWith(Parameterized.class)
+public class CrossOrganizationUI extends OBBaseTest {
   private static final String ORDER_PRICELIST_FIELD = "1077";
   private static final String ORDER_ORGTRX_FIELD = "7038";
 
   private static final String ORDER_PRICELIST_COLUMN = "2204";
   private static final String ORDER_ORGTRX_COLUMN = "9331";
-  private static final String ORDER_BP_COLUMN = "2762";
 
   private static final List<String> COLUMNS_TO_ALLOW_CROSS_ORG = Arrays
-      .asList(ORDER_PRICELIST_COLUMN, ORDER_ORGTRX_COLUMN, ORDER_BP_COLUMN);
+      .asList(ORDER_PRICELIST_COLUMN, ORDER_ORGTRX_COLUMN);
 
-  @Rule
-  public ParameterCdiTestRule<Boolean> parameterValuesRule = new ParameterCdiTestRule<Boolean>(
-      Arrays.asList(true, false));
+  private boolean useCrossOrgColumns;
 
-  private @ParameterCdiTest Boolean useCrossOrgColumns;
+  public CrossOrganizationUI(boolean useCrossOrgColumns) {
+    this.useCrossOrgColumns = useCrossOrgColumns;
+  }
 
-  @Inject
-  private CustomQuerySelectorDatasource customQuerySelectorDatasource;
+  @Parameters(name = "Cross org refrence:{0}")
+  public static Collection<Object[]> params() {
+    return Arrays.asList(new Object[][] { //
+        { true }, { false } });
+  }
 
   @Test
   public void tableDirShouldAlwaysShowReferenceableOrgs() throws Exception {
@@ -107,22 +102,6 @@ public class CrossOrganizationUI extends WeldBaseTest {
     }
   }
 
-  @Test
-  public void customQuerySelectorAlwaysShowReferenceableOrgs() throws Exception {
-    List<String> rows = getSelectorValues();
-    assertThat(rows, hasItem("Bebidas Alegres, S.L."));
-  }
-
-  @Test
-  public void customQuerySelectorShouldShowNonReferenceableOrgsIfAllowed() throws Exception {
-    List<String> rows = getSelectorValues();
-    if (useCrossOrgColumns) {
-      assertThat(rows, hasItem("Be Soft Drinker, Inc."));
-    } else {
-      assertThat(rows, not(hasItem("Be Soft Drinker, Inc.")));
-    }
-  }
-
   @SuppressWarnings("serial")
   private List<String> getComboValues(Field field) throws Exception {
     DalConnectionProvider con = new DalConnectionProvider(false);
@@ -149,32 +128,6 @@ public class CrossOrganizationUI extends WeldBaseTest {
       rows.add(row.getField("NAME"));
     }
     return rows;
-  }
-
-  private List<String> getSelectorValues() throws JSONException {
-    HttpServletRequestMock.setRequestMockInRequestContext();
-    BaseDataSourceService selectorDatasorce = customQuerySelectorDatasource;
-    @SuppressWarnings("serial")
-    String r = selectorDatasorce.fetch(new HashMap<String, String>() {
-      {
-        put(JsonConstants.STARTROW_PARAMETER, "0");
-        put(JsonConstants.ENDROW_PARAMETER, "75");
-        put(JsonConstants.NOCOUNT_PARAMETER, "true");
-        put(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER, "F132874BE0954A9B8C1301BE20704730");
-        put(JsonConstants.ORG_PARAMETER, TEST_ORG_ID);
-        put("inpTableId", "259");
-        put("targetProperty", "businessPartner");
-      }
-    });
-
-    List<String> values = new ArrayList<>();
-    JSONObject o = new JSONObject(r);
-    JSONArray data = o.getJSONObject("response").getJSONArray("data");
-    for (int i = 0; i < data.length(); i++) {
-      JSONObject row = data.getJSONObject(i);
-      values.add(row.getString("name"));
-    }
-    return values;
   }
 
   @Before
