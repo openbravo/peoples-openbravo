@@ -8,8 +8,11 @@
  */
 package org.openbravo.retail.posterminal;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.inject.Any;
@@ -23,10 +26,14 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.mobile.core.model.HQLPropertyList;
 import org.openbravo.mobile.core.model.ModelExtension;
 import org.openbravo.mobile.core.model.ModelExtensionUtils;
+import org.openbravo.mobile.core.utils.OBMOBCUtils;
 import org.openbravo.model.common.enterprise.Organization;
 
 public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
@@ -87,6 +94,8 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
       default:
         orderTypeHql = "";
     }
+    orderTypeHql += getOrderDateFilter(jsonsent, orderTypeFilter);
+
     String deliveryModeFilter = getDeliveryModeFilter(jsonsent);
     String deliveryModeHql;
     switch (deliveryModeFilter) {
@@ -138,6 +147,39 @@ public class PaidReceiptsFilter extends ProcessHQLQueryValidated {
 
   protected static String getDeliveryModeFilter(JSONObject jsonsent) {
     return getColumnFilterValue(jsonsent, "deliveryMode");
+  }
+
+  private static String getOrderDateFilter(final JSONObject jsonsent, final String orderTypeFilter)
+      throws JSONException {
+    if (jsonsent.optJSONArray("remoteFilters") != null
+        && ((jsonsent.optJSONArray("remoteFilters").length() == 0
+            && StringUtils.isEmpty(orderTypeFilter))
+            || (jsonsent.optJSONArray("remoteFilters").length() == 1
+                && !StringUtils.isEmpty(orderTypeFilter)))) {
+      int orderDaysFilter = 30;
+      try {
+        orderDaysFilter = Integer
+            .parseInt(Preferences.getPreferenceValue("OBPOS_PaidReceiptsOrderDateFilterDays", true,
+                OBContext.getOBContext().getCurrentClient(),
+                OBContext.getOBContext().getCurrentOrganization(),
+                OBContext.getOBContext().getUser(), OBContext.getOBContext().getRole(), null));
+      } catch (PropertyException e) {
+
+      }
+
+      final Date terminalDate = OBMOBCUtils.calculateServerDate(
+          jsonsent.getJSONObject("parameters").getString("terminalTime"),
+          jsonsent.getJSONObject("parameters")
+              .getJSONObject("terminalTimeOffset")
+              .getLong("value"));
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTime(terminalDate);
+      calendar.add(Calendar.DAY_OF_MONTH, -orderDaysFilter);
+      final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+      return String.format(" and ord.orderDate >= to_date('%s', 'yyyy-MM-dd') ",
+          dateFormat.format(calendar.getTime()));
+    }
+    return "";
   }
 
   private static String getOganizationFilter(final JSONObject jsonsent) throws JSONException {
