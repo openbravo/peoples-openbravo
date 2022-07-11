@@ -51,6 +51,10 @@
      * @throws {Error} in case the template can not be retrieved
      */
     get: name => {
+      if (!templates[name]) {
+        throw new Error(`Unknown template with name ${name}`);
+      }
+
       return OB.App.PrintTemplateStore.getPrintTemplateByName(name);
     },
 
