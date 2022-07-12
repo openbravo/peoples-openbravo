@@ -389,7 +389,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
-      <column name="LEGAL_CUSTOMER_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="BUSINESS_PARTNER_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
