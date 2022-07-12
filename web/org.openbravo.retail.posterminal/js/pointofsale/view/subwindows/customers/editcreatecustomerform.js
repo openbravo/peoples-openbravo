@@ -445,13 +445,13 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.CustomerComboProperty',
-      name: 'legalCustomerType',
+      name: 'businessPartnerType',
       classes:
         'obObposPointOfSaleUiCustomersEditCreatecustomersImpl-newAttributes-customerType',
       //Required: property where the selected value will be get and where the value will be saved
-      modelProperty: 'legalCustomerType',
+      modelProperty: 'businessPartnerType',
       //optional: When saving, the property which will store the selected text
-      modelPropertyText: 'legalCustomerType_name',
+      modelPropertyText: 'businessPartnerType_name',
       collectionName: 'customerTypeList',
       //Default value for new lines
       defaultValue: function() {
@@ -464,18 +464,13 @@ enyo.kind({
       //function to retrieve the data
       fetchDataFunction: async function(args) {
         let me = this;
-        let dataCustomerTypes = OB.App.TerminalProperty.get(
-          'legalCustomerType'
-        );
-        dataCustomerTypes = [
-          { id: undefined, name: undefined },
-          ...dataCustomerTypes
-        ];
+        let dataBPTypes = OB.App.TerminalProperty.get('businessPartnerType');
+        dataBPTypes = [{ id: undefined, name: undefined }, ...dataBPTypes];
         setTimeout(function() {
-          me.dataReadyFunction(dataCustomerTypes, args);
+          me.dataReadyFunction(dataBPTypes, args);
         }, 0);
       },
-      i18nLabel: 'OBPOS_CustomerType',
+      i18nLabel: 'OBPOS_BusinessPartnerType',
       fgSection: 'OBPOS_FG_OthersInformation',
       mandatory: false
     },

@@ -20,7 +20,7 @@ public class CustomerType extends QueryTerminalProperty {
 
   @Override
   public String getProperty() {
-    return "legalCustomerType";
+    return "businessPartnerType";
   }
 
   @Override

@@ -466,20 +466,19 @@ enyo.kind({
     },
     {
       kind: 'OB.UI.CustomerTextProperty',
-      name: 'customerType',
-      classes: 'obObPosPointOfSaleUiCustomersEditCustomersImpl-customerType',
-      modelProperty: 'legalCustomerType',
-      i18nLabel: 'OBPOS_CustomerType',
+      name: 'businessPartnerType',
+      classes:
+        'obObPosPointOfSaleUiCustomersEditCustomersImpl-businessPartnerType',
+      modelProperty: 'businessPartnerType',
+      i18nLabel: 'OBPOS_BusinessPartnerType',
       fgSection: 'OBPOS_FG_OthersInformation',
       readOnly: true,
       loadValue: function(inSender, inEvent) {
-        const dataCustomerTypes = OB.App.TerminalProperty.get(
-          'legalCustomerType'
-        );
+        const dataBPTypes = OB.App.TerminalProperty.get('businessPartnerType');
 
-        const element = dataCustomerTypes.find(
+        const element = dataBPTypes.find(
           element =>
-            element.id === inEvent.customer.attributes.legalCustomerType
+            element.id === inEvent.customer.attributes.businessPartnerType
         );
         this.setValue(element ? element.name : null);
       }

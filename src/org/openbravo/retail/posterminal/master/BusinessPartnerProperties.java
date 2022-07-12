@@ -66,7 +66,7 @@ public class BusinessPartnerProperties extends ModelExtension {
         add(new HQLProperty("ulist.commercialauth", "commercialauth"));
         add(new HQLProperty("ulist.viaemail", "viaemail"));
         add(new HQLProperty("ulist.viasms", "viasms"));
-        add(new HQLProperty("bp.legalCustomerType", "legalCustomerType"));
+        add(new HQLProperty("bp.businessPartnerType", "businessPartnerType"));
 
         String curDbms = OBPropertiesProvider.getInstance()
             .getOpenbravoProperties()
