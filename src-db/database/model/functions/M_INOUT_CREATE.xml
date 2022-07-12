@@ -34,7 +34,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2019 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2022 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -213,7 +213,8 @@ BEGIN
 BEGIN --BODY
 
   -- Get UOMPreference value
-  SELECT COUNT(1) INTO v_count FROM ad_preference WHERE property = 'UomManagement';
+  SELECT COUNT(1) INTO v_count FROM ad_preference WHERE property = 'UomManagement'
+    AND (ad_client_id = v_AD_Client_ID or ad_client_id = '0');
   IF (v_count > 0) THEN
     v_uom_preference := AD_GET_PREFERENCE_VALUE('UomManagement', 'Y', NULL, v_AD_Org_ID, v_User_ID, NULL, NULL);
   END IF;
@@ -229,7 +230,8 @@ BEGIN --BODY
     IF (p_ForceDelivery = 'Y') THEN
       SELECT COUNT(*) INTO v_count
       FROM DUAL
-      WHERE EXISTS (SELECT 1 FROM ad_preference WHERE property = 'AllowPartialShipment');
+      WHERE EXISTS (SELECT 1 FROM ad_preference WHERE property = 'AllowPartialShipment' 
+          AND (ad_client_id = v_AD_Client_ID or ad_client_id = '0'));
       IF (v_count = 1) THEN
         v_AllowPartialShipment := AD_GET_PREFERENCE_VALUE('AllowPartialShipment', 'Y', v_AD_Client_ID, v_AD_Org_ID, NULL, NULL, NULL);
       ELSE

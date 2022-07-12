@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2019 Openbravo SLU
+* All portions are Copyright (C) 2010-2022 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -80,6 +80,7 @@ BEGIN
                 or ad_user_id is null)
            and (ad_window_id = p_ad_window_id
                 or aD_window_id is null)
+           and (ad_client_id = p_ad_client_id or ad_client_id = '0')
            ) loop
      v_continue := false;
      if (not valueAssigned) then

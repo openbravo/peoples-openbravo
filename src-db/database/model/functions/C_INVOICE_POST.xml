@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2022 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -1530,7 +1530,8 @@ IF (NOT FINISH_PROCESS) THEN
       SELECT COUNT(1) INTO v_count
       FROM ad_preference
       WHERE property = 'FinancialManagement'
-        AND ad_module_id <> '0';
+        AND ad_module_id <> '0'
+        AND (ad_client_id = v_client_id or ad_client_id = '0');
       IF (v_count > 1) THEN
         v_dummy := AD_GET_PREFERENCE_VALUE('FinancialManagement', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
         DBMS_OUTPUT.PUT_LINE('FinancialManagement preference value: ' || v_dummy);

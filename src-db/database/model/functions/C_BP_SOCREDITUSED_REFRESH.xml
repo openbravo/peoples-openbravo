@@ -32,7 +32,8 @@ BEGIN
   SELECT count(1) INTO v_count
   FROM ad_preference
   WHERE property = 'CCU'
-    AND ad_module_id <> '0';
+    AND ad_module_id <> '0'
+    AND (ad_client_id = v_client_id or ad_client_id = '0');
   IF (v_count > 1) THEN
     v_dummy := AD_GET_PREFERENCE_VALUE('CCU', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
     DBMS_OUTPUT.PUT_LINE('CCU preference value: ' || v_dummy);

@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2019 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2022 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -132,7 +132,8 @@
     -- Calculate Hierarchical Product Price Preference
     SELECT COUNT(1) INTO v_count
     FROM ad_preference
-    WHERE property = 'HierarchicalPriceList';
+    WHERE property = 'HierarchicalPriceList'
+      AND (ad_client_id = v_client_id or ad_client_id = '0');
     IF (v_count > 0) THEN
       v_priceListPrefValue := AD_GET_PREFERENCE_VALUE('HierarchicalPriceList', 'Y', v_client_id, v_org_id, v_User, NULL, NULL);    
     END IF;
