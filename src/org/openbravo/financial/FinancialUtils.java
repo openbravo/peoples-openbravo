@@ -432,6 +432,7 @@ public class FinancialUtils {
   }
 
   /**
+   * Get the unit price for a date, and price exception if exists.
    * 
    * @param productPrice
    * @param organization
