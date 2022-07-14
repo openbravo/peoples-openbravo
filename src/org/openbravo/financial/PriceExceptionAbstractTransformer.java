@@ -24,6 +24,9 @@ import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
 import org.openbravo.service.json.JsonUtils;
 
+/**
+ * Defines same methods used in transformers price exception.
+ */
 public abstract class PriceExceptionAbstractTransformer extends HqlQueryTransformer {
 
   @Override
@@ -33,6 +36,16 @@ public abstract class PriceExceptionAbstractTransformer extends HqlQueryTransfor
     return null;
   }
 
+  /**
+   * Get document date.
+   * 
+   * @param requestParameters
+   *          map of all parameters.
+   * @param key
+   *          name of the parameter to capture in requestParameters.
+   *
+   * @return document date or null as a string format.
+   */
   protected String getDocumentDate(Map<String, String> requestParameters, String key) {
     String documentDate = requestParameters.containsKey(key)
         ? "TO_DATE('" + requestParameters.get(key) + "','"
@@ -41,6 +54,16 @@ public abstract class PriceExceptionAbstractTransformer extends HqlQueryTransfor
     return documentDate;
   }
 
+  /**
+   * Get parent organization list separated by comma.
+   * 
+   * @param requestParameters
+   *          map of all parameters.
+   * @param key
+   *          name of the parameter to capture in requestParameters.
+   *
+   * @return collection of organizations id separated by comma as a string format.
+   */
   protected String getOrganizationsList(Map<String, String> requestParameters, String key) {
     return StringCollectionUtils.commaSeparated(
         new OrganizationStructureProvider().getParentList(requestParameters.get(key), true), true);
