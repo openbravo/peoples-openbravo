@@ -25,23 +25,20 @@ import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.type.StandardBasicTypes;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.SQLFunctionRegister;
-import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
-import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.model.pricing.pricelist.PriceListVersion;
-import org.openbravo.service.datasource.hql.HqlQueryTransformer;
-import org.openbravo.service.json.JsonUtils;
 
 @ComponentProvider.Qualifier("4CCE605CBB914CFAB01005FBD0A8C259")
-public class CreatePolinesTransformer extends HqlQueryTransformer implements SQLFunctionRegister {
+public class CreatePolinesTransformer extends PriceExceptionAbstractTransformer
+    implements SQLFunctionRegister {
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
 
-    String documentDate = getDocumentDate(requestParameters);
-    String orgList = getOrganizationsList(requestParameters);
+    String documentDate = getDocumentDate(requestParameters, "@Order.orderDate@");
+    String orgList = getOrganizationsList(requestParameters, "@Order.organization@");
 
     String priceListId = requestParameters.get("@Order.priceList@");
     String transformedHql = hqlQuery.replace("@Order.priceList@", "'" + priceListId + "'");
@@ -75,19 +72,6 @@ public class CreatePolinesTransformer extends HqlQueryTransformer implements SQL
     sqlFunctions.put("m_get_default_aum_for_document",
         new StandardSQLFunction("m_get_default_aum_for_document", StandardBasicTypes.STRING));
     return sqlFunctions;
-  }
-
-  private String getDocumentDate(Map<String, String> requestParameters) {
-    String documentDate = requestParameters.containsKey("@Order.orderDate@")
-        ? "TO_DATE('" + requestParameters.get("@Order.orderDate@") + "','"
-            + JsonUtils.createDateFormat().toPattern() + "')"
-        : "null";
-    return documentDate;
-  }
-
-  private String getOrganizationsList(Map<String, String> requestParameters) {
-    return StringCollectionUtils.commaSeparated(new OrganizationStructureProvider()
-        .getParentList(requestParameters.get("@Order.organization@"), true), true);
   }
 
   private String getLeftJoinPriceExceptions() {

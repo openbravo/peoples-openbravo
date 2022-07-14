@@ -19,20 +19,31 @@ package org.openbravo.financial;
 
 import java.util.Map;
 
-import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.security.OrganizationStructureProvider;
+import org.openbravo.erpCommon.utility.StringCollectionUtils;
+import org.openbravo.service.datasource.hql.HqlQueryTransformer;
+import org.openbravo.service.json.JsonUtils;
 
-@ComponentProvider.Qualifier("D47A3616483E46C18A09794B9B276B37")
-public class ProductFilteredByProductCategoryTransformer extends PriceExceptionAbstractTransformer {
+public abstract class PriceExceptionAbstractTransformer extends HqlQueryTransformer {
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
       Map<String, Object> queryNamedParameters) {
-
-    String documentDate = getDocumentDate(requestParameters, "documentDate");
-    String orgList = getOrganizationsList(requestParameters, "inpadOrgId");
-
-    String transformedHql = hqlQuery.replace("@documentDate@", documentDate);
-    transformedHql = transformedHql.replace("@orgList@", orgList);
-    return transformedHql;
+    // TODO Auto-generated method stub
+    return null;
   }
+
+  protected String getDocumentDate(Map<String, String> requestParameters, String key) {
+    String documentDate = requestParameters.containsKey(key)
+        ? "TO_DATE('" + requestParameters.get(key) + "','"
+            + JsonUtils.createDateFormat().toPattern() + "')"
+        : "null";
+    return documentDate;
+  }
+
+  protected String getOrganizationsList(Map<String, String> requestParameters, String key) {
+    return StringCollectionUtils.commaSeparated(
+        new OrganizationStructureProvider().getParentList(requestParameters.get(key), true), true);
+  }
+
 }
