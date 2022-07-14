@@ -181,15 +181,15 @@
          ON (
 			  M_PRODUCTPRICE.m_productprice_id = ppe.m_productprice_id
 			  and exists (select 1 from ad_org_tree ot where ppe.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = ?)
-			  and ppe.validfrom <= ?
-			  and ppe.validto >= ?
+			  and ppe.validfrom <= TO_DATE(?)
+			  and ppe.validto >= TO_DATE(?)
 			  and ppe.orgdepth = (
 			    select max(ppe2.orgdepth)
 			    from m_productprice_exc ppe2
 			    where ppe2.m_productprice_id = ppe.m_productprice_id
 			    and exists (select 1 from ad_org_tree ot where ppe2.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = ?)
-			    and ppe2.validfrom <= ?
-			    and ppe2.validto >= ?
+			    and ppe2.validfrom <= TO_DATE(?)
+			    and ppe2.validto >= TO_DATE(?)
 			  ))
         WHERE 1=1
 	    GROUP BY M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, LOCKQTY, M_REQUISITIONLINE.DESCRIPTION, C_UOM_ID, QUANTITYORDER, 
