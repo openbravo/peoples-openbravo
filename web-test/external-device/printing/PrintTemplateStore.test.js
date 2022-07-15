@@ -79,7 +79,7 @@ describe('PrintTemplateStore', () => {
       '../org.openbravo.retail.posterminal/res/nonExistingTemplate.xml';
 
     expect(() => OB.App.PrintTemplateStore.getByResource(resource)).toThrow(
-      'Unknown template with resource path ../org.openbravo.retail.posterminal/res/nonExistingTemplate.xml'
+      `Unknown template with resource path ${resource}`
     );
   });
 
