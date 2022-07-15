@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,7 +46,6 @@ import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.client.application.window.ApplicationDictionaryCachedStructures;
-import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.reference.EnumUIDefinition;
 import org.openbravo.client.kernel.reference.IDUIDefinition;
 import org.openbravo.client.kernel.reference.NumberUIDefinition;
@@ -343,7 +342,8 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
     Map<String, Object> queryNamedParameters = queryBuilder.getNamedParameters();
 
     // if the is any HQL Query transformer defined for this table, use it to transform the query
-    hqlQuery = transFormQuery(hqlQuery, queryNamedParameters, parameters);
+    hqlQuery = HqlQueryTransformer.transFormQuery(hqlQuery, queryNamedParameters, parameters, table,
+        hqlQueryTransformers);
 
     // replaces the insertion points with injected code or with dummy comparisons
     // if the injected code includes named parameters for the query, they are stored in the
@@ -438,55 +438,6 @@ public class HQLDataSourceService extends ReadOnlyDataSourceService {
       index++;
     }
     return updatedHqlQuery;
-  }
-
-  /**
-   * If there is any HQL Query Transformer defined, uses its transformHqlQuery to transform the
-   * query
-   * 
-   * @param hqlQuery
-   *          the original HQL query
-   * @param queryNamedParameters
-   *          the named parameters that will be used in the query
-   * @param parameters
-   *          the parameters of the request
-   * @return the transformed query
-   */
-  private String transFormQuery(String hqlQuery, Map<String, Object> queryNamedParameters,
-      Map<String, String> parameters) {
-    String transformedHqlQuery = hqlQuery;
-    HqlQueryTransformer hqlQueryTransformer = getTransformer(parameters);
-    if (hqlQueryTransformer != null) {
-      transformedHqlQuery = hqlQueryTransformer.transformHqlQuery(transformedHqlQuery, parameters,
-          queryNamedParameters);
-    }
-    return transformedHqlQuery;
-  }
-
-  /**
-   * Returns, if defined, an HQL Query Transformer for this table. If the are several transformers
-   * defined, the one with the lowest priority will be chosen
-   * 
-   * @param parameters
-   *          the parameters of the request
-   * @return the HQL Query transformer that will be used to transform the query
-   */
-  private HqlQueryTransformer getTransformer(Map<String, String> parameters) {
-    HqlQueryTransformer transformer = null;
-    Table table = getTableFromParameters(parameters);
-    for (HqlQueryTransformer nextTransformer : hqlQueryTransformers
-        .select(new ComponentProvider.Selector(table.getId()))) {
-      if (transformer == null) {
-        transformer = nextTransformer;
-      } else if (nextTransformer.getPriority(parameters) < transformer.getPriority(parameters)) {
-        transformer = nextTransformer;
-      } else if (nextTransformer.getPriority(parameters) == transformer.getPriority(parameters)) {
-        log.warn(
-            "Trying to get hql query transformer for the table with id {}, there are more than one instance with same priority",
-            table.getId());
-      }
-    }
-    return transformer;
   }
 
   /**
