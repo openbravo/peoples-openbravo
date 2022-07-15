@@ -77,6 +77,10 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
               "( select hqlaggdist(i.documentNo)  from InvoiceLine iL  join iL.invoice i  join iL.salesOrderLine oL  join oL.salesOrder o  where o.id = ord.id )",
               "invoiceDocumentNo"));
         }
+
+        add(new HQLProperty("ord.invoiceTerms", "invoiceTerms"));
+        add(new HQLProperty("(select count(1) > 0 from Invoice i where ord = i.salesOrder)",
+            "invoiceCreated"));
       }
     };
 
