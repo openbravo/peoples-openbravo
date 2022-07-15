@@ -66,6 +66,7 @@ public class SL_Invoice_Product extends SimpleCallout {
     String strWarehouse = Utility.getContext(this, info.vars, "#M_Warehouse_ID",
         info.getWindowId());
     String strUOMProduct = info.getStringParameter("inpmProductUomId", IsIDFilter.instance);
+
     // Warehouse
     String strWarehouseOrg = SLOrderProductData.getWarehouseOrg(this, strWarehouse);
     String strWarehouseForOrg = "";
