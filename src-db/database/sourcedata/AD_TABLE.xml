@@ -10379,7 +10379,7 @@ You can also select if transactions are allowed or not for this organization typ
     pp.product.uOM as C_UOM_ID,
     '' AS qtyordered,
     '' AS qtyaum,
-    (select name from UOM where id = m_get_default_aum_for_document(pp.product.id, ad_get_doctype(pp.client.id, pp.organization.id, 'POO', NULL))) AS aum
+    (select name from UOM where id = m_get_default_aum_for_document(pp.product.id, ad_get_doctype(pp.client.id, pp.organization.id, 'POO', NULL))) AS Aum
   FROM PricingProductPrice pp
   @leftJoinPriceExceptions@
   WHERE pp.product.active = 'Y' AND pp.priceListVersion.priceList.salesPriceList = 'N' AND COALESCE(pp.product.isGeneric, 'N') = 'N'
