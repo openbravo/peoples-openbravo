@@ -79,7 +79,8 @@ public class PaidReceiptsFilterProperties extends ModelExtension {
         }
 
         add(new HQLProperty("ord.invoiceTerms", "invoiceTerms"));
-        add(new HQLProperty("(select count(1) > 0 from Invoice i where ord = i.salesOrder)",
+        add(new HQLProperty(
+            "(select case when max(inv) is null then false else true end from Invoice inv where ord = inv.salesOrder)",
             "invoiceCreated"));
       }
     };
