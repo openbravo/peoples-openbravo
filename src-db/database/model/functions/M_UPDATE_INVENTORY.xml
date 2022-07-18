@@ -134,14 +134,14 @@ BEGIN
    
     SELECT MAX(SD.M_STORAGE_DETAIL_ID) 
     INTO v_Storage_ID
-    FROM m_product p join m_attributeset aset ON p.m_attributeset_id = aset.m_attributeset_id 
+    FROM m_product p left join m_attributeset aset ON p.m_attributeset_id = aset.m_attributeset_id 
                      JOIN M_STORAGE_DETAIL SD ON SD.M_PRODUCT_ID=p.m_product_id
             AND SD.M_LOCATOR_ID=p_locator
             AND SD.M_ATTRIBUTESETINSTANCE_ID=v_attributesetinstance
             AND SD.C_UOM_ID=p_uom
             AND COALESCE(SD.M_PRODUCT_UOM_ID, '-1')=COALESCE(p_product_uom, '-1')
     WHERE COALESCE(p.attrsetvaluetype, '-') <> 'F'
-    AND aset.isoneattrsetvalrequired = 'Y'
+    AND (aset.isoneattrsetvalrequired = 'Y' or aset.isoneattrsetvalrequired is NULL)
     AND QTYONHAND = 0
     AND (QTYORDERONHAND=0 OR QTYORDERONHAND IS NULL)
     AND PREQTYONHAND=0
