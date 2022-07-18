@@ -71,7 +71,7 @@
       <![CDATA[
         SELECT TABLENAME
         FROM AD_TABLE 
-        WHERE lower(AD_TABLE_ID) = lower(?)
+        WHERE AD_TABLE_ID = ?
       ]]>
     </Sql>
     <Parameter name="adTableId"/>
