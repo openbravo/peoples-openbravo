@@ -85,6 +85,9 @@ public class ReferencedLink extends HttpSecureAppServlet {
       } else {
         throw new ServletException();
       }
+    } catch (Exception e) {
+      log4j.error("Error while navigating to another window " + e.getMessage(), e);
+      throw new OBException("Error while navigating to another window");
     } finally {
       OBContext.restorePreviousMode();
     }
