@@ -45,7 +45,7 @@ public class PriceExceptionBaseTest extends WeldBaseTest {
     try {
       osp = OBContext.getOBContext().getOrganizationStructureProvider(org.getClient().getId());
     } catch (Exception e) {
-      throw new OBException("Could not get org structure provider "e.getMessage());
+      throw new OBException("Could not get org structure provider "+e.getMessage());
     }
     if (org.getId().equals("0")) {
       return depth;
