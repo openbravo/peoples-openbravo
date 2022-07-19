@@ -12,8 +12,10 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.enterprise.inject.Any;
@@ -228,19 +230,33 @@ public class Invoices extends JSONProcessSimple {
             + "obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id) as mulrate, "
             + "p.financialAccount.currency.iSOCode as isocode, "
             + "p.paymentMethod.openDrawer as openDrawer " + "from FIN_Payment_Schedule as ps "
-            + "join ps.fINPaymentScheduleDetailOrderPaymentScheduleList psd "
+            + "join ps.fINPaymentScheduleDetailInvoicePaymentScheduleList psd "
             + "join psd.paymentDetails pd " + "join pd.finPayment fp "
             + "join OBPOS_App_Payment p with fp.account = p.financialAccount "
             + "where ps.invoice.id=:invoiceId "
             + "group by  p.financialAccount.id, p.commercialName ,p.searchKey, "
             + "obpos_currency_rate(p.financialAccount.currency, p.obposApplications.organization.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id), "
             + "obpos_currency_rate(p.obposApplications.organization.currency, p.financialAccount.currency, null, null, p.obposApplications.client.id, p.obposApplications.organization.id), "
-            + "p.financialAccount.currency.iSOCode, p.paymentMethod.openDrawer ";
-        @SuppressWarnings("rawtypes")
-        Query paymentsTypeQuery = OBDal.getInstance().getSession().createQuery(hqlPaymentsType);
+            + "p.financialAccount.currency.iSOCode, p.paymentMethod.openDrawer, p.active "
+            + "order by p.active desc";
+        Query<Object[]> paymentsTypeQuery = OBDal.getInstance()
+            .getSession()
+            .createQuery(hqlPaymentsType, Object[].class);
         paymentsTypeQuery.setParameter("invoiceId", invoiceid);
-        for (Object objPaymentType : paymentsTypeQuery.list()) {
-          Object[] objPaymentsType = (Object[]) objPaymentType;
+
+        List<Object[]> paymentsTypeQueryList = paymentsTypeQuery.list()
+            .stream()
+            .reduce(new ArrayList<>(), (List<Object[]> pml, Object[] pm) -> {
+              if (pml.stream().noneMatch(p -> p[1].equals(pm[1]))) {
+                pml.add(pm);
+              }
+              return pml;
+            }, (pm1, pm2) -> {
+              pm1.addAll(pm2);
+              return pm1;
+            });
+
+        for (Object[] objPaymentsType : paymentsTypeQueryList) {
           JSONObject paymentsType = new JSONObject();
           paymentsType.put("name", objPaymentsType[0]);
           paymentsType.put("account", objPaymentsType[1]);
