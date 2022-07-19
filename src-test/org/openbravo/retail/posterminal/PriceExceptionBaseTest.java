@@ -14,6 +14,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 import org.junit.Before;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
@@ -44,7 +45,7 @@ public class PriceExceptionBaseTest extends WeldBaseTest {
     try {
       osp = OBContext.getOBContext().getOrganizationStructureProvider(org.getClient().getId());
     } catch (Exception e) {
-      e.printStackTrace();
+      throw new OBException("Could not get org structure provider "e.getMessage());
     }
     if (org.getId().equals("0")) {
       return depth;
