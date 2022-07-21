@@ -6779,8 +6779,16 @@
         },
         async function(args) {
           var executeFinalCallback = function(saveChanges) {
-            if (saveChanges && !payment.get('changePayment')) {
-              order.trigger('updatePending');
+            if (saveChanges) {
+              if (!payment.get('changePayment')) {
+                order.trigger('updatePending');
+              }
+              var lossSaleLines = order.get('lines').filter(function(l) {
+                return l.get('isLossSale');
+              });
+              if (lossSaleLines.length > 0) {
+                OB.UTIL.LossSaleUtils.adjustPriceOnLossSaleLines(lossSaleLines);
+              }
             }
             OB.UTIL.HookManager.executeHooks(
               'OBPOS_postAddPayment',
@@ -6852,6 +6860,12 @@
         .then(() => {
           if (payment.get('openDrawer')) {
             me.set('openDrawer', false);
+          }
+          var lossSaleLines = me.get('lines').filter(function(l) {
+            return l.get('isLossSale');
+          });
+          if (lossSaleLines.length > 0) {
+            OB.UTIL.LossSaleUtils.adjustPriceOnLossSaleLines(lossSaleLines);
           }
           OB.UTIL.HookManager.executeHooks(
             'OBPOS_postRemovePayment',

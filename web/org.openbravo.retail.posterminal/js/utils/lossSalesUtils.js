@@ -48,7 +48,7 @@
         if (line.get('grossUnitPrice') < product.get('priceLimit')) {
           result.push({
             orderId: order.id,
-            lineId: line.get('id'),
+            id: line.get('id'),
             product: product.get('_identifier'),
             priceLimit: product.get('priceLimit'),
             unitPrice: line.get('grossUnitPrice')
@@ -64,7 +64,7 @@
     lossSaleLines.forEach(function(lossSaleLine) {
       var line = order
           .get('lines')
-          .models.find(l => l.get('id') === lossSaleLine.lineId),
+          .models.find(l => l.get('id') === lossSaleLine.id),
         discountedPrice = line.get('grossUnitPrice'),
         productPriceLimit = line.get('product').get('priceLimit');
       line.get('promotions').forEach(function(p) {
@@ -84,6 +84,7 @@
           discountedPrice += promoAmtDiffToLimit;
         }
       });
+      line.set('isLossSale', true);
       order.calculateGross();
     });
   };
