@@ -59,8 +59,12 @@
     return result;
   };
 
-  OB.UTIL.LossSaleUtils.adjustPriceOnLossSaleLines = function(lossSaleLines) {
+  OB.UTIL.LossSaleUtils.adjustPriceOnLossSaleLines = function(
+    lossSaleLines,
+    callback
+  ) {
     var order = OB.MobileApp.model.receipt;
+    let hasLossSale = false;
     lossSaleLines.forEach(function(lossSaleLine) {
       var line = order
           .get('lines')
@@ -79,13 +83,26 @@
           );
           p.identifier =
             p.name +
+            ' ' +
             OB.I18N.getLabel('OBMOBC_Character')[5] +
+            ' ' +
             OB.I18N.getLabel('OBPOS_LblLimitPrice');
           discountedPrice += promoAmtDiffToLimit;
         }
       });
       line.set('isLossSale', true);
-      order.calculateGross();
+      hasLossSale = true;
     });
+    if (hasLossSale) {
+      order.calculateGrossAndSave(true, () => {
+        if (callback) {
+          callback();
+        }
+      });
+    } else {
+      if (callback) {
+        callback();
+      }
+    }
   };
 })();

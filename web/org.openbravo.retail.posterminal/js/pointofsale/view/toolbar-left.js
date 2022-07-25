@@ -762,22 +762,23 @@ enyo.kind({
                       caller: me
                     },
                     function(args3) {
+                      function finishProcess() {
+                        OB.UTIL.ProcessController.finish(
+                          'totalAmountValidation',
+                          execution
+                        );
+                      }
+
                       function showPaymentTab() {
                         if (
                           !_.isUndefined(args3.approved) ? args3.approved : true
                         ) {
                           me.model.get('order').getPrepaymentAmount(function() {
-                            OB.UTIL.ProcessController.finish(
-                              'totalAmountValidation',
-                              execution
-                            );
+                            finishProcess();
                             me.showPaymentTab();
                           }, true);
                         } else {
-                          OB.UTIL.ProcessController.finish(
-                            'totalAmountValidation',
-                            execution
-                          );
+                          finishProcess();
                         }
                       }
 
@@ -789,79 +790,71 @@ enyo.kind({
                       ) {
                         args3.approvals.push('OBPOS_approval.returns');
                       }
-                      if (
-                        OB.MobileApp.model.hasPermission(
-                          'OBPOS_EnableLossSales',
-                          true
-                        )
-                      ) {
-                        var onHideModalLossSale = function() {
-                            OB.UTIL.ProcessController.finish(
-                              'totalAmountValidation',
-                              execution
-                            );
-                          },
-                          requestApprovalForLossSale = function(callback) {
-                            var lines = OB.UTIL.LossSaleUtils.getLossSaleLines(
-                              me.model.get('order')
-                            );
-                            if (lines.length) {
-                              me.doShowPopup({
-                                popup: 'OBPOS_modalLossSale',
-                                args: {
-                                  lossSaleLines: lines,
-                                  onhide: onHideModalLossSale,
-                                  callback: callback
-                                }
-                              });
-                            } else {
-                              callback({ requestApproval: false });
-                            }
-                          };
+                      const requestApprovalForLossSale = function(callback) {
+                        if (
+                          OB.MobileApp.model.hasPermission(
+                            'OBPOS_EnableLossSales',
+                            true
+                          ) &&
+                          me.model.get('order').get('isEditable')
+                        ) {
+                          const lines = OB.UTIL.LossSaleUtils.getLossSaleLines(
+                            me.model.get('order')
+                          );
+                          if (lines && lines.length > 0) {
+                            me.doShowPopup({
+                              popup: 'OBPOS_modalLossSale',
+                              args: {
+                                lossSaleLines: lines,
+                                onhide: finishProcess,
+                                callback: callback
+                              }
+                            });
+                            return;
+                          }
+                          callback({ requestApproval: false });
+                          return;
+                        }
+                        callback({ requestApproval: false });
+                      };
 
-                        if (me.model.get('order').get('isEditable')) {
-                          requestApprovalForLossSale(data => {
-                            if (data.requestApproval) {
-                              args3.approvals.push('OBPOS_approval.lossSales');
-                              if (data.adjustPrice) {
-                                args3.adjustPrice = true;
-                                args3.lines = data.lines;
+                      requestApprovalForLossSale(data => {
+                        if (data.requestApproval) {
+                          args3.approvals.push('OBPOS_approval.lossSales');
+                          if (data.adjustPrice) {
+                            args3.adjustPrice = true;
+                            args3.lines = data.lines;
+                          }
+                        }
+                        if (
+                          args3.approvals.length > 0 &&
+                          !receipt.get('isLayaway') &&
+                          !receipt.get('isPaid')
+                        ) {
+                          OB.UTIL.Approval.requestApproval(
+                            me.model,
+                            args3.approvals,
+                            function(approved) {
+                              if (approved) {
+                                if (args3.adjustPrice) {
+                                  OB.UTIL.LossSaleUtils.adjustPriceOnLossSaleLines(
+                                    args3.lines,
+                                    showPaymentTab
+                                  );
+                                } else {
+                                  showPaymentTab();
+                                }
+                              } else {
+                                finishProcess();
                               }
                             }
-                            if (
-                              args3.approvals.length > 0 &&
-                              !receipt.get('isLayaway') &&
-                              !receipt.get('isPaid')
-                            ) {
-                              OB.UTIL.Approval.requestApproval(
-                                me.model,
-                                args3.approvals,
-                                function(approved) {
-                                  if (approved) {
-                                    if (args3.adjustPrice) {
-                                      OB.UTIL.LossSaleUtils.adjustPriceOnLossSaleLines(
-                                        args3.lines
-                                      );
-                                    }
-                                    showPaymentTab();
-                                  } else {
-                                    OB.UTIL.ProcessController.finish(
-                                      'totalAmountValidation',
-                                      execution
-                                    );
-                                  }
-                                }
-                              );
-                            } else if (!data.lossSaleNotValidated) {
-                              showPaymentTab();
-                            }
-                          });
-                        } else {
+                          );
+                        } else if (!data.lossSaleNotValidated) {
                           showPaymentTab();
+                        } else {
+                          finishProcess();
                         }
-                      } else {
-                        showPaymentTab();
-                      }
+                      });
                     }
                   );
                 }
