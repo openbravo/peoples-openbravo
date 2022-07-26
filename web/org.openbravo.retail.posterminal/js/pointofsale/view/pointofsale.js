@@ -940,11 +940,13 @@ enyo.kind({
       receipt = this.model.get('order'),
       execution = OB.UTIL.ProcessController.start('deleteCurrentOrder');
 
+    OB.UTIL.setScanningFocus(false);
     inEvent.status = true;
     this.leftToolbarDisabled(inSender, inEvent);
     receipt.deleteOrder(this, function() {
       inEvent.status = false;
       me.leftToolbarDisabled(inSender, inEvent);
+      OB.UTIL.setScanningFocus(true);
       OB.UTIL.ProcessController.finish('deleteCurrentOrder', execution);
     });
   },
