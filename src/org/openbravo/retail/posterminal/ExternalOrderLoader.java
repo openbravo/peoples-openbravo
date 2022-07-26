@@ -717,12 +717,12 @@ public class ExternalOrderLoader extends OrderLoader {
       }
     }
 
-    lineJson.put("orderStep", orderJson.get("step"));
     setProduct(lineJson);
 
     if (!lineJson.has("id")) {
       lineJson.put("id", SequenceIdData.getUUID());
     }
+    lineJson.put("orderStep", orderJson.get("step"));
 
     if (lineJson.has("orderedQuantity")) {
       copyPropertyValue(lineJson, "orderedQuantity", "qty");
