@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2021 Openbravo S.L.U.
+ * Copyright (C) 2019-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -1785,6 +1785,67 @@
   }
 
   .obposUiStoreInformationSpecialScheduleLine-closeHour {
+    padding-left: 0px !important;
+  }
+}
+
+/***********************   ***********************/
+/*        File: modallosssales.js       */
+/*            Folder: js/components/             */
+/***********************   ***********************/
+/*
+# Component: OB.UI.LossSaleLine
+# Inherits: [OB.UI.listItemButton]
+*/
+.obposUiLossSaleLine {
+}
+
+.obposUiLossSaleLine-element1 {
+  float: left;
+  padding-top: 5px;
+  width: 5%;
+}
+
+.obposUiLossSaleLine-product {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+  width: 40%;
+  touch-action: none;
+}
+
+.obposUiLossSaleLine-priceLimit {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+  width: 25%;
+  touch-action: none;
+  text-align: center;
+}
+
+.obposUiLossSaleLine-unitPrice {
+  float: left;
+  padding-top: 5px;
+  padding-left: 5px;
+  width: 25%;
+  touch-action: none;
+  text-align: center;
+}
+
+@media (max-width: 525px) {
+  .obposUiLossSaleLine-element1 {
+    width: unset !important;
+  }
+
+  .obposUiLossSaleLine-product {
+    padding-left: 0px !important;
+  }
+
+  .obposUiLossSaleLine-priceLimit {
+    padding-left: 0px !important;
+  }
+
+  .obposUiLossSaleLine-unitPrice {
     padding-left: 0px !important;
   }
 }

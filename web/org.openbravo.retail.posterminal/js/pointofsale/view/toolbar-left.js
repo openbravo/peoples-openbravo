@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2013-2021 Openbravo S.L.U.
+ * Copyright (C) 2013-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -762,22 +762,23 @@ enyo.kind({
                       caller: me
                     },
                     function(args3) {
+                      function finishProcess() {
+                        OB.UTIL.ProcessController.finish(
+                          'totalAmountValidation',
+                          execution
+                        );
+                      }
+
                       function showPaymentTab() {
                         if (
                           !_.isUndefined(args3.approved) ? args3.approved : true
                         ) {
                           me.model.get('order').getPrepaymentAmount(function() {
-                            OB.UTIL.ProcessController.finish(
-                              'totalAmountValidation',
-                              execution
-                            );
+                            finishProcess();
                             me.showPaymentTab();
                           }, true);
                         } else {
-                          OB.UTIL.ProcessController.finish(
-                            'totalAmountValidation',
-                            execution
-                          );
+                          finishProcess();
                         }
                       }
 
@@ -789,28 +790,71 @@ enyo.kind({
                       ) {
                         args3.approvals.push('OBPOS_approval.returns');
                       }
-                      if (
-                        args3.approvals.length > 0 &&
-                        !receipt.get('isLayaway') &&
-                        !receipt.get('isPaid')
-                      ) {
-                        OB.UTIL.Approval.requestApproval(
-                          me.model,
-                          args3.approvals,
-                          function(approved) {
-                            if (approved) {
-                              showPaymentTab();
-                            } else {
-                              OB.UTIL.ProcessController.finish(
-                                'totalAmountValidation',
-                                execution
-                              );
-                            }
+                      const requestApprovalForLossSale = function(callback) {
+                        if (
+                          OB.MobileApp.model.hasPermission(
+                            'OBPOS_EnableLossSales',
+                            true
+                          ) &&
+                          me.model.get('order').get('isEditable')
+                        ) {
+                          const lines = OB.UTIL.LossSaleUtils.getLossSaleLines(
+                            me.model.get('order')
+                          );
+                          if (lines && lines.length > 0) {
+                            me.doShowPopup({
+                              popup: 'OBPOS_modalLossSale',
+                              args: {
+                                lossSaleLines: lines,
+                                onhide: finishProcess,
+                                callback: callback
+                              }
+                            });
+                            return;
                           }
-                        );
-                      } else {
-                        showPaymentTab();
-                      }
+                          callback({ requestApproval: false });
+                          return;
+                        }
+                        callback({ requestApproval: false });
+                      };
+
+                      requestApprovalForLossSale(data => {
+                        if (data.requestApproval) {
+                          args3.approvals.push('OBPOS_approval.lossSales');
+                          if (data.adjustPrice) {
+                            args3.adjustPrice = true;
+                            args3.lines = data.lines;
+                          }
+                        }
+                        if (
+                          args3.approvals.length > 0 &&
+                          !receipt.get('isLayaway') &&
+                          !receipt.get('isPaid')
+                        ) {
+                          OB.UTIL.Approval.requestApproval(
+                            me.model,
+                            args3.approvals,
+                            function(approved) {
+                              if (approved) {
+                                if (args3.adjustPrice) {
+                                  OB.UTIL.LossSaleUtils.adjustPriceOnLossSaleLines(
+                                    args3.lines,
+                                    showPaymentTab
+                                  );
+                                } else {
+                                  showPaymentTab();
+                                }
+                              } else {
+                                finishProcess();
+                              }
+                            }
+                          );
+                        } else if (!data.lossSaleNotValidated) {
+                          showPaymentTab();
+                        } else {
+                          finishProcess();
+                        }
+                      });
                     }
                   );
                 }

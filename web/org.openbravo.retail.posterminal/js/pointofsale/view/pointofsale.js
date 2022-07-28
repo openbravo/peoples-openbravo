@@ -668,6 +668,12 @@ enyo.kind({
           name: 'OBPOS_storeInformation',
           classes:
             'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSStoreInformation'
+        },
+        {
+          kind: 'OB.UI.ModalLossSale',
+          name: 'OBPOS_modalLossSale',
+          classes:
+            'obObposPointOfSaleUiPointOfSale-otherSubWindowsContainer-OBPOSModalLossSale'
         }
       ]
     },
