@@ -135,6 +135,11 @@ BEGIN
       AND Node_ID=:old.AD_Org_ID;     
   END IF;
   IF (UPDATING) THEN
+	IF(:OLD.IsActive!=:NEW.IsActive) THEN
+		UPDATE AD_TREENODE
+		  SET IsActive=:new.IsActive
+		WHERE Node_ID=:new.AD_Org_ID;
+	END IF;
     IF (COALESCE(:old.c_currency_id, '-1') <> COALESCE(:new.c_currency_id, '-1')) THEN
       SELECT COUNT(*) INTO v_count
       FROM DUAL

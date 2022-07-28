@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_PRODUCT_BOM_TRG">
-    <trigger name="M_PRODUCT_BOM_TRG" table="M_PRODUCT_BOM" fires="after" insert="true" update="true" delete="false" foreach="row">
+    <trigger name="M_PRODUCT_BOM_TRG" table="M_PRODUCT_BOM" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
@@ -37,6 +37,11 @@ BEGIN
   WHERE M_Product_ID=:new.M_Product_ID
     AND IsVerified='Y';
   ELSIF(UPDATING) THEN
+	IF(:OLD.IsActive!=:NEW.IsActive) THEN
+		UPDATE AD_TREENODE
+			SET IsActive=:NEW.IsActive
+		WHERE Node_ID=:NEW.M_Product_ID;
+	END IF;
   IF(COALESCE(:NEW.M_ProductBOM_ID, '0') <> COALESCE(:old.M_ProductBOM_ID, '0')) THEN
     UPDATE M_Product
       SET IsVerified='N'

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER M_CH_VALUE_TRG">
-    <trigger name="M_CH_VALUE_TRG" table="M_CH_VALUE" fires="after" insert="true" update="false" delete="true" foreach="row">
+    <trigger name="M_CH_VALUE_TRG" table="M_CH_VALUE" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 
 /*************************************************************************
@@ -93,8 +93,16 @@ BEGIN
         AND pch.isvariant='Y'
         AND pch.isexplodeconf = 'Y';
   END IF;
-
-  IF DELETING THEN
+  
+	IF (UPDATING) THEN
+		IF(:OLD.IsActive!=:NEW.IsActive) THEN
+			UPDATE AD_TREENODE
+				SET IsActive=:NEW.IsActive
+			WHERE Node_ID=:NEW.m_ch_value_id;
+		END IF;
+	END IF;
+	
+	IF DELETING THEN
     --  Delete TreeNode --
     SELECT ch.ad_tree_id INTO v_tree_id
     FROM m_characteristic ch

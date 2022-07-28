@@ -99,6 +99,12 @@ BEGIN
       )
       ;
   ELSIF (UPDATING) THEN
+	IF(:OLD.IsActive!=:NEW.IsActive) THEN
+		UPDATE AD_TREENODE
+			SET IsActive=:NEW.IsActive
+		WHERE Node_ID=:NEW.A_ASSET_ID;
+	END IF;
+
     UPDATE A_ASSET_ACCT SET AD_ORG_ID = :new.AD_ORG_ID
     WHERE A_ASSET_ID = :new.A_ASSET_ID;
   END IF;

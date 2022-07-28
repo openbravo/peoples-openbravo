@@ -111,6 +111,12 @@ BEGIN
       )
       ;
     ELSIF (UPDATING) THEN
+		IF(:OLD.IsActive!=:NEW.IsActive) THEN
+			UPDATE AD_TREENODE
+				SET IsActive=:NEW.IsActive
+			WHERE Node_ID=:NEW.C_PROJECT_ID;
+		END IF;
+
      IF (:new.AD_ORG_ID <> :old.AD_ORG_ID) THEN
        SELECT COUNT(*) INTO v_Count FROM C_PROJECTPHASE WHERE C_PROJECT_ID = :new.C_PROJECT_ID;
        IF(v_Count > 0) THEN

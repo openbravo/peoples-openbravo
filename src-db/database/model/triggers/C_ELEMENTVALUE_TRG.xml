@@ -124,6 +124,13 @@ BEGIN
   -- C_ElementValue update trigger
   --  synchronize name,...
   IF UPDATING THEN
+	IF(:OLD.IsActive!=:NEW.IsActive) THEN
+		-- Update
+		UPDATE AD_TREENODE
+			SET IsActive=:NEW.IsActive
+		WHERE Node_ID=:NEW.C_ElementValue_ID;
+	END IF;
+	
     IF COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.') THEN
       UPDATE C_ElementValue_Trl
         SET name=:NEW.Name,

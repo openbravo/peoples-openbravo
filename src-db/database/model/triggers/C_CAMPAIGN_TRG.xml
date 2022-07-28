@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_CAMPAIGN_TRG">
-    <trigger name="C_CAMPAIGN_TRG" table="C_CAMPAIGN" fires="before" insert="true" update="false" delete="true" foreach="row">
+    <trigger name="C_CAMPAIGN_TRG" table="C_CAMPAIGN" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -85,6 +85,13 @@ BEGIN
       AND Node_ID=:old.C_Campaign_ID;     
   END IF;
   -- Deleting
+  IF (UPDATING) THEN
+		IF(:OLD.IsActive!=:NEW.IsActive) THEN
+			UPDATE AD_TREENODE
+				SET IsActive=:NEW.IsActive
+			WHERE Node_ID=:NEW.C_Campaign_ID;
+		END IF;
+	END IF;
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20000, '@20014@');

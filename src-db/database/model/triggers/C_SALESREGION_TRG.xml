@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <database name="TRIGGER C_SALESREGION_TRG">
-    <trigger name="C_SALESREGION_TRG" table="C_SALESREGION" fires="after" insert="true" update="false" delete="true" foreach="row">
+    <trigger name="C_SALESREGION_TRG" table="C_SALESREGION" fires="after" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
     /*************************************************************************
     * The contents of this file are subject to the Compiere Public
@@ -75,6 +75,13 @@ BEGIN
       )
       ;
     -- Summary Nodes first
+  ELSIF (UPDATING) THEN
+	IF(:OLD.IsActive!=:NEW.IsActive) THEN
+		UPDATE AD_TREENODE
+			SET IsActive=:NEW.IsActive
+		WHERE Node_ID=:NEW.C_SalesRegion_ID;
+	END IF;
+
   ELSIF(DELETING) THEN
     --  Delete TreeNode --
     --  get AD_Tree_ID

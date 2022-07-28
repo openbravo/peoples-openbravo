@@ -99,6 +99,12 @@ BEGIN
   -- AD_Ref_List update trigger
   --  synchronize name,...
   IF UPDATING THEN
+	IF(:OLD.IsActive!=:NEW.IsActive) THEN
+		-- Update
+		UPDATE AD_TREENODE
+			SET IsActive=:NEW.IsActive
+		WHERE Node_ID=:NEW.AD_Menu_ID;
+	END IF;
     IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
    OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.'))
   THEN

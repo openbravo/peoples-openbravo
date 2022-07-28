@@ -116,6 +116,7 @@ BEGIN
 	
     UPDATE AD_TREENODE
     SET AD_ORG_ID = :new.AD_ORG_ID
+	,IsActive = :new.IsActive
     WHERE AD_CLIENT_ID=:new.AD_Client_ID
       AND AD_Tree_ID=v_xTree_ID
       AND Node_ID=:new.M_Product_Category_ID;
