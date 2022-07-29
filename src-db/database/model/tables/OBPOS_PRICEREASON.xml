@@ -56,5 +56,6 @@
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
       <check name="OBPOS_PRICEREASON_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="OBPOS_PRICEREASON_PRCLIMT_CHK"><![CDATA[VERIFY_PRICE_LIMIT IN ('Y', 'N')]]></check>
     </table>
   </database>
