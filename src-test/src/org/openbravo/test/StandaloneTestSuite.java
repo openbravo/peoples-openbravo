@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.openbravo.advpaymentmngt.test.DocumentNumberGeneration;
 import org.openbravo.authentication.hashing.PasswordHashing;
+import org.openbravo.base.model.NamingUtilTest;
 import org.openbravo.base.weld.test.testinfrastructure.CdiInfrastructure;
 import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
@@ -48,6 +49,7 @@ import org.openbravo.client.kernel.test.CompressionTest;
 import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.erpCommon.utility.OBDateUtilsTest;
+import org.openbravo.event.CharacteristicEventHandlerTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
 import org.openbravo.scheduling.trigger.TriggerProviderTest;
@@ -231,7 +233,8 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     TrlColumnsOraTypeTest.class, //
     ADCSInitialization.class, //
     ADCSTest.class, //
-    DBModifiedTest.class,
+    DBModifiedTest.class, //
+    NamingUtilTest.class,
 
     // modularity
     DatasetServiceTest.class, //
@@ -297,6 +300,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // Inventory Status
     InventoryStatusTest.class, //
+
+    // PLM
+    CharacteristicEventHandlerTest.class, //
 
     // PLM Status
     ProductStatusTest.class, //
