@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,12 +23,15 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -47,6 +50,7 @@ import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 
@@ -216,6 +220,13 @@ public class DataToJsonConverter {
         if (additionalProperty.length() == 0) {
           continue;
         }
+        Map<String, Object> values = resolveWithHook(bob, additionalProperty);
+        if (!values.isEmpty()) {
+          for (Entry<String, Object> entry : values.entrySet()) {
+            jsonObject.put(replaceDots(entry.getKey()), entry.getValue());
+          }
+          continue;
+        }
         final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
         if (value == null) {
           jsonObject.put(replaceDots(additionalProperty), (Object) null);
@@ -257,6 +268,22 @@ public class DataToJsonConverter {
     } catch (JSONException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  private Map<String, Object> resolveWithHook(BaseOBObject bob, String propertyPath) {
+    List<AdditionalPropertyResolver> resolvers = WeldUtils
+        .getInstances(AdditionalPropertyResolver.class)
+        .stream()
+        .sorted(Comparator.comparing(AdditionalPropertyResolver::getPriority))
+        .collect(Collectors.toList());
+
+    for (AdditionalPropertyResolver resolver : resolvers) {
+      Map<String, Object> result = resolver.resolve(bob, propertyPath);
+      if (result != null && !result.isEmpty()) {
+        return result;
+      }
+    }
+    return Collections.emptyMap();
   }
 
   private String replaceDots(String value) {
