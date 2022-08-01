@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -249,10 +249,7 @@ public class NamingUtil {
     if (coreModuleProp || coreModuleEntity) {
       mappingName = stripPrefix(mappingName);
     }
-    mappingName = camelCaseIt(mappingName, "_");
-    mappingName = camelCaseIt(mappingName, " ");
-    mappingName = stripIllegalCharacters(mappingName);
-    mappingName = lowerCaseFirst(mappingName);
+    mappingName = formatAsPropertyName(mappingName);
 
     // check for doublures and be robust....
     for (Property p : property.getEntity().getProperties()) {
@@ -270,6 +267,24 @@ public class NamingUtil {
       }
     }
 
+    return mappingName;
+  }
+
+  /**
+   * Formats the given String as a property name which implies camel casing the characters after "_"
+   * and " ", removing illegal characters and lower casing the first character.
+   *
+   * @param name
+   *          The name to be formatted
+   *
+   * @return the provided name formatted as a property name
+   */
+  public static String formatAsPropertyName(String name) {
+    String mappingName = name;
+    mappingName = camelCaseIt(mappingName, "_");
+    mappingName = camelCaseIt(mappingName, " ");
+    mappingName = stripIllegalCharacters(mappingName);
+    mappingName = lowerCaseFirst(mappingName);
     return mappingName;
   }
 
