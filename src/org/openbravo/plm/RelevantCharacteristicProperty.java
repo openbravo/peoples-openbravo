@@ -125,7 +125,7 @@ public class RelevantCharacteristicProperty {
   }
 
   /**
-   * Retrieves a new {@link RelevantCharacteristicProperty} instance for the relevant characteristic
+   * Retrieves a new {@code RelevantCharacteristicProperty} instance for the relevant characteristic
    * pointed by the given entity and property path.
    * 
    * @param entity
@@ -133,7 +133,7 @@ public class RelevantCharacteristicProperty {
    * @param propertyPath
    *          The path that references the relevant characteristic property
    * 
-   * @return an Optional describing the {@link RelevantCharacteristicProperty} or an empty Optional
+   * @return an Optional describing the {@code RelevantCharacteristicProperty} or an empty Optional
    *         in case the property cannot be resolved
    */
   public static Optional<RelevantCharacteristicProperty> from(Entity entity, String propertyPath) {
