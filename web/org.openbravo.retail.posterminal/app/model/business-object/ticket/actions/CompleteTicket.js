@@ -148,6 +148,12 @@
       newGlobalState.Cashup = newCashup;
       newGlobalState.Messages = newMessages;
 
+      if (newGlobalState.Cashup.totalCreateTickets === undefined) {
+        newGlobalState.Cashup.totalCreateTickets = OB.DEC.Zero;
+      } else {
+        newGlobalState.Cashup.totalCreateTickets += 1;
+      }
+
       return newGlobalState;
     }
   );

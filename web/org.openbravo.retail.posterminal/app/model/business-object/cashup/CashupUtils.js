@@ -75,6 +75,8 @@
       newCashup.isprocessed = false;
       newCashup.cashTaxInfo = [];
       newCashup.cashCloseInfo = [];
+      newCashup.totalDeleteTickets = OB.DEC.Zero;
+      newCashup.totalCreateTickets = OB.DEC.Zero;
 
       return newCashup;
     },
@@ -100,6 +102,10 @@
         currentCashupFromBackend.cashTaxInfo
       );
       newCashup.cashCloseInfo = currentCashupFromBackend.cashCloseInfo;
+
+      // TODO: Obtain the value to the backend
+      newCashup.totalDeleteTickets = OB.DEC.Zero;
+      newCashup.totalCreateTickets = OB.DEC.Zero;
 
       return newCashup;
     },
