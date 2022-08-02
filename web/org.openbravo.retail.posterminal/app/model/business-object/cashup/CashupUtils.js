@@ -76,7 +76,12 @@
       newCashup.cashTaxInfo = [];
       newCashup.cashCloseInfo = [];
       newCashup.totalDeleteTickets = OB.DEC.Zero;
-      newCashup.totalCreateTickets = OB.DEC.Zero;
+      newCashup.totalCompleteTickets = OB.DEC.Zero;
+      newCashup.totalQuantityProducts = OB.DEC.Zero;
+      newCashup.totalAmount = OB.DEC.Zero;
+      newCashup.totalDiscountAmount = OB.DEC.Zero;
+      newCashup.users = [];
+      newCashup.productCategories = [];
 
       return newCashup;
     },
@@ -105,7 +110,12 @@
 
       // TODO: Obtain the value to the backend
       newCashup.totalDeleteTickets = OB.DEC.Zero;
-      newCashup.totalCreateTickets = OB.DEC.Zero;
+      newCashup.totalCompleteTickets = OB.DEC.Zero;
+      newCashup.totalQuantityProducts = OB.DEC.Zero;
+      newCashup.totalAmount = OB.DEC.Zero;
+      newCashup.totalDiscountAmount = OB.DEC.Zero;
+      newCashup.users = [];
+      newCashup.productCategories = [];
 
       return newCashup;
     },

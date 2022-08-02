@@ -145,11 +145,8 @@
     newGlobalState.Cashup = newCashup;
     newGlobalState.Messages = newMessages;
 
-    if (newGlobalState.Cashup.totalDeleteTickets === undefined) {
-      newGlobalState.Cashup.totalDeleteTickets = OB.DEC.Zero;
-    } else {
-      newGlobalState.Cashup.totalDeleteTickets += 1;
-    }
+    // Complete cashup fields
+    newGlobalState.Cashup.totalDeleteTickets += 1;
 
     return newGlobalState;
   }

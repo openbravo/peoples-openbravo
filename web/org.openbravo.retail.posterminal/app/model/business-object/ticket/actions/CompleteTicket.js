@@ -148,13 +148,8 @@
       newGlobalState.Cashup = newCashup;
       newGlobalState.Messages = newMessages;
 
-      if (newGlobalState.Cashup.totalCreateTickets === undefined) {
-        newGlobalState.Cashup.totalCreateTickets = OB.DEC.Zero;
-      } else {
-        newGlobalState.Cashup.totalCreateTickets += 1;
-      }
-
-      return newGlobalState;
+      // Complete cashup fields
+      return completeCashupFields(newGlobalState, currentTicket);
     }
   );
 
@@ -215,4 +210,69 @@
     async (globalState, payload) => payload,
     150
   );
+
+  function completeCashupFields(newGlobalState, currentTicket) {
+    const globalState = { ...newGlobalState };
+
+    // Total complete tickets
+    globalState.Cashup.totalCompleteTickets += 1;
+
+    // Total amount
+    globalState.Cashup.totalAmount += currentTicket.grossAmount;
+
+    // Total quantity products
+    globalState.Cashup.totalQuantityProducts += currentTicket.qty;
+
+    // Total discount amount
+    globalState.Cashup.totalDiscountAmount += currentTicket.lines.reduce(
+      (previousValue, currentValue) =>
+        previousValue +
+        currentValue.baseGrossUnitAmount -
+        currentValue.grossUnitAmountWithoutTicketDiscounts,
+      0
+    );
+
+    // Information per user
+    const userExist = globalState.Cashup.users.find(
+      x => x.name === currentTicket.businessPartner.name
+    );
+
+    if (userExist === undefined) {
+      const user = {
+        name: currentTicket.businessPartner.name,
+        totalCompleteTickets: 1,
+        totalAmount: currentTicket.grossAmount
+      };
+
+      globalState.Cashup.users = [...globalState.Cashup.users, user];
+    } else {
+      userExist.totalCompleteTickets += 1;
+      userExist.totalAmount += currentTicket.grossAmount;
+    }
+
+    // Information per product category
+    currentTicket.lines.forEach(line => {
+      const productCategoryExist = globalState.Cashup.productCategories.find(
+        x => x.name === line.product.productCategory
+      );
+
+      if (productCategoryExist === undefined) {
+        const productCategory = {
+          name: line.product.productCategory,
+          numberOfItems: line.qty,
+          totalAmount: line.grossUnitAmount
+        };
+
+        globalState.Cashup.productCategories = [
+          ...globalState.Cashup.productCategories,
+          productCategory
+        ];
+      } else {
+        productCategoryExist.numberOfItems += line.qty;
+        productCategoryExist.totalAmount += line.grossUnitAmount;
+      }
+    });
+
+    return globalState;
+  }
 })();

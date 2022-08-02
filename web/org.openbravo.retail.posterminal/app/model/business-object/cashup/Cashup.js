@@ -22,7 +22,14 @@
     userId: null,
     cashTaxInfo: [], // taxCashupId, name, amount, orderType
     cashPaymentMethodInfo: [], // paymentMethodCashupId, paymentMethodId, searchKey, name, startingCash, totalSales, totalReturns, totalDeposits, totalDrops, rate, isocode, newPaymentMethod
-    isprocessed: null
+    isprocessed: null,
+    totalDeleteTickets: OB.DEC.Zero,
+    totalCompleteTickets: OB.DEC.Zero,
+    totalQuantityProducts: OB.DEC.Zero,
+    totalAmount: OB.DEC.Zero,
+    totalDiscountAmount: OB.DEC.Zero,
+    users: [],
+    productCategories: []
   });
 
   OB.App.StateAPI.Cashup.registerActions({
