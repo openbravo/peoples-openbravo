@@ -33,6 +33,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.common.plm.Characteristic;
+import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 
 /**
@@ -104,12 +105,12 @@ public class RelevantCharacteristicProperty {
    * @return the value of the characteristic linked to the relevant characteristic for the given
    *         {@link BaseOBObject}
    */
-  public String getCharacteristicValue(BaseOBObject bob) {
+  public CharacteristicValue getCharacteristicValue(BaseOBObject bob) {
     Product product = Product.ENTITY_NAME.equals(bob.getEntity().getName()) ? (Product) bob
         : (Product) DalUtil.getValueFromPath(bob, basePath);
 
     //@formatter:off
-    String hql = "select cv.name" +
+    String hql = "select cv" +
                  "  from CharacteristicValue as cv" +
                  "  join cv.productCharacteristicValueList as pcv"+
                  " where pcv.product.id = :productId" +
@@ -118,7 +119,7 @@ public class RelevantCharacteristicProperty {
 
     return OBDal.getInstance()
         .getSession()
-        .createQuery(hql, String.class)
+        .createQuery(hql, CharacteristicValue.class)
         .setParameter("productId", product.getId())
         .setParameter("characteristicId", getCharacteristicId())
         .uniqueResult();

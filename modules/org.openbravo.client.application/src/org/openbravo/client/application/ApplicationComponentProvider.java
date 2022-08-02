@@ -153,6 +153,9 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/form/formitem/ob-formitem-processfileupload.js",
         true));
+    globalResources.add(createStaticResource(
+        "web/org.openbravo.client.application/js/form/formitem/ob-formitem-chvalue-filter.js",
+        true));
 
     globalResources.add(createStaticResource(
         "web/org.openbravo.client.application/js/toolbar/ob-toolbar.js", false));

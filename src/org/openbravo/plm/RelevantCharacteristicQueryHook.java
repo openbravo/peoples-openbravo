@@ -98,11 +98,6 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
   @Override
   public String parseSimpleFilterClause(AdvancedQueryBuilder queryBuilder, String fieldName,
       String operator, Object value) {
-    if (fieldName.equals("product$productCategory")) {
-      // TODO: remove
-      fieldName = "product$oBPFColor";
-      value = "1A510FE566DB4E86A89D89A23ED484A1";
-    }
     if (isProductEntity(queryBuilder.getEntity())) {
       // TODO
       return null;

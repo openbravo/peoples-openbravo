@@ -23,7 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.dal.core.DalUtil;
+import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.service.json.AdditionalPropertyResolver;
+import org.openbravo.service.json.JsonConstants;
 
 /**
  * Resolves additional properties that reference to relevant characteristics
@@ -35,7 +38,10 @@ public class RelevantCharacteristicAdditionalPropertyResolver
   public Map<String, Object> resolve(BaseOBObject bob, String propertyPath) {
     return RelevantCharacteristicProperty.from(bob.getEntity(), propertyPath).map(o -> {
       Map<String, Object> result = new HashMap<>();
-      result.put(propertyPath, o.getCharacteristicValue(bob));
+      CharacteristicValue chv = o.getCharacteristicValue(bob);
+      result.put(propertyPath, chv != null ? chv.getId() : null);
+      result.put(propertyPath + DalUtil.DOT + JsonConstants.IDENTIFIER,
+          chv != null ? chv.getIdentifier() : null);
       return result;
     }).orElse(Collections.emptyMap());
   }
