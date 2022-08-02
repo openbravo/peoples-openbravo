@@ -18,13 +18,17 @@
  */
 package org.openbravo.service.json;
 
+import java.util.List;
 import java.util.Map;
 
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.service.datasource.DataSourceProperty;
+import org.openbravo.service.datasource.DefaultDataSourceService;
 
 /**
- * An extension mechanism for the {@link DataToJsonConverter} that defines a custom way for
- * resolving some additional properties.
+ * An extension mechanism that allows to define a custom way for resolving some additional
+ * properties (property fields).
  */
 public interface AdditionalPropertyResolver {
 
@@ -46,6 +50,26 @@ public interface AdditionalPropertyResolver {
    *         property names and values are the property values
    */
   public Map<String, Object> resolve(BaseOBObject bob, String additionalProperty);
+
+  /**
+   * Provides the list of {@link DataSourceProperty} that must be included in the standard data
+   * sources when the provided entity and additional property are requested. This is needed in order
+   * to support filtering and sorting in the client side by the additional property. If null or an
+   * empty list is returned, then the properties will be tried to be retrieved with an
+   * {@code AdditionalPropertyResolver} with less priority, if any. If there is no
+   * {@code AdditionalPropertyResolver} returning a list with properties, then no data source
+   * properties will be added for the given additional property.
+   * 
+   * @see DefaultDataSourceService#getDataSourceProperties
+   * 
+   * @param entity
+   *          The base entity
+   * @param additionalProperty
+   *          The additional property path
+   * 
+   * @return the list of {@link DataSourceProperty} to be included in the data source
+   */
+  public List<DataSourceProperty> getDataSourceProperties(Entity entity, String additionalProperty);
 
   /**
    * @return an integer representing the priority of this resolver. Those with lower priority are
