@@ -29,7 +29,8 @@
     totalAmount: OB.DEC.Zero,
     totalDiscountAmount: OB.DEC.Zero,
     users: [],
-    productCategories: []
+    productCategories: [],
+    paymentMethods: []
   });
 
   OB.App.StateAPI.Cashup.registerActions({

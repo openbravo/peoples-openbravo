@@ -273,6 +273,27 @@
       }
     });
 
+    // Information per payment methods
+    currentTicket.payments.forEach(paymentMethod => {
+      const paymentMethodExist = globalState.Cashup.paymentMethods.find(
+        x => x.name === paymentMethod.kind
+      );
+
+      if (paymentMethodExist === undefined) {
+        const newPaymentMethod = {
+          name: paymentMethod.kind,
+          quantityReceipt: 1
+        };
+
+        globalState.Cashup.paymentMethods = [
+          ...globalState.Cashup.paymentMethods,
+          newPaymentMethod
+        ];
+      } else {
+        paymentMethodExist.quantityReceipt += 1;
+      }
+    });
+
     return globalState;
   }
 })();

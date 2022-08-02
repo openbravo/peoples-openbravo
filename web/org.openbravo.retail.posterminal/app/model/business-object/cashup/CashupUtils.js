@@ -82,6 +82,7 @@
       newCashup.totalDiscountAmount = OB.DEC.Zero;
       newCashup.users = [];
       newCashup.productCategories = [];
+      newCashup.paymentMethods = [];
 
       return newCashup;
     },
@@ -116,6 +117,7 @@
       newCashup.totalDiscountAmount = OB.DEC.Zero;
       newCashup.users = [];
       newCashup.productCategories = [];
+      newCashup.paymentMethods = [];
 
       return newCashup;
     },
