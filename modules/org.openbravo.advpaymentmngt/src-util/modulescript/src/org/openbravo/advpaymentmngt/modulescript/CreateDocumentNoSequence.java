@@ -47,10 +47,10 @@ public class CreateDocumentNoSequence extends ModuleScript {
       handleError(e);
     }
   }
-  
+
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, 
-        new OpenbravoVersion(3,0,9091));
+    return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null,
+        new OpenbravoVersion(3, 0, 224000));
   }
 }
