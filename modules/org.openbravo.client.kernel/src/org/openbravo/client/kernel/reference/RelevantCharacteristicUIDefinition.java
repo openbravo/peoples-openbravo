@@ -21,8 +21,6 @@ package org.openbravo.client.kernel.reference;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.plm.RelevantCharacteristicProperty;
@@ -63,10 +61,7 @@ public class RelevantCharacteristicUIDefinition extends UIDefinition {
   @Override
   public String getFilterEditorPropertiesProperty(Field field) {
     // review: Boolean filterOnChange = (Boolean) readGridConfigurationSetting("filterOnChange");
-
-    Entity entity = ModelProvider.getInstance()
-        .getEntityByTableId(field.getTab().getTable().getId());
-    return RelevantCharacteristicProperty.from(entity, field.getProperty())
+    return RelevantCharacteristicProperty.from(field)
         .map(p -> ", characteristicId: '" + p.getCharacteristicId() + "'")
         .orElse("");
   }

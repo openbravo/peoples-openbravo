@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
@@ -32,6 +33,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
@@ -127,13 +129,29 @@ public class RelevantCharacteristicProperty {
 
   /**
    * Retrieves a new {@code RelevantCharacteristicProperty} instance for the relevant characteristic
-   * pointed by the given entity and property path.
-   * 
+   * referenced by the given {@link Field}.
+   *
+   * @param field
+   *          The AD field
+   *
+   * @return an Optional describing the {@code RelevantCharacteristicProperty} or an empty Optional
+   *         in case the property cannot be resolved
+   */
+  public static Optional<RelevantCharacteristicProperty> from(Field field) {
+    Entity entity = ModelProvider.getInstance()
+        .getEntityByTableId(field.getTab().getTable().getId());
+    return from(entity, field.getProperty());
+  }
+
+  /**
+   * Retrieves a new {@code RelevantCharacteristicProperty} instance for the relevant characteristic
+   * pointed by the given {@link Entity} and property path.
+   *
    * @param entity
    *          The {@link Entity} owner of the property path
    * @param propertyPath
    *          The path that references the relevant characteristic property
-   * 
+   *
    * @return an Optional describing the {@code RelevantCharacteristicProperty} or an empty Optional
    *         in case the property cannot be resolved
    */
