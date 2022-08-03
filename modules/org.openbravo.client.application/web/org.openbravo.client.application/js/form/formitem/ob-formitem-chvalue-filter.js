@@ -23,12 +23,6 @@ isc.ClassFactory.defineClass(
 );
 
 isc.OBCharacteristicValueFilterItem.addProperties({
-  /*init: function() {
-    this.Super('init', arguments);
-    const grid = this.form.grid.sourceWidget;
-    const gridField = grid.getField(this.name);
-  },*/
-
   createDataSource: function(grid, gridField) {
     const dataSource = OB.Datasource.create({
       dataURL:
@@ -38,21 +32,6 @@ isc.OBCharacteristicValueFilterItem.addProperties({
     });
     return dataSource;
   },
-
-  /*getAppliedCriteria: function() {
-    const baseCriteria = {
-      operator: 'and',
-      _constructor: 'AdvancedCriteria',
-      criteria: [
-        {
-          fieldName: 'characteristic.id',
-          operator: 'equals',
-          value: '015D6C6072AC4A13B7573A261B2011BC'
-        }
-      ]
-    };
-    return baseCriteria;
-  }*/
 
   getPickListFilterCriteria: function() {
     const baseCriteria = {
