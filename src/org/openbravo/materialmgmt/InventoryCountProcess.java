@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2021 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -535,6 +535,7 @@ public class InventoryCountProcess implements Process {
                   "     )" +
                   // Check only negative Stock for the Bins of the Lines of the Physical Inventory
                   "   and sd.storageBin.id = icl.storageBin.id" +
+                  "   and coalesce(sd.attributeSetValue, '0') = coalesce(icl.attributeSetValue, '0')" +
                   "   and l.id = icl.storageBin.id" +
                   "   and l.inventoryStatus.id = invs.id" +
                   "   and invs.overissue = false" +
