@@ -269,6 +269,7 @@ public class AdvancedQueryBuilder {
       AdvancedQueryBuilder subEntityQueryBuilder = subDataEntityQueryService.getQueryBuilder();
       subEntityQueryBuilder.aliasOffset = typedParameters.size();
 
+      String subentityJoin = subEntityQueryBuilder.getJoinClause();
       String subentityWhere = subEntityQueryBuilder.getWhereClause();
       if (StringUtils.isEmpty(subentityWhere.trim())) {
         subentityWhere += " where ";
@@ -293,13 +294,12 @@ public class AdvancedQueryBuilder {
         } else {
           joinType = " inner join ";
         }
-        whereClause += " exists (select 1 from " + subEntity.getName() + " "
-            + subEntityQueryBuilder.getJoinClause() + joinType
-            + subEntityQueryBuilder.getMainAlias() + DalUtil.DOT + distinctPropertyPath + " as i "
-            + subentityWhere + " i = " + mainAlias + subEntityClientOrg + ") ";
+        whereClause += " exists (select 1 from " + subEntity.getName() + " " + subentityJoin
+            + joinType + subEntityQueryBuilder.getMainAlias() + DalUtil.DOT + distinctPropertyPath
+            + " as i " + subentityWhere + " i = " + mainAlias + subEntityClientOrg + ") ";
       } else {
-        whereClause += " exists (select 1 from " + subEntity.getName() + " "
-            + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
+        whereClause += " exists (select 1 from " + subEntity.getName() + " " + subentityJoin
+            + subentityWhere + "e."
             + distinctPropertyPath.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT) + " = " + mainAlias
             + subEntityClientOrg + ") ";
       }

@@ -18,12 +18,22 @@
  */
 package org.openbravo.plm;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -41,22 +51,15 @@ import org.openbravo.service.json.JsonUtils;
  */
 @Dependent
 public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook {
+  private static final Logger log = LogManager.getLogger();
 
   private Map<String, String> joinsWithProductCharacteristicValue = new HashMap<>();
 
   @Override
   public List<JoinDefinition> getJoinDefinitions(AdvancedQueryBuilder queryBuilder,
       List<JoinDefinition> joinDefinitions) {
-    for (String propertyPath : queryBuilder.getAdditionalProperties()) {
-      RelevantCharacteristicProperty property = RelevantCharacteristicProperty
-          .from(queryBuilder.getEntity(), propertyPath)
-          .orElse(null);
-
-      if (property == null) {
-        // not a relevant characteristic property
-        continue;
-      }
-
+    for (RelevantCharacteristicProperty property : getRelevantCharacteristicProperties(
+        queryBuilder)) {
       // add the join with M_Product, if needed
       String productAlias;
       if (isProductEntity(queryBuilder.getEntity())) {
@@ -128,6 +131,40 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
     }
     return joinsWithProductCharacteristicValue.get(relevantCharacteristic) + ".code"
         + (desc ? " desc " : "");
+  }
+
+  private List<RelevantCharacteristicProperty> getRelevantCharacteristicProperties(
+      AdvancedQueryBuilder queryBuilder) {
+    // For grid requests the relevant characteristic properties are passed as additional properties
+    // For requests coming from the grid filters, they are not included as additional properties but
+    // as we only need to retrieve them in case the grid is filtered by any of them, in that case we
+    // get them from the criteria
+    Set<String> properties = queryBuilder.getAdditionalProperties().isEmpty()
+        ? getPropertiesFromCriteria(queryBuilder.getCriteria())
+        : new HashSet<>(queryBuilder.getAdditionalProperties());
+
+    return properties.stream()
+        .map(p -> RelevantCharacteristicProperty.from(queryBuilder.getEntity(), p).orElse(null))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+  }
+
+  private Set<String> getPropertiesFromCriteria(JSONObject criteria) {
+    try {
+      if (criteria.has("criteria")) {
+        Set<String> properties = new HashSet<>();
+        JSONArray c = criteria.getJSONArray("criteria");
+        for (int i = 0; i < c.length(); i++) {
+          properties.addAll(getPropertiesFromCriteria(c.getJSONObject(i)));
+        }
+        return properties;
+      } else if (criteria.has("fieldName")) {
+        return Set.of(criteria.getString("fieldName"));
+      }
+    } catch (JSONException ex) {
+      log.error("Error extracting fields from criteria {}", criteria, ex);
+    }
+    return Collections.emptySet();
   }
 
   private JoinDefinition getJoinDefinition(List<JoinDefinition> list, String path) {
