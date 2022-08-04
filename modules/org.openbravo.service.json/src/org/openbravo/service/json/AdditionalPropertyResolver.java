@@ -27,8 +27,10 @@ import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.DefaultDataSourceService;
 
 /**
- * An extension mechanism that allows to define a custom way for resolving some additional
- * properties (property fields).
+ * An extension mechanism that allows to define a custom way for resolving additional properties
+ * which cannot be resolved through the data model. This interface mainly allows to retrieve the
+ * value of the additional property and to provide the data source properties required to filter and
+ * sort in the client side by the property field linked to the additional property.
  */
 public interface AdditionalPropertyResolver {
 
