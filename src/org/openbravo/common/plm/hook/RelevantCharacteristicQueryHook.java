@@ -109,10 +109,6 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
           value);
       return null;
     }
-    if (isProductEntity(queryBuilder.getEntity())) {
-      // TODO
-      return null;
-    }
     String relevantCharacteristic = getRelevantCharacteristic(queryBuilder, fieldName);
     if (relevantCharacteristic == null) {
       return null;
@@ -124,10 +120,6 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
 
   @Override
   public String parseOrderByClausePart(AdvancedQueryBuilder queryBuilder, String orderByPart) {
-    if (isProductEntity(queryBuilder.getEntity())) {
-      // TODO
-      return null;
-    }
     boolean desc = orderByPart.startsWith("-");
     String path = desc ? orderByPart.substring(1) : orderByPart;
     String identifierPart = JsonConstants.FIELD_SEPARATOR + JsonConstants.IDENTIFIER;
@@ -188,6 +180,13 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
   }
 
   private String getRelevantCharacteristic(AdvancedQueryBuilder queryBuilder, String fieldName) {
+    if (isProductEntity(queryBuilder.getEntity())) {
+      return RelevantCharacteristicProperty.getRelevantCharateristicProperties()
+          .stream()
+          .filter(fieldName::equals)
+          .findFirst()
+          .orElse(null);
+    }
     List<Property> properties = JsonUtils.getPropertiesOnPath(queryBuilder.getEntity(), fieldName);
     if (properties.isEmpty()) {
       return null;

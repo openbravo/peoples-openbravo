@@ -534,7 +534,8 @@ public class AdvancedQueryBuilder {
     if (operator.equals(OPERATOR_EQUALS) || operator.equals(OPERATOR_EQUALSFIELD)) {
       final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
       if (properties.isEmpty()) {
-        return null;
+        // not a property of the model, try to parse the clause with a hook if possible
+        return parseSingleClauseWithHook(fieldName, operator, value);
       }
       final Property property = properties.get(properties.size() - 1);
       if (property == null) {
