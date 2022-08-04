@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.plm;
+package org.openbravo.common.plm.hook;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +37,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.common.plm.RelevantCharacteristicProperty;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;

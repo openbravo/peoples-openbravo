@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.plm;
+package org.openbravo.common.plm.hook;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +26,7 @@ import java.util.Map;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
+import org.openbravo.common.plm.RelevantCharacteristicProperty;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;

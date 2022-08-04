@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.plm;
+package org.openbravo.common.plm;
 
 import java.util.Map;
 import java.util.Optional;
