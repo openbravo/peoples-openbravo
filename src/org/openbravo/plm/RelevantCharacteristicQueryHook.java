@@ -38,11 +38,13 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.AdvancedQueryBuilderHook;
 import org.openbravo.service.json.JoinDefinition;
+import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 
 /**
@@ -115,22 +117,22 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
 
   @Override
   public String parseOrderByClausePart(AdvancedQueryBuilder queryBuilder, String orderByPart) {
-    if (orderByPart.contains("product$productCategory$_identifier")) {
-      // TODO: remove
-      orderByPart = "-product$oBPFColor";
-    }
     if (isProductEntity(queryBuilder.getEntity())) {
       // TODO
       return null;
     }
     boolean desc = orderByPart.startsWith("-");
     String path = desc ? orderByPart.substring(1) : orderByPart;
+    String identifierPart = JsonConstants.FIELD_SEPARATOR + JsonConstants.IDENTIFIER;
+    if (path.endsWith(identifierPart)) {
+      path = path.substring(0, path.length() - identifierPart.length());
+    }
     String relevantCharacteristic = getRelevantCharacteristic(queryBuilder, path);
     if (relevantCharacteristic == null) {
       return null;
     }
-    return joinsWithProductCharacteristicValue.get(relevantCharacteristic) + ".code"
-        + (desc ? " desc " : "");
+    return joinsWithProductCharacteristicValue.get(relevantCharacteristic) + DalUtil.DOT
+        + CharacteristicValue.PROPERTY_SEQUENCENUMBER + (desc ? " desc " : "");
   }
 
   private List<RelevantCharacteristicProperty> getRelevantCharacteristicProperties(

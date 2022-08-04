@@ -54,8 +54,8 @@ public interface AdditionalPropertyResolver {
   /**
    * Provides the list of {@link DataSourceProperty} that must be included in the standard data
    * sources when the provided entity and additional property are requested. This is needed in order
-   * to support filtering and sorting in the client side by the additional property. If null or an
-   * empty list is returned, then the properties will be tried to be retrieved with an
+   * to support filtering and sorting in the client side by the given additional property. If null
+   * or an empty list is returned, then the properties will be tried to be retrieved with an
    * {@code AdditionalPropertyResolver} with less priority, if any. If there is no
    * {@code AdditionalPropertyResolver} returning a list with properties, then no data source
    * properties will be added for the given additional property.

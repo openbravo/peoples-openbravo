@@ -42,7 +42,8 @@ import org.openbravo.service.json.JsonConstants;
 public class RelevantCharacteristicAdditionalPropertyResolver
     implements AdditionalPropertyResolver {
 
-  private static final String RELEVANT_CHARACTERISTIC_REFERENCE_ID = "243FB7EE87FD477E9DF1F14E098C645F";
+  private static final String INTEGER_REFERENCE_ID = "11";
+  private static final String STRING_REFERENCE_ID = "10";
 
   @Override
   public Map<String, Object> resolve(BaseOBObject bob, String additionalProperty) {
@@ -52,6 +53,8 @@ public class RelevantCharacteristicAdditionalPropertyResolver
       result.put(additionalProperty, chv != null ? chv.getId() : null);
       result.put(additionalProperty + DalUtil.DOT + JsonConstants.IDENTIFIER,
           chv != null ? chv.getIdentifier() : null);
+      result.put(additionalProperty + DalUtil.DOT + CharacteristicValue.PROPERTY_SEQUENCENUMBER,
+          chv != null ? chv.getSequenceNumber() : null);
       return result;
     }).orElse(Collections.emptyMap());
   }
@@ -60,28 +63,44 @@ public class RelevantCharacteristicAdditionalPropertyResolver
   public List<DataSourceProperty> getDataSourceProperties(Entity entity,
       String additionalProperty) {
     return RelevantCharacteristicProperty.from(entity, additionalProperty)
-        .map(o -> getRelevantCharacteristicDataSourceProperties(additionalProperty))
+        .map(rcp -> getRelevantCharacteristicDataSourceProperties(additionalProperty))
         .orElse(Collections.emptyList());
   }
 
   private List<DataSourceProperty> getRelevantCharacteristicDataSourceProperties(
       String additionalProperty) {
-    DataSourceProperty dsProperty = new DataSourceProperty();
-    dsProperty.setName(additionalProperty.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
-    dsProperty.setId(false);
-    dsProperty.setMandatory(false);
-    dsProperty.setAuditInfo(false);
-    dsProperty.setUpdatable(false);
-    dsProperty.setBoolean(false);
-    dsProperty.setAllowedValues(null);
-    dsProperty.setPrimitive(true);
-    dsProperty.setFieldLength(100);
-    dsProperty.setUIDefinition(UIDefinitionController.getInstance()
-        .getUIDefinition(
-            OBDal.getInstance().getProxy(Reference.class, RELEVANT_CHARACTERISTIC_REFERENCE_ID)));
-    dsProperty.setPrimitiveObjectType(String.class);
-    dsProperty.setNumericType(false);
-    dsProperty.setAdditional(true);
-    return List.of(dsProperty);
+    DataSourceProperty chValueId = new DataSourceProperty();
+    chValueId.setName(additionalProperty.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
+    chValueId.setId(false);
+    chValueId.setMandatory(false);
+    chValueId.setAuditInfo(false);
+    chValueId.setUpdatable(false);
+    chValueId.setBoolean(false);
+    chValueId.setAllowedValues(null);
+    chValueId.setPrimitive(true);
+    chValueId.setFieldLength(100);
+    chValueId.setUIDefinition(UIDefinitionController.getInstance()
+        .getUIDefinition(OBDal.getInstance().getProxy(Reference.class, STRING_REFERENCE_ID)));
+    chValueId.setPrimitiveObjectType(String.class);
+    chValueId.setNumericType(false);
+    chValueId.setAdditional(true);
+
+    DataSourceProperty sequenceNumber = new DataSourceProperty();
+    sequenceNumber.setName(additionalProperty.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
+        + DalUtil.FIELDSEPARATOR + CharacteristicValue.PROPERTY_SEQUENCENUMBER);
+    sequenceNumber.setId(false);
+    sequenceNumber.setMandatory(false);
+    sequenceNumber.setAuditInfo(false);
+    sequenceNumber.setUpdatable(false);
+    sequenceNumber.setBoolean(false);
+    sequenceNumber.setAllowedValues(null);
+    sequenceNumber.setPrimitive(true);
+    sequenceNumber.setFieldLength(12);
+    sequenceNumber.setUIDefinition(UIDefinitionController.getInstance()
+        .getUIDefinition(OBDal.getInstance().getProxy(Reference.class, INTEGER_REFERENCE_ID)));
+    sequenceNumber.setPrimitiveObjectType(Long.class);
+    sequenceNumber.setNumericType(true);
+
+    return List.of(chValueId, sequenceNumber);
   }
 }

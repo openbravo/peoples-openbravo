@@ -82,6 +82,11 @@ public class RelevantCharacteristicUIDefinition extends UIDefinition {
     }
   }
 
+  @Override
+  public String getTypeProperties() {
+    return "sortNormalizer: function (item, field, context){ return OB.Utilities.bySeqNoSortNormalizer(item, field, context); },";
+  }
+
   private String getDisplayField(Field field) {
     return getProperty(field) + DalUtil.FIELDSEPARATOR + JsonConstants.IDENTIFIER;
   }
