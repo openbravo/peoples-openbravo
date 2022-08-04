@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2016-2020 Openbravo SLU
+ * All portions are Copyright (C) 2016-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -73,6 +73,7 @@ public class CancelAndReplaceUtils {
   private static final String HYPHEN = "-";
   public static final String CREATE_NETTING_SHIPMENT = "CancelAndReplaceCreateNetShipment";
   public static final String ASSOCIATE_SHIPMENT_TO_REPLACE_TICKET = "CancelAndReplaceAssociateShipmentToNewTicket";
+  public static final String LEAVE_DELIVERY_QTY_AS_ZERO_WHEN_CANCEL_LAYAWAY = "LeaveDeliveryQtyAsZeroWhenCancelLayaway";
   public static final String ENABLE_STOCK_RESERVATIONS = "StockReservations";
   public static final String REVERSE_PREFIX = "*R*";
   public static final String ZERO_PAYMENT_SUFIX = "*Z*";
@@ -286,6 +287,26 @@ public class CancelAndReplaceUtils {
       associateShipmentToNewReceipt = false;
     }
     return associateShipmentToNewReceipt;
+  }
+
+  /**
+   * Method to check if during the C&amp;R process, the original order and reverse order's delivered
+   * quantity should be updated with ordered quantity
+   * 
+   * @param order
+   *          The order that is being canceled.
+   * @return boolean
+   */
+  public static boolean getDeliveryQtySetAsZeroWhenCancelLayaway(final Order order) {
+    try {
+      return Preferences
+          .getPreferenceValue(LEAVE_DELIVERY_QTY_AS_ZERO_WHEN_CANCEL_LAYAWAY, true,
+              OBContext.getOBContext().getCurrentClient(), order.getOrganization(),
+              OBContext.getOBContext().getUser(), null, null)
+          .equals("Y");
+    } catch (PropertyException e1) {
+      return false;
+    }
   }
 
   static void throwExceptionIfOrderIsCanceled(final Order order) {

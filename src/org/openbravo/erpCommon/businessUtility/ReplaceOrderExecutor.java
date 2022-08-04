@@ -260,6 +260,8 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
         oldOrder);
     final boolean associateShipmentToNewReceipt = getAssociateGoodsShipmentToNewSalesOrderPreferenceValue(
         oldOrder);
+    final boolean deliveryQtyWhenCancellingLayway = getDeliveryQtySetAsZeroWhenCancelLayaway(
+        oldOrder);
 
     // Iterate old order lines
     ScrollableResults orderLines = getOrderLineList(oldOrder);
@@ -373,13 +375,23 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
           newOrderLine.setDeliveredQuantity(oldOrderLine.getDeliveredQuantity());
         }
       }
+      if (deliveryQtyWhenCancellingLayway) {
+        final ScrollableResults shipmentLines = getShipmentLineListOfOrderLine(oldOrderLine);
+        if (shipmentLines.next()) {
+          // Set old order delivered quantity to the ordered quantity
+          oldOrderLine.setDeliveredQuantity(oldOrderLine.getOrderedQuantity());
 
-      // Set old order delivered quantity to the ordered quantity
-      oldOrderLine.setDeliveredQuantity(oldOrderLine.getOrderedQuantity());
+          // Set inverse order delivered quantity to ordered quantity
+          inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
+        }
+      } else {
+        // Set old order delivered quantity to the ordered quantity
+        oldOrderLine.setDeliveredQuantity(oldOrderLine.getOrderedQuantity());
+
+        // Set inverse order delivered quantity to ordered quantity
+        inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
+      }
       OBDal.getInstance().save(oldOrderLine);
-
-      // Set inverse order delivered quantity to ordered quantity
-      inverseOrderLine.setDeliveredQuantity(inverseOrderLine.getOrderedQuantity());
       OBDal.getInstance().save(inverseOrderLine);
 
       if ((++i % 100) == 0) {
