@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,7 +22,7 @@ package org.openbravo.base.weld.test.testinfrastructure;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 
 /** Simple qualified bean */
-@Qualifier("")
+@Qualifier("ValidValue")
 public class QualifiedBean extends ExtensionBean {
 
   @Override

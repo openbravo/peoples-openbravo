@@ -11,16 +11,16 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.base.weld;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -124,18 +124,28 @@ public class WeldUtils {
   /**
    * Returns a set of instances for a specified type/class
    */
-  @SuppressWarnings("unchecked")
   public static <T> List<T> getInstances(Class<T> type) {
-    final BeanManager beanManager = WeldUtils.getStaticInstanceBeanManager();
-    final Set<Bean<?>> beans = beanManager.getBeans(type, ANY_LITERAL);
+    return getInstances(type, ANY_LITERAL);
+  }
 
-    final List<T> instances = new ArrayList<>();
-    for (Bean<?> bean : beans) {
-      T instance = (T) beanManager.getReference(bean, type,
-          beanManager.createCreationalContext(bean));
-      instances.add(instance);
-    }
-    return instances;
+  /**
+   * Returns a set of instances for a specified type/class annotated with the {@code selectors}
+   * {@link AnnotationLiteral}.
+   * 
+   * Example:
+   * <p>
+   * {@code
+   *   WeldUtils.getInstances(Something.class, new ComponentProvider.Selector("Selector_Value"));
+   * }
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> List<T> getInstances(Class<T> type, AnnotationLiteral<?>... selectors) {
+    BeanManager bm = WeldUtils.getStaticInstanceBeanManager();
+
+    return bm.getBeans(type, selectors)
+        .stream()
+        .map(bean -> (T) bm.getReference(bean, type, bm.createCreationalContext(bean)))
+        .collect(Collectors.toList());
   }
 
   /**

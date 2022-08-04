@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +40,7 @@ import org.jboss.arquillian.junit.InSequence;
 import org.junit.Test;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.client.kernel.ComponentProvider;
 
 /**
  * Test cases for cdi infrastructure. Checking Arquillian works fine and it is possible to inject
@@ -102,6 +105,23 @@ public class CdiInfrastructure extends WeldBaseTest {
   @Test
   public void expectedBeanInstancesAreInjectedWithWeldUtils() {
     assertExtensionBeansInjection(WeldUtils.getInstances(ExtensionBean.class).stream());
+  }
+
+  @Test
+  public void expectedBeanWithAnnotationInstancesAreInjectedWithWeldUtils() {
+    List<ExtensionBean> beans = WeldUtils.getInstances(ExtensionBean.class,
+        new ComponentProvider.Selector("ValidValue"));
+
+    assertThat("Retrieved the expected number of beans", beans, hasSize(1));
+    assertThat(beans, hasItem(instanceOf(QualifiedBean.class)));
+  }
+
+  @Test
+  public void expectedBeanWithInvalidAnnotationInstancesAreNotInjectedWithWeldUtils() {
+    List<ExtensionBean> beans = WeldUtils.getInstances(ExtensionBean.class,
+        new ComponentProvider.Selector("InvalidValue"));
+
+    assertThat("Retrieved the expected number of beans", beans, hasSize(0));
   }
 
   private void assertExtensionBeansInjection(Stream<ExtensionBean> beans) {
