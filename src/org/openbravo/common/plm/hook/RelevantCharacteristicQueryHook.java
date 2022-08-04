@@ -104,6 +104,11 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
   @Override
   public String parseSimpleFilterClause(AdvancedQueryBuilder queryBuilder, String fieldName,
       String operator, Object value) {
+    if (!"equals".equals(operator)) {
+      log.error("Cannot filter using operator {} the field {} with value {}", operator, fieldName,
+          value);
+      return null;
+    }
     if (isProductEntity(queryBuilder.getEntity())) {
       // TODO
       return null;
@@ -112,8 +117,9 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
     if (relevantCharacteristic == null) {
       return null;
     }
-    return joinsWithProductCharacteristicValue.get(relevantCharacteristic) + ".id = '" + value
-        + "'";
+    String filterProperty = joinsWithProductCharacteristicValue.get(relevantCharacteristic)
+        + DalUtil.DOT + CharacteristicValue.PROPERTY_ID;
+    return filterProperty + AdvancedQueryBuilder.getHqlOperator(operator) + "'" + value + "'";
   }
 
   @Override
