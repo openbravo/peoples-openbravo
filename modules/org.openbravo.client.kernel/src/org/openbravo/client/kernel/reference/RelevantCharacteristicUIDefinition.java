@@ -60,9 +60,11 @@ public class RelevantCharacteristicUIDefinition extends UIDefinition {
 
   @Override
   public String getFilterEditorPropertiesProperty(Field field) {
-    // review: Boolean filterOnChange = (Boolean) readGridConfigurationSetting("filterOnChange");
+    // Ignore grid configuration settings like "allowFkFilterByIdentifier" or "disableFkDropdown"
+    // because this reference always displays all the values of the relevant characteristic and
+    // only allows to select the filtering criteria by selecting values in the drop-down
     return RelevantCharacteristicProperty.from(field)
-        .map(p -> ", characteristicId: '" + p.getCharacteristicId() + "'")
+        .map(p -> ", filterOnChange: false, characteristicId: '" + p.getCharacteristicId() + "'")
         .orElse("");
   }
 
