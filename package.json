@@ -26,11 +26,11 @@
     "prettier": "~1.18.2"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.18.9",
     "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "@babel/preset-env": "^7.11.0",
     "@babel/preset-react": "^7.10.4",
     "@testing-library/jest-dom": "^5.11.5",
-    "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.0",
     "eslint": "~7.17.0",
     "eslint-config-airbnb-base": "~14.2.1",
