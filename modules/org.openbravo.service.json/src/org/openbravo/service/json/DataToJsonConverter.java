@@ -220,29 +220,30 @@ public class DataToJsonConverter {
         if (additionalProperty.length() == 0) {
           continue;
         }
-        Map<String, Object> values = resolveWithHook(bob, additionalProperty);
+        Map<String, Object> values = resolveAdditionalPropertyWithHook(bob, additionalProperty);
         if (!values.isEmpty()) {
           for (Entry<String, Object> entry : values.entrySet()) {
             jsonObject.put(replaceDots(entry.getKey()), entry.getValue());
           }
-          continue;
-        }
-        final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
-        if (value == null) {
-          jsonObject.put(replaceDots(additionalProperty), (Object) null);
-        } else if (value instanceof BaseOBObject) {
-          final Property additonalPropertyObject = DalUtil.getPropertyFromPath(bob.getEntity(),
-              additionalProperty);
-          addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
-              additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
         } else {
-          final Property property = DalUtil.getPropertyFromPath(bob.getEntity(),
-              additionalProperty);
-          // identifier
-          if (additionalProperty.endsWith(JsonConstants.IDENTIFIER)) {
-            jsonObject.put(replaceDots(additionalProperty), value);
+          final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
+          if (value == null) {
+            jsonObject.put(replaceDots(additionalProperty), (Object) null);
+          } else if (value instanceof BaseOBObject) {
+            final Property additonalPropertyObject = DalUtil.getPropertyFromPath(bob.getEntity(),
+                additionalProperty);
+            addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
+                additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
           } else {
-            jsonObject.put(replaceDots(additionalProperty), convertPrimitiveValue(property, value));
+            final Property property = DalUtil.getPropertyFromPath(bob.getEntity(),
+                additionalProperty);
+            // identifier
+            if (additionalProperty.endsWith(JsonConstants.IDENTIFIER)) {
+              jsonObject.put(replaceDots(additionalProperty), value);
+            } else {
+              jsonObject.put(replaceDots(additionalProperty),
+                  convertPrimitiveValue(property, value));
+            }
           }
         }
       }
@@ -270,7 +271,8 @@ public class DataToJsonConverter {
     }
   }
 
-  private Map<String, Object> resolveWithHook(BaseOBObject bob, String propertyPath) {
+  private Map<String, Object> resolveAdditionalPropertyWithHook(BaseOBObject bob,
+      String propertyPath) {
     List<AdditionalPropertyResolver> resolvers = WeldUtils
         .getInstances(AdditionalPropertyResolver.class)
         .stream()
