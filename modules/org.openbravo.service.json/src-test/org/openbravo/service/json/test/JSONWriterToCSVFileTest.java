@@ -93,7 +93,7 @@ public class JSONWriterToCSVFileTest extends OBBaseTest {
     json.put("Custom Field 2", "Test 2");
 
     writer.write(json);
-    File file = writer.finishAndCreateCSVFile(params);
+    File file = writer.finishAndCreateCSVFile();
 
     tmpFileAbsolutePath = Paths.get(file.getAbsolutePath());
 

@@ -72,6 +72,11 @@ import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
+/**
+ * Helper class to write JSON objects to generate a CSV file with a custom field structure but using
+ * the standard preferences.
+ *
+ */
 public class JSONWriterToCSVFile {
 
   private static final Logger log = LogManager.getLogger();
@@ -81,29 +86,38 @@ public class JSONWriterToCSVFile {
   private static final String[] CSV_FORMULA_PREFIXES = new String[] { "=", "+", "-", "@" };
   private static final String YES_NO_REFERENCE_ID = "20";
 
-  StringBuilder writer;
-  String fieldSeparator;
-  String decimalSeparator;
-  String prefDecimalSeparator;
-  List<String> fieldProperties;
-  Map<String, String> niceFieldProperties = new HashMap<>();
-  boolean propertiesWritten = false;
-  Map<String, Map<String, String>> refLists = new HashMap<>();
-  List<String> refListCols = new ArrayList<>();
-  List<String> dateCols = new ArrayList<>();
-  List<String> dateTimeCols = new ArrayList<>();
-  List<String> timeCols = new ArrayList<>();
-  List<String> numericCols = new ArrayList<>();
-  List<String> yesNoCols = new ArrayList<>();
-  int clientUTCOffsetMiliseconds;
-  TimeZone clientTimeZone;
-  String translatedLabelYes;
-  String translatedLabelNo;
+  private Map<String, String> parameters;
+  private StringBuilder writer;
+  private String fieldSeparator;
+  private String decimalSeparator;
+  private List<String> fieldProperties;
+  private Map<String, String> niceFieldProperties = new HashMap<>();
+  private boolean propertiesWritten = false;
+  private Map<String, Map<String, String>> refLists = new HashMap<>();
+  private List<String> refListCols = new ArrayList<>();
+  private List<String> dateCols = new ArrayList<>();
+  private List<String> dateTimeCols = new ArrayList<>();
+  private List<String> timeCols = new ArrayList<>();
+  private List<String> numericCols = new ArrayList<>();
+  private List<String> yesNoCols = new ArrayList<>();
+  private int clientUTCOffsetMiliseconds;
+  private TimeZone clientTimeZone;
+  private String translatedLabelYes;
+  private String translatedLabelNo;
 
-  public JSONWriterToCSVFile(HttpServletRequest request, Map<String, String> parameters,
+  /**
+   * @param request
+   *          Request taken in the servlet.
+   * @param params
+   *          It contains the parameters required to build properly the CSV file.
+   * @param entity
+   *          Entity to load the properties.
+   */
+  public JSONWriterToCSVFile(HttpServletRequest request, Map<String, String> params,
       Entity entity) {
     try {
       OBContext.setAdminMode();
+      parameters = params;
       writer = new StringBuilder();
       VariablesSecureApp vars = new VariablesSecureApp(request);
       Window window = JsonUtils.isValueEmpty(parameters.get(JsonConstants.TAB_PARAMETER)) ? null
@@ -116,16 +130,16 @@ public class JSONWriterToCSVFile {
               : null;
 
       loadSeparatorValues(vars, window);
-      loadClientUTCOffsetMiliseconds(parameters);
+      loadClientUTCOffsetMiliseconds();
       loadClientTimeZone();
-      loadFieldProperties(parameters);
+      loadFieldProperties();
 
       // Now we calculate ref lists and nice property names
       final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
       if (entity != null) {
         final Map<String, Property> properties = loadEntityProperties(entity);
 
-        boolean translateYesNoReferences = translateYesNoReferencesInCsv(window);
+        boolean translateYesNoReferences = shouldTranslateYesNoReferencesInCsv(window);
         for (Entry<String, Property> propEntry : properties.entrySet()) {
           final String propKey = propEntry.getKey();
           final Property prop = propEntry.getValue();
@@ -141,14 +155,13 @@ public class JSONWriterToCSVFile {
 
           loadTypesCols(propKey, prop, translateYesNoReferences);
 
-          if (!(prop.getDomainType() instanceof EnumerateDomainType)) {
-            continue;
+          if (prop.getDomainType() instanceof EnumerateDomainType) {
+            loadRefListCols(propKey, col, userLanguageId);
           }
-          loadRefListCols(propKey, col, userLanguageId);
         }
       }
 
-      writeCSVHeaderNote(parameters);
+      writeCSVHeaderNote();
       writeCSVHeader();
     } catch (Exception e) {
       throw new OBException("Error while exporting a CSV file", e);
@@ -160,14 +173,15 @@ public class JSONWriterToCSVFile {
   private void loadSeparatorValues(VariablesSecureApp vars, Window window)
       throws PropertyException {
     try {
-      prefDecimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator", true,
+      decimalSeparator = Preferences.getPreferenceValue("OBSERDS_CSVDecimalSeparator", true,
           OBContext.getOBContext().getCurrentClient(),
           OBContext.getOBContext().getCurrentOrganization(), OBContext.getOBContext().getUser(),
           OBContext.getOBContext().getRole(), window);
     } catch (PropertyNotFoundException e) {
       // There is no preference for the decimal separator.
+      decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition")
+          .substring(0, 1);
     }
-    decimalSeparator = vars.getSessionValue("#DecimalSeparator|generalQtyEdition").substring(0, 1);
     try {
       fieldSeparator = Preferences.getPreferenceValue("OBSERDS_CSVFieldSeparator", true,
           OBContext.getOBContext().getCurrentClient(),
@@ -177,8 +191,7 @@ public class JSONWriterToCSVFile {
       // There is no preference for the field separator. Using the default one.
       fieldSeparator = ",";
     }
-    if ((prefDecimalSeparator != null && prefDecimalSeparator.equals(fieldSeparator))
-        || (prefDecimalSeparator == null && decimalSeparator.equals(fieldSeparator))) {
+    if (decimalSeparator.equals(fieldSeparator)) {
       if (!fieldSeparator.equals(";")) {
         fieldSeparator = ";";
       } else {
@@ -190,7 +203,7 @@ public class JSONWriterToCSVFile {
     }
   }
 
-  private void loadClientUTCOffsetMiliseconds(Map<String, String> parameters) {
+  private void loadClientUTCOffsetMiliseconds() {
     if (parameters.get(JsonConstants.UTCOFFSETMILISECONDS_PARAMETER).length() > 0) {
       clientUTCOffsetMiliseconds = Integer
           .parseInt(parameters.get(JsonConstants.UTCOFFSETMILISECONDS_PARAMETER));
@@ -220,7 +233,7 @@ public class JSONWriterToCSVFile {
     }
   }
 
-  private void loadFieldProperties(Map<String, String> parameters) throws JSONException {
+  private void loadFieldProperties() throws JSONException {
     fieldProperties = new ArrayList<>();
     if (!JsonUtils.isValueEmpty(parameters.get(JsonConstants.FIELDNAMES_PARAMETER))) {
       JSONArray fields = new JSONArray(parameters.get(JsonConstants.FIELDNAMES_PARAMETER));
@@ -325,7 +338,7 @@ public class JSONWriterToCSVFile {
     return YES_NO_REFERENCE_ID.equals(column.getReference().getId());
   }
 
-  private boolean translateYesNoReferencesInCsv(Window windowToCsv) {
+  private boolean shouldTranslateYesNoReferencesInCsv(Window windowToCsv) {
     boolean shouldCheck = false;
     try {
       shouldCheck = Preferences.YES
@@ -339,6 +352,13 @@ public class JSONWriterToCSVFile {
     return shouldCheck;
   }
 
+  /**
+   * Writes the JSON object as a record in CSV format based on the class parameters settings.
+   *
+   * @param json
+   *          JSON object to convert to CSV record.
+   *
+   */
   public void write(JSONObject json) {
     try {
       if (!propertiesWritten) {
@@ -413,8 +433,7 @@ public class JSONWriterToCSVFile {
       // if the CSV decimal separator property is defined, used it over the character
       // defined in Format.xml
       isNumeric = true;
-      keyValue = keyValue.toString()
-          .replace(".", prefDecimalSeparator != null ? prefDecimalSeparator : decimalSeparator);
+      keyValue = keyValue.toString().replace(".", decimalSeparator);
     } else if (yesNoCols.contains(key) && keyValue != null) {
       keyValue = (boolean) keyValue ? getTranslatedLabelYes() : getTranslatedLabelNo();
     } else {
@@ -523,8 +542,8 @@ public class JSONWriterToCSVFile {
     return calendar.getTime();
   }
 
-  private void writeCSVHeaderNote(Map<String, String> parameters) {
-    final String csvHeaderMsg = getMessage(parameters, "OBSERDS_CSVHeaderMessage");
+  private void writeCSVHeaderNote() {
+    final String csvHeaderMsg = getMessage("OBSERDS_CSVHeaderMessage");
 
     if (StringUtils.isNotBlank(csvHeaderMsg)) {
       writer.append("\"").append(csvHeaderMsg).append("\"");
@@ -550,8 +569,8 @@ public class JSONWriterToCSVFile {
     }
   }
 
-  private void writeCSVFooterNote(Map<String, String> parameters) {
-    final String csvFooterMsg = getMessage(parameters, "OBSERDS_CSVFooterMessage");
+  private void writeCSVFooterNote() {
+    final String csvFooterMsg = getMessage("OBSERDS_CSVFooterMessage");
 
     if (StringUtils.isNotBlank(csvFooterMsg)) {
       writer.append("\n").append("\"").append(csvFooterMsg).append("\"");
@@ -559,7 +578,7 @@ public class JSONWriterToCSVFile {
     }
   }
 
-  private String getMessage(final Map<String, String> parameters, final String property) {
+  private String getMessage(final String property) {
     OBContext.setAdminMode(true);
     try {
       String csvMessage = null;
@@ -596,10 +615,15 @@ public class JSONWriterToCSVFile {
     }
   }
 
-  public File finishAndCreateCSVFile(Map<String, String> parameters) {
+  /**
+   * Ends the CSV by adding the footnote message and returns the temporary file with the contents of
+   * the CSV.
+   *
+   */
+  public File finishAndCreateCSVFile() {
     File file = null;
     try {
-      writeCSVFooterNote(parameters);
+      writeCSVFooterNote();
       file = new File(TMP_DIR, UUID.randomUUID().toString() + CSV_EXTENSION);
       Files.writeString(Paths.get(file.getAbsolutePath()), writer.toString());
     } catch (IOException e) {
