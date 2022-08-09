@@ -39,6 +39,7 @@ import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.common.plm.RelevantCharacteristicProperty;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
@@ -57,6 +58,7 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
   private static final Logger log = LogManager.getLogger();
 
   private Map<String, String> joinsWithProductCharacteristicValue = new HashMap<>();
+  private String treeNodeJoin;
 
   @Override
   public List<JoinDefinition> getJoinDefinitions(AdvancedQueryBuilder queryBuilder,
@@ -87,8 +89,7 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
           .setJoinWithClause("characteristic.id = '" + property.getCharacteristicId() + "'");
       joinDefinitions.add(relevantCharJoin);
 
-      // need this left join with M_Ch_Value to not lose the records with null value for the
-      // characteristic when sorting
+      // join with M_Ch_Value
       JoinDefinition charValueJoin = new JoinDefinition(queryBuilder)
           .setOwnerAlias(relevantCharJoin.getJoinAlias())
           .setFetchJoin(false)
@@ -97,6 +98,17 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
               .getProperty(ProductCharacteristicValue.PROPERTY_CHARACTERISTICVALUE));
       joinDefinitions.add(charValueJoin);
       joinsWithProductCharacteristicValue.put(property.getName(), charValueJoin.getJoinAlias());
+
+      // join with AD_TreeNode so we can sort by sequence number
+      JoinDefinition adTreeNodeJoin = new JoinDefinition(queryBuilder)
+          .setOwnerAlias(charValueJoin.getJoinAlias())
+          .setFetchJoin(false)
+          .setProperty(ModelProvider.getInstance()
+              .getEntity(CharacteristicValue.class)
+              .getProperty(CharacteristicValue.PROPERTY_ID))
+          .setUnrelatedEntityJoin("ADTreeNode", "node");
+      joinDefinitions.add(adTreeNodeJoin);
+      treeNodeJoin = adTreeNodeJoin.getJoinAlias();
     }
     return joinDefinitions;
   }
@@ -104,13 +116,13 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
   @Override
   public String parseSimpleFilterClause(AdvancedQueryBuilder queryBuilder, String fieldName,
       String operator, Object value) {
+    String relevantCharacteristic = getRelevantCharacteristic(queryBuilder, fieldName);
+    if (relevantCharacteristic == null) {
+      return null;
+    }
     if (!"equals".equals(operator)) {
       log.error("Cannot filter using operator {} the field {} with value {}", operator, fieldName,
           value);
-      return null;
-    }
-    String relevantCharacteristic = getRelevantCharacteristic(queryBuilder, fieldName);
-    if (relevantCharacteristic == null) {
       return null;
     }
     String filterProperty = joinsWithProductCharacteristicValue.get(relevantCharacteristic)
@@ -130,8 +142,7 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
     if (relevantCharacteristic == null) {
       return null;
     }
-    return joinsWithProductCharacteristicValue.get(relevantCharacteristic) + DalUtil.DOT
-        + CharacteristicValue.PROPERTY_SEQUENCENUMBER + (desc ? " desc " : "");
+    return treeNodeJoin + DalUtil.DOT + TreeNode.PROPERTY_SEQUENCENUMBER + (desc ? " desc " : "");
   }
 
   private List<RelevantCharacteristicProperty> getRelevantCharacteristicProperties(

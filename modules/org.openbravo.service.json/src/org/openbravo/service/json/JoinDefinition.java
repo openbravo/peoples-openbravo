@@ -19,7 +19,9 @@
 package org.openbravo.service.json;
 
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.util.CheckException;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
 
@@ -34,6 +36,7 @@ public class JoinDefinition {
   private String ownerAlias;
   private boolean fetchJoin;
   private String joinWithClause;
+  private Property unrelatedProperty;
 
   /**
    * Builds a new entity join definition
@@ -60,6 +63,11 @@ public class JoinDefinition {
     if (queryBuilder.getOrNesting() > 0) {
       return " left outer join " + (fetchJoin ? "fetch " : "")
           + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
+    }
+    if (unrelatedProperty != null) {
+      return " left join " + unrelatedProperty.getEntity().getName() + " as " + joinAlias + " on "
+          + joinAlias + DalUtil.DOT + unrelatedProperty.getName() + " = " + ownerAlias + DalUtil.DOT
+          + propName;
     }
     String joinType = null;
     // if all the identifier properties of the target entity are mandatory, and if the joined
@@ -170,6 +178,27 @@ public class JoinDefinition {
    */
   public JoinDefinition setJoinWithClause(String joinWithClause) {
     this.joinWithClause = joinWithClause;
+    return this;
+  }
+
+  /**
+   * Sets this join definition as a join with an unrelated entity, i.e., an entity which is not
+   * referenced by the main entity of the query.
+   * 
+   * @param entityName
+   *          The name of the unrelated entity
+   * @param propertyName
+   *          The name of the property of the unrelated entity to be used for the joining
+   *
+   * @return the JoinDefinition instance, for method chaining
+   * @throws CheckException
+   *           if there is no entity with the provided name or if it exists but there is no property
+   *           with the given property name in that entity
+   */
+  public JoinDefinition setUnrelatedEntityJoin(String entityName, String propertyName) {
+    this.unrelatedProperty = ModelProvider.getInstance()
+        .getEntity(entityName)
+        .getProperty(propertyName);
     return this;
   }
 }

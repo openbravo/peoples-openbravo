@@ -45,6 +45,7 @@ public class RelevantCharacteristicAdditionalPropertyResolver
 
   private static final String INTEGER_REFERENCE_ID = "11";
   private static final String STRING_REFERENCE_ID = "10";
+  private static final String PROPERTY_SEQUENCENUMBER = "sequenceNumber";
 
   @Override
   public Map<String, Object> resolve(BaseOBObject bob, String additionalProperty) {
@@ -54,8 +55,8 @@ public class RelevantCharacteristicAdditionalPropertyResolver
       result.put(additionalProperty, chv != null ? chv.getId() : null);
       result.put(additionalProperty + DalUtil.DOT + JsonConstants.IDENTIFIER,
           chv != null ? chv.getIdentifier() : null);
-      result.put(additionalProperty + DalUtil.DOT + CharacteristicValue.PROPERTY_SEQUENCENUMBER,
-          chv != null ? chv.getSequenceNumber() : null);
+      result.put(additionalProperty + DalUtil.DOT + PROPERTY_SEQUENCENUMBER,
+          chv != null ? getSequenceNumber(chv.getId()) : null);
       return result;
     }).orElse(Collections.emptyMap());
   }
@@ -66,6 +67,19 @@ public class RelevantCharacteristicAdditionalPropertyResolver
     return RelevantCharacteristicProperty.from(entity, additionalProperty)
         .map(rcp -> getRelevantCharacteristicDataSourceProperties(additionalProperty))
         .orElse(Collections.emptyList());
+  }
+
+  private Long getSequenceNumber(String characteristicValueId) {
+    //@formatter:off
+    String hql = "select tn.sequenceNumber" +
+                 "  from ADTreeNode as tn" +
+                 " where tn.node = :characteristicValueId";
+    //@formatter:on
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Long.class)
+        .setParameter("characteristicValueId", characteristicValueId)
+        .uniqueResult();
   }
 
   private List<DataSourceProperty> getRelevantCharacteristicDataSourceProperties(
@@ -88,7 +102,7 @@ public class RelevantCharacteristicAdditionalPropertyResolver
 
     DataSourceProperty sequenceNumber = new DataSourceProperty();
     sequenceNumber.setName(additionalProperty.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR)
-        + DalUtil.FIELDSEPARATOR + CharacteristicValue.PROPERTY_SEQUENCENUMBER);
+        + DalUtil.FIELDSEPARATOR + PROPERTY_SEQUENCENUMBER);
     sequenceNumber.setId(false);
     sequenceNumber.setMandatory(false);
     sequenceNumber.setAuditInfo(false);
