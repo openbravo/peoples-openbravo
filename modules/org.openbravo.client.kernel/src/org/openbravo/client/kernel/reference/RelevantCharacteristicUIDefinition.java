@@ -18,11 +18,14 @@
  */
 package org.openbravo.client.kernel.reference;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.openbravo.base.exception.OBException;
+import java.util.HashMap;
+
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.OBTreeReferenceComponent;
 import org.openbravo.common.plm.RelevantCharacteristicProperty;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.json.JsonConstants;
 
@@ -31,14 +34,17 @@ import org.openbravo.service.json.JsonConstants;
  * characteristic
  */
 public class RelevantCharacteristicUIDefinition extends UIDefinition {
+
+  private static final String CH_VALUE_TREE_FILTER_REFERENCE = "39891DBE132640E98C15D090959DCC29";
+
   @Override
   public String getFormEditorType() {
-    return "OBTextItem";
+    return "OBMapTextItem";
   }
 
   @Override
   public String getFilterEditorType() {
-    return "OBCharacteristicValueFilterItem";
+    return "OBCharacteristicValueTreeFilterItem";
   }
 
   @Override
@@ -60,28 +66,25 @@ public class RelevantCharacteristicUIDefinition extends UIDefinition {
 
   @Override
   public String getFilterEditorPropertiesProperty(Field field) {
-    // Ignore grid configuration settings like "allowFkFilterByIdentifier" or "disableFkDropdown"
-    // because this reference always displays all the values of the relevant characteristic and
-    // only allows to select the filtering criteria by selecting values in the drop-down
     return RelevantCharacteristicProperty.from(field)
-        .map(p -> ", filterOnChange: false, characteristicId: '" + p.getCharacteristicId() + "'")
+        .map(p -> ", filterType: 'id', criteriaField: '" + getProperty(field)
+            + "', characteristicId: '" + p.getCharacteristicId() + "'")
         .orElse("");
   }
 
   @Override
   public String getFieldProperties(Field field) {
-    String parentProperties = super.getFieldProperties(field);
     if (field == null) {
-      return parentProperties;
+      return "";
     }
-    try {
-      JSONObject fieldProperties = new JSONObject(
-          parentProperties != null && parentProperties.startsWith("{") ? parentProperties : "{}");
-      fieldProperties.put("displayField", getDisplayField(field));
-      return fieldProperties.toString();
-    } catch (JSONException ex) {
-      throw new OBException("Exception when generating field properties for " + field, ex);
-    }
+    String displayField = getDisplayField(field);
+    String valueField = getProperty(field);
+    String fieldProperties = getOBTreeReferenceComponent().generate();
+    fieldProperties += " displayField: '" + displayField + "'";
+    fieldProperties += ", valueField: '" + valueField + "'";
+    fieldProperties += ", doMapValueToDisplay: (value, form) => form.getValue('" + displayField
+        + "')";
+    return fieldProperties;
   }
 
   @Override
@@ -95,5 +98,16 @@ public class RelevantCharacteristicUIDefinition extends UIDefinition {
 
   private String getProperty(Field field) {
     return field.getProperty().replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR);
+  }
+
+  private OBTreeReferenceComponent getOBTreeReferenceComponent() {
+    OBTreeReferenceComponent treeReferenceComponent = WeldUtils
+        .getInstanceFromStaticBeanManager(OBTreeReferenceComponent.class);
+    ReferencedTree referencedTree = OBDal.getInstance()
+        .get(ReferencedTree.class, CH_VALUE_TREE_FILTER_REFERENCE);
+    treeReferenceComponent.setId(referencedTree.getId());
+    treeReferenceComponent.setParameters(new HashMap<>());
+    treeReferenceComponent.setReferencedTree(referencedTree);
+    return treeReferenceComponent;
   }
 }

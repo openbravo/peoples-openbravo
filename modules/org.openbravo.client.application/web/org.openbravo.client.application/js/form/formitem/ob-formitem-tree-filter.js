@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2020 Openbravo SLU
+ * All portions are Copyright (C) 2013-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -148,7 +148,11 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         return params;
       },
 
-      dataArrived: function() {
+      dataArrived: function(parentNode) {
+        const filterItem = this.treePopup.filterItem;
+        if (filterItem.onDataArrived) {
+          filterItem.onDataArrived(parentNode);
+        }
         this.Super('dataArrived', arguments);
       },
 
@@ -160,13 +164,20 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
 
       setDataSource: function(ds, fields) {
         var me = this,
-          i;
+          i,
+          filterItem = me.treePopup.filterItem;
         ds.transformRequest = function(dsRequest) {
           var target = window[dsRequest.componentId];
           dsRequest.params = dsRequest.params || {};
           dsRequest.params._startRow = 0;
           dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
           dsRequest.params.treeReferenceId = target.treeReferenceId;
+          if (filterItem.addParamsToRequest) {
+            isc.addProperties(
+              dsRequest.params,
+              filterItem.addParamsToRequest()
+            );
+          }
           return this.Super('transformRequest', arguments);
         };
 
@@ -205,6 +216,10 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         ds.primaryKeys = {
           id: 'id'
         };
+        if (filterItem.filterType === 'id') {
+          // this prevents adding an extra criterion by the identifier property
+          filterItem.setOptionDataSource(ds);
+        }
         return this.Super('setDataSource', [ds, fields]);
       },
 
@@ -297,8 +312,15 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       criteria = {},
       i,
       len = selection.length,
-      fieldName =
-        this.fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+      filterByID = this.filterItem.filterType === 'id',
+      fieldName = filterByID
+        ? this.fieldName
+        : this.fieldName +
+          OB.Constants.FIELDSEPARATOR +
+          OB.Constants.IDENTIFIER,
+      criteriaFieldName = filterByID
+        ? OB.Constants.ID
+        : OB.Constants.IDENTIFIER;
     if (len === 0) {
       return {};
     } else if (len === 1) {
@@ -308,7 +330,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         {
           fieldName: fieldName,
           operator: 'equals',
-          value: selection[0][OB.Constants.IDENTIFIER]
+          value: selection[0][criteriaFieldName]
         }
       ];
     } else {
@@ -321,7 +343,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         criteria.criteria.push({
           fieldName: fieldName,
           operator: 'equals',
-          value: selection[i][OB.Constants.IDENTIFIER]
+          value: selection[i][criteriaFieldName]
         });
       }
     }
@@ -373,7 +395,13 @@ isc.OBTreeFilterItem.addProperties({
     this.pickerIconSrc = OB.Styles.OBFormField.DefaultSearch.pickerIconSrc;
     this.Super('init', arguments);
     field = this.grid.getField(this.name);
-    this.criteriaField = field.displayField;
+    this.criteriaField = field.filterEditorProperties
+      ? field.filterEditorProperties.criteriaField
+      : field.displayField;
+    this.filterType = field.filterEditorProperties
+      ? field.filterEditorProperties.filterType
+      : 'identifier';
+    this.recordCache = {};
     if (this.selectorWindow) {
       treeGridFields = this.selectorWindow.selectorGridFields.find(
         'name',
@@ -418,10 +446,126 @@ isc.OBTreeFilterItem.addProperties({
   },
 
   showDialog: function() {
-    var hasChanged = false;
-    if (this.lastValueFromPopup !== this.getValue()) {
+    const lastValue = this.lastValueFromPopup;
+    const currentValue = this.getValue();
+    const areNullValues = lastValue == null && currentValue == null;
+    let hasChanged = false;
+    if (isc.isAn.Array(lastValue) && isc.isAn.Array(currentValue)) {
+      hasChanged = !lastValue.equals(currentValue);
+    } else if (!areNullValues && lastValue !== currentValue) {
       hasChanged = true;
     }
     this.filterDialog.show(hasChanged);
+  },
+
+  onDataArrived: function(parentNode) {
+    if (this.filterType !== 'id') {
+      return;
+    }
+    const parent = parentNode[OB.Constants.ID]
+      ? {
+          [parentNode[OB.Constants.ID]]: parentNode[OB.Constants.IDENTIFIER]
+        }
+      : {};
+    const children = parentNode.children
+      ? parentNode.children.reduce(
+          (obj, child) => ({
+            ...obj,
+            [child[OB.Constants.ID]]: child[OB.Constants.IDENTIFIER]
+          }),
+          {}
+        )
+      : {};
+    this.recordCache = {
+      ...this.recordCache,
+      ...parent,
+      ...children
+    };
+  },
+
+  setCriterion: function(criterion) {
+    if (this.filterType !== 'id') {
+      return this.Super('setCriterion', arguments);
+    }
+    const equals = isc.DataSource.getSearchOperators().equals.symbol;
+    const criteria = criterion ? criterion.criteria : null;
+    let value;
+    if (criteria && criteria.length && criterion.operator === 'or') {
+      value = criteria.map(c => equals + this.recordCache[c.value]);
+    } else {
+      value = equals + this.recordCache[this.buildValueExpressions(criterion)];
+    }
+    this.setValue(value);
+  },
+
+  getCriterion: function() {
+    if (this.filterType !== 'id') {
+      return this.Super('getCriterion', arguments);
+    }
+    let value = this.getCriteriaValue();
+    if (value == null || isc.is.emptyString(value)) {
+      return;
+    }
+    if (isc.isAn.Array(value)) {
+      value = this.mapValueToDisplay(value);
+    }
+    return this.parseValueExpressions(
+      value,
+      this.getCriteriaFieldName(),
+      isc.DataSource.getSearchOperators().equals.ID
+    );
+  },
+
+  mapValueToDisplay: function(value) {
+    if (this.filterType !== 'id') {
+      return this.Super('mapValueToDisplay', arguments);
+    }
+    const valueToMap =
+      isc.isAn.Array(value) && value.length === 1 ? value[0] : value;
+    if (!isc.isAn.Array(valueToMap)) {
+      return this.Super('mapValueToDisplay', arguments);
+    }
+    return valueToMap
+      .map(v =>
+        OB.Utilities.encodeSearchOperator(this.Super('mapValueToDisplay', v))
+      )
+      .join(' or ');
+  },
+
+  getOperator: function() {
+    if (this.filterType !== 'id') {
+      return this.Super('getOperator', arguments);
+    }
+    return isc.DataSource.getSearchOperators().equals.ID;
+  },
+
+  getCriteriaValue: function() {
+    const values = this.getValue();
+    if (!values || this.filterType !== 'id') {
+      return this.Super('getCriteriaValue', arguments);
+    }
+    const identifiers = isc.isAn.Array(values) ? values : [values];
+    const ids = identifiers
+      .map(value => {
+        if (isc.isAn.Array(value)) {
+          return value[0];
+        }
+        if (value.startsWith('==')) {
+          return value.substring(2);
+        }
+        return value;
+      })
+      .map(value => this.getRecordIdsFromIdentifier(value))
+      .flat();
+
+    return ids.filter((element, index) => {
+      return ids.indexOf(element) === index;
+    });
+  },
+
+  getRecordIdsFromIdentifier: function(identifier) {
+    return Object.keys(this.recordCache).filter(
+      key => this.recordCache[key] === identifier
+    );
   }
 });

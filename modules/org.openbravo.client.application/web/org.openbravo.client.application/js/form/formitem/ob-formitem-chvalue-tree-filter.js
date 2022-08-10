@@ -18,33 +18,17 @@
  */
 
 isc.ClassFactory.defineClass(
-  'OBCharacteristicValueFilterItem',
-  isc.OBFKFilterTextItem
+  'OBCharacteristicValueTreeFilterItem',
+  isc.OBTreeFilterItem
 );
 
-isc.OBCharacteristicValueFilterItem.addProperties({
-  createDataSource: function(grid, gridField) {
-    const dataSource = OB.Datasource.create({
-      dataURL:
-        '/openbravo/org.openbravo.service.datasource/CharacteristicValue',
-      requestProperties: {},
-      fields: this.pickListFields
-    });
-    return dataSource;
-  },
+isc.OBCharacteristicValueTreeFilterItem.addProperties({
+  addParamsToRequest: function() {
+    const field = this.grid.getField(this.name);
 
-  getPickListFilterCriteria: function() {
-    const baseCriteria = {
-      operator: 'and',
-      _constructor: 'AdvancedCriteria',
-      criteria: [
-        {
-          fieldName: 'characteristic.id',
-          operator: 'equals',
-          value: this.characteristicId
-        }
-      ]
+    return {
+      characteristicId: field.filterEditorProperties.characteristicId,
+      referencedTableId: field.referencedTableId
     };
-    return baseCriteria;
   }
 });
