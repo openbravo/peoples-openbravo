@@ -33,9 +33,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -97,13 +94,11 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
   private String translatedLabelYes;
   private String translatedLabelNo;
 
-  public JSONWriterToCSV(HttpServletRequest request, HttpServletResponse response,
+  public JSONWriterToCSV(Writer printWriter, VariablesSecureApp vars,
       Map<String, String> parameters, Entity entity) {
     try {
       OBContext.setAdminMode();
-      response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
-      writer = response.getWriter();
-      VariablesSecureApp vars = new VariablesSecureApp(request);
+      writer = printWriter;
       Window window = JsonUtils.isValueEmpty(parameters.get(JsonConstants.TAB_PARAMETER)) ? null
           : OBDal.getInstance()
               .get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER))
@@ -181,6 +176,11 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
             continue;
           }
           fieldProperties.add(field.getString("name"));
+        }
+      } else if (!JsonUtils.isValueEmpty(parameters.get(JsonConstants.FIELDNAMES_PARAMETER))) {
+        JSONArray fields = new JSONArray(parameters.get(JsonConstants.FIELDNAMES_PARAMETER));
+        for (int i = 0; i < fields.length(); i++) {
+          fieldProperties.add(fields.getString(i));
         }
       }
 
@@ -307,6 +307,8 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
             writer.append("\"")
                 .append(niceFieldProperties.get(fieldProperties.get(i)))
                 .append("\"");
+          } else {
+            writer.append("\"").append(fieldProperties.get(i)).append("\"");
           }
         }
         propertiesWritten = true;

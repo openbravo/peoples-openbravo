@@ -237,9 +237,10 @@ public class DataSourceServlet extends BaseKernelServlet {
             OBContext.restorePreviousMode();
           }
           response.setHeader("Content-Disposition", "attachment; filename=ExportedData.csv");
+          VariablesSecureApp vars = new VariablesSecureApp(request);
           JSONWriterToCSV writer;
           if (getDataSource(request) instanceof DefaultDataSourceService) {
-            writer = new JSONWriterToCSV(request, response, parameters,
+            writer = new JSONWriterToCSV(response.getWriter(), vars, parameters,
                 getDataSourceEntity(request, parameters));
             // when exporting a OB grid, the isActive filter should not be set
             parameters.put(JsonConstants.NO_ACTIVE_FILTER, "true");
@@ -252,7 +253,7 @@ public class DataSourceServlet extends BaseKernelServlet {
             String result = getDataSource(request).fetch(parameters);
             JSONObject jsonResult = new JSONObject(result);
             JSONArray data = jsonResult.getJSONObject("response").getJSONArray("data");
-            writer = new JSONWriterToCSV(request, response, parameters,
+            writer = new JSONWriterToCSV(response.getWriter(), vars, parameters,
                 getDataSourceEntity(request, parameters));
             for (int i = 0; i < data.length(); i++) {
               writer.write(data.getJSONObject(i));
