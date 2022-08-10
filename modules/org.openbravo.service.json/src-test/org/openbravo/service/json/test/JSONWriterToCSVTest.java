@@ -24,11 +24,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,22 +43,28 @@ import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
-import org.openbravo.service.json.JSONWriterToCSVFile;
+import org.openbravo.service.json.JSONWriterToCSV;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
 
 /**
- * Tests the {@link JSONWriterToCSVFile} class
+ * Tests the {@link JSONWriterToCSV} class
  */
 
-public class JSONWriterToCSVFileTest extends OBBaseTest {
+public class JSONWriterToCSVTest extends OBBaseTest {
+
+  private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+  private static final String CSV_EXTENSION = "." + ExportType.CSV.getExtension();
 
   private Path tmpFileAbsolutePath;
 
@@ -75,17 +83,22 @@ public class JSONWriterToCSVFileTest extends OBBaseTest {
   }
 
   @Test
-  public void writeJsonObjectWithCustomFields() throws JSONException, IOException {
+  public void writeJsonObjectWithCustomFields()
+      throws JSONException, IOException, PropertyException {
     final HttpServletRequest request = RequestContext.get().getRequest();
+    VariablesSecureApp vars = new VariablesSecureApp(request);
     final Map<String, String> params = getRequestParameters();
 
     final DataToJsonConverter toJsonConverter = OBProvider.getInstance()
         .get(DataToJsonConverter.class);
     toJsonConverter.setAdditionalProperties(JsonUtils.getAdditionalProperties(params));
     toJsonConverter.setSelectedProperties(params.get(JsonConstants.SELECTEDPROPERTIES_PARAMETER));
+
     Entity entity = ModelProvider.getInstance()
         .getEntity(params.get(JsonConstants.DATASOURCE_NAME), false);
-    JSONWriterToCSVFile writer = new JSONWriterToCSVFile(request, params, entity);
+    File fileReport = new File(TMP_DIR, UUID.randomUUID().toString() + CSV_EXTENSION);
+    PrintWriter printWriter = new PrintWriter(fileReport);
+    JSONWriterToCSV writer = new JSONWriterToCSV(printWriter, vars, params, entity);
 
     Organization org = OBDal.getInstance().get(Organization.class, TEST_ORG_ID);
     final JSONObject json = toJsonConverter.toJsonObject(org, DataResolvingMode.FULL);
@@ -93,9 +106,10 @@ public class JSONWriterToCSVFileTest extends OBBaseTest {
     json.put("Custom Field 2", "Test 2");
 
     writer.write(json);
-    File file = writer.finishAndCreateCSVFile();
+    writer.writeCSVFooterNote(params);
+    printWriter.close();
 
-    tmpFileAbsolutePath = Paths.get(file.getAbsolutePath());
+    tmpFileAbsolutePath = Paths.get(fileReport.getAbsolutePath());
 
     final String fileContent = Files.readString(tmpFileAbsolutePath);
 
