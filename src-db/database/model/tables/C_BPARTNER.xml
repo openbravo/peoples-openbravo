@@ -506,6 +506,7 @@
       <check name="C_BPARTNER_INVOICERULE_CHK"><![CDATA[INVOICERULE <> 'S' OR C_INVOICESCHEDULE_ID IS NOT NULL]]></check>
       <check name="C_BPARTNER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISCASHVAT_CH"><![CDATA[ISCASHVAT IN ('Y', 'N')]]></check>
+      <check name="C_BPARTNER_ISCONSENTPAPER_CHK"><![CDATA[IS_CUSTOMER_CONSENT_PAPFORMAT IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISCUSTOMER_CHK"><![CDATA[ISCUSTOMER IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISDISCOUNTPRINT_CHK"><![CDATA[ISDISCOUNTPRINTED IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_ISEMPLOYEE_CHK"><![CDATA[ISEMPLOYEE IN ('Y', 'N')]]></check>
@@ -526,6 +527,5 @@
       <check name="C_BPARTNER_SPBLOCKING_CHK"><![CDATA[SO_PAYMENT_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_VBLOCKING_CHK"><![CDATA[VENDOR_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_VENBLOCKING_CHK"><![CDATA[VENDOR_BLOCKING = 'N' OR PO_ORDER_BLOCKING = 'Y' OR PO_GOODS_BLOCKING = 'Y' OR PO_INVOICE_BLOCKING = 'Y' OR PO_PAYMENT_BLOCKING = 'Y']]></check>
-      <check name="C_BPARTNER_ISCONSENTPAPER_CHK"><![CDATA[IS_CUSTOMER_CONSENT_PAPFORMAT IN ('Y', 'N')]]></check>
     </table>
   </database>
