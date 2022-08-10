@@ -393,6 +393,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="IS_CUSTOMER_CONSENT_PAPFORMAT" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_LANGUAGE" name="AD_LANGUAGE_C_BUSPARTNER">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
@@ -522,5 +526,6 @@
       <check name="C_BPARTNER_SPBLOCKING_CHK"><![CDATA[SO_PAYMENT_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_VBLOCKING_CHK"><![CDATA[VENDOR_BLOCKING IN ('Y', 'N')]]></check>
       <check name="C_BPARTNER_VENBLOCKING_CHK"><![CDATA[VENDOR_BLOCKING = 'N' OR PO_ORDER_BLOCKING = 'Y' OR PO_GOODS_BLOCKING = 'Y' OR PO_INVOICE_BLOCKING = 'Y' OR PO_PAYMENT_BLOCKING = 'Y']]></check>
+      <check name="C_BPARTNER_ISCONSENTPAPER_CHK"><![CDATA[IS_CUSTOMER_CONSENT_PAPFORMAT IN ('Y', 'N')]]></check>
     </table>
   </database>
