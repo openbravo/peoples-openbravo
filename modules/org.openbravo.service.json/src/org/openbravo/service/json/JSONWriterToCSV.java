@@ -68,6 +68,10 @@ import org.openbravo.utils.Replace;
 
 /**
  * Helper class to write JSON objects to generate a CSV file using the standard preferences.
+ * 
+ * This class will be commonly used by first creating a new instance and that will write the header
+ * in the writer, then invoking the write method for each of the json objects that need to be
+ * written and then by invoking the writeCSVFooterNote method to write the fotter, if any.
  *
  */
 public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
@@ -632,7 +636,6 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
                 "&quot;", "\""),
             "\"", "\"\"");
       }
-
       return csvMessage;
     } finally {
       OBContext.restorePreviousMode();

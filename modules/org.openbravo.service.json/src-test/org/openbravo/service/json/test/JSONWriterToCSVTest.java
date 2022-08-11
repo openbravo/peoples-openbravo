@@ -47,6 +47,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.json.DataResolvingMode;
@@ -65,6 +66,7 @@ public class JSONWriterToCSVTest extends OBBaseTest {
 
   private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
   private static final String CSV_EXTENSION = "." + ExportType.CSV.getExtension();
+  private static final String CSV_SEPARATOR = "\",\"";
 
   private Path tmpFileAbsolutePath;
 
@@ -97,14 +99,14 @@ public class JSONWriterToCSVTest extends OBBaseTest {
     Entity entity = ModelProvider.getInstance()
         .getEntity(params.get(JsonConstants.DATASOURCE_NAME), false);
     File fileReport = new File(TMP_DIR, UUID.randomUUID().toString() + CSV_EXTENSION);
-    PrintWriter printWriter = new PrintWriter(fileReport);
-    JSONWriterToCSV writer = new JSONWriterToCSV(printWriter, vars, params, entity);
 
     Organization org = OBDal.getInstance().get(Organization.class, TEST_ORG_ID);
     final JSONObject json = toJsonConverter.toJsonObject(org, DataResolvingMode.FULL);
     json.put("Custom Field 1", "Test 1");
     json.put("Custom Field 2", "Test 2");
 
+    PrintWriter printWriter = new PrintWriter(fileReport);
+    JSONWriterToCSV writer = new JSONWriterToCSV(printWriter, vars, params, entity);
     writer.write(json);
     writer.writeCSVFooterNote(params);
     printWriter.close();
@@ -120,10 +122,16 @@ public class JSONWriterToCSVTest extends OBBaseTest {
     Map<String, String> params = new HashMap<>();
     params.put(JsonConstants.UTCOFFSETMILISECONDS_PARAMETER, "7200000");
     params.put(JsonConstants.DATASOURCE_NAME, "Organization");
-    params.put(JsonConstants.SELECTEDPROPERTIES_PARAMETER, "searchKey,name");
+    params.put(JsonConstants.SELECTEDPROPERTIES_PARAMETER,
+        "searchKey,name,summaryLevel,organizationType,legalEntityOrganization,creationDate,createdBy");
     params.put(JsonConstants.FIELDNAMES_PARAMETER,
         new JSONArray().put("searchKey")
             .put("name")
+            .put("summaryLevel")
+            .put("organizationType")
+            .put("legalEntityOrganization")
+            .put("creationDate")
+            .put("createdBy")
             .put("Custom Field 1")
             .put("Custom Field 2")
             .toString());
@@ -131,8 +139,12 @@ public class JSONWriterToCSVTest extends OBBaseTest {
   }
 
   private String getExpectedResult(Organization org) {
-    return "\"Search Key\",\"Name\",\"Custom Field 1\",\"Custom Field 2\"\n" + "\""
-        + org.getSearchKey() + "\",\"" + org.getName() + "\",\"Test 1\",\"Test 2\"";
+    return "\"Search Key\",\"Name\",\"Summary Level\",\"Organization Type\",\"Legal Entity Organization\",\"Creation Date\",\"Created By\",\"Custom Field 1\",\"Custom Field 2\"\n"
+        + "\"" + org.getSearchKey() + CSV_SEPARATOR + org.getName() + CSV_SEPARATOR
+        + org.isSummaryLevel() + CSV_SEPARATOR + org.getOrganizationType().getIdentifier()
+        + CSV_SEPARATOR + org.getLegalEntityOrganization().getIdentifier() + CSV_SEPARATOR
+        + OBDateUtils.formatDateTime(org.getCreationDate()) + CSV_SEPARATOR
+        + org.getCreatedBy().getIdentifier() + "\",\"Test 1\",\"Test 2\"";
   }
 
 }
