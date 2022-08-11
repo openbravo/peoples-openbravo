@@ -17,8 +17,12 @@
  */
 package org.openbravo.financial;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
@@ -28,6 +32,7 @@ import org.openbravo.service.json.JsonUtils;
  * Defines same methods used in transformers price exception.
  */
 public abstract class PriceExceptionAbstractTransformer extends HqlQueryTransformer {
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   public String transformHqlQuery(String hqlQuery, Map<String, String> requestParameters,
@@ -47,10 +52,16 @@ public abstract class PriceExceptionAbstractTransformer extends HqlQueryTransfor
    * @return document date or null as a string format.
    */
   protected String getDocumentDate(Map<String, String> requestParameters, String key) {
-    String documentDate = requestParameters.containsKey(key)
-        ? "TO_DATE('" + requestParameters.get(key) + "','"
-            + JsonUtils.createDateFormat().toPattern() + "')"
-        : "null";
+    SimpleDateFormat formatter = JsonUtils.createDateFormat();
+    String documentDate = "null";
+    try {
+      documentDate = requestParameters.containsKey(key)
+          ? "TO_DATE('" + formatter.format(formatter.parse(requestParameters.get(key))) + "','"
+              + formatter.toPattern().toUpperCase() + "')"
+          : "null";
+    } catch (ParseException e) {
+      log.error("Couldn't transform date", e);
+    }
     return documentDate;
   }
 
