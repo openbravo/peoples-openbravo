@@ -21,8 +21,7 @@ package org.openbravo.advpaymentmngt.modulescript;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 
@@ -47,10 +46,10 @@ public class CreateDocumentNoSequence extends ModuleScript {
       handleError(e);
     }
   }
-
+  
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
-    return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null,
-        new OpenbravoVersion(3, 0, 224000));
+    return new ModuleScriptExecutionLimits("A918E3331C404B889D69AA9BFAFB23AC", null, 
+        new OpenbravoVersion(3,0,9091));
   }
 }
