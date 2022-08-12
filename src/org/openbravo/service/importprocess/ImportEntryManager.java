@@ -395,20 +395,20 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
     }
   }
 
-  private void handleImportEntry(ImportEntry importEntry) {
+  private boolean handleImportEntry(ImportEntry importEntry) {
 
     try {
       ImportEntryProcessor entryProcessor = getImportEntryProcessor(importEntry.getTypeofdata());
       if (entryProcessor == null) {
-        log.warn("No import entry processor defined for type of data " + importEntry);
+        log.warn("No import entry processor defined for type of data {}", importEntry);
+        return false;
       } else {
-        entryProcessor.handleImportEntry(importEntry);
+        return entryProcessor.handleImportEntry(importEntry);
       }
     } catch (Throwable t) {
-      log.error(
-          "Error while saving import message " + importEntry + " " + "  message: " + t.getMessage(),
-          t);
+      log.error("Error while saving import entry {} ", importEntry, t);
       setImportEntryErrorIndependent(importEntry.getId(), t);
+      return false;
     }
   }
 
@@ -645,6 +645,7 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
             }
 
             int entryCount = 0;
+            int skippedEntries = 0;
             try {
               // start processing, so ignore any notifications happening before
               wasNotifiedInParallel = false;
@@ -666,14 +667,17 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
                 int typeOfDataEntryCount = 0;
                 try (ScrollableResults entries = entriesQry.scroll(ScrollMode.FORWARD_ONLY)) {
                   while (entries.next() && isHandlingImportEntries()) {
-                    entryCount++;
-                    typeOfDataEntryCount++;
                     final ImportEntry entry = (ImportEntry) entries.get(0);
 
                     log.trace("Handle import entry {}", entry::getIdentifier);
 
                     try {
-                      manager.handleImportEntry(entry);
+                      if (manager.handleImportEntry(entry)) {
+                        entryCount++;
+                        typeOfDataEntryCount++;
+                      } else {
+                        skippedEntries++;
+                      }
                       // remove it from the internal cache to keep it small
                       OBDal.getInstance().getSession().evict(entry);
                     } catch (Throwable t) {
@@ -721,8 +725,8 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
                     300 + ((1_000 * entryCount) / manager.processingCapacityPerSecond));
 
                 log.debug(
-                    "{} entries have been handled. Wait {} ms, and try again to capture new entries which have been added",
-                    entryCount, t);
+                    "{} entries have been handled, {} skipped. Wait {} ms, and try again to capture new entries which have been added",
+                    entryCount, skippedEntries, t);
                 Thread.sleep(t);
               } catch (Exception ignored) {
               }

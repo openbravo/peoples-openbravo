@@ -135,11 +135,13 @@ public abstract class ImportEntryProcessor {
    * method. The implementation should be able to gracefully handle duplicate entries. Also the
    * implementation should check if the {@link ImportEntry} was possibly already handled and ignore
    * it then.
+   * 
+   * @return whether the importEntry has been assigned to a thread for it to be processed
    */
-  public void handleImportEntry(ImportEntry importEntry) {
+  public boolean handleImportEntry(ImportEntry importEntry) {
 
     if (!canHandleImportEntry(importEntry)) {
-      return;
+      return false;
     }
     // check if there is already a thread which should handle this
     // importentry.
@@ -147,19 +149,24 @@ public abstract class ImportEntryProcessor {
 
     // the next call is synchronized to manage the case
     // that a thread deregisters itself at the same time
-    assignEntryToThread(key, importEntry);
+    return assignEntryToThread(key, importEntry);
   }
 
-  // synchronized to handle the case that a thread tries to deregister
-  // itself at the same time
-  protected synchronized void assignEntryToThread(String key, ImportEntry importEntry) {
+  /**
+   * Assigns an import entry to a processing thread besed on its type and key.
+   * 
+   * @implNote it is synchronized to handle the case that a thread tries to deregister itself at the
+   *           same time
+   * @return whether the import entry could be assigned to a thread
+   */
+  protected synchronized boolean assignEntryToThread(String key, ImportEntry importEntry) {
 
     int currentCycle = importEntryManager.getCurrentCycle();
     if (!importEntryManager.isAcceptingEntries(importEntry.getTypeofdata(), key)) {
       log.trace(
           "Not accepting new entries of type {} key {} in this cycle ({}) as a runnable for them spanned from a previous cycle",
           importEntry.getTypeofdata(), key, currentCycle);
-      return;
+      return false;
     }
 
     // runnables is a concurrent hashmap
@@ -173,6 +180,7 @@ public abstract class ImportEntryProcessor {
         // give it to the runnable, the addEntry checks if the import entry
         // is not already being handled, if so it is skipped
         runnable.addEntry(importEntry);
+        return true;
       } else {
         // This runnable was created in a previous cycle and spanned to current, we should not
         // accept this entry to prevent it to take the processing threads that might be used by
@@ -184,9 +192,8 @@ public abstract class ImportEntryProcessor {
         log.debug("Not assigning {}-{} current cycle {} running since cycle {} size {}",
             importEntry.getTypeofdata(), key, currentCycle, runnable.getCycle(),
             runnable.getImportEntryQueue().size());
+        return false;
       }
-      // done
-      return;
     }
 
     // no runnable, create a new one
@@ -207,7 +214,9 @@ public abstract class ImportEntryProcessor {
     if (submitted) {
       // and make sure it can get next entries by caching it
       runnables.put(key, runnable);
+      return true;
     }
+    return false;
   }
 
   /**
