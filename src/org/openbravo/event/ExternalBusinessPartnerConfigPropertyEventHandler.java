@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2021 Openbravo SLU
+ * All portions are Copyright (C) 2021-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,9 +34,13 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfig;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigProperty;
 
-public class ExternalBusinessPartnerConfigPropertyEventHandler extends EntityPersistenceEventObserver {
+/**
+ * Checks the validity of the saved/updated external business partner configuration property
+ */
+public class ExternalBusinessPartnerConfigPropertyEventHandler
+    extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
-    ModelProvider.getInstance().getEntity(ExternalBusinessPartnerConfigProperty.ENTITY_NAME) };
+      ModelProvider.getInstance().getEntity(ExternalBusinessPartnerConfigProperty.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -48,6 +52,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler extends EntityPer
       return;
     }
     checkDefaultEmailDuplicates(event);
+    checkDefaultPhoneDuplicates(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -55,30 +60,60 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler extends EntityPer
       return;
     }
     checkDefaultEmailDuplicates(event);
+    checkDefaultPhoneDuplicates(event);
   }
 
   private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
     final String id = event.getId();
-    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event.getTargetInstance();
-    final ExternalBusinessPartnerConfig currentExtBPConfig = property.getExternalBusinessPartnerIntegrationConfiguration();
+    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    final ExternalBusinessPartnerConfig currentExtBPConfig = property
+        .getExternalBusinessPartnerIntegrationConfiguration();
 
     if (!property.isDefaultemail() || !property.isActive()) {
       return;
     }
 
     final OBCriteria<?> criteria = OBDal.getInstance()
-      .createCriteria(event.getTargetInstance().getClass());
+        .createCriteria(event.getTargetInstance().getClass());
     criteria.add(Restrictions.eq(
-      ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-      currentExtBPConfig));
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        currentExtBPConfig));
     criteria
-      .add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTEMAIL, true));
+        .add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTEMAIL, true));
     criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
     criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
 
     criteria.setMaxResults(1);
     if (criteria.uniqueResult() != null) {
       throw new OBException("@DuplicatedCRMDefaultEmail@");
+    }
+  }
+
+  private void checkDefaultPhoneDuplicates(EntityPersistenceEvent event) {
+    final String id = event.getId();
+    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    final ExternalBusinessPartnerConfig currentExtBPConfig = property
+        .getExternalBusinessPartnerIntegrationConfiguration();
+
+    if (!property.isDefaultphone() || !property.isActive()) {
+      return;
+    }
+
+    final OBCriteria<?> criteria = OBDal.getInstance()
+        .createCriteria(event.getTargetInstance().getClass());
+    criteria.add(Restrictions.eq(
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        currentExtBPConfig));
+    criteria
+        .add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTPHONE, true));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
+    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
+
+    criteria.setMaxResults(1);
+    if (criteria.uniqueResult() != null) {
+      throw new OBException("@DuplicatedCRMDefaultPhone@");
     }
   }
 }
