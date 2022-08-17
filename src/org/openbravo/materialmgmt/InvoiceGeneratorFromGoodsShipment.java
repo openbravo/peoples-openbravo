@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018-2021 Openbravo SLU
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -436,6 +436,7 @@ public class InvoiceGeneratorFromGoodsShipment {
     newInvoice.setWithholdingamount(BigDecimal.ZERO);
     newInvoice.setPaymentMethod(shipment.getBusinessPartner().getPaymentMethod());
     newInvoice.setPaymentTerms(shipment.getBusinessPartner().getPaymentTerms());
+    newInvoice.setUserContact(shipment.getUserContact());
 
     checkInvoiceHasAllMandatoryFields(newInvoice);
 
