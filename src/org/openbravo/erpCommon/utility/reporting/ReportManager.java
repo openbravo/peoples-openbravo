@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -226,7 +226,9 @@ public class ReportManager {
     final String lang = variables.getLanguage();
     designParameters.put("LANGUAGE", lang);
 
-    final Locale locale = new Locale(lang.substring(0, 2), lang.substring(3, 5));
+    final Locale locale = new Locale.Builder().setLanguage(lang.substring(0, 2))
+        .setRegion(lang.substring(3, 5))
+        .build();
     designParameters.put("LOCALE", locale);
 
     final DecimalFormatSymbols dfs = new DecimalFormatSymbols();

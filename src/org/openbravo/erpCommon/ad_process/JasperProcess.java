@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2008-2017 Openbravo SLU
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,7 +77,9 @@ public class JasperProcess implements Process {
     String strAttach = config.strFTPDirectory + "/284-" + classInfoId;
 
     String strLanguage = bundle.getContext().getLanguage();
-    Locale locLocale = new Locale(strLanguage.substring(0, 2), strLanguage.substring(3, 5));
+    final Locale locLocale = new Locale.Builder().setLanguage(strLanguage.substring(0, 2))
+        .setRegion(strLanguage.substring(3, 5))
+        .build();
 
     String strBaseDesign = getBaseDesignPath(config);
 

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Copyright (C) 2001-2022 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -1206,7 +1206,9 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
     final String strAttach = globalParameters.strFTPDirectory + "/284-" + classInfo.id;
 
     final String strLanguage = variables.getLanguage();
-    final Locale locLocale = new Locale(strLanguage.substring(0, 2), strLanguage.substring(3, 5));
+    final Locale locLocale = new Locale.Builder().setLanguage(strLanguage.substring(0, 2))
+        .setRegion(strLanguage.substring(3, 5))
+        .build();
 
     final String strBaseDesign = getBaseDesignPath(strLanguage);
 
