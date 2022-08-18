@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2020 Openbravo SLU
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -74,6 +74,8 @@ public class JsonConstants {
   public static final String TEXTMATCH_SUBSTRING = "substring";
   public static final String DISPLAYFIELD_PARAMETER = "displayProperty";
   public static final String CSRF_TOKEN_PARAMETER = "csrfToken";
+  public static final String UTCOFFSETMILISECONDS_PARAMETER = "_UTCOffsetMiliseconds";
+  public static final String FIELDNAMES_PARAMETER = "fieldNames";
 
   // if this parameter is passed then if a new object already has an id then
   // that id is set back in the json which is returned together with the
