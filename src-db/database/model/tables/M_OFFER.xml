@@ -245,6 +245,10 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault><![CDATA['Y']]></onCreateDefault>
       </column>
+      <column name="VALUE" primaryKey="false" required="false" type="NVARCHAR" size="30" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_OFFER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -254,6 +258,10 @@
       <foreign-key foreignTable="M_OFFER_TYPE" name="M_OFFER_OFFERTYPE">
         <reference local="M_OFFER_TYPE_ID" foreign="M_OFFER_TYPE_ID"/>
       </foreign-key>
+      <index name="M_OFFER_VALUE" unique="false">
+        <index-column name="VALUE"/>
+        <whereClause><![CDATA[VALUE IS NOT NULL]]></whereClause>
+      </index>
       <check name="M_OFFER_ALL_WEEK_TIME_CHK"><![CDATA[STARTINGTIME < ENDINGTIME]]></check>
       <check name="M_OFFER_FRIDAY_CHK"><![CDATA[FRIDAY IN ('Y', 'N')]]></check>
       <check name="M_OFFER_FRIDAY_TIME_CHK"><![CDATA[STARTINGTIMEFRIDAY < ENDINGTIMEFRIDAY]]></check>
