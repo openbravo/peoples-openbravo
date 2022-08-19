@@ -61,6 +61,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.service.json.JsonToDataConverter.JsonConversionError;
+import org.openbravo.service.json.observability.logger.DatasourceObservabilityLogger;
 import org.openbravo.userinterface.selector.Selector;
 import org.openbravo.userinterface.selector.SelectorConstants;
 
@@ -88,6 +89,9 @@ public class DefaultJsonDataService implements JsonDataService {
 
   @Inject
   private CachedPreference cachedPreference;
+
+  @Inject
+  private DatasourceObservabilityLogger datasourceObservabilityLogger;
 
   private static DefaultJsonDataService instance = WeldUtils
       .getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
@@ -254,7 +258,9 @@ public class DefaultJsonDataService implements JsonDataService {
         } else {
           long t = System.currentTimeMillis();
           bobs = queryService.list();
-          log.debug("query time: {}", System.currentTimeMillis() - t);
+          long queryTime = System.currentTimeMillis() - t;
+          log.debug("query time: {}", queryTime);
+          datasourceObservabilityLogger.logIfNeeded(parameters, queryService, queryTime);
 
           // If the request is done from a P&E window, then we should adapt the page size to include
           // all selected records into the response
