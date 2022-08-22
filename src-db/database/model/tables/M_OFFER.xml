@@ -263,6 +263,7 @@
         <whereClause><![CDATA[VALUE IS NOT NULL]]></whereClause>
       </index>
       <check name="M_OFFER_ALL_WEEK_TIME_CHK"><![CDATA[STARTINGTIME < ENDINGTIME]]></check>
+      <check name="M_OFFER_DATE_CHK"><![CDATA[DATEFROM <= DATETO]]></check>
       <check name="M_OFFER_FRIDAY_CHK"><![CDATA[FRIDAY IN ('Y', 'N')]]></check>
       <check name="M_OFFER_FRIDAY_TIME_CHK"><![CDATA[STARTINGTIMEFRIDAY < ENDINGTIMEFRIDAY]]></check>
       <check name="M_OFFER_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
