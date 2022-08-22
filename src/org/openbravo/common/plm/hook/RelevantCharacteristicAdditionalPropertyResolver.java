@@ -48,6 +48,11 @@ public class RelevantCharacteristicAdditionalPropertyResolver
   private static final String PROPERTY_SEQUENCENUMBER = "sequenceNumber";
 
   @Override
+  public boolean canResolve(Entity entity, String additionalProperty) {
+    return RelevantCharacteristicProperty.from(entity, additionalProperty).isPresent();
+  }
+
+  @Override
   public Map<String, Object> resolve(BaseOBObject bob, String additionalProperty) {
     return RelevantCharacteristicProperty.from(bob.getEntity(), additionalProperty).map(o -> {
       Map<String, Object> result = new HashMap<>();

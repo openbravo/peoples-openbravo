@@ -35,6 +35,21 @@ import org.openbravo.service.datasource.DefaultDataSourceService;
 public interface AdditionalPropertyResolver {
 
   /**
+   * Determines if the value of the given property can be resolved for the business objects of the
+   * given entity.
+   * 
+   * @param entity
+   *          The entity that may be linked to the given property, although without having direct
+   *          relationship through the data model
+   * @param additionalProperty
+   *          The additional property path
+   * 
+   * @return {@code true} if the value of the property can be resolved with this
+   *         {@code AdditionalPropertyResolver} or {@false} in any other case
+   */
+  public boolean canResolve(Entity entity, String additionalProperty);
+
+  /**
    * Resolves an additional property. If null or an empty map is returned, then the additional
    * property will be tried to be resolved with an {@code AdditionalPropertyResolver} with less
    * priority, if any. If there is no {@code AdditionalPropertyResolver} returning a map with

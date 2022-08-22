@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,6 +47,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.client.kernel.reference.DateTimeUIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
@@ -59,7 +61,6 @@ import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.ui.Element;
-import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.Window;
@@ -225,24 +226,24 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
 
   private void loadNiceFieldProperties(Map<String, String> parameters, Entity entity,
       Window window) {
+    if (entity == null) {
+      return;
+    }
     // Now we calculate ref lists and nice property names
     final String userLanguageId = OBContext.getOBContext().getLanguage().getId();
-    if (entity != null) {
-      final Map<String, Property> properties = loadEntityProperties(entity);
-
-      boolean translateYesNoReferences = shouldTranslateYesNoReferencesInCsv(window);
-      for (Entry<String, Property> propEntry : properties.entrySet()) {
-        final String propKey = propEntry.getKey();
-        final Property prop = propEntry.getValue();
+    final Map<String, Property> properties = loadEntityProperties(entity);
+    boolean translateYesNoReferences = shouldTranslateYesNoReferencesInCsv(window);
+    for (Entry<String, Property> propEntry : properties.entrySet()) {
+      final String propKey = propEntry.getKey();
+      final Property prop = propEntry.getValue();
+      if (prop == null) {
+        loadTabNiceFieldProperty(propKey, null, userLanguageId, parameters);
+      } else {
         Column col = OBDal.getInstance().get(Column.class, prop.getColumnId());
-
         if (prop.isAuditInfo()) {
           loadAuditInfoNiceFieldProperty(propKey, col);
-        } else if (parameters.get(JsonConstants.TAB_PARAMETER) != null
-            && !parameters.get(JsonConstants.TAB_PARAMETER).equals("")) {
-          loadTabNiceFieldProperty(propKey, col, userLanguageId, parameters);
         } else {
-          niceFieldProperties.put(propKey, col.getName());
+          loadTabNiceFieldProperty(propKey, col, userLanguageId, parameters);
         }
 
         loadTypesCols(propKey, prop, translateYesNoReferences);
@@ -265,9 +266,18 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
     for (String fieldProperty : fieldProperties) {
       if (fieldProperty.contains(DalUtil.FIELDSEPARATOR)) {
         properties.put(fieldProperty, DalUtil.getPropertyFromPath(entity, fieldProperty));
+      } else if (canBeResolvedAsAdditionalProperty(entity, fieldProperty)) {
+        properties.put(fieldProperty, null);
       }
     }
     return properties;
+  }
+
+  private boolean canBeResolvedAsAdditionalProperty(Entity entity, String property) {
+    return WeldUtils.getInstances(AdditionalPropertyResolver.class)
+        .stream()
+        .sorted(Comparator.comparing(AdditionalPropertyResolver::getPriority))
+        .anyMatch(r -> r.canResolve(entity, property));
   }
 
   private void loadAuditInfoNiceFieldProperty(String propKey, Column col) {
@@ -288,23 +298,28 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
     }
   }
 
-  private void loadTabNiceFieldProperty(String propKey, Column col, String userLanguageId,
+  private void loadTabNiceFieldProperty(String propKey, Column column, String userLanguageId,
       Map<String, String> parameters) {
-    Tab tab = OBDal.getInstance().get(Tab.class, parameters.get(JsonConstants.TAB_PARAMETER));
-    String formattedPropKey = propKey.replace("$", ".");
-    for (Field field : tab.getADFieldList()) {
-      if ((field.getProperty() != null && !formattedPropKey.equals(field.getProperty()))
-          || field.getColumn() == null || !field.getColumn().getId().equals(col.getId())) {
-        continue;
-      }
-
-      niceFieldProperties.put(propKey, field.getName());
-      for (FieldTrl fieldTrl : field.getADFieldTrlList()) {
-        if (fieldTrl.getLanguage().getId().equals(userLanguageId)) {
-          niceFieldProperties.put(propKey, fieldTrl.getName());
-        }
-      }
+    String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
+    if (StringUtils.isBlank(tabId)) {
+      niceFieldProperties.put(propKey, column != null ? column.getName() : "");
+      return;
     }
+    Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+    String formattedPropKey = propKey.replace("$", ".");
+    String columnId = column != null ? column.getId() : null;
+    tab.getADFieldList()
+        .stream()
+        .filter(f -> (f.getProperty() != null && formattedPropKey.equals(f.getProperty()))
+            || (f.getColumn() != null && f.getColumn().getId().equals(columnId)))
+        .findFirst()
+        .map(f -> f.getADFieldTrlList()
+            .stream()
+            .filter(trl -> userLanguageId.equals(trl.getLanguage().getId()))
+            .findFirst()
+            .map(FieldTrl::getName)
+            .orElse(f.getName()))
+        .ifPresent(name -> niceFieldProperties.put(propKey, name));
   }
 
   private void loadTypesCols(String propKey, Property prop, boolean translateYesNoReferences) {

@@ -44,6 +44,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
@@ -55,14 +56,13 @@ import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.JSONWriterToCSV;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
-import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
 
 /**
  * Tests the {@link JSONWriterToCSV} class
  */
 
-public class JSONWriterToCSVTest extends OBBaseTest {
+public class JSONWriterToCSVTest extends WeldBaseTest {
 
   private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
   private static final String CSV_EXTENSION = "." + ExportType.CSV.getExtension();
