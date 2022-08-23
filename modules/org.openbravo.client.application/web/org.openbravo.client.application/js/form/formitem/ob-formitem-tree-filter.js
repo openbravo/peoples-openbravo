@@ -533,7 +533,7 @@ isc.OBTreeFilterItem.addProperties({
   },
 
   getAppliedCriteriaValue: function() {
-    const currentGridCriteria = this.grid.sourceWidget.getCriteria();
+    const currentGridCriteria = this.grid.parentElement.getCriteria();
     if (!currentGridCriteria || !currentGridCriteria.criteria) {
       return [];
     }
