@@ -494,13 +494,12 @@ isc.OBTreeFilterItem.addProperties({
       this.Super('setCriterion', arguments);
       return;
     }
-    const equals = isc.DataSource.getSearchOperators().equals.symbol;
     const criteria = criterion ? criterion.criteria : null;
     let value;
     if (criteria && criteria.length && criterion.operator === 'or') {
-      value = criteria.map(c => equals + this.recordCache[c.value]);
+      value = criteria.map(c => this.recordCache[c.value]);
     } else {
-      value = equals + this.recordCache[this.buildValueExpressions(criterion)];
+      value = this.recordCache[this.buildValueExpressions(criterion)];
     }
     this.setValue(value);
   },
