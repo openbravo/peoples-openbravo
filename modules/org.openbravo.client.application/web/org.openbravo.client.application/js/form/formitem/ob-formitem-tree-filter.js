@@ -377,7 +377,13 @@ isc.OBTreeFilterItem.addProperties({
   filterDialogCallback: function(criterion) {
     this.updateCriterion(criterion);
     this.lastValueFromPopup = this.getValue();
-    this.form.grid.performAction();
+    const grid = this.grid.parentElement;
+    if (grid.lazyFiltering) {
+      grid.filterHasChanged = true;
+      grid.sorter.enable();
+    } else {
+      this.form.grid.performAction();
+    }
   },
 
   //This function updates the criterion of the tree filter, deletes the old
