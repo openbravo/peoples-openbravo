@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2022 Openbravo SLU
+ * All portions are Copyright (C) 2011-2020 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -242,7 +242,22 @@ isc.OBFKFilterTextItem.addProperties({
         }
       };
     }
-    dataSource = this.createDataSource(grid, gridField);
+    dataSource = OB.Datasource.create({
+      dataURL: grid.getDataSource().dataURL,
+      requestProperties: {
+        params: {
+          // distinct forces the distinct query on the server side
+          _distinct: gridField.valueField || gridField.name
+        }
+      },
+      fields: this.pickListFields
+    });
+    if (grid.Class === 'OBTreeGrid') {
+      dataSource.requestProperties.params.tabId = grid.view.tabId;
+    }
+    if (this.showFkDropdownUnfiltered) {
+      dataSource.requestProperties.params._showFkDropdownUnfiltered = true;
+    }
     this.setOptionDataSource(dataSource);
 
     this.Super('init', arguments);
@@ -263,26 +278,6 @@ isc.OBFKFilterTextItem.addProperties({
     ) {
       this.filterType = 'id';
     }
-  },
-
-  createDataSource: function(grid, gridField) {
-    const dataSource = OB.Datasource.create({
-      dataURL: grid.getDataSource().dataURL,
-      requestProperties: {
-        params: {
-          // distinct forces the distinct query on the server side
-          _distinct: gridField.valueField || gridField.name
-        }
-      },
-      fields: this.pickListFields
-    });
-    if (grid.Class === 'OBTreeGrid') {
-      dataSource.requestProperties.params.tabId = grid.view.tabId;
-    }
-    if (this.showFkDropdownUnfiltered) {
-      dataSource.requestProperties.params._showFkDropdownUnfiltered = true;
-    }
-    return dataSource;
   },
 
   destroy: function() {
