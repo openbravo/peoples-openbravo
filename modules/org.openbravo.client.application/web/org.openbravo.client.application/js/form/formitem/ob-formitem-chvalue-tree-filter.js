@@ -23,6 +23,14 @@ isc.ClassFactory.defineClass(
 );
 
 isc.OBCharacteristicValueTreeFilterItem.addProperties({
+  init: function() {
+    const field = this.grid.getField(this.name);
+    this.actOnKeypress = false;
+    if (field) {
+      field.filterOnKeypress = false;
+    }
+    this.Super('init', arguments);
+  },
   addParamsToRequest: function() {
     const field = this.grid.getField(this.name);
 
