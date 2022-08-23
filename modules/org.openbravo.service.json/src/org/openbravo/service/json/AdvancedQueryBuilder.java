@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +38,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -72,6 +75,8 @@ import org.openbravo.service.db.DalConnectionProvider;
  * @author mtaal
  */
 public class AdvancedQueryBuilder {
+
+  private static final Logger log = LogManager.getLogger();
 
   private static final String CRITERIA_KEY = "criteria";
   private static final String VALUE_KEY = "value";
@@ -182,14 +187,22 @@ public class AdvancedQueryBuilder {
   // in the FROM clause
   private boolean creatingJoinsInWhereClauseIsPrevented = false;
 
-  private List<AdvancedQueryBuilderHook> hooks = WeldUtils
-      .getInstances(AdvancedQueryBuilderHook.class)
-      .stream()
-      .sorted(Comparator.comparing(AdvancedQueryBuilderHook::getPriority))
-      .collect(Collectors.toList());
+  private List<AdvancedQueryBuilderHook> hooks = getHooks();
 
   public static enum TextMatching {
     startsWith, exact, substring
+  }
+
+  private static List<AdvancedQueryBuilderHook> getHooks() {
+    try {
+      return WeldUtils.getInstances(AdvancedQueryBuilderHook.class)
+          .stream()
+          .sorted(Comparator.comparing(AdvancedQueryBuilderHook::getPriority))
+          .collect(Collectors.toList());
+    } catch (Exception ex) {
+      log.error("Could not retrieve the list of hooks", ex);
+      return Collections.emptyList();
+    }
   }
 
   public Entity getEntity() {
