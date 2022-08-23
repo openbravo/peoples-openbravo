@@ -138,9 +138,13 @@ public class RelevantCharacteristicProperty {
    *         in case the property cannot be resolved
    */
   public static Optional<RelevantCharacteristicProperty> from(Field field) {
+    String propertyPath = field.getProperty();
+    if (propertyPath == null) {
+      return Optional.empty();
+    }
     Entity entity = ModelProvider.getInstance()
         .getEntityByTableId(field.getTab().getTable().getId());
-    return from(entity, field.getProperty());
+    return from(entity, propertyPath);
   }
 
   /**
