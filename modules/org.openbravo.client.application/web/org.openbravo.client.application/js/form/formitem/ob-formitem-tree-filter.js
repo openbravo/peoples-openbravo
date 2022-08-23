@@ -391,15 +391,21 @@ isc.OBTreeFilterItem.addProperties({
   },
 
   init: function() {
-    var field, treeGridFields, treeReferenceId, dataSourceId, view;
+    var field,
+      treeGridFields,
+      treeReferenceId,
+      dataSourceId,
+      view,
+      filterEditorProperties;
     this.pickerIconSrc = OB.Styles.OBFormField.DefaultSearch.pickerIconSrc;
     this.Super('init', arguments);
     field = this.grid.getField(this.name);
-    this.criteriaField = field.filterEditorProperties
-      ? field.filterEditorProperties.criteriaField
+    filterEditorProperties = field.filterEditorProperties || {};
+    this.criteriaField = filterEditorProperties.criteriaField
+      ? filterEditorProperties.criteriaField
       : field.displayField;
-    this.filterType = field.filterEditorProperties
-      ? field.filterEditorProperties.filterType
+    this.filterType = filterEditorProperties.filterType
+      ? filterEditorProperties.filterType
       : 'identifier';
     this.recordCache = {};
     if (this.selectorWindow) {
@@ -485,7 +491,8 @@ isc.OBTreeFilterItem.addProperties({
 
   setCriterion: function(criterion) {
     if (this.filterType !== 'id') {
-      return this.Super('setCriterion', arguments);
+      this.Super('setCriterion', arguments);
+      return;
     }
     const equals = isc.DataSource.getSearchOperators().equals.symbol;
     const criteria = criterion ? criterion.criteria : null;
@@ -507,13 +514,34 @@ isc.OBTreeFilterItem.addProperties({
       return;
     }
     if (isc.isAn.Array(value)) {
-      value = this.mapValueToDisplay(value);
+      if (value.length === 0) {
+        value = this.getAppliedCriteriaValue();
+      } else {
+        value = this.mapValueToDisplay(value);
+      }
     }
     return this.parseValueExpressions(
       value,
       this.getCriteriaFieldName(),
       isc.DataSource.getSearchOperators().equals.ID
     );
+  },
+
+  getAppliedCriteriaValue: function() {
+    const currentGridCriteria = this.grid.sourceWidget.getCriteria();
+    if (!currentGridCriteria || !currentGridCriteria.criteria) {
+      return [];
+    }
+    const criteria = currentGridCriteria.criteria.find(
+      c => c.fieldName === this.name
+    );
+    if (!criteria) {
+      return [];
+    }
+    if (criteria.criteria) {
+      return criteria.criteria.map(c => c.value).join(' or ');
+    }
+    return criteria.value || [];
   },
 
   mapValueToDisplay: function(value) {
@@ -544,7 +572,7 @@ isc.OBTreeFilterItem.addProperties({
     if (!values || this.filterType !== 'id') {
       return this.Super('getCriteriaValue', arguments);
     }
-    const identifiers = isc.isAn.Array(values) ? values : [values];
+    const identifiers = isc.isAn.Array(values) ? values : values.split(' or ');
     const ids = identifiers
       .map(value => {
         if (isc.isAn.Array(value)) {
