@@ -416,7 +416,7 @@ public class CancelAndReplaceUtils {
     FIN_FinancialAccount financialAccount = null;
     final OrganizationStructureProvider osp = OBContext.getOBContext()
         .getOrganizationStructureProvider(oldOrder.getOrganization().getClient().getId());
-    if (jsonOrder != null) {
+    if (jsonOrder != null && jsonOrder.has("defaultPaymentType")) {
       paymentPaymentMethod = OBDal.getInstance()
           .get(FIN_PaymentMethod.class,
               (String) jsonOrder.getJSONObject("defaultPaymentType").get("paymentMethodId"));
