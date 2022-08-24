@@ -67,8 +67,8 @@ public class RelevantCharacteristicUIDefinition extends UIDefinition {
   @Override
   public String getFilterEditorPropertiesProperty(Field field) {
     return RelevantCharacteristicProperty.from(field)
-        .map(p -> ", filterType: 'id', criteriaField: '" + getProperty(field)
-            + "', characteristicId: '" + p.getCharacteristicId() + "'")
+        .map(p -> ", filterType: 'id', filterOnKeypress: false, criteriaField: '"
+            + getProperty(field) + "', characteristicId: '" + p.getCharacteristicId() + "'")
         .orElse("");
   }
 

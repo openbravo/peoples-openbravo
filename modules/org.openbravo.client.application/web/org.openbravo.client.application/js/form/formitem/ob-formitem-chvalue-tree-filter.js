@@ -17,6 +17,8 @@
  ************************************************************************
  */
 
+// == OBCharacteristicValueTreeFilterItem ==
+// A tree filter of characteristic values
 isc.ClassFactory.defineClass(
   'OBCharacteristicValueTreeFilterItem',
   isc.OBTreeFilterItem
@@ -25,12 +27,13 @@ isc.ClassFactory.defineClass(
 isc.OBCharacteristicValueTreeFilterItem.addProperties({
   init: function() {
     const field = this.grid.getField(this.name);
-    this.actOnKeypress = false;
-    if (field) {
+    if (field && field.filterEditorProperties.filterOnKeypress === false) {
+      this.actOnKeypress = false;
       field.filterOnKeypress = false;
     }
     this.Super('init', arguments);
   },
+
   addParamsToRequest: function() {
     const field = this.grid.getField(this.name);
 
