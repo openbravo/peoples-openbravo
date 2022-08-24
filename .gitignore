@@ -51,6 +51,8 @@ scripts
 node_modules
 node_modules_global
 test-reports
+.nycrc
+.eslintrc.json.copy
 
 # ignore all modules 
 # except those ones included in OB3 distribution
