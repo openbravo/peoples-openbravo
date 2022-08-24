@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.common.plm.hook;
+package org.openbravo.client.kernel.reference.plm;
 
 import java.util.Collections;
 import java.util.HashMap;

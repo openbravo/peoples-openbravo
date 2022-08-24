@@ -16,12 +16,13 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.kernel.reference;
+package org.openbravo.client.kernel.reference.plm;
 
 import java.util.HashMap;
 
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.OBTreeReferenceComponent;
+import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.common.plm.RelevantCharacteristicProperty;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
@@ -83,7 +84,7 @@ public class RelevantCharacteristicUIDefinition extends UIDefinition {
     fieldProperties += " displayField: '" + displayField + "'";
     fieldProperties += ", valueField: '" + valueField + "'";
     fieldProperties += ", doMapValueToDisplay: (value, form) => form.getValue('" + displayField
-        + "')";
+        + "') || ''";
     return fieldProperties;
   }
 

@@ -16,8 +16,9 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.application.window;
+package org.openbravo.client.application.window.hooks;
 
+import org.openbravo.client.application.window.FieldSettingsProvider;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.common.plm.RelevantCharacteristicProperty;
