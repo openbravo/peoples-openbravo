@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,8 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.window.FieldSettingsProvider;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
@@ -82,7 +84,7 @@ class FieldHandler extends EntityPersistenceEventObserver {
     final String tableId = tab.getTable().getId();
     final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
     final Property property = DalUtil.getPropertyFromPath(entity, propertyPath);
-    if (property == null) {
+    if (property == null && !isAcceptedPropertyField((Field) event.getTargetInstance())) {
       throw new OBException(OBMessageUtils.messageBD("OBUIAPP_PropertyNotFound"));
     }
 
@@ -90,8 +92,16 @@ class FieldHandler extends EntityPersistenceEventObserver {
       event.setCurrentState(getIgnoreInWadProperty(), true);
     }
 
-    final Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
-    event.setCurrentState(getColumnProperty(), column);
+    if (property != null) {
+      final Column column = OBDal.getInstance().get(Column.class, property.getColumnId());
+      event.setCurrentState(getColumnProperty(), column);
+    }
+  }
+
+  private boolean isAcceptedPropertyField(Field field) {
+    return WeldUtils.getInstances(FieldSettingsProvider.class)
+        .stream()
+        .anyMatch(fsp -> fsp.accepts(field));
   }
 
   @Override
