@@ -216,7 +216,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         ds.primaryKeys = {
           id: 'id'
         };
-        if (filterItem.filterType === 'id') {
+        if (filterItem.filterType === 'id' && filterItem.form) {
           // this prevents adding an extra criterion by the identifier property
           filterItem.setOptionDataSource(ds);
         }
@@ -413,7 +413,7 @@ isc.OBTreeFilterItem.addProperties({
     this.filterType = filterEditorProperties.filterType
       ? filterEditorProperties.filterType
       : 'identifier';
-    this.recordCache = {};
+    this.filterAuxCache = [];
     if (this.selectorWindow) {
       treeGridFields = this.selectorWindow.selectorGridFields.find(
         'name',
@@ -474,25 +474,20 @@ isc.OBTreeFilterItem.addProperties({
     if (this.filterType !== 'id') {
       return;
     }
-    const parent = parentNode[OB.Constants.ID]
-      ? {
-          [parentNode[OB.Constants.ID]]: parentNode[OB.Constants.IDENTIFIER]
-        }
-      : {};
     const children = parentNode.children
-      ? parentNode.children.reduce(
-          (obj, child) => ({
-            ...obj,
-            [child[OB.Constants.ID]]: child[OB.Constants.IDENTIFIER]
-          }),
-          {}
-        )
-      : {};
-    this.recordCache = {
-      ...this.recordCache,
-      ...parent,
-      ...children
-    };
+      ? parentNode.children
+          .filter(
+            child =>
+              !this.filterAuxCache.some(
+                r => r[OB.Constants.ID] === child[OB.Constants.ID]
+              )
+          )
+          .map(child => ({
+            [OB.Constants.ID]: child[OB.Constants.ID],
+            [OB.Constants.IDENTIFIER]: child[OB.Constants.IDENTIFIER]
+          }))
+      : [];
+    this.filterAuxCache = [...this.filterAuxCache, ...children];
   },
 
   setCriterion: function(criterion) {
@@ -503,9 +498,11 @@ isc.OBTreeFilterItem.addProperties({
     const criteria = criterion ? criterion.criteria : null;
     let value;
     if (criteria && criteria.length && criterion.operator === 'or') {
-      value = criteria.map(c => this.recordCache[c.value]);
+      value = this.getRecordIdentifiersFromCriteria(criteria);
     } else {
-      value = this.recordCache[this.buildValueExpressions(criterion)];
+      value = this.getRecordIdentifierFromId(
+        this.buildValueExpressions(criterion)
+      );
     }
     this.setValue(value);
   },
@@ -597,8 +594,21 @@ isc.OBTreeFilterItem.addProperties({
   },
 
   getRecordIdsFromIdentifier: function(identifier) {
-    return Object.keys(this.recordCache).filter(
-      key => this.recordCache[key] === identifier
-    );
+    return this.filterAuxCache
+      .filter(r => r[OB.Constants.IDENTIFIER] === identifier)
+      .map(r => r[OB.Constants.ID]);
+  },
+
+  getRecordIdentifierFromId: function(id) {
+    const record = this.filterAuxCache.find(r => r[OB.Constants.ID] === id);
+    return record ? record[OB.Constants.IDENTIFIER] : null;
+  },
+
+  getRecordIdentifiersFromCriteria: function(criteria) {
+    const cache = this.filterAuxCache;
+    return criteria
+      .map(c => cache.find(r => r[OB.Constants.ID] === c.value))
+      .filter(r => r != null)
+      .map(r => r[OB.Constants.IDENTIFIER]);
   }
 });
