@@ -72,10 +72,17 @@ public class RelevantCharacteristicProperty {
   }
 
   /**
-   * @return the name of the referenced relevant characteristic property
+   * @return the name of the relevant characteristic property
    */
   public String getName() {
     return name;
+  }
+
+  /**
+   * @return the search key of the referenced relevant characteristic
+   */
+  public String getSearchKey() {
+    return RELEVANT_CHARACTERISTICS.get(name);
   }
 
   /**

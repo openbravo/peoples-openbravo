@@ -34,11 +34,13 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.common.plm.RelevantCharacteristicProperty;
 import org.openbravo.dal.core.DalUtil;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
@@ -65,6 +67,13 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
       List<JoinDefinition> joinDefinitions) {
     for (RelevantCharacteristicProperty property : getRelevantCharacteristicProperties(
         queryBuilder)) {
+
+      String characteristicId = property.getCharacteristicId();
+      if (characteristicId == null) {
+        throw new OBException(OBMessageUtils.getI18NMessage("RelevantCharacteristicNotLinked",
+            new String[] { property.getSearchKey() }));
+      }
+
       // add the join with M_Product, if needed
       String productAlias;
       if (isProductEntity(queryBuilder.getEntity())) {
@@ -86,7 +95,7 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
           .setProperty(ModelProvider.getInstance()
               .getEntity(Product.class)
               .getProperty(Product.PROPERTY_PRODUCTCHARACTERISTICVALUELIST))
-          .setJoinWithClause("characteristic.id = '" + property.getCharacteristicId() + "'");
+          .setJoinWithClause("characteristic.id = '" + characteristicId + "'");
       joinDefinitions.add(relevantCharJoin);
 
       // join with M_Ch_Value
