@@ -39,7 +39,7 @@ public class RelevantCharacteristicUIDefinition extends UIDefinition {
 
   @Override
   public String getFormEditorType() {
-    return "OBMapTextItem";
+    return "OBMappedTextItem";
   }
 
   @Override

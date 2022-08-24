@@ -17,9 +17,11 @@
  ************************************************************************
  */
 
-isc.ClassFactory.defineClass('OBMapTextItem', isc.OBTextItem);
+// == OBMappedTextItem ==
+// Allows to display in the text item a value different from the one in the value field
+isc.ClassFactory.defineClass('OBMappedTextItem', isc.OBTextItem);
 
-isc.OBMapTextItem.addProperties({
+isc.OBMappedTextItem.addProperties({
   mapValueToDisplay: function(value) {
     if (this.doMapValueToDisplay) {
       return this.doMapValueToDisplay(value, this.form);
