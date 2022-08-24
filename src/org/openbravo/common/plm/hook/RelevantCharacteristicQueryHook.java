@@ -58,7 +58,7 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
   private static final Logger log = LogManager.getLogger();
 
   private Map<String, String> joinsWithProductCharacteristicValue = new HashMap<>();
-  private String treeNodeJoin;
+  private Map<String, String> joinsWithTreeNode = new HashMap<>();
 
   @Override
   public List<JoinDefinition> getJoinDefinitions(AdvancedQueryBuilder queryBuilder,
@@ -108,7 +108,7 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
               .getProperty(CharacteristicValue.PROPERTY_ID))
           .setUnrelatedEntityJoin("ADTreeNode", "node");
       joinDefinitions.add(adTreeNodeJoin);
-      treeNodeJoin = adTreeNodeJoin.getJoinAlias();
+      joinsWithTreeNode.put(property.getName(), adTreeNodeJoin.getJoinAlias());
     }
     return joinDefinitions;
   }
@@ -142,7 +142,8 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
     if (relevantCharacteristic == null) {
       return null;
     }
-    return treeNodeJoin + DalUtil.DOT + TreeNode.PROPERTY_SEQUENCENUMBER + (desc ? " desc " : "");
+    return joinsWithTreeNode.get(relevantCharacteristic) + DalUtil.DOT
+        + TreeNode.PROPERTY_SEQUENCENUMBER + (desc ? " desc " : "");
   }
 
   private List<RelevantCharacteristicProperty> getRelevantCharacteristicProperties(
