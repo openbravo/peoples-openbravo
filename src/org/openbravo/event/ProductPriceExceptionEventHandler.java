@@ -23,13 +23,19 @@ import java.util.Date;
 
 import javax.enterprise.event.Observes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
@@ -37,10 +43,11 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.pricing.pricelist.ProductPriceException;
 
-class ProductPriceExceptionObserver extends EntityPersistenceEventObserver {
+class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(ProductPriceException.ENTITY_NAME) };
+  protected Logger logger = LogManager.getLogger();
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -56,6 +63,7 @@ class ProductPriceExceptionObserver extends EntityPersistenceEventObserver {
         pppe.getValidFromDate(), pppe.getValidToDate())) {
       throw new OBException(OBMessageUtils.getI18NMessage("ProductPriceExceptionExists"));
     }
+    updateOrgDepth(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -67,6 +75,8 @@ class ProductPriceExceptionObserver extends EntityPersistenceEventObserver {
         pppe.getValidFromDate(), pppe.getValidToDate())) {
       throw new OBException(OBMessageUtils.getI18NMessage("ProductPriceExceptionExists"));
     }
+    updateOrgDepth(event);
+    updateProductPriceExceptionAuditFields(event);
   }
 
   // Check if exists another record using this validFromDate - validToDate in the same dates
@@ -107,5 +117,59 @@ class ProductPriceExceptionObserver extends EntityPersistenceEventObserver {
         .setMaxResults(1);
 
     return !query.list().isEmpty();
+  }
+
+  private void updateOrgDepth(EntityPersistenceEvent event) {
+    final Entity ppeEntity = ModelProvider.getInstance()
+        .getEntity(ProductPriceException.ENTITY_NAME);
+    final Property orgProperty = ppeEntity.getProperty(ProductPriceException.PROPERTY_ORGANIZATION);
+    final Property orgDepthProperty = ppeEntity
+        .getProperty(ProductPriceException.PROPERTY_ORGDEPTH);
+
+    final Organization org = (Organization) event.getCurrentState(orgProperty);
+
+    event.setCurrentState(orgDepthProperty, getOrgDepth(org));
+  }
+
+  private long getOrgDepth(Organization org) {
+    return calculateOrgDepth(0, org);
+
+  }
+
+  private long calculateOrgDepth(int depth, Organization org) {
+    OrganizationStructureProvider osp = null;
+    try {
+      osp = OBContext.getOBContext().getOrganizationStructureProvider(org.getClient().getId());
+    } catch (Exception e) {
+      logger.error("Error trying to get organization structure: ", e);
+    }
+    if (org.getId().equals("0")) {
+      return depth;
+    } else {
+      return calculateOrgDepth(depth + 1, osp.getParentOrg(org));
+    }
+  }
+
+  private void updateProductPriceExceptionAuditFields(EntityUpdateEvent event) {
+    final Entity productPriceExcEntity = ModelProvider.getInstance()
+        .getEntity(ProductPriceException.ENTITY_NAME);
+    final Property isActive = productPriceExcEntity
+        .getProperty(ProductPriceException.PROPERTY_ACTIVE);
+    final Property productPriceProperty = productPriceExcEntity
+        .getProperty(ProductPriceException.PROPERTY_PRODUCTPRICE);
+    final ProductPrice productPrice = (ProductPrice) event.getCurrentState(productPriceProperty);
+    productPrice.setUpdated(new Date());
+    final boolean previousIsActive = (boolean) event.getPreviousState(isActive);
+    final boolean currentIsActive = (boolean) event.getCurrentState(isActive);
+    if (previousIsActive != currentIsActive) {
+      final String hql = "update PricingProductPriceException set updated = :date "
+          + " where productPrice.id = :productPriceId";
+      OBDal.getInstance()
+          .getSession()
+          .createQuery(hql)
+          .setParameter("date", new Date())
+          .setParameter("productPriceId", productPrice.getId())
+          .executeUpdate();
+    }
   }
 }
