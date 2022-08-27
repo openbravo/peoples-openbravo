@@ -10384,8 +10384,30 @@ You can also select if transactions are allowed or not for this organization typ
 <!--4CCE605CBB914CFAB01005FBD0A8C259-->  <ISDEFAULTACCT><![CDATA[N]]></ISDEFAULTACCT>
 <!--4CCE605CBB914CFAB01005FBD0A8C259-->  <DEVELOPMENTSTATUS><![CDATA[RE]]></DEVELOPMENTSTATUS>
 <!--4CCE605CBB914CFAB01005FBD0A8C259-->  <AD_PACKAGE_ID><![CDATA[5A3ED54AB1DA4B84E040007F01006125]]></AD_PACKAGE_ID>
-<!--4CCE605CBB914CFAB01005FBD0A8C259-->  <DATAORIGINTYPE><![CDATA[Table]]></DATAORIGINTYPE>
+<!--4CCE605CBB914CFAB01005FBD0A8C259-->  <DATAORIGINTYPE><![CDATA[HQL]]></DATAORIGINTYPE>
 <!--4CCE605CBB914CFAB01005FBD0A8C259-->  <ISTREE><![CDATA[N]]></ISTREE>
+<!--4CCE605CBB914CFAB01005FBD0A8C259-->  <HQLQUERY><![CDATA[SELECT pp.id AS m_createpolines_pe_v_id,
+    pp.client as ad_client_id,
+    pp.organization as ad_org_id,
+    pp.active as isactive,
+    pp.creationDate as created,
+    pp.createdBy as createdby,
+    pp.updated as updated,
+    pp.updatedBy as updatedby,
+    pp.product.searchKey as value, 
+    pp.product as M_Product_ID,
+    pp.priceListVersion.priceList as m_pricelist_id,
+    coalesce(ppe.standardPrice,pp.standardPrice) as Pricestd,
+    pp.priceListVersion.priceList.currency as C_Currency_ID,
+    pp.product.uOM as C_UOM_ID,
+    '' AS qtyordered,
+    '' AS qtyaum,
+    (select name from UOM where id = m_get_default_aum_for_document(pp.product.id, ad_get_doctype(pp.client.id, pp.organization.id, 'POO', NULL))) AS Aum
+  FROM PricingProductPrice pp
+  @leftJoinPriceExceptions@
+  WHERE pp.product.active = 'Y' AND pp.priceListVersion.priceList.salesPriceList = 'N' AND COALESCE(pp.product.isGeneric, 'N') = 'N'
+ AND pp.priceListVersion.validFromDate = @Max_ValidFromDate@]]></HQLQUERY>
+<!--4CCE605CBB914CFAB01005FBD0A8C259-->  <ENTITY_ALIAS><![CDATA[pp]]></ENTITY_ALIAS>
 <!--4CCE605CBB914CFAB01005FBD0A8C259--></AD_TABLE>
 
 <!--4D25087A4BD74E1D9E528CB5491D94DC--><AD_TABLE>

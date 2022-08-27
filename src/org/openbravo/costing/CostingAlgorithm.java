@@ -667,7 +667,8 @@ public abstract class CostingAlgorithm {
     }
     ProductPrice pp = FinancialUtils.getProductPrice(transaction.getProduct(),
         transaction.getMovementDate(), false, pricelist, true, false);
-    BigDecimal cost = pp.getStandardPrice().multiply(transaction.getMovementQuantity().abs());
+    BigDecimal cost = FinancialUtils.getProductStdPrice(pp, costOrg, transaction.getMovementDate())
+        .multiply(transaction.getMovementQuantity().abs());
     if (pp.getPriceListVersion()
         .getPriceList()
         .getCurrency()

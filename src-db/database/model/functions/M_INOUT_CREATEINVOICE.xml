@@ -19,7 +19,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2022 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -296,12 +296,26 @@
             ELSE
               v_ResultStr:='GettingPrice-PList';
               SELECT COALESCE(MAX(PriceList), 0),
-                COALESCE(MAX(PriceStd), 0),
+                COALESCE(MAX(COALESCE(ppe.PriceStd, pp.PriceStd)), 0),
                 COALESCE(MAX(PriceLimit), 0)
               INTO v_PriceList,
                 v_PriceActual,
                 v_PriceLimit
-              FROM M_PRODUCTPRICE
+              FROM M_PRODUCTPRICE pp
+              LEFT JOIN M_PRODUCTPRICE_EXC ppe
+              ON (
+			  pp.m_productprice_id = ppe.m_productprice_id
+			  and exists (select 1 from ad_org_tree ot where ppe.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = CUR_Shipment.AD_Org_ID)
+			  and ppe.validfrom <= CUR_Shipment.MovementDate
+			  and ppe.validto >= CUR_Shipment.MovementDate
+			  and ppe.orgdepth = (
+			    select max(ppe2.orgdepth)
+			    from m_productprice_exc ppe2
+			    where ppe2.m_productprice_id = ppe.m_productprice_id
+			    and exists (select 1 from ad_org_tree ot where ppe2.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = CUR_Shipment.AD_Org_ID)
+			    and ppe2.validfrom <= CUR_Shipment.MovementDate
+			    and ppe2.validto >= CUR_Shipment.MovementDate
+			  ))
               WHERE M_Product_ID=CUR_ShipmentLines.M_Product_ID
                 AND M_PriceList_Version_ID=v_M_PriceList_Version_ID;
               v_C_Tax_ID:=C_Gettax(CUR_ShipmentLines.M_Product_ID, CUR_Shipment.MovementDate, CUR_Shipment.AD_Org_ID, CUR_Shipment.M_Warehouse_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_BPartner_Location_ID, CUR_Shipment.C_Project_ID, 'N') ;

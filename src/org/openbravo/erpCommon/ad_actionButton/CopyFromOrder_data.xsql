@@ -36,7 +36,7 @@
         M_GET_OFFERS_NAME(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID)
         ) END) AS OFFER_NAME,
         (CASE coalesce(M_GET_OFFER(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID),'-1') WHEN '-1' THEN '' ELSE M_GET_OFFER(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID) END) AS M_OFFER_ID,
-        M_BOM_PRICESTD(CL.M_PRODUCT_ID, M_GET_PRICELIST_VERSION(?, TO_DATE(?))) AS PRICESTD,
+        M_BOM_PRICESTD(CL.M_PRODUCT_ID, M_GET_PRICELIST_VERSION(?, TO_DATE(?)), ?, TO_DATE(?)) AS PRICESTD,
         (CASE coalesce(M_GET_OFFER(TO_DATE(NOW()), ?, CL.M_PRODUCT_ID),'-1') WHEN '-1' 
                                                             THEN (SELECT MAX(CASE ? WHEN 'Y' THEN gross_unit_price ELSE PRICEACTUAL END) 
                                                                     FROM C_ORDER
@@ -55,7 +55,7 @@
                                                                     AND C_ORDER.C_BPARTNER_ID = ?
                                                                     AND C_ORDERLINE.M_PRODUCT_ID = M.M_PRODUCT_ID
                                                                     AND C_ORDER.DOCSTATUS = 'CO') 
-                                                               ELSE M_BOM_PRICESTD(CL.M_PRODUCT_ID, M_GET_PRICELIST_VERSION(?, TO_DATE(?))) 
+                                                               ELSE M_BOM_PRICESTD(CL.M_PRODUCT_ID, M_GET_PRICELIST_VERSION(?, TO_DATE(?)), ?, TO_DATE(?))
                                                                 END) AS LASTPRICESO,
         C_TAX.C_TAX_ID, C_TAX.NAME AS NAMETAX, C_UOM.C_UOM_ID, C_UOM.UOMSYMBOL,
         (CASE WHEN CL.C_AUM IS NULL THEN M_GET_DEFAULT_AUM_FOR_DOCUMENT(CL.M_PRODUCT_ID, C.C_DOCTYPE_ID) ELSE CL.C_AUM END) AS C_AUM,
@@ -88,6 +88,8 @@
     <Parameter name="cBpartnerId"/>
     <Parameter name="mPricelistId"/>
     <Parameter name="dateOrdered"/>
+    <Parameter name="adOrgId"/>
+    <Parameter name="dateOrdered"/>
     <Parameter name="cBpartnerId"/>
     <Parameter name="isTaxIncluded"/>
     <Parameter name="isTaxIncluded"/>
@@ -95,6 +97,8 @@
     <Parameter name="isTaxIncluded"/>
     <Parameter name="cBpartnerId"/>
     <Parameter name="mPricelistId"/>
+    <Parameter name="dateOrdered"/>
+    <Parameter name="adOrgId"/>
     <Parameter name="dateOrdered"/>
     <Parameter name="isTaxIncluded"/>
     <Parameter name="cBpartnerId"/>

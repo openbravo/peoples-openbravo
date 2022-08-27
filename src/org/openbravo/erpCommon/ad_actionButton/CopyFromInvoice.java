@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -137,6 +137,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           priceActual = priceStd = priceList = priceLimit = priceGross = priceListGross = priceStdGross = BigDecimal.ZERO;
           BigDecimal lineNetAmt, lineGrossAmt;
           lineNetAmt = lineGrossAmt = BigDecimal.ZERO;
+          final String orgId = dataInvoice[0].adOrgId;
+          final String dateInvoiced = dataInvoice[0].dateinvoiced;
           strInvPriceList = dataInvoice[0].mPricelistId;
           strmProductId = data[i].productId;
 
@@ -169,7 +171,7 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
           if (StringUtils.equals(strPriceListCheck, "Y") || forcePriceList) {
 
             CopyFromInvoiceData[] invoicelineprice = CopyFromInvoiceData.selectPriceForProduct(this,
-                strmProductId, strInvPriceList);
+                orgId, dateInvoiced, strmProductId, strInvPriceList);
             for (int j = 0; invoicelineprice != null && j < invoicelineprice.length; j++) {
               if (invoicelineprice[j].validfrom == null
                   || StringUtils.isEmpty(invoicelineprice[j].validfrom)
@@ -194,7 +196,8 @@ public class CopyFromInvoice extends HttpSecureAppServlet {
                       invoice.getPriceList(), false);
                   if (prices != null) {
                     priceListGross = prices.getListPrice();
-                    priceStdGross = prices.getStandardPrice();
+                    priceStdGross = FinancialUtils.getProductStdPrice(prices,
+                        invoice.getOrganization(), invoice.getInvoiceDate());
                   }
                 } else {
                   // Calculate price adjustments (offers)

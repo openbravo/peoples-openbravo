@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -261,12 +261,14 @@ public class SRMOPickEditLines extends BaseProcessActionHandler {
         try {
           final ProductPrice pp = FinancialUtils.getProductPrice(product, order.getOrderDate(),
               isSOTrx, order.getPriceList());
-          unitPrice = pp.getStandardPrice();
+          BigDecimal pricestd = FinancialUtils.getProductStdPrice(pp, order.getOrganization(),
+              order.getOrderDate());
+          unitPrice = pricestd;
           limitPrice = pp.getPriceLimit();
           netListPrice = pp.getListPrice();
           grossListPrice = pp.getListPrice();
-          stdPrice = pp.getStandardPrice();
-          baseGrossUnitPrice = pp.getStandardPrice();
+          stdPrice = pricestd;
+          baseGrossUnitPrice = pricestd;
         } catch (OBException e) {
           // Product not found in price list. Prices default to ZERO
           unitPrice = limitPrice = netListPrice = grossListPrice = stdPrice = BigDecimal.ZERO;

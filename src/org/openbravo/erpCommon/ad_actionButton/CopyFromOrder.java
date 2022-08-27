@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -157,14 +157,16 @@ public class CopyFromOrder extends HttpSecureAppServlet {
           }
         }
 
-        priceStd = new BigDecimal(CopyFromOrderData.getOffersStdPrice(this, strLastpriceso, strKey));
+        priceStd = new BigDecimal(
+            CopyFromOrderData.getOffersStdPrice(this, strLastpriceso, strKey));
         ProductPrice prices = FinancialUtils.getProductPrice(
             OBDal.getInstance().get(Product.class, strmProductId), order.getOrderDate(),
             order.isSalesTransaction(), order.getPriceList(), false);
         if (prices != null) {
           priceLimit = prices.getPriceLimit();
           priceList = prices.getListPrice();
-          pricestdgross = prices.getStandardPrice();
+          pricestdgross = FinancialUtils.getProductStdPrice(prices, order.getOrganization(),
+              order.getOrderDate());
         } else {
           priceLimit = BigDecimal.ZERO;
           priceList = BigDecimal.ZERO;
@@ -265,7 +267,8 @@ public class CopyFromOrder extends HttpSecureAppServlet {
     CopyFromOrderRecordData[] dataOrder = CopyFromOrderRecordData.select(this, strKey);
     Order order = OBDal.getInstance().get(Order.class, strKey);
     CopyFromOrderData[] data = CopyFromOrderData.select(this, strBpartner, strmPricelistId,
-        dataOrder[0].dateordered, order.getPriceList().isPriceIncludesTax() ? "Y" : "N", strSOTrx,
+        dataOrder[0].dateordered, dataOrder[0].adOrgId,
+        order.getPriceList().isPriceIncludesTax() ? "Y" : "N", strSOTrx,
         dataOrder[0].lastDays.equals("") ? "0" : dataOrder[0].lastDays);
     FieldProvider[][] dataAUM = new FieldProvider[data.length][];
     for (int i = 0; i < data.length; i++) {

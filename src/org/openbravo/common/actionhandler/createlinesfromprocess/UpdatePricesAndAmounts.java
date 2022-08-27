@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.openbravo.client.kernel.ComponentProvider.Qualifier;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.currency.Currency;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
@@ -194,7 +195,8 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
    * @return The product price defined for the product in the price list or NULL if any.
    */
   private PriceInformation getBOMPrices(Product product, PriceList priceList) {
-    Object[] bomPrices = selectBOMPrices(product, priceList);
+    Object[] bomPrices = selectBOMPrices(product, priceList, getInvoice().getOrganization(),
+        getInvoice().getInvoiceDate());
     if (bomPrices.length == 0) {
       return null;
     }
@@ -207,14 +209,15 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
   }
 
   @SuppressWarnings("unchecked")
-  private Object[] selectBOMPrices(Product product, PriceList priceList) {
+  private Object[] selectBOMPrices(Product product, PriceList priceList, Organization org,
+      Date invoiceDate) {
     //@formatter:off
     String hql =
             " select " +
-            "   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), " +
+            "   TO_NUMBER(M_BOM_PriceStd(:productID, plv.id, :orgId, :invoiceDate)), " +
             "   TO_NUMBER(M_BOM_PriceList(:productID, plv.id)), " +
             "   TO_NUMBER(M_BOM_PriceLimit(:productID, plv.id)), " +
-            "   TO_NUMBER(ROUND(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id)), :pricePrecision)) " +
+            "   TO_NUMBER(ROUND(TO_NUMBER(M_BOM_PriceStd(:productID, plv.id, :orgId, :invoiceDate)), :pricePrecision)) " +
             " from PricingProductPrice pp " +
             "   join pp.priceListVersion plv " +
             " where pp.product.id = :productID" +
@@ -228,6 +231,8 @@ class UpdatePricesAndAmounts extends CreateLinesFromProcessHook {
         .getSession()
         .createQuery(hql)
         .setParameter("productID", product.getId())
+        .setParameter("orgId", org.getId())
+        .setParameter("invoiceDate", invoiceDate)
         .setParameter("priceListID", priceList.getId())
         .setParameter("validFromDate", new Date())
         .setParameter("pricePrecision", getInvoice().getCurrency().getPricePrecision())

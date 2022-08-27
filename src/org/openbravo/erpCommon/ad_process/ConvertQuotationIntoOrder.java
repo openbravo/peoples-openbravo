@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -311,7 +311,8 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
     String strPriceVersionId = getPriceListVersion(quotation.getPriceList().getId(),
         quotation.getClient().getId(), newSalesOrder.getOrderDate());
     BigDecimal bdPriceList = getPriceList(quotationLine.getProduct().getId(), strPriceVersionId);
-    BigDecimal bdPriceStd = getPriceStd(quotationLine.getProduct().getId(), strPriceVersionId);
+    BigDecimal bdPriceStd = getPriceStd(quotationLine.getProduct().getId(), strPriceVersionId,
+        newSalesOrder.getOrganization().getId(), newSalesOrder.getOrderDate());
 
     if (bdPriceList != null && bdPriceList.compareTo(BigDecimal.ZERO) != 0) {
       // List Price
@@ -425,12 +426,15 @@ public class ConvertQuotationIntoOrder extends DalBaseProcess {
   /**
    * Call Database Procedure to get the Standard Price of a Product
    */
-  private BigDecimal getPriceStd(String strProductID, String strPriceVersionId) {
+  private BigDecimal getPriceStd(String strProductID, String strPriceVersionId, String orgId,
+      Date orderDate) {
     BigDecimal bdPriceList = null;
     try {
       final List<Object> parameters = new ArrayList<Object>();
       parameters.add(strProductID);
       parameters.add(strPriceVersionId);
+      parameters.add(orgId);
+      parameters.add(orderDate);
       final String procedureName = "M_BOM_PriceStd";
       bdPriceList = (BigDecimal) CallStoredProcedure.getInstance()
           .call(procedureName, parameters, null);

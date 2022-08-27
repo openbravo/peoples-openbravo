@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -160,30 +160,44 @@
           M_REQUISITIONLINE_ID, '' AS C_ORDERLINE_ID,
           COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) AS PRICELIST,
           COALESCE(M_PRODUCTPRICE.PRICELIMIT, LOCKPRICE) AS PRICELIMIT,
-          COALESCE(M_PRODUCTPRICE.PRICESTD, LOCKPRICE) AS PRICESTD,
+          COALESCE(COALESCE(ppe.PRICESTD,M_PRODUCTPRICE.PRICESTD), LOCKPRICE) AS PRICESTD,
           CASE WHEN M_Pricelist.istaxincluded = 'Y' THEN 0
-                                                ELSE ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) END AS PRICEACTUAL,
+                                                ELSE ROUND(COALESCE(LOCKPRICE, COALESCE(ppe.PRICESTD,M_PRODUCTPRICE.PRICESTD)),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) END AS PRICEACTUAL,
           CASE WHEN COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) = 0 THEN 0 ELSE
-                    ROUND((COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) - COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD))/
+                    ROUND((COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE) - COALESCE(LOCKPRICE, COALESCE(ppe.PRICESTD,M_PRODUCTPRICE.PRICESTD)))/
                            COALESCE(M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE)*100,
                     (SELECT STDPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) END AS DISCOUNT,
           C_GetTax(M_REQUISITIONLINE.M_PRODUCT_ID, to_date(?), ?, ?, ?, ?, null, 'N') AS TAX,
           CASE WHEN LOCKQTY < (M_REQUISITIONLINE.QTY - M_REQUISITIONLINE.ORDEREDQTY) THEN 'N' ELSE 'Y' END AS TO_CLOSE,
-          CASE WHEN M_Pricelist.istaxincluded = 'Y' THEN ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) ELSE 0 END AS GROSS_UNIT,
-          CASE WHEN M_Pricelist.istaxincluded = 'Y' THEN ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD)*LOCKQTY,(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) ELSE 0 END AS GROSS_AMT,
+          CASE WHEN M_Pricelist.istaxincluded = 'Y' THEN ROUND(COALESCE(LOCKPRICE, COALESCE(ppe.PRICESTD,M_PRODUCTPRICE.PRICESTD)),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) ELSE 0 END AS GROSS_UNIT,
+          CASE WHEN M_Pricelist.istaxincluded = 'Y' THEN ROUND(COALESCE(LOCKPRICE, COALESCE(ppe.PRICESTD,M_PRODUCTPRICE.PRICESTD))*LOCKQTY,(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?)) ELSE 0 END AS GROSS_AMT,
           M_REQUISITIONLINE.needbydate
           FROM M_REQUISITIONLINE LEFT JOIN M_PRODUCTPRICE
                                          ON M_REQUISITIONLINE.M_PRODUCT_ID = M_PRODUCTPRICE.M_PRODUCT_ID
                                             AND M_PRODUCTPRICE.M_PRICELIST_VERSION_ID = ?
                                LEFT JOIN m_pricelist_version on M_PRODUCTPRICE.M_PRICELIST_VERSION_ID = m_pricelist_version.M_PRICELIST_VERSION_ID
                                LEFT JOIN m_pricelist on m_pricelist_version.m_pricelist_id = m_pricelist.m_pricelist_id
+                               LEFT JOIN M_PRODUCTPRICE_EXC ppe
+         ON (
+			  M_PRODUCTPRICE.m_productprice_id = ppe.m_productprice_id
+			  and exists (select 1 from ad_org_tree ot where ppe.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = ?)
+			  and ppe.validfrom <= TO_DATE(?)
+			  and ppe.validto >= TO_DATE(?)
+			  and ppe.orgdepth = (
+			    select max(ppe2.orgdepth)
+			    from m_productprice_exc ppe2
+			    where ppe2.m_productprice_id = ppe.m_productprice_id
+			    and exists (select 1 from ad_org_tree ot where ppe2.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = ?)
+			    and ppe2.validfrom <= TO_DATE(?)
+			    and ppe2.validto >= TO_DATE(?)
+			  ))
         WHERE 1=1
 	    GROUP BY M_REQUISITIONLINE.M_PRODUCT_ID, M_ATTRIBUTESETINSTANCE_ID, LOCKQTY, M_REQUISITIONLINE.DESCRIPTION, C_UOM_ID, QUANTITYORDER, 
 	    AUMQTY, C_AUM, LOCKAUMQTY, M_PRODUCT_UOM_ID, M_REQUISITIONLINE_ID, M_PRODUCTPRICE.PRICELIST, M_REQUISITIONLINE.PRICELIST, LOCKPRICE,
-	    M_PRODUCTPRICE.PRICELIMIT, M_PRODUCTPRICE.PRICESTD, M_Pricelist.istaxincluded, M_REQUISITIONLINE.needbydate,
+	    M_PRODUCTPRICE.PRICELIMIT, COALESCE(ppe.PRICESTD,M_PRODUCTPRICE.PRICESTD), M_Pricelist.istaxincluded, M_REQUISITIONLINE.needbydate,
             M_REQUISITIONLINE.QTY, M_REQUISITIONLINE.ORDEREDQTY, SUPPLIERNOTES
         ORDER BY MIN(M_REQUISITIONLINE.LINE), M_REQUISITIONLINE.M_PRODUCT_ID, M_PRODUCT_UOM_ID, M_ATTRIBUTESETINSTANCE_ID, SUPPLIERNOTES, 
-                 ROUND(COALESCE(LOCKPRICE, M_PRODUCTPRICE.PRICESTD),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?))
+                 ROUND(COALESCE(LOCKPRICE, COALESCE(ppe.PRICESTD,M_PRODUCTPRICE.PRICESTD)),(SELECT PRICEPRECISION FROM C_CURRENCY WHERE C_CURRENCY_ID = ?))
         ]]></Sql>
     <Field name="rownum" value="count"/>
     <Parameter name="currency"/>
@@ -193,12 +207,16 @@
     <Parameter name="warehouse"/>
     <Parameter name="billto"/>
     <Parameter name="shipto"/>
-    
     <Parameter name="currency"/>
     <Parameter name="currency"/>
-    
     <Parameter name="pricelistversion"/>
     <Parameter name="parRequisitionLines" optional="true" type="argument" after="WHERE 1=1" text=" AND M_RequisitionLine_ID IN"/>
+    <Parameter name="org"/>
+    <Parameter name="orderdate"/>
+    <Parameter name="orderdate"/>
+    <Parameter name="org"/>
+    <Parameter name="orderdate"/>
+    <Parameter name="orderdate"/>
     <Parameter name="currency"/>
   </SqlMethod>
   <SqlMethod name="selectVendor" type="preparedStatement" return="Multiple">

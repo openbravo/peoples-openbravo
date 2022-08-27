@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.financial.FinancialUtils;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
@@ -146,14 +147,15 @@ public class RMInsertOrphanLine implements org.openbravo.scheduling.Process {
     if (strUnitPrice.isEmpty()) {
       final ProductPrice productPrice = getProductPrice(product, order.getOrderDate(),
           order.isSalesTransaction(), order.getPriceList());
-      newOrderLine.setUnitPrice(productPrice.getStandardPrice());
+      BigDecimal priceStd = FinancialUtils.getProductStdPrice(productPrice, order.getOrganization(),
+          order.getOrderDate());
+      newOrderLine.setUnitPrice(priceStd);
       newOrderLine.setListPrice(productPrice.getListPrice());
       newOrderLine.setPriceLimit(productPrice.getPriceLimit());
-      newOrderLine.setStandardPrice(productPrice.getStandardPrice());
+      newOrderLine.setStandardPrice(priceStd);
       if (order.getPriceList().isPriceIncludesTax()) {
-        newOrderLine.setGrossUnitPrice(productPrice.getStandardPrice());
-        newOrderLine
-            .setLineGrossAmount(productPrice.getStandardPrice().multiply(returnedQty).negate());
+        newOrderLine.setGrossUnitPrice(priceStd);
+        newOrderLine.setLineGrossAmount(priceStd.multiply(returnedQty).negate());
         newOrderLine.setUnitPrice(BigDecimal.ZERO);
       }
     } else {

@@ -16,7 +16,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2020 Openbravo SLU
+* All portions are Copyright (C) 2001-2022 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -229,9 +229,23 @@
           ;
       END IF;
       v_auxQtyTotal:=0;
-      SELECT MAX(PRICELIST), MAX(PRICESTD),  MAX(PRICELIMIT)
+      SELECT MAX(PRICELIST), MAX(coalesce (ppe.pricestd, M_PRODUCTPRICE.PRICESTD)),  MAX(PRICELIMIT)
       INTO v_priceList, v_priceActual,  v_priceLimit
       FROM M_PRODUCTPRICE
+      LEFT JOIN M_PRODUCTPRICE_EXC ppe
+         ON (
+			  M_PRODUCTPRICE.m_productprice_id = ppe.m_productprice_id
+			  and exists (select 1 from ad_org_tree ot where ppe.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = Cur_Outs.AD_Org_ID)
+			  and ppe.validfrom <= v_DateInvoiced
+			  and ppe.validto >= v_DateInvoiced
+			  and ppe.orgdepth = (
+			    select max(ppe2.orgdepth)
+			    from m_productprice_exc ppe2
+			    where ppe2.m_productprice_id = ppe.m_productprice_id
+			    and exists (select 1 from ad_org_tree ot where ppe2.ad_org_id = ot.ad_parent_org_id and ot.ad_org_id = Cur_Outs.AD_Org_ID)
+			    and ppe2.validfrom <= v_DateInvoiced
+			    and ppe2.validto >= v_DateInvoiced
+			  ))
       WHERE M_PriceList_Version_ID=
         (SELECT MIN(M_PriceList_Version_ID)
         FROM M_PRICELIST_VERSION

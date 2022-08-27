@@ -111,6 +111,7 @@ import org.openbravo.test.modularity.ExecutionLimitsTest;
 import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
 import org.openbravo.test.preference.PreferenceTest;
+import org.openbravo.test.pricelist.PriceListExceptionTest;
 import org.openbravo.test.pricelist.PriceListTest;
 import org.openbravo.test.process.order.OrderProcessTest;
 import org.openbravo.test.productStatus.ProductStatusTest;
@@ -132,6 +133,7 @@ import org.openbravo.test.security.OBContextCollectionsTest;
 import org.openbravo.test.security.PasswordStrengthCheckerTest;
 import org.openbravo.test.security.StandardCrossOrganizationReference;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
+import org.openbravo.test.selector.TestSelectorHqlQueryTransformer;
 import org.openbravo.test.services.ServicesTest;
 import org.openbravo.test.services.ServicesTest2;
 import org.openbravo.test.services.ServicesTest3;
@@ -291,6 +293,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // Price List
     PriceListTest.class, //
 
+    // Price List Exceptions
+    PriceListExceptionTest.class, //
+
     // costing
     TestCosting.class, //
 
@@ -406,7 +411,10 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     ConversionRateDocUniqueTestSuite.class,
 
     // Utilities to manage dates
-    OBDateUtilsTest.class
+    OBDateUtilsTest.class,
+
+    // selector
+    TestSelectorHqlQueryTransformer.class
 
 })
 

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
     }
 
     // Parameters
+    final String orgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
     String strMProductID = info.getStringParameter("inpmProductId", IsIDFilter.instance);
     String strRequisitionId = info.getStringParameter("inpmRequisitionId", IsIDFilter.instance);
     String strPriceListId = info.getStringParameter("inpmPricelistId", IsIDFilter.instance);
@@ -87,7 +88,7 @@ public class SL_RequisitionLine_Product extends SimpleCallout {
             strPriceListId, strDueDate);
         if (StringUtils.isNotEmpty(strPriceListVersion)) {
           SLRequisitionLineProductData[] prices = SLRequisitionLineProductData.getPrices(this,
-              strMProductID, strPriceListVersion);
+              strMProductID, strPriceListVersion, orgId, strDueDate);
           if (prices != null && prices.length > 0 && (!StringUtils.equals(prices[0].pricelist, "0")
               || !StringUtils.equals(prices[0].pricestd, "0"))) {
             BigDecimal priceList = StringUtils.isEmpty(prices[0].pricelist) ? BigDecimal.ZERO

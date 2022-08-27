@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2020 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -47,6 +47,7 @@ import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
+import org.openbravo.model.pricing.pricelist.ProductPriceException;
 import org.openbravo.service.db.CallStoredProcedure;
 
 public class FinancialUtils {
@@ -92,7 +93,7 @@ public class FinancialUtils {
       final boolean useSalesPriceList, final PriceList pricelist, final Currency currency,
       final Organization organization) throws OBException {
     final ProductPrice pp = getProductPrice(product, date, useSalesPriceList, pricelist);
-    BigDecimal price = pp.getStandardPrice();
+    BigDecimal price = getProductStdPrice(pp, organization, date);
     if (!pp.getPriceListVersion().getPriceList().getCurrency().getId().equals(currency.getId())) {
       // Conversion is needed.
       price = getConvertedAmount(price, pp.getPriceListVersion().getPriceList().getCurrency(),
@@ -429,4 +430,39 @@ public class FinancialUtils {
         .setParameter("currencyId", currencyId)
         .scroll(ScrollMode.SCROLL_SENSITIVE);
   }
+
+  /**
+   * Get the unit price for a date, and price exception if exists.
+   * 
+   * @param productPrice
+   * @param organization
+   * @param date
+   * @return priceStd
+   * @throws OBException
+   */
+  public static BigDecimal getProductStdPrice(final ProductPrice productPrice,
+      final Organization organization, final Date date) throws OBException {
+    //@formatter:off
+    final String hql =
+            "as ppe, OrganizationTree as ot" +
+            " where ppe.productPrice.id = :productPriceId" +
+            "   and ppe.validFromDate <= :date" +
+            "   and ppe.validToDate >= :date" +
+            "   and ot.organization.id = :orgId" +
+            "   and ot.parentOrganization.id = ppe.organization.id" +
+            " order by ot.levelno";
+    //@formatter:on
+
+    final ProductPriceException productPriceException = OBDal.getInstance()
+        .createQuery(ProductPriceException.class, hql)
+        .setNamedParameter("productPriceId", productPrice.getId())
+        .setNamedParameter("orgId", organization.getId())
+        .setNamedParameter("date", date)
+        .setMaxResult(1)
+        .uniqueResult();
+
+    return productPriceException != null ? productPriceException.getStandardPrice()
+        : productPrice.getStandardPrice();
+  }
+
 }
