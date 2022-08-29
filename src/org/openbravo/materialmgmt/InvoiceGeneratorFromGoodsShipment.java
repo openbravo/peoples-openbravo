@@ -40,6 +40,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.RequestContext;
@@ -81,6 +82,7 @@ public class InvoiceGeneratorFromGoodsShipment {
   private String priceListId;
   private final Set<String> ordersWithAfterOrderDeliveryAlreadyInvoiced = new HashSet<>();
   private boolean allowInvoicePOSOrder = false;
+  private boolean allowEvictObjectOnCreation = true;
 
   private enum InvoiceTerm {
     IMMEDIATE("I"), AFTER_DELIVERY("D"), CUSTOMERSCHEDULE("S"), AFTER_ORDER_DELIVERY("O");
@@ -113,6 +115,10 @@ public class InvoiceGeneratorFromGoodsShipment {
 
   public void setAllowInvoicePOSOrder(boolean allowInvoicePOSOrder) {
     this.allowInvoicePOSOrder = allowInvoicePOSOrder;
+  }
+
+  public void setEvictObjectOnCreation(boolean allowEvictObjectOnCreation) {
+    this.allowEvictObjectOnCreation = allowEvictObjectOnCreation;
   }
 
   /**
@@ -230,7 +236,9 @@ public class InvoiceGeneratorFromGoodsShipment {
         } else if (isOrderCandidateToBeInvoiced(order)) {
           invoiceShipmentLineWithRelatedOrderLine(shipmentLine, orderLine, order);
         }
-        evictObjects(shipmentLine, orderLine, order);
+        if (this.allowEvictObjectOnCreation) {
+          evictObjects(shipmentLine, orderLine, order);
+        }
       }
       OBDal.getInstance().flush();
     }
@@ -394,8 +402,8 @@ public class InvoiceGeneratorFromGoodsShipment {
     return lines;
   }
 
-  private void evictObjects(final Object... objects) {
-    for (final Object object : objects) {
+  private void evictObjects(final BaseOBObject... objects) {
+    for (final BaseOBObject object : objects) {
       if (object != null) {
         OBDal.getInstance().getSession().evict(object);
       }
