@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2002 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,8 +19,10 @@
 
 package org.openbravo.base.weld.test.testinfrastructure;
 
+import org.openbravo.base.Prioritizable;
+
 /** Simple abstract bean */
-public abstract class ExtensionBean {
+public abstract class ExtensionBean implements Prioritizable {
 
   public abstract String getName();
 

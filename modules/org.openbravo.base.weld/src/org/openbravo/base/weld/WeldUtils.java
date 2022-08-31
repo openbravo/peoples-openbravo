@@ -33,6 +33,7 @@ import javax.naming.NamingException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.Prioritizable;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.DalContextListener;
 
@@ -137,6 +138,11 @@ public class WeldUtils {
    * {@code
    *   WeldUtils.getInstances(Something.class, new ComponentProvider.Selector("Selector_Value"));
    * }
+   * 
+   * @param type
+   *          the expected class
+   * @param selectors
+   *          the selectors that define the class annotations
    */
   @SuppressWarnings("unchecked")
   public static <T> List<T> getInstances(Class<T> type, AnnotationLiteral<?>... selectors) {
@@ -146,6 +152,26 @@ public class WeldUtils {
         .stream()
         .map(bean -> (T) bm.getReference(bean, type, bm.createCreationalContext(bean)))
         .collect(Collectors.toList());
+  }
+
+  /**
+   * Returns a set of instances for a specified type/class that implement the {@link Prioritizable}.
+   * Note that those with a lower priority value are sorted first.
+   */
+  public static <P extends Prioritizable> List<P> getInstancesSortedByPriority(Class<P> type) {
+    return Prioritizable.sortByPriority(getInstances(type));
+  }
+
+  /**
+   * Returns a set of instances for a specified type/class that implement the {@link Prioritizable},
+   * that match with the provided selectors and sorted by priority. Note that those with a lower
+   * priority value are sorted first.
+   * 
+   * @see #getInstances(Class, AnnotationLiteral...)
+   */
+  public static <P extends Prioritizable> List<P> getInstancesSortedByPriority(Class<P> type,
+      AnnotationLiteral<?>... selectors) {
+    return Prioritizable.sortByPriority(getInstances(type, selectors));
   }
 
   /**

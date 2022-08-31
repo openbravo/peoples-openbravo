@@ -30,4 +30,8 @@ public class QualifiedBean extends ExtensionBean {
     return "qualifiedBean";
   }
 
+  @Override
+  public int getPriority() {
+    return 200;
+  }
 }

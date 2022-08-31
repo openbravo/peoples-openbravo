@@ -124,6 +124,16 @@ public class CdiInfrastructure extends WeldBaseTest {
     assertThat("Retrieved the expected number of beans", beans, hasSize(0));
   }
 
+  @Test
+  public void expectedBeanWithAnnotationInstancesAreInjectedSortedByPriorityWithWeldUtils() {
+    List<ExtensionBean> beans = WeldUtils.getInstancesSortedByPriority(ExtensionBean.class);
+
+    assertThat("Bean with higher priority is retrieved first", beans.get(0).getName(),
+        equalTo("unqualifiedBean"));
+    assertThat("Bean with lower priority is retrieved last", beans.get(1).getName(),
+        equalTo("qualifiedBean"));
+  }
+
   private void assertExtensionBeansInjection(Stream<ExtensionBean> beans) {
     int numberOfExtensionBeans = 2;
 
