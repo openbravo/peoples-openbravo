@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,12 +24,15 @@ import static org.openbravo.scheduling.Process.PROCESSING;
 import static org.openbravo.scheduling.Process.SCHEDULED;
 import static org.openbravo.scheduling.Process.SUCCESS;
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.ad_process.ADProcessIDSelector;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 
 /**
@@ -84,6 +87,9 @@ public class ProcessRunner {
       process.execute(bundle);
       endTime = System.currentTimeMillis();
       status = SUCCESS;
+      for (ProcessRunnerHook hook : getHooks()) {
+        hook.onExecutionFinish(bundle);
+      }
 
     } catch (final Exception e) {
       endTime = System.currentTimeMillis();
@@ -97,5 +103,15 @@ public class ProcessRunner {
     }
 
     return executionId;
+  }
+
+  /**
+   * 
+   * @return a list with the instances implementing ProcessRunnerHook ordered by priority
+   */
+  private List<ProcessRunnerHook> getHooks() {
+    return WeldUtils.getInstancesSortedByPriority(ProcessRunnerHook.class,
+        new ADProcessIDSelector(bundle.getProcessId()));
+
   }
 }
