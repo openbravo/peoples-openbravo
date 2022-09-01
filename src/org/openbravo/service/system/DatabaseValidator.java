@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2020 Openbravo SLU
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,6 +34,8 @@ import org.apache.ddlutils.model.Index;
 import org.apache.ddlutils.model.Reference;
 import org.apache.ddlutils.model.Unique;
 import org.apache.ddlutils.model.View;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
@@ -49,6 +51,7 @@ import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.module.ModuleDBPrefix;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.system.NamingException;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.DataSet;
@@ -62,12 +65,11 @@ import org.openbravo.service.system.SystemValidationResult.SystemValidationType;
  * 
  * @author mtaal
  */
-
-// check naming rule of a table, use ad_exceptions table
 public class DatabaseValidator implements SystemValidator {
   private Database database;
   private boolean dbsmExecution = false;
 
+  private static final Logger log = LogManager.getLogger();
   private static int MAX_OBJECT_NAME_LENGTH = 30;
   private static final String FRENCHFISCAL_MODULE = "BA750E79C7AA4AA2860B99B415038E37";
 
@@ -754,7 +756,14 @@ public class DatabaseValidator implements SystemValidator {
       return;
     }
 
+    List<NamingException> namingExceptions = getTableNamingExceptions();
     for (org.apache.ddlutils.model.Table table : getDatabase().getTables()) {
+      if (hasNamingException(table, namingExceptions)) {
+        log.debug("Skipping name checking for table {} because it has a naming exception",
+            table.getName());
+        continue;
+      }
+
       // Primary Key
       if (table.getPrimaryKey() != null && !table.getPrimaryKey().equals("")
           && !nameStartsByDBPrefix(table.getPrimaryKey())) {
@@ -914,5 +923,18 @@ public class DatabaseValidator implements SystemValidator {
       }
 
     }
+  }
+
+  private List<NamingException> getTableNamingExceptions() {
+    return OBDal.getInstance()
+        .createCriteria(NamingException.class)
+        .add(Restrictions.eq(NamingException.PROPERTY_TYPE, "TABLE"))
+        .list();
+  }
+
+  private boolean hasNamingException(org.apache.ddlutils.model.Table table,
+      List<NamingException> namingExceptions) {
+    return namingExceptions.stream()
+        .anyMatch(ne -> ne.getName1().equalsIgnoreCase(table.getName()));
   }
 }
