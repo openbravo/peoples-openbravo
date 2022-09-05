@@ -50,6 +50,16 @@ public class OfferPickProductCategoryActionHandler extends OfferPickAndExecBaseA
     }
   }
 
+  /**
+   * Return all child tree of selected product categories
+   * 
+   * @param selectedLines
+   *          The product categories objects in JSON format. Each JSON object must have at least the
+   *          property "id"
+   * @return List of the product category IDs
+   * @throws JSONException
+   */
+
   public static Set<String> getAllChildProductCategories(JSONArray selectedLines)
       throws JSONException {
     Set<String> result = new HashSet<>();
