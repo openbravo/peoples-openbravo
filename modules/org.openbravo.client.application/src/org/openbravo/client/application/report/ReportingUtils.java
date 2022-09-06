@@ -1473,6 +1473,13 @@ public class ReportingUtils {
     return base + "/" + design;
   }
 
+  /**
+   * @return a String with the real path to the design sub-folder.
+   */
+  public static String getRealBaseDesignPath() {
+    return DalContextListener.getServletContext().getRealPath(getBaseDesign());
+  }
+
   private static String getReportLanguage(Map<?, ?> parameters) throws OBException {
     Map<?, ?> qualifier = (Map<?, ?>) parameters.get("REPORT_QUALIFIER");
     List<ReportLanguageHandler> reportLangHandlers = WeldUtils.getInstancesSortedByPriority(
