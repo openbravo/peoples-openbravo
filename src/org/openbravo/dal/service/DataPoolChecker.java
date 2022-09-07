@@ -18,6 +18,7 @@
  */
 package org.openbravo.dal.service;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.cache.TimeInvalidatedCache;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 
@@ -46,7 +48,7 @@ public class DataPoolChecker implements OBSingleton {
   private Map<String, String> confPoolMap = new HashMap<>();
   private final List<String> validPoolValues = Arrays.asList(ExternalConnectionPool.DEFAULT_POOL,
       ExternalConnectionPool.READONLY_POOL);
-  private Map<String, String> defaultReadOnlyPools = new HashMap<>();
+  private TimeInvalidatedCache<String, String> defaultReadOnlyPoolsCache;
   private List<DataPoolConfiguration> dataPoolConfigurations;
 
   private static DataPoolChecker instance;
@@ -65,14 +67,30 @@ public class DataPoolChecker implements OBSingleton {
    */
   private void initialize() {
     try {
-      defaultReadOnlyPools = getDataPoolConfigurations().stream()
-          .map(c -> Map.entry(c.getDataType(), getDefaultPoolPreference(c)))
-          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      defaultReadOnlyPoolsCache = TimeInvalidatedCache.newBuilder()
+          .name("Data Pool Checker")
+          .expireAfterDuration(Duration.ofMinutes(1))
+          .build(this::getDefaultReadOnlyPools);
       refreshDataPoolProcesses();
     } catch (Exception ex) {
       log.error("Error initializing the data pool configurations", ex);
       confPoolMap = Collections.emptyMap();
     }
+  }
+
+  /**
+   * Returns the pool associated to the data type provided
+   */
+  private String getDefaultReadOnlyPools(String dataType) {
+    List<DataPoolConfiguration> defaultReadOnlyPools = getDataPoolConfigurations().stream()
+        .filter(dataPoolConfiguration -> dataPoolConfiguration.getDataType().equals(dataType))
+        .collect(Collectors.toList());
+
+    if (!defaultReadOnlyPools.isEmpty()) {
+    	return getDefaultPoolPreference(defaultReadOnlyPools.get(0));
+    }
+    
+    return ExternalConnectionPool.DEFAULT_POOL;
   }
 
   /**
@@ -143,7 +161,7 @@ public class DataPoolChecker implements OBSingleton {
 
     String configPool = StringUtils.isBlank(processId) ? null
         : getConfiguredPool(processId, dataType, poolExtraProperty);
-    String poolToUse = configPool == null ? defaultReadOnlyPools.get(dataType) : configPool;
+    String poolToUse = configPool == null ? defaultReadOnlyPoolsCache.get(dataType) : configPool;
 
     if (processId != null) {
       log.debug("Using pool {} for process with id {} and data type {}", poolToUse, processId,
@@ -153,7 +171,7 @@ public class DataPoolChecker implements OBSingleton {
   }
 
   private boolean isUnknownType(String dataType) {
-    return StringUtils.isBlank(dataType) || !defaultReadOnlyPools.containsKey(dataType);
+    return StringUtils.isBlank(dataType) || (defaultReadOnlyPoolsCache.get(dataType) != null);
   }
 
   private String getConfiguredPool(String processId, String dataType, String poolExtraProperty) {

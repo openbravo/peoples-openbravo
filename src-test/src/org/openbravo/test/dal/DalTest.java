@@ -54,6 +54,7 @@ import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
@@ -71,7 +72,6 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.financialmgmt.cashmgmt.CashBook;
 import org.openbravo.model.financialmgmt.cashmgmt.CashBookAccounts;
 import org.openbravo.model.materialmgmt.transaction.MaterialTransaction;
-import org.openbravo.test.base.OBBaseTest;
 
 /**
  * Test different parts of the DAL API: {@link OBDal}, {@link OBQuery} and {@link OBCriteria}.
@@ -81,7 +81,7 @@ import org.openbravo.test.base.OBBaseTest;
  * @author mtaal
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DalTest extends OBBaseTest {
+public class DalTest extends WeldBaseTest {
   private static final Logger log = LogManager.getLogger();
 
   /**
