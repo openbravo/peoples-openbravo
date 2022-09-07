@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2022 Openbravo SLU
+ * All portions are Copyright (C) 2007-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -34,6 +33,7 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.AttachImplementationManager;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
+import org.openbravo.client.application.report.language.ReportLanguageHandler;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -222,14 +222,10 @@ public class ReportManager {
         Utility.getContext(_connectionProvider, variables, "#User_Client", ""));
     designParameters.put("USER_ORG",
         Utility.getContext(_connectionProvider, variables, "#User_Org", ""));
-
-    final String lang = variables.getLanguage();
-    designParameters.put("LANGUAGE", lang);
-
-    final Locale locale = new Locale.Builder().setLanguage(lang.substring(0, 2))
-        .setRegion(lang.substring(3, 5))
-        .build();
-    designParameters.put("LOCALE", locale);
+    designParameters.put("REPORT_QUALIFIER",
+        Map.of("QUALIFIER_TYPE", ReportLanguageHandler.ReportType.DOCUMENT, "QUALIFIER_VALUE",
+            report.getDocumentType().toString()));
+    designParameters.put("REPORT_PARAMETERS", report);
 
     final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
     dfs.setDecimalSeparator(variables.getSessionValue("#AD_ReportDecimalSeparator").charAt(0));

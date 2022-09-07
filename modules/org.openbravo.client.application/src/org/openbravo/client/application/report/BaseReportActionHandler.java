@@ -60,6 +60,7 @@ import org.openbravo.client.application.ReportDefinition;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
+import org.openbravo.client.application.report.language.ReportLanguageHandler;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.reference.UIDefinition;
@@ -319,6 +320,11 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     Map<String, Object> jrParams = new HashMap<>();
     loadFilterParams(jrParams, report, params);
     loadReportParams(jrParams, report, jrTemplatePath, jsonContent);
+    jrParams.put("REPORT_QUALIFIER", //
+        Map.of( //
+            "QUALIFIER_TYPE", ReportLanguageHandler.ReportType.PROCESS_DEFINITION,
+            "QUALIFIER_VALUE", parameters.get("processId")));
+    jrParams.put("REPORT_PARAMETERS", report);
     // Include the HTTP session into the parameters that are sent to the report
     jrParams.put("HTTP_SESSION", parameters.get(KernelConstants.HTTP_SESSION));
     allParametersMap.putAll(parameters);

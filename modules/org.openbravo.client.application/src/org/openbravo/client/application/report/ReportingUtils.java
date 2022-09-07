@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,6 +37,9 @@ import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.report.language.ReportLanguageHandler;
+import org.openbravo.client.application.report.language.ReportLanguageHandler.ReportType;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.client.kernel.reference.UIDefinitionController.FormatDefinition;
 import org.openbravo.dal.core.DalContextListener;
@@ -980,7 +984,21 @@ public class ReportingUtils {
         return reportFiller.fillReport();
       }
 
-      String language = OBContext.getOBContext().getLanguage().getLanguage();
+      String language;
+      if (parameters.get("REPORT_QUALIFIER") != null) {
+        language = getReportLanguage(parameters);
+      } else {
+        language = OBContext.getOBContext().getLanguage().getLanguage();
+        log.debug(
+            "The context language will be used because \"REPORT_QUALIFIER\" was not found into report parameters: {}",
+            parameters, new Exception("stack trace"));
+      }
+      parameters.put("LANGUAGE", language);
+      final Locale locale = new Locale.Builder().setLanguage(language.substring(0, 2))
+          .setRegion(language.substring(3, 5))
+          .build();
+      parameters.put("LOCALE", locale);
+
       JasperReport jReport;
 
       jReport = compiledReportManager.compileReportWithSubreports(jasperFilePath, language,
@@ -1305,6 +1323,7 @@ public class ReportingUtils {
         put("IS_IGNORE_PAGINATION", true);
       }
     });
+
     private final String extension;
     private final String contentType;
     private final Map<String, Object> params;
@@ -1452,5 +1471,16 @@ public class ReportingUtils {
       base = "/" + base;
     }
     return base + "/" + design;
+  }
+
+  private static String getReportLanguage(Map<?, ?> parameters) throws OBException {
+    Map<?, ?> qualifier = (Map<?, ?>) parameters.get("REPORT_QUALIFIER");
+    List<ReportLanguageHandler> reportLangHandlers = WeldUtils.getInstancesSortedByPriority(
+        ReportLanguageHandler.class,
+        new ReportLanguageHandler.Selector((ReportType) qualifier.get("QUALIFIER_TYPE"),
+            (String) qualifier.get("QUALIFIER_VALUE")));
+
+    return reportLangHandlers.isEmpty() ? OBContext.getOBContext().getLanguage().getLanguage()
+        : reportLangHandlers.get(0).getLanguage(parameters);
   }
 }

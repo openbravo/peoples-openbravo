@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2007-2018 Openbravo SLU
+ * All portions are Copyright (C) 2007-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.application.report.ReportingUtils;
+import org.openbravo.client.application.report.language.ReportLanguageHandler;
 import org.openbravo.data.Sqlc;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.reference.Reference;
@@ -62,6 +64,8 @@ public class PrintJR extends HttpSecureAppServlet {
     HashMap<String, Object> parameters = createParameters(vars, strProcessId);
 
     parameters.put("HTTP_SESSION", request.getSession(false));
+    parameters.put("REPORT_QUALIFIER", Map.of("QUALIFIER_TYPE",
+        ReportLanguageHandler.ReportType.AD_PROCESS, "QUALIFIER_VALUE", strProcessId));
 
     renderJR(vars, response, strReportName, strOutputType, parameters, null, null);
   }
