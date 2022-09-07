@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2021 Openbravo SLU
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,10 @@ public class BaseDataSourceTestDal extends OBBaseTest {
   private static boolean authenticated = false;
   private static String cookie;
   private static String csrfToken;
+  private static String lastRoleId;
+  private static String lastLangId;
+  private static String lastOrgId;
+  private static String lastWarehouseId;
 
   protected static final String POST_METHOD = "POST";
 
@@ -167,8 +171,17 @@ public class BaseDataSourceTestDal extends OBBaseTest {
       authenticated = true;
     }
 
+    // skip changeProfile if same as in last call
+    if (roleId.equals(lastRoleId) && langId.equals(lastLangId) && orgId.equals(lastOrgId)
+        && warehouseId.equals(lastWarehouseId)) {
+      return;
+    }
     DatasourceTestUtil.changeProfile(getOpenbravoURL(), cookie, roleId, langId, orgId, warehouseId);
     csrfToken = getTokenFromSessionDynamic();
+    lastRoleId = roleId;
+    lastLangId = langId;
+    lastOrgId = orgId;
+    lastWarehouseId = warehouseId;
   }
 
   /** Logs out current session */
@@ -179,5 +192,9 @@ public class BaseDataSourceTestDal extends OBBaseTest {
     authenticated = false;
     cookie = null;
     csrfToken = null;
+    lastRoleId = null;
+    lastLangId = null;
+    lastOrgId = null;
+    lastWarehouseId = null;
   }
 }
