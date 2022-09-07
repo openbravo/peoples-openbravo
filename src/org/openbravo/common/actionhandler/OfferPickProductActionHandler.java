@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019 Openbravo S.L.U.
+ * Copyright (C) 2019-2022 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -23,22 +23,28 @@ public class OfferPickProductActionHandler extends OfferPickAndExecBaseActionHan
   @Override
   protected void doPickAndExecute(String offerId, PriceAdjustment priceAdjustment, Client client,
       Organization org, JSONArray selectedLines) throws JSONException {
-    for (int i = 0; i < selectedLines.length(); i++) {
+    int i = 0;
+    while (i < selectedLines.length()) {
       JSONObject product = selectedLines.getJSONObject(i);
-      Product prd = (Product) OBDal.getInstance().getProxy(Product.ENTITY_NAME,
-          product.getString("id"));
-      org.openbravo.model.pricing.priceadjustment.Product item = OBProvider.getInstance().get(
-          org.openbravo.model.pricing.priceadjustment.Product.class);
+      Product prd = (Product) OBDal.getInstance()
+          .getProxy(Product.ENTITY_NAME, product.getString("id"));
+      org.openbravo.model.pricing.priceadjustment.Product item = OBProvider.getInstance()
+          .get(org.openbravo.model.pricing.priceadjustment.Product.class);
       item.setActive(true);
       item.setClient(client);
       item.setOrganization(org);
       item.setPriceAdjustment(priceAdjustment);
       item.setProduct(prd);
       OBDal.getInstance().save(item);
+      i++;
       if ((i % 100) == 0) {
         OBDal.getInstance().flush();
         OBDal.getInstance().getSession().clear();
+        i = 0;
       }
+    }
+    if (i > 0) {
+      OBDal.getInstance().flush();
     }
   }
 

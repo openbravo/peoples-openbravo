@@ -45,8 +45,12 @@ public class OfferPickProductCategoryActionHandler extends OfferPickAndExecBaseA
         if ((i % 100) == 0) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
+          i = 0;
         }
       }
+    }
+    if (i > 0) {
+      OBDal.getInstance().flush();
     }
   }
 
