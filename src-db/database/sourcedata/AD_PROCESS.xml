@@ -2181,30 +2181,6 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800094-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800094--></AD_PROCESS>
 
-<!--800098--><AD_PROCESS>
-<!--800098-->  <AD_PROCESS_ID><![CDATA[800098]]></AD_PROCESS_ID>
-<!--800098-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800098-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800098-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800098-->  <VALUE><![CDATA[AT_CreateTest]]></VALUE>
-<!--800098-->  <NAME><![CDATA[Create Document]]></NAME>
-<!--800098-->  <DESCRIPTION><![CDATA[Creates a apliccation test.]]></DESCRIPTION>
-<!--800098-->  <HELP><![CDATA[Select a test group or a single test. A apliccation testing text file will be generated.]]></HELP>
-<!--800098-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--800098-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800098-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800098-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800098-->  <CLASSNAME><![CDATA[ad_process/CreateTest.html]]></CLASSNAME>
-<!--800098-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800098-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800098-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800098-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800098-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800098-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800098-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800098-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800098--></AD_PROCESS>
-
 <!--800099--><AD_PROCESS>
 <!--800099-->  <AD_PROCESS_ID><![CDATA[800099]]></AD_PROCESS_ID>
 <!--800099-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
