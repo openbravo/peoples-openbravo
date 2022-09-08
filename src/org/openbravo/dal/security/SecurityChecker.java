@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -133,7 +133,8 @@ public class SecurityChecker implements OBSingleton {
       isOrganization = true;
     }
 
-    final Entity entity = ((BaseOBObject) obj).getEntity();
+    BaseOBObject bob = (BaseOBObject) obj;
+    final Entity entity = bob.getEntity();
     if ((!obContext.isInAdministratorMode() || obContext.doOrgClientAccessCheck())
         && clientId.length() > 0) {
       if (obj instanceof ClientEnabled || obj instanceof Client) {
@@ -145,7 +146,8 @@ public class SecurityChecker implements OBSingleton {
         }
       }
 
-      if (!obContext.getEntityAccessChecker().isWritable(entity)) {
+      if (!obContext.getEntityAccessChecker().isWritable(entity)
+          && bob.isWriteAccessCheckEnabled()) {
         throw new OBSecurityException("Entity " + entity + " is not writable by this user",
             logError);
       }
@@ -158,7 +160,8 @@ public class SecurityChecker implements OBSingleton {
         // client administrator and also is inserting the record in the same client
         boolean checkOrgAccess = !(entity.getTableName().equals("AD_Role_OrgAccess")
             && OBContext.getOBContext().getRole().isClientAdmin()
-            && OBContext.getOBContext().getRole().getClient().getId().equals(clientId));
+            && OBContext.getOBContext().getRole().getClient().getId().equals(clientId))
+            && bob.isOrgClientAccessCheckEnabled();
         boolean notWritableOrganization = !obContext.getWritableOrganizations().contains(orgId);
         boolean isDisabledOrganization = isOrganization
             && obContext.getDeactivatedOrganizations().contains(orgId);

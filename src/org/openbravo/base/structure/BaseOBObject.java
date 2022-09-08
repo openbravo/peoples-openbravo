@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import org.openbravo.base.util.CheckException;
 import org.openbravo.base.validation.ValidationException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.OBInterceptor;
+import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Language;
@@ -81,6 +82,10 @@ public abstract class BaseOBObject
   // Takes true, when dataTrl has been tried to initialize (regardless it has any value) in this way
   // it is tried only once
   private boolean hasLookedForTrl = false;
+
+  // flags to enable/disable the access checks when the object is saved
+  private boolean checkWriteAccess = true;
+  private boolean checkOrgClientAccess = true;
 
   // is used to set default data in a constructor of the generated class
   // without a security check
@@ -393,5 +398,41 @@ public abstract class BaseOBObject
       throw new OBSecurityException("setAllowRead may only be called in admin mode");
     }
     this.allowRead = allowRead;
+  }
+
+  /**
+   * For internal use only.
+   *
+   * Used to enable or disable the access checks that are done when invoking
+   * {@link SecurityChecker#checkWriteAccess(Object)}.
+   * 
+   * @param checkWriteAccess
+   *          {@code true} to enable the write access or {@code false} to disable it.
+   * @param checkOrgClientAccess
+   *          {@code true} to enable the org/client check or {@code false} to disable it.
+   */
+  public void setAccessChecks(boolean checkWriteAccess, boolean checkOrgClientAccess) {
+    this.checkWriteAccess = checkWriteAccess;
+    this.checkOrgClientAccess = checkOrgClientAccess;
+  }
+
+  /**
+   * For internal use only.
+   *
+   * @return {@code true} if the write access check should be done when flushing the changes of this
+   *         object or {@false} to disable the write access check
+   */
+  public boolean isWriteAccessCheckEnabled() {
+    return checkWriteAccess;
+  }
+
+  /**
+   * For internal use only.
+   *
+   * @return {@code true} if the org/client access check should be done when flushing the changes of
+   *         this object or {@code false} to disable the org/client check
+   */
+  public boolean isOrgClientAccessCheckEnabled() {
+    return checkOrgClientAccess;
   }
 }

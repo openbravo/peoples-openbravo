@@ -286,8 +286,8 @@ public class OBDal implements OBNotSingleton {
     // prevent saving of db view objects, this can happen for example if someone accidentally
     // exported views in xml and then imports this xml again
     if (obj instanceof BaseOBObject && ((BaseOBObject) obj).getEntity().isView()) {
-      log.warn("Trying to save an object which is a db-view, ignoring save operation, entity: "
-          + ((BaseOBObject) obj).getEntity().getName());
+      log.warn("Trying to save an object which is a db-view, ignoring save operation, entity: {}",
+          ((BaseOBObject) obj).getEntity().getName());
       return;
     }
 
@@ -296,9 +296,17 @@ public class OBDal implements OBNotSingleton {
     // not the most nice to do
     // TODO: add checking if setClientOrganization is really necessary
     // TODO: log using entityName
-    log.debug("Saving object " + obj.getClass().getName());
+    log.debug("Saving object {}", obj.getClass().getName());
     setClientOrganization(obj);
-    if (!OBContext.getOBContext().isInAdministratorMode()) {
+    OBContext context = OBContext.getOBContext();
+    if (context.isInAdministratorMode()) {
+      if (obj instanceof BaseOBObject) {
+        // As this BOB is being saved in administrator mode, disable the write access check for it
+        // in case later dirty changes are flushed. Note that the org/client check may be also
+        // disabled depending on if it is disabled in the current context.
+        ((BaseOBObject) obj).setAccessChecks(false, context.doOrgClientAccessCheck());
+      }
+    } else {
       if (obj instanceof BaseOBObject) {
         OBContext.getOBContext()
             .getEntityAccessChecker()
