@@ -132,6 +132,7 @@ import org.openbravo.test.security.OBContextCollectionsTest;
 import org.openbravo.test.security.PasswordStrengthCheckerTest;
 import org.openbravo.test.security.StandardCrossOrganizationReference;
 import org.openbravo.test.security.WritableReadableOrganizationClientTest;
+import org.openbravo.test.sendemail.SendEmailTest;
 import org.openbravo.test.services.ServicesTest;
 import org.openbravo.test.services.ServicesTest2;
 import org.openbravo.test.services.ServicesTest3;
@@ -406,7 +407,10 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     ConversionRateDocUniqueTestSuite.class,
 
     // Utilities to manage dates
-    OBDateUtilsTest.class
+    OBDateUtilsTest.class,
+
+    // Email Configuration by differents organization
+    SendEmailTest.class
 
 })
 
