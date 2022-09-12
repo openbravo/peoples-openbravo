@@ -87,9 +87,9 @@ public class DataPoolChecker implements OBSingleton {
         .collect(Collectors.toList());
 
     if (!defaultReadOnlyPools.isEmpty()) {
-    	return getDefaultPoolPreference(defaultReadOnlyPools.get(0));
+      return getDefaultPoolPreference(defaultReadOnlyPools.get(0));
     }
-    
+
     return ExternalConnectionPool.DEFAULT_POOL;
   }
 
@@ -171,7 +171,7 @@ public class DataPoolChecker implements OBSingleton {
   }
 
   private boolean isUnknownType(String dataType) {
-    return StringUtils.isBlank(dataType) || (defaultReadOnlyPoolsCache.get(dataType) != null);
+    return StringUtils.isBlank(dataType) || (defaultReadOnlyPoolsCache.get(dataType) == null);
   }
 
   private String getConfiguredPool(String processId, String dataType, String poolExtraProperty) {
