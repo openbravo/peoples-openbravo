@@ -10,7 +10,7 @@
  * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
  * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
  * Contributor(s): Openbravo SLU
- * Contributions are Copyright (C) 2001-2022 Openbravo S.L.U.
+ * Contributions are Copyright (C) 2001-2023 Openbravo S.L.U.
  ******************************************************************************/
 package org.openbravo.erpCommon.ad_forms;
 
@@ -605,6 +605,10 @@ public class TranslationManager {
 
       log4j.info("exportTrl - Records=" + rows + ", DTD=" + document.getDoctype());
 
+      // skip creating xml file if it would be empty
+      if (rows == 0) {
+        return;
+      }
       final DOMSource source = new DOMSource(document);
       // Output
       out.createNewFile();

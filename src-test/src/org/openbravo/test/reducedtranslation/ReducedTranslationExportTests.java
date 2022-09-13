@@ -21,9 +21,9 @@ package org.openbravo.test.reducedtranslation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +34,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -209,9 +208,9 @@ public class ReducedTranslationExportTests extends WeldBaseTest {
   }
 
   @Test
-  public void expectedEmptyTranslationFiles() {
+  public void expectedEmptyTranslationFilesAbsent() {
     Stream.of("lang/sq_AL/AD_REFERENCE_TRL_sq_AL.xml", "lang/sq_AL/OBUISEL_SELECTOR_TRL_sq_AL.xml")
-        .forEach(this::testExpectedEmptyTranslationFile);
+        .forEach(this::testExpectedEmptyTranslationFileAbsent);
   }
 
   private void testExistInFullAndNotExistsInReduced(final String relativePath, final String string)
@@ -220,7 +219,7 @@ public class ReducedTranslationExportTests extends WeldBaseTest {
         Files.readString(ReducedTrlTestConstants.FULL_TRL_DIR.resolve(relativePath)),
         containsString(string));
     assertThat("Reduced version " + relativePath,
-        Files.readString(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath)),
+        readFileAllowMissing(ReducedTrlTestConstants.REDUCED_TRL_DIR.resolve(relativePath)),
         not(containsString(string)));
   }
 
@@ -234,22 +233,22 @@ public class ReducedTranslationExportTests extends WeldBaseTest {
         containsString(string));
   }
 
-  private void testExpectedEmptyTranslationFile(final String relativePath) {
-    final long lineCountReduced = countLines(ReducedTrlTestConstants.REDUCED_TRL_DIR, relativePath);
-    final long lineCountFull = countLines(ReducedTrlTestConstants.FULL_TRL_DIR, relativePath);
+  private void testExpectedEmptyTranslationFileAbsent(final String relativePath) {
+    final boolean fileExistsReduced = fileExists(ReducedTrlTestConstants.REDUCED_TRL_DIR,
+        relativePath);
 
-    final long xmlHeaderLinesOnly = 2l;
-    assertThat("Reduced translation " + relativePath, lineCountReduced,
-        equalTo(xmlHeaderLinesOnly));
-    assertThat("Reduced translation " + relativePath, lineCountReduced, lessThan(lineCountFull));
+    assertFalse("Reduced translation " + relativePath, fileExistsReduced);
   }
 
-  private int countLines(final Path translationDir, final String fileRelativePath) {
-    try {
-      return Files.readAllLines(translationDir.resolve(fileRelativePath)).size();
-    } catch (IOException e) {
-      throw new OBException(e);
+  private boolean fileExists(final Path translationDir, final String fileRelativePath) {
+    return Files.exists(translationDir.resolve(fileRelativePath));
+  }
+
+  private String readFileAllowMissing(final Path file) throws IOException {
+    if (Files.notExists(file)) {
+      return "";
     }
-  }
+    return Files.readString(file);
 
+  }
 }
