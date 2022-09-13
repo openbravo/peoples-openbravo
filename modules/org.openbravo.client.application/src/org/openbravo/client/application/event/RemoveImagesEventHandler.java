@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2019 Openbravo SLU
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -132,7 +132,7 @@ class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    Property orgProperty = event.getTargetInstance().getEntity().getProperty("organization");
+    Entity entity = event.getTargetInstance().getEntity();
 
     // Iterate image properties of the entity
     for (String property : getImageProperties(event.getTargetInstance().getEntity())) {
@@ -155,11 +155,14 @@ class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
             OBContext.restorePreviousMode();
           }
         }
-      } else if (event.getPreviousState(orgProperty) != null
-          && event.getCurrentState(orgProperty) != event.getPreviousState(orgProperty)) {
-        // The ad_org_id of the parent entity has changed, update the ad_org_id of the referenced
-        // image to be the same
-        bob.setOrganization((Organization) event.getCurrentState(orgProperty));
+      } else if (entity.hasProperty("organization")) {
+        Property orgProperty = entity.getProperty("organization");
+        if (event.getPreviousState(orgProperty) != null
+            && event.getCurrentState(orgProperty) != event.getPreviousState(orgProperty)) {
+          // The ad_org_id of the parent entity has changed, update the ad_org_id of the referenced
+          // image to be the same
+          bob.setOrganization((Organization) event.getCurrentState(orgProperty));
+        }
       }
     }
   }
