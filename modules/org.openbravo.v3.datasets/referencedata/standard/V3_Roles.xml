@@ -107,42 +107,6 @@
     <editableField>true</editableField>
     <inheritedFrom xsi:nil="true"/>
   </ADFormAccess>
-  <ADFormAccess id="FF808181259DADEB01259DDDA4C201E8" identifier="Alert Management - Company Admin">
-    <id>FF808181259DADEB01259DDDA4C201E8</id>
-    <specialForm id="800016" entity-name="ADForm" identifier="Alert Management"/>
-    <role id="FF808181259DADEB01259DDDA4BB01E5" entity-name="ADRole" identifier="Company Admin"/>
-    <active>true</active>
-    <creationDate transient="true">2019-04-23T08:34:13.503Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2019-04-23T08:34:13.503Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADFormAccess>
-  <ADFormAccess id="FF808181259DADEB01259DDDA4C301E9" identifier="Alert Management - Sales">
-    <id>FF808181259DADEB01259DDDA4C301E9</id>
-    <specialForm id="800016" entity-name="ADForm" identifier="Alert Management"/>
-    <role id="FF8081812250326E012250353BDE0006" entity-name="ADRole" identifier="Sales"/>
-    <active>true</active>
-    <creationDate transient="true">2019-04-23T08:34:13.500Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2019-04-23T08:34:13.500Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADFormAccess>
-  <ADFormAccess id="FF808181259DADEB01259DDDA4C301EA" identifier="Alert Management - Finance">
-    <id>FF808181259DADEB01259DDDA4C301EA</id>
-    <specialForm id="800016" entity-name="ADForm" identifier="Alert Management"/>
-    <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
-    <active>true</active>
-    <creationDate transient="true">2019-04-23T08:34:13.500Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2019-04-23T08:34:13.500Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADFormAccess>
   <ADFormAccess id="FF808181259DADEB01259DDDA4C301EC" identifier="GL Posting by DB Tables - Finance">
     <id>FF808181259DADEB01259DDDA4C301EC</id>
     <specialForm id="800003" entity-name="ADForm" identifier="GL Posting by DB Tables"/>
@@ -159,30 +123,6 @@
     <id>FF808181259DADEB01259DDDA4C301ED</id>
     <specialForm id="100" entity-name="ADForm" identifier="Create Invoices from Orders"/>
     <role id="FF8081812250326E012250353BDE0005" entity-name="ADRole" identifier="Finance"/>
-    <active>true</active>
-    <creationDate transient="true">2019-04-23T08:34:13.499Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2019-04-23T08:34:13.499Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADFormAccess>
-  <ADFormAccess id="FF808181259DADEB01259DDDA4C401EE" identifier="Alert Management - Company Executive">
-    <id>FF808181259DADEB01259DDDA4C401EE</id>
-    <specialForm id="800016" entity-name="ADForm" identifier="Alert Management"/>
-    <role id="FF808181259DADEB01259DDDA4C201E6" entity-name="ADRole" identifier="Company Executive"/>
-    <active>true</active>
-    <creationDate transient="true">2019-04-23T08:34:13.499Z</creationDate>
-    <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <updated transient="true">2019-04-23T08:34:13.499Z</updated>
-    <updatedBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>
-    <editableField>true</editableField>
-    <inheritedFrom xsi:nil="true"/>
-  </ADFormAccess>
-  <ADFormAccess id="FF808181259DADEB01259DDDA4C401EF" identifier="Alert Management - Warehouse">
-    <id>FF808181259DADEB01259DDDA4C401EF</id>
-    <specialForm id="800016" entity-name="ADForm" identifier="Alert Management"/>
-    <role id="FF808181259DADEB01259DDDA4C201E7" entity-name="ADRole" identifier="Warehouse"/>
     <active>true</active>
     <creationDate transient="true">2019-04-23T08:34:13.499Z</creationDate>
     <createdBy transient="true" id="100" entity-name="ADUser" identifier="Openbravo"/>

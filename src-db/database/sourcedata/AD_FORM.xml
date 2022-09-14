@@ -130,19 +130,6 @@
 <!--800015-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
 <!--800015--></AD_FORM>
 
-<!--800016--><AD_FORM>
-<!--800016-->  <AD_FORM_ID><![CDATA[800016]]></AD_FORM_ID>
-<!--800016-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800016-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800016-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800016-->  <NAME><![CDATA[Alert Management]]></NAME>
-<!--800016-->  <DESCRIPTION><![CDATA[Edit predefined alerts made by the user.]]></DESCRIPTION>
-<!--800016-->  <ACCESSLEVEL><![CDATA[7]]></ACCESSLEVEL>
-<!--800016-->  <CLASSNAME><![CDATA[org.openbravo.erpCommon.ad_forms.AlertManagement]]></CLASSNAME>
-<!--800016-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800016-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800016--></AD_FORM>
-
 <!--800017--><AD_FORM>
 <!--800017-->  <AD_FORM_ID><![CDATA[800017]]></AD_FORM_ID>
 <!--800017-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
