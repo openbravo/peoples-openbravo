@@ -18,6 +18,7 @@
  */
 package org.openbravo.client.application.window;
 
+import org.openbravo.base.Prioritizable;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.model.ad.ui.Field;
 
@@ -25,7 +26,7 @@ import org.openbravo.model.ad.ui.Field;
  * Allows to provide to the {@link OBViewFieldHandler} the settings of the fields that are not
  * backed by a column and therefore cannot be retrieved from the application dictionary.
  */
-public interface FieldSettingsProvider {
+public interface FieldSettingsProvider extends Prioritizable {
 
   /**
    * Determines if the {@code FieldSettingsProvider} is able to retrieve the field view properties
@@ -65,6 +66,7 @@ public interface FieldSettingsProvider {
    * @return an integer representing the priority of this provider. Those with lower priority are
    *         taken first when executing the different methods. It returns 100 by default.
    */
+  @Override
   public default int getPriority() {
     return 100;
   }

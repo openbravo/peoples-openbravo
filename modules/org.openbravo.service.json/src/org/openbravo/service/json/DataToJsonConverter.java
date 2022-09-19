@@ -24,14 +24,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -273,13 +271,8 @@ public class DataToJsonConverter {
 
   private Map<String, Object> resolveAdditionalPropertyWithHook(BaseOBObject bob,
       String propertyPath) {
-    List<AdditionalPropertyResolver> resolvers = WeldUtils
-        .getInstances(AdditionalPropertyResolver.class)
-        .stream()
-        .sorted(Comparator.comparing(AdditionalPropertyResolver::getPriority))
-        .collect(Collectors.toList());
-
-    for (AdditionalPropertyResolver resolver : resolvers) {
+    for (AdditionalPropertyResolver resolver : WeldUtils
+        .getInstancesSortedByPriority(AdditionalPropertyResolver.class)) {
       Map<String, Object> result = resolver.resolve(bob, propertyPath);
       if (result != null && !result.isEmpty()) {
         return result;

@@ -21,6 +21,7 @@ package org.openbravo.service.json;
 import java.util.List;
 import java.util.Map;
 
+import org.openbravo.base.Prioritizable;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.service.datasource.DataSourceProperty;
@@ -32,7 +33,7 @@ import org.openbravo.service.datasource.DefaultDataSourceService;
  * value of the additional property and to provide the data source properties required to filter and
  * sort in the client side by the property field linked to the additional property.
  */
-public interface AdditionalPropertyResolver {
+public interface AdditionalPropertyResolver extends Prioritizable {
 
   /**
    * Determines if the value of the given property can be resolved for the business objects of the
@@ -92,6 +93,7 @@ public interface AdditionalPropertyResolver {
    * @return an integer representing the priority of this resolver. Those with lower priority are
    *         taken first when executing the different methods. It returns 100 by default.
    */
+  @Override
   public default int getPriority() {
     return 100;
   }

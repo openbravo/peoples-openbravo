@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -276,7 +275,6 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
   private boolean canBeResolvedAsAdditionalProperty(Entity entity, String property) {
     return WeldUtils.getInstances(AdditionalPropertyResolver.class)
         .stream()
-        .sorted(Comparator.comparing(AdditionalPropertyResolver::getPriority))
         .anyMatch(r -> r.canResolve(entity, property));
   }
 

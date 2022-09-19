@@ -21,10 +21,8 @@ package org.openbravo.service.datasource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -423,13 +421,8 @@ public class DefaultDataSourceService extends BaseDataSourceService {
 
   private List<DataSourceProperty> getDatasourcePropertiesFromHook(Entity entity,
       String propertyPath) {
-    List<AdditionalPropertyResolver> resolvers = WeldUtils
-        .getInstances(AdditionalPropertyResolver.class)
-        .stream()
-        .sorted(Comparator.comparing(AdditionalPropertyResolver::getPriority))
-        .collect(Collectors.toList());
-
-    for (AdditionalPropertyResolver resolver : resolvers) {
+    for (AdditionalPropertyResolver resolver : WeldUtils
+        .getInstancesSortedByPriority(AdditionalPropertyResolver.class)) {
       List<DataSourceProperty> result = resolver.getDataSourceProperties(entity, propertyPath);
       if (result != null && !result.isEmpty()) {
         return result;

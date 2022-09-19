@@ -96,10 +96,7 @@ public class OBViewFieldHandler {
   private Map<String, Optional<GCTab>> tabsGridConfig;
 
   private List<FieldSettingsProvider> fieldSettingsProviders = WeldUtils
-      .getInstances(FieldSettingsProvider.class)
-      .stream()
-      .sorted(Comparator.comparing(FieldSettingsProvider::getPriority))
-      .collect(Collectors.toList());
+      .getInstancesSortedByPriority(FieldSettingsProvider.class);
 
   public Tab getTab() {
     return tab;

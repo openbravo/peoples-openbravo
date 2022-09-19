@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +34,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -195,10 +193,7 @@ public class AdvancedQueryBuilder {
 
   private static List<AdvancedQueryBuilderHook> getHooks() {
     try {
-      return WeldUtils.getInstances(AdvancedQueryBuilderHook.class)
-          .stream()
-          .sorted(Comparator.comparing(AdvancedQueryBuilderHook::getPriority))
-          .collect(Collectors.toList());
+      return WeldUtils.getInstancesSortedByPriority(AdvancedQueryBuilderHook.class);
     } catch (Exception ex) {
       log.error("Could not retrieve the list of hooks", ex);
       return Collections.emptyList();

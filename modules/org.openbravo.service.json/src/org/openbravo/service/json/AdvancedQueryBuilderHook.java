@@ -20,11 +20,13 @@ package org.openbravo.service.json;
 
 import java.util.List;
 
+import org.openbravo.base.Prioritizable;
+
 /**
  * Allows to modify the queries built by the {@link AdvancedQueryBuilder} by adding custom logic on
  * some key points of the query building.
  */
-public interface AdvancedQueryBuilderHook {
+public interface AdvancedQueryBuilderHook extends Prioritizable {
 
   /**
    * This method can be used to modify the join clauses of the query.
@@ -85,6 +87,7 @@ public interface AdvancedQueryBuilderHook {
    * @return an integer representing the priority of this hook. Those with lower priority are taken
    *         first when executing the different methods. It returns 100 by default.
    */
+  @Override
   public default int getPriority() {
     return 100;
   }
