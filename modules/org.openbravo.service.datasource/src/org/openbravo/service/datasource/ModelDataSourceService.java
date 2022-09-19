@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
   private static final String PROPERTY_FIELD = "inpproperty";
   private static final String DATASOURCE_FIELD = "property";
   private static final String FORM_FIELD = "inpadTableId";
+  private static final String UNSUPPORTED_OPERATION_MESSAGE = "This operation is not supported by this data source implementation";
 
   private static final Logger log = LogManager.getLogger();
   private static final Property identifier = new Property();
@@ -58,8 +59,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
 
   @Override
   public String add(Map<String, String> parameters, String content) {
-    throw new UnsupportedOperationException(
-        "This operation is not supported by this data source implementation");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MESSAGE);
   }
 
   @Override
@@ -69,8 +69,8 @@ public class ModelDataSourceService extends BaseDataSourceService {
     String propertyPath;
 
     // filter based on criteria
-    HashMap<String, String> criteria = getCriteria(parameters);
-    if (criteria != null && criteria.containsKey(DATASOURCE_FIELD)) {
+    Map<String, String> criteria = getCriteria(parameters);
+    if (!criteria.isEmpty() && criteria.containsKey(DATASOURCE_FIELD)) {
       propertyPath = criteria.get(DATASOURCE_FIELD);
     } else {
       // when there is no criteria present, filter based on field's value
@@ -83,7 +83,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
     if (baseEntity == null) {
       // The first request doesn't contain the adTableId
       // that's why baseEntity is null
-      final List<Property> baseEntityProperties = new ArrayList<Property>();
+      final List<Property> baseEntityProperties = new ArrayList<>();
       if (propertyPath != null) {
         final Property savedPath = new Property();
         savedPath.setName(propertyPath);
@@ -92,12 +92,11 @@ public class ModelDataSourceService extends BaseDataSourceService {
       try {
         return getJSONResponse(baseEntityProperties, "", 0);
       } catch (JSONException e) {
-        log.error("Error building JSON response: " + e.getMessage(), e);
+        log.error("Error building JSON response: {}", e.getMessage(), e);
         return JsonUtils.getEmptyResult();
       }
     }
 
-    Property foundProperty = null;
     int startRow = 0;
 
     if (propertyPath == null || propertyPath.equals("")) {
@@ -107,7 +106,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
         return getJSONResponse(baseEntityProperties, "", 0);
 
       } catch (JSONException e) {
-        log.error("Error building JSON response: " + e.getMessage(), e);
+        log.error("Error building JSON response: {}", e.getMessage(), e);
         return JsonUtils.getEmptyResult();
       }
     }
@@ -122,7 +121,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
       final String[] parts = propertyPath.split("\\.");
       Entity currentEntity = baseEntity;
       Property currentProperty = null;
-      List<Property> props = new ArrayList<Property>();
+      List<Property> props = new ArrayList<>();
       int currentDepth = 0;
       int pathDepth = parts.length;
 
@@ -158,7 +157,6 @@ public class ModelDataSourceService extends BaseDataSourceService {
             } else {
               currentProperty = currentEntity.getProperty(prop.getName());
             }
-            foundProperty = prop;
             propNotFound = false;
             if (currentDepth != pathDepth) {
               // Breaking loop to continue with next property in the path
@@ -172,13 +170,12 @@ public class ModelDataSourceService extends BaseDataSourceService {
           return JsonUtils.getEmptyResult();
         }
 
-        foundProperty = currentProperty;
-        List<Property> computedColProperties = null;
+        List<Property> computedColProperties = Collections.emptyList();
         if (getAllProperties
             && Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
           computedColProperties = currentEntity.getComputedColumnProperties();
         } else {
-          currentEntity = foundProperty.getTargetEntity();
+          currentEntity = currentProperty.getTargetEntity();
         }
 
         if (currentDepth == pathDepth && getAllProperties
@@ -194,10 +191,8 @@ public class ModelDataSourceService extends BaseDataSourceService {
         index++;
       }
 
-      if (getAllProperties && props.size() > 0) {
-        if (props.get(0).getTargetEntity() == null) {
-          return JsonUtils.getEmptyResult();
-        }
+      if (getAllProperties && !props.isEmpty() && props.get(0).getTargetEntity() == null) {
+        return JsonUtils.getEmptyResult();
       }
 
       return getJSONResponse(props, propertyPath, startRow);
@@ -209,14 +204,12 @@ public class ModelDataSourceService extends BaseDataSourceService {
 
   @Override
   public String remove(Map<String, String> parameters) {
-    throw new UnsupportedOperationException(
-        "This operation is not supported by this data source implementation");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MESSAGE);
   }
 
   @Override
   public String update(Map<String, String> parameters, String content) {
-    throw new UnsupportedOperationException(
-        "This operation is not supported by this data source implementation");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MESSAGE);
   }
 
   /**
@@ -232,8 +225,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
     if (tableId == null) {
       return null;
     }
-    final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
-    return entity;
+    return ModelProvider.getInstance().getEntityByTableId(tableId);
   }
 
   /**
@@ -245,7 +237,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
    */
   protected List<Property> getEntityProperties(Entity entity) {
 
-    final List<Property> entityProperties = new ArrayList<Property>();
+    final List<Property> entityProperties = new ArrayList<>();
     // Appending identifier property
     entityProperties.add(identifier);
     entityProperties.addAll(entity.getProperties());
@@ -293,7 +285,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
    * @return a list of JSONObjects
    */
   private List<JSONObject> convertToJSONObjects(List<Property> properties, String propertyPath) {
-    final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+    final List<JSONObject> jsonObjects = new ArrayList<>();
     final int pos = propertyPath.lastIndexOf('.');
     String propertyPrefix = "";
 
@@ -328,11 +320,11 @@ public class ModelDataSourceService extends BaseDataSourceService {
     return jsonObject;
   }
 
-  private HashMap<String, String> getCriteria(Map<String, String> parameters) {
+  private Map<String, String> getCriteria(Map<String, String> parameters) {
     if (!"AdvancedCriteria".equals(parameters.get("_constructor"))) {
-      return null;
+      return Collections.emptyMap();
     }
-    HashMap<String, String> criteriaValues = new HashMap<String, String>();
+    Map<String, String> criteriaValues = new HashMap<>();
     try {
       JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
       for (int i = 0; i < criterias.length(); i++) {
@@ -343,7 +335,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
       // Ignore exception.
     }
     if (criteriaValues.isEmpty()) {
-      return null;
+      return Collections.emptyMap();
     }
     return criteriaValues;
   }
