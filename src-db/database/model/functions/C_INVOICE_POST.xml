@@ -1081,6 +1081,24 @@ IF (NOT FINISH_PROCESS) THEN
 
       END_PROCESSING:=TRUE;
     END IF;
+
+    IF (v_DocAction IN ('AP', 'CO', 'RE')) THEN
+      -- Check the period control is opened (only if it is legal entity with accounting)
+      -- Gets the BU or LE of the document
+      SELECT AD_GET_DOC_LE_BU('C_INVOICE', v_Record_ID, 'C_INVOICE_ID', 'LE') INTO v_org_bule_id FROM DUAL;
+      SELECT AD_OrgType.IsAcctLegalEntity INTO v_isacctle
+      FROM AD_OrgType, AD_Org
+      WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
+        AND AD_Org.AD_Org_ID=v_org_bule_id;
+
+      IF (v_isacctle='Y') THEN
+        SELECT C_CHK_OPEN_PERIOD(v_Org_ID, v_DateAcct, NULL, v_DocTypeTarget_ID) INTO v_available_period FROM DUAL;
+        IF (v_available_period<>1) THEN
+          RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
+        END IF;
+      END IF;
+    END IF;
+
   END IF;--END_PROCESSING
   -- Issue 20553. Problem with the order of the execution of the triggers.
   -- By updating the Invoice Line again, we can assure that the Invoice Line Tax
@@ -1089,6 +1107,7 @@ IF (NOT FINISH_PROCESS) THEN
   SET UPDATED = now()
   WHERE C_INVOICE_ID = v_Record_ID;
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
+
     /**************************************************************************
      * Actions allowed: COmplete, APprove
      */
@@ -1110,21 +1129,6 @@ IF (NOT FINISH_PROCESS) THEN
       SELECT AD_ORG_CHK_DOCUMENTS('C_INVOICE', 'C_INVOICELINE', v_Record_ID, 'C_INVOICE_ID', 'C_INVOICE_ID') INTO v_is_included FROM dual;
       IF (v_is_included=-1) THEN
         RAISE_APPLICATION_ERROR(-20000, '@LinesAndHeaderDifferentLEorBU@');
-      END IF;
-
-      -- Check the period control is opened (only if it is legal entity with accounting)
-      -- Gets the BU or LE of the document
-      SELECT AD_GET_DOC_LE_BU('C_INVOICE', v_Record_ID, 'C_INVOICE_ID', 'LE') INTO v_org_bule_id FROM DUAL;
-      SELECT AD_OrgType.IsAcctLegalEntity INTO v_isacctle
-      FROM AD_OrgType, AD_Org
-      WHERE AD_Org.AD_OrgType_ID = AD_OrgType.AD_OrgType_ID
-        AND AD_Org.AD_Org_ID=v_org_bule_id;
-
-      IF (v_isacctle='Y') THEN
-        SELECT C_CHK_OPEN_PERIOD(v_Org_ID, v_DateAcct, NULL, v_DocTypeTarget_ID) INTO v_available_period FROM DUAL;
-        IF (v_available_period<>1) THEN
-          RAISE_APPLICATION_ERROR(-20000, '@PeriodNotAvailable@');
-        END IF;
       END IF;
 
       SELECT COUNT(*) INTO v_count
