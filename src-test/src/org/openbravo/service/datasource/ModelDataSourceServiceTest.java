@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.service.datasource.test;
+package org.openbravo.service.datasource;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -51,7 +51,6 @@ import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.service.datasource.ModelDataSourceService;
 import org.openbravo.service.json.AdditionalPropertyResolver;
 import org.openbravo.test.base.TestConstants;
 

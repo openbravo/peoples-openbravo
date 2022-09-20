@@ -45,6 +45,7 @@ import org.openbravo.client.kernel.CSSMinifier;
 import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
+import org.openbravo.client.kernel.reference.plm.RelevantCharacteristicQueryHookTest;
 import org.openbravo.client.kernel.test.CompressionTest;
 import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
@@ -53,8 +54,10 @@ import org.openbravo.event.CharacteristicEventHandlerTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
 import org.openbravo.scheduling.trigger.TriggerProviderTest;
+import org.openbravo.service.datasource.ModelDataSourceServiceTest;
 import org.openbravo.service.externalsystem.ExternalSystemProviderTest;
 import org.openbravo.service.externalsystem.http.HttpExternalSystemDataCreationTest;
+import org.openbravo.service.json.AdvancedQueryBuilderTest;
 import org.openbravo.synchronization.event.EventTriggeringTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
@@ -336,6 +339,13 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     GenerateComponentTest.class, //
     LabelTest.class, //
     CompressionTest.class, //
+    RelevantCharacteristicQueryHookTest.class, //
+
+    // service json
+    AdvancedQueryBuilderTest.class, //
+
+    // service datasource
+    ModelDataSourceServiceTest.class, //
 
     // buildValidations and moduleScripts
     ExecutionLimitsTest.class, //
