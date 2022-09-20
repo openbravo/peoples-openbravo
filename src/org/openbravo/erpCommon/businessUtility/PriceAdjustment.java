@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -137,8 +137,8 @@ public class PriceAdjustment {
     }
   }
 
-  private static BigDecimal getPriceStdWithDiscountsApplied(final BigDecimal qty, final BigDecimal originalPriceStd,
-      final int precision,
+  private static BigDecimal getPriceStdWithDiscountsApplied(final BigDecimal qty,
+      final BigDecimal originalPriceStd, final int precision,
       final org.openbravo.model.pricing.priceadjustment.PriceAdjustment promo) {
     boolean applyDiscount = true;
     BigDecimal priceStd = originalPriceStd;
@@ -330,6 +330,8 @@ public class PriceAdjustment {
             "        where active = true" +
             "          and o.priceAdjustment = p" +
             "          and o.organization.id = :orgId" +
+            "          and (o.endingDate is null or trunc(o.endingDate) + 1 > :date)" +
+            "          and (o.startingDate is null or trunc(o.startingDate) <= :date)" +
             "       )" +
             "     )" +
             "     or (includedOrganizations='N' and exists (" +
@@ -338,6 +340,8 @@ public class PriceAdjustment {
             "        where active = true" +
             "          and o.priceAdjustment = p" +
             "          and o.organization.id = :orgId" +
+            "          and (o.endingDate is null or trunc(o.endingDate) + 1 > :date)" +
+            "          and (o.startingDate is null or trunc(o.startingDate) <= :date)" +
             "       )" +
             "   ))" +
             // Product characteristic
