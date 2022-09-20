@@ -21,13 +21,13 @@ package org.openbravo.service.datasource.test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -63,6 +63,7 @@ public class ModelDataSourceServiceTest extends WeldBaseTest {
 
   @Before
   public void initialize() {
+    // create an special property that will be retrieved through an AdditionalPropertyResolver
     addRelevantCharacteristic();
     setSystemAdministratorContext();
   }
@@ -99,63 +100,100 @@ public class ModelDataSourceServiceTest extends WeldBaseTest {
 
   @Test
   public void fetchAllProperties() throws JSONException {
-    Map<String, String> parameters = new HashMap<>();
-    parameters.put("inpadTableId", "208");
-    parameters.put("_constructor", "AdvancedCriteria");
-    //@formatter:off
-    parameters.put("criteria",
-        "{\"fieldName\":\"_dummy\",\"operator\":\"equals\",\"value\":1663665066321}");
-    //@formatter:on
-
     ModelDataSourceService datasource = WeldUtils
         .getInstanceFromStaticBeanManager(ModelDataSourceService.class);
+    Map<String, String> parameters = getRequestParameters(TestConstants.Tables.M_PRODUCT, null);
+
     String result = datasource.fetch(parameters);
 
-    List<String> expectedProperties = new ArrayList<>();
-    expectedProperties.add("_identifier");
-    expectedProperties.addAll(getProductProperties(p -> true));
-    assertThat(getPropertiesFromResponse(result), contains(expectedProperties.toArray()));
+    String[] expectedProperties = getProductProperties(p -> true, p -> p);
+    assertThat(getPropertiesFromResponse(result), contains(expectedProperties));
+  }
+
+  @Test
+  public void fetchAllPropertiesNavigatingFromOtherEntity() throws JSONException {
+    ModelDataSourceService datasource = WeldUtils
+        .getInstanceFromStaticBeanManager(ModelDataSourceService.class);
+    Map<String, String> parameters = getRequestParameters(TestConstants.Tables.C_ORDERLINE,
+        "product.");
+
+    String result = datasource.fetch(parameters);
+
+    String[] expectedProperties = getProductProperties(p -> true, p -> "product." + p);
+    assertThat(getPropertiesFromResponse(result), contains(expectedProperties));
   }
 
   @Test
   public void fetchMatchingProperties() throws JSONException {
-    Map<String, String> parameters = new HashMap<>();
-    parameters.put("inpadTableId", "208");
-    parameters.put("_constructor", "AdvancedCriteria");
-    parameters.put("_OrExpression", "true");
-    //@formatter:off
-    parameters.put("criteria",
-        "{\"fieldName\":\"_dummy\",\"operator\":\"equals\",\"value\":1663665066321}" +
-        "__;__" +
-        "{\"fieldName\":\"property\",\"operator\":\"iContains\",\"value\":\"a\"}");
-    //@formatter:on
-
     ModelDataSourceService datasource = WeldUtils
         .getInstanceFromStaticBeanManager(ModelDataSourceService.class);
+    Map<String, String> parameters = getRequestParameters(TestConstants.Tables.M_PRODUCT, "a");
+
     String result = datasource.fetch(parameters);
 
-    List<String> expectedProperties = getProductProperties(p -> p.startsWith("a"));
-    assertThat(getPropertiesFromResponse(result), contains(expectedProperties.toArray()));
+    String[] expectedProperties = getProductProperties(p -> p.startsWith("a"), p -> p);
+    assertThat(getPropertiesFromResponse(result), contains(expectedProperties));
+  }
+
+  @Test
+  public void fetchMatchingPropertiesNavigatingFromOtherEntity() throws JSONException {
+    ModelDataSourceService datasource = WeldUtils
+        .getInstanceFromStaticBeanManager(ModelDataSourceService.class);
+    Map<String, String> parameters = getRequestParameters(TestConstants.Tables.C_ORDERLINE,
+        "product.a");
+
+    String result = datasource.fetch(parameters);
+
+    String[] expectedProperties = getProductProperties(p -> p.startsWith("a"), p -> "product." + p);
+    assertThat(getPropertiesFromResponse(result), contains(expectedProperties));
+  }
+
+  @Test
+  public void fetchProductPropertyNavigatingFromOtherEntity() throws JSONException {
+    ModelDataSourceService datasource = WeldUtils
+        .getInstanceFromStaticBeanManager(ModelDataSourceService.class);
+    Map<String, String> parameters = getRequestParameters(TestConstants.Tables.C_ORDERLINE,
+        "product");
+
+    String result = datasource.fetch(parameters);
+
+    assertThat(getPropertiesFromResponse(result), contains("product"));
   }
 
   @Test
   public void fetchAdditionalProperty() throws JSONException {
+    ModelDataSourceService datasource = WeldUtils
+        .getInstanceFromStaticBeanManager(ModelDataSourceService.class);
+    Map<String, String> parameters = getRequestParameters(TestConstants.Tables.M_PRODUCT, "mtes");
+
+    String result = datasource.fetch(parameters);
+
+    assertThat(getPropertiesFromResponse(result), contains("mTest"));
+  }
+
+  @Test
+  public void fetchAdditionalPropertyNavigatingFromOtherEntity() throws JSONException {
+    ModelDataSourceService datasource = WeldUtils
+        .getInstanceFromStaticBeanManager(ModelDataSourceService.class);
+    Map<String, String> parameters = getRequestParameters(TestConstants.Tables.C_ORDERLINE,
+        "product.mtes");
+
+    String result = datasource.fetch(parameters);
+
+    assertThat(getPropertiesFromResponse(result), contains("product.mTest"));
+  }
+
+  private Map<String, String> getRequestParameters(String tableId, String filterValue) {
     Map<String, String> parameters = new HashMap<>();
-    parameters.put("inpadTableId", "208");
+    parameters.put("inpadTableId", tableId);
     parameters.put("_constructor", "AdvancedCriteria");
     parameters.put("_OrExpression", "true");
     //@formatter:off
     parameters.put("criteria",
         "{\"fieldName\":\"_dummy\",\"operator\":\"equals\",\"value\":1663665066321}" +
-        "__;__" +
-        "{\"fieldName\":\"property\",\"operator\":\"iContains\",\"value\":\"mtes\"}");
+        (filterValue == null ? "" : "__;__{\"fieldName\":\"property\",\"operator\":\"iContains\",\"value\":\""+ filterValue +"\"}"));
     //@formatter:on
-
-    ModelDataSourceService datasource = WeldUtils
-        .getInstanceFromStaticBeanManager(ModelDataSourceService.class);
-    String result = datasource.fetch(parameters);
-
-    assertThat(getPropertiesFromResponse(result), contains("mTest"));
+    return parameters;
   }
 
   private List<String> getPropertiesFromResponse(String response) throws JSONException {
@@ -169,7 +207,7 @@ public class ModelDataSourceServiceTest extends WeldBaseTest {
     }).collect(Collectors.toList());
   }
 
-  private List<String> getProductProperties(Predicate<String> filter) {
+  private String[] getProductProperties(Predicate<String> filter, UnaryOperator<String> mapper) {
     Entity product = ModelProvider.getInstance().getEntity(Product.class);
     List<String> properties = product.getProperties()
         .stream()
@@ -181,7 +219,8 @@ public class ModelDataSourceServiceTest extends WeldBaseTest {
         .map(resolver -> resolver.getPropertyNames(product))
         .flatMap(Collection::stream)
         .collect(Collectors.toSet());
+    properties.add("_identifier");
     properties.addAll(additionalProperties);
-    return properties.stream().filter(filter).sorted().collect(Collectors.toList());
+    return properties.stream().filter(filter).map(mapper).sorted().toArray(String[]::new);
   }
 }
