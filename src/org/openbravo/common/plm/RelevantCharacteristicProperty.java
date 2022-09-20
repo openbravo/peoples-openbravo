@@ -42,7 +42,7 @@ import org.openbravo.model.common.plm.Product;
  * Keeps the information related to a relevant characteristic property.
  */
 public class RelevantCharacteristicProperty {
-  private static final String RELEVANT_CHARACTERISTIC_REFERENCE = "247C9B7EEFE1475EA322003B96E8B7AE";
+  private static final String RELEVANT_CHARACTERISTICS_REFERENCE = "247C9B7EEFE1475EA322003B96E8B7AE";
   private static final Map<String, String> RELEVANT_CHARACTERISTICS = getRelevantCharacteristics();
 
   private Entity entity;
@@ -207,7 +207,7 @@ public class RelevantCharacteristicProperty {
       return OBDal.getInstance()
           .createCriteria(org.openbravo.model.ad.domain.List.class)
           .add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
-              OBDal.getInstance().getProxy(Reference.class, RELEVANT_CHARACTERISTIC_REFERENCE)))
+              OBDal.getInstance().getProxy(Reference.class, RELEVANT_CHARACTERISTICS_REFERENCE)))
           .setFilterOnReadableClients(false)
           .setFilterOnReadableOrganization(false)
           .list()
