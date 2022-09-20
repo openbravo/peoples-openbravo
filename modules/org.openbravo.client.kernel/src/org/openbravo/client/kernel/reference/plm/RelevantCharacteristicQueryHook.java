@@ -21,6 +21,7 @@ package org.openbravo.client.kernel.reference.plm;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -136,7 +137,8 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
     }
     String filterProperty = joinsWithProductCharacteristicValue.get(relevantCharacteristic)
         + DalUtil.DOT + CharacteristicValue.PROPERTY_ID;
-    return filterProperty + AdvancedQueryBuilder.getHqlOperator(operator) + "'" + value + "'";
+    return filterProperty + " " + AdvancedQueryBuilder.getHqlOperator(operator) + " '" + value
+        + "'";
   }
 
   @Override
@@ -163,7 +165,7 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
     // get them from the criteria
     Set<String> properties = queryBuilder.getAdditionalProperties().isEmpty()
         ? getPropertiesFromCriteria(queryBuilder.getCriteria())
-        : new HashSet<>(queryBuilder.getAdditionalProperties());
+        : new LinkedHashSet<>(queryBuilder.getAdditionalProperties());
 
     return properties.stream()
         .map(p -> RelevantCharacteristicProperty.from(queryBuilder.getEntity(), p).orElse(null))
