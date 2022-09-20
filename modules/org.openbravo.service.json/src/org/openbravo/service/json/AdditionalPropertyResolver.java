@@ -20,12 +20,14 @@ package org.openbravo.service.json;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openbravo.base.Prioritizable;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.DefaultDataSourceService;
+import org.openbravo.service.datasource.ModelDataSourceService;
 
 /**
  * An extension mechanism that allows to define a custom way for resolving additional properties
@@ -84,10 +86,26 @@ public interface AdditionalPropertyResolver extends Prioritizable {
    *          The base entity
    * @param additionalProperty
    *          The additional property path
-   * 
+   *
    * @return the list of {@link DataSourceProperty} to be included in the data source
    */
   public List<DataSourceProperty> getDataSourceProperties(Entity entity, String additionalProperty);
+
+  /**
+   * Retrieves the set of names of the additional properties that can be resolved with this
+   * {@code AdditionalPropertyResolver} for the given {@link Entity}. It is used to display these
+   * names as part of the list of available properties calculated by the
+   * {@link ModelDataSourceService}.
+   *
+   * @see ModelDataSourceService#fetch
+   *
+   * @param entity
+   *          The entity whose additional properties would be resolved
+   *
+   * @return the set of names of the additional properties that can be resolved for the given entity
+   *         with this {@code AdditionalPropertyResolver}
+   */
+  public Set<String> getPropertyNames(Entity entity);
 
   /**
    * @return an integer representing the priority of this resolver. Those with lower priority are

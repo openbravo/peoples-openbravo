@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.structure.BaseOBObject;
@@ -31,6 +32,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.common.plm.CharacteristicValue;
+import org.openbravo.model.common.plm.Product;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.json.AdditionalPropertyResolver;
 import org.openbravo.service.json.JsonConstants;
@@ -122,5 +124,12 @@ public class RelevantCharacteristicAdditionalPropertyResolver
     sequenceNumber.setNumericType(true);
 
     return List.of(chValueId, sequenceNumber);
+  }
+
+  @Override
+  public Set<String> getPropertyNames(Entity entity) {
+    return entity != null && Product.ENTITY_NAME.equals(entity.getName())
+        ? RelevantCharacteristicProperty.getRelevantCharateristicProperties()
+        : Collections.emptySet();
   }
 }
