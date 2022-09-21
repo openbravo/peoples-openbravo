@@ -45,6 +45,7 @@ import org.openbravo.client.kernel.CSSMinifier;
 import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
+import org.openbravo.client.kernel.reference.plm.RelevantCharacteristicAdditionalPropertyResolverTest;
 import org.openbravo.client.kernel.reference.plm.RelevantCharacteristicQueryHookTest;
 import org.openbravo.client.kernel.test.CompressionTest;
 import org.openbravo.dal.service.DataPoolCheckerTest;
@@ -340,6 +341,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     LabelTest.class, //
     CompressionTest.class, //
     RelevantCharacteristicQueryHookTest.class, //
+    RelevantCharacteristicAdditionalPropertyResolverTest.class, //
 
     // service json
     AdvancedQueryBuilderTest.class, //
