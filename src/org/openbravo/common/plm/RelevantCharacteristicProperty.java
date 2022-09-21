@@ -218,4 +218,14 @@ public class RelevantCharacteristicProperty {
       OBContext.restorePreviousMode();
     }
   }
+
+  /**
+   * Internal API: do not use, used for testing purposes
+   * 
+   * Reloads the cache of relevant characteristic properties
+   */
+  static void reloadRelevantCharacteristicsCache() {
+    RELEVANT_CHARACTERISTICS.clear();
+    RELEVANT_CHARACTERISTICS.putAll(getRelevantCharacteristics());
+  }
 }

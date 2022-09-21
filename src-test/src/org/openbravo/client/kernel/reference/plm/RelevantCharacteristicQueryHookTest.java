@@ -31,17 +31,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.dal.core.OBContext;
+import org.openbravo.common.plm.ProductCharacteristicTestUtils;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.domain.Reference;
-import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.service.json.AdvancedQueryBuilder;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.test.base.TestConstants;
@@ -54,24 +46,24 @@ import org.openbravo.test.base.TestConstants;
 public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
   private static final String PRODUCT_ENTITY = "Product";
   private static final String PRODUCT_PRICE_ENTITY = "PricingProductPrice";
-  private static final String RELEVANT_CHARACTERISTICS_REFERENCE = "247C9B7EEFE1475EA322003B96E8B7AE";
 
   private String characteristicId1;
   private String characteristicId2;
 
   @Before
   public void initialize() {
-    try {
-      OBContext.setAdminMode(false);
-      setCoreInDevelopment();
-      createRelevantCharacteristic("M_Test1", "Test1");
-      createRelevantCharacteristic("M_Test2", "Test2");
-      characteristicId1 = createCharacteristicAndLinkRelevant("Char1", "M_Test1");
-      characteristicId2 = createCharacteristicAndLinkRelevant("Char2", "M_Test2");
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    ProductCharacteristicTestUtils.addRelevantCharacteristic("M_Test1", "Test1",
+        TestConstants.Modules.ID_CORE);
+    ProductCharacteristicTestUtils.addRelevantCharacteristic("M_Test2", "Test2",
+        TestConstants.Modules.ID_CORE);
+    characteristicId1 = ProductCharacteristicTestUtils
+        .createCharacteristicLinkedToRelevant("Char1", "M_Test1")
+        .getId();
+    characteristicId2 = ProductCharacteristicTestUtils
+        .createCharacteristicLinkedToRelevant("Char2", "M_Test2")
+        .getId();
+    OBDal.getInstance().flush();
+    ProductCharacteristicTestUtils.reloadRelevantCharacteristicsCache();
   }
 
   @After
@@ -151,7 +143,8 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
 
   @Test
   public void buildQueryFailsIfRelevantCharacteristicIsNotLinked() throws JSONException {
-    unlinkRelevantCharacteristic(characteristicId1);
+    ProductCharacteristicTestUtils.unlinkRelevantCharacteristic(characteristicId1);
+    OBDal.getInstance().flush();
 
     AdvancedQueryBuilder queryBuilder = createAdvancedQueryBuilder(PRODUCT_ENTITY,
         getEmptyCriteria(), "searchKey,id", List.of("mTest1"));
@@ -204,50 +197,5 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
     criteria.put("_constructor", "AdvancedCriteria");
     criteria.put("criteria", criteriaDefinition);
     return criteria;
-  }
-
-  private void setCoreInDevelopment() {
-    Module module = OBDal.getInstance().get(Module.class, TestConstants.Modules.ID_CORE);
-    module.setInDevelopment(true);
-    OBDal.getInstance().flush();
-  }
-
-  private void createRelevantCharacteristic(String searchKey, String name) {
-    org.openbravo.model.ad.domain.List listReference = OBProvider.getInstance()
-        .get(org.openbravo.model.ad.domain.List.class);
-    listReference
-        .setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
-    listReference
-        .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
-    listReference
-        .setModule(OBDal.getInstance().getProxy(Module.class, TestConstants.Modules.ID_CORE));
-    listReference.setReference(
-        OBDal.getInstance().getProxy(Reference.class, RELEVANT_CHARACTERISTICS_REFERENCE));
-    listReference.setSearchKey(searchKey);
-    listReference.setName(name);
-    OBDal.getInstance().save(listReference);
-
-    StringEnumerateDomainType relevantCharDomainType = (StringEnumerateDomainType) ModelProvider
-        .getInstance()
-        .getEntity(Characteristic.class)
-        .getProperty("relevantCharacteristic")
-        .getDomainType();
-    relevantCharDomainType.addEnumerateValue(searchKey);
-  }
-
-  private String createCharacteristicAndLinkRelevant(String name, String relevantCharacteristic) {
-    Characteristic characteristic = OBProvider.getInstance().get(Characteristic.class);
-    characteristic
-        .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
-    characteristic.setName(name);
-    characteristic.setRelevantCharacteristic(relevantCharacteristic);
-    OBDal.getInstance().save(characteristic);
-    return characteristic.getId();
-  }
-
-  private void unlinkRelevantCharacteristic(String characteristicId) {
-    Characteristic characteristic = OBDal.getInstance().get(Characteristic.class, characteristicId);
-    characteristic.setRelevantCharacteristic(null);
-    OBDal.getInstance().flush();
   }
 }

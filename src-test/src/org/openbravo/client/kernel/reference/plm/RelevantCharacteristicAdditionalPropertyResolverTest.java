@@ -38,19 +38,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.common.plm.ProductCharacteristicTestUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.domain.Reference;
-import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
-import org.openbravo.model.common.plm.ProductCharacteristicValue;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.service.datasource.DataSourceProperty;
 import org.openbravo.service.datasource.DataSourceServiceProvider;
@@ -65,7 +59,6 @@ import org.openbravo.test.base.TestConstants;
  * Test cases for the {@link RelevantCharacteristicAdditionalPropertyResolver} hook
  */
 public class RelevantCharacteristicAdditionalPropertyResolverTest extends WeldBaseTest {
-  private static final String RELEVANT_CHARACTERISTICS_REFERENCE = "247C9B7EEFE1475EA322003B96E8B7AE";
   private static final String PRODUCT_ID = "DA7FC1BB3BA44EC48EC1AB9C74168CED";
   private static final String PRODUCT_PRICE_ID = "316F95A165914A538D923F3CA815E4D4";
 
@@ -82,9 +75,7 @@ public class RelevantCharacteristicAdditionalPropertyResolverTest extends WeldBa
   public void initialize() {
     try {
       OBContext.setAdminMode(false);
-      setCoreInDevelopment();
-      createRelevantCharacteristic();
-      createCharacteristic();
+      setProductCharacteristicConfiguration();
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
@@ -166,10 +157,11 @@ public class RelevantCharacteristicAdditionalPropertyResolverTest extends WeldBa
   @Test
   public void getDataSourcePropertiesForProductRelatedEntity() {
     Map<String, Object> parameters = Map.of(JsonConstants.ADDITIONAL_PROPERTIES_PARAMETER,
-        "product$mColor");
+        "product.mColor");
     Entity productPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
 
     List<DataSourceProperty> properties = getDataSourceProperties(productPrice, parameters);
+    properties.stream().forEach(p -> System.out.println(p.getName()));
 
     assertThat(properties.stream().anyMatch(p -> p.getName().equals("product$mColor")),
         equalTo(true));
@@ -203,59 +195,17 @@ public class RelevantCharacteristicAdditionalPropertyResolverTest extends WeldBa
         equalTo(false));
   }
 
-  private void setCoreInDevelopment() {
-    Module module = OBDal.getInstance().get(Module.class, TestConstants.Modules.ID_CORE);
-    module.setInDevelopment(true);
-    OBDal.getInstance().flush();
-  }
-
-  private void createRelevantCharacteristic() {
-    org.openbravo.model.ad.domain.List listReference = OBProvider.getInstance()
-        .get(org.openbravo.model.ad.domain.List.class);
-    listReference
-        .setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
-    listReference
-        .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
-    listReference
-        .setModule(OBDal.getInstance().getProxy(Module.class, TestConstants.Modules.ID_CORE));
-    listReference.setReference(
-        OBDal.getInstance().getProxy(Reference.class, RELEVANT_CHARACTERISTICS_REFERENCE));
-    listReference.setSearchKey("M_Color");
-    listReference.setName("Color");
-    OBDal.getInstance().save(listReference);
-
-    StringEnumerateDomainType relevantCharDomainType = (StringEnumerateDomainType) ModelProvider
-        .getInstance()
-        .getEntity(Characteristic.class)
-        .getProperty("relevantCharacteristic")
-        .getDomainType();
-    relevantCharDomainType.addEnumerateValue("M_Color");
-  }
-
-  private void createCharacteristic() {
-    Characteristic characteristic = OBProvider.getInstance().get(Characteristic.class);
-    characteristic
-        .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
-    characteristic.setName("Color");
-    characteristic.setRelevantCharacteristic("M_Color");
-    OBDal.getInstance().save(characteristic);
-
-    CharacteristicValue characteristicValue = OBProvider.getInstance()
-        .get(CharacteristicValue.class);
-    characteristicValue
-        .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
-    characteristicValue.setCharacteristic(characteristic);
-    characteristicValue.setName("Blue");
-    characteristicValue.setCode("B");
-    OBDal.getInstance().save(characteristicValue);
-    characteristicValueId = characteristicValue.getId();
-
-    ProductCharacteristicValue productCharacteristicValue = OBProvider.getInstance()
-        .get(ProductCharacteristicValue.class);
-    productCharacteristicValue.setProduct(OBDal.getInstance().getProxy(Product.class, PRODUCT_ID));
-    productCharacteristicValue.setCharacteristic(characteristic);
-    productCharacteristicValue.setCharacteristicValue(characteristicValue);
-    OBDal.getInstance().save(productCharacteristicValue);
+  private void setProductCharacteristicConfiguration() {
+    ProductCharacteristicTestUtils.addRelevantCharacteristic("M_Color", "Color",
+        TestConstants.Modules.ID_CORE);
+    Characteristic characteristic = ProductCharacteristicTestUtils
+        .createCharacteristicLinkedToRelevant("Color", "M_Color");
+    CharacteristicValue chValue = ProductCharacteristicTestUtils.createCharacteristicValue("Blue",
+        "B", characteristic.getId());
+    characteristicValueId = chValue.getId();
+    ProductCharacteristicTestUtils.assignCharacteristicValueToProduct(PRODUCT_ID,
+        characteristicValueId);
+    ProductCharacteristicTestUtils.reloadRelevantCharacteristicsCache();
   }
 
   private boolean canBeResolvedAsAdditionalProperty(Entity entity, String property) {

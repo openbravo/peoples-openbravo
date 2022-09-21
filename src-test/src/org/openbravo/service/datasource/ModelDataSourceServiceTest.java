@@ -41,15 +41,10 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.dal.core.OBContext;
+import org.openbravo.common.plm.ProductCharacteristicTestUtils;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.domain.Reference;
-import org.openbravo.model.ad.module.Module;
-import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.service.json.AdditionalPropertyResolver;
 import org.openbravo.test.base.TestConstants;
@@ -58,43 +53,18 @@ import org.openbravo.test.base.TestConstants;
  * Test cases for the {@link ModelDataSourceService} class
  */
 public class ModelDataSourceServiceTest extends WeldBaseTest {
-  private static final String RELEVANT_CHARACTERISTICS_REFERENCE = "247C9B7EEFE1475EA322003B96E8B7AE";
-
   @Before
   public void initialize() {
     // create an special property that will be retrieved through an AdditionalPropertyResolver
-    addRelevantCharacteristic();
+    ProductCharacteristicTestUtils.addRelevantCharacteristic("M_Test", "Test",
+        TestConstants.Modules.ID_CORE);
+    ProductCharacteristicTestUtils.reloadRelevantCharacteristicsCache();
     setSystemAdministratorContext();
   }
 
   @After
   public void cleanUp() {
     OBDal.getInstance().rollbackAndClose();
-  }
-
-  private void addRelevantCharacteristic() {
-    try {
-      OBContext.setAdminMode(false);
-      Module module = OBDal.getInstance().get(Module.class, TestConstants.Modules.ID_CORE);
-      module.setInDevelopment(true);
-      OBDal.getInstance().flush();
-
-      org.openbravo.model.ad.domain.List listReference = OBProvider.getInstance()
-          .get(org.openbravo.model.ad.domain.List.class);
-      listReference
-          .setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
-      listReference.setOrganization(
-          OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
-      listReference.setModule(module);
-      listReference.setReference(
-          OBDal.getInstance().getProxy(Reference.class, RELEVANT_CHARACTERISTICS_REFERENCE));
-      listReference.setSearchKey("M_Test");
-      listReference.setName("Test");
-      OBDal.getInstance().save(listReference);
-      OBDal.getInstance().flush();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
   }
 
   @Test
