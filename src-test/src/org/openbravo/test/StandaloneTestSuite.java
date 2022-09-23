@@ -48,6 +48,7 @@ import org.openbravo.client.kernel.freemarker.test.LabelTest;
 import org.openbravo.client.kernel.reference.plm.RelevantCharacteristicAdditionalPropertyResolverTest;
 import org.openbravo.client.kernel.reference.plm.RelevantCharacteristicQueryHookTest;
 import org.openbravo.client.kernel.test.CompressionTest;
+import org.openbravo.common.plm.RelevantCharacteristicPropertyTest;
 import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.erpCommon.utility.OBDateUtilsTest;
@@ -307,6 +308,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // PLM
     CharacteristicEventHandlerTest.class, //
+    RelevantCharacteristicPropertyTest.class, //
 
     // PLM Status
     ProductStatusTest.class, //

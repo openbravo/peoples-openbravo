@@ -62,6 +62,7 @@ public class TestConstants {
 
   public static class Tabs {
     public static final String SALES_INVOICE_HEADER = "263";
+    public static final String PRODUCT_HEADER = "180";
     public static final String PURCHASE_INVOICE_HEADER = "290";
   }
 

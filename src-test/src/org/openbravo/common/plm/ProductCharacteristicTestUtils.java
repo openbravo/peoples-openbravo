@@ -26,6 +26,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.ui.Field;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
@@ -71,6 +73,7 @@ public class ProductCharacteristicTestUtils {
           OBDal.getInstance().getProxy(Reference.class, RELEVANT_CHARACTERISTICS_REFERENCE));
       listReference.setSearchKey(searchKey);
       listReference.setName(name);
+      listReference.setDescription(name + " relevant characteristic for testing purposes");
       OBDal.getInstance().save(listReference);
       OBDal.getInstance().flush();
 
@@ -175,5 +178,35 @@ public class ProductCharacteristicTestUtils {
    */
   public static void reloadRelevantCharacteristicsCache() {
     RelevantCharacteristicProperty.reloadRelevantCharacteristicsCache();
+  }
+
+  /**
+   * Creates a {@link Field} on a {@link Tab} with the given property path
+   *
+   * @param tabId
+   *          The ID of the tab where the field is going to be placed
+   * @param propertyPath
+   *          The path of the property
+   */
+  public static Field createPropertyField(String tabId, String propertyPath, String moduleId) {
+    try {
+      OBContext.setAdminMode(false);
+      Module module = OBDal.getInstance().get(Module.class, moduleId);
+      setModuleInDevelopment(module, true);
+
+      Field field = OBProvider.getInstance().get(Field.class);
+      field.setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
+      field.setOrganization(
+          OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
+      field.setTab(OBDal.getInstance().getProxy(Tab.class, tabId));
+      field.setName(propertyPath);
+      field.setProperty(propertyPath);
+      OBDal.getInstance().save(field);
+
+      setModuleInDevelopment(module, false);
+      return field;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }
