@@ -18,7 +18,7 @@
  */
 package org.openbravo.common.plm;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,13 +26,11 @@ import java.util.stream.Collectors;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.NamingUtil;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.ad.domain.List;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.common.plm.Characteristic;
@@ -44,13 +42,11 @@ import org.openbravo.model.common.plm.Product;
  */
 public class RelevantCharacteristicProperty {
   private static final String RELEVANT_CHARACTERISTICS_REFERENCE = "247C9B7EEFE1475EA322003B96E8B7AE";
-  private static final Map<String, String> REFERENCE_ENTRIES = getReferenceEntries();
-  private static final Map<String, String> RELEVANT_CHARACTERISTICS = getRelevantCharacteristics();
+  private static final List<RefListEntry> REF_LIST_ENTRIES = getRefListEntries();
 
   private Entity entity;
   private String basePath;
   private String name;
-  private String description;
 
   private RelevantCharacteristicProperty(Entity entity, String basePath, String name) {
     this.entity = entity;
@@ -85,7 +81,7 @@ public class RelevantCharacteristicProperty {
    * @return the search key of the referenced relevant characteristic
    */
   public String getSearchKey() {
-    return RELEVANT_CHARACTERISTICS.get(name);
+    return getRefListEntry().getSearchKey();
   }
 
   /**
@@ -94,29 +90,11 @@ public class RelevantCharacteristicProperty {
    *         relevant characteristics.
    */
   String getFieldName() {
-    return REFERENCE_ENTRIES.get(getSearchKey());
+    return getRefListEntry().getName();
   }
 
   String getDescription() {
-    if (description != null) {
-      return description;
-    }
-    try {
-      OBContext.setAdminMode(true);
-      List item = (List) OBDal.getInstance()
-          .createCriteria(List.class)
-          .add(Restrictions.eq(List.PROPERTY_REFERENCE,
-              OBDal.getInstance().getProxy(Reference.class, RELEVANT_CHARACTERISTICS_REFERENCE)))
-          .add(Restrictions.eq(List.PROPERTY_SEARCHKEY, getSearchKey()))
-          .setFilterOnReadableClients(false)
-          .setFilterOnReadableOrganization(false)
-          .setMaxResults(1)
-          .uniqueResult();
-      description = item != null ? item.getDescription() : "";
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return description;
+    return getRefListEntry().getDescription();
   }
 
   /**
@@ -133,7 +111,7 @@ public class RelevantCharacteristicProperty {
     return OBDal.getInstance()
         .getSession()
         .createQuery(hql, String.class)
-        .setParameter("relevantCharacteristic", RELEVANT_CHARACTERISTICS.get(name))
+        .setParameter("relevantCharacteristic", getSearchKey())
         .setParameter("clientId", OBContext.getOBContext().getCurrentClient().getId())
         .uniqueResult();
   }
@@ -166,6 +144,13 @@ public class RelevantCharacteristicProperty {
         .setParameter("productId", product.getId())
         .setParameter("characteristicId", getCharacteristicId())
         .uniqueResult();
+  }
+
+  private RefListEntry getRefListEntry() {
+    return REF_LIST_ENTRIES.stream()
+        .filter(rc -> rc.getPropertyName().equals(name))
+        .findFirst()
+        .orElseThrow();
   }
 
   /**
@@ -205,10 +190,11 @@ public class RelevantCharacteristicProperty {
         .split("\\" + DalUtil.DOT);
     Entity currentEntity = entity;
     StringBuilder basePath = null;
+    Set<String> relevantCharacteristicProperties = getRelevantCharateristicProperties();
     for (String part : parts) {
       if (!currentEntity.hasProperty(part)) {
         if (Product.ENTITY_NAME.equals(currentEntity.getName())
-            && RELEVANT_CHARACTERISTICS.keySet().contains(part)) {
+            && relevantCharacteristicProperties.contains(part)) {
           return Optional.of(new RelevantCharacteristicProperty(entity,
               basePath == null ? null : basePath.toString(), part));
         }
@@ -232,34 +218,22 @@ public class RelevantCharacteristicProperty {
    * @return a set with the property name of the existing relevant characteristics
    */
   public static Set<String> getRelevantCharateristicProperties() {
-    return RELEVANT_CHARACTERISTICS.keySet();
+    return REF_LIST_ENTRIES.stream().map(RefListEntry::getPropertyName).collect(Collectors.toSet());
   }
 
-  private static Map<String, String> getReferenceEntries() {
+  private static List<RefListEntry> getRefListEntries() {
     try {
       OBContext.setAdminMode(true);
       return OBDal.getInstance()
-          .createCriteria(List.class)
-          .add(Restrictions.eq(List.PROPERTY_REFERENCE,
+          .createCriteria(org.openbravo.model.ad.domain.List.class)
+          .add(Restrictions.eq(org.openbravo.model.ad.domain.List.PROPERTY_REFERENCE,
               OBDal.getInstance().getProxy(Reference.class, RELEVANT_CHARACTERISTICS_REFERENCE)))
           .setFilterOnReadableClients(false)
           .setFilterOnReadableOrganization(false)
           .list()
           .stream()
-          .map(l -> Map.entry(l.getSearchKey(), l.getName()))
-          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  private static Map<String, String> getRelevantCharacteristics() {
-    try {
-      OBContext.setAdminMode(true);
-      return REFERENCE_ENTRIES.keySet()
-          .stream()
-          .map(searchKey -> Map.entry(NamingUtil.formatAsPropertyName(searchKey), searchKey))
-          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+          .map(RefListEntry::new)
+          .collect(Collectors.toList());
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -271,9 +245,7 @@ public class RelevantCharacteristicProperty {
    * Reloads the cache of relevant characteristic properties
    */
   static void reloadRelevantCharacteristicsCache() {
-    REFERENCE_ENTRIES.clear();
-    REFERENCE_ENTRIES.putAll(getReferenceEntries());
-    RELEVANT_CHARACTERISTICS.clear();
-    RELEVANT_CHARACTERISTICS.putAll(getRelevantCharacteristics());
+    REF_LIST_ENTRIES.clear();
+    REF_LIST_ENTRIES.addAll(getRefListEntries());
   }
 }
