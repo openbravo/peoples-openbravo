@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
 
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -46,6 +47,8 @@ import org.openbravo.test.base.TestConstants;
 public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
   private static final String PRODUCT_ENTITY = "Product";
   private static final String PRODUCT_PRICE_ENTITY = "PricingProductPrice";
+  private static final String PRODUCT_CATEGORY_ID = "0C20B3F7AB234915B2239FCD8BE10CD1";
+  private static final String CHARACTERISTIC_ID = "2A5B402016FE443F8F8C54722A69C77B";
 
   private String characteristicId1;
   private String characteristicId2;
@@ -79,12 +82,15 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
     //@formatter:off
     assertThat(queryBuilder.getJoinClause(), equalTo(
         " as e " +
-        " left join e.productCharacteristicValueList as join_0 with join_0.characteristic.id = '" + characteristicId1 + "'" +
+        " left join e.productCharacteristicValueList as join_0 with join_0.characteristic.id = :alias_0" +
         " left join join_0.characteristicValue as join_1" +
         " left join ADTreeNode as join_2 on join_2.node = join_1.id "));
     //@formatter:on
-    assertThat(queryBuilder.getWhereClause(), equalTo(" where (e.productCategory.id = :alias_0) "));
+    assertThat(queryBuilder.getWhereClause(), equalTo(" where (e.productCategory.id = :alias_1) "));
     assertThat(queryBuilder.getOrderByClause(), equalTo(" order by e.searchKey,e.id"));
+    Map<String, Object> namedParameters = queryBuilder.getNamedParameters();
+    assertThat(namedParameters.get("alias_0"), equalTo(characteristicId1));
+    assertThat(namedParameters.get("alias_1"), equalTo(PRODUCT_CATEGORY_ID));
   }
 
   @Test
@@ -95,15 +101,19 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
     //@formatter:off
     assertThat(queryBuilder.getJoinClause(), equalTo(
         " as e " +
-        " left join e.productCharacteristicValueList as join_0 with join_0.characteristic.id = '" + characteristicId1 + "'" +
+        " left join e.productCharacteristicValueList as join_0 with join_0.characteristic.id = :alias_0" +
         " left join join_0.characteristicValue as join_1" +
         " left join ADTreeNode as join_2 on join_2.node = join_1.id" +
-        " left join e.productCharacteristicValueList as join_3 with join_3.characteristic.id = '" + characteristicId2 + "'" +
+        " left join e.productCharacteristicValueList as join_3 with join_3.characteristic.id = :alias_1" +
         " left join join_3.characteristicValue as join_4" +
         " left join ADTreeNode as join_5 on join_5.node = join_4.id "));
     //@formatter:on
-    assertThat(queryBuilder.getWhereClause(), equalTo(" where (e.productCategory.id = :alias_0) "));
+    assertThat(queryBuilder.getWhereClause(), equalTo(" where (e.productCategory.id = :alias_2) "));
     assertThat(queryBuilder.getOrderByClause(), equalTo(" order by e.searchKey,e.id"));
+    Map<String, Object> namedParameters = queryBuilder.getNamedParameters();
+    assertThat(namedParameters.get("alias_0"), equalTo(characteristicId1));
+    assertThat(namedParameters.get("alias_1"), equalTo(characteristicId2));
+    assertThat(namedParameters.get("alias_2"), equalTo(PRODUCT_CATEGORY_ID));
   }
 
   @Test
@@ -115,12 +125,13 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
     assertThat(queryBuilder.getJoinClause(), equalTo(
         " as e " +
         " left join e.product as join_0" +
-        " left join join_0.productCharacteristicValueList as join_1 with join_1.characteristic.id = '" + characteristicId1 + "'" +
+        " left join join_0.productCharacteristicValueList as join_1 with join_1.characteristic.id = :alias_0" +
         " left join join_1.characteristicValue as join_2" +
         " left join ADTreeNode as join_3 on join_3.node = join_2.id "));
     //@formatter:on
     assertThat(queryBuilder.getWhereClause(), equalTo(" "));
     assertThat(queryBuilder.getOrderByClause(), equalTo(" order by e.standardPrice,e.id"));
+    assertThat(queryBuilder.getNamedParameters().get("alias_0"), equalTo(characteristicId1));
   }
 
   @Test
@@ -132,13 +143,15 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
     //@formatter:off
     assertThat(queryBuilder.getJoinClause(), equalTo(
         " as e " +
-        " left join e.productCharacteristicValueList as join_0 with join_0.characteristic.id = '" + characteristicId1 + "'" +
+        " left join e.productCharacteristicValueList as join_0 with join_0.characteristic.id = :alias_0" +
         " left join join_0.characteristicValue as join_1" +
         " left join ADTreeNode as join_2 on join_2.node = join_1.id "));
     //@formatter:on
-    assertThat(queryBuilder.getWhereClause(),
-        equalTo(" where (( join_1.id = '2A5B402016FE443F8F8C54722A69C77B' )) "));
+    assertThat(queryBuilder.getWhereClause(), equalTo(" where (( join_1.id = :alias_1 )) "));
     assertThat(queryBuilder.getOrderByClause(), equalTo(" order by join_2.sequenceNumber,e.id"));
+    Map<String, Object> namedParameters = queryBuilder.getNamedParameters();
+    assertThat(namedParameters.get("alias_0"), equalTo(characteristicId1));
+    assertThat(namedParameters.get("alias_1"), equalTo(CHARACTERISTIC_ID));
   }
 
   @Test
@@ -177,7 +190,7 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
     JSONObject criteria = new JSONObject();
     criteria.put("fieldName", "productCategory");
     criteria.put("operator", "equals");
-    criteria.put("value", "0C20B3F7AB234915B2239FCD8BE10CD1");
+    criteria.put("value", PRODUCT_CATEGORY_ID);
     criteria.put("_constructor", "AdvancedCriteria");
     criteria.put("criteria", new JSONArray());
     return criteria;
@@ -188,7 +201,7 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
     JSONObject criterion = new JSONObject();
     criterion.put("fieldName", fieldName);
     criterion.put("operator", "equals");
-    criterion.put("value", "2A5B402016FE443F8F8C54722A69C77B");
+    criterion.put("value", CHARACTERISTIC_ID);
     criterion.put("_constructor", "AdvancedCriteria");
     JSONArray criteriaDefinition = new JSONArray();
     criteriaDefinition.put(criterion);

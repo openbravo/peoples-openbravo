@@ -91,7 +91,8 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
           .setProperty(ModelProvider.getInstance()
               .getEntity(Product.class)
               .getProperty(Product.PROPERTY_PRODUCTCHARACTERISTICVALUELIST))
-          .setJoinWithClause("characteristic.id = '" + characteristicId + "'");
+          .setJoinWithClause(
+              "characteristic.id = :" + queryBuilder.addNamedParameter(characteristicId));
       joinDefinitions.add(relevantCharJoin);
 
       // join with M_Ch_Value
@@ -132,8 +133,8 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
     }
     String filterProperty = joinsWithProductCharacteristicValue.get(relevantCharacteristic)
         + DalUtil.DOT + CharacteristicValue.PROPERTY_ID;
-    return filterProperty + " " + AdvancedQueryBuilder.getHqlOperator(operator) + " '" + value
-        + "'";
+    return filterProperty + " " + AdvancedQueryBuilder.getHqlOperator(operator) + " :"
+        + queryBuilder.addNamedParameter(value);
   }
 
   @Override

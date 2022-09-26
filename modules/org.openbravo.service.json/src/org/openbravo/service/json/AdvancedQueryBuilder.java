@@ -1810,12 +1810,30 @@ public class AdvancedQueryBuilder {
     filterParameters.put(key, value);
   }
 
+  /**
+   * Gets the named parameters of the query to build
+   * 
+   * @return a map whose keys are the parameter names and the values the parameter values
+   */
   public Map<String, Object> getNamedParameters() {
-    final Map<String, Object> parameters = new HashMap<String, Object>();
+    final Map<String, Object> parameters = new HashMap<>();
     for (int i = 0; i < typedParameters.size(); i++) {
       parameters.put(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
     }
     return parameters;
+  }
+
+  /**
+   * Adds a named parameter for the query to be built
+   * 
+   * @param value
+   *          the value for the query parameter
+   * 
+   * @return the parameter name as it is used in the query
+   */
+  public String addNamedParameter(Object value) {
+    typedParameters.add(value);
+    return ALIAS_PREFIX + Integer.toString(typedParameters.size() - 1);
   }
 
   public void setDoOr(boolean doOr) {
