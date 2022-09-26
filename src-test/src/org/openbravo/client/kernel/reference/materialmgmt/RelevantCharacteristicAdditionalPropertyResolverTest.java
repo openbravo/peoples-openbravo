@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.kernel.reference.plm;
+package org.openbravo.client.kernel.reference.materialmgmt;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -39,9 +39,9 @@ import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.common.plm.ProductCharacteristicTestUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.materialmgmt.ProductCharacteristicTestUtils;
 import org.openbravo.model.common.plm.Characteristic;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;

@@ -21,9 +21,9 @@ package org.openbravo.client.application.window.hooks;
 import org.openbravo.client.application.window.FieldSettingsProvider;
 import org.openbravo.client.kernel.reference.UIDefinition;
 import org.openbravo.client.kernel.reference.UIDefinitionController;
-import org.openbravo.common.plm.RelevantCharacteristicProperty;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.materialmgmt.RelevantCharacteristicProperty;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Field;
 

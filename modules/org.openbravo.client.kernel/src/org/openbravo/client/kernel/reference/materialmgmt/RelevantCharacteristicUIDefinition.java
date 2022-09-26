@@ -16,16 +16,16 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.kernel.reference.plm;
+package org.openbravo.client.kernel.reference.materialmgmt;
 
 import java.util.HashMap;
 
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.window.OBTreeReferenceComponent;
 import org.openbravo.client.kernel.reference.UIDefinition;
-import org.openbravo.common.plm.RelevantCharacteristicProperty;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.materialmgmt.RelevantCharacteristicProperty;
 import org.openbravo.model.ad.domain.ReferencedTree;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.service.json.JsonConstants;

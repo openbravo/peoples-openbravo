@@ -6,7 +6,7 @@
  * or in the legal folder of this module distribution.
  ************************************************************************************
  */
-package org.openbravo.common.plm;
+package org.openbravo.materialmgmt;
 
 import java.util.List;
 

@@ -45,14 +45,14 @@ import org.openbravo.client.kernel.CSSMinifier;
 import org.openbravo.client.kernel.freemarker.test.FreemarkerTemplateProcessorTest;
 import org.openbravo.client.kernel.freemarker.test.GenerateComponentTest;
 import org.openbravo.client.kernel.freemarker.test.LabelTest;
-import org.openbravo.client.kernel.reference.plm.RelevantCharacteristicAdditionalPropertyResolverTest;
-import org.openbravo.client.kernel.reference.plm.RelevantCharacteristicQueryHookTest;
+import org.openbravo.client.kernel.reference.materialmgmt.RelevantCharacteristicAdditionalPropertyResolverTest;
+import org.openbravo.client.kernel.reference.materialmgmt.RelevantCharacteristicQueryHookTest;
 import org.openbravo.client.kernel.test.CompressionTest;
-import org.openbravo.common.plm.RelevantCharacteristicPropertyTest;
 import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.erpCommon.utility.OBDateUtilsTest;
 import org.openbravo.event.CharacteristicEventHandlerTest;
+import org.openbravo.materialmgmt.RelevantCharacteristicPropertyTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
 import org.openbravo.scheduling.trigger.TriggerProviderTest;
@@ -306,7 +306,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // Inventory Status
     InventoryStatusTest.class, //
 
-    // PLM
+    // Characteristics
     CharacteristicEventHandlerTest.class, //
     RelevantCharacteristicPropertyTest.class, //
 

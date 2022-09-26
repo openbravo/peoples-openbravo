@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.common.plm;
+package org.openbravo.materialmgmt;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;

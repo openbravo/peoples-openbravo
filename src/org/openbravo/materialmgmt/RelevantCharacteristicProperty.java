@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.common.plm;
+package org.openbravo.materialmgmt;
 
 import java.util.List;
 import java.util.Optional;

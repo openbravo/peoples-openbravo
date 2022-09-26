@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.common.plm;
+package org.openbravo.materialmgmt;
 
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;

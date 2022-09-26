@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.client.kernel.reference.plm;
+package org.openbravo.client.kernel.reference.materialmgmt;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -34,9 +34,9 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
-import org.openbravo.common.plm.RelevantCharacteristicProperty;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.materialmgmt.RelevantCharacteristicProperty;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.plm.CharacteristicValue;
 import org.openbravo.model.common.plm.Product;
