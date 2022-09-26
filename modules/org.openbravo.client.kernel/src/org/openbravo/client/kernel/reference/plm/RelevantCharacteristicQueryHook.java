@@ -18,9 +18,7 @@
  */
 package org.openbravo.client.kernel.reference.plm;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +30,6 @@ import javax.enterprise.context.Dependent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -159,36 +154,11 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
 
   private List<RelevantCharacteristicProperty> getRelevantCharacteristicProperties(
       AdvancedQueryBuilder queryBuilder) {
-    // For grid requests the relevant characteristic properties are passed as additional properties
-    // For requests coming from the grid filters, they are not included as additional properties but
-    // as we only need to retrieve them in case the grid is filtered by any of them, in that case we
-    // get them from the criteria
-    Set<String> properties = queryBuilder.getAdditionalProperties().isEmpty()
-        ? getPropertiesFromCriteria(queryBuilder.getCriteria())
-        : new LinkedHashSet<>(queryBuilder.getAdditionalProperties());
-
+    Set<String> properties = new LinkedHashSet<>(queryBuilder.getAdditionalProperties());
     return properties.stream()
         .map(p -> RelevantCharacteristicProperty.from(queryBuilder.getEntity(), p).orElse(null))
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
-  }
-
-  private Set<String> getPropertiesFromCriteria(JSONObject criteria) {
-    try {
-      if (criteria.has("criteria")) {
-        Set<String> properties = new HashSet<>();
-        JSONArray c = criteria.getJSONArray("criteria");
-        for (int i = 0; i < c.length(); i++) {
-          properties.addAll(getPropertiesFromCriteria(c.getJSONObject(i)));
-        }
-        return properties;
-      } else if (criteria.has("fieldName")) {
-        return Set.of(criteria.getString("fieldName"));
-      }
-    } catch (JSONException ex) {
-      log.error("Error extracting fields from criteria {}", criteria, ex);
-    }
-    return Collections.emptySet();
   }
 
   private JoinDefinition getJoinDefinition(List<JoinDefinition> list, String path) {
