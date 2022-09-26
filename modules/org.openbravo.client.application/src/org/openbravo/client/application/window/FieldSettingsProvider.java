@@ -61,13 +61,4 @@ public interface FieldSettingsProvider extends Prioritizable {
    *         other case
    */
   public boolean isReadOnly(Field field);
-
-  /**
-   * @return an integer representing the priority of this provider. Those with lower priority are
-   *         taken first when executing the different methods. It returns 100 by default.
-   */
-  @Override
-  public default int getPriority() {
-    return 100;
-  }
 }

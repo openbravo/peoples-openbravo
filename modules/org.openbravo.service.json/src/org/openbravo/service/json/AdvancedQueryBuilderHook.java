@@ -82,13 +82,4 @@ public interface AdvancedQueryBuilderHook extends Prioritizable {
    *         the filter clause
    */
   public String parseOrderByClausePart(AdvancedQueryBuilder queryBuilder, String orderByPart);
-
-  /**
-   * @return an integer representing the priority of this hook. Those with lower priority are taken
-   *         first when executing the different methods. It returns 100 by default.
-   */
-  @Override
-  public default int getPriority() {
-    return 100;
-  }
 }

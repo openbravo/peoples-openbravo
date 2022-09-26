@@ -106,13 +106,4 @@ public interface AdditionalPropertyResolver extends Prioritizable {
    *         with this {@code AdditionalPropertyResolver}
    */
   public Set<String> getPropertyNames(Entity entity);
-
-  /**
-   * @return an integer representing the priority of this resolver. Those with lower priority are
-   *         taken first when executing the different methods. It returns 100 by default.
-   */
-  @Override
-  public default int getPriority() {
-    return 100;
-  }
 }
