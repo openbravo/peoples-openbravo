@@ -359,6 +359,7 @@ isc.OBTreeFilterItem.addProperties({
   lastValueFromPopup: null,
   pickerConstructor: 'ImgButton',
   allowExpressions: true,
+  multipleValueSeparator: ' or ',
   pickerIconDefaults: {
     name: 'showDateRange',
     width: 21,
@@ -559,7 +560,7 @@ isc.OBTreeFilterItem.addProperties({
       .map(v =>
         OB.Utilities.encodeSearchOperator(this.Super('mapValueToDisplay', v))
       )
-      .join(' or ');
+      .join(this.multipleValueSeparator);
   },
 
   getOperator: function() {
