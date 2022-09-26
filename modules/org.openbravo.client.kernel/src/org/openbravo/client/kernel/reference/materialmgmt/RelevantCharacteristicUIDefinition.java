@@ -51,8 +51,7 @@ public class RelevantCharacteristicUIDefinition extends UIDefinition {
   @Override
   public String getGridFieldProperties(Field field) {
     String gridFieldProperties = super.getGridFieldProperties(field);
-    gridFieldProperties += ", displayField: '" + getDisplayField(field) + "'";
-    gridFieldProperties += ", valueField: '" + getProperty(field) + "'";
+    gridFieldProperties += ", fkField: true";
     gridFieldProperties += ", length: 100";
     gridFieldProperties += ", displaylength: 100";
     return gridFieldProperties;
