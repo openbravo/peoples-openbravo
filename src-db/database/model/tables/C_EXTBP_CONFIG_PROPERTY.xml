@@ -125,6 +125,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="ISDEFAULTPHONE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <column name="ISDISPLAYEDINCREATE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
@@ -157,7 +161,7 @@
         <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISDEFAULTPHONE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+      <column name="ISADDRESSPROPERTY" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
@@ -196,6 +200,7 @@
       <check name="C_EXTBPCONFPROP_DISLIST_CH"><![CDATA[ISDISPLAYEDINLIST IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_EDITAB_CH"><![CDATA[ISEDITABLE IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_IDENTIF_CH"><![CDATA[ISIDENTIFIER IN ('Y', 'N')]]></check>
+      <check name="C_EXTBPCONFPROP_ISADDR_CH"><![CDATA[ISADDRESSPROPERTY IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_ISKEY_CH"><![CDATA[ISKEY IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_ISTR_CH"><![CDATA[ISTRANSLATABLE IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_MAND_CH"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
