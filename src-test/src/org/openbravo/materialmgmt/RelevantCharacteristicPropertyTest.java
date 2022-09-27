@@ -23,10 +23,10 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -103,13 +103,24 @@ public class RelevantCharacteristicPropertyTest extends WeldBaseTest {
         equalTo("Color relevant characteristic for testing purposes"));
   }
 
-  @Ignore
+  @Test
   public void getPropertyFromField() {
     Field field = ProductCharacteristicTestUtils.createPropertyField(
         TestConstants.Tabs.PRODUCT_HEADER, "mColor", TestConstants.Modules.ID_CORE);
     try {
       OBContext.setAdminMode(true);
       assertThat(RelevantCharacteristicProperty.from(field).isPresent(), equalTo(true));
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  @Test
+  public void getPropertyFromNonPropertyField() {
+    Field nonPropertyField = OBProvider.getInstance().get(Field.class);
+    try {
+      OBContext.setAdminMode(true);
+      assertThat(RelevantCharacteristicProperty.from(nonPropertyField).isPresent(), equalTo(false));
     } finally {
       OBContext.restorePreviousMode();
     }
