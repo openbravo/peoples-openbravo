@@ -161,7 +161,6 @@ public class RelevantCharacteristicAdditionalPropertyResolverTest extends WeldBa
     Entity productPrice = ModelProvider.getInstance().getEntity(ProductPrice.class);
 
     List<DataSourceProperty> properties = getDataSourceProperties(productPrice, parameters);
-    properties.stream().forEach(p -> System.out.println(p.getName()));
 
     assertThat(properties.stream().anyMatch(p -> p.getName().equals("product$mColor")),
         equalTo(true));
