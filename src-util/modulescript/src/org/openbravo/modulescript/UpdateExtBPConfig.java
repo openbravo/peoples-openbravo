@@ -37,7 +37,7 @@ public class UpdateExtBPConfig extends ModuleScript {
           + "SET isdisplayedincreate = isdisplayedindetail, isdisplayedinedit = isdisplayedindetail, "
           + "create_seqno = detail_seqno, edit_seqno = detail_seqno, "
           + "sectionmessagecreate_id = sectionmessage_id , sectionmessageedit_id = sectionmessage_id, "
-          + "create_colspan = detail_colspan, edit_colspan = detail_colspan;");
+          + "create_colspan = detail_colspan, edit_colspan = detail_colspan");
       ps.executeUpdate();
     } catch (Exception e) {
       handleError(e);
