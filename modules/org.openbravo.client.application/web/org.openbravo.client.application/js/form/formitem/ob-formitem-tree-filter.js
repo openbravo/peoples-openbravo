@@ -415,6 +415,8 @@ isc.OBTreeFilterItem.addProperties({
       ? filterEditorProperties.filterType
       : 'identifier';
     this.filterAuxCache = [];
+    this.canEdit = this.filterType !== 'id';
+    this.pickerIconDefaults.neverDisable = this.filterType === 'id';
     if (this.selectorWindow) {
       treeGridFields = this.selectorWindow.selectorGridFields.find(
         'name',
@@ -575,17 +577,8 @@ isc.OBTreeFilterItem.addProperties({
     if (!values || this.filterType !== 'id') {
       return this.Super('getCriteriaValue', arguments);
     }
-    const identifiers = isc.isAn.Array(values) ? values : values.split(' or ');
+    const identifiers = isc.isAn.Array(values) ? values : [values];
     const ids = identifiers
-      .map(value => {
-        if (isc.isAn.Array(value)) {
-          return value[0];
-        }
-        if (value.startsWith('==')) {
-          return value.substring(2);
-        }
-        return value;
-      })
       .map(value => this.getRecordIdsFromIdentifier(value))
       .flat();
 
