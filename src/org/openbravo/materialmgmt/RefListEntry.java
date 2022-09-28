@@ -26,16 +26,25 @@ import org.openbravo.model.ad.domain.List;
  * relevant characteristic list reference
  */
 class RefListEntry {
+  private String id;
   private String searchKey;
   private String name;
   private String description;
   private String propertyName;
 
   RefListEntry(List refListEntry) {
+    this.id = refListEntry.getId();
     this.searchKey = refListEntry.getSearchKey();
     this.name = refListEntry.getName();
     this.description = refListEntry.getDescription();
     propertyName = NamingUtil.formatAsPropertyName(refListEntry.getSearchKey());
+  }
+
+  /**
+   * @return the entry ID
+   */
+  String getId() {
+    return id;
   }
 
   /**

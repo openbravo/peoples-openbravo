@@ -85,14 +85,27 @@ public class RelevantCharacteristicProperty {
   }
 
   /**
-   * @return the name to be used in the {@Field} that points to this property. This is the name
-   *         defined for the relevant characteristic in the AD, i.e., in the list reference of
-   *         relevant characteristics.
+   * @return the ID of the {@link org.openbravo.model.ad.domain.List} for the relevant
+   *         characteristic in the list reference of relevant characteristics.
+   */
+  String getRefListId() {
+    return getRefListEntry().getId();
+  }
+
+  /**
+   * @return the name to be used in the {@Field} that points to this property. This is the name of
+   *         the {@link org.openbravo.model.ad.domain.List} for the relevant characteristic in the
+   *         list reference of relevant characteristics.
    */
   String getFieldName() {
     return getRefListEntry().getName();
   }
 
+  /**
+   * @return the description of the property. This is the description of the
+   *         {@link org.openbravo.model.ad.domain.List} for the relevant characteristic in the list
+   *         reference of relevant characteristics.
+   */
   String getDescription() {
     return getRefListEntry().getDescription();
   }

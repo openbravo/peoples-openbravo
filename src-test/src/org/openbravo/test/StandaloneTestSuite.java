@@ -52,6 +52,7 @@ import org.openbravo.dal.service.DataPoolCheckerTest;
 import org.openbravo.erpCommon.info.ClassicSelectorTest;
 import org.openbravo.erpCommon.utility.OBDateUtilsTest;
 import org.openbravo.event.CharacteristicEventHandlerTest;
+import org.openbravo.materialmgmt.RelevantCharacteristicFieldTerminologyChecker;
 import org.openbravo.materialmgmt.RelevantCharacteristicPropertyTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
@@ -309,6 +310,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // Characteristics
     CharacteristicEventHandlerTest.class, //
     RelevantCharacteristicPropertyTest.class, //
+    RelevantCharacteristicFieldTerminologyChecker.class, //
 
     // PLM Status
     ProductStatusTest.class, //
