@@ -61,6 +61,7 @@
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="M_OFFER_ID"/>
       </unique>
+      <check name="M_OFFER_ORG_DATE_CHK"><![CDATA[STARTDATE IS NULL OR ENDDATE IS NULL OR ENDDATE >= STARTDATE]]></check>
       <check name="M_OFFER_ORG_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
