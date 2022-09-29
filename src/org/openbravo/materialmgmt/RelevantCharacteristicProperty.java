@@ -97,7 +97,7 @@ public class RelevantCharacteristicProperty {
    *         the {@link org.openbravo.model.ad.domain.List} for the relevant characteristic in the
    *         list reference of relevant characteristics.
    */
-  String getFieldName() {
+  public String getFieldName() {
     return getRefListEntry().getName();
   }
 

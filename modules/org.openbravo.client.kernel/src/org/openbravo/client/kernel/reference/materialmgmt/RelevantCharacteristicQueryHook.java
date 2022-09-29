@@ -30,12 +30,10 @@ import javax.enterprise.context.Dependent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.RelevantCharacteristicProperty;
 import org.openbravo.model.ad.utility.TreeNode;
 import org.openbravo.model.common.plm.CharacteristicValue;
@@ -66,8 +64,7 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
 
       String characteristicId = property.getCharacteristicId();
       if (characteristicId == null) {
-        throw new OBException(OBMessageUtils.getI18NMessage("RelevantCharacteristicNotLinked",
-            new String[] { property.getSearchKey() }));
+        continue;
       }
 
       // add the join with M_Product, if needed
@@ -123,7 +120,8 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
   public String parseSimpleFilterClause(AdvancedQueryBuilder queryBuilder, String fieldName,
       String operator, Object value) {
     String relevantCharacteristic = getRelevantCharacteristic(queryBuilder, fieldName);
-    if (relevantCharacteristic == null) {
+    if (relevantCharacteristic == null
+        || joinsWithProductCharacteristicValue.get(relevantCharacteristic) == null) {
       return null;
     }
     if (!"equals".equals(operator)) {
@@ -149,8 +147,14 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
     if (relevantCharacteristic == null) {
       return null;
     }
-    return joinsWithTreeNode.get(relevantCharacteristic) + DalUtil.DOT
-        + TreeNode.PROPERTY_SEQUENCENUMBER + (desc ? " desc " : "");
+    String treeNodeJoin = joinsWithTreeNode.get(relevantCharacteristic);
+    if (treeNodeJoin == null) {
+      // we cannot sort by the referenced relevant characteristic because it is not linked to a
+      // product characteristic, so just return an empty order by clause part to avoid breaking the
+      // complete order by clause being built by the AdvancedQueryBuilder
+      return "";
+    }
+    return treeNodeJoin + DalUtil.DOT + TreeNode.PROPERTY_SEQUENCENUMBER + (desc ? " desc " : "");
   }
 
   private List<RelevantCharacteristicProperty> getRelevantCharacteristicProperties(

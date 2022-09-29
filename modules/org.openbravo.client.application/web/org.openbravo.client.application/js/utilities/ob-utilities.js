@@ -515,6 +515,18 @@ OB.Utilities.openDirectView = function(
   isc.RPCManager.sendRequest(reqObj);
 };
 
+// ** {{{OB.Utilities.showWindowMessage}}} **
+// Shows a message in the main view of a given standard window
+OB.Utilities.showWindowMessage = function({ window, extraSettings }) {
+  const { view } = window;
+  const { message, messageType, messageParams = [] } = extraSettings;
+  view.messageBar.setMessage(
+    messageType,
+    '',
+    OB.I18N.getLabel(message, messageParams)
+  );
+};
+
 // ** {{{OB.Utilities.getPromptString}}} **
 // Translates a string or array of strings to a string with html returns.
 OB.Utilities.getPromptString = function(msg) {

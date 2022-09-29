@@ -20,7 +20,6 @@ package org.openbravo.client.kernel.reference.materialmgmt;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThrows;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.ProductCharacteristicTestUtils;
@@ -155,16 +153,16 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
   }
 
   @Test
-  public void buildQueryFailsIfRelevantCharacteristicIsNotLinked() throws JSONException {
+  public void buildQueryDoNotFailIfRelevantCharacteristicIsNotLinked() throws JSONException {
     ProductCharacteristicTestUtils.unlinkRelevantCharacteristic(characteristicId1);
     OBDal.getInstance().flush();
 
     AdvancedQueryBuilder queryBuilder = createAdvancedQueryBuilder(PRODUCT_ENTITY,
-        getEmptyCriteria(), "searchKey,id", List.of("mTest1"));
+        getEmptyCriteria(), "mTest1$_identifier,id", List.of("mTest1"));
 
-    OBException exception = assertThrows(OBException.class, queryBuilder::getJoinClause);
-    assertThat(exception.getMessage(),
-        equalTo("The relevant characteristic M_Test1 is not linked to any characteristic"));
+    assertThat(queryBuilder.getJoinClause(), equalTo(" as e  "));
+    assertThat(queryBuilder.getWhereClause(), equalTo(" "));
+    assertThat(queryBuilder.getOrderByClause(), equalTo(" order by e.id"));
   }
 
   private AdvancedQueryBuilder createAdvancedQueryBuilder(String entity, JSONObject criteria,

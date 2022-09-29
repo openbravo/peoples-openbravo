@@ -1440,8 +1440,10 @@ public class AdvancedQueryBuilder {
         part = getOrderByClausePart(
             localOrderBy.trim().replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT));
       }
-      sb.append(part);
-      firstElement = false;
+      if (!StringUtils.isBlank(part)) {
+        sb.append(part);
+        firstElement = false;
+      }
     }
 
     // no order by elements, just use empty string
