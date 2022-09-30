@@ -28,5 +28,9 @@ isc.OBMappedTextItem.addProperties({
     } else {
       return this.Super('mapValueToDisplay', arguments);
     }
+  },
+
+  itemHoverHTML: function(item, form) {
+    return this.mapValueToDisplay();
   }
 });
