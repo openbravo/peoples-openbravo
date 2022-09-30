@@ -828,15 +828,10 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    */
   public static class DaemonThreadFactory implements ThreadFactory {
     private AtomicInteger threadNumber = new AtomicInteger(0);
-    private final ThreadGroup group;
-
-    public DaemonThreadFactory() {
-      group = Thread.currentThread().getThreadGroup();
-    }
 
     @Override
     public Thread newThread(Runnable runnable) {
-      return new ImportEntryThread(group, runnable, threadNumber.getAndIncrement());
+      return new ImportEntryThread(runnable, threadNumber.getAndIncrement());
     }
   }
 
@@ -845,8 +840,8 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    * import entries
    */
   private static class ImportEntryThread extends Thread {
-    private ImportEntryThread(ThreadGroup group, Runnable runnable, int threadNumber) {
-      super(group, runnable, "Import Entry - " + threadNumber, 0);
+    private ImportEntryThread(Runnable runnable, int threadNumber) {
+      super(runnable, "Import Entry - " + threadNumber);
       if (getPriority() != Thread.NORM_PRIORITY) {
         setPriority(Thread.NORM_PRIORITY);
       }

@@ -107,8 +107,7 @@ public class ClusterServiceManager {
     return Executors.newSingleThreadExecutor(new ThreadFactory() {
       @Override
       public Thread newThread(Runnable runnable) {
-        ThreadGroup group = Thread.currentThread().getThreadGroup();
-        final Thread thread = new Thread(group, runnable, "Cluster Service Leader Registrator");
+        final Thread thread = new Thread(runnable, "Cluster Service Leader Registrator");
         if (thread.getPriority() != Thread.NORM_PRIORITY) {
           thread.setPriority(Thread.NORM_PRIORITY);
         }
