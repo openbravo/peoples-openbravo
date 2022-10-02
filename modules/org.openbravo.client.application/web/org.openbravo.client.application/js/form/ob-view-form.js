@@ -151,26 +151,29 @@ OB.ViewFormProperties = {
           }
         }
 
-        // if there is a display field or an identifier field accompanying the
-        // status bar field and it has a value then always use that
-        // one
-        if (
-          item.displayField &&
-          this.getValue(
-            item.name + OB.Constants.FIELDSEPARATOR + item.displayField
-          )
-        ) {
-          displayedValue = this.getValue(
-            item.name + OB.Constants.FIELDSEPARATOR + item.displayField
-          );
-        } else if (
-          this.getValue(
-            item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
-          )
-        ) {
-          displayedValue = this.getValue(
-            item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
-          );
+        if (!item.valueMap || item.valueMap[value] !== displayedValue) {
+          // if there is a display field or an identifier field accompanying the
+          // status bar field and it has a value then always use that
+          // one, but only if the current display value is not backed up by the valueMap
+          // of the item, because some form items will use it instead of the identifier
+          if (
+            item.displayField &&
+            this.getValue(
+              item.name + OB.Constants.FIELDSEPARATOR + item.displayField
+            )
+          ) {
+            displayedValue = this.getValue(
+              item.name + OB.Constants.FIELDSEPARATOR + item.displayField
+            );
+          } else if (
+            this.getValue(
+              item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
+            )
+          ) {
+            displayedValue = this.getValue(
+              item.name + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER
+            );
+          }
         }
 
         statusBarFields[0].push(title);
