@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU 
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -124,7 +124,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
     final StringBuilder sb = new StringBuilder();
     for (Field fld : tab.getADFieldList()) {
-      if (fld.getProperty() != null && fld.getProperty().contains(".")) {
+      if (hasAdditionalProperty(fld)) {
         if (sb.length() > 0) {
           sb.append(",");
         }
@@ -146,6 +146,14 @@ public class OBViewTab extends BaseTemplateComponent {
       component.setIncludeCreationCode(false);
     }
     return component.generate();
+  }
+
+  private boolean hasAdditionalProperty(Field field) {
+    // An additional property is a property that is accessed navigating through the data model or
+    // one that is not backed by a database column and therefore it needs some special logic to
+    // calculate its value
+    return field.getProperty() != null
+        && (field.getProperty().contains(".") || field.getColumn() == null);
   }
 
   public String getNotesDataSourceJavaScript() {

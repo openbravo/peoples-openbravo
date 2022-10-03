@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2021 Openbravo SLU
+ * All portions are Copyright (C) 2011-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -42,6 +42,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.ApplicationUtils;
 import org.openbravo.client.application.DynamicExpressionParser;
 import org.openbravo.client.application.GCSystem;
@@ -93,6 +94,9 @@ public class OBViewFieldHandler {
 
   private Optional<GCSystem> systemGridConfig;
   private Map<String, Optional<GCTab>> tabsGridConfig;
+
+  private List<FieldSettingsProvider> fieldSettingsProviders = WeldUtils
+      .getInstancesSortedByPriority(FieldSettingsProvider.class);
 
   public Tab getTab() {
     return tab;
@@ -263,7 +267,10 @@ public class OBViewFieldHandler {
 
     for (Field field : sortedAdFields) {
 
-      if ((field.getColumn() == null && field.getClientclass() == null) || !field.isActive()
+      FieldSettingsProvider fieldSettingsProvider = getFieldSettingsProvider(field);
+
+      if ((field.getColumn() == null && field.getClientclass() == null
+          && fieldSettingsProvider == null) || !field.isActive()
           || !(field.isDisplayed() || field.isShowInGridView())
           || (field.getColumn() != null && !field.getColumn().isActive())
           || ApplicationUtils.isUIButton(field)) {
@@ -291,7 +298,7 @@ public class OBViewFieldHandler {
         }
       }
 
-      if (field.getColumn() == null) {
+      if (field.getColumn() == null && fieldSettingsProvider == null) {
         final OBClientClassField viewField = new OBClientClassField();
 
         viewField.setField(field);
@@ -338,12 +345,12 @@ public class OBViewFieldHandler {
         previousFieldColSpan = viewField.getColSpan();
       } else {
         final OBViewField viewField = new OBViewField();
-
-        final Property property = KernelUtils.getInstance()
-            .getPropertyFromColumn(field.getColumn(), false);
-        viewField.setProperty(property);
-
+        if (field.getColumn() != null) {
+          viewField.setProperty(
+              KernelUtils.getInstance().getPropertyFromColumn(field.getColumn(), false));
+        }
         viewField.setField(field);
+        viewField.setFieldSettingsProvider(fieldSettingsProvider);
         viewField.setId(field);
         viewField.setRedrawOnChange(fieldsInDynamicExpression.contains(field.getId()));
         viewField.setShowIf(displayLogicMap.get(field) != null ? displayLogicMap.get(field) : "");
@@ -459,6 +466,13 @@ public class OBViewFieldHandler {
     return fields;
   }
 
+  private FieldSettingsProvider getFieldSettingsProvider(Field field) {
+    return fieldSettingsProviders.stream()
+        .filter(fsp -> fsp.accepts(field))
+        .findFirst()
+        .orElse(null);
+  }
+
   public List<String> getStoredInSessionProperties() {
     return storedInSessionProperties;
   }
@@ -541,7 +555,7 @@ public class OBViewFieldHandler {
   static String getFieldColumnName(Field f, Property p) {
     String columnName;
     if (p == null) {
-      columnName = f.getColumn().getDBColumnName();
+      columnName = f.getColumn() != null ? f.getColumn().getDBColumnName() : "";
     } else {
       columnName = p.getColumnName();
     }
@@ -1256,10 +1270,11 @@ public class OBViewFieldHandler {
     private String displayLogicGrid = "";
     private int gridSort = 0;
     private String id;
+    private FieldSettingsProvider fieldSettingsProvider;
 
     @Override
     public boolean getIsComputedColumn() {
-      return property.isComputedColumn();
+      return property != null && property.isComputedColumn();
     }
 
     @Override
@@ -1309,7 +1324,7 @@ public class OBViewFieldHandler {
 
     @Override
     public boolean getAutoExpand() {
-      return (!property.getName().equalsIgnoreCase("documentno")
+      return (property != null && !property.getName().equalsIgnoreCase("documentno")
           && (uiDefinition instanceof StringUIDefinition || !property.isPrimitive()));
     }
 
@@ -1370,12 +1385,15 @@ public class OBViewFieldHandler {
 
     @Override
     public boolean getSessionProperty() {
-      return property.isStoredInSession();
+      return property != null && property.isStoredInSession();
     }
 
     @Override
     public boolean getReadOnly() {
-      if (field.getProperty() != null && field.getProperty().contains(".")) {
+      if (fieldSettingsProvider != null) {
+        return fieldSettingsProvider.isReadOnly(field);
+      }
+      if (field.getProperty() != null && field.getProperty().contains(DalUtil.DOT)) {
         return true;
       }
       if (field.getColumn().getSqllogic() != null) {
@@ -1386,7 +1404,7 @@ public class OBViewFieldHandler {
 
     @Override
     public boolean getUpdatable() {
-      return property.isUpdatable();
+      return property != null && property.isUpdatable();
     }
 
     @Override
@@ -1456,9 +1474,11 @@ public class OBViewFieldHandler {
         return uiDefinition;
       }
       if (field.getColumn() == null) {
-        return null;
+        uiDefinition = fieldSettingsProvider != null ? fieldSettingsProvider.getUIDefinition(field)
+            : null;
+      } else {
+        uiDefinition = UIDefinitionController.getInstance().getUIDefinition(property.getColumnId());
       }
-      uiDefinition = UIDefinitionController.getInstance().getUIDefinition(property.getColumnId());
       return uiDefinition;
     }
 
@@ -1487,7 +1507,7 @@ public class OBViewFieldHandler {
 
     @Override
     public String getReferencedKeyColumnName() {
-      if (property.isOneToMany() || property.isPrimitive()) {
+      if (property == null || property.isOneToMany() || property.isPrimitive()) {
         return "";
       }
       Property prop;
@@ -1501,7 +1521,7 @@ public class OBViewFieldHandler {
 
     @Override
     public String getTargetEntity() {
-      if (property.isOneToMany() || property.isPrimitive()) {
+      if (property == null || property.isOneToMany() || property.isPrimitive()) {
         return "";
       }
       return property.getTargetEntity().getName();
@@ -1526,6 +1546,10 @@ public class OBViewFieldHandler {
 
     public void setField(Field field) {
       this.field = field;
+    }
+
+    private void setFieldSettingsProvider(FieldSettingsProvider fieldSettingsProvider) {
+      this.fieldSettingsProvider = fieldSettingsProvider;
     }
 
     public void setId(Field field) {
@@ -1557,7 +1581,7 @@ public class OBViewFieldHandler {
       }
 
       // booleans are never required as their input only allows 2 values
-      if (property.isBoolean()) {
+      if (property != null && property.isBoolean()) {
         return false;
       }
 
@@ -1566,21 +1590,21 @@ public class OBViewFieldHandler {
         // memory model, because memory model sets mandatoriness regarding physical DB definition.
         return field.getColumn().isMandatory();
       } else {
-        return property.isMandatory();
+        return property != null && property.isMandatory();
       }
     }
 
     @Override
     public Integer getLength() {
-      return property.getFieldLength();
+      return property != null ? property.getFieldLength() : 0;
     }
 
     public boolean getForeignKeyField() {
-      return property.getDomainType() instanceof ForeignKeyDomainType;
+      return property != null && property.getDomainType() instanceof ForeignKeyDomainType;
     }
 
     public String getDataSourceId() {
-      return property.getTargetEntity().getName();
+      return property != null ? property.getTargetEntity().getName() : null;
     }
 
     @Override
@@ -1603,10 +1627,12 @@ public class OBViewFieldHandler {
       if (field.getObuiappRowspan() != null) {
         return field.getObuiappRowspan();
       }
-      if (property.getDomainType().getReference().getId().equals(TEXT_AD_REFERENCE_ID)) {
+      if (property != null
+          && property.getDomainType().getReference().getId().equals(TEXT_AD_REFERENCE_ID)) {
         return 2;
       }
-      if (property.getDomainType().getReference().getId().equals(IMAGEBLOB_AD_REFERENCE_ID)) {
+      if (property != null
+          && property.getDomainType().getReference().getId().equals(IMAGEBLOB_AD_REFERENCE_ID)) {
         return 2;
       }
       return 1;

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -47,6 +48,7 @@ import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 
@@ -216,22 +218,30 @@ public class DataToJsonConverter {
         if (additionalProperty.length() == 0) {
           continue;
         }
-        final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
-        if (value == null) {
-          jsonObject.put(replaceDots(additionalProperty), (Object) null);
-        } else if (value instanceof BaseOBObject) {
-          final Property additonalPropertyObject = DalUtil.getPropertyFromPath(bob.getEntity(),
-              additionalProperty);
-          addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
-              additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
+        Map<String, Object> values = resolveAdditionalPropertyWithHook(bob, additionalProperty);
+        if (!values.isEmpty()) {
+          for (Entry<String, Object> entry : values.entrySet()) {
+            jsonObject.put(replaceDots(entry.getKey()), entry.getValue());
+          }
         } else {
-          final Property property = DalUtil.getPropertyFromPath(bob.getEntity(),
-              additionalProperty);
-          // identifier
-          if (additionalProperty.endsWith(JsonConstants.IDENTIFIER)) {
-            jsonObject.put(replaceDots(additionalProperty), value);
+          final Object value = DalUtil.getValueFromPath(bob, additionalProperty);
+          if (value == null) {
+            jsonObject.put(replaceDots(additionalProperty), (Object) null);
+          } else if (value instanceof BaseOBObject) {
+            final Property additonalPropertyObject = DalUtil.getPropertyFromPath(bob.getEntity(),
+                additionalProperty);
+            addBaseOBObject(jsonObject, additonalPropertyObject, additionalProperty,
+                additonalPropertyObject.getReferencedProperty(), (BaseOBObject) value);
           } else {
-            jsonObject.put(replaceDots(additionalProperty), convertPrimitiveValue(property, value));
+            final Property property = DalUtil.getPropertyFromPath(bob.getEntity(),
+                additionalProperty);
+            // identifier
+            if (additionalProperty.endsWith(JsonConstants.IDENTIFIER)) {
+              jsonObject.put(replaceDots(additionalProperty), value);
+            } else {
+              jsonObject.put(replaceDots(additionalProperty),
+                  convertPrimitiveValue(property, value));
+            }
           }
         }
       }
@@ -257,6 +267,18 @@ public class DataToJsonConverter {
     } catch (JSONException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  private Map<String, Object> resolveAdditionalPropertyWithHook(BaseOBObject bob,
+      String propertyPath) {
+    for (AdditionalPropertyResolver resolver : WeldUtils
+        .getInstancesSortedByPriority(AdditionalPropertyResolver.class)) {
+      Map<String, Object> result = resolver.resolve(bob, propertyPath);
+      if (result != null && !result.isEmpty()) {
+        return result;
+      }
+    }
+    return Collections.emptyMap();
   }
 
   private String replaceDots(String value) {

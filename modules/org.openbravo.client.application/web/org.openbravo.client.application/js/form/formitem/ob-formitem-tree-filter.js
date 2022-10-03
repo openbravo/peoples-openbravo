@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2020 Openbravo SLU
+ * All portions are Copyright (C) 2013-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -148,7 +148,11 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         return params;
       },
 
-      dataArrived: function() {
+      dataArrived: function(parentNode) {
+        const filterItem = this.treePopup.filterItem;
+        if (filterItem.onDataArrived) {
+          filterItem.onDataArrived(parentNode);
+        }
         this.Super('dataArrived', arguments);
       },
 
@@ -160,13 +164,20 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
 
       setDataSource: function(ds, fields) {
         var me = this,
-          i;
+          i,
+          filterItem = me.treePopup.filterItem;
         ds.transformRequest = function(dsRequest) {
           var target = window[dsRequest.componentId];
           dsRequest.params = dsRequest.params || {};
           dsRequest.params._startRow = 0;
           dsRequest.params._endRow = OB.Properties.TreeDatasourceFetchLimit;
           dsRequest.params.treeReferenceId = target.treeReferenceId;
+          if (filterItem.addParamsToRequest) {
+            isc.addProperties(
+              dsRequest.params,
+              filterItem.addParamsToRequest()
+            );
+          }
           return this.Super('transformRequest', arguments);
         };
 
@@ -205,6 +216,10 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         ds.primaryKeys = {
           id: 'id'
         };
+        if (filterItem.filterType === 'id' && filterItem.form) {
+          // this prevents adding an extra criterion by the identifier property
+          filterItem.setOptionDataSource(ds);
+        }
         return this.Super('setDataSource', [ds, fields]);
       },
 
@@ -297,8 +312,15 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
       criteria = {},
       i,
       len = selection.length,
-      fieldName =
-        this.fieldName + OB.Constants.FIELDSEPARATOR + OB.Constants.IDENTIFIER;
+      filterByID = this.filterItem.filterType === 'id',
+      fieldName = filterByID
+        ? this.fieldName
+        : this.fieldName +
+          OB.Constants.FIELDSEPARATOR +
+          OB.Constants.IDENTIFIER,
+      criteriaFieldName = filterByID
+        ? OB.Constants.ID
+        : OB.Constants.IDENTIFIER;
     if (len === 0) {
       return {};
     } else if (len === 1) {
@@ -308,7 +330,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         {
           fieldName: fieldName,
           operator: 'equals',
-          value: selection[0][OB.Constants.IDENTIFIER]
+          value: selection[0][criteriaFieldName]
         }
       ];
     } else {
@@ -321,7 +343,7 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         criteria.criteria.push({
           fieldName: fieldName,
           operator: 'equals',
-          value: selection[i][OB.Constants.IDENTIFIER]
+          value: selection[i][criteriaFieldName]
         });
       }
     }
@@ -337,6 +359,7 @@ isc.OBTreeFilterItem.addProperties({
   lastValueFromPopup: null,
   pickerConstructor: 'ImgButton',
   allowExpressions: true,
+  multipleValueSeparator: ' or ',
   pickerIconDefaults: {
     name: 'showDateRange',
     width: 21,
@@ -355,7 +378,13 @@ isc.OBTreeFilterItem.addProperties({
   filterDialogCallback: function(criterion) {
     this.updateCriterion(criterion);
     this.lastValueFromPopup = this.getValue();
-    this.form.grid.performAction();
+    const grid = this.grid.parentElement;
+    if (grid.lazyFiltering) {
+      grid.filterHasChanged = true;
+      grid.sorter.enable();
+    } else {
+      this.form.grid.performAction();
+    }
   },
 
   //This function updates the criterion of the tree filter, deletes the old
@@ -369,11 +398,25 @@ isc.OBTreeFilterItem.addProperties({
   },
 
   init: function() {
-    var field, treeGridFields, treeReferenceId, dataSourceId, view;
+    var field,
+      treeGridFields,
+      treeReferenceId,
+      dataSourceId,
+      view,
+      filterEditorProperties;
     this.pickerIconSrc = OB.Styles.OBFormField.DefaultSearch.pickerIconSrc;
     this.Super('init', arguments);
     field = this.grid.getField(this.name);
-    this.criteriaField = field.displayField;
+    filterEditorProperties = field.filterEditorProperties || {};
+    this.criteriaField = filterEditorProperties.criteriaField
+      ? filterEditorProperties.criteriaField
+      : field.displayField;
+    this.filterType = filterEditorProperties.filterType
+      ? filterEditorProperties.filterType
+      : 'identifier';
+    this.filterAuxCache = [];
+    this.canEdit = this.filterType !== 'id';
+    this.pickerIconDefaults.neverDisable = this.filterType === 'id';
     if (this.selectorWindow) {
       treeGridFields = this.selectorWindow.selectorGridFields.find(
         'name',
@@ -418,10 +461,148 @@ isc.OBTreeFilterItem.addProperties({
   },
 
   showDialog: function() {
-    var hasChanged = false;
-    if (this.lastValueFromPopup !== this.getValue()) {
+    const lastValue = this.lastValueFromPopup;
+    const currentValue = this.getValue();
+    const areNullValues = lastValue == null && currentValue == null;
+    let hasChanged = false;
+    if (isc.isAn.Array(lastValue) && isc.isAn.Array(currentValue)) {
+      hasChanged = !lastValue.equals(currentValue);
+    } else if (!areNullValues && lastValue !== currentValue) {
       hasChanged = true;
     }
     this.filterDialog.show(hasChanged);
+  },
+
+  onDataArrived: function(parentNode) {
+    if (this.filterType !== 'id') {
+      return;
+    }
+    const children = parentNode.children
+      ? parentNode.children
+          .filter(
+            child =>
+              !this.filterAuxCache.some(
+                r => r[OB.Constants.ID] === child[OB.Constants.ID]
+              )
+          )
+          .map(child => ({
+            [OB.Constants.ID]: child[OB.Constants.ID],
+            [OB.Constants.IDENTIFIER]: child[OB.Constants.IDENTIFIER]
+          }))
+      : [];
+    this.filterAuxCache = [...this.filterAuxCache, ...children];
+  },
+
+  setCriterion: function(criterion) {
+    if (this.filterType !== 'id') {
+      this.Super('setCriterion', arguments);
+      return;
+    }
+    const criteria = criterion ? criterion.criteria : null;
+    let value;
+    if (criteria && criteria.length && criterion.operator === 'or') {
+      value = this.getRecordIdentifiersFromCriteria(criteria);
+    } else {
+      value = this.getRecordIdentifierFromId(
+        this.buildValueExpressions(criterion)
+      );
+    }
+    this.setValue(value);
+  },
+
+  getCriterion: function() {
+    if (this.filterType !== 'id') {
+      return this.Super('getCriterion', arguments);
+    }
+    let value = this.getCriteriaValue();
+    if (value == null || isc.is.emptyString(value)) {
+      return;
+    }
+    if (isc.isAn.Array(value)) {
+      if (value.length === 0) {
+        value = this.getAppliedCriteriaValue();
+      } else {
+        value = this.mapValueToDisplay(value);
+      }
+    }
+    return this.parseValueExpressions(
+      value,
+      this.getCriteriaFieldName(),
+      isc.DataSource.getSearchOperators().equals.ID
+    );
+  },
+
+  getAppliedCriteriaValue: function() {
+    const currentGridCriteria = this.grid.parentElement.getCriteria();
+    if (!currentGridCriteria || !currentGridCriteria.criteria) {
+      return [];
+    }
+    const criteria = currentGridCriteria.criteria.find(
+      c => c.fieldName === this.name
+    );
+    if (!criteria) {
+      return [];
+    }
+    if (criteria.criteria) {
+      return criteria.criteria.map(c => c.value).join(' or ');
+    }
+    return criteria.value || [];
+  },
+
+  mapValueToDisplay: function(value) {
+    if (this.filterType !== 'id') {
+      return this.Super('mapValueToDisplay', arguments);
+    }
+    const valueToMap =
+      isc.isAn.Array(value) && value.length === 1 ? value[0] : value;
+    if (!isc.isAn.Array(valueToMap)) {
+      return this.Super('mapValueToDisplay', arguments);
+    }
+    return valueToMap
+      .map(v =>
+        OB.Utilities.encodeSearchOperator(this.Super('mapValueToDisplay', v))
+      )
+      .join(this.multipleValueSeparator);
+  },
+
+  getOperator: function() {
+    if (this.filterType !== 'id') {
+      return this.Super('getOperator', arguments);
+    }
+    return isc.DataSource.getSearchOperators().equals.ID;
+  },
+
+  getCriteriaValue: function() {
+    const values = this.getValue();
+    if (!values || this.filterType !== 'id') {
+      return this.Super('getCriteriaValue', arguments);
+    }
+    const identifiers = isc.isAn.Array(values) ? values : [values];
+    const ids = identifiers
+      .map(value => this.getRecordIdsFromIdentifier(value))
+      .flat();
+
+    return ids.filter((element, index) => {
+      return ids.indexOf(element) === index;
+    });
+  },
+
+  getRecordIdsFromIdentifier: function(identifier) {
+    return this.filterAuxCache
+      .filter(r => r[OB.Constants.IDENTIFIER] === identifier)
+      .map(r => r[OB.Constants.ID]);
+  },
+
+  getRecordIdentifierFromId: function(id) {
+    const record = this.filterAuxCache.find(r => r[OB.Constants.ID] === id);
+    return record ? record[OB.Constants.IDENTIFIER] : null;
+  },
+
+  getRecordIdentifiersFromCriteria: function(criteria) {
+    const cache = this.filterAuxCache;
+    return criteria
+      .map(c => cache.find(r => r[OB.Constants.ID] === c.value))
+      .filter(r => r != null)
+      .map(r => r[OB.Constants.IDENTIFIER]);
   }
 });

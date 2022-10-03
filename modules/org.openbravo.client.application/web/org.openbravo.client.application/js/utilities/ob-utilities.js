@@ -515,6 +515,18 @@ OB.Utilities.openDirectView = function(
   isc.RPCManager.sendRequest(reqObj);
 };
 
+// ** {{{OB.Utilities.showWindowMessage}}} **
+// Shows a message in the main view of a given standard window
+OB.Utilities.showWindowMessage = function({ window, extraSettings }) {
+  const { view } = window;
+  const { message, messageType, messageParams = [] } = extraSettings;
+  view.messageBar.setMessage(
+    messageType,
+    '',
+    OB.I18N.getLabel(message, messageParams)
+  );
+};
+
 // ** {{{OB.Utilities.getPromptString}}} **
 // Translates a string or array of strings to a string with html returns.
 OB.Utilities.getPromptString = function(msg) {
@@ -1325,6 +1337,14 @@ OB.Utilities.getProcessTabBarPosition = function(processView) {
   return -1;
 };
 
+//** {{{ OB.Utilities.yesNoSortNormalizer }}} **
+//
+// Returns the value that should be used when sorting the grid by the value of the given boolean field
+// With this normalizer 'true' value goes before 'false' value when sorting ascending
+// Parameters:
+//  * {{{item}}} Record to normalize
+//  * {{{field}}} Name of the field on which sorting occurred
+//  * {{{context}}} Provides a pointer back to the list grid displaying this field
 OB.Utilities.yesNoSortNormalizer = function(item, field, context) {
   var value = item[field];
   if (value === true) {
@@ -1336,6 +1356,13 @@ OB.Utilities.yesNoSortNormalizer = function(item, field, context) {
   }
 };
 
+//** {{{ OB.Utilities.enumSortNormalizer }}} **
+//
+// Returns the value that should be used when sorting the grid by the value of the given field
+// Parameters:
+//  * {{{item}}} Record to normalize
+//  * {{{field}}} Name of the field on which sorting occurred
+//  * {{{context}}} Provides a pointer back to the list grid displaying this field
 OB.Utilities.enumSortNormalizer = function(item, field, context) {
   var value = item[field],
     undef;
@@ -1345,7 +1372,27 @@ OB.Utilities.enumSortNormalizer = function(item, field, context) {
   return ' ' + value;
 };
 
-//** {{{ OB.Utilities.getTabNumber }}} **
+//** {{{ OB.Utilities.bySeqNoSortNormalizer }}} **
+//
+// Returns the value that should be used when sorting the grid by the sequenceNumber field linked to the given field
+// Parameters:
+//  * {{{item}}} Record to normalize
+//  * {{{field}}} Name of the field on which sorting occurred
+//  * {{{context}}} Provides a pointer back to the list grid displaying this field
+OB.Utilities.bySeqNoSortNormalizer = function(item, field, context) {
+  const identifierPart = `${OB.Constants.FIELDSEPARATOR}${OB.Constants.IDENTIFIER}`;
+  const fieldName = field.endsWith(identifierPart)
+    ? field.substring(0, field.length - identifierPart.length)
+    : field;
+  const value =
+    item[`${fieldName}${OB.Constants.FIELDSEPARATOR}sequenceNumber`];
+  if (value == null) {
+    return Number.MAX_SAFE_INTEGER; // hack to sort nulls last
+  }
+  return value;
+};
+
+//** {{{ OB.Utilities.getTabNumberById }}} **
 //
 // Returns the position of a window in the main tab bar
 // Parameters:

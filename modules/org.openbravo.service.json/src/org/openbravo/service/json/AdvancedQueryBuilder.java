@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -47,6 +50,7 @@ import org.openbravo.base.model.domaintype.TableDomainType;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.base.util.Check;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
@@ -69,6 +73,8 @@ import org.openbravo.service.db.DalConnectionProvider;
  * @author mtaal
  */
 public class AdvancedQueryBuilder {
+
+  private static final Logger log = LogManager.getLogger();
 
   private static final String CRITERIA_KEY = "criteria";
   private static final String VALUE_KEY = "value";
@@ -179,8 +185,19 @@ public class AdvancedQueryBuilder {
   // in the FROM clause
   private boolean creatingJoinsInWhereClauseIsPrevented = false;
 
+  private List<AdvancedQueryBuilderHook> hooks = getHooks();
+
   public static enum TextMatching {
     startsWith, exact, substring
+  }
+
+  private static List<AdvancedQueryBuilderHook> getHooks() {
+    try {
+      return WeldUtils.getInstancesSortedByPriority(AdvancedQueryBuilderHook.class);
+    } catch (Exception ex) {
+      log.error("Could not retrieve the list of hooks", ex);
+      return Collections.emptyList();
+    }
   }
 
   public Entity getEntity() {
@@ -260,6 +277,7 @@ public class AdvancedQueryBuilder {
       AdvancedQueryBuilder subEntityQueryBuilder = subDataEntityQueryService.getQueryBuilder();
       subEntityQueryBuilder.aliasOffset = typedParameters.size();
 
+      String subentityJoin = subEntityQueryBuilder.getJoinClause();
       String subentityWhere = subEntityQueryBuilder.getWhereClause();
       if (StringUtils.isEmpty(subentityWhere.trim())) {
         subentityWhere += " where ";
@@ -284,13 +302,12 @@ public class AdvancedQueryBuilder {
         } else {
           joinType = " inner join ";
         }
-        whereClause += " exists (select 1 from " + subEntity.getName() + " "
-            + subEntityQueryBuilder.getJoinClause() + joinType
-            + subEntityQueryBuilder.getMainAlias() + DalUtil.DOT + distinctPropertyPath + " as i "
-            + subentityWhere + " i = " + mainAlias + subEntityClientOrg + ") ";
+        whereClause += " exists (select 1 from " + subEntity.getName() + " " + subentityJoin
+            + joinType + subEntityQueryBuilder.getMainAlias() + DalUtil.DOT + distinctPropertyPath
+            + " as i " + subentityWhere + " i = " + mainAlias + subEntityClientOrg + ") ";
       } else {
-        whereClause += " exists (select 1 from " + subEntity.getName() + " "
-            + subEntityQueryBuilder.getJoinClause() + subentityWhere + "e."
+        whereClause += " exists (select 1 from " + subEntity.getName() + " " + subentityJoin
+            + subentityWhere + "e."
             + distinctPropertyPath.replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT) + " = " + mainAlias
             + subEntityClientOrg + ") ";
       }
@@ -525,7 +542,8 @@ public class AdvancedQueryBuilder {
     if (operator.equals(OPERATOR_EQUALS) || operator.equals(OPERATOR_EQUALSFIELD)) {
       final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
       if (properties.isEmpty()) {
-        return null;
+        // not a property of the model, try to parse the clause with a hook if possible
+        return parseSingleClauseWithHook(fieldName, operator, value);
       }
       final Property property = properties.get(properties.size() - 1);
       if (property == null) {
@@ -567,6 +585,11 @@ public class AdvancedQueryBuilder {
   private String parseSimpleClause(String fieldName, String operator, Object value)
       throws JSONException {
 
+    String clause = parseSingleClauseWithHook(fieldName, operator, value);
+    if (clause != null) {
+      return clause;
+    }
+
     // note: code duplicated in parseSingleClause
     final List<Property> properties = JsonUtils.getPropertiesOnPath(getEntity(), fieldName);
     if (properties.isEmpty()) {
@@ -596,6 +619,16 @@ public class AdvancedQueryBuilder {
     } else {
       return leftClause + " " + hqlOperator + " " + rightClause;
     }
+  }
+
+  private String parseSingleClauseWithHook(String fieldName, String operator, Object value) {
+    for (AdvancedQueryBuilderHook hook : hooks) {
+      String parsed = hook.parseSimpleFilterClause(this, fieldName, operator, value);
+      if (parsed != null) {
+        return parsed;
+      }
+    }
+    return null;
   }
 
   private String buildRightClause(Property property, String operator, Object value)
@@ -1340,13 +1373,17 @@ public class AdvancedQueryBuilder {
     if (joinAssociatedEntities) {
       for (Property property : entity.getProperties()) {
         if (!property.isPrimitive() && !property.isOneToMany() && !property.isOneToOne()) {
-          final JoinDefinition joinDefinition = new JoinDefinition();
-          joinDefinition.setOwnerAlias(getMainAlias());
-          joinDefinition.setFetchJoin(true);
-          joinDefinition.setProperty(property);
+          final JoinDefinition joinDefinition = new JoinDefinition(this)
+              .setOwnerAlias(getMainAlias())
+              .setFetchJoin(true)
+              .setProperty(property);
           joinDefinitions.add(joinDefinition);
         }
       }
+    }
+
+    for (AdvancedQueryBuilderHook hook : hooks) {
+      joinDefinitions = hook.getJoinDefinitions(this, joinDefinitions);
     }
 
     // make sure that the join clauses are computed
@@ -1357,6 +1394,7 @@ public class AdvancedQueryBuilder {
     if (getMainAlias() != null) {
       sb.append(" as " + getMainAlias() + " ");
     }
+
     for (JoinDefinition joinDefinition : joinDefinitions) {
       sb.append(joinDefinition.getJoinStatement());
     }
@@ -1397,9 +1435,15 @@ public class AdvancedQueryBuilder {
       if (!firstElement) {
         sb.append(",");
       }
-      sb.append(
-          getOrderByClausePart(localOrderBy.trim().replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT)));
-      firstElement = false;
+      String part = parseOrderByClausePartWithHook(localOrderBy);
+      if (part == null) {
+        part = getOrderByClausePart(
+            localOrderBy.trim().replace(DalUtil.FIELDSEPARATOR, DalUtil.DOT));
+      }
+      if (!StringUtils.isBlank(part)) {
+        sb.append(part);
+        firstElement = false;
+      }
     }
 
     // no order by elements, just use empty string
@@ -1408,7 +1452,18 @@ public class AdvancedQueryBuilder {
     } else {
       orderByClause = " order by " + sb.toString();
     }
+
     return orderByClause;
+  }
+
+  private String parseOrderByClausePartWithHook(String localOrderBy) {
+    for (AdvancedQueryBuilderHook hook : hooks) {
+      String injectedOrderBy = hook.parseOrderByClausePart(this, localOrderBy);
+      if (injectedOrderBy != null) {
+        return injectedOrderBy;
+      }
+    }
+    return null;
   }
 
   private int getNumberOfDescendingColumns() {
@@ -1642,20 +1697,20 @@ public class AdvancedQueryBuilder {
 
           // Look if the property has been joined
           for (JoinDefinition joinableDefinition : joinDefinitions) {
-            if (joinableDefinition.property == prop) {
+            if (joinableDefinition.getProperty() == prop) {
               addJoin = false;
 
               // Update newPrefix with the alias of the joinDefinition
-              newPrefix = joinableDefinition.joinAlias;
+              newPrefix = joinableDefinition.getJoinAlias();
               break;
             }
           }
 
           if (addJoin) {
             // Add join if this property allows null values
-            final JoinDefinition joinDefinition = new JoinDefinition();
-            joinDefinition.setOwnerAlias(prefix.substring(0, prefix.length() - 1));
-            joinDefinition.setProperty(prop);
+            final JoinDefinition joinDefinition = new JoinDefinition(this)
+                .setOwnerAlias(prefix.substring(0, prefix.length() - 1))
+                .setProperty(prop);
             joinDefinitions.add(joinDefinition);
           }
         }
@@ -1685,8 +1740,9 @@ public class AdvancedQueryBuilder {
     if (properties.length > 2) {
       for (JoinDefinition join : joinDefinitions) {
         if (compare.startsWith(getMainAlias())) {
-          if (compare.equalsIgnoreCase(getMainAlias() + DalUtil.DOT + join.property.toString())) {
-            query = join.joinAlias + DalUtil.DOT + properties[properties.length - 1];
+          if (compare
+              .equalsIgnoreCase(getMainAlias() + DalUtil.DOT + join.getProperty().toString())) {
+            query = join.getJoinAlias() + DalUtil.DOT + properties[properties.length - 1];
           }
 
         } else {
@@ -1697,7 +1753,7 @@ public class AdvancedQueryBuilder {
             if (entities[entities.length - 1] != null) {
               String entityToCompare = entities[entities.length - 1];
               if (compare.equalsIgnoreCase(entityToCompare)) {
-                query = join.joinAlias + DalUtil.DOT + properties[properties.length - 1];
+                query = join.getJoinAlias() + DalUtil.DOT + properties[properties.length - 1];
               }
             }
           }
@@ -1717,8 +1773,8 @@ public class AdvancedQueryBuilder {
     if (value.contains("join")) {
       joinValue = value.substring(0, value.indexOf("."));
       for (JoinDefinition joinDefinition : joinDefinitions) {
-        if (joinDefinition.joinAlias.equals(joinValue)) {
-          String string = joinDefinition.property.toString();
+        if (joinDefinition.getJoinAlias().equals(joinValue)) {
+          String string = joinDefinition.getProperty().toString();
           string = string.substring(string.indexOf(".") + 1, string.length());
           query = getMainAlias() + DalUtil.DOT + string + DalUtil.DOT
               + value.substring(value.indexOf(".") + 1, value.length());
@@ -1756,12 +1812,30 @@ public class AdvancedQueryBuilder {
     filterParameters.put(key, value);
   }
 
+  /**
+   * Gets the named parameters of the query to build
+   * 
+   * @return a map whose keys are the parameter names and the values the parameter values
+   */
   public Map<String, Object> getNamedParameters() {
-    final Map<String, Object> parameters = new HashMap<String, Object>();
+    final Map<String, Object> parameters = new HashMap<>();
     for (int i = 0; i < typedParameters.size(); i++) {
       parameters.put(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
     }
     return parameters;
+  }
+
+  /**
+   * Adds a named parameter for the query to be built
+   * 
+   * @param value
+   *          the value for the query parameter
+   * 
+   * @return the parameter name as it is used in the query
+   */
+  public String addNamedParameter(Object value) {
+    typedParameters.add(value);
+    return ALIAS_PREFIX + Integer.toString(typedParameters.size() - 1);
   }
 
   public void setDoOr(boolean doOr) {
@@ -1813,9 +1887,8 @@ public class AdvancedQueryBuilder {
         break;
       }
       // a joinable property
-      final JoinDefinition joinDefinition = new JoinDefinition();
-      joinDefinition.setOwnerAlias(alias);
-      joinDefinition.setProperty(prop);
+      final JoinDefinition joinDefinition = new JoinDefinition(this).setOwnerAlias(alias)
+          .setProperty(prop);
       if (fromCriteria) {
         useInnerJoinMap.put(prop.getName(), Boolean.TRUE);
       } else {
@@ -1844,62 +1917,8 @@ public class AdvancedQueryBuilder {
     return alias + DalUtil.DOT + propName;
   }
 
-  private String getNewUniqueJoinAlias() {
+  String getNewUniqueJoinAlias() {
     return JOIN_ALIAS_PREFIX + (aliasIndex++);
-  }
-
-  private class JoinDefinition {
-    private Property property;
-    private String joinAlias = getNewUniqueJoinAlias();
-    private String ownerAlias;
-    private boolean fetchJoin = AdvancedQueryBuilder.this.isJoinAssociatedEntities();
-
-    public boolean appliesTo(String checkAlias, Property checkProperty) {
-      return checkAlias.equals(ownerAlias) && checkProperty == property;
-    }
-
-    public String getJoinStatement() {
-      String propName;
-      if (property.isComputedColumn()) {
-        propName = Entity.COMPUTED_COLUMNS_PROXY_PROPERTY + DalUtil.DOT + property.getName();
-      } else {
-        propName = property.getName();
-      }
-      if (orNesting > 0) {
-        return " left outer join " + (fetchJoin ? "fetch " : "")
-            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
-      } else {
-        String joinType = null;
-        // if all the identifier properties of the target entity are mandatory, and if the joined
-        // entity is used only in where clauses resulting from filtering the grid, an inner join can
-        // be used
-        if (Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(property.getName())
-            || KernelUtils.hasNullableIdentifierProperties(property.getTargetEntity())
-            || !(Boolean.TRUE.equals(useInnerJoinMap.get(property.getName())))) {
-          joinType = " left join ";
-        } else {
-          joinType = " inner join ";
-        }
-        return joinType + (fetchJoin ? "fetch " : "")
-            + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
-      }
-    }
-
-    public void setProperty(Property property) {
-      this.property = property;
-    }
-
-    public String getJoinAlias() {
-      return joinAlias;
-    }
-
-    public void setOwnerAlias(String ownerAlias) {
-      this.ownerAlias = ownerAlias;
-    }
-
-    public void setFetchJoin(boolean fetchJoin) {
-      this.fetchJoin = fetchJoin;
-    }
   }
 
   public String getMainAlias() {
@@ -1921,6 +1940,14 @@ public class AdvancedQueryBuilder {
         && orderBy.indexOf(DalUtil.DOT) != orderBy.lastIndexOf(DalUtil.DOT)) {
       setMainAlias(JsonConstants.MAIN_ALIAS);
     }
+  }
+
+  boolean useInnerJoin(Property property) {
+    return Boolean.TRUE.equals(useInnerJoinMap.get(property.getName()));
+  }
+
+  int getOrNesting() {
+    return orNesting;
   }
 
   private String escapeLike(String value) {

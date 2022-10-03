@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2016 Openbravo SLU
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -39,6 +39,7 @@ import org.openbravo.base.model.domaintype.DatetimeDomainType;
 import org.openbravo.base.model.domaintype.EnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.CachedPreference;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.core.DalUtil;
@@ -49,6 +50,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.service.json.AdditionalPropertyResolver;
 import org.openbravo.service.json.DataResolvingMode;
 import org.openbravo.service.json.DataToJsonConverter;
 import org.openbravo.service.json.DefaultJsonDataService;
@@ -398,17 +400,35 @@ public class DefaultDataSourceService extends BaseDataSourceService {
       for (String additionalProp : additionalProps) {
         final Property property = DalUtil.getPropertyFromPath(entity, additionalProp);
         if (property == null) {
-          log4j.debug("Couldn't find property from additional property " + additionalProp
-              + " in entity " + entity);
-          continue;
+          List<DataSourceProperty> props = getDatasourcePropertiesFromHook(entity, additionalProp);
+          if (props.isEmpty()) {
+            log4j.debug(
+                "Not adding any data source property for additional property {} in entity {}",
+                additionalProp, entity);
+          } else {
+            dsProperties.addAll(props);
+          }
+        } else {
+          final DataSourceProperty dsProperty = DataSourceProperty.createFromProperty(property);
+          dsProperty.setAdditional(true);
+          dsProperty.setName(additionalProp.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
+          dsProperties.add(dsProperty);
         }
-        final DataSourceProperty dsProperty = DataSourceProperty.createFromProperty(property);
-        dsProperty.setAdditional(true);
-        dsProperty.setName(additionalProp.replace(DalUtil.DOT, DalUtil.FIELDSEPARATOR));
-        dsProperties.add(dsProperty);
       }
     }
     return dsProperties;
+  }
+
+  private List<DataSourceProperty> getDatasourcePropertiesFromHook(Entity entity,
+      String propertyPath) {
+    for (AdditionalPropertyResolver resolver : WeldUtils
+        .getInstancesSortedByPriority(AdditionalPropertyResolver.class)) {
+      List<DataSourceProperty> result = resolver.getDataSourceProperties(entity, propertyPath);
+      if (result != null && !result.isEmpty()) {
+        return result;
+      }
+    }
+    return Collections.emptyList();
   }
 
   protected List<DataSourceProperty> getInitialProperties(Entity entity,

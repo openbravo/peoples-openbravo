@@ -3110,8 +3110,9 @@ isc.OBViewGrid.addProperties({
               .setValue(field.name, OB.Utilities.encodeSearchOperator(value));
           }
           if (
-            field.filterEditorType === 'OBFKFilterTextItem' &&
-            filterFormItem
+            filterFormItem &&
+            (field.filterEditorType === 'OBFKFilterTextItem' ||
+              filterFormItem.filterType === 'id')
           ) {
             filterFormItem.filterType = 'id';
             if (!filterFormItem.getRecordIdentifierFromId(record[field.name])) {

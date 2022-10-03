@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2014 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,11 +19,15 @@
 package org.openbravo.service.datasource;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +37,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.service.json.AdditionalPropertyResolver;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.service.json.JsonUtils;
 
@@ -47,6 +53,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
   private static final String PROPERTY_FIELD = "inpproperty";
   private static final String DATASOURCE_FIELD = "property";
   private static final String FORM_FIELD = "inpadTableId";
+  private static final String UNSUPPORTED_OPERATION_MESSAGE = "This operation is not supported by this data source implementation";
 
   private static final Logger log = LogManager.getLogger();
   private static final Property identifier = new Property();
@@ -58,8 +65,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
 
   @Override
   public String add(Map<String, String> parameters, String content) {
-    throw new UnsupportedOperationException(
-        "This operation is not supported by this data source implementation");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MESSAGE);
   }
 
   @Override
@@ -69,8 +75,8 @@ public class ModelDataSourceService extends BaseDataSourceService {
     String propertyPath;
 
     // filter based on criteria
-    HashMap<String, String> criteria = getCriteria(parameters);
-    if (criteria != null && criteria.containsKey(DATASOURCE_FIELD)) {
+    Map<String, String> criteria = getCriteria(parameters);
+    if (!criteria.isEmpty() && criteria.containsKey(DATASOURCE_FIELD)) {
       propertyPath = criteria.get(DATASOURCE_FIELD);
     } else {
       // when there is no criteria present, filter based on field's value
@@ -83,31 +89,28 @@ public class ModelDataSourceService extends BaseDataSourceService {
     if (baseEntity == null) {
       // The first request doesn't contain the adTableId
       // that's why baseEntity is null
-      final List<Property> baseEntityProperties = new ArrayList<Property>();
+      final List<Property> baseEntityProperties = new ArrayList<>();
       if (propertyPath != null) {
         final Property savedPath = new Property();
         savedPath.setName(propertyPath);
         baseEntityProperties.add(savedPath);
       }
       try {
-        return getJSONResponse(baseEntityProperties, "", 0);
+        return getJSONResponse(baseEntityProperties, Collections.emptySet(), "", 0);
       } catch (JSONException e) {
-        log.error("Error building JSON response: " + e.getMessage(), e);
+        log.error("Error building JSON response: {}", e.getMessage(), e);
         return JsonUtils.getEmptyResult();
       }
     }
 
-    Property foundProperty = null;
     int startRow = 0;
 
     if (propertyPath == null || propertyPath.equals("")) {
       try {
-        final List<Property> baseEntityProperties = getEntityProperties(baseEntity);
-
-        return getJSONResponse(baseEntityProperties, "", 0);
-
+        return getJSONResponse(getEntityProperties(baseEntity), getAdditionalProperties(baseEntity),
+            "", 0);
       } catch (JSONException e) {
-        log.error("Error building JSON response: " + e.getMessage(), e);
+        log.error("Error building JSON response: {}", e.getMessage(), e);
         return JsonUtils.getEmptyResult();
       }
     }
@@ -122,7 +125,8 @@ public class ModelDataSourceService extends BaseDataSourceService {
       final String[] parts = propertyPath.split("\\.");
       Entity currentEntity = baseEntity;
       Property currentProperty = null;
-      List<Property> props = new ArrayList<Property>();
+      List<Property> props = new ArrayList<>();
+      Set<String> additionalProps = Collections.emptySet();
       int currentDepth = 0;
       int pathDepth = parts.length;
 
@@ -158,7 +162,6 @@ public class ModelDataSourceService extends BaseDataSourceService {
             } else {
               currentProperty = currentEntity.getProperty(prop.getName());
             }
-            foundProperty = prop;
             propNotFound = false;
             if (currentDepth != pathDepth) {
               // Breaking loop to continue with next property in the path
@@ -168,39 +171,43 @@ public class ModelDataSourceService extends BaseDataSourceService {
           }
         }
 
-        if (propNotFound) {
+        if (currentDepth == pathDepth) {
+          additionalProps = getAdditionalProperties(currentEntity,
+              p -> p.toLowerCase().startsWith(part.toLowerCase()));
+        }
+
+        if (propNotFound && additionalProps.isEmpty()) {
           return JsonUtils.getEmptyResult();
         }
 
-        foundProperty = currentProperty;
         List<Property> computedColProperties = null;
-        if (getAllProperties
+        if (getAllProperties && currentProperty != null
             && Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
-          computedColProperties = currentEntity.getComputedColumnProperties();
-        } else {
-          currentEntity = foundProperty.getTargetEntity();
+          computedColProperties = currentEntity != null
+              ? currentEntity.getComputedColumnProperties()
+              : Collections.emptyList();
+        } else if (currentProperty != null) {
+          currentEntity = currentProperty.getTargetEntity();
         }
 
-        if (currentDepth == pathDepth && getAllProperties
-            && (currentEntity != null || computedColProperties != null)) {
+        if (currentDepth == pathDepth && getAllProperties) {
           // User just pressed a final dot (.) key - getting all properties
           // of current Entity
-          if (Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(currentProperty.getName())) {
-            return getJSONResponse(computedColProperties, propertyPath, 0);
+          if (computedColProperties != null) {
+            return getJSONResponse(computedColProperties, Collections.emptySet(), propertyPath, 0);
           } else if (currentEntity != null) {
-            return getJSONResponse(getEntityProperties(currentEntity), propertyPath, 0);
+            return getJSONResponse(getEntityProperties(currentEntity),
+                getAdditionalProperties(currentEntity), propertyPath, 0);
           }
         }
         index++;
       }
 
-      if (getAllProperties && props.size() > 0) {
-        if (props.get(0).getTargetEntity() == null) {
-          return JsonUtils.getEmptyResult();
-        }
+      if (getAllProperties && !props.isEmpty() && props.get(0).getTargetEntity() == null) {
+        return JsonUtils.getEmptyResult();
       }
 
-      return getJSONResponse(props, propertyPath, startRow);
+      return getJSONResponse(props, additionalProps, propertyPath, startRow);
 
     } catch (JSONException e) {
       throw new IllegalStateException(e);
@@ -209,14 +216,12 @@ public class ModelDataSourceService extends BaseDataSourceService {
 
   @Override
   public String remove(Map<String, String> parameters) {
-    throw new UnsupportedOperationException(
-        "This operation is not supported by this data source implementation");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MESSAGE);
   }
 
   @Override
   public String update(Map<String, String> parameters, String content) {
-    throw new UnsupportedOperationException(
-        "This operation is not supported by this data source implementation");
+    throw new UnsupportedOperationException(UNSUPPORTED_OPERATION_MESSAGE);
   }
 
   /**
@@ -232,8 +237,7 @@ public class ModelDataSourceService extends BaseDataSourceService {
     if (tableId == null) {
       return null;
     }
-    final Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
-    return entity;
+    return ModelProvider.getInstance().getEntityByTableId(tableId);
   }
 
   /**
@@ -245,21 +249,34 @@ public class ModelDataSourceService extends BaseDataSourceService {
    */
   protected List<Property> getEntityProperties(Entity entity) {
 
-    final List<Property> entityProperties = new ArrayList<Property>();
+    final List<Property> entityProperties = new ArrayList<>();
     // Appending identifier property
     entityProperties.add(identifier);
     entityProperties.addAll(entity.getProperties());
 
-    Collections.sort(entityProperties, new PropertyNameComparator());
-
     return entityProperties;
   }
 
+  private Set<String> getAdditionalProperties(Entity entity) {
+    return getAdditionalProperties(entity, p -> true);
+  }
+
+  private Set<String> getAdditionalProperties(Entity entity, Predicate<String> filter) {
+    return WeldUtils.getInstancesSortedByPriority(AdditionalPropertyResolver.class)
+        .stream()
+        .map(resolver -> resolver.getPropertyNames(entity))
+        .flatMap(Collection::stream)
+        .filter(filter)
+        .collect(Collectors.toSet());
+  }
+
   /**
-   * Returns a JSON string representation of the properties matched based n user input
+   * Returns a JSON string representation of the properties matched based on user input
    * 
-   * @param props
-   *          the list of properties to be transformed into JSON representation
+   * @param entityProperties
+   *          the list of entity properties to be transformed into JSON representation
+   * @param additionalProperties
+   *          a set of additional property names to be included also as part of the result
    * @param propertyPath
    *          the user's request input string
    * @param startRow
@@ -267,17 +284,20 @@ public class ModelDataSourceService extends BaseDataSourceService {
    * @return a JSON string response for the client
    * @throws JSONException
    */
-  private String getJSONResponse(List<Property> props, String propertyPath, int startRow)
-      throws JSONException {
+  private String getJSONResponse(List<Property> entityProperties, Set<String> additionalProperties,
+      String propertyPath, int startRow) throws JSONException {
     final JSONObject jsonResult = new JSONObject();
     final JSONObject jsonResponse = new JSONObject();
 
+    List<JSONObject> properties = convertToJSONObjects(entityProperties, propertyPath);
+    properties.addAll(convertToJSONObjects(additionalProperties, propertyPath));
+    Collections.sort(properties, new PropertyNameComparator());
+
     jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
     jsonResponse.put(JsonConstants.RESPONSE_STARTROW, startRow);
-    jsonResponse.put(JsonConstants.RESPONSE_ENDROW, props.size() + startRow - 1);
-    jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, props.size());
-    jsonResponse.put(JsonConstants.RESPONSE_DATA,
-        new JSONArray(convertToJSONObjects(props, propertyPath)));
+    jsonResponse.put(JsonConstants.RESPONSE_ENDROW, properties.size() + startRow - 1);
+    jsonResponse.put(JsonConstants.RESPONSE_TOTALROWS, properties.size());
+    jsonResponse.put(JsonConstants.RESPONSE_DATA, new JSONArray(properties));
     jsonResult.put(JsonConstants.RESPONSE_RESPONSE, jsonResponse);
 
     return jsonResult.toString();
@@ -293,19 +313,21 @@ public class ModelDataSourceService extends BaseDataSourceService {
    * @return a list of JSONObjects
    */
   private List<JSONObject> convertToJSONObjects(List<Property> properties, String propertyPath) {
-    final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
     final int pos = propertyPath.lastIndexOf('.');
-    String propertyPrefix = "";
+    String propertyPrefix = pos != -1 ? propertyPath.substring(0, pos + 1) : "";
 
-    if (pos != -1) {
-      propertyPrefix = propertyPath.substring(0, pos + 1);
-    }
+    return properties.stream()
+        .map(property -> convertToJSONObject(property, propertyPrefix))
+        .collect(Collectors.toList());
+  }
 
-    for (Property prop : properties) {
-      jsonObjects.add(convertToJSONObject(prop, propertyPrefix));
-    }
+  private List<JSONObject> convertToJSONObjects(Set<String> propertyNames, String propertyPath) {
+    final int pos = propertyPath.lastIndexOf('.');
+    String propertyPrefix = pos != -1 ? propertyPath.substring(0, pos + 1) : "";
 
-    return jsonObjects;
+    return propertyNames.stream()
+        .map(property -> convertToJSONObject(property, propertyPrefix))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -319,20 +341,24 @@ public class ModelDataSourceService extends BaseDataSourceService {
    * @return a JSONObject representation of the Property
    */
   private JSONObject convertToJSONObject(Property property, String propertyPrefix) {
+    return convertToJSONObject(property.getName(), propertyPrefix);
+  }
+
+  private JSONObject convertToJSONObject(String propertyName, String propertyPrefix) {
     final JSONObject jsonObject = new JSONObject();
     try {
-      jsonObject.put(DATASOURCE_FIELD, propertyPrefix + property.getName());
+      jsonObject.put(DATASOURCE_FIELD, propertyPrefix + propertyName);
     } catch (JSONException e) {
       throw new IllegalStateException(e);
     }
     return jsonObject;
   }
 
-  private HashMap<String, String> getCriteria(Map<String, String> parameters) {
+  private Map<String, String> getCriteria(Map<String, String> parameters) {
     if (!"AdvancedCriteria".equals(parameters.get("_constructor"))) {
-      return null;
+      return Collections.emptyMap();
     }
-    HashMap<String, String> criteriaValues = new HashMap<String, String>();
+    Map<String, String> criteriaValues = new HashMap<>();
     try {
       JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
       for (int i = 0; i < criterias.length(); i++) {
@@ -343,24 +369,26 @@ public class ModelDataSourceService extends BaseDataSourceService {
       // Ignore exception.
     }
     if (criteriaValues.isEmpty()) {
-      return null;
+      return Collections.emptyMap();
     }
     return criteriaValues;
   }
 
   /**
-   * Comparator implementation based on Property names
+   * Compares 2 JSONObjects based on the value of their property named "property"
    * 
    * @author iperdomo
    */
-  private static class PropertyNameComparator implements Comparator<Property> {
+  private static class PropertyNameComparator implements Comparator<JSONObject> {
 
-    /**
-     * Compares 2 {@link org.openbravo.base.model.Property properties} based on the name
-     */
     @Override
-    public int compare(Property o1, Property o2) {
-      return o1.getName().compareTo(o2.getName());
+    public int compare(JSONObject o1, JSONObject o2) {
+      try {
+        return o1.getString(DATASOURCE_FIELD).compareTo(o2.getString(DATASOURCE_FIELD));
+      } catch (JSONException ex) {
+        log.error("Could not compare {} with {}", o1, o2);
+        throw new IllegalArgumentException("JSONObject comparison failed", ex);
+      }
     }
   }
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2020 Openbravo SLU
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,8 @@ public class TestConstants {
 
   public static class Tables {
     public static final String C_ORDER = "259";
+    public static final String C_ORDERLINE = "260";
+    public static final String M_PRODUCT = "208";
   }
 
   public static class Windows {
@@ -60,6 +62,7 @@ public class TestConstants {
 
   public static class Tabs {
     public static final String SALES_INVOICE_HEADER = "263";
+    public static final String PRODUCT_HEADER = "180";
     public static final String PURCHASE_INVOICE_HEADER = "290";
   }
 
