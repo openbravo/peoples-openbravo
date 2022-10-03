@@ -37,6 +37,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="STARTDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ENDDATE" primaryKey="false" required="false" type="TIMESTAMP" size="7" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_OFFER_ORG_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -53,6 +61,7 @@
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="M_OFFER_ID"/>
       </unique>
+      <check name="M_OFFER_ORG_DATE_CHK"><![CDATA[STARTDATE IS NULL OR ENDDATE IS NULL OR ENDDATE >= STARTDATE]]></check>
       <check name="M_OFFER_ORG_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
