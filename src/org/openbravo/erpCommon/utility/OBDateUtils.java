@@ -22,8 +22,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,6 +34,7 @@ import java.util.Date;
 import org.apache.commons.lang.time.DateUtils;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.service.json.JsonUtils;
 
 /**
  * Utilities to manage dates.
@@ -85,6 +89,29 @@ public class OBDateUtils {
   public static String formatDate(Date date, String pattern) {
     final SimpleDateFormat dateFormatter = new SimpleDateFormat(pattern);
     return dateFormatter.format(date);
+  }
+
+  /**
+   * Returns the current client date in the correct format.
+   * 
+   * @param strDate
+   *          String containing the date
+   * @return the actual date of the client
+   * @throws ParseException
+   */
+  public static Date getCurrentClientDate(String strDate) throws ParseException {
+    if (strDate == null || strDate.equals("null") || strDate.trim().length() == 0) {
+      return null;
+    }
+
+    Instant instant = LocalDateTime
+        .parse(strDate, DateTimeFormatter.ofPattern(JsonUtils.createJSTimeFormat().toPattern()))
+        .atOffset(ZoneOffset.UTC)
+        .atZoneSameInstant(ZoneId.systemDefault())
+        .toInstant();
+
+    return Date.from(instant);
+
   }
 
   /**
