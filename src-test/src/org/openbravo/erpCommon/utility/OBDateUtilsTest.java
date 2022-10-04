@@ -54,7 +54,7 @@ public class OBDateUtilsTest extends OBBaseTest {
   }
 
   /**
-   * Test truncate method wit specified unit.
+   * Test truncate method with specified unit.
    * 
    * @throws ParseException
    */
@@ -69,6 +69,23 @@ public class OBDateUtilsTest extends OBBaseTest {
     Date dateTrucanted = OBDateUtils.truncate(dateWithMinutes, ChronoUnit.HOURS);
 
     assertThat(dateTrucanted, equalTo(dateWithoutMinutes));
+  }
+
+  /**
+   * Tests getCurrentClientDate method
+   * 
+   * @throws ParseException
+   */
+  @Test
+  public void getCurrentClientDate() throws ParseException {
+
+    String strDate = "2022-10-02T22:00:00";
+    String strDateResult = "Mon Oct 03 00:00:00 CEST 2022";
+
+    Date actualDate = OBDateUtils.getCurrentClientDate(strDate);
+
+    assertThat(actualDate.toString(), equalTo(strDateResult.toString()));
+
   }
 
 }
