@@ -65,6 +65,10 @@
         <default><![CDATA[SI]]></default>
         <onCreateDefault><![CDATA['SI']]></onCreateDefault>
       </column>
+      <column name="CONNECTIVITY_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[ON]]></default>
+        <onCreateDefault><![CDATA['ON']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTBPCONF_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
