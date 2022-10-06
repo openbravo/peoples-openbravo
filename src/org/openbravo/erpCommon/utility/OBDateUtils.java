@@ -92,21 +92,44 @@ public class OBDateUtils {
   }
 
   /**
-   * Returns the current client date in the correct format.
+   * Returns a Date in UTC format.
    * 
-   * @param strDate
-   *          String containing the date
-   * @return the actual date of the client
+   * @param utcDate
+   *          String containing the UTC date
+   * @return the date in UTC format
    * @throws ParseException
    */
-  public static Date getCurrentClientDate(String strDate) throws ParseException {
-    if (strDate == null || strDate.equals("null") || strDate.trim().length() == 0) {
+  public static Date convertUTCToDate(String utcDate) throws ParseException {
+    if (utcDate == null || utcDate.equals("null") || utcDate.trim().length() == 0) {
       return null;
     }
 
     Instant instant = LocalDateTime
-        .parse(strDate, DateTimeFormatter.ofPattern(JsonUtils.createJSTimeFormat().toPattern()))
+        .parse(utcDate, DateTimeFormatter.ofPattern(JsonUtils.createJSTimeFormat().toPattern()))
         .atOffset(ZoneOffset.UTC)
+        .atZoneSameInstant(ZoneId.systemDefault())
+        .toInstant();
+
+    return Date.from(instant);
+
+  }
+
+  /**
+   * Returns a Date in the specified pattern
+   * 
+   * @param utcDate
+   * @param pattern
+   * @return the date in the specified format
+   * @throws ParseException
+   */
+  public static Date convertUTCToDate(String utcDate, String pattern) throws ParseException {
+    if (utcDate == null || utcDate.equals("null") || utcDate.trim().length() == 0) {
+      return null;
+    }
+
+    Instant instant = LocalDateTime
+        .parse(utcDate, DateTimeFormatter.ofPattern(JsonUtils.createJSTimeFormat().toPattern()))
+        .atOffset(ZoneOffset.of(pattern))
         .atZoneSameInstant(ZoneId.systemDefault())
         .toInstant();
 
