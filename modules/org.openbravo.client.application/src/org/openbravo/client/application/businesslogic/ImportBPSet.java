@@ -58,8 +58,8 @@ public class ImportBPSet extends ProcessUploadedFile {
   protected UploadResult doProcessFile(JSONObject paramValues, File file) throws Exception {
     final UploadResult uploadResult = new UploadResult();
     final String bpSetId = paramValues.getString("inpOwnerId");
-    final Date startDate = OBDateUtils.getCurrentClientDate(paramValues.getString("startDate"));
-    final Date endDate = OBDateUtils.getCurrentClientDate(paramValues.getString("endDate"));
+    final Date startDate = OBDateUtils.convertUTCToDate(paramValues.getString("startDate"));
+    final Date endDate = OBDateUtils.convertUTCToDate(paramValues.getString("endDate"));
 
     final String errorMsgBPNotFound = OBMessageUtils.getI18NMessage("OBUIAPP_BPNotFound",
         new String[0]);
