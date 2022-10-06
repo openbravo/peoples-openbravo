@@ -100,18 +100,7 @@ public class OBDateUtils {
    * @throws ParseException
    */
   public static Date convertUTCToDate(String utcDate) throws ParseException {
-    if (utcDate == null || utcDate.equals("null") || utcDate.trim().length() == 0) {
-      return null;
-    }
-
-    Instant instant = LocalDateTime
-        .parse(utcDate, DateTimeFormatter.ofPattern(JsonUtils.createJSTimeFormat().toPattern()))
-        .atOffset(ZoneOffset.UTC)
-        .atZoneSameInstant(ZoneId.systemDefault())
-        .toInstant();
-
-    return Date.from(instant);
-
+    return convertUTCToDate(utcDate, JsonUtils.createJSTimeFormat().toPattern());
   }
 
   /**
@@ -127,9 +116,8 @@ public class OBDateUtils {
       return null;
     }
 
-    Instant instant = LocalDateTime
-        .parse(utcDate, DateTimeFormatter.ofPattern(JsonUtils.createJSTimeFormat().toPattern()))
-        .atOffset(ZoneOffset.of(pattern))
+    Instant instant = LocalDateTime.parse(utcDate, DateTimeFormatter.ofPattern(pattern))
+        .atOffset(ZoneOffset.UTC)
         .atZoneSameInstant(ZoneId.systemDefault())
         .toInstant();
 
