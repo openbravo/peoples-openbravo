@@ -68,14 +68,14 @@ public class RelevantCharacteristicFieldTerminologySynchronizer implements Proce
   private void synchronizeField(Field field) {
     RelevantCharacteristicProperty.from(field).ifPresent(p -> {
       field.setName(p.getFieldName());
-      field.setDescription(p.getDescription());
+      field.setHelpComment(p.getDescription());
 
       // synchronize field translations
       for (FieldTrl fieldTrl : field.getADFieldTrlList()) {
         ListTrl listTrl = getTranslation(p.getRefListId(), fieldTrl.getLanguage());
         if (listTrl != null) {
           fieldTrl.setName(listTrl.getName());
-          fieldTrl.setDescription(listTrl.getDescription());
+          fieldTrl.setHelpComment(listTrl.getDescription());
         } else {
           log.warn("Translation for relevant characteristic {} in {} language not found",
               p.getSearchKey(), fieldTrl.getLanguage().getName());
@@ -119,7 +119,7 @@ public class RelevantCharacteristicFieldTerminologySynchronizer implements Proce
   private boolean isSynchronized(Field field) {
     return RelevantCharacteristicProperty.from(field)
         .map(p -> field.getName().equals(p.getFieldName())
-            && field.getDescription().equals(p.getDescription()))
+            && field.getHelpComment().equals(p.getDescription()))
         .orElse(true);
   }
 }
