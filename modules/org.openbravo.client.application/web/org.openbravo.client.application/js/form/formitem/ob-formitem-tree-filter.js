@@ -126,11 +126,15 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
         this.isGridFilteredWithCriteria = grid.isGridFilteredWithCriteria;
         this.isValidFilterField = grid.isValidFilterField;
         this.convertCriteria = grid.convertCriteria;
-        this.resetEmptyMessage = grid.resetEmptyMessage;
         this.filterData = grid.filterData;
         this.loadingDataMessage = grid.loadingDataMessage;
         this.emptyMessage = grid.emptyMessage;
-        this.noDataEmptyMessage = grid.noDataEmptyMessage;
+        this.noDataEmptyMessage =
+          '<span class="' +
+          this.emptyMessageStyle +
+          '">' +
+          OB.I18N.getLabel('OBUIAPP_NoDataInGrid') +
+          '</span>';
       },
 
       onFetchData: function(criteria, requestProperties) {
@@ -154,6 +158,14 @@ isc.OBTreeItemPopupFilterWindow.addProperties({
           filterItem.onDataArrived(parentNode);
         }
         this.Super('dataArrived', arguments);
+        this.resetEmptyMessage(parentNode);
+      },
+
+      resetEmptyMessage: function(parentNode) {
+        const { nodeId, children = [] } = parentNode;
+        if (nodeId === '-1' && children.length === 0) {
+          this.emptyMessage = this.noDataEmptyMessage;
+        }
       },
 
       fields: this.treeGridFields,
