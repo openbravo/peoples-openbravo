@@ -18,10 +18,12 @@
  */
 package org.openbravo.materialmgmt;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.dal.service.OBDal;
 
 /**
  * A check to detect if there are centrally maintained fields based in relevant characteristic
@@ -32,6 +34,12 @@ public class RelevantCharacteristicFieldTerminologyChecker extends WeldBaseTest 
   @Before
   public void init() {
     setSystemAdministratorContext();
+    setModulesInDevelopment();
+  }
+
+  @After
+  public void reset() {
+    OBDal.getInstance().rollbackAndClose();
   }
 
   @Test
@@ -39,5 +47,11 @@ public class RelevantCharacteristicFieldTerminologyChecker extends WeldBaseTest 
     WeldUtils
         .getInstanceFromStaticBeanManager(RelevantCharacteristicFieldTerminologySynchronizer.class)
         .validate();
+  }
+
+  private void setModulesInDevelopment() {
+    String hql = "update ADModule set inDevelopment = true";
+    OBDal.getInstance().getSession().createQuery(hql).executeUpdate();
+    OBDal.getInstance().flush();
   }
 }
