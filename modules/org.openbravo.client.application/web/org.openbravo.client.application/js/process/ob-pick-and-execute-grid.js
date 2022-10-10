@@ -244,8 +244,7 @@ isc.OBPickAndExecuteGrid.addProperties({
       if (
         dsRequest.sortBy &&
         dsRequest.sortBy.length > 0 &&
-        this.fields &&
-        !this.fields[dsRequest.sortBy[0]]
+        !this.fieldExists(dsRequest.sortBy[0])
       ) {
         delete dsRequest.sortBy;
       }
