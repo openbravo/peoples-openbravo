@@ -11,10 +11,22 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011 Openbravo SLU
+ * All portions are Copyright (C) 2011-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 isc.defineClass('OBPickAndExecuteDataSource', isc.OBRestDataSource);
+
+isc.OBPickAndExecuteDataSource.addProperties({
+  fieldExists: function(fieldName) {
+    const name = fieldName.startsWith('-') ? fieldName.substring(1) : fieldName;
+    if (this.fields && this.fields[name]) {
+      return true;
+    }
+    // look if it is the name of the display field of one of the view grid fields
+    const gridFields = (this.view && this.view.gridFields) || [];
+    return gridFields.some(f => f.displayField === name);
+  }
+});
