@@ -30,6 +30,8 @@ import org.junit.Test;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.test.base.OBBaseTest;
 
+import com.ibm.icu.util.TimeZone;
+
 /**
  * Tests the {@link OBDateUtils} class
  */
@@ -77,14 +79,18 @@ public class OBDateUtilsTest extends OBBaseTest {
    * @throws ParseException
    */
   @Test
-  public void getCurrentClientDate() throws ParseException {
+  public void convertUTCToDate() throws ParseException {
 
-    String strDate = "2022-10-02T22:00:00";
-    String strDateResult = "Mon Oct 03 00:00:00 CEST 2022";
+    String strDate = "2022-10-06T22:00:00";
+    String strDateResult = "Thu Oct 06 22:00:00 UTC 2022";
 
-    Date actualDate = OBDateUtils.getCurrentClientDate(strDate);
+    TimeZone def = TimeZone.getDefault();
+    TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    Date actualDate = OBDateUtils.convertUTCToDate(strDate);
 
     assertThat(actualDate.toString(), equalTo(strDateResult.toString()));
+
+    TimeZone.setDefault(def);
 
   }
 
