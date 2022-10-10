@@ -1,11 +1,18 @@
 package org.openbravo.test.modularity;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 import org.openbravo.base.model.Entity;
@@ -58,6 +65,13 @@ public class DependencyChecker extends OBBaseTest {
         .createCriteria(DataSet.class)
         .add(Restrictions.eq(DataSet.PROPERTY_SEARCHKEY, "AD"));
     List<DataSetTable> dsTables = ((DataSet) q.uniqueResult()).getDataSetTableList();
+    @SuppressWarnings("serial")
+    List<String> errors = new ArrayList<>() {
+      @Override
+      public String toString() {
+        return this.stream().collect(Collectors.joining("\n"));
+      }
+    };
     for (DataSetTable dsTable : dsTables) {
 
       Entity m = ModelProvider.getInstance().getEntityByTableId(dsTable.getTable().getId());
@@ -67,15 +81,12 @@ public class DependencyChecker extends OBBaseTest {
         continue;
       }
 
-      System.out.println(r);
-
       List<BaseOBObject> bobs = OBDal.getInstance()
           .createCriteria(r.entity.getName())
           .add(Restrictions.isNotNull(r.moduleProperty.getName()))
           .list();
 
       for (BaseOBObject bob : bobs) {
-        boolean hasErrors = false;
         Module bobModule = (Module) bob.get(r.moduleProperty.getName());
 
         for (Property p : r.fksToEntitiesWithModule) {
@@ -88,18 +99,18 @@ public class DependencyChecker extends OBBaseTest {
               ReferencedEntitiesWithModules.getModuleProperty(referencedBob.getEntity()).getName());
 
           if (!isDependency(bobModule.getId(), referencedBobModule.getId(), allDeps)) {
-            if (!hasErrors) {
-              System.out.println("  " + bob + " - " + bobModule);
-            }
-            hasErrors = true;
-            System.out.println(
-                "      " + p.getName() + " ->" + referencedBob + "  " + referencedBobModule);
+            errors.add(bob + " - module [" + bobModule.getId() + "] " + bobModule.getJavaPackage()
+                + "\n" + "  " + p.getName() + " ->" + referencedBob + " - module ["
+                + referencedBobModule.getId() + "] " + referencedBobModule.getJavaPackage());
           }
         }
       }
 
     }
-
+    if (!errors.isEmpty()) {
+      log.error("Incorrect dependencies:\n{}", errors.toString());
+    }
+    assertThat(errors, is(empty()));
   }
 
   private boolean isDependency(String referencedModuleId, String baseModuleId,
@@ -166,9 +177,7 @@ public class DependencyChecker extends OBBaseTest {
 
     @Override
     public String toString() {
-
       return entity + "  " + moduleProperty + " " + fksToEntitiesWithModule;
     }
   }
-
 }
