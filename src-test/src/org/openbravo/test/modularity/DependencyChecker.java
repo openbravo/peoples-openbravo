@@ -23,6 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,7 +34,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.ddlutils.alteration.ColumnDataChange;
+import org.apache.ddlutils.io.DatabaseIO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
@@ -38,6 +45,7 @@ import org.junit.Test;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.dal.service.OBCriteria;
@@ -88,10 +96,12 @@ public class DependencyChecker extends OBBaseTest {
   );
 
   private Map<String, Set<String>> modTree;
+  private Set<ColumnDataChange> configScriptsChanges = Collections.emptySet();
 
   @Test
   public void checkDependencies() {
     setSystemAdministratorContext();
+    initializeConfigScriptChanges();
 
     modTree = getAllModuleDependencies();
 
@@ -147,9 +157,15 @@ public class DependencyChecker extends OBBaseTest {
             ReferencedEntitiesWithModules.getModuleProperty(referencedBob.getEntity()).getName());
 
         if (!isDependency(bobModule.getId(), referencedBobModule.getId())) {
-          errors.add(bob + " - module [" + bobModule.getId() + "] " + bobModule.getJavaPackage()
-              + "\n" + "  " + p.getName() + " -> " + referencedBob + " - module ["
-              + referencedBobModule.getId() + "] " + referencedBobModule.getJavaPackage());
+          String errorDefinition = bob + " - module [" + bobModule.getId() + "] "
+              + bobModule.getJavaPackage() + "\n" + "  " + p.getName() + " -> " + referencedBob
+              + " - module [" + referencedBobModule.getId() + "] "
+              + referencedBobModule.getJavaPackage();
+          if (changedInConfigScript(bob, p)) {
+            log.info("Ignoring property changed by a config script:\n  {}\n", errorDefinition);
+          } else {
+            errors.add(errorDefinition);
+          }
         }
       }
     }
@@ -169,6 +185,13 @@ public class DependencyChecker extends OBBaseTest {
     return modTree.get(referencedModuleId).contains(baseModuleId);
   }
 
+  private boolean changedInConfigScript(BaseOBObject bob, Property p) {
+    return configScriptsChanges.stream()
+        .anyMatch(c -> c.getTablename().equalsIgnoreCase(bob.getEntity().getTableName())
+            && c.getPkRow().equals(bob.getId())
+            && c.getColumnname().equalsIgnoreCase(p.getColumnName()));
+  }
+
   private static Map<String, Set<String>> getAllModuleDependencies() {
     log.info("Calculating module tree...");
     Map<String, Set<String>> deps = new HashMap<>();
@@ -181,6 +204,36 @@ public class DependencyChecker extends OBBaseTest {
     log.info("Module tree calculated");
     return deps;
 
+  }
+
+  private void initializeConfigScriptChanges() {
+    String sourcePath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("source.path");
+
+    if (sourcePath == null) {
+      log.info("Source path not defined. Not looking for config scripts");
+      return;
+    }
+
+    log.info("Looking for config scripts in {}", sourcePath);
+
+    try (Stream<Path> stream = Files.list(Paths.get(sourcePath, "modules"))) {
+      configScriptsChanges = stream.filter(Files::isDirectory)
+          .map(m -> Paths.get(m.toString(), "src-db/database/configScript.xml"))
+          .filter(Files::exists)
+          .flatMap(this::readConfigScriptChanges)
+          .collect(Collectors.toSet());
+    } catch (IOException e) {
+      log.error("Could not read config scripts", e);
+    }
+  }
+
+  private Stream<ColumnDataChange> readConfigScriptChanges(Path configScript) {
+    return new DatabaseIO().readChanges(configScript.toFile())
+        .stream()
+        .filter(ColumnDataChange.class::isInstance)
+        .map(ColumnDataChange.class::cast);
   }
 
   private static class ReferencedEntitiesWithModules {
