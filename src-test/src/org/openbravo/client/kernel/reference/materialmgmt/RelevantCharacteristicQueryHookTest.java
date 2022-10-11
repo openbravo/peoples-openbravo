@@ -146,7 +146,7 @@ public class RelevantCharacteristicQueryHookTest extends WeldBaseTest {
         " left join ADTreeNode as join_2 on join_2.node = join_1.id "));
     //@formatter:on
     assertThat(queryBuilder.getWhereClause(), equalTo(" where (( join_1.id = :alias_1 )) "));
-    assertThat(queryBuilder.getOrderByClause(), equalTo(" order by join_2.sequenceNumber,e.id"));
+    assertThat(queryBuilder.getOrderByClause(), equalTo(" order by join_2.sequenceNumber,join_1.name,e.id"));
     Map<String, Object> namedParameters = queryBuilder.getNamedParameters();
     assertThat(namedParameters.get("alias_0"), equalTo(characteristicId1));
     assertThat(namedParameters.get("alias_1"), equalTo(CHARACTERISTIC_ID));

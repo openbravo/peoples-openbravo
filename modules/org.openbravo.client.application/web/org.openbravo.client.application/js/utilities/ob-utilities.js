@@ -1384,12 +1384,16 @@ OB.Utilities.bySeqNoSortNormalizer = function(item, field, context) {
   const fieldName = field.endsWith(identifierPart)
     ? field.substring(0, field.length - identifierPart.length)
     : field;
-  const value =
-    item[`${fieldName}${OB.Constants.FIELDSEPARATOR}sequenceNumber`];
-  if (value == null) {
-    return Number.MAX_SAFE_INTEGER; // hack to sort nulls last
+  let seqNo = item[`${fieldName}${OB.Constants.FIELDSEPARATOR}sequenceNumber`];
+  if (seqNo == null) {
+    seqNo = Number.MAX_SAFE_INTEGER; // hack to sort nulls last
   }
-  return value;
+  // use the identifier as secondary sorting criteria for the records with equal sequence number
+  const identifier = item[`${fieldName}${identifierPart}`]
+    ? ' ' + item[`${fieldName}${identifierPart}`]
+    : '-';
+  const paddingLimit = Number.MAX_SAFE_INTEGER.toString().length;
+  return `${seqNo.toString().padStart(paddingLimit, '0')}${identifier}`;
 };
 
 //** {{{ OB.Utilities.getTabNumberById }}} **

@@ -148,13 +148,16 @@ public class RelevantCharacteristicQueryHook implements AdvancedQueryBuilderHook
       return null;
     }
     String treeNodeJoin = joinsWithTreeNode.get(relevantCharacteristic);
-    if (treeNodeJoin == null) {
+    String chValueJoin = joinsWithProductCharacteristicValue.get(relevantCharacteristic);
+    if (treeNodeJoin == null || chValueJoin == null) {
       // we cannot sort by the referenced relevant characteristic because it is not linked to a
       // product characteristic, so just return an empty order by clause part to avoid breaking the
       // complete order by clause being built by the AdvancedQueryBuilder
       return "";
     }
-    return treeNodeJoin + DalUtil.DOT + TreeNode.PROPERTY_SEQUENCENUMBER + (desc ? " desc " : "");
+    String direction = (desc ? " desc " : "");
+    return treeNodeJoin + DalUtil.DOT + TreeNode.PROPERTY_SEQUENCENUMBER + direction + ","
+        + chValueJoin + DalUtil.DOT + CharacteristicValue.PROPERTY_NAME + direction;
   }
 
   private List<RelevantCharacteristicProperty> getRelevantCharacteristicProperties(
