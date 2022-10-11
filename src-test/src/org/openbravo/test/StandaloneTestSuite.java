@@ -115,6 +115,7 @@ import org.openbravo.test.model.TrlColumnsOraTypeTest;
 import org.openbravo.test.model.UniqueConstraintTest;
 import org.openbravo.test.modularity.DBPrefixTest;
 import org.openbravo.test.modularity.DatasetServiceTest;
+import org.openbravo.test.modularity.DependencyChecker;
 import org.openbravo.test.modularity.ExecutionLimitsTest;
 import org.openbravo.test.modularity.MergePropertiesTest;
 import org.openbravo.test.modularity.TableNameTest;
@@ -246,7 +247,8 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     DatasetServiceTest.class, //
     DBPrefixTest.class, //
     MergePropertiesTest.class, //
-    TableNameTest.class,
+    TableNameTest.class, //
+    DependencyChecker.class,
 
     // security
     AccessLevelTest.class, //
