@@ -169,6 +169,7 @@ public class DependencyChecker extends OBBaseTest {
         }
       }
     }
+    OBDal.getInstance().getSession().clear();
     return errors;
   }
 
