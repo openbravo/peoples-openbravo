@@ -1,3 +1,22 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html 
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License. 
+ * The Original Code is Openbravo ERP. 
+ * The Initial Developer of the Original Code is Openbravo SLU 
+ * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All Rights Reserved. 
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
 package org.openbravo.test.modularity;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -5,6 +24,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +47,16 @@ import org.openbravo.model.ad.utility.DataSet;
 import org.openbravo.model.ad.utility.DataSetTable;
 import org.openbravo.test.base.OBBaseTest;
 
+/**
+ * Checks AD artifacts (those defined in AD dataset) do not depend on other artifacts that are in a
+ * module that is not part of its dependencies.
+ * <p>
+ * <b>Limitations:</b>
+ * <p>
+ * It currently only checks objects which are directly pointing to a module, some cases such as
+ * tables which are linked to a module through a package are not covered.
+ *
+ */
 public class DependencyChecker extends OBBaseTest {
   private static final Logger log = LogManager.getLogger();
   private static final Entity MODULE_ENTITY = ModelProvider.getInstance().getEntity(Module.class);
@@ -57,78 +87,90 @@ public class DependencyChecker extends OBBaseTest {
       "FF8080813141B198013141B86DD70003" // org.openbravo.service.integration.openid
   );
 
+  private Map<String, Set<String>> modTree;
+
   @Test
   public void checkDependencies() {
     setSystemAdministratorContext();
 
-    Map<String, Set<String>> allDeps = getAllModuleDependencies();
+    modTree = getAllModuleDependencies();
 
     OBCriteria<DataSet> q = OBDal.getInstance()
         .createCriteria(DataSet.class)
         .add(Restrictions.eq(DataSet.PROPERTY_SEARCHKEY, "AD"));
     List<DataSetTable> dsTables = ((DataSet) q.uniqueResult()).getDataSetTableList();
-    @SuppressWarnings("serial")
-    List<String> errors = new ArrayList<>() {
-      @Override
-      public String toString() {
-        return this.stream().collect(Collectors.joining("\n"));
-      }
-    };
-    for (DataSetTable dsTable : dsTables) {
 
-      Entity m = ModelProvider.getInstance().getEntityByTableId(dsTable.getTable().getId());
+    List<String> errors = dsTables.stream()
+        .map(this::checkTable)
+        .flatMap(List::stream)
+        .collect(Collectors.toCollection(() -> new ArrayList<String>() {
+          private static final long serialVersionUID = 1L;
 
-      ReferencedEntitiesWithModules r = new ReferencedEntitiesWithModules(m);
-      if (!r.hasModule() || !r.hasReferencesToModuleEntities()) {
-        continue;
-      }
-
-      List<BaseOBObject> bobs = OBDal.getInstance()
-          .createCriteria(r.entity.getName())
-          .add(Restrictions.isNotNull(r.moduleProperty.getName()))
-          .list();
-
-      for (BaseOBObject bob : bobs) {
-        Module bobModule = (Module) bob.get(r.moduleProperty.getName());
-
-        for (Property p : r.fksToEntitiesWithModule) {
-          BaseOBObject referencedBob = (BaseOBObject) bob.get(p.getName());
-          if (referencedBob == null) {
-            continue;
+          @Override
+          public String toString() {
+            return "\n" + stream().map(s -> "* " + s).collect(Collectors.joining("\n\n"));
           }
+        }));
 
-          Module referencedBobModule = (Module) referencedBob.get(
-              ReferencedEntitiesWithModules.getModuleProperty(referencedBob.getEntity()).getName());
-
-          if (!isDependency(bobModule.getId(), referencedBobModule.getId(), allDeps)) {
-            errors.add(bob + " - module [" + bobModule.getId() + "] " + bobModule.getJavaPackage()
-                + "\n" + "  " + p.getName() + " ->" + referencedBob + " - module ["
-                + referencedBobModule.getId() + "] " + referencedBobModule.getJavaPackage());
-          }
-        }
-      }
-
-    }
     if (!errors.isEmpty()) {
       log.error("Incorrect dependencies:\n{}", errors.toString());
     }
+
     assertThat(errors, is(empty()));
   }
 
-  private boolean isDependency(String referencedModuleId, String baseModuleId,
-      Map<String, Set<String>> allDeps) {
+  private List<String> checkTable(DataSetTable dsTable) {
+    Entity entity = ModelProvider.getInstance().getEntityByTableId(dsTable.getTable().getId());
+
+    ReferencedEntitiesWithModules references = new ReferencedEntitiesWithModules(entity);
+    if (!references.hasModule() || !references.hasReferencesToModuleEntities()) {
+      return Collections.emptyList();
+    }
+
+    List<BaseOBObject> bobs = OBDal.getInstance()
+        .createCriteria(references.entity.getName())
+        .add(Restrictions.isNotNull(references.moduleProperty.getName()))
+        .list();
+
+    List<String> errors = new ArrayList<>();
+
+    for (BaseOBObject bob : bobs) {
+      Module bobModule = (Module) bob.get(references.moduleProperty.getName());
+
+      for (Property p : references.fksToEntitiesWithModule) {
+        BaseOBObject referencedBob = (BaseOBObject) bob.get(p.getName());
+        if (referencedBob == null) {
+          continue;
+        }
+
+        Module referencedBobModule = (Module) referencedBob.get(
+            ReferencedEntitiesWithModules.getModuleProperty(referencedBob.getEntity()).getName());
+
+        if (!isDependency(bobModule.getId(), referencedBobModule.getId())) {
+          errors.add(bob + " - module [" + bobModule.getId() + "] " + bobModule.getJavaPackage()
+              + "\n" + "  " + p.getName() + " -> " + referencedBob + " - module ["
+              + referencedBobModule.getId() + "] " + referencedBobModule.getJavaPackage());
+        }
+      }
+    }
+    return errors;
+  }
+
+  private boolean isDependency(String baseModuleId, String referencedModuleId) {
     // OB3 pack is already messed up! It's not worth to try to fix it.
     // note we also allow here incorrect dependencies to any ob3 module (ie. defining dep on core
     // but making using of client.kernell stuff)
-    if (OB3.contains(baseModuleId)) {
+    // Accepting as good any dependency with OB3 regardless if it is strictly correct
+    if (OB3.contains(referencedModuleId)) {
       return true;
     }
 
-    return allDeps.get(baseModuleId).contains(referencedModuleId);
+    // base module is in the parent tree of the referenced module
+    return modTree.get(referencedModuleId).contains(baseModuleId);
   }
 
   private static Map<String, Set<String>> getAllModuleDependencies() {
-    log.info("Calculating all dependencies...");
+    log.info("Calculating module tree...");
     Map<String, Set<String>> deps = new HashMap<>();
     for (Module mod : OBDal.getInstance()
         .createCriteria(Module.class)
@@ -136,7 +178,7 @@ public class DependencyChecker extends OBBaseTest {
         .list()) {
       deps.put(mod.getId(), KernelUtils.getInstance().getAncestorsDependencyTree(mod));
     }
-    log.info("Dependencies calculated");
+    log.info("Module tree calculated");
     return deps;
 
   }
@@ -163,7 +205,6 @@ public class DependencyChecker extends OBBaseTest {
           .filter(p -> p.getTargetEntity() != null && !p.isOneToMany()
               && getModuleProperty(p.getTargetEntity()) != null)
           .collect(Collectors.toSet());
-
     }
 
     boolean hasModule() {
@@ -180,11 +221,6 @@ public class DependencyChecker extends OBBaseTest {
           .filter(p -> MODULE_ENTITY.equals(p.getTargetEntity()))
           .findFirst()
           .orElse(null);
-    }
-
-    @Override
-    public String toString() {
-      return entity + "  " + moduleProperty + " " + fksToEntitiesWithModule;
     }
   }
 }
