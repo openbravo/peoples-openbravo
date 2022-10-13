@@ -165,6 +165,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISMAINADDRESS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTBPCONFPROP_CLIENT_FK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -207,5 +211,6 @@
       <check name="C_EXTBPCONFPROP_TRMSG_CH"><![CDATA[ISTRANSLATABLE = 'N' OR AD_MESSAGE_ID IS NOT NULL AND ISTRANSLATABLE = 'Y']]></check>
       <check name="C_EXTBPCONFPROP_TXTMSG_CH"><![CDATA[TEXT IS NOT NULL OR ISTRANSLATABLE = 'Y']]></check>
       <check name="C_EXTBPCP_ISCATEGORYKEY_CH"><![CDATA[ISCATEGORYKEY IN ('Y', 'N')]]></check>
+      <check name="C_ISMAINADDRESS_CHK"><![CDATA[ISMAINADDRESS IN ('Y', 'N')]]></check>
     </table>
   </database>
