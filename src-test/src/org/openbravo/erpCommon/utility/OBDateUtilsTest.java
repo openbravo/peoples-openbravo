@@ -25,12 +25,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.text.ParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.openbravo.service.json.JsonUtils;
 import org.openbravo.test.base.OBBaseTest;
-
-import com.ibm.icu.util.TimeZone;
 
 /**
  * Tests the {@link OBDateUtils} class
@@ -81,16 +80,19 @@ public class OBDateUtilsTest extends OBBaseTest {
   @Test
   public void convertUTCToDate() throws ParseException {
 
-    String strDate = "2022-10-06T22:00:00";
-    String strDateResult = "Thu Oct 06 22:00:00 UTC 2022";
-
     TimeZone def = TimeZone.getDefault();
-    TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    Date actualDate = OBDateUtils.convertUTCToDate(strDate);
+    try {
+      String strDate = "2022-10-06T22:00:00";
+      String strDateResult = "Fri Oct 07 00:00:00 CEST 2022";
 
-    assertThat(actualDate.toString(), equalTo(strDateResult.toString()));
+      TimeZone.setDefault(TimeZone.getTimeZone("Europe/Madrid"));
 
-    TimeZone.setDefault(def);
+      Date currentDate = OBDateUtils.convertUTCToDate(strDate);
+
+      assertThat(currentDate.toString(), equalTo(strDateResult.toString()));
+    } finally {
+      TimeZone.setDefault(def);
+    }
 
   }
 
