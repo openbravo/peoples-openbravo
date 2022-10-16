@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -141,6 +142,8 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
 
   private ImportEntryManagerThread managerThread;
   private ThreadPoolExecutor executorService;
+
+  private Map<String, ImportEntryProcessRunnable> runnables = new ConcurrentHashMap<>();
 
   private Map<String, ImportEntryProcessor> importEntryProcessors = new HashMap<String, ImportEntryProcessor>();
 
@@ -265,9 +268,13 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    * 
    * Returns true if the runnable was properly submitted and false if the submission was rejected
    */
-  boolean submitRunnable(Runnable runnable) {
+  boolean submitRunnable(String key, ImportEntryProcessRunnable runnable) {
     try {
       executorService.submit(runnable);
+
+      // and make sure it can get next entries by caching it
+      runnables.put(key, runnable);
+
       return true;
     } catch (Exception e) {
       // except for logging we can ignore the exception
@@ -548,6 +555,13 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
             .stream()
             .map(e -> " " + e.getKey() + " - " + e.getValue())
             .collect(Collectors.joining("\n"))
+        + "\n" + //
+        "* Runnables:"
+        + (runnables.isEmpty() ? " No runnables"
+            : runnables.values()
+                .stream()
+                .map(ImportEntryProcessRunnable::toString)
+                .collect(Collectors.joining("\n")))
         + "\n" + //
         "* Shut Down: " + isShutDown + "\n" //
         + clusterService;
@@ -897,4 +911,31 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
   void stopAcceptingEntries(String typeOfData, String key) {
     blockedNewEntriesForKey.add(typeOfData + "_" + key);
   }
+
+  ImportEntryProcessRunnable getRunnable(String key) {
+    return runnables.get(key);
+  }
+
+  /**
+   * Is called when a {@link ImportEntryProcessRunnable} is ready with its current sets of
+   * {@link ImportEntry} and stops running.
+   * 
+   * Is synchronized to be handle the case that deregistering happens while also an entry was added.
+   * If an entry was added false is returned and the thread continues.
+   */
+  synchronized boolean tryDeregisterProcessThread(ImportEntryProcessRunnable runnable) {
+    if (!runnable.getImportEntryQueue().isEmpty() && isHandlingImportEntries()) {
+      log.debug("Not deregistering process thread as new entries have been added to it");
+      // a new entry was entered while we tried to deregister
+      return false;
+    }
+    doDeregisterProcessThread(runnable);
+    return true;
+  }
+
+  synchronized void doDeregisterProcessThread(ImportEntryProcessRunnable runnable) {
+    log.debug("Removing runnable {}", runnable.getKey());
+    runnables.remove(runnable.getKey());
+  }
+
 }

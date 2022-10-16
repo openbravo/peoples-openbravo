@@ -27,7 +27,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -43,6 +42,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.service.importprocess.ImportEntryManager.ImportEntryQualifier;
 
 /**
  * The {@link ImportEntryProcessor} is responsible for importing/processing {@link ImportEntry}
@@ -111,10 +111,6 @@ public abstract class ImportEntryProcessor {
   // not static to create a Logger for each subclass
   private Logger log = LogManager.getLogger(this.getClass());
 
-  // multiple threads access this map, its access is handled through
-  // synchronized methods
-  private Map<String, ImportEntryProcessRunnable> runnables = new HashMap<>();
-
   @Inject
   private ImportEntryManager importEntryManager;
 
@@ -162,8 +158,7 @@ public abstract class ImportEntryProcessor {
       return;
     }
 
-    // runnables is a concurrent hashmap
-    ImportEntryProcessRunnable runnable = runnables.get(key);
+    ImportEntryProcessRunnable runnable = importEntryManager.getRunnable(key);
 
     // note: the runnable maybe is not running yet
     // as runnable can already be in a queue of the executorservice
@@ -191,8 +186,8 @@ public abstract class ImportEntryProcessor {
 
     // no runnable, create a new one
     runnable = createImportEntryProcessRunnable();
-    log.debug("Created new runnable for type {} key {} cycle {}", importEntry.getTypeofdata(), key,
-        currentCycle);
+    log.debug("Created new runnable for type {} key {} cycle {} - {}", importEntry.getTypeofdata(),
+        key, currentCycle, importEntryManager.getNumberOfQueuedTasks());
 
     runnable.setCycle(currentCycle);
 
@@ -203,33 +198,7 @@ public abstract class ImportEntryProcessor {
     runnable.addEntry(importEntry);
 
     // and give it to the executorServer to run
-    boolean submitted = importEntryManager.submitRunnable(runnable);
-    if (submitted) {
-      // and make sure it can get next entries by caching it
-      runnables.put(key, runnable);
-    }
-  }
-
-  /**
-   * Is called when a {@link ImportEntryProcessRunnable} is ready with its current sets of
-   * {@link ImportEntry} and stops running.
-   * 
-   * Is synchronized to be handle the case that deregistering happens while also an entry was added.
-   * If an entry was added false is returned and the thread continues.
-   */
-  private synchronized boolean tryDeregisterProcessThread(ImportEntryProcessRunnable runnable) {
-    if (!runnable.getImportEntryQueue().isEmpty() && importEntryManager.isHandlingImportEntries()) {
-      log.debug("Not deregistering process thread as new entries have been added to it");
-      // a new entry was entered while we tried to deregister
-      return false;
-    }
-    doDeregisterProcessThread(runnable);
-    return true;
-  }
-
-  private synchronized void doDeregisterProcessThread(ImportEntryProcessRunnable runnable) {
-    log.debug("Removing runnable " + runnable.getKey());
-    runnables.remove(runnable.getKey());
+    importEntryManager.submitRunnable(key, runnable);
   }
 
   /**
@@ -262,12 +231,14 @@ public abstract class ImportEntryProcessor {
 
   @Override
   public String toString() {
-    return getClass().getSimpleName() + "\n"
-        + (runnables.isEmpty() ? "  No runnables"
-            : runnables.values()
-                .stream()
-                .map(ImportEntryProcessRunnable::toString)
-                .collect(Collectors.joining("\n")));
+    return getClass().getSimpleName();
+    // TODO: TBD
+    // + "\n"
+    // + (runnables.isEmpty() ? " No runnables"
+    // : runnables.values()
+    // .stream()
+    // .map(ImportEntryProcessRunnable::toString)
+    // .collect(Collectors.joining("\n")));
 
   }
 
@@ -356,10 +327,10 @@ public abstract class ImportEntryProcessor {
             } catch (Exception ignored) {
             }
 
-            logger.debug("Trying to deregister process " + key);
+            logger.debug("Trying to deregister process {}", key);
 
             // no more entries and deregistered, if so go away
-            if (importEntryProcessor.tryDeregisterProcessThread(this)) {
+            if (importEntryManager.tryDeregisterProcessThread(this)) {
               logger.debug("All entries processed, exiting thread");
               importEntryIds.clear();
               cachedOBContexts.clear();
@@ -369,8 +340,8 @@ public abstract class ImportEntryProcessor {
         }
       } finally {
         // always deregister at this point to be sure that we are not re-used
-        logger.debug("Loop finished removing runnable " + getKey());
-        importEntryProcessor.doDeregisterProcessThread(this);
+        logger.debug("Loop finished removing runnable {}", getKey());
+        importEntryManager.doDeregisterProcessThread(this);
         importEntryManager.notifyEndProcessingInCluster();
       }
     }
@@ -387,7 +358,8 @@ public abstract class ImportEntryProcessor {
           }
           final long t0 = System.currentTimeMillis();
 
-          currentProcessingEntry = queuedImportEntry.importEntryId;
+          currentProcessingEntry = queuedImportEntry.typeOfData + "-"
+              + queuedImportEntry.importEntryId;
           currentProcessingEntryStarted = System.currentTimeMillis();
 
           // set the same obcontext as was being used for the original
@@ -430,7 +402,8 @@ public abstract class ImportEntryProcessor {
           localImportEntry = null;
 
           // processed so can be removed
-          importEntryIds.remove(queuedImportEntry.importEntryId);
+          importEntryIds
+              .remove(queuedImportEntry.typeOfData + "-" + queuedImportEntry.importEntryId);
 
           // keep some stats
           cnt++;
@@ -595,16 +568,16 @@ public abstract class ImportEntryProcessor {
         return;
       }
 
-      if (!importEntryIds.contains(importEntry.getId())) {
-        logger.debug("Adding entry to runnable with key {} - {}", importEntry.getTypeofdata(), key);
+      String ieId = importEntry.getTypeofdata() + "-" + importEntry.getId();
+      if (!importEntryIds.contains(ieId)) {
+        logger.debug("Adding entry to runnable with key {}", ieId);
 
-        importEntryIds.add(importEntry.getId());
+        importEntryIds.add(ieId);
         // cache a queued entry as it has a much lower mem foot print than the import
         // entry itself
         importEntries.add(new QueuedEntry(importEntry));
       } else {
-        logger.debug("Not adding entry, it is already in the list of ids {} - {} - {} ",
-            importEntry.getTypeofdata(), key, importEntry.getId());
+        logger.debug("Not adding entry, it is already in the list of ids {} - {}", key, ieId);
       }
     }
 
@@ -649,6 +622,9 @@ public abstract class ImportEntryProcessor {
       // Let's log them in case they are not in sync.
       boolean queuAndIdsInSync = idsSize == queueSize || idsSize == queueSize + 1;
 
+      ImportEntryQualifier q = this.getClass().getAnnotation(ImportEntryQualifier.class);
+      String s = q != null ? q.entity() : "?";
+
       return "  key:" + key + " cycle: " + cycle + " processing: " + currentProcessing + "\n" + //
           "   queue: (" + importEntries.size() + ") - " + importEntries + //
           (queuAndIdsInSync ? "" : "\n   ids: (" + importEntryIds.size() + ") - " + importEntryIds);
@@ -662,11 +638,13 @@ public abstract class ImportEntryProcessor {
       final String userId;
       final String clientId;
       final String roleId;
+      final String typeOfData;
 
       QueuedEntry(ImportEntry importEntry) {
         importEntryId = importEntry.getId();
         userId = importEntry.getCreatedBy().getId();
         orgId = importEntry.getOrganization().getId();
+        typeOfData = importEntry.getTypeofdata();
         if (importEntry.getRole() != null) {
           roleId = importEntry.getRole().getId();
         } else {
@@ -678,7 +656,7 @@ public abstract class ImportEntryProcessor {
 
       @Override
       public String toString() {
-        return importEntryId;
+        return typeOfData + "-" + importEntryId;
       }
     }
   }
