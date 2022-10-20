@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
@@ -58,6 +59,7 @@ public class HttpServletRequestMock implements HttpServletRequest {
   private static final Logger log = LogManager.getLogger();
 
   private HttpSession session;
+  private Map<String, String[]> parameters;
 
   /**
    * Creates a new HttpServletRequestMock instance and sets it in RequestContext together with the
@@ -82,13 +84,24 @@ public class HttpServletRequestMock implements HttpServletRequest {
   }
 
   /**
-   * Create a mock for HttpServletRequest setting some basic configuration parameters in session.
+   * Create a mock for HttpServletRequest setting some basic configuration parameters in session and
+   * without providing any request parameter. See {@link #HttpServletRequestMock(Map)}.
    */
   public HttpServletRequestMock() {
+    this(Collections.emptyMap());
+  }
+
+  /**
+   * Create a mock for HttpServletRequest setting some basic configuration parameters in session.
+   * 
+   * @parameters the parameters of the request
+   */
+  public HttpServletRequestMock(Map<String, String[]> parameters) {
     session = new HttpSessionWrapper();
     Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     session.setAttribute("#AD_JAVADATEFORMAT", props.getProperty("dateFormat.java"));
     session.setAttribute("#AD_JAVADATETIMEFORMAT", props.getProperty("dateTimeFormat.java"));
+    this.parameters = parameters;
   }
 
   @Override
@@ -157,23 +170,23 @@ public class HttpServletRequestMock implements HttpServletRequest {
   }
 
   @Override
-  public String getParameter(String arg0) {
-    return null;
+  public String getParameter(String name) {
+    return parameters.get(name)[0];
   }
 
   @Override
   public Map<String, String[]> getParameterMap() {
-    return null;
+    return parameters;
   }
 
   @Override
   public Enumeration<String> getParameterNames() {
-    return null;
+    return Collections.enumeration(parameters.keySet());
   }
 
   @Override
-  public String[] getParameterValues(String arg0) {
-    return null;
+  public String[] getParameterValues(String name) {
+    return parameters.get(name);
   }
 
   @Override
