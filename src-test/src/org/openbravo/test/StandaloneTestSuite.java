@@ -61,6 +61,7 @@ import org.openbravo.service.datasource.ModelDataSourceServiceTest;
 import org.openbravo.service.externalsystem.ExternalSystemProviderTest;
 import org.openbravo.service.externalsystem.http.HttpExternalSystemDataCreationTest;
 import org.openbravo.service.json.AdvancedQueryBuilderTest;
+import org.openbravo.service.json.JsonUtilsTest;
 import org.openbravo.synchronization.event.EventTriggeringTest;
 import org.openbravo.test.accounting.PostDocumentTest;
 import org.openbravo.test.accounting.RecordID2Test;
@@ -349,6 +350,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // service json
     AdvancedQueryBuilderTest.class, //
+    JsonUtilsTest.class, //
 
     // service datasource
     ModelDataSourceServiceTest.class, //

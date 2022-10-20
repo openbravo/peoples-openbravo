@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ import java.sql.SQLTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -438,4 +439,91 @@ public class JsonUtils {
         || JsonConstants.NULL.equals(value);
   }
 
+  /**
+   * Merges a given {@link JSONObject} with a target {@link JSONObject}. If a property in the source
+   * object already exists in the target object, the following happens depending on the type of that
+   * property:<br>
+   * - If it is a {@link JSONObject}, both source and target object are merged by calling this
+   * method recursively. If the property on the target object is not of type {@link JSONObject},
+   * then a {@link JSONException} will be thrown.<br>
+   * - If it is a {@link Map}, the entries of the map and the target property are merged by invoking
+   * {@link #merge(Map, JSONObject)} if the target property is a {@link JSONObject} or by putting
+   * all the entries if the target property is a {@link Map}. If the property on the target object
+   * is neither of type {@link JSONObject} or {@link Map}, then a {@link JSONException} will be
+   * thrown.<br>
+   * - It it is a JSONArray, both source and target arrays are merged by invoking
+   * {@link #merge(JSONArray, JSONArray)}. If the property on the target object is not of type
+   * {@link JSONArray}, then a {@link JSONException} will be thrown.<br>
+   * - For the rest of the cases, the property is overridden in the target object.
+   * 
+   * This method mutates the {@code target} object: after invoking this method it will contain the
+   * result of merging the properties of the two given objects.
+   * 
+   * @param source
+   *          The source object
+   * @param target
+   *          The object where the properties are merged. It is mutated by this method.
+   *
+   * @throws JSONException
+   *           in case the merge operation cannot be completed
+   */
+  public static void merge(JSONObject source, JSONObject target) throws JSONException {
+    @SuppressWarnings("unchecked")
+    Iterator<String> keys = source.keys();
+    while (keys.hasNext()) {
+      String key = keys.next();
+      Object value = source.get(key);
+      if (!target.has(key)) {
+        target.put(key, value);
+      } else {
+        if (value instanceof JSONObject) {
+          JSONObject json = (JSONObject) value;
+          merge(json, target.getJSONObject(key));
+        } else if (value instanceof JSONArray) {
+          JSONArray jsonArray = (JSONArray) value;
+          merge(jsonArray, target.getJSONArray(key));
+        } else if (value instanceof Map) {
+          @SuppressWarnings("unchecked")
+          Map<String, Object> map = (Map<String, Object>) value;
+          Object targetObj = target.get(key);
+          if (targetObj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> targetMap = (Map<String, Object>) targetObj;
+            targetMap.putAll(map);
+          } else {
+            merge(map, (JSONObject) targetObj);
+          }
+        } else {
+          target.put(key, value);
+        }
+      }
+    }
+  }
+
+  /**
+   * Merges the entries of a given {@link Map} with the properties of a target {@link JSONObject}.
+   * See {@link #merge(JSONObject, JSONObject)}
+   */
+  public static void merge(Map<String, Object> sourceProperties, JSONObject target)
+      throws JSONException {
+    merge(new JSONObject(sourceProperties), target);
+  }
+
+  /**
+   * Puts all the objects of a given JSONArray into a target JSONArray.
+   * 
+   * @param source
+   *          The source array
+   * @param target
+   *          The array where the elements of the source array are put. Note that this method
+   *          modifies the contents of this array by adding on it the elements of the source array.
+   *
+   * @throws JSONException
+   *           in case the merge operation cannot be completed
+   */
+  public static void merge(JSONArray source, JSONArray target) throws JSONException {
+    for (int i = 0; i < source.length(); i += 1) {
+      target.put(source.get(i));
+    }
+  }
 }
