@@ -171,7 +171,7 @@ public class HttpServletRequestMock implements HttpServletRequest {
 
   @Override
   public String getParameter(String name) {
-    return parameters.get(name)[0];
+    return parameters.containsKey(name) ? parameters.get(name)[0] : null;
   }
 
   @Override
