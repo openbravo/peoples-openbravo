@@ -61,10 +61,6 @@
         <default><![CDATA[3]]></default>
         <onCreateDefault><![CDATA[3]]></onCreateDefault>
       </column>
-      <column name="ADDRESSURL" primaryKey="false" required="false" type="VARCHAR" size="4000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="TYPE_OF_INTEGRATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
