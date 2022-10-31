@@ -169,6 +169,14 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISDISPLAYEDINCUSTOMERWINDOW" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CUSTOMERWINDOW_SEQNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTBPCONFPROP_CLIENT_FK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -198,6 +206,7 @@
       <check name="C_DEFAULTEMAIL_CHK"><![CDATA[ISDEFAULTEMAIL IN ('Y', 'N')]]></check>
       <check name="C_DEFAULTPHONE_CHK"><![CDATA[ISDEFAULTPHONE IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_ACTIVE_CH"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_EXTBPCONFPROP_CUSTW_CH"><![CDATA[ISDISPLAYEDINCUSTOMERWINDOW IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_DISCRE_CH"><![CDATA[ISDISPLAYEDINEDIT IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_DISDET_CH"><![CDATA[ISDISPLAYEDINDETAIL IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_DISEDI_CH"><![CDATA[ISDISPLAYEDINCREATE IN ('Y', 'N')]]></check>
