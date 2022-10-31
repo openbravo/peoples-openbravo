@@ -62,8 +62,8 @@
         <onCreateDefault><![CDATA[3]]></onCreateDefault>
       </column>
       <column name="TYPE_OF_INTEGRATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
+        <default><![CDATA[Single_integration]]></default>
+        <onCreateDefault><![CDATA[Single_integration]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTBPCONF_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
