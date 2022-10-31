@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -257,6 +257,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
 
       JSONArray responseData = null;
       boolean tooManyNodes = false;
+      boolean cycleDetected = false;
       // Do not consider dummy criteria as valid criteria
       boolean validCriteria = false;
       JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
@@ -288,6 +289,8 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           }
         } catch (TooManyTreeNodesException e) {
           tooManyNodes = true;
+        } catch (CycleInHierarchyException e) {
+          cycleDetected = true;
         }
       } else {
         // Fetch the children of a given node
@@ -305,6 +308,15 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
         jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
         final JSONObject error = new JSONObject();
         error.put("type", "tooManyNodes");
+        jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);
+        jsonResponse.put(JsonConstants.RESPONSE_ERRORS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+      }
+      if (cycleDetected) {
+        responseData = new JSONArray();
+        jsonResponse.put(JsonConstants.RESPONSE_STATUS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
+        final JSONObject error = new JSONObject();
+        error.put("type", "user");
+        error.put("message", "AD_TreeDatasourceCycle");
         jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);
         jsonResponse.put(JsonConstants.RESPONSE_ERRORS, JsonConstants.RPCREQUEST_STATUS_FAILURE);
       } else {
@@ -555,7 +567,7 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    */
   private JSONArray fetchFilteredNodes(Map<String, String> parameters,
       Map<String, Object> datasourceParameters, List<String> filteredNodes)
-      throws MultipleParentsException, TooManyTreeNodesException {
+      throws MultipleParentsException, TooManyTreeNodesException, CycleInHierarchyException {
     String tabId = parameters.get("tabId");
     String treeReferenceId = parameters.get("treeReferenceId");
     Tab tab = null;
@@ -603,12 +615,14 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
   private JSONArray fetchFilteredNodesForTrueTrees(Map<String, String> parameters,
       Map<String, Object> datasourceParameters, TableTree tableTree, List<String> filteredNodes,
       String hqlTreeWhereClause, String hqlTreeWhereClauseRootNodes,
-      boolean allowNotApplyingWhereClauseToChildren) throws MultipleParentsException {
+      boolean allowNotApplyingWhereClauseToChildren)
+      throws MultipleParentsException, CycleInHierarchyException {
 
     JSONArray responseData = new JSONArray();
     Map<String, JSONObject> addedNodesMap = new HashMap<String, JSONObject>();
 
     try {
+      log.info("Filtered nodes: " + filteredNodes);
       for (String nodeId : filteredNodes) {
         JSONObject node = getJSONObjectByRecordId(parameters, datasourceParameters, nodeId);
         if (!allowNotApplyingWhereClauseToChildren && !this.nodeConformsToWhereClause(tableTree,
@@ -632,6 +646,9 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
               && (allowNotApplyingWhereClauseToChildren || this.nodeConformsToWhereClause(tableTree,
                   node.getString("parentId"), hqlTreeWhereClause))) {
             nodeId = node.getString("parentId");
+            if (addedNodesMap.containsKey(nodeId)) {
+              throw new CycleInHierarchyException();
+            }
             node = getJSONObjectByNodeId(parameters, datasourceParameters, nodeId);
             savedNode = addedNodesMap.get(node.getString("id"));
             if (savedNode == null) {
@@ -991,6 +1008,13 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
    * defined limit
    */
   protected class TooManyTreeNodesException extends Exception {
+    private static final long serialVersionUID = 1L;
+  }
+
+  /**
+   * Exception thrown when the a cycle is detected in the data to be returned by the datasource
+   */
+  protected class CycleInHierarchyException extends Exception {
     private static final long serialVersionUID = 1L;
   }
 
