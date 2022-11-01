@@ -771,6 +771,7 @@ isc.OBViewGrid.addProperties({
         this.recalculateGridSummary();
       }
     }
+    this.view.standardWindow.storeViewState();
   },
 
   setShowGridSummary: function(showGridSummary) {
