@@ -498,14 +498,16 @@ public class InventoryCountProcess implements Process {
           // p_qty
           updateStockStatement.setBigDecimal(9, BigDecimal.ZERO);
           // p_qtyorder
-          updateStockStatement.setBigDecimal(10, BigDecimal.ZERO);
+          updateStockStatement.setBigDecimal(10,
+              invCountLine.getOrderUOM() != null ? BigDecimal.ZERO : null);
           // p_dateLastInventory --- **
           updateStockStatement.setDate(11,
               new java.sql.Date(inventory.getMovementDate().getTime()));
           // p_preqty
           updateStockStatement.setBigDecimal(12, BigDecimal.ZERO);
           // p_preqtyorder
-          updateStockStatement.setBigDecimal(13, BigDecimal.ZERO);
+          updateStockStatement.setBigDecimal(13,
+              invCountLine.getOrderUOM() != null ? BigDecimal.ZERO : null);
 
           updateStockStatement.execute();
         }
