@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2019 Openbravo SLU
+ * All portions are Copyright (C) 2017-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2120,6 +2120,7 @@ public class TestCostingUtils {
 
         final OBCriteria<LCMatched> criteria1 = OBDal.getInstance().createCriteria(LCMatched.class);
         criteria1.add(Restrictions.eq(LCMatched.PROPERTY_LANDEDCOSTCOST, landedCostCost));
+        criteria1.addOrderBy(LCMatched.PROPERTY_AMOUNT, false);
         criteria1.addOrderBy(LCMatched.PROPERTY_CREATIONDATE, true);
         List<LCMatched> landedCostCostMatchedList = criteria1.list();
 
