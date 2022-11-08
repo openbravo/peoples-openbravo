@@ -333,7 +333,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CHARACTERISTIC_DESC" primaryKey="false" required="false" type="NVARCHAR" size="4000" autoIncrement="false">
+      <column name="CHARACTERISTIC_DESC" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
