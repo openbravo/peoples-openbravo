@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
@@ -194,6 +195,7 @@ public class SessionListener implements HttpSessionListener, ServletContextListe
       SessionLoginData.deactivate((ConnectionProvider) context.getAttribute("openbravoPool"),
           sessionId);
       log.debug("Closed session" + sessionId);
+      log.trace("Stack trace: ", new OBException());
     } catch (Exception e) {
       log.error("Error closing session:" + sessionId, e);
     } finally {
