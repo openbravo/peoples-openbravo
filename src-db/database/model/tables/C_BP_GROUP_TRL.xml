@@ -65,11 +65,11 @@
       <foreign-key foreignTable="C_BP_GROUP" name="C_BP_GROUP_TRL_BP_GROUP">
         <reference local="C_BP_GROUP_ID" foreign="C_BP_GROUP_ID"/>
       </foreign-key>
-      <unique name="C_BP_GROUP_TRL_MENU_LANGUAGE">
+      <unique name="C_BP_GROUP_TRL_LANGUAGE">
         <unique-column name="C_BP_GROUP_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="AD_MENU_TRL_ISACTIVE_CHK_1"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="AD_MENU_TRL_ISTRANSLATED_CHK_1"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="C_BP_GROUP_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_BP_GROUP_TRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>
