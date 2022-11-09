@@ -70,6 +70,6 @@
         <unique-column name="AD_LANGUAGE"/>
       </unique>
       <check name="C_BP_GROUP_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="C_BP_GROUP_TRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="C_BP_GROUP_TRL_ISTRANTD_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>
