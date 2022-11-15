@@ -73,6 +73,7 @@ public class TestConstants {
   public static class Users {
     public static final String OPENBRAVO = "100";
     public static final String SYSTEM = "0";
+    public static final String FB_ESP_USER = "167450A5BB284AB29C4FEF039E98C963";
   }
 
   public static class Languages {
