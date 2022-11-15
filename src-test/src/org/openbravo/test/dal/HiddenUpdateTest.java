@@ -85,6 +85,14 @@ public class HiddenUpdateTest extends OBBaseTest {
       for (PersistentClass pc : metadata.getEntityBindings()) {
         final String entityName = pc.getEntityName();
 
+        /*
+         * Issue 50879: db_checksum column (only) on oracle instances contains invalid (for xml)
+         * characters Since jdk19 xml parser rejects those so skip that specific table
+         */
+        if (entityName.equals("ADSystemInformation")) {
+          continue;
+        }
+
         Entity entity = ModelProvider.getInstance().getEntity(entityName);
         // can also ignore views as they will result in errors anyway and they are mapped as not
         // updateable
