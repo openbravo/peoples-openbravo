@@ -642,13 +642,16 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
           } else {
             savedNode.put("filterHit", true);
           }
+          List<String> ancestors = new ArrayList<>();
+          ancestors.add(node.getString("id"));
           while (node.has("parentId") && !ROOT_NODE_CLIENT.equals(node.get("parentId"))
               && (allowNotApplyingWhereClauseToChildren || this.nodeConformsToWhereClause(tableTree,
                   node.getString("parentId"), hqlTreeWhereClause))) {
             nodeId = node.getString("parentId");
-            if (addedNodesMap.containsKey(nodeId)) {
+            if (ancestors.contains(nodeId)) {
               throw new CycleInHierarchyException();
             }
+            ancestors.add(nodeId);
             node = getJSONObjectByNodeId(parameters, datasourceParameters, nodeId);
             savedNode = addedNodesMap.get(node.getString("id"));
             if (savedNode == null) {
