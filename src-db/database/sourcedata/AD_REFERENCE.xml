@@ -6997,6 +6997,9 @@ By default the type is empty (null), which means the product characteristic does
 <!--C8B3026503D04CAF8886A7061E531D82-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--C8B3026503D04CAF8886A7061E531D82-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--C8B3026503D04CAF8886A7061E531D82-->  <NAME><![CDATA[CRM Connector Type]]></NAME>
+<!--C8B3026503D04CAF8886A7061E531D82-->  <DESCRIPTION><![CDATA[Type of integration to be used by the implementation]]></DESCRIPTION>
+<!--C8B3026503D04CAF8886A7061E531D82-->  <HELP><![CDATA[Single Endpoint Configuration: Used for implementations where Customer and Addresses are handled as a single plain object.
+Customer and Addresses Endpoint Configuration: Used for implementations where Customers and Addresses are handled as different entities. It allows to work directly with an array of addresses.]]></HELP>
 <!--C8B3026503D04CAF8886A7061E531D82-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C8B3026503D04CAF8886A7061E531D82-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
 <!--C8B3026503D04CAF8886A7061E531D82-->  <PARENTREFERENCE_ID><![CDATA[17]]></PARENTREFERENCE_ID>

@@ -31,6 +31,7 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfig;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigProperty;
 
@@ -53,6 +54,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     }
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
+    checkDefaultAddressDuplicates(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -61,6 +63,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     }
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
+    checkDefaultAddressDuplicates(event);
   }
 
   private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
@@ -114,6 +117,33 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     criteria.setMaxResults(1);
     if (criteria.uniqueResult() != null) {
       throw new OBException("@DuplicatedCRMDefaultPhone@");
+    }
+  }
+
+  private void checkDefaultAddressDuplicates(EntityPersistenceEvent event) {
+    final String id = event.getId();
+    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    final ExternalBusinessPartnerConfig currentExtBPConfig = property
+        .getExternalBusinessPartnerIntegrationConfiguration();
+
+    if (!property.isDefaultAddress() || !property.isActive()) {
+      return;
+    }
+
+    final OBCriteria<?> criteria = OBDal.getInstance()
+        .createCriteria(event.getTargetInstance().getClass());
+    criteria.add(Restrictions.eq(
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        currentExtBPConfig));
+    criteria.add(
+        Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTADDRESS, true));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
+    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
+
+    criteria.setMaxResults(1);
+    if (criteria.uniqueResult() != null) {
+      throw new OBException(OBMessageUtils.messageBD("@DuplicatedCRMDefaultAddress@"));
     }
   }
 }
