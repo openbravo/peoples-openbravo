@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2010 Openbravo S.L.U.
+ * All portions are Copyright (C) 2001-2022 Openbravo S.L.U.
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -90,12 +90,11 @@
   <SqlMethod name="updateRange" type="preparedStatement" return="rowCount">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-      UPDATE AD_SYSTEM SET UPDATED=now(), UPDATEDBY = ?, TAD_RECORDRANGE=TO_NUMBER(?), TAD_RECORDRANGE_INFO=TO_NUMBER(?), TAD_TRANSACTIONALRANGE=TO_NUMBER(?), TAD_THEME=?
+      UPDATE AD_SYSTEM SET UPDATED=now(), UPDATEDBY = ?, TAD_RECORDRANGE=TO_NUMBER(?), TAD_TRANSACTIONALRANGE=TO_NUMBER(?), TAD_THEME=?
       WHERE AD_System_ID = '0'
     ]]></Sql>
       <Parameter name="adUserId"/>
       <Parameter name="tadRecordrange"/>
-      <Parameter name="tadRecordrangeInfo"/>
       <Parameter name="tadTransactionalrange"/>
       <Parameter name="tadTheme"/>
   </SqlMethod>

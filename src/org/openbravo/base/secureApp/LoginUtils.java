@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2021 Openbravo S.L.U.
+ * Copyright (C) 2001-2022 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -389,7 +389,6 @@ public class LoginUtils {
         SystemPreferencesData[] dataSystem = SystemPreferencesData.select(conn);
         if (dataSystem != null && dataSystem.length > 0) {
           vars.setSessionValue("#RecordRange", dataSystem[0].tadRecordrange);
-          vars.setSessionValue("#RecordRangeInfo", dataSystem[0].tadRecordrangeInfo);
           vars.setSessionValue("#Transactional$Range", dataSystem[0].tadTransactionalrange);
           if (strIsRTL.equals("Y")) {
             vars.setSessionValue("#Theme", "rtl/" + dataSystem[0].tadTheme);

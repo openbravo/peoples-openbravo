@@ -266,8 +266,8 @@ create.database: creates the database from scratch.
       </classpath>
       <transaction>
           DELETE FROM AD_SYSTEM;
-          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO,  TAD_TRANSACTIONALRANGE, TAD_THEME)
-          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100,  1,
+          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_TRANSACTIONALRANGE, TAD_THEME)
+          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 1,
                   (SELECT Value
 				     FROM (SELECT Value
 					         FROM AD_Ref_List
@@ -311,8 +311,8 @@ create.database: creates the database from scratch.
       </classpath>
       <transaction>
           DELETE FROM AD_SYSTEM;
-          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
-          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1,
+          INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_TRANSACTIONALRANGE, TAD_THEME)
+          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 1,
 		          (SELECT Value FROM AD_Ref_List
                     WHERE AD_Ref_List_ID in ('800247', '27F0D1235450423C814D3A0DCABA7D10')
                     ORDER BY (CASE WHEN Name ='Default' THEN 2 ELSE 1 END)

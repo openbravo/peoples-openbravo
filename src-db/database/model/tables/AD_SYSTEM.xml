@@ -53,10 +53,6 @@
         <default><![CDATA[500]]></default>
         <onCreateDefault/>
       </column>
-      <column name="TAD_RECORDRANGE_INFO" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
-        <default><![CDATA[500]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="TAD_TRANSACTIONALRANGE" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[1]]></default>
         <onCreateDefault/>

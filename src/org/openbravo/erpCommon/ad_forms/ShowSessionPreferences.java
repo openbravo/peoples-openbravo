@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2011 Openbravo S.L.U.
+ * All portions are Copyright (C) 2001-2022 Openbravo S.L.U.
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -57,12 +57,6 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
       } else {
         strRecordRange = vars.getSessionValue("#RecordRange");
       }
-      String strRecordRangeInfo = vars.getNumericParameter("inpRecordRangeInfo");
-      if (!strRecordRangeInfo.equals("")) {
-        vars.setSessionValue("#RecordRangeInfo", strRecordRangeInfo);
-      } else {
-        strRecordRangeInfo = vars.getSessionValue("#RecordRangeInfo");
-      }
       String strTheme = vars.getStringParameter("inpTheme");
       vars.setSessionValue("#Theme", vars.getSessionValue("#Theme").substring(0, 4) + strTheme);
       String strTransactionalRange = vars.getNumericParameter("inpTransactionalRange");
@@ -79,7 +73,7 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(),
           "ShowTrl");
       ShowSessionPreferencesData.updateRange(this, vars.getUser(), strRecordRange,
-          strRecordRangeInfo, strTransactionalRange, strTheme);
+          strTransactionalRange, strTheme);
       if (!strPreference.equals("")) {
         ShowSessionPreferencesData.update(this, vars.getUser(), strTranslate, strPreference);
       } else {
@@ -105,7 +99,7 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
           Utility.getContext(this, vars, "#User_Org", "ShowSessionPreferences"), vars.getUser(),
           "ShowTest");
       ShowSessionPreferencesData.updateRange(this, vars.getUser(), strRecordRange,
-          strRecordRangeInfo, strTransactionalRange, strTheme);
+          strTransactionalRange, strTheme);
       if (!strPreference.equals("")) {
         ShowSessionPreferencesData.update(this, vars.getUser(), strTest, strPreference);
       } else {
@@ -155,7 +149,6 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
         vars.getSessionValue("#Transactional$Range", ""));
     xmlDocument.setParameter("test", vars.getSessionValue("#ShowTest", "N"));
     xmlDocument.setParameter("recordRange", vars.getSessionValue("#RecordRange"));
-    xmlDocument.setParameter("recordRangeInfo", vars.getSessionValue("#RecordRangeInfo"));
     xmlDocument.setParameter("info", getInfo(vars));
     xmlDocument.setParameter("Theme", vars.getTheme().substring(4));
 
@@ -232,10 +225,6 @@ public class ShowSessionPreferences extends HttpSecureAppServlet {
     script.append(Utility.messageBD(this, "RecordRange", vars.getLanguage()))
         .append(": ")
         .append(vars.getSessionValue("#RecordRange"))
-        .append("\n");
-    script.append(Utility.messageBD(this, "SearchsRecordRange", vars.getLanguage()))
-        .append(": ")
-        .append(vars.getSessionValue("#RecordRangeInfo"))
         .append("\n");
     if (globalParameters.strVersion != null && !globalParameters.strVersion.equals("")) {
       script.append(Utility.messageBD(this, "SourceVersion", vars.getLanguage()))
