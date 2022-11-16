@@ -39,25 +39,24 @@ import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigLocatio
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigProperty;
 
 /**
- * @formatter: off
  * Ensures the following rules:
- * When using Customer and Adderss Enpoint Configuration only one Adderss Mapping is allowed
- * When Creating an Address Mapping, Country property should always be filled
- * When Using Customer and Address Endpoint Configuration, if an Address Mapping property is assigned it should always be marked as mandatory
- * @formatter:on
+ * <ul>
+ * <li>When using Customer and Address Endpoint Configuration, only one Address Mapping is
+ * allowed</li>
+ * <li>When Creating an Address Mapping, Country property should always be filled</li>
+ * <li>When Using Customer and Address Endpoint Configuration, if an Address Mapping property is
+ * assigned it should always be marked as mandatory</li>
+ * </ul>
  */
-
 public class ExternalBusinessPartnerAddressMappingEventHandler
     extends EntityPersistenceEventObserver {
-  private static Entity[] entities = {
+  private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(ExternalBusinessPartnerConfigLocation.ENTITY_NAME) };
-  final Entity externalBPAddressEntity = ModelProvider.getInstance()
-      .getEntity(ExternalBusinessPartnerConfigLocation.ENTITY_NAME);
   private static final String MULTI_INTEGRATION_TYPE = "MI";
 
   @Override
   protected Entity[] getObservedEntities() {
-    return entities;
+    return ENTITIES;
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -79,7 +78,7 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
   }
 
   private void checkEmptyCountry(EntityPersistenceEvent event) {
-    final Property externalBPAddressProperty = externalBPAddressEntity
+    final Property externalBPAddressProperty = ENTITIES[0]
         .getProperty(ExternalBusinessPartnerConfigLocation.PROPERTY_COUNTRY);
     final ExternalBusinessPartnerConfigProperty externalBPAddressCountry = (ExternalBusinessPartnerConfigProperty) event
         .getCurrentState(externalBPAddressProperty);
@@ -106,7 +105,7 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
 
       criteria.setMaxResults(1);
       if (criteria.uniqueResult() != null) {
-        throw new OBException(OBMessageUtils.messageBD("@DuplicatedCRMAddressMapping@"));
+        throw new OBException(OBMessageUtils.messageBD("DuplicatedCRMAddressMapping"));
       }
     }
 
@@ -132,7 +131,7 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
       String addressPropertyName) {
     if (addressPropertyName != null) {
       final ExternalBusinessPartnerConfigProperty propertyAddress = (ExternalBusinessPartnerConfigProperty) event
-          .getCurrentState(externalBPAddressEntity.getProperty(addressPropertyName));
+          .getCurrentState(ENTITIES[0].getProperty(addressPropertyName));
       if (propertyAddress != null && !propertyAddress.isMandatory()) {
         throw new OBException(OBMessageUtils.messageBD("ExtBPAddressPropertyMandatory"));
       }
