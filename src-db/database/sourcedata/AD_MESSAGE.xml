@@ -19144,7 +19144,7 @@ This column is already checked as key: ]]></MSGTEXT>
 <!--444D1357B2D044209E0C789D9BC8BF88-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--444D1357B2D044209E0C789D9BC8BF88-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--444D1357B2D044209E0C789D9BC8BF88-->  <VALUE><![CDATA[ExtBPAddressPropertyMandatory]]></VALUE>
-<!--444D1357B2D044209E0C789D9BC8BF88-->  <MSGTEXT><![CDATA[Address Properties are mandatory. Please make the property mandatory before assigning it.]]></MSGTEXT>
+<!--444D1357B2D044209E0C789D9BC8BF88-->  <MSGTEXT><![CDATA[Address Properties are mandatory for "Customer and Address Endpoint Configuration" integration type. Please make the property mandatory before assigning it.]]></MSGTEXT>
 <!--444D1357B2D044209E0C789D9BC8BF88-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--444D1357B2D044209E0C789D9BC8BF88-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--444D1357B2D044209E0C789D9BC8BF88-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>

@@ -2164,7 +2164,7 @@ or (@AD_Module_ID@ is not null and AD_User_ID =  '0')]]></CODE>
 <!--B02E5C9F54E44A45995886E96690F68E-->  <NAME><![CDATA[AddressMappingForCustomerAndAddressIntegration]]></NAME>
 <!--B02E5C9F54E44A45995886E96690F68E-->  <DESCRIPTION><![CDATA[Filter by Is Address Property when using Customer and Address Integration]]></DESCRIPTION>
 <!--B02E5C9F54E44A45995886E96690F68E-->  <TYPE><![CDATA[S]]></TYPE>
-<!--B02E5C9F54E44A45995886E96690F68E-->  <CODE><![CDATA[(@Type_Of_Integration@='MI' AND  Isaddressproperty='Y') OR @Type_Of_Integration@!='MI']]></CODE>
+<!--B02E5C9F54E44A45995886E96690F68E-->  <CODE><![CDATA[(@Type_Of_Integration@='MI' AND  Isaddressproperty='Y' AND ismandatory='Y') OR @Type_Of_Integration@!='MI']]></CODE>
 <!--B02E5C9F54E44A45995886E96690F68E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--B02E5C9F54E44A45995886E96690F68E--></AD_VAL_RULE>
 
