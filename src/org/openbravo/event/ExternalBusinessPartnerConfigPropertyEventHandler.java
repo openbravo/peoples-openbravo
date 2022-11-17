@@ -68,7 +68,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
     checkDefaultAddressDuplicates(event);
-    checkRemoveMandatory(event);
+    checkMandatoryRemovalIfMultiIntegration(event);
   }
 
   private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
@@ -152,8 +152,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     }
   }
 
-  private void checkRemoveMandatory(EntityUpdateEvent event) {
-
+  private void checkMandatoryRemovalIfMultiIntegration(EntityUpdateEvent event) {
     final ExternalBusinessPartnerConfigProperty externalBusinessPartnerConfigProperty = (ExternalBusinessPartnerConfigProperty) event
         .getTargetInstance();
     final Property mandatoryProperty = ENTITIES[0]
@@ -164,18 +163,25 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
         && !((Boolean) event.getCurrentState(mandatoryProperty)) && MULTI_INTEGRATION_TYPE
             .equals(externalBusinessPartnerConfiguration.getTypeOfIntegration())) {
       // Query to check if the property being managed exists in address mapping
-      String hql = "cRMConnectorConfiguration = :crmConfigurationId " + " and " + "("
-          + "addressLine1 = :propertyId or " + "addressLine2 = :propertyId or "
-          + "cityName = :propertyId or " + "postalCode = :propertyId or "
-          + "country = :propertyId or " + "region = :propertyId" + ")";
+      //@formatter:off
+      String hql = " cRMConnectorConfiguration.id = :crmConfigurationId "
+                 + " and ("
+                 + "         addressLine1.id = :propertyId "
+                 + "      or addressLine2.id = :propertyId "
+                 + "      or cityName.id = :propertyId "
+                 + "      or postalCode.id = :propertyId "
+                 + "      or country.id = :propertyId "
+                 + "      or region.id = :propertyId"
+                 + "     )";
+      //@formatter:on
 
       OBQuery<ExternalBusinessPartnerConfigLocation> hqlCriteria = OBDal.getInstance()
           .createQuery(ExternalBusinessPartnerConfigLocation.class, hql)
-          .setNamedParameter("crmConfigurationId", externalBusinessPartnerConfiguration)
-          .setNamedParameter("propertyId", externalBusinessPartnerConfigProperty);
+          .setNamedParameter("crmConfigurationId", externalBusinessPartnerConfiguration.getId())
+          .setNamedParameter("propertyId", externalBusinessPartnerConfigProperty.getId());
       hqlCriteria.setMaxResult(1);
       if (hqlCriteria.uniqueResult() != null) {
-        throw new OBException(OBMessageUtils.messageBD("@UnnasignExtBPAddressPropertyMandatory@"));
+        throw new OBException(OBMessageUtils.messageBD("UnnasignExtBPAddressPropertyMandatory"));
       }
     }
   }
