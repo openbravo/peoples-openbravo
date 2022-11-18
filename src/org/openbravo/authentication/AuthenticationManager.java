@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2021 Openbravo S.L.U.
+ * Copyright (C) 2001-2022 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -226,8 +226,7 @@ public abstract class AuthenticationManager {
    *           in case of an authentication error different than incorrect user/password (which just
    *           returns null)
    */
-  public final String webServiceAuthenticate(HttpServletRequest request)
-      throws AuthenticationException {
+  public String webServiceAuthenticate(HttpServletRequest request) throws AuthenticationException {
 
     String userId = null;
     HttpSession session = request.getSession(false);

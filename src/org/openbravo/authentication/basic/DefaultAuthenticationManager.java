@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2019 Openbravo S.L.U.
+ * Copyright (C) 2001-2022 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -32,6 +32,7 @@ import org.openbravo.base.HttpBaseUtils;
 import org.openbravo.base.secureApp.LoginUtils;
 import org.openbravo.base.secureApp.VariablesHistory;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -241,5 +242,26 @@ public class DefaultAuthenticationManager extends AuthenticationManager {
       throw new AuthenticationExpirationPasswordException(errorMsg.getTitle(), errorMsg, true);
     }
 
+  }
+
+  @Override
+  public String webServiceAuthenticate(HttpServletRequest request) throws AuthenticationException {
+    String userId = super.webServiceAuthenticate(request);
+    if (!StringUtils.isEmpty(userId)) {
+      OBContext.setAdminMode(false);
+      VariablesHistory variables = new VariablesHistory(request);
+      User userOB = OBDal.getInstance().get(User.class, userId);
+      String username = userOB.getUsername();
+      final String sessionId = createDBSession(request, username, userId);
+      try {
+        checkIfPasswordExpired(userId, variables.getLanguage());
+      } catch (AuthenticationExpirationPasswordException e) {
+        updateDBSession(sessionId, false, FAILED_SESSION);
+        throw e;
+      } finally {
+        OBContext.restorePreviousMode();
+      }
+    }
+    return userId;
   }
 }
