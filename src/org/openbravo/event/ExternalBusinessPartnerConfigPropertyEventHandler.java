@@ -25,13 +25,17 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfig;
+import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigLocation;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigProperty;
 
 /**
@@ -41,6 +45,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(ExternalBusinessPartnerConfigProperty.ENTITY_NAME) };
+  private static final String MULTI_INTEGRATION_TYPE = "MI";
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -53,6 +58,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     }
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
+    checkDefaultAddressDuplicates(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -61,6 +67,8 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     }
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
+    checkDefaultAddressDuplicates(event);
+    checkMandatoryRemovalIfMultiIntegration(event);
   }
 
   private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
@@ -114,6 +122,67 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     criteria.setMaxResults(1);
     if (criteria.uniqueResult() != null) {
       throw new OBException("@DuplicatedCRMDefaultPhone@");
+    }
+  }
+
+  private void checkDefaultAddressDuplicates(EntityPersistenceEvent event) {
+    final String id = event.getId();
+    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    final ExternalBusinessPartnerConfig currentExtBPConfig = property
+        .getExternalBusinessPartnerIntegrationConfiguration();
+
+    if (!property.isDefaultAddress() || !property.isActive()) {
+      return;
+    }
+
+    final OBCriteria<?> criteria = OBDal.getInstance()
+        .createCriteria(event.getTargetInstance().getClass());
+    criteria.add(Restrictions.eq(
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        currentExtBPConfig));
+    criteria.add(
+        Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTADDRESS, true));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
+    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
+
+    criteria.setMaxResults(1);
+    if (criteria.uniqueResult() != null) {
+      throw new OBException(OBMessageUtils.messageBD("@DuplicatedCRMDefaultAddress@"));
+    }
+  }
+
+  private void checkMandatoryRemovalIfMultiIntegration(EntityUpdateEvent event) {
+    final ExternalBusinessPartnerConfigProperty externalBusinessPartnerConfigProperty = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    final Property mandatoryProperty = ENTITIES[0]
+        .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_MANDATORY);
+    final ExternalBusinessPartnerConfig externalBusinessPartnerConfiguration = externalBusinessPartnerConfigProperty
+        .getExternalBusinessPartnerIntegrationConfiguration();
+    if (((Boolean) event.getPreviousState(mandatoryProperty))
+        && !((Boolean) event.getCurrentState(mandatoryProperty)) && MULTI_INTEGRATION_TYPE
+            .equals(externalBusinessPartnerConfiguration.getTypeOfIntegration())) {
+      // Query to check if the property being managed exists in address mapping
+      //@formatter:off
+      String hql = " cRMConnectorConfiguration.id = :crmConfigurationId "
+                 + " and ("
+                 + "         addressLine1.id = :propertyId "
+                 + "      or addressLine2.id = :propertyId "
+                 + "      or cityName.id = :propertyId "
+                 + "      or postalCode.id = :propertyId "
+                 + "      or country.id = :propertyId "
+                 + "      or region.id = :propertyId"
+                 + "     )";
+      //@formatter:on
+
+      OBQuery<ExternalBusinessPartnerConfigLocation> hqlCriteria = OBDal.getInstance()
+          .createQuery(ExternalBusinessPartnerConfigLocation.class, hql)
+          .setNamedParameter("crmConfigurationId", externalBusinessPartnerConfiguration.getId())
+          .setNamedParameter("propertyId", externalBusinessPartnerConfigProperty.getId());
+      hqlCriteria.setMaxResult(1);
+      if (hqlCriteria.uniqueResult() != null) {
+        throw new OBException(OBMessageUtils.messageBD("UnnasignExtBPAddressPropertyMandatory"));
+      }
     }
   }
 }

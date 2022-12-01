@@ -26,6 +26,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.client.kernel.BaseComponentProvider;
+import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
 import org.openbravo.client.kernel.Component;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.client.kernel.KernelConstants;
@@ -327,6 +328,12 @@ public class ApplicationComponentProvider extends BaseComponentProvider {
         .add(createStyleSheetResource("web/org.openbravo.userinterface.smartclient/openbravo/skins/"
             + KernelConstants.SKIN_PARAMETER
             + "/org.openbravo.client.application/ob-upload-styles.css", false));
+
+    // Callouts
+    // File to handle default values for CRM Connector tabs
+    globalResources.add(createComponentResource(ComponentResourceType.Static,
+        "web/org.openbravo.client.application/js/callout/customerAddressOnchange.js",
+        ComponentResource.APP_OB3));
 
     // Styling
     globalResources
