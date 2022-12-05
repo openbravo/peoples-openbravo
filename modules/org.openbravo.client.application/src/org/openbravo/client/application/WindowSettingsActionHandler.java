@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -176,7 +176,8 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
       final Set<String> fields = new TreeSet<String>();
       List<Field> tabFields = tab.getADFieldList();
       for (Field field : tabFields) {
-        if (!field.isReadOnly() && !field.isShownInStatusBar() && field.getColumn().isUpdatable()) {
+        if (!field.isReadOnly() && !field.isShownInStatusBar() && field.getColumn() != null
+            && field.getColumn().isUpdatable()) {
           final Property property = KernelUtils.getProperty(entity, field);
           if (property != null) {
             fields.add(property.getName());
