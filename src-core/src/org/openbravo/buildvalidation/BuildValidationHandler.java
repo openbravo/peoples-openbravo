@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2010-2018 Openbravo S.L.U.
+ * Copyright (C) 2010-2022 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -31,7 +31,15 @@ public class BuildValidationHandler {
   private static final Logger log4j = LogManager.getLogger();
 
   /** Prerequisite validations are ensured to be executed before the rest of other ones */
-  private static final List<String> prerequisiteValidations = Collections.emptyList();
+  @SuppressWarnings("serial")
+  private static final List<String> prerequisiteValidations = new ArrayList<>() {
+    {
+      /* Check if update is possible first (not coming from too old version)
+       * This avoids other buildvalidation to run which in some cases already modify data
+       */
+      add("org.openbravo.buildvalidation.RestrictOldDirectUpdates");
+    }
+  };
 
   private static File basedir;
   private static String module;
