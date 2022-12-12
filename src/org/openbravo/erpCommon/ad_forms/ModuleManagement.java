@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.ConnectException;
-import java.net.URL;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -800,8 +800,9 @@ public class ModuleManagement extends HttpSecureAppServlet {
         infoRequest += "&aprm=" + usingAprm;
         infoRequest += "&professional=" + (ActivationKey.getInstance().isActive() ? "Y" : "N");
 
-        upgradeInfo = new JSONObject(HttpsUtils.sendSecure(new URL(UPGRADE_INFO_URL), infoRequest))
-            .getString("description");
+        upgradeInfo = new JSONObject(
+            HttpsUtils.sendSecure(new URI(UPGRADE_INFO_URL).toURL(), infoRequest))
+                .getString("description");
       } catch (Exception e1) {
         log4j.error("Error getting upgrade info", e1);
       }
@@ -836,7 +837,7 @@ public class ModuleManagement extends HttpSecureAppServlet {
 
       try {
         JSONArray requirements = new JSONObject(
-            HttpsUtils.sendSecure(new URL(UPGRADE_INFO_URL), infoRequest))
+            HttpsUtils.sendSecure(new URI(UPGRADE_INFO_URL).toURL(), infoRequest))
                 .getJSONArray("requirements");
 
         List<Map<String, String>> requiredUpdates = new ArrayList<Map<String, String>>();

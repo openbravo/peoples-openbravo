@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -33,6 +33,7 @@ import java.io.StringWriter;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
@@ -301,7 +302,7 @@ public class BaseWSTest extends OBBaseTest {
       }
     });
     log.debug(method + ": " + getOpenbravoURL() + wsPart);
-    final URL url = new URL(getOpenbravoURL() + wsPart);
+    final URL url = new URI(getOpenbravoURL() + wsPart).toURL();
     final HttpURLConnection hc = (HttpURLConnection) url.openConnection();
     hc.setRequestMethod(method);
     hc.setAllowUserInteraction(false);

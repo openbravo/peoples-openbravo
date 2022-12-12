@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
@@ -250,8 +252,8 @@ public class HeartbeatProcess implements Process {
     logger.logln(logger.messageDb("HB_SEND", ctx.getLanguage()));
     URL url = null;
     try {
-      url = new URL(HEARTBEAT_URL);
-    } catch (MalformedURLException e) { // Won't happen
+      url = new URI(HEARTBEAT_URL).toURL();
+    } catch (MalformedURLException | URISyntaxException e) { // Won't happen
       log.error(e.getMessage(), e);
     }
     log.info("Heartbeat sending: '" + queryStr + "'");

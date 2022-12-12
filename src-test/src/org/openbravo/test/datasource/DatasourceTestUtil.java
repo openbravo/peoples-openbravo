@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2018 Openbravo SLU
+ * All portions are Copyright (C) 2014-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,7 @@ package org.openbravo.test.datasource;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
@@ -52,7 +53,7 @@ public class DatasourceTestUtil {
 
     String completeUrl = url + wsPart;
     log.debug("Create conntection URL: {}, method {}", completeUrl, method);
-    final URL connUrl = new URL(completeUrl);
+    final URL connUrl = new URI(completeUrl).toURL();
     final HttpURLConnection hc = (HttpURLConnection) connUrl.openConnection();
     hc.setRequestMethod(method);
     hc.setAllowUserInteraction(false);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2006-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2006-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.PasswordAuthentication;
+import java.net.URI;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
@@ -161,7 +162,7 @@ public class HttpsUtils {
 
     try {
       // Double check.
-      URL url = new URL("https://butler.openbravo.com");
+      URL url = new URI("https://butler.openbravo.com").toURL();
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();
       conn.setConnectTimeout(3000);
       conn.connect();

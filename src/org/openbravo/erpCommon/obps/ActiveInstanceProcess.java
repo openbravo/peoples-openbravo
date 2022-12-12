@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 
 package org.openbravo.erpCommon.obps;
 
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -251,7 +252,7 @@ public class ActiveInstanceProcess implements Process {
       content += "&updated=" + updated;
     }
 
-    URL url = new URL(BUTLER_URL);
+    URL url = new URI(BUTLER_URL).toURL();
     try {
       String result = HttpsUtils.sendSecure(url, content);
       log.debug("Activation key response:" + result);

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyFactory;
@@ -1544,7 +1545,7 @@ public class ActivationKey {
                 content += "&instanceNo="
                     + URLEncoder.encode(SystemInfo.getOBPSIntanceNumber(), "utf-8");
 
-                URL url = new URL(HEARTBEAT_URL);
+                URL url = new URI(HEARTBEAT_URL).toURL();
                 HttpsUtils.sendSecure(url, content);
                 log.info("Sending CWSR beat");
               } catch (Exception e) {
