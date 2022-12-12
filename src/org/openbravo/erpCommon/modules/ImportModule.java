@@ -27,10 +27,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpClient.Version;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,7 +82,6 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.ddlutils.task.DatabaseUtils;
 import org.openbravo.erpCommon.ad_forms.MaturityLevel;
 import org.openbravo.erpCommon.obps.ActivationKey;
-import org.openbravo.erpCommon.utility.HttpsUtils;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.erpCommon.utility.Zip;
@@ -1925,40 +1932,42 @@ public class ImportModule implements Serializable {
     }
 
     try {
-      URL url = new URL(strUrl);
-      HttpURLConnection conn = null;
+      HttpClient client = HttpClient.newBuilder()
+          .version(Version.HTTP_1_1)
+          .connectTimeout(Duration.ofSeconds(5))
+          .followRedirects(Redirect.NORMAL)
+          .build();
+
+      var requestBuilder = HttpRequest.newBuilder()
+          .uri(URI.create(strUrl))
+          .timeout(Duration.ofMinutes(5));
 
       if (isCommercial) {
-        ActivationKey ak = ActivationKey.getInstance();
-        String instanceKey = "obinstance=" + URLEncoder.encode(ak.getPublicKey(), "utf-8");
-        conn = HttpsUtils.sendHttpsRequest(url, instanceKey);
+        requestBuilder.POST(BodyPublishers.ofString("obinstance=" + URLEncoder
+            .encode(ActivationKey.getInstance().getPublicKey(), StandardCharsets.UTF_8)));
       } else {
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("Keep-Alive", "300");
-        conn.setRequestProperty("Connection", "keep-alive");
-        conn.setRequestMethod("GET");
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-        conn.setUseCaches(false);
-        conn.setAllowUserInteraction(false);
+        requestBuilder.GET();
       }
 
-      if (conn.getResponseCode() == HttpServletResponse.SC_OK) {
+      HttpResponse<InputStream> resp = client.send(requestBuilder.build(),
+          BodyHandlers.ofInputStream());
+
+      if (resp.statusCode() == HttpServletResponse.SC_OK) {
         // OBX is ready to be used
-        remoteModule.setObx(conn.getInputStream());
-        String size = conn.getHeaderField("Content-Length");
-        if (size != null) {
-          remoteModule.setSize(Integer.valueOf(size));
+        remoteModule.setObx(resp.body());
+        List<String> sizeHeaders = resp.headers().allValues("Content-Length");
+        if (!sizeHeaders.isEmpty()) {
+          remoteModule.setSize(Integer.valueOf(sizeHeaders.get(0)));
         }
         return remoteModule;
       }
 
       // There is an error, let's check for a parseable message
-      String msg = conn.getHeaderField("OB-ErrMessage");
-      if (msg != null) {
-        addLog(msg, ImportModule.MSG_ERROR);
+      List<String> msg = resp.headers().allValues("OB-ErrMessage");
+      if (!msg.isEmpty()) {
+        addLog(msg.get(0), ImportModule.MSG_ERROR);
       } else {
-        addLog("@ErrorDownloadingOBX@ " + conn.getResponseCode(), ImportModule.MSG_ERROR);
+        addLog("@ErrorDownloadingOBX@ " + resp.statusCode(), ImportModule.MSG_ERROR);
       }
     } catch (Exception e) {
       addLog("@ErrorDownloadingOBX@ " + e.getMessage(), ImportModule.MSG_ERROR);
