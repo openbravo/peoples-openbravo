@@ -102,7 +102,7 @@ function isDebugEnabled() {
 * Return a number that would be checked at the Login screen to know if the file is cached with the correct version
 */
 function getCurrentRevision() {
-  var number = '35326';
+  var number = '35327';
   return number;
 }
 
@@ -700,6 +700,12 @@ function submitCommandForm(action, bolValidation, form, newAction, newTarget, bo
   }
   if (bolCheckChanges && !checkForChanges(f)) return false;
   if (confirmAction(action)) {
+    // Since Chrome 107, setting target to _blank removes the window.opener information, required by the newly opened window
+    // as such, in those cases we force a null newTarget
+    // For more info, check ISSUE-51106
+    if (action === 'EXCEL' && newTarget === '_blank') {
+      newTarget = null;
+    }
     if (newAction != null) f.action = newAction;
     // Deprecated in 2.50, This code is only here fore backwards compatibility
     // it allow callers which still use the old names to work
@@ -757,6 +763,12 @@ function submitCommandFormParameter(action, field, value, bolValidation, form, f
 
   if (confirmAction(action)) {
     field.value = value;
+    // Since Chrome 107, setting target to _blank removes the window.opener information, required by the newly opened window
+    // as such, in those cases we force a null newTarget
+    // For more info, check ISSUE-51106
+    if (action === 'EXCEL' && newTarget === '_blank') {
+      newTarget = null;
+    }
     if (formAction != null) form.action = formAction;
     // Deprecated in 2.50, This code is only here fore backwards compatibility
     // it allow callers which still use the old frameAplicacion name to work with the new name appFrame
