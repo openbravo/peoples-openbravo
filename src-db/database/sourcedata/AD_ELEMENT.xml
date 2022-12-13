@@ -15443,20 +15443,6 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800515-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800515--></AD_ELEMENT>
 
-<!--800516--><AD_ELEMENT>
-<!--800516-->  <AD_ELEMENT_ID><![CDATA[800516]]></AD_ELEMENT_ID>
-<!--800516-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800516-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800516-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800516-->  <COLUMNNAME><![CDATA[C_Debt_Payment_Create]]></COLUMNNAME>
-<!--800516-->  <NAME><![CDATA[Created Debt Payment]]></NAME>
-<!--800516-->  <PRINTNAME><![CDATA[C_Debt_Payment_Create]]></PRINTNAME>
-<!--800516-->  <DESCRIPTION><![CDATA[Debt payment create]]></DESCRIPTION>
-<!--800516-->  <HELP><![CDATA[Process to create a debt/payment.]]></HELP>
-<!--800516-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800516-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--800516--></AD_ELEMENT>
-
 <!--800517--><AD_ELEMENT>
 <!--800517-->  <AD_ELEMENT_ID><![CDATA[800517]]></AD_ELEMENT_ID>
 <!--800517-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
