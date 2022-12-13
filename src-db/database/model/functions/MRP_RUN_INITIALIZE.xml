@@ -52,7 +52,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2018 Openbravo SLU
+* All portions are Copyright (C) 2001-2022 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -108,7 +108,6 @@ BEGIN --BODY
                                         WHERE o.c_order_id = ol.c_order_id
                                           AND o.c_bpartner_id = p_bpartner_id
                                           AND o.issotrx = 'Y'
-                                          --AND C_Order_Status(o.C_ORDER_ID) IN (1, 2, 3)
                                           AND o.processed = 'Y'
                                           AND ol.qtyordered <> ol.qtydelivered
                                           AND ol.m_product_id = p.m_product_id
@@ -135,7 +134,6 @@ BEGIN --BODY
                                          AND o.c_bpartner_id = bp.c_bpartner_id
                                          AND o.issotrx = 'Y'
                                          AND bp.c_bp_group_id = p_bp_group_id
-                                         --AND C_Order_Status(o.C_ORDER_ID) IN (1, 2, 3)
                                          AND o.processed = 'Y'
                                          AND ol.qtyordered <> ol.qtydelivered
                                          AND ol.m_product_id = p.m_product_id
