@@ -12658,20 +12658,6 @@ Order closed: All the products agreed have been delivered.]]></HELP>
 <!--800071-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--800071--></AD_ELEMENT>
 
-<!--800072--><AD_ELEMENT>
-<!--800072-->  <AD_ELEMENT_ID><![CDATA[800072]]></AD_ELEMENT_ID>
-<!--800072-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800072-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800072-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800072-->  <COLUMNNAME><![CDATA[GetOutSettlement]]></COLUMNNAME>
-<!--800072-->  <NAME><![CDATA[Get out from Settlement]]></NAME>
-<!--800072-->  <PRINTNAME><![CDATA[Get out from Settlement]]></PRINTNAME>
-<!--800072-->  <DESCRIPTION><![CDATA[Get out from Settlement]]></DESCRIPTION>
-<!--800072-->  <HELP><![CDATA[Get out from Settlement]]></HELP>
-<!--800072-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800072-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
-<!--800072--></AD_ELEMENT>
-
 <!--800076--><AD_ELEMENT>
 <!--800076-->  <AD_ELEMENT_ID><![CDATA[800076]]></AD_ELEMENT_ID>
 <!--800076-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
