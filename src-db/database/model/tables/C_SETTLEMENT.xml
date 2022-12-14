@@ -117,10 +117,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="COPYFROM" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="ISGENERATED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>

@@ -2010,30 +2010,6 @@ The ledger accounting entries created by the Fiscal Year closing process are:
 <!--800079-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--800079--></AD_PROCESS>
 
-<!--800083--><AD_PROCESS>
-<!--800083-->  <AD_PROCESS_ID><![CDATA[800083]]></AD_PROCESS_ID>
-<!--800083-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800083-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800083-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800083-->  <VALUE><![CDATA[CopyFromSettlement]]></VALUE>
-<!--800083-->  <NAME><![CDATA[Copy from Settlement]]></NAME>
-<!--800083-->  <DESCRIPTION><![CDATA[Generates a manual settlement]]></DESCRIPTION>
-<!--800083-->  <HELP><![CDATA[Generates a manual settlement copying an existing one.]]></HELP>
-<!--800083-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
-<!--800083-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--800083-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--800083-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--800083-->  <CLASSNAME><![CDATA[ad_actionButton/CopyFromSettlement.html]]></CLASSNAME>
-<!--800083-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--800083-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--800083-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800083-->  <UIPATTERN><![CDATA[M]]></UIPATTERN>
-<!--800083-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--800083-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--800083-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--800083-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--800083--></AD_PROCESS>
-
 <!--800087--><AD_PROCESS>
 <!--800087-->  <AD_PROCESS_ID><![CDATA[800087]]></AD_PROCESS_ID>
 <!--800087-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
