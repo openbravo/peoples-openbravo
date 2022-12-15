@@ -8591,18 +8591,6 @@
 <!--800143-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--800143--></AD_MESSAGE>
 
-<!--800144--><AD_MESSAGE>
-<!--800144-->  <AD_MESSAGE_ID><![CDATA[800144]]></AD_MESSAGE_ID>
-<!--800144-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800144-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800144-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800144-->  <VALUE><![CDATA[ErrorUnoprocessingBS]]></VALUE>
-<!--800144-->  <MSGTEXT><![CDATA[Error unprocessing Bank Statement.]]></MSGTEXT>
-<!--800144-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--800144-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800144-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--800144--></AD_MESSAGE>
-
 <!--800145--><AD_MESSAGE>
 <!--800145-->  <AD_MESSAGE_ID><![CDATA[800145]]></AD_MESSAGE_ID>
 <!--800145-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10381,18 +10369,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804746-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--804746--></AD_MESSAGE>
 
-<!--804747--><AD_MESSAGE>
-<!--804747-->  <AD_MESSAGE_ID><![CDATA[804747]]></AD_MESSAGE_ID>
-<!--804747-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804747-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804747-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804747-->  <VALUE><![CDATA[NotCorrectOrgDebtpaymentBankstatement]]></VALUE>
-<!--804747-->  <MSGTEXT><![CDATA[the organization associated with the debt payment is different or doesn't depend on the organization associated with the Bank statement]]></MSGTEXT>
-<!--804747-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804747-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804747-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804747--></AD_MESSAGE>
-
 <!--804748--><AD_MESSAGE>
 <!--804748-->  <AD_MESSAGE_ID><![CDATA[804748]]></AD_MESSAGE_ID>
 <!--804748-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10512,18 +10488,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804758-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804758-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--804758--></AD_MESSAGE>
-
-<!--804759--><AD_MESSAGE>
-<!--804759-->  <AD_MESSAGE_ID><![CDATA[804759]]></AD_MESSAGE_ID>
-<!--804759-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804759-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804759-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804759-->  <VALUE><![CDATA[DPAccountdatelaterBankstatementlinedate]]></VALUE>
-<!--804759-->  <MSGTEXT><![CDATA[that contains an account date later than the account date of the bank statement line]]></MSGTEXT>
-<!--804759-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804759-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804759-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804759--></AD_MESSAGE>
 
 <!--804760--><AD_MESSAGE>
 <!--804760-->  <AD_MESSAGE_ID><![CDATA[804760]]></AD_MESSAGE_ID>
@@ -10872,18 +10836,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804791-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804791-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--804791--></AD_MESSAGE>
-
-<!--804792--><AD_MESSAGE>
-<!--804792-->  <AD_MESSAGE_ID><![CDATA[804792]]></AD_MESSAGE_ID>
-<!--804792-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804792-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804792-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804792-->  <VALUE><![CDATA[BankStatementDocumentPosted]]></VALUE>
-<!--804792-->  <MSGTEXT><![CDATA[Bank statement posted]]></MSGTEXT>
-<!--804792-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804792-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804792-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804792--></AD_MESSAGE>
 
 <!--804793--><AD_MESSAGE>
 <!--804793-->  <AD_MESSAGE_ID><![CDATA[804793]]></AD_MESSAGE_ID>

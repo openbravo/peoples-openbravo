@@ -602,30 +602,6 @@ The Invoices generated are going to be created all of them against the selected 
 <!--144-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--144--></AD_PROCESS>
 
-<!--147--><AD_PROCESS>
-<!--147-->  <AD_PROCESS_ID><![CDATA[147]]></AD_PROCESS_ID>
-<!--147-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--147-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--147-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--147-->  <VALUE><![CDATA[C_BankStatement_Post]]></VALUE>
-<!--147-->  <NAME><![CDATA[Process Statement]]></NAME>
-<!--147-->  <DESCRIPTION><![CDATA[Process Statement]]></DESCRIPTION>
-<!--147-->  <HELP><![CDATA[Process Statement]]></HELP>
-<!--147-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
-<!--147-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
-<!--147-->  <PROCEDURENAME><![CDATA[C_BankStatement_Post]]></PROCEDURENAME>
-<!--147-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--147-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--147-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--147-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--147-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--147-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--147-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--147-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--147-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--147-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--147--></AD_PROCESS>
-
 <!--154--><AD_PROCESS>
 <!--154-->  <AD_PROCESS_ID><![CDATA[154]]></AD_PROCESS_ID>
 <!--154-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
