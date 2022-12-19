@@ -7162,19 +7162,6 @@
 <!--800004-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--800004--></AD_MESSAGE>
 
-<!--800005--><AD_MESSAGE>
-<!--800005-->  <AD_MESSAGE_ID><![CDATA[800005]]></AD_MESSAGE_ID>
-<!--800005-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800005-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800005-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800005-->  <VALUE><![CDATA[CashOrderInvoiced]]></VALUE>
-<!--800005-->  <MSGTEXT><![CDATA[There are Order Cash lines linked to Orders fully invoiced]]></MSGTEXT>
-<!--800005-->  <MSGTIP><![CDATA[Check lines]]></MSGTIP>
-<!--800005-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--800005-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800005-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--800005--></AD_MESSAGE>
-
 <!--800006--><AD_MESSAGE>
 <!--800006-->  <AD_MESSAGE_ID><![CDATA[800006]]></AD_MESSAGE_ID>
 <!--800006-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -7210,30 +7197,6 @@
 <!--800008-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--800008-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--800008--></AD_MESSAGE>
-
-<!--800009--><AD_MESSAGE>
-<!--800009-->  <AD_MESSAGE_ID><![CDATA[800009]]></AD_MESSAGE_ID>
-<!--800009-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800009-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800009-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800009-->  <VALUE><![CDATA[DebtAmountsSamemoneyNoMatch]]></VALUE>
-<!--800009-->  <MSGTEXT><![CDATA[the amount does not match with amount of the debt payment]]></MSGTEXT>
-<!--800009-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--800009-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800009-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--800009--></AD_MESSAGE>
-
-<!--800010--><AD_MESSAGE>
-<!--800010-->  <AD_MESSAGE_ID><![CDATA[800010]]></AD_MESSAGE_ID>
-<!--800010-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800010-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800010-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800010-->  <VALUE><![CDATA[DebtAmountsDifferentMoneyNoMatch]]></VALUE>
-<!--800010-->  <MSGTEXT><![CDATA[the amount does not match with amount of the debt payment. Conversion money applied]]></MSGTEXT>
-<!--800010-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--800010-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800010-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--800010--></AD_MESSAGE>
 
 <!--800011--><AD_MESSAGE>
 <!--800011-->  <AD_MESSAGE_ID><![CDATA[800011]]></AD_MESSAGE_ID>
@@ -10201,30 +10164,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804729-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--804729--></AD_MESSAGE>
 
-<!--804730--><AD_MESSAGE>
-<!--804730-->  <AD_MESSAGE_ID><![CDATA[804730]]></AD_MESSAGE_ID>
-<!--804730-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804730-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804730-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804730-->  <VALUE><![CDATA[NotCorrectOrgCashbook]]></VALUE>
-<!--804730-->  <MSGTEXT><![CDATA[The organization associated with the  Cash Book  is different or doesn't depend on the organization associated with the Cash journal]]></MSGTEXT>
-<!--804730-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804730-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804730-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804730--></AD_MESSAGE>
-
-<!--804731--><AD_MESSAGE>
-<!--804731-->  <AD_MESSAGE_ID><![CDATA[804731]]></AD_MESSAGE_ID>
-<!--804731-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804731-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804731-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804731-->  <VALUE><![CDATA[NotCorrectOrgOrderCashLine]]></VALUE>
-<!--804731-->  <MSGTEXT><![CDATA[the organization associated with the order is different or doesn't depend on the organization associated with the Cash journal]]></MSGTEXT>
-<!--804731-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804731-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804731-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804731--></AD_MESSAGE>
-
 <!--804732--><AD_MESSAGE>
 <!--804732-->  <AD_MESSAGE_ID><![CDATA[804732]]></AD_MESSAGE_ID>
 <!--804732-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10249,54 +10188,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804737-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--804737--></AD_MESSAGE>
 
-<!--804738--><AD_MESSAGE>
-<!--804738-->  <AD_MESSAGE_ID><![CDATA[804738]]></AD_MESSAGE_ID>
-<!--804738-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804738-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804738-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804738-->  <VALUE><![CDATA[NotCorrectOrgDebtpaymentCashLine]]></VALUE>
-<!--804738-->  <MSGTEXT><![CDATA[the organization associated with the debt payment is different or doesn't depend on the organization associated with the Cash journal]]></MSGTEXT>
-<!--804738-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804738-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804738-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804738--></AD_MESSAGE>
-
-<!--804739--><AD_MESSAGE>
-<!--804739-->  <AD_MESSAGE_ID><![CDATA[804739]]></AD_MESSAGE_ID>
-<!--804739-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804739-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804739-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804739-->  <VALUE><![CDATA[ManagedDebtPaymentBank]]></VALUE>
-<!--804739-->  <MSGTEXT><![CDATA[the debt payment is already managed in the bank statement]]></MSGTEXT>
-<!--804739-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804739-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804739-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804739--></AD_MESSAGE>
-
-<!--804740--><AD_MESSAGE>
-<!--804740-->  <AD_MESSAGE_ID><![CDATA[804740]]></AD_MESSAGE_ID>
-<!--804740-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804740-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804740-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804740-->  <VALUE><![CDATA[ManagedDebtPaymentCash]]></VALUE>
-<!--804740-->  <MSGTEXT><![CDATA[the debt payment is already managed in the cash journal]]></MSGTEXT>
-<!--804740-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804740-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804740-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804740--></AD_MESSAGE>
-
-<!--804741--><AD_MESSAGE>
-<!--804741-->  <AD_MESSAGE_ID><![CDATA[804741]]></AD_MESSAGE_ID>
-<!--804741-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804741-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804741-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804741-->  <VALUE><![CDATA[ManagedDebtPaymentCancel]]></VALUE>
-<!--804741-->  <MSGTEXT><![CDATA[the debt payment is already managed in the settlement]]></MSGTEXT>
-<!--804741-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804741-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804741-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804741--></AD_MESSAGE>
-
 <!--804742--><AD_MESSAGE>
 <!--804742-->  <AD_MESSAGE_ID><![CDATA[804742]]></AD_MESSAGE_ID>
 <!--804742-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10320,30 +10211,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804743-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804743-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--804743--></AD_MESSAGE>
-
-<!--804744--><AD_MESSAGE>
-<!--804744-->  <AD_MESSAGE_ID><![CDATA[804744]]></AD_MESSAGE_ID>
-<!--804744-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804744-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804744-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804744-->  <VALUE><![CDATA[Samedebtpayment]]></VALUE>
-<!--804744-->  <MSGTEXT><![CDATA[exists the same debt payment]]></MSGTEXT>
-<!--804744-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804744-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804744-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804744--></AD_MESSAGE>
-
-<!--804745--><AD_MESSAGE>
-<!--804745-->  <AD_MESSAGE_ID><![CDATA[804745]]></AD_MESSAGE_ID>
-<!--804745-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804745-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804745-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804745-->  <VALUE><![CDATA[WrongLineTypeAndReferenceCash]]></VALUE>
-<!--804745-->  <MSGTEXT><![CDATA[the  Cash type  is not Debt payment  and a debt payment is associated]]></MSGTEXT>
-<!--804745-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804745-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804745-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804745--></AD_MESSAGE>
 
 <!--804746--><AD_MESSAGE>
 <!--804746-->  <AD_MESSAGE_ID><![CDATA[804746]]></AD_MESSAGE_ID>
@@ -10764,18 +10631,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804790-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804790-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--804790--></AD_MESSAGE>
-
-<!--804791--><AD_MESSAGE>
-<!--804791-->  <AD_MESSAGE_ID><![CDATA[804791]]></AD_MESSAGE_ID>
-<!--804791-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804791-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804791-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804791-->  <VALUE><![CDATA[CashDocumentPosted]]></VALUE>
-<!--804791-->  <MSGTEXT><![CDATA[Cash posted]]></MSGTEXT>
-<!--804791-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804791-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804791-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804791--></AD_MESSAGE>
 
 <!--804793--><AD_MESSAGE>
 <!--804793-->  <AD_MESSAGE_ID><![CDATA[804793]]></AD_MESSAGE_ID>

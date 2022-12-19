@@ -36,7 +36,6 @@
   * OpenItem Amount:
   *  - C_BPartner.SO_CreditUsed is increased
   *  - if C_CashLine entry is created
-  *  - C_Cash_Post creates C_Allocation
   *  - C_Allocation_Trg decreases C_BPartner.SO_CreditUsed
   *
   ************************************************************************/
