@@ -39,8 +39,6 @@ v_processed c_taxpayment.processed%TYPE;
 v_taxtotalamt NUMBER;
 v_prevvatcredit NUMBER;
 v_paymentamt NUMBER;
-v_paymentcreditamt NUMBER;
-v_paymentdebitamt NUMBER;
 v_isreceipt VARCHAR2(1);
 v_ispayment VARCHAR2(1);
 v_posted VARCHAR(60);
@@ -49,13 +47,6 @@ v_taxamtfromreglines NUMBER;
 
 
 v_date DATE;
-v_settlementid varchar2(32);
-v_settlementdoctype_ID VARCHAR2(32);
-v_sdocumentno VARCHAR(40);
-v_debtpaymentid varchar2(32);
-v_debtpaymentbalancingid varchar2(32);
-v_paymentrule VARCHAR2(30);
-v_bpartner_ID VARCHAR2(32);
 
 
 v_gl_journalbatchid varchar2(32);
@@ -86,7 +77,6 @@ v_gl_category_count  NUMBER;
 v_name NVARCHAR2(255);
 v_TRTcountY  NUMBER;
 v_TRTcountN  NUMBER;
-v_dummy VARCHAR2(2000);
 v_count NUMBER:=0;
 
 BEGIN
@@ -116,8 +106,8 @@ BEGIN
     BEGIN
       -- BODY
 
-      select dateto, ad_client_id, ad_org_id, createdby, updatedby, generatepayment, c_acctschema_id, c_currency_id, name, C_BPARTNER_ID, processed
-        into v_date, v_client_id, v_org_id, v_createdby, v_updatedby, v_ispayment, v_acctschema_id, v_currency_id, v_name, v_bpartner_id, v_processed
+      select dateto, ad_client_id, ad_org_id, createdby, updatedby, generatepayment, c_acctschema_id, c_currency_id, name, processed
+        into v_date, v_client_id, v_org_id, v_createdby, v_updatedby, v_ispayment, v_acctschema_id, v_currency_id, v_name, v_processed
         from c_taxpayment
         where c_taxpayment_id=v_record_id;
 
@@ -142,7 +132,6 @@ BEGIN
       end if;
    
 
-        v_paymentrule := 'T';
         v_currencyratetype := 'S';
 
       select ad_inheritedcalendar_id into v_calendar_ID
@@ -166,8 +155,8 @@ BEGIN
      if v_processed='Y' then
       begin
 
-      select tp.gl_journal_id ,  gljb.gl_journalbatch_id, tp.c_settlement_id
-      into v_gl_journalid, v_gl_journalbatchid, v_settlementid
+      select tp.gl_journal_id ,  gljb.gl_journalbatch_id
+      into v_gl_journalid, v_gl_journalbatchid
       from c_taxpayment tp
       inner join gl_journal glj on tp.gl_journal_id=glj.gl_journal_id
       inner join gl_journalbatch gljb on gljb.gl_journalbatch_id=glj.gl_journalbatch_id
@@ -184,24 +173,6 @@ BEGIN
         delete from gl_journal where gl_journal_id=v_gl_journalid;
         delete from gl_journalbatch where gl_journalbatch_id=v_gl_journalbatchid;
 
-      if v_ispayment = 'Y' then
-        SELECT COUNT(1) INTO v_count
-        FROM ad_preference
-        WHERE property = 'FinancialManagement'
-          AND (ad_client_id = v_client_id or ad_client_id = '0')
-          AND ad_module_id <> '0';
-        IF (v_count > 0) THEN
-          v_dummy := AD_GET_PREFERENCE_VALUE('FinancialManagement', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
-          DBMS_OUTPUT.PUT_LINE('FinancialManagement preference value: ' || v_dummy);
-        ELSIF (v_count = 0) THEN
-	  C_SETTLEMENT_POST(null, v_settlementid);
-	  update c_taxpayment set c_settlement_id=null where c_taxpayment.C_TAXPAYMENT_ID = v_record_id;
-	  delete from c_debt_payment_balancing where c_debt_payment_id in
-	  (select c_debt_payment_id from c_debt_payment where c_settlement_generate_id = v_settlementid);
-	  delete from c_debt_payment where c_settlement_generate_id = v_settlementid;
-	  delete from c_settlement where c_settlement_id=v_settlementid;
-	end if;
-      end if;
     end;
     end if;
 
@@ -354,85 +325,10 @@ BEGIN
 	      if v_paymentamt <=0 then
 		      v_isreceipt:='Y';
 		      v_paymentamt:=(-1)*v_paymentamt;
-		      v_paymentcreditamt  := v_paymentamt;
-		      v_paymentdebitamt := 0;
 	      else
 		      v_isreceipt:='N';
-		      v_paymentcreditamt  := 0;
-		      v_paymentdebitamt := v_paymentamt;
 	      end if;
 
-	      SELECT COUNT(1) INTO v_count
-	      FROM ad_preference
-	      WHERE property = 'FinancialManagement'
-	        AND (ad_client_id = v_client_id or ad_client_id = '0')
-	        AND ad_module_id <> '0';
-	IF (v_count > 0) THEN
-		v_dummy := AD_GET_PREFERENCE_VALUE('FinancialManagement', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
-		DBMS_OUTPUT.PUT_LINE('FinancialManagement preference value: ' || v_dummy);
-	ELSIF (v_count = 0) THEN
-		v_ResultStr:='Generating C_Debt_Payment';
-
-		v_settlementdoctype_id := ad_get_doctype(v_client_id,   v_org_id,   to_char('STM'));
-		ad_sequence_next('C_Settlement', v_record_id, v_settlementid);
-		ad_sequence_doctype(v_settlementdoctype_id, v_record_id, 'Y', v_sdocumentno);
-
-		IF(v_sdocumentno IS NULL) THEN --to do send by mail
-		ad_sequence_doc('DocumentNo_C_Settlement', v_client_id, 'Y', v_sdocumentno);
-		END IF;
-
-		INSERT
-			INTO c_settlement(c_settlement_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   updated,   updatedby,   documentno,   datetrx,   dateacct,   settlementtype,   c_doctype_id,   processing,   processed,   posted,   createfrom,   isgenerated, c_currency_id)
-			SELECT v_settlementid,
-			  ad_client_id,
-			  ad_org_id,
-			  'Y',
-			  now(),
-			  createdby,
-			  now(),
-			  updatedby,
-			  v_sdocumentno,
-			  v_date,
-			  TRUNC(now()),
-			  'I',
-			  v_settlementdoctype_id,
-			  'N',
-			  'N',
-			  'N',
-			  'N',
-			  'N',
-			  v_currency_id
-			FROM c_taxpayment
-		       WHERE c_taxpayment_id = v_record_id;
-
-	       ad_sequence_next('C_Debt_Payment', v_record_id, v_debtpaymentid);
-
-	       INSERT
-		 INTO c_debt_payment(c_debt_payment_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   
-		 updated,   updatedby,   isreceipt,   c_settlement_cancel_id,   c_settlement_generate_id,   description,   
-		 c_invoice_id,   c_bpartner_id,   c_currency_id,   c_cashline_id,   c_bankaccount_id,   c_cashbook_id,   
-		 paymentrule,   ispaid,   amount,   writeoffamt,   dateplanned,   ismanual,   isvalid,   c_bankstatementline_id,   
-		 changesettlementcancel,   cancel_processed,   generate_processed,   c_project_id,   status,   status_initial)
-	       VALUES(v_debtpaymentid,   v_client_id,   v_org_id,   'Y',   now(),   v_createdby,   
-		  now(), v_updatedby,   v_isreceipt,   NULL,   v_settlementid, v_name,   
-		  NULL,   v_bpartner_id,   v_currency_id,   NULL,   NULL,   NULL,   
-		  v_paymentrule,   'N',  v_paymentamt ,   0,   v_date,   'Y',   'Y',   NULL,   
-		  'N',   'N',   'Y',   null,   'DE',   'DE');
-
-
-	       ad_sequence_next('C_Debt_Payment_Balancing', v_record_id, v_debtpaymentbalancingid);
-
-	       insert
-	       into c_debt_payment_balancing(c_debt_payment_balancing_id,   ad_client_id,   ad_org_id,   isactive,   created,   createdby,   
-	       updated,   updatedby, c_debt_payment_id, AMOUNTDEBIT, AMOUNTCREDIT, C_GLITEM_ID)
-	       values(v_debtpaymentbalancingid,   v_client_id,   v_org_id,   'Y',   now(),   v_createdby,   
-	       now(),   v_updatedby, v_debtpaymentid, v_paymentdebitamt, v_paymentcreditamt, v_glitem_id);
-	       C_SETTLEMENT_POST(null, v_settlementid);
-
-	       UPDATE c_taxpayment
-		SET c_settlement_id = v_settlementid
-		where c_taxpayment.C_TAXPAYMENT_ID = v_record_id;
-	END IF;
       end if;
      END;
 
