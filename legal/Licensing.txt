@@ -128,9 +128,9 @@ http://opensource.org/licenses/afl-2.1.php)
 # itext-2.1.7.js8.jar
 Under the terms of the MPL 1.1 license, available at https://www.mozilla.org/en-US/MPL/1.1/
 
-# jackson-core-2.13.2.jar
-# jackson-databind-2.13.2.2.jar
-# jackson-annotations-2.13.2.jar
+# jackson-core-2.14.1.jar
+# jackson-databind-2.14.1.jar
+# jackson-annotations-2.14.1.jar
 All files under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 
 # jasperreports-6.17.0.jar
