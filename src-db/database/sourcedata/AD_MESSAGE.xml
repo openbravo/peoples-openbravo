@@ -8231,18 +8231,6 @@
 <!--800111-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--800111--></AD_MESSAGE>
 
-<!--800112--><AD_MESSAGE>
-<!--800112-->  <AD_MESSAGE_ID><![CDATA[800112]]></AD_MESSAGE_ID>
-<!--800112-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--800112-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800112-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--800112-->  <VALUE><![CDATA[WrongStatusToFrom]]></VALUE>
-<!--800112-->  <MSGTEXT><![CDATA[does not match the current status of the debt payment with the status to]]></MSGTEXT>
-<!--800112-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
-<!--800112-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--800112-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--800112--></AD_MESSAGE>
-
 <!--800113--><AD_MESSAGE>
 <!--800113-->  <AD_MESSAGE_ID><![CDATA[800113]]></AD_MESSAGE_ID>
 <!--800113-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10561,30 +10549,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804766-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--804766--></AD_MESSAGE>
 
-<!--804767--><AD_MESSAGE>
-<!--804767-->  <AD_MESSAGE_ID><![CDATA[804767]]></AD_MESSAGE_ID>
-<!--804767-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804767-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804767-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804767-->  <VALUE><![CDATA[DPManagementDocumentPosted]]></VALUE>
-<!--804767-->  <MSGTEXT><![CDATA[DP Management posted]]></MSGTEXT>
-<!--804767-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804767-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804767-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804767--></AD_MESSAGE>
-
-<!--804768--><AD_MESSAGE>
-<!--804768-->  <AD_MESSAGE_ID><![CDATA[804768]]></AD_MESSAGE_ID>
-<!--804768-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804768-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804768-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804768-->  <VALUE><![CDATA[UnProcessedDPManagement]]></VALUE>
-<!--804768-->  <MSGTEXT><![CDATA[DP Management unprocessed]]></MSGTEXT>
-<!--804768-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
-<!--804768-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804768-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804768--></AD_MESSAGE>
-
 <!--804769--><AD_MESSAGE>
 <!--804769-->  <AD_MESSAGE_ID><![CDATA[804769]]></AD_MESSAGE_ID>
 <!--804769-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
@@ -10596,30 +10560,6 @@ Openbravo Administrator]]></MSGTEXT>
 <!--804769-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--804769-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
 <!--804769--></AD_MESSAGE>
-
-<!--804771--><AD_MESSAGE>
-<!--804771-->  <AD_MESSAGE_ID><![CDATA[804771]]></AD_MESSAGE_ID>
-<!--804771-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804771-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804771-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804771-->  <VALUE><![CDATA[NotCorrectOrgDoctypeDPManagement]]></VALUE>
-<!--804771-->  <MSGTEXT><![CDATA[The organization associated with the  Document Type  is different or does not depend on the organization associated with the DP Management]]></MSGTEXT>
-<!--804771-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804771-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804771-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804771--></AD_MESSAGE>
-
-<!--804772--><AD_MESSAGE>
-<!--804772-->  <AD_MESSAGE_ID><![CDATA[804772]]></AD_MESSAGE_ID>
-<!--804772-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--804772-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--804772-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--804772-->  <VALUE><![CDATA[LaterChangeStatus]]></VALUE>
-<!--804772-->  <MSGTEXT><![CDATA[the debt payment has a change status later than the selected  Account Date]]></MSGTEXT>
-<!--804772-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
-<!--804772-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--804772-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
-<!--804772--></AD_MESSAGE>
 
 <!--804773--><AD_MESSAGE>
 <!--804773-->  <AD_MESSAGE_ID><![CDATA[804773]]></AD_MESSAGE_ID>
