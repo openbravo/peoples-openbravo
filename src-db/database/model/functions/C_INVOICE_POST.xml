@@ -74,7 +74,6 @@
   v_DocType_ID VARCHAR2(32);
   v_DocTypeTarget_ID VARCHAR2(32);
   v_isreturndoctype CHAR(1);
-  v_PaymentTerm C_INVOICE.C_PaymentTerm_ID%TYPE;
   v_DateAcct DATE;
   v_DateInvoiced DATE;
   v_DocumentNo C_INVOICE.DocumentNo%TYPE;
@@ -99,16 +98,10 @@
   v_Settlement_Cancel_ID VARCHAR2(32);
   --Finish added by P.Sarobe
   --
-  v_GrandTotal NUMBER:=0;
-  v_TotalLines NUMBER:=0;
-  v_Currency_ID VARCHAR2(32);
-  v_paymentcheck NUMBER;
-  --
   v_RInvoice_ID VARCHAR2(32);
   v_RDocumentNo C_INVOICE.DocumentNo%TYPE;
   v_NextNo VARCHAR2(32);
   v_count NUMBER;
-  v_POReference NVARCHAR2(40) ;
   --
   v_SettlementDocType_ID VARCHAR2(32) ;
   v_SDocumentNo C_SETTLEMENT.DocumentNo%TYPE;
@@ -124,15 +117,9 @@
   v_InvoiceLineSeqNo NUMBER;
   v_InvoiceLine VARCHAR2(32);
   v_Discount NUMBER;
-  v_Line NUMBER;
-  v_C_Project_ID VARCHAR2(32);
   v_acctAmount NUMBER;
-  v_partialAmount NUMBER;
   FINISH_PROCESS BOOLEAN:=FALSE;
   END_PROCESSING BOOLEAN:=FALSE;
-  v_TargetDocBaseType C_DOCTYPE.DocBaseType%TYPE;
-  v_isReversal C_DOCTYPE.IsReversal%TYPE;
-  v_MultiplierARC NUMBER:=1;
   v_is_included NUMBER:=0;
   v_available_period NUMBER:=0;
   v_is_ready AD_Org.IsReady%TYPE;
@@ -144,7 +131,6 @@
   v_PeriodEndDate DATE;
   v_DocNo_Org_ID AD_Sequence.AD_Org_ID%TYPE;
   withholdamount NUMBER(10,2);
-  cWithHoldId varchar2(32);
   Cur_InvoiceNetLine RECORD;
 
   v_LineMax NUMBER:=0;
@@ -253,18 +239,18 @@ BEGIN --BODY
   v_ResultStr:='ReadingInvoice';
    SELECT i.Processing, i.Processed, i.DocAction, i.DocStatus,
       i.C_DocType_ID, i.C_DocTypeTarget_ID,
-      i.C_PaymentTerm_ID, i.DateAcct, i.DateInvoiced,
+      i.DateAcct, i.DateInvoiced,
       i.AD_Client_ID, i.AD_Org_ID, i.UpdatedBy, i.DocumentNo,
       i.IsSOTrx, i.C_BPartner_ID, i.AD_User_ID,
-      i.C_Currency_ID, i.POReference, i.Posted,
-      i.c_Project_Id, i.C_WithHolding_ID, i.IsCashVat, i.prepaymentamt
+      i.Posted,
+      i.IsCashVat, i.prepaymentamt
   INTO v_Processing, v_Processed, v_DocAction, v_DocStatus,
       v_DocType_ID, v_DocTypeTarget_ID,
-      v_PaymentTerm, v_DateAcct, v_DateInvoiced,
+      v_DateAcct, v_DateInvoiced,
       v_Client_ID, v_Org_ID, v_UpdatedBy, v_DocumentNo,
       v_IsSOTrx, v_BPartner_ID, v_BPartner_User_ID,
-      v_Currency_ID, v_POReference, v_Posted,
-      v_C_Project_Id, cWithHoldID, v_iscashvat, v_prepaymentamt
+      v_Posted,
+      v_iscashvat, v_prepaymentamt
   FROM C_INVOICE i
   WHERE i.C_Invoice_ID=v_Record_ID FOR UPDATE;
 
@@ -1515,279 +1501,6 @@ IF (NOT FINISH_PROCESS) THEN
     END IF;
   END IF;--FINISH_PROCESS
   IF (NOT FINISH_PROCESS AND NOT END_PROCESSING) THEN
-    -- Modified by Ismael Ciordia
-    -- Generate C_Debt_Payment linked to this invoice
-    DECLARE
-      v_totalCash NUMBER:=0;
-      v_debtPaymentID varchar2(32) ;
-      v_amount NUMBER;
-      v_cashBook VARCHAR2(32) ;
-      v_bankAccount VARCHAR2(32) ;
-      v_cash VARCHAR2(32) ;
-      v_IsoCode C_CURRENCY.ISO_CODE%TYPE;
-      v_CashLine VARCHAR2(32) ;
-      v_BPartnerName C_BPARTNER.NAME%TYPE;
-      v_GenDP_Org VARCHAR2(32);
-      v_dummy VARCHAR2(2000);
-    BEGIN
-      SELECT COUNT(1) INTO v_count
-      FROM ad_preference
-      WHERE property = 'FinancialManagement'
-        AND ad_module_id <> '0'
-        AND (ad_client_id = v_client_id or ad_client_id = '0');
-      IF (v_count > 1) THEN
-        v_dummy := AD_GET_PREFERENCE_VALUE('FinancialManagement', 'Y', v_client_id, v_org_id, NULL, NULL, NULL);
-        DBMS_OUTPUT.PUT_LINE('FinancialManagement preference value: ' || v_dummy);
-      ELSIF (v_count = 0) THEN
-        v_ResultStr:='Generating C_Debt_Payment';
-        UPDATE C_DEBT_PAYMENT
-          SET C_INVOICE_ID=v_Record_ID
-        WHERE EXISTS
-              (SELECT 1
-               FROM C_ORDERLINE ol, C_INVOICELINE il
-               WHERE ol.C_ORDERLINE_ID=il.C_ORDERLINE_ID
-                 AND il.C_INVOICE_ID=v_Record_ID
-                 AND ol.C_ORDER_ID=C_DEBT_PAYMENT.C_ORDER_ID
-              )
-          AND C_INVOICE_ID IS NULL;
-        UPDATE C_DEBT_PAYMENT
-          SET IsValid='Y'
-        WHERE C_INVOICE_ID=v_Record_ID
-          AND IsValid!='Y';
-
-        -- Is it a Credit Memo:4
-        SELECT DocBaseType, isreversal INTO v_TargetDocBaseType, v_isReversal
-        FROM C_DOCTYPE
-        WHERE C_DocType_ID=v_DocTypeTarget_ID;
-        IF (v_TargetDocBaseType in ('ARC','APC') or v_isReversal='Y') THEN
-          v_MultiplierARC:=-1;
-        END IF;
-
-        --Sums debt payments from the order and the ones that have been inserted manually, added by ALO
-        SELECT COALESCE(SUM(C_Currency_Round(C_Currency_Convert((Amount + WriteOffAmt)*v_MultiplierARC, C_Currency_ID, v_Currency_ID, v_DateInvoiced, NULL, v_Client_ID, v_Org_ID), v_Currency_ID, NULL)), 0) INTO v_totalCash
-        FROM C_DEBT_PAYMENT_V dp
-        WHERE C_INVOICE_ID=v_Record_ID;
-        --Insert C_Debt_Payment if GrandTotal - v_totalCash <> 0;
-        IF (v_GrandTotal<>v_totalCash) THEN
-          DECLARE
-            CUR_PAYMENTS RECORD;
-            v_plannedDate DATE;
-            v_pendingAmount NUMBER;
-            v_paymentAmount NUMBER;
-            v_GenDebt_PaymentID varchar2(32);
-            v_SettlementDocTypeID varchar2(32) ;
-            v_settlement_ID VARCHAR2(32) ;
-            v_CB_Curr VARCHAR2(32) ;
-            v_SDocument_No C_SETTLEMENT.DocumentNo%TYPE;
-          BEGIN
-            IF (v_IsSOTrx ='Y') THEN
-              v_pendingAmount:=v_GrandTotal - v_totalCash;
-            ELSE
-              v_pendingAmount:=v_GrandTotal + v_totalCash;
-            END IF;
-            FOR CUR_PAYMENTS IN
-              (SELECT LINE, PERCENTAGE, ONREMAINDER, EXCLUDETAX,
-                   PAYMENTRULE AS PAYMENTRULE, FIXMONTHDAY, FIXMONTHDAY2, FIXMONTHDAY3,
-                   NETDAYS, FIXMONTHOFFSET, NETDAY, ISNEXTBUSINESSDAY
-               FROM C_PAYMENTTERMLINE
-               WHERE C_PAYMENTTERM_ID=v_PaymentTerm
-               UNION
-               -- Header of paymentTerm is processed at last
-               SELECT 9999 AS LINE, 100 AS PERCENTAGE, 'Y' AS ONREMAINDER, 'N' AS EXCLUDETAX,
-                   null AS PAYMENTRULE, FIXMONTHDAY, FIXMONTHDAY2, FIXMONTHDAY3,
-                   NETDAYS, FIXMONTHOFFSET, NETDAY, ISNEXTBUSINESSDAY
-               FROM C_PAYMENTTERM
-               WHERE C_PAYMENTTERM_ID=v_PaymentTerm
-               ORDER BY LINE
-              )
-            LOOP
-              IF (CUR_PAYMENTS.PaymentRule IN('B', 'C')) THEN
-                SELECT MAX(C_CashBook_ID) INTO v_cashBook
-                FROM C_CASHBOOK
-                WHERE AD_Client_ID=v_Client_ID
-                  AND isActive='Y'
-                  AND isDefault='Y'
-                  AND AD_IsOrgIncluded(v_org_id,AD_ORG_ID, AD_Client_ID)<>-1;
-                IF (v_cashBook IS NULL) THEN
-                  RAISE_APPLICATION_ERROR(-20000, '@NoDefaultCashBook@');
-                END IF;
-                v_bankAccount:=NULL;
-              ELSE
-                SELECT COALESCE((
-                         CASE v_IsSOTrx
-                           WHEN 'Y' THEN SO_BankAccount_ID
-                           ELSE PO_BankAccount_ID
-                         END
-                         ),
-                         (SELECT MAX(C_BankAccount_ID)
-                          FROM C_BANKACCOUNT
-                          WHERE AD_Client_ID=v_Client_ID
-                            AND isDefault='Y'
-                         )
-                       ) INTO v_bankAccount
-                FROM C_BPARTNER
-                WHERE c_BPartner_ID=v_BPartner_ID;
-                v_cashBook:=NULL;
-              END IF;
-              v_plannedDate:=C_Paymentduedate(v_BPartner_ID, v_IsSOTrx, CUR_PAYMENTS.FixMonthDay, CUR_PAYMENTS.FixMonthDay2, CUR_PAYMENTS.FixMonthDay3, CUR_PAYMENTS.NetDays, CUR_PAYMENTS.FixMonthOffset, CUR_PAYMENTS.NetDay, CUR_PAYMENTS.IsNextbusinessday, v_DateInvoiced) ;
-              SELECT COALESCE(SUM(C_DEBT_PAYMENT_V.AMOUNT),0) INTO v_partialAmount
-              FROM C_DEBT_PAYMENT_V, C_DEBT_PAYMENT
-              WHERE C_DEBT_PAYMENT_V.C_INVOICE_ID = V_RECORD_ID
-                AND C_DEBT_PAYMENT_V.C_DEBT_PAYMENT_ID = C_DEBT_PAYMENT.C_DEBT_PAYMENT_ID
-                AND ISAUTOMATICGENERATED='N';
-              IF (CUR_PAYMENTS.EXCLUDETAX='Y') THEN
-                -- if excludeTax = 'Y', percentage is aplied on the TotalLines
-                v_paymentAmount:=C_Currency_Round((v_TotalLines-v_partialAmount) *CUR_PAYMENTS.PERCENTAGE/100, v_Currency_ID, NULL) ;
-              ELSIF (CUR_PAYMENTS.ONREMAINDER='N') THEN
-                -- if onRemainder = 'N', percentage is aplied on the GrandTotal
-                v_paymentAmount:=C_Currency_Round((v_GrandTotal-v_partialAmount) *CUR_PAYMENTS.PERCENTAGE/100, v_Currency_ID, NULL) ;
-              ELSE
-                v_paymentAmount:=C_Currency_Round((v_pendingAmount) *CUR_PAYMENTS.PERCENTAGE/100, v_Currency_ID, NULL) ;
-              END IF;
-              v_pendingAmount:=v_pendingAmount - v_paymentAmount;
-              v_debtPaymentID :=get_uuid() ;
-              v_paymentcheck:=C_Currency_Round((v_paymentamount *v_multiplierarc) -withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal), v_Currency_ID, NULL);
-              IF (v_paymentcheck <> 0) THEN
-                INSERT INTO C_DEBT_PAYMENT
-                  (
-                   C_DEBT_PAYMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-                   CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-                   ISRECEIPT, C_SETTLEMENT_CANCEL_ID, C_SETTLEMENT_GENERATE_ID, DESCRIPTION,
-                   C_INVOICE_ID, C_BPARTNER_ID, C_CURRENCY_ID, C_CASHLINE_ID,
-                   C_BANKACCOUNT_ID, C_CASHBOOK_ID, PAYMENTRULE, ISPAID,
-                   AMOUNT, WRITEOFFAMT, DATEPLANNED, ISMANUAL,
-                   ISVALID, C_BANKSTATEMENTLINE_ID, CHANGESETTLEMENTCANCEL, CANCEL_PROCESSED,
-                   GENERATE_PROCESSED, c_project_id, status, status_initial,   withholdingamount,C_WITHHOLDING_ID
-                  )
-                  VALUES
-                  (
-                   v_debtPaymentID, v_Client_ID, v_Org_ID, 'Y',
-                   now(), v_UpdatedBy, now(), v_UpdatedBy,
-                   v_IsSOTrx, NULL, NULL, '* ' || v_DocumentNo || ' * (' || COALESCE(TO_CHAR(v_BPartnerName) ,'') ||( CASE WHEN v_POReference IS NULL THEN '' ELSE ' .Ref:'||TO_CHAR(v_POReference) END) || ' )',
-                   v_Record_ID, v_BPartner_ID, v_Currency_ID, NULL,
-                   v_bankAccount, v_cashBook, CUR_PAYMENTS.PaymentRule, 'N',
-                   C_Currency_Round((v_paymentamount *v_multiplierarc) -withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal), v_Currency_ID, NULL), 0, v_plannedDate, 'N',
-                   'Y', NULL, 'N', 'N',
-                   'N', v_C_Project_Id, 'DE', 'DE', C_Currency_Round(withholdamount *(v_paymentamount *v_multiplierarc / v_grandtotal), v_Currency_ID, NULL),cWithHoldId
-                  );
-              END IF;
-              --AL
-              --Looking for autogenerated debt-payments
-              SELECT MAX(c_Debt_Payment_Id), MAX(ad_Org_ID)
-                INTO v_GenDebt_PaymentID, v_GenDP_Org
-              FROM C_DEBT_PAYMENT DP
-              WHERE C_BPartner_ID=v_BPartner_ID
-                AND C_Debt_Payment_Status(C_Settlement_Cancel_ID, Cancel_Processed, Generate_Processed, IsPaid, IsValid, C_Cashline_ID, C_BankstatementLine_ID)='P'
-                AND ISRECEIPT=v_IsSOTrx
-                AND (-1) *Amount=v_paymentAmount
-                AND c_currency_ID=v_Currency_ID
-                AND C_SETTLEMENT_GENERATE_ID IS NOT NULL
-                AND Ad_Isorgincluded(v_Org_id, dp.ad_org_id,v_Client_ID) != -1
-                AND ad_client_id = v_Client_ID
-                AND EXISTS (SELECT 1
-                            FROM C_SETTLEMENT S
-                            WHERE DP.C_SETTLEMENT_GENERATE_ID = S.C_Settlement_ID
-                              AND IsGenerated = 'Y')
-                AND NOT EXISTS (SELECT 1
-                                FROM C_REMITTANCELINE rl
-                                WHERE rl.C_DEBT_PAYMENT_CANCELLED = DP.C_DEBT_PAYMENT_ID);
-  
-              IF (v_GenDebt_PaymentID IS NOT NULL) THEN
-                v_SettlementDocTypeID:=Ad_Get_Doctype(v_Client_ID, v_GenDP_Org, TO_CHAR('STT')) ;
-                v_settlement_ID := get_uuid();
-                Ad_Sequence_Doctype(v_SettlementDocTypeID, v_Record_ID, 'Y', v_SDocument_No) ;
-                IF (v_SDocument_No IS NULL) THEN
-                  Ad_Sequence_Doc('DocumentNo_C_Settlement', v_Client_ID, 'Y', v_SDocument_No) ;
-                END IF;
-                INSERT INTO C_SETTLEMENT
-                  (
-                   C_SETTLEMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-                   CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-                   DOCUMENTNO, DATETRX, DATEACCT, SETTLEMENTTYPE,
-                   C_DOCTYPE_ID, PROCESSING, PROCESSED, POSTED,
-                   C_CURRENCY_ID, ISGENERATED
-                  )
-                   /*, C_PROJECT_ID, C_CAMPAIGN_ID,
-                   C_ACTIVITY_ID, USER1_ID, USER2_ID, CREATEFROM)*/
-                  VALUES
-                  (
-                   v_Settlement_ID, v_Client_ID, v_GenDP_Org, 'Y',
-                   now(), v_UpdatedBy, now(), v_UpdatedBy,
-                   '*C*'||v_SDocument_No, TRUNC(now()), TRUNC(now()), 'C',
-                   v_SettlementDocTypeID, 'N', 'N', 'N',
-                   v_Currency_ID, 'Y'
-                  );
-                UPDATE C_DEBT_PAYMENT
-                SET C_Settlement_Cancel_Id=v_Settlement_ID,
-                    Updated=now(),
-                    UpdatedBy=v_UpdatedBy
-                WHERE c_Debt_Payment_ID IN(v_genDebt_PaymentID, v_debtPaymentID) ;
-                C_SETTLEMENT_POST(NULL, v_Settlement_ID) ;
-              END IF;
-              --If Invoice.paymentRule = 'B', insert de cashline de tipo efecto apuntando al efecto
-              IF (v_cashBook IS NOT NULL AND CUR_PAYMENTS.PaymentRule='B') THEN
-                SELECT MAX(C.C_CASH_ID) INTO v_Cash
-                FROM C_CASH C
-                WHERE C.C_CASHBOOK_ID=v_cashBook
-                  AND TRUNC(C.DATEACCT)=TRUNC(v_DateAcct)
-                  AND C.PROCESSED='N';
-  
-                SELECT C_CURRENCY_ID INTO v_CB_Curr
-                FROM C_CASHBOOK
-                WHERE C_CASHBOOK_ID = v_cashBook;
-  
-                IF (v_Cash IS NULL) THEN
-                  v_ResultStr:='Creating C_Cash';
-                  SELECT ISO_CODE INTO v_IsoCode
-                  FROM C_CURRENCY
-                  WHERE C_Currency_ID=v_CB_Curr;
-                  v_Cash :=get_uuid();
-                  INSERT INTO C_CASH (
-                      C_Cash_ID, AD_Client_ID, AD_Org_ID, IsActive,
-                      Created, CreatedBy, Updated, UpdatedBy,
-                      C_CashBook_ID, NAME, StatementDate, DateAcct,
-                      BeginningBalance, EndingBalance, StatementDifference, Processing,
-                      Processed, Posted )
-                    VALUES (
-                      v_Cash, v_Client_ID, v_Org_ID, 'Y',
-                      now(), v_UpdatedBy, now(), v_UpdatedBy,
-                      v_cashBook, (TO_CHAR(v_DateAcct, 'YYYY-MM-DD') || ' ' || v_IsoCode), v_DateAcct, v_DateAcct,
-                      0, 0, 0, 'N',
-                      'N', 'N');
-                END IF; -- v_Cash IS NULL
-                v_ResultStr:='Creating C_CashLine';
-                v_CashLine := get_uuid();
-                SELECT COALESCE(MAX(LINE), 0) + 10 INTO v_line
-                FROM C_CASHLINE
-                WHERE C_CASH_ID=v_Cash;
-  
-                SELECT SUM(AMOUNT) INTO v_Amount
-                FROM C_DEBT_PAYMENT_V
-                WHERE C_INVOICE_ID = v_Record_ID;
-  
-                INSERT INTO C_CASHLINE
-                  (
-                    C_CashLine_ID, AD_Client_ID, AD_Org_ID, IsActive,
-                    Created, CreatedBy, Updated, UpdatedBy,
-                    C_Cash_ID, C_Debt_Payment_ID, Line, Description,
-                    Amount, CashType, C_Currency_ID, DiscountAmt,
-                    WriteOffAmt, IsGenerated
-                  )
-                  VALUES
-                  (
-                    v_CashLine, v_Client_ID, v_Org_ID, 'Y',
-                    TO_DATE(now()), v_UpdatedBy, TO_DATE(now()), v_UpdatedBy,
-                    v_Cash, v_debtPaymentID, v_line, v_BPartnerName,
-                    v_Amount, 'P', v_Currency_ID, 0,
-                    0, 'Y'
-                  );
-  
-              END IF; -- v_cashBook IS NOT NULL
-            END LOOP;
-          END;
-        END IF; -- v_GrandTotal <> v_totalCash
-      END IF;
-    END;
     IF (NOT FINISH_PROCESS AND v_IsSOTrx='Y') THEN
       C_BP_SOCREDITUSED_REFRESH(v_BPartner_ID) ;
     END IF;
