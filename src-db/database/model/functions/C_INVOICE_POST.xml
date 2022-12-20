@@ -103,10 +103,6 @@
   v_NextNo VARCHAR2(32);
   v_count NUMBER;
   --
-  v_SettlementDocType_ID VARCHAR2(32) ;
-  v_SDocumentNo C_SETTLEMENT.DocumentNo%TYPE;
-  v_settlementID varchar2(32):=NULL;
-  --
   v_FirstSales C_BPARTNER.FirstSale%TYPE;
   v_REInOutStatus M_INOUT.DocStatus%TYPE;
   v_REDateInvoiced DATE;
@@ -820,52 +816,6 @@ IF (NOT FINISH_PROCESS) THEN
             DocAction='--',
             Processed='Y'
         WHERE C_Invoice_ID=v_RInvoice_ID;
-        -- If Payments from both invoices are pending, create a new settlement and cancel them
-        SELECT COUNT(*) INTO v_count
-        FROM C_DEBT_PAYMENT dp
-        WHERE C_Debt_Payment_Status(dp.C_Settlement_Cancel_ID, dp.Cancel_Processed, dp.Generate_Processed, dp.IsPaid, dp.IsValid, dp.C_CashLine_ID, dp.C_BankStatementLine_ID)<>'P'
-          AND(dp.C_Invoice_ID=v_Record_ID
-          OR dp.C_Invoice_ID=v_RInvoice_ID) ;
-        -- To cancel, the sum of amounts should be 0
-        IF (v_count=0) THEN
-          SELECT SUM(AMOUNT) INTO v_count
-          FROM C_DEBT_PAYMENT dp
-          WHERE dp.C_Invoice_ID=v_Record_ID
-            OR dp.C_Invoice_ID=v_RInvoice_ID;
-          IF (v_count=0) THEN
-            v_SettlementDocType_ID:=Ad_Get_Doctype(v_Client_ID, v_Org_ID, TO_CHAR('STT')) ;
-            v_settlementID := get_uuid();
-            Ad_Sequence_Doctype(v_SettlementDocType_ID, v_Record_ID, 'Y', v_SDocumentNo) ;
-            IF (v_SDocumentNo IS NULL) THEN
-              Ad_Sequence_Doc('DocumentNo_C_Settlement', v_Client_ID, 'Y', v_SDocumentNo) ;
-            END IF;
-            INSERT
-            INTO C_SETTLEMENT
-              (
-                C_SETTLEMENT_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE,
-                CREATED, CREATEDBY, UPDATED, UPDATEDBY,
-                DOCUMENTNO, DATETRX, DATEACCT, SETTLEMENTTYPE,
-                C_DOCTYPE_ID, PROCESSING, PROCESSED, POSTED,
-                C_CURRENCY_ID, C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID,
-                USER1_ID, USER2_ID, CREATEFROM, ISGENERATED
-              )
-              SELECT v_settlementID, AD_Client_ID, AD_Org_ID, 'Y',
-                now(), v_UpdatedBy, now(), v_UpdatedBy,
-                '*RE*'||v_SDocumentNo, TRUNC(now()), TRUNC(now()), 'C',
-                v_SettlementDocType_ID, 'N', 'N', 'N',
-                C_Currency_ID, C_PROJECT_ID, C_CAMPAIGN_ID, C_ACTIVITY_ID,
-                USER1_ID, USER2_ID, 'N', 'Y'
-              FROM C_INVOICE
-              WHERE C_Invoice_ID=v_Record_ID;
-            UPDATE C_DEBT_PAYMENT
-            SET C_Settlement_Cancel_id=v_settlementID,
-                UPDATED=now(),
-                UPDATEDBY=v_UpdatedBy
-            WHERE C_DEBT_PAYMENT.C_Invoice_ID=v_Record_ID
-              OR C_DEBT_PAYMENT.C_Invoice_ID=v_RInvoice_ID;
-            C_SETTLEMENT_POST(NULL, v_settlementID) ;
-          END IF;
-        END IF;
         END_PROCESSING:=TRUE;
       END IF;
     END; -- FOR COMMIT
