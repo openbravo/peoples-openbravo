@@ -235,8 +235,6 @@ public class ProcessGoods extends HttpSecureAppServlet {
         strWindowPath = strDefaultServlet;
       }
       printPageClosePopUp(response, vars, strWindowPath);
-      pushApiEvent(goodsShipmentInOut.isSalesTransaction(),
-          goodsShipmentInOut.getDocumentType().isReturn(), goodsShipmentInOut.getId());
 
     } catch (ServletException | ParseException ex) {
       generateErrorProcessReceipt(response, vars, strTabId, ex);
