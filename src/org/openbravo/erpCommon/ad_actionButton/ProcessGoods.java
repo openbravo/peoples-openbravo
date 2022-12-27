@@ -242,16 +242,18 @@ public class ProcessGoods extends HttpSecureAppServlet {
   }
 
   private void pushApiEvent(Boolean isSale, boolean isReturn, String id) {
+    String event = null;
     if (!isSale && !isReturn) {
-      SynchronizationEvent.getInstance().triggerEvent("API_GoodsReceipt", id);
+      event = "API_GoodsReceipt";
     } else if (!isSale && isReturn) {
-      SynchronizationEvent.getInstance().triggerEvent("API_GoodsShipment", id);
+      event = "API_GoodsShipment";
     } else if (isSale & !isReturn) {
-      SynchronizationEvent.getInstance().triggerEvent("API_ReturnMaterialReceipt", id);
+      event = "API_ReturnMaterialReceipt";
     } else {
-      SynchronizationEvent.getInstance().triggerEvent("API_ReturnToVendorShipment", id);
+      event = "API_ReturnToVendorShipment";
     }
-    log4j.info("Push API event success");
+    SynchronizationEvent.getInstance().triggerEvent("API_ReturnToVendorShipment", id);
+    log4j.info("Push API event success: " + event);
   }
 
   private Map<String, String> getFormatedDateParameters(final String strVoidMinoutDate,
