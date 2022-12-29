@@ -169,11 +169,53 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="COMPANY_LOGO" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANY_LOGO_DARK" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANY_LOGO_SUBMARK" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANY_LOGO_SUBMARK_DARK" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANY_LOGO_FOR_DOCS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="COMPANY_LOGO_FOR_RECEIPTS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_SYSTEM_INFO_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_SYSTEM_INFO_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_COMPANYLOGO">
+        <reference local="COMPANY_LOGO" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_COMPANYLOGODOCS">
+        <reference local="COMPANY_LOGO_FOR_DOCS" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_COMPANYLOGODRK">
+        <reference local="COMPANY_LOGO_DARK" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_COMPANYLOGORCPT">
+        <reference local="COMPANY_LOGO_FOR_RECEIPTS" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_COMPANYLOGOSM">
+        <reference local="COMPANY_LOGO_SUBMARK" foreign="AD_IMAGE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_COMPANYLOGOSMDK">
+        <reference local="COMPANY_LOGO_SUBMARK_DARK" foreign="AD_IMAGE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_IMAGE" name="AD_SYSTEM_INFO_IMAGEBIGCOMP">
         <reference local="YOUR_COMPANY_BIG_IMAGE" foreign="AD_IMAGE_ID"/>
