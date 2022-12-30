@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU
+ * All portions are Copyright (C) 2001-2022 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -79,6 +79,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
+import org.openbravo.erpCommon.utility.companylogo.CompanyLogoUtils;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
@@ -2205,12 +2206,13 @@ public class Utility {
    * Provides the image logo as a byte array for the indicated parameters.
    * 
    * @param logo
-   *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
-   *          or banner-production
+   *          The name of the logo to display This can be one of the following: companylogo, companylogosubmark,
+   *          companylogodocuments, companylogoreceipts, youritservicelogin or banner-production
+   *
+   *          The following values are also supported but they are deprecated in favor of the values above:
+   *          yourcompanylogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
    * @param org
-   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
-   *          logo you can indicate the organization used to request the logo.
+   *          The organization id used to get the logo.
    *
    * @return The image requested
    */
@@ -2218,70 +2220,37 @@ public class Utility {
     Image img = null;
     OBContext.setAdminMode();
     try {
+      Organization organization = null;
+      if (org != null && !org.equals("")) {
+        organization = OBDal.getReadOnlyInstance().get(Organization.class, org);
+      }
 
       if ("yourcompanylogin".equals(logo)) {
-        img = OBDal.getReadOnlyInstance()
-            .get(SystemInformation.class, "0")
-            .getYourCompanyLoginImage();
+        img = CompanyLogoUtils.getCompanyLogo(organization);
       } else if ("youritservicelogin".equals(logo)) {
         img = OBDal.getReadOnlyInstance()
             .get(SystemInformation.class, "0")
             .getYourItServiceLoginImage();
       } else if ("yourcompanymenu".equals(logo)) {
-        img = OBDal.getReadOnlyInstance()
-            .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
-            .getYourCompanyMenuImage();
-        if (img == null) {
-          img = OBDal.getReadOnlyInstance()
-              .get(SystemInformation.class, "0")
-              .getYourCompanyMenuImage();
-        }
+        img = CompanyLogoUtils.getCompanyLogo(organization);
       } else if ("yourcompanybig".equals(logo)) {
-        img = OBDal.getReadOnlyInstance()
-            .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
-            .getYourCompanyBigImage();
-        if (img == null) {
-          img = OBDal.getReadOnlyInstance()
-              .get(SystemInformation.class, "0")
-              .getYourCompanyBigImage();
-        }
+        img = CompanyLogoUtils.getCompanyLogo(organization);
       } else if ("yourcompanydoc".equals(logo)) {
-        if (org != null && !org.equals("")) {
-          Organization organization = OBDal.getReadOnlyInstance().get(Organization.class, org);
-          img = organization.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
-        }
-        if (img == null) {
-          img = OBDal.getReadOnlyInstance()
-              .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
-              .getYourCompanyDocumentImage();
-        }
-        if (img == null) {
-          img = OBDal.getReadOnlyInstance()
-              .get(SystemInformation.class, "0")
-              .getYourCompanyDocumentImage();
-        }
+        img = CompanyLogoUtils.getCompanyLogoForDocuments(organization);
       } else if ("banner-production".equals(logo)) {
         img = OBDal.getReadOnlyInstance()
             .get(SystemInformation.class, "0")
             .getProductionBannerImage();
       } else if ("yourcompanylegal".equals(logo)) {
-        if (org != null && !org.equals("")) {
-          Organization organization = OBDal.getReadOnlyInstance().get(Organization.class, org);
-          img = organization.getOrganizationInformationList().get(0).getYourCompanyDocumentImage();
-        }
-        if (img == null) {
-
-          img = OBDal.getReadOnlyInstance()
-              .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId())
-              .getYourCompanyDocumentImage();
-
-          if (img == null) {
-            img = OBDal.getReadOnlyInstance()
-                .get(SystemInformation.class, "0")
-                .getYourCompanyDocumentImage();
-          }
-        }
-      } else {
+        img = CompanyLogoUtils.getCompanyLogoForDocuments(organization);
+      } else if ("companylogo".equals(logo)) {
+        img = CompanyLogoUtils.getCompanyLogo(organization);
+      } else if ("companylogodocuments".equals(logo)) {
+        img = CompanyLogoUtils.getCompanyLogoForDocuments(organization);
+      } else if ("companylogoreceipts".equals(logo)) {
+        img = CompanyLogoUtils.getCompanyLogoForReceipts(organization);
+      }
+      else {
         log4j.error("Logo key does not exist: " + logo);
       }
     } catch (Exception e) {
@@ -2296,12 +2265,14 @@ public class Utility {
    * Provides the image logo as a byte array for the indicated parameters.
    *
    * @param logo
-   *          The name of the logo to display This can be one of the following: yourcompanylogin,
-   *          youritservicelogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
-   *          or banner-production
+   *          The name of the logo to display This can be one of the following: companylogo, companylogosubmark,
+   *          companylogodocuments, companylogoreceipts, youritservicelogin or banner-production
+   *
+   *          The following values are also supported but they are deprecated in favor of the values above:
+   *          yourcompanylogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *
    * @param org
-   *          The organization id used to get the logo In the case of requesting the yourcompanydoc
-   *          logo you can indicate the organization used to request the logo.
+   *          The organization id used to get the logo.
    * @return The image requested
    */
   public static byte[] getImageLogo(String logo, String org) {
