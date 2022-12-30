@@ -18,6 +18,7 @@
  */
 package org.openbravo.erpCommon.utility.companylogo;
 
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.ClientInformation;
@@ -33,164 +34,65 @@ import org.openbravo.model.common.enterprise.OrganizationInformation;
  */
 public class CompanyLogoUtils {
   public static Image getCompanyLogo(Organization org) {
-    return getCompanyLogoImage(org, false);
+    return getCompanyLogoByProperties(org, "companyLogo", "companyLogoDark", false);
+  }
+
+  public static Image getCompanyLogoDarkMode(Organization org) {
+    return getCompanyLogoByProperties(org, "companyLogo", "companyLogoDark", true);
   }
 
   public static Image getCompanyLogoSubmark(Organization org) {
-    return getCompanyLogoSubmarkImage(org, false);
+    return getCompanyLogoByProperties(org, "companyLogoSubmark", "companyLogoSubmarkDark", false);
   }
 
   public static Image getCompanyLogoForDocuments(Organization org) {
-    Image img = null;
-    // first look for the logo in org
-    if (org != null) {
-      OrganizationInformation orgInfo = org.getOrganizationInformationList().get(0);
-      img = orgInfo.getCompanyLogoForDocs();
-    }
-    // then try in Client info
-    if (img == null) {
-      ClientInformation clientInfo = OBDal.getReadOnlyInstance()
-          .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId());
-      img = clientInfo.getCompanyLogoForDocs();
-    }
-    // Finally try the system info
-    if (img == null) {
-      SystemInformation systemInfo = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0");
-      img = systemInfo.getCompanyLogoForDocs();
-    }
-    // If everything fails, return an empty image
-    return img;
+    return getCompanyLogoByProperties(org, "companyLogoForDocs", null, false);
   }
 
   public static Image getCompanyLogoForReceipts(Organization org) {
+    return getCompanyLogoByProperties(org, "companyLogoForReceipts", null, false);
+  }
+
+  private static Image getCompanyLogoByProperties(Organization org, String propertyLight, String propertyDark, boolean isDarkMode) {
     Image img = null;
     // first look for the logo in org
     if (org != null) {
       OrganizationInformation orgInfo = org.getOrganizationInformationList().get(0);
-      img = orgInfo.getCompanyLogoForReceipts();
+      img = getLogoImageFromEntity(orgInfo, propertyLight, propertyDark, isDarkMode);
     }
     // then try in Client info
     if (img == null) {
       ClientInformation clientInfo = OBDal.getReadOnlyInstance()
-          .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId());
-      img = clientInfo.getCompanyLogoForReceipts();
+              .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId());
+      img = getLogoImageFromEntity(clientInfo, propertyLight, propertyDark, isDarkMode);
     }
     // Finally try the system info
     if (img == null) {
       SystemInformation systemInfo = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0");
-      img = systemInfo.getCompanyLogoForReceipts();
+      img = getLogoImageFromEntity(systemInfo, propertyLight, propertyDark, isDarkMode);
     }
     // If everything fails, return an empty image
     return img;
   }
 
-  private static Image getCompanyLogoSubmarkImage(Organization org, Boolean isDarkMode) {
-    Image img = null;
-    // first look for the logo in org
-    if (org != null) {
-      OrganizationInformation orgInfo = org.getOrganizationInformationList().get(0);
-
+  private static Image getLogoImageFromEntity(BaseOBObject entity, String propertyLight, String propertyDark, boolean isDarkMode) {
+    if (propertyDark != null && !"".equals(propertyDark)) {
+      Image img = null;
       if (isDarkMode) {
-        img = orgInfo.getCompanyLogoSubmarkDark();
+        img = (Image) entity.get(propertyDark);
         if (img == null) {
-          img = orgInfo.getCompanyLogoSubmark();
+          img = (Image) entity.get(propertyLight);
         }
       } else {
-        img = orgInfo.getCompanyLogoSubmark();
+        img = (Image) entity.get(propertyLight);
         if (img == null) {
-          img = orgInfo.getCompanyLogoSubmarkDark();
+          img = (Image) entity.get(propertyDark);
         }
       }
-    }
-    // then try in Client info
-    if (img == null) {
-      ClientInformation clientInfo = OBDal.getReadOnlyInstance()
-          .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId());
 
-      if (isDarkMode) {
-        img = clientInfo.getCompanyLogoSubmarkDark();
-        if (img == null) {
-          img = clientInfo.getCompanyLogoSubmark();
-        }
-      } else {
-        img = clientInfo.getCompanyLogoSubmark();
-        if (img == null) {
-          img = clientInfo.getCompanyLogoSubmarkDark();
-        }
-      }
+      return img;
     }
-    // Finally try the system info
-    if (img == null) {
-      SystemInformation systemInfo = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0");
 
-      if (isDarkMode) {
-        img = systemInfo.getCompanyLogoSubmarkDark();
-        if (img == null) {
-          img = systemInfo.getCompanyLogoSubmark();
-        }
-      } else {
-        img = systemInfo.getCompanyLogoSubmark();
-        if (img == null) {
-          img = systemInfo.getCompanyLogoSubmarkDark();
-        }
-      }
-    }
-    // If everything fails, return an empty image
-    return img;
-  }
-
-  private static Image getCompanyLogoImage(Organization org, Boolean isDarkMode) {
-    Image img = null;
-    // first look for the logo in org
-    if (org != null) {
-      OrganizationInformation orgInfo = org.getOrganizationInformationList().get(0);
-
-      if (isDarkMode) {
-        img = orgInfo.getCompanyLogoDark();
-        if (img == null) {
-          img = orgInfo.getCompanyLogo();
-        }
-      } else {
-        img = orgInfo.getCompanyLogo();
-        if (img == null) {
-          img = orgInfo.getCompanyLogoDark();
-        }
-      }
-    }
-    // then try in Client info
-    if (img == null) {
-      ClientInformation clientInfo = OBDal.getReadOnlyInstance()
-          .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId());
-
-      if (isDarkMode) {
-        img = clientInfo.getCompanyLogoDark();
-        if (img == null) {
-          img = clientInfo.getCompanyLogo();
-        }
-      } else {
-        img = clientInfo.getCompanyLogo();
-        if (img == null) {
-          img = clientInfo.getCompanyLogoDark();
-        }
-      }
-    }
-    // Finally try the system info
-    if (img == null) {
-      SystemInformation systemInfo = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0");
-
-      if (isDarkMode) {
-        img = systemInfo.getCompanyLogoDark();
-        if (img == null) {
-          img = systemInfo.getCompanyLogo();
-        }
-      } else {
-        img = systemInfo.getCompanyLogo();
-        if (img == null) {
-          img = systemInfo.getCompanyLogoDark();
-        }
-      }
-    }
-    // If everything fails, return an empty image
-    return img;
+    return (Image) entity.get(propertyLight);
   }
 }
