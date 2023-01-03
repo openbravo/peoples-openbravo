@@ -61,7 +61,7 @@ fs.mkdirSync(globalModulesPath, {
 
 // install modules in openbravo root rolder
 // ignore scripts to avoid a infinite loop caused by this script already being executed as part of a npm script
-const environment = production ? '--production' : '';
+const environment = production ? '--omit=dev' : '';
 execSync(`npm ci --ignore-scripts ${environment} --legacy-peer-deps`, {
   stdio: 'inherit'
 });
