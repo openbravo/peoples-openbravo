@@ -571,19 +571,17 @@ public class InitialOrgSetup {
   private OBError addImages() {
     OBError obResult = new OBError();
     obResult.setType(ERRORTYPE);
-    if (client.getClientInformationList().get(0).getYourCompanyDocumentImage() != null) {
       try {
         OBContext.setAdminMode(true);
         InitialSetupUtility.setOrgImage(client, org,
-            client.getClientInformationList().get(0).getYourCompanyDocumentImage().getBindaryData(),
-            client.getClientInformationList().get(0).getYourCompanyDocumentImage().getName());
+            client.getClientInformationList().get(0));
       } catch (final Exception err) {
         obResult.setMessage(err.getMessage());
         return obResult;
       } finally {
         OBContext.restorePreviousMode();
       }
-    }
+
     obResult.setType(OKTYPE);
     return obResult;
   }

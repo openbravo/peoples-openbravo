@@ -40,6 +40,7 @@ import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.companylogo.CompanyLogoUtils;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -150,7 +151,7 @@ public class Login extends HttpBaseServlet {
       log4j.error("System information not found");
     } else {
       showITLogo = sysInfo.getYourItServiceLoginImage() != null;
-      showCompanyLogo = sysInfo.getYourCompanyLoginImage() != null;
+      showCompanyLogo = CompanyLogoUtils.getCompanyLogo(null) != null;
 
       itLink = sysInfo.getSupportContact() == null ? "" : sysInfo.getSupportContact();
       if (!itLink.isEmpty() && !(StringUtils.startsWithIgnoreCase(itLink, "http://")
