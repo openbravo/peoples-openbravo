@@ -373,7 +373,7 @@
 					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylogin")]]></imageExpression>
+				<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogo")]]></imageExpression>
 			</image>
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" style="Report_Footer" x="1" y="96" width="534" height="14" uuid="e218dd5b-1d73-4f9e-baa2-267780e445ac"/>

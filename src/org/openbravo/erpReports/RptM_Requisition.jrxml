@@ -94,7 +94,7 @@
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylogin")]]></imageExpression>
+					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogo")]]></imageExpression>
 				</image>
 				<line>
 					<reportElement key="line-2" x="1" y="96" width="482" height="1" uuid="5d19a24b-7b86-438b-9265-bc8b9e2cdbdd"/>

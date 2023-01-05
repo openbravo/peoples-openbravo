@@ -46,7 +46,7 @@ td.Login_Logo_Company_Container_Cell {
 .Login_Logo_Company {
   width: 197px;
   height: 55px;
-  background: url(../../utility/ShowImageLogo?logo=yourcompanylogin) no-repeat center center;
+  background: url(../../utility/ShowImageLogo?logo=companylogo) no-repeat center center;
 }
 
 .Login_Logo_Company_Props {
