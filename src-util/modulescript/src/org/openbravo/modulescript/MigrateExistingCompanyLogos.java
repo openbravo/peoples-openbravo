@@ -19,6 +19,8 @@
 package org.openbravo.modulescript;
 
 import org.openbravo.database.ConnectionProvider;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * This module script is used to upgrade the existing company logos to fit the new structure
@@ -27,8 +29,12 @@ import org.openbravo.database.ConnectionProvider;
  * The general criteria followed here is that we only migrate the logo used for documents,
  * and for the company logo we will prefer using a vectorial version, and in case there is
  * no vectorial image available, pick the largest image.
+ *
+ * This migration will only be done when logo images are found in the deprecated logo fields. If none,
+ * new logo fields won't be updated
  */
 public class MigrateExistingCompanyLogos extends ModuleScript {
+  static Logger log4j = LogManager.getLogger();
 
   @Override
   public void execute() {
@@ -61,8 +67,15 @@ public class MigrateExistingCompanyLogos extends ModuleScript {
       companyLogoSysInfo = MigrateExistingCompanyLogosData.selectLargestCompanyLogoInSystemInfo(cp);
     }
 
-    MigrateExistingCompanyLogosData.updateLogosInSystemInfo(cp, companyLogoSysInfo,
-        logoForDocsSysInfo);
+    // Update logos if found any
+    if (logoExists(logoForDocsSysInfo) || logoExists(companyLogoSysInfo)) {
+      log4j.warn("Updating logos in sys info " + logoForDocsSysInfo + " and " + companyLogoSysInfo);
+      MigrateExistingCompanyLogosData.updateLogosInSystemInfo(cp, companyLogoSysInfo,
+              logoForDocsSysInfo);
+    }
+    else {
+      log4j.warn("skipping update in sysinfo");
+    }
   }
 
   private void migrateLogosInClientInfo(ConnectionProvider cp) throws Exception {
@@ -82,8 +95,15 @@ public class MigrateExistingCompanyLogos extends ModuleScript {
         companyLogoForClient = MigrateExistingCompanyLogosData.selectLargestLogoInClientInfo(cp,
             docLogo.adClientId);
       }
-      MigrateExistingCompanyLogosData.updateLogosInClientInfo(cp, companyLogoForClient,
-          docLogo.yourCompanyDocumentImage, docLogo.adClientId);
+
+      if (logoExists(docLogo.yourCompanyDocumentImage) || logoExists(companyLogoForClient)) {
+        log4j.warn("Updating logos in client info " + docLogo.yourCompanyDocumentImage + " and " + companyLogoForClient);
+        MigrateExistingCompanyLogosData.updateLogosInClientInfo(cp, companyLogoForClient,
+                docLogo.yourCompanyDocumentImage, docLogo.adClientId);
+      }
+      else {
+        log4j.warn("skipping update in client");
+      }
     }
   }
 
@@ -94,9 +114,15 @@ public class MigrateExistingCompanyLogos extends ModuleScript {
     MigrateExistingCompanyLogosForDocsData[] docLogosPerOrg = MigrateExistingCompanyLogosForDocsData
         .selectLogoForDocumentsInOrganizations(cp);
     for (MigrateExistingCompanyLogosForDocsData docLogo : docLogosPerOrg) {
-      MigrateExistingCompanyLogosData.updateLogosInOrgInfo(cp, docLogo.yourCompanyDocumentImage,
-          docLogo.adOrgId);
+      if (logoExists(docLogo.yourCompanyDocumentImage)) {
+        MigrateExistingCompanyLogosData.updateLogosInOrgInfo(cp, docLogo.yourCompanyDocumentImage,
+                docLogo.adOrgId);
+      }
     }
+  }
+
+  private boolean logoExists(String logoId) {
+    return logoId != null && !"".equals(logoId);
   }
 
   private void clearOldLogos(ConnectionProvider cp) throws Exception {
