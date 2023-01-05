@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2021 Openbravo SLU
+ * All portions are Copyright (C) 2017-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -153,8 +153,7 @@ OB.Layout.initialize = function() {
   OB.TopLayout.CompanyImageLogo = isc.Img.create({
     width: OB.Application.companyImage.width,
     height: OB.Application.companyImage.height,
-    src:
-      OB.Application.contextUrl + 'utility/ShowImageLogo?logo=yourcompanymenu',
+    src: OB.Application.contextUrl + 'utility/ShowImageLogo?logo=companylogo',
     imageType: 'normal'
   });
 

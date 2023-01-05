@@ -133,7 +133,7 @@ AD_ORG.NAME, AD_ORGINFO.TAXID, AD_USER.NAME, C_BPARTNER_LOCATION.PHONE, C_BPARTN
 					<reportElement key="image-1" x="0" y="13" width="153" height="78" uuid="e2a42cb6-9e11-4a52-a2c6-ee7cfe492484">
 						<printWhenExpression><![CDATA[new Boolean($F{SHOWLOGO}.equalsIgnoreCase("Y"))]]></printWhenExpression>
 					</reportElement>
-					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{organizationid})]]></imageExpression>
+					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogodocs", $F{organizationid})]]></imageExpression>
 				</image>
 				<textField isBlankWhenNull="false">
 					<reportElement key="textField-22" x="314" y="18" width="168" height="27" forecolor="#FF0000" uuid="0a101abd-3805-4eac-9ae6-d0ff0e641177"/>

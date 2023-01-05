@@ -274,7 +274,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					<reportElement key="image-1" x="313" y="0" width="170" height="91" uuid="9dd4845f-3519-434a-bac0-665eb1b5e0e4">
 						<printWhenExpression><![CDATA[new Boolean($F{SHOWLOGO}.equalsIgnoreCase("Y"))]]></printWhenExpression>
 					</reportElement>
-					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{ORGANIZATIONID})]]></imageExpression>
+					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogodocs", $F{ORGANIZATIONID})]]></imageExpression>
 				</image>
 			</band>
 		</groupHeader>

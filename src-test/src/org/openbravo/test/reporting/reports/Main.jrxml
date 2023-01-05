@@ -24,7 +24,7 @@
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{ad_org_id})]]></imageExpression>
+				<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogodocs", $F{ad_org_id})]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="10" y="50" width="77" height="20" uuid="9a8e4e76-f1e5-4766-aac2-fae16c1df71d"/>

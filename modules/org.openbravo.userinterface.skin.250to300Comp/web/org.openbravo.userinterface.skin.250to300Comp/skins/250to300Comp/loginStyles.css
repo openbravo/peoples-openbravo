@@ -557,7 +557,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   padding: 50px 0px 0px 0px;
   width: 520px;
   height: 120px;
-  background: url(../../../../../utility/ShowImageLogo?logo=yourcompanybig) no-repeat center center;
+  background: url(../../../../../utility/ShowImageLogo?logo=companylogo) no-repeat center center;
 }
 
 .error-text {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -95,7 +95,7 @@ public class ApplicationDynamicComponent extends SessionDynamicTemplateComponent
       return imageProperties;
     }
     imageProperties = new HashMap<>();
-    Image img = Utility.getImageLogoObject("yourcompanymenu", "");
+    Image img = Utility.getImageLogoObject("companylogo", "");
     String imageWidth = "122";
     String imageHeight = "34";
     if (img != null) {

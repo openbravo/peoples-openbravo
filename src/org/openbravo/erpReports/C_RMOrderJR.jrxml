@@ -216,7 +216,7 @@ AND C_CURRENCY.C_CURRENCY_ID=C_ORDER.C_CURRENCY_ID]]>
 					<reportElement key="image-1" x="313" y="0" width="170" height="91" uuid="113a498a-deee-4cf6-b2da-9a500b90c8d2">
 						<printWhenExpression><![CDATA[new Boolean($F{SHOWLOGO}.equalsIgnoreCase("Y"))]]></printWhenExpression>
 					</reportElement>
-					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{ORGANIZATIONID})]]></imageExpression>
+					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogodocs", $F{ORGANIZATIONID})]]></imageExpression>
 				</image>
 				<textField isBlankWhenNull="false">
 					<reportElement key="textField-16" positionType="FixRelativeToBottom" x="121" y="118" width="275" height="55" forecolor="#FF0000" uuid="df5bd25b-b15b-41b4-a93c-6f097194373d"/>

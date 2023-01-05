@@ -176,7 +176,7 @@ AND AD_ORG.ad_org_id = (SELECT o.AD_ORG_ID
 						<bottomPen lineWidth="0.0" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{ORGANIZATIONID})]]></imageExpression>
+					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogodocs", $F{ORGANIZATIONID})]]></imageExpression>
 				</image>
 				<textField textAdjust="StretchHeight" isBlankWhenNull="false">
 					<reportElement key="textField-9" style="Report_Footer" positionType="Float" x="314" y="18" width="168" height="27" isPrintWhenDetailOverflows="true" forecolor="#FF0000" uuid="daa0dc12-8785-4592-b3ec-da4365b38803"/>

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2022 Openbravo SLU
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2207,7 +2207,7 @@ public class Utility {
    * 
    * @param logo
    *          The name of the logo to display This can be one of the following: companylogo, companylogosubmark,
-   *          companylogodocuments, companylogoreceipts, youritservicelogin or banner-production
+   *          companylogodocs, companylogoreceipts, youritservicelogin or banner-production
    *
    *          The following values are also supported but they are deprecated in favor of the values above:
    *          yourcompanylogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
@@ -2245,7 +2245,7 @@ public class Utility {
         img = CompanyLogoUtils.getCompanyLogoForDocuments(organization);
       } else if ("companylogo".equals(logo)) {
         img = CompanyLogoUtils.getCompanyLogo(organization);
-      } else if ("companylogodocuments".equals(logo)) {
+      } else if ("companylogodocs".equals(logo)) {
         img = CompanyLogoUtils.getCompanyLogoForDocuments(organization);
       } else if ("companylogoreceipts".equals(logo)) {
         img = CompanyLogoUtils.getCompanyLogoForReceipts(organization);
@@ -2266,7 +2266,7 @@ public class Utility {
    *
    * @param logo
    *          The name of the logo to display This can be one of the following: companylogo, companylogosubmark,
-   *          companylogodocuments, companylogoreceipts, youritservicelogin or banner-production
+   *          companylogodocs, companylogoreceipts, youritservicelogin or banner-production
    *
    *          The following values are also supported but they are deprecated in favor of the values above:
    *          yourcompanylogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
