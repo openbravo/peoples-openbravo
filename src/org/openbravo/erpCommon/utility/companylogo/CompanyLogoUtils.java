@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility.companylogo;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.utility.Image;
@@ -35,6 +36,10 @@ import org.openbravo.model.common.enterprise.OrganizationInformation;
 public class CompanyLogoUtils {
   public static Image getCompanyLogo(Organization org) {
     return getCompanyLogoByProperties(org, "companyLogo", "companyLogoDark", false);
+  }
+
+  public static Image getCompanyLogoForClient(Client client) {
+    return getCompanyLogoByProperties(client, "companyLogo", "companyLogoDark", false);
   }
 
   public static Image getCompanyLogoDarkMode(Organization org) {
@@ -53,19 +58,33 @@ public class CompanyLogoUtils {
     return getCompanyLogoByProperties(org, "companyLogoForReceipts", null, false);
   }
 
-  private static Image getCompanyLogoByProperties(Organization org, String propertyLight, String propertyDark, boolean isDarkMode) {
+  private static Image getCompanyLogoByProperties(Organization org, String propertyLight,
+      String propertyDark, boolean isDarkMode) {
     Image img = null;
     // first look for the logo in org
     if (org != null) {
       OrganizationInformation orgInfo = org.getOrganizationInformationList().get(0);
       img = getLogoImageFromEntity(orgInfo, propertyLight, propertyDark, isDarkMode);
     }
-    // then try in Client info
+    // then try in Client info from the current client
+    // or in SystemInfo if no logo is found for this client
     if (img == null) {
-      ClientInformation clientInfo = OBDal.getReadOnlyInstance()
-              .get(ClientInformation.class, OBContext.getOBContext().getCurrentClient().getId());
-      img = getLogoImageFromEntity(clientInfo, propertyLight, propertyDark, isDarkMode);
+      img = getCompanyLogoByProperties(OBContext.getOBContext().getCurrentClient(), propertyLight,
+          propertyDark, isDarkMode);
     }
+
+    // If everything fails, return an empty image
+    return img;
+  }
+
+  private static Image getCompanyLogoByProperties(Client client, String propertyLight,
+      String propertyDark, boolean isDarkMode) {
+    Image img = null;
+    // try in Client info
+    ClientInformation clientInfo = OBDal.getReadOnlyInstance()
+        .get(ClientInformation.class, client.getId());
+    img = getLogoImageFromEntity(clientInfo, propertyLight, propertyDark, isDarkMode);
+
     // Finally try the system info
     if (img == null) {
       SystemInformation systemInfo = OBDal.getReadOnlyInstance().get(SystemInformation.class, "0");
@@ -75,7 +94,8 @@ public class CompanyLogoUtils {
     return img;
   }
 
-  private static Image getLogoImageFromEntity(BaseOBObject entity, String propertyLight, String propertyDark, boolean isDarkMode) {
+  private static Image getLogoImageFromEntity(BaseOBObject entity, String propertyLight,
+      String propertyDark, boolean isDarkMode) {
     if (propertyDark != null && !"".equals(propertyDark)) {
       Image img = null;
       if (isDarkMode) {
