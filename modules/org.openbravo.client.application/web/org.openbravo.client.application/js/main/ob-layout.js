@@ -151,10 +151,9 @@ OB.Layout.initialize = function() {
 
   //create the navbar on the left and the logo on the right
   OB.TopLayout.CompanyImageLogo = isc.Img.create({
-    width: OB.Application.companyImage.width,
-    height: OB.Application.companyImage.height,
     src: OB.Application.contextUrl + 'utility/ShowImageLogo?logo=companylogo',
-    imageType: 'normal'
+    imageType: 'normal',
+    styleName: 'OBNavBarCompanyLogo'
   });
 
   OB.TestRegistry.register(

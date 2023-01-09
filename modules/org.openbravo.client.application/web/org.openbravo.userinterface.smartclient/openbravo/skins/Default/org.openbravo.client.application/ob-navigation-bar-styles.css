@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -277,4 +277,10 @@ if the tab headers are on the right, left or bottom the same styles can be used 
 .OBHelpAboutLinkButtonFocusedOver,
 .OBHelpAboutLinkButton:hover {
   text-decoration: underline;
+}
+
+.OBNavBarCompanyLogo img {
+  max-width: 197px;
+  max-height: 55px;
+  object-fit: contain;
 }
