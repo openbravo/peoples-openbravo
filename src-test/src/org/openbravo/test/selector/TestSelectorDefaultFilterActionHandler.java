@@ -60,6 +60,7 @@ public class TestSelectorDefaultFilterActionHandler extends BaseDataSourceTestDa
     try {
       content.put("_selectorDefinitionId", PRODUCT_COMPLETE_SELECTOR_ID);
       content.put("inpwindowId", GOODS_MOVEMENTS_WINDOW_ID);
+      content.put("csrfToken", getSessionCsrfToken());
     } catch (JSONException ignore) {
     }
     return content.toString();

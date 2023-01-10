@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,7 +60,13 @@ public class FICTest extends BaseDataSourceTestDal {
     params.put("_action", "org.openbravo.client.application.window.FormInitializationComponent");
     params.put("TAB_ID", "186"); // Sales Order
     params.put("PARENT_ID", null);
-    String response = doRequest("/org.openbravo.client.kernel", params, 200, "POST");
+
+    JSONObject content = new JSONObject();
+    content.put("csrfToken", getSessionCsrfToken());
+
+    String response = doRequest(
+        "/org.openbravo.client.kernel?" + DatasourceTestUtil.getParamsContent(params),
+        content.toString(), 200, "POST", "application/json");
 
     JSONObject auxiliaryInputs = new JSONObject(response).getJSONObject("auxiliaryInputValues");
     assertTrue("ORDERTYPE should be set", auxiliaryInputs.has("ORDERTYPE"));
@@ -88,7 +94,13 @@ public class FICTest extends BaseDataSourceTestDal {
     params.put("_action", "org.openbravo.client.application.window.FormInitializationComponent");
     params.put("TAB_ID", "6868B706DA8340158DE353A6C252A564"); // Costing Rules
     params.put("ROW_ID", rule.getId());
-    String response = doRequest("/org.openbravo.client.kernel", params, 200, "POST");
+
+    JSONObject content = new JSONObject();
+    content.put("csrfToken", getSessionCsrfToken());
+
+    String response = doRequest(
+        "/org.openbravo.client.kernel?" + DatasourceTestUtil.getParamsContent(params),
+        content.toString(), 200, "POST", "application/json");
 
     String ficDateFromValue = new JSONObject(response).getJSONObject("columnValues")
         .getJSONObject("Datefrom")
@@ -123,6 +135,7 @@ public class FICTest extends BaseDataSourceTestDal {
     JSONObject content = new JSONObject();
     content.put("inpadOrgId", "null"); // clearing organization field
     content.put("inpadRoleId", selectedRoleId);
+    content.put("csrfToken", getSessionCsrfToken());
 
     String response = doRequest("/org.openbravo.client.kernel" + urlParams.toString(),
         content.toString(), 200, "POST", "application/json");

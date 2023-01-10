@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014 Openbravo SLU
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,7 +19,15 @@
 
 package org.openbravo.test.datasource;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Base for tests performing requests to a live Openbravo instance. It doesn't allow to work with
@@ -32,11 +40,15 @@ import java.util.Map;
  *
  */
 public class BaseDataSourceTestNoDal {
+  private static Logger log = LogManager.getLogger();
   private static String OB_URL = null;
   protected static final String LOGIN = "Openbravo";
   protected static final String PWD = "openbravo";
   private static boolean authenticated = false;
   private static String cookie;
+  private static String csrfToken;
+
+  protected static final String POST_METHOD = "POST";
 
   /**
    * Performs a request to Openbravo returning its response and asserting the response code matches
@@ -102,6 +114,35 @@ public class BaseDataSourceTestNoDal {
     return PWD;
   }
 
+  protected String getSessionCsrfToken() {
+    if (csrfToken == null) {
+      csrfToken = getTokenFromSessionDynamic();
+    }
+    return csrfToken;
+  }
+
+  private String getTokenFromSessionDynamic() {
+    Map<String, String> params = new HashMap<>();
+    try {
+      String response = doRequest("/org.openbravo.client.kernel/OBCLKER_Kernel/SessionDynamic",
+          params, HttpServletResponse.SC_OK, POST_METHOD);
+      return findCsrfTokenInResponse(response);
+    } catch (Exception e) {
+      log.error("Cannot retrieve CSRF Token", e);
+      return "";
+    }
+  }
+
+  private String findCsrfTokenInResponse(String response) throws Exception {
+    Pattern pattern = Pattern.compile("csrfToken:\\s?\'([A-Z0-9]+)\'");
+    Matcher matcher = pattern.matcher(response);
+    if (matcher.find()) {
+      return matcher.group(1);
+    }
+
+    throw new Exception("Cannot find CSRF Token in SessionDynamic response");
+  }
+
   /**
    * Changes current session's profile
    */
@@ -112,6 +153,8 @@ public class BaseDataSourceTestNoDal {
       authenticated = true;
     }
 
-    DatasourceTestUtil.changeProfile(getOpenbravoURL(), cookie, roleId, langId, orgId, warehouseId);
+    DatasourceTestUtil.changeProfile(getOpenbravoURL(), cookie, getSessionCsrfToken(), roleId,
+        langId, orgId, warehouseId);
+    csrfToken = getTokenFromSessionDynamic();
   }
 }

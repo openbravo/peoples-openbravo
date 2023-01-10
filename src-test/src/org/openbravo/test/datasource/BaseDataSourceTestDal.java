@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2022 Openbravo SLU
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -176,7 +176,8 @@ public class BaseDataSourceTestDal extends OBBaseTest {
         && warehouseId.equals(lastWarehouseId)) {
       return;
     }
-    DatasourceTestUtil.changeProfile(getOpenbravoURL(), cookie, roleId, langId, orgId, warehouseId);
+    DatasourceTestUtil.changeProfile(getOpenbravoURL(), cookie, getSessionCsrfToken(), roleId,
+        langId, orgId, warehouseId);
     csrfToken = getTokenFromSessionDynamic();
     lastRoleId = roleId;
     lastLangId = langId;

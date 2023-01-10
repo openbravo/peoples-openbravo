@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2022 Openbravo SLU
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -133,13 +133,14 @@ public class DatasourceTestUtil {
     return obURL;
   }
 
-  static void changeProfile(String openbravoURL, String cookie, String roleId, String langId,
-      String orgId, String warehouseId) throws Exception {
+  static void changeProfile(String openbravoURL, String cookie, String csrfToken, String roleId,
+      String langId, String orgId, String warehouseId) throws Exception {
     JSONObject newProfile = new JSONObject();
     newProfile.put("language", langId);
     newProfile.put("organization", orgId);
     newProfile.put("role", roleId);
     newProfile.put("warehouse", warehouseId);
+    newProfile.put("csrfToken", csrfToken);
     request(openbravoURL,
         "/org.openbravo.client.kernel?command=save&_action=org.openbravo.client.application.navigationbarcomponents.UserInfoWidgetActionHandler",
         "POST", newProfile.toString(), cookie, 200, "application/json");

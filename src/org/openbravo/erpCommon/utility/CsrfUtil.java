@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -50,12 +50,16 @@ public class CsrfUtil {
   }
 
   public static String getCsrfTokenFromRequestContent(String requestContent) {
-    Matcher matcher = csrfTokenPattern.matcher(requestContent);
-    if (matcher.find()) {
-      return matcher.group("token");
+    String csrfToken = "";
+
+    if (requestContent != null) {
+      Matcher matcher = csrfTokenPattern.matcher(requestContent);
+      if (matcher.find()) {
+        csrfToken = matcher.group("token");
+      }
     }
 
-    return "";
+    return csrfToken;
   }
 
   private static String getSessionCsrfToken(HttpServletRequest request) {

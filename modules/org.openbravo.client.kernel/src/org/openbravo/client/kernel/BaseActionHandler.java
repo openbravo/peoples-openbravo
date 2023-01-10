@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.CsrfUtil;
+import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.service.json.JsonConstants;
 
 /**
@@ -51,7 +54,14 @@ public abstract class BaseActionHandler implements ActionHandler {
     try {
       final HttpServletRequest request = RequestContext.get().getRequest();
       final Map<String, Object> parameterMap = this.extractParametersFromRequest(request);
+
       final String content = this.extractRequestContent(request, parameterMap);
+
+      if ("POST".equals(request.getMethod()) && shouldCheckCSRFInActionHandlers()) {
+        final String csrfToken = CsrfUtil.getCsrfTokenFromRequestContent(content);
+        CsrfUtil.checkCsrfToken(csrfToken, request);
+      }
+
       // also add the Http Stuff
       parameterMap.put(KernelConstants.HTTP_SESSION, request.getSession(false));
       parameterMap.put(KernelConstants.HTTP_REQUEST, request);
@@ -62,6 +72,18 @@ public abstract class BaseActionHandler implements ActionHandler {
       this.writeResponse(parameterMap, result, request, response);
     } catch (Exception e) {
       throw new IllegalStateException(e);
+    }
+  }
+
+  private boolean shouldCheckCSRFInActionHandlers() {
+    try {
+      return Preferences
+          .getPreferenceValue("CheckCSRFInActionHandlers", true, null, null, null, null,
+              (String) null)
+          .equals("Y");
+    } catch (PropertyException e) {
+      e.printStackTrace();
+      return false;
     }
   }
 

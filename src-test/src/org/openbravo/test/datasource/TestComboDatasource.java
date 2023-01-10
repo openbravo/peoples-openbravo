@@ -20,13 +20,6 @@ package org.openbravo.test.datasource;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-
-/**
- * Test cases for ComboTableDatasourceService
- * 
- * @author Shankar Balachandran 
- */
-
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
@@ -253,10 +246,13 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
         + "&ROW_ID=null" //
         + "&CHANGED_COLUMN=inpadOrgId";
 
+    JSONObject content = new JSONObject();
+    content.put("csrfToken", getSessionCsrfToken());
+
     // Executes a FIC in mode change for an empty ad_org, before the fix it returned default value,
     // now it should return empty
 
-    String response = doRequest(ficRequest, new HashMap<String, String>(), 200, "POST");
+    String response = doRequest(ficRequest, content.toString(), 200, "POST", "application/json");
     JSONObject jsonResponse = new JSONObject(response);
     assertTrue(jsonResponse.toString() != null);
     assertThat(
