@@ -114,7 +114,7 @@
             your_company_document_image = null,
             your_company_login_image = null,
             your_company_big_image = null,
-            your_company_menu_image = null;
+            your_company_menu_image = null
         ]]>
         </Sql>
     </SqlMethod>
@@ -125,7 +125,7 @@
           UPDATE ad_clientinfo SET
             your_company_document_image = null,
             your_company_big_image = null,
-            your_company_menu_image = null;
+            your_company_menu_image = null
         ]]>
         </Sql>
     </SqlMethod>
@@ -133,7 +133,7 @@
         <SqlMethodComment></SqlMethodComment>
         <Sql>
             <![CDATA[
-          UPDATE ad_orginfo SET your_company_document_image = null;
+          UPDATE ad_orginfo SET your_company_document_image = null
         ]]>
         </Sql>
     </SqlMethod>
