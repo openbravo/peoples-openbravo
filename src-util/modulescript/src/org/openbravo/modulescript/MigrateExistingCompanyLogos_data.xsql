@@ -46,7 +46,7 @@
         <Parameter name="adClientId"/>
         <Parameter name="adClientId"/>
     </SqlMethod>
-    <SqlMethod name="selectLargestCompanyLogoInSystemInfo" type="preparedStatement" return="String">
+    <SqlMethod name="selectCompanyLogosInSystemInfoOrderedBySize" type="preparedStatement" return="multiple">
         <SqlMethodComment></SqlMethodComment>
         <Sql>
             <![CDATA[
@@ -56,11 +56,10 @@
         OR ad_image_id IN (SELECT your_company_login_image FROM ad_system_info)
         OR ad_image_id IN (SELECT your_company_menu_image FROM ad_system_info)
         ORDER BY height DESC
-        LIMIT 1
         ]]>
         </Sql>
     </SqlMethod>
-    <SqlMethod name="selectLargestLogoInClientInfo" type="preparedStatement" return="String">
+    <SqlMethod name="selectLogosInClientInfoOrderedBySize" type="preparedStatement" return="multiple">
         <SqlMethodComment></SqlMethodComment>
         <Sql>
             <![CDATA[
@@ -69,7 +68,6 @@
         WHERE ad_image_id IN (SELECT your_company_big_image from ad_clientinfo where ad_client_id = ?)
            OR ad_image_id IN (SELECT your_company_menu_image from ad_clientinfo where ad_client_id = ?)
         ORDER BY height DESC
-        LIMIT 1
         ]]>
         </Sql>
         <Parameter name="adClientId"/>
