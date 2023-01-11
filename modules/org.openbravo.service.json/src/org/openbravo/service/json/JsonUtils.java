@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.persistence.QueryTimeoutException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -253,7 +254,10 @@ public class JsonUtils {
         jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);
       } else if (obError != null) {
         final JSONObject error = new JSONObject();
-        error.put("message", obError.getMessage());
+        // unescape the text before escaping it to support error message that are already escaped
+        final String escapedErrorMessage = StringEscapeUtils
+            .escapeHtml(StringEscapeUtils.unescapeHtml(obError.getMessage()));
+        error.put("message", escapedErrorMessage);
         error.put("messageType", obError.getType());
         error.put("title", obError.getTitle());
         jsonResponse.put(JsonConstants.RESPONSE_ERROR, error);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2019 Openbravo SLU
+ * All portions are Copyright (C) 2011-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -135,6 +135,11 @@ isc.OBSearchItem.addProperties({
     this.icons = [this.instanceClearIcon];
 
     return this.Super('init', arguments);
+  },
+
+  getDisplayValue: function(args) {
+    var displayValue = this.Super('getDisplayValue', args);
+    return displayValue && displayValue.asHTML();
   },
 
   // show the complete displayed value, handy when the display value got clipped
