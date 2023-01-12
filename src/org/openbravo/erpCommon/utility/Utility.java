@@ -81,7 +81,6 @@ import org.openbravo.erpCommon.obps.ActivationKey.LicenseClass;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.companylogo.CompanyLogoUtils;
 import org.openbravo.model.ad.process.ProcessInstance;
-import org.openbravo.model.ad.system.ClientInformation;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.Tab;
@@ -2206,11 +2205,13 @@ public class Utility {
    * Provides the image logo as a byte array for the indicated parameters.
    * 
    * @param logo
-   *          The name of the logo to display This can be one of the following: companylogo, companylogosubmark,
-   *          companylogodocs, companylogoreceipts, youritservicelogin or banner-production
+   *          The name of the logo to display This can be one of the following: companylogo,
+   *          companylogosubmark, companylogodocs, companylogoreceipts, youritservicelogin or
+   *          banner-production
    *
-   *          The following values are also supported but they are deprecated in favor of the values above:
-   *          yourcompanylogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          The following values are also supported but they are deprecated in favor of the values
+   *          above: yourcompanylogin, yourcompanymenu, yourcompanybig, yourcompanydoc,
+   *          yourcompanylegal
    * @param org
    *          The organization id used to get the logo.
    *
@@ -2249,8 +2250,7 @@ public class Utility {
         img = CompanyLogoUtils.getCompanyLogoForDocuments(organization);
       } else if ("companylogoreceipts".equals(logo)) {
         img = CompanyLogoUtils.getCompanyLogoForReceipts(organization);
-      }
-      else {
+      } else {
         log4j.error("Logo key does not exist: " + logo);
       }
     } catch (Exception e) {
@@ -2265,11 +2265,13 @@ public class Utility {
    * Provides the image logo as a byte array for the indicated parameters.
    *
    * @param logo
-   *          The name of the logo to display This can be one of the following: companylogo, companylogosubmark,
-   *          companylogodocs, companylogoreceipts, youritservicelogin or banner-production
+   *          The name of the logo to display This can be one of the following: companylogo,
+   *          companylogosubmark, companylogodocs, companylogoreceipts, youritservicelogin or
+   *          banner-production
    *
-   *          The following values are also supported but they are deprecated in favor of the values above:
-   *          yourcompanylogin, yourcompanymenu, yourcompanybig, yourcompanydoc, yourcompanylegal
+   *          The following values are also supported but they are deprecated in favor of the values
+   *          above: yourcompanylogin, yourcompanymenu, yourcompanybig, yourcompanydoc,
+   *          yourcompanylegal
    *
    * @param org
    *          The organization id used to get the logo.
