@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -398,6 +398,9 @@ isc.OBStandardWindow.addProperties({
       afterRefresh;
 
     afterRefresh = function() {
+      var isDirectTab =
+        currentView.standardWindow.targetRecordId &&
+        currentView.tabId === currentView.standardWindow.targetTabId;
       // Refresh context view
       //contextView.getTabMessage();
       currentView.toolBar.refreshCustomButtons();
@@ -407,8 +410,11 @@ isc.OBStandardWindow.addProperties({
       //        // let's set half for each in order to see the message
       //        contextView.setHalfSplit();
       //      }
-      // Refresh in order to show possible new records
-      currentView.refresh(null, false);
+      // Refresh in order to show possible new records, if the view was opened with a target
+      //  record do not refresh the grid as the current selection could be lost
+      if (!isDirectTab) {
+        currentView.refresh(null, false);
+      }
     };
 
     if (!currentView) {
