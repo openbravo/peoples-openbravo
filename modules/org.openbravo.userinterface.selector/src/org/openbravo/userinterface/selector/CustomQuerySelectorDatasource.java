@@ -47,6 +47,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
@@ -65,7 +66,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
@@ -138,8 +139,12 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         String hqlSelect = "select " + entityAlias + property;
         String hqlSubquery = hqlSelect + "\nfrom " + hqlParts[1];
 
-        String hqlDistinctQuery = "select distinct e\nfrom " + entityName + " e\nwhere e in ("
-            + hqlSubquery + ")";
+        //@formatter:off
+        String hqlDistinctQuery =
+            "select distinct e " +
+            "from " + entityName + " e " +
+            "where e in (" + hqlSubquery + ")";
+        //@formatter:on
         Query<Tuple> distinctQuery = OBDal.getInstance()
             .getSession()
             .createQuery(hqlDistinctQuery, Tuple.class);
@@ -268,8 +273,16 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   }
 
   private Entity getEntityFromSelectorField(SelectorField selectorField) {
-    Table table = selectorField.getReference().getADReferencedTableList().get(0).getTable();
-    return ModelProvider.getInstance().getEntityByTableId(table.getId());
+    List<ReferencedTable> referencedTableList = selectorField.getReference()
+        .getADReferencedTableList();
+    if (!referencedTableList.isEmpty()) {
+      return ModelProvider.getInstance()
+          .getEntityByTableId(referencedTableList.get(0).getTable().getId());
+    } else {
+      throw new OBException("Error while getting entity from selector field: "
+          + "This functionality is only available when using Table references.");
+    }
+
   }
 
   private String getPropertyFromClauseLeftParts(String[] clauseLeftParts) {
