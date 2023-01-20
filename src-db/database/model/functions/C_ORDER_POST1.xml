@@ -1432,7 +1432,7 @@
                   END IF;
                 END IF;
                 
-                IF (v_res_status <> 'DR') THEN
+                IF (v_res_status <> 'DR' AND v_res_status <> 'OG') THEN
                   -- Update so_res_status
                   UPDATE c_orderline
                   SET so_res_status = CASE WHEN cur_orderline.qtyordered = v_reservedqty THEN 'CR'

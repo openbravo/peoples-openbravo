@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -77,7 +77,8 @@ public class ManageReservationActionHandler extends BaseProcessActionHandler {
         final String strOrderLineId = jsonRequest.getString("C_OrderLine_ID");
         final OrderLine sol = OBDal.getInstance().get(OrderLine.class, strOrderLineId);
         reservation = ReservationUtils.getReservationFromOrder(sol);
-        processReservation = reservation.getRESStatus().equals("DR");
+        processReservation = reservation.getRESStatus().equals("DR")
+            || reservation.getRESStatus().equals("OG");
       }
 
       if (StringUtils.equals(reservation.getRESStatus(), "CL")) {

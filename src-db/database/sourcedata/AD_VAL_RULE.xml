@@ -1298,6 +1298,7 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--1645143617E44289A08A1EA4D617A184-->  <NAME><![CDATA[M_Reservation Allowed Actions]]></NAME>
 <!--1645143617E44289A08A1EA4D617A184-->  <TYPE><![CDATA[S]]></TYPE>
 <!--1645143617E44289A08A1EA4D617A184-->  <CODE><![CDATA[((@res_status@ = 'DR' AND value IN ('PR'))
+ OR (@res_status@ = 'OG' AND value IN ('PR'))
  OR (@res_status@ = 'CO' AND value IN ('HO', 'RE', 'CL'))
  OR (@res_status@ = 'HO' AND value IN ('UNHO', 'CL'))
  OR (@res_status@ = 'CL' AND value IN ('--'))

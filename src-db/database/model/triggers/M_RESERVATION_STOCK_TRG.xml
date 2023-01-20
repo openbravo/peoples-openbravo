@@ -74,7 +74,7 @@ BEGIN
              releasedqty = COALESCE(releasedqty, 0) + v_releasedqtydiff
          WHERE m_reservation_id = v_reservation_id;
          SELECT res_status, m_product_id, c_uom_id INTO v_resstatus, v_m_product_id, v_c_uom_id FROM   m_reservation where m_reservation_id = v_reservation_id;
-         IF(v_resstatus <> 'DR') THEN
+         IF(v_resstatus <> 'DR' AND v_resstatus <> 'OG') THEN
                  UPDATE m_storage_detail
                  SET reservedqty = reservedqty + v_reservedqtydiff - v_releasedqtydiff,
                      allocatedqty = allocatedqty + v_allocatedqtydiff

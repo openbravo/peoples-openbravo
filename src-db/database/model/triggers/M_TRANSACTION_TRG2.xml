@@ -42,7 +42,7 @@ BEGIN
       WHERE EXISTS (SELECT 1
                     FROM m_reservation r
                         JOIN m_reservation_stock rs ON r.m_reservation_id = rs.m_reservation_id
-                    WHERE r.res_status NOT IN ('CL', 'DR')
+                    WHERE r.res_status NOT IN ('CL', 'DR' , 'OG')
                       AND r.m_product_id = :NEW.m_product_id
                       AND r.c_uom_id = :NEW.c_uom_id
                       AND COALESCE(rs.m_attributesetinstance_id, '0') = :NEW.m_attributesetinstance_id
@@ -52,7 +52,7 @@ BEGIN
           INTO v_reserved
         FROM m_reservation_stock rs
             JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
-        WHERE r.res_status NOT IN ('CL', 'DR')
+        WHERE r.res_status NOT IN ('CL', 'DR' , 'OG')
           AND r.m_product_id = :NEW.m_product_id
           AND r.c_uom_id = :NEW.c_uom_id
           AND COALESCE(rs.m_attributesetinstance_id, '0') = :NEW.m_attributesetinstance_id

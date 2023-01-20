@@ -119,7 +119,7 @@ BEGIN
       v_aux                   NUMBER;
       v_res_stock_id          VARCHAR2(32);
     BEGIN
-      IF (v_resstatus != 'DR') THEN
+      IF (v_resstatus != 'DR' AND v_resstatus != 'OG') THEN
         RAISE_APPLICATION_ERROR(-20000, '@ActionNotSupported@');
       END IF;
       -- Convert prereservation to reserve if purchase order is receipt.
@@ -143,7 +143,7 @@ BEGIN
           FROM m_reservation_stock rs
                JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
           WHERE rs.c_orderline_id = cur_prereserve.c_orderline_id
-            AND r.res_status NOT IN ('DR', 'CL')
+            AND r.res_status NOT IN ('DR', 'CL', 'OG')
             AND rs.m_locator_id = cur_receipt.m_locator_id
             AND rs.m_attributesetinstance_id = cur_receipt.m_attributesetinstance_id;
           IF (cur_receipt.receiptqty > v_reservedqty) THEN
@@ -221,7 +221,7 @@ BEGIN
                   FROM m_reservation_stock rs2
                       JOIN m_reservation r ON rs2.m_reservation_id = r.m_reservation_id
                   WHERE rs2.c_orderline_id IS NOT NULL
-                    AND r.res_status NOT IN ('DR')
+                    AND r.res_status NOT IN ('DR' , 'OG')
                     AND r.m_product_id = v_product_id
                     AND r.c_uom_id = v_uom_id
                   GROUP BY rs2.c_orderline_id
