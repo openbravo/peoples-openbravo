@@ -129,44 +129,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
       if (distinct != null) {
         SelectorField selectorField = getSelectorFieldFromColumnAlias(selector, distinct);
-        Entity entity = getEntityFromSelectorField(selectorField);
-        String entityName = entity.getName();
-        String[] clauseLeftParts = selectorField.getClauseLeftPart().split("\\.", 2);
-        String entityAlias = clauseLeftParts[0];
-        String property = getPropertyFromClauseLeftParts(clauseLeftParts);
-
-        String[] hqlParts = hql.split("(?i)from", 2);
-        String hqlSelect = "select " + entityAlias + property;
-        String hqlSubquery = hqlSelect + "\nfrom " + hqlParts[1];
-
-        //@formatter:off
-        String hqlDistinctQuery =
-            "select distinct e " +
-            "from " + entityName + " e " +
-            "where e in (" + hqlSubquery + ")";
-        //@formatter:on
-        Query<Tuple> distinctQuery = OBDal.getInstance()
-            .getSession()
-            .createQuery(hqlDistinctQuery, Tuple.class);
-
-        distinctQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
-        if (namedParameters.containsKey("orgs")) {
-          distinctQuery.setParameterList("orgs", (String[]) namedParameters.get("orgs"));
-        }
-        for (int i = 0; i < typedParameters.size(); i++) {
-          distinctQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
-        }
-
-        for (Tuple tuple : distinctQuery.list()) {
-          Map<String, Object> record = new HashMap<>();
-          BaseOBObject tupleObject = (BaseOBObject) tuple.get(0);
-          if (tupleObject == null) {
-            break;
-          }
-          record.put(JsonConstants.ID, tupleObject.getId());
-          record.put(JsonConstants.IDENTIFIER,
-              IdentifierProvider.getInstance().getIdentifier(tupleObject));
-          result.add(record);
+        if (selectorField != null
+            && selectorField.getReference().getParentReference().getName().equals("Table")) {
+          filterByDistinctEntity(hql, namedParameters, typedParameters, selectorField, result);
         }
       } else {
         String criteriaParameter = parameters.get("criteria");
@@ -178,29 +143,10 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
             String fieldName = criteria.getString("fieldName").split("[^a-zA-Z]")[0];
 
             SelectorField selectorField = getSelectorFieldFromColumnAlias(selector, fieldName);
-            String[] clauseLeftParts = selectorField.getClauseLeftPart().split("\\.", 2);
-            String entityAlias = clauseLeftParts[0];
-            String property = getPropertyFromClauseLeftParts(clauseLeftParts);
-
-            String filter;
-            if (criteria.getString("operator").equals("equals")) {
-              filter = " and " + entityAlias + property + "='" + criteria.getString("value") + "'";
-            } else if (criteria.getString("operator").equals("or")) {
-              JSONArray criterias = criteria.getJSONArray("criteria");
-              String values = "'" + criterias.getJSONObject(0).getString("value") + "'";
-              for (int i = 1; i < criterias.length(); i++) {
-                values += ", '" + criterias.getJSONObject(i).getString("value") + "'";
-              }
-              filter = " and " + entityAlias + property + " in (" + values + ")";
-            } else {
-              Entity entity = getEntityFromSelectorField(selectorField);
-              String identifierPropertyName = "."
-                  + entity.getIdentifierProperties().get(0).getName();
-              filter = " and lower(" + entityAlias + property + identifierPropertyName + ") like '%"
-                  + criteria.getString("value").toLowerCase() + "%'";
+            if (selectorField != null
+                && selectorField.getReference().getParentReference().getName().equals("Table")) {
+              hqlWithFilter = getFilteredHQL(hql, sortBy, criteria, selector, selectorField);
             }
-
-            hqlWithFilter = hql + filter + getSortClause(sortBy, selector, hql);
           } catch (JSONException e) {
             // Ignore this case
           }
@@ -262,6 +208,79 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       OBContext.restorePreviousMode();
     }
     return result;
+  }
+
+  private String getFilteredHQL(String hql, String sortBy, JSONObject criteria,
+      Selector selector, SelectorField selectorField) {
+    String[] clauseLeftParts = selectorField.getClauseLeftPart().split("\\.", 2);
+    String entityAlias = clauseLeftParts[0];
+    String property = getPropertyFromClauseLeftParts(clauseLeftParts);
+
+    String filter = null;
+    try {
+      if (criteria.getString("operator").equals("equals")) {
+        filter = " and " + entityAlias + property + "='" + criteria.getString("value") + "'";
+      } else if (criteria.getString("operator").equals("or")) {
+        JSONArray criterias = criteria.getJSONArray("criteria");
+        String values = "'" + criterias.getJSONObject(0).getString("value") + "'";
+        for (int i = 1; i < criterias.length(); i++) {
+          values += ", '" + criterias.getJSONObject(i).getString("value") + "'";
+        }
+        filter = " and " + entityAlias + property + " in (" + values + ")";
+      } else {
+        Entity entity = getEntityFromSelectorField(selectorField);
+        String identifierPropertyName = "." + entity.getIdentifierProperties().get(0).getName();
+        filter = " and lower(" + entityAlias + property + identifierPropertyName + ") like '%"
+            + criteria.getString("value").toLowerCase() + "%'";
+      }
+    } catch (JSONException e) {
+      // Ignore this case
+    }
+
+    return hql + filter + getSortClause(sortBy, selector, hql);
+  }
+
+  private void filterByDistinctEntity(String hql, Map<String, Object> namedParameters,
+      List<Object> typedParameters, SelectorField selectorField, List<Map<String, Object>> result) {
+    Entity entity = getEntityFromSelectorField(selectorField);
+    String entityName = entity.getName();
+    String[] clauseLeftParts = selectorField.getClauseLeftPart().split("\\.", 2);
+    String entityAlias = clauseLeftParts[0];
+    String property = getPropertyFromClauseLeftParts(clauseLeftParts);
+
+    String[] hqlParts = hql.split("(?i)from", 2);
+    String hqlSelect = "select " + entityAlias + property;
+    String hqlSubquery = hqlSelect + "\nfrom " + hqlParts[1];
+
+    //@formatter:off
+    String hqlDistinctQuery =
+        "select distinct e " +
+        "from " + entityName + " e " +
+        "where e in (" + hqlSubquery + ")";
+    //@formatter:on
+    Query<Tuple> distinctQuery = OBDal.getInstance()
+        .getSession()
+        .createQuery(hqlDistinctQuery, Tuple.class);
+
+    distinctQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
+    if (namedParameters.containsKey("orgs")) {
+      distinctQuery.setParameterList("orgs", (String[]) namedParameters.get("orgs"));
+    }
+    for (int i = 0; i < typedParameters.size(); i++) {
+      distinctQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
+    }
+
+    for (Tuple tuple : distinctQuery.list()) {
+      Map<String, Object> record = new HashMap<>();
+      BaseOBObject tupleObject = (BaseOBObject) tuple.get(0);
+      if (tupleObject == null) {
+        break;
+      }
+      record.put(JsonConstants.ID, tupleObject.getId());
+      record.put(JsonConstants.IDENTIFIER,
+          IdentifierProvider.getInstance().getIdentifier(tupleObject));
+      result.add(record);
+    }
   }
 
   private SelectorField getSelectorFieldFromColumnAlias(Selector selector, String columnAlias) {
