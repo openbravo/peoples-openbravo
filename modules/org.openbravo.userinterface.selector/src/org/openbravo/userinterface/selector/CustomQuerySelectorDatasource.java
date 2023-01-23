@@ -132,10 +132,12 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         if (selectorField != null
             && selectorField.getReference().getParentReference().getName().equals("Table")) {
           filterByDistinctEntity(hql, namedParameters, typedParameters, selectorField, result);
+        } else {
+          getSelectorResults(hql, sortBy, selector, namedParameters, typedParameters, startRow,
+              endRow, rowCount, fields, xmlDateFormat, xmlDateTimeFormat, result);
         }
       } else {
         String criteriaParameter = parameters.get("criteria");
-        String hqlWithFilter = null;
         if (criteriaParameter != null) {
           JSONObject criteria;
           try {
@@ -145,59 +147,16 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
             SelectorField selectorField = getSelectorFieldFromColumnAlias(selector, fieldName);
             if (selectorField != null
                 && selectorField.getReference().getParentReference().getName().equals("Table")) {
-              hqlWithFilter = getFilteredHQL(hql, sortBy, criteria, selector, selectorField);
+              hql = getFilteredHQL(hql, sortBy, criteria, selector, selectorField);
             }
           } catch (JSONException e) {
             // Ignore this case
           }
         }
-
-        if (hqlWithFilter != null) {
-          hql = hqlWithFilter;
-        } else {
-          hql += getSortClause(sortBy, selector, hql);
-        }
-
-        Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
-
-        selQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
-        if (namedParameters.containsKey("orgs")) {
-          selQuery.setParameterList("orgs", (String[]) namedParameters.get("orgs"));
-        }
-
-        for (int i = 0; i < typedParameters.size(); i++) {
-          selQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
-        }
-
-        if (startRow > 0) {
-          selQuery.setFirstResult(startRow);
-        }
-        if (endRow > startRow) {
-          selQuery.setMaxResults(endRow - startRow + 1);
-        }
-        for (Tuple tuple : selQuery.list()) {
-          rowCount++;
-          final Map<String, Object> data = new LinkedHashMap<>();
-          for (SelectorField field : fields) {
-            // TODO: throw an exception if the display expression doesn't match any returned alias.
-            for (TupleElement<?> tupleElement : tuple.getElements()) {
-              String alias = tupleElement.getAlias();
-              if (alias != null && alias.equals(field.getDisplayColumnAlias())) {
-                Object value = tuple.get(alias);
-                if (value instanceof Date) {
-                  value = xmlDateFormat.format(value);
-                }
-                if (value instanceof Timestamp) {
-                  value = xmlDateTimeFormat.format(value);
-                  value = JsonUtils.convertToCorrectXSDFormat((String) value);
-                }
-                data.put(alias, value);
-              }
-            }
-          }
-          result.add(data);
-        }
+        getSelectorResults(hql, sortBy, selector, namedParameters, typedParameters, startRow,
+            endRow, rowCount, fields, xmlDateFormat, xmlDateTimeFormat, result);
       }
+
       if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER)) && startRow < endRow) {
         if (rowCount < endRow) {
           totalRows = rowCount;
@@ -210,8 +169,56 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return result;
   }
 
-  private String getFilteredHQL(String hql, String sortBy, JSONObject criteria,
-      Selector selector, SelectorField selectorField) {
+  @SuppressWarnings("all")
+  private void getSelectorResults(String hql, String sortBy, Selector selector,
+      Map<String, Object> namedParameters, List<Object> typedParameters, int startRow, int endRow,
+      int rowCount, List<SelectorField> fields, SimpleDateFormat xmlDateFormat,
+      SimpleDateFormat xmlDateTimeFormat, List<Map<String, Object>> result) {
+    hql += getSortClause(sortBy, selector, hql);
+
+    Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
+
+    selQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
+    if (namedParameters.containsKey("orgs")) {
+      selQuery.setParameterList("orgs", (String[]) namedParameters.get("orgs"));
+    }
+
+    for (int i = 0; i < typedParameters.size(); i++) {
+      selQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
+    }
+
+    if (startRow > 0) {
+      selQuery.setFirstResult(startRow);
+    }
+    if (endRow > startRow) {
+      selQuery.setMaxResults(endRow - startRow + 1);
+    }
+    for (Tuple tuple : selQuery.list()) {
+      rowCount++;
+      final Map<String, Object> data = new LinkedHashMap<>();
+      for (SelectorField field : fields) {
+        // TODO: throw an exception if the display expression doesn't match any returned alias.
+        for (TupleElement<?> tupleElement : tuple.getElements()) {
+          String alias = tupleElement.getAlias();
+          if (alias != null && alias.equals(field.getDisplayColumnAlias())) {
+            Object value = tuple.get(alias);
+            if (value instanceof Date) {
+              value = xmlDateFormat.format(value);
+            }
+            if (value instanceof Timestamp) {
+              value = xmlDateTimeFormat.format(value);
+              value = JsonUtils.convertToCorrectXSDFormat((String) value);
+            }
+            data.put(alias, value);
+          }
+        }
+      }
+      result.add(data);
+    }
+  }
+
+  private String getFilteredHQL(String hql, String sortBy, JSONObject criteria, Selector selector,
+      SelectorField selectorField) {
     String[] clauseLeftParts = selectorField.getClauseLeftPart().split("\\.", 2);
     String entityAlias = clauseLeftParts[0];
     String property = getPropertyFromClauseLeftParts(clauseLeftParts);
@@ -219,25 +226,25 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     String filter = null;
     try {
       if (criteria.getString("operator").equals("equals")) {
-        filter = " and " + entityAlias + property + "='" + criteria.getString("value") + "'";
+        filter = " and " + entityAlias + property + "='" + criteria.optString("value") + "'";
       } else if (criteria.getString("operator").equals("or")) {
         JSONArray criterias = criteria.getJSONArray("criteria");
-        String values = "'" + criterias.getJSONObject(0).getString("value") + "'";
+        String values = "'" + criterias.getJSONObject(0).optString("value") + "'";
         for (int i = 1; i < criterias.length(); i++) {
-          values += ", '" + criterias.getJSONObject(i).getString("value") + "'";
+          values += ", '" + criterias.getJSONObject(i).optString("value") + "'";
         }
         filter = " and " + entityAlias + property + " in (" + values + ")";
       } else {
         Entity entity = getEntityFromSelectorField(selectorField);
         String identifierPropertyName = "." + entity.getIdentifierProperties().get(0).getName();
         filter = " and lower(" + entityAlias + property + identifierPropertyName + ") like '%"
-            + criteria.getString("value").toLowerCase() + "%'";
+            + criteria.optString("value").toLowerCase() + "%'";
       }
     } catch (JSONException e) {
       // Ignore this case
     }
 
-    return hql + filter + getSortClause(sortBy, selector, hql);
+    return hql + filter;
   }
 
   private void filterByDistinctEntity(String hql, Map<String, Object> namedParameters,
