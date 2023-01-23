@@ -129,7 +129,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
 
       if (distinct != null) {
         SelectorField selectorField = getSelectorFieldFromColumnAlias(selector, distinct);
-        if (selectorField != null
+        if (selectorField != null && selectorField.getReference().getParentReference() != null
             && selectorField.getReference().getParentReference().getName().equals("Table")) {
           filterByDistinctEntity(hql, namedParameters, typedParameters, selectorField, result);
         } else {
@@ -145,7 +145,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
             String fieldName = criteria.getString("fieldName").split("[^a-zA-Z]")[0];
 
             SelectorField selectorField = getSelectorFieldFromColumnAlias(selector, fieldName);
-            if (selectorField != null
+            if (selectorField != null && selectorField.getReference().getParentReference() != null
                 && selectorField.getReference().getParentReference().getName().equals("Table")) {
               hql = getFilteredHQL(hql, sortBy, criteria, selector, selectorField);
             }
