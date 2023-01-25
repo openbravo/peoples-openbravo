@@ -279,6 +279,10 @@ if the tab headers are on the right, left or bottom the same styles can be used 
   text-decoration: underline;
 }
 
+.OBNavBarCompanyLogo {
+  text-align: right;
+}
+
 .OBNavBarCompanyLogo img {
   max-width: 130px;
   max-height: 32px;
