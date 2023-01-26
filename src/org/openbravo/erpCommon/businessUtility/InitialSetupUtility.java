@@ -471,6 +471,17 @@ public class InitialSetupUtility {
     return boResult;
   }
 
+  private static Image saveLogoImage(Client client, Organization org, Image providedCompanyLogo) {
+    Image companyLogo = OBProvider.getInstance().get(Image.class);
+    companyLogo.setClient(client);
+    companyLogo.setOrganization(org);
+    companyLogo.setBindaryData(providedCompanyLogo.getBindaryData());
+    companyLogo.setName(providedCompanyLogo.getName());
+    OBDal.getInstance().save(companyLogo);
+
+    return companyLogo;
+  }
+
   /**
    * 
    * @param client
@@ -479,76 +490,40 @@ public class InitialSetupUtility {
   public static void setOrgImage(Client client, Organization org, ClientInformation clientInfo)
       throws Exception {
     if (clientInfo.getCompanyLogo() != null) {
-      Image companyLogo = OBProvider.getInstance().get(Image.class);
-      Image clientCompanyLogo = clientInfo.getCompanyLogo();
-      companyLogo.setClient(client);
-      companyLogo.setOrganization(org);
-      companyLogo.setBindaryData(clientCompanyLogo.getBindaryData());
-      companyLogo.setName(clientCompanyLogo.getName());
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogo());
       org.getOrganizationInformationList()
               .get(0)
               .setCompanyLogo(companyLogo);
-      OBDal.getInstance().save(companyLogo);
     }
     if (clientInfo.getCompanyLogoDark() != null) {
-      Image companyLogoDark = OBProvider.getInstance().get(Image.class);
-      Image clientCompanyLogoDark = clientInfo.getCompanyLogoDark();
-      companyLogoDark.setClient(client);
-      companyLogoDark.setOrganization(org);
-      companyLogoDark.setBindaryData(clientCompanyLogoDark.getBindaryData());
-      companyLogoDark.setName(clientCompanyLogoDark.getName());
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoDark());
       org.getOrganizationInformationList()
               .get(0)
-              .setCompanyLogoDark(companyLogoDark);
-      OBDal.getInstance().save(companyLogoDark);
+              .setCompanyLogoDark(companyLogo);
     }
     if (clientInfo.getCompanyLogoSubmark() != null) {
-      Image companyLogoSubmark = OBProvider.getInstance().get(Image.class);
-      Image clientCompanyLogoSubmark = clientInfo.getCompanyLogoSubmark();
-      companyLogoSubmark.setClient(client);
-      companyLogoSubmark.setOrganization(org);
-      companyLogoSubmark.setBindaryData(clientCompanyLogoSubmark.getBindaryData());
-      companyLogoSubmark.setName(clientCompanyLogoSubmark.getName());
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoSubmark());
       org.getOrganizationInformationList()
               .get(0)
-              .setCompanyLogoSubmark(companyLogoSubmark);
-      OBDal.getInstance().save(companyLogoSubmark);
+              .setCompanyLogoSubmark(companyLogo);
     }
     if (clientInfo.getCompanyLogoSubmarkDark() != null) {
-      Image companyLogoSubmarkDark = OBProvider.getInstance().get(Image.class);
-      Image clientCompanyLogoSubmarkDark = clientInfo.getCompanyLogoSubmarkDark();
-      companyLogoSubmarkDark.setClient(client);
-      companyLogoSubmarkDark.setOrganization(org);
-      companyLogoSubmarkDark.setBindaryData(clientCompanyLogoSubmarkDark.getBindaryData());
-      companyLogoSubmarkDark.setName(clientCompanyLogoSubmarkDark.getName());
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoSubmarkDark());
       org.getOrganizationInformationList()
               .get(0)
-              .setCompanyLogoSubmarkDark(companyLogoSubmarkDark);
-      OBDal.getInstance().save(companyLogoSubmarkDark);
+              .setCompanyLogoSubmarkDark(companyLogo);
     }
     if (clientInfo.getCompanyLogoForDocs() != null) {
-      Image companyLogoForDocs = OBProvider.getInstance().get(Image.class);
-      Image clientCompanyLogoForDocs = clientInfo.getCompanyLogoForDocs();
-      companyLogoForDocs.setClient(client);
-      companyLogoForDocs.setOrganization(org);
-      companyLogoForDocs.setBindaryData(clientCompanyLogoForDocs.getBindaryData());
-      companyLogoForDocs.setName(clientCompanyLogoForDocs.getName());
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoForDocs());
       org.getOrganizationInformationList()
               .get(0)
-              .setCompanyLogoForDocs(companyLogoForDocs);
-      OBDal.getInstance().save(companyLogoForDocs);
+              .setCompanyLogoForDocs(companyLogo);
     }
     if (clientInfo.getCompanyLogoForReceipts() != null) {
-      Image companyLogoForReceipts = OBProvider.getInstance().get(Image.class);
-      Image clientCompanyLogoForReceipts = clientInfo.getCompanyLogoForReceipts();
-      companyLogoForReceipts.setClient(client);
-      companyLogoForReceipts.setOrganization(org);
-      companyLogoForReceipts.setBindaryData(clientCompanyLogoForReceipts.getBindaryData());
-      companyLogoForReceipts.setName(clientCompanyLogoForReceipts.getName());
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoForReceipts());
       org.getOrganizationInformationList()
               .get(0)
-              .setCompanyLogoForReceipts(companyLogoForReceipts);
-      OBDal.getInstance().save(companyLogoForReceipts);
+              .setCompanyLogoForReceipts(companyLogo);
     }
 
     OBDal.getInstance().save(org);

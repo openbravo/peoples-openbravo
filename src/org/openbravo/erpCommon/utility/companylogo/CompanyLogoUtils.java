@@ -18,6 +18,7 @@
  */
 package org.openbravo.erpCommon.utility.companylogo;
 
+import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -96,7 +97,7 @@ public class CompanyLogoUtils {
 
   private static Image getLogoImageFromEntity(BaseOBObject entity, String propertyLight,
       String propertyDark, boolean isDarkMode) {
-    if (propertyDark != null && !"".equals(propertyDark)) {
+    if (StringUtils.isNotEmpty(propertyDark)) {
       Image img = null;
       if (isDarkMode) {
         img = (Image) entity.get(propertyDark);
