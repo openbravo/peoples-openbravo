@@ -653,6 +653,38 @@ public class InitialSetupUtility {
     }
   }
 
+  @Deprecated
+  public static void setOrgImage(Client client, Organization org, byte[] image, String strImageName)
+          throws Exception {
+  }
+
+  /**
+   *
+   * @param sys
+   * @param client
+   */
+  @Deprecated
+  public static void setYourCompanyBigImage(SystemInformation sys, Client client) {
+  }
+
+  /**
+   *
+   * @param sys
+   * @param client
+   */
+  @Deprecated
+  public static void setYourCompanyDocumentImage(SystemInformation sys, Client client) {
+  }
+
+  /**
+   *
+   * @param sys
+   * @param client
+   */
+  @Deprecated
+  public static void setYourCompanyMenuImage(SystemInformation sys, Client client) {
+  }
+
   /**
    * 
    * @param client
