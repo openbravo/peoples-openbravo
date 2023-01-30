@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2022 Openbravo SLU
+ * All portions are Copyright (C) 2011-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,6 +47,8 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.domaintype.BigDecimalDomainType;
 import org.openbravo.base.model.domaintype.BooleanDomainType;
@@ -56,12 +58,15 @@ import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.LongDomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.model.domaintype.UniqueIdDomainType;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.IdentifierProvider;
 import org.openbravo.client.application.ParameterUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.model.ad.domain.ReferencedTable;
 import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.datasource.ReadOnlyDataSourceService;
 import org.openbravo.service.datasource.hql.HqlQueryTransformer;
@@ -88,12 +93,12 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
   @Override
   protected List<Map<String, Object>> getData(Map<String, String> parameters, int startRow,
       int endRow) {
-    // creation of formats is done here because they are not thread safe
+    // Creation of formats is done here because they are not thread safe
     final SimpleDateFormat xmlDateFormat = JsonUtils.createDateFormat();
     final SimpleDateFormat xmlDateTimeFormat = JsonUtils.createDateTimeFormat();
-    final List<Map<String, Object>> result = new ArrayList<>();
     final List<Object> typedParameters = new ArrayList<>();
     final Map<String, Object> namedParameters = new HashMap<>();
+
     // Defaulted to endRow + 2 to check for more records while scrolling.
     int totalRows = endRow + 2;
     int rowCount = 0;
@@ -101,14 +106,15 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     String selectorId = parameters.get(SelectorConstants.DS_REQUEST_SELECTOR_ID_PARAMETER);
 
     if (StringUtils.isEmpty(selectorId)) {
-      return result;
+      return new ArrayList<>();
     }
 
     OBContext.setAdminMode();
-    try {
 
-      Selector sel = OBDal.getInstance().get(Selector.class, selectorId);
-      List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
+    List<Map<String, Object>> result = null;
+    try {
+      Selector selector = OBDal.getInstance().get(Selector.class, selectorId);
+      List<SelectorField> fields = OBDao.getActiveOBObjectList(selector,
           Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
 
       // Forcing object initialization to prevent LazyInitializationException in case session is
@@ -116,51 +122,44 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       Hibernate.initialize(fields);
 
       // Parse the hql in case that optional filters are required
-      String hql = parseOptionalFilters(parameters, sel, xmlDateFormat, typedParameters,
+      String hql = parseOptionalFilters(parameters, selector, xmlDateFormat, typedParameters,
           namedParameters);
+
       String sortBy = parameters.get("_sortBy");
-      hql += getSortClause(sortBy, sel, hql);
+      String distinct = parameters.get(JsonConstants.DISTINCT_PARAMETER);
 
-      Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
+      if (distinct != null) {
+        SelectorField selectorField = getSelectorFieldFromColumnAlias(selector, distinct);
+        if (selectorField != null && selectorField.getReference().getParentReference() != null
+            && selectorField.getReference().getParentReference().getName().equals("Table")) {
+          String[] distinctCriteria = getDistinctCriteria(parameters, distinct);
+          result = filterByDistinctEntity(hql, namedParameters, typedParameters, selectorField,
+              startRow, endRow, distinctCriteria);
+        } else {
+          result = getSelectorResults(hql, sortBy, selector, namedParameters, typedParameters,
+              startRow, endRow, rowCount, fields, xmlDateFormat, xmlDateTimeFormat);
+        }
+      } else {
+        String criteriaParameter = parameters.get("criteria");
+        if (criteriaParameter != null) {
+          JSONObject criteria;
+          try {
+            criteria = new JSONObject(criteriaParameter);
+            String fieldName = criteria.getString("fieldName").split("[^a-zA-Z]")[0];
 
-      selQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
-      if (namedParameters.containsKey("orgs")) {
-        selQuery.setParameterList("orgs", (String[]) namedParameters.get("orgs"));
-      }
-
-      for (int i = 0; i < typedParameters.size(); i++) {
-        selQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
-      }
-
-      if (startRow > 0) {
-        selQuery.setFirstResult(startRow);
-      }
-      if (endRow > startRow) {
-        selQuery.setMaxResults(endRow - startRow + 1);
-      }
-
-      for (Tuple tuple : selQuery.list()) {
-        rowCount++;
-        final Map<String, Object> data = new LinkedHashMap<>();
-        for (SelectorField field : fields) {
-          // TODO: throw an exception if the display expression doesn't match any returned alias.
-          for (TupleElement<?> tupleElement : tuple.getElements()) {
-            String alias = tupleElement.getAlias();
-            if (alias != null && alias.equals(field.getDisplayColumnAlias())) {
-              Object value = tuple.get(alias);
-              if (value instanceof Date) {
-                value = xmlDateFormat.format(value);
-              }
-              if (value instanceof Timestamp) {
-                value = xmlDateTimeFormat.format(value);
-                value = JsonUtils.convertToCorrectXSDFormat((String) value);
-              }
-              data.put(alias, value);
+            SelectorField selectorField = getSelectorFieldFromColumnAlias(selector, fieldName);
+            if (selectorField != null && selectorField.getReference().getParentReference() != null
+                && selectorField.getReference().getParentReference().getName().equals("Table")) {
+              hql = getFilteredHQL(hql, sortBy, criteria, selector, selectorField);
             }
+          } catch (JSONException e) {
+            // Ignore this case
           }
         }
-        result.add(data);
+        result = getSelectorResults(hql, sortBy, selector, namedParameters, typedParameters,
+            startRow, endRow, rowCount, fields, xmlDateFormat, xmlDateTimeFormat);
       }
+
       if ("true".equals(parameters.get(JsonConstants.NOCOUNT_PARAMETER)) && startRow < endRow) {
         if (rowCount < endRow) {
           totalRows = rowCount;
@@ -173,6 +172,188 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     return result;
   }
 
+  @SuppressWarnings("all")
+  private List<Map<String, Object>> getSelectorResults(String hql, String sortBy, Selector selector,
+      Map<String, Object> namedParameters, List<Object> typedParameters, int startRow, int endRow,
+      int rowCount, List<SelectorField> fields, SimpleDateFormat xmlDateFormat,
+      SimpleDateFormat xmlDateTimeFormat) {
+    hql += getSortClause(sortBy, selector, hql);
+    List<Map<String, Object>> result = new ArrayList<>();
+    Query<Tuple> selQuery = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
+
+    setQueryParameters(selQuery, namedParameters, typedParameters, startRow, endRow);
+    for (Tuple tuple : selQuery.list()) {
+      rowCount++;
+      final Map<String, Object> data = new LinkedHashMap<>();
+      for (SelectorField field : fields) {
+        // TODO: throw an exception if the display expression doesn't match any returned alias.
+        for (TupleElement<?> tupleElement : tuple.getElements()) {
+          String alias = tupleElement.getAlias();
+          if (alias != null && alias.equals(field.getDisplayColumnAlias())) {
+            Object value = tuple.get(alias);
+            if (value instanceof Date) {
+              value = xmlDateFormat.format(value);
+            }
+            if (value instanceof Timestamp) {
+              value = xmlDateTimeFormat.format(value);
+              value = JsonUtils.convertToCorrectXSDFormat((String) value);
+            }
+            data.put(alias, value);
+          }
+        }
+      }
+      result.add(data);
+    }
+    return result;
+  }
+
+  private void setQueryParameters(Query<Tuple> selQuery, Map<String, Object> namedParameters,
+      List<Object> typedParameters, int startRow, int endRow) {
+    selQuery.setParameterList("clients", (String[]) namedParameters.get("clients"));
+    if (namedParameters.containsKey("orgs")) {
+      selQuery.setParameterList("orgs", (String[]) namedParameters.get("orgs"));
+    }
+    if (namedParameters.containsKey("distinctCriteriaValue")) {
+      selQuery.setParameter("distinctCriteriaValue",
+          (String) namedParameters.get("distinctCriteriaValue"));
+    }
+
+    for (int i = 0; i < typedParameters.size(); i++) {
+      selQuery.setParameter(ALIAS_PREFIX + Integer.toString(i), typedParameters.get(i));
+    }
+
+    if (startRow > 0) {
+      selQuery.setFirstResult(startRow);
+    }
+    if (endRow > startRow) {
+      selQuery.setMaxResults(endRow - startRow + 1);
+    }
+  }
+
+  private String getFilteredHQL(String hql, String sortBy, JSONObject criteria, Selector selector,
+      SelectorField selectorField) {
+    String[] clauseLeftParts = selectorField.getClauseLeftPart().split("\\.", 2);
+    String entityAlias = clauseLeftParts[0];
+    String property = getPropertyFromClauseLeftParts(clauseLeftParts);
+
+    String filter = null;
+    try {
+      if (criteria.getString("operator").equals("equals")) {
+        filter = " and " + entityAlias + property + "='" + criteria.optString("value") + "'";
+      } else if (criteria.getString("operator").equals("or")) {
+        JSONArray criterias = criteria.getJSONArray("criteria");
+        String values = "'" + criterias.getJSONObject(0).optString("value") + "'";
+        for (int i = 1; i < criterias.length(); i++) {
+          values += ", '" + criterias.getJSONObject(i).optString("value") + "'";
+        }
+        filter = " and " + entityAlias + property + " in (" + values + ")";
+      } else {
+        Entity entity = getEntityFromSelectorField(selectorField);
+        String identifierPropertyName = "." + entity.getIdentifierProperties().get(0).getName();
+        filter = " and lower(" + entityAlias + property + identifierPropertyName + ") like '%"
+            + criteria.optString("value").toLowerCase() + "%'";
+      }
+    } catch (JSONException e) {
+      // Ignore this case
+    }
+
+    return hql + filter;
+  }
+
+  private List<Map<String, Object>> filterByDistinctEntity(String hql,
+      Map<String, Object> namedParameters, List<Object> typedParameters,
+      SelectorField selectorField, int startRow, int endRow, String[] distinctCriteria) {
+    Entity entity = getEntityFromSelectorField(selectorField);
+    String entityName = entity.getName();
+    String[] clauseLeftParts = selectorField.getClauseLeftPart().split("\\.", 2);
+    String entityAlias = clauseLeftParts[0];
+    String property = getPropertyFromClauseLeftParts(clauseLeftParts);
+
+    String[] hqlParts = hql.split("(?i)from", 2);
+    String hqlSelect = "select " + entityAlias + property;
+    String fromAndWhereClause = hqlParts[1];
+    String hqlSubquery = hqlSelect + " from " + fromAndWhereClause;
+
+    List<Map<String, Object>> result = new ArrayList<>();
+
+    //@formatter:off
+    String hqlDistinctQuery =
+        "select distinct e " +
+        "from " + entityName + " e " +
+        "where e in (" + hqlSubquery + ") " + getFilteredDistinctWhereClause(entity, selectorField, distinctCriteria, typedParameters);
+    //@formatter:on
+    Query<Tuple> distinctQuery = OBDal.getInstance()
+        .getSession()
+        .createQuery(hqlDistinctQuery, Tuple.class);
+
+    setQueryParameters(distinctQuery, namedParameters, typedParameters, startRow, endRow);
+
+    for (Tuple tuple : distinctQuery.list()) {
+      Map<String, Object> record = new HashMap<>();
+      BaseOBObject tupleObject = (BaseOBObject) tuple.get(0);
+      if (tupleObject == null) {
+        break;
+      }
+      record.put(JsonConstants.ID, tupleObject.getId());
+      record.put(JsonConstants.IDENTIFIER,
+          IdentifierProvider.getInstance().getIdentifier(tupleObject));
+      result.add(record);
+    }
+    return result;
+  }
+
+  // if the user is including some text in the selector filter, take it into account
+  private String getFilteredDistinctWhereClause(Entity entity, SelectorField selectorField,
+      String[] distinctCriteria, List<Object> typedParameters) {
+    if (distinctCriteria == null || distinctCriteria.length == 0) {
+      return "";
+    }
+    String firstIdentifierProperty = getNameOfFirstIdentifierProperty(entity);
+    String operator = distinctCriteria[0];
+    String value = distinctCriteria[1];
+    return " AND "
+        + getTextWhereClause(operator, value, "e." + firstIdentifierProperty, typedParameters);
+  }
+
+  private String getNameOfFirstIdentifierProperty(Entity entity) {
+    String propertyName = "";
+    if (!entity.getIdentifierProperties().isEmpty()) {
+      propertyName = entity.getIdentifierProperties().get(0).getName();
+    }
+    return propertyName;
+  }
+
+  private SelectorField getSelectorFieldFromColumnAlias(Selector selector, String columnAlias) {
+    return selector.getOBUISELSelectorFieldList()
+        .stream()
+        .filter(selectorField -> selectorField.getDisplayColumnAlias().equals(columnAlias))
+        .findFirst()
+        .orElse(null);
+  }
+
+  private Entity getEntityFromSelectorField(SelectorField selectorField) {
+    List<ReferencedTable> referencedTableList = selectorField.getReference()
+        .getADReferencedTableList();
+    if (!referencedTableList.isEmpty()) {
+      return ModelProvider.getInstance()
+          .getEntityByTableId(referencedTableList.get(0).getTable().getId());
+    } else {
+      throw new OBException("Error while getting entity from selector field: "
+          + "This functionality is only available when using Table references.");
+    }
+
+  }
+
+  private String getPropertyFromClauseLeftParts(String[] clauseLeftParts) {
+    String property = "";
+
+    if (clauseLeftParts.length > 1) {
+      property = "." + clauseLeftParts[1];
+    }
+
+    return property;
+  }
+
   /**
    * Returns the selectors HQL query. In case that it contains the '@additional_filters@' String it
    * is replaced by a set of filter clauses.
@@ -189,16 +370,17 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * 
    * @param parameters
    *          Map of String values with the request parameters.
-   * @param sel
+   * @param selector
    *          the selector that it is being retrieved the data.
    * @param xmlDateFormat
    *          SimpleDataFormat to be used to parse date Strings.
    * @return a String with the HQL to be executed.
    */
 
-  public String parseOptionalFilters(Map<String, String> parameters, Selector sel,
+  public String parseOptionalFilters(Map<String, String> parameters, Selector selector,
       SimpleDateFormat xmlDateFormat, List<Object> typedParameters) {
-    return parseOptionalFilters(parameters, sel, xmlDateFormat, typedParameters, new HashMap<>());
+    return parseOptionalFilters(parameters, selector, xmlDateFormat, typedParameters,
+        new HashMap<>());
   }
 
   /**
@@ -217,7 +399,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    *
    * @param parameters
    *          Map of String values with the request parameters.
-   * @param sel
+   * @param selector
    *          the selector that it is being retrieved the data.
    * @param xmlDateFormat
    *          SimpleDataFormat to be used to parse date Strings.
@@ -228,21 +410,21 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * @return a String with the HQL to be executed.
    */
 
-  public String parseOptionalFilters(Map<String, String> parameters, Selector sel,
+  public String parseOptionalFilters(Map<String, String> parameters, Selector selector,
       SimpleDateFormat xmlDateFormat, List<Object> typedParameters,
       Map<String, Object> namedParameters) {
-    String hql = sel.getHQL();
+    String hql = selector.getHQL();
 
     if (hql.contains(ADDITIONAL_FILTERS)) {
       final String requestType = parameters.get(SelectorConstants.DS_REQUEST_TYPE_PARAMETER);
-      final String entityAlias = sel.getEntityAlias();
+      final String entityAlias = selector.getEntityAlias();
       // Client filter
       String additionalFilter = entityAlias + ".client.id in :clients";
       final String[] clients = { "0", OBContext.getOBContext().getCurrentClient().getId() };
       namedParameters.put("clients", clients);
       if (includeOrgFilter(parameters)) {
         // Organization filter
-        boolean isOrgSelector = sel.getTable().getName().equals("Organization");
+        boolean isOrgSelector = selector.getTable().getName().equals("Organization");
         String orgs;
         if (isOrgSelector) {
           // Just retrieve the list of readable organizations in the current context
@@ -260,11 +442,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
           namedParameters.put("orgs", orgs.replaceAll("'", "").split(","));
         }
       }
-      additionalFilter += getDefaultFilterExpression(sel, parameters);
+      additionalFilter += getDefaultFilterExpression(selector, parameters);
 
       String defaultExpressionsFilter = "";
       boolean hasFilter = false;
-      List<SelectorField> fields = OBDao.getActiveOBObjectList(sel,
+      List<SelectorField> fields = OBDao.getActiveOBObjectList(selector,
           Selector.PROPERTY_OBUISELSELECTORFIELDLIST);
       HashMap<String, String[]> criteria = getCriteria(parameters);
       for (SelectorField field : fields) {
@@ -328,8 +510,9 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
       }
       hql = hql.replace(ADDITIONAL_FILTERS, additionalFilter);
     }
-    // if the is any HQL Query transformer defined for this selector, use it to transform the query
-    hql = HqlQueryTransformer.transFormQuery(hql, namedParameters, parameters, sel,
+    // if there is any HQL Query transformer defined for this selector, use it to transform the
+    // query
+    hql = HqlQueryTransformer.transFormQuery(hql, namedParameters, parameters, selector,
         hqlQueryTransformers);
 
     return hql;
@@ -445,16 +628,23 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
         whereClause += ")";
       }
     } else {
-      if ("iStartsWith".equals(operator)) {
-        whereClause = "upper(" + field.getClauseLeftPart() + ") LIKE upper("
-            + getTypedParameterAlias(typedParameters, value.replaceAll(" ", "%") + "%") + ")";
-      } else if ("iEquals".equals(operator)) {
-        whereClause = "upper(" + field.getClauseLeftPart() + ") = upper("
-            + getTypedParameterAlias(typedParameters, value) + ")";
-      } else {
-        whereClause = "upper(" + field.getClauseLeftPart() + ") LIKE upper("
-            + getTypedParameterAlias(typedParameters, "%" + value.replaceAll(" ", "%") + "%") + ")";
-      }
+      whereClause = getTextWhereClause(operator, value, field.getClauseLeftPart(), typedParameters);
+    }
+    return whereClause;
+  }
+
+  private String getTextWhereClause(String operator, String value, String leftPart,
+      List<Object> typedParameters) {
+    String whereClause;
+    if ("iStartsWith".equals(operator)) {
+      whereClause = "upper(" + leftPart + ") LIKE upper("
+          + getTypedParameterAlias(typedParameters, value.replaceAll(" ", "%") + "%") + ")";
+    } else if ("iEquals".equals(operator)) {
+      whereClause = "upper(" + leftPart + ") = upper("
+          + getTypedParameterAlias(typedParameters, value) + ")";
+    } else {
+      whereClause = "upper(" + leftPart + ") LIKE upper("
+          + getTypedParameterAlias(typedParameters, "%" + value.replaceAll(" ", "%") + "%") + ")";
     }
     return whereClause;
   }
@@ -465,11 +655,11 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * 
    * @param sortBy
    *          String of grid's field names concatenated by JsonConstants.IN_PARAMETER_SEPARATOR.
-   * @param sel
+   * @param selector
    *          the selector that it is being displayed.
    * @return a String with the HQL Sort By clause.
    */
-  private String getSortClause(String sortBy, Selector sel, String hql) {
+  private String getSortClause(String sortBy, Selector selector, String hql) {
     StringBuffer sortByClause = new StringBuffer();
     boolean sortByDesc = false;
     if (sortBy != null && sortBy.startsWith("-")) {
@@ -516,7 +706,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     // If sortByClause is empty set default sort options.
     if (sortByClause.length() == 0) {
       OBCriteria<SelectorField> selFieldsCrit = OBDao.getFilteredCriteria(SelectorField.class,
-          Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, sel),
+          Restrictions.eq(SelectorField.PROPERTY_OBUISELSELECTOR, selector),
           Restrictions.eq(SelectorField.PROPERTY_SHOWINGRID, true));
       selFieldsCrit.addOrderBy(SelectorField.PROPERTY_SORTNO, true);
       for (SelectorField selField : selFieldsCrit.list()) {
@@ -542,14 +732,14 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * Given a Selector object and the request parameters it evaluates the Filter Expression in case
    * that it is defined and returns the result.
    * 
-   * @param sel
+   * @param selector
    *          The Selector that it is being used.
    * @param parameters
    *          parameters used for this request.
    * @return a String with the evaluated JavaScript filter expression in case it is defined.
    */
-  private String getDefaultFilterExpression(Selector sel, Map<String, String> parameters) {
-    if ((sel.getFilterExpression() == null || sel.getFilterExpression().equals(""))) {
+  private String getDefaultFilterExpression(Selector selector, Map<String, String> parameters) {
+    if ((selector.getFilterExpression() == null || selector.getFilterExpression().equals(""))) {
       // Nothing to filter
       return "";
     }
@@ -557,7 +747,7 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     Object result = null;
     try {
       result = ParameterUtils.getJSExpressionResult(parameters, RequestContext.get().getSession(),
-          sel.getFilterExpression());
+          selector.getFilterExpression());
     } catch (Exception e) {
       log.error("Error evaluating filter expression: " + e.getMessage(), e);
     }
@@ -574,8 +764,8 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
    * @param fieldName
    *          Grid's field name or display alias of the related selector field it is desired to
    *          order by.
-   * @param sel
-   *          The Selector that it is being used.
+   * @param hql
+   *          A String with the HQL query that is being used.
    * @return The index of the query column related to the field. Note that 0 will be returned if
    *         there is no query column with an alias equal to the provided field name.
    */
@@ -648,6 +838,20 @@ public class CustomQuerySelectorDatasource extends ReadOnlyDataSourceService {
     }
     return criteriaValues;
 
+  }
+
+  private String[] getDistinctCriteria(Map<String, String> parameters, String fieldName) {
+    try {
+      JSONArray criterias = (JSONArray) JsonUtils.buildCriteria(parameters).get("criteria");
+      HashMap<String, String[]> criteria = getCriteria(criterias);
+      String key = fieldName + "$_identifier";
+      if (criteria == null || !criteria.containsKey(key)) {
+        return null;
+      }
+      return criteria.get(key);
+    } catch (JSONException e) {
+      return null;
+    }
   }
 
   private HashMap<String, String[]> getCriteria(Map<String, String> parameters) {
