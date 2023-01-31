@@ -134,4 +134,9 @@ public class MigrateExistingCompanyLogos extends ModuleScript {
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     return new ModuleScriptExecutionLimits("0", null, new OpenbravoVersion(3, 0, 231901));
   }
+
+  @Override
+  protected boolean executeOnInstall() {
+    return false;
+  }
 }
