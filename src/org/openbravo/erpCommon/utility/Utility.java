@@ -42,6 +42,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -2224,6 +2225,12 @@ public class Utility {
       Organization organization = null;
       if (org != null && !org.equals("")) {
         organization = OBDal.getReadOnlyInstance().get(Organization.class, org);
+      }
+
+      List<String> deprecatedValues = Arrays.asList("yourcompanylogin", "yourcompanymenu",
+          "yourcompanybig", "yourcompanydoc", "yourcompanylegal");
+      if (deprecatedValues.contains(logo)) {
+        log4j.warn("Logo value is deprecated: " + logo);
       }
 
       if ("yourcompanylogin".equals(logo)) {
