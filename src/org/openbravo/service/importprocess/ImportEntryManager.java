@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2022 Openbravo SLU
+ * All portions are Copyright (C) 2015-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -272,8 +272,17 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
     } catch (Exception e) {
       // except for logging we can ignore the exception
       // as the import entry will be offered again for reprocessing later anyway
-      log.warn(
-          "Exception while trying to add runnable " + runnable + " to the list of tasks to run", e);
+      if (!log.isTraceEnabled()) {
+        // Do not log stack trace unless log level is trace other way the log is too verbose, this
+        // typically occurs when the queue limit is reached.
+        log.warn("Cannot submit runnable. Queued: {} - Max queue: {}. Exception: {}. Runnable: {}",
+            executorService.getQueue().size(), maxTaskQueueSize, e.getClass().getSimpleName(),
+            runnable);
+      } else {
+        log.trace("Cannot submit runnable. Queued: {} - Max queue: {}. Runnable: {}",
+            executorService.getQueue().size(), maxTaskQueueSize, runnable, e);
+      }
+
       return false;
     }
   }
