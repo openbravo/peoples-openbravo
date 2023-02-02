@@ -108,13 +108,15 @@ isc.OBTextItem.addProperties({
   },
 
   itemHoverHTML: function(item, form) {
-    var value;
+    var value, unescapedDisplayValue;
     if (this.isDisabled()) {
       value = this.getValue();
     } else if (this.mask) {
       value = this.mask;
     }
-    return value && value.asHTML();
+    // unescape before escaping to prevent escaping text that is already escaped
+    unescapedDisplayValue = value.unescapeHTML();
+    return unescapedDisplayValue && unescapedDisplayValue.asHTML();
   },
 
   setMask: function(mask) {

@@ -138,8 +138,11 @@ isc.OBSearchItem.addProperties({
   },
 
   getDisplayValue: function(args) {
-    var displayValue = this.Super('getDisplayValue', args);
-    return displayValue && displayValue.asHTML();
+    var displayValue = this.Super('getDisplayValue', args),
+      unescapedDisplayValue;
+    // unescape before escaping to prevent escaping text that is already escaped
+    unescapedDisplayValue = displayValue ? displayValue.unescapeHTML() : null;
+    return unescapedDisplayValue && unescapedDisplayValue.asHTML();
   },
 
   // show the complete displayed value, handy when the display value got clipped
