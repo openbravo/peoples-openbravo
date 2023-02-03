@@ -450,7 +450,7 @@ ORDER BY currency_id, issotrx, f.dateacct, f.created]]>
 			</rectangle>
 			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle" isUsingCache="true">
 				<reportElement key="image-1" x="10" y="4" width="205" height="55" uuid="73a5995d-9060-4607-b691-814fd83574d6"/>
-				<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{organizationid})]]></imageExpression>
+				<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogodocs", $F{organizationid})]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="490" y="48" width="59" height="11" uuid="715f1869-f95e-466f-9cb4-bf0ae163334c"/>

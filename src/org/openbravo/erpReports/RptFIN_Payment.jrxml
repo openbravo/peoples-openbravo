@@ -306,7 +306,7 @@ WHERE p.fin_payment_id=$P{DOCUMENT_ID}
 						<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					</box>
-					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylegal", $F{LEGALENTITY})]]></imageExpression>
+					<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogodocs", $F{LEGALENTITY})]]></imageExpression>
 				</image>
 			</band>
 		</groupHeader>

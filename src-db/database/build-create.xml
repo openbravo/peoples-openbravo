@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  *************************************************************************
- * The contents of this file are subject to the Openbravo  Public  License
+ * The contents of this hfile are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
- * the License at http://www.openbravo.com/legal/license.html 
+ * the License at http://www.openbravo.com/legal/license.html
  * Software distributed under the License  is  distributed  on  an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific  language  governing  rights  and  limitations
- * under the License. 
- * The Original Code is Openbravo ERP. 
- * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2021 Openbravo SLU
- * All Rights Reserved. 
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
+ * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
 -->
@@ -63,7 +63,7 @@ create.database: creates the database from scratch.
       <param name="systemPassword" value="${bbdd.systemPassword}"/>
       <param name="sid" value="${bbdd.sid}"/>
     </antcall>
-  </target>	
+  </target>
 
   <target name="clean.database.ORACLE.param">
     <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" onerror="continue" delimiter="/">
@@ -88,7 +88,7 @@ create.database: creates the database from scratch.
     </sql>
   </target>
 
-	
+
   <target name="clean.database.POSTGRE">
     <antcall target="clean.database.POSTGRE.param">
       <param name="driver" value="${bbdd.driver}"/>
@@ -98,8 +98,8 @@ create.database: creates the database from scratch.
       <param name="systemPassword" value="${bbdd.systemPassword}"/>
       <param name="sid" value="${bbdd.sid}"/>
     </antcall>
-  </target>		
-	
+  </target>
+
   <target name="clean.database.POSTGRE.param">
     <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" autocommit="true" delimitertype="row">
       <classpath>
@@ -142,8 +142,8 @@ create.database: creates the database from scratch.
       <param name="password" value="${bbdd.password}"/>
       <param name="sid" value="${bbdd.sid}"/>
     </antcall>
-  </target>	
-	
+  </target>
+
   <target name="ORACLE.structure.param">
     <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" delimiter="/">
       <classpath>
@@ -204,7 +204,7 @@ create.database: creates the database from scratch.
       </transaction>
     </sql>
   </target>
-	
+
   <target name="POSTGRE.structure">
     <antcall target="POSTGRE.structure.param">
       <param name="driver" value="${bbdd.driver}"/>
@@ -215,7 +215,7 @@ create.database: creates the database from scratch.
       <param name="password" value="${bbdd.password}"/>
       <param name="sid" value="${bbdd.sid}"/>
     </antcall>
-  </target>		
+  </target>
 
   <target name="POSTGRE.structure.param">
     <sql driver="${driver}" url="${url}" userid="${systemUser}" password="${systemPassword}" onerror="continue" autocommit="true">
@@ -265,18 +265,18 @@ create.database: creates the database from scratch.
       <transaction>
           DELETE FROM AD_SYSTEM;
           INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO,  TAD_TRANSACTIONALRANGE, TAD_THEME)
-          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100,  1, 
-                  (SELECT Value 
-				     FROM (SELECT Value 
-					         FROM AD_Ref_List 
+          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100,  1,
+                  (SELECT Value
+				     FROM (SELECT Value
+					         FROM AD_Ref_List
                             WHERE AD_Ref_List_ID IN ('800247', '27F0D1235450423C814D3A0DCABA7D10')
                             ORDER BY (CASE WHEN Name ='Default' THEN 2 ELSE 1 END))
                     WHERE RowNum = 1));
           DELETE FROM AD_SYSTEM_INFO;
           INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_INSTALLMODE, MATURITY_UPDATE, MATURITY_SEARCH,
-                your_company_login_image, your_it_service_login_image, your_company_menu_image, your_company_big_image, your_company_document_image, support_contact)
+                company_logo, your_it_service_login_image, company_logo_for_docs, support_contact)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', '200', '200',
-                '37B37B6A8876462780DB969E5C4D81FD', '6C216D1786B34105ACCBA4DD8612A0CE', '5F3C04DF603F409A875C294910BD3491', '0A41E7C5497B46559BD03AD4100F8FEB', 'AA90B7900AD04E87A890BA2E2604A6D9', 'https://www.openbravo.com/services/support-maintenance');
+                '1F7285A7E281432ABCE5929B73809C09', 'BE5244AE8F1C4EC8820DE7779203EFA7', 'AA90B7900AD04E87A890BA2E2604A6D9', 'https://www.openbravo.com/services/support-maintenance');
           CALL AD_UPDATE_ACCESS();
       	  ${bbdd.sessionConfig};
           SELECT AD_DB_MODIFIED('Y') FROM DUAL;
@@ -310,16 +310,16 @@ create.database: creates the database from scratch.
       <transaction>
           DELETE FROM AD_SYSTEM;
           INSERT INTO AD_SYSTEM (AD_SYSTEM_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, NAME, TAD_RECORDRANGE, TAD_RECORDRANGE_INFO, TAD_TRANSACTIONALRANGE, TAD_THEME)
-          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1, 
-		          (SELECT Value FROM AD_Ref_List 
+          VALUES ('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '?', 20, 100, 1,
+		          (SELECT Value FROM AD_Ref_List
                     WHERE AD_Ref_List_ID in ('800247', '27F0D1235450423C814D3A0DCABA7D10')
                     ORDER BY (CASE WHEN Name ='Default' THEN 2 ELSE 1 END)
                     LIMIT 1));
           DELETE FROM AD_SYSTEM_INFO;
           INSERT INTO AD_SYSTEM_INFO(AD_SYSTEM_INFO_ID, AD_CLIENT_ID, AD_ORG_ID, ISACTIVE, CREATED, CREATEDBY, UPDATED, UPDATEDBY, ANT_VERSION, OB_INSTALLMODE, MATURITY_UPDATE, MATURITY_SEARCH,
-                your_company_login_image, your_it_service_login_image, your_company_menu_image, your_company_big_image, your_company_document_image, support_contact)
+                company_logo, your_it_service_login_image, company_logo_for_docs, support_contact)
           VALUES('0', '0', '0', 'Y', NOW(), '0', NOW(), '0', '${ant.version}', 'From Sources', '200', '200',
-                '37B37B6A8876462780DB969E5C4D81FD', '6C216D1786B34105ACCBA4DD8612A0CE', '5F3C04DF603F409A875C294910BD3491', '0A41E7C5497B46559BD03AD4100F8FEB', 'AA90B7900AD04E87A890BA2E2604A6D9', 'https://www.openbravo.com/services/support-maintenance');
+                '1F7285A7E281432ABCE5929B73809C09', 'BE5244AE8F1C4EC8820DE7779203EFA7', 'AA90B7900AD04E87A890BA2E2604A6D9', 'https://www.openbravo.com/services/support-maintenance');
           SELECT AD_UPDATE_ACCESS();
           ${bbdd.sessionConfig};
           SELECT AD_DB_MODIFIED('Y');

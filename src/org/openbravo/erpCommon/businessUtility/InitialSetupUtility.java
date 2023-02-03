@@ -471,23 +471,61 @@ public class InitialSetupUtility {
     return boResult;
   }
 
+  private static Image saveLogoImage(Client client, Organization org, Image providedCompanyLogo) {
+    Image companyLogo = OBProvider.getInstance().get(Image.class);
+    companyLogo.setClient(client);
+    companyLogo.setOrganization(org);
+    companyLogo.setBindaryData(providedCompanyLogo.getBindaryData());
+    companyLogo.setName(providedCompanyLogo.getName());
+    OBDal.getInstance().save(companyLogo);
+
+    return companyLogo;
+  }
+
   /**
    * 
    * @param client
    * @throws Exception
    */
-  public static void setOrgImage(Client client, Organization org, byte[] image, String strImageName)
+  public static void setOrgImage(Client client, Organization org, ClientInformation clientInfo)
       throws Exception {
-    Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
-    yourCompanyDocumentImage.setClient(client);
-    yourCompanyDocumentImage.setOrganization(org);
-    yourCompanyDocumentImage.setBindaryData(image);
-    yourCompanyDocumentImage.setName(strImageName);
-    org.getOrganizationInformationList()
-        .get(0)
-        .setYourCompanyDocumentImage(yourCompanyDocumentImage);
-    yourCompanyDocumentImage.setOrganization(org);
-    OBDal.getInstance().save(yourCompanyDocumentImage);
+    if (clientInfo.getCompanyLogo() != null) {
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogo());
+      org.getOrganizationInformationList()
+              .get(0)
+              .setCompanyLogo(companyLogo);
+    }
+    if (clientInfo.getCompanyLogoDark() != null) {
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoDark());
+      org.getOrganizationInformationList()
+              .get(0)
+              .setCompanyLogoDark(companyLogo);
+    }
+    if (clientInfo.getCompanyLogoSubmark() != null) {
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoSubmark());
+      org.getOrganizationInformationList()
+              .get(0)
+              .setCompanyLogoSubmark(companyLogo);
+    }
+    if (clientInfo.getCompanyLogoSubmarkDark() != null) {
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoSubmarkDark());
+      org.getOrganizationInformationList()
+              .get(0)
+              .setCompanyLogoSubmarkDark(companyLogo);
+    }
+    if (clientInfo.getCompanyLogoForDocs() != null) {
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoForDocs());
+      org.getOrganizationInformationList()
+              .get(0)
+              .setCompanyLogoForDocs(companyLogo);
+    }
+    if (clientInfo.getCompanyLogoForReceipts() != null) {
+      Image companyLogo = saveLogoImage(client, org, clientInfo.getCompanyLogoForReceipts());
+      org.getOrganizationInformationList()
+              .get(0)
+              .setCompanyLogoForReceipts(companyLogo);
+    }
+
     OBDal.getInstance().save(org);
     OBDal.getInstance().flush();
   }
@@ -499,9 +537,12 @@ public class InitialSetupUtility {
    */
   public static void setClientImages(Client client) throws Exception {
     SystemInformation sys = OBDal.getInstance().get(SystemInformation.class, "0");
-    setYourCompanyBigImage(sys, client);
-    setYourCompanyDocumentImage(sys, client);
-    setYourCompanyMenuImage(sys, client);
+    setCompanyLogo(sys, client);
+    setCompanyLogoDark(sys, client);
+    setCompanyLogoSubmark(sys, client);
+    setCompanyLogoSubmarkDark(sys, client);
+    setCompanyLogoForDocs(sys, client);
+    setCompanyLogoForReceipts(sys, client);
   }
 
   /**
@@ -509,53 +550,139 @@ public class InitialSetupUtility {
    * @param sys
    * @param client
    */
+  public static void setCompanyLogo(SystemInformation sys, Client client) {
+    Image companyLogo = OBProvider.getInstance().get(Image.class);
+    Image systemCompanyLogo = sys.getCompanyLogo();
+    if (systemCompanyLogo != null) {
+      companyLogo.setClient(client);
+      companyLogo.setBindaryData(systemCompanyLogo.getBindaryData());
+      companyLogo.setName(systemCompanyLogo.getName());
+      client.getClientInformationList().get(0).setCompanyLogo(companyLogo);
+      OBDal.getInstance().save(companyLogo);
+      OBDal.getInstance().flush();
+    }
+  }
+
+  /**
+   * 
+   * @param sys
+   * @param client
+   */
+  public static void setCompanyLogoDark(SystemInformation sys, Client client) {
+    Image companyLogoDark = OBProvider.getInstance().get(Image.class);
+    Image systemCompanyLogoDark = sys.getCompanyLogoDark();
+    if (systemCompanyLogoDark != null) {
+      companyLogoDark.setClient(client);
+      companyLogoDark.setBindaryData(systemCompanyLogoDark.getBindaryData());
+      companyLogoDark.setName(systemCompanyLogoDark.getName());
+      client.getClientInformationList().get(0).setCompanyLogoDark(companyLogoDark);
+      OBDal.getInstance().save(companyLogoDark);
+      OBDal.getInstance().flush();
+    }
+  }
+
+  /**
+   * 
+   * @param sys
+   * @param client
+   */
+  public static void setCompanyLogoSubmark(SystemInformation sys, Client client) {
+    Image companyLogoSubmark = OBProvider.getInstance().get(Image.class);
+    Image systemCompanyLogoSubmark = sys.getCompanyLogoSubmark();
+    if (systemCompanyLogoSubmark != null) {
+      companyLogoSubmark.setClient(client);
+      companyLogoSubmark.setBindaryData(systemCompanyLogoSubmark.getBindaryData());
+      companyLogoSubmark.setName(systemCompanyLogoSubmark.getName());
+      client.getClientInformationList().get(0).setCompanyLogoSubmark(companyLogoSubmark);
+      OBDal.getInstance().save(companyLogoSubmark);
+      OBDal.getInstance().flush();
+    }
+  }
+
+  /**
+   *
+   * @param sys
+   * @param client
+   */
+  public static void setCompanyLogoSubmarkDark(SystemInformation sys, Client client) {
+    Image companyLogoSubmarkDark = OBProvider.getInstance().get(Image.class);
+    Image systemCompanyLogoSubmarkDark = sys.getCompanyLogoSubmarkDark();
+    if (systemCompanyLogoSubmarkDark != null) {
+      companyLogoSubmarkDark.setClient(client);
+      companyLogoSubmarkDark.setBindaryData(systemCompanyLogoSubmarkDark.getBindaryData());
+      companyLogoSubmarkDark.setName(systemCompanyLogoSubmarkDark.getName());
+      client.getClientInformationList().get(0).setCompanyLogoSubmarkDark(companyLogoSubmarkDark);
+      OBDal.getInstance().save(companyLogoSubmarkDark);
+      OBDal.getInstance().flush();
+    }
+  }
+
+  /**
+   *
+   * @param sys
+   * @param client
+   */
+  public static void setCompanyLogoForDocs(SystemInformation sys, Client client) {
+    Image companyLogoForDocs = OBProvider.getInstance().get(Image.class);
+    Image systemCompanyLogoForDocs = sys.getCompanyLogoForDocs();
+    if (systemCompanyLogoForDocs != null) {
+      companyLogoForDocs.setClient(client);
+      companyLogoForDocs.setBindaryData(systemCompanyLogoForDocs.getBindaryData());
+      companyLogoForDocs.setName(systemCompanyLogoForDocs.getName());
+      client.getClientInformationList().get(0).setCompanyLogoForDocs(companyLogoForDocs);
+      OBDal.getInstance().save(companyLogoForDocs);
+      OBDal.getInstance().flush();
+    }
+  }
+
+  /**
+   *
+   * @param sys
+   * @param client
+   */
+  public static void setCompanyLogoForReceipts(SystemInformation sys, Client client) {
+    Image companyLogoForReceipts = OBProvider.getInstance().get(Image.class);
+    Image systemCompanyLogoForReceipts = sys.getCompanyLogoForReceipts();
+    if (systemCompanyLogoForReceipts != null) {
+      companyLogoForReceipts.setClient(client);
+      companyLogoForReceipts.setBindaryData(systemCompanyLogoForReceipts.getBindaryData());
+      companyLogoForReceipts.setName(systemCompanyLogoForReceipts.getName());
+      client.getClientInformationList().get(0).setCompanyLogoForReceipts(companyLogoForReceipts);
+      OBDal.getInstance().save(companyLogoForReceipts);
+      OBDal.getInstance().flush();
+    }
+  }
+
+  @Deprecated
+  public static void setOrgImage(Client client, Organization org, byte[] image, String strImageName)
+          throws Exception {
+  }
+
+  /**
+   *
+   * @param sys
+   * @param client
+   */
+  @Deprecated
   public static void setYourCompanyBigImage(SystemInformation sys, Client client) {
-    Image yourCompanyBigImage = OBProvider.getInstance().get(Image.class);
-    Image systemCompanyBigImage = sys.getYourCompanyBigImage();
-    if (systemCompanyBigImage != null) {
-      yourCompanyBigImage.setClient(client);
-      yourCompanyBigImage.setBindaryData(systemCompanyBigImage.getBindaryData());
-      yourCompanyBigImage.setName(systemCompanyBigImage.getName());
-      client.getClientInformationList().get(0).setYourCompanyBigImage(yourCompanyBigImage);
-      OBDal.getInstance().save(yourCompanyBigImage);
-      OBDal.getInstance().flush();
-    }
   }
 
   /**
-   * 
+   *
    * @param sys
    * @param client
    */
+  @Deprecated
   public static void setYourCompanyDocumentImage(SystemInformation sys, Client client) {
-    Image yourCompanyDocumentImage = OBProvider.getInstance().get(Image.class);
-    if (sys.getYourCompanyDocumentImage() != null) {
-      yourCompanyDocumentImage.setClient(client);
-      yourCompanyDocumentImage.setBindaryData(sys.getYourCompanyDocumentImage().getBindaryData());
-      yourCompanyDocumentImage.setName(sys.getYourCompanyBigImage().getName());
-      client.getClientInformationList()
-          .get(0)
-          .setYourCompanyDocumentImage(yourCompanyDocumentImage);
-      OBDal.getInstance().save(yourCompanyDocumentImage);
-      OBDal.getInstance().flush();
-    }
   }
 
   /**
-   * 
+   *
    * @param sys
    * @param client
    */
+  @Deprecated
   public static void setYourCompanyMenuImage(SystemInformation sys, Client client) {
-    Image yourCompanyMenuImage = OBProvider.getInstance().get(Image.class);
-    if (sys.getYourCompanyMenuImage() != null) {
-      yourCompanyMenuImage.setClient(client);
-      yourCompanyMenuImage.setBindaryData(sys.getYourCompanyMenuImage().getBindaryData());
-      yourCompanyMenuImage.setName(sys.getYourCompanyMenuImage().getName());
-      client.getClientInformationList().get(0).setYourCompanyMenuImage(yourCompanyMenuImage);
-      OBDal.getInstance().save(yourCompanyMenuImage);
-      OBDal.getInstance().flush();
-    }
   }
 
   /**

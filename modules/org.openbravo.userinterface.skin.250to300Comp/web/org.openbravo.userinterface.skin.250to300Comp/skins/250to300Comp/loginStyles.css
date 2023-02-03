@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2021 Openbravo SLU
+ * All portions are Copyright (C) 2017-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -557,7 +557,7 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
   padding: 50px 0px 0px 0px;
   width: 520px;
   height: 120px;
-  background: url(../../../../../utility/ShowImageLogo?logo=yourcompanybig) no-repeat center center;
+  background: url(../../../../../utility/ShowImageLogo?logo=companylogo) no-repeat center center;
 }
 
 .error-text {
@@ -596,7 +596,8 @@ button.ButtonLink_disabled table.Button .Button_right, table.ButtonLink_disabled
 .Login_Logo_Company {
   width: 197px;
   height: 55px;
-  background: url(../../../../../utility/ShowImageLogo?logo=yourcompanylogin) no-repeat center center;
+  background: url(../../../../../utility/ShowImageLogo?logo=companylogo) no-repeat center center;
+  background-size: contain;
 }
 
 .Login_Logo_Support {

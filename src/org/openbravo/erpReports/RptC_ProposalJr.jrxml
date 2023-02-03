@@ -193,7 +193,7 @@ table7.C_BPARTNER_ID, TO_CHAR(table8.address1) AS address1, to_char(table8.addre
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("yourcompanylogin")]]></imageExpression>
+				<imageExpression><![CDATA[org.openbravo.erpCommon.utility.Utility.showImageLogo("companylogo")]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField" x="-1" y="202" width="490" height="41" uuid="4eeeef14-67c9-4979-8b47-f3a4b6954674"/>

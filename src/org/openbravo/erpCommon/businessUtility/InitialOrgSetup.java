@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -571,19 +571,16 @@ public class InitialOrgSetup {
   private OBError addImages() {
     OBError obResult = new OBError();
     obResult.setType(ERRORTYPE);
-    if (client.getClientInformationList().get(0).getYourCompanyDocumentImage() != null) {
-      try {
-        OBContext.setAdminMode(true);
-        InitialSetupUtility.setOrgImage(client, org,
-            client.getClientInformationList().get(0).getYourCompanyDocumentImage().getBindaryData(),
-            client.getClientInformationList().get(0).getYourCompanyDocumentImage().getName());
-      } catch (final Exception err) {
-        obResult.setMessage(err.getMessage());
-        return obResult;
-      } finally {
-        OBContext.restorePreviousMode();
-      }
+    try {
+      OBContext.setAdminMode(true);
+      InitialSetupUtility.setOrgImage(client, org, client.getClientInformationList().get(0));
+    } catch (final Exception err) {
+      obResult.setMessage(err.getMessage());
+      return obResult;
+    } finally {
+      OBContext.restorePreviousMode();
     }
+
     obResult.setType(OKTYPE);
     return obResult;
   }
