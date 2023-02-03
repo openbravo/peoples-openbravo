@@ -70,8 +70,11 @@ public class CompanyLogoUtils {
     // then try in Client info from the current client
     // or in SystemInfo if no logo is found for this client
     if (img == null) {
-      img = getCompanyLogoByProperties(OBContext.getOBContext().getCurrentClient(), propertyLight,
-          propertyDark, isDarkMode);
+      Client client = OBContext.getOBContext().getCurrentClient();
+      if (org != null) {
+        client = org.getClient();
+      }
+      img = getCompanyLogoByProperties(client, propertyLight, propertyDark, isDarkMode);
     }
 
     // If everything fails, return an empty image
