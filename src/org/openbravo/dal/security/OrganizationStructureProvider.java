@@ -462,7 +462,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    *         provided organization. It may be null in case the provided list is empty or the
    *         organization ID is null
    */
-  public BaseOBObject getBOBInClosestOrg(Collection<BaseOBObject> bobs, String orgId) {
+  public <T extends BaseOBObject> BaseOBObject getBOBInClosestOrg(Collection<T> bobs,
+      String orgId) {
     if (bobs.isEmpty() || orgId == null) {
       return null;
     }
@@ -474,8 +475,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
             .orElse(getFirstRecordOrderedById(bobs).orElse(null)));
   }
 
-  private Optional<BaseOBObject> getBOBInClosestOrgInParentList(Collection<BaseOBObject> bobs,
-      String orgId) {
+  private <T extends BaseOBObject> Optional<BaseOBObject> getBOBInClosestOrgInParentList(
+      Collection<T> bobs, String orgId) {
     List<String> parentList = getParentList(orgId, true);
 
     int min = Integer.MAX_VALUE;
@@ -510,8 +511,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     return getFirstRecordOrderedById(closest);
   }
 
-  private Optional<BaseOBObject> getBOBInClosestOrgInChildTree(Collection<BaseOBObject> bobs,
-      String orgId) {
+  private <T extends BaseOBObject> Optional<BaseOBObject> getBOBInClosestOrgInChildTree(
+      Collection<T> bobs, String orgId) {
     Set<String> childTree = getChildTree(orgId, false);
     List<BaseOBObject> closest = bobs.stream()
         .filter(bob -> getOrgId(bob) != null && childTree.contains(getOrgId(bob)))
@@ -530,7 +531,7 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     return getFirstRecordOrderedById(closest);
   }
 
-  private Optional<BaseOBObject> getFirstRecordOrderedById(Collection<BaseOBObject> bobs) {
+  private <T extends BaseOBObject> Optional<T> getFirstRecordOrderedById(Collection<T> bobs) {
     return bobs.stream().sorted(Comparator.comparing(bob -> (String) bob.getId())).findFirst();
   }
 
