@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,14 +21,19 @@ package org.openbravo.dal.security;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.provider.OBNotSingleton;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationNodeCache.OrgNode;
@@ -431,5 +436,112 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       }
     }
     return trxAllowedOrgs;
+  }
+
+  /**
+   * Retrieves from a list of {@link BaseOBObject} the one whose organization is the closest in the
+   * tree structure to the provided organization. To criteria to determine the closest one is the
+   * following:
+   * <ol>
+   * <li>First we take the closest record in the parent list, if multiple records are found then we
+   * sort them by ID and return the first one.</li>
+   * <li>If no records are found in the fist step, then we select the record whose organization is
+   * present in the child tree. Here it does not make sense to consider the distance, because we can
+   * have multiple records with the same distance due to the ramifications that the child tree may
+   * have. If multiple records are found, then we sort them by ID and return the first one.</li>
+   * <li>If still we have not selected any record after these two steps, which may be the case of
+   * the cross organization references, then we just sort the candidate records by its ID and return
+   * the first one.</li>
+   * </ol>
+   * 
+   * @param bobs
+   *          a collection of {@link BaseOBObject}
+   * @param orgId
+   *          the organization ID
+   * @return an optional describing the {@link BaseOBObject} whose organization is closest to the
+   *         provided organization. It may be null in case the provided list is empty or the
+   *         organization ID is null
+   */
+  public BaseOBObject getBOBInClosestOrg(Collection<BaseOBObject> bobs, String orgId) {
+    if (bobs.isEmpty() || orgId == null) {
+      return null;
+    }
+    if (bobs.size() == 1) {
+      return bobs.iterator().next();
+    }
+    return getBOBInClosestOrgInParentList(bobs, orgId)
+        .orElse(getBOBInClosestOrgInChildTree(bobs, orgId)
+            .orElse(getFirstRecordOrderedById(bobs).orElse(null)));
+  }
+
+  private Optional<BaseOBObject> getBOBInClosestOrgInParentList(Collection<BaseOBObject> bobs,
+      String orgId) {
+    List<String> parentList = getParentList(orgId, true);
+
+    int min = Integer.MAX_VALUE;
+    List<BaseOBObject> closest = new ArrayList<>();
+    for (BaseOBObject bob : bobs) {
+      String bobOrgId = getOrgId(bob);
+      if (bobOrgId == null) {
+        continue;
+      }
+      int position = parentList.indexOf(bobOrgId);
+      if (position == -1) {
+        continue;
+      } else if (min > position) {
+        min = position;
+        closest.clear();
+        closest.add(bob);
+      } else if (min == position) {
+        closest.add(bob);
+      }
+    }
+
+    if (closest.isEmpty()) {
+      return Optional.empty();
+    }
+
+    if (closest.size() == 1) {
+      return Optional.of(closest.get(0));
+    }
+
+    log.warn("Found multiple records in the parent list of the organization {}: {}", orgId,
+        closest.stream().map(bob -> (String) bob.getId()).collect(Collectors.joining(", ")));
+    return getFirstRecordOrderedById(closest);
+  }
+
+  private Optional<BaseOBObject> getBOBInClosestOrgInChildTree(Collection<BaseOBObject> bobs,
+      String orgId) {
+    Set<String> childTree = getChildTree(orgId, false);
+    List<BaseOBObject> closest = bobs.stream()
+        .filter(bob -> getOrgId(bob) != null && childTree.contains(getOrgId(bob)))
+        .collect(Collectors.toList());
+
+    if (closest.isEmpty()) {
+      return Optional.empty();
+    }
+
+    if (closest.size() == 1) {
+      return Optional.of(closest.get(0));
+    }
+
+    log.warn("Found multiple records in the child tree of the organization {}: {}", orgId,
+        closest.stream().map(bob -> (String) bob.getId()).collect(Collectors.joining(", ")));
+    return getFirstRecordOrderedById(closest);
+  }
+
+  private Optional<BaseOBObject> getFirstRecordOrderedById(Collection<BaseOBObject> bobs) {
+    return bobs.stream().sorted(Comparator.comparing(bob -> (String) bob.getId())).findFirst();
+  }
+
+  private String getOrgId(BaseOBObject bob) {
+    if (Organization.ENTITY_NAME.equals(bob.getEntity().getName())) {
+      return (String) bob.getId();
+    }
+    if (!bob.getEntity().isOrganizationEnabled()) {
+      return null;
+    }
+    Organization org = (Organization) bob.get("organization");
+    return org != null ? org.getId() : OBContext.getOBContext().getCurrentOrganization().getId();
   }
 }
