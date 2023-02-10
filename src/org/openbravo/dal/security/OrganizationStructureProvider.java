@@ -455,12 +455,13 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    * </ol>
    * 
    * @param bobs
-   *          a collection of {@link BaseOBObject}
+   *          a collection of objects extending {@link BaseOBObject}
    * @param orgId
    *          the organization ID
-   * @return an optional describing the {@link BaseOBObject} whose organization is closest to the
-   *         provided organization. It may be null in case the provided list is empty or the
-   *         organization ID is null
+   * @return an object extending {@link BaseOBObject} whose organization is closest to the provided
+   *         organization. It may be null in case the provided list is empty or if there is no BOB
+   *         in that list whose organization is in the natural tree of the given organization or if
+   *         the given organization ID is null
    */
   public <T extends BaseOBObject> BaseOBObject getBOBInClosestOrg(Collection<T> bobs,
       String orgId) {
