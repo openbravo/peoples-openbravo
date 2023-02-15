@@ -61,7 +61,7 @@ BEGIN
     SELECT res_status INTO v_resstatus
     FROM m_reservation
     WHERE m_reservation_id = :OLD.m_reservation_id;
-    IF (:OLD.releasedqty <> 0) THEN
+    IF (:OLD.releasedqty <> 0 AND v_resstatus<>'OG') THEN
       RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReleasedReservation@');
     END IF;
     v_attributesetinstance_id := :OLD.m_attributesetinstance_id;
