@@ -468,12 +468,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
     if (bobs.isEmpty() || orgId == null) {
       return null;
     }
-    if (bobs.size() == 1) {
-      return bobs.iterator().next();
-    }
     return getBOBInClosestOrgInParentList(bobs, orgId)
-        .orElse(getBOBInClosestOrgInChildTree(bobs, orgId)
-            .orElse(getFirstRecordOrderedById(bobs).orElse(null)));
+        .orElse(getBOBInClosestOrgInChildTree(bobs, orgId).orElse(null));
   }
 
   private <T extends BaseOBObject> Optional<BaseOBObject> getBOBInClosestOrgInParentList(
