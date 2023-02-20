@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2020 Openbravo SLU
+ * All portions are Copyright (C) 2011-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -243,6 +243,9 @@ isc.OBFKFilterTextItem.addProperties({
       };
     }
     dataSource = OB.Datasource.create({
+      // this will prevent a slow request to overwrite the results of a request that was sent after it but
+      // processed after. It is not done for all requests to support shared datasources
+      preventResponseOverwrite: true,
       dataURL: grid.getDataSource().dataURL,
       requestProperties: {
         params: {

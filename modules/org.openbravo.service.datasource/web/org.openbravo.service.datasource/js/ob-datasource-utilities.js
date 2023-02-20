@@ -11,11 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2018 Openbravo SLU
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
+
+// Used to cancel previous requests if they are going to overlap the last one
+const RPCREQUEST_STATUS_FAILURE = -1;
 
 // = Openbravo Datasource Utilities =
 // Defines a number of utility methods related to datasources.
@@ -249,7 +252,23 @@ isc.OBRestDataSource.addProperties({
       encodedParams = isc.JSON.encode(decodedParams);
     }
 
+    encodedParams.timestamp = Date.now();
+
     return encodedParams;
+  },
+
+  transformResponse: function(dsResponse, dsRequest, data) {
+    // Ensures that a previous request doesn't overlap the last one
+    if (
+      this.preventResponseOverwrite &&
+      dsRequest.data.timestamp < this.lastTimestamp
+    ) {
+      dsResponse.status = RPCREQUEST_STATUS_FAILURE;
+      return;
+    }
+    this.lastTimestamp = dsRequest.data.timestamp;
+
+    return this.Super('transformResponse', arguments);
   },
 
   // always let the dummy criterion be true
