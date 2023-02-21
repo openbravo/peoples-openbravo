@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2016 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,13 +58,33 @@ public class DataSourceServiceProvider {
    * @return a {@link DataSourceService} object
    */
   public DataSourceService getDataSource(String dataSourceIdentifier) {
+    // reuse existing instance if possible
+    boolean useCache = true;
+    return getDataSource(dataSourceIdentifier, useCache);
+  }
+
+  /**
+   * Checks the internal cache for a datasource with the requested name and returns it if found. A
+   * second boolean parameter can be use to specify whether the datasource can be returned from a
+   * cache if available, or if a fresh, not-shared copy is expected
+   * 
+   * @param dataSourceIdentifier
+   *          the name by which to search and identify the data source.
+   * @param useCache
+   *          if true, the datasource will be read from a cache, if available. If false, a new
+   *          instance will be created and will not be cached
+   * @return a {@link DataSourceService} object
+   */
+  public DataSourceService getDataSource(String dataSourceIdentifier, boolean useCache) {
     DataSourceService dataSourceService = dataSources.get(dataSourceIdentifier);
-    if (dataSourceService == null) {
+    if (!useCache || dataSourceService == null) {
       OBContext.setAdminMode();
       try {
         DataSource dataSource = getRealDataSource(dataSourceIdentifier);
         dataSourceService = getDataSourceServiceFromDataSource(dataSource, dataSourceIdentifier);
-        dataSources.put(dataSourceIdentifier, dataSourceService);
+        if (useCache) {
+          dataSources.put(dataSourceIdentifier, dataSourceService);
+        }
       } catch (Exception e) {
         throw new OBException(e);
       } finally {

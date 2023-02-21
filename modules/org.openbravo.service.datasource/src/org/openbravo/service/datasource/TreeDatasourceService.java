@@ -516,9 +516,30 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       throws TooManyTreeNodesException {
     List<String> filteredNodes = new ArrayList<String>();
     Entity entity = ModelProvider.getInstance().getEntityByTableId(table.getId());
+
     // Delegate on the default standard datasource to fetch the filtered nodes
-    DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName());
+    // do not used a cached version because we might need to modify its where clause
+    boolean useCache = false;
+    DataSourceService dataSource = dataSourceServiceProvider.getDataSource(entity.getName(),
+        useCache);
+    String tabId = parameters.get("tabId");
+    String treeReferenceId = parameters.get("treeReferenceId");
+    String hqlTreeWhereClause = null;
+
+    if (tabId != null) {
+      Tab tab = OBDal.getInstance().get(Tab.class, tabId);
+      hqlTreeWhereClause = tab.getHqlwhereclause();
+    } else if (treeReferenceId != null) {
+      ReferencedTree treeReference = OBDal.getInstance().get(ReferencedTree.class, treeReferenceId);
+      hqlTreeWhereClause = treeReference.getHQLSQLWhereClause();
+    }
+
+    if (hqlTreeWhereClause != null) {
+      hqlTreeWhereClause = this.substituteParameters(hqlTreeWhereClause, parameters);
+      dataSource.setWhereClause(hqlTreeWhereClause);
+    }
     String dsResult = dataSource.fetch(parameters);
+
     try {
       JSONObject jsonDsResult = new JSONObject(dsResult);
       JSONObject jsonResponse = jsonDsResult.getJSONObject(JsonConstants.RESPONSE_RESPONSE);
