@@ -2,7 +2,6 @@
   <database name="TRIGGER M_RESERVATION_TRG">
     <trigger name="M_RESERVATION_TRG" table="M_RESERVATION" fires="before" insert="true" update="true" delete="true" foreach="row">
       <body><![CDATA[
-
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -88,7 +87,7 @@ BEGIN
   END IF;
 
   IF (UPDATING) THEN
-    IF ((:OLD.res_status = 'DR' AND :NEW.res_status <> 'DR') or (:OLD.res_status = 'OG' AND :NEW.res_status <> 'OG'))THEN
+    IF ((:OLD.res_status = 'DR' AND :NEW.res_status <> 'DR') and (:OLD.res_status = 'DR' AND :NEW.res_status <> 'OG'))THEN
       FOR cur_reservationstock IN (
 	      select rs.m_locator_id, rs.m_attributesetinstance_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
 				SUM(CASE WHEN rs.isallocated = 'Y' THEN (rs.quantity - coalesce(rs.releasedqty,0)) ELSE 0 END) as allocatedqty
@@ -107,7 +106,7 @@ BEGIN
 				AND m_attributesetinstance_id = cur_reservationstock.m_attributesetinstance_id;
       END LOOP;
     END IF;
-    IF ((:OLD.res_status <> 'DR' AND :NEW.res_status = 'DR') or (:OLD.res_status = 'OG' AND :NEW.res_status <> 'OG')) THEN
+    IF ((:OLD.res_status <> 'DR' AND :NEW.res_status = 'DR') and (:OLD.res_status <> 'OG' AND :NEW.res_status = 'DR')) THEN
       FOR cur_reservationstock IN (
 	      select rs.m_locator_id, rs.m_attributesetinstance_id, SUM(rs.quantity - coalesce(rs.releasedqty,0)) as reservedqty, 
 				SUM(CASE WHEN rs.isallocated = 'Y' THEN (rs.quantity - coalesce(rs.releasedqty,0)) ELSE 0 END) as allocatedqty
