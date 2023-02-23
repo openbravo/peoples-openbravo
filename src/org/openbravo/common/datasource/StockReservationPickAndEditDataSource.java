@@ -676,7 +676,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     if (ol != null && !"".equals(ol)) {
       reservation = ReservationUtils
           .getReservationFromOrder(OBDal.getInstance().get(OrderLine.class, ol));
-      if (reservation.getRESStatus().equals("DR") || reservation.getRESStatus().equals("OG")) {
+      if (reservation.getRESStatus().equals("DR")) {
         ReservationUtils.processReserve(reservation, "PR");
       }
     } else {
@@ -1526,8 +1526,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
               continue;
             }
             BigDecimal qtty = BigDecimal.ZERO;
-            if (reservation.getRESStatus().equals("DR")
-                || reservation.getRESStatus().equals("OG")) {
+            if (reservation.getRESStatus().equals("DR")) {
               ReservationStock rs = getPrereservedStock(reservation, sd.getStorageBin(),
                   sd.getAttributeSetValue());
               if (rs != null) {
@@ -1563,7 +1562,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
           continue;
         }
         BigDecimal qtty = BigDecimal.ZERO;
-        if (reservation.getRESStatus().equals("DR") || reservation.getRESStatus().equals("OG")) {
+        if (reservation.getRESStatus().equals("DR")) {
           ReservationStock rs = getPrereservedStock(reservation, sd.getStorageBin(),
               sd.getAttributeSetValue());
           if (rs != null) {
@@ -1647,7 +1646,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       Map<String, Object> myMap = new HashMap<>();
       myMap.put("id", sd.getId());
       myMap.put("obSelected", obSelected);
-      if (reservation.getRESStatus().equals("DR") || reservation.getRESStatus().equals("OG")) {
+      if (reservation.getRESStatus().equals("DR")) {
         ReservationStock rs = getPrereservedStock(reservation, sd.getStorageBin(),
             sd.getAttributeSetValue());
         if (rs != null) {
@@ -1681,7 +1680,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
       myMap.put("reservedinothers", reservedinothers);
       myMap.put("reservationQuantity", reservation.getQuantity());
       myMap.put("quantity", BigDecimal.ZERO);
-      if (reservation.getRESStatus().equals("DR") || reservation.getRESStatus().equals("OG")) {
+      if (reservation.getRESStatus().equals("DR")) {
         ReservationStock rs = getPrereservedStock(reservation, sd.getStorageBin(),
             sd.getAttributeSetValue());
         if (rs != null) {
