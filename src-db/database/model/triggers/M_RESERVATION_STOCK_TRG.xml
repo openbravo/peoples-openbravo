@@ -34,6 +34,9 @@ BEGIN
   END IF;
 
   IF (INSERTING OR UPDATING) THEN
+    SELECT res_status, m_product_id, c_uom_id INTO v_resstatus, v_m_product_id, v_c_uom_id
+    FROM m_reservation
+    WHERE m_reservation_id = :NEW.m_reservation_id;
     v_reservedqtydiff := COALESCE(:NEW.quantity, 0);
     v_releasedqtydiff := COALESCE(:NEW.releasedqty, 0);
     v_reservation_id := :NEW.m_reservation_id;
@@ -48,6 +51,9 @@ BEGIN
   END IF;
 
   IF (UPDATING OR DELETING) THEN
+    SELECT res_status, m_product_id, c_uom_id INTO v_resstatus, v_m_product_id, v_c_uom_id
+    FROM m_reservation
+    WHERE m_reservation_id = :OLD.m_reservation_id;
     v_reservedqtydiff := v_reservedqtydiff - COALESCE(:OLD.quantity, 0);
     v_releasedqtydiff := v_releasedqtydiff - COALESCE(:OLD.releasedqty, 0);
     v_reservation_id := :OLD.m_reservation_id;
@@ -57,9 +63,6 @@ BEGIN
   END IF;
   
   IF (DELETING) THEN
-    SELECT res_status INTO v_resstatus
-    FROM m_reservation
-    WHERE m_reservation_id = :OLD.m_reservation_id;
     IF (:OLD.releasedqty <> 0 AND v_resstatus<>'OG') THEN
       RAISE_APPLICATION_ERROR(-20000, '@CannotDeleteReleasedReservation@');
     END IF;
@@ -67,12 +70,11 @@ BEGIN
    v_locator_id := :OLD.m_locator_id;
   END IF;
 
-  IF ((v_reservedqtydiff <> 0 OR v_releasedqtydiff <> 0 or v_allocatedqtydiff <> 0) and v_resstatus <> 'OG' ) THEN
+  IF ((v_reservedqtydiff <> 0 OR v_releasedqtydiff <> 0 or v_allocatedqtydiff <> 0) AND v_resstatus <> 'OG') THEN
          UPDATE m_reservation
          SET reservedqty = COALESCE(reservedqty, 0) + v_reservedqtydiff,
              releasedqty = COALESCE(releasedqty, 0) + v_releasedqtydiff
          WHERE m_reservation_id = v_reservation_id;
-         SELECT res_status, m_product_id, c_uom_id INTO v_resstatus, v_m_product_id, v_c_uom_id FROM   m_reservation where m_reservation_id = v_reservation_id;
          IF(v_resstatus <> 'DR') THEN
                  UPDATE m_storage_detail
                  SET reservedqty = reservedqty + v_reservedqtydiff - v_releasedqtydiff,
