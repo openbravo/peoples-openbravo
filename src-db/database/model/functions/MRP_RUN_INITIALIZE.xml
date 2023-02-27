@@ -52,7 +52,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2022 Openbravo SLU
+* All portions are Copyright (C) 2001-2023 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -211,9 +211,9 @@ BEGIN --BODY
               LEFT JOIN m_matchpo matchpo ON ol.c_orderline_id = matchpo.c_orderline_id AND matchpo.m_inoutline_id IS NOT NULL
               JOIN m_warehouse w ON ol.m_warehouse_id = w.m_warehouse_id
               -- Sales order reservation
-              LEFT JOIN m_reservation res ON res.c_orderline_id = ol.c_orderline_id AND res.res_status NOT IN ('CL', 'DR')
+              LEFT JOIN m_reservation res ON res.c_orderline_id = ol.c_orderline_id AND res.res_status NOT IN ('CL', 'DR' , 'OG')
               -- Prereserved purchase orders
-              LEFT JOIN m_reservation r ON r.c_orderline_id = ol.c_orderline_id AND r.res_status NOT IN ('CL', 'DR')
+              LEFT JOIN m_reservation r ON r.c_orderline_id = ol.c_orderline_id AND r.res_status NOT IN ('CL', 'DR' , 'OG')
               LEFT JOIN m_reservation_stock rs ON rs.m_reservation_id = r.m_reservation_id AND rs.c_orderline_id IS NOT NULL AND rs.m_locator_id IS NULL
          WHERE o.processed = 'Y'
            AND ol.m_product_id = cur_product.m_product_id

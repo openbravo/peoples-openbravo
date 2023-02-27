@@ -22,7 +22,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2020 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2023 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -581,7 +581,7 @@
                   INTO v_aux, v_reservation_id
                 FROM m_reservation
                 WHERE c_orderline_id = cur_inoutline.c_orderline_id
-                AND res_status NOT IN ('DR', 'CL');
+                AND res_status NOT IN ('DR', 'CL' , 'OG');
                 IF (v_aux > 1) THEN
                   RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
                 ELSIF (v_aux = 1) THEN
@@ -593,7 +593,7 @@
                 INTO v_aux, v_reservation_id
                 FROM m_reservation
                 WHERE c_orderline_id = cur_inoutline.c_orderline_id
-                AND res_status NOT IN ('DR', 'CL');
+                AND res_status NOT IN ('DR', 'CL' , 'OG');
                 IF (v_aux > 1) THEN
                   RAISE_APPLICATION_ERROR(-20000, '@SOLineWithMoreThanOneOpenReservation@');
                 END IF;
@@ -612,7 +612,7 @@
                       WHERE rs.c_orderline_id = cur_inoutline.c_orderline_id
                         AND rs.quantity <> COALESCE(rs.releasedqty, 0)
                         AND rs.m_locator_id IS NULL
-                        AND r.res_status NOT IN ('DR', 'CL')
+                        AND r.res_status NOT IN ('DR', 'CL' , 'OG')
                   ) LOOP
                     v_qtyaux := LEAST(cur_reserve_stock.quantity - COALESCE(cur_reserve_stock.releasedqty, 0), v_pendingqty);
                     -- Check if exists a reserved stock for the same orderline, attributes and locator in the reservation
@@ -692,7 +692,7 @@
                       FROM m_reservation_stock rs JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
                       WHERE rs.c_orderline_id = cur_inoutline.c_orderline_id
                         AND rs.m_locator_id = cur_inoutline.m_locator_id
-                        AND r.res_status NOT IN ('DR', 'CL')
+                        AND r.res_status NOT IN ('DR', 'CL', 'OG')
                   ) LOOP
                     v_qtyaux := LEAST((cur_reserve_stock.quantity - COALESCE(cur_reserve_stock.releasedqty, 0)), v_pendingqty);
                     v_aux_released := v_aux_released + COALESCE(cur_reserve_stock.releasedqty, 0);
@@ -1267,7 +1267,7 @@
               JOIN C_ORDER o
               ON ol.c_order_id = o.c_order_id
               WHERE iol.m_inout_id = Cur_InOut.m_inout_id
-              AND r.res_status <> 'DR'
+              AND r.res_status not in ('DR' , 'OG')
               AND iol.movementqty > 0
               AND iol.canceled_inoutline_id IS NULL
               AND o.docstatus <> 'CL'
@@ -1275,7 +1275,7 @@
                 SELECT max(created)
                 FROM M_RESERVATION
                 WHERE c_orderline_id = r.c_orderline_id
-                AND res_status <> 'DR'
+                AND res_status not in ('DR' , 'OG')
               )
               GROUP BY r.m_reservation_id, r.ad_client_id, r.ad_org_id,
               r.m_product_id, r.quantity, r.c_uom_id, r.c_orderline_id, r.ad_user_id,

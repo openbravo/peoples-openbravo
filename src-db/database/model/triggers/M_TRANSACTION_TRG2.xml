@@ -2,7 +2,6 @@
   <database name="TRIGGER M_TRANSACTION_TRG2">
     <trigger name="M_TRANSACTION_TRG2" table="M_TRANSACTION" fires="before" insert="true" update="false" delete="false" foreach="row">
       <body><![CDATA[
-
 /*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
 * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -15,7 +14,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2012-2018 Openbravo SLU
+* All portions are Copyright (C) 2012-2023 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -42,7 +41,7 @@ BEGIN
       WHERE EXISTS (SELECT 1
                     FROM m_reservation r
                         JOIN m_reservation_stock rs ON r.m_reservation_id = rs.m_reservation_id
-                    WHERE r.res_status NOT IN ('CL', 'DR')
+                    WHERE r.res_status NOT IN ('CL', 'DR' , 'OG')
                       AND r.m_product_id = :NEW.m_product_id
                       AND r.c_uom_id = :NEW.c_uom_id
                       AND COALESCE(rs.m_attributesetinstance_id, '0') = :NEW.m_attributesetinstance_id
@@ -52,7 +51,7 @@ BEGIN
           INTO v_reserved
         FROM m_reservation_stock rs
             JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
-        WHERE r.res_status NOT IN ('CL', 'DR')
+        WHERE r.res_status NOT IN ('CL', 'DR' , 'OG')
           AND r.m_product_id = :NEW.m_product_id
           AND r.c_uom_id = :NEW.c_uom_id
           AND COALESCE(rs.m_attributesetinstance_id, '0') = :NEW.m_attributesetinstance_id

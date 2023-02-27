@@ -17,7 +17,7 @@
   * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
   * All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2018 Openbravo, S.L.U.
+  * Contributions are Copyright (C) 2001-2023 Openbravo, S.L.U.
   *
   * Specifically, this derivative work is based upon the following Compiere
   * file and version.
@@ -55,7 +55,6 @@ BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
-
 
 IF (UPDATING) THEN
   IF NOT(COALESCE(:old.M_Product_ID,'0') <> COALESCE(:NEW.M_Product_ID,'0')
@@ -136,13 +135,13 @@ IF (UPDATING) THEN
        SELECT count(*) INTO v_count
        FROM m_reservation 
        WHERE c_orderline_id = :OLD.c_orderline_id
-       AND res_status = 'DR';
+       AND res_status in ('DR','OG');
        IF (v_count > 0) THEN
          SELECT max(m_reservation_id) INTO v_reservation_id
          FROM m_reservation 
          WHERE c_orderline_id = :OLD.c_orderline_id
          AND m_product_id = :OLD.m_product_id
-         AND res_status = 'DR';
+         AND res_status in ('DR','OG');
          DELETE FROM m_reservation_stock
          WHERE m_reservation_id = v_reservation_id;
          UPDATE m_reservation

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2020 Openbravo SLU
+ * All portions are Copyright (C) 2014-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1847,7 +1847,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     String hql =
             "select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs " +
             "  join rs.reservation as r " +
-            " where r.rESStatus not in ('CL', 'DR') " +
+            " where r.rESStatus not in ('CL', 'DR', 'OG') " +
             "   and rs.salesOrderLine.id = :orderLineId " +
             "   and r.id <> :reservationId ";
     //@formatter:on
@@ -1866,7 +1866,7 @@ public class StockReservationPickAndEditDataSource extends ReadOnlyDataSourceSer
     String hql =
             "select coalesce(sum(rs.quantity - coalesce(rs.released,0)),0) from MaterialMgmtReservationStock rs " +
             "  join rs.reservation as r " +
-            " where r.rESStatus not in ('CL', 'DR') " +
+            " where r.rESStatus not in ('CL', 'DR', 'OG') " +
             "   and r.product.id = :productId " +
             "   and r.id <> :reservationId " ;
     //@formatter:on

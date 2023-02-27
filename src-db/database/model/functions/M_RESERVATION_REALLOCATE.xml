@@ -34,7 +34,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2013-2018 Openbravo SLU
+* All portions are Copyright (C) 2013-2023 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************/
@@ -146,7 +146,7 @@ BEGIN
   FROM m_reservation_stock rs
     JOIN m_reservation r ON rs.m_reservation_id = r.m_reservation_id
   WHERE r.m_product_id = v_product_id
-    AND r.res_status NOT IN ('CL', 'DR')
+    AND r.res_status NOT IN ('CL', 'DR', 'OG')
     AND r.c_uom_id = v_uom_id
     AND rs.m_locator_id = p_locator_id
     AND rs.m_attributesetinstance_id = v_attributesetinstance_id;
@@ -248,7 +248,7 @@ BEGIN
         AND rs.m_locator_id = p_locator_id
         AND rs.m_attributesetinstance_id = v_attributesetinstance_id
         AND rs.isallocated = 'N'
-        AND r.res_status NOT IN ('HO', 'CL', 'DR')
+        AND r.res_status NOT IN ('HO', 'CL', 'DR', 'OG')
         AND rs.quantity <> COALESCE(rs.releasedqty,0)
   ) LOOP
     v_qtytorelease := LEAST(v_pendingtoreallocate, cur_not_allocated_stock.quantity - cur_not_allocated_stock.releasedqty);
