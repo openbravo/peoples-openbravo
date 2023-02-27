@@ -38,7 +38,8 @@
     "eslint-plugin-jest": "~24.1.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "27.5.1",
-    "jest-html-reporters": "~2.1.2"
+    "jest-html-reporters": "~2.1.2",
+    "nyc-config-tsx": "^0.1.0"
   },
   "jest": {
     "testEnvironment": "jsdom",
