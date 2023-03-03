@@ -57,7 +57,7 @@ public class ExternalSystemProvider {
       OBContext.setAdminMode(true);
       ExternalSystemData externalSystemData = OBDal.getInstance()
           .get(ExternalSystemData.class, externalSystemDataId);
-      String protocol = externalSystemData.getProtocol();
+      String protocol = externalSystemData.getProtocol2().getName();
       List<ExternalSystem> externalSystems = WeldUtils.getInstances(ExternalSystem.class,
           new ProtocolSelector(protocol));
 
