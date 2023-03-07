@@ -49,7 +49,12 @@ class ParameterSerializer {
 
     checkParameters(parameters);
 
-    return new JSONObject(parameters).toString();
+    String json = null;
+    try {
+      json = new JSONObject(parameters).toString();
+    } catch (JSONException ignore) {
+    }
+    return json;
   }
 
   private void checkParameters(Map<String, Object> parameters) {

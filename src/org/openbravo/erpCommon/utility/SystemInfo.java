@@ -54,6 +54,7 @@ import javax.servlet.ServletException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
@@ -553,7 +554,10 @@ public class SystemInfo {
           qUsage.add(Restrictions.ge(SessionUsageAudit.PROPERTY_CREATIONDATE, startOfPeriod));
           modInfo.add(Integer.toString(qUsage.count()));
         }
-        mods.put(modInfo);
+        try {
+          mods.put(modInfo);
+        } catch (JSONException ignore) {
+        }
       }
       return mods.toString();
     } finally {

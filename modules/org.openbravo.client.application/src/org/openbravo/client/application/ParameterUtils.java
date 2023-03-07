@@ -283,7 +283,10 @@ public class ParameterUtils {
     Object result = OBScriptEngine.getInstance().eval(expression, bindings);
     if (result instanceof Map) {
       // complex js object, convert it into a JSON
-      result = new JSONObject((Map) result);
+      try {
+        result = new JSONObject((Map) result);
+      } catch (JSONException ignore) {
+      }
     }
     return result;
   }

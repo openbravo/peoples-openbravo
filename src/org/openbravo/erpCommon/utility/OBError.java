@@ -88,8 +88,8 @@ public class OBError implements Serializable {
 
   public JSONObject toJSON() {
     JSONObject obError = new JSONObject();
-    JSONObject data = new JSONObject(toMap());
     try {
+      JSONObject data = new JSONObject(toMap());
       obError.put("OBError", data);
     } catch (JSONException ignore) {
     }
