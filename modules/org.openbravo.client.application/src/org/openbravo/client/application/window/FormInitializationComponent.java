@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1049,7 +1049,8 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (jsContent.has(inpColName)) {
             final Object jsonValue = jsContent.get(inpColName);
             String value;
-            if (jsonValue == null || jsonValue.toString().equals("null")) {
+            if (jsonValue == null || jsonValue.toString() == null
+                || jsonValue.toString().equals("null")) {
               value = null;
             } else if (!(jsonValue instanceof String)) {
               final Object propValue = JsonToDataConverter.convertJsonToPropertyValue(prop,
@@ -1380,6 +1381,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       RequestContext.get()
           .setRequestParameter(fieldId,
               jsonObj.has("classicValue") && jsonObj.get("classicValue") != null
+                  && jsonObj.getString("classicValue") != null
                   && !jsonObj.getString("classicValue").equals("null")
                       ? jsonObj.getString("classicValue")
                       : null);
