@@ -297,6 +297,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SALESREP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="A_ASSET" name="C_ORDERLINE_A_ASSET">
         <reference local="A_ASSET_ID" foreign="A_ASSET_ID"/>
       </foreign-key>
@@ -371,6 +375,9 @@
       </foreign-key>
       <foreign-key foreignTable="S_RESOURCEASSIGNMENT" name="C_ORDERLINE_S_RESOURCEASSIGNME">
         <reference local="S_RESOURCEASSIGNMENT_ID" foreign="S_RESOURCEASSIGNMENT_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="C_ORDERLINE_SALESREP">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_ORDERLINE" name="C_ORDERLINE_SOPOREF">
         <reference local="REF_ORDERLINE_ID" foreign="C_ORDERLINE_ID"/>

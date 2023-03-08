@@ -137,6 +137,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SALESREP_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="M_CONDITION_GOODS" name="M_CONDITION_GOODS">
         <reference local="M_CONDITION_GOODS_ID" foreign="M_CONDITION_GOODS_ID"/>
       </foreign-key>
@@ -187,6 +191,9 @@
       </foreign-key>
       <foreign-key foreignTable="M_PRODUCT_UOM" name="M_INOUTLINE_M_PRODUCT_UOM">
         <reference local="M_PRODUCT_UOM_ID" foreign="M_PRODUCT_UOM_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_USER" name="M_INOUTLINE_SALESREP">
+        <reference local="SALESREP_ID" foreign="AD_USER_ID"/>
       </foreign-key>
       <foreign-key foreignTable="USER1" name="M_INOUTLINE_USER1">
         <reference local="USER1_ID" foreign="USER1_ID"/>
