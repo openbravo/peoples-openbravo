@@ -52,7 +52,8 @@ class ParameterSerializer {
     String json = null;
     try {
       json = new JSONObject(parameters).toString();
-    } catch (JSONException ignore) {
+    } catch (JSONException e) {
+      e.printStackTrace();
     }
     return json;
   }

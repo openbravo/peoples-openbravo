@@ -556,7 +556,8 @@ public class SystemInfo {
         }
         try {
           mods.put(modInfo);
-        } catch (JSONException ignore) {
+        } catch (JSONException e) {
+          e.printStackTrace();
         }
       }
       return mods.toString();

@@ -91,7 +91,8 @@ public class OBError implements Serializable {
     try {
       JSONObject data = new JSONObject(toMap());
       obError.put("OBError", data);
-    } catch (JSONException ignore) {
+    } catch (JSONException e) {
+      e.printStackTrace();
     }
     return obError;
   }

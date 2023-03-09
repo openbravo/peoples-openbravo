@@ -285,7 +285,8 @@ public class ParameterUtils {
       // complex js object, convert it into a JSON
       try {
         result = new JSONObject((Map) result);
-      } catch (JSONException ignore) {
+      } catch (JSONException e) {
+        e.printStackTrace();
       }
     }
     return result;
