@@ -69,6 +69,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkDefaultPhoneDuplicates(event);
     checkDefaultAddressDuplicates(event);
     checkMandatoryRemovalIfMultiIntegration(event);
+    checkIdentifierScanningActionDuplicates(event);
   }
 
   private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
@@ -183,6 +184,37 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
       if (hqlCriteria.uniqueResult() != null) {
         throw new OBException(OBMessageUtils.messageBD("UnnasignExtBPAddressPropertyMandatory"));
       }
+    }
+  }
+
+  private void checkIdentifierScanningActionDuplicates(EntityPersistenceEvent event) {
+    final String id = event.getId();
+    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    final ExternalBusinessPartnerConfig currentExtBPConfig = property
+        .getExternalBusinessPartnerIntegrationConfiguration();
+
+    if (!property.isIdentifierscanningaction() || !property.isActive()) {
+      return;
+    }
+
+    if (!property.getReference().equals("B")) {
+      throw new OBException("@NotBooleanTypeCRMIdentifierScanningAction@");
+    }
+
+    final OBCriteria<?> criteria = OBDal.getInstance()
+        .createCriteria(event.getTargetInstance().getClass());
+    criteria.add(Restrictions.eq(
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        currentExtBPConfig));
+    criteria.add(Restrictions
+        .eq(ExternalBusinessPartnerConfigProperty.PROPERTY_IDENTIFIERSCANNINGACTION, true));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
+    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
+
+    criteria.setMaxResults(1);
+    if (criteria.uniqueResult() != null) {
+      throw new OBException("@DuplicatedCRMIdentifierScanningAction@");
     }
   }
 }
