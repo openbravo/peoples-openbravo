@@ -1528,7 +1528,7 @@ isc.OBStandardWindow.addProperties({
     return this.views.find('tabId', tabId);
   },
 
-  storeViewState: function() {
+  storeViewState: function(ignoreTransactionalFilter) {
     var result = {},
       i,
       length = this.views.length;
@@ -1539,7 +1539,11 @@ isc.OBStandardWindow.addProperties({
 
     for (i = 0; i < length; i++) {
       if (this.views[i].viewGrid) {
-        result[this.views[i].tabId] = this.views[i].viewGrid.getViewState();
+        result[this.views[i].tabId] = this.views[i].viewGrid.getViewState(
+          false,
+          false,
+          ignoreTransactionalFilter
+        );
       }
     }
     this.viewState = result;

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1116,7 +1116,7 @@ isc.OBViewGrid.addProperties({
     } else {
       res = this.Super('reorderField', arguments);
     }
-    this.view.standardWindow.storeViewState();
+    this.view.standardWindow.storeViewState(true);
     return res;
   },
 
@@ -1183,7 +1183,11 @@ isc.OBViewGrid.addProperties({
   },
 
   // also store the filter criteria
-  getViewState: function(returnObject, includeFilter) {
+  getViewState: function(
+    returnObject,
+    includeFilter,
+    ignoreTransactionalFilter
+  ) {
     var i,
       fld,
       state = this.Super('getViewState', [returnObject || true]);
@@ -1199,7 +1203,9 @@ isc.OBViewGrid.addProperties({
       }
     }
 
-    state.filterClause = this.filterClause;
+    if (!ignoreTransactionalFilter) {
+      state.filterClause = this.filterClause;
+    }
 
     // set summary information, can not be stored in the field state
     // because smartclient does not provide a nice override point
