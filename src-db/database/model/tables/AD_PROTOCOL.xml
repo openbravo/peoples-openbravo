@@ -45,6 +45,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="EVENT_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_MODULE" name="AD_MODULE_MOD">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
