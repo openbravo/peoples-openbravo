@@ -531,11 +531,16 @@ public class MaterialReceiptPending extends HttpSecureAppServlet {
         releaseRollbackConnection(conn);
       } catch (Exception ignored) {
       }
-      e.printStackTrace();
       log4j.warn("Rollback in transaction");
       myMessage = Utility.translateError(this, vars, vars.getLanguage(), "ProcessRunError");
     } finally {
       OBContext.restorePreviousMode();
+      try {
+        if (conn != null && !conn.isClosed()) {
+          conn.close();
+        }
+      } catch (Exception ignored) {
+      }
     }
     return myMessage;
   }
