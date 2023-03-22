@@ -140,6 +140,7 @@
                 WHERE (to_char('800017') = ? 
                    OR to_char('800018') = ?) 
                    AND TO_CHAR('TABLE') <> TO_CHAR(?)
+                   AND TO_CHAR('R') <> TO_CHAR(?)
                UNION
                SELECT COUNT(*) AS TOTAL 
                  FROM AD_Window_Access 
@@ -188,6 +189,7 @@
       
       <Parameter name="id"/>
       <Parameter name="id"/>
+      <Parameter name="type"/>
       <Parameter name="type"/>
       
       <Parameter name="role"/>
