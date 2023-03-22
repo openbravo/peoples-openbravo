@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -843,7 +843,10 @@
     FROM (SELECT NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 
       SUM(LINENETAMT) AS AMOUNT, SUM(QTYINVOICED) AS QTY, SUM(WEIGHT) AS WEIGHT, SUM(COST) AS COST,
       SUM(LINENETREF) AS AMOUNTREF, SUM(QTYINVOICEDREF) AS QTYREF, SUM(WEIGHT_REF) AS WEIGHTREF,
-      C_CURRENCY_CONVERT(SUM(LINENETAMT), TRCURRENCYID, ?, TO_DATE(TRDATE), NULL, TRCLIENTID, TRORGID) AS CONVAMOUNT,
+      CASE WHEN CONVRATE IS NULL 
+        THEN C_CURRENCY_CONVERT(SUM(LINENETAMT), TRCURRENCYID, ?, TO_DATE(TRDATE), NULL, TRCLIENTID, TRORGID) 
+        ELSE ROUND(SUM(LINENETAMT) * CONVRATE, C_GET_CURRENCY_PRECISION(?, 'A'))
+      END AS CONVAMOUNT,
       CASE WHEN SUM(COSTCALCULATED) = 0 THEN SUM(COST) WHEN SUM(COSTEDAMT) = 0 THEN 0 ELSE SUM(COST)*SUM(LINENETAMT)/SUM(COSTEDAMT) END AS CONVCOST,
           0 AS CONVAMOUNTREF,
           0 AS CONVCOSTREF,
@@ -866,7 +869,8 @@
                 END AS COST,
                 CASE WHEN sum(trxcost.cost) is null AND m_product.isstocked = 'Y' AND m_product.producttype = 'I' THEN 0
                      ELSE CASE WHEN C_DOCTYPE.DOCBASETYPE='ARC' THEN C_INVOICELINE.LINENETAMT*-1 ELSE C_INVOICELINE.LINENETAMT END
-                END AS COSTEDAMT
+                END AS COSTEDAMT, 
+                CONVERSIONRATE.RATE AS CONVRATE
             FROM C_INVOICELINE 
                 join C_INVOICE on C_INVOICE.C_INVOICE_ID = C_INVOICELINE.C_INVOICE_ID
                 join C_BPARTNER on C_INVOICE.C_BPARTNER_ID = C_BPARTNER.C_BPARTNER_ID
@@ -883,18 +887,23 @@
                 left join M_INOUT ON M_INOUTLINE.M_INOUT_ID = M_INOUT.M_INOUT_ID
                 left join m_transaction trx ON trx.m_inoutline_id = m_inoutline.m_inoutline_id
                 left join m_transaction_cost trxcost ON trx.m_transaction_id = trxcost.m_transaction_id
+                left join C_CONVERSION_RATE_DOCUMENT CONVERSIONRATE ON CONVERSIONRATE.C_INVOICE_ID = C_INVOICE.C_INVOICE_ID
+                  and CONVERSIONRATE.C_CURRENCY_ID_TO = ?
+                  and CONVERSIONRATE.C_CURRENCY_ID = C_INVOICE.C_CURRENCY_ID 
       WHERE C_INVOICE.ISSOTRX = 'Y'
         AND C_INVOICE.PROCESSED = 'Y'
         AND C_INVOICE.AD_ORG_ID IN ('1')
         AND C_INVOICE.AD_CLIENT_ID IN ('7')
         AND ((trxcost.m_transaction_cost_id is not null and trxcost.isunitcost = 'Y') or (trxcost.m_transaction_cost_id is null))
         AND 1=1
-      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE
+      GROUP BY trxcost.m_transaction_id, C_INVOICELINE.C_INVOICELINE_ID, C_BPARTNER.C_BPARTNER_ID, M_PRODUCT_CATEGORY.NAME, C_INVOICE.DOCUMENTNO, AD_ORG.NAME, AD_USER.AD_USER_ID, C_PROJECT.NAME, AD_USER.FIRSTNAME, AD_USER.LASTNAME, C_BP_GROUP.NAME, M_INOUT.C_BPARTNER_LOCATION_ID, C_INVOICELINE.AD_CLIENT_ID, C_INVOICELINE.AD_ORG_ID, C_INVOICELINE.LINENETAMT, C_INVOICELINE.QTYINVOICED, C_UOM.UOMSYMBOL, c_doctype.docbasetype, ad_org.ad_org_id, C_INVOICE.C_CURRENCY_ID, C_INVOICE.DATEINVOICED, trx.movementqty, trx.movementdate, trx.ad_client_id, trx.ad_org_id, trxcost.c_currency_id, M_PRODUCT.WEIGHT, M_PRODUCT.M_PRODUCT_ID, M_PRODUCT.ISSTOCKED, M_PRODUCT.PRODUCTTYPE, CONVERSIONRATE.RATE
       ORDER BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10) AA
-      GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID) ZZ
+      GROUP BY  NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, TRCURRENCYID, TRDATE, TRCLIENTID, TRORGID, CONVRATE) ZZ
       GROUP BY NIVEL1, NIVEL2, NIVEL3, NIVEL4, NIVEL5, NIVEL6, NIVEL7, NIVEL8, NIVEL9, NIVEL10, 1
       ) B
      ]]></Sql>
+    <Parameter name="cCurrencyConv"/>
+    <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
     <Parameter name="cCurrencyConv"/>
