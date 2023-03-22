@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2022 Openbravo SLU
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,6 +88,7 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
                   "select pppe.id" +
                   "  from PricingProductPriceException as pppe" +
                   " where pppe.id != :exceptionId" +
+                  "   and pppe.active = true" +
                   "   and pppe.client.id = :clientId" +
                   "   and pppe.organization.id = :orgId" +
                   "   and pppe.productPrice.id = :productPriceId" +
