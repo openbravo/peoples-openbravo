@@ -31,9 +31,11 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.utility.Protocol;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.externalsystem.ExternalSystemData;
 import org.openbravo.service.externalsystem.HttpExternalSystemData;
+import org.openbravo.test.base.TestConstants;
 
 /**
  * Tests for covering the creation of {@link HttpExternalSystemData} records
@@ -51,7 +53,9 @@ public class HttpExternalSystemDataCreationTest extends WeldBaseTest {
     externalSystemData = OBProvider.getInstance().get(ExternalSystemData.class);
     externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
     externalSystemData.setName("Test");
-    externalSystemData.setProtocol("HTTP");
+    Protocol httpProtocol = OBDal.getInstance()
+        .getProxy(Protocol.class, TestConstants.Protocols.HTTP);
+    externalSystemData.setProtocol(httpProtocol);
     OBDal.getInstance().save(externalSystemData);
   }
 

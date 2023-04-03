@@ -48,6 +48,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.utility.Protocol;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.externalsystem.ExternalSystem;
 import org.openbravo.service.externalsystem.ExternalSystemData;
@@ -55,6 +56,7 @@ import org.openbravo.service.externalsystem.ExternalSystemProvider;
 import org.openbravo.service.externalsystem.ExternalSystemResponse;
 import org.openbravo.service.externalsystem.HttpExternalSystemData;
 import org.openbravo.test.base.Issue;
+import org.openbravo.test.base.TestConstants;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -76,7 +78,9 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
     externalSystemData = OBProvider.getInstance().get(ExternalSystemData.class);
     externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
     externalSystemData.setName("Test");
-    externalSystemData.setProtocol("HTTP");
+    Protocol httpProtocol = OBDal.getInstance()
+        .getProxy(Protocol.class, TestConstants.Protocols.HTTP);
+    externalSystemData.setProtocol(httpProtocol);
     OBDal.getInstance().save(externalSystemData);
     httpExternalSystemData = OBProvider.getInstance().get(HttpExternalSystemData.class);
     httpExternalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));

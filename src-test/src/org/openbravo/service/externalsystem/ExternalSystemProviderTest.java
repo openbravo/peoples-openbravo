@@ -31,9 +31,14 @@ import org.junit.Test;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.Protocol;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.externalsystem.http.HttpExternalSystem;
+import org.openbravo.test.base.TestConstants;
 
 /**
  * Tests for the {@link ExternalSystemProvider} class
@@ -50,7 +55,9 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
     externalSystemData = OBProvider.getInstance().get(ExternalSystemData.class);
     externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
     externalSystemData.setName("Test");
-    externalSystemData.setProtocol("HTTP");
+    Protocol httpProtocol = OBDal.getInstance()
+        .getProxy(Protocol.class, TestConstants.Protocols.HTTP);
+    externalSystemData.setProtocol(httpProtocol);
     OBDal.getInstance().save(externalSystemData);
 
     HttpExternalSystemData httpExternalSystemData = OBProvider.getInstance()
@@ -65,13 +72,7 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
 
     OBDal.getInstance().flush();
 
-    // Add new protocol and authorization type testing values into their corresponding list
-    // references
-    StringEnumerateDomainType protocolDomainType = (StringEnumerateDomainType) externalSystemData
-        .getEntity()
-        .getProperty("protocol")
-        .getDomainType();
-    protocolDomainType.addEnumerateValue("TEST");
+    // Add new authorization type testing values into its corresponding list reference
     StringEnumerateDomainType authTypeDomainType = (StringEnumerateDomainType) httpExternalSystemData
         .getEntity()
         .getProperty("authorizationType")
@@ -115,7 +116,8 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
 
   @Test
   public void cannotGetExternalSystemForUnknownProtocol() {
-    setConfigurationProtocol("TEST");
+    Protocol unknownProtocol = createTestProtocol();
+    setConfigurationProtocol(unknownProtocol);
 
     assertThat(externalSystemProvider.getExternalSystem(externalSystemData).isEmpty(),
         equalTo(true));
@@ -177,8 +179,36 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
     OBDal.getInstance().flush();
   }
 
-  private void setConfigurationProtocol(String protocol) {
+  private void setConfigurationProtocol(Protocol protocol) {
     externalSystemData.setProtocol(protocol);
+    OBDal.getInstance().flush();
+  }
+
+  private Protocol createTestProtocol() {
+    try {
+      OBContext.setAdminMode(false);
+      setCoreInDevelopment(true);
+      Protocol protocol = OBProvider.getInstance().get(Protocol.class);
+      protocol.setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
+      protocol.setOrganization(
+          OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
+      protocol.setModule(OBDal.getInstance().getProxy(Module.class, TestConstants.Modules.ID_CORE));
+      protocol.setSearchKey("UNKNOWN");
+      protocol.setName("UNKNOWN");
+      protocol.setProtocolType("BE");
+      OBDal.getInstance().save(protocol);
+      OBDal.getInstance().flush();
+      return protocol;
+    } finally {
+      setCoreInDevelopment(false);
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private void setCoreInDevelopment(boolean inDevelopment) {
+    OBDal.getInstance()
+        .get(Module.class, TestConstants.Clients.SYSTEM)
+        .setInDevelopment(inDevelopment);
     OBDal.getInstance().flush();
   }
 
