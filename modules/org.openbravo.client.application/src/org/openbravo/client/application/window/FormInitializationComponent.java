@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -480,8 +481,7 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (aTab.getDisplayLogic() != null && aTab.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(
                 aTab.getDisplayLogic(), aTab);
-            setSessionAttributesFromParserResult(parser, sessionAttributesMap,
-                tab.getWindow().getId());
+            setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab);
           }
         }
 
@@ -502,16 +502,14 @@ public class FormInitializationComponent extends BaseActionHandler {
           if (field.getDisplayLogic() != null && field.isDisplayed() && field.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(
                 field.getDisplayLogic(), tab, cachedStructures, field);
-            setSessionAttributesFromParserResult(parser, sessionAttributesMap,
-                tab.getWindow().getId());
+            setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab);
           }
           // We also add session attributes from readonly logic fields
           if (field.getColumn().getReadOnlyLogic() != null && field.isDisplayed()
               && field.isActive()) {
             final DynamicExpressionParser parser = new DynamicExpressionParser(
                 field.getColumn().getReadOnlyLogic(), tab, cachedStructures);
-            setSessionAttributesFromParserResult(parser, sessionAttributesMap,
-                tab.getWindow().getId());
+            setSessionAttributesFromParserResult(parser, sessionAttributesMap, tab);
           }
 
         }
@@ -551,13 +549,16 @@ public class FormInitializationComponent extends BaseActionHandler {
   }
 
   private void setSessionAttributesFromParserResult(DynamicExpressionParser parser,
-      Map<String, String> sessionAttributesMap, String windowId) {
-    String attribute = null, attrValue = null;
+      Map<String, String> sessionAttributesMap, Tab adTab) {
+    String attribute = null;
+    String attrValue = null;
+    String windowId = adTab.getWindow().getId();
+    List<String> auxIns = getAuxiliaryInputNames(adTab.getId());
     for (String attrName : parser.getSessionAttributes()) {
       if (!sessionAttributesMap.containsKey(attrName)) {
-        if (attrName.startsWith("inp_propertyField")) {
-          // do not add the property fields to the session attributes to avoid overwriting its value
-          // with an empty string
+        if (attrName.startsWith("inp_propertyField") || auxIns.contains(attrName)) {
+          // do not add the property fields neither the auxiliary inputs to the session attributes
+          // to avoid overwriting its value with an empty string or an outdated value respectively
           continue;
         }
         if (attrName.startsWith("#")) {
@@ -1851,6 +1852,12 @@ public class FormInitializationComponent extends BaseActionHandler {
 
   private List<AuxiliaryInput> getAuxiliaryInputList(String tabId) {
     return cachedStructures.getAuxiliarInputList(tabId);
+  }
+
+  private List<String> getAuxiliaryInputNames(String tabId) {
+    return getAuxiliaryInputList(tabId).stream()
+        .map(AuxiliaryInput::getName)
+        .collect(Collectors.toList());
   }
 
   private List<String> getAuxiliaryInputNamesList(String tabId) {
