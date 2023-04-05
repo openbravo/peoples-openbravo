@@ -5548,12 +5548,12 @@ Usually, company's internal identifiers for various records (products, customers
 <!--955-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--955-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--955-->  <COLUMNNAME><![CDATA[PriceLimit]]></COLUMNNAME>
-<!--955-->  <NAME><![CDATA[Price Limit]]></NAME>
-<!--955-->  <PRINTNAME><![CDATA[Price Limit]]></PRINTNAME>
+<!--955-->  <NAME><![CDATA[Lower Limit Price]]></NAME>
+<!--955-->  <PRINTNAME><![CDATA[Lower Limit Price]]></PRINTNAME>
 <!--955-->  <DESCRIPTION><![CDATA[The lowest net price a specified item may be sold for.]]></DESCRIPTION>
 <!--955-->  <HELP><![CDATA[The Net Price Limit indicates the lowest price for a product stated in the Price List Currency.]]></HELP>
-<!--955-->  <PO_NAME><![CDATA[Price Limit]]></PO_NAME>
-<!--955-->  <PO_PRINTNAME><![CDATA[Price Limit]]></PO_PRINTNAME>
+<!--955-->  <PO_NAME><![CDATA[Lower Limit Price]]></PO_NAME>
+<!--955-->  <PO_PRINTNAME><![CDATA[Lower Limit Price]]></PO_PRINTNAME>
 <!--955-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--955-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--955--></AD_ELEMENT>
