@@ -66,7 +66,7 @@ BEGIN
         COALESCE(:NEW.IsActive , '.') != COALESCE(:OLD.IsActive , '.') OR
         COALESCE(:NEW.Value , '.') != COALESCE(:OLD.Value , '.') OR
         COALESCE(:NEW.Name , '.') != COALESCE(:OLD.Name , '.') OR
-        COALESCE(:NEW.EVENT_TYPE , '.') != COALESCE(:OLD.EVENT_TYPE , '.') OR
+        COALESCE(:NEW.PROTOCOL_TYPE , '.') != COALESCE(:OLD.PROTOCOL_TYPE , '.') OR
         COALESCE(:NEW.AD_MODULE_ID , '.') != COALESCE(:OLD.AD_MODULE_ID , '.') OR
         1=2) THEN
       RAISE_APPLICATION_ERROR(-20000, '@20532@');
