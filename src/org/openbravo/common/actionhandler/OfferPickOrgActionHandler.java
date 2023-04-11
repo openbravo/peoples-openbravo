@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2019-2022 Openbravo S.L.U.
+ * Copyright (C) 2019-2023 Openbravo S.L.U.
  * Licensed under the Openbravo Commercial License version 1.0
  * You may obtain a copy of the License at http://www.openbravo.com/legal/obcl.html
  * or in the legal folder of this module distribution.
@@ -33,6 +33,8 @@ public class OfferPickOrgActionHandler extends OfferPickAndExecBaseActionHandler
       item.setClient(client);
       item.setOrganization(organization);
       item.setPriceAdjustment(priceAdjustment);
+      item.setStartingDate(priceAdjustment.getStartingDate());
+      item.setEndingDate(priceAdjustment.getEndingDate());
       OBDal.getInstance().save(item);
       i++;
       if ((i % 100) == 0) {
