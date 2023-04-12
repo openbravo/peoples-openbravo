@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,12 +21,17 @@ package org.openbravo.client.kernel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.BaseComponentProvider.ComponentResource.ComponentResourceType;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Application;
 import org.openbravo.model.ad.module.Module;
 
 /**
@@ -39,6 +44,7 @@ public abstract class BaseComponentProvider implements ComponentProvider {
   private Module module;
 
   private static Map<String, List<String>> appDependencies = new ConcurrentHashMap<>();
+  private static Map<String, List<Application>> adAppDependencies = new ConcurrentHashMap<>();
 
   /**
    * Return a component of the correct implementation using Weld.
@@ -60,8 +66,67 @@ public abstract class BaseComponentProvider implements ComponentProvider {
     return module;
   }
 
+  /**
+   * Sets the dependencies of a given application
+   *
+   * @param app
+   *          The application identifier
+   * @param dependencies
+   *          The identifiers of the applications that the given application depends on
+   */
   public static void setAppDependencies(String app, List<String> dependencies) {
     appDependencies.put(app, dependencies);
+  }
+
+  /**
+   * Retrieves the AD applications that a given AD application depends on according to the
+   * dependency configuration set through {@link #setAppDependencies(String, List)}.
+   *
+   * @param app
+   *          The application identifier, that matches with the value returned by
+   *          {@link Application#getValue()}
+   * @return the AD applications that the given application depends on. This list includes also the
+   *         given application
+   */
+  public static List<Application> getADAppDependencies(String app) {
+    if (adAppDependencies.containsKey(app)) {
+      return adAppDependencies.get(app);
+    }
+    for (@SuppressWarnings("unused")
+    var provider : WeldUtils.getInstances(BaseComponentProvider.class)) {
+      // NOOP: ensure all the component providers are instantiated before using this method to
+      // ensure that the application dependencies are set. This should be enough because usually
+      // dependencies are set through static initialization blocks
+    }
+    Set<String> deps = getAppDependencies(app);
+    Set<String> apps = new HashSet<>(deps.size() + 1);
+    apps.add(app);
+    apps.addAll(deps);
+    List<Application> adAppDeps = OBDal.getInstance()
+        .createCriteria(Application.class)
+        .add(Restrictions.in(Application.PROPERTY_VALUE, apps))
+        .list();
+    adAppDependencies.putIfAbsent(app, adAppDeps);
+    return adAppDeps;
+  }
+
+  /**
+   * Gets the dependencies of a given application
+   *
+   * @param app
+   *          The application identifier
+   * @return The identifiers of the applications that the given application depends on
+   */
+  private static Set<String> getAppDependencies(String app) {
+    if (!appDependencies.containsKey(app)) {
+      return Collections.emptySet();
+    }
+    Set<String> appDeps = new HashSet<>(appDependencies.get(app));
+    Set<String> allDeps = new HashSet<>(appDeps);
+    for (var dep : appDeps) {
+      allDeps.addAll(getAppDependencies(dep));
+    }
+    return allDeps;
   }
 
   /**
