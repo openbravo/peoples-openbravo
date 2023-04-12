@@ -21,6 +21,8 @@
   "author": "Openbravo SLU",
   "license": "SEE LICENSE IN legal/Openbravo_license.txt",
   "dependencies": {
+    "autoprefixer": "^10.4.14",
+    "caniuse-lite": "^1.0.30001477",
     "eslint-config-prettier": "~7.1.0",
     "eslint-plugin-prettier": "~3.3.1",
     "prettier": "~1.18.2"
