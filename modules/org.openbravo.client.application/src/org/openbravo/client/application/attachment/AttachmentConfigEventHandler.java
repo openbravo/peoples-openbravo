@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
@@ -67,11 +68,12 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
 
     isAnyActivated(event);
     String clientId = newAttConfig.getClient().getId();
+    AttachmentType attachmentType = AttachmentType.valueOf(newAttConfig.getAttachmentType());
     if ((Boolean) event.getCurrentState(propActive)) {
-      AttachmentUtils.setAttachmentConfig(clientId, event.getId());
+      AttachmentUtils.setAttachmentConfig(clientId, attachmentType, event.getId());
     } else if ((Boolean) event.getPreviousState(propActive)) {
       // Deactivating a config reset AttachmentUtils state
-      AttachmentUtils.setAttachmentConfig(clientId, null);
+      AttachmentUtils.setAttachmentConfig(clientId, attachmentType, null);
     }
   }
 
@@ -87,8 +89,9 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
 
     isAnyActivated(event);
     String clientId = newAttConfig.getClient().getId();
+    AttachmentType attachmentType = AttachmentType.valueOf(newAttConfig.getAttachmentType());
     if ((Boolean) event.getCurrentState(propActive)) {
-      AttachmentUtils.setAttachmentConfig(clientId, newAttConfig.getId());
+      AttachmentUtils.setAttachmentConfig(clientId, attachmentType, newAttConfig.getId());
     }
   }
 
@@ -102,9 +105,11 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
 
     final AttachmentConfig deletedAttachmentConfig = (AttachmentConfig) event.getTargetInstance();
     String clientId = deletedAttachmentConfig.getClient().getId();
+    AttachmentType attachmentType = AttachmentType
+        .valueOf(deletedAttachmentConfig.getAttachmentType());
     if (deletedAttachmentConfig.isActive()) {
       // The active config of the client is deleted. Update AttachmentUtils with an empty config
-      AttachmentUtils.setAttachmentConfig(clientId, null);
+      AttachmentUtils.setAttachmentConfig(clientId, attachmentType, null);
     }
 
   }
@@ -115,15 +120,19 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     final OBQuery<AttachmentConfig> attachmentConfigQuery = OBDal.getInstance()
-        .createQuery(AttachmentConfig.class, "id!=:id and client.id=:clientId");
+        .createQuery(AttachmentConfig.class,
+            "id!=:id and client.id=:clientId and attachmentType=:attachmentType");
     attachmentConfigQuery.setNamedParameter("id", newAttachmentConfig.getId());
     attachmentConfigQuery.setNamedParameter("clientId", newAttachmentConfig.getClient().getId());
+    attachmentConfigQuery.setNamedParameter("attachmentType",
+        newAttachmentConfig.getAttachmentType());
     // Ensure that filtering by client and active is done.
     attachmentConfigQuery.setFilterOnReadableClients(true);
     attachmentConfigQuery.setFilterOnActive(true);
 
     if (!attachmentConfigQuery.list().isEmpty()) {
-      logger.error("Error saving, more than one active config detected.");
+      logger.error(
+          "Error saving, more than one active config for the same attachment type detected.");
       throw new OBException(OBMessageUtils.messageBD("AD_EnabledAttachmentMethod"));
     }
   }
