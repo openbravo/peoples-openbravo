@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,6 +32,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
@@ -88,6 +89,11 @@ public class MyOpenbravoActionHandler extends BaseActionHandler implements Porta
       if (isAdminMode) {
         availableAtLevel = context.getString("availableAtLevel");
         availableAtLevelValue[0] = context.getString("availableAtLevelValue");
+      }
+
+      String currentRoleId = OBContext.getOBContext().getRole().getId();
+      if (!"0".equals(currentRoleId) && "SYSTEM".equals(availableAtLevel)) {
+        throw new OBSecurityException("SYSTEM level is only available for the SYSTEM role");
       }
       log.debug("context: " + context.toString());
 
