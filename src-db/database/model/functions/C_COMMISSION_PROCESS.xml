@@ -16,7 +16,7 @@
   * Portions created by Jorg Janke are Copyright (C) 1999-2001 Jorg Janke, parts
   * created by ComPiere are Copyright (C) ComPiere, Inc.;   All Rights Reserved.
   * Contributor(s): Openbravo SLU
-  * Contributions are Copyright (C) 2001-2018 Openbravo S.L.U.
+  * Contributions are Copyright (C) 2001-2023 Openbravo S.L.U.
   ******************************************************************************/
   -- Logistice
   v_ResultStr VARCHAR2(2000):='';
@@ -186,7 +186,6 @@
       v_C_Currency_ID C_CommissionDetail.C_Currency_ID%TYPE;
       v_Amt C_CommissionDetail.ActualAmt%TYPE;
       v_Qty C_CommissionDetail.ActualQty%TYPE;
-      v_Amt_Deleted C_CommissionDetail.ActualAmt%TYPE;
       v_C_OrderLine_ID VARCHAR2(32) ;
       v_C_InvoiceLine_ID VARCHAR2(32) ;
       v_Reference C_CommissionDetail.Reference%TYPE;
@@ -385,7 +384,7 @@
         --
         v_ResultStr:='OpenDynCursor';
         SELECT REPLACE(REPLACE(REPLACE(v_Cmd, ':1', to_char(v_AD_Client_ID)), ':2', to_char(v_StartDate)), ':3', to_char(v_EndDate)) INTO v_Cmd FROM DUAL;
-        OPEN v_rc FOR v_Cmd;
+       OPEN v_rc FOR v_Cmd;
         LOOP
           v_ResultStr:='FetchingData';
           FETCH v_rc INTO v_C_Currency_ID,
@@ -397,30 +396,15 @@
           v_Info,
           v_iscostCalculated;
           EXIT WHEN v_rc%NOTFOUND;
-          -- 
           IF (v_isCascade = 'Y') THEN  --DELETE DETAILS
             v_ResultStr:='DeletingDetail';
             IF (v_DocBasisType='I') THEN  --invoice
-              SELECT ActualAmt
-              INTO v_Amt_Deleted
-              FROM C_CommissionDetail
-              WHERE c_invoiceline_id = v_C_InvoiceLine_ID
-              AND EXISTS (SELECT 1 FROM c_commissionamt
-                                    WHERE c_commissionamt.c_commissionrun_id = v_C_CommissionRun_ID
-                                    AND C_CommissionDetail.c_commissionamt_id = c_commissionamt.c_commissionamt_id);
               DELETE FROM C_CommissionDetail 
               WHERE c_commissionamt_id IN (select c_commissionamt_id
                                          from c_commissionamt 
                                          where c_commissionamt.c_commissionrun_id = v_C_CommissionRun_ID)  
                     AND c_invoiceline_id = v_C_InvoiceLine_ID;
             ELSE --orders
-              SELECT ActualAmt
-              INTO v_Amt_Deleted
-              FROM C_CommissionDetail
-              WHERE c_orderline_id = v_C_OrderLine_ID
-              AND EXISTS (SELECT 1 FROM c_commissionamt
-                                    WHERE c_commissionamt.c_commissionrun_id = v_C_CommissionRun_ID
-                                    AND C_CommissionDetail.c_commissionamt_id = c_commissionamt.c_commissionamt_id);
               DELETE FROM C_CommissionDetail 
               WHERE c_commissionamt_id IN (select c_commissionamt_id 
                                          from c_commissionamt 
@@ -428,8 +412,8 @@
                     AND c_orderline_id = v_C_OrderLine_ID;
             END IF;
           END IF;
-          IF (v_isCascade = 'N' OR (v_isCascade = 'Y' AND CUR_CLine.Exclude='N')) THEN
-            v_ResultStr:='InsertingDetail';
+          IF (v_isCascade = 'N' OR (v_isCascade = 'Y' AND CUR_CLine.Exclude='N')) then
+          	v_ResultStr:='InsertingDetail';
             AD_Sequence_Next('C_CommissionDetail', v_AD_Client_ID, v_NextNo) ;
             INSERT
             INTO C_CommissionDetail
@@ -444,7 +428,7 @@
               (
                 v_NextNo, v_C_CommissionAmt_ID, v_AD_Client_ID, v_AD_Org_ID,
                  'Y', now(), '0', now(),
-                '0', v_C_Currency_ID, v_Amt + COALESCE(v_Amt_Deleted, 0), 0,
+                '0', v_C_Currency_ID, v_Amt, 0,
                 v_Qty, -- Conversion done by Trigger
                 v_C_OrderLine_ID, v_C_InvoiceLine_ID, v_Reference, v_Info, v_isCostCalculated 
               )
