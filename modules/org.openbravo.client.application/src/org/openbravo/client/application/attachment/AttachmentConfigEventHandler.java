@@ -29,7 +29,6 @@ import org.openbravo.base.model.Property;
 import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
-import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
@@ -66,7 +65,7 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
     }
     final AttachmentConfig newAttConfig = (AttachmentConfig) event.getTargetInstance();
 
-    isAnyActivated(event);
+    validate(newAttConfig);
     String clientId = newAttConfig.getClient().getId();
     AttachmentType attachmentType = AttachmentType.valueOf(newAttConfig.getAttachmentType());
     if ((Boolean) event.getCurrentState(propActive)) {
@@ -87,7 +86,7 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
     }
     final AttachmentConfig newAttConfig = (AttachmentConfig) event.getTargetInstance();
 
-    isAnyActivated(event);
+    validate(newAttConfig);
     String clientId = newAttConfig.getClient().getId();
     AttachmentType attachmentType = AttachmentType.valueOf(newAttConfig.getAttachmentType());
     if ((Boolean) event.getCurrentState(propActive)) {
@@ -111,11 +110,17 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
       // The active config of the client is deleted. Update AttachmentUtils with an empty config
       AttachmentUtils.setAttachmentConfig(clientId, attachmentType, null);
     }
-
   }
 
-  private void isAnyActivated(EntityPersistenceEvent event) {
-    final AttachmentConfig newAttachmentConfig = (AttachmentConfig) event.getTargetInstance();
+  private void validate(AttachmentConfig newAttachmentConfig) {
+    if ("RD".equals(newAttachmentConfig.getAttachmentType())
+        && !newAttachmentConfig.getAttachmentMethod().isSupportReprintableDocuments()) {
+      throw new OBException(OBMessageUtils.messageBD("UnsupportedAttachmentType"));
+    }
+    isAnyActivated(newAttachmentConfig);
+  }
+
+  private void isAnyActivated(AttachmentConfig newAttachmentConfig) {
     if (!newAttachmentConfig.isActive()) {
       return;
     }
