@@ -21,6 +21,11 @@ package org.openbravo.client.application.attachment;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -40,6 +45,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.Attachment;
+import org.openbravo.model.ad.utility.ReprintableDocument;
 
 /**
  * Default implementation of Attachment Management. This method saves the attached files in the
@@ -49,7 +55,8 @@ import org.openbravo.model.ad.utility.Attachment;
  */
 @ApplicationScoped
 @ComponentProvider.Qualifier(AttachmentUtils.DEFAULT_METHOD)
-public class CoreAttachImplementation extends AttachImplementation {
+public class CoreAttachImplementation extends AttachImplementation
+    implements ReprintableDocumentAttachHandler {
   private static final Logger log = LogManager.getLogger();
 
   @Override
@@ -122,6 +129,22 @@ public class CoreAttachImplementation extends AttachImplementation {
   public boolean isTempFile() {
     // Return false as the downloaded file is the original file stored in the server.
     return false;
+  }
+
+  @Override
+  public void upload(ReprintableDocument document, InputStream inputStream) throws IOException {
+    log.trace("Uploading reprintable document {}", document);
+    String tableId = "259";
+    String key = "50CFE2600296EF513D61104E99BDDED2";
+    String fileDirPath = getAttachmentDirectoryForNewAttachments(tableId, key);
+    String attachmentFolderPath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("attach.path");
+    Path path = Paths.get(attachmentFolderPath, fileDirPath, document.getName());
+    if (!Files.exists(path.getParent())) {
+      Files.createDirectories(path.getParent());
+    }
+    Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
   }
 
   /**
@@ -240,5 +263,4 @@ public class CoreAttachImplementation extends AttachImplementation {
     }
     return newname;
   }
-
 }
