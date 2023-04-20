@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,18 +19,16 @@
 package org.openbravo.service.externalsystem;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.cache.TimeInvalidatedCache;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -43,10 +41,6 @@ import org.openbravo.dal.service.OBDal;
 @ApplicationScoped
 public class ExternalSystemProvider {
   private static final Logger log = LogManager.getLogger();
-
-  @Inject
-  @Any
-  private Instance<ExternalSystem> externalSystems;
 
   private TimeInvalidatedCache<String, ExternalSystem> configuredExternalSystems;
 
@@ -64,27 +58,29 @@ public class ExternalSystemProvider {
       ExternalSystemData externalSystemData = OBDal.getInstance()
           .get(ExternalSystemData.class, externalSystemDataId);
       String protocol = externalSystemData.getProtocol();
-      return externalSystems.select(new ProtocolSelector(protocol))
-          .stream()
-          .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
-            if (list.size() > 1) {
-              // For the moment it is only supported to have one ExternalSystem instance per
-              // protocol
-              throw new OBException("Found multiple external systems for protocol " + protocol);
-            }
-            if (list.isEmpty()) {
-              return null;
-            }
-            try {
-              ExternalSystem externalSystem = list.get(0);
-              externalSystem.configure(externalSystemData);
-              return externalSystem;
-            } catch (Exception ex) {
-              log.error("Could not configure an external system with configuration {}",
-                  externalSystemDataId, ex);
-              return null;
-            }
-          }));
+      List<ExternalSystem> externalSystems = WeldUtils.getInstances(ExternalSystem.class,
+          new ProtocolSelector(protocol));
+
+      if (externalSystems.size() > 1) {
+        // For the moment it is only supported to have one ExternalSystem instance per
+        // protocol
+        throw new OBException("Found multiple external systems for protocol " + protocol);
+      }
+
+      if (externalSystems.isEmpty()) {
+        return null;
+      }
+
+      try {
+        ExternalSystem externalSystem = externalSystems.get(0);
+        externalSystem.configure(externalSystemData);
+        return externalSystem;
+      } catch (Exception ex) {
+        log.error("Could not configure an external system with configuration {}",
+            externalSystemDataId, ex);
+        return null;
+      }
+
     } finally {
       OBContext.restorePreviousMode();
     }
