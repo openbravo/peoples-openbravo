@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2020 Openbravo SLU
+ * All portions are Copyright (C) 2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,7 +32,6 @@ import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.AttachmentConfig;
-import org.openbravo.model.ad.utility.FileType;
 import org.openbravo.model.ad.utility.ReprintableDocument;
 
 /**
@@ -42,18 +41,11 @@ import org.openbravo.model.ad.utility.ReprintableDocument;
 @ApplicationScoped
 public class ReprintableDocumentManager {
 
-  public enum DocumentType {
-    XML("837C10E59441409E89D7F0A39E2AA00F"), PDF("D8998F59873041BDA5D025EC07B4121E");
-
-    private String fileTypeId;
-
-    private DocumentType(String fileTypeId) {
-      this.fileTypeId = fileTypeId;
-    }
-
-    private FileType getFileType() {
-      return OBDal.getInstance().getProxy(FileType.class, fileTypeId);
-    }
+  /**
+   * Supported formats for a {@link ReprintableDocument}
+   */
+  public enum Format {
+    XML, PDF;
   }
 
   @Inject
@@ -66,14 +58,14 @@ public class ReprintableDocumentManager {
    * @param documentData
    *          An InputStream with the document data. This method is in charge of closing it when
    *          finish its execution.
-   * @param documentType
-   *          The type of document
+   * @param format
+   *          The format of document
    */
-  public ReprintableDocument upload(InputStream documentData, DocumentType documentType) {
+  public ReprintableDocument upload(InputStream documentData, Format format) {
     ReprintableDocument document = OBProvider.getInstance().get(ReprintableDocument.class);
     AttachmentConfig config = AttachmentUtils.getAttachmentConfig(AttachmentType.RD);
-    document.setName("doc." + documentType.name().toLowerCase());
-    document.setDataType(documentType.getFileType());
+    document.setName("reprintableDocument." + format.name().toLowerCase());
+    document.setFormat(format.name());
     document.setAttachmentConfiguration(config);
     OBDal.getInstance().save(document);
 

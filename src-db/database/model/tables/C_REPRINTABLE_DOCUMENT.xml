@@ -37,15 +37,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="AD_DATATYPE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="PATH" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="C_ATTACHMENT_CONF_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="DOCUMENT_FORMAT" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -57,9 +53,6 @@
       </foreign-key>
       <foreign-key foreignTable="C_ATTACHMENT_CONF" name="C_REPRINTABLE_DOC_ATTACH_CONF">
         <reference local="C_ATTACHMENT_CONF_ID" foreign="C_ATTACHMENT_CONF_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_DATATYPE" name="C_REPRINTABLE_DOC_DATA_TYPE">
-        <reference local="AD_DATATYPE_ID" foreign="AD_DATATYPE_ID"/>
       </foreign-key>
       <check name="C_REPRINTABLE_DOC_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
