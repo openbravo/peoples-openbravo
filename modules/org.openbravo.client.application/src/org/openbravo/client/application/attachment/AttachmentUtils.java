@@ -96,6 +96,20 @@ public class AttachmentUtils {
   }
 
   /**
+   * Gets the Attachment Configuration for the given attachment type and associated to the client
+   * active in OBContext
+   * 
+   * @param attachmentType
+   *          The type of attachment
+   * @return Activated Attachment Configuration for the given attachment and associated to the
+   *         current OBContext client
+   */
+  public static AttachmentConfig getAttachmentConfig(AttachmentType attachmentType) {
+    Client client = OBContext.getOBContext().getCurrentClient();
+    return getAttachmentConfig(client.getId(), attachmentType);
+  }
+
+  /**
    * Gets the Attachment Configuration for the given attachment type and associated to the given
    * client
    *

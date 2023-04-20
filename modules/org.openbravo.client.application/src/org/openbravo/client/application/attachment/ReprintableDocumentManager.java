@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -70,7 +71,7 @@ public class ReprintableDocumentManager {
    */
   public ReprintableDocument upload(InputStream documentData, DocumentType documentType) {
     ReprintableDocument document = OBProvider.getInstance().get(ReprintableDocument.class);
-    AttachmentConfig config = AttachmentUtils.getAttachmentConfig();
+    AttachmentConfig config = AttachmentUtils.getAttachmentConfig(AttachmentType.RD);
     document.setName("doc." + documentType.name().toLowerCase());
     document.setDataType(documentType.getFileType());
     document.setAttachmentConfiguration(config);
