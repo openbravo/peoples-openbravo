@@ -9117,7 +9117,7 @@ This tab is used to indicate the different toolsets used in the selected process
 <!--0EAC15A249F0492E8A67451C9DD1FD99-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--0EAC15A249F0492E8A67451C9DD1FD99-->  <NAME><![CDATA[ReprintableDocument]]></NAME>
 <!--0EAC15A249F0492E8A67451C9DD1FD99-->  <DESCRIPTION><![CDATA[Keeps the data of the immutable printable documents]]></DESCRIPTION>
-<!--0EAC15A249F0492E8A67451C9DD1FD99-->  <HELP><![CDATA[Keeps the required information to support immutable printable documents. These are documents that guarantee that subsequent reprints at different points in time generate the same printable document.]]></HELP>
+<!--0EAC15A249F0492E8A67451C9DD1FD99-->  <HELP><![CDATA[Keeps the required information to support document reprinting, i.e., immutable printable documents. These are documents that guarantee that subsequent reprints at different points in time generate the same printable document.]]></HELP>
 <!--0EAC15A249F0492E8A67451C9DD1FD99-->  <TABLENAME><![CDATA[C_Reprintable_Document]]></TABLENAME>
 <!--0EAC15A249F0492E8A67451C9DD1FD99-->  <CLASSNAME><![CDATA[ReprintableDocument]]></CLASSNAME>
 <!--0EAC15A249F0492E8A67451C9DD1FD99-->  <ISVIEW><![CDATA[N]]></ISVIEW>
