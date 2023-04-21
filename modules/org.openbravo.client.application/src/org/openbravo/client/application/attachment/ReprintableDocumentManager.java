@@ -19,6 +19,7 @@
 package org.openbravo.client.application.attachment;
 
 import java.io.InputStream;
+import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -33,6 +34,8 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.ReprintableDocument;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.Order;
 
 /**
  * Centralizes the {@link ReprintableDocument} Management. Any action to manage reprintable
@@ -60,13 +63,26 @@ public class ReprintableDocumentManager {
    *          finish its execution.
    * @param format
    *          The format of document
+   * @param additionalProperties
+   *          Extra properties to complete the {@link ReprintableDocument} data. It may include:
+   *          "orderId": in case the document is linked to an order <br>
+   *          "invoiceId": in case the document is linked to an invoice
    */
-  public ReprintableDocument upload(InputStream documentData, Format format) {
+  public ReprintableDocument upload(InputStream documentData, Format format,
+      Map<String, Object> additionalProperties) {
     ReprintableDocument document = OBProvider.getInstance().get(ReprintableDocument.class);
     AttachmentConfig config = AttachmentUtils.getAttachmentConfig(AttachmentType.RD);
     document.setName("reprintableDocument." + format.name().toLowerCase());
     document.setFormat(format.name());
     document.setAttachmentConfiguration(config);
+    String orderId = (String) additionalProperties.get("orderId");
+    if (orderId != null) {
+      document.setOrder(OBDal.getInstance().getProxy(Order.class, orderId));
+    }
+    String invoiceId = (String) additionalProperties.get("invoiceId");
+    if (invoiceId != null) {
+      document.setInvoice(OBDal.getInstance().getProxy(Invoice.class, invoiceId));
+    }
     OBDal.getInstance().save(document);
 
     ReprintableDocumentAttachHandler handler = getHandler(config.getAttachmentMethod().getValue());

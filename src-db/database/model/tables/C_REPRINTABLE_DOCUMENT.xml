@@ -45,6 +45,14 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="C_ORDER_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="C_INVOICE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_REPRINTABLE_DOC_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -54,6 +62,13 @@
       <foreign-key foreignTable="C_ATTACHMENT_CONF" name="C_REPRINTABLE_DOC_ATTACH_CONF">
         <reference local="C_ATTACHMENT_CONF_ID" foreign="C_ATTACHMENT_CONF_ID"/>
       </foreign-key>
+      <foreign-key foreignTable="C_INVOICE" name="C_REPRINTABLE_DOC_C_INVOICE">
+        <reference local="C_INVOICE_ID" foreign="C_INVOICE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_ORDER" name="C_REPRINTABLE_DOC_C_ORDER">
+        <reference local="C_ORDER_ID" foreign="C_ORDER_ID"/>
+      </foreign-key>
       <check name="C_REPRINTABLE_DOC_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_REPRINTABLE_DOC_NULLDOC_CHK"><![CDATA[C_ORDER_ID IS NOT NULL OR C_INVOICE_ID IS NOT NULL]]></check>
     </table>
   </database>
