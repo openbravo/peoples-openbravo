@@ -134,17 +134,49 @@ public class CoreAttachImplementation extends AttachImplementation
   @Override
   public void upload(ReprintableDocument document, InputStream inputStream) throws IOException {
     log.trace("Uploading reprintable document {}", document);
-    String tableId = "259";
-    String key = "50CFE2600296EF513D61104E99BDDED2";
-    String fileDirPath = getAttachmentDirectoryForNewAttachments(tableId, key);
-    String attachmentFolderPath = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("attach.path");
-    Path path = Paths.get(attachmentFolderPath, fileDirPath, document.getName());
+    Path path = getReprintableDocumentAttachmentPath(document);
     if (!Files.exists(path.getParent())) {
       Files.createDirectories(path.getParent());
     }
     Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+  }
+
+  @Override
+  public InputStream download(ReprintableDocument document) throws IOException {
+    log.debug("Downloading reprintable document {}", document);
+    Path path = getReprintableDocumentAttachmentPath(document);
+    return Files.newInputStream(path);
+  }
+
+  private Path getReprintableDocumentAttachmentPath(ReprintableDocument document) {
+    String fileDirPath = getAttachmentDirectoryForNewAttachments(getTableId(document),
+        getDocumentId(document));
+    String attachmentFolderPath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("attach.path");
+    return Paths.get(attachmentFolderPath, fileDirPath, document.getName());
+  }
+
+  private String getTableId(ReprintableDocument document) {
+    if (document.getOrder() != null) {
+      return "259"; // c_order
+    }
+    if (document.getInvoice() != null) {
+      return "318"; // c_invoice
+    }
+    throw new IllegalArgumentException(
+        "Unknown source document linked to ReprintableDocument " + document.getId());
+  }
+
+  private String getDocumentId(ReprintableDocument document) {
+    if (document.getOrder() != null) {
+      return document.getOrder().getId();
+    }
+    if (document.getInvoice() != null) {
+      return document.getInvoice().getId();
+    }
+    throw new IllegalArgumentException(
+        "Unknown source document linked to ReprintableDocument " + document.getId());
   }
 
   /**

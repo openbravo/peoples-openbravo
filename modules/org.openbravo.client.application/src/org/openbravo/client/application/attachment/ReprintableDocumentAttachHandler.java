@@ -24,7 +24,8 @@ import java.io.InputStream;
 import org.openbravo.model.ad.utility.ReprintableDocument;
 
 /**
- * Allows to handle printable documents as attachments through an attachment provider in particular.
+ * Allows to handle re-printable documents as attachments through an attachment provider in
+ * particular.
  * 
  * The {@link ReprintableDocumentManager} is the class in charge of instantiating and use the
  * correct instance of this class depending on the attachment provider to be used on each case.
@@ -32,13 +33,22 @@ import org.openbravo.model.ad.utility.ReprintableDocument;
 public interface ReprintableDocumentAttachHandler {
 
   /**
-   * Uploads the document data the ReprintableDocument as an attachment
-   * 
+   * Uploads the document the data of the ReprintableDocument as an attachment
+   *
    * @param document
-   *          The {@link ReprintableDocument} whose data is uploaded
+   *          The ReprintableDocument whose data is uploaded
    * @param documentData
    *          The InputStream with the document data
    */
   public void upload(ReprintableDocument document, InputStream documentData) throws IOException;
 
+  /**
+   * Retrieves ReprintableDocument data which was saved as an attachment
+   *
+   * @param document
+   *          The ReprintableDocument whose data is retrieved
+   *
+   * @return an InputStream with the document data
+   */
+  public InputStream download(ReprintableDocument document) throws IOException;
 }

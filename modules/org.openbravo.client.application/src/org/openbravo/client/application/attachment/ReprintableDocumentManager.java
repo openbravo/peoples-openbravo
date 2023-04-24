@@ -18,24 +18,26 @@
  */
 package org.openbravo.client.application.attachment;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.ReprintableDocument;
-import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.order.Order;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Centralizes the {@link ReprintableDocument} Management. Any action to manage reprintable
@@ -56,36 +58,21 @@ public class ReprintableDocumentManager {
   private Instance<ReprintableDocumentAttachHandler> handlers;
 
   /**
-   * Creates a new {@link ReprintableDocument} and uploads its data as an attachment
+   * Creates a new ReprintableDocument and uploads its data as an attachment
    * 
    * @param documentData
    *          An InputStream with the document data. This method is in charge of closing it when
    *          finish its execution.
    * @param format
    *          The format of document
-   * @param additionalProperties
-   *          Extra properties to complete the {@link ReprintableDocument} data. It may include:
-   *          "orderId": in case the document is linked to an order <br>
-   *          "invoiceId": in case the document is linked to an invoice
+   * @param sourceDocument
+   *          The document used as source data for the ReprintableDocument
    */
   public ReprintableDocument upload(InputStream documentData, Format format,
-      Map<String, Object> additionalProperties) {
-    ReprintableDocument document = OBProvider.getInstance().get(ReprintableDocument.class);
-    AttachmentConfig config = AttachmentUtils.getAttachmentConfig(AttachmentType.RD);
-    document.setName("reprintableDocument." + format.name().toLowerCase());
-    document.setFormat(format.name());
-    document.setAttachmentConfiguration(config);
-    String orderId = (String) additionalProperties.get("orderId");
-    if (orderId != null) {
-      document.setOrder(OBDal.getInstance().getProxy(Order.class, orderId));
-    }
-    String invoiceId = (String) additionalProperties.get("invoiceId");
-    if (invoiceId != null) {
-      document.setInvoice(OBDal.getInstance().getProxy(Invoice.class, invoiceId));
-    }
-    OBDal.getInstance().save(document);
+      SourceDocument sourceDocument) {
+    ReprintableDocument document = createReprintableDocument(format, sourceDocument);
+    ReprintableDocumentAttachHandler handler = getHandler(document);
 
-    ReprintableDocumentAttachHandler handler = getHandler(config.getAttachmentMethod().getValue());
     try (documentData) {
       handler.upload(document, documentData);
     } catch (Exception ex) {
@@ -94,8 +81,51 @@ public class ReprintableDocumentManager {
     return document;
   }
 
-  private ReprintableDocumentAttachHandler getHandler(String strAttachMethod) {
-    return handlers.select(new ComponentProvider.Selector(strAttachMethod))
+  /**
+   * Retrieves the data of a ReprintableDocument linked to the provided document
+   *
+   * @param sourceDocument
+   *          The document used as source data for the ReprintableDocument
+   *
+   * @return an InputStream with the document data. Code invoking this method is also responsible of
+   *         closing this InputStream.
+   */
+  public InputStream download(SourceDocument sourceDocument) throws IOException {
+    ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
+    ReprintableDocumentAttachHandler handler = getHandler(reprintableDocument);
+
+    return handler.download(reprintableDocument);
+  }
+
+  private ReprintableDocument createReprintableDocument(Format format,
+      SourceDocument sourceDocument) {
+    ReprintableDocument reprintableDocument = OBProvider.getInstance()
+        .get(ReprintableDocument.class);
+    AttachmentConfig config = AttachmentUtils.getAttachmentConfig(AttachmentType.RD);
+    BaseOBObject sourceDocumentBOB = sourceDocument.getBOB();
+    reprintableDocument.setClient((Client) sourceDocumentBOB.get("client"));
+    reprintableDocument.setOrganization((Organization) sourceDocumentBOB.get("organization"));
+    reprintableDocument.setName("reprintableDocument." + format.name().toLowerCase());
+    reprintableDocument.setFormat(format.name());
+    reprintableDocument.setAttachmentConfiguration(config);
+    reprintableDocument.set(sourceDocument.getProperty(), sourceDocument.getBOB());
+    OBDal.getInstance().save(reprintableDocument);
+    return reprintableDocument;
+  }
+
+  private ReprintableDocument findReprintableDocument(SourceDocument sourceDocument) {
+    return (ReprintableDocument) OBDal.getInstance()
+        .createCriteria(ReprintableDocument.class)
+        .add(Restrictions.eq(sourceDocument.getProperty(), sourceDocument.getBOB()))
+        .setMaxResults(1)
+        .uniqueResult();
+  }
+
+  private ReprintableDocumentAttachHandler getHandler(ReprintableDocument reprintableDocument) {
+    String attachMethod = reprintableDocument.getAttachmentConfiguration()
+        .getAttachmentMethod()
+        .getValue();
+    return handlers.select(new ComponentProvider.Selector(attachMethod))
         .stream()
         .findFirst()
         .orElseThrow(() -> new OBException(OBMessageUtils.messageBD("MoreThanOneImplementation")));
