@@ -22,14 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.service.OBDal;
@@ -52,10 +50,6 @@ public class ReprintableDocumentManager {
   public enum Format {
     XML, PDF;
   }
-
-  @Inject
-  @Any
-  private Instance<ReprintableDocumentAttachHandler> handlers;
 
   /**
    * Creates a new ReprintableDocument and uploads its data as an attachment
@@ -125,7 +119,9 @@ public class ReprintableDocumentManager {
     String attachMethod = reprintableDocument.getAttachmentConfiguration()
         .getAttachmentMethod()
         .getValue();
-    return handlers.select(new ComponentProvider.Selector(attachMethod))
+    return WeldUtils
+        .getInstances(ReprintableDocumentAttachHandler.class,
+            new ComponentProvider.Selector(attachMethod))
         .stream()
         .findFirst()
         .orElseThrow(() -> new OBException(OBMessageUtils.messageBD("MoreThanOneImplementation")));
