@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -132,7 +132,7 @@ public class OBBaseTest extends MockableBaseTest {
 
     private boolean packageIsExcluded(String className) {
       return disabledTestCases.stream()
-          .anyMatch(element -> ((className).startsWith(element+ ".")));
+          .anyMatch(element -> ((className).startsWith(element + ".")));
     }
 
     @Override
@@ -238,6 +238,11 @@ public class OBBaseTest extends MockableBaseTest {
    * Record ID of a Order in Draft status
    */
   protected static final String TEST_ORDER_ID = "F8492493E92C4EE5B5251AC4574778B7";
+
+  /**
+   * Record ID of an Invoice
+   */
+  protected static final String TEST_INVOICE_ID = "3D54957DB9B64CB4A8DA54D838E539BA";
 
   /**
    * Record ID of Product "Zumo de Fresa Bio 0,33L"

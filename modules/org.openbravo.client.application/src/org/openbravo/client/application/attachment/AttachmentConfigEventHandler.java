@@ -31,6 +31,7 @@ import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -113,9 +114,14 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
   }
 
   private void validate(AttachmentConfig newAttachmentConfig) {
-    if ("RD".equals(newAttachmentConfig.getAttachmentType())
-        && !newAttachmentConfig.getAttachmentMethod().isSupportReprintableDocuments()) {
-      throw new OBException(OBMessageUtils.messageBD("UnsupportedAttachmentType"));
+    try {
+      OBContext.setAdminMode(true);
+      if ("RD".equals(newAttachmentConfig.getAttachmentType())
+          && !newAttachmentConfig.getAttachmentMethod().isSupportReprintableDocuments()) {
+        throw new OBException(OBMessageUtils.messageBD("UnsupportedAttachmentType"));
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
     isAnyActivated(newAttachmentConfig);
   }
