@@ -19,6 +19,7 @@
 package org.openbravo.client.application.attachment;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,6 +51,9 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
       ModelProvider.getInstance().getEntity(AttachmentConfig.ENTITY_NAME) };
   private static Property propActive = entities[0].getProperty(AttachmentConfig.PROPERTY_ACTIVE);
 
+  @Inject
+  private ReprintableDocumentManager reprintableDocumentManager;
+
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
@@ -75,6 +79,7 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
       // Deactivating a config reset AttachmentUtils state
       AttachmentUtils.setAttachmentConfig(clientId, attachmentType, null);
     }
+    reprintableDocumentManager.invalidateAttachmentConfigurationCache(newAttConfig.getId());
   }
 
   /**
@@ -111,6 +116,8 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
       // The active config of the client is deleted. Update AttachmentUtils with an empty config
       AttachmentUtils.setAttachmentConfig(clientId, attachmentType, null);
     }
+    reprintableDocumentManager
+        .invalidateAttachmentConfigurationCache(deletedAttachmentConfig.getId());
   }
 
   private void validate(AttachmentConfig newAttachmentConfig) {

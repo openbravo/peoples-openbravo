@@ -20,7 +20,9 @@ package org.openbravo.client.application.attachment;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.hibernate.criterion.Restrictions;
@@ -30,6 +32,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.cache.TimeInvalidatedCache;
 import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
@@ -48,11 +51,34 @@ import org.openbravo.model.common.enterprise.Organization;
 @ApplicationScoped
 public class ReprintableDocumentManager {
 
+  private TimeInvalidatedCache<String, String> methodsOfAttachmentConfigs;
+
   /**
    * Supported formats for a {@link ReprintableDocument}
    */
   public enum Format {
     XML, PDF;
+  }
+
+  @PostConstruct
+  private void init() {
+    methodsOfAttachmentConfigs = TimeInvalidatedCache.newBuilder()
+        .name("Methods of Attachment Configs")
+        .expireAfterDuration(Duration.ofMinutes(10))
+        .build(this::getAttachmentMethod);
+  }
+
+  private String getAttachmentMethod(String attachmentConfigurationId) {
+    //@formatter:off
+    String hql = "select c.attachmentMethod.value" +
+                 "  from AttachmentConfig c" +
+                 " where c.id = :id";
+    //@formatter:on
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, String.class)
+        .setParameter("id", attachmentConfigurationId)
+        .uniqueResult();
   }
 
   /**
@@ -151,7 +177,8 @@ public class ReprintableDocumentManager {
   }
 
   private ReprintableDocumentAttachHandler getHandler(ReprintableDocument reprintableDocument) {
-    String attachMethod = getAttachmentMethod(reprintableDocument);
+    String attachMethod = methodsOfAttachmentConfigs
+        .get(reprintableDocument.getAttachmentConfiguration().getId());
     return WeldUtils
         .getInstances(ReprintableDocumentAttachHandler.class,
             new ComponentProvider.Selector(attachMethod))
@@ -160,16 +187,14 @@ public class ReprintableDocumentManager {
         .orElseThrow(() -> new OBException(OBMessageUtils.messageBD("MoreThanOneImplementation")));
   }
 
-  private String getAttachmentMethod(ReprintableDocument reprintableDocument) {
-    //@formatter:off
-    String hql = "select c.attachmentMethod.value" +
-                 "  from AttachmentConfig c" +
-                 " where c.id = :id";
-    //@formatter:on
-    return OBDal.getInstance()
-        .getSession()
-        .createQuery(hql, String.class)
-        .setParameter("id", reprintableDocument.getAttachmentConfiguration().getId())
-        .uniqueResult();
+  /**
+   * Clears the cache information of the attachment configuration passed as parameter. For internal
+   * use only.
+   *
+   * @param attachmentConfigurationId
+   *          The attachment configuration ID
+   */
+  public void invalidateAttachmentConfigurationCache(String attachmentConfigurationId) {
+    methodsOfAttachmentConfigs.invalidate(attachmentConfigurationId);
   }
 }
