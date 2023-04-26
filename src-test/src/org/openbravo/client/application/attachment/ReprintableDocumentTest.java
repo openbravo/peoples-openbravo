@@ -68,7 +68,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
   @Test
   public void uploadAndDownloadReprintableDocumentOfOrder() throws IOException {
-    createAttachmentConfiguration(
+    createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
@@ -92,7 +92,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
   @Test
   public void uploadAndDownloadReprintableDocumentOfInvoice() throws IOException {
-    createAttachmentConfiguration(
+    createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
@@ -116,7 +116,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
   @Test
   public void cannotUploadReprintableDocumentOfNonWritableDocument() {
-    createAttachmentConfiguration(
+    createAttachmentConfiguration(TestConstants.Clients.SYSTEM,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
     setQAAdminContext();
@@ -130,7 +130,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
   @Test
   public void cannotDownloadReprintableDocumentOfNonWritableDocument() {
-    createAttachmentConfiguration(
+    createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
@@ -150,7 +150,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
         false);
 
     OBException thrown = assertThrows(OBException.class,
-        () -> createAttachmentConfiguration(attachmentMethod));
+        () -> createAttachmentConfiguration(TestConstants.Clients.FB_GRP, attachmentMethod));
     assertThat(thrown.getMessage(), equalTo(INVALID_CONFIG_MSG));
   }
 
@@ -159,7 +159,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     AttachmentMethod reprintableDocAttachmentMethod = createAttachmentMethod(
         TestAttachImplementation.SEARCH_KEY, true);
     AttachmentMethod standardAttachmentMethod = createAttachmentMethod("ANOTHER_METHOD", false);
-    AttachmentConfig config = createAttachmentConfiguration(reprintableDocAttachmentMethod);
+    AttachmentConfig config = createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
+        reprintableDocAttachmentMethod);
 
     OBException thrown = assertThrows(OBException.class, () -> {
       config.setAttachmentMethod(standardAttachmentMethod);
@@ -168,17 +169,24 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     assertThat(thrown.getMessage(), equalTo(INVALID_CONFIG_MSG));
   }
 
-  private AttachmentConfig createAttachmentConfiguration(AttachmentMethod attachmentMethod) {
-    AttachmentConfig config = OBProvider.getInstance().get(AttachmentConfig.class);
-    config
-        .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
-    config.setAttachmentType(AttachmentType.RD.name());
-    config.setAttachmentMethod(attachmentMethod);
+  private AttachmentConfig createAttachmentConfiguration(String clientId,
+      AttachmentMethod attachmentMethod) {
+    try {
+      OBContext.setAdminMode(false);
+      AttachmentConfig config = OBProvider.getInstance().get(AttachmentConfig.class);
+      config.setClient(OBDal.getInstance().getProxy(Client.class, clientId));
+      config.setOrganization(
+          OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
+      config.setAttachmentType(AttachmentType.RD.name());
+      config.setAttachmentMethod(attachmentMethod);
 
-    OBDal.getInstance().save(config);
-    OBDal.getInstance().flush();
+      OBDal.getInstance().save(config);
+      OBDal.getInstance().flush();
 
-    return config;
+      return config;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private AttachmentMethod createAttachmentMethod(String searchKey,

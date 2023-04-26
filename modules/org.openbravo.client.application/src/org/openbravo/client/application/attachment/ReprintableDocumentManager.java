@@ -96,6 +96,10 @@ public class ReprintableDocumentManager {
    *           if the write access to the source document is not granted in the current context
    *           because in such case is not allowed to create a ReprintableDocument linked to the
    *           source document.
+   * @throws OBException
+   *           if there is not a valid attachment configuration for the ReprintableDocument or is
+   *           not possible to find a handler for the attachment method defined in the attachment
+   *           configuration found
    */
   public ReprintableDocument upload(InputStream documentData, Format format,
       SourceDocument sourceDocument) {
@@ -123,6 +127,9 @@ public class ReprintableDocumentManager {
    *           if the read access to the source document is not granted in the current context
    *           because in such case is not allowed to access to the ReprintableDocument linked to
    *           the source document.
+   * @throws OBException
+   *           if it is not possible to find a handler for the attachment method defined in the
+   *           ReprintableDocument attachment configuration
    */
   public InputStream download(SourceDocument sourceDocument) throws IOException {
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
@@ -134,6 +141,9 @@ public class ReprintableDocumentManager {
   private ReprintableDocument createReprintableDocument(Format format,
       SourceDocument sourceDocument) {
     AttachmentConfig config = AttachmentUtils.getAttachmentConfig(AttachmentType.RD);
+    if (config == null) {
+      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoValidAttachConfig"));
+    }
     BaseOBObject sourceDocumentBOB = sourceDocument.getBOB();
 
     SecurityChecker.getInstance().checkWriteAccess(sourceDocumentBOB);
@@ -184,7 +194,7 @@ public class ReprintableDocumentManager {
             new ComponentProvider.Selector(attachMethod))
         .stream()
         .findFirst()
-        .orElseThrow(() -> new OBException(OBMessageUtils.messageBD("MoreThanOneImplementation")));
+        .orElseThrow(() -> new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod")));
   }
 
   /**
