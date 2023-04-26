@@ -25,11 +25,15 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
 import org.openbravo.client.kernel.ComponentProvider;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
@@ -61,6 +65,11 @@ public class ReprintableDocumentManager {
    *          The format of document
    * @param sourceDocument
    *          The document used as source data for the ReprintableDocument
+   *
+   * @throws OBSecurityException
+   *           if the write access to the source document is not granted in the current context
+   *           because in such case is not allowed to create a ReprintableDocument linked to the
+   *           source document.
    */
   public ReprintableDocument upload(InputStream documentData, Format format,
       SourceDocument sourceDocument) {
@@ -83,6 +92,11 @@ public class ReprintableDocumentManager {
    *
    * @return an InputStream with the document data. Code invoking this method is also responsible of
    *         closing this InputStream.
+   *
+   * @throws OBSecurityException
+   *           if the read access to the source document is not granted in the current context
+   *           because in such case is not allowed to access to the ReprintableDocument linked to
+   *           the source document.
    */
   public InputStream download(SourceDocument sourceDocument) throws IOException {
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
@@ -93,37 +107,69 @@ public class ReprintableDocumentManager {
 
   private ReprintableDocument createReprintableDocument(Format format,
       SourceDocument sourceDocument) {
-    ReprintableDocument reprintableDocument = OBProvider.getInstance()
-        .get(ReprintableDocument.class);
     AttachmentConfig config = AttachmentUtils.getAttachmentConfig(AttachmentType.RD);
     BaseOBObject sourceDocumentBOB = sourceDocument.getBOB();
-    reprintableDocument.setClient((Client) sourceDocumentBOB.get("client"));
-    reprintableDocument.setOrganization((Organization) sourceDocumentBOB.get("organization"));
-    reprintableDocument.setName("reprintableDocument." + format.name().toLowerCase());
-    reprintableDocument.setFormat(format.name());
-    reprintableDocument.setAttachmentConfiguration(config);
-    reprintableDocument.set(sourceDocument.getProperty(), sourceDocument.getBOB());
-    OBDal.getInstance().save(reprintableDocument);
-    return reprintableDocument;
+
+    SecurityChecker.getInstance().checkWriteAccess(sourceDocumentBOB);
+
+    // If we have write access to the source document, the ReprintableDocument can be saved but we
+    // need to do it in admin mode because the ReprintableDocument entity is not writable by default
+    try {
+      OBContext.setAdminMode(true);
+      ReprintableDocument reprintableDocument = OBProvider.getInstance()
+          .get(ReprintableDocument.class);
+      reprintableDocument.setClient((Client) sourceDocumentBOB.get("client"));
+      reprintableDocument.setOrganization((Organization) sourceDocumentBOB.get("organization"));
+      reprintableDocument.setName("reprintableDocument." + format.name().toLowerCase());
+      reprintableDocument.setFormat(format.name());
+      reprintableDocument.setAttachmentConfiguration(config);
+      reprintableDocument.set(sourceDocument.getProperty(), sourceDocument.getBOB());
+      OBDal.getInstance().save(reprintableDocument);
+      return reprintableDocument;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private ReprintableDocument findReprintableDocument(SourceDocument sourceDocument) {
-    return (ReprintableDocument) OBDal.getInstance()
-        .createCriteria(ReprintableDocument.class)
-        .add(Restrictions.eq(sourceDocument.getProperty(), sourceDocument.getBOB()))
-        .setMaxResults(1)
-        .uniqueResult();
+    BaseOBObject bob = sourceDocument.getBOB();
+
+    SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) bob);
+
+    // If we have read access to the source document, its ReprintableDocument can be accessed but we
+    // need to do it in admin mode because the ReprintableDocument entity is not readable by default
+    try {
+      OBContext.setAdminMode(true);
+      return (ReprintableDocument) OBDal.getInstance()
+          .createCriteria(ReprintableDocument.class)
+          .add(Restrictions.eq(sourceDocument.getProperty(), bob))
+          .setMaxResults(1)
+          .uniqueResult();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private ReprintableDocumentAttachHandler getHandler(ReprintableDocument reprintableDocument) {
-    String attachMethod = reprintableDocument.getAttachmentConfiguration()
-        .getAttachmentMethod()
-        .getValue();
+    String attachMethod = getAttachmentMethod(reprintableDocument);
     return WeldUtils
         .getInstances(ReprintableDocumentAttachHandler.class,
             new ComponentProvider.Selector(attachMethod))
         .stream()
         .findFirst()
         .orElseThrow(() -> new OBException(OBMessageUtils.messageBD("MoreThanOneImplementation")));
+  }
+
+  private String getAttachmentMethod(ReprintableDocument reprintableDocument) {
+    //@formatter:off
+    String hql = "select c.attachmentMethod.value" +
+                 "  from AttachmentConfig c" +
+                 " where c.id = :id";
+    //@formatter:on
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, String.class)
+        .setParameter("id", reprintableDocument.getAttachmentConfiguration().getId())
+        .uniqueResult();
   }
 }
