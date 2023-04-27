@@ -20,6 +20,7 @@ package org.openbravo.client.application.attachment;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.time.Duration;
 
 import javax.annotation.PostConstruct;
@@ -138,8 +139,9 @@ public class ReprintableDocumentManager {
    * @param sourceDocument
    *          The document used as source data for the ReprintableDocument
    *
-   * @return an InputStream with the document data. Code invoking this method is also responsible of
-   *         closing this InputStream.
+   * @param outputStream
+   *          outputStream where document data is provided. Code invoking this method is also
+   *          responsible of closing it.
    *
    * @throws OBSecurityException
    *           if the read access to the source document is not granted in the current context
@@ -149,11 +151,12 @@ public class ReprintableDocumentManager {
    *           if it is not possible to find a handler for the attachment method defined in the
    *           ReprintableDocument attachment configuration
    */
-  public InputStream download(SourceDocument sourceDocument) throws IOException {
+  public void download(SourceDocument sourceDocument, OutputStream outputStream)
+      throws IOException {
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
     ReprintableDocumentAttachHandler handler = getHandler(reprintableDocument);
 
-    return handler.download(reprintableDocument);
+    handler.download(reprintableDocument, outputStream);
   }
 
   /**

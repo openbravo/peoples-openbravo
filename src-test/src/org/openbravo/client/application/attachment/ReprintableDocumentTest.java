@@ -25,9 +25,14 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.inject.Inject;
 
@@ -102,9 +107,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
     OBDal.getInstance().flush();
 
-    InputStream downloadedStream = reprintableDocumentManager.download(sourceDocument);
-    String result = new String(downloadedStream.readAllBytes(), StandardCharsets.UTF_8);
-    assertThat(result, equalTo(DATA));
+    String downloadedDocument = download(sourceDocument);
+    assertThat(downloadedDocument, equalTo(DATA));
   }
 
   @Test
@@ -126,9 +130,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
     OBDal.getInstance().flush();
 
-    InputStream downloadedStream = reprintableDocumentManager.download(sourceDocument);
-    String result = new String(downloadedStream.readAllBytes(), StandardCharsets.UTF_8);
-    assertThat(result, equalTo(DATA));
+    String downloadedDocument = download(sourceDocument);
+    assertThat(downloadedDocument, equalTo(DATA));
   }
 
   @Test
@@ -157,8 +160,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
     setQAAdminContext();
 
-    assertThrows(OBSecurityException.class,
-        () -> reprintableDocumentManager.download(sourceDocument));
+    assertThrows(OBSecurityException.class, () -> download(sourceDocument));
   }
 
   @Test
@@ -299,6 +301,16 @@ public class ReprintableDocumentTest extends WeldBaseTest {
       OBDal.getInstance().flush();
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  private String download(SourceDocument sourceDocument) throws IOException {
+    Path file = Files.createTempFile(null, null);
+    try (OutputStream os = new FileOutputStream(file.toFile())) {
+      reprintableDocumentManager.download(sourceDocument, os);
+    }
+    try (FileInputStream is = new FileInputStream(file.toFile())) {
+      return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
   }
 

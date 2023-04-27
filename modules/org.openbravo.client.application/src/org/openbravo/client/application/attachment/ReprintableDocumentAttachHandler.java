@@ -20,6 +20,7 @@ package org.openbravo.client.application.attachment;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.openbravo.model.ad.utility.ReprintableDocument;
 
@@ -48,7 +49,8 @@ public interface ReprintableDocumentAttachHandler {
    * @param document
    *          The ReprintableDocument whose data is retrieved
    *
-   * @return an InputStream with the document data
+   * @param outputStream
+   *          the OutputStream where the document data should be provided
    */
-  public InputStream download(ReprintableDocument document) throws IOException;
+  public void download(ReprintableDocument document, OutputStream outputStream) throws IOException;
 }

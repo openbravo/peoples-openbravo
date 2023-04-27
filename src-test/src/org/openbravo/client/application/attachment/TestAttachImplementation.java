@@ -20,6 +20,7 @@ package org.openbravo.client.application.attachment;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,8 +48,8 @@ public class TestAttachImplementation implements ReprintableDocumentAttachHandle
   }
 
   @Override
-  public InputStream download(ReprintableDocument document) throws IOException {
+  public void download(ReprintableDocument document, OutputStream outputStream) throws IOException {
     Path path = Paths.get(TMP_PATH, document.getName());
-    return Files.newInputStream(path);
+    Files.copy(path, outputStream);
   }
 }
