@@ -23,11 +23,12 @@ import java.sql.PreparedStatement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.database.ConnectionProvider;
-
+/**
+ * This script allows back compatilbity whith old external system without ad_protocol_id, using default value of protocol http for server
+ * @author fermin.gascon@openbravo.com
+ *
+ */
 public class UpdateExternalSystemProtocol extends ModuleScript {
-
-  private static final Logger log4j = LogManager.getLogger();
-
   @Override
   public void execute() {
     try {
