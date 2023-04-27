@@ -58,6 +58,9 @@
       <foreign-key foreignTable="AD_CLIENT" name="AD_PROTOCOL_CLI">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
+      <unique name="AD_PROTOCOL_SEARCHKEY_UNIQUE">
+        <unique-column name="VALUE"/>
+      </unique>
       <check name="AD_MODULE_ACT"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
