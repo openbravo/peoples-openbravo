@@ -25,6 +25,7 @@ import java.time.Duration;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
@@ -52,6 +53,7 @@ import org.openbravo.model.common.enterprise.Organization;
 public class ReprintableDocumentManager {
 
   private TimeInvalidatedCache<String, String> methodsOfAttachmentConfigs;
+  private TimeInvalidatedCache<String, Boolean> reprintDocumentsConfiguration;
 
   /**
    * Supported formats for a {@link ReprintableDocument}
@@ -66,6 +68,10 @@ public class ReprintableDocumentManager {
         .name("Methods of Attachment Configs")
         .expireAfterDuration(Duration.ofMinutes(10))
         .build(this::getAttachmentMethod);
+    reprintDocumentsConfiguration = TimeInvalidatedCache.newBuilder()
+        .name("Reprint Document Org Configs")
+        .expireAfterDuration(Duration.ofMinutes(10))
+        .build(this::getIsReprintDocumentEnabled);
   }
 
   private String getAttachmentMethod(String attachmentConfigurationId) {
@@ -79,6 +85,18 @@ public class ReprintableDocumentManager {
         .createQuery(hql, String.class)
         .setParameter("id", attachmentConfigurationId)
         .uniqueResult();
+  }
+
+  private Boolean getIsReprintDocumentEnabled(String orgId) {
+    return OBContext.getOBContext()
+        .getOrganizationStructureProvider(OBContext.getOBContext().getCurrentClient().getId())
+        .getParentList(orgId, true)
+        .stream()
+        .map(org -> OBDal.getInstance().get(Organization.class, org).getReprintDocuments())
+        .filter(setting -> !StringUtils.isBlank(setting))
+        .findFirst()
+        .map("enabled"::equals)
+        .orElse(false);
   }
 
   /**
@@ -136,6 +154,21 @@ public class ReprintableDocumentManager {
     ReprintableDocumentAttachHandler handler = getHandler(reprintableDocument);
 
     return handler.download(reprintableDocument);
+  }
+
+  /**
+   * Checks whether documents reprinting is enabled for a given organization which is determined by
+   * the value returned with {@link Organization#getReprintDocuments()}. Note that in case that
+   * value is not defined (null) for the given organization, it is taken from the closest
+   * organization in the parent organization tree that has a value defined (not null).
+   *
+   * @param orgId
+   *          The ID of the organization to check
+   *
+   * @return true if document reprinting is enabled for the given organization or false otherwise
+   */
+  public boolean isReprintDocumentsEnabled(String orgId) {
+    return reprintDocumentsConfiguration.get(orgId);
   }
 
   private ReprintableDocument createReprintableDocument(Format format,
@@ -198,7 +231,7 @@ public class ReprintableDocumentManager {
   }
 
   /**
-   * Clears the cache information of the attachment configuration passed as parameter. For internal
+   * Clears the cached information of the attachment configuration passed as parameter. For internal
    * use only.
    *
    * @param attachmentConfigurationId
@@ -206,5 +239,16 @@ public class ReprintableDocumentManager {
    */
   void invalidateAttachmentConfigurationCache(String attachmentConfigurationId) {
     methodsOfAttachmentConfigs.invalidate(attachmentConfigurationId);
+  }
+
+  /**
+   * Clears the cached information of the document reprinting configuration for a given
+   * organization.
+   *
+   * @param orgId
+   *          The organization ID
+   */
+  void invalidateReprintDocumentConfigurationCache(String orgId) {
+    reprintDocumentsConfiguration.invalidate(orgId);
   }
 }

@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
 
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
@@ -57,6 +58,8 @@ import org.openbravo.test.base.TestConstants;
  */
 public class ReprintableDocumentTest extends WeldBaseTest {
 
+  private static final String DISABLED = "disabled";
+  private static final String ENABLED = "enabled";
   private static final String DATA = "<output>hello<output/>";
   private static final String INVALID_CONFIG_MSG = "The attachment type is not supported by the selected attachment method";
 
@@ -65,7 +68,19 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
   @After
   public void cleanUp() {
+    resetCachedData();
     rollback();
+  }
+
+  private void resetCachedData() {
+    OBDal.getInstance()
+        .createCriteria(Organization.class)
+        .add(Restrictions.eq(Organization.PROPERTY_CLIENT,
+            OBContext.getOBContext().getCurrentClient()))
+        .list()
+        .stream()
+        .forEach(org -> reprintableDocumentManager
+            .invalidateReprintDocumentConfigurationCache(org.getId()));
   }
 
   @Test
@@ -159,9 +174,51 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   }
 
   @Test
-  public void checkSourceDocumentNotExists() {
-    SourceDocument sourceDocument = new SourceDocument("unknown", DocumentType.ORDER);
-    assertFalse(sourceDocument.exists());
+  public void enableReprintDocumentsInOrg() {
+    setReprintDocuments(TestConstants.Orgs.ESP_NORTE, ENABLED);
+    assertTrue(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.ESP_NORTE));
+  }
+
+  @Test
+  public void disableReprintDocumentsInOrg() {
+    setReprintDocuments(TestConstants.Orgs.ESP_NORTE, DISABLED);
+    assertFalse(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.ESP_NORTE));
+  }
+
+  @Test
+  public void reprintDocumentsIsDisabledIfNotSet() {
+    setReprintDocuments(TestConstants.Orgs.ESP_NORTE, null);
+    assertFalse(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.ESP_NORTE));
+  }
+
+  @Test
+  public void enableReprintDocumentsInParent() {
+    setReprintDocuments(TestConstants.Orgs.ESP, ENABLED);
+    assertTrue(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.ESP_NORTE));
+    assertTrue(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.ESP_SUR));
+    assertFalse(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.US_EST));
+    assertFalse(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.US_WEST));
+  }
+
+  @Test
+  public void enableReprintDocumentsInAncestor() {
+    setReprintDocuments(TestConstants.Orgs.FB_GROUP, ENABLED);
+    assertTrue(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.ESP_NORTE));
+    assertTrue(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.ESP_SUR));
+    assertTrue(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.US_EST));
+    assertTrue(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.US_WEST));
+  }
+
+  @Test
+  public void configureReprintDocumentsAtDifferentLevels() {
+    setReprintDocuments(TestConstants.Orgs.FB_GROUP, ENABLED);
+    setReprintDocuments(TestConstants.Orgs.US, DISABLED);
+    setReprintDocuments(TestConstants.Orgs.ESP_SUR, DISABLED);
+    setReprintDocuments(TestConstants.Orgs.US_WEST, ENABLED);
+    assertTrue(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.ESP_NORTE));
+    assertFalse(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.ESP_SUR));
+    assertFalse(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.US_EST));
+    assertTrue(reprintableDocumentManager.isReprintDocumentsEnabled(TestConstants.Orgs.US_WEST));
   }
 
   @Test
@@ -243,5 +300,10 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private void setReprintDocuments(String orgId, String status) {
+    OBDal.getInstance().get(Organization.class, orgId).setReprintDocuments(status);
+    OBDal.getInstance().flush();
   }
 }
