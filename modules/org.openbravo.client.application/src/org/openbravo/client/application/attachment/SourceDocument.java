@@ -18,6 +18,8 @@
  */
 package org.openbravo.client.application.attachment;
 
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.ReprintableDocument;
@@ -76,6 +78,33 @@ public class SourceDocument {
         return OBDal.getInstance().getProxy(Invoice.class, id);
       case ORDER:
         return OBDal.getInstance().getProxy(Order.class, id);
+      default:
+        throw new IllegalArgumentException("Unknown document type");
+    }
+  }
+
+  /**
+   * @return true if the document exists in the database or false otherwise
+   */
+  public boolean exists() {
+    //@formatter:off
+    String hql = "select 1" +
+                 "  from " + getEntity() + " e" +
+                 " where e.id = :id";
+    //@formatter:on
+    return OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, Integer.class)
+        .setParameter("id", id)
+        .uniqueResult() != null;
+  }
+
+  private Entity getEntity() {
+    switch (documentType) {
+      case INVOICE:
+        return ModelProvider.getInstance().getEntity("Invoice");
+      case ORDER:
+        return ModelProvider.getInstance().getEntity("Order");
       default:
         throw new IllegalArgumentException("Unknown document type");
     }

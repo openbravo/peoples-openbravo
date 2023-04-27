@@ -20,7 +20,9 @@ package org.openbravo.client.application.attachment;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -142,6 +144,24 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
     assertThrows(OBSecurityException.class,
         () -> reprintableDocumentManager.download(sourceDocument));
+  }
+
+  @Test
+  public void checkOrderSourceDocumentExists() {
+    SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    assertTrue(sourceDocument.exists());
+  }
+
+  @Test
+  public void checkInvoiceSourceDocumentExists() {
+    SourceDocument sourceDocument = new SourceDocument(TEST_INVOICE_ID, DocumentType.INVOICE);
+    assertTrue(sourceDocument.exists());
+  }
+
+  @Test
+  public void checkSourceDocumentNotExists() {
+    SourceDocument sourceDocument = new SourceDocument("unknown", DocumentType.ORDER);
+    assertFalse(sourceDocument.exists());
   }
 
   @Test
