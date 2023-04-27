@@ -204,7 +204,7 @@ public class ReprintableDocumentManager {
    * @param attachmentConfigurationId
    *          The attachment configuration ID
    */
-  public void invalidateAttachmentConfigurationCache(String attachmentConfigurationId) {
+  void invalidateAttachmentConfigurationCache(String attachmentConfigurationId) {
     methodsOfAttachmentConfigs.invalidate(attachmentConfigurationId);
   }
 }
