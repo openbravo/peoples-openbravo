@@ -53,6 +53,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="VALUE" primaryKey="false" required="false" type="VARCHAR" size="40" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_OFFERTYPE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -62,6 +66,9 @@
       <foreign-key foreignTable="AD_MODULE" name="M_OFFERTYPE_MODULE" onDelete="cascade">
         <reference local="AD_MODULE_ID" foreign="AD_MODULE_ID"/>
       </foreign-key>
+      <unique name="M_OFFER_TYPE_VALUE_KEY">
+        <unique-column name="VALUE"/>
+      </unique>
       <check name="M_OFFERTYPE_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
