@@ -11,24 +11,31 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2020 Openbravo SLU
+ * All portions are Copyright (C) 2015-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.event;
 
+import java.util.List;
+
 import javax.enterprise.event.Observes;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
+import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.order.OrderLine;
+import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 
 class OrderLineEventHandler extends EntityPersistenceEventObserver {
+  public static final String DRAFT = "DR";
+
   private static final Entity[] entities = {
       ModelProvider.getInstance().getEntity(OrderLine.ENTITY_NAME) };
 
@@ -37,12 +44,21 @@ class OrderLineEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
+  public void onUpdate(@Observes EntityUpdateEvent event) {
+    if (event.getTargetInstance().getEntity() != getObservedEntities()[0]) {
+      return;
+    }
+
+    updateGoodsShipmentLines(event);
+  }
+
   public void onDelete(final @Observes EntityDeleteEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
 
     removeSoPoReference(event);
+    deleteGoodsShipmentLines(event);
   }
 
   private void removeSoPoReference(final EntityDeleteEvent event) {
@@ -66,6 +82,33 @@ class OrderLineEventHandler extends EntityPersistenceEventObserver {
           .executeUpdate();
     } finally {
       OBContext.restorePreviousMode();
+    }
+  }
+
+  // Update Existing GoodsShipment Line
+  private void updateGoodsShipmentLines(EntityPersistenceEvent event) {
+    OrderLine orderLine = (OrderLine) event.getTargetInstance();
+    List<ShipmentInOutLine> shipmentLines = orderLine.getMaterialMgmtShipmentInOutLineList();
+    for (ShipmentInOutLine siol : shipmentLines) {
+      if (siol.getShipmentReceipt().getDocumentStatus().equals(DRAFT)
+          && !orderLine.getProduct().equals(siol.getProduct())) {
+        siol.setProduct(orderLine.getProduct());
+        siol.setMovementQuantity(orderLine.getOrderedQuantity());
+        siol.setAttributeSetValue(orderLine.getAttributeSetValue());
+        siol.setDescription(orderLine.getDescription());
+        OBDal.getInstance().save(siol);
+      }
+    }
+  }
+
+  // Delete Existing GoodsShipment Line
+  private void deleteGoodsShipmentLines(EntityPersistenceEvent event) {
+    OrderLine orderLine = (OrderLine) event.getTargetInstance();
+    List<ShipmentInOutLine> shipmentLines = orderLine.getMaterialMgmtShipmentInOutLineList();
+    for (ShipmentInOutLine siol : shipmentLines) {
+      if (siol.getShipmentReceipt().getDocumentStatus().equals(DRAFT)) {
+        OBDal.getInstance().remove(siol);
+      }
     }
   }
 }
