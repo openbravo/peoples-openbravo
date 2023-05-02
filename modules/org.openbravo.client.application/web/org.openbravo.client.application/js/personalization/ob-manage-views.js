@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2016 Openbravo SLU
+ * All portions are Copyright (C) 2011-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s): ___________
  ************************************************************************
@@ -292,6 +292,16 @@ OB.Personalization.getViewDefinition = function(
 
       if (view.childTabSet && view.childTabSet.getSelectedTabNumber() >= 0) {
         persDataByTab.selectedTab = view.childTabSet.getSelectedTabNumber();
+        if (
+          view.childTabSet.tabs[persDataByTab.selectedTab].pane.showTabIf !==
+          undefined
+        ) {
+          personalizationData.selectedTabsWithDisplayLogic =
+            personalizationData.selectedTabsWithDisplayLogic || [];
+          personalizationData.selectedTabsWithDisplayLogic.push(
+            view.childTabSet.tabs[persDataByTab.selectedTab].pane.tabTitle
+          );
+        }
       }
     } else if (view.initialTabDefinition) {
       // If there it is a non-rendered child view and there is an initial tab definition it means that
@@ -339,7 +349,24 @@ OB.Personalization.storeViewDefinition = function(
       standardWindow,
       name,
       isDefault
+    ),
+    selectedTabsWithDisplayLogic;
+
+  selectedTabsWithDisplayLogic =
+    personalizationData.selectedTabsWithDisplayLogic || [];
+  if (selectedTabsWithDisplayLogic.length > 0) {
+    // saved views with active tabs that have display logic are not supported, because
+    // it might be that when restoring the saved view, the initial conditions that resulted
+    // in the tab being displayed are no longer met
+    standardWindow.view.messageBar.setMessage(
+      isc.OBMessageBar.TYPE_ERROR,
+      OB.I18N.getLabel('OBUIAPP_CannotSaveView'),
+      OB.I18N.getLabel('OBUIApp_SavedViewWithTabDisplayLogic', [
+        selectedTabsWithDisplayLogic
+      ])
     );
+    return;
+  }
 
   // if there is a personalization id then use that
   // this ensures that a specific record will be updated
