@@ -164,6 +164,16 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   }
 
   @Test
+  public void cannotDownloadReprintableDocumentIfDoesNotExist() {
+    createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
+        createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
+
+    SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+
+    assertThrows(DocumentNotFoundException.class, () -> download(sourceDocument));
+  }
+
+  @Test
   public void checkOrderSourceDocumentExists() {
     SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
     assertTrue(sourceDocument.exists());
