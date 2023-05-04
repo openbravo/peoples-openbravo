@@ -46,8 +46,8 @@
         <onCreateDefault/>
       </column>
       <column name="AD_PROTOCOL_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
+        <default><![CDATA[36ADC30F67164F119013515280D82C01]]></default>
+        <onCreateDefault><![CDATA['36ADC30F67164F119013515280D82C01']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTERNAL_SYSTEM_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
