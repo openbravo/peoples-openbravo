@@ -149,6 +149,15 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   }
 
   @Test
+  public void cannotUploadReprintableDocumentIfNoAttachmentConfig() {
+    InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
+    SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+
+    assertThrows(OBException.class,
+        () -> reprintableDocumentManager.upload(inputStream, Format.XML, sourceDocument));
+  }
+
+  @Test
   public void cannotDownloadReprintableDocumentOfNonWritableDocument() {
     createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
