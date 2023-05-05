@@ -113,6 +113,8 @@ public class ReprintableDocumentManager {
    * @param sourceDocument
    *          The document used as source data for the ReprintableDocument
    *
+   * @return the newly created ReprintableDocument
+   *
    * @throws OBSecurityException
    *           if the write access to the source document is not granted in the current context
    *           because in such case is not allowed to create a ReprintableDocument linked to the
@@ -145,6 +147,8 @@ public class ReprintableDocumentManager {
    *          outputStream where document data is provided. Code invoking this method is also
    *          responsible of closing it.
    *
+   * @return the ReprintableDocument linked to the source document
+   *
    * @throws DocumentNotFoundException
    *           if it is not possible to find the ReprintableDocument linked to the provided source
    *           document
@@ -156,7 +160,7 @@ public class ReprintableDocumentManager {
    *           if it is not possible to find a handler for the attachment method defined in the
    *           ReprintableDocument attachment configuration
    */
-  public void download(SourceDocument sourceDocument, OutputStream outputStream)
+  public ReprintableDocument download(SourceDocument sourceDocument, OutputStream outputStream)
       throws IOException {
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
     if (reprintableDocument == null) {
@@ -168,6 +172,7 @@ public class ReprintableDocumentManager {
     } catch (FileNotFoundException | NoSuchFileException ex) {
       throw new DocumentNotFoundException(ex);
     }
+    return reprintableDocument;
   }
 
   /**
