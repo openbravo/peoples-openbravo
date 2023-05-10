@@ -116,8 +116,8 @@ BEGIN
       )
       LOOP
 			  UPDATE m_storage_detail
-			  SET reservedqty = reservedqty - cur_reservationstock.reservedqty,
-			      allocatedqty = allocatedqty - cur_reservationstock.allocatedqty
+			  SET reservedqty = CASE WHEN reservedqty - cur_reservationstock.reservedqty <= 0 THEN 0 ELSE reservedqty - cur_reservationstock.reservedqty END,
+			      allocatedqty = CASE WHEN allocatedqty - cur_reservationstock.allocatedqty <=0 THEN 0 ELSE allocatedqty - cur_reservationstock.allocatedqty END
 			  WHERE m_product_id = :NEW.m_product_id
 				AND m_product_uom_id IS NULL
 				AND c_uom_id = :NEW.c_uom_id
