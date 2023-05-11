@@ -109,6 +109,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="SORTBYFIELD_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="OBUISEL_S_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -138,6 +142,9 @@
       </foreign-key>
       <foreign-key foreignTable="OBUIAPP_PROCESS" name="OBUISEL_S_OBUIAPP_PROCESS">
         <reference local="OBUIAPP_PROCESS_ID" foreign="OBUIAPP_PROCESS_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="OBUISEL_SELECTOR_FIELD" name="OBUISEL_S_SORTBYFIELD">
+        <reference local="SORTBYFIELD_ID" foreign="OBUISEL_SELECTOR_FIELD_ID"/>
       </foreign-key>
       <foreign-key foreignTable="OBUISEL_SELECTOR_FIELD" name="OBUISEL_S_VALUEFIELD">
         <reference local="VALUEFIELD_ID" foreign="OBUISEL_SELECTOR_FIELD_ID"/>

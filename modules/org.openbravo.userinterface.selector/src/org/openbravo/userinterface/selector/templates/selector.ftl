@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2019 Openbravo SLU
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@
     defaultPopupFilterField : '${data.defaultPopupFilterField}',
     displayField: '${data.displayField?js_string}',
     valueField: '${data.valueField?js_string}',
+    sortByField: '${data.sortByField?js_string}',
     pickListFields: [
     <#list data.pickListFields as pickListField>
 <@compress single_line=true>
@@ -95,6 +96,7 @@ sc_${data.columnName} = isc.OBSelectorWidget.create({
     numCols : ${data.numCols},
     displayField: '${data.displayField?js_string}',
     valueField: '${data.valueField?js_string}',
+    sortByField: '${data.sortByField?js_string}',
     pickListFields: [
     <#list data.pickListFields as pickListField>
         {<#list pickListField.properties as property>

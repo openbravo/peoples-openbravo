@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2020 Openbravo SLU
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -348,6 +348,21 @@ public class SelectorComponent extends BaseTemplateComponent {
 
     // in all other cases use an identifier
     return JsonConstants.IDENTIFIER;
+  }
+
+  /**
+   * Determines the field that will be used by the data sources to sort the fetched records. If
+   * there is no sort field defined for the selector, then the record are sorted by the values of
+   * the display field by default.
+   *
+   * @return the name of the field used to sort the selector records
+   */
+  public String getSortByField() {
+    if (getSelector().getSortbyfield() != null) {
+      return getPropertyOrDataSourceField(getSelector().getSortbyfield());
+    } else {
+      return getDisplayField();
+    }
   }
 
   public String getProcessDefinition() {
