@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -40,6 +40,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.advpaymentmngt.APRM_FinaccTransactionV;
 import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.dao.TransactionsDao;
+import org.openbravo.advpaymentmngt.process.FIN_TransactionProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
@@ -74,6 +75,7 @@ public class Reconciliation extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private AdvPaymentMngtDao dao;
   Set<FIN_FinaccTransaction> transactionsToBePosted = new HashSet<FIN_FinaccTransaction>();
+  private static final String BP_DEPOSIT = "BPD";
   private static final String BP_WITHDRAWAL = "BPW";
 
   @Override
@@ -289,12 +291,13 @@ public class Reconciliation extends HttpSecureAppServlet {
 
         // Difference transaction
         LineNumberUtil lineNoUtil = new LineNumberUtil();
-        BigDecimal bdGlItemDiff = new BigDecimal(strGlItemDiff).negate();
+        BigDecimal bdGlItemDiff = new BigDecimal(strGlItemDiff);
 
         // Do no create a difference transaction if the amount is 0.00
         // If transaction is created with amount 0, a constratint is violated
         if (bdGlItemDiff.compareTo(BigDecimal.ZERO) != 0) {
-          createTransaction(account, BP_WITHDRAWAL, reconciliation.getTransactionDate(),
+          String trxType = bdGlItemDiff.compareTo(BigDecimal.ZERO) > 0 ? BP_DEPOSIT : BP_WITHDRAWAL;
+          createTransaction(account, trxType, reconciliation.getTransactionDate(),
               account.getAprmGlitemDiff(), bdGlItemDiff, lineNoUtil, null, "GL Item: Differences",
               reconciliation);
         }
@@ -699,11 +702,11 @@ public class Reconciliation extends HttpSecureAppServlet {
     trx.setDateAcct(trxDate);
     trx.setGLItem(glitem);
     trx.setCurrency(account.getCurrency());
-    // if (BP_DEPOSIT.equalsIgnoreCase(trxType)) {
-    // trx.setDepositAmount(amount);
-    // } else {
-    trx.setPaymentAmount(amount);
-    // }
+    if (BP_DEPOSIT.equalsIgnoreCase(trxType)) {
+      trx.setDepositAmount(amount.abs());
+    } else {
+      trx.setPaymentAmount(amount.abs());
+    }
     // If the user has access to the Organization of the Financial Account, the Transaction is
     // created for it. If not, the Organization of the context is used instead
     if (OBContext.getOBContext()
@@ -723,6 +726,8 @@ public class Reconciliation extends HttpSecureAppServlet {
 
     OBDal.getInstance().save(trx);
     OBDal.getInstance().flush();
+
+    FIN_TransactionProcess.doTransactionProcess("P", trx);
 
     return trx;
   }
