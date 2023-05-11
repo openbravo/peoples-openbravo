@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2023 Openbravo SLU
+ * All portions are Copyright (C) 2011-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1472,15 +1472,4 @@ OB.Utilities.removeAccents = function(value) {
     value = value.replace(/ñ/g, 'n').replace(/Ñ/g, 'N');
   }
   return value;
-};
-
-OB.Utilities.HTTPProtocols = ['36ADC30F67164F119013515280D82C01'];
-
-//** {{{ OB.Utilities.isHTTProtocol }}} **
-//
-// Returns true if the value of the protocol field given in the window context is an HTTP protocol
-// Parameters:
-//  * {{{context}}} The current record context in a window
-OB.Utilities.isHTTProtocol = function(context) {
-  return OB.Utilities.HTTPProtocols.includes(context.inpadProtocolId);
 };
