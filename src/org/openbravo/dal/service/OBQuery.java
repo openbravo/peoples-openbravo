@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -194,6 +194,7 @@ public class OBQuery<E extends BaseOBObject> {
     }
     sql = "select " + usedAlias + "id " + FROM_SPACED + sql;
     final Query<String> qry = getSession().createQuery(sql, String.class);
+    addQueryProfile(qry);
     setParameters(qry);
 
     try (ScrollableResults results = qry.scroll(ScrollMode.FORWARD_ONLY)) {
@@ -282,18 +283,22 @@ public class OBQuery<E extends BaseOBObject> {
       if (maxResult > -1) {
         qry.setMaxResults(maxResult);
       }
-      String queryProfile = null;
-      if (this.getQueryType() != null) {
-        queryProfile = this.getQueryType();
-      } else if (SessionInfo.getQueryProfile() != null) {
-        queryProfile = SessionInfo.getQueryProfile();
-      }
-      if (queryProfile != null) {
-        QueryTimeOutUtil.getInstance().setQueryTimeOut(qry, queryProfile);
-      }
+      addQueryProfile(qry);
       return qry;
     } catch (final Exception e) {
       throw new OBException("Exception when creating query " + qryStr, e);
+    }
+  }
+
+  private <T> void addQueryProfile(final Query<T> qry) {
+    String queryProfile = null;
+    if (this.getQueryType() != null) {
+      queryProfile = this.getQueryType();
+    } else if (SessionInfo.getQueryProfile() != null) {
+      queryProfile = SessionInfo.getQueryProfile();
+    }
+    if (queryProfile != null) {
+      QueryTimeOutUtil.getInstance().setQueryTimeOut(qry, queryProfile);
     }
   }
 
