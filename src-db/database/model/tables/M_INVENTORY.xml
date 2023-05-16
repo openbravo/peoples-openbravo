@@ -146,6 +146,11 @@
       <foreign-key foreignTable="USER2" name="M_INVENTORY_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="M_INVENTORY_DOC_ORG_UN" unique="true">
+        <index-column name="DOCUMENTNO"/>
+        <index-column name="AD_ORG_ID"/>
+        <whereClause><![CDATA[DOCUMENTNO IS NOT NULL]]></whereClause>
+      </index>
       <index name="M_INVENTORY_DOCNO" unique="false">
         <index-column name="DOCUMENTNO"/>
         <whereClause><![CDATA[DOCUMENTNO IS NOT NULL]]></whereClause>
@@ -156,10 +161,6 @@
       <index name="M_INVENTORY_POSTED" unique="false">
         <index-column name="POSTED"/>
       </index>
-      <unique name="M_INVENTORY_DOC_ORG_UN">
-        <unique-column name="DOCUMENTNO"/>
-        <unique-column name="AD_ORG_ID"/>
-      </unique>
       <check name="M_INVENTORY_GENERATELIST_CHK"><![CDATA[GENERATELIST IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
