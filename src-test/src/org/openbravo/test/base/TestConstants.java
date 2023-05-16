@@ -89,6 +89,10 @@ public class TestConstants {
     public static final String ID_CORE = "0";
   }
 
+  public static class Protocols {
+    public static final String HTTP = "36ADC30F67164F119013515280D82C01";
+  }
+
   private TestConstants() {
   }
 }

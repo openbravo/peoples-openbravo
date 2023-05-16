@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,12 +25,12 @@ import javax.enterprise.util.AnnotationLiteral;
  * Selector for the {@link Protocol} annotation
  */
 @SuppressWarnings("all")
-class ProtocolSelector extends AnnotationLiteral<Protocol> implements Protocol {
+public class ProtocolSelector extends AnnotationLiteral<Protocol> implements Protocol {
   private static final long serialVersionUID = 1L;
 
   private final String value;
 
-  ProtocolSelector(String value) {
+  public ProtocolSelector(String value) {
     this.value = value;
   }
 
