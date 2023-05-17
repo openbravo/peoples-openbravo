@@ -127,8 +127,11 @@ public class ReprintableDocumentManager {
   public ReprintableDocument upload(InputStream documentData, Format format,
       SourceDocument sourceDocument) {
     ReprintableDocument document = createReprintableDocument(format, sourceDocument);
-    ReprintableDocumentAttachHandler handler = getHandler(document);
+    // flush to trigger unique constraint checks because we do not want to proceed with the file
+    // upload in case the ReprintableDocument record cannot be created
+    OBDal.getInstance().flush();
 
+    ReprintableDocumentAttachHandler handler = getHandler(document);
     try (documentData) {
       handler.upload(document, documentData);
     } catch (Exception ex) {
