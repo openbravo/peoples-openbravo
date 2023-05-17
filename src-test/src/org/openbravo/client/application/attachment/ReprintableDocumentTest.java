@@ -90,7 +90,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   }
 
   @Test
-  public void uploadAndDownloadReprintableDocumentOfOrder() throws IOException {
+  public void uploadAndDownloadReprintableDocumentOfOrder()
+      throws IOException, DocumentNotFoundException {
     AttachmentConfig config = createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
@@ -113,7 +114,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   }
 
   @Test
-  public void uploadAndDownloadReprintableDocumentOfInvoice() throws IOException {
+  public void uploadAndDownloadReprintableDocumentOfInvoice()
+      throws IOException, DocumentNotFoundException {
     AttachmentConfig config = createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
@@ -151,7 +153,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   }
 
   @Test
-  public void uploadReprintableDocumentWithDefaultConfig() throws IOException {
+  public void uploadReprintableDocumentWithDefaultConfig()
+      throws IOException, DocumentNotFoundException {
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
     SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
     Order order = OBDal.getInstance().get(Order.class, TEST_ORDER_ID);
@@ -337,7 +340,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     }
   }
 
-  private String download(SourceDocument sourceDocument) throws IOException {
+  private String download(SourceDocument sourceDocument)
+      throws IOException, DocumentNotFoundException {
     Path file = Files.createTempFile(null, null);
     try (OutputStream os = new FileOutputStream(file.toFile())) {
       reprintableDocumentManager.download(sourceDocument, os);

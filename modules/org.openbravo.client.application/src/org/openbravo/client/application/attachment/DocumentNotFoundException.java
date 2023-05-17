@@ -18,29 +18,17 @@
  */
 package org.openbravo.client.application.attachment;
 
-import org.openbravo.base.exception.OBException;
-
 /**
  * Class used to indicate that the information of a ReprintableDocument could not be found by the
  * {@link ReprintableDocumentManager}
  */
 @SuppressWarnings("serial")
-public class DocumentNotFoundException extends OBException {
+public class DocumentNotFoundException extends Exception {
 
   /**
    * Constructs a new DocumentNotFoundException
    */
   public DocumentNotFoundException() {
     super();
-  }
-
-  /**
-   * Constructs a new DocumentNotFoundException
-   *
-   * @param cause
-   *          The original cause of the error
-   */
-  public DocumentNotFoundException(Throwable cause) {
-    super(cause);
   }
 }

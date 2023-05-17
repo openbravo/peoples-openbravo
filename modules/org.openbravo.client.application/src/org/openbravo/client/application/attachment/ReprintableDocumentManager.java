@@ -18,11 +18,9 @@
  */
 package org.openbravo.client.application.attachment;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.NoSuchFileException;
 import java.time.Duration;
 
 import javax.annotation.PostConstruct;
@@ -163,17 +161,13 @@ public class ReprintableDocumentManager {
    *           ReprintableDocument attachment configuration
    */
   public ReprintableDocument download(SourceDocument sourceDocument, OutputStream outputStream)
-      throws IOException {
+      throws IOException, DocumentNotFoundException {
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
     if (reprintableDocument == null) {
       throw new DocumentNotFoundException();
     }
     ReprintableDocumentAttachHandler handler = getHandler(reprintableDocument);
-    try {
-      handler.download(reprintableDocument, outputStream);
-    } catch (FileNotFoundException | NoSuchFileException ex) {
-      throw new DocumentNotFoundException(ex);
-    }
+    handler.download(reprintableDocument, outputStream);
     return reprintableDocument;
   }
 
