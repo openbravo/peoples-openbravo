@@ -21,6 +21,7 @@ package org.openbravo.client.application.attachment;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -90,7 +91,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
   @Test
   public void uploadAndDownloadReprintableDocumentOfOrder() throws IOException {
-    createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
+    AttachmentConfig config = createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
@@ -104,7 +105,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     assertThat(document.getClient().getId(), equalTo(order.getClient().getId()));
     assertThat(document.getOrganization().getId(), equalTo(order.getOrganization().getId()));
     assertThat(document.getName(), equalTo("reprintableDocument.xml"));
-
+    assertThat(document.getAttachmentConfiguration().getId(), equalTo(config.getId()));
     OBDal.getInstance().flush();
 
     String downloadedDocument = download(sourceDocument);
@@ -113,7 +114,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
 
   @Test
   public void uploadAndDownloadReprintableDocumentOfInvoice() throws IOException {
-    createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
+    AttachmentConfig config = createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
@@ -127,6 +128,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     assertThat(document.getClient().getId(), equalTo(invoice.getClient().getId()));
     assertThat(document.getOrganization().getId(), equalTo(invoice.getOrganization().getId()));
     assertThat(document.getName(), equalTo("reprintableDocument.xml"));
+    assertThat(document.getAttachmentConfiguration().getId(), equalTo(config.getId()));
 
     OBDal.getInstance().flush();
 
@@ -149,12 +151,24 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   }
 
   @Test
-  public void cannotUploadReprintableDocumentIfNoAttachmentConfig() {
+  public void uploadReprintableDocumentWithDefaultConfig() throws IOException {
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
     SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    Order order = OBDal.getInstance().get(Order.class, TEST_ORDER_ID);
 
-    assertThrows(OBException.class,
-        () -> reprintableDocumentManager.upload(inputStream, Format.XML, sourceDocument));
+    ReprintableDocument document = reprintableDocumentManager.upload(inputStream, Format.XML,
+        sourceDocument);
+    assertThat(document.getFormat(), equalTo(Format.XML.name()));
+    assertThat(document.getOrder().getId(), equalTo(order.getId()));
+    assertThat(document.getClient().getId(), equalTo(order.getClient().getId()));
+    assertThat(document.getOrganization().getId(), equalTo(order.getOrganization().getId()));
+    assertThat(document.getName(), equalTo("reprintableDocument.xml"));
+    assertNull(document.getAttachmentConfiguration());
+
+    OBDal.getInstance().flush();
+
+    String downloadedDocument = download(sourceDocument);
+    assertThat(downloadedDocument, equalTo(DATA));
   }
 
   @Test

@@ -103,7 +103,11 @@ public class ReprintableDocumentManager {
   }
 
   /**
-   * Creates a new ReprintableDocument and uploads its data as an attachment
+   * Creates a new ReprintableDocument and uploads its data as an attachment using the attachment
+   * method of the configuration for "Reprintable Documents" defined for the current session client.
+   * If such configuration does not exist for the current client then the one defined at system
+   * level is used. And if no attachment configuration is found at all, then the {#link
+   * AttachmentUtils#DEFAULT_METHOD} method is used by default.
    * 
    * @param documentData
    *          An InputStream with the document data. This method is in charge of closing it when
@@ -120,9 +124,7 @@ public class ReprintableDocumentManager {
    *           because in such case is not allowed to create a ReprintableDocument linked to the
    *           source document.
    * @throws OBException
-   *           if there is not a valid attachment configuration for the ReprintableDocument or is
-   *           not possible to find a handler for the attachment method defined in the attachment
-   *           configuration found
+   *           if it is not possible to find a handler for the selected attachment method
    */
   public ReprintableDocument upload(InputStream documentData, Format format,
       SourceDocument sourceDocument) {
@@ -192,10 +194,6 @@ public class ReprintableDocumentManager {
 
   private ReprintableDocument createReprintableDocument(Format format,
       SourceDocument sourceDocument) {
-    AttachmentConfig config = AttachmentUtils.getAttachmentConfig(AttachmentType.RD);
-    if (config == null) {
-      throw new OBException(OBMessageUtils.messageBD("OBUIAPP_NoValidAttachConfig"));
-    }
     BaseOBObject sourceDocumentBOB = sourceDocument.getBOB();
 
     SecurityChecker.getInstance().checkWriteAccess(sourceDocumentBOB);
@@ -210,7 +208,8 @@ public class ReprintableDocumentManager {
       reprintableDocument.setOrganization((Organization) sourceDocumentBOB.get("organization"));
       reprintableDocument.setName("reprintableDocument." + format.name().toLowerCase());
       reprintableDocument.setFormat(format.name());
-      reprintableDocument.setAttachmentConfiguration(config);
+      reprintableDocument
+          .setAttachmentConfiguration(AttachmentUtils.getAttachmentConfig(AttachmentType.RD));
       reprintableDocument.set(sourceDocument.getProperty(), sourceDocument.getBOB());
       OBDal.getInstance().save(reprintableDocument);
       return reprintableDocument;
@@ -239,8 +238,9 @@ public class ReprintableDocumentManager {
   }
 
   private ReprintableDocumentAttachHandler getHandler(ReprintableDocument reprintableDocument) {
-    String attachMethod = methodsOfAttachmentConfigs
-        .get(reprintableDocument.getAttachmentConfiguration().getId());
+    AttachmentConfig config = reprintableDocument.getAttachmentConfiguration();
+    String attachMethod = config != null ? methodsOfAttachmentConfigs.get(config.getId())
+        : AttachmentUtils.DEFAULT_METHOD;
     return WeldUtils
         .getInstances(ReprintableDocumentAttachHandler.class,
             new ComponentProvider.Selector(attachMethod))
