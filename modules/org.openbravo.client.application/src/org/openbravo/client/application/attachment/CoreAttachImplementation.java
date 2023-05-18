@@ -144,7 +144,7 @@ public class CoreAttachImplementation extends AttachImplementation
 
   @Override
   public void download(ReprintableDocument document, OutputStream outputStream) throws IOException {
-    log.debug("Downloading reprintable document {}", document);
+    log.trace("Downloading reprintable document {}", document);
     Path path = getReprintableDocumentAttachmentPath(document);
     Files.copy(path, outputStream);
   }
@@ -152,10 +152,16 @@ public class CoreAttachImplementation extends AttachImplementation
   private Path getReprintableDocumentAttachmentPath(ReprintableDocument document) {
     String fileDirPath = getAttachmentDirectoryForNewAttachments(getTableId(document),
         getDocumentId(document));
-    String attachmentFolderPath = OBPropertiesProvider.getInstance()
+    String reprintablePath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("reprintable.path");
+    if (reprintablePath != null) {
+      return Paths.get(reprintablePath, fileDirPath, document.getName());
+    }
+    String attachmentPath = OBPropertiesProvider.getInstance()
         .getOpenbravoProperties()
         .getProperty("attach.path");
-    return Paths.get(attachmentFolderPath, fileDirPath, document.getName());
+    return Paths.get(attachmentPath, "reprintable", fileDirPath, document.getName());
   }
 
   private String getTableId(ReprintableDocument document) {
