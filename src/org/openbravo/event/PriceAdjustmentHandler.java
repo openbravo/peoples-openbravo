@@ -61,7 +61,9 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
         .getEntity(event.getTargetInstance().getEntityName());
     final BigDecimal maxQty = (BigDecimal) event
         .getCurrentState(offerEntity.getProperty(PriceAdjustment.PROPERTY_MAXQUANTITY));
-    if (maxQty != null && maxQty.compareTo(BigDecimal.ZERO) > 0) {
+    final Boolean applyToProduct = (Boolean) event.getCurrentState(
+        offerEntity.getProperty(PriceAdjustment.PROPERTY_APPLYTOPRODUCTSUPTOTHEMAXQUANTITY));
+    if (maxQty != null && maxQty.compareTo(BigDecimal.ZERO) > 0 && applyToProduct) {
       final String priorityRule = (String) event
           .getCurrentState(offerEntity.getProperty(PriceAdjustment.PROPERTY_PRIORITYRULE));
       if (priorityRule == null) {
