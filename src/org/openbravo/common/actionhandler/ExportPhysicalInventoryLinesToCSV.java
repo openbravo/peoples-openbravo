@@ -78,11 +78,13 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
     try {
       params = data.getJSONObject("_params");
       boolean generateLines = params.optBoolean("CreateInventoryLinesAutomatically");
+      boolean blindCount = params.optBoolean("BlindCount");
+
       String inventoryId = data.optString("M_Inventory_ID");
 
       generateInventoryLines(generateLines, inventoryId);
       if (hasLines(inventoryId)) {
-        return createCSVFile(inventoryId).getName();
+        return createCSVFile(inventoryId, blindCount).getName();
       } else {
         throw new OBException(OBMessageUtils.messageBD("NoPhysicalInventoryLines"));
       }
@@ -171,12 +173,12 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
     }
   }
 
-  private File createCSVFile(String inventoryId) throws IOException {
+  private File createCSVFile(String inventoryId, boolean blindCount) throws IOException {
     File file = Files.createTempFile("", ".csv").toFile();
     try (FileWriter outputfile = new FileWriter(file)) {
       // Comma as a separator and No Quote Character
       final Writer writer = new StringWriter();
-      addPhysicalInventoryLinesToCsv(writer, inventoryId);
+      addPhysicalInventoryLinesToCsv(writer, inventoryId, blindCount);
       writer.close();
       outputfile.write(writer.toString());
     }
@@ -190,6 +192,7 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
                   "  pil.product.searchKey as productSearchKey," +
                   "  pil.attributeSetValue.description as attributeSet, "+
                   "  pil.bookQuantity as bookQuantity," +
+                  "  pil.quantityCount as quantityCount," +
                   "  pil.uOM.name as UOM, pil.storageBin.searchKey as storageBin" +
                   " from MaterialMgmtInventoryCountLine as pil" +
                   " where pil.physInventory.id = :inventoryId ";
@@ -200,8 +203,8 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
     return query.scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private void addPhysicalInventoryLinesToCsv(final Writer writer, String inventoryId)
-      throws IOException {
+  private void addPhysicalInventoryLinesToCsv(final Writer writer, String inventoryId,
+      boolean blindCount) throws IOException {
     String fieldSeparator = getFieldSeparator();
     // adding header to csv
     writer.append(OBMessageUtils.messageBD("ProductUPCEAN") + fieldSeparator);
@@ -225,8 +228,10 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
         writer.append(((String) physicalInventoryline.get("attributeSet") != null
             ? (String) physicalInventoryline.get("attributeSet")
             : "") + fieldSeparator);
-        writer.append((BigDecimal) physicalInventoryline.get("bookQuantity") + fieldSeparator);
-        writer.append("" + fieldSeparator);
+        writer.append((blindCount ? "" : (BigDecimal) physicalInventoryline.get("bookQuantity"))
+            + fieldSeparator);
+        writer.append((blindCount ? "" : (BigDecimal) physicalInventoryline.get("quantityCount"))
+            + fieldSeparator);
         writer.append((String) physicalInventoryline.get("UOM") + fieldSeparator);
         writer.append((String) physicalInventoryline.get("storageBin") + fieldSeparator);
         writer.append("" + fieldSeparator);
