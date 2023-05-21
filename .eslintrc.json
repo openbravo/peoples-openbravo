@@ -31,6 +31,7 @@
       }
     ],
     "no-console": ["warn"],
-    "no-useless-escape": ["warn"]
+    "no-useless-escape": ["warn"],
+    "jest/no-conditional-expect": ["off"]
   }
 }
