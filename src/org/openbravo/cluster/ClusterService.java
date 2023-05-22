@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2021 Openbravo SLU
+ * All portions are Copyright (C) 2018-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,10 +36,12 @@ import org.openbravo.service.db.DalConnectionProvider;
 public abstract class ClusterService {
   private static final Logger log = LogManager.getLogger();
   private static final Long DEFAULT_TIMEOUT = 10_000L;
+  private static final Long DEFAULT_THRESHOLD_PERCENTAGE = 10L;
   private static final Long MIN_THRESHOLD = 1_000L;
-  private static final Long MAX_THRESHOLD = 5_000L;
+  private static final Long MAX_THRESHOLD = 60_000L;
 
   private Long timeout;
+  private Long thresholdPercentage;
   private Long threshold;
   private Long nextPing;
   private String nodeId;
@@ -69,7 +71,8 @@ public abstract class ClusterService {
     this.nodeId = currentNodeId;
     this.nodeName = currentNodeName;
     this.timeout = getClusterServiceTimeout();
-    this.threshold = calculateThreshold(timeout);
+    this.thresholdPercentage = getClusterServiceThesholdPercentage();
+    this.threshold = calculateThreshold();
     this.initialized = true;
     return true;
   }
@@ -87,7 +90,7 @@ public abstract class ClusterService {
       // the timeout is defined in the AD in seconds, convert to milliseconds
       return Long.parseLong(serviceTimeout) * 1000;
     } catch (Exception ex) {
-      log.error("Could not retrieve the settings for service {}", getServiceName(), ex);
+      log.error("Could not retrieve the timeout for service {}", getServiceName(), ex);
       return DEFAULT_TIMEOUT;
     } finally {
       try {
@@ -98,15 +101,41 @@ public abstract class ClusterService {
     }
   }
 
-  private Long calculateThreshold(Long amount) {
-    long result = amount * 10 / 100;
-    if (result < MIN_THRESHOLD) {
-      return MIN_THRESHOLD;
-    } else if (result > MAX_THRESHOLD) {
-      return MAX_THRESHOLD;
-    } else {
-      return result;
+  private Long getClusterServiceThesholdPercentage() {
+    DalConnectionProvider dcp = new DalConnectionProvider(false);
+    Connection connection = null;
+    try {
+      connection = dcp.getTransactionConnection();
+      String serviceTimeout = ClusterServiceData.getServiceTimeoutThreshold(connection, dcp,
+          getServiceName());
+      if (serviceTimeout == null) {
+        return DEFAULT_THRESHOLD_PERCENTAGE;
+      }
+      return Long.parseLong(serviceTimeout);
+    } catch (Exception ex) {
+      log.error("Could not retrieve the timeout threshold for service {}", getServiceName(), ex);
+      return DEFAULT_THRESHOLD_PERCENTAGE;
+    } finally {
+      try {
+        dcp.releaseCommitConnection(connection);
+      } catch (SQLException ex) {
+        log.error("Error closing connection", ex);
+      }
     }
+  }
+
+  private Long calculateThreshold() {
+    long result = timeout * thresholdPercentage / 100;
+
+    if (result < MIN_THRESHOLD) {
+      result = MIN_THRESHOLD;
+    } else if (result > MAX_THRESHOLD) {
+      result = MAX_THRESHOLD;
+    }
+    log.info(
+        "Cluster timeout threshold defined to {} ms. After {} ms with no ping, another cluster instance will take charge",
+        result, timeout + result);
+    return result;
   }
 
   /**

@@ -41,6 +41,10 @@
         <default><![CDATA[1]]></default>
         <onCreateDefault/>
       </column>
+      <column name="TIMEOUT_THRESHOLD" primaryKey="false" required="true" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default><![CDATA[10]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_CLUSTER_SRV_SET_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -51,6 +55,7 @@
         <unique-column name="SERVICE"/>
       </unique>
       <check name="AD_CLUSTER_SRV_SET_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="AD_CLUSTER_SRV_SET_THRES_CHK"><![CDATA[TIMEOUT_THRESHOLD > 0]]></check>
       <check name="AD_CLUSTER_SRV_SET_TIME_CHK"><![CDATA[TIMEOUT > 0]]></check>
     </table>
   </database>

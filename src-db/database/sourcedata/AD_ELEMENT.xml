@@ -23019,6 +23019,23 @@ When this flag is enabled, this default behavior can be overridden allowing to r
 <!--3269E9900D0C45BB9CDA1BF2975242ED-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--3269E9900D0C45BB9CDA1BF2975242ED--></AD_ELEMENT>
 
+<!--331C588F2370413F91EC1E630794A5C8--><AD_ELEMENT>
+<!--331C588F2370413F91EC1E630794A5C8-->  <AD_ELEMENT_ID><![CDATA[331C588F2370413F91EC1E630794A5C8]]></AD_ELEMENT_ID>
+<!--331C588F2370413F91EC1E630794A5C8-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
+<!--331C588F2370413F91EC1E630794A5C8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
+<!--331C588F2370413F91EC1E630794A5C8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--331C588F2370413F91EC1E630794A5C8-->  <COLUMNNAME><![CDATA[Timeout_Threshold]]></COLUMNNAME>
+<!--331C588F2370413F91EC1E630794A5C8-->  <NAME><![CDATA[Timeout Threshold (%)]]></NAME>
+<!--331C588F2370413F91EC1E630794A5C8-->  <PRINTNAME><![CDATA[Timeout Threshold (%)]]></PRINTNAME>
+<!--331C588F2370413F91EC1E630794A5C8-->  <DESCRIPTION><![CDATA[Specifies how much, as a percentage, a timeout can be delayed before another instance takes charge of a service]]></DESCRIPTION>
+<!--331C588F2370413F91EC1E630794A5C8-->  <HELP><![CDATA[Specifies how much, as a percentage, a timeout can be delayed before another instance takes charge of a service. For instance, if timeout is 10s:
+- A threshold of 10 means that after 10+(10*10/100)=11s with no ping from the instance that owns the service, other instance may take charge
+- A threshold of 50 means that after 10+(10*50/100)=15s with no ping from the instance that owns the service, other instance may take charge
+- A threshold of 200 means that after 10+(10*200/100)=30s with no ping from the instance that owns the service, other instance may take charge]]></HELP>
+<!--331C588F2370413F91EC1E630794A5C8-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
+<!--331C588F2370413F91EC1E630794A5C8-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
+<!--331C588F2370413F91EC1E630794A5C8--></AD_ELEMENT>
+
 <!--336E3CA968AF4707AFED0D8C94BBCE64--><AD_ELEMENT>
 <!--336E3CA968AF4707AFED0D8C94BBCE64-->  <AD_ELEMENT_ID><![CDATA[336E3CA968AF4707AFED0D8C94BBCE64]]></AD_ELEMENT_ID>
 <!--336E3CA968AF4707AFED0D8C94BBCE64-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
