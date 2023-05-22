@@ -22,6 +22,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -403,6 +404,25 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
     if (managerThread != null) {
       managerThread.doNotify();
     }
+  }
+
+  /**
+   * Commits the current transaction if the current node is in charge of handling the import
+   * entries. This method is intended to be used by those import entry processors which need to
+   * commit their changes in the middle of the process. If processors don't use this method for
+   * committing the changes they can leave an inconsistent state in the system if a subsequent call
+   * to {@link #setImportEntryProcessed(String)} detects that we are not in the node that should
+   * handle the import entries.
+   *
+   * @throws OBException
+   *           if this method is invoked in a cluster node which is not handling the import entries
+   */
+  public void commitCurrentTransaction() throws SQLException {
+    if (!isHandlingImportEntries()) {
+      throw new OBException("Not allowed to commit in node " + clusterService.getNodeIdentifier()
+          + " because active node is " + clusterService.getIdentifierOfNodeHandlingService());
+    }
+    OBDal.getInstance().getConnection().commit();
   }
 
   private boolean handleImportEntry(ImportEntry importEntry) {
