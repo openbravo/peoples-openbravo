@@ -35,6 +35,13 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 
+/**
+ * Event handler that ensures that the documentNo is a unique value in each organization.
+ * 
+ * Since the documentNo is not mandatory and has null values, it could not be implemented as a
+ * unique constraint in the database as this behavior fails in Oracle.
+ */
+
 class PhysicalInventoryEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = {
@@ -49,7 +56,10 @@ class PhysicalInventoryEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-    existRecordSameDocumentNoAndOrg(event);
+    InventoryCount inventoryCount = (InventoryCount) event.getTargetInstance();
+    if (inventoryCount.getDocumentNo() != null) {
+      existRecordSameDocumentNoAndOrg(event);
+    }
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -59,8 +69,9 @@ class PhysicalInventoryEventHandler extends EntityPersistenceEventObserver {
     final Entity entity = ModelProvider.getInstance().getEntity(InventoryCount.class);
     final Property propertyDocumentNo = entity.getProperty(InventoryCount.PROPERTY_DOCUMENTNO);
 
-    if (!event.getCurrentState(propertyDocumentNo)
-        .equals(event.getPreviousState(propertyDocumentNo))) {
+    if (event.getCurrentState(propertyDocumentNo) != null
+        && (!event.getCurrentState(propertyDocumentNo)
+            .equals(event.getPreviousState(propertyDocumentNo)))) {
       existRecordSameDocumentNoAndOrg(event);
     }
   }

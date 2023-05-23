@@ -25,11 +25,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.persistence.Tuple;
 
@@ -42,7 +42,8 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
-import org.openbravo.client.application.process.GenericExporterActionHandler;
+import org.openbravo.client.application.process.FileExportActionHandler;
+import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -63,14 +64,10 @@ import org.openbravo.service.db.CallProcess;
  * default values parameters when the inventory type is "total".
  */
 
-public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHandler {
+public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
   private static final Logger log = LogManager.getLogger();
-  private String FILE_PREFIX = "STOCK_LEVEL_";
-  private String FILE_EXTENSION = ".csv";
-
-  @Override
-  protected void verifyData(JSONObject data) {
-  }
+  private static final String FILE_PREFIX = "STOCK_LEVEL_";
+  private static final String FILE_EXTENSION = ".csv";
 
   @Override
   protected String generateTmpFile(Map<String, Object> parameters, JSONObject data) {
@@ -95,12 +92,18 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
   }
 
   @Override
+  protected void doValidations(Map<String, Object> parameters, JSONObject data) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
   protected String getDownloadContentType() {
     return "text/csv";
   }
 
   @Override
-  protected String getDownloadFileName(JSONObject data) {
+  protected String getDownloadFileName(Map<String, Object> parameters, JSONObject data) {
     String inventoryId = data.optString("M_Inventory_ID");
     InventoryCount inventory = OBDal.getInstance().getProxy(InventoryCount.class, inventoryId);
     return FILE_PREFIX + inventory.getOrganization().getSearchKey() + "_" + new Date()
@@ -111,9 +114,7 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
     InventoryCount inventory = OBDal.getInstance().getProxy(InventoryCount.class, inventoryId);
     if (generateLines && inventory.getInventoryType().equals("T")) {
       // Delete lines, in order to replace and create again
-      if (hasLines(inventoryId)) {
-        deleteInventoryLines(inventoryId);
-      }
+      deleteInventoryLines(inventoryId);
       generateInventoryLinesProcess(inventoryId);
     }
     OBDal.getInstance().refresh(inventory);
@@ -151,19 +152,11 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
     }
   }
 
-  protected void generateInventoryLinesProcess(String inventoryId) {
+  private void generateInventoryLinesProcess(String inventoryId) {
     final String PROCESS_M_INVENTORY_LISTCREATE = "105";
     final org.openbravo.model.ad.ui.Process process = OBDal.getInstance()
         .get(org.openbravo.model.ad.ui.Process.class, PROCESS_M_INVENTORY_LISTCREATE);
-    // Default values parameters, generate inventory lines for all products regardless of the
-    // quantity count
-    Map<String, String> parameters = new HashMap<>();
-    parameters.put("M_Locator_ID", null);
-    parameters.put("ProductValue", "%");
-    parameters.put("M_Product_Category_ID", null);
-    parameters.put("QtyRange", null);
-    parameters.put("regularization", "N");
-    parameters.put("ABC", null);
+    Map<String, String> parameters = inventoryLinesProcessParameters();
 
     final ProcessInstance pinstance = CallProcess.getInstance()
         .call(process, inventoryId, parameters);
@@ -173,8 +166,22 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
     }
   }
 
+  protected Map<String, String> inventoryLinesProcessParameters() {
+    // Default values parameters, generate inventory lines for all products regardless of the
+    // quantity count
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("M_Locator_ID", null);
+    parameters.put("ProductValue", "%");
+    parameters.put("M_Product_Category_ID", null);
+    parameters.put("QtyRange", null);
+    parameters.put("regularization", "N");
+    parameters.put("ABC", null);
+    return parameters;
+  }
+
   private File createCSVFile(String inventoryId, boolean blindCount) throws IOException {
-    File file = Files.createTempFile("", ".csv").toFile();
+    String tmpFileName = UUID.randomUUID().toString() + ".csv";
+    File file = new File(ReportingUtils.getTempFolder(), tmpFileName);
     try (FileWriter outputfile = new FileWriter(file)) {
       // Comma as a separator and No Quote Character
       final Writer writer = new StringWriter();
@@ -188,13 +195,15 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
   private static ScrollableResults getPhysicalInventoryLines(String inventoryId) {
     //@formatter:off
     String hql = 
-                  "select pil.product.uPCEAN as productUPC , " +
+                  "select coalesce(pil.product.uPCEAN,'') as productUPC , " +
                   "  pil.product.searchKey as productSearchKey," +
-                  "  pil.attributeSetValue.description as attributeSet, "+
+                  "  coalesce(att.description,'') as attributeSet, "+
                   "  pil.bookQuantity as bookQuantity," +
                   "  pil.quantityCount as quantityCount," +
-                  "  pil.uOM.name as UOM, pil.storageBin.searchKey as storageBin" +
+                  "  pil.uOM.name as UOM, pil.storageBin.searchKey as storageBin," +
+                  "  coalesce(pil.description,'') as description " +
                   " from MaterialMgmtInventoryCountLine as pil" +
+                  " left join pil.attributeSetValue as att" +
                   " where pil.physInventory.id = :inventoryId ";
     //@formatter:on  
 
@@ -221,9 +230,7 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
     try (ScrollableResults physicalInventorylines = getPhysicalInventoryLines(inventoryId)) {
       while (physicalInventorylines.next()) {
         Tuple physicalInventoryline = (Tuple) physicalInventorylines.get()[0];
-        writer.append(((String) physicalInventoryline.get("productUPC") != null
-            ? (String) physicalInventoryline.get("productUPC")
-            : "") + fieldSeparator);
+        writer.append((String) physicalInventoryline.get("productUPC") + fieldSeparator);
         writer.append((String) physicalInventoryline.get("productSearchKey") + fieldSeparator);
         writer.append(((String) physicalInventoryline.get("attributeSet") != null
             ? (String) physicalInventoryline.get("attributeSet")
@@ -234,7 +241,7 @@ public class ExportPhysicalInventoryLinesToCSV extends GenericExporterActionHand
             + fieldSeparator);
         writer.append((String) physicalInventoryline.get("UOM") + fieldSeparator);
         writer.append((String) physicalInventoryline.get("storageBin") + fieldSeparator);
-        writer.append("" + fieldSeparator);
+        writer.append((String) physicalInventoryline.get("description") + fieldSeparator);
         writer.append("\n");
       }
     }
