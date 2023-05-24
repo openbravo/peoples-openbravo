@@ -1644,7 +1644,7 @@ or (@AD_Module_ID@ is not null and AD_Role_ID='0')]]></CODE>
 <!--5ABEE0829BD24BFB9BA454E607825821-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--5ABEE0829BD24BFB9BA454E607825821-->  <NAME><![CDATA[UOM Validation]]></NAME>
 <!--5ABEE0829BD24BFB9BA454E607825821-->  <TYPE><![CDATA[S]]></TYPE>
-<!--5ABEE0829BD24BFB9BA454E607825821-->  <CODE><![CDATA[td0.c_uom_id IN(select p.c_uom_id from m_product p where p.m_product_id = @M_Product_ID@) or td0.c_uom_id IN(select a.c_uom_id from m_product_aum a where a.m_product_id = @M_Product_ID@ and ((@IsSOTrx@ = 'Y' and a.sales <> 'NA') OR (@IsSOTrx@ <> 'Y' and a.purchase <> 'NA')))]]></CODE>
+<!--5ABEE0829BD24BFB9BA454E607825821-->  <CODE><![CDATA[td0.c_uom_id IN(select p.c_uom_id from m_product p where p.m_product_id = @M_Product_ID@) or td0.c_uom_id IN(select a.c_uom_id from m_product_aum a where a.m_product_id = @M_Product_ID@ and ((@IsSOTrx@ = 'Y' and a.sales <> 'NA') OR (@IsSOTrx@ <> 'Y' and a.purchase <> 'NA')) and a.isactive='Y')]]></CODE>
 <!--5ABEE0829BD24BFB9BA454E607825821-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5ABEE0829BD24BFB9BA454E607825821--></AD_VAL_RULE>
 
@@ -2393,7 +2393,7 @@ where ad_org_warehouse.ad_org_id=@AD_Org_ID@)]]></CODE>
 <!--D9A3E30D0CCA43F487EC83756C33D435-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D9A3E30D0CCA43F487EC83756C33D435-->  <NAME><![CDATA[Available UOM's for Product for Logistics flow]]></NAME>
 <!--D9A3E30D0CCA43F487EC83756C33D435-->  <TYPE><![CDATA[S]]></TYPE>
-<!--D9A3E30D0CCA43F487EC83756C33D435-->  <CODE><![CDATA[(exists(select 1 from m_product p where p.m_product_id = @M_Product_ID@ and p.c_uom_id = td0.c_uom_id) or exists(select 1 from m_product_aum a where a.m_product_id = @M_Product_ID@ and a.logistics <> 'NA' and a.c_uom_id = td0.c_uom_id))  ]]></CODE>
+<!--D9A3E30D0CCA43F487EC83756C33D435-->  <CODE><![CDATA[(exists(select 1 from m_product p where p.m_product_id = @M_Product_ID@ and p.c_uom_id = td0.c_uom_id) or exists(select 1 from m_product_aum a where a.m_product_id = @M_Product_ID@ and a.logistics <> 'NA' and a.c_uom_id = td0.c_uom_id and a.isactive='Y'))]]></CODE>
 <!--D9A3E30D0CCA43F487EC83756C33D435-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--D9A3E30D0CCA43F487EC83756C33D435--></AD_VAL_RULE>
 
