@@ -30228,11 +30228,11 @@ a Dark theme. Note that this logo should have different colors or more contrast 
 <!--81BA5063EF234E618EBB18F99D02412B-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--81BA5063EF234E618EBB18F99D02412B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--81BA5063EF234E618EBB18F99D02412B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--81BA5063EF234E618EBB18F99D02412B-->  <COLUMNNAME><![CDATA[ExportCsv]]></COLUMNNAME>
+<!--81BA5063EF234E618EBB18F99D02412B-->  <COLUMNNAME><![CDATA[ExportPhysicalInventoryLinesToCsv]]></COLUMNNAME>
 <!--81BA5063EF234E618EBB18F99D02412B-->  <NAME><![CDATA[Export to CSV]]></NAME>
 <!--81BA5063EF234E618EBB18F99D02412B-->  <PRINTNAME><![CDATA[Export to CSV]]></PRINTNAME>
 <!--81BA5063EF234E618EBB18F99D02412B-->  <DESCRIPTION><![CDATA[Export to CSV Physical Inventory lines]]></DESCRIPTION>
-<!--81BA5063EF234E618EBB18F99D02412B-->  <HELP><![CDATA[Physical inventory lines are exported to csv in order to help with count process. When count process are finish the csv can be imported again]]></HELP>
+<!--81BA5063EF234E618EBB18F99D02412B-->  <HELP><![CDATA[Physical inventory lines are exported to a CSV file in order to help with the counting process. The CSV file can be imported afterwards with the updated quantities.]]></HELP>
 <!--81BA5063EF234E618EBB18F99D02412B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--81BA5063EF234E618EBB18F99D02412B-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--81BA5063EF234E618EBB18F99D02412B--></AD_ELEMENT>

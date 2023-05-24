@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,8 +92,17 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
 
   @Override
   protected void doValidations(Map<String, Object> parameters, JSONObject data) {
-    // TODO Auto-generated method stub
+    // No validations needed
+  }
 
+  @Override
+  protected void addAditionalParameters(Map<String, Object> parameters, JSONObject processParams) {
+    // Not needed
+  }
+
+  @Override
+  protected void addAditionalRecordInfo(Map<String, Object> parameters, JSONObject recordInfo) {
+    // Not needed
   }
 
   @Override
@@ -121,11 +129,7 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
     criteria.add(Restrictions.eq("physInventory.id", inventoryId));
     criteria.setMaxResults(1);
     InventoryCountLine inventoryCountLine = (InventoryCountLine) criteria.uniqueResult();
-    if (inventoryCountLine == null) {
-      return false;
-    } else {
-      return true;
-    }
+    return inventoryCountLine != null;
   }
 
   private void deleteInventoryLines(String inventoryId) {
@@ -134,17 +138,14 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
             " delete from MaterialMgmtInventoryCountLine " +
             " where physInventory.id = :inventoryId ";
     //@formatter:on
-    try {
-      OBDal.getInstance()
-          .getSession()
-          .createQuery(hql)
-          .setParameter("inventoryId", inventoryId)
-          .executeUpdate();
 
-      OBDal.getInstance().getConnection(true).commit();
-    } catch (SQLException e) {
-      log.error("SQL error in query: " + hql + "Exception:" + e);
-    }
+    OBDal.getInstance()
+        .getSession()
+        .createQuery(hql)
+        .setParameter("inventoryId", inventoryId)
+        .executeUpdate();
+
+    OBDal.getInstance().refresh(OBDal.getInstance().getProxy(InventoryCount.class, inventoryId));
   }
 
   private void generateInventoryLinesProcess(String inventoryId) {
@@ -161,6 +162,9 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
     }
   }
 
+  /**
+   * Generates the map of parameters to launch the Create Inventory Count List process
+   */
   protected Map<String, String> inventoryLinesProcessParameters() {
     // Default values parameters, generate inventory lines for all products regardless of the
     // quantity count
@@ -189,8 +193,7 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
 
   private static ScrollableResults getPhysicalInventoryLines(String inventoryId) {
     //@formatter:off
-    String hql = 
-                  "select coalesce(pil.product.uPCEAN,'') as productUPC , " +
+    String hql =  "select coalesce(pil.product.uPCEAN,'') as productUPC , " +
                   "  pil.product.searchKey as productSearchKey," +
                   "  coalesce(att.description,'') as attributeSet, "+
                   "  pil.bookQuantity as bookQuantity," +
@@ -199,7 +202,8 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
                   "  coalesce(pil.description,'') as description " +
                   " from MaterialMgmtInventoryCountLine as pil" +
                   " left join pil.attributeSetValue as att" +
-                  " where pil.physInventory.id = :inventoryId ";
+                  " where pil.physInventory.id = :inventoryId " +
+                  " order by pil.lineNo, pil.id ";
     //@formatter:on  
 
     final Query<Tuple> query = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
@@ -256,18 +260,6 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
     }
     return fieldSeparator;
-  }
-
-  @Override
-  protected void addAditionalParameters(Map<String, Object> parameters, JSONObject processParams) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  protected void addAditionalRecordInfo(Map<String, Object> parameters, JSONObject recordInfo) {
-    // TODO Auto-generated method stub
-
   }
 
 }
