@@ -70,7 +70,7 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
   private static final String FILE_EXTENSION = ".csv";
 
   @Override
-  protected String generateTmpFile(Map<String, Object> parameters, JSONObject data) {
+  protected String generateFileToDownload(Map<String, Object> parameters, JSONObject data) {
     JSONObject params;
     try {
       params = data.getJSONObject("_params");
@@ -95,11 +95,6 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
   protected void doValidations(Map<String, Object> parameters, JSONObject data) {
     // TODO Auto-generated method stub
 
-  }
-
-  @Override
-  protected String getDownloadContentType() {
-    return "text/csv";
   }
 
   @Override
@@ -261,6 +256,18 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
       log.error("Error getting Preference: " + e1.getMessage(), e1);
     }
     return fieldSeparator;
+  }
+
+  @Override
+  protected void addAditionalParameters(Map<String, Object> parameters, JSONObject processParams) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  protected void addAditionalRecordInfo(Map<String, Object> parameters, JSONObject recordInfo) {
+    // TODO Auto-generated method stub
+
   }
 
 }
