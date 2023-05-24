@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2021 Openbravo SLU
+ * All portions are Copyright (C) 2021-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -27,4 +27,7 @@ public interface ImportEntryManagerMBean {
    * entries.
    */
   void logImportEntryManager();
+
+  /** Forces ImportEntryManager to start a new cycle if it was waiting idle. */
+  void notifyNewImportEntryCreated();
 }

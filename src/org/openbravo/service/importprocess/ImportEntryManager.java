@@ -393,6 +393,7 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    * Is used to tell the import entry manager that a new entry was created in the import entry
    * table, so it can go process it immediately.
    */
+  @Override
   public void notifyNewImportEntryCreated() {
     // make sure that the threads have started
     if (!threadsStarted) {
@@ -595,7 +596,8 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
       synchronized (monitorObject) {
         try {
           if (!wasNotifiedInParallel) {
-            log.debug("Waiting for next cycle or new import entries");
+            log.debug("Waiting for next cycle or new import entries for {} ms",
+                manager.managerWaitTime);
             monitorObject.wait(manager.managerWaitTime);
             log.debug("Woken");
           }
