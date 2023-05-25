@@ -193,6 +193,10 @@ isc.OBFKFilterTextItem.addProperties({
             }
 
             for (rowNum = startRow; rowNum < endRow + 1; rowNum++) {
+              if (this.data && !this.data.rowIsLoaded(rowNum)) {
+                // another request is in progress, we can skip the selection of the current records
+                break;
+              }
               record = this.getRecord(rowNum);
               if (record && fixedValues.contains(record[me.displayField])) {
                 // selectRecord asynchronously invokes handleChanged, this should be
