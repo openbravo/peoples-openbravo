@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +36,7 @@ import javax.persistence.Tuple;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -69,7 +71,8 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
   private static final String FILE_EXTENSION = ".csv";
 
   @Override
-  protected String generateFileToDownload(Map<String, Object> parameters, JSONObject data) {
+  protected Path generateFileToDownload(Map<String, Object> parameters, JSONObject data)
+      throws IOException, JSONException {
     JSONObject params;
     try {
       params = data.getJSONObject("_params");
@@ -80,7 +83,7 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
 
       generateInventoryLines(generateLines, inventoryId);
       if (hasLines(inventoryId)) {
-        return createCSVFile(inventoryId, blindCount).getName();
+        return createCSVFile(inventoryId, blindCount);
       } else {
         throw new OBException(OBMessageUtils.messageBD("NoPhysicalInventoryLines"));
       }
@@ -178,7 +181,7 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
     return parameters;
   }
 
-  private File createCSVFile(String inventoryId, boolean blindCount) throws IOException {
+  private Path createCSVFile(String inventoryId, boolean blindCount) throws IOException {
     String tmpFileName = UUID.randomUUID().toString() + ".csv";
     File file = new File(ReportingUtils.getTempFolder(), tmpFileName);
     try (FileWriter outputfile = new FileWriter(file)) {
@@ -188,7 +191,7 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
       writer.close();
       outputfile.write(writer.toString());
     }
-    return file;
+    return file.toPath();
   }
 
   private static ScrollableResults getPhysicalInventoryLines(String inventoryId) {
