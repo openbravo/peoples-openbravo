@@ -37,6 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -51,14 +53,12 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.service.db.DbUtility;
 import org.openbravo.utils.FileUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base action handler that provides the ability of generating and downloading a file.
  */
 public abstract class FileExportActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = LoggerFactory.getLogger(FileExportActionHandler.class);
+  private static final Logger log = LogManager.getLogger();
 
   protected enum FileAction {
     BROWSE("OBUIAPP_browseReport"), DOWNLOAD("OBUIAPP_downloadReport");
