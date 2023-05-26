@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,23 +19,17 @@
 
 package org.openbravo.client.application.report;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.mail.internet.MimeUtility;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -57,8 +51,7 @@ import org.openbravo.client.application.ApplicationConstants;
 import org.openbravo.client.application.Parameter;
 import org.openbravo.client.application.Process;
 import org.openbravo.client.application.ReportDefinition;
-import org.openbravo.client.application.process.BaseProcessActionHandler;
-import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
+import org.openbravo.client.application.process.FileExportActionHandler;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.application.report.language.ReportLanguageHandler;
 import org.openbravo.client.kernel.KernelConstants;
@@ -69,11 +62,10 @@ import org.openbravo.dal.core.DalContextListener;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
-import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.service.db.DbUtility;
 import org.openbravo.userinterface.selector.reference.FKMultiSelectorUIDefinition;
-import org.openbravo.utils.FileUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRDataSource;
 
@@ -82,153 +74,15 @@ import net.sf.jasperreports.engine.JRDataSource;
  * can be extended to customize its behavior.
  * 
  */
-public class BaseReportActionHandler extends BaseProcessActionHandler {
-  private static final Logger log = LogManager.getLogger();
+public class BaseReportActionHandler extends FileExportActionHandler {
+  private static final Logger log = LoggerFactory.getLogger(BaseReportActionHandler.class);
   private static final String JASPER_PARAM_PROCESS = "jasper_process";
   protected static final String JASPER_REPORT_PARAMETERS = "JASPER_REPORT_PARAMETERS";
 
-  /**
-   * execute() method overridden to add the logic to download or display the report file stored in
-   * the temporary folder.
-   */
   @Override
-  public void execute() {
-    final HttpServletRequest request = RequestContext.get().getRequest();
-    String mode = request.getParameter("mode");
-    if (mode == null) {
-      mode = "Default";
-    }
-    if ("DOWNLOAD".equals(mode)) {
-      try {
-        doDownload(request);
-      } catch (Exception e) {
-        // Error downloading file
-        log.error("Error downloading the file: " + e.getMessage(), e);
-      }
-      return;
-    } else if ("BROWSE".equals(mode)) {
-      try {
-        doBrowse(request);
-      } catch (IOException e) {
-        log.error("Error browsing the file: " + e.getMessage(), e);
-      }
-      return;
-    }
-    SessionInfo.auditThisThread(false);
-    super.execute();
-  }
-
-  @Override
-  protected JSONObject doExecute(Map<String, Object> parameters, String content) {
-
-    try {
-      JSONObject result = getResponseBuilder().retryExecution().showResultsInProcessView().build();
-
-      final JSONObject jsonContent = new JSONObject(content);
-      final String action = jsonContent.getString(ApplicationConstants.BUTTON_VALUE);
-      doGenerateReport(result, parameters, jsonContent, action);
-
-      return result;
-    } catch (Exception e) {
-      log.error("Error generating report id: {}", parameters.get("reportId"), e);
-      Throwable uiException = DbUtility.getUnderlyingSQLException(e);
-      return getResponseBuilder().retryExecution()
-          .showResultsInProcessView()
-          .showMsgInProcessView(MessageType.ERROR,
-              OBMessageUtils.translateError(uiException.getMessage()).getMessage())
-          .build();
-    }
-  }
-
-  /**
-   * Returns the report output. The file containing the output is stored in a temporary folder with
-   * a generated name. Its content is sent back to the browser to be shown in a new Openbravo tab.
-   * Once the process is finished the file is removed from the server.
-   *
-   * @param request
-   *          The HTTP request for this handler.
-   */
-  private void doBrowse(HttpServletRequest request) throws IOException {
-    final Map<String, Object> parameters = getParameterMapFromRequest(request);
-    final String strFileName = (String) parameters.get("fileName");
-    final String tmpFileName = (String) parameters.get("tmpfileName");
-    ExportType expType = ExportType.HTML;
-
-    handleReportResponse(request, expType, strFileName, tmpFileName, false);
-  }
-
-  /**
-   * Downloads the file with the report result. The file is stored in a temporary folder with a
-   * generated name. It is renamed and download as an attachment of the HTTP response. Once it is
-   * finished the file is removed from the server.
-   *
-   * @param request
-   *          The HTTP request for this handler.
-   */
-  private void doDownload(HttpServletRequest request) throws IOException {
-    final Map<String, Object> parameters = getParameterMapFromRequest(request);
-    final String strFileName = (String) parameters.get("fileName");
-    final String tmpFileName = (String) parameters.get("tmpfileName");
-    ExportType expType = null;
-
-    if (strFileName.endsWith("." + ExportType.PDF.getExtension())) {
-      expType = ExportType.PDF;
-    } else if (strFileName.endsWith("." + ExportType.XLS.getExtension())) {
-      expType = ExportType.XLS;
-    } else if (strFileName.endsWith("." + ExportType.XLSX.getExtension())) {
-      expType = ExportType.XLSX;
-    } else if (strFileName.endsWith("." + ExportType.CSV.getExtension())) {
-      expType = ExportType.CSV;
-    } else {
-      throw new IllegalArgumentException(
-          "Trying to download report file with unsupported type " + strFileName);
-    }
-
-    handleReportResponse(request, expType, strFileName, tmpFileName, true);
-  }
-
-  private void handleReportResponse(HttpServletRequest request, ExportType expType,
-      String strFileName, String tmpFileName, boolean includeReportAsAttachment)
-      throws IOException {
-    if (!expType.isValidTemporaryFileName(tmpFileName)) {
-      throw new IllegalArgumentException(
-          "Trying to download report with invalid name " + strFileName);
-    }
-    final String tmpDirectory = ReportingUtils.getTempFolder();
-    final File file = new File(tmpDirectory, tmpFileName);
-    FileUtility fileUtil = new FileUtility(tmpDirectory, tmpFileName, false, true);
-    try {
-      final HttpServletResponse response = RequestContext.get().getResponse();
-      response.setHeader("Content-Type", expType.getContentType());
-      response.setContentType(expType.getContentType());
-      response.setCharacterEncoding("UTF-8");
-      if (includeReportAsAttachment) {
-        response.setHeader("Content-Disposition",
-            "attachment; filename=\"" + MimeUtility.encodeWord(strFileName, "utf-8", "Q") + "\"");
-      }
-      fileUtil.dumpFile(response.getOutputStream());
-      response.getOutputStream().flush();
-      response.getOutputStream().close();
-    } finally {
-      if (file.exists()) {
-        file.delete();
-      }
-    }
-  }
-
-  private Map<String, Object> getParameterMapFromRequest(HttpServletRequest request) {
-    Map<String, Object> parameterMap = new HashMap<String, Object>();
-    for (Enumeration<?> keys = request.getParameterNames(); keys.hasMoreElements();) {
-      final String key = (String) keys.nextElement();
-      if (request.getParameterValues(key) != null && request.getParameterValues(key).length > 1) {
-        parameterMap.put(key, request.getParameterValues(key));
-      } else {
-        parameterMap.put(key, request.getParameter(key));
-      }
-    }
-    parameterMap.put(KernelConstants.HTTP_SESSION, request.getSession(false));
-    parameterMap.put(KernelConstants.HTTP_REQUEST, request);
-    return parameterMap;
+  protected Path doGenerateFile(Map<String, Object> parameters, JSONObject data)
+      throws IOException, JSONException {
+    return doGenerateReport(parameters, data);
   }
 
   /**
@@ -246,7 +100,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
    *          this JSONObject.
    * @return The template path.
    */
-
   protected String getReportTemplatePath(ExportType expType, ReportDefinition report,
       JSONObject jsonContent) throws JSONException, OBException {
     String strJRPath = "";
@@ -280,34 +133,44 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   }
 
   /**
+   * @deprecated {@link #doGenerateReport(Map, JSONObject)} is used instead
+   */
+  @Deprecated(forRemoval = true)
+  protected void doGenerateReport(JSONObject result, Map<String, Object> parameters,
+      JSONObject jsonContent, String action) throws JSONException, OBException {
+    doGenerateReport(parameters, jsonContent);
+  }
+
+  /**
    * Manages the report generation. It sets the proper response actions to download the generated
    * file or to open it in a new Openbravo tab.
-   * 
-   * @param result
-   *          JSONObject with the response that is returned to the client.
+   *
    * @param parameters
    *          Map including the parameters of the call.
    * @param jsonContent
    *          JSONObject with the values set in the filter parameters.
    * @param action
    *          String with the output type of the report.
-   *
+   * 
+   * @return JSONObject with the content of response that is returned to the client
+   * 
    * @throws JSONException
    * @throws OBException
    *           Exception thrown when a validation fails.
    */
-
-  protected void doGenerateReport(JSONObject result, Map<String, Object> parameters,
-      JSONObject jsonContent, String action) throws JSONException, OBException {
+  protected Path doGenerateReport(Map<String, Object> parameters, JSONObject jsonContent)
+      throws JSONException, OBException {
     JSONObject params = jsonContent.getJSONObject("_params");
+
     final ReportDefinition report = OBDal.getInstance()
         .get(ReportDefinition.class, parameters.get("reportId"));
 
     doValidations(report, parameters, jsonContent);
+    String action = jsonContent.getString(ApplicationConstants.BUTTON_VALUE);
     final ExportType expType = getExportType(action);
 
-    String strFileName = getReportFileName(report, parameters, expType);
-    String strTmpFileName = UUID.randomUUID().toString() + "." + expType.getExtension();
+    Path tmpFile = Paths.get(ReportingUtils.getTempFolder(),
+        UUID.randomUUID().toString() + "." + expType.getExtension());
     String strJRPath = getReportTemplatePath(expType, report, jsonContent);
 
     if (!strJRPath.startsWith("/")) {
@@ -332,56 +195,11 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
 
     log.debug("Report: {}. Start export JR process.", report.getId());
     long t1 = System.currentTimeMillis();
-    doJRExport(jrTemplatePath, expType, strTmpFileName, allParametersMap);
+    doJRExport(jrTemplatePath, expType, tmpFile, allParametersMap);
     log.debug("Report: {}. Finish export JR process. Elapsed time: {}", report.getId(),
         System.currentTimeMillis() - t1);
 
-    final JSONObject recordInfo = new JSONObject();
-    params.put("processId", parameters.get("processId"));
-    params.put("reportId", parameters.get("reportId"));
-    params.put("actionHandler", this.getClass().getName());
-    recordInfo.put("processParameters", params);
-    recordInfo.put("tmpfileName", strTmpFileName);
-    recordInfo.put("fileName", strFileName);
-
-    final JSONObject reportAction = new JSONObject();
-    if (expType.equals(ExportType.HTML)) {
-      recordInfo.put("tabTitle", getResultTabTitle(report));
-      reportAction.put("OBUIAPP_browseReport", recordInfo);
-    } else {
-      reportAction.put("OBUIAPP_downloadReport", recordInfo);
-    }
-
-    final JSONArray actions = new JSONArray();
-    actions.put(0, reportAction);
-    result.put("responseActions", actions);
-  }
-
-  private ExportType getExportType(String action) {
-    if (ExportType.XLS.hasExtension(action)) {
-      return ReportingUtils.getExcelExportType();
-    }
-    return ExportType.getExportType(action);
-  }
-
-  private String getResultTabTitle(ReportDefinition report) {
-    Process processDefinition = report.getProcessDefintion();
-    return (String) processDefinition.get(Process.PROPERTY_NAME,
-        OBContext.getOBContext().getLanguage(), processDefinition.getId());
-  }
-
-  /**
-   * Override this method to add validations to the report before it is generated.
-   * 
-   * @param report
-   *          the Report Definition
-   * @param parameters
-   *          Map including the parameters of the call.
-   * @param jsonContent
-   *          JSONObject with the values set in the filter parameters.
-   */
-  protected void doValidations(ReportDefinition report, Map<String, Object> parameters,
-      JSONObject jsonContent) throws OBException {
+    return tmpFile;
   }
 
   /**
@@ -521,26 +339,6 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
   }
 
   /**
-   * @return the filename of the generated file, it is okay to return null, then a default filename
-   *         is generated. NOTE, if you return a value it should include the extension. Also, it can
-   *         make sense to use the {@link #getSafeFilename(String)} method to ensure the file name
-   *         is valid
-   */
-  private String getReportFileName(ReportDefinition report, Map<String, Object> parameters,
-      ExportType expType) {
-    final SimpleDateFormat dateFormat = new SimpleDateFormat(OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty("dateTimeFormat.java"));
-    return getSafeFilename(
-        report.getProcessDefintion().getName() + "-" + dateFormat.format(new Date())) + "."
-        + expType.getExtension();
-  }
-
-  private static String getSafeFilename(String name) {
-    return name.replaceAll("[:\\\\/*?|<>]", "_");
-  }
-
-  /**
    * Override this method to put additional parameters to send to the Jasper Report template.
    * Process Definition filter parameters are automatically added.
    * 
@@ -595,7 +393,7 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
     return true;
   }
 
-  private void doJRExport(String jrTemplatePath, ExportType expType, String strFileName,
+  private void doJRExport(String jrTemplatePath, ExportType expType, Path file,
       Map<String, Object> parameters) {
     ReportSemaphoreHandling.getInstance().acquire();
     @SuppressWarnings("unchecked")
@@ -611,11 +409,106 @@ public class BaseReportActionHandler extends BaseProcessActionHandler {
         localExportParameters.put(ReportingUtils.IMAGES_URI,
             localAddress + "/servlets/image?image={0}");
       }
-      ReportingUtils.exportJR(jrTemplatePath, expType, jrParameters,
-          new File(ReportingUtils.getTempFolder(), strFileName), true,
+      ReportingUtils.exportJR(jrTemplatePath, expType, jrParameters, file.toFile(), true,
           getReportConnectionProvider(), getReportData(parameters), localExportParameters);
     } finally {
       ReportSemaphoreHandling.getInstance().release();
     }
+  }
+
+  @Override
+  protected FileAction getDownloadAction(JSONObject data) throws JSONException {
+    String action = data.getString(ApplicationConstants.BUTTON_VALUE);
+    ExportType expType = getExportType(action);
+    if (expType.equals(ExportType.HTML)) {
+      return FileAction.BROWSE;
+    } else {
+      return FileAction.DOWNLOAD;
+    }
+  }
+
+  private ExportType getExportType(String action) {
+    if (ExportType.XLS.hasExtension(action)) {
+      return ReportingUtils.getExcelExportType();
+    }
+    return ExportType.getExportType(action);
+  }
+
+  @Override
+  protected void doValidations(Map<String, Object> parameters, JSONObject data) {
+    final ReportDefinition report = OBDal.getInstance()
+        .get(ReportDefinition.class, parameters.get("reportId"));
+    doValidations(report, parameters, data);
+  }
+
+  /**
+   * Override this method to add validations to the report before it is generated.
+   * 
+   * @param report
+   *          the Report Definition
+   * @param parameters
+   *          Map including the parameters of the call.
+   * @param jsonContent
+   *          JSONObject with the values set in the filter parameters.
+   */
+  protected void doValidations(ReportDefinition report, Map<String, Object> parameters,
+      JSONObject jsonContent) throws OBException {
+  }
+
+  @Override
+  protected Path generateFileToDownload(Map<String, Object> parameters, JSONObject data)
+      throws IOException, JSONException {
+    // Just return null because this class overrides the entire doGenerateFile method, therefore
+    // this method is never invoked
+    return null;
+  }
+
+  @Override
+  protected String getDownloadFileName(Map<String, Object> parameters, JSONObject data)
+      throws JSONException {
+    ReportDefinition report = OBDal.getInstance()
+        .get(ReportDefinition.class, parameters.get("reportId"));
+    String action = data.getString(ApplicationConstants.BUTTON_VALUE);
+    final SimpleDateFormat dateFormat = new SimpleDateFormat(OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("dateTimeFormat.java"));
+    return getSafeFilename(
+        report.getProcessDefintion().getName() + "-" + dateFormat.format(new Date())) + "."
+        + getExportType(action).getExtension();
+  }
+
+  private static String getSafeFilename(String name) {
+    return name.replaceAll("[:\\\\/*?|<>]", "_");
+  }
+
+  @Override
+  protected boolean isValidDownloadFileType(ExportType exportType) {
+    return exportType == ExportType.PDF || exportType == ExportType.XLS
+        || exportType == ExportType.XLSX || exportType == ExportType.CSV;
+  }
+
+  @Override
+  protected JSONObject getAdditionalResponseActions() {
+    return getResponseBuilder().retryExecution().showResultsInProcessView().build();
+  }
+
+  @Override
+  protected void addAditionalParameters(Map<String, Object> parameters, JSONObject processParams)
+      throws JSONException {
+    processParams.put("reportId", parameters.get("reportId"));
+  }
+
+  @Override
+  protected void addAditionalRecordInfo(Map<String, Object> parameters, JSONObject recordInfo)
+      throws JSONException {
+    ReportDefinition report = OBDal.getInstance()
+        .get(ReportDefinition.class, parameters.get("reportId"));
+    recordInfo.put("tabTitle", getResultTabTitle(report));
+  }
+
+  private String getResultTabTitle(ReportDefinition report) {
+    Process processDefinition = report.getProcessDefintion();
+    return (String) processDefinition.get(Process.PROPERTY_NAME,
+        OBContext.getOBContext().getLanguage(), processDefinition.getId());
   }
 }
