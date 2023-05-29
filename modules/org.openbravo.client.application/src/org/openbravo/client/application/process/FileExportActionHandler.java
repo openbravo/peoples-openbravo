@@ -139,7 +139,9 @@ public abstract class FileExportActionHandler extends BaseProcessActionHandler {
    * @param data
    *          JSONObject with the request content
    */
-  protected abstract void doValidations(Map<String, Object> parameters, JSONObject data);
+  protected void doValidations(Map<String, Object> parameters, JSONObject data) {
+
+  }
 
   /**
    * This method that allows possible verifications in the data
@@ -323,8 +325,10 @@ public abstract class FileExportActionHandler extends BaseProcessActionHandler {
    *          JSONObject with the record information. This method is allowed to mutate this object
    *          by adding properties into it.
    */
-  protected abstract void addAditionalRecordInfo(Map<String, Object> parameters,
-      JSONObject recordInfo) throws JSONException;
+  protected void addAditionalRecordInfo(Map<String, Object> parameters, JSONObject recordInfo)
+      throws JSONException {
+
+  }
 
   /**
    * Allows to include additional process parameters in the result built with
@@ -336,8 +340,10 @@ public abstract class FileExportActionHandler extends BaseProcessActionHandler {
    *          JSONObject with information of the process itself. This method is allowed to mutate
    *          this object by adding properties into it.
    */
-  protected abstract void addAditionalParameters(Map<String, Object> parameters,
-      JSONObject processParameters) throws JSONException;
+  protected void addAditionalParameters(Map<String, Object> parameters,
+      JSONObject processParameters) throws JSONException {
+
+  }
 
   /**
    * Uploads the downloaded file as an attachment. By default, it only attaches the file when the
