@@ -18,13 +18,21 @@
  ************************************************************************
 -->
 <SqlClass name="PopulateUserSalesRepresentativeData" package="org.openbravo.modulescript">
+ <SqlMethod name="select" type="preparedStatement" return="multiple">
+    <SqlMethodComment></SqlMethodComment>
+    <Sql><![CDATA[
+      SELECT '' AS counter
+      FROM DUAL
+      ]]>
+    </Sql>
+  </SqlMethod>
   <SqlMethod name="populateUserSalesRepresentative" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
         update ad_user us set issalesrep = 'Y' 
-		where us.c_bpartner_id is not null
-		and 
-		(select issalesrep from c_bpartner where c_bpartner_id = us.c_bpartner_id) = 'Y' 
+        where us.c_bpartner_id is not null
+        and exists
+        (select 1 from c_bpartner where c_bpartner_id = us.c_bpartner_id and issalesrep='Y')
       ]]>
     </Sql>
   </SqlMethod>
