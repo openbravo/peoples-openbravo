@@ -11,13 +11,17 @@
     }
   ],
 
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "sourceType": "module",
     "allowImportExportEverywhere": true
   },
 
   "rules": {
+    "react/forbid-prop-types": "off",
+    "jest/no-conditional-expect": "off",
+    "react/jsx-no-bind": "off",
+    "react/no-unused-prop-types": "off",
     "import/no-extraneous-dependencies": [
       "error",
       {
