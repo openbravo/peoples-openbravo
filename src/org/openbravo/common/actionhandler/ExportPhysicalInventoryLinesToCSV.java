@@ -94,21 +94,6 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
   }
 
   @Override
-  protected void doValidations(Map<String, Object> parameters, JSONObject data) {
-    // No validations needed
-  }
-
-  @Override
-  protected void addAditionalParameters(Map<String, Object> parameters, JSONObject processParams) {
-    // Not needed
-  }
-
-  @Override
-  protected void addAditionalRecordInfo(Map<String, Object> parameters, JSONObject recordInfo) {
-    // Not needed
-  }
-
-  @Override
   protected String getDownloadFileName(Map<String, Object> parameters, JSONObject data) {
     String inventoryId = data.optString("M_Inventory_ID");
     InventoryCount inventory = OBDal.getInstance().getProxy(InventoryCount.class, inventoryId);
