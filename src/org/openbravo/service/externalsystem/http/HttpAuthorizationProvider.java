@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -34,4 +34,19 @@ public interface HttpAuthorizationProvider {
    *          Provides the configuration data of an HTTP protocol based external system
    */
   public void init(HttpExternalSystemData configuration);
+
+  /**
+   * This method allows to execute additional actions required by the authorization method before
+   * retrying a request for which an error response is received. It also allows to skip the retry if
+   * needed by using the returned value: if true is returned then the retry is done and if false is
+   * returned then no retry is attempted.
+   * 
+   * @param statusCode
+   *          The status code of the external system response
+   * @return true if it is necessary to retry the connection with the External System or false to
+   *         skip the retry
+   */
+  public default boolean handleRequestRetry(int statusCode) {
+    return false;
+  }
 }

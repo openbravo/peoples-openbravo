@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,6 +58,7 @@ import org.openbravo.service.externalsystem.Protocol;
 public class HttpExternalSystem extends ExternalSystem {
   private static final Logger log = LogManager.getLogger();
   public static final int MAX_TIMEOUT = 30;
+  private static final int MAX_RETRIES = 1;
 
   private String url;
   private String method;
@@ -133,41 +134,67 @@ public class HttpExternalSystem extends ExternalSystem {
       Supplier<? extends InputStream> inputStreamSupplier) {
     log.trace("Sending {} request to URL {} of external system {}", method, url, getName());
     if ("POST".equals(method)) {
-      return post(url, inputStreamSupplier);
+      return sendRequest(getPOSTRequestSupplier(inputStreamSupplier));
     }
     throw new OBException("Unsupported HTTP request method " + method);
   }
 
-  private CompletableFuture<ExternalSystemResponse> post(String postURL,
-      Supplier<? extends InputStream> inputStreamSupplier) {
-    HttpRequest.Builder request = HttpRequest.newBuilder()
-        .uri(URI.create(postURL))
-        .timeout(Duration.ofSeconds(timeout))
-        // sent JSON content by default, if any other content type needs to be posted then this
-        // should be moved to a new HTTP configuration setting
-        .header("Content-Type", "application/json")
-        .POST(BodyPublishers.ofInputStream(inputStreamSupplier));
+  private CompletableFuture<ExternalSystemResponse> sendRequest(
+      Supplier<HttpRequest> requestSupplier) {
+    return sendRequestWithRetry(requestSupplier, MAX_RETRIES);
+  }
 
-    if (authorizationProvider instanceof HttpAuthorizationRequestHeaderProvider) {
-      ((HttpAuthorizationRequestHeaderProvider) authorizationProvider).getHeaders()
-          .entrySet()
-          .stream()
-          .forEach(entry -> request.header(entry.getKey(), entry.getValue()));
+  private CompletableFuture<ExternalSystemResponse> sendRequestWithRetry(
+      Supplier<HttpRequest> requestSupplier, int remainingRetries) {
+    HttpRequest request;
+    try {
+      request = requestSupplier.get();
+    } catch (Exception ex) {
+      log.error("Error building the HTTP request to {}", url, ex);
+      return CompletableFuture.failedFuture(ex);
     }
-
     long requestStartTime = System.currentTimeMillis();
-    return client.sendAsync(request.build(), BodyHandlers.ofString())
-        .thenApply(this::buildResponse)
-        .orTimeout(timeout, TimeUnit.SECONDS)
-        .exceptionally(this::buildErrorResponse)
-        .whenComplete((response, action) -> log.debug("HTTP POST request to {} completed in {} ms",
-            postURL, System.currentTimeMillis() - requestStartTime));
+    return client.sendAsync(request, BodyHandlers.ofString()).thenCompose(response -> {
+      boolean retry = false;
+      if (!isSuccessfulResponse(response) && remainingRetries > 0) {
+        retry = authorizationProvider.handleRequestRetry(response.statusCode());
+      }
+      if (retry) {
+        return sendRequestWithRetry(requestSupplier, remainingRetries - 1);
+      }
+      return CompletableFuture.completedFuture(response)
+          .thenApply(this::buildResponse)
+          .orTimeout(timeout, TimeUnit.SECONDS)
+          .exceptionally(this::buildErrorResponse);
+    })
+        .whenComplete((response, action) -> log.debug("{} request to {} completed in {} ms",
+            request.method(), url, System.currentTimeMillis() - requestStartTime));
+  }
+
+  private Supplier<HttpRequest> getPOSTRequestSupplier(
+      Supplier<? extends InputStream> inputStreamSupplier) {
+    return () -> {
+      HttpRequest.Builder request = HttpRequest.newBuilder()
+          .uri(URI.create(url))
+          .timeout(Duration.ofSeconds(timeout))
+          // sent JSON content by default, if any other content type needs to be posted then this
+          // should be moved to a new HTTP configuration setting
+          .header("Content-Type", "application/json")
+          .POST(BodyPublishers.ofInputStream(inputStreamSupplier));
+
+      if (authorizationProvider instanceof HttpAuthorizationRequestHeaderProvider) {
+        ((HttpAuthorizationRequestHeaderProvider) authorizationProvider).getHeaders()
+            .entrySet()
+            .stream()
+            .forEach(entry -> request.header(entry.getKey(), entry.getValue()));
+      }
+      return request.build();
+    };
   }
 
   private ExternalSystemResponse buildResponse(HttpResponse<String> response) {
     long buildResponseStartTime = System.currentTimeMillis();
-    boolean requestSuccess = response.statusCode() >= 200 && response.statusCode() <= 299;
-    if (requestSuccess) {
+    if (isSuccessfulResponse(response)) {
       ExternalSystemResponse externalSystemResponse = ExternalSystemResponseBuilder.newBuilder()
           .withData(parseBody(response.body()))
           .withStatusCode(response.statusCode())
@@ -186,6 +213,10 @@ public class HttpExternalSystem extends ExternalSystem {
     log.trace("HTTP error response processed in {} ms",
         () -> (System.currentTimeMillis() - buildResponseStartTime));
     return externalSystemResponse;
+  }
+
+  private boolean isSuccessfulResponse(HttpResponse<String> response) {
+    return response.statusCode() >= 200 && response.statusCode() <= 299;
   }
 
   private Object parseBody(String body) {
