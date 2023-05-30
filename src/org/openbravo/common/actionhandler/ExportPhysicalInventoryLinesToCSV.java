@@ -202,7 +202,35 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
   private void addPhysicalInventoryLinesToCsv(final Writer writer, String inventoryId,
       boolean blindCount) throws IOException {
     String fieldSeparator = getFieldSeparator();
-    // adding header to csv
+
+    createCSVHeader(writer, fieldSeparator);
+
+    try (ScrollableResults physicalInventorylines = getPhysicalInventoryLines(inventoryId)) {
+      addCSVLines(writer, blindCount, fieldSeparator, physicalInventorylines);
+    }
+  }
+
+  protected void addCSVLines(final Writer writer, boolean blindCount, String fieldSeparator,
+      ScrollableResults physicalInventorylines) throws IOException {
+    while (physicalInventorylines.next()) {
+      Tuple physicalInventoryline = (Tuple) physicalInventorylines.get()[0];
+      writer.append((String) physicalInventoryline.get("productUPC") + fieldSeparator);
+      writer.append((String) physicalInventoryline.get("productSearchKey") + fieldSeparator);
+      writer.append(((String) physicalInventoryline.get("attributeSet") != null
+          ? (String) physicalInventoryline.get("attributeSet")
+          : "") + fieldSeparator);
+      writer.append((blindCount ? "" : (BigDecimal) physicalInventoryline.get("bookQuantity"))
+          + fieldSeparator);
+      writer.append((blindCount ? "" : (BigDecimal) physicalInventoryline.get("quantityCount"))
+          + fieldSeparator);
+      writer.append((String) physicalInventoryline.get("UOM") + fieldSeparator);
+      writer.append((String) physicalInventoryline.get("storageBin") + fieldSeparator);
+      writer.append((String) physicalInventoryline.get("description") + fieldSeparator);
+      writer.append("\n");
+    }
+  }
+
+  protected void createCSVHeader(final Writer writer, String fieldSeparator) throws IOException {
     writer.append(OBMessageUtils.messageBD("ProductUPCEAN") + fieldSeparator);
     writer.append(OBMessageUtils.messageBD("ProductSearchKey") + fieldSeparator);
     writer.append(OBMessageUtils.messageBD("Attributes") + fieldSeparator);
@@ -212,26 +240,6 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
     writer.append(OBMessageUtils.messageBD("StorageBinSearchKey") + fieldSeparator);
     writer.append(OBMessageUtils.messageBD("Description") + fieldSeparator);
     writer.append("\n");
-
-    // adding lines
-    try (ScrollableResults physicalInventorylines = getPhysicalInventoryLines(inventoryId)) {
-      while (physicalInventorylines.next()) {
-        Tuple physicalInventoryline = (Tuple) physicalInventorylines.get()[0];
-        writer.append((String) physicalInventoryline.get("productUPC") + fieldSeparator);
-        writer.append((String) physicalInventoryline.get("productSearchKey") + fieldSeparator);
-        writer.append(((String) physicalInventoryline.get("attributeSet") != null
-            ? (String) physicalInventoryline.get("attributeSet")
-            : "") + fieldSeparator);
-        writer.append((blindCount ? "" : (BigDecimal) physicalInventoryline.get("bookQuantity"))
-            + fieldSeparator);
-        writer.append((blindCount ? "" : (BigDecimal) physicalInventoryline.get("quantityCount"))
-            + fieldSeparator);
-        writer.append((String) physicalInventoryline.get("UOM") + fieldSeparator);
-        writer.append((String) physicalInventoryline.get("storageBin") + fieldSeparator);
-        writer.append((String) physicalInventoryline.get("description") + fieldSeparator);
-        writer.append("\n");
-      }
-    }
   }
 
   private String getFieldSeparator() {
