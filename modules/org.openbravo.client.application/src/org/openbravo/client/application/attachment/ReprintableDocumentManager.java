@@ -27,6 +27,8 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
@@ -52,6 +54,7 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 @ApplicationScoped
 public class ReprintableDocumentManager {
+  private static final Logger log = LogManager.getLogger();
 
   private TimeInvalidatedCache<String, String> methodsOfAttachmentConfigs;
   private TimeInvalidatedCache<String, Boolean> reprintDocumentsConfiguration;
@@ -126,6 +129,7 @@ public class ReprintableDocumentManager {
    */
   public ReprintableDocument upload(InputStream documentData, Format format,
       SourceDocument sourceDocument) {
+    long init = System.currentTimeMillis();
     ReprintableDocument document = createReprintableDocument(format, sourceDocument);
     // flush to trigger unique constraint checks because we do not want to proceed with the file
     // upload in case the ReprintableDocument record cannot be created
@@ -137,6 +141,8 @@ public class ReprintableDocumentManager {
     } catch (Exception ex) {
       throw new OBException("Error uploading reprintable document", ex);
     }
+    log.trace("Reprintable document {} uploaded in {} ms", document.getId(),
+        System.currentTimeMillis() - init);
     return document;
   }
 
@@ -165,12 +171,15 @@ public class ReprintableDocumentManager {
    */
   public ReprintableDocument download(SourceDocument sourceDocument, OutputStream outputStream)
       throws IOException, DocumentNotFoundException {
+    long init = System.currentTimeMillis();
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
     if (reprintableDocument == null) {
       throw new DocumentNotFoundException();
     }
     ReprintableDocumentAttachHandler handler = getHandler(reprintableDocument);
     handler.download(reprintableDocument, outputStream);
+    log.trace("Reprintable document {} downloaded in {} ms", reprintableDocument.getId(),
+        System.currentTimeMillis() - init);
     return reprintableDocument;
   }
 
