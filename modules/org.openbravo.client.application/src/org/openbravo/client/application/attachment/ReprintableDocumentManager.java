@@ -109,6 +109,11 @@ public class ReprintableDocumentManager {
    * If such configuration does not exist for the current client then the one defined at system
    * level is used. And if no attachment configuration is found at all, then the {#link
    * AttachmentUtils#DEFAULT_METHOD} method is used by default.
+   *
+   * Important Note: this method flushes the current transaction when creating the
+   * ReprintableDocument record in order to trigger the unique constraint checks because in case the
+   * record cannot be saved, this method should not continue doing the attachment upload in order to
+   * avoid creating attachments not linked to any record.
    * 
    * @param documentData
    *          An InputStream with the document data. This method is in charge of closing it when
@@ -131,9 +136,6 @@ public class ReprintableDocumentManager {
       SourceDocument sourceDocument) {
     long init = System.currentTimeMillis();
     ReprintableDocument document = createReprintableDocument(format, sourceDocument);
-    // flush to trigger unique constraint checks because we do not want to proceed with the file
-    // upload in case the ReprintableDocument record cannot be created
-    OBDal.getInstance().flush();
 
     ReprintableDocumentAttachHandler handler = getHandler(document);
     try (documentData) {
@@ -218,6 +220,7 @@ public class ReprintableDocumentManager {
           .setAttachmentConfiguration(AttachmentUtils.getAttachmentConfig(AttachmentType.RD));
       reprintableDocument.set(sourceDocument.getProperty(), sourceDocument.getBOB());
       OBDal.getInstance().save(reprintableDocument);
+      OBDal.getInstance().flush();
       return reprintableDocument;
     } finally {
       OBContext.restorePreviousMode();
