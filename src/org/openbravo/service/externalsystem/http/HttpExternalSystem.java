@@ -164,9 +164,9 @@ public class HttpExternalSystem extends ExternalSystem {
       }
       return CompletableFuture.completedFuture(response)
           .thenApply(this::buildResponse)
-          .orTimeout(timeout, TimeUnit.SECONDS)
-          .exceptionally(this::buildErrorResponse);
+          .orTimeout(timeout, TimeUnit.SECONDS);
     })
+        .exceptionally(this::buildErrorResponse)
         .whenComplete((response, action) -> log.debug("{} request to {} completed in {} ms",
             request.method(), url, System.currentTimeMillis() - requestStartTime));
   }
