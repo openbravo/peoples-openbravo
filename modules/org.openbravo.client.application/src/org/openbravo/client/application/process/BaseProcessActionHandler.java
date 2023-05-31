@@ -71,6 +71,8 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
   protected static final String PARAM_FILE_CONTENT = "content";
   protected static final String PARAM_FILE_NAME = "fileName";
   protected static final String PARAM_FILE_SIZE = "size";
+  // processId, reportId, windowId, paramValues
+  private static final int NUMBER_OF_FIXED_PARAMS = 4;
 
   @Override
   protected final JSONObject execute(Map<String, Object> parameters, String content) {
@@ -270,6 +272,8 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     try {
       FileItemFactory factory = new DiskFileItemFactory();
       ServletFileUpload upload = new ServletFileUpload(factory);
+      // limit applies to the combination of uploaded files and other params
+      upload.setFileCountMax(getMaxNumberOfUploadedFiles() + NUMBER_OF_FIXED_PARAMS);
       List<FileItem> items = upload.parseRequest(request);
 
       for (FileItem item : items) {
@@ -295,6 +299,29 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     }
 
     return parameters;
+  }
+
+  private long getMaxNumberOfUploadedFiles() {
+    try {
+      OBContext.setAdminMode(true);
+      String className = this.getClass().getName();
+      OBCriteria<Process> criteria = OBDal.getInstance().createCriteria(Process.class);
+      criteria.add(Restrictions.eq(Process.PROPERTY_JAVACLASSNAME, className));
+      criteria.setMaxResults(1);
+      Process process = (Process) criteria.uniqueResult();
+      long nAttachments = 0;
+      if (process != null) {
+        List<Parameter> processParams = process.getOBUIAPPParameterList();
+        nAttachments = processParams.stream()
+            .filter(
+                param -> param.getReference().getId().equals("715C53D4FEA74B28B74F14AE65BC5C16"))
+            .count();
+
+      }
+      return nAttachments;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

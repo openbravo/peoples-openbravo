@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2022 Openbravo SLU
+ * All portions are Copyright (C) 2012-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -483,7 +483,7 @@ isc.OBParameterWindowView.addProperties({
             data.append(item.name, htmlFieldElement.files[0]);
             return data;
           }, new FormData());
-
+        // if any new parameter is added to formData, BaseProcessActionHandler.NUMBER_OF_FIXED_PARAMS needs to be updated
         formData.append('processId', view.processId);
         formData.append('reportId', view.reportId);
         formData.append('windowId', view.windowId);
