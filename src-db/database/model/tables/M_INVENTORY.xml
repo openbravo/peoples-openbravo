@@ -105,6 +105,14 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault><![CDATA['N']]></onCreateDefault>
       </column>
+      <column name="DOCUMENTNO" primaryKey="false" required="false" type="NVARCHAR" size="30" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="EXPORTCSV" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_INVENTORY_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -138,12 +146,17 @@
       <foreign-key foreignTable="USER2" name="M_INVENTORY_USER2">
         <reference local="USER2_ID" foreign="USER2_ID"/>
       </foreign-key>
+      <index name="M_INVENTORY_DOCNO" unique="false">
+        <index-column name="DOCUMENTNO"/>
+        <whereClause><![CDATA[DOCUMENTNO IS NOT NULL]]></whereClause>
+      </index>
       <index name="M_INVENTORY_MVMTDATE" unique="false">
         <index-column name="MOVEMENTDATE"/>
       </index>
       <index name="M_INVENTORY_POSTED" unique="false">
         <index-column name="POSTED"/>
       </index>
+      <check name="M_INVENTORY_EXPORTCSV_CHECK"><![CDATA[EXPORTCSV IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_GENERATELIST_CHK"><![CDATA[GENERATELIST IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_INVENTORY_PROCESSED_CHECK"><![CDATA[PROCESSED IN ('Y', 'N')]]></check>
