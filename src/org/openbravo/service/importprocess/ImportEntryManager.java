@@ -418,7 +418,7 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    *           if this method is invoked in a cluster node which is not handling the import entries
    */
   public void commitCurrentTransaction() throws SQLException {
-    if (!isHandlingImportEntries()) {
+    if (!isHandlingImportEntries() && Thread.currentThread() instanceof ImportEntryThread) {
       throw new OBException("Not allowed to commit in node " + clusterService.getNodeIdentifier()
           + " because active node is " + clusterService.getIdentifierOfNodeHandlingService());
     }
