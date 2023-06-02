@@ -38,5 +38,10 @@ public class PopulateUserSalesRepresentative extends ModuleScript {
     return new ModuleScriptExecutionLimits("0", null,
         new OpenbravoVersion(3, 0, 233000));
   }
+  
+  @Override
+  protected boolean executeOnInstall() {
+    return false;
+  }
 
 }
