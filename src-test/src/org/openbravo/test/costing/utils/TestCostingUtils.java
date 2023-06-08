@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2022 Openbravo SLU
+ * All portions are Copyright (C) 2017-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -247,7 +247,7 @@ public class TestCostingUtils {
   // Create a Product cloning a created one
   public static Product createProduct(String name, List<Product> productList,
       List<BigDecimal> quantityList) {
-    return createProduct(name, null, null, null, null, null, 0, TestCostingConstants.EURO_ID,
+    return createProduct(name, "I", null, null, null, null, 0, TestCostingConstants.EURO_ID,
         productList, quantityList);
   }
 
