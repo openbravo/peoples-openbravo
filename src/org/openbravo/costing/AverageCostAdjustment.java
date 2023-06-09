@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2022 Openbravo SLU
+ * All portions are Copyright (C) 2014-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -359,24 +359,26 @@ public class AverageCostAdjustment extends CostingAlgorithmAdjustmentImp {
           BigDecimal trxPrice = getTransactionPrice(trxCost.add(trxAdjAmt), trxNegativeStockAdjAmt,
               trx.getMovementQuantity());
 
-          if (checkNegativeStockCorrection && currentStock.compareTo(trx.getMovementQuantity()) < 0
-              && cost.compareTo(trxPrice) != 0) {
+          if (checkNegativeStockCorrection
+              && currentStock.compareTo(trx.getMovementQuantity()) < 0) {
             // stock was negative and cost different than trx price then Negative Stock Correction
             // is added
             BigDecimal negCorrAmt = trxPrice.multiply(currentStock)
                 .setScale(stdCurPrecission, RoundingMode.HALF_UP)
                 .subtract(currentValueAmt)
                 .subtract(adjustmentBalance);
-            adjustmentBalance = adjustmentBalance.add(negCorrAmt.multiply(trxSignMultiplier));
-            // If there is a difference insert a cost adjustment line.
-            final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
-                trx, negCorrAmt, getCostAdj());
-            lineParameters.setNegativeCorrection(true);
-            lineParameters.setRelatedTransactionAdjusted(true);
-            insertCostAdjustmentLine(lineParameters);
-            cost = trxPrice;
-            log.debug("Negative stock correction. Amount: {}, new cost {}",
-                negCorrAmt.toPlainString(), cost.toPlainString());
+            if (negCorrAmt.signum() != 0) {
+              adjustmentBalance = adjustmentBalance.add(negCorrAmt.multiply(trxSignMultiplier));
+              // If there is a difference insert a cost adjustment line.
+              final CostAdjustmentLineParameters lineParameters = new CostAdjustmentLineParameters(
+                  trx, negCorrAmt, getCostAdj());
+              lineParameters.setNegativeCorrection(true);
+              lineParameters.setRelatedTransactionAdjusted(true);
+              insertCostAdjustmentLine(lineParameters);
+              cost = trxPrice;
+              log.debug("Negative stock correction. Amount: {}, new cost {}",
+                  negCorrAmt.toPlainString(), cost.toPlainString());
+            }
           } else if (checkNegativeStockCorrection
               && currentStock.compareTo(trx.getMovementQuantity()) >= 0) {
             List<CostAdjustmentLine> costAdjustmentLineList = getNegativeStockAdjustments(trx);
