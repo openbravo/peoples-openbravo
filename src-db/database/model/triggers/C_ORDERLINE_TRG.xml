@@ -108,6 +108,9 @@ IF (UPDATING) THEN
    IF (:old.M_Product_ID <> :NEW.M_Product_ID) THEN
      SELECT COUNT(1) into v_CountRelations FROM DUAL 
      WHERE EXISTS (SELECT 1 FROM C_ORDERLINE_SERVICERELATION WHERE C_ORDERLINE_ID = :NEW.C_ORDERLINE_ID);
+     SELECT COUNT(1) INTO v_Count
+     FROM m_inoutline
+     WHERE c_orderline_id = :NEW.c_orderline_id;
      IF(v_CountRelations <> 0) THEN
        RAISE_APPLICATION_ERROR(-20000, '@RelationsExist@');
      END IF;
@@ -115,6 +118,10 @@ IF (UPDATING) THEN
        RAISE_APPLICATION_ERROR(-20000, '@20203@' || ' ' || :old.QtyReserved);
      ELSIF (:old.QtyDelivered <> 0) THEN
        RAISE_APPLICATION_ERROR(-20000, '@20204@' || ' ' || :old.QtyDelivered);
+     ELSIF (v_Count>0 AND v_IsSOTrx = 'Y') THEN
+       RAISE_APPLICATION_ERROR(-20000, '@ProductDefinedByShipment@');
+     ELSIF (v_Count>0 AND v_IsSOTrx = 'N') THEN
+       RAISE_APPLICATION_ERROR(-20000, '@20206@');
      ELSIF (:old.QtyInvoiced <> 0) THEN
        RAISE_APPLICATION_ERROR(-20000, '@20205@' || ' ' || :old.QtyInvoiced);
      ELSIF (v_IsSOTrx = 'N') THEN
