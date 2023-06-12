@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2021 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -2713,12 +2713,18 @@ isc.OBStandardView.addProperties({
                   id: deleteData.ids[i]
                 });
               }
-              view.viewGrid.data.handleUpdate(
-                'remove',
-                recordInfos,
-                false,
-                req
-              );
+              if (
+                view.viewGrid &&
+                view.viewGrid.data &&
+                view.viewGrid.data.handleUpdate
+              ) {
+                view.viewGrid.data.handleUpdate(
+                  'remove',
+                  recordInfos,
+                  false,
+                  req
+                );
+              }
               if (
                 view.treeGrid &&
                 view.treeGrid.data &&
@@ -2730,6 +2736,10 @@ isc.OBStandardView.addProperties({
                   false,
                   req
                 );
+              }
+              if (view.viewGrid && view.viewGrid.isGrouped) {
+                // to update a grouped grid, it must be refreshed
+                view.viewGrid.refreshGrid();
               }
               if (updateTotalRows) {
                 currentGrid.data.totalRows = currentGrid.data.getLength();
