@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2023 Openbravo SLU
+ * All portions are Copyright (C) 2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,10 @@
 package org.openbravo.modulescript;
 import org.openbravo.database.ConnectionProvider;
 
+
+
+//Sets the new "isSalesRepresentative" column in the ADUser table taking into account 
+//if there were business partners defined as sales representative for that user
 public class PopulateUserSalesRepresentative extends ModuleScript {
   
   @Override
