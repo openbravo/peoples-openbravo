@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
   <vector>
-    <versionInfo version="3.0.25650"/>
+    <versionInfo version="3.0.232900"/>
     <columnDataChange tablename="AD_PROCESS" columnname="ISACTIVE" pkRow="800026">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
@@ -22,10 +22,6 @@
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
     <columnDataChange tablename="AD_MENU" columnname="ISACTIVE" pkRow="800281">
-      <oldValue><![CDATA[Y]]></oldValue>
-      <newValue><![CDATA[N]]></newValue>
-    </columnDataChange>
-    <columnDataChange tablename="AD_TAB" columnname="ISACTIVE" pkRow="181">
       <oldValue><![CDATA[Y]]></oldValue>
       <newValue><![CDATA[N]]></newValue>
     </columnDataChange>
