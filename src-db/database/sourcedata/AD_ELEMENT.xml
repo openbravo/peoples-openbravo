@@ -35920,10 +35920,10 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <COLUMNNAME><![CDATA[Reprint_Documents]]></COLUMNNAME>
-<!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <NAME><![CDATA[Reprint Documents]]></NAME>
-<!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <PRINTNAME><![CDATA[Reprint Documents]]></PRINTNAME>
+<!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <NAME><![CDATA[Reprintable Documents]]></NAME>
+<!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <PRINTNAME><![CDATA[Reprintable Documents]]></PRINTNAME>
 <!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <DESCRIPTION><![CDATA[Allows to set whether document reprinting is enabled or disabled for a given organization.]]></DESCRIPTION>
-<!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <HELP><![CDATA[Allows to set whether document reprinting is enabled or disabled for a given organization. When enabled, it is guaranteed that subsequent reprints at different points in time of the same document generate the same printable document. If it is not explicitly enabled for a given organization, then closest configuration in the parent organization tree is applied.]]></HELP>
+<!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <HELP><![CDATA[Allows to set whether reprintable documents are enabled or disabled for a given organization. When enabled, it is guaranteed that subsequent reprints at different points in time of the same document generate the same printable document. If it is not explicitly enabled for a given organization, then closest configuration in the parent organization tree is applied.]]></HELP>
 <!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--CCF9904EC52E454A9D6D1FE68D515DFF-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--CCF9904EC52E454A9D6D1FE68D515DFF--></AD_ELEMENT>
