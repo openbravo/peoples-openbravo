@@ -665,14 +665,14 @@ public abstract class ImportEntryProcessor {
 
     // Local cache to make sure that there is a much lower mem foot print in the queue
     // of entries, so only keep the needed info to create an obcontext
-    private static class QueuedEntry {
+    public static class QueuedEntry {
       final String importEntryId;
       final String orgId;
       final String userId;
       final String clientId;
       final String roleId;
 
-      QueuedEntry(ImportEntry importEntry) {
+      public QueuedEntry(ImportEntry importEntry) {
         importEntryId = importEntry.getId();
         userId = importEntry.getCreatedBy().getId();
         orgId = importEntry.getOrganization().getId();

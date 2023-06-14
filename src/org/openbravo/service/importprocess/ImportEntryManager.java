@@ -863,6 +863,17 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    */
   public static class DaemonThreadFactory implements ThreadFactory {
     private AtomicInteger threadNumber = new AtomicInteger(0);
+    private final ThreadGroup group;
+    private String threadNamePrefix;
+
+    public DaemonThreadFactory() {
+      this("Import Entry");
+    }
+
+    public DaemonThreadFactory(String threadNamePrefix) {
+      this.threadNamePrefix = threadNamePrefix;
+      group = Thread.currentThread().getThreadGroup();
+    }
 
     @Override
     public Thread newThread(Runnable runnable) {
