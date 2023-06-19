@@ -20,6 +20,8 @@
 package org.openbravo.event;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.enterprise.event.Observes;
 
@@ -61,7 +63,11 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
     final ProductPriceException pppe = (ProductPriceException) event.getTargetInstance();
     if (existsRecord(pppe.getId(), pppe.getClient(), pppe.getOrganization(), pppe.getProductPrice(),
         pppe.getValidFromDate(), pppe.getValidToDate())) {
-      throw new OBException(OBMessageUtils.getI18NMessage("ProductPriceExceptionExists"));
+      Map<String, String> map = new HashMap<>();
+      map.put("product", pppe.getProductPrice().getProduct().getName());
+      map.put("organization", pppe.getOrganization().getName());
+      throw new OBException(OBMessageUtils
+          .parseTranslation(OBMessageUtils.messageBD("ProductPriceExceptionExists"), map));
     }
     updateOrgDepth(event);
   }
@@ -73,7 +79,11 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
     final ProductPriceException pppe = (ProductPriceException) event.getTargetInstance();
     if (existsRecord(pppe.getId(), pppe.getClient(), pppe.getOrganization(), pppe.getProductPrice(),
         pppe.getValidFromDate(), pppe.getValidToDate())) {
-      throw new OBException(OBMessageUtils.getI18NMessage("ProductPriceExceptionExists"));
+      Map<String, String> map = new HashMap<>();
+      map.put("product", pppe.getProductPrice().getProduct().getName());
+      map.put("organization", pppe.getOrganization().getName());
+      throw new OBException(OBMessageUtils
+          .parseTranslation(OBMessageUtils.messageBD("ProductPriceExceptionExists"), map));
     }
     updateOrgDepth(event);
     updateProductPriceExceptionAuditFields(event);
