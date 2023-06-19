@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -1282,7 +1282,7 @@ isc.OBGrid.addProperties({
   getFKFilterAuxiliaryCache: function(criteria) {
     var filterField,
       criterion,
-      filterLength = criteria.criteria.length,
+      filterLength = criteria.criteria ? criteria.criteria.length : 0,
       fkFilterAuxCache = [],
       innerCache = [],
       filterEditForm,
