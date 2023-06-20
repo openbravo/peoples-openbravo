@@ -34,14 +34,21 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
   private static ExecutorService executorService = Executors.newFixedThreadPool(10,
       new ImportEntryManager.DaemonThreadFactory("ImportEntryNonBlocking"));
 
-  public abstract CompletableFuture<?> processAsync(ImportEntry importEntry);
+  public abstract CompletableFuture<?> processAsync(ImportEntry importEntry) throws Exception;
 
   @Override
   protected void processEntry(ImportEntry importEntry) throws Exception {
     log.debug("Non-blocking async processing {}", importEntry.getId());
-    processAsync(importEntry)
-        .thenAccept(__ -> runWithDal(importEntry, () -> completed(importEntry)));
-    // TODO: Implement exceptionally error handling
+    // TODO: Add logic for processing state
+    // ImportEntryManager.getInstance().setImportEntryProcessing(importEntry.getId());
+    processAsync(importEntry).handle((result, ex) -> {
+      if (ex != null) {
+        handleException(ex);
+      } else {
+        runWithDal(importEntry, () -> completed(importEntry));
+      }
+      return CompletableFuture.completedFuture(null);
+    });
     log.debug("main thread done...");
   }
 
@@ -50,12 +57,16 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
     ImportEntryManager.getInstance().setImportEntryProcessed(importEntry.getId());
   }
 
-  private CompletableFuture<Void> runWithDal(ImportEntry importEntry, Runnable task) {
+  private void runWithDal(ImportEntry importEntry, Runnable task) {
     setOBContext(new ImportEntryProcessor.ImportEntryProcessRunnable.QueuedEntry(importEntry));
     task.run();
     OBDal.getInstance().commitAndClose();
+  }
 
-    return CompletableFuture.completedFuture(null);
+  private String handleException(Throwable exception) {
+    // TODO: Implement exceptionally error handling
+    log.error("It was not possible to complete processing IE: {}", exception.getMessage());
+    return "";
   }
 
   protected ExecutorService getExecutorService() {
