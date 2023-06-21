@@ -257,6 +257,7 @@ public class InventoryCountProcess implements Process {
       }
 
       executeHooks(inventoryCountProcesses, inventory);
+      inventory.setProcessDate(new Date());
     } catch (final Exception e) {
       throw new OBException(e.getMessage(), e.getCause());
     }
