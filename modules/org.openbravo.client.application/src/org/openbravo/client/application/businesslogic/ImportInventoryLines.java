@@ -24,6 +24,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Tuple;
@@ -36,11 +37,12 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.attachment.AttachImplementationManager;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.model.common.enterprise.Locator;
@@ -70,12 +72,8 @@ public class ImportInventoryLines extends ProcessUploadedFile {
   protected UploadResult doProcessFile(JSONObject paramValues, File file) throws Exception {
     final UploadResult uploadResult = new UploadResult();
     final String inventoryId = paramValues.getString("inpOwnerId");
+    final String tabId = paramValues.getString("inpTabId");
     final String noStock = paramValues.getString("noStock");
-
-    final String errorMsgNotFound = OBMessageUtils.getI18NMessage("OBUIAPP_BPNotFound",
-        new String[0]);
-    final String errorMsgNotUnique = OBMessageUtils.getI18NMessage("OBUIAPP_BPNotUnique",
-        new String[0]);
 
     try (BufferedReader br = Files.newBufferedReader(Paths.get(file.getAbsolutePath()))) {
       String line;
@@ -83,7 +81,6 @@ public class ImportInventoryLines extends ProcessUploadedFile {
 
         String separador = getFieldSeparator();
         String[] fields = line.split(separador, -1);
-
         String upc = fields[0];
         String productSearchkey = fields[1];
         String attributes = fields[2];
@@ -127,29 +124,54 @@ public class ImportInventoryLines extends ProcessUploadedFile {
               getAttributeSetInstance(attributes) != null ? getAttributeSetInstance(attributes)
                   : OBDal.getInstance().get(AttributeSetInstance.class, "0"));
           inventoryLine.setBookQuantity(BigDecimal.ZERO);
+          inventoryLine.setGapqty(BigDecimal.ZERO);
           inventoryLine.setUOM(product.getUOM());
           inventoryLine.setStorageBin(getLocator(bin));
           inventoryLine.setActive(true);
-
         } else {
           // get the line from the result
           inventoryLine = lines.get(0);
+          inventoryLine
+              .setGapqty(new BigDecimal(bookQty).subtract(inventoryLine.getBookQuantity()));
         }
         inventoryLine.setActive(true);
         inventoryLine.setQuantityCount(new BigDecimal(qtyCount));
         inventoryLine.setDescription(description);
         inventoryLine.setCsvimported(true);
-        // inventoryLine.getGapqty()
         OBDal.getInstance().save(inventoryLine);
+        OBDal.getInstance().flush();
         uploadResult.incTotalCount();
       }
     }
 
-    // try (ScrollableResults physicalInventorylines = getPhysicalInventoryLines(inventoryId)) {
-    // inCaseNoStock(noStock, physicalInventorylines);
-    // }
+    try (ScrollableResults physicalInventorylines = getPhysicalInventoryLines(inventoryId)) {
+      inCaseNoStock(noStock, physicalInventorylines);
+    }
+    InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
 
+    AttachImplementationManager aim = WeldUtils
+        .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
+    aim.upload(Collections.emptyMap(), tabId, inventoryId, inventory.getOrganization().getId(),
+        file);
     return uploadResult;
+  }
+
+  private void inCaseNoStock(String noStock, ScrollableResults physicalInventorylines) {
+    while (physicalInventorylines.next()) {
+      Tuple physicalInventoryline = (Tuple) physicalInventorylines.get()[0];
+      InventoryCountLine inventoryCountLine = OBDal.getInstance()
+          .get(InventoryCountLine.class, physicalInventoryline.get("inventoryLineId"));
+
+      if (noStock.equals("deleteLines")) {
+        OBDal.getInstance().remove(inventoryCountLine);
+      } else if (noStock.equals("quantityCountZero")) {
+        inventoryCountLine.setQuantityCount(BigDecimal.ZERO);
+      } else if (noStock.equals("quantityCountOriginal")) {
+        inventoryCountLine.setQuantityCount(inventoryCountLine.getBookQuantity());
+      } else if (noStock.equals("doNotModify")) {
+        // Do nothing
+      }
+    }
   }
 
   private Long getMaxLineNo(String inventoryId) {
@@ -205,9 +227,8 @@ public class ImportInventoryLines extends ProcessUploadedFile {
 
   private static ScrollableResults getPhysicalInventoryLines(String inventoryId) {
     //@formatter:off
-    String hql =  "select pil.id as inventoryLineId " +
+    String hql =  " select pil.id as inventoryLineId " +
                   " from MaterialMgmtInventoryCountLine as pil" +
-                  " left join pil.attributeSetValue as att" +
                   " where pil.physInventory.id = :inventoryId " +
                   " and iscsvimported = 'N'" +
                   " order by pil.lineNo, pil.id ";
