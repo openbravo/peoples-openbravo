@@ -32,6 +32,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
@@ -87,6 +88,14 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
     }
     updateOrgDepth(event);
     updateProductPriceExceptionAuditFields(event);
+  }
+
+  public void onDelete(@Observes EntityDeleteEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    ProductPriceException prdPriceException = (ProductPriceException) event.getTargetInstance();
+    prdPriceException.getProductPrice().setUpdated(new Date());
   }
 
   // Check if exists another record using this validFromDate - validToDate in the same dates
