@@ -131,8 +131,8 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         } else {
           // get the line from the result
           inventoryLine = lines.get(0);
-          inventoryLine
-              .setGapqty(new BigDecimal(bookQty).subtract(inventoryLine.getBookQuantity()));
+          inventoryLine.setGapqty(
+              inventoryLine.getBookQuantity().subtract(getUpdatedBookQty(inventoryLine)));
         }
         inventoryLine.setActive(true);
         inventoryLine.setQuantityCount(new BigDecimal(qtyCount));
@@ -154,6 +154,25 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     aim.upload(Collections.emptyMap(), tabId, inventoryId, inventory.getOrganization().getId(),
         file);
     return uploadResult;
+  }
+
+  private BigDecimal getUpdatedBookQty(InventoryCountLine inventoryLine) {
+    String hql = "select sd.quantityOnHand from MaterialMgmtStorageDetail as sd where sd.product.id = :productId "
+        + "and sd.storageBin.id = :locatorId and sd.attributeSetValue.id = :attributeSetValueId "
+        + "and sd.uOM.id = :uomId and coalesce(sd.orderUOM.id, '-1') = :productUOMId";
+    Query<BigDecimal> query = OBDal.getInstance().getSession().createQuery(hql, BigDecimal.class);
+    query.setParameter("productId", inventoryLine.getProduct().getId());
+    query.setParameter("locatorId", inventoryLine.getStorageBin().getId());
+    query.setParameter("attributeSetValueId", inventoryLine.getAttributeSetValue().getId());
+    query.setParameter("uomId", inventoryLine.getUOM().getId());
+    query.setParameter("productUOMId",
+        inventoryLine.getOrderUOM() != null ? inventoryLine.getOrderUOM() : "-1");
+
+    BigDecimal bookqty = query.uniqueResult();
+    if (bookqty != null) {
+      return bookqty;
+    }
+    return BigDecimal.ZERO;
   }
 
   private void inCaseNoStock(String noStock, ScrollableResults physicalInventorylines) {
