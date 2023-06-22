@@ -35,6 +35,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.GenericJDBCException;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
@@ -255,6 +256,10 @@ public class InventoryCountProcess implements Process {
       if (!"C".equals(inventory.getInventoryType()) && !"O".equals(inventory.getInventoryType())) {
         checkStock(inventory);
       }
+
+      // In order to prevent some small stock imbalances that may have occurred during the counting
+      // process, the following calculation will be made
+      updateQuantityCount(inventory);
 
       executeHooks(inventoryCountProcesses, inventory);
       inventory.setProcessDate(new Date());
@@ -580,5 +585,17 @@ public class InventoryCountProcess implements Process {
         }
       }
     }
+  }
+
+  private void updateQuantityCount(InventoryCount inventory) {
+    // @formatter:off  
+    final String hql = "update MaterialMgmtInventoryCountLine " 
+        + "set quantityCount = quantityCount - gapqty  "
+        + "where physInventory.id = :inventoryId " ;
+    // @formatter:on
+    @SuppressWarnings("rawtypes")
+    final Query updateQuery = OBDal.getInstance().getSession().createQuery(hql);
+    updateQuery.setParameter("inventoryId", inventory.getId());
+    updateQuery.executeUpdate();
   }
 }

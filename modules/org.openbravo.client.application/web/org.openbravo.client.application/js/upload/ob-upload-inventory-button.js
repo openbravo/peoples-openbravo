@@ -32,7 +32,7 @@
         // execute default updateTabState
         this.updateTabState.bind(this);
         if (this.isDisabled() === false) {
-          // disable button for super set
+          // disable button depends on preferece
           this.setDisabled(
             OB.PropertyStore.get(
               'OBUIAPP_ShowImportStoreStockButton',

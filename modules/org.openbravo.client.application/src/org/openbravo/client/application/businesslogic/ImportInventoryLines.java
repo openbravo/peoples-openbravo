@@ -79,12 +79,11 @@ public class ImportInventoryLines extends ProcessUploadedFile {
       String line;
       while ((line = br.readLine()) != null) {
 
-        String separador = getFieldSeparator();
-        String[] fields = line.split(separador, -1);
+        String separator = getFieldSeparator();
+        String[] fields = line.split(separator, -1);
         String upc = fields[0];
         String productSearchkey = fields[1];
         String attributes = fields[2];
-        String bookQty = fields[3];
         String qtyCount = fields[4];
         String bin = fields[6];
         String description = fields[7];
@@ -127,7 +126,6 @@ public class ImportInventoryLines extends ProcessUploadedFile {
           inventoryLine.setGapqty(BigDecimal.ZERO);
           inventoryLine.setUOM(product.getUOM());
           inventoryLine.setStorageBin(getLocator(bin));
-          inventoryLine.setActive(true);
         } else {
           // get the line from the result
           inventoryLine = lines.get(0);
@@ -135,7 +133,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
               inventoryLine.getBookQuantity().subtract(getUpdatedBookQty(inventoryLine)));
         }
         inventoryLine.setActive(true);
-        inventoryLine.setQuantityCount(new BigDecimal(qtyCount));
+        inventoryLine.setQuantityCount(qtyCount != "" ? new BigDecimal(qtyCount) : BigDecimal.ZERO);
         inventoryLine.setDescription(description);
         inventoryLine.setCsvimported(true);
         OBDal.getInstance().save(inventoryLine);
@@ -144,11 +142,12 @@ public class ImportInventoryLines extends ProcessUploadedFile {
       }
     }
 
-    try (ScrollableResults physicalInventorylines = getPhysicalInventoryLines(inventoryId)) {
+    try (ScrollableResults physicalInventorylines = getPhysicalInventoryLinesNotImported(
+        inventoryId)) {
       inCaseNoStock(noStock, physicalInventorylines);
     }
-    InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
 
+    InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
     aim.upload(Collections.emptyMap(), tabId, inventoryId, inventory.getOrganization().getId(),
@@ -157,9 +156,14 @@ public class ImportInventoryLines extends ProcessUploadedFile {
   }
 
   private BigDecimal getUpdatedBookQty(InventoryCountLine inventoryLine) {
-    String hql = "select sd.quantityOnHand from MaterialMgmtStorageDetail as sd where sd.product.id = :productId "
-        + "and sd.storageBin.id = :locatorId and sd.attributeSetValue.id = :attributeSetValueId "
-        + "and sd.uOM.id = :uomId and coalesce(sd.orderUOM.id, '-1') = :productUOMId";
+    // @formatter:off 
+    String hql = "select sd.quantityOnHand from MaterialMgmtStorageDetail as sd "
+        + "where sd.product.id = :productId "
+        + "and sd.storageBin.id = :locatorId "
+        + "and sd.attributeSetValue.id = :attributeSetValueId "
+        + "and sd.uOM.id = :uomId "
+        + "and coalesce(sd.orderUOM.id, '-1') = :productUOMId ";
+    // @formatter:on
     Query<BigDecimal> query = OBDal.getInstance().getSession().createQuery(hql, BigDecimal.class);
     query.setParameter("productId", inventoryLine.getProduct().getId());
     query.setParameter("locatorId", inventoryLine.getStorageBin().getId());
@@ -194,7 +198,10 @@ public class ImportInventoryLines extends ProcessUploadedFile {
   }
 
   private Long getMaxLineNo(String inventoryId) {
-    String hql = "select coalesce(max(il.lineNo), 0) from MaterialMgmtInventoryCountLine as il where il.physInventory.id = :inventoryId";
+    // @formatter:off 
+    String hql = "select coalesce(max(il.lineNo), 0) from MaterialMgmtInventoryCountLine as il"
+        + " where il.physInventory.id = :inventoryId";
+    // @formatter:on
     Query<Long> query = OBDal.getInstance().getSession().createQuery(hql, Long.class);
     query.setParameter("inventoryId", inventoryId);
     Long maxLineNo = query.uniqueResult();
@@ -244,7 +251,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     return fieldSeparator;
   }
 
-  private static ScrollableResults getPhysicalInventoryLines(String inventoryId) {
+  private static ScrollableResults getPhysicalInventoryLinesNotImported(String inventoryId) {
     //@formatter:off
     String hql =  " select pil.id as inventoryLineId " +
                   " from MaterialMgmtInventoryCountLine as pil" +
