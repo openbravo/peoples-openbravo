@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2016-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2016-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -148,13 +148,13 @@ public class AllowedCrossDomainsHandler {
       response.setHeader("Access-Control-Allow-Credentials", "true");
       response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
       response.setHeader("Access-Control-Allow-Headers",
-          "Content-Type, Origin, Accept, X-Requested-With, Access-Control-Allow-Credentials");
+          "Content-Type, Origin, Accept, X-Requested-With, Access-Control-Allow-Credentials, Authorization");
 
       response.setHeader("Access-Control-Max-Age", "10000");
     } catch (Exception logIt) {
       // on purpose not stopping on this to retain some robustness
-      log.error("Error when setting cors headers " + logIt.getMessage() + " "
-          + request.getRequestURL() + " " + request.getQueryString(), logIt);
+      log.error("Error when setting cors headers {} {} {}", logIt.getMessage(),
+          request.getRequestURL(), request.getQueryString(), logIt);
     }
   }
 
