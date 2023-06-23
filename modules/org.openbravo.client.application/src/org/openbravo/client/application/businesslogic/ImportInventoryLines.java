@@ -43,11 +43,13 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
+import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 
@@ -76,7 +78,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     final String noStock = paramValues.getString("noStock");
 
     try (BufferedReader br = Files.newBufferedReader(Paths.get(file.getAbsolutePath()))) {
-      String line;
+      String line = br.readLine();
       while ((line = br.readLine()) != null) {
 
         String separator = getFieldSeparator();
@@ -85,25 +87,45 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         String productSearchkey = fields[1];
         String attributes = fields[2];
         String qtyCount = fields[4];
+        String uomName = fields[5];
         String bin = fields[6];
         String description = fields[7];
 
-        // check if the line already exists
         Product product = getProduct(upc, productSearchkey);
         if (product == null) {
+          uploadResult.incErrorCount();
+          uploadResult.addErrorMessage(upc + "/" + productSearchkey + " --> "
+              + OBMessageUtils.getI18NMessage("OBUIAPP_ProductNotFound") + "\n");
           continue;
         }
-        final OBQuery<InventoryCountLine> qry = OBDal.getInstance()
+        Locator locator = getLocator(bin);
+        if (locator == null) {
+          uploadResult.incErrorCount();
+          uploadResult.addErrorMessage(
+              bin + " --> " + OBMessageUtils.getI18NMessage("OBUIAPP_LocatorNotFound") + "\n");
+          continue;
+        }
+        UOM uom = getUOM(uomName);
+        if (uom == null) {
+          uploadResult.incErrorCount();
+          uploadResult.addErrorMessage(
+              uomName + " --> " + OBMessageUtils.getI18NMessage("OBUIAPP_UOMNotFound") + "\n");
+          continue;
+        }
+
+        // check if the line already exists
+        OBQuery<InventoryCountLine> qry = OBDal.getInstance()
             .createQuery(InventoryCountLine.class,
                 "m_inventory_id=:m_inventory_id and m_product_id=:m_product_id and m_locator_id=:m_locator_id "
-                    + "and m_attributesetinstance_id=:m_attributesetinstance_id");
+                    + "and m_attributesetinstance_id=:m_attributesetinstance_id and c_uom_id=:c_uom_id");
         qry.setNamedParameter("m_inventory_id", inventoryId);
         qry.setNamedParameter("m_product_id", product.getId());
-        qry.setNamedParameter("m_locator_id", getLocator(bin).getId());
+        qry.setNamedParameter("m_locator_id", locator.getId());
         qry.setNamedParameter("m_attributesetinstance_id",
             getAttributeSetInstance(attributes) != null
                 ? getAttributeSetInstance(attributes).getId()
                 : "0");
+        qry.setNamedParameter("c_uom_id", uom.getId());
         qry.setFilterOnActive(false);
         List<InventoryCountLine> lines = qry.list();
         InventoryCountLine inventoryLine = null;
@@ -125,7 +147,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
           inventoryLine.setBookQuantity(BigDecimal.ZERO);
           inventoryLine.setGapqty(BigDecimal.ZERO);
           inventoryLine.setUOM(product.getUOM());
-          inventoryLine.setStorageBin(getLocator(bin));
+          inventoryLine.setStorageBin(locator);
         } else {
           // get the line from the result
           inventoryLine = lines.get(0);
@@ -140,13 +162,20 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         OBDal.getInstance().flush();
         uploadResult.incTotalCount();
       }
+    } catch (Exception e) {
+      uploadResult.incErrorCount();
+      uploadResult.addErrorMessage(e.getMessage() + "\n");
     }
 
     try (ScrollableResults physicalInventorylines = getPhysicalInventoryLinesNotImported(
         inventoryId)) {
       inCaseNoStock(noStock, physicalInventorylines);
+    } catch (Exception e) {
+      uploadResult.incErrorCount();
+      uploadResult.addErrorMessage(e.getMessage() + "\n");
     }
 
+    // Attach csv in inventory attachments
     InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
@@ -223,6 +252,13 @@ public class ImportInventoryLines extends ProcessUploadedFile {
   private Locator getLocator(String bin) {
     final OBQuery<Locator> qry = OBDal.getInstance().createQuery(Locator.class, "value=:value");
     qry.setNamedParameter("value", bin);
+    qry.setMaxResult(1);
+    return qry.uniqueResult();
+  }
+
+  private UOM getUOM(String uom) {
+    final OBQuery<UOM> qry = OBDal.getInstance().createQuery(UOM.class, "name=:name");
+    qry.setNamedParameter("name", uom);
     qry.setMaxResult(1);
     return qry.uniqueResult();
   }
