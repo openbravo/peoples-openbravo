@@ -112,42 +112,13 @@ public class ImportInventoryLines extends ProcessUploadedFile {
               uomName + " --> " + OBMessageUtils.getI18NMessage("OBUIAPP_UOMNotFound") + "\n");
           continue;
         }
-
-        // check if the line already exists
-        OBQuery<InventoryCountLine> qry = OBDal.getInstance()
-            .createQuery(InventoryCountLine.class,
-                "m_inventory_id=:m_inventory_id and m_product_id=:m_product_id and m_locator_id=:m_locator_id "
-                    + "and m_attributesetinstance_id=:m_attributesetinstance_id and c_uom_id=:c_uom_id");
-        qry.setNamedParameter("m_inventory_id", inventoryId);
-        qry.setNamedParameter("m_product_id", product.getId());
-        qry.setNamedParameter("m_locator_id", locator.getId());
-        qry.setNamedParameter("m_attributesetinstance_id",
-            getAttributeSetInstance(attributes) != null
-                ? getAttributeSetInstance(attributes).getId()
-                : "0");
-        qry.setNamedParameter("c_uom_id", uom.getId());
-        qry.setFilterOnActive(false);
-        List<InventoryCountLine> lines = qry.list();
         InventoryCountLine inventoryLine = null;
-
+        // check if the line already exists
+        List<InventoryCountLine> lines = checkIfInventoryLineExist(inventoryId, attributes, product,
+            locator, uom);
         if (lines.size() == 0) {
           // create a new one
-          InventoryCount inventoryCount = OBDal.getInstance()
-              .get(InventoryCount.class, inventoryId);
-
-          inventoryLine = OBProvider.getInstance().get(InventoryCountLine.class);
-          inventoryLine.setClient(inventoryCount.getClient());
-          inventoryLine.setOrganization(inventoryCount.getOrganization());
-          inventoryLine.setPhysInventory(inventoryCount);
-          inventoryLine.setLineNo(getMaxLineNo(inventoryId) + 10);
-          inventoryLine.setProduct(product);
-          inventoryLine.setAttributeSetValue(
-              getAttributeSetInstance(attributes) != null ? getAttributeSetInstance(attributes)
-                  : OBDal.getInstance().get(AttributeSetInstance.class, "0"));
-          inventoryLine.setBookQuantity(BigDecimal.ZERO);
-          inventoryLine.setGapqty(BigDecimal.ZERO);
-          inventoryLine.setUOM(product.getUOM());
-          inventoryLine.setStorageBin(locator);
+          inventoryLine = createInventoryLine(inventoryId, attributes, product, locator);
         } else {
           // get the line from the result
           inventoryLine = lines.get(0);
@@ -176,12 +147,56 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     }
 
     // Attach csv in inventory attachments
+    attachCSV(file, inventoryId, tabId);
+    return uploadResult;
+  }
+
+  private void attachCSV(File file, final String inventoryId, final String tabId) {
     InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
     aim.upload(Collections.emptyMap(), tabId, inventoryId, inventory.getOrganization().getId(),
         file);
-    return uploadResult;
+  }
+
+  private List<InventoryCountLine> checkIfInventoryLineExist(final String inventoryId,
+      String attributes, Product product, Locator locator, UOM uom) {
+    OBQuery<InventoryCountLine> qry = OBDal.getInstance()
+        .createQuery(InventoryCountLine.class,
+            "m_inventory_id=:m_inventory_id and m_product_id=:m_product_id and m_locator_id=:m_locator_id "
+                + "and m_attributesetinstance_id=:m_attributesetinstance_id and c_uom_id=:c_uom_id");
+    qry.setNamedParameter("m_inventory_id", inventoryId);
+    qry.setNamedParameter("m_product_id", product.getId());
+    qry.setNamedParameter("m_locator_id", locator.getId());
+    qry.setNamedParameter("m_attributesetinstance_id",
+        getAttributeSetInstance(attributes) != null ? getAttributeSetInstance(attributes).getId()
+            : "0");
+    qry.setNamedParameter("c_uom_id", uom.getId());
+    qry.setFilterOnActive(false);
+    List<InventoryCountLine> lines = qry.list();
+
+    return lines;
+  }
+
+  private InventoryCountLine createInventoryLine(final String inventoryId, String attributes,
+      Product product, Locator locator) {
+    InventoryCountLine inventoryLine;
+    InventoryCount inventoryCount = OBDal.getInstance().get(InventoryCount.class, inventoryId);
+
+    inventoryLine = OBProvider.getInstance().get(InventoryCountLine.class);
+    inventoryLine.setClient(inventoryCount.getClient());
+    inventoryLine.setOrganization(inventoryCount.getOrganization());
+    inventoryLine.setPhysInventory(inventoryCount);
+    inventoryLine.setLineNo(getMaxLineNo(inventoryId) + 10);
+    inventoryLine.setProduct(product);
+    inventoryLine.setAttributeSetValue(
+        getAttributeSetInstance(attributes) != null ? getAttributeSetInstance(attributes)
+            : OBDal.getInstance().get(AttributeSetInstance.class, "0"));
+    inventoryLine.setBookQuantity(BigDecimal.ZERO);
+    inventoryLine.setGapqty(BigDecimal.ZERO);
+    inventoryLine.setUOM(product.getUOM());
+    inventoryLine.setStorageBin(locator);
+    return inventoryLine;
   }
 
   private BigDecimal getUpdatedBookQty(InventoryCountLine inventoryLine) {
