@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2023 Openbravo SLU
+ * All portions are Copyright (C) 2012-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -61,7 +61,6 @@ import org.openbravo.model.materialmgmt.transaction.ShipmentInOut;
 import org.openbravo.model.materialmgmt.transaction.ShipmentInOutLine;
 import org.openbravo.model.pricing.pricelist.PriceList;
 import org.openbravo.service.db.CallProcess;
-import org.openbravo.synchronization.event.SynchronizationEvent;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ProcessGoods extends HttpSecureAppServlet {
@@ -155,7 +154,6 @@ public class ProcessGoods extends HttpSecureAppServlet {
     } else {
       processReceipt(response, vars, strdocaction, strVoidMinoutDate, strVoidMinoutAcctDate);
     }
-    SynchronizationEvent.getInstance().triggerEvent("API_ShipmentInOut", receiptId);
   }
 
   private void loadPhysicalInventory(final HttpServletResponse response,
@@ -217,7 +215,6 @@ public class ProcessGoods extends HttpSecureAppServlet {
       goodsShipmentInOut.setProcessGoodsJava(goodsShipmentInOut.getDocumentAction());
       OBDal.getInstance().save(goodsShipmentInOut);
       OBDal.getInstance().flush();
-
       OBDal.getInstance().commitAndClose();
 
       final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this,

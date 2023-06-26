@@ -33,11 +33,9 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
-import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.ad_process.ADProcessIDSelector;
 import org.openbravo.model.ad.process.Parameter;
 import org.openbravo.model.ad.process.ProcessInstance;
 
@@ -215,10 +213,6 @@ public class CallProcess {
           ps.setString(2, doCommit ? "Y" : "N");
         }
         ps.execute();
-        for (StoredProcedureHook hook : getHooks(process.getId())) {
-          hook.onExecutionFinish(recordID, parameters);
-        }
-
       } catch (Exception e) {
         throw new IllegalStateException(e);
       } finally {
@@ -293,10 +287,5 @@ public class CallProcess {
   public ProcessInstance callProcess(org.openbravo.model.ad.ui.Process process, String recordID,
       Map<String, ?> parameters) {
     return callProcess(process, recordID, parameters, null);
-  }
-
-  private List<StoredProcedureHook> getHooks(String processId) {
-    return WeldUtils.getInstancesSortedByPriority(StoredProcedureHook.class,
-        new ADProcessIDSelector(processId));
   }
 }
