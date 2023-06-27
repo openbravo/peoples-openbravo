@@ -25,8 +25,12 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.persistence.Tuple;
 
 import org.apache.logging.log4j.LogManager;
@@ -56,6 +60,10 @@ import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
 public class ImportInventoryLines extends ProcessUploadedFile {
   private static final long serialVersionUID = 1L;
   private static final Logger log = LogManager.getLogger();
+
+  @Inject
+  @Any
+  private Instance<InventoryCountUpdateHook> inventoryCountUpdate;
 
   @Override
   protected void clearBeforeImport(String ownerId, JSONObject paramValues) {
@@ -126,7 +134,8 @@ public class ImportInventoryLines extends ProcessUploadedFile {
               inventoryLine.getBookQuantity().subtract(getUpdatedBookQty(inventoryLine)));
         }
         inventoryLine.setActive(true);
-        inventoryLine.setQuantityCount(qtyCount != "" ? new BigDecimal(qtyCount) : BigDecimal.ZERO);
+        inventoryLine
+            .setQuantityCount(qtyCount.equals("") ? BigDecimal.ZERO : new BigDecimal(qtyCount));
         inventoryLine.setDescription(description);
         inventoryLine.setCsvimported(true);
         OBDal.getInstance().save(inventoryLine);
@@ -146,17 +155,19 @@ public class ImportInventoryLines extends ProcessUploadedFile {
       uploadResult.addErrorMessage(e.getMessage() + "\n");
     }
 
+    InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
     // Attach csv in inventory attachments
-    attachCSV(file, inventoryId, tabId);
+    attachCSV(file, inventory, tabId);
+    executeHooks(inventoryCountUpdate, inventory);
+
     return uploadResult;
   }
 
-  private void attachCSV(File file, final String inventoryId, final String tabId) {
-    InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
+  private void attachCSV(File file, InventoryCount inventory, String tabId) {
     AttachImplementationManager aim = WeldUtils
         .getInstanceFromStaticBeanManager(AttachImplementationManager.class);
-    aim.upload(Collections.emptyMap(), tabId, inventoryId, inventory.getOrganization().getId(),
-        file);
+    aim.upload(Collections.emptyMap(), tabId, inventory.getId(),
+        inventory.getOrganization().getId(), file);
   }
 
   private List<InventoryCountLine> checkIfInventoryLineExist(final String inventoryId,
@@ -314,6 +325,18 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     final Query<Tuple> query = OBDal.getInstance().getSession().createQuery(hql, Tuple.class);
     query.setParameter("inventoryId", inventoryId);
     return query.scroll(ScrollMode.FORWARD_ONLY);
+  }
+
+  private void executeHooks(final Instance<? extends Object> hooks, final InventoryCount inventory)
+      throws Exception {
+    if (hooks != null) {
+      for (final Iterator<? extends Object> procIter = hooks.iterator(); procIter.hasNext();) {
+        final Object proc = procIter.next();
+        if (proc instanceof InventoryCountUpdateHook) {
+          ((InventoryCountUpdateHook) proc).exec(inventory);
+        }
+      }
+    }
   }
 
 }
