@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2021 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -247,7 +247,7 @@ public class Entity {
     setTableId(t.getId() + "_CC");
     setClassName(
         e.getPackageName() + "." + e.getSimpleClassName() + COMPUTED_COLUMNS_CLASS_APPENDIX);
-    setName(e.getSimpleClassName() + COMPUTED_COLUMNS_CLASS_APPENDIX);
+    setName(e.getName() + COMPUTED_COLUMNS_CLASS_APPENDIX);
     setDeletable(false);
     setMutable(false);
     setInActive(true);

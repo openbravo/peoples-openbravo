@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -219,8 +219,9 @@ public class DalMappingGenerator implements OBSingleton {
       List<Property> computedColumns) {
     String hbm = getClassTemplateContents();
     String entityName = getComputedColumnsEntityName(entity);
+    String className = getComputedColumnsClassName(entity);
     hbm = hbm.replaceAll("<class",
-        "<class name=\"" + entity.getPackageName() + "." + entityName + "\" ");
+        "<class name=\"" + entity.getPackageName() + "." + className + "\" ");
     hbm = hbm.replaceAll("mappingName", entityName);
     hbm = hbm.replaceAll("tableName", entity.getTableName());
     hbm = hbm.replaceAll("ismutable", "false");
@@ -263,6 +264,10 @@ public class DalMappingGenerator implements OBSingleton {
   }
 
   private String getComputedColumnsEntityName(Entity entity) {
+    return entity.getName() + "_ComputedColumns";
+  }
+
+  private String getComputedColumnsClassName(Entity entity) {
     return entity.getSimpleClassName() + "_ComputedColumns";
   }
 
