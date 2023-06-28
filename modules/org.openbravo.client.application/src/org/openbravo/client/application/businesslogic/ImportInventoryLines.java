@@ -63,7 +63,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
 
   @Inject
   @Any
-  private Instance<InventoryCountUpdateHook> inventoryCountUpdate;
+  private Instance<InventoryCountUpdateHook> inventoryCountUpdateHooks;
 
   @Override
   protected void clearBeforeImport(String ownerId, JSONObject paramValues) {
@@ -158,7 +158,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
     // Attach csv in inventory attachments
     attachCSV(file, inventory, tabId);
-    executeHooks(inventoryCountUpdate, inventory);
+    executeHooks(inventoryCountUpdateHooks, inventory);
 
     return uploadResult;
   }
