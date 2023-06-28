@@ -130,8 +130,9 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         } else {
           // get the line from the result
           inventoryLine = lines.get(0);
-          inventoryLine.setGapqty(
+          inventoryLine.setBookQuantity(
               inventoryLine.getBookQuantity().subtract(getUpdatedBookQty(inventoryLine)));
+
         }
         inventoryLine.setActive(true);
         inventoryLine
@@ -204,7 +205,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         getAttributeSetInstance(attributes) != null ? getAttributeSetInstance(attributes)
             : OBDal.getInstance().get(AttributeSetInstance.class, "0"));
     inventoryLine.setBookQuantity(BigDecimal.ZERO);
-    inventoryLine.setGapqty(BigDecimal.ZERO);
+    inventoryLine.setGapbookqty(BigDecimal.ZERO);
     inventoryLine.setUOM(product.getUOM());
     inventoryLine.setStorageBin(locator);
     return inventoryLine;

@@ -93,7 +93,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="GAPQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
+      <column name="GAPBOOKQTY" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
