@@ -39,7 +39,7 @@ isc.OBUploadInventoryView.addProperties({
         // is the list reference
         type: '_id_17',
         valueMap: {
-          deletelines: OB.I18N.getLabel('OBUIAPP_DeleteLines'),
+          deleteLines: OB.I18N.getLabel('OBUIAPP_DeleteLines'),
           quantityCountZero: OB.I18N.getLabel('OBUIAPP_QuantityCountZero'),
           quantityCountOriginal: OB.I18N.getLabel(
             'OBUIAPP_QuantityCountOriginal'
