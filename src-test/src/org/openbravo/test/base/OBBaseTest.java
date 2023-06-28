@@ -79,7 +79,7 @@ import org.openbravo.test.base.mock.OBServletContextMock;
  * 
  */
 
-public class OBBaseTest {
+public class OBBaseTest extends MockableBaseTest {
 
   static {
     // Adds the package location of the plugins used by Log4j
@@ -333,7 +333,9 @@ public class OBBaseTest {
    * context through the {@link DalContextListener} if the test case is configured to do so.
    */
   @Before
+  @Override
   public void setUp() throws Exception {
+    super.setUp();
     // clear the session otherwise it keeps the old model
     setTestUserContext();
     errorOccured = false;
@@ -348,7 +350,9 @@ public class OBBaseTest {
    * when it applies.
    */
   @After
-  public void testDone() {
+  @Override
+  public void testDone() throws Exception {
+    super.testDone();
     if (testLogAppender != null) {
       testLogAppender.reset();
       setTestLogAppenderLevel(Level.OFF);
