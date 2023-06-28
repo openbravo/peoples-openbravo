@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2019 Openbravo SLU
+ * All portions are Copyright (C) 2013-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -21,10 +21,14 @@ package org.openbravo.event;
 import javax.enterprise.event.Observes;
 
 import org.hibernate.criterion.Restrictions;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
+import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
+import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.common.invoice.Invoice;
@@ -45,6 +49,27 @@ class InvoiceLineEventHandler extends EntityPersistenceEventObserver {
       return;
     }
     checkInvoiceLineRelation((InvoiceLine) event.getTargetInstance());
+  }
+
+  public void onSave(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    checkProductDefinedIfNoFinancialInvoiceLine(event);
+  }
+
+  public void onUpdate(@Observes EntityUpdateEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    checkProductDefinedIfNoFinancialInvoiceLine(event);
+  }
+
+  private void checkProductDefinedIfNoFinancialInvoiceLine(EntityPersistenceEvent event) {
+    final InvoiceLine invoiceLine = (InvoiceLine) event.getTargetInstance();
+    if (!invoiceLine.isFinancialInvoiceLine() && invoiceLine.getProduct() == null) {
+      throw new OBException("@NoProductSelected@");
+    }
   }
 
   private void checkInvoiceLineRelation(InvoiceLine invoiceLine) {
