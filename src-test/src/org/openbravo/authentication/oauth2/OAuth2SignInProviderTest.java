@@ -124,7 +124,7 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
     config.setType("OAUTH");
     config.setSequenceNumber(sequenceNumber);
     if (imageId != null) {
-      config.setImage(OBDal.getInstance().getProxy(Image.class, imageId));
+      config.setIcon(OBDal.getInstance().getProxy(Image.class, imageId));
     }
     OBDal.getInstance().save(config);
 
