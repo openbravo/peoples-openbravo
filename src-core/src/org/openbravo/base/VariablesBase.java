@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2020 Openbravo S.L.U.
+ * Copyright (C) 2001-2023 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -1476,41 +1478,31 @@ public class VariablesBase {
    *          are erased.
    */
   public void clearSession(boolean all) {
-    if (log4j.isDebugEnabled()) {
-      log4j.debug("...: removing session");
-    }
-    String target = "";
+    clearSession(all ? att -> true : att -> !"target".equalsIgnoreCase(att));
+  }
+
+  /**
+   * Clear the session variables indicated by the given predicate.
+   *
+   * @param removeFilter
+   *          Indicates the session variables that should be cleared
+   */
+  public void clearSession(Predicate<String> removeFilter) {
+    log4j.debug("...: removing session");
     try {
       if (session != null) {
-        String sessionName;
-        Enumeration<?> e = session.getAttributeNames();
-        while (e.hasMoreElements()) {
-          sessionName = (String) e.nextElement();
-          if (log4j.isDebugEnabled()) {
-            log4j.debug("  session name: " + sessionName);
-          }
-          if (!all && sessionName.equalsIgnoreCase("target")) {
-            target = (String) session.getAttribute(sessionName);
-          }
-          session.removeAttribute(sessionName);
-          e = session.getAttributeNames();
-        }
-        if (!target.equals("")) {
-          session.setAttribute("TARGET", target);
-        }
+        Collections.list(session.getAttributeNames())
+            .stream()
+            .filter(removeFilter::test)
+            .forEach(att -> {
+              log4j.trace("removing session attribute {}", att);
+              session.removeAttribute(att);
+            });
       } else {
-        for (String key : sessionAttributes.keySet()) {
-          if (log4j.isDebugEnabled()) {
-            log4j.debug("  session name: " + key);
-          }
-          if (!all && key.equalsIgnoreCase("target")) {
-            target = (String) sessionAttributes.get(key);
-          }
-        }
-        sessionAttributes.clear();
-        if (!target.equals("")) {
-          sessionAttributes.put("TARGET", target);
-        }
+        sessionAttributes = sessionAttributes.entrySet()
+            .stream()
+            .filter(e -> removeFilter.negate().test(e.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       }
     } catch (IllegalStateException ignored) {
       // session is already invalidated: don't do anything
