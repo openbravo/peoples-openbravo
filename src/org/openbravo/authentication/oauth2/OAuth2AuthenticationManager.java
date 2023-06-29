@@ -68,7 +68,8 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
   @Override
   public String doAuthenticate(HttpServletRequest request, HttpServletResponse response) {
     if (!isValidAuthorizationResponse(request)) {
-      handleError("EXTERNAL_AUTHENTICATION_FAILURE");
+      log.error("The authorization response validation was not passed");
+      throw new AuthenticationException(buildError());
     }
     return handleAuthorizationResponse(request);
   }
@@ -96,12 +97,12 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
       int responseCode = tokenResponse.statusCode();
       if (responseCode >= 200 && responseCode < 300) {
         return getUser(tokenResponse.body());
-      } else {
-        throw new AuthenticationException("2");
       }
+      log.error("The token request failed with a {} error", responseCode);
+      throw new AuthenticationException(buildError());
     } catch (Exception ex) {
       log.error("Error handling the authorization response", ex);
-      throw new AuthenticationException("3");
+      throw new AuthenticationException(buildError());
     }
   }
 
@@ -155,12 +156,12 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
     }
   }
 
-  private void handleError(String message) {
+  private OBError buildError() {
     OBError errorMsg = new OBError();
     errorMsg.setType("Error");
     errorMsg.setTitle("AUTHENTICATION_FAILURE");
-    errorMsg.setMessage(message);
-    throw new AuthenticationException(errorMsg.getMessage(), errorMsg);
+    errorMsg.setMessage("EXTERNAL_AUTHENTICATION_FAILURE");
+    return errorMsg;
   }
 
   /**
