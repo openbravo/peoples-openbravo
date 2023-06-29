@@ -18,10 +18,6 @@
  */
 package org.openbravo.authentication.oauth2;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.openbravo.base.HttpBaseUtils;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.authentication.LoginProvider;
 import org.openbravo.model.authentication.OAuth2LoginProvider;
@@ -33,13 +29,13 @@ import org.openbravo.model.authentication.OAuth2LoginProvider;
  */
 class OAuth2Config {
   private static final String DEFAULT_SCOPE = "openid profile email";
-  private static final String REDIRECT_PATH = "org.openbravo.authentication/ExternalLogin";
 
   private String id;
   private String name;
   private String authorizationServerURL;
   private String clientID;
   private String scope;
+  private String redirectPath;
   private byte[] imageData;
   private String imageMimeType;
 
@@ -52,6 +48,7 @@ class OAuth2Config {
     clientID = provider.getClientID();
     authorizationServerURL = provider.getAuthorizationServerURL();
     scope = provider.getScope() != null ? provider.getScope() : DEFAULT_SCOPE;
+    redirectPath = provider.getRedirectPath();
     imageData = image != null ? image.getBindaryData() : null;
     imageMimeType = image != null ? image.getMimetype() : null;
   }
@@ -72,17 +69,12 @@ class OAuth2Config {
     return authorizationServerURL;
   }
 
-  String getRedirectURL() {
-    HttpServletRequest request = RequestContext.get().getRequest();
-    String host = HttpBaseUtils.getLocalHostAddress(request, true);
-    String context = request.getContextPath() != null && request.getContextPath().startsWith("/")
-        ? request.getContextPath()
-        : "/" + request.getContextPath();
-    return host + context + "/" + REDIRECT_PATH;
-  }
-
   String getScope() {
     return scope;
+  }
+
+  String getRedirectPath() {
+    return redirectPath;
   }
 
   byte[] getIconData() {

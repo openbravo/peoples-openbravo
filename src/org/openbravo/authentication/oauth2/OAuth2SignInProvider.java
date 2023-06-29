@@ -43,7 +43,7 @@ import org.openbravo.model.authentication.LoginProvider;
 @ApplicationScoped
 public class OAuth2SignInProvider implements SignInProvider {
   private static final String TEMPLATE_ID = "64F02C64E2A14E09BCD145D74F2DE93F";
-  private static final String OAUTH2 = "OAUTH";
+  private static final String OAUTH2 = "OAUTH2";
   private Template template;
 
   @Inject

@@ -57,11 +57,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CERTIFICATE_TYPE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="CERTIFICATE_URL" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CERTIFICATE" primaryKey="false" required="false" type="CLOB" size="4000" autoIncrement="false">
+      <column name="REDIRECT_PATH" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

@@ -1,0 +1,195 @@
+/*
+ *************************************************************************
+ * The contents of this file are subject to the Openbravo  Public  License
+ * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
+ * Version 1.1  with a permitted attribution clause; you may not  use this
+ * file except in compliance with the License. You  may  obtain  a copy of
+ * the License at http://www.openbravo.com/legal/license.html
+ * Software distributed under the License  is  distributed  on  an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific  language  governing  rights  and  limitations
+ * under the License.
+ * The Original Code is Openbravo ERP.
+ * The Initial Developer of the Original Code is Openbravo SLU
+ * All portions are Copyright (C) 2023 Openbravo SLU
+ * All Rights Reserved.
+ * Contributor(s):  ______________________________________.
+ ************************************************************************
+ */
+
+package org.openbravo.authentication.oauth2;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
+import org.openbravo.authentication.AuthenticationException;
+import org.openbravo.authentication.AuthenticationType;
+import org.openbravo.authentication.ExternalAuthenticationManager;
+import org.openbravo.authentication.LoginStateHandler;
+import org.openbravo.base.HttpBaseUtils;
+import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBError;
+import org.openbravo.model.ad.access.User;
+import org.openbravo.model.authentication.OAuth2LoginProvider;
+import org.openbravo.utils.FormatUtilities;
+
+/**
+ * Allows to authenticate with an external authentication provider using OAuth 2.0.
+ */
+@AuthenticationType("OAUTH2")
+public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
+  private static final Logger log = LogManager.getLogger();
+  private static final String DEFAULT_REDIRECT_PATH = "/secureApp/LoginHandler.html?loginMethod=OAUTH2";
+
+  @Inject
+  private LoginStateHandler authStateHandler;
+
+  @Override
+  public String doAuthenticate(HttpServletRequest request, HttpServletResponse response) {
+    if (!isValidAuthorizationResponse(request)) {
+      handleError("EXTERNAL_AUTHENTICATION_FAILURE");
+    }
+    return handleAuthorizationResponse(request);
+  }
+
+  @Override
+  protected void doLogout(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+    throw new UnsupportedOperationException("doLogout is not implemented");
+  }
+
+  private boolean isValidAuthorizationResponse(HttpServletRequest request) {
+    String code = request.getParameter("code");
+    String state = request.getParameter("state");
+    log.trace("Authorization response parameters: code = {}, state = {}", code, state);
+    return code != null && authStateHandler.isValidKey(state);
+  }
+
+  private String handleAuthorizationResponse(HttpServletRequest request) {
+    try {
+      HttpRequest accessTokenRequest = buildAccessTokenRequest(request);
+      HttpResponse<String> tokenResponse = HttpClient.newBuilder()
+          .connectTimeout(Duration.ofSeconds(30))
+          .build()
+          .send(accessTokenRequest, HttpResponse.BodyHandlers.ofString());
+      int responseCode = tokenResponse.statusCode();
+      if (responseCode >= 200 && responseCode < 300) {
+        return getUser(tokenResponse.body());
+      } else {
+        throw new AuthenticationException("2");
+      }
+    } catch (Exception ex) {
+      log.error("Error handling the authorization response", ex);
+      throw new AuthenticationException("3");
+    }
+  }
+
+  private HttpRequest buildAccessTokenRequest(HttpServletRequest request) throws ServletException {
+    try {
+      OBContext.setAdminMode(true);
+
+      OAuth2LoginProvider config = authStateHandler.getConfiguration(OAuth2LoginProvider.class,
+          request.getParameter("state"));
+
+      //@formatter:off
+      String requestBody = Map.of("grant_type", "authorization_code", 
+                                  "code", request.getParameter("code"),
+                                  "redirect_uri", getRedirectURL(request, config.getRedirectPath()),
+                                  "client_id", config.getClientID(),
+                                  "client_secret", FormatUtilities.encryptDecrypt(config.getClientSecret(), false))
+      //@formatter:on
+          .entrySet()
+          .stream()
+          .map(e -> URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8) + "="
+              + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+          .collect(Collectors.joining("&"));
+
+      log.trace("Access token request parameters: {}", requestBody);
+
+      return HttpRequest.newBuilder()
+          .uri(URI.create(config.getAccessTokenURL()))
+          .header("Content-Type", "application/x-www-form-urlencoded")
+          .timeout(Duration.ofSeconds(30))
+          .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+          .build();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private String getUser(String responseData) throws JSONException {
+    JSONObject data = new JSONObject(responseData);
+    OpenIDToken openIdToken = new OpenIDToken(data.getString("id_token"));
+    String email = (String) openIdToken.getData().get("email");
+    try {
+      OBContext.setAdminMode(true);
+      User user = (User) OBDal.getInstance()
+          .createCriteria(User.class)
+          .add(Restrictions.eq(User.PROPERTY_EMAIL, email))
+          .setMaxResults(1)
+          .uniqueResult();
+      return user != null ? user.getId() : null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private void handleError(String message) {
+    OBError errorMsg = new OBError();
+    errorMsg.setType("Error");
+    errorMsg.setTitle("AUTHENTICATION_FAILURE");
+    errorMsg.setMessage(message);
+    throw new AuthenticationException(errorMsg.getMessage(), errorMsg);
+  }
+
+  /**
+   * Retrieves the standard URL where OAuth 2.0 requests coming from the external provided should be
+   * redirected by using the information of the request in the {@link RequestContext}.
+   * 
+   * @see #getRedirectURL(HttpServletRequest)
+   * 
+   * @return the standard URL where OAuth 2.0 requests coming from the external provided should be
+   *         redirected
+   */
+  static String getRedirectURL(String redirectPath) {
+    return getRedirectURL(RequestContext.get().getRequest(), redirectPath);
+  }
+
+  /**
+   * Retrieves the standard URL where OAuth 2.0 requests coming from the external provided should be
+   * redirected by using the information in the provided request.
+   * 
+   * @param request
+   *          the HTTP request
+   * @return the standard URL where OAuth 2.0 requests coming from the external provided should be
+   *         redirected
+   */
+  private static String getRedirectURL(HttpServletRequest request, String redirectPath) {
+    String path = StringUtils.isBlank(redirectPath) ? DEFAULT_REDIRECT_PATH : redirectPath;
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
+    return HttpBaseUtils.getLocalAddress(request) + path;
+  }
+}

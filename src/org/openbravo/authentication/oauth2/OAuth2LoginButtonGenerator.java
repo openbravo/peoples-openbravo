@@ -20,18 +20,15 @@
 package org.openbravo.authentication.oauth2;
 
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import org.openbravo.authentication.LoginStateHandler;
 import org.openbravo.client.kernel.BaseTemplateComponent;
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.client.kernel.Template;
-import org.openbravo.erpCommon.utility.SequenceIdData;
 
 /**
  * Generates the code for the buttons that are placed in the login page to log in with an external
@@ -41,10 +38,12 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
  */
 @RequestScoped
 public class OAuth2LoginButtonGenerator extends BaseTemplateComponent {
-  private static final String LOGIN_STATE = "#LOGIN_STATE";
 
   @Inject
   private OAuth2SignInProvider oauth2SignInProvider;
+
+  @Inject
+  private LoginStateHandler oauth2StateHandler;
 
   @Override
   protected Template getComponentTemplate() {
@@ -82,27 +81,11 @@ public class OAuth2LoginButtonGenerator extends BaseTemplateComponent {
     }
 
     public String getRedirectURL() {
-      return config.getRedirectURL();
+      return OAuth2AuthenticationManager.getRedirectURL(config.getRedirectPath());
     }
 
     public String getState() {
-      Map<String, String> loginState = getLoginState();
-      String state = SequenceIdData.getUUID();
-      loginState.put(state, config.getID());
-      setLoginState(loginState);
-      return state;
-    }
-
-    private Map<String, String> getLoginState() {
-      @SuppressWarnings("unchecked")
-      Map<String, String> loginState = RequestContext.get().getSessionAttribute(LOGIN_STATE) != null
-          ? (Map<String, String>) RequestContext.get().getSessionAttribute(LOGIN_STATE)
-          : new HashMap<>();
-      return loginState;
-    }
-
-    private void setLoginState(Map<String, String> loginState) {
-      RequestContext.get().setSessionAttribute(LOGIN_STATE, loginState);
+      return oauth2StateHandler.addNewConfiguration(config.getID());
     }
 
     public String getScope() {
