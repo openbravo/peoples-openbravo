@@ -34,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openbravo.authentication.LoginStateHandler;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -83,7 +84,7 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
       // replace the random values of the state stored in the session
       @SuppressWarnings("unchecked")
       Map<String, String> loginState = (Map<String, String>) RequestContext.get()
-          .getSessionAttribute("#LOGIN_STATE");
+          .getSessionAttribute(LoginStateHandler.LOGIN_STATE);
       for (Entry<String, String> entry : loginState.entrySet()) {
         html = html.replaceAll("state: '" + entry.getValue() + "'",
             "state: '" + entry.getKey() + "'");
@@ -97,7 +98,7 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
   private void prepareData() {
     disableExistingConfigurations();
     try {
-      OBContext.setAdminMode();
+      OBContext.setAdminMode(false);
       createOAuth2Configuration("Test 1", 1L, "650E72E5682A410F9DE4166FBA59A101",
           "B188EDFE47BA4B62B63038E3203A4D48");
       createOAuth2Configuration("Test 2", 2L, "CFB0455F982C4262AF3808BF0D468EDB", null);
@@ -121,7 +122,7 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
     config
         .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
     config.setName(name);
-    config.setType("OAUTH");
+    config.setType("OAUTH2");
     config.setSequenceNumber(sequenceNumber);
     if (imageId != null) {
       config.setIcon(OBDal.getInstance().getProxy(Image.class, imageId));
