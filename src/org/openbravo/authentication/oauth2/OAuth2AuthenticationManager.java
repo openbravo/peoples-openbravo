@@ -65,6 +65,9 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
   @Inject
   private LoginStateHandler authStateHandler;
 
+  @Inject
+  private OpenIDTokenDataProvider openIDTokenDataProvider;
+
   @Override
   public String doAuthenticate(HttpServletRequest request, HttpServletResponse response) {
     if (!isValidAuthorizationResponse(request)) {
@@ -89,71 +92,67 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
 
   private String handleAuthorizationResponse(HttpServletRequest request) {
     try {
-      HttpRequest accessTokenRequest = buildAccessTokenRequest(request);
+      OBContext.setAdminMode(true);
+      OAuth2LoginProvider config = authStateHandler.getConfiguration(OAuth2LoginProvider.class,
+          request.getParameter("state"));
+
+      HttpRequest accessTokenRequest = buildAccessTokenRequest(request, config);
       HttpResponse<String> tokenResponse = HttpClient.newBuilder()
           .connectTimeout(Duration.ofSeconds(30))
           .build()
           .send(accessTokenRequest, HttpResponse.BodyHandlers.ofString());
       int responseCode = tokenResponse.statusCode();
       if (responseCode >= 200 && responseCode < 300) {
-        return getUser(tokenResponse.body());
+        return getUser(tokenResponse.body(), config);
       }
       log.error("The token request failed with a {} error", responseCode);
       throw new AuthenticationException(buildError());
     } catch (Exception ex) {
       log.error("Error handling the authorization response", ex);
       throw new AuthenticationException(buildError());
-    }
-  }
-
-  private HttpRequest buildAccessTokenRequest(HttpServletRequest request) throws ServletException {
-    try {
-      OBContext.setAdminMode(true);
-
-      OAuth2LoginProvider config = authStateHandler.getConfiguration(OAuth2LoginProvider.class,
-          request.getParameter("state"));
-
-      //@formatter:off
-      String requestBody = Map.of("grant_type", "authorization_code", 
-                                  "code", request.getParameter("code"),
-                                  "redirect_uri", getRedirectURL(request, config.getRedirectPath()),
-                                  "client_id", config.getClientID(),
-                                  "client_secret", FormatUtilities.encryptDecrypt(config.getClientSecret(), false))
-      //@formatter:on
-          .entrySet()
-          .stream()
-          .map(e -> URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8) + "="
-              + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
-          .collect(Collectors.joining("&"));
-
-      log.trace("Access token request parameters: {}", requestBody);
-
-      return HttpRequest.newBuilder()
-          .uri(URI.create(config.getAccessTokenURL()))
-          .header("Content-Type", "application/x-www-form-urlencoded")
-          .timeout(Duration.ofSeconds(30))
-          .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-          .build();
     } finally {
       OBContext.restorePreviousMode();
     }
   }
 
-  private String getUser(String responseData) throws JSONException {
-    JSONObject data = new JSONObject(responseData);
-    OpenIDToken openIdToken = new OpenIDToken(data.getString("id_token"));
-    String email = (String) openIdToken.getData().get("email");
-    try {
-      OBContext.setAdminMode(true);
-      User user = (User) OBDal.getInstance()
-          .createCriteria(User.class)
-          .add(Restrictions.eq(User.PROPERTY_EMAIL, email))
-          .setMaxResults(1)
-          .uniqueResult();
-      return user != null ? user.getId() : null;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+  private HttpRequest buildAccessTokenRequest(HttpServletRequest request,
+      OAuth2LoginProvider config) throws ServletException {
+    //@formatter:off
+    Map<String, String> params = Map.of("grant_type", "authorization_code",
+                                        "code", request.getParameter("code"),
+                                        "redirect_uri", getRedirectURL(request, config.getRedirectPath()),
+                                        "client_id", config.getClientID(),
+                                        "client_secret", FormatUtilities.encryptDecrypt(config.getClientSecret(), false));
+    //@formatter:on
+    String requestBody = params.entrySet()
+        .stream()
+        .map(e -> URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8) + "="
+            + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+        .collect(Collectors.joining("&"));
+
+    log.trace("Access token request parameters: {}", requestBody);
+
+    return HttpRequest.newBuilder()
+        .uri(URI.create(config.getAccessTokenURL()))
+        .header("Content-Type", "application/x-www-form-urlencoded")
+        .timeout(Duration.ofSeconds(30))
+        .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+        .build();
+  }
+
+  private String getUser(String responseData, OAuth2LoginProvider config)
+      throws JSONException, OAuth2TokenVerificationException {
+    JSONObject tokenData = new JSONObject(responseData);
+    String token = tokenData.getString("id_token");
+    Map<String, Object> authData = openIDTokenDataProvider.getData(token, config);
+    String email = (String) authData.get("email");
+
+    User user = (User) OBDal.getInstance()
+        .createCriteria(User.class)
+        .add(Restrictions.eq(User.PROPERTY_EMAIL, email))
+        .setMaxResults(1)
+        .uniqueResult();
+    return user != null ? user.getId() : null;
   }
 
   private OBError buildError() {
