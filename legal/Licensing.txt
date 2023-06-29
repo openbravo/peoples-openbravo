@@ -3,7 +3,7 @@
 This license file applies to the Openbravo ERP software (the "Openbravo
 Software"), except as described below.
 
-This product is Copyright 2001-2021 Openbravo S.L.U.  For other detailed notice,
+This product is Copyright 2001-2023 Openbravo S.L.U.  For other detailed notice,
 see the "NOTICE" file with this distribution.
 
 This product is free software; you can redistribute it and/or modify
@@ -255,13 +255,15 @@ or in the file CDDL-1.0.txt in this folder)
 Under the CDDL license version 1.1 (license available at https://spdx.org/licenses/CDDL-1.1.html 
 or in the file CDDL-1.1.txt in this folder)
 
+# java-jwt-4.4.0.jar
+Under the MIT license (available at https://opensource.org/license/mit/)
+
 # CSSMinimizer.java
 CSSMin Copyright License Agreement (BSD License), Copyright (c) 2011, Barry van Oudtshoorn
 The full license text is embedded within the CSSMinimizer.java file itself
 
 # org.openbravo.client.kernel
-LAB.min.js is available under the MIT license (available at
-http://www.opensource.org/licenses/mit-license.php)
+LAB.min.js is available under the MIT license (available at https://opensource.org/license/mit/)
 
 # org.openbravo.userinterface.smartclient
 The SmartClient source code, as well as JavaScript and CSS files under the isomorphic/skins
