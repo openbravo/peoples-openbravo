@@ -51,7 +51,7 @@ public class OAuth2SignInProvider implements SignInProvider {
 
   private TimeInvalidatedCache<String, List<OAuth2Config>> configs = TimeInvalidatedCache
       .newBuilder()
-      .name("External System")
+      .name("OAuth 2.0 Configurations")
       .expireAfterDuration(Duration.ofMinutes(10))
       .build(this::getLoginProviderConfigs);
 
