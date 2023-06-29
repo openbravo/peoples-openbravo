@@ -590,7 +590,7 @@ public class InventoryCountProcess implements Process {
   private void updateQuantityCount(InventoryCount inventory) {
     // @formatter:off  
     final String hql = "update MaterialMgmtInventoryCountLine " 
-        + "set quantityCount = quantityCount - gapqty  "
+        + "set quantityCount = quantityCount - gapbookqty  "
         + "where physInventory.id = :inventoryId " ;
     // @formatter:on
     @SuppressWarnings("rawtypes")
