@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2012-2022 Openbravo SLU
+ * All portions are Copyright (C) 2012-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.GenericJDBCException;
+import org.hibernate.query.Query;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
@@ -256,7 +257,12 @@ public class InventoryCountProcess implements Process {
         checkStock(inventory);
       }
 
+      // In order to prevent some small stock imbalances that may have occurred during the counting
+      // process, the following calculation will be made
+      updateQuantityCount(inventory);
+
       executeHooks(inventoryCountProcesses, inventory);
+      inventory.setProcessDate(new Date());
     } catch (final Exception e) {
       throw new OBException(e.getMessage(), e.getCause());
     }
@@ -579,5 +585,17 @@ public class InventoryCountProcess implements Process {
         }
       }
     }
+  }
+
+  private void updateQuantityCount(InventoryCount inventory) {
+    // @formatter:off  
+    final String hql = "update MaterialMgmtInventoryCountLine " 
+        + "set quantityCount = quantityCount - gapbookqty  "
+        + "where physInventory.id = :inventoryId " ;
+    // @formatter:on
+    @SuppressWarnings("rawtypes")
+    final Query updateQuery = OBDal.getInstance().getSession().createQuery(hql);
+    updateQuery.setParameter("inventoryId", inventory.getId());
+    updateQuery.executeUpdate();
   }
 }

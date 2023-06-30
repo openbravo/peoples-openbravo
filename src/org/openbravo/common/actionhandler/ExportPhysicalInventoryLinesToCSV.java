@@ -175,6 +175,8 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
       addPhysicalInventoryLinesToCsv(writer, inventoryId, blindCount);
       writer.close();
       outputfile.write(writer.toString());
+      InventoryCount inventoryCount = OBDal.getInstance().get(InventoryCount.class, inventoryId);
+      inventoryCount.setExportedCsvDate(new Date());
     }
     return file.toPath();
   }
