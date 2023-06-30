@@ -22,10 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.openbravo.base.secureApp.LoginHandler;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
@@ -50,10 +47,8 @@ public class LoginStateHandler {
    */
   public String addNewConfiguration(String configId) {
     Map<String, String> loginState = getLoginState();
-    String key = SequenceIdData.getUUID();
-    loginState.put(key, configId);
-    RequestContext.get().setSessionAttribute(LOGIN_STATE, loginState);
-    return key;
+    loginState.putIfAbsent(configId, SequenceIdData.getUUID());
+    return loginState.get(configId);
   }
 
   /**
@@ -65,7 +60,7 @@ public class LoginStateHandler {
    * @return true if the key is valid or false in any other case.
    */
   public boolean isValidKey(String key) {
-    return getLoginState().containsKey(key);
+    return getLoginState().containsValue(key);
   }
 
   /**
@@ -79,38 +74,22 @@ public class LoginStateHandler {
    * @return true if the key is valid or false in any other case.
    */
   public <T extends BaseOBObject> T getConfiguration(Class<T> clz, String key) {
-    String configId = getLoginState().get(key);
-    return OBDal.getInstance().get(clz, configId);
-  }
-
-  /**
-   * Invalidates the session of the provided request and generates a new one on the fly, thus
-   * generating a new JSSESSIONID cookie but preserving the login state information in the session.
-   *
-   * @see LoginHandler#doPost(HttpServletRequest, javax.servlet.http.HttpServletResponse)
-   *
-   * @param request
-   *          The request whose session should be invalidate
-   */
-  public void resetCookieId(HttpServletRequest request) {
-    HttpSession httpSession = request.getSession(false);
-    Object loginState = null;
-    if (httpSession != null && !httpSession.isNew()) {
-      loginState = httpSession.getAttribute(LOGIN_STATE);
-      httpSession.invalidate();
-    }
-    httpSession = request.getSession(true);
-    if (loginState != null) {
-      // keep the login state for the new session, used by the external authentication providers
-      httpSession.setAttribute(LOGIN_STATE, loginState);
-    }
+    return getLoginState().entrySet()
+        .stream()
+        .filter(e -> e.getValue().equals(key))
+        .findFirst()
+        .map(e -> OBDal.getInstance().get(clz, e.getKey()))
+        .orElseThrow();
   }
 
   private Map<String, String> getLoginState() {
     @SuppressWarnings("unchecked")
-    Map<String, String> loginState = RequestContext.get().getSessionAttribute(LOGIN_STATE) != null
-        ? (Map<String, String>) RequestContext.get().getSessionAttribute(LOGIN_STATE)
-        : new ConcurrentHashMap<>();
+    Map<String, String> loginState = (Map<String, String>) RequestContext.get()
+        .getSessionAttribute(LOGIN_STATE);
+    if (loginState == null) {
+      loginState = new ConcurrentHashMap<>();
+      RequestContext.get().setSessionAttribute(LOGIN_STATE, loginState);
+    }
     return loginState;
   }
 }

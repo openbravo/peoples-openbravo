@@ -79,9 +79,6 @@ public class LoginHandler extends HttpBaseServlet {
   @Inject
   private PasswordStrengthChecker passwordStrengthChecker;
 
-  @Inject
-  private LoginStateHandler loginStateHandler;
-
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse res)
       throws IOException, ServletException {
@@ -89,21 +86,17 @@ public class LoginHandler extends HttpBaseServlet {
     log4j.debug("start doPost");
 
     boolean isPasswordResetFlow = Boolean.parseBoolean(req.getParameter("resetPassword"));
-    boolean isExternalLoginFlow = isExternalLoginRequest(new VariablesSecureApp(req));
-    if (!isPasswordResetFlow && !isExternalLoginFlow) {
+    if (!isPasswordResetFlow) {
       // Cookie id will be reset every time a user logs in, to prevent a malicious user from
       // stealing a cookie which later on will correspond with a valid session
       // If we are in password reset flow, there is no need to reset the cookie as it was reset in
       // the previous attempt to login
       resetCookieId(req);
-    } else if (isExternalLoginFlow) {
-      // reset the cookie but preserving in session the login state information used by the external
-      // authentication providers
-      loginStateHandler.resetCookieId(req);
     }
 
     doOptions(req, res);
     final VariablesSecureApp vars = new VariablesSecureApp(req);
+    boolean isExternalLoginFlow = isExternalLoginRequest(vars);
 
     // Empty session
     req.getSession().removeAttribute("#Authenticated_user");
@@ -198,15 +191,21 @@ public class LoginHandler extends HttpBaseServlet {
   /**
    * This method invalidates the current session and generates a new one on the fly, thus generating
    * a new JSSESSIONID cookie. It is called every time the user logs in to prevent some malicious
-   * user from stealing a cookie which later on will correspond with a valid session
+   * user from stealing a cookie which later on will correspond with a valid session. Note that the
+   * login state information required to login with some external authentication providers is
+   * preserved in the newly created session.
    */
   private void resetCookieId(HttpServletRequest req) {
     HttpSession httpSession = req.getSession(false);
+    Object loginState = null;
     if (httpSession != null && !httpSession.isNew()) {
+      loginState = httpSession.getAttribute(LoginStateHandler.LOGIN_STATE);
       httpSession.invalidate();
     }
     httpSession = req.getSession(true);
-
+    if (loginState != null) {
+      httpSession.setAttribute(LoginStateHandler.LOGIN_STATE, loginState);
+    }
   }
 
   @Override
