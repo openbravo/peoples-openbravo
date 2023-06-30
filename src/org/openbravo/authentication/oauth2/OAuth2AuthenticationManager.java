@@ -40,7 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationType;
 import org.openbravo.authentication.ExternalAuthenticationManager;
@@ -140,19 +139,56 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
         .build();
   }
 
-  private String getUser(String responseData, OAuth2LoginProvider config)
+  /**
+   * Retrieves the ID of the authenticated {@link User}. By default this method assumes that the
+   * provided response data contains an OpenID token which includes an email which is used to find
+   * the authenticated user.
+   *
+   * @param responseData
+   *          The data obtained in the response of the access token request
+   * @param configuration
+   *          the OAuth 2.0 configuration with information that can be used to verify the token like
+   *          the URL to get the public keys required by the algorithm used for encrypting the token
+   *          data.
+   *
+   * @return the ID of the authenticated {@link User}
+   *
+   * @throws JSONException
+   *           If it is not possible to parse the response data as JSON or if the "id_token"
+   *           property is not present in the response
+   * @throws OAuth2TokenVerificationException
+   *           If it is not possible to verify the token or extract the authentication data
+   * @throws AuthenticationException
+   *           If there is no user linked to the retrieved email
+   */
+  protected String getUser(String responseData, OAuth2LoginProvider config)
       throws JSONException, OAuth2TokenVerificationException {
     JSONObject tokenData = new JSONObject(responseData);
-    String token = tokenData.getString("id_token");
-    Map<String, Object> authData = openIDTokenDataProvider.getData(token, config);
+    String idToken = tokenData.getString("id_token");
+    Map<String, Object> authData = openIDTokenDataProvider.getData(idToken, config);
     String email = (String) authData.get("email");
 
-    User user = (User) OBDal.getInstance()
-        .createCriteria(User.class)
-        .add(Restrictions.eq(User.PROPERTY_EMAIL, email))
+    if (StringUtils.isBlank(email)) {
+      throw new OAuth2TokenVerificationException("The user e-mail was not found");
+    }
+
+    //@formatter:off
+    String hql = "select u.id" +
+                 "  from ADUser u" +
+                 " where email = :email";
+    //@formatter:on
+    String userId = OBDal.getInstance()
+        .getSession()
+        .createQuery(hql, String.class)
+        .setParameter("email", email)
         .setMaxResults(1)
         .uniqueResult();
-    return user != null ? user.getId() : null;
+
+    if (userId == null) {
+      throw new AuthenticationException("No user found matching the e-mail");
+    }
+
+    return userId;
   }
 
   private OBError buildError() {
