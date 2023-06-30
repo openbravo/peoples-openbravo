@@ -190,7 +190,9 @@ public class LoginHandler extends HttpBaseServlet {
       log4j.error("Could not find an AuthenticationManager instance for method {}", method);
       throw new AuthenticationException("Could not find an AuthenticationManager");
     }
-    return externalAuthManagers.get(0);
+    ExternalAuthenticationManager authManager = externalAuthManagers.get(0);
+    authManager.init(this);
+    return authManager;
   }
 
   /**
