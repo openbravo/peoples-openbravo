@@ -147,7 +147,7 @@ public class LoginHandler extends HttpBaseServlet {
             throw new AuthenticationException("Message");// FIXME
           }
 
-          checkLicenseAndGo(res, vars, strUserAuth, user, sessionId);
+          checkLicenseAndGo(res, vars, strUserAuth, sessionId);
 
         } catch (AuthenticationExpirationPasswordException | ChangePasswordException exception) {
           vars.removeSessionValue("#LoginErrorMsg");
@@ -238,15 +238,27 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  @Deprecated
+  /**
+   * Use {@link #checkLicenseAndGo(HttpServletResponse, VariablesSecureApp, String, String)} instead
+   */
+  @Deprecated(forRemoval = true)
   protected final void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
       String strUserAuth, String username, String sessionId, boolean doRedirect)
       throws IOException, ServletException {
-    checkLicenseAndGo(res, vars, strUserAuth, username, sessionId);
+    checkLicenseAndGo(res, vars, strUserAuth, sessionId);
+  }
+
+  /**
+   * Use {@link #checkLicenseAndGo(HttpServletResponse, VariablesSecureApp, String, String)} instead
+   */
+  @Deprecated(forRemoval = true)
+  protected final void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
+      String strUserAuth, String username, String sessionId) throws IOException, ServletException {
+    checkLicenseAndGo(res, vars, strUserAuth, sessionId);
   }
 
   protected final void checkLicenseAndGo(HttpServletResponse res, VariablesSecureApp vars,
-      String strUserAuth, String username, String sessionId) throws IOException, ServletException {
+      String strUserAuth, String sessionId) throws IOException, ServletException {
     OBContext.setAdminMode();
     ConnectionProvider cp = new DalConnectionProvider(false);
     try {
