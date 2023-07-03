@@ -38,7 +38,7 @@ import org.openbravo.test.base.MockableBaseTest;
 /**
  * Tests for the {@link SynchronizationEvent} class
  */
-@Ignore
+@Ignore("Fails with JDK 22")
 public class SynchronizationEventTest extends MockableBaseTest {
 
   private static final String HANDLED_EVENT = "A";
