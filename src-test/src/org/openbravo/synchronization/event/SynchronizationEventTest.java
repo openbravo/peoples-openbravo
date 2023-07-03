@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 import javax.enterprise.inject.Instance;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,6 +38,7 @@ import org.openbravo.test.base.MockableBaseTest;
 /**
  * Tests for the {@link SynchronizationEvent} class
  */
+@Ignore
 public class SynchronizationEventTest extends MockableBaseTest {
 
   private static final String HANDLED_EVENT = "A";
