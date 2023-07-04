@@ -84,6 +84,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     final String inventoryId = paramValues.getString("inpOwnerId");
     final String tabId = paramValues.getString("inpTabId");
     final String noStock = paramValues.getString("noStock");
+    InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
 
     try (BufferedReader br = Files.newBufferedReader(Paths.get(file.getAbsolutePath()))) {
       String line = br.readLine();
@@ -106,7 +107,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
               + OBMessageUtils.getI18NMessage("OBUIAPP_ProductNotFound") + "\n");
           continue;
         }
-        Locator locator = getLocator(bin);
+        Locator locator = getLocator(bin, inventory.getWarehouse().getId());
         if (locator == null) {
           uploadResult.incErrorCount();
           uploadResult.addErrorMessage(
@@ -155,7 +156,6 @@ public class ImportInventoryLines extends ProcessUploadedFile {
       uploadResult.addErrorMessage(e.getMessage() + "\n");
     }
 
-    InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
     // Attach csv in inventory attachments
     attachCSV(file, inventory, tabId);
     executeHooks(inventoryCountUpdateHooks, inventory);
@@ -275,9 +275,11 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     return qry.uniqueResult();
   }
 
-  private Locator getLocator(String bin) {
-    final OBQuery<Locator> qry = OBDal.getInstance().createQuery(Locator.class, "value=:value");
+  private Locator getLocator(String bin, String warehouseId) {
+    final OBQuery<Locator> qry = OBDal.getInstance()
+        .createQuery(Locator.class, "value=:value and m_warehouse_id= :warehouseId");
     qry.setNamedParameter("value", bin);
+    qry.setNamedParameter("warehouseId", warehouseId);
     qry.setMaxResult(1);
     return qry.uniqueResult();
   }
