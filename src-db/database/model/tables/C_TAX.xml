@@ -149,6 +149,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="SEARCHKEY" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRY_C_TAX">
         <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
