@@ -116,6 +116,8 @@ create.database: creates the database from scratch.
             alter database "${sid}" owner to "${systemUser}";
           end if;
         END';
+      </transaction>
+      <transaction>
         DROP DATABASE IF EXISTS "${sid}";
       </transaction>
     </sql>
