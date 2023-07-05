@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-  <database name="TABLE M_PRODUCT_TRL">
-    <table name="M_PRODUCT_TRL" primaryKey="M_PRODUCT_TRL_KEY">
-      <column name="M_PRODUCT_TRL_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE M_CH_VALUE_TRL">
+    <table name="M_CH_VALUE_TRL" primaryKey="M_CH_VALUE_TRL_KEY">
+      <column name="M_CH_VALUE_TRL_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
-        <onCreateDefault><![CDATA[get_uuid()]]></onCreateDefault>
+        <onCreateDefault/>
       </column>
-      <column name="M_PRODUCT_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="M_CH_VALUE_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -41,11 +41,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="NAME" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+      <column name="NAME" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DOCUMENTNOTE" primaryKey="false" required="false" type="NVARCHAR" size="2000" autoIncrement="false">
+      <column name="DOCUMENTNOTE" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -53,27 +53,23 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CHARACTERISTIC_DESC" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_TRL_AD_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_CH_VALUE_TRL_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_LANGUAGE" name="M_PRODUCT_TRL_AD_LANGUAGE">
+      <foreign-key foreignTable="AD_LANGUAGE" name="M_CH_VALUE_TRL_AD_LANGUAGE">
         <reference local="AD_LANGUAGE" foreign="AD_LANGUAGE"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="M_PRODUCT_TRL_AD_ORG">
+      <foreign-key foreignTable="AD_ORG" name="M_CH_VALUE_TRL_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_PRODUCT" name="M_PRODUCT_TRL_M_PRODUCT" onDelete="cascade">
-        <reference local="M_PRODUCT_ID" foreign="M_PRODUCT_ID"/>
+      <foreign-key foreignTable="M_CH_VALUE" name="M_CH_VALUE_TRL_M_CH_VALUE" onDelete="cascade">
+        <reference local="M_CH_VALUE_ID" foreign="M_CH_VALUE_ID"/>
       </foreign-key>
-      <unique name="M_PRODUCT_TRL_PRODUCT_LANGU_UN">
-        <unique-column name="M_PRODUCT_ID"/>
+      <unique name="M_CH_VALUE_TRL_LANGU_UN">
+        <unique-column name="M_CH_VALUE_ID"/>
         <unique-column name="AD_LANGUAGE"/>
       </unique>
-      <check name="M_PRODUCT_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
-      <check name="M_PRODUCT_TRL_ISTRANSLATED_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
+      <check name="M_CH_VALUE_TRL_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_CH_VALUE_TRL_ISTRANS_CHK"><![CDATA[ISTRANSLATED IN ('Y', 'N')]]></check>
     </table>
   </database>
