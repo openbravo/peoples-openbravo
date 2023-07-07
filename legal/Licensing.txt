@@ -152,7 +152,8 @@ Under the ANTLR license (available at http://www.antlr.org/license.html)
 # junit-4.13.2.jar
 Under the Eclipse Public License - v 1.0 (available at https://www.eclipse.org/legal/epl-v10.html)
 
-# mockito-core-5.4.0.jar
+# mockito-core-4.4.0.jar
+# mockito-inline-4.4.0.jar
 Under MIT license. (available at https://github.com/mockito/mockito/blob/main/LICENSE)
 
 # objenesis-3.3.jar
@@ -234,8 +235,8 @@ Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 # reflections-0.9.11.jar
 Under the WTFPL license (included as WTFPL_license.txt in this folder)
 
-# byte-buddy-1.14.5.jar
-# byte-buddy-agent-1.14.5.jar
+# byte-buddy-1.11.20.jar
+# byte-buddy-agent-1.11.20.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder),
 note that Byte Buddy depends on the ASM library which is distributed under a BSD license (included as ASM_BSD_license.txt in this folder)
 
