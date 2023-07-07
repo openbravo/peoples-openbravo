@@ -11,13 +11,15 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2021-2022 Openbravo SLU
+ * All portions are Copyright (C) 2021-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.event;
+
+import java.util.List;
 
 import javax.enterprise.event.Observes;
 
@@ -59,6 +61,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
     checkDefaultAddressDuplicates(event);
+    checkKeyColumns(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -70,6 +73,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkDefaultAddressDuplicates(event);
     checkMandatoryRemovalIfMultiIntegration(event);
     checkIdentifierScanningActionDuplicates(event);
+    checkKeyColumns(event);
   }
 
   private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
@@ -217,4 +221,47 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
       throw new OBException("@DuplicatedCRMIdentifierScanningAction@");
     }
   }
+
+  private void checkKeyColumns(EntityPersistenceEvent event) {
+    final Entity transactionEntity = ModelProvider.getInstance()
+        .getEntity(event.getTargetInstance().getEntityName());
+    final Boolean currentKeyColumn = (Boolean) event.getCurrentState(
+        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN));
+
+    if (!currentKeyColumn) {
+      return;
+    }
+
+    final ExternalBusinessPartnerConfig currentConfig = (ExternalBusinessPartnerConfig) event
+        .getCurrentState(transactionEntity.getProperty(
+            ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION));
+    final String currentApiKey = (String) event.getCurrentState(
+        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_APIKEY));
+    final Boolean currentIsAddressProperty = (Boolean) event.getCurrentState(transactionEntity
+        .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISADDRESSPROPERTY));
+
+    final OBCriteria<ExternalBusinessPartnerConfigProperty> criteria = OBDal.getInstance()
+        .createCriteria(ExternalBusinessPartnerConfigProperty.class);
+    criteria.add(Restrictions.eq(
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        currentConfig));
+    criteria
+        .add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_APIKEY, currentApiKey));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN, true));
+    List<ExternalBusinessPartnerConfigProperty> keyColumns = criteria.list();
+    if (currentIsAddressProperty) {
+      long countAddressKey = keyColumns.stream()
+          .filter(ExternalBusinessPartnerConfigProperty::isAddressProperty)
+          .count();
+      if (countAddressKey > 0) {
+        throw new OBException("@DuplicatedCRMAddressKeyColumn@");
+      }
+      return;
+    }
+    long countKey = keyColumns.stream().filter(col -> !col.isAddressProperty()).count();
+    if (countKey > 0) {
+      throw new OBException("@DuplicatedCRMKeyColumn@");
+    }
+  }
+
 }
