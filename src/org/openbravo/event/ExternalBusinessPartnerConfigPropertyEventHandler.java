@@ -61,7 +61,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
     checkDefaultAddressDuplicates(event);
-    checkKeyColumns(event);
+    checkKeyColumnsAndAddress(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -73,7 +73,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkDefaultAddressDuplicates(event);
     checkMandatoryRemovalIfMultiIntegration(event);
     checkIdentifierScanningActionDuplicates(event);
-    checkKeyColumns(event);
+    checkKeyColumnsAndAddress(event);
   }
 
   private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
@@ -222,23 +222,59 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     }
   }
 
-  private void checkKeyColumns(EntityPersistenceEvent event) {
+  private void checkKeyColumnsAndAddress(EntityPersistenceEvent event) {
     final Entity transactionEntity = ModelProvider.getInstance()
         .getEntity(event.getTargetInstance().getEntityName());
+    final Boolean currentIsAddressProperty = (Boolean) event.getCurrentState(transactionEntity
+        .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISADDRESSPROPERTY));
+
+    // Check Key Column unique constrain
     final Boolean currentKeyColumn = (Boolean) event.getCurrentState(
         transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN));
-
-    if (!currentKeyColumn) {
-      return;
+    if (currentKeyColumn) {
+      OBCriteria<ExternalBusinessPartnerConfigProperty> criteria = getUniqueCriteria(event,
+          transactionEntity);
+      criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN, true));
+      List<ExternalBusinessPartnerConfigProperty> keyColumns = criteria.list();
+      if (currentIsAddressProperty) {
+        long countAddressKey = keyColumns.stream()
+            .filter(ExternalBusinessPartnerConfigProperty::isAddressProperty)
+            .count();
+        if (countAddressKey > 0) {
+          throw new OBException("@DuplicatedCRMAddressKeyColumn@");
+        }
+        return;
+      }
+      long countKey = keyColumns.stream().filter(col -> !col.isAddressProperty()).count();
+      if (countKey > 0) {
+        throw new OBException("@DuplicatedCRMKeyColumn@");
+      }
     }
 
+    // Check Address reference constrains
+    final String currentReference = (String) event.getCurrentState(
+        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_REFERENCE));
+    if ("ShippingAddress".equals(currentReference) || "InvoiceAddress".equals(currentReference)) {
+      if (currentIsAddressProperty) {
+        throw new OBException("@AddressReferenceCRMNotAllowAtAddress@");
+      }
+      OBCriteria<ExternalBusinessPartnerConfigProperty> criteria = getUniqueCriteria(event,
+          transactionEntity);
+      criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_REFERENCE,
+          currentReference));
+      if (criteria.count() > 0) {
+        throw new OBException("@DuplicatedCRMRefenceAddress@");
+      }
+    }
+  }
+
+  private OBCriteria<ExternalBusinessPartnerConfigProperty> getUniqueCriteria(
+      EntityPersistenceEvent event, Entity transactionEntity) {
     final ExternalBusinessPartnerConfig currentConfig = (ExternalBusinessPartnerConfig) event
         .getCurrentState(transactionEntity.getProperty(
             ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION));
     final String currentApiKey = (String) event.getCurrentState(
         transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_APIKEY));
-    final Boolean currentIsAddressProperty = (Boolean) event.getCurrentState(transactionEntity
-        .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISADDRESSPROPERTY));
 
     final OBCriteria<ExternalBusinessPartnerConfigProperty> criteria = OBDal.getInstance()
         .createCriteria(ExternalBusinessPartnerConfigProperty.class);
@@ -247,21 +283,6 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
         currentConfig));
     criteria
         .add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_APIKEY, currentApiKey));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN, true));
-    List<ExternalBusinessPartnerConfigProperty> keyColumns = criteria.list();
-    if (currentIsAddressProperty) {
-      long countAddressKey = keyColumns.stream()
-          .filter(ExternalBusinessPartnerConfigProperty::isAddressProperty)
-          .count();
-      if (countAddressKey > 0) {
-        throw new OBException("@DuplicatedCRMAddressKeyColumn@");
-      }
-      return;
-    }
-    long countKey = keyColumns.stream().filter(col -> !col.isAddressProperty()).count();
-    if (countKey > 0) {
-      throw new OBException("@DuplicatedCRMKeyColumn@");
-    }
+    return criteria;
   }
-
 }
