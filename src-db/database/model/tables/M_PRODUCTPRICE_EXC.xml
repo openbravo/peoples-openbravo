@@ -70,5 +70,6 @@
         <index-column name="M_PRODUCTPRICE_ID"/>
       </index>
       <check name="M_PPRICE_EXC_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_PRODUCTPRICE_EXC_DATE_CHK"><![CDATA[VALIDFROM <= VALIDTO]]></check>
     </table>
   </database>
