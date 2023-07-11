@@ -70,6 +70,7 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
       throw new OBException(OBMessageUtils
           .parseTranslation(OBMessageUtils.messageBD("ProductPriceExceptionExists"), map));
     }
+    checkDates(event);
     updateOrgDepth(event);
   }
 
@@ -86,6 +87,7 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
       throw new OBException(OBMessageUtils
           .parseTranslation(OBMessageUtils.messageBD("ProductPriceExceptionExists"), map));
     }
+    checkDates(event);
     updateOrgDepth(event);
     updateProductPriceExceptionAuditFields(event);
   }
@@ -192,4 +194,13 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
           .executeUpdate();
     }
   }
+
+  private void checkDates(EntityPersistenceEvent event) {
+    final ProductPriceException priceException = (ProductPriceException) event.getTargetInstance();
+    if (priceException.getValidToDate() != null
+        && priceException.getValidToDate().before(priceException.getValidFromDate())) {
+      throw new OBException("@M_ProductPrice_Exc_Date_Chk@");
+    }
+  }
+
 }
