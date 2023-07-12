@@ -18,6 +18,8 @@
  */
 package org.openbravo.materialmgmt;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,14 +27,21 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.exception.GenericJDBCException;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.ad.system.Language;
+import org.openbravo.model.common.plm.Characteristic;
+import org.openbravo.model.common.plm.CharacteristicTrl;
+import org.openbravo.model.common.plm.CharacteristicValue;
+import org.openbravo.model.common.plm.CharacteristicValueTrl;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.plm.ProductCharacteristic;
 import org.openbravo.model.common.plm.ProductCharacteristicValue;
+import org.openbravo.model.common.plm.ProductTrl;
 import org.openbravo.scheduling.ProcessBundle;
 import org.openbravo.service.db.DalBaseProcess;
 
@@ -89,11 +98,28 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
   public void update(String strProductId, String strChValueId) {
     OBContext.setAdminMode(true);
     try {
+
+      boolean translationRequired = false;
+
+      // @formatter:off
+      final String trlQryStr = " as l"
+                             + " where l.systemLanguage = true ";
+      // @formatter:on
+      final OBQuery<Language> languagesHql = OBDal.getInstance()
+          .createQuery(Language.class, trlQryStr);
+      List<Language> languages = languagesHql.list();
+      if (languages.size() > 1) {
+        translationRequired = true;
+      }
+
       if (StringUtils.isNotBlank(strProductId)) {
         Product product = OBDal.getInstance().get(Product.class, strProductId);
         // In some cases product might have been deleted.
         if (product != null) {
           updateProduct(product);
+          if (translationRequired) {
+            updateProductTrl(product, languages);
+          }
         }
         return;
       }
@@ -171,5 +197,114 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
       }
     }
     product.setCharacteristicDescription(strChDesc.toString());
+  }
+
+  private void updateProductTrl(Product product, List<Language> languages) {
+
+    for (Language language : languages) {
+      // In case it is the language of the Client skip the process as it is supposed to use the
+      // standard M_Product
+      if (language == OBContext.getOBContext().getCurrentClient().getLanguage()) {
+        continue;
+      }
+
+      StringBuilder strChDesc = new StringBuilder();
+      //@formatter:off
+      String hql = " as pch "
+                 + " where pch.product.id = :productId "
+                 + " order by pch.sequenceNumber ";
+      //@formatter:on
+      OBQuery<ProductCharacteristic> pchQuery = OBDal.getInstance()
+          .createQuery(ProductCharacteristic.class, hql)
+          .setFilterOnActive(false)
+          .setFilterOnReadableOrganization(false)
+          .setNamedParameter("productId", product.getId());
+
+      for (ProductCharacteristic pch : pchQuery.list()) {
+        Characteristic characteristic = pch.getCharacteristic();
+        String charName = characteristic.getName();
+        //@formatter:off
+        String pchTrlHql = " as pchtrl "
+                         + " where pchtrl.characteristic.id = :characteristicId "
+                         + " and pchtrl.language.id = :languageId ";
+        //@formatter:on
+        OBQuery<CharacteristicTrl> pchTrlQuery = OBDal.getInstance()
+            .createQuery(CharacteristicTrl.class, pchTrlHql)
+            .setFilterOnActive(false)
+            .setFilterOnReadableOrganization(false)
+            .setNamedParameter("characteristicId", characteristic.getId())
+            .setNamedParameter("languageId", language.getId())
+            .setMaxResult(1);
+        CharacteristicTrl characteristicTrl = pchTrlQuery.uniqueResult();
+        if (characteristicTrl != null) {
+          charName = characteristicTrl.getName();
+        }
+
+        if (StringUtils.isNotBlank(strChDesc.toString())) {
+          strChDesc.append(", ");
+        }
+        strChDesc.append(charName + ":");
+
+        //@formatter:off
+        hql = " as pchv "
+            + " where pchv.characteristic.id = :chId "
+            + " and pchv.product.id = :productId ";
+        //@formatter:on
+        OBQuery<ProductCharacteristicValue> pchvQuery = OBDal.getInstance()
+            .createQuery(ProductCharacteristicValue.class, hql)
+            .setFilterOnActive(false)
+            .setFilterOnReadableOrganization(false)
+            .setNamedParameter("chId", pch.getCharacteristic().getId())
+            .setNamedParameter("productId", product.getId());
+
+        for (ProductCharacteristicValue pchv : pchvQuery.list()) {
+          CharacteristicValue chValue = pchv.getCharacteristicValue();
+          String chValueName = chValue.getName();
+          //@formatter:off
+          String pchValueTrlHql = " as pchvaluetrl "
+                                + " where pchvaluetrl.characteristicValue.id = :characteristicValueId "
+                                + " and pchvaluetrl.language.id = :languageId ";
+          //@formatter:on
+          OBQuery<CharacteristicValueTrl> pchValueTrlQuery = OBDal.getInstance()
+              .createQuery(CharacteristicValueTrl.class, pchValueTrlHql)
+              .setFilterOnActive(false)
+              .setFilterOnReadableOrganization(false)
+              .setNamedParameter("characteristicValueId", chValue.getId())
+              .setNamedParameter("languageId", language.getId())
+              .setMaxResult(1);
+          CharacteristicValueTrl characteristicValueTrl = pchValueTrlQuery.uniqueResult();
+          if (characteristicValueTrl != null) {
+            chValueName = characteristicValueTrl.getName();
+          }
+          strChDesc.append(" " + chValueName);
+        }
+      }
+
+      //@formatter:off
+      String hqlProductTrl = " as pt "
+                           + " where pt.language.id = :languageId "
+                           + " and pt.product.id = :productId ";
+      //@formatter:on
+      OBQuery<ProductTrl> productTrlQuery = OBDal.getInstance()
+          .createQuery(ProductTrl.class, hqlProductTrl)
+          .setFilterOnActive(false)
+          .setFilterOnReadableOrganization(false)
+          .setNamedParameter("languageId", language.getId())
+          .setNamedParameter("productId", product.getId())
+          .setMaxResult(1);
+
+      ProductTrl productTrl = productTrlQuery.uniqueResult();
+
+      if (productTrl == null) {
+        productTrl = OBProvider.getInstance().get(ProductTrl.class);
+        productTrl.setLanguage(language);
+        productTrl.setName(product.getName());
+        productTrl.setProduct(product);
+      }
+      productTrl.setCharacteristicDescription(strChDesc.toString());
+      OBDal.getInstance().save(productTrl);
+
+    }
+
   }
 }
