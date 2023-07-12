@@ -60,7 +60,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     }
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
-    checkDefaultAddressDuplicates(event);
+    checkKeyColumnsAndAddress(event);
     checkKeyColumnsAndAddress(event);
   }
 
@@ -70,7 +70,6 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     }
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
-    checkDefaultAddressDuplicates(event);
     checkMandatoryRemovalIfMultiIntegration(event);
     checkIdentifierScanningActionDuplicates(event);
     checkKeyColumnsAndAddress(event);
@@ -127,33 +126,6 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     criteria.setMaxResults(1);
     if (criteria.uniqueResult() != null) {
       throw new OBException("@DuplicatedCRMDefaultPhone@");
-    }
-  }
-
-  private void checkDefaultAddressDuplicates(EntityPersistenceEvent event) {
-    final String id = event.getId();
-    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
-        .getTargetInstance();
-    final ExternalBusinessPartnerConfig currentExtBPConfig = property
-        .getExternalBusinessPartnerIntegrationConfiguration();
-
-    if (!property.isDefaultAddress() || !property.isActive()) {
-      return;
-    }
-
-    final OBCriteria<?> criteria = OBDal.getInstance()
-        .createCriteria(event.getTargetInstance().getClass());
-    criteria.add(Restrictions.eq(
-        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-        currentExtBPConfig));
-    criteria.add(
-        Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTADDRESS, true));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
-    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
-
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
-      throw new OBException(OBMessageUtils.messageBD("@DuplicatedCRMDefaultAddress@"));
     }
   }
 

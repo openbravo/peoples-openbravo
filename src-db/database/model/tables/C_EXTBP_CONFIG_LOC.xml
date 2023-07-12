@@ -73,6 +73,30 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISSHIPPING_ADDRESS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISINVOICE_ADDRESSS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISDEFAULT_SHIPPING_ADDRESS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISDEFAULT_INVOICE_ADDRESS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="USEAS_DEFAULT_SHIP_ADD" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
+      <column name="USEAS_DEFAULT_INV_ADD" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault><![CDATA['N']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ADD1">
         <reference local="ADDRESS1" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
       </foreign-key>
@@ -87,6 +111,18 @@
       </foreign-key>
       <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_COUNTRY">
         <reference local="COUNTRY" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ISDEF_INV">
+        <reference local="ISDEFAULT_INVOICE_ADDRESS" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ISDEF_SHIP">
+        <reference local="ISDEFAULT_SHIPPING_ADDRESS" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ISINVOICE">
+        <reference local="ISINVOICE_ADDRESSS" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ISSHIPPING">
+        <reference local="ISSHIPPING_ADDRESS" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_POSTAL">
         <reference local="POSTAL" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
@@ -107,5 +143,7 @@
       <check name="C_EXTBP_CONF_LOC_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_EXTBP_CONF_LOC_ISBILLTO_CHK"><![CDATA[ISBILLTO IN ('Y', 'N')]]></check>
       <check name="C_EXTBP_CONF_LOC_ISSHIPTO_CHK"><![CDATA[ISSHIPTO IN ('Y', 'N')]]></check>
+      <check name="C_EXTBP_CONF_LOC_USEASINV_CHK"><![CDATA[USEAS_DEFAULT_INV_ADD IN ('Y', 'N')]]></check>
+      <check name="C_EXTBP_CONF_LOC_USEASSHI_CHK"><![CDATA[USEAS_DEFAULT_SHIP_ADD IN ('Y', 'N')]]></check>
     </table>
   </database>

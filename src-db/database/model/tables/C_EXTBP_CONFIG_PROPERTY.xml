@@ -165,10 +165,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISDEFAULTADDRESS" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
-        <onCreateDefault/>
-      </column>
       <column name="ISDISPLAYEDINCUSTOMERSWINDOW" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
@@ -227,7 +223,6 @@
       <check name="C_EXTBPCONFPROP_EDITAB_CH"><![CDATA[ISEDITABLE IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_IDENTIF_CH"><![CDATA[ISIDENTIFIER IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_ISADDR_CH"><![CDATA[ISADDRESSPROPERTY IN ('Y', 'N')]]></check>
-      <check name="C_EXTBPCONFPROP_ISDEFADDR"><![CDATA[ISADDRESSPROPERTY = 'Y' AND (ISDEFAULTADDRESS IN ('Y', 'N')) OR ISADDRESSPROPERTY = 'N' AND ISDEFAULTADDRESS = 'N']]></check>
       <check name="C_EXTBPCONFPROP_ISKEY_CH"><![CDATA[ISKEY IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_ISTR_CH"><![CDATA[ISTRANSLATABLE IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_MAND_CH"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
@@ -235,6 +230,5 @@
       <check name="C_EXTBPCONFPROP_TXTMSG_CH"><![CDATA[TEXT IS NOT NULL OR ISTRANSLATABLE = 'Y']]></check>
       <check name="C_EXTBPCP_IDTFRSCNACTION_CHK"><![CDATA[IDENTIFIERSCANNINGACTION IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCP_ISCATEGORYKEY_CH"><![CDATA[ISCATEGORYKEY IN ('Y', 'N')]]></check>
-      <check name="C_EXTBPCP_ISDFADR_CHK"><![CDATA[ISDEFAULTADDRESS IN ('Y', 'N')]]></check>
     </table>
   </database>
