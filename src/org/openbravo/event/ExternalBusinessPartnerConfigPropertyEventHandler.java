@@ -61,7 +61,6 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
     checkKeyColumnsAndAddress(event);
-    checkKeyColumnsAndAddress(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
