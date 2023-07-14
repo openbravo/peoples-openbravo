@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.persistence.Tuple;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -173,22 +174,24 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
     }
 
     //@formatter:off
-    String hql = "select u.id" +
+    String hql = "select u.id as id, u.username as userName" +
                  "  from ADUser u" +
                  " where email = :email";
     //@formatter:on
-    String userId = OBDal.getInstance()
+    Tuple user = OBDal.getInstance()
         .getSession()
-        .createQuery(hql, String.class)
+        .createQuery(hql, Tuple.class)
         .setParameter("email", email)
         .setMaxResults(1)
         .uniqueResult();
 
-    if (userId == null) {
+    if (user == null) {
       throw new AuthenticationException("No user found matching the e-mail");
     }
 
-    return userId;
+    loginName.set((String) user.get("userName"));
+
+    return (String) user.get("id");
   }
 
   private OBError buildError() {
