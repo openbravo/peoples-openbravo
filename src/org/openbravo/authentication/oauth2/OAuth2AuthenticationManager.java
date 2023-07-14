@@ -105,7 +105,7 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
       if (responseCode >= 200 && responseCode < 300) {
         return getUser(tokenResponse.body(), config);
       }
-      log.error("The token request failed with a {} error", responseCode);
+      log.error("The token request failed with a {} error {}", responseCode, tokenResponse.body());
       throw new AuthenticationException(buildError());
     } catch (Exception ex) {
       log.error("Error handling the authorization response", ex);
