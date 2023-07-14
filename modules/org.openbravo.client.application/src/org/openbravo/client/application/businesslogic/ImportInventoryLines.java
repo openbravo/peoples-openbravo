@@ -131,8 +131,10 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         } else {
           // get the line from the result
           inventoryLine = lines.get(0);
+          BigDecimal updatedBookedQty = getUpdatedBookQty(inventoryLine);
           inventoryLine.setGapbookqty(
-              inventoryLine.getBookQuantity().subtract(getUpdatedBookQty(inventoryLine)));
+              inventoryLine.getBookQuantity().subtract(updatedBookedQty));
+          inventoryLine.setBookQuantity(updatedBookedQty);
         }
         inventoryLine.setActive(true);
         inventoryLine
