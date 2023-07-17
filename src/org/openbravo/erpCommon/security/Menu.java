@@ -105,7 +105,6 @@ public class Menu extends HttpSecureAppServlet {
     String menuLoadingURL = "../utility/VerticalMenu.html?Command=LOADING";
     String menuURL = "../utility/VerticalMenu.html";
 
-    vars.setSessionValue("#Hide_BackButton", "true");
     menuLoadingURL = "about:blank";
     menuURL += "?Command=HIDE";
 

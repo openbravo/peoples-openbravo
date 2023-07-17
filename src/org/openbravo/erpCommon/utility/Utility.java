@@ -2120,8 +2120,7 @@ public class Utility {
    * @return true in case new UI is being used false if not
    */
   public static boolean isNewUI() {
-    OBContext context = OBContext.getOBContext();
-    return context != null && context.isNewUI();
+    return true;
   }
 
   private static byte[] getBlankImage() {

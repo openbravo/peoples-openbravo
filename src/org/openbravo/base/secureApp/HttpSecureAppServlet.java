@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2022 Openbravo S.L.U.
+ * Copyright (C) 2001-2023 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -789,9 +789,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   private void bdErrorGeneral(HttpServletRequest request, HttpServletResponse response,
       String strTitle, String strText) throws IOException {
     String discard[] = { "" };
-    if (OBContext.getOBContext().isNewUI()) {
-      discard[0] = "backButton";
-    }
+    discard[0] = "backButton";
 
     final XmlDocument xmlDocument = xmlEngine
         .readXmlTemplate("org/openbravo/base/secureApp/Error", discard)
