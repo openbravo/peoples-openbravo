@@ -2114,15 +2114,6 @@ public class Utility {
     return numberFormatDecimal;
   }
 
-  /**
-   * Checks whether the current context is using new UI
-   * 
-   * @return true in case new UI is being used false if not
-   */
-  public static boolean isNewUI() {
-    return true;
-  }
-
   private static byte[] getBlankImage() {
 
     try {
