@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2022 Openbravo SLU
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,58 +56,6 @@
         mnu.style.display = "";
       }
 
-      function callback(paramXMLParticular, XMLHttpRequestObj) {
-        var strText = "";
-        if (getReadyStateHandler(XMLHttpRequestObj,null,false)) {
-          try {
-            if (XMLHttpRequestObj.responseText) strText = XMLHttpRequestObj.responseText;
-          } catch (e) {
-          }
-          //layer("returnText", strText, true, false);
-          document.getElementById("alertCount").innerHTML=strText;
-
-          if (parseFloat(strText) == 0 && document.getElementById("alertImage").className.indexOf("Menu_ToolBar_Button_Icon_alertActive") != -1) {
-            setAlertIcon(false);
-          } else if (parseFloat(strText) != 0 && document.getElementById("alertImage").className.indexOf("Menu_ToolBar_Button_Icon_alertActive") == -1) {
-            setAlertIcon(true);
-          }
-
-          if (strText != "") {
-            if (parseFloat(strText) != strText) {
-              document.getElementById("alertLink").innerHTML="Session expired";
-            }
-          }
-    /*
-          if (strText==0) {
-            document.getElementById("alertNotifier").style.display="none";
-          } else {
-            document.getElementById("alertNotifier").style.display="";
-            document.getElementById("alertCount").innerHTML=strText;
-         }
-    */
-        }
-        return true;
-      }
-      
-      function updateData() {
-        var paramXMLReq = null;
-        return submitXmlHttpRequestWithParams(callback, null, 'ALERT', "VerticalMenu.html", false, "&ignoreForSessionTimeout=1", paramXMLReq);
-      }
-      
-      function updateAlert()
-      {
-          setMDIEnvironment();
-          if(isWindowInMDIContext) {
-            return;
-          }
-
-          updateData();
-          //Frequency of call to update alert is hardcoded to each 50s.
-          //This is used to update the number of active alerts as well as to know whether
-          //browser is still open to control active sessions. 
-          setTimeout("updateAlert()", 50000);
-      }
-
       function onLoadDo() {
         try {
           if (parent.frameMenu) {
@@ -125,7 +73,6 @@
         setMenuLoading(false);
         resizeMenu();
         setMenuElementFocus('firstElement');
-        updateAlert();
         putFocusOnMenu();
       }
   
