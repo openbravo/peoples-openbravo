@@ -146,6 +146,9 @@ public class VariantChDescUpdateProcess extends DalBaseProcess {
         while (products.next()) {
           Product product = (Product) products.get(0);
           updateProduct(product);
+          if (translationRequired) {
+            updateProductTrl(product, languages);
+          }
 
           if ((i % 100) == 0) {
             OBDal.getInstance().flush();
