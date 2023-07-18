@@ -20,47 +20,16 @@
 -->
 
 <#list data.buttons as button>
-<div id="${button.id}" class="oAuth2SignInButton oAuth2SignInButton-${button.id}" onclick="doExternalAuthentication({ authorizationServerURL: '${button.authorizationServerURL}', clientID: '${button.clientID}', state: '${button.state}', redirectURL: '${button.redirectURL}', scope: '${button.scope}' })">
+<div id="${button.id}" class="signInButton signInButton-${button.id}" onclick="doExternalAuthentication({ authorizationServerURL: '${button.authorizationServerURL}', clientID: '${button.clientID}', state: '${button.state}', redirectURL: '${button.redirectURL}', scope: '${button.scope}' })">
   <span title="${button.name}"></span>
 </div>
 <#if button_index != data.buttons?size - 1>&nbsp;</#if>
 </#list>
 
-<script>
-  function doExternalAuthentication({ authorizationServerURL, clientID, state, redirectURL, scope }) {
-    window.location.href = authorizationServerURL + "?" + "response_type=code&client_id=" + clientID + "&state=" + state + "&redirect_uri=" + redirectURL + "&scope=" + scope; 
-  }
-</script>
-
 <style type="text/css">
-  .oAuth2SignInButton {
-    display: inline-block;
-    color: white;
-    width: 24px;
-    border-radius: 2px;
-    white-space: nowrap;
-    border: 1px solid #d9d9d9;
-    transition: opacity 0.3s ease;
-  }
-  .oAuth2SignInButton:hover,
-  .oAuth2SignInButton:active {
-    border-color: #c0c0c0;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.10);
-    cursor: hand;
-  }
-  .oAuth2SignInButton:hover {
-    opacity: 0.7;
-  }
-  .oAuth2SignInButton > span {
-    display: inline-block;	
-    height: 24px;
-    width: 24px;
-    margin-top: -1px;
-    vertical-align: middle;
-  }
   <#list data.buttons as button>
     <#if button.icon??>
-  .oAuth2SignInButton-${button.id} > span {
+  .signInButton-${button.id} > span {
     background: url(${button.icon});
     background-size: cover;
   }

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2017-2022 Openbravo SLU
+ * All portions are Copyright (C) 2017-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -818,4 +818,14 @@ function getReadyStateHandler(req, responseXmlHandler, notifyError) {
     }
   }
   return false;
+}
+
+function doExternalAuthentication({
+  authorizationServerURL,
+  clientID,
+  state,
+  redirectURL,
+  scope
+}) {
+  window.location.href = `${authorizationServerURL}?response_type=code&client_id=${clientID}&state=${state}&redirect_uri=${redirectURL}&scope=${scope}`;
 }
