@@ -28,6 +28,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
@@ -58,6 +59,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     if (!isValidEvent(event)) {
       return;
     }
+    resetValuesWhenReferenceIsInvoiceOrShipping(event);
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
     checkKeyColumnsAndAddress(event);
@@ -67,11 +69,28 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     if (!isValidEvent(event)) {
       return;
     }
+    resetValuesWhenReferenceIsInvoiceOrShipping(event);
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
     checkMandatoryRemovalIfMultiIntegration(event);
     checkIdentifierScanningActionDuplicates(event);
     checkKeyColumnsAndAddress(event);
+  }
+
+  private void resetValuesWhenReferenceIsInvoiceOrShipping(final EntityPersistenceEvent event) {
+    BaseOBObject targetInstance = event.getTargetInstance();
+    final Entity entity = targetInstance.getEntity();
+    final Entity transactionEntity = ModelProvider.getInstance()
+        .getEntity(targetInstance.getEntityName());
+    final String currentReferenceProperty = (String) event.getCurrentState(
+        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_REFERENCE));
+    if ("ShippingAddress".equals(currentReferenceProperty)
+        || "InvoiceAddress".equals(currentReferenceProperty)) {
+      event.setCurrentState(
+          entity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_TRANSLATABLE), false);
+      event.setCurrentState(entity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_TEXT),
+          currentReferenceProperty);
+    }
   }
 
   private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
