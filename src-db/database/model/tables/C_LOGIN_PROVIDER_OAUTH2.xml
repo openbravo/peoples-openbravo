@@ -45,10 +45,6 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="SCOPE" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
       <column name="AUTH_SERVER_URL" primaryKey="false" required="true" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
@@ -58,10 +54,6 @@
         <onCreateDefault/>
       </column>
       <column name="CERTIFICATE_URL" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
-        <default/>
-        <onCreateDefault/>
-      </column>
-      <column name="REDIRECT_PATH" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

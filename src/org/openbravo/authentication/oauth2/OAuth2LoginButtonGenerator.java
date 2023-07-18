@@ -81,7 +81,7 @@ public class OAuth2LoginButtonGenerator extends BaseTemplateComponent {
     }
 
     public String getRedirectURL() {
-      return OAuth2AuthenticationManager.getRedirectURL(config.getRedirectPath());
+      return OAuth2AuthenticationManager.getRedirectURL();
     }
 
     public String getState() {

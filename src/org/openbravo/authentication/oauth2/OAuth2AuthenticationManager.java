@@ -119,7 +119,7 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
     //@formatter:off
     Map<String, String> params = Map.of("grant_type", "authorization_code",
                                         "code", request.getParameter("code"),
-                                        "redirect_uri", getRedirectURL(request, config.getRedirectPath()),
+                                        "redirect_uri", getRedirectURL(request),
                                         "client_id", config.getClientID(),
                                         "client_secret", FormatUtilities.encryptDecrypt(config.getClientSecret(), false));
     //@formatter:on
@@ -208,8 +208,8 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
    * @return the standard URL where OAuth 2.0 requests coming from the external provided should be
    *         redirected
    */
-  static String getRedirectURL(String redirectPath) {
-    return getRedirectURL(RequestContext.get().getRequest(), redirectPath);
+  static String getRedirectURL() {
+    return getRedirectURL(RequestContext.get().getRequest());
   }
 
   /**
@@ -221,11 +221,7 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
    * @return the standard URL where OAuth 2.0 requests coming from the external provided should be
    *         redirected
    */
-  private static String getRedirectURL(HttpServletRequest request, String redirectPath) {
-    String path = StringUtils.isBlank(redirectPath) ? DEFAULT_REDIRECT_PATH : redirectPath;
-    if (!path.startsWith("/")) {
-      path = "/" + path;
-    }
-    return HttpBaseUtils.getLocalAddress(request) + path;
+  private static String getRedirectURL(HttpServletRequest request) {
+    return HttpBaseUtils.getLocalAddress(request) + DEFAULT_REDIRECT_PATH;
   }
 }

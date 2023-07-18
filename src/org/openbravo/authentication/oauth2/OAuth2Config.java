@@ -35,7 +35,6 @@ class OAuth2Config {
   private String authorizationServerURL;
   private String clientID;
   private String scope;
-  private String redirectPath;
   private byte[] imageData;
   private String imageMimeType;
 
@@ -47,8 +46,7 @@ class OAuth2Config {
     name = loginProvider.getName();
     clientID = provider.getClientID();
     authorizationServerURL = provider.getAuthorizationServerURL();
-    scope = provider.getScope() != null ? provider.getScope() : DEFAULT_SCOPE;
-    redirectPath = provider.getRedirectPath();
+    scope = DEFAULT_SCOPE;
     imageData = image != null ? image.getBindaryData() : null;
     imageMimeType = image != null ? image.getMimetype() : null;
   }
@@ -71,10 +69,6 @@ class OAuth2Config {
 
   String getScope() {
     return scope;
-  }
-
-  String getRedirectPath() {
-    return redirectPath;
   }
 
   byte[] getIconData() {
