@@ -79,7 +79,8 @@ class OpenIDTokenDataProvider {
       JSONObject certificates = new JSONObject(response.body());
       return certificates.getJSONArray("keys");
     } catch (Exception ex) {
-      return new JSONArray();
+      log.error("Error requesting keys to {}", url);
+      return null;
     }
   }
 
