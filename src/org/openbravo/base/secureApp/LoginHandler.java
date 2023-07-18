@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2022 Openbravo S.L.U.
+ * Copyright (C) 2001-2023 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -310,7 +310,7 @@ public class LoginHandler extends HttpBaseServlet {
       boolean hasNonRestrictedRole = false;
       User user = OBDal.getInstance().get(User.class, strUserAuth);
       for (UserRoles userrole : user.getADUserRolesList()) {
-        if (!userrole.getRole().isRestrictbackend()) {
+        if (userrole.isActive() && !userrole.getRole().isRestrictbackend()) {
           hasNonRestrictedRole = true;
           break;
         }
