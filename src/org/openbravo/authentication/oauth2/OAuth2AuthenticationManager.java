@@ -107,6 +107,8 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
       }
       log.error("The token request failed with a {} error {}", responseCode, tokenResponse.body());
       throw new AuthenticationException(buildError());
+    } catch (AuthenticationException authex) {
+      throw authex;
     } catch (Exception ex) {
       log.error("Error handling the authorization response", ex);
       throw new AuthenticationException(buildError());
@@ -186,7 +188,7 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
         .uniqueResult();
 
     if (user == null) {
-      throw new AuthenticationException("No user found matching the e-mail");
+      throw new AuthenticationException(buildError("UNKNOWN_EMAIL_AUTHENTICATION_FAILURE"));
     }
 
     loginName.set((String) user.get("userName"));
@@ -195,10 +197,14 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
   }
 
   private OBError buildError() {
+    return buildError("EXTERNAL_AUTHENTICATION_FAILURE");
+  }
+
+  private OBError buildError(String message) {
     OBError errorMsg = new OBError();
     errorMsg.setType("Error");
     errorMsg.setTitle("AUTHENTICATION_FAILURE");
-    errorMsg.setMessage("EXTERNAL_AUTHENTICATION_FAILURE");
+    errorMsg.setMessage(message);
     return errorMsg;
   }
 
