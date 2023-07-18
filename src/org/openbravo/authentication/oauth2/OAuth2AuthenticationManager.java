@@ -107,8 +107,11 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
       }
       log.error("The token request failed with a {} error {}", responseCode, tokenResponse.body());
       throw new AuthenticationException(buildError());
-    } catch (AuthenticationException authex) {
-      throw authex;
+    } catch (AuthenticationException ex) {
+      throw ex;
+    } catch (OAuth2TokenVerificationException ex) {
+      log.error("The token verification failed", ex);
+      throw new AuthenticationException(buildError("AUTHENTICATION_DATA_VERIFICATION_FAILURE"));
     } catch (Exception ex) {
       log.error("Error handling the authorization response", ex);
       throw new AuthenticationException(buildError());

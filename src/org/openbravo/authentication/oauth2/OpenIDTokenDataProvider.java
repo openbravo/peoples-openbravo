@@ -123,8 +123,8 @@ class OpenIDTokenDataProvider {
     String keyId = decodedJWT.getKeyId();
     if ("RS256".equals(algorithm)) {
       return getKey(certificateURL, keyId).map(this::getRS256Algorithm)
-          .orElseThrow(
-              () -> new OAuth2TokenVerificationException("Could not get algorithm " + algorithm));
+          .orElseThrow(() -> new OAuth2TokenVerificationException(
+              "Error getting the RSA public key from " + certificateURL));
     }
     throw new NoSuchAlgorithmException("Unsupported algorithm: " + algorithm);
   }
@@ -138,7 +138,7 @@ class OpenIDTokenDataProvider {
       PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
       return Algorithm.RSA256((RSAPublicKey) publicKey);
     } catch (JSONException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
-      log.error("Error getting RS256 algorithm", ex);
+      log.error("Error getting the public key required by the RS256 algorithm", ex);
       return null;
     }
   }
