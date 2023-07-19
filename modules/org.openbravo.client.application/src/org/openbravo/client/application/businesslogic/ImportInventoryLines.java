@@ -179,9 +179,9 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         .createQuery(InventoryCountLine.class,
             "m_inventory_id=:m_inventory_id and m_product_id=:m_product_id and m_locator_id=:m_locator_id "
                 + (asi == null || asi.getId().equals("0")
-                    ? "and (m_attributesetinstance_id is null or m_attributesetinstance_id='0')"
-                    : "and m_attributesetinstance_id=:m_attributesetinstance_id")
-                + " and c_uom_id=:c_uom_id");
+                    ? "and (m_attributesetinstance_id is null or m_attributesetinstance_id='0') "
+                    : "and m_attributesetinstance_id=:m_attributesetinstance_id ")
+                + "and c_uom_id=:c_uom_id");
     qry.setNamedParameter("m_inventory_id", inventoryId);
     qry.setNamedParameter("m_product_id", product.getId());
     qry.setNamedParameter("m_locator_id", locator.getId());
@@ -224,8 +224,8 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         + "where sd.product.id = :productId "
         + "and sd.storageBin.id = :locatorId "
         + (asi == null || asi.getId().equals("0") ?
-            "and (sd.attributeSetValue is null or sd.attributeSetValue.id = '0')"
-            : "and sd.attributeSetValue.id = :attributeSetValueId " 
+            "and (sd.attributeSetValue is null or sd.attributeSetValue.id = '0') "
+            : "and sd.attributeSetValue.id = :attributeSetValueId "
             )
         + "and sd.uOM.id = :uomId "
         + "and coalesce(sd.orderUOM.id, '-1') = :productUOMId ";
