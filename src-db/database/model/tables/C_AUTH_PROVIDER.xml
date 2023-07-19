@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE C_LOGIN_PROVIDER">
-    <table name="C_LOGIN_PROVIDER" primaryKey="C_LOGIN_PROVIDER_KEY">
-      <column name="C_LOGIN_PROVIDER_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE C_AUTH_PROVIDER">
+    <table name="C_AUTH_PROVIDER" primaryKey="C_AUTH_PROVIDER_KEY">
+      <column name="C_AUTH_PROVIDER_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -53,18 +53,18 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="C_LOGIN_PROVIDER_AD_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_AUTH_PROVIDER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_IMAGE" name="C_LOGIN_PROVIDER_AD_IMAGE">
+      <foreign-key foreignTable="AD_IMAGE" name="C_AUTH_PROVIDER_AD_IMAGE">
         <reference local="AD_IMAGE_ID" foreign="AD_IMAGE_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="C_LOGIN_PROVIDER_AD_ORG">
+      <foreign-key foreignTable="AD_ORG" name="C_AUTH_PROVIDER_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <unique name="C_LOGIN_PROVIDER_UNIQUE_NAME">
+      <unique name="C_AUTH_PROVIDER_UNIQUE_NAME">
         <unique-column name="NAME"/>
       </unique>
-      <check name="C_LOGIN_PROVIDER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_AUTH_PROVIDER_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

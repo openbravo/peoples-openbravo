@@ -23,27 +23,27 @@ import javax.inject.Inject;
 
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
+import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.model.authentication.OAuth2LoginProvider;
+import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
- * Used to invalidate the cache of public keys kept by {@link OpenIDTokenDataProvider} when changes
- * regarding an OAuth 2.0 authentication provider configuration are detected. Note that in case of
- * working in a clustered environment, this mechanism will only invalidate the cache in the node
- * were the changes occurred. For the rest of the nodes in the cluster it will be necessary to wait
- * for the expiration of the cache entry.
+ * Used to invalidate the cache of configurations kept by {@link OAuth2SignInProvider} when changes
+ * regarding an authentication provider configuration are detected. Note that in case of working in
+ * a clustered environment, this mechanism will only invalidate the cache in the node were the
+ * changes occurred. For the rest of the nodes in the cluster it will be necessary to wait for the
+ * expiration of the cache entry.
  *
- * @see OpenIDTokenDataProvider#invalidateCache()
+ * @see OAuth2SignInProvider#invalidateCache()
  */
-class OAuth2LoginProviderEventHandler extends EntityPersistenceEventObserver {
+class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
-      ModelProvider.getInstance().getEntity(OAuth2LoginProvider.ENTITY_NAME) };
+      ModelProvider.getInstance().getEntity(AuthenticationProvider.ENTITY_NAME) };
 
   @Inject
-  private OpenIDTokenDataProvider openIDTokenDataProvider;
+  private OAuth2SignInProvider oauth2SignInProvider;
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -54,21 +54,26 @@ class OAuth2LoginProviderEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-    OAuth2LoginProvider loginProvider = (OAuth2LoginProvider) event.getTargetInstance();
-    invalidateOAuth2ConfigurationCache(loginProvider.getCertificateURL());
+    invalidateOAuth2ConfigurationCache((AuthenticationProvider) event.getTargetInstance());
+  }
+
+  public void onSave(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    invalidateOAuth2ConfigurationCache((AuthenticationProvider) event.getTargetInstance());
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    Property certificateURLProperty = ENTITIES[0]
-        .getProperty(OAuth2LoginProvider.PROPERTY_CERTIFICATEURL);
-    String certificateURL = (String) event.getPreviousState(certificateURLProperty);
-    invalidateOAuth2ConfigurationCache(certificateURL);
+    invalidateOAuth2ConfigurationCache((AuthenticationProvider) event.getTargetInstance());
   }
 
-  private void invalidateOAuth2ConfigurationCache(String certificateURL) {
-    openIDTokenDataProvider.invalidateCache(certificateURL);
+  private void invalidateOAuth2ConfigurationCache(AuthenticationProvider authProvider) {
+    if ("OAUTH2".equals(authProvider.getType())) {
+      oauth2SignInProvider.invalidateCache();
+    }
   }
 }

@@ -34,7 +34,7 @@ import org.openbravo.client.kernel.Template;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.security.SignInProvider;
-import org.openbravo.model.authentication.LoginProvider;
+import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
  * Provides to the login page the sign in buttons for each of the authentication provider
@@ -53,7 +53,7 @@ public class OAuth2SignInProvider implements SignInProvider {
       .newBuilder()
       .name("OAuth 2.0 Configurations")
       .expireAfterDuration(Duration.ofMinutes(10))
-      .build(this::getLoginProviderConfigs);
+      .build(this::getAuthenticationProviderConfigs);
 
   @Override
   public String getLoginPageSignInHTMLCode() {
@@ -75,20 +75,23 @@ public class OAuth2SignInProvider implements SignInProvider {
   /**
    * @return the active OAuth 2.0 authentication provider configurations
    */
-  List<OAuth2Config> getOAuth2LoginProviderConfigs() {
+  List<OAuth2Config> getOAuth2AuthenticationProviderConfigs() {
     return configs.get(OAUTH2);
   }
 
-  private List<OAuth2Config> getLoginProviderConfigs(String type) {
+  private List<OAuth2Config> getAuthenticationProviderConfigs(String type) {
     OBContext.setAdminMode(false);
     try {
       return OBDal.getInstance()
-          .createCriteria(LoginProvider.class)
-          .add(Restrictions.eq(LoginProvider.PROPERTY_TYPE, type))
-          .addOrderBy(LoginProvider.PROPERTY_SEQUENCENUMBER, true)
+          .createCriteria(AuthenticationProvider.class)
+          .add(Restrictions.eq(AuthenticationProvider.PROPERTY_TYPE, type))
+          .addOrderBy(AuthenticationProvider.PROPERTY_SEQUENCENUMBER, true)
           .list()
           .stream()
-          .map(lp -> lp.getOAuth2LoginProviderList().stream().filter(l -> l.isActive()).findFirst())
+          .map(lp -> lp.getOAuth2AuthenticationProviderList()
+              .stream()
+              .filter(l -> l.isActive())
+              .findFirst())
           .filter(c -> c.isPresent())
           .map(Optional::get)
           .map(OAuth2Config::new)

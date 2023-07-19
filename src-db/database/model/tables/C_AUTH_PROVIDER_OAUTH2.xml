@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE C_LOGIN_PROVIDER_OAUTH2">
-    <table name="C_LOGIN_PROVIDER_OAUTH2" primaryKey="C_LOGIN_PROVIDER_OAUTH2_KEY">
-      <column name="C_LOGIN_PROVIDER_OAUTH2_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE C_AUTH_PROVIDER_OAUTH2">
+    <table name="C_AUTH_PROVIDER_OAUTH2" primaryKey="C_AUTH_PROVIDER_OAUTH2_KEY">
+      <column name="C_AUTH_PROVIDER_OAUTH2_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="C_LOGIN_PROVIDER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
+      <column name="C_AUTH_PROVIDER_ID" primaryKey="false" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -57,23 +57,23 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="C_LOGIN_PROVIDER_OAUTH2_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="C_AUTH_PROVIDER_OAUTH2_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="C_LOGIN_PROVIDER_OAUTH2_ORG">
+      <foreign-key foreignTable="AD_ORG" name="C_AUTH_PROVIDER_OAUTH2_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="C_LOGIN_PROVIDER" name="C_LOGIN_PROVIDER_OAUTH2_PROV">
-        <reference local="C_LOGIN_PROVIDER_ID" foreign="C_LOGIN_PROVIDER_ID"/>
+      <foreign-key foreignTable="C_AUTH_PROVIDER" name="C_AUTH_PROVIDER_OAUTH2_PROV">
+        <reference local="C_AUTH_PROVIDER_ID" foreign="C_AUTH_PROVIDER_ID"/>
       </foreign-key>
-      <index name="C_LOGIN_PROVIDER_OAUTH2_PR" unique="false">
-        <index-column name="C_LOGIN_PROVIDER_ID"/>
+      <index name="C_AUTH_PROVIDER_OAUTH2_PR" unique="false">
+        <index-column name="C_AUTH_PROVIDER_ID"/>
       </index>
-      <index name="C_LOGIN_PROVIDER_OAUTH2_UN_PR" unique="true">
-        <index-column name="C_LOGIN_PROVIDER_ID"/>
+      <index name="C_AUTH_PROVIDER_OAUTH2_UN_PR" unique="true">
+        <index-column name="C_AUTH_PROVIDER_ID"/>
         <index-column name="ISACTIVE"/>
         <whereClause><![CDATA[ISACTIVE='Y']]></whereClause>
       </index>
-      <check name="C_LOGIN_PROVIDER_OAUTH2_ACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="C_AUTH_PROVIDER_OAUTH2_ACTIVE"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

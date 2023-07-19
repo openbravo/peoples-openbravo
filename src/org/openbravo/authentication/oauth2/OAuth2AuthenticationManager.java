@@ -51,7 +51,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.model.ad.access.User;
-import org.openbravo.model.authentication.OAuth2LoginProvider;
+import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 import org.openbravo.utils.FormatUtilities;
 
 /**
@@ -93,8 +93,8 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
   private String handleAuthorizationResponse(HttpServletRequest request) {
     try {
       OBContext.setAdminMode(true);
-      OAuth2LoginProvider config = authStateHandler.getConfiguration(OAuth2LoginProvider.class,
-          request.getParameter("state"));
+      OAuth2AuthenticationProvider config = authStateHandler
+          .getConfiguration(OAuth2AuthenticationProvider.class, request.getParameter("state"));
 
       HttpRequest accessTokenRequest = buildAccessTokenRequest(request, config);
       HttpResponse<String> tokenResponse = HttpClient.newBuilder()
@@ -121,7 +121,7 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
   }
 
   private HttpRequest buildAccessTokenRequest(HttpServletRequest request,
-      OAuth2LoginProvider config) throws ServletException {
+      OAuth2AuthenticationProvider config) throws ServletException {
     //@formatter:off
     Map<String, String> params = Map.of("grant_type", "authorization_code",
                                         "code", request.getParameter("code"),
@@ -167,11 +167,11 @@ public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
    * @throws AuthenticationException
    *           If there is no user linked to the retrieved email
    */
-  protected String getUser(String responseData, OAuth2LoginProvider config)
+  protected String getUser(String responseData, OAuth2AuthenticationProvider configuration)
       throws JSONException, OAuth2TokenVerificationException {
     JSONObject tokenData = new JSONObject(responseData);
     String idToken = tokenData.getString("id_token");
-    Map<String, Object> authData = openIDTokenDataProvider.getData(idToken, config);
+    Map<String, Object> authData = openIDTokenDataProvider.getData(idToken, configuration);
     String email = (String) authData.get("email");
 
     if (StringUtils.isBlank(email)) {

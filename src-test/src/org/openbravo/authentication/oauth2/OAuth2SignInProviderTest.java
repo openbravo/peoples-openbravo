@@ -43,8 +43,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Image;
-import org.openbravo.model.authentication.LoginProvider;
-import org.openbravo.model.authentication.OAuth2LoginProvider;
+import org.openbravo.model.authentication.AuthenticationProvider;
+import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.test.base.TestConstants;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
@@ -111,13 +111,13 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
   private void disableExistingConfigurations() {
     OBDal.getInstance()
         .getSession()
-        .createQuery("update LoginProvider set active = false")
+        .createQuery("update AuthenticationProvider set active = false")
         .executeUpdate();
   }
 
   private void createOAuth2Configuration(String name, Long sequenceNumber, String oAuth2ConfigId,
       String imageId) {
-    LoginProvider config = OBProvider.getInstance().get(LoginProvider.class);
+    AuthenticationProvider config = OBProvider.getInstance().get(AuthenticationProvider.class);
     config.setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
     config
         .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
@@ -129,7 +129,8 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
     }
     OBDal.getInstance().save(config);
 
-    OAuth2LoginProvider oAuth2Config = OBProvider.getInstance().get(OAuth2LoginProvider.class);
+    OAuth2AuthenticationProvider oAuth2Config = OBProvider.getInstance()
+        .get(OAuth2AuthenticationProvider.class);
     oAuth2Config
         .setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
     oAuth2Config
@@ -140,8 +141,8 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
     oAuth2Config.setClientSecret("secret");
     oAuth2Config.setAuthorizationServerURL("https://auth-server.com");
     oAuth2Config.setAccessTokenURL("https://token-server.com");
-    oAuth2Config.setLoginProvider(config);
-    config.getOAuth2LoginProviderList().add(oAuth2Config);
+    oAuth2Config.setAuthProvider(config);
+    config.getOAuth2AuthenticationProviderList().add(oAuth2Config);
     OBDal.getInstance().save(oAuth2Config);
   }
 }

@@ -19,8 +19,8 @@
 package org.openbravo.authentication.oauth2;
 
 import org.openbravo.model.ad.utility.Image;
-import org.openbravo.model.authentication.LoginProvider;
-import org.openbravo.model.authentication.OAuth2LoginProvider;
+import org.openbravo.model.authentication.AuthenticationProvider;
+import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 
 /**
  * Allows to keep in cache the information of a login provider configuration based in OAuth 2.0
@@ -38,12 +38,12 @@ class OAuth2Config {
   private byte[] imageData;
   private String imageMimeType;
 
-  OAuth2Config(OAuth2LoginProvider provider) {
-    LoginProvider loginProvider = provider.getLoginProvider();
-    Image image = loginProvider.getIcon();
+  OAuth2Config(OAuth2AuthenticationProvider provider) {
+    AuthenticationProvider authProvider = provider.getAuthProvider();
+    Image image = authProvider.getIcon();
 
     id = provider.getId();
-    name = loginProvider.getName();
+    name = authProvider.getName();
     clientID = provider.getClientID();
     authorizationServerURL = provider.getAuthorizationServerURL();
     scope = DEFAULT_SCOPE;

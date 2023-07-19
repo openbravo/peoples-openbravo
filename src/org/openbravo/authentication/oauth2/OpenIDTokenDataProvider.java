@@ -43,7 +43,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.cache.TimeInvalidatedCache;
-import org.openbravo.model.authentication.OAuth2LoginProvider;
+import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -100,11 +100,11 @@ class OpenIDTokenDataProvider {
    * @throws OAuth2TokenVerificationException
    *           if it is not possible to verify the token or extract the authentication data
    */
-  Map<String, Object> getData(String token, OAuth2LoginProvider config)
+  Map<String, Object> getData(String token, OAuth2AuthenticationProvider configuration)
       throws OAuth2TokenVerificationException {
     try {
       DecodedJWT decodedJWT = JWT.decode(token);
-      Algorithm algorithm = getAlgorithm(decodedJWT, config.getCertificateURL());
+      Algorithm algorithm = getAlgorithm(decodedJWT, configuration.getCertificateURL());
       JWTVerifier verifier = JWT.require(algorithm).build();
       DecodedJWT verifiedJWT = verifier.verify(token);
       Map<String, Claim> claims = verifiedJWT.getClaims();

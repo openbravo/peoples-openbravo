@@ -3549,7 +3549,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--B28015B2244743F5B64D67235D5F88E7-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--B28015B2244743F5B64D67235D5F88E7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B28015B2244743F5B64D67235D5F88E7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--B28015B2244743F5B64D67235D5F88E7-->  <NAME><![CDATA[Login Provider Configuration]]></NAME>
+<!--B28015B2244743F5B64D67235D5F88E7-->  <NAME><![CDATA[Authentication Provider Configuration]]></NAME>
 <!--B28015B2244743F5B64D67235D5F88E7-->  <DESCRIPTION><![CDATA[Configuration of the external authentication providers]]></DESCRIPTION>
 <!--B28015B2244743F5B64D67235D5F88E7-->  <HELP><![CDATA[Configuration of the external authentication providers]]></HELP>
 <!--B28015B2244743F5B64D67235D5F88E7-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>

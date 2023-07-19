@@ -51,7 +51,7 @@ public class OAuth2LoginButtonGenerator extends BaseTemplateComponent {
   }
 
   public List<OAuth2LoginButton> getButtons() {
-    return oauth2SignInProvider.getOAuth2LoginProviderConfigs()
+    return oauth2SignInProvider.getOAuth2AuthenticationProviderConfigs()
         .stream()
         .map(OAuth2LoginButton::new)
         .collect(Collectors.toList());
