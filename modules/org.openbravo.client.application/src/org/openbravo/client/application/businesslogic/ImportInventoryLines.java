@@ -132,8 +132,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
           // get the line from the result
           inventoryLine = lines.get(0);
           BigDecimal updatedBookedQty = getUpdatedBookQty(inventoryLine);
-          inventoryLine.setGapbookqty(
-              inventoryLine.getBookQuantity().subtract(updatedBookedQty));
+          inventoryLine.setGapbookqty(inventoryLine.getBookQuantity().subtract(updatedBookedQty));
           inventoryLine.setBookQuantity(updatedBookedQty);
         }
         inventoryLine.setActive(true);
@@ -174,16 +173,21 @@ public class ImportInventoryLines extends ProcessUploadedFile {
 
   private List<InventoryCountLine> checkIfInventoryLineExist(final String inventoryId,
       String attributes, Product product, Locator locator, UOM uom) {
+    AttributeSetInstance asi = getAttributeSetInstance(attributes);
+
     OBQuery<InventoryCountLine> qry = OBDal.getInstance()
         .createQuery(InventoryCountLine.class,
             "m_inventory_id=:m_inventory_id and m_product_id=:m_product_id and m_locator_id=:m_locator_id "
-                + "and m_attributesetinstance_id=:m_attributesetinstance_id and c_uom_id=:c_uom_id");
+                + (asi == null || asi.getId().equals("0")
+                    ? "and (m_attributesetinstance_id is null or m_attributesetinstance_id='0')"
+                    : "and m_attributesetinstance_id=:m_attributesetinstance_id")
+                + " and c_uom_id=:c_uom_id");
     qry.setNamedParameter("m_inventory_id", inventoryId);
     qry.setNamedParameter("m_product_id", product.getId());
     qry.setNamedParameter("m_locator_id", locator.getId());
-    qry.setNamedParameter("m_attributesetinstance_id",
-        getAttributeSetInstance(attributes) != null ? getAttributeSetInstance(attributes).getId()
-            : "0");
+    if (asi != null && !asi.getId().equals("0")) {
+      qry.setNamedParameter("m_attributesetinstance_id", asi.getId());
+    }
     qry.setNamedParameter("c_uom_id", uom.getId());
     qry.setFilterOnActive(false);
     List<InventoryCountLine> lines = qry.list();
@@ -213,18 +217,25 @@ public class ImportInventoryLines extends ProcessUploadedFile {
   }
 
   private BigDecimal getUpdatedBookQty(InventoryCountLine inventoryLine) {
+    AttributeSetInstance asi = inventoryLine.getAttributeSetValue();
+
     // @formatter:off 
     String hql = "select sd.quantityOnHand from MaterialMgmtStorageDetail as sd "
         + "where sd.product.id = :productId "
         + "and sd.storageBin.id = :locatorId "
-        + "and sd.attributeSetValue.id = :attributeSetValueId "
+        + (asi == null || asi.getId().equals("0") ?
+            "and (sd.attributeSetValue is null or sd.attributeSetValue.id = '0')"
+            : "and sd.attributeSetValue.id = :attributeSetValueId " 
+            )
         + "and sd.uOM.id = :uomId "
         + "and coalesce(sd.orderUOM.id, '-1') = :productUOMId ";
     // @formatter:on
     Query<BigDecimal> query = OBDal.getInstance().getSession().createQuery(hql, BigDecimal.class);
     query.setParameter("productId", inventoryLine.getProduct().getId());
     query.setParameter("locatorId", inventoryLine.getStorageBin().getId());
-    query.setParameter("attributeSetValueId", inventoryLine.getAttributeSetValue().getId());
+    if (asi != null && !asi.getId().equals("0")) {
+      query.setParameter("attributeSetValueId", inventoryLine.getAttributeSetValue().getId());
+    }
     query.setParameter("uomId", inventoryLine.getUOM().getId());
     query.setParameter("productUOMId",
         inventoryLine.getOrderUOM() != null ? inventoryLine.getOrderUOM() : "-1");
