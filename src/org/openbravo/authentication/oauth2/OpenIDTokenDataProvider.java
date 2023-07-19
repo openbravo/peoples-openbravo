@@ -158,4 +158,14 @@ class OpenIDTokenDataProvider {
       return Optional.empty();
     }
   }
+
+  /**
+   * Invalidates the cache of public keys
+   *
+   * @param url
+   *          The URL where the public keys to remove from cache are obtained
+   */
+  void invalidateCache(String url) {
+    keys.invalidate(url);
+  }
 }

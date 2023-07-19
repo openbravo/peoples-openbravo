@@ -37,8 +37,8 @@ import org.openbravo.erpCommon.security.SignInProvider;
 import org.openbravo.model.authentication.LoginProvider;
 
 /**
- * Provides to the login page the sign in buttons for each of the login provider configurations
- * defined to use OAuth 2.0.
+ * Provides to the login page the sign in buttons for each of the authentication provider
+ * configurations defined to use OAuth 2.0.
  */
 @ApplicationScoped
 public class OAuth2SignInProvider implements SignInProvider {
@@ -60,6 +60,10 @@ public class OAuth2SignInProvider implements SignInProvider {
     return buttonGenerator.generate();
   }
 
+  /**
+   * @return the template used to build the sign in buttons for each of the OAuth 2.0 authentication
+   *         provider configurations
+   */
   Template getTemplate() {
     if (template == null) {
       template = OBDal.getInstance().get(Template.class, TEMPLATE_ID);
@@ -68,6 +72,9 @@ public class OAuth2SignInProvider implements SignInProvider {
     return template;
   }
 
+  /**
+   * @return the active OAuth 2.0 authentication provider configurations
+   */
   List<OAuth2Config> getOAuth2LoginProviderConfigs() {
     return configs.get(OAUTH2);
   }
@@ -89,5 +96,12 @@ public class OAuth2SignInProvider implements SignInProvider {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  /**
+   * Invalidates the cache of OAuth 2.0 authentication provider configurations
+   */
+  void invalidateCache() {
+    configs.invalidate(OAUTH2);
   }
 }
