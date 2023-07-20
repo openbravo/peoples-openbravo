@@ -41,6 +41,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.authentication.AuthenticatedUser;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationType;
 import org.openbravo.authentication.ExternalAuthenticationManager;
@@ -69,7 +70,8 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   private OpenIDTokenDataProvider openIDTokenDataProvider;
 
   @Override
-  public String doAuthenticate(HttpServletRequest request, HttpServletResponse response) {
+  public AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
+      HttpServletResponse response) {
     if (!isValidAuthorizationResponse(request)) {
       log.error("The authorization response validation was not passed");
       throw new AuthenticationException(buildError());
@@ -90,7 +92,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
     return code != null && authStateHandler.isValidKey(state);
   }
 
-  private String handleAuthorizationResponse(HttpServletRequest request) {
+  private AuthenticatedUser handleAuthorizationResponse(HttpServletRequest request) {
     try {
       OBContext.setAdminMode(true);
       OAuth2AuthenticationProvider config = authStateHandler
@@ -157,7 +159,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
    *          the URL to get the public keys required by the algorithm used for encrypting the token
    *          data.
    *
-   * @return the ID of the authenticated {@link User}
+   * @return the {@link AuthenticatedUser} with the information of the authenticated {@link User}
    *
    * @throws JSONException
    *           If it is not possible to parse the response data as JSON or if the "id_token"
@@ -167,7 +169,8 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
    * @throws AuthenticationException
    *           If there is no user linked to the retrieved email
    */
-  protected String getUser(String responseData, OAuth2AuthenticationProvider configuration)
+  protected AuthenticatedUser getUser(String responseData,
+      OAuth2AuthenticationProvider configuration)
       throws JSONException, OAuth2TokenVerificationException {
     JSONObject tokenData = new JSONObject(responseData);
     String idToken = tokenData.getString("id_token");
@@ -194,9 +197,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
       throw new AuthenticationException(buildError("UNKNOWN_EMAIL_AUTHENTICATION_FAILURE"));
     }
 
-    loginName.set((String) user.get("userName"));
-
-    return (String) user.get("id");
+    return new AuthenticatedUser((String) user.get("id"), (String) user.get("userName"));
   }
 
   private OBError buildError() {

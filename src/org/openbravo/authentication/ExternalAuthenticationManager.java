@@ -18,6 +18,9 @@
  */
 package org.openbravo.authentication;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.openbravo.base.Prioritizable;
 
 /**
@@ -27,4 +30,25 @@ import org.openbravo.base.Prioritizable;
  */
 public abstract class ExternalAuthenticationManager extends AuthenticationManager
     implements Prioritizable {
+
+  @Override
+  public String doAuthenticate(HttpServletRequest request, HttpServletResponse response) {
+    AuthenticatedUser user = doExternalAuthentication(request, response);
+    if (user.getUserName() != null) {
+      loginName.set(user.getUserName());
+    }
+    return user.getId();
+  }
+
+  /**
+   * To be implemented with the logic of the external authentication
+   *
+   * @param request
+   *          HTTP request object to handle parameters and session attributes
+   * @param response
+   *          HTTP response object to handle possible redirects
+   * @return the information of the successfully authenticated user
+   */
+  public abstract AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
+      HttpServletResponse response);
 }
