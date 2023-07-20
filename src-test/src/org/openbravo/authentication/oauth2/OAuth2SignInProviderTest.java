@@ -86,8 +86,8 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
       Map<String, String> loginState = (Map<String, String>) RequestContext.get()
           .getSessionAttribute(LoginStateHandler.LOGIN_STATE);
       for (Entry<String, String> entry : loginState.entrySet()) {
-        html = html.replaceAll("state: '" + entry.getValue() + "'",
-            "state: '" + entry.getKey() + "'");
+        html = html.replaceAll("state: '" + entry.getKey() + "'",
+            "state: '" + entry.getValue() + "'");
       }
       return html;
     } catch (IOException ex) {
@@ -122,7 +122,7 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
     config
         .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
     config.setName(name);
-    config.setType("OAUTH2");
+    config.setType("OPENID");
     config.setSequenceNumber(sequenceNumber);
     if (imageId != null) {
       config.setIcon(OBDal.getInstance().getProxy(Image.class, imageId));
