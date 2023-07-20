@@ -18,6 +18,7 @@
  */
 package org.openbravo.authentication.oauth2;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -25,18 +26,21 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.time.Duration;
-import java.util.Base64;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -59,12 +63,13 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 class OpenIDTokenDataProvider {
   private static final Logger log = LogManager.getLogger();
 
-  private TimeInvalidatedCache<String, JSONArray> keys = TimeInvalidatedCache.newBuilder()
-      .name("Open ID Certificates")
+  private TimeInvalidatedCache<String, Map<String, RSAPublicKey>> rsaPublicKeys = TimeInvalidatedCache
+      .newBuilder()
+      .name("Open ID RSA Public Keys")
       .expireAfterDuration(Duration.ofMinutes(10))
-      .build(this::requestKeys);
+      .build(this::requestCertificateData);
 
-  private JSONArray requestKeys(String url) {
+  private Map<String, RSAPublicKey> requestCertificateData(String url) {
     try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create(url))
@@ -76,12 +81,50 @@ class OpenIDTokenDataProvider {
           .connectTimeout(Duration.ofSeconds(30))
           .build()
           .send(request, HttpResponse.BodyHandlers.ofString());
-      JSONObject certificates = new JSONObject(response.body());
-      return certificates.getJSONArray("keys");
+      return getRSAPublicKeys(response.body());
     } catch (Exception ex) {
       log.error("Error requesting keys to {}", url);
       return null;
     }
+  }
+
+  private Map<String, RSAPublicKey> getRSAPublicKeys(String certificateData)
+      throws InvalidKeySpecException, NoSuchAlgorithmException, JSONException,
+      CertificateException {
+    JSONObject certificates = new JSONObject(certificateData);
+    if (certificates.has("keys")) {
+      // JSON Web Key (JWK) certificate
+      JSONArray keys = certificates.getJSONArray("keys");
+      Map<String, RSAPublicKey> publicKeys = new HashMap<>(keys.length());
+      for (int i = 0; i < keys.length(); i += 1) {
+        JSONObject key = keys.getJSONObject(i);
+        String keyId = key.getString("kid");
+        byte[] modulusBytes = Base64.decodeBase64(key.getString("n"));
+        byte[] exponentBytes = Base64.decodeBase64(key.getString("e"));
+        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(1, modulusBytes),
+            new BigInteger(1, exponentBytes));
+        RSAPublicKey publicKey = (RSAPublicKey) KeyFactory.getInstance("RSA")
+            .generatePublic(keySpec);
+        publicKeys.put(keyId, publicKey);
+      }
+      return publicKeys;
+    }
+    // X.509 certificate in ASCII PEM format
+    @SuppressWarnings("unchecked")
+    Iterator<String> keysIterator = certificates.keys();
+    Map<String, RSAPublicKey> publicKeys = new HashMap<>();
+    while (keysIterator.hasNext()) {
+      String keyId = keysIterator.next();
+      String pem = certificates.getString(keyId);
+      pem = pem.replace("-----BEGIN CERTIFICATE-----", "")
+          .replace("-----END CERTIFICATE-----", "")
+          .replaceAll("\\s", "");
+      byte[] encoded = Base64.decodeBase64(pem);
+      X509Certificate certificate = (X509Certificate) CertificateFactory.getInstance("X.509")
+          .generateCertificate(new ByteArrayInputStream(encoded));
+      publicKeys.put(keyId, (RSAPublicKey) certificate.getPublicKey());
+    }
+    return publicKeys;
   }
 
   /**
@@ -122,41 +165,14 @@ class OpenIDTokenDataProvider {
     String algorithm = decodedJWT.getAlgorithm();
     String keyId = decodedJWT.getKeyId();
     if ("RS256".equals(algorithm)) {
-      return getKey(certificateURL, keyId).map(this::getRS256Algorithm)
-          .orElseThrow(() -> new OAuth2TokenVerificationException(
-              "Error getting the RSA public key from " + certificateURL));
+      RSAPublicKey publicKey = rsaPublicKeys.get(certificateURL).get(keyId);
+      if (publicKey == null) {
+        throw new OAuth2TokenVerificationException(
+            "Error getting the RSA public key from " + certificateURL);
+      }
+      return Algorithm.RSA256(publicKey);
     }
     throw new NoSuchAlgorithmException("Unsupported algorithm: " + algorithm);
-  }
-
-  private Algorithm getRS256Algorithm(JSONObject key) {
-    try {
-      byte[] modulusBytes = Base64.getUrlDecoder().decode(key.getString("n"));
-      byte[] exponentBytes = Base64.getUrlDecoder().decode(key.getString("e"));
-      RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(1, modulusBytes),
-          new BigInteger(1, exponentBytes));
-      PublicKey publicKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
-      return Algorithm.RSA256((RSAPublicKey) publicKey);
-    } catch (JSONException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
-      log.error("Error getting the public key required by the RS256 algorithm", ex);
-      return null;
-    }
-  }
-
-  private Optional<JSONObject> getKey(String url, String keyId) {
-    try {
-      JSONArray array = keys.get(url);
-      for (int i = 0; i < array.length(); i += 1) {
-        JSONObject key = array.getJSONObject(i);
-        if (keyId.equals(key.getString("kid"))) {
-          return Optional.of(key);
-        }
-      }
-      return Optional.empty();
-    } catch (JSONException ex) {
-      log.error("Error getting key from URL {}", url, ex);
-      return Optional.empty();
-    }
   }
 
   /**
@@ -166,6 +182,6 @@ class OpenIDTokenDataProvider {
    *          The URL where the public keys to remove from cache are obtained
    */
   void invalidateCache(String url) {
-    keys.invalidate(url);
+    rsaPublicKeys.invalidate(url);
   }
 }

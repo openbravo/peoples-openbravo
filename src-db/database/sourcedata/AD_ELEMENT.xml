@@ -33281,7 +33281,11 @@ By disabling this option standard beats will be sent to HeartBeat server, but no
 <!--ABEDEBB26EBE4885B21F6F6E7F9CFFC6-->  <NAME><![CDATA[Certificate URL]]></NAME>
 <!--ABEDEBB26EBE4885B21F6F6E7F9CFFC6-->  <PRINTNAME><![CDATA[Certificate URL]]></PRINTNAME>
 <!--ABEDEBB26EBE4885B21F6F6E7F9CFFC6-->  <DESCRIPTION><![CDATA[The URL where the certificates required for the ID token verification can be requested]]></DESCRIPTION>
-<!--ABEDEBB26EBE4885B21F6F6E7F9CFFC6-->  <HELP><![CDATA[The URL where the certificates required for the ID token verification can be requested]]></HELP>
+<!--ABEDEBB26EBE4885B21F6F6E7F9CFFC6-->  <HELP><![CDATA[The URL where the certificates required for the ID token verification can be requested. The supported certificate types that can be retrieved through this URL are:
+  - X.509 in ASCII PEM format
+  - JSON Web Key (JWK)
+
+In both cases the RSA (key type) algorithm is used to extract the public keys.]]></HELP>
 <!--ABEDEBB26EBE4885B21F6F6E7F9CFFC6-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--ABEDEBB26EBE4885B21F6F6E7F9CFFC6-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--ABEDEBB26EBE4885B21F6F6E7F9CFFC6--></AD_ELEMENT>
