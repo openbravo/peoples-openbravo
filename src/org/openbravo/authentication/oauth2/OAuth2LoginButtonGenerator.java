@@ -32,7 +32,7 @@ import org.openbravo.client.kernel.Template;
 
 /**
  * Generates the code for the buttons that are placed in the login page to log in with an external
- * authorization provider using OAuth 2.0.
+ * authorization provider using an OAuth 2.0 based protocol.
  * 
  * @see OAuth2SignInProvider
  */
@@ -51,7 +51,7 @@ public class OAuth2LoginButtonGenerator extends BaseTemplateComponent {
   }
 
   public List<OAuth2LoginButton> getButtons() {
-    return oauth2SignInProvider.getOAuth2AuthenticationProviderConfigs()
+    return oauth2SignInProvider.getAuthenticationProviderConfigs()
         .stream()
         .map(OAuth2LoginButton::new)
         .collect(Collectors.toList());
@@ -81,7 +81,7 @@ public class OAuth2LoginButtonGenerator extends BaseTemplateComponent {
     }
 
     public String getRedirectURL() {
-      return OAuth2AuthenticationManager.getRedirectURL();
+      return OpenIDAuthenticationManager.getRedirectURL();
     }
 
     public String getState() {

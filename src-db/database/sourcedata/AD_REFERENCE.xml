@@ -6355,9 +6355,9 @@ By default the type is empty (null), which means the product characteristic does
 <!--94552A4C01CC4C7393E8DFAE37353B7C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--94552A4C01CC4C7393E8DFAE37353B7C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--94552A4C01CC4C7393E8DFAE37353B7C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--94552A4C01CC4C7393E8DFAE37353B7C-->  <NAME><![CDATA[Login Provider Type]]></NAME>
-<!--94552A4C01CC4C7393E8DFAE37353B7C-->  <DESCRIPTION><![CDATA[The supported authentication types or methods for login providers]]></DESCRIPTION>
-<!--94552A4C01CC4C7393E8DFAE37353B7C-->  <HELP><![CDATA[The supported authentication types or methods for login providers]]></HELP>
+<!--94552A4C01CC4C7393E8DFAE37353B7C-->  <NAME><![CDATA[Authentication Provider Type]]></NAME>
+<!--94552A4C01CC4C7393E8DFAE37353B7C-->  <DESCRIPTION><![CDATA[The supported authentication types or methods for authentication providers]]></DESCRIPTION>
+<!--94552A4C01CC4C7393E8DFAE37353B7C-->  <HELP><![CDATA[The supported authentication types or methods for authentication providers]]></HELP>
 <!--94552A4C01CC4C7393E8DFAE37353B7C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--94552A4C01CC4C7393E8DFAE37353B7C-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
 <!--94552A4C01CC4C7393E8DFAE37353B7C-->  <PARENTREFERENCE_ID><![CDATA[17]]></PARENTREFERENCE_ID>

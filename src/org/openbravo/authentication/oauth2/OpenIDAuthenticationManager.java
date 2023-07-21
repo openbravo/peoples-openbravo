@@ -55,12 +55,12 @@ import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 import org.openbravo.utils.FormatUtilities;
 
 /**
- * Allows to authenticate with an external authentication provider using OAuth 2.0.
+ * Allows to authenticate with an external authentication provider using OpenID.
  */
-@AuthenticationType("OAUTH2")
-public class OAuth2AuthenticationManager extends ExternalAuthenticationManager {
+@AuthenticationType("OPENID")
+public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
   private static final Logger log = LogManager.getLogger();
-  private static final String DEFAULT_REDIRECT_PATH = "/secureApp/LoginHandler.html?loginMethod=OAUTH2";
+  private static final String DEFAULT_REDIRECT_PATH = "/secureApp/LoginHandler.html?loginMethod=OPENID";
 
   @Inject
   private LoginStateHandler authStateHandler;

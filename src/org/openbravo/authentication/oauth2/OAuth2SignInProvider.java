@@ -38,12 +38,12 @@ import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
  * Provides to the login page the sign in buttons for each of the authentication provider
- * configurations defined to use OAuth 2.0.
+ * configurations defined to use an OAuth 2.0 based protocol.
  */
 @ApplicationScoped
 public class OAuth2SignInProvider implements SignInProvider {
   private static final String TEMPLATE_ID = "64F02C64E2A14E09BCD145D74F2DE93F";
-  private static final String OAUTH2 = "OAUTH2";
+  private static final String OPENID = "OPENID";
   private Template template;
 
   @Inject
@@ -73,10 +73,10 @@ public class OAuth2SignInProvider implements SignInProvider {
   }
 
   /**
-   * @return the active OAuth 2.0 authentication provider configurations
+   * @return the active OAuth 2.0 based authentication provider configurations
    */
-  List<OAuth2Config> getOAuth2AuthenticationProviderConfigs() {
-    return configs.get(OAUTH2);
+  List<OAuth2Config> getAuthenticationProviderConfigs() {
+    return configs.get(OPENID);
   }
 
   private List<OAuth2Config> getAuthenticationProviderConfigs(String type) {
@@ -102,9 +102,14 @@ public class OAuth2SignInProvider implements SignInProvider {
   }
 
   /**
-   * Invalidates the cache of OAuth 2.0 authentication provider configurations
+   * Invalidates the cache of OAuth 2.0 based authentication provider configurations
+   * 
+   * @param type
+   *          The OAuth 2.0 protocol used by the authentication provider
    */
-  void invalidateCache() {
-    configs.invalidate(OAUTH2);
+  void invalidateCache(String type) {
+    if (OPENID.equals(type)) {
+      configs.invalidate(OPENID);
+    }
   }
 }

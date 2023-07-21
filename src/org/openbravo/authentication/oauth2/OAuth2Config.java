@@ -25,7 +25,7 @@ import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 /**
  * Allows to keep in cache the information of a login provider configuration based in OAuth 2.0
  * 
- * @see OAuth2SignInProvider
+ * @see OpenIDSignInProvider
  */
 class OAuth2Config {
   private static final String DEFAULT_SCOPE = "openid profile email";

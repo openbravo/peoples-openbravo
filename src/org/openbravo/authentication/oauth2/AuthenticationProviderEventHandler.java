@@ -30,13 +30,13 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
- * Used to invalidate the cache of configurations kept by {@link OAuth2SignInProvider} when changes
+ * Used to invalidate the cache of configurations kept by {@link OpenIDSignInProvider} when changes
  * regarding an authentication provider configuration are detected. Note that in case of working in
  * a clustered environment, this mechanism will only invalidate the cache in the node were the
  * changes occurred. For the rest of the nodes in the cluster it will be necessary to wait for the
  * expiration of the cache entry.
  *
- * @see OAuth2SignInProvider#invalidateCache()
+ * @see OpenIDSignInProvider#invalidateCache()
  */
 class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
@@ -72,8 +72,6 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
   }
 
   private void invalidateOAuth2ConfigurationCache(AuthenticationProvider authProvider) {
-    if ("OAUTH2".equals(authProvider.getType())) {
-      oauth2SignInProvider.invalidateCache();
-    }
+    oauth2SignInProvider.invalidateCache(authProvider.getType());
   }
 }
