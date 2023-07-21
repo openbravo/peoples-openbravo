@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.query.Query;
+import org.openbravo.authentication.LoginStateHandler;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -116,7 +117,8 @@ public class Login extends HttpBaseServlet {
             recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
             emptyUsernameOrPasswordText, errorSamePassword, errorDifferentPasswordInFields);
       } finally {
-        vars.clearSession(false);
+        vars.clearSession(att -> !"target".equalsIgnoreCase(att)
+            && !att.equalsIgnoreCase(LoginStateHandler.LOGIN_STATE));
         OBContext.restorePreviousMode();
       }
     }

@@ -14,6 +14,7 @@ package org.openbravo.base.secureApp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -29,10 +30,14 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.authentication.AuthenticationException;
 import org.openbravo.authentication.AuthenticationExpirationPasswordException;
 import org.openbravo.authentication.AuthenticationManager;
+import org.openbravo.authentication.AuthenticationTypeSelector;
 import org.openbravo.authentication.ChangePasswordException;
+import org.openbravo.authentication.ExternalAuthenticationManager;
+import org.openbravo.authentication.LoginStateHandler;
 import org.openbravo.authentication.hashing.PasswordHash;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.LoginUtils.RoleDefaults;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
@@ -74,6 +79,9 @@ public class LoginHandler extends HttpBaseServlet {
   @Inject
   private PasswordStrengthChecker passwordStrengthChecker;
 
+  @Inject
+  private LoginStateHandler loginStateHandler;
+
   @Override
   public void doPost(HttpServletRequest req, HttpServletResponse res)
       throws IOException, ServletException {
@@ -81,12 +89,17 @@ public class LoginHandler extends HttpBaseServlet {
     log4j.debug("start doPost");
 
     boolean isPasswordResetFlow = Boolean.parseBoolean(req.getParameter("resetPassword"));
-    if (!isPasswordResetFlow) {
+    boolean isExternalLoginFlow = isExternalLoginRequest(new VariablesSecureApp(req));
+    if (!isPasswordResetFlow && !isExternalLoginFlow) {
       // Cookie id will be reset every time a user logs in, to prevent a malicious user from
       // stealing a cookie which later on will correspond with a valid session
       // If we are in password reset flow, there is no need to reset the cookie as it was reset in
       // the previous attempt to login
       resetCookieId(req);
+    } else if (isExternalLoginFlow) {
+      // reset the cookie but preserving in session the login state information used by the external
+      // authentication providers
+      loginStateHandler.resetCookieId(req);
     }
 
     doOptions(req, res);
@@ -113,7 +126,7 @@ public class LoginHandler extends HttpBaseServlet {
       String language = systemClient.getLanguage().getLanguage();
       vars.setSessionValue("#AD_Language", language);
       ConnectionProvider cp = new DalConnectionProvider(false);
-      if ("".equals(user)) {
+      if ("".equals(user) && !isExternalLoginFlow) {
         goToRetry(res, vars, Utility.messageBD(cp, "IDENTIFICATION_FAILURE_TITLE", language),
             Utility.messageBD(cp, "IDENTIFICATION_FAILURE_MSG", language), "Error",
             "../security/Login");
@@ -124,7 +137,8 @@ public class LoginHandler extends HttpBaseServlet {
             updatePassword(user, password, language);
           }
 
-          AuthenticationManager authManager = AuthenticationManager.getAuthenticationManager(this);
+          AuthenticationManager authManager = getAuthenticationManager(
+              vars.getStringParameter("loginMethod"));
 
           final String strUserAuth = authManager.authenticate(req, res);
           final String sessionId = vars.getSessionValue("#AD_Session_ID");
@@ -161,6 +175,24 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
+  private boolean isExternalLoginRequest(VariablesSecureApp vars) {
+    return !StringUtils.isBlank(vars.getStringParameter("loginMethod"));
+  }
+
+  private AuthenticationManager getAuthenticationManager(String method) {
+    if (StringUtils.isBlank(method)) {
+      return AuthenticationManager.getAuthenticationManager(this);
+    }
+    List<ExternalAuthenticationManager> externalAuthManagers = WeldUtils
+        .getInstancesSortedByPriority(ExternalAuthenticationManager.class,
+            new AuthenticationTypeSelector(method.toUpperCase()));
+    if (externalAuthManagers.isEmpty()) {
+      log4j.error("Could not find an AuthenticationManager instance for method {}", method);
+      throw new AuthenticationException("Could not find an AuthenticationManager");
+    }
+    return externalAuthManagers.get(0);
+  }
+
   /**
    * This method invalidates the current session and generates a new one on the fly, thus generating
    * a new JSSESSIONID cookie. It is called every time the user logs in to prevent some malicious
@@ -184,8 +216,12 @@ public class LoginHandler extends HttpBaseServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws IOException, ServletException {
-    response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    throw new UnsupportedOperationException("GET method is not allowed by LoginHandler");
+    if (isExternalLoginRequest(new VariablesSecureApp(request))) {
+      doPost(request, response);
+    } else {
+      response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+      throw new UnsupportedOperationException("GET method is not allowed by LoginHandler");
+    }
   }
 
   protected void setCORSHeaders(HttpServletRequest request, HttpServletResponse response)
@@ -385,7 +421,7 @@ public class LoginHandler extends HttpBaseServlet {
           vars.getSessionValue("target"), vars.getStringParameter("targetQueryString"));
       vars.removeSessionValue("target");
 
-      goToTarget(res, target);
+      goToTarget(res, vars, target);
     } finally {
       OBContext.restorePreviousMode();
     }
@@ -447,10 +483,17 @@ public class LoginHandler extends HttpBaseServlet {
 
   }
 
-  private void goToTarget(HttpServletResponse response, String target)
+  private void goToTarget(HttpServletResponse response, VariablesSecureApp vars, String target)
       throws IOException, ServletException {
 
-    // Return a JSON object with the target to redirect to
+    if (isResponseRedirected(vars)) {
+      // Redirect to the target directly, without writing content in the response
+      response.sendRedirect(target);
+      return;
+    }
+
+    // Return a JSON object with the target to redirect to. This JSON is processed in the client
+    // that will be in charge of redirecting to the target.
     try {
       JSONObject jsonResult = new JSONObject();
       jsonResult.put("showMessage", false);
@@ -478,11 +521,24 @@ public class LoginHandler extends HttpBaseServlet {
       throws IOException, ServletException {
     String msg = (message != null && !message.equals("")) ? message
         : Utility.messageBD(myPool, "CPEmptyUserPassword", vars.getLanguage());
+
+    // Show the message in the login window by saving the message in the session and redirecting to
+    // the login page
+    if (isResponseRedirected(vars)) {
+      OBError error = new OBError();
+      error.setType("Error");
+      error.setTitle(title);
+      error.setMessage(msg);
+      vars.setSessionObject("LoginErrorMsg", error);
+      response.sendRedirect("../security/Login");
+      return;
+    }
+
+    // Show the message in the login window by returning a JSON object with the info to print the
+    // message. This JSON is processed in the client that will be in charge of showing the message.
     String targetQueryString = vars.getStringParameter("targetQueryString");
     String target = StringUtils.isBlank(targetQueryString) ? action
         : action + "?" + targetQueryString;
-
-    // Show the message in the login window, return a JSON object with the info to print the message
     try {
       boolean loginHasError = "Error".equals(msgType);
       JSONObject jsonMsg = new JSONObject();
@@ -494,7 +550,8 @@ public class LoginHandler extends HttpBaseServlet {
 
       if (loginHasError && isBackOfficeLogin()) {
         // mobile apps expect session to be populated in case of backoffice restricted roles
-        vars.clearSession(false);
+        vars.clearSession(att -> !"target".equalsIgnoreCase(att)
+            && !att.equalsIgnoreCase(LoginStateHandler.LOGIN_STATE));
       }
 
       response.setContentType("application/json;charset=UTF-8");
@@ -505,6 +562,21 @@ public class LoginHandler extends HttpBaseServlet {
       log4j.error("Error setting login msg", e);
       throw new ServletException(e);
     }
+  }
+
+  /**
+   * Determines if a redirect should be done as a result of the login request or false it should
+   * directly write the login result into the response content. By default it returns true if it is
+   * a request for an external login authentication and false in any other case.
+   *
+   * @param vars
+   *          The {@link VariablesSecureApp} built with the request data
+   *
+   * @return true if the handler should do a redirect as a result of the request or false it should
+   *         directly write the result into the response content.
+   */
+  protected boolean isResponseRedirected(VariablesSecureApp vars) {
+    return isExternalLoginRequest(vars);
   }
 
   private void goToUpdatePassword(HttpServletResponse response, VariablesSecureApp vars,
