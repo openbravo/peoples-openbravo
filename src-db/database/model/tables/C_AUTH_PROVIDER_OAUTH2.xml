@@ -53,7 +53,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="CERTIFICATE_URL" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+      <column name="CERTIFICATE_URL" primaryKey="false" required="true" type="VARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>

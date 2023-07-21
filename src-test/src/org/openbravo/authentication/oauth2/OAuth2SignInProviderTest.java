@@ -141,6 +141,7 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
     oAuth2Config.setClientSecret("secret");
     oAuth2Config.setAuthorizationServerURL("https://auth-server.com");
     oAuth2Config.setAccessTokenURL("https://token-server.com");
+    oAuth2Config.setCertificateURL("https://certificate-server.com");
     oAuth2Config.setAuthProvider(config);
     config.getOAuth2AuthenticationProviderList().add(oAuth2Config);
     OBDal.getInstance().save(oAuth2Config);
