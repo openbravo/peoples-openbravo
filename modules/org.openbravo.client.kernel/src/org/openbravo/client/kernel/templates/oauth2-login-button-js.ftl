@@ -26,6 +26,7 @@
 <#if button_index != data.buttons?size - 1>&nbsp;</#if>
 </#list>
 
+<#if data.buttons?has_content>
 <style type="text/css">
   <#list data.buttons as button>
     <#if button.icon??>
@@ -36,3 +37,4 @@
     </#if>
   </#list>
 </style>
+</#if>
