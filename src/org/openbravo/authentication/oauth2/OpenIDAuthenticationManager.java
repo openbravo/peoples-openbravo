@@ -22,7 +22,6 @@ package org.openbravo.authentication.oauth2;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -47,6 +46,7 @@ import org.openbravo.authentication.AuthenticationType;
 import org.openbravo.authentication.ExternalAuthenticationManager;
 import org.openbravo.authentication.LoginStateHandler;
 import org.openbravo.base.HttpBaseUtils;
+import org.openbravo.base.HttpClientManager;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -68,6 +68,9 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
 
   @Inject
   private OpenIDTokenDataProvider openIDTokenDataProvider;
+
+  @Inject
+  private HttpClientManager httpClientManager;
 
   @Override
   public AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
@@ -99,10 +102,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
           .getConfiguration(OAuth2AuthenticationProvider.class, request.getParameter("state"));
 
       HttpRequest accessTokenRequest = buildAccessTokenRequest(request, config);
-      HttpResponse<String> tokenResponse = HttpClient.newBuilder()
-          .connectTimeout(Duration.ofSeconds(30))
-          .build()
-          .send(accessTokenRequest, HttpResponse.BodyHandlers.ofString());
+      HttpResponse<String> tokenResponse = httpClientManager.send(accessTokenRequest);
       int responseCode = tokenResponse.statusCode();
       if (responseCode >= 200 && responseCode < 300) {
         return getUser(tokenResponse.body(), config);

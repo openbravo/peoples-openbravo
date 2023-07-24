@@ -21,7 +21,6 @@ package org.openbravo.authentication.oauth2;
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyFactory;
@@ -39,6 +38,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +46,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.HttpClientManager;
 import org.openbravo.cache.TimeInvalidatedCache;
 import org.openbravo.model.authentication.OAuth2AuthenticationProvider;
 
@@ -63,6 +64,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 class OpenIDTokenDataProvider {
   private static final Logger log = LogManager.getLogger();
 
+  @Inject
+  private HttpClientManager httpClientManager;
+
   private TimeInvalidatedCache<String, Map<String, RSAPublicKey>> rsaPublicKeys = TimeInvalidatedCache
       .newBuilder()
       .name("Open ID RSA Public Keys")
@@ -77,10 +81,7 @@ class OpenIDTokenDataProvider {
           .timeout(Duration.ofSeconds(30))
           .GET()
           .build();
-      HttpResponse<String> response = HttpClient.newBuilder()
-          .connectTimeout(Duration.ofSeconds(30))
-          .build()
-          .send(request, HttpResponse.BodyHandlers.ofString());
+      HttpResponse<String> response = httpClientManager.send(request);
       return getRSAPublicKeys(response.body());
     } catch (Exception ex) {
       log.error("Error requesting keys to {}", url);
