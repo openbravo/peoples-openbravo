@@ -142,6 +142,7 @@ public class OpenIDAuthenticationManager extends ExternalAuthenticationManager {
     return HttpRequest.newBuilder()
         .uri(URI.create(config.getAccessTokenURL()))
         .header("Content-Type", "application/x-www-form-urlencoded")
+        .header("Accept", "application/json")
         .timeout(Duration.ofSeconds(30))
         .POST(HttpRequest.BodyPublishers.ofString(requestBody))
         .build();
