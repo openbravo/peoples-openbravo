@@ -76,8 +76,8 @@ public class OAuth2LoginButtonGenerator extends BaseTemplateComponent {
       return config.getClientID();
     }
 
-    public String getAuthorizationServerURL() {
-      return config.getAuthorizationServerURL();
+    public String getAuthorizationURL() {
+      return config.getAuthorizationURL();
     }
 
     public String getRedirectURL() {

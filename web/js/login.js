@@ -821,11 +821,11 @@ function getReadyStateHandler(req, responseXmlHandler, notifyError) {
 }
 
 function doExternalAuthentication({
-  authorizationServerURL,
+  authorizationURL,
   clientID,
   state,
   redirectURL,
   scope
 }) {
-  window.location.href = `${authorizationServerURL}?response_type=code&client_id=${clientID}&state=${state}&redirect_uri=${redirectURL}&scope=${scope}`;
+  window.location.href = `${authorizationURL}?response_type=code&client_id=${clientID}&state=${state}&redirect_uri=${redirectURL}&scope=${scope}`;
 }

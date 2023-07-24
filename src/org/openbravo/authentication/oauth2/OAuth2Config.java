@@ -32,7 +32,7 @@ class OAuth2Config {
 
   private String id;
   private String name;
-  private String authorizationServerURL;
+  private String authorizationURL;
   private String clientID;
   private String scope;
   private byte[] imageData;
@@ -45,7 +45,7 @@ class OAuth2Config {
     id = provider.getId();
     name = authProvider.getName();
     clientID = provider.getClientID();
-    authorizationServerURL = provider.getAuthorizationServerURL();
+    authorizationURL = provider.getAuthorizationURL();
     scope = DEFAULT_SCOPE;
     imageData = image != null ? image.getBindaryData() : null;
     imageMimeType = image != null ? image.getMimetype() : null;
@@ -63,8 +63,8 @@ class OAuth2Config {
     return clientID;
   }
 
-  String getAuthorizationServerURL() {
-    return authorizationServerURL;
+  String getAuthorizationURL() {
+    return authorizationURL;
   }
 
   String getScope() {

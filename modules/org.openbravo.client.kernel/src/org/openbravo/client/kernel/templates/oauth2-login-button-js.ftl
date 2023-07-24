@@ -20,7 +20,7 @@
 -->
 
 <#list data.buttons as button>
-<div id="${button.id}" class="signInButton signInButton-${button.id}" onclick="doExternalAuthentication({ authorizationServerURL: '${button.authorizationServerURL}', clientID: '${button.clientID}', state: '${button.state}', redirectURL: '${button.redirectURL}', scope: '${button.scope}' })">
+<div id="${button.id}" class="signInButton signInButton-${button.id}" onclick="doExternalAuthentication({ authorizationURL: '${button.authorizationURL}', clientID: '${button.clientID}', state: '${button.state}', redirectURL: '${button.redirectURL}', scope: '${button.scope}' })">
   <span title="${button.name}"></span>
 </div>
 <#if button_index != data.buttons?size - 1>&nbsp;</#if>
