@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,9 +25,12 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThrows;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 import static org.openbravo.test.matchers.json.JSONMatchers.equal;
+import static org.openbravo.test.matchers.json.JSONMatchers.matchesObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
 import java.util.function.Supplier;
 
@@ -39,6 +42,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +54,7 @@ import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Protocol;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.geography.Country;
 import org.openbravo.service.externalsystem.ExternalSystem;
 import org.openbravo.service.externalsystem.ExternalSystemData;
 import org.openbravo.service.externalsystem.ExternalSystemProvider;
@@ -74,6 +79,7 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
   @Before
   public void init() {
     setTestAdminContext();
+    createTestData();
 
     externalSystemData = OBProvider.getInstance().get(ExternalSystemData.class);
     externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
@@ -99,6 +105,15 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
     domainType.addEnumerateValue("TEST");
   }
 
+  private void createTestData() {
+    Country newCountry = OBProvider.getInstance().get(Country.class);
+    newCountry.setName("Wonderland");
+    newCountry.setISOCountryCode("WL");
+    newCountry.setAddressPrintFormat("-");
+    OBDal.getInstance().save(newCountry);
+    OBDal.getInstance().commitAndClose();
+  }
+
   private String getURL() {
     Properties props = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     String obURL = props.getProperty("context.url");
@@ -111,6 +126,24 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
   @After
   public void cleanUp() {
     OBDal.getInstance().rollbackAndClose();
+    deleteTestData();
+  }
+
+  private void deleteTestData() {
+    Country country = getTestCountry();
+    if (country != null) {
+      OBDal.getInstance().remove(country);
+    }
+    OBDal.getInstance().commitAndClose();
+  }
+
+  private Country getTestCountry() {
+    return (Country) OBDal.getInstance()
+        .createCriteria(Country.class)
+        .add(Restrictions.eq(Country.PROPERTY_ISOCOUNTRYCODE, "WL"))
+        .setFilterOnActive(false)
+        .setMaxResults(1)
+        .uniqueResult();
   }
 
   @Test
@@ -140,14 +173,7 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   private ExternalSystemResponse sendWithBasicCredentials(String authorizationType)
       throws JSONException, ServletException {
-    httpExternalSystemData.setAuthorizationType(authorizationType);
-    httpExternalSystemData.setUsername("Openbravo");
-    httpExternalSystemData.setPassword(FormatUtilities.encryptDecrypt("openbravo", true));
-
-    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
-        .orElseThrow();
-
-    return externalSystem.send(getRequestDataSupplier()).join();
+    return getExternalSystem(authorizationType).send(getRequestDataSupplier()).join();
   }
 
   @Test
@@ -165,7 +191,7 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
   }
 
   @Test
-  public void cannotSendWithUnsupportedRequestMethod() throws JSONException {
+  public void cannotSendWithUnsupportedRequestMethod() {
     OBException exceptionRule = assertThrows(OBException.class, () -> {
       httpExternalSystemData.setAuthorizationType("NOAUTH");
       httpExternalSystemData.setRequestMethod("TEST");
@@ -193,9 +219,82 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
         startsWith("java.net.ConnectException"));
   }
 
+  @Test
+  @Issue("53077")
+  public void sendWithDeleteMethod() throws ServletException {
+    ExternalSystemResponse response = getExternalSystem()
+        .send("DELETE", Map.of("urlPart", getTestCountry().getId()))
+        .join();
+
+    assertThat("Is Successful Response", response.getType(),
+        equalTo(ExternalSystemResponse.Type.SUCCESS));
+    assertThat("Expected Response Status Code", response.getStatusCode(),
+        equalTo(HttpServletResponse.SC_OK));
+  }
+
+  @Test
+  @Issue("53077")
+  public void sendWithGetMethod() throws ServletException {
+    ExternalSystemResponse response = getExternalSystem()
+        .send("GET", Map.of("urlPart", getTestCountry().getId()))
+        .join();
+
+    assertThat("Is Successful Response", response.getType(),
+        equalTo(ExternalSystemResponse.Type.SUCCESS));
+    assertThat("Expected Response Status Code", response.getStatusCode(),
+        equalTo(HttpServletResponse.SC_OK));
+    assertThat("Expected Response Data", (JSONObject) response.getData(),
+        matchesObject(new JSONObject(Map.of("iSOCountryCode", "WL"))));
+  }
+
+  @Test
+  @Issue("53077")
+  public void sendWithPostMethod() throws ServletException, JSONException {
+    ExternalSystemResponse response = getExternalSystem()
+        .send("POST", getRequestDataSupplier(), Collections.emptyMap())
+        .join();
+
+    assertThat("Is Successful Response", response.getType(),
+        equalTo(ExternalSystemResponse.Type.SUCCESS));
+    assertThat("Expected Response Status Code", response.getStatusCode(),
+        equalTo(HttpServletResponse.SC_OK));
+  }
+
+  @Test
+  @Issue("53077")
+  public void sendWithPutMethod() throws ServletException, JSONException {
+    JSONObject requestData = new JSONObject();
+    requestData.put("data", new JSONObject(
+        Map.of("id", getTestCountry().getId(), "_entityName", "Country", "active", false)));
+    ExternalSystemResponse response = getExternalSystem()
+        .send("PUT", getRequestDataSupplier(requestData), Collections.emptyMap())
+        .join();
+
+    assertThat("Is Successful Response", response.getType(),
+        equalTo(ExternalSystemResponse.Type.SUCCESS));
+    assertThat("Expected Response Status Code", response.getStatusCode(),
+        equalTo(HttpServletResponse.SC_OK));
+  }
+
+  private ExternalSystem getExternalSystem() throws ServletException {
+    return getExternalSystem("BASIC");
+  }
+
+  private ExternalSystem getExternalSystem(String authorizationType) throws ServletException {
+    httpExternalSystemData.setAuthorizationType(authorizationType);
+    httpExternalSystemData.setUsername("Openbravo");
+    httpExternalSystemData.setPassword(FormatUtilities.encryptDecrypt("openbravo", true));
+
+    return externalSystemProvider.getExternalSystem(externalSystemData).orElseThrow();
+  }
+
   private Supplier<InputStream> getRequestDataSupplier() throws JSONException {
     JSONObject requestData = new JSONObject();
     requestData.put("data", new JSONArray());
+    return getRequestDataSupplier(requestData);
+  }
+
+  private Supplier<InputStream> getRequestDataSupplier(JSONObject requestData) {
     return () -> new ByteArrayInputStream(requestData.toString().getBytes());
   }
 

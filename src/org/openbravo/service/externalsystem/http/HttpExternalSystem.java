@@ -27,6 +27,8 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -60,8 +62,12 @@ public class HttpExternalSystem extends ExternalSystem {
   public static final int MAX_TIMEOUT = 30;
   private static final int MAX_RETRIES = 1;
 
+  private enum Method {
+    DELETE, GET, POST, PUT
+  }
+
   private String url;
-  private String method;
+  private String requestMethod;
   private int timeout;
   private HttpClient client;
   HttpAuthorizationProvider authorizationProvider;
@@ -82,7 +88,7 @@ public class HttpExternalSystem extends ExternalSystem {
             "No HTTP configuration found for external system with ID " + configuration.getId()));
 
     url = httpConfig.getURL();
-    method = httpConfig.getRequestMethod();
+    requestMethod = httpConfig.getRequestMethod();
     timeout = getTimeoutValue(httpConfig);
     authorizationProvider = newHttpAuthorizationProvider(httpConfig);
     client = buildClient();
@@ -132,11 +138,34 @@ public class HttpExternalSystem extends ExternalSystem {
   @Override
   public CompletableFuture<ExternalSystemResponse> send(
       Supplier<? extends InputStream> inputStreamSupplier) {
+    return send(requestMethod, inputStreamSupplier, Collections.emptyMap());
+  }
+
+  @Override
+  public CompletableFuture<ExternalSystemResponse> send(String method,
+      Supplier<? extends InputStream> inputStreamSupplier, Map<String, Object> payload) {
     log.trace("Sending {} request to URL {} of external system {}", method, url, getName());
-    if ("POST".equals(method)) {
-      return sendRequest(getPOSTRequestSupplier(inputStreamSupplier));
+    Method sendMethod = getMethod(method);
+    switch (sendMethod) {
+      case DELETE:
+        return sendRequest(getDeleteRequestSupplier(payload));
+      case GET:
+        return sendRequest(getGetRequestSupplier(payload));
+      case POST:
+        return sendRequest(getPostRequestSupplier(inputStreamSupplier, payload));
+      case PUT:
+        return sendRequest(getPutRequestSupplier(inputStreamSupplier, payload));
+      default:
+        throw new OBException("Unsupported HTTP request method " + method);
     }
-    throw new OBException("Unsupported HTTP request method " + method);
+  }
+
+  private Method getMethod(String method) {
+    try {
+      return Method.valueOf(method.toUpperCase());
+    } catch (IllegalArgumentException ex) {
+      throw new OBException("Unsupported HTTP request method " + method);
+    }
   }
 
   private CompletableFuture<ExternalSystemResponse> sendRequest(
@@ -171,25 +200,46 @@ public class HttpExternalSystem extends ExternalSystem {
             request.method(), url, System.currentTimeMillis() - requestStartTime));
   }
 
-  private Supplier<HttpRequest> getPOSTRequestSupplier(
-      Supplier<? extends InputStream> inputStreamSupplier) {
-    return () -> {
-      HttpRequest.Builder request = HttpRequest.newBuilder()
-          .uri(URI.create(url))
-          .timeout(Duration.ofSeconds(timeout))
-          // sent JSON content by default, if any other content type needs to be posted then this
-          // should be moved to a new HTTP configuration setting
-          .header("Content-Type", "application/json")
-          .POST(BodyPublishers.ofInputStream(inputStreamSupplier));
+  private Supplier<HttpRequest> getDeleteRequestSupplier(Map<String, Object> payload) {
+    return () -> getHttpRequestBuilder(payload).DELETE().build();
+  }
 
-      if (authorizationProvider instanceof HttpAuthorizationRequestHeaderProvider) {
-        ((HttpAuthorizationRequestHeaderProvider) authorizationProvider).getHeaders()
-            .entrySet()
-            .stream()
-            .forEach(entry -> request.header(entry.getKey(), entry.getValue()));
-      }
-      return request.build();
-    };
+  private Supplier<HttpRequest> getGetRequestSupplier(Map<String, Object> payload) {
+    return () -> getHttpRequestBuilder(payload).GET().build();
+  }
+
+  private Supplier<HttpRequest> getPostRequestSupplier(
+      Supplier<? extends InputStream> inputStreamSupplier, Map<String, Object> payload) {
+    return () -> getHttpRequestBuilder(payload)
+        .POST(BodyPublishers.ofInputStream(inputStreamSupplier))
+        .build();
+  }
+
+  private Supplier<HttpRequest> getPutRequestSupplier(
+      Supplier<? extends InputStream> inputStreamSupplier, Map<String, Object> payload) {
+    return () -> getHttpRequestBuilder(payload)
+        .PUT(BodyPublishers.ofInputStream(inputStreamSupplier))
+        .build();
+  }
+
+  private HttpRequest.Builder getHttpRequestBuilder(Map<String, Object> payload) {
+    String urlPart = (String) payload.getOrDefault("urlPart", "");
+    if (!"".equals(urlPart) && !urlPart.startsWith("/")) {
+      urlPart = "/" + urlPart;
+    }
+
+    HttpRequest.Builder builder = HttpRequest.newBuilder()
+        .uri(URI.create(url + urlPart))
+        .timeout(Duration.ofSeconds(timeout))
+        .header("Content-Type", (String) payload.getOrDefault("Content-Type", "application/json"));
+
+    if (authorizationProvider instanceof HttpAuthorizationRequestHeaderProvider) {
+      ((HttpAuthorizationRequestHeaderProvider) authorizationProvider).getHeaders()
+          .entrySet()
+          .stream()
+          .forEach(entry -> builder.header(entry.getKey(), entry.getValue()));
+    }
+    return builder;
   }
 
   private ExternalSystemResponse buildResponse(HttpResponse<String> response) {

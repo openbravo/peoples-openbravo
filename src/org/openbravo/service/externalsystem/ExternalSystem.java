@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,8 @@
 package org.openbravo.service.externalsystem;
 
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -43,6 +45,43 @@ public abstract class ExternalSystem {
    */
   public abstract CompletableFuture<ExternalSystemResponse> send(
       Supplier<? extends InputStream> inputStreamSupplier);
+
+  /**
+   * Sends information to the external system
+   *
+   * @param method
+   *          Identifies the method or type of the send operation
+   * @param inputStreamSupplier
+   *          A supplier of the input stream with the data to be sent
+   * @param payload
+   *          Additional information used to configure the send operation
+   *
+   * @return a CompletableFuture<ExternalSystemResponse> containing the response data coming from
+   *         the external system
+   */
+  public abstract CompletableFuture<ExternalSystemResponse> send(String method,
+      Supplier<? extends InputStream> inputStreamSupplier, Map<String, Object> payload);
+
+  /**
+   * Sends information to the external system using the provided method and payload but without
+   * using a supplier of data to be sent.
+   *
+   * @see #send(String, Supplier, Map)
+   */
+  public CompletableFuture<ExternalSystemResponse> send(String method,
+      Map<String, Object> payload) {
+    return send(method, null, payload);
+  }
+
+  /**
+   * Sends information to the external system using the provided method but without using a supplier
+   * of data to be sent nor a payload.
+   *
+   * @see #send(String, Supplier, Map)
+   */
+  public CompletableFuture<ExternalSystemResponse> send(String method) {
+    return send(method, null, Collections.emptyMap());
+  }
 
   /**
    * Configures the external system instance with the provided configuration. The extensions of this
