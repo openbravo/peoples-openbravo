@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2021 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.test;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.openbravo.base.HttpClientManagerTest;
 import org.openbravo.service.externalsystem.http.HttpExternalSystemCommunicationTest;
 import org.openbravo.test.datasource.DataSourceSecurity;
 import org.openbravo.test.datasource.DataSourceWhereParameter;
@@ -112,6 +113,7 @@ import org.openbravo.test.webservice.WebServicesWithNoActiveFilterTest;
     TestSelectorDefaultFilterActionHandler.class, //
     SummaryFieldRequestTest.class, //
     CSRFAttackTest.class, //
+    HttpClientManagerTest.class, //
     HttpExternalSystemCommunicationTest.class //
 })
 public class WebserviceTestSuite {

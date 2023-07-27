@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@ package org.openbravo.erpCommon.security;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -29,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.query.Query;
+import org.openbravo.authentication.LoginStateHandler;
 import org.openbravo.base.HttpBaseServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.dal.core.OBContext;
@@ -48,8 +49,6 @@ import org.openbravo.xmlEngine.XmlDocument;
 
 public class Login extends HttpBaseServlet {
   private static final long serialVersionUID = 1L;
-
-  private static final String GOOGLE_PREFERENCE_PROPERTY = "OBSEIG_ShowGIcon";
 
   @Inject
   @Any
@@ -116,7 +115,8 @@ public class Login extends HttpBaseServlet {
             recBrowserMsgTitle, recBrowserMsgText, identificationFailureTitle,
             emptyUsernameOrPasswordText, errorSamePassword, errorDifferentPasswordInFields);
       } finally {
-        vars.clearSession(false);
+        vars.clearSession(att -> !"target".equalsIgnoreCase(att)
+            && !att.equalsIgnoreCase(LoginStateHandler.LOGIN_STATE));
         OBContext.restorePreviousMode();
       }
     }
@@ -130,22 +130,10 @@ public class Login extends HttpBaseServlet {
 
     boolean showITLogo = false;
     boolean showCompanyLogo = false;
-    boolean showGSignInButtonDemo = true;
 
     String itLink = "";
     String companyLink = "";
     SystemInformation sysInfo = OBDal.getInstance().get(SystemInformation.class, "0");
-
-    ActivationKey ak = ActivationKey.getInstance(true);
-    if (ak.isActive()) {
-      String hql = "from ADPreference pref where searchKey like :value and property = :prop and (visibleAtClient is null or visibleAtClient.id = '0')";
-      Query<Object> q = OBDal.getInstance().getSession().createQuery(hql, Object.class);
-      q.setParameter("value", "N");
-      q.setParameter("prop", GOOGLE_PREFERENCE_PROPERTY);
-
-      // show by default - not show when there is a preference to disable it
-      showGSignInButtonDemo = q.list().size() == 0;
-    }
 
     if (sysInfo == null) {
       log4j.error("System information not found");
@@ -180,6 +168,8 @@ public class Login extends HttpBaseServlet {
         + showITLogo + ", urlCompany = '" + companyLink + "', urlSupport = '" + itLink + "';";
     xmlDocument.setParameter("visualPrefs", visualPrefs);
 
+    ActivationKey ak = ActivationKey.getInstance(true);
+
     String expirationMessage = "var expirationMessage="
         + ak.getExpirationMessage(vars.getLanguage()).toString() + ";";
     xmlDocument.setParameter("expirationMessage", expirationMessage);
@@ -198,68 +188,16 @@ public class Login extends HttpBaseServlet {
     insertMessageInPage(xmlDocument, "recBrowserMsgTitle", recBrowserMsgTitle);
     insertMessageInPage(xmlDocument, "recBrowserMsgText", recBrowserMsgText);
 
-    if (showGSignInButtonDemo || !signInProvider.isUnsatisfied()) {
+    String signInCode = signInProvider.stream()
+        .map(SignInProvider::getLoginPageSignInHTMLCode)
+        .filter(StringUtils::isNotBlank)
+        .collect(Collectors.joining("&nbsp;"));
+    if (StringUtils.isNotBlank(signInCode)) {
+      // a module is providing a different sign in: including its HTML code in Log In page
       String link = "<span class=\"LabelText Login_LabelText\">"
           + Utility.messageBD(cp, "OBUIAPP_SignIn", vars.getLanguage()) + "</span>";
-      if (signInProvider.isUnsatisfied()) {
-        // if there is no external sign in provider, show Google Sign In icon with demo purposes
-        String lang = OBDal.getInstance().get(Client.class, "0").getLanguage().getLanguage();
-        String message = "";
-        if (ak.isActive()) {
-          message = Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoProfessional", lang);
-        } else {
-          message = Utility.messageBD(cp, "OBUIAPP_ActivateMessage", lang);
-          message = message.replace("%0",
-              Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoCommunity", lang));
-        }
-        message = message.replaceAll("&quot;", "\"")
-            .replaceAll("\"", "\\\\\"")
-            .replaceAll("'", "´");
-
-        link += "<style type=\"text/css\">" //
-            + "  .gSignInButtonDemo {" //
-            + "    display: inline-block;" //
-            + "    background-color: #dd4b39;" //
-            + "    color: white;" //
-            + "    width: 24px;" //
-            + "    border-radius: 2px;" //
-            + "    white-space: nowrap;" //
-            + "    border: 1px solid #d9d9d9;" //
-            + "  }" //
-            + "  .gSignInButtonDemo:hover," //
-            + "  .gSignInButtonDemo:active {" //
-            + "    border-color: #c0c0c0;" //
-            + "    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.10);" //
-            + "    cursor: hand;" //
-            + "  }" //
-            + "  .gSignInButtonDemo:hover {" //
-            + "    background-color: #e74b37;" //
-            + "  }" //
-            + "  .gSignInButtonDemo:active {" //
-            + "    background-color: #be3e2e;" //
-            + "  }" //
-            + "  .gSignInButtonDemo > span {" //
-            + "    background: url('../web/images/gSignInButtonDemo.png') 2px 2px;" //
-            + "    height: 24px;" //
-            + "    width: 24px;" //
-            + "    margin-top: -1px;" //
-            + "    display: inline-block;" //
-            + "    vertical-align: middle;" //
-            + "  }" //
-            + "</style>" //
-            + "&nbsp;&nbsp;<div id=\"gSignInButtonDemo\" class=\"gSignInButtonDemo\" onclick='setLoginMessage(\"Error\", null, \""
-            + message + "\")'>" //
-            + "  <span title=\""
-            + Utility.messageBD(cp, "OBUIAPP_gSignInButtonDemoAltMsg", vars.getLanguage()) //
-            + "\"></span>" //
-            + "</div>";
-      } else {
-        // a module is providing a different sign in: including its HTML code in Log In page
-        for (SignInProvider cSignInProvider : signInProvider) {
-          link += "&nbsp;";
-          link += cSignInProvider.getLoginPageSignInHTMLCode();
-        }
-      }
+      link += "&nbsp;";
+      link += signInCode;
       xmlDocument.setParameter("sign-in", link);
     }
 
