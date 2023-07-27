@@ -420,22 +420,6 @@
 <!--31-->  <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
 <!--31--></AD_REFERENCE>
 
-<!--32--><AD_REFERENCE>
-<!--32-->  <AD_REFERENCE_ID><![CDATA[32]]></AD_REFERENCE_ID>
-<!--32-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--32-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--32-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--32-->  <NAME><![CDATA[Image]]></NAME>
-<!--32-->  <DESCRIPTION><![CDATA[Binary Image Data]]></DESCRIPTION>
-<!--32-->  <VALIDATIONTYPE><![CDATA[D]]></VALIDATIONTYPE>
-<!--32-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--32-->  <ISBASEREFERENCE><![CDATA[Y]]></ISBASEREFERENCE>
-<!--32-->  <MODEL_IMPL><![CDATA[org.openbravo.base.model.domaintype.TableDirDomainType]]></MODEL_IMPL>
-<!--32-->  <WAD_IMPL><![CDATA[org.openbravo.wad.controls.WADImage]]></WAD_IMPL>
-<!--32-->  <UI_IMPL><![CDATA[org.openbravo.reference.ui.UIImage]]></UI_IMPL>
-<!--32-->  <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--32--></AD_REFERENCE>
-
 <!--33--><AD_REFERENCE>
 <!--33-->  <AD_REFERENCE_ID><![CDATA[33]]></AD_REFERENCE_ID>
 <!--33-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
