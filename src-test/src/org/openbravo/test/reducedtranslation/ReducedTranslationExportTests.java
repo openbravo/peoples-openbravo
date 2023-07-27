@@ -35,20 +35,20 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.ad_forms.TranslationManager;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.service.db.CallProcess;
 import org.openbravo.service.db.DalConnectionProvider;
-import org.openbravo.test.base.OBBaseTest;
 import org.openbravo.test.base.TestConstants;
 
 /**
  * Tests that checks some examples of expected scenarios where the reduced translation version
  * should exclude or include some terms
  */
-public class ReducedTranslationExportTests extends OBBaseTest {
+public class ReducedTranslationExportTests extends WeldBaseTest {
   private static boolean restoreSystemLanguageFlag = false;
 
   @BeforeClass
