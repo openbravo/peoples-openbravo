@@ -68,7 +68,7 @@ public class ExternalBusinessPartnerConfigColspan extends EntityPersistenceEvent
       String hql = "select count(1) "
           + "from C_ExtBP_Config as config, C_ExtBP_Config_Property as property "
           + "where property.detailColspan > :columnsdetailview "
-          + "and config.id = :configId ";
+          + "and config.id = :configId and property.externalBusinessPartnerIntegrationConfiguration = :configId ";
       //@formatter:on
       result = (Long) OBDal.getInstance()
           .getSession()
@@ -87,7 +87,7 @@ public class ExternalBusinessPartnerConfigColspan extends EntityPersistenceEvent
       String hql = "select count(1) "
           + "from C_ExtBP_Config as config, C_ExtBP_Config_Property as property "
           + "where :detailColspan > config.columnsdetailview "
-          + "and config.id = :configId ";
+          + "and config.id = :configId and property.externalBusinessPartnerIntegrationConfiguration = :configId ";
       //@formatter:on
       result = (Long) OBDal.getInstance()
           .getSession()
