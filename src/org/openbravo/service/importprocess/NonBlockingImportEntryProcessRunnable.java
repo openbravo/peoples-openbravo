@@ -21,26 +21,20 @@ package org.openbravo.service.importprocess;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.service.NonBlockingExecutorServiceProvider;
 import org.openbravo.service.importprocess.ImportEntryProcessor.ImportEntryProcessRunnable;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryProcessRunnable {
   private final Logger log = LogManager.getLogger();
-
-  // TODO: Parameterize
-  private static ExecutorService executorService = Executors.newFixedThreadPool(10,
-      new ImportEntryManager.DaemonThreadFactory("ImportEntryNonBlocking"));
 
   public abstract CompletableFuture<?> processAsync(ImportEntry importEntry) throws Exception;
 
   @Override
   protected void processEntry(ImportEntry importEntry) throws Exception {
     log.debug("Non-blocking async processing {}", importEntry.getId());
-    // TODO: Add logic for processing state
-    // ImportEntryManager.getInstance().setImportEntryProcessing(importEntry.getId());
     processAsync(importEntry).handle((result, ex) -> {
       if (ex != null) {
         handleException(ex);
@@ -52,9 +46,25 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
     log.debug("main thread done...");
   }
 
+  @Override
+  protected void postProcessEntry(String importEntryId, long t0, ImportEntry localImportEntry,
+      String typeOfData) {
+    if (!"Initial".equals(localImportEntry.getImportStatus())) {
+      super.postProcessEntry(importEntryId, t0, localImportEntry, typeOfData);
+    }
+  }
+
+  @Override
+  protected boolean tryDeregisteringProcessThread() {
+    return super.tryDeregisteringProcessThread();
+  }
+
   private void completed(ImportEntry importEntry) {
     log.info("Completed {}", importEntry);
     ImportEntryManager.getInstance().setImportEntryProcessed(importEntry.getId());
+    importEntry.setImportStatus("Processed"); // TODO: Necessary for the postProcessEntry to know
+                                              // that the import entry has been processed
+    postProcessEntry(importEntry.getId(), 0L, importEntry, importEntry.getTypeofdata());
   }
 
   private void runWithDal(ImportEntry importEntry, Runnable task) {
@@ -70,6 +80,6 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
   }
 
   protected ExecutorService getExecutorService() {
-    return executorService;
+    return NonBlockingExecutorServiceProvider.getExecutorService();
   }
 }

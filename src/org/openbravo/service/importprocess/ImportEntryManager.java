@@ -877,7 +877,7 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
 
     @Override
     public Thread newThread(Runnable runnable) {
-      return new ImportEntryThread(runnable, threadNumber.getAndIncrement());
+      return new ImportEntryThread(runnable, threadNumber.getAndIncrement(), threadNamePrefix);
     }
   }
 
@@ -887,7 +887,11 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    */
   private static class ImportEntryThread extends Thread {
     private ImportEntryThread(Runnable runnable, int threadNumber) {
-      super(runnable, "Import Entry - " + threadNumber);
+      this(runnable, threadNumber, "Import Entry");
+    }
+
+    private ImportEntryThread(Runnable runnable, int threadNumber, String threadNamePrefix) {
+      super(runnable, threadNamePrefix + " - " + threadNumber);
       if (getPriority() != Thread.NORM_PRIORITY) {
         setPriority(Thread.NORM_PRIORITY);
       }

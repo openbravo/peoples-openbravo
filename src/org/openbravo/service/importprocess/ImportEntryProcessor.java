@@ -20,6 +20,7 @@ package org.openbravo.service.importprocess;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -114,6 +115,9 @@ public abstract class ImportEntryProcessor {
   // multiple threads access this map, its access is handled through
   // synchronized methods
   private Map<String, ImportEntryProcessRunnable> runnables = new HashMap<>();
+  // Contains import entries that are handled in completable future methods, and are still being
+  // processed after runnable deregistering
+  private Set<String> nonBlockingImportEntriesInExecution = new HashSet<>();
 
   @Inject
   private ImportEntryManager importEntryManager;
@@ -166,6 +170,11 @@ public abstract class ImportEntryProcessor {
       log.trace(
           "Not accepting new entries of type {} key {} in this cycle ({}) as a runnable for them spanned from a previous cycle",
           importEntry.getTypeofdata(), key, currentCycle);
+      return false;
+    }
+
+    if (nonBlockingImportEntriesInExecution.contains(importEntry.getId())) {
+      // Entry is already in execution, not required to assign it to a new thread
       return false;
     }
 
@@ -238,6 +247,14 @@ public abstract class ImportEntryProcessor {
 
   private synchronized void doDeregisterProcessThread(ImportEntryProcessRunnable runnable) {
     log.debug("Removing runnable " + runnable.getKey());
+    // TODO: This doesn't look like the proper place to apply this change. It should be more
+    // generic/specific.
+    // TODO: Maybe runnable.cleanup function??
+    if (runnable instanceof NonBlockingImportEntryProcessRunnable
+        && !runnable.importEntryIds.isEmpty()) {
+      // In case of non-blocking import entry, we save it in the list of import entries to keep
+      nonBlockingImportEntriesInExecution.addAll(runnable.importEntryIds);
+    }
     runnables.remove(runnable.getKey());
   }
 
@@ -315,7 +332,7 @@ public abstract class ImportEntryProcessor {
     private Logger logger;
 
     // create concurrent hashset using util method
-    private Set<String> importEntryIds = Collections
+    Set<String> importEntryIds = Collections
         .newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     private ImportEntryManager importEntryManager;
@@ -329,6 +346,9 @@ public abstract class ImportEntryProcessor {
     private long currentProcessingEntryStarted;
 
     private int cycle;
+
+    private int cnt;
+    private int totalT;
 
     public ImportEntryProcessRunnable() {
       logger = LogManager.getLogger();
@@ -365,13 +385,7 @@ public abstract class ImportEntryProcessor {
             } catch (Exception ignored) {
             }
 
-            logger.debug("Trying to deregister process " + key);
-
-            // no more entries and deregistered, if so go away
-            if (importEntryProcessor.tryDeregisterProcessThread(this)) {
-              logger.debug("All entries processed, exiting thread");
-              importEntryIds.clear();
-              cachedOBContexts.clear();
+            if (tryDeregisteringProcessThread()) {
               return;
             }
           }
@@ -385,8 +399,8 @@ public abstract class ImportEntryProcessor {
     }
 
     protected void doRunCycle() {
-      int cnt = 0;
-      long totalT = 0;
+      cnt = 0;
+      totalT = 0;
       QueuedEntry queuedImportEntry;
       while ((queuedImportEntry = importEntries.poll()) != null) {
         try {
@@ -427,45 +441,11 @@ public abstract class ImportEntryProcessor {
             logger.debug("Processing entry {} {}", localImportEntry.getIdentifier(), typeOfData);
           }
 
+          // TODO: If this is a non-blocking entry it will follow and be marked as finished. It
+          // might be rescheduled several times.
           processEntry(localImportEntry);
 
-          if (logger.isDebugEnabled()) {
-            logger.debug("Finished Processing entry {} {} in {} ms",
-                localImportEntry.getIdentifier(), typeOfData, System.currentTimeMillis() - t0);
-          }
-
-          // don't use the import entry anymore, touching methods on it
-          // may re-open a session
-          localImportEntry = null;
-
-          // processed so can be removed
-          importEntryIds.remove(queuedImportEntry.importEntryId);
-
-          // keep some stats
-          cnt++;
-          final long timeForEntry = (System.currentTimeMillis() - t0);
-          totalT += timeForEntry;
-          importEntryManager.reportStats(typeOfData, timeForEntry);
-          if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
-            logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in " + totalT
-                + " millis, " + (totalT / cnt) + " per import entry, current queue size: "
-                + importEntries.size());
-          }
-
-          if (TriggerHandler.getInstance().isDisabled()) {
-            logger.error("Triggers disabled at end of processing an entry, this is a coding error, "
-                + "call TriggerHandler.enable in your code. Triggers are enabled again for now!");
-            TriggerHandler.getInstance().enable();
-            OBDal.getInstance().commitAndClose();
-          }
-
-          // close sessions in case the import entry processEntry left them opened
-          if (SessionHandler.isSessionHandlerPresent()) {
-            OBDal.getInstance().commitAndClose();
-          }
-          if (SessionHandler.existsOpenedSessions()) {
-            SessionHandler.getInstance().cleanUpSessions();
-          }
+          postProcessEntry(queuedImportEntry.importEntryId, t0, localImportEntry, typeOfData);
 
         } catch (Throwable t) {
           ImportProcessUtils.logError(logger, t);
@@ -505,6 +485,64 @@ public abstract class ImportEntryProcessor {
             + " millis, " + (totalT / cnt) + " per import entry, current queue size: "
             + importEntries.size());
 
+      }
+    }
+
+    protected void postProcessEntry(String importEntryId, long t0, ImportEntry localImportEntry,
+        String typeOfData) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Finished Processing entry {} {} in {} ms", localImportEntry.getIdentifier(),
+            typeOfData, System.currentTimeMillis() - t0);
+      }
+
+      // don't use the import entry anymore, touching methods on it
+      // may re-open a session
+      localImportEntry = null;
+
+      // processed so can be removed
+      importEntryIds.remove(importEntryId);
+      importEntryProcessor.nonBlockingImportEntriesInExecution.remove(importEntryId);
+
+      // keep some stats
+      cnt++;
+      final long timeForEntry = (System.currentTimeMillis() - t0);
+      totalT += timeForEntry;
+      importEntryManager.reportStats(typeOfData, timeForEntry);
+      if ((cnt % 100) == 0 && logger.isDebugEnabled()) {
+        logger.debug("Runnable: " + key + ", processed " + cnt + " import entries in " + totalT
+            + " millis, " + (totalT / cnt) + " per import entry, current queue size: "
+            + importEntries.size());
+      }
+
+      if (TriggerHandler.getInstance().isDisabled()) {
+        logger.error("Triggers disabled at end of processing an entry, this is a coding error, "
+            + "call TriggerHandler.enable in your code. Triggers are enabled again for now!");
+        TriggerHandler.getInstance().enable();
+        OBDal.getInstance().commitAndClose();
+      }
+
+      // close sessions in case the import entry processEntry left them opened
+      if (SessionHandler.isSessionHandlerPresent()) {
+        OBDal.getInstance().commitAndClose();
+      }
+      if (SessionHandler.existsOpenedSessions()) {
+        SessionHandler.getInstance().cleanUpSessions();
+      }
+    }
+
+    protected boolean tryDeregisteringProcessThread() {
+      logger.debug("Trying to deregister process " + key);
+
+      // no more entries and deregistered, if so go away
+      // TODO: This is deregistering while we have completable future thread processing. Resulting
+      // in the IE being reprocessed several times
+      if (importEntryProcessor.tryDeregisterProcessThread(this)) {
+        logger.debug("All entries processed, exiting thread");
+        importEntryIds.clear();
+        cachedOBContexts.clear();
+        return true;
+      } else {
+        return false;
       }
     }
 

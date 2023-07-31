@@ -47,6 +47,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.service.NonBlockingExecutorServiceProvider;
 import org.openbravo.service.externalsystem.ExternalSystem;
 import org.openbravo.service.externalsystem.ExternalSystemConfigurationError;
 import org.openbravo.service.externalsystem.ExternalSystemData;
@@ -104,6 +105,8 @@ public class HttpExternalSystem extends ExternalSystem {
   private HttpClient buildClient() {
     HttpClient.Builder builder = HttpClient.newBuilder()
         .connectTimeout(Duration.ofSeconds(timeout));
+
+    builder.executor(NonBlockingExecutorServiceProvider.getExecutorService());
 
     if (authorizationProvider instanceof Authenticator) {
       builder.authenticator((Authenticator) authorizationProvider);
