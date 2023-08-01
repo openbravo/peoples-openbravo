@@ -247,14 +247,7 @@ public abstract class ImportEntryProcessor {
 
   private synchronized void doDeregisterProcessThread(ImportEntryProcessRunnable runnable) {
     log.debug("Removing runnable " + runnable.getKey());
-    // TODO: This doesn't look like the proper place to apply this change. It should be more
-    // generic/specific.
-    // TODO: Maybe runnable.cleanup function??
-    if (runnable instanceof NonBlockingImportEntryProcessRunnable
-        && !runnable.importEntryIds.isEmpty()) {
-      // In case of non-blocking import entry, we save it in the list of import entries to keep
-      nonBlockingImportEntriesInExecution.addAll(runnable.importEntryIds);
-    }
+    runnable.cleanUp(nonBlockingImportEntriesInExecution);
     runnables.remove(runnable.getKey());
   }
 
@@ -441,8 +434,6 @@ public abstract class ImportEntryProcessor {
             logger.debug("Processing entry {} {}", localImportEntry.getIdentifier(), typeOfData);
           }
 
-          // TODO: If this is a non-blocking entry it will follow and be marked as finished. It
-          // might be rescheduled several times.
           processEntry(localImportEntry);
 
           postProcessEntry(queuedImportEntry.importEntryId, t0, localImportEntry, typeOfData);
@@ -534,8 +525,6 @@ public abstract class ImportEntryProcessor {
       logger.debug("Trying to deregister process " + key);
 
       // no more entries and deregistered, if so go away
-      // TODO: This is deregistering while we have completable future thread processing. Resulting
-      // in the IE being reprocessed several times
       if (importEntryProcessor.tryDeregisterProcessThread(this)) {
         logger.debug("All entries processed, exiting thread");
         importEntryIds.clear();
@@ -620,6 +609,17 @@ public abstract class ImportEntryProcessor {
      * if this is somehow forgotten.
      */
     protected abstract void processEntry(ImportEntry importEntry) throws Exception;
+
+    /**
+     * This is a cleanUp function that is expected to be executed on Runner deregistering, it allows
+     * executing some code on deregistering.
+     * 
+     * @param importEntriesInExecution
+     *          - Import entries that are currently in execution
+     */
+    public void cleanUp(Set<String> importEntriesInExecution) {
+      // To be overwritten by child implementations
+    }
 
     public void setImportEntryManager(ImportEntryManager importEntryManager) {
       this.importEntryManager = importEntryManager;

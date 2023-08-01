@@ -24,6 +24,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.NonBlockingExecutorServiceProvider;
 import org.openbravo.service.importprocess.ImportEntryProcessor.ImportEntryProcessRunnable;
 
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -59,11 +60,18 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
     return super.tryDeregisteringProcessThread();
   }
 
+  @Override
+  public void cleanUp(Set<String> importEntriesInExecution) {
+    if (!importEntryIds.isEmpty()) {
+      // In case of non-blocking import entry, we save it in the list of import entries to keep
+      importEntriesInExecution.addAll(importEntryIds);
+    }
+  }
+
   private void completed(ImportEntry importEntry) {
     log.info("Completed {}", importEntry);
     ImportEntryManager.getInstance().setImportEntryProcessed(importEntry.getId());
-    importEntry.setImportStatus("Processed"); // TODO: Necessary for the postProcessEntry to know
-                                              // that the import entry has been processed
+    importEntry.setImportStatus("Processed");
     postProcessEntry(importEntry.getId(), 0L, importEntry, importEntry.getTypeofdata());
   }
 
