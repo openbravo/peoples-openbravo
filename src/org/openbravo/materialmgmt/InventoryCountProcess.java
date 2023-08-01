@@ -148,6 +148,10 @@ public class InventoryCountProcess implements Process {
     msg.setTitle(OBMessageUtils.messageBD("Success"));
     runChecks(inventory);
 
+    // In order to prevent some small stock imbalances that may have occurred during the counting
+    // process, the following calculation will be made
+    updateQuantityCount(inventory);
+
     //@formatter:off
     String hqlInsert =
             "insert into MaterialMgmtMaterialTransaction" +
@@ -256,10 +260,6 @@ public class InventoryCountProcess implements Process {
       if (!"C".equals(inventory.getInventoryType()) && !"O".equals(inventory.getInventoryType())) {
         checkStock(inventory);
       }
-
-      // In order to prevent some small stock imbalances that may have occurred during the counting
-      // process, the following calculation will be made
-      updateQuantityCount(inventory);
 
       executeHooks(inventoryCountProcesses, inventory);
       inventory.setProcessDate(new Date());
