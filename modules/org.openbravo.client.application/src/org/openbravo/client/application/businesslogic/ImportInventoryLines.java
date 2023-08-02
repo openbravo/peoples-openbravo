@@ -85,12 +85,12 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     final String tabId = paramValues.getString("inpTabId");
     final String noStock = paramValues.getString("noStock");
     InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
-
+    String separator = getFieldSeparator();
     try (BufferedReader br = Files.newBufferedReader(Paths.get(file.getAbsolutePath()))) {
       String line = br.readLine();
+      int i = 0;
       while ((line = br.readLine()) != null) {
 
-        String separator = getFieldSeparator();
         String[] fields = line.split(separator, -1);
         String upc = fields[0];
         String productSearchkey = fields[1];
@@ -141,9 +141,14 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         inventoryLine.setDescription(description);
         inventoryLine.setCsvimported(true);
         OBDal.getInstance().save(inventoryLine);
-        OBDal.getInstance().flush();
+        if ((i > 0) && (i % 100) == 0) {
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getSession().clear();
+        }
+        i++;
         uploadResult.incTotalCount();
       }
+      OBDal.getInstance().flush();
     } catch (Exception e) {
       uploadResult.incErrorCount();
       uploadResult.addErrorMessage(e.getMessage() + "\n");
