@@ -18,10 +18,13 @@
  */
 package org.openbravo.client.application.attachment;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Base64;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -29,6 +32,8 @@ import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
@@ -37,6 +42,7 @@ import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.cache.TimeInvalidatedCache;
 import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
+import org.openbravo.client.application.attachment.SourceDocument.DocumentType;
 import org.openbravo.client.kernel.ComponentProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.SecurityChecker;
@@ -113,7 +119,45 @@ public class ReprintableDocumentManager {
    * ReprintableDocument record in order to trigger the unique constraint checks because in case the
    * record cannot be saved, this method should not continue doing the attachment upload in order to
    * avoid creating attachments not linked to any record.
-   * 
+   *
+   * @param document
+   *          A JSONObject containing the properties documentData (string containing the report),
+   *          documentId (the ticket id), documentType (ORDER or INVOICE) and documentFormat (XML or
+   *          PDF).
+   *
+   * @return the newly created ReprintableDocument
+   *
+   * @throws JSONException
+   *           if it is not possible to find a required property inside the document parameter
+   */
+  public ReprintableDocument upload(JSONObject document) throws JSONException {
+    String documentData = document.getString("documentData");
+    String documentId = document.getString("documentId");
+    String documentType = document.getString("documentType");
+    String documentFormat = document.getString("documentFormat");
+
+    Format format = Format.valueOf(documentFormat.toUpperCase());
+    InputStream inputStream = Format.PDF.equals(format)
+        ? new ByteArrayInputStream(Base64.getDecoder().decode(documentData))
+        : new ByteArrayInputStream(documentData.getBytes(StandardCharsets.UTF_8));
+    DocumentType type = DocumentType.valueOf(documentType.toUpperCase());
+    SourceDocument sourceDocument = new SourceDocument(documentId, type);
+
+    return upload(inputStream, format, sourceDocument);
+  }
+
+  /**
+   * Creates a new ReprintableDocument and uploads its data as an attachment using the attachment
+   * method of the configuration for "Reprintable Documents" defined for the current session client.
+   * If such configuration does not exist for the current client then the one defined at system
+   * level is used. And if no attachment configuration is found at all, then the {#link
+   * AttachmentUtils#DEFAULT_METHOD} method is used by default.
+   *
+   * Important Note: this method flushes the current transaction when creating the
+   * ReprintableDocument record in order to trigger the unique constraint checks because in case the
+   * record cannot be saved, this method should not continue doing the attachment upload in order to
+   * avoid creating attachments not linked to any record.
+   *
    * @param documentData
    *          An InputStream with the document data. This method is in charge of closing it when
    *          finish its execution.
@@ -142,8 +186,10 @@ public class ReprintableDocumentManager {
     } catch (Exception ex) {
       throw new OBException("Error uploading reprintable document", ex);
     }
+
     log.trace("Reprintable document {} uploaded in {} ms", document.getId(),
         System.currentTimeMillis() - init);
+
     return document;
   }
 
@@ -223,7 +269,7 @@ public class ReprintableDocumentManager {
     }
   }
 
-  private ReprintableDocument findReprintableDocument(SourceDocument sourceDocument)
+  public ReprintableDocument findReprintableDocument(SourceDocument sourceDocument)
       throws DocumentNotFoundException {
     BaseOBObject bob = sourceDocument.getBOB();
 
