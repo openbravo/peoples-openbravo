@@ -439,20 +439,7 @@ public abstract class ImportEntryProcessor {
           postProcessEntry(queuedImportEntry.importEntryId, t0, localImportEntry, typeOfData);
 
         } catch (Throwable t) {
-          ImportProcessUtils.logError(logger, t);
-
-          // bit rough but ensures that the connection is released/closed
-          try {
-            OBDal.getInstance().rollbackAndClose();
-          } catch (Exception ignored) {
-          }
-          try {
-            if (TriggerHandler.getInstance().isDisabled()) {
-              TriggerHandler.getInstance().enable();
-            }
-            OBDal.getInstance().commitAndClose();
-          } catch (Exception ignored) {
-          }
+          cleanUpAndLogOnException(t);
 
           ExternalConnectionPool pool = ExternalConnectionPool.getInstance();
           if (pool != null && pool.hasNoConnections(t)) {
@@ -476,6 +463,23 @@ public abstract class ImportEntryProcessor {
             + " millis, " + (totalT / cnt) + " per import entry, current queue size: "
             + importEntries.size());
 
+      }
+    }
+
+    protected void cleanUpAndLogOnException(Throwable t) {
+      ImportProcessUtils.logError(logger, t);
+
+      // bit rough but ensures that the connection is released/closed
+      try {
+        OBDal.getInstance().rollbackAndClose();
+      } catch (Exception ignored) {
+      }
+      try {
+        if (TriggerHandler.getInstance().isDisabled()) {
+          TriggerHandler.getInstance().enable();
+        }
+        OBDal.getInstance().commitAndClose();
+      } catch (Exception ignored) {
       }
     }
 

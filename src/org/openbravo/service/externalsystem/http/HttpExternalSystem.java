@@ -195,7 +195,7 @@ public class HttpExternalSystem extends ExternalSystem {
       return CompletableFuture.failedFuture(ex);
     }
     long requestStartTime = System.currentTimeMillis();
-    return client.sendAsync(request, BodyHandlers.ofString()).thenCompose(response -> {
+    return client.sendAsync(request, BodyHandlers.ofString()).thenComposeAsync(response -> {
       boolean retry = false;
       if (!isSuccessfulResponse(response) && remainingRetries > 0) {
         retry = authorizationProvider.handleRequestRetry(response.statusCode());
@@ -206,7 +206,7 @@ public class HttpExternalSystem extends ExternalSystem {
       return CompletableFuture.completedFuture(response)
           .thenApply(this::buildResponse)
           .orTimeout(timeout, TimeUnit.SECONDS);
-    })
+    }, NonBlockingExecutorServiceProvider.getExecutorService())
         .exceptionally(this::buildErrorResponse)
         .whenComplete((response, action) -> log.debug("{} request to {} completed in {} ms",
             request.method(), url, System.currentTimeMillis() - requestStartTime));

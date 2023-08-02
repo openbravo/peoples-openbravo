@@ -35,16 +35,16 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
 
   @Override
   protected void processEntry(ImportEntry importEntry) throws Exception {
-    log.debug("Non-blocking async processing {}", importEntry.getId());
     processAsync(importEntry).handle((result, ex) -> {
       if (ex != null) {
-        handleException(ex);
-      } else {
-        runWithDal(importEntry, () -> completed(importEntry));
+        cleanUpAndLogOnException(ex);
+        markImportEntryWithError(importEntry.getId(), ex);
+        return CompletableFuture.failedFuture(ex);
       }
+
+      runWithDal(importEntry, () -> completed(importEntry));
       return CompletableFuture.completedFuture(null);
     });
-    log.debug("main thread done...");
   }
 
   @Override
@@ -69,7 +69,7 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
   }
 
   private void completed(ImportEntry importEntry) {
-    log.info("Completed {}", importEntry);
+    log.info("Completed {}", importEntry); // TODO: Remove verbose log
     ImportEntryManager.getInstance().setImportEntryProcessed(importEntry.getId());
     importEntry.setImportStatus("Processed");
     postProcessEntry(importEntry.getId(), 0L, importEntry, importEntry.getTypeofdata());
@@ -81,10 +81,20 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
     OBDal.getInstance().commitAndClose();
   }
 
-  private String handleException(Throwable exception) {
-    // TODO: Implement exceptionally error handling
-    log.error("It was not possible to complete processing IE: {}", exception.getMessage());
-    return "";
+  /**
+   * Marks the import entry with an error status in an independent transaction
+   * 
+   * @param importEntryId
+   *          Import entry id of the import entry to change its status
+   * @param t
+   *          Throwable that caused the error
+   */
+  private void markImportEntryWithError(String importEntryId, Throwable t) {
+    try {
+      ImportEntryManager.getInstance().setImportEntryErrorIndependent(importEntryId, t);
+    } catch (Throwable ex) {
+      ImportProcessUtils.logError(log, ex);
+    }
   }
 
   protected ExecutorService getExecutorService() {
