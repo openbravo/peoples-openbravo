@@ -29,7 +29,6 @@ import javax.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.provider.OBProvider;
@@ -175,9 +174,6 @@ public class ReprintableDocumentManager {
       throws IOException, DocumentNotFoundException {
     long init = System.currentTimeMillis();
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
-    if (reprintableDocument == null) {
-      throw new DocumentNotFoundException();
-    }
     ReprintableDocumentAttachHandler handler = getHandler(reprintableDocument);
     handler.download(reprintableDocument, outputStream);
     log.trace("Reprintable document {} downloaded in {} ms", reprintableDocument.getId(),
@@ -227,23 +223,13 @@ public class ReprintableDocumentManager {
     }
   }
 
-  private ReprintableDocument findReprintableDocument(SourceDocument sourceDocument) {
+  private ReprintableDocument findReprintableDocument(SourceDocument sourceDocument)
+      throws DocumentNotFoundException {
     BaseOBObject bob = sourceDocument.getBOB();
 
     SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) bob);
 
-    // If we have read access to the source document, its ReprintableDocument can be accessed but we
-    // need to do it in admin mode because the ReprintableDocument entity is not readable by default
-    try {
-      OBContext.setAdminMode(true);
-      return (ReprintableDocument) OBDal.getInstance()
-          .createCriteria(ReprintableDocument.class)
-          .add(Restrictions.eq(sourceDocument.getProperty(), bob))
-          .setMaxResults(1)
-          .uniqueResult();
-    } finally {
-      OBContext.restorePreviousMode();
-    }
+    return sourceDocument.getReprintableDocument().orElseThrow(DocumentNotFoundException::new);
   }
 
   private ReprintableDocumentAttachHandler getHandler(ReprintableDocument reprintableDocument) {

@@ -18,9 +18,14 @@
  */
 package org.openbravo.client.application.attachment;
 
+import java.util.Optional;
+
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.ReprintableDocument;
 import org.openbravo.model.common.invoice.Invoice;
@@ -97,6 +102,33 @@ public class SourceDocument {
         .createQuery(hql, Integer.class)
         .setParameter("id", id)
         .uniqueResult() != null;
+  }
+
+  /**
+   * @return an Optional representing the ReprintableDocument linked to the document. If the
+   *         document does not have a ReprintableDocument linked to it, an empty Optional is
+   *         returned.
+   */
+  public Optional<ReprintableDocument> getReprintableDocument() {
+    // use admin mode because the ReprintableDocument entity is not readable by default
+    try {
+      OBContext.setAdminMode(true);
+      ReprintableDocument document = (ReprintableDocument) OBDal.getInstance()
+          .createCriteria(ReprintableDocument.class)
+          .add(Restrictions.eq(getProperty(), getBOB()))
+          .setMaxResults(1)
+          .uniqueResult();
+      return Optional.ofNullable(document);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  /**
+   * @return the ID of the organization which the document belongs to
+   */
+  public String getOrganizationId() {
+    return ((OrganizationEnabled) getBOB()).getOrganization().getId();
   }
 
   private Entity getEntity() {
