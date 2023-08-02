@@ -269,6 +269,15 @@ public class ReprintableDocumentManager {
     }
   }
 
+  /**
+   * Looks for a persisted reprintable document. If it exists it returns it, if not it throws a
+   * DocumentNotFoundException exception.
+   *
+   * @param sourceDocument
+   *          The reprintable document to be found
+   *
+   * @return the document if found or a DocumentNotFoundException otherwise
+   */
   public ReprintableDocument findReprintableDocument(SourceDocument sourceDocument)
       throws DocumentNotFoundException {
     BaseOBObject bob = sourceDocument.getBOB();
