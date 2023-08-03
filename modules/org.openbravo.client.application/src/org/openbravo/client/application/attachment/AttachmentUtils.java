@@ -154,6 +154,19 @@ public class AttachmentUtils {
    * 
    * @param strClient
    *          The Client whose attachment configuration has changed.
+   * @param strAttConfig
+   *          The new Attachment Configuration.
+   */
+  public static synchronized void setAttachmentConfig(String strClient, String strAttConfig) {
+    setAttachmentConfig(strClient, AttachmentType.SA, strAttConfig);
+  }
+
+  /**
+   * Updates the current active attachment configuration of the given attachment type for the
+   * client.
+   *
+   * @param strClient
+   *          The Client whose attachment configuration has changed.
    * @param attachmentType
    *          The attachment type
    * @param strAttConfig
