@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -297,6 +297,16 @@ public class OBViewTab extends BaseTemplateComponent {
 
     PrintButton printBtn = new PrintButton();
     btns.add(printBtn);
+
+    if (printBtn.hasReprint) {
+      IconButton reprintBtn = new IconButton();
+      reprintBtn.type = "reprint";
+      reprintBtn.label = Utility.messageBD(new DalConnectionProvider(false), "Reprint",
+          OBContext.getOBContext().getLanguage().getLanguage());
+      reprintBtn.action = printBtn.action.replace("print.html", "reprint.html");
+      reprintBtn.action = reprintBtn.action.replace("printButton", "reprintButton");
+      btns.add(reprintBtn);
+    }
 
     if (printBtn.hasEmail) {
       IconButton emailBtn = new IconButton();
@@ -1037,6 +1047,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
   public class PrintButton extends IconButton {
     public boolean hasEmail;
+    private final boolean hasReprint;
 
     public PrintButton() {
       Process process = tab.getProcess();
@@ -1044,6 +1055,7 @@ public class OBViewTab extends BaseTemplateComponent {
 
       hasEmail = processUrl.contains("orders") || processUrl.contains("invoices")
           || processUrl.contains("payments");
+      hasReprint = processUrl.contains("orders") || processUrl.contains("invoices");
 
       type = "print";
       action = "OB.ToolbarUtils.print(this.view, '" + processUrl + "', " + process.isDirectPrint()

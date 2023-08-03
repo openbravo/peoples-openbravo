@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2022 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2023 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -26,13 +26,16 @@ import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
@@ -48,6 +51,10 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.attachment.ReprintableDocumentManager;
+import org.openbravo.client.application.attachment.ReprintableDocumentManager.Format;
+import org.openbravo.client.application.attachment.SourceDocument;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.dal.core.OBContext;
@@ -74,6 +81,7 @@ import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.utility.ReprintableDocument;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
@@ -90,6 +98,7 @@ public class PrintController extends HttpSecureAppServlet {
   private boolean multiReports = false;
   private boolean archivedReports = false;
   private static final String PRINT_PATH = "print.html";
+  private static final String REPRINT_PATH = "reprint.html";
   private static final String PRINT_OPTIONS_PATH = "printoptions.html";
   private static final String SEND_PATH = "send.html";
 
@@ -244,6 +253,49 @@ public class PrintController extends HttpSecureAppServlet {
           savedReports.add(report);
         }
         printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
+      } else if (vars.commandIn("REPRINT")) {
+        SourceDocument.DocumentType type;
+        if ("PRINTINVOICES".equals(sessionValuePrefix)) {
+          type = SourceDocument.DocumentType.INVOICE;
+        } else if ("PRINTORDERS".equals(sessionValuePrefix)) {
+          type = SourceDocument.DocumentType.ORDER;
+        } else {
+          throw new ServletException("@CODE=UnsupportedReprintDocumentType@");
+        }
+        ReprintableDocumentManager reprintableManager = WeldUtils
+            .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
+        SourceDocument sourceDocument = new SourceDocument(documentIds[0], type);
+        if (reprintableManager.isReprintDocumentsEnabled(sourceDocument.getOrganizationId())) {
+          Report report = buildReport(response, vars, documentIds[0], reportManager, documentType,
+              Report.OutputTypeEnum.PRINT);
+          Optional<ReprintableDocument> reprintableDocument = sourceDocument
+              .getReprintableDocument();
+          if (reprintableDocument.isPresent()) {
+            // reprint
+            Format format = Format.valueOf(reprintableDocument.get().getFormat().toUpperCase());
+            if (Format.PDF == format) {
+              response.setHeader("Content-disposition",
+                  "attachment" + "; filename=" + report.getFilename());
+              try (OutputStream os = response.getOutputStream()) {
+                reprintableManager.download(sourceDocument, os);
+              }
+            } else {
+              throw new ServletException("@CODE=UnsupportedReprintDocumentFormat@");
+            }
+          } else {
+            // persist and print
+            JasperPrint jasperPrint = reportManager.processReport(report, vars);
+            Path tmp = Files.createTempFile("jasper", ".tmp");
+            ReportingUtils.saveReport(jasperPrint, ExportType.PDF, Collections.emptyMap(),
+                tmp.toFile());
+            try (InputStream is = Files.newInputStream(tmp, StandardOpenOption.DELETE_ON_CLOSE)) {
+              reprintableManager.upload(is, Format.PDF, sourceDocument);
+            }
+            printReports(response, Arrays.asList(jasperPrint), Arrays.asList(report), false);
+          }
+        } else {
+          throw new ServletException("@CODE=ReprintDocumentsDisabledForOrg@");
+        }
       } else if (vars.commandIn("ARCHIVE")) {
         // Order documents by Document No.
         if (multiReports) {
@@ -911,11 +963,15 @@ public class PrintController extends HttpSecureAppServlet {
     if (strIsDirectAttach == null || "".equals(strIsDirectAttach)) {
       strIsDirectAttach = "false";
     }
+    String printCommand = request.getServletPath().toLowerCase().indexOf(REPRINT_PATH) != -1
+        ? "REPRINT"
+        : "PRINT";
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("language", vars.getLanguage());
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", "");
     xmlDocument.setParameter("help", "");
+    xmlDocument.setParameter("printCommand", "var printCommand = '" + printCommand + "';");
     xmlDocument.setParameter("isDirectPDF", "isDirectPDF = " + strIsDirectPDF + ";\r\n");
     xmlDocument.setParameter("isDirectAttach", "isDirectAttach = " + strIsDirectAttach + ";\r\n");
     response.setContentType("text/html; charset=UTF-8");

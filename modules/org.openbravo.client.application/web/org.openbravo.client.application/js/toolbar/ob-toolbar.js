@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -679,6 +679,20 @@ isc.OBToolbar.addClassProperties({
         this.setDisabled(disabled);
       },
       keyboardShortcutId: 'ToolBar_Print'
+    },
+    reprint: {
+      updateState: function() {
+        const view = this.view;
+        const form = view.viewForm;
+        const grid = view.viewGrid;
+        const disabled =
+          grid.getSelectedRecords().length !== 1 ||
+          grid.getTotalRows() === 0 ||
+          (view.isShowingForm && form.isNew) ||
+          (view.isEditingGrid && grid.getEditForm().isNew);
+        this.setDisabled(disabled);
+      },
+      keyboardShortcutId: 'ToolBar_Reprint'
     },
     email: {
       updateState: function() {
