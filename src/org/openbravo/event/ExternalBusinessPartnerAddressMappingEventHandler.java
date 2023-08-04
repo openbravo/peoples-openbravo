@@ -115,18 +115,19 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
   }
 
   private void checkDefaultAddressDuplicatesIfSingleIntegration(EntityPersistenceEvent event) {
-    ExternalBusinessPartnerConfigLocation extBpPartnerConfigLocation = (ExternalBusinessPartnerConfigLocation) event
+    final ExternalBusinessPartnerConfigLocation property = (ExternalBusinessPartnerConfigLocation) event
         .getTargetInstance();
     if (SINGLE_INTEGRATION_TYPE
-        .equals(extBpPartnerConfigLocation.getCRMConnectorConfiguration().getTypeOfIntegration())) {
-      final ExternalBusinessPartnerConfigLocation property = (ExternalBusinessPartnerConfigLocation) event
-          .getTargetInstance();
+        .equals(property.getCRMConnectorConfiguration().getTypeOfIntegration())) {
 
       if (!property.isActive()) {
         return;
       }
 
       if (property.isUseasDefaultShipAdd()) {
+        if (!property.isShippingAddress()) {
+          throw new OBException("@ValidDefaultShipLocation@");
+        }
         OBCriteria<?> criteria = buildCriteria(event, property);
         criteria.add(Restrictions
             .eq(ExternalBusinessPartnerConfigLocation.PROPERTY_USEASDEFAULTSHIPADD, true));
@@ -136,6 +137,9 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
       }
 
       if (property.isUseasDefaultInvAdd()) {
+        if (!property.isInvoicingAddress()) {
+          throw new OBException("@ValidDefaultInvoiceLocation@");
+        }
         OBCriteria<?> criteria = buildCriteria(event, property);
         criteria.add(Restrictions
             .eq(ExternalBusinessPartnerConfigLocation.PROPERTY_USEASDEFAULTINVADD, true));
