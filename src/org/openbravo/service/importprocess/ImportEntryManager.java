@@ -358,10 +358,23 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
   public void createImportEntry(String id, String typeOfData, String json, boolean commitAndClose) {
+    createImportEntry(id, typeOfData, json, commitAndClose, false);
+  }
+
+  /**
+   * Creates and saves the import entry, calls the
+   * {@link ImportEntryPreProcessor#beforeCreate(ImportEntry)} on the
+   * {@link ImportEntryPreProcessor} instances.
+   *
+   * Note will commit the session/connection using {@link OBDal#commitAndClose()}
+   */
+  public void createImportEntry(String id, String typeOfData, String json, boolean commitAndClose,
+      boolean isNonBlocking) {
     try {
       ImportEntryBuilder.newInstance(typeOfData, json) //
           .setId(id) //
           .setNotifyManager(commitAndClose) //
+          .setIsNonBlocking(isNonBlocking)
           .create();
     } catch (ImportEntryAlreadyExistsException e) {
       // Ignore exception when ImportEntry already exists either in ImportEntry or

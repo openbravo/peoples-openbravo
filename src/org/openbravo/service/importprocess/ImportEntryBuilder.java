@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -58,6 +58,7 @@ public class ImportEntryBuilder {
   private String jsonData;
   private Map<String, Object> customProperties;
   private boolean notifyManager;
+  private boolean isNonBlocking;
 
   /**
    * Create a new instance of the Builder to create a new ImportEntry. Both the typeOfData and
@@ -82,6 +83,7 @@ public class ImportEntryBuilder {
     this.notifyManager = false;
     this.typeOfData = typeOfData;
     this.jsonData = jsonData;
+    this.isNonBlocking = false;
   }
 
   public ImportEntryBuilder setId(String id) {
@@ -130,6 +132,18 @@ public class ImportEntryBuilder {
    */
   public ImportEntryBuilder setNotifyManager(boolean notifyManager) {
     this.notifyManager = notifyManager;
+    return this;
+  }
+
+  /**
+   * Set this flag to true to mark the ImportEntry as a nonBlocking one
+   * 
+   * @param isNonBlocking
+   *          whether the ImportEntry is or not NonBlocking
+   * @return The ImportEntryBuilder instance to chain another method
+   */
+  public ImportEntryBuilder setIsNonBlocking(boolean isNonBlocking) {
+    this.isNonBlocking = isNonBlocking;
     return this;
   }
 
@@ -195,6 +209,7 @@ public class ImportEntryBuilder {
     importEntry.setRole(role);
     importEntry.setJsonInfo(jsonData);
     importEntry.setTypeofdata(typeOfData);
+    importEntry.setNonblocking(isNonBlocking);
 
     for (Map.Entry<String, Object> property : customProperties.entrySet()) {
       importEntry.set(property.getKey(), property.getValue());
