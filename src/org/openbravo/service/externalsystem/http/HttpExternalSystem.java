@@ -21,11 +21,13 @@ package org.openbravo.service.externalsystem.http;
 import java.io.InputStream;
 import java.net.Authenticator;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
@@ -246,7 +248,8 @@ public class HttpExternalSystem extends ExternalSystem {
 
     String queryString = queryParams.entrySet()
         .stream()
-        .map(e -> e.getKey() + "=" + e.getValue())
+        .map(e -> URLEncoder.encode(e.getKey(), StandardCharsets.UTF_8) + "="
+            + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
         .collect(Collectors.joining("&"));
 
     if (StringUtils.isNotBlank(queryString)) {
