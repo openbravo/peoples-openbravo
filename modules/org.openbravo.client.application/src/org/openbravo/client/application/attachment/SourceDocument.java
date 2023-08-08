@@ -22,70 +22,60 @@ import java.util.Optional;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.ReprintableDocument;
-import org.openbravo.model.common.invoice.Invoice;
-import org.openbravo.model.common.order.Order;
 
 /**
  * Represents a document used as the source to generate the data of a {@link ReprintableDocument}
  */
-public class SourceDocument {
-
-  private String id;
-  private DocumentType documentType;
+public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & OrganizationEnabled> {
+  protected String id;
 
   /**
    * Supported document types that can be linked to a {@link ReprintableDocument}
    */
   public enum DocumentType {
     INVOICE, ORDER;
+
   }
 
-  /**
-   * Builds a new source document for a {@link ReprintableDocument}
-   * 
-   * @param id
-   *          the ID of the source document
-   * @param documentType
-   *          type of the source document
-   */
-  public SourceDocument(String id, DocumentType documentType) {
-    this.id = id;
-    this.documentType = documentType;
+  public static SourceDocument<?> newSourceDocument(String id, DocumentType documentType) {
+    switch (documentType) {
+      case INVOICE:
+        return new InvoiceSourceDocument(id);
+      case ORDER:
+        return new OrderSourceDocument(id);
+      default:
+        throw new IllegalArgumentException("Unknown document type");
+    }
   }
 
   /**
    * @return the DAL property that references to the source document in the
    *         {@link ReprintableDocument} model
    */
-  String getProperty() {
-    switch (documentType) {
-      case INVOICE:
-        return ReprintableDocument.PROPERTY_INVOICE;
-      case ORDER:
-        return ReprintableDocument.PROPERTY_ORDER;
-      default:
-        throw new IllegalArgumentException("Unknown document type");
-    }
-  }
+  abstract String getProperty();
 
   /**
    * @return the BaseOBObject of the source document, obtained based on its type
    */
-  BaseOBObject getBOB() {
-    switch (documentType) {
-      case INVOICE:
-        return OBDal.getInstance().getProxy(Invoice.class, id);
-      case ORDER:
-        return OBDal.getInstance().getProxy(Order.class, id);
-      default:
-        throw new IllegalArgumentException("Unknown document type");
-    }
+
+  abstract D getBOB();
+
+  protected abstract Entity getEntity();
+
+  /**
+   * Builds a new source document for a {@link ReprintableDocument}
+   * 
+   * @param id
+   *          the ID of the source document
+   */
+  protected SourceDocument(String id) {
+    this.id = id;
   }
 
   /**
@@ -121,24 +111,6 @@ public class SourceDocument {
       return Optional.ofNullable(document);
     } finally {
       OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
-   * @return the ID of the organization which the document belongs to
-   */
-  public String getOrganizationId() {
-    return ((OrganizationEnabled) getBOB()).getOrganization().getId();
-  }
-
-  private Entity getEntity() {
-    switch (documentType) {
-      case INVOICE:
-        return ModelProvider.getInstance().getEntity("Invoice");
-      case ORDER:
-        return ModelProvider.getInstance().getEntity("Order");
-      default:
-        throw new IllegalArgumentException("Unknown document type");
     }
   }
 }

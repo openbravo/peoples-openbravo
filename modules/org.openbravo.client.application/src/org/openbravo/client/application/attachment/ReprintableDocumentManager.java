@@ -48,7 +48,6 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.SecurityChecker;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.AttachmentConfig;
 import org.openbravo.model.ad.utility.ReprintableDocument;
 import org.openbravo.model.common.enterprise.Organization;
@@ -141,7 +140,7 @@ public class ReprintableDocumentManager {
         ? new ByteArrayInputStream(Base64.getDecoder().decode(documentData))
         : new ByteArrayInputStream(documentData.getBytes(StandardCharsets.UTF_8));
     DocumentType type = DocumentType.valueOf(documentType.toUpperCase());
-    SourceDocument sourceDocument = new SourceDocument(documentId, type);
+    SourceDocument<?> sourceDocument = SourceDocument.newSourceDocument(documentId, type);
 
     return upload(inputStream, format, sourceDocument);
   }
@@ -176,7 +175,7 @@ public class ReprintableDocumentManager {
    *           if it is not possible to find a handler for the selected attachment method
    */
   public ReprintableDocument upload(InputStream documentData, Format format,
-      SourceDocument sourceDocument) {
+      SourceDocument<?> sourceDocument) {
     long init = System.currentTimeMillis();
     ReprintableDocument document = createReprintableDocument(format, sourceDocument);
 
@@ -216,7 +215,7 @@ public class ReprintableDocumentManager {
    *           if it is not possible to find a handler for the attachment method defined in the
    *           ReprintableDocument attachment configuration
    */
-  public ReprintableDocument download(SourceDocument sourceDocument, OutputStream outputStream)
+  public ReprintableDocument download(SourceDocument<?> sourceDocument, OutputStream outputStream)
       throws IOException, DocumentNotFoundException {
     long init = System.currentTimeMillis();
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
@@ -243,8 +242,8 @@ public class ReprintableDocumentManager {
   }
 
   private ReprintableDocument createReprintableDocument(Format format,
-      SourceDocument sourceDocument) {
-    BaseOBObject sourceDocumentBOB = sourceDocument.getBOB();
+      SourceDocument<?> sourceDocument) {
+    var sourceDocumentBOB = sourceDocument.getBOB();
 
     SecurityChecker.getInstance().checkWriteAccess(sourceDocumentBOB);
 
@@ -254,8 +253,8 @@ public class ReprintableDocumentManager {
       OBContext.setAdminMode(true);
       ReprintableDocument reprintableDocument = OBProvider.getInstance()
           .get(ReprintableDocument.class);
-      reprintableDocument.setClient((Client) sourceDocumentBOB.get("client"));
-      reprintableDocument.setOrganization((Organization) sourceDocumentBOB.get("organization"));
+      reprintableDocument.setClient(sourceDocumentBOB.getClient());
+      reprintableDocument.setOrganization(sourceDocumentBOB.getOrganization());
       reprintableDocument.setName("reprintableDocument." + format.name().toLowerCase());
       reprintableDocument.setFormat(format.name());
       reprintableDocument
@@ -278,7 +277,7 @@ public class ReprintableDocumentManager {
    *
    * @return the document if found or a DocumentNotFoundException otherwise
    */
-  public ReprintableDocument findReprintableDocument(SourceDocument sourceDocument)
+  public ReprintableDocument findReprintableDocument(SourceDocument<?> sourceDocument)
       throws DocumentNotFoundException {
     BaseOBObject bob = sourceDocument.getBOB();
 
