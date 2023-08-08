@@ -28,9 +28,28 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
+/**
+ * An import entry process runnable that handles non-blocking execution. It provides a processAsync
+ * function which other classes that extend this onee should implement, by returning a
+ * CompletableFuture. Once the CompeltableFuture has been completed,
+ * {@link NonBlockingImportEntryProcessRunnable#completed} method is executed and handles marking
+ * the Import Entry as processed.
+ * 
+ * Exceptions and errors are handled through
+ * {@link NonBlockingImportEntryProcessRunnable#cleanUpAndLogOnException} and
+ * {@link NonBlockingImportEntryProcessRunnable#markImportEntryWithError} methods.
+ */
 public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryProcessRunnable {
   private final Logger log = LogManager.getLogger();
 
+  /**
+   * Method that handles asynchronous task execution. It should return a CompletableFuture. When the
+   * CompletableFuture is completed, the Import Entry will be marked as processed.
+   * 
+   * @param importEntry
+   *          Import Entry to process
+   * @return a CompletableFuture
+   */
   public abstract CompletableFuture<?> processAsync(ImportEntry importEntry) throws Exception;
 
   @Override
@@ -69,7 +88,7 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
   }
 
   private void completed(ImportEntry importEntry) {
-    log.info("Completed {}", importEntry); // TODO: Remove verbose log
+    log.debug("Completed non-blocking import entry {}", importEntry);
     ImportEntryManager.getInstance().setImportEntryProcessed(importEntry.getId());
     importEntry.setImportStatus("Processed");
     postProcessEntry(importEntry.getId(), 0L, importEntry, importEntry.getTypeofdata());
