@@ -23,13 +23,14 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.verify;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 import static org.openbravo.test.matchers.json.JSONMatchers.equal;
 import static org.openbravo.test.matchers.json.JSONMatchers.matchesObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Collections;
+import java.net.http.HttpRequest;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Supplier;
@@ -46,6 +47,8 @@ import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
@@ -56,6 +59,7 @@ import org.openbravo.model.ad.utility.Protocol;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.geography.Country;
 import org.openbravo.service.externalsystem.ExternalSystem;
+import org.openbravo.service.externalsystem.ExternalSystem.Operation;
 import org.openbravo.service.externalsystem.ExternalSystemData;
 import org.openbravo.service.externalsystem.ExternalSystemProvider;
 import org.openbravo.service.externalsystem.ExternalSystemResponse;
@@ -75,8 +79,10 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   private ExternalSystemData externalSystemData;
   private HttpExternalSystemData httpExternalSystemData;
+  ArgumentCaptor<Supplier<HttpRequest>> requestCaptor;
 
   @Before
+  @SuppressWarnings("unchecked")
   public void init() {
     setTestAdminContext();
     createTestData();
@@ -103,6 +109,8 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
         .getProperty("requestMethod")
         .getDomainType();
     domainType.addEnumerateValue("TEST");
+
+    requestCaptor = ArgumentCaptor.forClass(Supplier.class);
   }
 
   private void createTestData() {
@@ -130,30 +138,18 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
   }
 
   private void deleteTestData() {
-    Country country = getTestCountry();
-    if (country != null) {
-      OBDal.getInstance().remove(country);
-    }
+    OBDal.getInstance()
+        .getSession()
+        .createQuery("DELETE FROM Country WHERE iSOCountryCode IN ('WL', 'TE')")
+        .executeUpdate();
     OBDal.getInstance().commitAndClose();
-  }
-
-  private Country getTestCountry() {
-    return (Country) OBDal.getInstance()
-        .createCriteria(Country.class)
-        .add(Restrictions.eq(Country.PROPERTY_ISOCOUNTRYCODE, "WL"))
-        .setFilterOnActive(false)
-        .setMaxResults(1)
-        .uniqueResult();
   }
 
   @Test
   public void sendWithBasicAuth() throws JSONException, ServletException {
     ExternalSystemResponse response = sendWithBasicCredentials("BASIC");
 
-    assertThat("Is Successful Response", response.getType(),
-        equalTo(ExternalSystemResponse.Type.SUCCESS));
-    assertThat("Expected Response Status Code", response.getStatusCode(),
-        equalTo(HttpServletResponse.SC_OK));
+    assertResponse(response, ExternalSystemResponse.Type.SUCCESS, HttpServletResponse.SC_OK);
     assertThat("Expected Response Data", (JSONObject) response.getData(),
         equal(getExpectedResponseData()));
   }
@@ -163,10 +159,7 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
   public void sendWithBasicAuthAlwaysInHeader() throws JSONException, ServletException {
     ExternalSystemResponse response = sendWithBasicCredentials("BASIC_ALWAYS_HEADER");
 
-    assertThat("Is Successful Response", response.getType(),
-        equalTo(ExternalSystemResponse.Type.SUCCESS));
-    assertThat("Expected Response Status Code", response.getStatusCode(),
-        equalTo(HttpServletResponse.SC_OK));
+    assertResponse(response, ExternalSystemResponse.Type.SUCCESS, HttpServletResponse.SC_OK);
     assertThat("Expected Response Data", (JSONObject) response.getData(),
         equal(getExpectedResponseData()));
   }
@@ -184,10 +177,8 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
         .orElseThrow();
     ExternalSystemResponse response = externalSystem.send(getRequestDataSupplier()).join();
 
-    assertThat("Is Erroneous Response", response.getType(),
-        equalTo(ExternalSystemResponse.Type.ERROR));
-    assertThat("Expected Response Status Code", response.getStatusCode(),
-        equalTo(HttpServletResponse.SC_UNAUTHORIZED));
+    assertResponse(response, ExternalSystemResponse.Type.ERROR,
+        HttpServletResponse.SC_UNAUTHORIZED);
   }
 
   @Test
@@ -212,80 +203,127 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
         .orElseThrow();
     ExternalSystemResponse response = externalSystem.send(getRequestDataSupplier()).join();
 
-    assertThat("Is Erroneous Response", response.getType(),
-        equalTo(ExternalSystemResponse.Type.ERROR));
-    assertThat("Expected Response Status Code", response.getStatusCode(), equalTo(0));
+    assertResponse(response, ExternalSystemResponse.Type.ERROR, 0);
     assertThat("Expected Response Error", response.getError().toString(),
         startsWith("java.net.ConnectException"));
   }
 
   @Test
   @Issue("53077")
-  public void sendWithDeleteMethod() throws ServletException {
-    ExternalSystemResponse response = getExternalSystem()
-        .send("DELETE", Map.of("urlPart", getTestCountry().getId()))
-        .join();
+  public void sendWithDeleteOperation() throws ServletException {
+    HttpExternalSystem externalSystem = getExternalSystem();
+    String path = getCountry("WL").getId();
 
-    assertThat("Is Successful Response", response.getType(),
-        equalTo(ExternalSystemResponse.Type.SUCCESS));
-    assertThat("Expected Response Status Code", response.getStatusCode(),
-        equalTo(HttpServletResponse.SC_OK));
+    ExternalSystemResponse response = externalSystem.send(Operation.DELETE, path).join();
+
+    assertResponse(response, ExternalSystemResponse.Type.SUCCESS, HttpServletResponse.SC_OK);
+    verifyRequestMethod(externalSystem, "DELETE");
   }
 
   @Test
   @Issue("53077")
-  public void sendWithGetMethod() throws ServletException {
-    ExternalSystemResponse response = getExternalSystem()
-        .send("GET", Map.of("urlPart", getTestCountry().getId()))
-        .join();
+  public void sendWithReadOperation() throws ServletException {
+    HttpExternalSystem externalSystem = getExternalSystem();
+    String path = getCountry("WL").getId();
 
-    assertThat("Is Successful Response", response.getType(),
-        equalTo(ExternalSystemResponse.Type.SUCCESS));
-    assertThat("Expected Response Status Code", response.getStatusCode(),
-        equalTo(HttpServletResponse.SC_OK));
+    ExternalSystemResponse response = externalSystem.send(Operation.READ, path).join();
+
+    assertResponse(response, ExternalSystemResponse.Type.SUCCESS, HttpServletResponse.SC_OK);
+    verifyRequestMethod(externalSystem, "GET");
     assertThat("Expected Response Data", (JSONObject) response.getData(),
         matchesObject(new JSONObject(Map.of("iSOCountryCode", "WL"))));
   }
 
   @Test
   @Issue("53077")
-  public void sendWithPostMethod() throws ServletException, JSONException {
-    ExternalSystemResponse response = getExternalSystem()
-        .send("POST", getRequestDataSupplier(), Collections.emptyMap())
+  public void sendWithQueryParams() throws ServletException, JSONException {
+    HttpExternalSystem externalSystem = getExternalSystem();
+
+    ExternalSystemResponse response = externalSystem
+        .send(Operation.READ, Map.of("queryParameters", Map.of("_where", "iSOCountryCode='WL'")))
         .join();
 
-    assertThat("Is Successful Response", response.getType(),
-        equalTo(ExternalSystemResponse.Type.SUCCESS));
-    assertThat("Expected Response Status Code", response.getStatusCode(),
-        equalTo(HttpServletResponse.SC_OK));
+    assertResponse(response, ExternalSystemResponse.Type.SUCCESS, HttpServletResponse.SC_OK);
+    verifyRequestMethod(externalSystem, "GET");
+    JSONArray data = ((JSONObject) response.getData()).getJSONObject("response")
+        .getJSONArray("data");
+    assertThat("Expected Response Data", data.getJSONObject(0),
+        matchesObject(new JSONObject(Map.of("iSOCountryCode", "WL"))));
   }
 
   @Test
   @Issue("53077")
-  public void sendWithPutMethod() throws ServletException, JSONException {
+  public void sendWithCreateOperation() throws ServletException, JSONException {
+    HttpExternalSystem externalSystem = getExternalSystem();
     JSONObject requestData = new JSONObject();
-    requestData.put("data", new JSONObject(
-        Map.of("id", getTestCountry().getId(), "_entityName", "Country", "active", false)));
-    ExternalSystemResponse response = getExternalSystem()
-        .send("PUT", getRequestDataSupplier(requestData), Collections.emptyMap())
+    requestData.put("data",
+        new JSONObject(Map.of("name", "Test", "iSOCountryCode", "TE", "addressPrintFormat", "-")));
+
+    ExternalSystemResponse response = externalSystem
+        .send(Operation.CREATE, getRequestDataSupplier(requestData))
         .join();
 
-    assertThat("Is Successful Response", response.getType(),
-        equalTo(ExternalSystemResponse.Type.SUCCESS));
-    assertThat("Expected Response Status Code", response.getStatusCode(),
-        equalTo(HttpServletResponse.SC_OK));
+    assertResponse(response, ExternalSystemResponse.Type.SUCCESS, HttpServletResponse.SC_OK);
+    verifyRequestMethod(externalSystem, "POST");
   }
 
-  private ExternalSystem getExternalSystem() throws ServletException {
+  @Test
+  @Issue("53077")
+  public void sendWithUpdateOperation() throws ServletException, JSONException {
+    HttpExternalSystem externalSystem = getExternalSystem();
+    JSONObject requestData = new JSONObject();
+    requestData.put("data",
+        new JSONObject(Map.of("id", getCountry("WL").getId(), "description", "hi")));
+
+    ExternalSystemResponse response = externalSystem
+        .send(Operation.UPDATE, getRequestDataSupplier(requestData))
+        .join();
+
+    assertResponse(response, ExternalSystemResponse.Type.SUCCESS, HttpServletResponse.SC_OK);
+    verifyRequestMethod(externalSystem, "PUT");
+  }
+
+  @Test
+  @Issue("53077")
+  public void cannotSendPayloadInGetRequests() {
+    OBException exceptionRule = assertThrows(OBException.class,
+        () -> getExternalSystem().send(Operation.READ, getRequestDataSupplier(new JSONObject()))
+            .join());
+
+    assertThat(exceptionRule.getMessage(), equalTo("GET requests do not accept a payload"));
+  }
+
+  @Test
+  @Issue("53077")
+  public void cannotSendPayloadInDeleteRequests() {
+    OBException exceptionRule = assertThrows(OBException.class,
+        () -> getExternalSystem().send(Operation.DELETE, getRequestDataSupplier(new JSONObject()))
+            .join());
+
+    assertThat(exceptionRule.getMessage(), equalTo("DELETE requests do not accept a payload"));
+  }
+
+  private HttpExternalSystem getExternalSystem() throws ServletException {
     return getExternalSystem("BASIC");
   }
 
-  private ExternalSystem getExternalSystem(String authorizationType) throws ServletException {
+  private HttpExternalSystem getExternalSystem(String authorizationType) throws ServletException {
     httpExternalSystemData.setAuthorizationType(authorizationType);
     httpExternalSystemData.setUsername("Openbravo");
     httpExternalSystemData.setPassword(FormatUtilities.encryptDecrypt("openbravo", true));
 
-    return externalSystemProvider.getExternalSystem(externalSystemData).orElseThrow();
+    ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
+        .orElseThrow();
+    return Mockito.spy((HttpExternalSystem) externalSystem);
+  }
+
+  private Country getCountry(String isoCode) {
+    return (Country) OBDal.getInstance()
+        .createCriteria(Country.class)
+        .add(Restrictions.eq(Country.PROPERTY_ISOCOUNTRYCODE, isoCode))
+        .setFilterOnActive(false)
+        .setMaxResults(1)
+        .uniqueResult();
   }
 
   private Supplier<InputStream> getRequestDataSupplier() throws JSONException {
@@ -296,6 +334,18 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   private Supplier<InputStream> getRequestDataSupplier(JSONObject requestData) {
     return () -> new ByteArrayInputStream(requestData.toString().getBytes());
+  }
+
+  private void assertResponse(ExternalSystemResponse response, ExternalSystemResponse.Type type,
+      int statusCode) {
+    assertThat("Has Expected Response Type", response.getType(), equalTo(type));
+    assertThat("Expected Response Status Code", response.getStatusCode(), equalTo(statusCode));
+  }
+
+  private void verifyRequestMethod(HttpExternalSystem externalSystemSpy, String method) {
+    verify(externalSystemSpy, Mockito.times(1)).sendRequest(requestCaptor.capture());
+    HttpRequest request = requestCaptor.getValue().get();
+    assertThat("Expected Request Method", request.method(), equalTo(method));
   }
 
   private JSONObject getExpectedResponseData() throws JSONException {

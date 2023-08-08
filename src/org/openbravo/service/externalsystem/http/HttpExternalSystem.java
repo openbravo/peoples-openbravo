@@ -39,6 +39,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
@@ -61,10 +62,6 @@ public class HttpExternalSystem extends ExternalSystem {
   private static final Logger log = LogManager.getLogger();
   public static final int MAX_TIMEOUT = 30;
   private static final int MAX_RETRIES = 1;
-
-  private enum Method {
-    DELETE, GET, POST, PUT
-  }
 
   private String url;
   private String requestMethod;
@@ -136,40 +133,50 @@ public class HttpExternalSystem extends ExternalSystem {
   }
 
   @Override
-  public CompletableFuture<ExternalSystemResponse> send(
-      Supplier<? extends InputStream> inputStreamSupplier) {
-    return send(requestMethod, inputStreamSupplier, Collections.emptyMap());
+  protected Operation getDefaultOperation() {
+    switch (requestMethod.toUpperCase()) {
+      case "DELETE":
+        return Operation.DELETE;
+      case "GET":
+        return Operation.READ;
+      case "POST":
+        return Operation.CREATE;
+      case "PUT":
+        return Operation.UPDATE;
+      default:
+        throw new OBException("Unsupported HTTP request method " + requestMethod);
+    }
   }
 
   @Override
-  public CompletableFuture<ExternalSystemResponse> send(String method,
-      Supplier<? extends InputStream> inputStreamSupplier, Map<String, Object> payload) {
-    log.trace("Sending {} request to URL {} of external system {}", method, url, getName());
-    Method sendMethod = getMethod(method);
-    switch (sendMethod) {
+  public CompletableFuture<ExternalSystemResponse> send(Operation operation,
+      Supplier<? extends InputStream> payloadSupplier, String path,
+      Map<String, Object> configuration) {
+    log.trace("Sending {} request to URL {} of external system {}", operation, url, getName());
+    switch (operation) {
       case DELETE:
-        return sendRequest(getDeleteRequestSupplier(payload));
-      case GET:
-        return sendRequest(getGetRequestSupplier(payload));
-      case POST:
-        return sendRequest(getPostRequestSupplier(inputStreamSupplier, payload));
-      case PUT:
-        return sendRequest(getPutRequestSupplier(inputStreamSupplier, payload));
+        if (payloadSupplier != null) {
+          throw new OBException("DELETE requests do not accept a payload");
+        }
+        return sendRequest(getDeleteRequestSupplier(path, configuration));
+      case READ:
+        if (payloadSupplier != null) {
+          throw new OBException("GET requests do not accept a payload");
+        }
+        return sendRequest(getGetRequestSupplier(path, configuration));
+      case CREATE:
+        return sendRequest(getPostRequestSupplier(payloadSupplier, path, configuration));
+      case UPDATE:
+        return sendRequest(getPutRequestSupplier(payloadSupplier, path, configuration));
       default:
-        throw new OBException("Unsupported HTTP request method " + method);
+        throw new OBException("Unsupported operation " + operation);
     }
   }
 
-  private Method getMethod(String method) {
-    try {
-      return Method.valueOf(method.toUpperCase());
-    } catch (IllegalArgumentException ex) {
-      throw new OBException("Unsupported HTTP request method " + method);
-    }
-  }
-
-  private CompletableFuture<ExternalSystemResponse> sendRequest(
-      Supplier<HttpRequest> requestSupplier) {
+  /**
+   * Internal API, this method is not private only because of testing purposes
+   */
+  CompletableFuture<ExternalSystemResponse> sendRequest(Supplier<HttpRequest> requestSupplier) {
     return sendRequestWithRetry(requestSupplier, MAX_RETRIES);
   }
 
@@ -200,38 +207,57 @@ public class HttpExternalSystem extends ExternalSystem {
             request.method(), url, System.currentTimeMillis() - requestStartTime));
   }
 
-  private Supplier<HttpRequest> getDeleteRequestSupplier(Map<String, Object> payload) {
-    return () -> getHttpRequestBuilder(payload).DELETE().build();
+  private Supplier<HttpRequest> getDeleteRequestSupplier(String path,
+      Map<String, Object> configuration) {
+    return () -> getHttpRequestBuilder(path, configuration).DELETE().build();
   }
 
-  private Supplier<HttpRequest> getGetRequestSupplier(Map<String, Object> payload) {
-    return () -> getHttpRequestBuilder(payload).GET().build();
+  private Supplier<HttpRequest> getGetRequestSupplier(String path,
+      Map<String, Object> configuration) {
+    return () -> getHttpRequestBuilder(path, configuration).GET().build();
   }
 
   private Supplier<HttpRequest> getPostRequestSupplier(
-      Supplier<? extends InputStream> inputStreamSupplier, Map<String, Object> payload) {
-    return () -> getHttpRequestBuilder(payload)
+      Supplier<? extends InputStream> inputStreamSupplier, String path,
+      Map<String, Object> configuration) {
+    return () -> getHttpRequestBuilder(path, configuration)
         .POST(BodyPublishers.ofInputStream(inputStreamSupplier))
         .build();
   }
 
   private Supplier<HttpRequest> getPutRequestSupplier(
-      Supplier<? extends InputStream> inputStreamSupplier, Map<String, Object> payload) {
-    return () -> getHttpRequestBuilder(payload)
+      Supplier<? extends InputStream> inputStreamSupplier, String path,
+      Map<String, Object> configuration) {
+    return () -> getHttpRequestBuilder(path, configuration)
         .PUT(BodyPublishers.ofInputStream(inputStreamSupplier))
         .build();
   }
 
-  private HttpRequest.Builder getHttpRequestBuilder(Map<String, Object> payload) {
-    String urlPart = (String) payload.getOrDefault("urlPart", "");
-    if (!"".equals(urlPart) && !urlPart.startsWith("/")) {
-      urlPart = "/" + urlPart;
+  private HttpRequest.Builder getHttpRequestBuilder(String path,
+      Map<String, Object> configuration) {
+    String urlPart = path != null ? path : "";
+    if (StringUtils.isNotBlank(urlPart) && !urlPart.startsWith("/")) {
+      urlPart = "/" + path;
+    }
+
+    @SuppressWarnings("unchecked")
+    Map<String, String> queryParams = (Map<String, String>) configuration
+        .getOrDefault("queryParameters", Collections.emptyMap());
+
+    String queryString = queryParams.entrySet()
+        .stream()
+        .map(e -> e.getKey() + "=" + e.getValue())
+        .collect(Collectors.joining("&"));
+
+    if (StringUtils.isNotBlank(queryString)) {
+      queryString = "?" + queryString;
     }
 
     HttpRequest.Builder builder = HttpRequest.newBuilder()
-        .uri(URI.create(url + urlPart))
+        .uri(URI.create(url + urlPart + queryString))
         .timeout(Duration.ofSeconds(timeout))
-        .header("Content-Type", (String) payload.getOrDefault("Content-Type", "application/json"));
+        .header("Content-Type",
+            (String) configuration.getOrDefault("Content-Type", "application/json"));
 
     if (authorizationProvider instanceof HttpAuthorizationRequestHeaderProvider) {
       ((HttpAuthorizationRequestHeaderProvider) authorizationProvider).getHeaders()

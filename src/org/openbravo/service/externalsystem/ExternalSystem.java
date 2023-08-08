@@ -35,52 +35,108 @@ public abstract class ExternalSystem {
   private String name;
 
   /**
-   * Sends information to the external system
-   *
-   * @param inputStreamSupplier
-   *          A supplier of the input stream with the data to be sent
-   *
-   * @return a CompletableFuture<ExternalSystemResponse> containing the response data coming from
-   *         the external system
+   * Operations that can be applied in the external system when sending the information
    */
-  public abstract CompletableFuture<ExternalSystemResponse> send(
-      Supplier<? extends InputStream> inputStreamSupplier);
+  public enum Operation {
+    CREATE, READ, UPDATE, DELETE
+  }
 
   /**
    * Sends information to the external system
    *
-   * @param method
-   *          Identifies the method or type of the send operation
-   * @param inputStreamSupplier
+   * @param operation
+   *          The operation to be applied in the external system with the sent information
+   * @param payloadSupplier
    *          A supplier of the input stream with the data to be sent
-   * @param payload
+   * @param path
+   *          An optional sequence of segments separated by a slash (/) that be appended to the base
+   *          external system URI where the information will be eventually sent. It can be null if
+   *          not needed.
+   * @param configuration
    *          Additional information used to configure the send operation
    *
    * @return a CompletableFuture<ExternalSystemResponse> containing the response data coming from
    *         the external system
    */
-  public abstract CompletableFuture<ExternalSystemResponse> send(String method,
-      Supplier<? extends InputStream> inputStreamSupplier, Map<String, Object> payload);
+  public abstract CompletableFuture<ExternalSystemResponse> send(Operation operation,
+      Supplier<? extends InputStream> payloadSupplier, String path,
+      Map<String, Object> configuration);
 
   /**
-   * Sends information to the external system using the provided method and payload but without
-   * using a supplier of data to be sent.
+   * Sends information to the external system with the default operation.
+   * 
+   * @see #getDefaultOperation
    *
-   * @see #send(String, Supplier, Map)
+   * @param payloadSupplier
+   *          A supplier of the input stream with the data to be sent
+   *
+   * @return a CompletableFuture<ExternalSystemResponse> containing the response data coming from
+   *         the external system
    */
-  public CompletableFuture<ExternalSystemResponse> send(String method,
-      Map<String, Object> payload) {
-    return send(method, null, payload);
+  public final CompletableFuture<ExternalSystemResponse> send(
+      Supplier<? extends InputStream> payloadSupplier) {
+    return send(getDefaultOperation(), payloadSupplier, null, Collections.emptyMap());
   }
 
   /**
-   * Sends information to the external system using the provided method but without using a supplier
-   * of data to be sent nor a payload.
-   *
-   * @see #send(String, Supplier, Map)
+   * @return the operation used by default when invoking the {@link #send(Supplier)} method
    */
-  public CompletableFuture<ExternalSystemResponse> send(String method) {
-    return send(method, null, Collections.emptyMap());
+  protected Operation getDefaultOperation() {
+    return Operation.CREATE;
+  }
+
+  /**
+   * Sends information to the external system using the provided operation, payload supplier and
+   * path but without using additional configuration.
+   *
+   * @see #send(Operation, Supplier, String, Map)
+   */
+  public final CompletableFuture<ExternalSystemResponse> send(Operation operation,
+      Supplier<? extends InputStream> payloadSupplier, String path) {
+    return send(operation, payloadSupplier, path, Collections.emptyMap());
+  }
+
+  /**
+   * Sends information to the external system using the provided operation and payload supplier but
+   * without using a path nor additional configuration.
+   *
+   * @see #send(Operation, Supplier, String)
+   */
+  public final CompletableFuture<ExternalSystemResponse> send(Operation operation,
+      Supplier<? extends InputStream> payloadSupplier) {
+    return send(operation, payloadSupplier, null);
+  }
+
+  /**
+   * Sends information to the external system using the provided operation and path but without
+   * using a payload supplier nor additional configuration.
+   *
+   * @see #send(Operation, String, Map)
+   */
+  public final CompletableFuture<ExternalSystemResponse> send(Operation operation, String path) {
+    return send(operation, path, Collections.emptyMap());
+  }
+
+  /**
+   * Sends information to the external system using the provided operation and configuration but
+   * without using a payload supplier nor a path.
+   *
+   * @see #send(Operation, String, Map)
+   */
+  public final CompletableFuture<ExternalSystemResponse> send(Operation operation,
+      Map<String, Object> configuration) {
+    return send(operation, null, configuration);
+  }
+
+  /**
+   * Sends information to the external system using the provided operation, path and configuration
+   * but without using a payload supplier.
+   *
+   * @see #send(Operation, Supplier, String, Map)
+   */
+  public final CompletableFuture<ExternalSystemResponse> send(Operation operation, String path,
+      Map<String, Object> configuration) {
+    return send(operation, null, path, configuration);
   }
 
   /**
