@@ -13,7 +13,7 @@ public class InvoiceSourceDocument extends SourceDocument<Invoice> {
   }
 
   @Override
-  Invoice getBOB() {
+  Invoice getBaseDocument() {
     return OBDal.getInstance().getProxy(Invoice.class, id);
   }
 

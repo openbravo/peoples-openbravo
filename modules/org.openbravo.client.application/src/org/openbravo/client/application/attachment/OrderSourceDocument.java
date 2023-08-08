@@ -13,7 +13,7 @@ public class OrderSourceDocument extends SourceDocument<Order> {
   }
 
   @Override
-  Order getBOB() {
+  Order getBaseDocument() {
     return OBDal.getInstance().getProxy(Order.class, id);
   }
 

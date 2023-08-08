@@ -243,7 +243,7 @@ public class ReprintableDocumentManager {
 
   private ReprintableDocument createReprintableDocument(Format format,
       SourceDocument<?> sourceDocument) {
-    var sourceDocumentBOB = sourceDocument.getBOB();
+    var sourceDocumentBOB = sourceDocument.getBaseDocument();
 
     SecurityChecker.getInstance().checkWriteAccess(sourceDocumentBOB);
 
@@ -259,7 +259,7 @@ public class ReprintableDocumentManager {
       reprintableDocument.setFormat(format.name());
       reprintableDocument
           .setAttachmentConfiguration(AttachmentUtils.getAttachmentConfig(AttachmentType.RD));
-      reprintableDocument.set(sourceDocument.getProperty(), sourceDocument.getBOB());
+      reprintableDocument.set(sourceDocument.getProperty(), sourceDocument.getBaseDocument());
       OBDal.getInstance().save(reprintableDocument);
       OBDal.getInstance().flush();
       return reprintableDocument;
@@ -279,7 +279,7 @@ public class ReprintableDocumentManager {
    */
   public ReprintableDocument findReprintableDocument(SourceDocument<?> sourceDocument)
       throws DocumentNotFoundException {
-    BaseOBObject bob = sourceDocument.getBOB();
+    BaseOBObject bob = sourceDocument.getBaseDocument();
 
     SecurityChecker.getInstance().checkReadableAccess((OrganizationEnabled) bob);
 

@@ -64,7 +64,7 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
    * @return the BaseOBObject of the source document, obtained based on its type
    */
 
-  abstract D getBOB();
+  abstract D getBaseDocument();
 
   protected abstract Entity getEntity();
 
@@ -105,7 +105,7 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
       OBContext.setAdminMode(true);
       ReprintableDocument document = (ReprintableDocument) OBDal.getInstance()
           .createCriteria(ReprintableDocument.class)
-          .add(Restrictions.eq(getProperty(), getBOB()))
+          .add(Restrictions.eq(getProperty(), getBaseDocument()))
           .setMaxResults(1)
           .uniqueResult();
       return Optional.ofNullable(document);
