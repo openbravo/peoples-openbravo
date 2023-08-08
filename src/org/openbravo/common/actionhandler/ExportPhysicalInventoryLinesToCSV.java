@@ -216,14 +216,22 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
       ScrollableResults physicalInventorylines) throws IOException {
     while (physicalInventorylines.next()) {
       Tuple physicalInventoryline = (Tuple) physicalInventorylines.get()[0];
+      BigDecimal bookedQty = (BigDecimal) physicalInventoryline.get("bookQuantity");
+      BigDecimal qtyCount = (BigDecimal) physicalInventoryline.get("quantityCount");
       writer.append((String) physicalInventoryline.get("productUPC") + fieldSeparator);
       writer.append((String) physicalInventoryline.get("productSearchKey") + fieldSeparator);
       writer.append(((String) physicalInventoryline.get("attributeSet") != null
           ? (String) physicalInventoryline.get("attributeSet")
           : "") + fieldSeparator);
-      writer.append((blindCount ? "" : (BigDecimal) physicalInventoryline.get("bookQuantity"))
+      writer.append((blindCount ? ""
+          : bookedQty.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0
+              ? bookedQty.toBigInteger()
+              : bookedQty)
           + fieldSeparator);
-      writer.append((blindCount ? "" : (BigDecimal) physicalInventoryline.get("quantityCount"))
+      writer.append((blindCount ? ""
+          : qtyCount.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0
+              ? qtyCount.toBigInteger()
+              : qtyCount)
           + fieldSeparator);
       writer.append((String) physicalInventoryline.get("UOM") + fieldSeparator);
       writer.append((String) physicalInventoryline.get("storageBin") + fieldSeparator);
