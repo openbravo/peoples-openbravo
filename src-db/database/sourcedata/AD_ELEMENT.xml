@@ -21399,10 +21399,10 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--10F725BB8A534B5691EEA3FEA7871609-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--10F725BB8A534B5691EEA3FEA7871609-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--10F725BB8A534B5691EEA3FEA7871609-->  <COLUMNNAME><![CDATA[Request_Method]]></COLUMNNAME>
-<!--10F725BB8A534B5691EEA3FEA7871609-->  <NAME><![CDATA[Request Method]]></NAME>
-<!--10F725BB8A534B5691EEA3FEA7871609-->  <PRINTNAME><![CDATA[Request Method]]></PRINTNAME>
-<!--10F725BB8A534B5691EEA3FEA7871609-->  <DESCRIPTION><![CDATA[The HTTP method used to indicate the desired action on an external system resource]]></DESCRIPTION>
-<!--10F725BB8A534B5691EEA3FEA7871609-->  <HELP><![CDATA[The HTTP method used to indicate the desired action to be performed on an external system resource]]></HELP>
+<!--10F725BB8A534B5691EEA3FEA7871609-->  <NAME><![CDATA[Default Request Method]]></NAME>
+<!--10F725BB8A534B5691EEA3FEA7871609-->  <PRINTNAME><![CDATA[Default Request Method]]></PRINTNAME>
+<!--10F725BB8A534B5691EEA3FEA7871609-->  <DESCRIPTION><![CDATA[The default HTTP method used to indicate the desired action on an external system resource]]></DESCRIPTION>
+<!--10F725BB8A534B5691EEA3FEA7871609-->  <HELP><![CDATA[The HTTP method used to indicate the desired action to be performed on an external system resource. Note that this method can be overwritten in the programmatic API used to communicate with the external system in order to use a different method.]]></HELP>
 <!--10F725BB8A534B5691EEA3FEA7871609-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--10F725BB8A534B5691EEA3FEA7871609-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--10F725BB8A534B5691EEA3FEA7871609--></AD_ELEMENT>
