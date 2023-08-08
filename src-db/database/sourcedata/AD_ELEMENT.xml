@@ -22315,6 +22315,9 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--212FE1E0D0764879B9E6F715A389C085-->  <COLUMNNAME><![CDATA[Showcustomeridentifier]]></COLUMNNAME>
 <!--212FE1E0D0764879B9E6F715A389C085-->  <NAME><![CDATA[Show customer identifier on referenced documents]]></NAME>
 <!--212FE1E0D0764879B9E6F715A389C085-->  <PRINTNAME><![CDATA[Show customer identifier on referenced documents]]></PRINTNAME>
+<!--212FE1E0D0764879B9E6F715A389C085-->  <DESCRIPTION><![CDATA[Flag that indicates if the customer identifier configured for the customer is to be used]]></DESCRIPTION>
+<!--212FE1E0D0764879B9E6F715A389C085-->  <HELP><![CDATA[If TRUE, the properties configured in the API Property for Customers tab will be used as the customer identifier when displaying the external customer and it will be necessary to call the CRM Connector to get this information.
+If FALSE, no call will be made to the CRM Connector to get the customer information, and the external customer reference will be shown as identifier if it exists.]]></HELP>
 <!--212FE1E0D0764879B9E6F715A389C085-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--212FE1E0D0764879B9E6F715A389C085-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--212FE1E0D0764879B9E6F715A389C085--></AD_ELEMENT>
