@@ -167,6 +167,12 @@ html[data-useragent*=' Edge/'] .OBToolbarIconButtonSelectedDisabled {
   background-image: url(./images/toolbar/iconButton-email.png);
 }
 
+.OBToolbarIconButton_icon_reemail {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/toolbar/iconButton-reemail.png);
+}
+
 .OBToolbarIconButton_icon_print {
   background-repeat: no-repeat;
   background-position: center center;
@@ -176,7 +182,7 @@ html[data-useragent*=' Edge/'] .OBToolbarIconButtonSelectedDisabled {
 .OBToolbarIconButton_icon_reprint {
   background-repeat: no-repeat;
   background-position: center center;
-  background-image: url(./images/toolbar/iconButton-print.png);
+  background-image: url(./images/toolbar/iconButton-reprint.png);
 }
 
 .OBToolbarIconButton_icon_undo {

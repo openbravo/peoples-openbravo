@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -19,23 +19,36 @@
 package org.openbravo.erpCommon.utility.reporting;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.AttachImplementationManager;
+import org.openbravo.client.application.attachment.DocumentNotFoundException;
+import org.openbravo.client.application.attachment.ReprintableDocumentManager;
+import org.openbravo.client.application.attachment.SourceDocument;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.application.report.language.ReportLanguageHandler;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
@@ -141,9 +154,58 @@ public class ReportManager {
   public void saveTempReport(Report report, VariablesSecureApp vars) {
     JasperPrint jasperPrint = null;
     try {
-      jasperPrint = processReport(report, vars);
-      saveReport(report, jasperPrint);
-    } catch (final ReportingException e) {
+      ReprintableDocumentManager reprintableManager = WeldUtils
+          .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
+      final String documentId = report.getDocumentId();
+      final DocumentType documentType = report.getDocumentType();
+      String orgId = null;
+      if (DocumentType.SALESORDER.equals(documentType)) {
+        orgId = OBDal.getInstance().get(Order.class, documentId).getOrganization().getId();
+      } else if (DocumentType.SALESINVOICE.equals(documentType)) {
+        orgId = OBDal.getInstance().get(Invoice.class, documentId).getOrganization().getId();
+      }
+      if (orgId != null && reprintableManager.isReprintDocumentsEnabled(orgId)) {
+        try {
+          final SourceDocument reprintableSource = new SourceDocument(documentId,
+              DocumentType.SALESORDER.equals(documentType) ? SourceDocument.DocumentType.ORDER
+                  : SourceDocument.DocumentType.INVOICE);
+          reprintableManager.findReprintableDocument(reprintableSource);
+
+          final File reprintable = new File(
+              report.getTargetDirectory().toString() + '/' + report.getFilename());
+          try (OutputStream outputStream = new FileOutputStream(reprintable)) {
+            reprintableManager.download(reprintableSource, outputStream);
+          } catch (IOException e) {
+            throw new OBException("Error creating output stream. Stack trace: " + e);
+          }
+        } catch (DocumentNotFoundException e1) {
+          jasperPrint = processReport(report, vars);
+          saveReport(report, jasperPrint);
+
+          final JSONObject jsonReprintable = new JSONObject();
+          final File reportFile = new File(
+              report.getTargetDirectory().toString() + '/' + report.getFilename());
+          try {
+            jsonReprintable.put("documentData",
+                Base64.getEncoder().encodeToString(Files.readAllBytes(reportFile.toPath())));
+            jsonReprintable.put("documentId", documentId);
+            jsonReprintable.put("documentType",
+                documentType.equals(DocumentType.SALESORDER) ? "ORDER" : "INVOICE");
+            jsonReprintable.put("documentFormat", "PDF");
+            reprintableManager.upload(jsonReprintable);
+          } catch (JSONException e2) {
+            throw new OBException("Error creating reprintable json. Stack trace: " + e2);
+          } catch (IOException e3) {
+            throw new OBException("Error reading reprintable file. Stack trace: " + e3);
+          }
+        }
+      } else {
+        jasperPrint = processReport(report, vars);
+        saveReport(report, jasperPrint);
+      }
+    } catch (
+
+    final ReportingException e) {
       log4j.error(e.getMessage());
       e.printStackTrace();
     }

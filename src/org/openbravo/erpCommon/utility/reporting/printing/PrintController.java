@@ -97,10 +97,11 @@ public class PrintController extends HttpSecureAppServlet {
   private final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
   private boolean multiReports = false;
   private boolean archivedReports = false;
+  private static final String PRINT_OPTIONS_PATH = "printoptions.html";
   private static final String PRINT_PATH = "print.html";
   private static final String REPRINT_PATH = "reprint.html";
-  private static final String PRINT_OPTIONS_PATH = "printoptions.html";
   private static final String SEND_PATH = "send.html";
+  private static final String RESEND_PATH = "resend.html";
 
   @Override
   public void init(ServletConfig config) {
@@ -328,7 +329,6 @@ public class PrintController extends HttpSecureAppServlet {
         printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
       } else {
         if (vars.commandIn("DEFAULT")) {
-
           differentDocTypes.clear();
           reports = new HashMap<String, Report>();
           for (int index = 0; index < documentIds.length; index++) {
@@ -346,25 +346,22 @@ public class PrintController extends HttpSecureAppServlet {
                   report.getOrgId());
 
               if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) == -1
-                  && request.getServletPath().toLowerCase().indexOf(PRINT_OPTIONS_PATH) == -1) {
-                if ("".equals(senderAddress) || senderAddress == null) {
-                  final OBError on = new OBError();
-                  on.setMessage(Utility.messageBD(this, "NoSender", vars.getLanguage()));
-                  on.setTitle(Utility.messageBD(this, "EmailConfigError", vars.getLanguage()));
-                  on.setType("Error");
-                  final String tabId = vars.getSessionValue("inpTabId");
-                  vars.getStringParameter("tab");
-                  vars.setMessage(tabId, on);
-                  vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
-                  printPageClosePopUpAndRefreshParent(response, vars);
-                  throw new ServletException("Configuration Error no sender defined");
-                }
+                  && request.getServletPath().toLowerCase().indexOf(PRINT_OPTIONS_PATH) == -1
+                  && "".equals(senderAddress) || senderAddress == null) {
+                final OBError on = new OBError();
+                on.setMessage(Utility.messageBD(this, "NoSender", vars.getLanguage()));
+                on.setTitle(Utility.messageBD(this, "EmailConfigError", vars.getLanguage()));
+                on.setType("Error");
+                final String tabId = vars.getSessionValue("inpTabId");
+                vars.getStringParameter("tab");
+                vars.setMessage(tabId, on);
+                vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
+                printPageClosePopUpAndRefreshParent(response, vars);
+                throw new ServletException("Configuration Error no sender defined");
               }
 
-              // check the different doc typeId's if all the selected
-              // doc's
-              // has the same doc typeId the template selector should
-              // appear
+              // Check the different document type IDs. If all the selected documents have the same
+              // document type ID, the template selector should appear.
               if (!differentDocTypes.containsKey(report.getDocTypeId())) {
                 differentDocTypes.put(report.getDocTypeId(), report.getTemplate());
               }
@@ -379,7 +376,8 @@ public class PrintController extends HttpSecureAppServlet {
           if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1) {
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
-          } else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1) {
+          } else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1
+              || request.getServletPath().toLowerCase().indexOf(RESEND_PATH) != -1) {
             createEmailOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
           }

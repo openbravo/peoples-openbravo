@@ -655,6 +655,7 @@ isc.OBToolbar.addClassProperties({
         var view = this.view,
           form = view.viewForm,
           grid = view.viewGrid;
+
         var selectedRecords = grid.getSelectedRecords();
         var disabled = false;
         if (selectedRecords.length === 0) {
@@ -676,29 +677,38 @@ isc.OBToolbar.addClassProperties({
         if (view.tabId === '220' && selectedRecords.length > 1) {
           disabled = true;
         }
+
+        if (view.isReprintEnabled) {
+          this.buttonType = 'reprint';
+          this.prompt = OB.I18N.getLabel('Reprint');
+          if (selectedRecords.length > 1) {
+            disabled = true;
+          }
+        } else {
+          this.buttonType = 'print';
+          this.prompt = OB.I18N.getLabel('Print');
+        }
+        this.resetBaseStyle();
+
         this.setDisabled(disabled);
       },
       keyboardShortcutId: 'ToolBar_Print'
-    },
-    reprint: {
-      updateState: function() {
-        const view = this.view;
-        const form = view.viewForm;
-        const grid = view.viewGrid;
-        const disabled =
-          grid.getSelectedRecords().length !== 1 ||
-          grid.getTotalRows() === 0 ||
-          (view.isShowingForm && form.isNew) ||
-          (view.isEditingGrid && grid.getEditForm().isNew);
-        this.setDisabled(disabled);
-      },
-      keyboardShortcutId: 'ToolBar_Reprint'
     },
     email: {
       updateState: function() {
         var view = this.view,
           form = view.viewForm,
           grid = view.viewGrid;
+
+        if (view.isReprintEnabled) {
+          this.buttonType = 'reemail';
+          this.prompt = OB.I18N.getLabel('ReEmail');
+        } else {
+          this.buttonType = 'email';
+          this.prompt = OB.I18N.getLabel('Email');
+        }
+        this.resetBaseStyle();
+
         var selectedRecords = grid.getSelectedRecords();
         var disabled = false;
         if (selectedRecords.length === 0) {
@@ -1542,6 +1552,7 @@ isc.OBToolbar.addProperties({
             }
           }
           currentContext.viewForm.view.attachmentExists = attachmentExists;
+          currentContext.isReprintEnabled = data.isReprintEnabled;
           doRefresh(
             buttonsByContext[currentContext],
             currentContext.getCurrentValues() || {},
@@ -2057,6 +2068,14 @@ isc.OBToolbarTextButton.addProperties({
 OB.ToolbarUtils = {};
 
 OB.ToolbarUtils.print = function(view, url, directPrint, type) {
+  if (type === 'printButton' && view.isReprintEnabled) {
+    url = url.replace('print.html', 'reprint.html');
+    type = type.replace('printButton', 'reprintButton');
+  } else if (type === 'emailButton' && view.isReprintEnabled) {
+    url = url.replace('send.html', 'resend.html');
+    type = type.replace('emailButton', 'reemailButton');
+  }
+
   var selectedRecords = view.viewGrid.getSelectedRecords(),
     length = selectedRecords.length;
 
