@@ -69,9 +69,11 @@ public class IsReprintEnabledFICFinalObjectExtension implements FICFinalObjectEx
               : jsContent.getString("C_Invoice_ID");
           OrganizationEnabled selectedRecord = (OrganizationEnabled) OBDal.getInstance()
               .get(row.getClass(), selectedRecordId);
-          Organization organization = selectedRecord.getOrganization();
-          if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
-            isReprintEnabled = true;
+          if (selectedRecord != null) {
+            Organization organization = selectedRecord.getOrganization();
+            if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
+              isReprintEnabled = true;
+            }
           }
         }
         finalObject.put("isReprintEnabled", isReprintEnabled);
