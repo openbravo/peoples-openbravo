@@ -438,6 +438,10 @@ public abstract class ImportEntryProcessor {
 
           postProcessEntry(queuedImportEntry.importEntryId, t0, localImportEntry, typeOfData);
 
+          // don't use the import entry anymore, touching methods on it
+          // may re-open a session
+          localImportEntry = null;
+
         } catch (Throwable t) {
           cleanUpAndLogOnException(t);
 
@@ -489,10 +493,6 @@ public abstract class ImportEntryProcessor {
         logger.debug("Finished Processing entry {} {} in {} ms", localImportEntry.getIdentifier(),
             typeOfData, System.currentTimeMillis() - t0);
       }
-
-      // don't use the import entry anymore, touching methods on it
-      // may re-open a session
-      localImportEntry = null;
 
       // processed so can be removed
       importEntryIds.remove(importEntryId);
