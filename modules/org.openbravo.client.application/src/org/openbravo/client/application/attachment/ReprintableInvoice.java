@@ -25,9 +25,9 @@ import org.openbravo.model.common.invoice.Invoice;
 /**
  * Used to generate the data of a {@link ReprintableDocument} based in an {@link Invoice}
  */
-public class InvoiceSourceDocument extends SourceDocument<Invoice> {
+public class ReprintableInvoice extends ReprintableSourceDocument<Invoice> {
 
-  public InvoiceSourceDocument(String id) {
+  public ReprintableInvoice(String id) {
     super(id);
   }
 

@@ -33,7 +33,7 @@ import org.openbravo.model.ad.utility.ReprintableDocument;
 /**
  * Represents a document used as the source to generate the data of a {@link ReprintableDocument}
  */
-public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & OrganizationEnabled> {
+public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientEnabled & OrganizationEnabled> {
   protected String id;
 
   /**
@@ -44,7 +44,7 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
   }
 
   /**
-   * Retrieves a {@link SourceDocument} instance with the information of the document identified by
+   * Retrieves a {@link ReprintableSourceDocument} instance with the information of the document identified by
    * the provided ID and document type.
    *
    * @param id
@@ -55,12 +55,12 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
    * @return the source document with the information of the document referenced by the given
    *         parameters
    */
-  public static SourceDocument<?> newSourceDocument(String id, DocumentType documentType) {
+  public static ReprintableSourceDocument<?> newSourceDocument(String id, DocumentType documentType) {
     switch (documentType) {
       case INVOICE:
-        return new InvoiceSourceDocument(id);
+        return new ReprintableInvoice(id);
       case ORDER:
-        return new OrderSourceDocument(id);
+        return new ReprintableOrder(id);
       default:
         throw new IllegalArgumentException("Unknown document type");
     }
@@ -97,7 +97,7 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
    * @param id
    *          the ID of the source document
    */
-  protected SourceDocument(String id) {
+  protected ReprintableSourceDocument(String id) {
     this.id = id;
   }
 

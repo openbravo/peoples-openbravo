@@ -25,9 +25,9 @@ import org.openbravo.model.common.order.Order;
 /**
  * Used to generate the data of a {@link ReprintableDocument} based in an {@link Order}
  */
-public class OrderSourceDocument extends SourceDocument<Order> {
+public class ReprintableOrder extends ReprintableSourceDocument<Order> {
 
-  public OrderSourceDocument(String id) {
+  public ReprintableOrder(String id) {
     super(id);
   }
 

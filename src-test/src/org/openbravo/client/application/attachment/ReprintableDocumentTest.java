@@ -37,7 +37,6 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
-import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
@@ -46,7 +45,7 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
 import org.openbravo.client.application.attachment.ReprintableDocumentManager.Format;
-import org.openbravo.client.application.attachment.SourceDocument.DocumentType;
+import org.openbravo.client.application.attachment.ReprintableSourceDocument.DocumentType;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.module.Module;
@@ -79,14 +78,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   }
 
   private void resetCachedData() {
-    OBDal.getInstance()
-        .createCriteria(Organization.class)
-        .add(Restrictions.eq(Organization.PROPERTY_CLIENT,
-            OBContext.getOBContext().getCurrentClient()))
-        .list()
-        .stream()
-        .forEach(org -> reprintableDocumentManager
-            .invalidateReprintDocumentConfigurationCache(org.getId()));
+    reprintableDocumentManager.invalidateReprintDocumentConfigurationCache(
+        OBDal.getInstance().get(Organization.class, TestConstants.Orgs.FB_GROUP));
   }
 
   @Test
@@ -96,7 +89,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
-    SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
     Order order = OBDal.getInstance().get(Order.class, TEST_ORDER_ID);
 
     ReprintableDocument document = reprintableDocumentManager.upload(inputStream, Format.XML,
@@ -105,7 +99,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     assertThat(document.getOrder().getId(), equalTo(order.getId()));
     assertThat(document.getClient().getId(), equalTo(order.getClient().getId()));
     assertThat(document.getOrganization().getId(), equalTo(order.getOrganization().getId()));
-    assertThat(document.getName(), equalTo("reprintableDocument.xml"));
+    assertThat(document.getName(), equalTo("1000014.xml"));
     assertThat(document.getAttachmentConfiguration().getId(), equalTo(config.getId()));
     OBDal.getInstance().flush();
 
@@ -120,7 +114,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
-    SourceDocument sourceDocument = new SourceDocument(TEST_INVOICE_ID, DocumentType.INVOICE);
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_INVOICE_ID, DocumentType.INVOICE);
     Invoice invoice = OBDal.getInstance().get(Invoice.class, TEST_INVOICE_ID);
 
     ReprintableDocument document = reprintableDocumentManager.upload(inputStream, Format.XML,
@@ -129,7 +124,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     assertThat(document.getInvoice().getId(), equalTo(invoice.getId()));
     assertThat(document.getClient().getId(), equalTo(invoice.getClient().getId()));
     assertThat(document.getOrganization().getId(), equalTo(invoice.getOrganization().getId()));
-    assertThat(document.getName(), equalTo("reprintableDocument.xml"));
+    assertThat(document.getName(), equalTo("1000014.xml"));
     assertThat(document.getAttachmentConfiguration().getId(), equalTo(config.getId()));
 
     OBDal.getInstance().flush();
@@ -146,7 +141,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     setQAAdminContext();
 
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
-    SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
 
     assertThrows(OBSecurityException.class,
         () -> reprintableDocumentManager.upload(inputStream, Format.XML, sourceDocument));
@@ -156,7 +152,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   public void uploadReprintableDocumentWithDefaultConfig()
       throws IOException, DocumentNotFoundException {
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
-    SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
     Order order = OBDal.getInstance().get(Order.class, TEST_ORDER_ID);
 
     ReprintableDocument document = reprintableDocumentManager.upload(inputStream, Format.XML,
@@ -165,7 +162,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     assertThat(document.getOrder().getId(), equalTo(order.getId()));
     assertThat(document.getClient().getId(), equalTo(order.getClient().getId()));
     assertThat(document.getOrganization().getId(), equalTo(order.getOrganization().getId()));
-    assertThat(document.getName(), equalTo("reprintableDocument.xml"));
+    assertThat(document.getName(), equalTo("1000014.xml"));
     assertNull(document.getAttachmentConfiguration());
 
     OBDal.getInstance().flush();
@@ -180,7 +177,8 @@ public class ReprintableDocumentTest extends WeldBaseTest {
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
     InputStream inputStream = new ByteArrayInputStream(DATA.getBytes(StandardCharsets.UTF_8));
-    SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
     reprintableDocumentManager.upload(inputStream, Format.XML, sourceDocument);
     OBDal.getInstance().flush();
 
@@ -194,20 +192,23 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
-    SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
 
     assertThrows(DocumentNotFoundException.class, () -> download(sourceDocument));
   }
 
   @Test
   public void checkOrderSourceDocumentExists() {
-    SourceDocument sourceDocument = new SourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
     assertTrue(sourceDocument.exists());
   }
 
   @Test
   public void checkInvoiceSourceDocumentExists() {
-    SourceDocument sourceDocument = new SourceDocument(TEST_INVOICE_ID, DocumentType.INVOICE);
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(TEST_INVOICE_ID, DocumentType.INVOICE);
     assertTrue(sourceDocument.exists());
   }
 
@@ -340,7 +341,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     }
   }
 
-  private String download(SourceDocument sourceDocument)
+  private String download(ReprintableSourceDocument<?> sourceDocument)
       throws IOException, DocumentNotFoundException {
     Path file = Files.createTempFile(null, null);
     try (OutputStream os = new FileOutputStream(file.toFile())) {
