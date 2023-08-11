@@ -92,16 +92,13 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
    * @return true if the document exists in the database or false otherwise
    */
   public boolean exists() {
-    //@formatter:off
-    String hql = "select 1" +
-                 "  from " + getEntity() + " e" +
-                 " where e.id = :id";
-    //@formatter:on
     return OBDal.getInstance()
-        .getSession()
-        .createQuery(hql, Integer.class)
-        .setParameter("id", id)
-        .uniqueResult() != null;
+        .createCriteria(getEntity().getName())
+        .add(Restrictions.eq("id", id))
+        .setFilterOnReadableClients(false)
+        .setFilterOnReadableOrganization(false)
+        .setFilterOnActive(false)
+        .count() > 0;
   }
 
   private Entity getEntity() {
