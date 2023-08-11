@@ -41,7 +41,6 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
    */
   public enum DocumentType {
     INVOICE, ORDER;
-
   }
 
   /**
@@ -77,6 +76,20 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
    * @return the BaseOBObject of the source document, obtained based on its type
    */
   abstract D getBaseDocument();
+
+  /**
+   * @return a name that can be safely used as the file name of a {@link ReprintableDocument} linked
+   *         to this document. By default is the value returned by {@link #getName()} method with
+   *         the slashes ("/"), considered as path delimiters, replaced with hyphens ("-").
+   */
+  String getSafeName() {
+    return getName().replace("/", "-");
+  }
+
+  /**
+   * @return a name that identifies the document
+   */
+  protected abstract String getName();
 
   /**
    * Builds a new source document for a {@link ReprintableDocument}

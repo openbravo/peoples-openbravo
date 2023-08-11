@@ -41,4 +41,8 @@ public class InvoiceSourceDocument extends SourceDocument<Invoice> {
     return ReprintableDocument.PROPERTY_INVOICE;
   }
 
+  @Override
+  protected String getName() {
+    return getBaseDocument().getDocumentNo();
+  }
 }

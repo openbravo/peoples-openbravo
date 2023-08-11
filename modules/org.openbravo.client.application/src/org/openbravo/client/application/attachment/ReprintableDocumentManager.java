@@ -255,7 +255,7 @@ public class ReprintableDocumentManager {
           .get(ReprintableDocument.class);
       reprintableDocument.setClient(sourceDocumentBOB.getClient());
       reprintableDocument.setOrganization(sourceDocumentBOB.getOrganization());
-      reprintableDocument.setName("reprintableDocument." + format.name().toLowerCase());
+      reprintableDocument.setName(sourceDocument.getSafeName() + "." + format.name().toLowerCase());
       reprintableDocument.setFormat(format.name());
       reprintableDocument
           .setAttachmentConfiguration(AttachmentUtils.getAttachmentConfig(AttachmentType.RD));

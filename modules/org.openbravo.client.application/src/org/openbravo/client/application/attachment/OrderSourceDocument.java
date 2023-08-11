@@ -40,4 +40,9 @@ public class OrderSourceDocument extends SourceDocument<Order> {
   String getProperty() {
     return ReprintableDocument.PROPERTY_ORDER;
   }
+
+  @Override
+  protected String getName() {
+    return getBaseDocument().getDocumentNo();
+  }
 }
