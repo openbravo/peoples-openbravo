@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
@@ -43,6 +44,18 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
 
   }
 
+  /**
+   * Retrieves a {@link SourceDocument} instance with the information of the document identified by
+   * the provided ID and document type.
+   *
+   * @param id
+   *          The ID of the BaseOBObject of the source document
+   * @param documentType
+   *          The type of source document
+   *
+   * @return the source document with the information of the document referenced by the given
+   *         parameters
+   */
   public static SourceDocument<?> newSourceDocument(String id, DocumentType documentType) {
     switch (documentType) {
       case INVOICE:
@@ -63,10 +76,7 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
   /**
    * @return the BaseOBObject of the source document, obtained based on its type
    */
-
   abstract D getBaseDocument();
-
-  protected abstract Entity getEntity();
 
   /**
    * Builds a new source document for a {@link ReprintableDocument}
@@ -92,6 +102,10 @@ public abstract class SourceDocument<D extends BaseOBObject & ClientEnabled & Or
         .createQuery(hql, Integer.class)
         .setParameter("id", id)
         .uniqueResult() != null;
+  }
+
+  private Entity getEntity() {
+    return ModelProvider.getInstance().getEntity(getBaseDocument().getEntityName());
   }
 
   /**
