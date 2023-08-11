@@ -48,45 +48,54 @@ public class IsReprintEnabledFICFinalObjectExtension implements FICFinalObjectEx
   public JSONObject execute(String mode, Tab tab, Map<String, JSONObject> columnValues,
       BaseOBObject row, JSONObject jsContent, JSONObject finalObject) throws JSONException {
     JSONObject newObject = new JSONObject();
-    if ((mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION"))
-        && (jsContent.has("C_Order_ID") || jsContent.has("C_Invoice_ID"))) {
-      if (row instanceof OrganizationEnabled) {
-        boolean isReprintEnabled = false;
-        if (jsContent.has("MULTIPLE_ROW_IDS")) {
-          JSONArray selectedRecordIds = jsContent.getJSONArray("MULTIPLE_ROW_IDS");
-          for (int i = 0; i < selectedRecordIds.length(); i++) {
-            String selectedRecordId = selectedRecordIds.getString(i);
-            OrganizationEnabled selectedRecord = (OrganizationEnabled) OBDal.getInstance()
-                .get(row.getClass(), selectedRecordId);
-            Organization organization = selectedRecord.getOrganization();
-            if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
-              isReprintEnabled = true;
-              break;
-            }
-          }
-        } else {
-          String selectedRecordId = jsContent.has("C_Order_ID") ? jsContent.getString("C_Order_ID")
-              : jsContent.getString("C_Invoice_ID");
+    if (!((mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION"))
+        && (jsContent.has("C_Order_ID") || jsContent.has("C_Invoice_ID")))
+        || !isReprintableWindow(tab)) {
+      newObject.put("isReprintEnabled", false);
+      return newObject;
+    }
+
+    if (row instanceof OrganizationEnabled) {
+      boolean isReprintEnabled = false;
+      if (jsContent.has("MULTIPLE_ROW_IDS")) {
+        JSONArray selectedRecordIds = jsContent.getJSONArray("MULTIPLE_ROW_IDS");
+        for (int i = 0; i < selectedRecordIds.length(); i++) {
+          String selectedRecordId = selectedRecordIds.getString(i);
           OrganizationEnabled selectedRecord = (OrganizationEnabled) OBDal.getInstance()
               .get(row.getClass(), selectedRecordId);
-          if (selectedRecord != null) {
-            Organization organization = selectedRecord.getOrganization();
-            if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
-              isReprintEnabled = true;
-            }
+          Organization organization = selectedRecord.getOrganization();
+          if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
+            isReprintEnabled = true;
+            break;
           }
         }
-        finalObject.put("isReprintEnabled", isReprintEnabled);
       } else {
-        Organization organization = ((OrganizationEnabled) row).getOrganization();
-        if (organization != null) {
-          newObject.put("isReprintEnabled",
-              reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId()));
+        String selectedRecordId = jsContent.has("C_Order_ID") ? jsContent.getString("C_Order_ID")
+            : jsContent.getString("C_Invoice_ID");
+        OrganizationEnabled selectedRecord = (OrganizationEnabled) OBDal.getInstance()
+            .get(row.getClass(), selectedRecordId);
+        if (selectedRecord != null) {
+          Organization organization = selectedRecord.getOrganization();
+          if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
+            isReprintEnabled = true;
+          }
         }
       }
+      newObject.put("isReprintEnabled", isReprintEnabled);
     } else {
-      newObject.put("isReprintEnabled", false);
+      Organization organization = ((OrganizationEnabled) row).getOrganization();
+      if (organization != null) {
+        newObject.put("isReprintEnabled",
+            reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId()));
+      }
     }
+
     return newObject;
+  }
+
+  private boolean isReprintableWindow(Tab tab) {
+    String window = tab.getWindow().getName();
+    return window.equals("Sales Order") || window.equals("Sales Invoice")
+        || window.equals("Purchase Order") || window.equals("Purchase Invoice");
   }
 }
