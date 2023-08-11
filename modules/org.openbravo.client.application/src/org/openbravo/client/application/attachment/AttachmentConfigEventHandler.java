@@ -123,7 +123,7 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
   private void validate(AttachmentConfig newAttachmentConfig) {
     try {
       OBContext.setAdminMode(true);
-      if ("RD".equals(newAttachmentConfig.getAttachmentType())
+      if (AttachmentUtils.AttachmentType.RD.name().equals(newAttachmentConfig.getAttachmentType())
           && !newAttachmentConfig.getAttachmentMethod().isSupportReprintableDocuments()) {
         throw new OBException(OBMessageUtils.messageBD("UnsupportedAttachmentType"));
       }
