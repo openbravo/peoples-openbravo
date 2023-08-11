@@ -310,13 +310,22 @@ public class ReprintableDocumentManager {
   }
 
   /**
-   * Clears the cached information of the document reprinting configuration for a given
-   * organization.
+   * Clears the cached information of the document reprinting configuration for a given organization
+   * and for all the organizations on its natural tree.
    *
-   * @param orgId
-   *          The organization ID
+   * @param organization
+   *          The organization whose configuration is invalidated. The configuration of the
+   *          organizations included on its natural tree is also invalidated.
    */
-  void invalidateReprintDocumentConfigurationCache(String orgId) {
-    reprintDocumentsConfiguration.invalidate(orgId);
+  void invalidateReprintDocumentConfigurationCache(Organization organization) {
+    try {
+      OBContext.setAdminMode(true);
+      OBContext.getOBContext()
+          .getOrganizationStructureProvider(organization.getClient().getId())
+          .getNaturalTree(organization.getId())
+          .forEach(o -> reprintDocumentsConfiguration.invalidate(o));
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 }

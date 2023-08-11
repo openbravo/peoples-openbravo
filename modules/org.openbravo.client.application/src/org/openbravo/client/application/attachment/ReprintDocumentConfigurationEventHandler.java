@@ -51,8 +51,8 @@ class ReprintDocumentConfigurationEventHandler extends EntityPersistenceEventObs
       return;
     }
     if (isConfigurationChanged(event)) {
-      String orgId = ((Organization) event.getTargetInstance()).getId();
-      reprintableDocumentManager.invalidateReprintDocumentConfigurationCache(orgId);
+      Organization org = ((Organization) event.getTargetInstance());
+      reprintableDocumentManager.invalidateReprintDocumentConfigurationCache(org);
     }
   }
 
