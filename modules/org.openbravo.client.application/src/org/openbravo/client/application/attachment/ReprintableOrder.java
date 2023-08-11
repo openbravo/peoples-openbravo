@@ -33,7 +33,7 @@ public class ReprintableOrder extends ReprintableSourceDocument<Order> {
 
   @Override
   Order getBaseDocument() {
-    return OBDal.getInstance().getProxy(Order.class, id);
+    return OBDal.getInstance().getProxy(Order.class, getId());
   }
 
   @Override

@@ -34,7 +34,7 @@ import org.openbravo.model.ad.utility.ReprintableDocument;
  * Represents a document used as the source to generate the data of a {@link ReprintableDocument}
  */
 public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientEnabled & OrganizationEnabled> {
-  protected String id;
+  private String id;
 
   /**
    * Supported document types that can be linked to a {@link ReprintableDocument}
@@ -44,8 +44,8 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
   }
 
   /**
-   * Retrieves a {@link ReprintableSourceDocument} instance with the information of the document identified by
-   * the provided ID and document type.
+   * Retrieves a {@link ReprintableSourceDocument} instance with the information of the document
+   * identified by the provided ID and document type.
    *
    * @param id
    *          The ID of the BaseOBObject of the source document
@@ -55,7 +55,8 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
    * @return the source document with the information of the document referenced by the given
    *         parameters
    */
-  public static ReprintableSourceDocument<?> newSourceDocument(String id, DocumentType documentType) {
+  public static ReprintableSourceDocument<?> newSourceDocument(String id,
+      DocumentType documentType) {
     switch (documentType) {
       case INVOICE:
         return new ReprintableInvoice(id);
@@ -78,15 +79,6 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
   abstract D getBaseDocument();
 
   /**
-   * @return a name that can be safely used as the file name of a {@link ReprintableDocument} linked
-   *         to this document. By default is the value returned by {@link #getName()} method with
-   *         the slashes ("/"), considered as path delimiters, replaced with hyphens ("-").
-   */
-  String getSafeName() {
-    return getName().replace("/", "-");
-  }
-
-  /**
    * @return a name that identifies the document
    */
   protected abstract String getName();
@@ -99,6 +91,19 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
    */
   protected ReprintableSourceDocument(String id) {
     this.id = id;
+  }
+
+  protected String getId() {
+    return id;
+  }
+
+  /**
+   * @return a name that can be safely used as the file name of a {@link ReprintableDocument} linked
+   *         to this document. By default is the value returned by {@link #getName()} method with
+   *         the slashes ("/"), considered as path delimiters, replaced with hyphens ("-").
+   */
+  String getSafeName() {
+    return getName().replace("/", "-");
   }
 
   /**

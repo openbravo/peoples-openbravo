@@ -33,7 +33,7 @@ public class ReprintableInvoice extends ReprintableSourceDocument<Invoice> {
 
   @Override
   Invoice getBaseDocument() {
-    return OBDal.getInstance().getProxy(Invoice.class, id);
+    return OBDal.getInstance().getProxy(Invoice.class, getId());
   }
 
   @Override
