@@ -25,8 +25,10 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -88,6 +90,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     final String noStock = paramValues.getString("noStock");
     InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
     String separator = getFieldSeparator();
+    Set<String> alreadyProcessed = new HashSet<String>();
     try (BufferedReader br = Files.newBufferedReader(Paths.get(file.getAbsolutePath()))) {
       String line = br.readLine();
       int i = 0;
@@ -137,6 +140,17 @@ public class ImportInventoryLines extends ProcessUploadedFile {
           inventoryLine.setGapbookqty(inventoryLine.getBookQuantity().subtract(updatedBookedQty));
           inventoryLine.setBookQuantity(updatedBookedQty);
         }
+        if (alreadyProcessed.contains(inventoryLine.getId())) {
+          uploadResult.incErrorCount();
+          String[] messageParams = { inventoryLine.getProduct().getName(),
+              inventoryLine.getStorageBin().getSearchKey(),
+              inventoryLine.getAttributeSetValue().getIdentifier(),
+              inventoryLine.getUOM().getName() };
+          String errorMsg = OBMessageUtils.getI18NMessage("OBUIAPP_DuplicateLineFound",
+              messageParams);
+          uploadResult.addErrorMessage(errorMsg);
+          continue;
+        }
         inventoryLine.setActive(true);
         inventoryLine
             .setQuantityCount(qtyCount.equals("") ? BigDecimal.ZERO : new BigDecimal(qtyCount));
@@ -154,7 +168,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         } else {
           OBDal.getInstance().save(inventoryLine);
         }
-
+        alreadyProcessed.add(inventoryLine.getId());
         if ((i > 0) && (i % 100) == 0) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
