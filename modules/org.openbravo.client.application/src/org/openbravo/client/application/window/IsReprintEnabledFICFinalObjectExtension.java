@@ -63,31 +63,21 @@ public class IsReprintEnabledFICFinalObjectExtension implements FICFinalObjectEx
           String selectedRecordId = selectedRecordIds.getString(i);
           OrganizationEnabled selectedRecord = (OrganizationEnabled) OBDal.getInstance()
               .get(row.getClass(), selectedRecordId);
-          Organization organization = selectedRecord.getOrganization();
-          if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
+          if (reprintableDocumentManager
+              .isReprintDocumentsEnabled(selectedRecord.getOrganization().getId())) {
             isReprintEnabled = true;
             break;
           }
         }
       } else {
-        String selectedRecordId = jsContent.has("C_Order_ID") ? jsContent.getString("C_Order_ID")
-            : jsContent.getString("C_Invoice_ID");
-        OrganizationEnabled selectedRecord = (OrganizationEnabled) OBDal.getInstance()
-            .get(row.getClass(), selectedRecordId);
-        if (selectedRecord != null) {
-          Organization organization = selectedRecord.getOrganization();
-          if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
-            isReprintEnabled = true;
-          }
+        Organization organization = ((OrganizationEnabled) row).getOrganization();
+        if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
+          isReprintEnabled = true;
         }
       }
       newObject.put("isReprintEnabled", isReprintEnabled);
     } else {
-      Organization organization = ((OrganizationEnabled) row).getOrganization();
-      if (organization != null) {
-        newObject.put("isReprintEnabled",
-            reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId()));
-      }
+      return null;
     }
 
     return newObject;

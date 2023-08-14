@@ -358,7 +358,7 @@ public class PrintController extends HttpSecureAppServlet {
 
               if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) == -1
                   && request.getServletPath().toLowerCase().indexOf(PRINT_OPTIONS_PATH) == -1
-                  && "".equals(senderAddress) || senderAddress == null) {
+                  && ("".equals(senderAddress) || senderAddress == null)) {
                 final OBError on = new OBError();
                 on.setMessage(Utility.messageBD(this, "NoSender", vars.getLanguage()));
                 on.setTitle(Utility.messageBD(this, "EmailConfigError", vars.getLanguage()));
