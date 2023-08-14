@@ -54,6 +54,8 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.ReprintableDocumentManager;
 import org.openbravo.client.application.attachment.ReprintableDocumentManager.Format;
+import org.openbravo.client.application.attachment.ReprintableInvoice;
+import org.openbravo.client.application.attachment.ReprintableOrder;
 import org.openbravo.client.application.attachment.ReprintableSourceDocument;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
@@ -86,6 +88,8 @@ import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.xmlEngine.XmlDocument;
 
 import net.sf.jasperreports.engine.JRException;
@@ -255,18 +259,25 @@ public class PrintController extends HttpSecureAppServlet {
         }
         printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
       } else if (vars.commandIn("REPRINT")) {
-        ReprintableSourceDocument.DocumentType type;
-        if ("PRINTINVOICES".equals(sessionValuePrefix)) {
-          type = ReprintableSourceDocument.DocumentType.INVOICE;
-        } else if ("PRINTORDERS".equals(sessionValuePrefix)) {
-          type = ReprintableSourceDocument.DocumentType.ORDER;
-        } else {
-          throw new ServletException("@CODE=UnsupportedReprintDocumentType@");
-        }
         ReprintableDocumentManager reprintableManager = WeldUtils
             .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
-        ReprintableSourceDocument sourceDocument = new ReprintableSourceDocument(documentIds[0], type);
-        if (reprintableManager.isReprintDocumentsEnabled(sourceDocument.getOrganizationId())) {
+        ReprintableSourceDocument<?> sourceDocument = null;
+        String organizationId = null;
+        if (DocumentType.SALESORDER.equals(documentType)) {
+          sourceDocument = new ReprintableOrder(documentIds[0]);
+          organizationId = OBDal.getInstance()
+              .get(Order.class, documentIds[0])
+              .getOrganization()
+              .getId();
+        } else if (DocumentType.SALESINVOICE.equals(documentType)) {
+          sourceDocument = new ReprintableInvoice(documentIds[0]);
+          organizationId = OBDal.getInstance()
+              .get(Invoice.class, documentIds[0])
+              .getOrganization()
+              .getId();
+        }
+
+        if (reprintableManager.isReprintDocumentsEnabled(organizationId)) {
           Report report = buildReport(response, vars, documentIds[0], reportManager, documentType,
               Report.OutputTypeEnum.PRINT);
           Optional<ReprintableDocument> reprintableDocument = sourceDocument

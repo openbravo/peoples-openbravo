@@ -40,6 +40,8 @@ import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.AttachImplementationManager;
 import org.openbravo.client.application.attachment.DocumentNotFoundException;
 import org.openbravo.client.application.attachment.ReprintableDocumentManager;
+import org.openbravo.client.application.attachment.ReprintableInvoice;
+import org.openbravo.client.application.attachment.ReprintableOrder;
 import org.openbravo.client.application.attachment.ReprintableSourceDocument;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
@@ -166,9 +168,12 @@ public class ReportManager {
       }
       if (orgId != null && reprintableManager.isReprintDocumentsEnabled(orgId)) {
         try {
-          final ReprintableSourceDocument reprintableSource = new ReprintableSourceDocument(documentId,
-              DocumentType.SALESORDER.equals(documentType) ? ReprintableSourceDocument.DocumentType.ORDER
-                  : ReprintableSourceDocument.DocumentType.INVOICE);
+          ReprintableSourceDocument<?> reprintableSource = null;
+          if (DocumentType.SALESORDER.equals(documentType)) {
+            reprintableSource = new ReprintableOrder(documentId);
+          } else if (DocumentType.SALESINVOICE.equals(documentType)) {
+            reprintableSource = new ReprintableInvoice(documentId);
+          }
           reprintableManager.findReprintableDocument(reprintableSource);
 
           final File reprintable = new File(
