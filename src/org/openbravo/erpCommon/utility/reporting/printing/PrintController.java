@@ -54,7 +54,7 @@ import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.ReprintableDocumentManager;
 import org.openbravo.client.application.attachment.ReprintableDocumentManager.Format;
-import org.openbravo.client.application.attachment.SourceDocument;
+import org.openbravo.client.application.attachment.ReprintableSourceDocument;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.dal.core.OBContext;
@@ -255,17 +255,17 @@ public class PrintController extends HttpSecureAppServlet {
         }
         printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
       } else if (vars.commandIn("REPRINT")) {
-        SourceDocument.DocumentType type;
+        ReprintableSourceDocument.DocumentType type;
         if ("PRINTINVOICES".equals(sessionValuePrefix)) {
-          type = SourceDocument.DocumentType.INVOICE;
+          type = ReprintableSourceDocument.DocumentType.INVOICE;
         } else if ("PRINTORDERS".equals(sessionValuePrefix)) {
-          type = SourceDocument.DocumentType.ORDER;
+          type = ReprintableSourceDocument.DocumentType.ORDER;
         } else {
           throw new ServletException("@CODE=UnsupportedReprintDocumentType@");
         }
         ReprintableDocumentManager reprintableManager = WeldUtils
             .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
-        SourceDocument sourceDocument = new SourceDocument(documentIds[0], type);
+        ReprintableSourceDocument sourceDocument = new ReprintableSourceDocument(documentIds[0], type);
         if (reprintableManager.isReprintDocumentsEnabled(sourceDocument.getOrganizationId())) {
           Report report = buildReport(response, vars, documentIds[0], reportManager, documentType,
               Report.OutputTypeEnum.PRINT);
