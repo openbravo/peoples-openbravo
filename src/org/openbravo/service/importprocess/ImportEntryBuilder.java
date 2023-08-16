@@ -58,6 +58,12 @@ public class ImportEntryBuilder {
   private String jsonData;
   private Map<String, Object> customProperties;
   private boolean notifyManager;
+
+  // A non blocking import entry is one that is executed on another thread different to the one
+  // provided by the ImportEntryManager. It is done using CompletableFuture's API and allows
+  // non-blocking execution, like for example listening to a http request without blocking awaiting
+  // response. Processing will be handled in Non-blocking threads, leaving the ImportEntry thread
+  // free to process other Import entries.
   private boolean isNonBlocking;
 
   /**

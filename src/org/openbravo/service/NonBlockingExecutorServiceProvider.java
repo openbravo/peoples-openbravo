@@ -38,7 +38,7 @@ public class NonBlockingExecutorServiceProvider {
   private static final String AMOUNT_OF_NON_BLOCKING_THREADS_PROPERTY = "amountOfNonBlockingThreads";
   private static final Logger log = LogManager.getLogger();
 
-  static void initializeExecutorService() {
+  synchronized static void initializeExecutorService() {
     if (executorService == null) {
       int amountOfThreads;
       String amountOfThreadsProperty = OBPropertiesProvider.getInstance()

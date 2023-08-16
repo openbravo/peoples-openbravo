@@ -30,8 +30,8 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * An import entry process runnable that handles non-blocking execution. It provides a processAsync
- * function which other classes that extend this onee should implement, by returning a
- * CompletableFuture. Once the CompeltableFuture has been completed,
+ * function which other classes that extend this one should implement, by returning a
+ * CompletableFuture. Once the CompletableFuture has been completed,
  * {@link NonBlockingImportEntryProcessRunnable#completed} method is executed and handles marking
  * the Import Entry as processed.
  * 
@@ -44,7 +44,13 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
 
   /**
    * Method that handles asynchronous task execution. It should return a CompletableFuture. When the
-   * CompletableFuture is completed, the Import Entry will be marked as processed.
+   * CompletableFuture is completed, the Import Entry will be marked as processed if it was properly
+   * processed. Otherwise, if the CompletableFuture thrown some exception or there was an error, it
+   * will be marked with Error.
+   * 
+   * Exceptions should be thrown when the processing of the ImportEntry must fail. This way it is
+   * properly handled by the processEntry method and the ImportEntry is properly marked with an
+   * Error state and an Error message
    * 
    * @param importEntry
    *          Import Entry to process
@@ -61,7 +67,7 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
         return CompletableFuture.failedFuture(ex);
       }
 
-      runWithDal(importEntry, () -> completed(importEntry));
+      completed(importEntry);
       return CompletableFuture.completedFuture(null);
     });
   }
@@ -75,11 +81,6 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
   }
 
   @Override
-  protected boolean tryDeregisteringProcessThread() {
-    return super.tryDeregisteringProcessThread();
-  }
-
-  @Override
   public void cleanUp(Set<String> importEntriesInExecution) {
     if (!importEntryIds.isEmpty()) {
       // In case of non-blocking import entry, we save it in the list of import entries to keep
@@ -88,16 +89,15 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
   }
 
   private void completed(ImportEntry importEntry) {
-    log.debug("Completed non-blocking import entry {}", importEntry);
-    ImportEntryManager.getInstance().setImportEntryProcessed(importEntry.getId());
-    importEntry.setImportStatus("Processed");
-    postProcessEntry(importEntry.getId(), 0L, importEntry, importEntry.getTypeofdata());
-  }
-
-  private void runWithDal(ImportEntry importEntry, Runnable task) {
     setOBContext(new ImportEntryProcessor.ImportEntryProcessRunnable.QueuedEntry(importEntry));
-    task.run();
-    OBDal.getInstance().commitAndClose();
+    try {
+      log.debug("Completed non-blocking import entry {}", importEntry);
+      ImportEntryManager.getInstance().setImportEntryProcessed(importEntry.getId());
+      importEntry.setImportStatus("Processed");
+      postProcessEntry(importEntry.getId(), 0L, importEntry, importEntry.getTypeofdata());
+    } finally {
+      OBDal.getInstance().commitAndClose();
+    }
   }
 
   /**
@@ -116,6 +116,11 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
     }
   }
 
+  /**
+   * Retrieves the executor service where non-blocking execution is expected to be executed
+   * 
+   * @return An executor service with non-blocking threads
+   */
   protected ExecutorService getExecutorService() {
     return NonBlockingExecutorServiceProvider.getExecutorService();
   }

@@ -325,7 +325,7 @@ public abstract class ImportEntryProcessor {
     private Logger logger;
 
     // create concurrent hashset using util method
-    Set<String> importEntryIds = Collections
+    protected Set<String> importEntryIds = Collections
         .newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     private ImportEntryManager importEntryManager;
@@ -525,7 +525,7 @@ public abstract class ImportEntryProcessor {
       }
     }
 
-    protected boolean tryDeregisteringProcessThread() {
+    private boolean tryDeregisteringProcessThread() {
       logger.debug("Trying to deregister process " + key);
 
       // no more entries and deregistered, if so go away
@@ -621,7 +621,7 @@ public abstract class ImportEntryProcessor {
      * @param importEntriesInExecution
      *          - Import entries that are currently in execution
      */
-    public void cleanUp(Set<String> importEntriesInExecution) {
+    protected void cleanUp(Set<String> importEntriesInExecution) {
       // To be overwritten by child implementations
     }
 
@@ -707,14 +707,14 @@ public abstract class ImportEntryProcessor {
 
     // Local cache to make sure that there is a much lower mem foot print in the queue
     // of entries, so only keep the needed info to create an obcontext
-    public static class QueuedEntry {
+    protected static class QueuedEntry {
       final String importEntryId;
       final String orgId;
       final String userId;
       final String clientId;
       final String roleId;
 
-      public QueuedEntry(ImportEntry importEntry) {
+      protected QueuedEntry(ImportEntry importEntry) {
         importEntryId = importEntry.getId();
         userId = importEntry.getCreatedBy().getId();
         orgId = importEntry.getOrganization().getId();
