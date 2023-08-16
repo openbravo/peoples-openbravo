@@ -470,6 +470,12 @@ public abstract class ImportEntryProcessor {
       }
     }
 
+    /**
+     * Cleans up after the import entry has failed processing and logs the exception information*
+     * 
+     * @param t
+     *          Throwable of the given exception
+     */
     protected void cleanUpAndLogOnException(Throwable t) {
       ImportProcessUtils.logError(logger, t);
 
@@ -487,6 +493,23 @@ public abstract class ImportEntryProcessor {
       }
     }
 
+    /**
+     * Method that is executed after processing an Import Entry, it is provided as protected because
+     * it might be useful to override it in certain cases where logic needs to be executed
+     * before/after the main postProcess.
+     * 
+     * This handles marking the ImportEntry as processed and removing it from the queued list of
+     * import entries being processed.
+     * 
+     * @param importEntryId
+     *          Id of the import entry being processed
+     * @param t0
+     *          Original timestamp when the import entry started processing
+     * @param localImportEntry
+     *          Import entry being processed
+     * @param typeOfData
+     *          The type of the import entry
+     */
     protected void postProcessEntry(String importEntryId, long t0, ImportEntry localImportEntry,
         String typeOfData) {
       if (logger.isDebugEnabled()) {
@@ -668,6 +691,16 @@ public abstract class ImportEntryProcessor {
     }
 
     /**
+     * Sets the OBContext to a new QueuedEntry of the given ImportEntry
+     * 
+     * @param importEntry
+     *          Import Entry that will be used to create the QueuedEntry
+     */
+    protected void setImportEntryQueuedEntryContext(ImportEntry importEntry) {
+      setOBContext(new QueuedEntry(importEntry));
+    }
+
+    /**
      * Associates this {@link ImportEntryProcessRunnable} with the current
      * {@link ImportEntryManager}'s execution cycle.
      * 
@@ -707,14 +740,14 @@ public abstract class ImportEntryProcessor {
 
     // Local cache to make sure that there is a much lower mem foot print in the queue
     // of entries, so only keep the needed info to create an obcontext
-    protected static class QueuedEntry {
+    static class QueuedEntry {
       final String importEntryId;
       final String orgId;
       final String userId;
       final String clientId;
       final String roleId;
 
-      protected QueuedEntry(ImportEntry importEntry) {
+      QueuedEntry(ImportEntry importEntry) {
         importEntryId = importEntry.getId();
         userId = importEntry.getCreatedBy().getId();
         orgId = importEntry.getOrganization().getId();

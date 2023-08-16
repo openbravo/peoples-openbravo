@@ -29499,8 +29499,8 @@ Do not forget to generate Audit infrastructure after selecting or deselecting a 
 <!--7D100FF089244121BE53BD216247D18D-->  <COLUMNNAME><![CDATA[Isnonblocking]]></COLUMNNAME>
 <!--7D100FF089244121BE53BD216247D18D-->  <NAME><![CDATA[Isnonblocking]]></NAME>
 <!--7D100FF089244121BE53BD216247D18D-->  <PRINTNAME><![CDATA[Isnonblocking]]></PRINTNAME>
-<!--7D100FF089244121BE53BD216247D18D-->  <DESCRIPTION><![CDATA[Indicates if an import entry is non blocking.]]></DESCRIPTION>
-<!--7D100FF089244121BE53BD216247D18D-->  <HELP><![CDATA[Indicates if an import entry is non blocking.]]></HELP>
+<!--7D100FF089244121BE53BD216247D18D-->  <DESCRIPTION><![CDATA[Indicates if an import entry is non blocking. This means its processing is done in a NonBlocking thread, freeing the ImportEntry thread to process other import entries.]]></DESCRIPTION>
+<!--7D100FF089244121BE53BD216247D18D-->  <HELP><![CDATA[Indicates if an import entry is non blocking. This means its processing is done in a NonBlocking thread, freeing the ImportEntry thread to process other import entries. For example, when working with requests, it allows freeing the ImportEntry thread until the response is received.]]></HELP>
 <!--7D100FF089244121BE53BD216247D18D-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--7D100FF089244121BE53BD216247D18D-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--7D100FF089244121BE53BD216247D18D--></AD_ELEMENT>

@@ -89,7 +89,7 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
   }
 
   private void completed(ImportEntry importEntry) {
-    setOBContext(new ImportEntryProcessor.ImportEntryProcessRunnable.QueuedEntry(importEntry));
+    setImportEntryQueuedEntryContext(importEntry);
     try {
       log.debug("Completed non-blocking import entry {}", importEntry);
       ImportEntryManager.getInstance().setImportEntryProcessed(importEntry.getId());
@@ -118,7 +118,7 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
 
   /**
    * Retrieves the executor service where non-blocking execution is expected to be executed
-   * 
+   *
    * @return An executor service with non-blocking threads
    */
   protected ExecutorService getExecutorService() {
