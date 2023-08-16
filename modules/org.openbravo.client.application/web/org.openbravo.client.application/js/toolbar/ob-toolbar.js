@@ -677,6 +677,16 @@ isc.OBToolbar.addClassProperties({
         if (view.tabId === '220' && selectedRecords.length > 1) {
           disabled = true;
         }
+        if (
+          this.view.isReprintEnabled &&
+          this.view.viewGrid.getSelectedRecords().size() === 1 &&
+          this.view.viewGrid
+            .getSelectedRecords()
+            .get(0)
+            .documentStatus.includes('DR')
+        ) {
+          disabled = true;
+        }
 
         if (view.isReprintEnabled) {
           this.buttonType = 'reprint';
@@ -721,6 +731,15 @@ isc.OBToolbar.addClassProperties({
           disabled = true;
         }
         if (view.isEditingGrid && grid.getEditForm().isNew) {
+          disabled = true;
+        }
+        if (
+          this.view.isReprintEnabled &&
+          this.view.viewGrid
+            .getSelectedRecords()
+            .map(record => record.documentStatus)
+            .includes('DR')
+        ) {
           disabled = true;
         }
         this.setDisabled(disabled);

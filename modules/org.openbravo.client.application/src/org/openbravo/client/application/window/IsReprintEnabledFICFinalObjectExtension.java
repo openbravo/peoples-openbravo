@@ -71,7 +71,8 @@ public class IsReprintEnabledFICFinalObjectExtension implements FICFinalObjectEx
         }
       } else {
         Organization organization = ((OrganizationEnabled) row).getOrganization();
-        if (reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
+        if (organization != null
+            && reprintableDocumentManager.isReprintDocumentsEnabled(organization.getId())) {
           isReprintEnabled = true;
         }
       }
