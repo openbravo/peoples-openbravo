@@ -206,6 +206,11 @@ public class HttpExternalSystem extends ExternalSystem {
       return CompletableFuture.completedFuture(response)
           .thenApply(this::buildResponse)
           .orTimeout(timeout, TimeUnit.SECONDS);
+
+      // Executor is required to be provided here because of how the HttpClient is implemented, it
+      // allows running the request on the provided executor service, but it doesn't return a
+      // CompletableFuture with the same executor service, so we need to provide it again here in
+      // the thenComposeAsync.
     }, NonBlockingExecutorServiceProvider.getExecutorService())
         .exceptionally(this::buildErrorResponse)
         .whenComplete((response, action) -> log.debug("{} request to {} completed in {} ms",
