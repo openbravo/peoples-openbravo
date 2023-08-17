@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2020-2021 Openbravo SLU
+ * All portions are Copyright (C) 2020-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.test.WeldBaseTest;
@@ -49,12 +49,21 @@ import org.openbravo.test.base.TestConstants;
  * should exclude or include some terms
  */
 public class ReducedTranslationExportTests extends WeldBaseTest {
+  private static boolean isReducedTranslationExported = false;
   private static boolean restoreSystemLanguageFlag = false;
 
-  @BeforeClass
-  public static void exportReducedTranslation() throws IOException {
+  @Before
+  public void init() throws IOException {
+    exportReducedTranslationIfNotDone();
+  }
+
+  private static void exportReducedTranslationIfNotDone() throws IOException {
+    if (isReducedTranslationExported) {
+      return;
+    }
     doVerifyLanguageIfNotPreviouslyDoneBefore();
     exportReducedAndFullTranslations();
+    isReducedTranslationExported = true;
   }
 
   private static void doVerifyLanguageIfNotPreviouslyDoneBefore() {
