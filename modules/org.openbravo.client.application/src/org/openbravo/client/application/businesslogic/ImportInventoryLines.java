@@ -47,6 +47,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
@@ -56,6 +57,7 @@ import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.common.uom.UOM;
 import org.openbravo.model.materialmgmt.transaction.InventoryCount;
 import org.openbravo.model.materialmgmt.transaction.InventoryCountLine;
+import org.openbravo.service.db.DbUtility;
 
 public class ImportInventoryLines extends ProcessUploadedFile {
   private static final long serialVersionUID = 1L;
@@ -140,7 +142,19 @@ public class ImportInventoryLines extends ProcessUploadedFile {
             .setQuantityCount(qtyCount.equals("") ? BigDecimal.ZERO : new BigDecimal(qtyCount));
         inventoryLine.setDescription(description);
         inventoryLine.setCsvimported(true);
-        OBDal.getInstance().save(inventoryLine);
+
+        if (paramValues.has("importErrorHandling")
+            && paramValues.getString("importErrorHandling").equals("continue_at_error")) {
+          // Note: OBDal.getInstance().commitAndClose() does not work
+          // as it closes the session, doing the autocommit approach instead
+          OBDal.getInstance().getConnection().setAutoCommit(true);
+          OBDal.getInstance().save(inventoryLine);
+          OBDal.getInstance().flush();
+          OBDal.getInstance().getConnection().setAutoCommit(false);
+        } else {
+          OBDal.getInstance().save(inventoryLine);
+        }
+
         if ((i > 0) && (i % 100) == 0) {
           OBDal.getInstance().flush();
           OBDal.getInstance().getSession().clear();
@@ -149,9 +163,14 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         uploadResult.incTotalCount();
       }
       OBDal.getInstance().flush();
+
     } catch (Exception e) {
       uploadResult.incErrorCount();
-      uploadResult.addErrorMessage(e.getMessage() + "\n");
+      final Throwable ex = DbUtility
+          .getUnderlyingSQLException(e.getCause() != null ? e.getCause() : e);
+      final OBError errMsg = OBMessageUtils.translateError(ex.getMessage());
+      uploadResult.addErrorMessage(errMsg.getMessage() + "\n");
+
     }
 
     try (ScrollableResults physicalInventorylines = getPhysicalInventoryLinesNotImported(
