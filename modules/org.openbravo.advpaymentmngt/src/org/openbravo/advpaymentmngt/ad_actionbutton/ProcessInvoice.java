@@ -154,7 +154,7 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         Invoice invoice = dao.getObject(Invoice.class, strC_Invoice_ID);
         if (immutableReportHasBeenPrinted(invoice) && "RE".equals(strdocaction)) {
           throw new OBException(
-              "Unable to reactivate the document: already printed its immutable report");
+              Utility.messageBD(this, "ReactivationErrorWithReprintable", vars.getLanguage()));
         }
         invoice.setDocumentAction(strdocaction);
         OBDal.getInstance().save(invoice);
