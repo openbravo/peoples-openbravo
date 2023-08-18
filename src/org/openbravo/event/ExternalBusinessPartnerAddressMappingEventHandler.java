@@ -123,30 +123,6 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
       if (!property.isActive()) {
         return;
       }
-
-      if (property.isUseasDefaultShipAdd()) {
-        if (!property.isShippingAddress()) {
-          throw new OBException("@ValidDefaultShipLocation@");
-        }
-        OBCriteria<?> criteria = buildCriteria(event, property);
-        criteria.add(Restrictions
-            .eq(ExternalBusinessPartnerConfigLocation.PROPERTY_USEASDEFAULTSHIPADD, true));
-        if (criteria.count() > 0) {
-          throw new OBException("@DuplicatedCRMUseasDefaultShipAdd@");
-        }
-      }
-
-      if (property.isUseasDefaultInvAdd()) {
-        if (!property.isInvoicingAddress()) {
-          throw new OBException("@ValidDefaultInvoiceLocation@");
-        }
-        OBCriteria<?> criteria = buildCriteria(event, property);
-        criteria.add(Restrictions
-            .eq(ExternalBusinessPartnerConfigLocation.PROPERTY_USEASDEFAULTINVADD, true));
-        if (criteria.count() > 0) {
-          throw new OBException("@DuplicatedCRMUseasDefaultInvAdd@");
-        }
-      }
     }
   }
 
