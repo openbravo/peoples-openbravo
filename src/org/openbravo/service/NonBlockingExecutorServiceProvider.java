@@ -18,9 +18,10 @@
  */
 package org.openbravo.service;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +39,7 @@ public class NonBlockingExecutorServiceProvider {
   private static final String AMOUNT_OF_NON_BLOCKING_THREADS_PROPERTY = "amountOfNonBlockingThreads";
   private static final Logger log = LogManager.getLogger();
 
-  synchronized static void initializeExecutorService() {
+  private static synchronized void initializeExecutorService() {
     if (executorService == null) {
       int amountOfThreads;
       String amountOfThreadsProperty = OBPropertiesProvider.getInstance()
