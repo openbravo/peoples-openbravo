@@ -123,6 +123,33 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
       if (!property.isActive()) {
         return;
       }
+
+      if (property.isShippingAddress() != true && property.isInvoicingAddress() != true) {
+        throw new OBException("@CRMSingleEndpoint_ShipInvMandatory@");
+      }
+
+      final ExternalBusinessPartnerConfig currentExtBPConfig = property
+          .getCRMConnectorConfiguration();
+
+      OBCriteria<?> criteriaShipAdds = buildCriteria(event, property);
+      criteriaShipAdds.add(
+          Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_CRMCONNECTORCONFIGURATION,
+              currentExtBPConfig));
+      criteriaShipAdds.add(
+          Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_SHIPPINGADDRESS, true));
+      if (criteriaShipAdds.count() > 0 && property.isShippingAddress() == true) {
+        throw new OBException("@CRMSingleEndpoint_OnlyOneShip@");
+      }
+
+      OBCriteria<?> criteriaInvAdds = buildCriteria(event, property);
+      criteriaInvAdds.add(
+          Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_CRMCONNECTORCONFIGURATION,
+              currentExtBPConfig));
+      criteriaInvAdds.add(
+          Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_INVOICINGADDRESS, true));
+      if (criteriaInvAdds.count() > 0 && property.isInvoicingAddress() == true) {
+        throw new OBException("@CRMSingleEndpoint_OnlyOneInv@");
+      }
     }
   }
 
