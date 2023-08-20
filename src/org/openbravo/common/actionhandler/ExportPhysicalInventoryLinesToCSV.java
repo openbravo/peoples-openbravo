@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -77,11 +78,14 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
     try {
       params = data.getJSONObject("_params");
       boolean generateLines = params.optBoolean("CreateInventoryLinesAutomatically");
+
       boolean blindCount = params.optBoolean("BlindCount");
 
       String inventoryId = data.optString("M_Inventory_ID");
 
-      generateInventoryLines(generateLines, inventoryId);
+      boolean alreadyImported = checkIfThereAreLinesImported(inventoryId);
+
+      generateInventoryLines(generateLines && !alreadyImported, inventoryId);
       if (hasLines(inventoryId)) {
         return createCSVFile(inventoryId, blindCount);
       } else {
@@ -91,6 +95,12 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
       log.error("Error generating tmp file: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  private boolean checkIfThereAreLinesImported(String inventoryId) {
+    InventoryCount inventory = OBDal.getInstance().getProxy(InventoryCount.class, inventoryId);
+    List<InventoryCountLine> lines = inventory.getMaterialMgmtInventoryCountLineList();
+    return lines.stream().anyMatch(line -> line.isCsvimported());
   }
 
   @Override
