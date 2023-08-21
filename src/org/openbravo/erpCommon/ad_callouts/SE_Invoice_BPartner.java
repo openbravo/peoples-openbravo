@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2017 Openbravo SLU
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -36,6 +36,7 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.model.financialmgmt.payment.FIN_FinancialAccount;
 import org.openbravo.model.financialmgmt.payment.FIN_PaymentMethod;
 import org.openbravo.model.financialmgmt.payment.FinAccPaymentMethod;
@@ -83,6 +84,11 @@ public class SE_Invoice_BPartner extends SimpleCallout {
         // BPartner Location
         if (StringUtils.isNotEmpty(strLocation)) {
           info.addResult("inpcBpartnerLocationId", strLocation);
+        } else {
+          Location location = SE_BPartner_Utils.getDefaultLocation(strBPartner, false);
+          if (location != null) {
+            info.addResult("inpcBpartnerLocationId", location.getId());
+          }
         }
 
         // Price List

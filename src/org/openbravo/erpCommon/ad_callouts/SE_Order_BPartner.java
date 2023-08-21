@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2016 Openbravo SLU
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -31,6 +31,7 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.businesspartner.Location;
 
 public class SE_Order_BPartner extends SimpleCallout {
 
@@ -66,7 +67,7 @@ public class SE_Order_BPartner extends SimpleCallout {
       if (docTypeData != null && docTypeData.length > 0) {
         docSubTypeSO = docTypeData[0].docsubtypeso;
       }
-      // Incase of purchase flow set Invoice Rule as "I":Immediate
+      // In case of purchase flow set Invoice Rule as "I":Immediate
       strInvoiceRule = strIsSOTrx.equals("Y")
           ? (docSubTypeSO.equals("PR") || docSubTypeSO.equals("WI")
               || data[0].invoicerule.equals("") ? info.vars.getStringParameter("inpinvoicerule")
@@ -111,13 +112,17 @@ public class SE_Order_BPartner extends SimpleCallout {
             ? Utility.getContext(this, info.vars, "#M_PriceList_ID", info.getWindowId())
             : strPriceList);
 
-    // BPartner Location
-
     FieldProvider[] tdv = null;
 
+    // BPartner Location
     String strLocation = info.vars.getStringParameter("inpcBpartnerId_LOC");
     if (strLocation != null && !strLocation.isEmpty()) {
       info.addResult("inpcBpartnerLocationId", strLocation);
+    } else {
+      Location location = SE_BPartner_Utils.getDefaultLocation(strBPartner, true);
+      if (location != null) {
+        info.addResult("inpcBpartnerLocationId", location.getId());
+      }
     }
 
     // Warehouses
@@ -238,6 +243,11 @@ public class SE_Order_BPartner extends SimpleCallout {
 
     if (strLocation != null && !strLocation.isEmpty()) {
       info.addResult("inpbilltoId", strLocation);
+    } else {
+      Location location = SE_BPartner_Utils.getDefaultLocation(strBPartner, false);
+      if (location != null) {
+        info.addResult("inpbilltoId", location.getId());
+      }
     }
 
     // Payment rule

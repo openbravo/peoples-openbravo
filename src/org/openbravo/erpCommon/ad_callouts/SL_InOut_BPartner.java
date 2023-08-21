@@ -32,6 +32,7 @@ import org.openbravo.erpCommon.utility.ComboTableData;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
+import org.openbravo.model.common.businesspartner.Location;
 import org.openbravo.utils.FormatUtilities;
 import org.openbravo.utils.Replace;
 
@@ -78,11 +79,19 @@ public class SL_InOut_BPartner extends SimpleCallout {
     }
     if (tdv != null && tdv.length > 0) {
       info.addSelect("inpcBpartnerLocationId");
+      Location location = null;
+      if (StringUtils.isEmpty(strLocation)) {
+        location = SE_BPartner_Utils.getDefaultLocation(strBPartner, true);
+      }
       for (int i = 0; i < tdv.length; i++) {
-        // If a location is provided it is selected, else the first one is selected
-        boolean selected = (StringUtils.isEmpty(strLocation) && i == 0)
-            || (StringUtils.isNotEmpty(strLocation)
-                && StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strLocation));
+        // If a location is provided it is selected, else the default shipping or first one is
+        // selected
+        boolean selected;
+        if (StringUtils.isEmpty(strLocation)) {
+          selected = location == null ? i == 0 : location.getId().equals(tdv[i].getField("id"));
+        } else {
+          selected = StringUtils.equalsIgnoreCase(tdv[i].getField("id"), strLocation);
+        }
         info.addSelectResult(tdv[i].getField("id"),
             FormatUtilities.replaceJS(Replace.replace(tdv[i].getField("name"), "\"", "\\\"")),
             selected);
