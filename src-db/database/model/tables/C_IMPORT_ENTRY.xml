@@ -65,6 +65,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISNONBLOCKING" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_ROLE" name="C_IMPORT_ENTRY_AD_ROLE">
         <reference local="AD_ROLE_ID" foreign="AD_ROLE_ID"/>
       </foreign-key>
@@ -82,5 +86,6 @@
         <index-column name="TYPEOFDATA"/>
         <index-column name="IMPORTSTATUS"/>
       </index>
+      <check name="C_IMPORT_ENTRY_NONBLOCK_CHK"><![CDATA[ISNONBLOCKING IN ('Y', 'N')]]></check>
     </table>
   </database>

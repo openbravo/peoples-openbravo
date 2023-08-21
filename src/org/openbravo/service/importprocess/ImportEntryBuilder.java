@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019 Openbravo SLU
+ * All portions are Copyright (C) 2019-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -59,6 +59,13 @@ public class ImportEntryBuilder {
   private Map<String, Object> customProperties;
   private boolean notifyManager;
 
+  // A non blocking import entry is one that is executed on another thread different to the one
+  // provided by the ImportEntryManager. It is done using CompletableFuture's API and allows
+  // non-blocking execution, like for example listening to a http request without blocking awaiting
+  // response. Processing will be handled in Non-blocking threads, leaving the ImportEntry thread
+  // free to process other Import entries.
+  private boolean isNonBlocking;
+
   /**
    * Create a new instance of the Builder to create a new ImportEntry. Both the typeOfData and
    * jsonData values are mandatory.
@@ -82,6 +89,7 @@ public class ImportEntryBuilder {
     this.notifyManager = false;
     this.typeOfData = typeOfData;
     this.jsonData = jsonData;
+    this.isNonBlocking = false;
   }
 
   public ImportEntryBuilder setId(String id) {
@@ -130,6 +138,18 @@ public class ImportEntryBuilder {
    */
   public ImportEntryBuilder setNotifyManager(boolean notifyManager) {
     this.notifyManager = notifyManager;
+    return this;
+  }
+
+  /**
+   * Set this flag to true to mark the ImportEntry as a nonBlocking one
+   * 
+   * @param isNonBlocking
+   *          whether the ImportEntry is or not NonBlocking
+   * @return The ImportEntryBuilder instance to chain another method
+   */
+  public ImportEntryBuilder setIsNonBlocking(boolean isNonBlocking) {
+    this.isNonBlocking = isNonBlocking;
     return this;
   }
 
@@ -195,6 +215,7 @@ public class ImportEntryBuilder {
     importEntry.setRole(role);
     importEntry.setJsonInfo(jsonData);
     importEntry.setTypeofdata(typeOfData);
+    importEntry.setNonblocking(isNonBlocking);
 
     for (Map.Entry<String, Object> property : customProperties.entrySet()) {
       importEntry.set(property.getKey(), property.getValue());

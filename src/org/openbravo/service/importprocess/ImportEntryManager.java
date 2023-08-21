@@ -358,10 +358,23 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    * Note will commit the session/connection using {@link OBDal#commitAndClose()}
    */
   public void createImportEntry(String id, String typeOfData, String json, boolean commitAndClose) {
+    createImportEntry(id, typeOfData, json, commitAndClose, false);
+  }
+
+  /**
+   * Creates and saves the import entry, calls the
+   * {@link ImportEntryPreProcessor#beforeCreate(ImportEntry)} on the
+   * {@link ImportEntryPreProcessor} instances.
+   *
+   * Note will commit the session/connection using {@link OBDal#commitAndClose()}
+   */
+  public void createImportEntry(String id, String typeOfData, String json, boolean commitAndClose,
+      boolean isNonBlocking) {
     try {
       ImportEntryBuilder.newInstance(typeOfData, json) //
           .setId(id) //
           .setNotifyManager(commitAndClose) //
+          .setIsNonBlocking(isNonBlocking)
           .create();
     } catch (ImportEntryAlreadyExistsException e) {
       // Ignore exception when ImportEntry already exists either in ImportEntry or
@@ -863,10 +876,19 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    */
   public static class DaemonThreadFactory implements ThreadFactory {
     private AtomicInteger threadNumber = new AtomicInteger(0);
+    private String threadNamePrefix;
+
+    public DaemonThreadFactory() {
+      this("Import Entry");
+    }
+
+    public DaemonThreadFactory(String threadNamePrefix) {
+      this.threadNamePrefix = threadNamePrefix;
+    }
 
     @Override
     public Thread newThread(Runnable runnable) {
-      return new ImportEntryThread(runnable, threadNumber.getAndIncrement());
+      return new ImportEntryThread(runnable, threadNumber.getAndIncrement(), threadNamePrefix);
     }
   }
 
@@ -876,7 +898,11 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
    */
   private static class ImportEntryThread extends Thread {
     private ImportEntryThread(Runnable runnable, int threadNumber) {
-      super(runnable, "Import Entry - " + threadNumber);
+      this(runnable, threadNumber, "Import Entry");
+    }
+
+    private ImportEntryThread(Runnable runnable, int threadNumber, String threadNamePrefix) {
+      super(runnable, threadNamePrefix + " - " + threadNumber);
       if (getPriority() != Thread.NORM_PRIORITY) {
         setPriority(Thread.NORM_PRIORITY);
       }

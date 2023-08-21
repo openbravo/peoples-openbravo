@@ -47,6 +47,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.service.NonBlockingExecutorServiceProvider;
 import org.openbravo.service.externalsystem.ExternalSystem;
 import org.openbravo.service.externalsystem.ExternalSystemConfigurationError;
 import org.openbravo.service.externalsystem.ExternalSystemData;
@@ -104,6 +105,8 @@ public class HttpExternalSystem extends ExternalSystem {
   private HttpClient buildClient() {
     HttpClient.Builder builder = HttpClient.newBuilder()
         .connectTimeout(Duration.ofSeconds(timeout));
+
+    builder.executor(NonBlockingExecutorServiceProvider.getExecutorService());
 
     if (authorizationProvider instanceof Authenticator) {
       builder.authenticator((Authenticator) authorizationProvider);
@@ -192,7 +195,7 @@ public class HttpExternalSystem extends ExternalSystem {
       return CompletableFuture.failedFuture(ex);
     }
     long requestStartTime = System.currentTimeMillis();
-    return client.sendAsync(request, BodyHandlers.ofString()).thenCompose(response -> {
+    return client.sendAsync(request, BodyHandlers.ofString()).thenComposeAsync(response -> {
       boolean retry = false;
       if (!isSuccessfulResponse(response) && remainingRetries > 0) {
         retry = authorizationProvider.handleRequestRetry(response.statusCode());
@@ -203,7 +206,12 @@ public class HttpExternalSystem extends ExternalSystem {
       return CompletableFuture.completedFuture(response)
           .thenApply(this::buildResponse)
           .orTimeout(timeout, TimeUnit.SECONDS);
-    })
+
+      // Executor is required to be provided here because of how the HttpClient is implemented, it
+      // allows running the request on the provided executor service, but it doesn't return a
+      // CompletableFuture with the same executor service, so we need to provide it again here in
+      // the thenComposeAsync.
+    }, NonBlockingExecutorServiceProvider.getExecutorService())
         .exceptionally(this::buildErrorResponse)
         .whenComplete((response, action) -> log.debug("{} request to {} completed in {} ms",
             request.method(), url, System.currentTimeMillis() - requestStartTime));
