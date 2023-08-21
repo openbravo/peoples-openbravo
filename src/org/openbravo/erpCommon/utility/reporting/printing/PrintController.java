@@ -298,13 +298,15 @@ public class PrintController extends HttpSecureAppServlet {
             }
           } else {
             // persist and print
-            JasperPrint jasperPrint = reportManager.processReport(report, vars);
+            JasperPrint jasperPrintForDuplicate = reportManager.processReport(report, vars,
+                Map.of("IS_DUPLICATE", true));
             Path tmp = Files.createTempFile("jasper", ".tmp");
-            ReportingUtils.saveReport(jasperPrint, ExportType.PDF, Collections.emptyMap(),
-                tmp.toFile());
+            ReportingUtils.saveReport(jasperPrintForDuplicate, ExportType.PDF,
+                Collections.emptyMap(), tmp.toFile());
             try (InputStream is = Files.newInputStream(tmp, StandardOpenOption.DELETE_ON_CLOSE)) {
               reprintableManager.upload(is, Format.PDF, sourceDocument);
             }
+            JasperPrint jasperPrint = reportManager.processReport(report, vars);
             printReports(response, Arrays.asList(jasperPrint), Arrays.asList(report), false);
           }
         } else {

@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -99,6 +100,11 @@ public class ReportManager {
 
   public JasperPrint processReport(Report report, VariablesSecureApp variables)
       throws ReportingException {
+    return processReport(report, variables, Collections.emptyMap());
+  }
+
+  public JasperPrint processReport(Report report, VariablesSecureApp variables,
+      Map<String, Object> extraDesignParameters) throws ReportingException {
 
     setTargetDirectory(report);
     language = variables.getLanguage();
@@ -113,6 +119,7 @@ public class ReportManager {
 
     final HashMap<String, Object> designParameters = populateDesignParameters(variables, report);
     designParameters.put("TEMPLATE_LOCATION", templateLocation);
+    designParameters.putAll(extraDesignParameters);
     JasperPrint jasperPrint = null;
 
     String salesOrder = report.getCheckSalesOrder();
