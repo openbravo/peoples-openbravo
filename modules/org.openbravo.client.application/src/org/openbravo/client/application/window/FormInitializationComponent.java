@@ -556,7 +556,14 @@ public class FormInitializationComponent extends BaseActionHandler {
         }
       }
 
-      log.debug(finalObject.toString(1));
+      log.debug("Final JSON: {}", () -> {
+        try {
+          return finalObject.toString(1);
+        } catch (JSONException ex) {
+          return finalObject.toString();
+        }
+      });
+
       return finalObject;
     } catch (JSONException e) {
       log.error("Error while generating the final JSON object: ", e);
