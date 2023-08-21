@@ -275,6 +275,8 @@ public class PrintController extends HttpSecureAppServlet {
               .get(Invoice.class, documentIds[0])
               .getOrganization()
               .getId();
+        } else {
+          throw new ServletException("@CODE=UnsupportedReprintDocumentType@");
         }
 
         if (reprintableManager.isReprintDocumentsEnabled(organizationId)) {
