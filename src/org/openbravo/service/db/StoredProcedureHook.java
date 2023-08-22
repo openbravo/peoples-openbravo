@@ -21,20 +21,26 @@ package org.openbravo.service.db;
 import java.util.Map;
 
 import org.openbravo.base.Prioritizable;
+import org.openbravo.erpCommon.ad_process.ADProcessID;
 
 /**
- * Hook to be executed after the execution of the CallProcess class
+ * Hook executed when calling a process with the {@link CallProcess} class. The implementations of
+ * this interface must be annotated with {@link ADProcessID} to indicate the related process that
+ * triggers their execution.
  * 
  * @author Fermin Gascon
  *
  */
 public interface StoredProcedureHook extends Prioritizable {
   /**
-   * Executed when the callProcess ends successfully
+   * Executed when the process call ends successfully
    * 
-   * @param bundle
-   *          a collection with the processRunner args and the system process data
+   * @see CallProcess#callProcess(org.openbravo.model.ad.ui.Process, String, Map, Boolean)
    * 
+   * @param recordId
+   *          Id of the stored DB object in CallProces
+   * @param processParameters
+   *          The parameters used in the process call
    */
-  public void onExecutionFinish(String recordId, Map<String, ?> params);
+  public void onExecutionFinish(String recordId, Map<String, ?> processParameters);
 }
