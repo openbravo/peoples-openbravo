@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2022 Openbravo SLU
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -49,6 +49,10 @@ public class CompanyLogoUtils {
 
   public static Image getCompanyLogoSubmark(Organization org) {
     return getCompanyLogoByProperties(org, "companyLogoSubmark", "companyLogoSubmarkDark", false);
+  }
+
+  public static Image getCompanyLogoSubmarkDarkMode(Organization org) {
+    return getCompanyLogoByProperties(org, "companyLogoSubmark", "companyLogoSubmarkDark", true);
   }
 
   public static Image getCompanyLogoForDocuments(Organization org) {
