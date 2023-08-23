@@ -114,8 +114,7 @@ public class EmailManager {
       Transport transport = mailSession.getTransport();
 
       MimeMessage message = getEmailMessage(senderAddress, subject, content, attachments, sentDate,
-          headerExtras, replyTo, recipientTO, recipientCC, recipientBCC,
-              contentType, mailSession);
+          headerExtras, replyTo, recipientTO, recipientCC, recipientBCC, contentType, mailSession);
 
       transport.connect();
       transport.sendMessage(message, message.getAllRecipients());
@@ -126,6 +125,42 @@ public class EmailManager {
     } catch (final MessagingException exception) {
       log4j.error(exception);
       throw new ServletException(exception.getMessage(), exception);
+    }
+  }
+
+  private static CompletableFuture<Void> sendEmailAsync(String host, boolean auth, String username,
+      String password, String connSecurity, int port, String senderAddress, String recipientTO,
+      String recipientCC, String recipientBCC, String replyTo, String subject, String content,
+      String contentType, List<File> attachments, Date sentDate, List<String> headerExtras,
+      int smtpServerTimeout) throws Exception {
+    try {
+      Properties props = getProperties(host, port, smtpServerTimeout, connSecurity);
+
+      Session mailSession = getSession(auth, username, password, props);
+
+      Transport transport = mailSession.getTransport();
+
+      MimeMessage message = getEmailMessage(senderAddress, subject, content, attachments, sentDate,
+          headerExtras, replyTo, recipientTO, recipientCC, recipientBCC, contentType, mailSession);
+
+      return CompletableFuture.supplyAsync(() -> {
+        try {
+          transport.connect();
+          transport.sendMessage(message, message.getAllRecipients());
+          transport.close();
+        } catch (Exception e) {
+          // TODO: Handle exceptions
+          return null;
+        }
+        return null;
+      }, NonBlockingExecutorServiceProvider.getExecutorService());
+    } catch (final AddressException exception) {
+      log4j.error(exception);
+      return CompletableFuture.failedFuture(new ServletException(exception));
+    } catch (final MessagingException exception) {
+      log4j.error(exception);
+      return CompletableFuture
+          .failedFuture(new ServletException(exception.getMessage(), exception));
     }
   }
 
@@ -257,17 +292,25 @@ public class EmailManager {
     return props;
   }
 
+  /**
+   * TODO: Pending JavaDoc explanation
+   * 
+   * @param conf
+   * @param email
+   * @return
+   * @throws Exception
+   */
   public static CompletableFuture<Void> sendEmailAsync(EmailServerConfiguration conf,
-      EmailInfo email) {
-    return CompletableFuture.supplyAsync(() -> {
-      try {
-        sendEmail(conf, email);
-      } catch (Exception e) {
-        // TODO: Handle exceptions
-        return null;
-      }
-      return null;
-    }, NonBlockingExecutorServiceProvider.getExecutorService());
+      EmailInfo email) throws Exception {
+    String decryptedPassword = FormatUtilities.encryptDecrypt(conf.getSmtpServerPassword(), false);
+    Long timeoutMillis = getSmtpConnectionTimeout(conf);
+
+    return sendEmailAsync(conf.getSmtpServer(), conf.isSMTPAuthentification(),
+        conf.getSmtpServerAccount(), decryptedPassword, conf.getSmtpConnectionSecurity(),
+        conf.getSmtpPort().intValue(), conf.getSmtpServerSenderAddress(), email.getRecipientTO(),
+        email.getRecipientCC(), email.getRecipientBCC(), email.getReplyTo(), email.getSubject(),
+        email.getContent(), email.getContentType(), email.getAttachments(), email.getSentDate(),
+        email.getHeaderExtras(), timeoutMillis.intValue());
   }
 
   private static class SMTPAuthenticator extends javax.mail.Authenticator {
