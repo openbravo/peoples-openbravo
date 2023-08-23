@@ -172,7 +172,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
   }
 
   @Test
-  public void cannotDownloadReprintableDocumentOfNonWritableDocument() {
+  public void cannotDownloadReprintableDocumentOfNonReadableDocument() {
     createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
@@ -192,6 +192,7 @@ public class ReprintableDocumentTest extends WeldBaseTest {
     createAttachmentConfiguration(TestConstants.Clients.FB_GRP,
         createAttachmentMethod(TestAttachImplementation.SEARCH_KEY, true));
 
+    // Retrieve a source document that does not have a linked reprintable document yet
     ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
         .newSourceDocument(TEST_ORDER_ID, DocumentType.ORDER);
 
