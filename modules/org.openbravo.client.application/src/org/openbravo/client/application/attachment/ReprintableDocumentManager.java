@@ -102,7 +102,10 @@ public class ReprintableDocumentManager {
         .stream()
         .map(org -> OBDal.getInstance().get(Organization.class, org).getReprintDocuments())
         .filter(setting -> !StringUtils.isBlank(setting))
-        .findFirst()
+        .findFirst() // note that getParentList returns the parent organizations ordered by distance
+                     // from the orgId node, from closest to farthest. So following that order, we
+                     // retrieve the configuration status from the first organization that enables
+                     // or disables the feature (if any).
         .map("enabled"::equals)
         .orElse(false);
   }
@@ -140,7 +143,8 @@ public class ReprintableDocumentManager {
         ? new ByteArrayInputStream(Base64.getDecoder().decode(documentData))
         : new ByteArrayInputStream(documentData.getBytes(StandardCharsets.UTF_8));
     DocumentType type = DocumentType.valueOf(documentType.toUpperCase());
-    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument.newSourceDocument(documentId, type);
+    ReprintableSourceDocument<?> sourceDocument = ReprintableSourceDocument
+        .newSourceDocument(documentId, type);
 
     return upload(inputStream, format, sourceDocument);
   }
@@ -215,8 +219,8 @@ public class ReprintableDocumentManager {
    *           if it is not possible to find a handler for the attachment method defined in the
    *           ReprintableDocument attachment configuration
    */
-  public ReprintableDocument download(ReprintableSourceDocument<?> sourceDocument, OutputStream outputStream)
-      throws IOException, DocumentNotFoundException {
+  public ReprintableDocument download(ReprintableSourceDocument<?> sourceDocument,
+      OutputStream outputStream) throws IOException, DocumentNotFoundException {
     long init = System.currentTimeMillis();
     ReprintableDocument reprintableDocument = findReprintableDocument(sourceDocument);
     ReprintableDocumentAttachHandler handler = getHandler(reprintableDocument);
