@@ -285,7 +285,7 @@ public class PrintController extends HttpSecureAppServlet {
           Optional<ReprintableDocument> reprintableDocument = sourceDocument
               .getReprintableDocument();
           if (reprintableDocument.isPresent()) {
-            // reprint
+            // reprint: get the stored report and directly write it into the response
             Format format = Format.valueOf(reprintableDocument.get().getFormat().toUpperCase());
             if (Format.PDF == format) {
               response.setHeader("Content-disposition",
