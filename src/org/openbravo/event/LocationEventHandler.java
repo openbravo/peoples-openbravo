@@ -61,8 +61,7 @@ class LocationEventHandler extends EntityPersistenceEventObserver {
     // Check default ship to address
     if (loc.isDefaultShipToAddress()) {
       if (!loc.isShipToAddress()) {
-        checkSingleDefaultAddress(loc, Location.PROPERTY_DEFAULTSHIPTOADDRESS,
-            "ValidDefaultShipLocation");
+        throw new OBException(OBMessageUtils.messageBD("ValidDefaultShipLocation"));
       }
       checkSingleDefaultAddress(loc, Location.PROPERTY_DEFAULTSHIPTOADDRESS,
           "DuplicatedDefaultShipLocation");
@@ -70,8 +69,7 @@ class LocationEventHandler extends EntityPersistenceEventObserver {
     // Check default invoice to address
     if (loc.isDefaultInvoiceToAddress()) {
       if (!loc.isInvoiceToAddress()) {
-        checkSingleDefaultAddress(loc, Location.PROPERTY_DEFAULTINVOICETOADDRESS,
-            "ValidDefaultInvoiceLocation");
+        throw new OBException(OBMessageUtils.messageBD("ValidDefaultInvoiceLocation"));
       }
       checkSingleDefaultAddress(loc, Location.PROPERTY_DEFAULTINVOICETOADDRESS,
           "DuplicatedDefaultInvoiceLocation");
