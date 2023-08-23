@@ -315,7 +315,9 @@ public class ReprintableDocumentManager {
 
   /**
    * Clears the cached information of the document reprinting configuration for a given organization
-   * and for all the organizations on its natural tree.
+   * and for all the organizations on its natural tree. Note that when working in a cluster it is
+   * only cleared the cache in the node processing the request. In the rest of the nodes, the cache
+   * will be automatically invalidated some time later because the cache is a time invalidated one.
    *
    * @param organization
    *          The organization whose configuration is invalidated. The configuration of the
