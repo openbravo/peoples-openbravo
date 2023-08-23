@@ -678,9 +678,9 @@ isc.OBToolbar.addClassProperties({
           disabled = true;
         }
         if (
-          this.view.isReprintEnabled &&
-          this.view.viewGrid.getSelectedRecords().size() === 1 &&
-          this.view.viewGrid
+          view.isReprintEnabled &&
+          view.viewGrid.getSelectedRecords().size() === 1 &&
+          view.viewGrid
             .getSelectedRecords()
             .get(0)
             .documentStatus.includes('DR')
@@ -692,6 +692,7 @@ isc.OBToolbar.addClassProperties({
           this.buttonType = 'reprint';
           this.prompt = OB.I18N.getLabel('Reprint');
           if (selectedRecords.length > 1) {
+            // Printing multiple records is not supported if immutable reports are configured
             disabled = true;
           }
         } else {
@@ -724,7 +725,7 @@ isc.OBToolbar.addClassProperties({
         if (selectedRecords.length === 0) {
           disabled = true;
         }
-        if (this.view.viewGrid.getTotalRows() === 0) {
+        if (view.viewGrid.getTotalRows() === 0) {
           disabled = true;
         }
         if (view.isShowingForm && form.isNew) {
@@ -734,12 +735,13 @@ isc.OBToolbar.addClassProperties({
           disabled = true;
         }
         if (
-          this.view.isReprintEnabled &&
-          this.view.viewGrid
+          view.isReprintEnabled &&
+          view.viewGrid
             .getSelectedRecords()
             .map(record => record.documentStatus)
             .includes('DR')
         ) {
+          // Draft records cannot be printed when printing immutable reports
           disabled = true;
         }
         this.setDisabled(disabled);
