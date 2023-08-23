@@ -46,7 +46,7 @@ public class IsReprintEnabledFICFinalObjectExtension implements FICFinalObjectEx
 
   @Override
   public JSONObject execute(String mode, Tab tab, Map<String, JSONObject> columnValues,
-      BaseOBObject row, JSONObject jsContent, JSONObject finalObject) throws JSONException {
+      BaseOBObject row, JSONObject jsContent) throws JSONException {
     JSONObject newObject = new JSONObject();
     if (!((mode.equals("NEW") || mode.equals("EDIT") || mode.equals("SETSESSION"))
         && (jsContent.has("C_Order_ID") || jsContent.has("C_Invoice_ID")))

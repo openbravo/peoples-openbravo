@@ -47,11 +47,9 @@ public interface FICFinalObjectExtension {
    *          The BaseOBObject that it is being edited in the form.
    * @param jsContent
    *          JSON content received as a parameter in the FormInitializationComponent.
-   * @param finalObject
-   *          The final JSON Object that will be later modified with the result in this method.
    * 
    * @return The changes to the properties of the final JSON Object.
    */
   public JSONObject execute(String mode, Tab tab, Map<String, JSONObject> columnValues,
-      BaseOBObject row, JSONObject jsContent, JSONObject finalObject) throws JSONException;
+      BaseOBObject row, JSONObject jsContent) throws JSONException;
 }

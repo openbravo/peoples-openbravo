@@ -546,8 +546,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       }
 
       for (FICFinalObjectExtension ficExtension : ficFinalObjectExtensions) {
-        JSONObject newObject = ficExtension.execute(mode, tab, columnValues, row, jsContent,
-            finalObject);
+        JSONObject newObject = ficExtension.execute(mode, tab, columnValues, row, jsContent);
         @SuppressWarnings("unchecked")
         Iterator<String> keys = newObject.keys();
         while (keys.hasNext()) {
