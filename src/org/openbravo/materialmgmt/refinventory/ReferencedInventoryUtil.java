@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -199,7 +199,7 @@ public class ReferencedInventoryUtil {
       final StorageDetail storageDetail, final Reservation reservation) {
     final InternalMovementLine line = OBProvider.getInstance().get(InternalMovementLine.class);
     line.setClient(internalMovement.getClient());
-    line.setOrganization(storageDetail.getOrganization());
+    line.setOrganization(internalMovement.getOrganization());
     line.setLineNo(lineNo);
     line.setProduct(storageDetail.getProduct());
     line.setMovementQuantity(movementQty);
