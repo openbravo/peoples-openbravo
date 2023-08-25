@@ -209,6 +209,7 @@
       <unique name="C_EXTBPCONFPROP_APIKEY_UN">
         <unique-column name="C_EXTBP_CONFIG_ID"/>
         <unique-column name="APIKEY"/>
+        <unique-column name="ISADDRESSPROPERTY"/>
       </unique>
       <check name="C_BIRTHDAYDATE_CHK"><![CDATA[ISBIRTHDAYDATE IN ('Y', 'N')]]></check>
       <check name="C_DEFAULTEMAIL_CHK"><![CDATA[ISDEFAULTEMAIL IN ('Y', 'N')]]></check>
