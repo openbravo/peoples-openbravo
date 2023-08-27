@@ -98,7 +98,7 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
   }
 
   private boolean checkIfThereAreLinesImported(String inventoryId) {
-    InventoryCount inventory = OBDal.getInstance().getProxy(InventoryCount.class, inventoryId);
+    InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
     List<InventoryCountLine> lines = inventory.getMaterialMgmtInventoryCountLineList();
     return lines.stream().anyMatch(line -> line.isCsvimported());
   }
@@ -112,10 +112,10 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
   }
 
   private void generateInventoryLines(boolean generateLines, String inventoryId) {
-    InventoryCount inventory = OBDal.getInstance().getProxy(InventoryCount.class, inventoryId);
+    InventoryCount inventory = OBDal.getInstance().get(InventoryCount.class, inventoryId);
     if (generateLines && inventory.getInventoryType().equals("T")) {
       // Delete lines, in order to replace and create again
-      deleteInventoryLines(inventoryId);
+      deleteInventoryLines(inventory);
       generateInventoryLinesProcess(inventoryId);
     }
     OBDal.getInstance().refresh(inventory);
@@ -130,20 +130,12 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
     return inventoryCountLine != null;
   }
 
-  private void deleteInventoryLines(String inventoryId) {
-    //@formatter:off
-    String hql =
-            " delete from MaterialMgmtInventoryCountLine " +
-            " where physInventory.id = :inventoryId ";
-    //@formatter:on
+  private void deleteInventoryLines(InventoryCount inventory) {
 
-    OBDal.getInstance()
-        .getSession()
-        .createQuery(hql)
-        .setParameter("inventoryId", inventoryId)
-        .executeUpdate();
-
-    OBDal.getInstance().refresh(OBDal.getInstance().getProxy(InventoryCount.class, inventoryId));
+    // clear will also remove the objects from the database
+    inventory.getMaterialMgmtInventoryCountLineList().clear();
+    OBDal.getInstance().save(inventory);
+    OBDal.getInstance().flush();
   }
 
   private void generateInventoryLinesProcess(String inventoryId) {
