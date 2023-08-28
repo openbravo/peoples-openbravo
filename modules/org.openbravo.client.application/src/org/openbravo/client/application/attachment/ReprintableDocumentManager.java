@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -59,6 +60,8 @@ import org.openbravo.model.common.enterprise.Organization;
 @ApplicationScoped
 public class ReprintableDocumentManager {
   private static final Logger log = LogManager.getLogger();
+  // Sales Order, Sales Invoice, Purchase Order and Purchase Invoice windows
+  private static final Set<String> WINDOWS_WITH_REPRINT = Set.of("143", "167", "181", "183");
 
   private TimeInvalidatedCache<String, String> methodsOfAttachmentConfigs;
   private TimeInvalidatedCache<String, Boolean> reprintDocumentsConfiguration;
@@ -300,6 +303,21 @@ public class ReprintableDocumentManager {
         .stream()
         .findFirst()
         .orElseThrow(() -> new OBException(OBMessageUtils.messageBD("OBUIAPP_NoMethod")));
+  }
+
+  /**
+   * Checks if reprintable documents can be generated from a given window. For the moment it is only
+   * supported to generate reprintable documents from these windows: Sales Order, Sales Invoice,
+   * Purchase Order and Purchase Invoice.
+   *
+   * @param windowId
+   *          The ID of the AD window
+   *
+   * @return true if reprintable documents can be generated from the given window or false in other
+   *         case
+   */
+  public boolean isReprintableDocumentsWindow(String windowId) {
+    return WINDOWS_WITH_REPRINT.contains(windowId);
   }
 
   /**

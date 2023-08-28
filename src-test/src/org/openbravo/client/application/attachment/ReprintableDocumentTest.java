@@ -34,6 +34,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -284,6 +285,23 @@ public class ReprintableDocumentTest extends WeldBaseTest {
       OBDal.getInstance().flush();
     });
     assertThat(thrown.getMessage(), equalTo(INVALID_CONFIG_MSG));
+  }
+
+  @Test
+  public void checkReprintableDocumentsWindows() {
+    for (String windowId : Set.of("143", "167", "181", "183")) {
+      assertThat("Window " + windowId + " supports reprintable documents",
+          reprintableDocumentManager.isReprintableDocumentsWindow(windowId), equalTo(true));
+    }
+  }
+
+  @Test
+  public void checkSomeNonReprintableDocumentsWindows() {
+    for (String windowId : Set.of("6CB5B67ED33F47DFA334079D3EA2340E", "169", "184",
+        "E547CE89D4C04429B6340FFA44E70716", "6F8F913FA60F4CBD93DC1D3AA696E76E")) {
+      assertThat("Window " + windowId + " does not support reprintable documents",
+          reprintableDocumentManager.isReprintableDocumentsWindow(windowId), equalTo(false));
+    }
   }
 
   private AttachmentConfig createAttachmentConfiguration(String clientId,

@@ -20,7 +20,6 @@
 package org.openbravo.client.application.window;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -41,9 +40,6 @@ import org.openbravo.model.common.enterprise.Organization;
  */
 @ApplicationScoped
 public class IsReprintEnabledFICFinalObjectExtension implements FICFinalObjectExtension {
-
-  // Sales Order, Sales Invoice, Purchase Order and Purchase Invoice windows
-  private static final Set<String> WINDOWS_WITH_REPRINT = Set.of("143", "167", "181", "183");
 
   @Inject
   private ReprintableDocumentManager reprintableDocumentManager;
@@ -87,6 +83,6 @@ public class IsReprintEnabledFICFinalObjectExtension implements FICFinalObjectEx
   }
 
   private boolean isReprintableWindow(Tab tab) {
-    return WINDOWS_WITH_REPRINT.contains(tab.getWindow().getId());
+    return reprintableDocumentManager.isReprintableDocumentsWindow(tab.getWindow().getId());
   }
 }
