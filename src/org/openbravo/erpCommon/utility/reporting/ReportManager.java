@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Base64;
@@ -47,9 +48,11 @@ import org.openbravo.client.application.attachment.ReprintableSourceDocument;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.application.report.language.ReportLanguageHandler;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.DalConnectionProvider;
@@ -161,65 +164,85 @@ public class ReportManager {
   }
 
   public void saveTempReport(Report report, VariablesSecureApp vars) {
-    JasperPrint jasperPrint = null;
     try {
+      if (!canReprint(report, vars)) {
+        JasperPrint jasperPrint = processReport(report, vars);
+        saveReport(report, jasperPrint);
+        return;
+      }
       ReprintableDocumentManager reprintableManager = WeldUtils
           .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
-      final String documentId = report.getDocumentId();
-      final DocumentType documentType = report.getDocumentType();
+      String documentId = report.getDocumentId();
+      DocumentType documentType = report.getDocumentType();
+      try {
+        ReprintableSourceDocument<?> reprintableSource = DocumentType.SALESORDER.equals(
+            documentType) ? new ReprintableOrder(documentId) : new ReprintableInvoice(documentId);
+        reprintableManager.findReprintableDocument(reprintableSource);
+        File reprintable = new File(
+            report.getTargetDirectory().toString() + '/' + report.getFilename());
+        try (OutputStream outputStream = new FileOutputStream(reprintable)) {
+          reprintableManager.download(reprintableSource, outputStream);
+        } catch (IOException ex) {
+          throw new OBException("Error reading reprintable for document" + report.getDocumentId(),
+              ex);
+        }
+      } catch (DocumentNotFoundException dex) {
+        JasperPrint jasperPrint = processReport(report, vars);
+        saveReport(report, jasperPrint);
+        Path tmp = null;
+        try {
+          JasperPrint jasperPrintForDuplicate = processReport(report, vars,
+              Map.of("IS_DUPLICATE", true));
+          tmp = Files.createTempFile("jasper", ".tmp");
+          ReportingUtils.saveReport(jasperPrintForDuplicate, ExportType.PDF, Collections.emptyMap(),
+              tmp.toFile());
+          JSONObject jsonReprintable = new JSONObject();
+          jsonReprintable.put("documentData",
+              Base64.getEncoder().encodeToString(Files.readAllBytes(tmp)));
+          jsonReprintable.put("documentId", documentId);
+          jsonReprintable.put("documentType",
+              documentType.equals(DocumentType.SALESORDER) ? "ORDER" : "INVOICE");
+          jsonReprintable.put("documentFormat", "PDF");
+          reprintableManager.upload(jsonReprintable);
+        } catch (IOException | JSONException | JRException ex) {
+          throw new OBException("Error creating reprintable for document " + report.getDocumentId(),
+              ex);
+        } finally {
+          try {
+            if (tmp != null) {
+              Files.deleteIfExists(tmp);
+            }
+          } catch (IOException ex) {
+            log4j.error("Error deleting file {}", tmp);
+          }
+        }
+      }
+    } catch (final ReportingException e) {
+      log4j.error(e.getMessage());
+      e.printStackTrace();
+    }
+  }
+
+  public boolean canReprint(Report report, VariablesSecureApp vars) {
+    ReprintableDocumentManager reprintableManager = WeldUtils
+        .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
+    try {
+      OBContext.setAdminMode(true);
+      Tab tab = OBDal.getInstance().get(Tab.class, vars.getSessionValue("inpTabId"));
+      if (!reprintableManager.isReprintableDocumentsWindow(tab.getWindow().getId())) {
+        return false;
+      }
+      String documentId = report.getDocumentId();
+      DocumentType documentType = report.getDocumentType();
       String orgId = null;
       if (DocumentType.SALESORDER.equals(documentType)) {
         orgId = OBDal.getInstance().get(Order.class, documentId).getOrganization().getId();
       } else if (DocumentType.SALESINVOICE.equals(documentType)) {
         orgId = OBDal.getInstance().get(Invoice.class, documentId).getOrganization().getId();
       }
-      if (orgId != null && reprintableManager.isReprintDocumentsEnabled(orgId)) {
-        try {
-          ReprintableSourceDocument<?> reprintableSource = null;
-          if (DocumentType.SALESORDER.equals(documentType)) {
-            reprintableSource = new ReprintableOrder(documentId);
-          } else if (DocumentType.SALESINVOICE.equals(documentType)) {
-            reprintableSource = new ReprintableInvoice(documentId);
-          }
-          reprintableManager.findReprintableDocument(reprintableSource);
-
-          final File reprintable = new File(
-              report.getTargetDirectory().toString() + '/' + report.getFilename());
-          try (OutputStream outputStream = new FileOutputStream(reprintable)) {
-            reprintableManager.download(reprintableSource, outputStream);
-          } catch (IOException e) {
-            throw new OBException("Error creating output stream. Stack trace: " + e);
-          }
-        } catch (DocumentNotFoundException e1) {
-          jasperPrint = processReport(report, vars);
-          saveReport(report, jasperPrint);
-
-          final JSONObject jsonReprintable = new JSONObject();
-          final File reportFile = new File(
-              report.getTargetDirectory().toString() + '/' + report.getFilename());
-          try {
-            jsonReprintable.put("documentData",
-                Base64.getEncoder().encodeToString(Files.readAllBytes(reportFile.toPath())));
-            jsonReprintable.put("documentId", documentId);
-            jsonReprintable.put("documentType",
-                documentType.equals(DocumentType.SALESORDER) ? "ORDER" : "INVOICE");
-            jsonReprintable.put("documentFormat", "PDF");
-            reprintableManager.upload(jsonReprintable);
-          } catch (JSONException e2) {
-            throw new OBException("Error creating reprintable json. Stack trace: " + e2);
-          } catch (IOException e3) {
-            throw new OBException("Error reading reprintable file. Stack trace: " + e3);
-          }
-        }
-      } else {
-        jasperPrint = processReport(report, vars);
-        saveReport(report, jasperPrint);
-      }
-    } catch (
-
-    final ReportingException e) {
-      log4j.error(e.getMessage());
-      e.printStackTrace();
+      return orgId != null && reprintableManager.isReprintDocumentsEnabled(orgId);
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 

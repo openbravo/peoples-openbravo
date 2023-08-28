@@ -460,8 +460,10 @@ public class PrintController extends HttpSecureAppServlet {
                 final String tableId = ToolsData.getTableId(this,
                     report.getDocumentType().getTableName());
 
-                // If the user wants to archive the document
-                if (vars.getStringParameter("inpArchive").equals("Y")) {
+                // If the user wants to archive the document and a reprintable document should not
+                // be generated for it
+                if (vars.getStringParameter("inpArchive").equals("Y")
+                    && !reportManager.canReprint(report, vars)) {
                   // Save the report as a attachment because it is
                   // being transferred to the user
                   try {
