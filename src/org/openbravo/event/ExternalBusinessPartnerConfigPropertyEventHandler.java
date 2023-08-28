@@ -222,9 +222,11 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     final Boolean currentKeyColumn = (Boolean) event.getCurrentState(
         transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN));
     if (currentKeyColumn) {
+      final String id = event.getId();
       OBCriteria<ExternalBusinessPartnerConfigProperty> criteria = getUniqueCriteria(event,
           transactionEntity);
       criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN, true));
+      criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
       List<ExternalBusinessPartnerConfigProperty> keyColumns = criteria.list();
       if (currentIsAddressProperty) {
         long countAddressKey = keyColumns.stream()
