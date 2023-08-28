@@ -83,11 +83,13 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
 
       String inventoryId = data.optString("M_Inventory_ID");
 
+      boolean exportLinesWithZeroQty = params.optBoolean("exportLinesWithZeroQty");
+
       boolean alreadyImported = checkIfThereAreLinesImported(inventoryId);
 
       generateInventoryLines(generateLines && !alreadyImported, inventoryId);
       if (hasLines(inventoryId)) {
-        return createCSVFile(inventoryId, blindCount);
+        return createCSVFile(inventoryId, blindCount, exportLinesWithZeroQty);
       } else {
         throw new OBException(OBMessageUtils.messageBD("NoPhysicalInventoryLines"));
       }
@@ -168,13 +170,14 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
     return parameters;
   }
 
-  private Path createCSVFile(String inventoryId, boolean blindCount) throws IOException {
+  private Path createCSVFile(String inventoryId, boolean blindCount, boolean exportLinesWithZeroQty)
+      throws IOException {
     String tmpFileName = UUID.randomUUID().toString() + ".csv";
     File file = new File(ReportingUtils.getTempFolder(), tmpFileName);
     try (FileWriter outputfile = new FileWriter(file)) {
       // Comma as a separator and No Quote Character
       final Writer writer = new StringWriter();
-      addPhysicalInventoryLinesToCsv(writer, inventoryId, blindCount);
+      addPhysicalInventoryLinesToCsv(writer, inventoryId, blindCount, exportLinesWithZeroQty);
       writer.close();
       outputfile.write(writer.toString());
       InventoryCount inventoryCount = OBDal.getInstance().get(InventoryCount.class, inventoryId);
@@ -183,7 +186,8 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
     return file.toPath();
   }
 
-  private static ScrollableResults getPhysicalInventoryLines(String inventoryId) {
+  private static ScrollableResults getPhysicalInventoryLines(String inventoryId,
+      boolean exportLinesWithZeroQty) {
     //@formatter:off
     String hql =  "select coalesce(pil.product.uPCEAN,'') as productUPC , " +
                   "  pil.product.searchKey as productSearchKey," +
@@ -195,6 +199,7 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
                   " from MaterialMgmtInventoryCountLine as pil" +
                   " left join pil.attributeSetValue as att" +
                   " where pil.physInventory.id = :inventoryId " +
+(!exportLinesWithZeroQty ? " and pil.bookQuantity <> 0 " : "") +
                   " order by pil.lineNo, pil.id ";
     //@formatter:on  
 
@@ -204,12 +209,13 @@ public class ExportPhysicalInventoryLinesToCSV extends FileExportActionHandler {
   }
 
   private void addPhysicalInventoryLinesToCsv(final Writer writer, String inventoryId,
-      boolean blindCount) throws IOException {
+      boolean blindCount, boolean exportLinesWithZeroQty) throws IOException {
     String fieldSeparator = getFieldSeparator();
 
     createCSVHeader(writer, fieldSeparator);
 
-    try (ScrollableResults physicalInventorylines = getPhysicalInventoryLines(inventoryId)) {
+    try (ScrollableResults physicalInventorylines = getPhysicalInventoryLines(inventoryId,
+        exportLinesWithZeroQty)) {
       addCSVLines(writer, blindCount, fieldSeparator, physicalInventorylines);
     }
   }
