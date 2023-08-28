@@ -149,6 +149,10 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="VALUE" primaryKey="false" required="true" type="NVARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA[NAME]]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="C_COUNTRY" name="C_COUNTRY_C_TAX">
         <reference local="C_COUNTRY_ID" foreign="C_COUNTRY_ID"/>
       </foreign-key>
@@ -184,6 +188,12 @@
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="NAME"/>
         <unique-column name="PARENT_TAX_ID"/>
+      </unique>
+      <unique name="C_TAX_VALUE">
+        <unique-column name="VALUE"/>
+        <unique-column name="PARENT_TAX_ID"/>
+        <unique-column name="AD_ORG_ID"/>
+        <unique-column name="AD_CLIENT_ID"/>
       </unique>
       <check name="C_TAX_ISACTIVE_CHECK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="C_TAX_ISCASHVAT_WH_CH"><![CDATA[ISCASHVAT = 'Y' AND ISWITHHOLDINGTAX = 'N' OR ISCASHVAT = 'N']]></check>
