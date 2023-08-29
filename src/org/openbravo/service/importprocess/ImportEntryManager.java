@@ -150,7 +150,7 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
   private boolean threadsStarted = false;
 
   private long initialWaitTime = 10000;
-  private long managerWaitTime = 600_000L;
+  private long managerWaitTime = 10_000L;
 
   // default to number of processors plus some additionals for the main threads
   private int numberOfThreads = Runtime.getRuntime().availableProcessors() + 3;

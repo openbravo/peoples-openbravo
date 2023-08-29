@@ -43,6 +43,7 @@ import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.email.EmailUtils;
@@ -149,8 +150,7 @@ public class EmailManager {
           transport.sendMessage(message, message.getAllRecipients());
           transport.close();
         } catch (Exception e) {
-          // TODO: Handle exceptions
-          return null;
+          throw new OBException(e);
         }
         return null;
       }, NonBlockingExecutorServiceProvider.getExecutorService());
