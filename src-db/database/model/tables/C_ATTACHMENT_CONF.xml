@@ -37,6 +37,10 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ATTACHMENT_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[SA]]></default>
+        <onCreateDefault><![CDATA['SA']]></onCreateDefault>
+      </column>
       <foreign-key foreignTable="C_ATTACHMENT_METHOD" name="C_ATT_CONF_C_ATT_METHOD_ID">
         <reference local="C_ATTACHMENT_METHOD_ID" foreign="C_ATTACHMENT_METHOD_ID"/>
       </foreign-key>

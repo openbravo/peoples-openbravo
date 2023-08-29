@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2016 Openbravo SLU
+ * All portions are Copyright (C) 2015-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,12 @@ package org.openbravo.client.application.attachment;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -40,6 +46,7 @@ import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.utility.Attachment;
+import org.openbravo.model.ad.utility.ReprintableDocument;
 
 /**
  * Default implementation of Attachment Management. This method saves the attached files in the
@@ -49,7 +56,8 @@ import org.openbravo.model.ad.utility.Attachment;
  */
 @ApplicationScoped
 @ComponentProvider.Qualifier(AttachmentUtils.DEFAULT_METHOD)
-public class CoreAttachImplementation extends AttachImplementation {
+public class CoreAttachImplementation extends AttachImplementation
+    implements ReprintableDocumentAttachHandler {
   private static final Logger log = LogManager.getLogger();
 
   @Override
@@ -122,6 +130,60 @@ public class CoreAttachImplementation extends AttachImplementation {
   public boolean isTempFile() {
     // Return false as the downloaded file is the original file stored in the server.
     return false;
+  }
+
+  @Override
+  public void upload(ReprintableDocument document, InputStream inputStream) throws IOException {
+    log.trace("Uploading reprintable document {}", document);
+    Path path = getReprintableDocumentAttachmentPath(document);
+    if (!Files.exists(path.getParent())) {
+      Files.createDirectories(path.getParent());
+    }
+    Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+  }
+
+  @Override
+  public void download(ReprintableDocument document, OutputStream outputStream) throws IOException {
+    log.trace("Downloading reprintable document {}", document);
+    Path path = getReprintableDocumentAttachmentPath(document);
+    Files.copy(path, outputStream);
+  }
+
+  private Path getReprintableDocumentAttachmentPath(ReprintableDocument document) {
+    String fileDirPath = getAttachmentDirectoryForNewAttachments(getTableId(document),
+        getDocumentId(document));
+    String reprintablePath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("reprintable.path");
+    if (reprintablePath != null) {
+      return Paths.get(reprintablePath, fileDirPath, document.getName());
+    }
+    String attachmentPath = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("attach.path");
+    return Paths.get(attachmentPath, "reprintable", fileDirPath, document.getName());
+  }
+
+  private String getTableId(ReprintableDocument document) {
+    if (document.getOrder() != null) {
+      return "259"; // c_order
+    }
+    if (document.getInvoice() != null) {
+      return "318"; // c_invoice
+    }
+    throw new IllegalArgumentException(
+        "Unknown source document linked to ReprintableDocument " + document.getId());
+  }
+
+  private String getDocumentId(ReprintableDocument document) {
+    if (document.getOrder() != null) {
+      return document.getOrder().getId();
+    }
+    if (document.getInvoice() != null) {
+      return document.getInvoice().getId();
+    }
+    throw new IllegalArgumentException(
+        "Unknown source document linked to ReprintableDocument " + document.getId());
   }
 
   /**
@@ -240,5 +302,4 @@ public class CoreAttachImplementation extends AttachImplementation {
     }
     return newname;
   }
-
 }

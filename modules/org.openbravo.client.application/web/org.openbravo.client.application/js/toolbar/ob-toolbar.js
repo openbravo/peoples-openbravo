@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):   Sreedhar Sirigiri (TDS), Mallikarjun M (TDS)
  ************************************************************************
@@ -655,6 +655,7 @@ isc.OBToolbar.addClassProperties({
         var view = this.view,
           form = view.viewForm,
           grid = view.viewGrid;
+
         var selectedRecords = grid.getSelectedRecords();
         var disabled = false;
         if (selectedRecords.length === 0) {
@@ -676,6 +677,30 @@ isc.OBToolbar.addClassProperties({
         if (view.tabId === '220' && selectedRecords.length > 1) {
           disabled = true;
         }
+        if (
+          view.isReprintEnabled &&
+          view.viewGrid.getSelectedRecords().size() === 1 &&
+          view.viewGrid
+            .getSelectedRecords()
+            .get(0)
+            .documentStatus.includes('DR')
+        ) {
+          disabled = true;
+        }
+
+        if (view.isReprintEnabled) {
+          this.buttonType = 'reprint';
+          this.prompt = OB.I18N.getLabel('Reprint');
+          if (selectedRecords.length > 1) {
+            // Printing multiple records is not supported if immutable reports are configured
+            disabled = true;
+          }
+        } else {
+          this.buttonType = 'print';
+          this.prompt = OB.I18N.getLabel('Print');
+        }
+        this.resetBaseStyle();
+
         this.setDisabled(disabled);
       },
       keyboardShortcutId: 'ToolBar_Print'
@@ -685,18 +710,38 @@ isc.OBToolbar.addClassProperties({
         var view = this.view,
           form = view.viewForm,
           grid = view.viewGrid;
+
+        if (view.isReprintEnabled) {
+          this.buttonType = 'reemail';
+          this.prompt = OB.I18N.getLabel('ReEmail');
+        } else {
+          this.buttonType = 'email';
+          this.prompt = OB.I18N.getLabel('Email');
+        }
+        this.resetBaseStyle();
+
         var selectedRecords = grid.getSelectedRecords();
         var disabled = false;
         if (selectedRecords.length === 0) {
           disabled = true;
         }
-        if (this.view.viewGrid.getTotalRows() === 0) {
+        if (view.viewGrid.getTotalRows() === 0) {
           disabled = true;
         }
         if (view.isShowingForm && form.isNew) {
           disabled = true;
         }
         if (view.isEditingGrid && grid.getEditForm().isNew) {
+          disabled = true;
+        }
+        if (
+          view.isReprintEnabled &&
+          view.viewGrid
+            .getSelectedRecords()
+            .map(record => record.documentStatus)
+            .includes('DR')
+        ) {
+          // Draft records cannot be printed when printing immutable reports
           disabled = true;
         }
         this.setDisabled(disabled);
@@ -1528,6 +1573,7 @@ isc.OBToolbar.addProperties({
             }
           }
           currentContext.viewForm.view.attachmentExists = attachmentExists;
+          currentContext.isReprintEnabled = data.isReprintEnabled;
           doRefresh(
             buttonsByContext[currentContext],
             currentContext.getCurrentValues() || {},
@@ -2043,6 +2089,14 @@ isc.OBToolbarTextButton.addProperties({
 OB.ToolbarUtils = {};
 
 OB.ToolbarUtils.print = function(view, url, directPrint, type) {
+  if (type === 'printButton' && view.isReprintEnabled) {
+    url = url.replace('print.html', 'reprint.html');
+    type = type.replace('printButton', 'reprintButton');
+  } else if (type === 'emailButton' && view.isReprintEnabled) {
+    url = url.replace('send.html', 'resend.html');
+    type = type.replace('emailButton', 'reemailButton');
+  }
+
   var selectedRecords = view.viewGrid.getSelectedRecords(),
     length = selectedRecords.length;
 

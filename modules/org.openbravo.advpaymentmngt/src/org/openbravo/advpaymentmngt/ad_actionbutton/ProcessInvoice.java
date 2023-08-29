@@ -43,11 +43,15 @@ import org.openbravo.advpaymentmngt.dao.AdvPaymentMngtDao;
 import org.openbravo.advpaymentmngt.process.FIN_AddPayment;
 import org.openbravo.advpaymentmngt.process.FIN_PaymentProcess;
 import org.openbravo.advpaymentmngt.utility.FIN_Utility;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.application.attachment.DocumentNotFoundException;
+import org.openbravo.client.application.attachment.ReprintableDocumentManager;
+import org.openbravo.client.application.attachment.ReprintableInvoice;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
@@ -90,6 +94,9 @@ public class ProcessInvoice extends HttpSecureAppServlet {
   @Inject
   @Any
   private Instance<ProcessInvoiceHook> hooks;
+
+  @Inject
+  private ReprintableDocumentManager reprintableDocumentManager;
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -144,8 +151,11 @@ public class ProcessInvoice extends HttpSecureAppServlet {
 
       OBError myMessage = null;
       try {
-
         Invoice invoice = dao.getObject(Invoice.class, strC_Invoice_ID);
+        if (immutableReportHasBeenPrinted(invoice) && "RE".equals(strdocaction)) {
+          throw new OBException(
+              Utility.messageBD(this, "ReactivationErrorWithReprintable", vars.getLanguage()));
+        }
         invoice.setDocumentAction(strdocaction);
         OBDal.getInstance().save(invoice);
         OBDal.getInstance().flush();
@@ -801,6 +811,16 @@ public class ProcessInvoice extends HttpSecureAppServlet {
         }
       }
       executePayments(response, vars, strWindowId, strTabId, strC_Invoice_ID, strOrg);
+    }
+  }
+
+  private boolean immutableReportHasBeenPrinted(Invoice invoice) {
+    try {
+      ReprintableInvoice sourceInvoice = new ReprintableInvoice(invoice.getId());
+      reprintableDocumentManager.findReprintableDocument(sourceInvoice);
+      return true;
+    } catch (DocumentNotFoundException e) {
+      return false;
     }
   }
 

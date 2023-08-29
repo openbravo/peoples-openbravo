@@ -8,7 +8,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2008-2022 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2008-2023 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  */
 package org.openbravo.erpCommon.utility.reporting.printing;
@@ -26,13 +26,16 @@ import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.regex.Matcher;
 
 import javax.servlet.ServletConfig;
@@ -48,6 +51,12 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.application.attachment.ReprintableDocumentManager;
+import org.openbravo.client.application.attachment.ReprintableDocumentManager.Format;
+import org.openbravo.client.application.attachment.ReprintableInvoice;
+import org.openbravo.client.application.attachment.ReprintableOrder;
+import org.openbravo.client.application.attachment.ReprintableSourceDocument;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.dal.core.OBContext;
@@ -74,10 +83,13 @@ import org.openbravo.erpCommon.utility.reporting.TemplateInfo.EmailDefinition;
 import org.openbravo.exception.NoConnectionAvailableException;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.ad.utility.ReprintableDocument;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
 import org.openbravo.model.common.enterprise.EmailTemplate;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.xmlEngine.XmlDocument;
 
 import net.sf.jasperreports.engine.JRException;
@@ -89,9 +101,11 @@ public class PrintController extends HttpSecureAppServlet {
   private final Map<String, TemplateData[]> differentDocTypes = new HashMap<String, TemplateData[]>();
   private boolean multiReports = false;
   private boolean archivedReports = false;
-  private static final String PRINT_PATH = "print.html";
   private static final String PRINT_OPTIONS_PATH = "printoptions.html";
+  private static final String PRINT_PATH = "print.html";
+  private static final String REPRINT_PATH = "reprint.html";
   private static final String SEND_PATH = "send.html";
+  private static final String RESEND_PATH = "resend.html";
 
   @Override
   public void init(ServletConfig config) {
@@ -244,6 +258,60 @@ public class PrintController extends HttpSecureAppServlet {
           savedReports.add(report);
         }
         printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
+      } else if (vars.commandIn("REPRINT")) {
+        ReprintableDocumentManager reprintableManager = WeldUtils
+            .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
+        ReprintableSourceDocument<?> sourceDocument = null;
+        String organizationId = null;
+        if (DocumentType.SALESORDER.equals(documentType)) {
+          sourceDocument = new ReprintableOrder(documentIds[0]);
+          organizationId = OBDal.getInstance()
+              .get(Order.class, documentIds[0])
+              .getOrganization()
+              .getId();
+        } else if (DocumentType.SALESINVOICE.equals(documentType)) {
+          sourceDocument = new ReprintableInvoice(documentIds[0]);
+          organizationId = OBDal.getInstance()
+              .get(Invoice.class, documentIds[0])
+              .getOrganization()
+              .getId();
+        } else {
+          throw new ServletException("@CODE=UnsupportedReprintDocumentType@");
+        }
+
+        if (reprintableManager.isReprintDocumentsEnabled(organizationId)) {
+          Report report = buildReport(response, vars, documentIds[0], reportManager, documentType,
+              Report.OutputTypeEnum.PRINT);
+          Optional<ReprintableDocument> reprintableDocument = sourceDocument
+              .getReprintableDocument();
+          if (reprintableDocument.isPresent()) {
+            // reprint: get the stored report and directly write it into the response
+            Format format = Format.valueOf(reprintableDocument.get().getFormat().toUpperCase());
+            if (Format.PDF == format) {
+              response.setHeader("Content-disposition",
+                  "attachment" + "; filename=" + report.getFilename());
+              try (OutputStream os = response.getOutputStream()) {
+                reprintableManager.download(sourceDocument, os);
+              }
+            } else {
+              throw new ServletException("@CODE=UnsupportedReprintDocumentFormat@");
+            }
+          } else {
+            // persist and print
+            JasperPrint jasperPrintForDuplicate = reportManager.processReport(report, vars,
+                Map.of("IS_DUPLICATE", true));
+            Path tmp = Files.createTempFile("jasper", ".tmp");
+            ReportingUtils.saveReport(jasperPrintForDuplicate, ExportType.PDF,
+                Collections.emptyMap(), tmp.toFile());
+            try (InputStream is = Files.newInputStream(tmp, StandardOpenOption.DELETE_ON_CLOSE)) {
+              reprintableManager.upload(is, Format.PDF, sourceDocument);
+            }
+            JasperPrint jasperPrint = reportManager.processReport(report, vars);
+            printReports(response, Arrays.asList(jasperPrint), Arrays.asList(report), false);
+          }
+        } else {
+          throw new ServletException("@CODE=ReprintDocumentsDisabledForOrg@");
+        }
       } else if (vars.commandIn("ARCHIVE")) {
         // Order documents by Document No.
         if (multiReports) {
@@ -276,7 +344,6 @@ public class PrintController extends HttpSecureAppServlet {
         printReports(response, jrPrintReports, savedReports, isDirectPrint(vars));
       } else {
         if (vars.commandIn("DEFAULT")) {
-
           differentDocTypes.clear();
           reports = new HashMap<String, Report>();
           for (int index = 0; index < documentIds.length; index++) {
@@ -294,25 +361,22 @@ public class PrintController extends HttpSecureAppServlet {
                   report.getOrgId());
 
               if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) == -1
-                  && request.getServletPath().toLowerCase().indexOf(PRINT_OPTIONS_PATH) == -1) {
-                if ("".equals(senderAddress) || senderAddress == null) {
-                  final OBError on = new OBError();
-                  on.setMessage(Utility.messageBD(this, "NoSender", vars.getLanguage()));
-                  on.setTitle(Utility.messageBD(this, "EmailConfigError", vars.getLanguage()));
-                  on.setType("Error");
-                  final String tabId = vars.getSessionValue("inpTabId");
-                  vars.getStringParameter("tab");
-                  vars.setMessage(tabId, on);
-                  vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
-                  printPageClosePopUpAndRefreshParent(response, vars);
-                  throw new ServletException("Configuration Error no sender defined");
-                }
+                  && request.getServletPath().toLowerCase().indexOf(PRINT_OPTIONS_PATH) == -1
+                  && ("".equals(senderAddress) || senderAddress == null)) {
+                final OBError on = new OBError();
+                on.setMessage(Utility.messageBD(this, "NoSender", vars.getLanguage()));
+                on.setTitle(Utility.messageBD(this, "EmailConfigError", vars.getLanguage()));
+                on.setType("Error");
+                final String tabId = vars.getSessionValue("inpTabId");
+                vars.getStringParameter("tab");
+                vars.setMessage(tabId, on);
+                vars.getRequestGlobalVariable("inpTabId", "AttributeSetInstance.tabId");
+                printPageClosePopUpAndRefreshParent(response, vars);
+                throw new ServletException("Configuration Error no sender defined");
               }
 
-              // check the different doc typeId's if all the selected
-              // doc's
-              // has the same doc typeId the template selector should
-              // appear
+              // Check the different document type IDs. If all the selected documents have the same
+              // document type ID, the template selector should appear.
               if (!differentDocTypes.containsKey(report.getDocTypeId())) {
                 differentDocTypes.put(report.getDocTypeId(), report.getTemplate());
               }
@@ -327,7 +391,8 @@ public class PrintController extends HttpSecureAppServlet {
           if (request.getServletPath().toLowerCase().indexOf(PRINT_PATH) != -1) {
             createPrintOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports);
-          } else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1) {
+          } else if (request.getServletPath().toLowerCase().indexOf(SEND_PATH) != -1
+              || request.getServletPath().toLowerCase().indexOf(RESEND_PATH) != -1) {
             createEmailOptionsPage(request, response, vars, documentType,
                 getComaSeparatedString(documentIds), reports, checks, fullDocumentIdentifier);
           }
@@ -395,8 +460,10 @@ public class PrintController extends HttpSecureAppServlet {
                 final String tableId = ToolsData.getTableId(this,
                     report.getDocumentType().getTableName());
 
-                // If the user wants to archive the document
-                if (vars.getStringParameter("inpArchive").equals("Y")) {
+                // If the user wants to archive the document and a reprintable document should not
+                // be generated for it
+                if (vars.getStringParameter("inpArchive").equals("Y")
+                    && !reportManager.canReprint(report, vars)) {
                   // Save the report as a attachment because it is
                   // being transferred to the user
                   try {
@@ -911,11 +978,15 @@ public class PrintController extends HttpSecureAppServlet {
     if (strIsDirectAttach == null || "".equals(strIsDirectAttach)) {
       strIsDirectAttach = "false";
     }
+    String printCommand = request.getServletPath().toLowerCase().indexOf(REPRINT_PATH) != -1
+        ? "REPRINT"
+        : "PRINT";
     xmlDocument.setParameter("directory", "var baseDirectory = \"" + strReplaceWith + "/\";\r\n");
     xmlDocument.setParameter("language", vars.getLanguage());
     xmlDocument.setParameter("theme", vars.getTheme());
     xmlDocument.setParameter("description", "");
     xmlDocument.setParameter("help", "");
+    xmlDocument.setParameter("printCommand", "var printCommand = '" + printCommand + "';");
     xmlDocument.setParameter("isDirectPDF", "isDirectPDF = " + strIsDirectPDF + ";\r\n");
     xmlDocument.setParameter("isDirectAttach", "isDirectAttach = " + strIsDirectAttach + ";\r\n");
     response.setContentType("text/html; charset=UTF-8");

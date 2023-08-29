@@ -30,6 +30,7 @@ import org.openbravo.base.weld.test.testinfrastructure.DalPersistanceEventTest;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdi;
 import org.openbravo.base.weld.test.testinfrastructure.ParameterizedCdiWithSkip;
 import org.openbravo.cache.TimeInvalidatedCacheTest;
+import org.openbravo.client.application.attachment.ReprintableDocumentTest;
 import org.openbravo.client.application.test.ADCSInitialization;
 import org.openbravo.client.application.test.ADCSTest;
 import org.openbravo.client.application.test.ApplicationTest;
@@ -367,6 +368,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // role inheritance
     RoleInheritanceTestSuite.class, //
+
+    // attachments and reprintable documents
+    ReprintableDocumentTest.class, //
 
     // db
     SqlCallableStatement.class, //

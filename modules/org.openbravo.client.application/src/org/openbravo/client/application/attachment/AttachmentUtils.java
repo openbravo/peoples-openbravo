@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -56,7 +56,7 @@ import org.openbravo.model.ad.utility.AttachmentMethod;
  *
  */
 public class AttachmentUtils {
-  private static Map<String, String> clientConfigs = new ConcurrentHashMap<String, String>();
+  private static Map<String, String> clientConfigs = new ConcurrentHashMap<>();
   public static final String DEFAULT_METHOD = "Default";
   public static final String DEFAULT_METHOD_ID = "D7B1319FC2B340799283BBF8E838DF9F";
   private static final String CORE_DESC_PARAMETER = "E22E8E3B737D4A47A691A073951BBF16";
@@ -66,7 +66,16 @@ public class AttachmentUtils {
       .getInstanceFromStaticBeanManager(ApplicationDictionaryCachedStructures.class);
 
   /**
-   * Gets the Attachment Configuration associated to the client active in OBContext
+   * The supported types of attachments
+   */
+  public enum AttachmentType {
+    SA, // standard attachment
+    RD // reprintable document
+  }
+
+  /**
+   * Gets the Attachment Configuration for standard attachments associated to the client active in
+   * OBContext
    * 
    * @return Activate Attachment Configuration for the current OBContext client
    */
@@ -76,19 +85,49 @@ public class AttachmentUtils {
   }
 
   /**
-   * Gets the Attachment Configuration associated to the active client
+   * Gets the Attachment Configuration for standard attachments associated to the given client
    * 
    * @param clientId
    *          Client using openbravo
    * @return Activated Attachment Configuration for this client
    */
   public static AttachmentConfig getAttachmentConfig(String clientId) {
-    String strAttachmentConfigId = clientConfigs.get(clientId);
+    return getAttachmentConfig(clientId, AttachmentType.SA);
+  }
+
+  /**
+   * Gets the Attachment Configuration for the given attachment type and associated to the client
+   * active in OBContext
+   * 
+   * @param attachmentType
+   *          The type of attachment
+   * @return Activated Attachment Configuration for the given attachment and associated to the
+   *         current OBContext client
+   */
+  public static AttachmentConfig getAttachmentConfig(AttachmentType attachmentType) {
+    Client client = OBContext.getOBContext().getCurrentClient();
+    return getAttachmentConfig(client.getId(), attachmentType);
+  }
+
+  /**
+   * Gets the Attachment Configuration for the given attachment type and associated to the given
+   * client
+   *
+   * @param clientId
+   *          Client using openbravo
+   * @param attachmentType
+   *          The type of attachment
+   * @return Activated Attachment Configuration for the given attachment type and client
+   */
+  public static AttachmentConfig getAttachmentConfig(String clientId,
+      AttachmentType attachmentType) {
+    String strAttachmentConfigId = clientConfigs.get(getKey(clientId, attachmentType));
     if (strAttachmentConfigId == null) {
       // Only one active AttachmentConfig is allowed per client.
       OBCriteria<AttachmentConfig> critAttConf = OBDal.getInstance()
-          .createCriteria(AttachmentConfig.class);
-      critAttConf.add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT + ".id", clientId));
+          .createCriteria(AttachmentConfig.class)
+          .add(Restrictions.eq(AttachmentConfig.PROPERTY_CLIENT + ".id", clientId))
+          .add(Restrictions.eq(AttachmentConfig.PROPERTY_ATTACHMENTTYPE, attachmentType.name()));
       if (!OBDal.getInstance().isActiveFilterEnabled()) {
         critAttConf.setFilterOnActive(true);
       }
@@ -97,12 +136,12 @@ public class AttachmentUtils {
       if (attConf == null && !SYSTEM_CLIENT_ID.equals(clientId)) {
         // If there is no specific configuration on the client search a generic configuration on
         // system client.
-        attConf = getAttachmentConfig(SYSTEM_CLIENT_ID);
+        attConf = getAttachmentConfig(SYSTEM_CLIENT_ID, attachmentType);
       }
 
       String attConfId = attConf != null ? attConf.getId() : "no-config";
 
-      setAttachmentConfig(clientId, attConfId);
+      setAttachmentConfig(clientId, attachmentType, attConfId);
       return attConf;
     } else if ("no-config".equals(strAttachmentConfigId)) {
       return null;
@@ -111,7 +150,7 @@ public class AttachmentUtils {
   }
 
   /**
-   * Updates the current active attachment configuration for the client.
+   * Updates the current active attachment configuration of standard attachments for the client.
    * 
    * @param strClient
    *          The Client whose attachment configuration has changed.
@@ -119,11 +158,32 @@ public class AttachmentUtils {
    *          The new Attachment Configuration.
    */
   public static synchronized void setAttachmentConfig(String strClient, String strAttConfig) {
+    setAttachmentConfig(strClient, AttachmentType.SA, strAttConfig);
+  }
+
+  /**
+   * Updates the current active attachment configuration of the given attachment type for the
+   * client.
+   *
+   * @param strClient
+   *          The Client whose attachment configuration has changed.
+   * @param attachmentType
+   *          The attachment type
+   * @param strAttConfig
+   *          The new Attachment Configuration.
+   */
+  public static synchronized void setAttachmentConfig(String strClient,
+      AttachmentType attachmentType, String strAttConfig) {
+    String key = getKey(strClient, attachmentType);
     if (strAttConfig == null) {
-      clientConfigs.remove(strClient);
+      clientConfigs.remove(key);
     } else {
-      clientConfigs.put(strClient, strAttConfig);
+      clientConfigs.put(key, strAttConfig);
     }
+  }
+
+  private static String getKey(String strClient, AttachmentType attachmentType) {
+    return strClient + "-" + attachmentType.name();
   }
 
   /**

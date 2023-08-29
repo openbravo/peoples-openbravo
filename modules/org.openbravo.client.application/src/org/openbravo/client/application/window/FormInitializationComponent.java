@@ -109,6 +109,10 @@ public class FormInitializationComponent extends BaseActionHandler {
   @Any
   private Instance<FICExtension> ficExtensions;
 
+  @Inject
+  @Any
+  private Instance<FICFinalObjectExtension> ficFinalObjectExtensions;
+
   @Override
   protected JSONObject execute(Map<String, Object> parameters, String content) {
     OBContext.setAdminMode(true);
@@ -311,7 +315,7 @@ public class FormInitializationComponent extends BaseActionHandler {
       long t10 = System.currentTimeMillis();
       JSONObject finalObject = buildJSONObject(mode, tab, columnValues, row, changeEventCols,
           calloutMessages, attachments, attachmentCount, jsExcuteCode, hiddenInputs, noteCount,
-          overwrittenAuxiliaryInputs);
+          overwrittenAuxiliaryInputs, jsContent);
       analyzeResponse(tab, columnValues);
       long t11 = System.currentTimeMillis();
       log.debug("Elapsed time: " + (System.currentTimeMillis() - iniTime) + "(" + (t2 - t1) + ","
@@ -427,7 +431,8 @@ public class FormInitializationComponent extends BaseActionHandler {
   private JSONObject buildJSONObject(String mode, Tab tab, Map<String, JSONObject> columnValues,
       BaseOBObject row, List<String> changeEventCols, List<JSONObject> calloutMessages,
       List<JSONObject> attachments, int attachmentCount, List<String> jsExcuteCode,
-      Map<String, Object> hiddenInputs, int noteCount, List<String> overwrittenAuxiliaryInputs) {
+      Map<String, Object> hiddenInputs, int noteCount, List<String> overwrittenAuxiliaryInputs,
+      JSONObject jsContent) {
     JSONObject finalObject = new JSONObject();
     try {
       if ((mode.equals("NEW") || mode.equals("CHANGE")) && !hiddenInputs.isEmpty()) {
@@ -530,7 +535,7 @@ public class FormInitializationComponent extends BaseActionHandler {
 
         finalObject.put("noteCount", noteCount);
       }
-      if (attachments.size() > 0) {
+      if (!attachments.isEmpty()) {
         finalObject.put("attachments", new JSONArray(attachments));
       }
       finalObject.put("attachmentCount", attachmentCount);
@@ -540,7 +545,24 @@ public class FormInitializationComponent extends BaseActionHandler {
         finalObject.put("jscode", new JSONArray(jsExcuteCode));
       }
 
-      log.debug(finalObject.toString(1));
+      for (FICFinalObjectExtension ficExtension : ficFinalObjectExtensions) {
+        JSONObject newObject = ficExtension.execute(mode, tab, columnValues, row, jsContent);
+        @SuppressWarnings("unchecked")
+        Iterator<String> keys = newObject.keys();
+        while (keys.hasNext()) {
+          String key = keys.next();
+          finalObject.put(key, newObject.get(key));
+        }
+      }
+
+      log.debug("Final JSON: {}", () -> {
+        try {
+          return finalObject.toString(1);
+        } catch (JSONException ex) {
+          return finalObject.toString();
+        }
+      });
+
       return finalObject;
     } catch (JSONException e) {
       log.error("Error while generating the final JSON object: ", e);

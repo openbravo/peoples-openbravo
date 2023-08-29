@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Business Momentum b.v.
- * All portions are Copyright (C) 2007-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2007-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  Business Momentum b.v. (http://www.businessmomentum.eu).
  *************************************************************************
@@ -19,23 +19,42 @@
 package org.openbravo.erpCommon.utility.reporting;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.attachment.AttachImplementationManager;
+import org.openbravo.client.application.attachment.DocumentNotFoundException;
+import org.openbravo.client.application.attachment.ReprintableDocumentManager;
+import org.openbravo.client.application.attachment.ReprintableInvoice;
+import org.openbravo.client.application.attachment.ReprintableOrder;
+import org.openbravo.client.application.attachment.ReprintableSourceDocument;
 import org.openbravo.client.application.report.ReportingUtils;
 import org.openbravo.client.application.report.ReportingUtils.ExportType;
 import org.openbravo.client.application.report.language.ReportLanguageHandler;
+import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.ui.Tab;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.order.Order;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.utils.Replace;
 
@@ -84,6 +103,11 @@ public class ReportManager {
 
   public JasperPrint processReport(Report report, VariablesSecureApp variables)
       throws ReportingException {
+    return processReport(report, variables, Collections.emptyMap());
+  }
+
+  public JasperPrint processReport(Report report, VariablesSecureApp variables,
+      Map<String, Object> extraDesignParameters) throws ReportingException {
 
     setTargetDirectory(report);
     language = variables.getLanguage();
@@ -98,6 +122,7 @@ public class ReportManager {
 
     final HashMap<String, Object> designParameters = populateDesignParameters(variables, report);
     designParameters.put("TEMPLATE_LOCATION", templateLocation);
+    designParameters.putAll(extraDesignParameters);
     JasperPrint jasperPrint = null;
 
     String salesOrder = report.getCheckSalesOrder();
@@ -139,13 +164,85 @@ public class ReportManager {
   }
 
   public void saveTempReport(Report report, VariablesSecureApp vars) {
-    JasperPrint jasperPrint = null;
     try {
-      jasperPrint = processReport(report, vars);
-      saveReport(report, jasperPrint);
+      if (!canReprint(report, vars)) {
+        JasperPrint jasperPrint = processReport(report, vars);
+        saveReport(report, jasperPrint);
+        return;
+      }
+      ReprintableDocumentManager reprintableManager = WeldUtils
+          .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
+      String documentId = report.getDocumentId();
+      DocumentType documentType = report.getDocumentType();
+      try {
+        ReprintableSourceDocument<?> reprintableSource = DocumentType.SALESORDER.equals(
+            documentType) ? new ReprintableOrder(documentId) : new ReprintableInvoice(documentId);
+        reprintableManager.findReprintableDocument(reprintableSource);
+        File reprintable = new File(
+            report.getTargetDirectory().toString() + '/' + report.getFilename());
+        try (OutputStream outputStream = new FileOutputStream(reprintable)) {
+          reprintableManager.download(reprintableSource, outputStream);
+        } catch (IOException ex) {
+          throw new OBException("Error reading reprintable for document" + report.getDocumentId(),
+              ex);
+        }
+      } catch (DocumentNotFoundException dex) {
+        JasperPrint jasperPrint = processReport(report, vars);
+        saveReport(report, jasperPrint);
+        Path tmp = null;
+        try {
+          JasperPrint jasperPrintForDuplicate = processReport(report, vars,
+              Map.of("IS_DUPLICATE", true));
+          tmp = Files.createTempFile("jasper", ".tmp");
+          ReportingUtils.saveReport(jasperPrintForDuplicate, ExportType.PDF, Collections.emptyMap(),
+              tmp.toFile());
+          JSONObject jsonReprintable = new JSONObject();
+          jsonReprintable.put("documentData",
+              Base64.getEncoder().encodeToString(Files.readAllBytes(tmp)));
+          jsonReprintable.put("documentId", documentId);
+          jsonReprintable.put("documentType",
+              documentType.equals(DocumentType.SALESORDER) ? "ORDER" : "INVOICE");
+          jsonReprintable.put("documentFormat", "PDF");
+          reprintableManager.upload(jsonReprintable);
+        } catch (IOException | JSONException | JRException ex) {
+          throw new OBException("Error creating reprintable for document " + report.getDocumentId(),
+              ex);
+        } finally {
+          try {
+            if (tmp != null) {
+              Files.deleteIfExists(tmp);
+            }
+          } catch (IOException ex) {
+            log4j.error("Error deleting file {}", tmp);
+          }
+        }
+      }
     } catch (final ReportingException e) {
       log4j.error(e.getMessage());
       e.printStackTrace();
+    }
+  }
+
+  public boolean canReprint(Report report, VariablesSecureApp vars) {
+    ReprintableDocumentManager reprintableManager = WeldUtils
+        .getInstanceFromStaticBeanManager(ReprintableDocumentManager.class);
+    try {
+      OBContext.setAdminMode(true);
+      Tab tab = OBDal.getInstance().get(Tab.class, vars.getSessionValue("inpTabId"));
+      if (!reprintableManager.isReprintableDocumentsWindow(tab.getWindow().getId())) {
+        return false;
+      }
+      String documentId = report.getDocumentId();
+      DocumentType documentType = report.getDocumentType();
+      String orgId = null;
+      if (DocumentType.SALESORDER.equals(documentType)) {
+        orgId = OBDal.getInstance().get(Order.class, documentId).getOrganization().getId();
+      } else if (DocumentType.SALESINVOICE.equals(documentType)) {
+        orgId = OBDal.getInstance().get(Invoice.class, documentId).getOrganization().getId();
+      }
+      return orgId != null && reprintableManager.isReprintDocumentsEnabled(orgId);
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 

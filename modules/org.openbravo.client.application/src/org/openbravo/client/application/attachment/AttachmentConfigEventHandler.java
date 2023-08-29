@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2015-2019 Openbravo SLU
+ * All portions are Copyright (C) 2015-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.client.application.attachment;
 
 import javax.enterprise.event.Observes;
+import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,11 +27,12 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.application.attachment.AttachmentUtils.AttachmentType;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
-import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
@@ -49,6 +51,9 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
       ModelProvider.getInstance().getEntity(AttachmentConfig.ENTITY_NAME) };
   private static Property propActive = entities[0].getProperty(AttachmentConfig.PROPERTY_ACTIVE);
 
+  @Inject
+  private ReprintableDocumentManager reprintableDocumentManager;
+
   @Override
   protected Entity[] getObservedEntities() {
     return entities;
@@ -65,14 +70,16 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
     }
     final AttachmentConfig newAttConfig = (AttachmentConfig) event.getTargetInstance();
 
-    isAnyActivated(event);
+    validate(newAttConfig);
     String clientId = newAttConfig.getClient().getId();
+    AttachmentType attachmentType = AttachmentType.valueOf(newAttConfig.getAttachmentType());
     if ((Boolean) event.getCurrentState(propActive)) {
-      AttachmentUtils.setAttachmentConfig(clientId, event.getId());
+      AttachmentUtils.setAttachmentConfig(clientId, attachmentType, event.getId());
     } else if ((Boolean) event.getPreviousState(propActive)) {
       // Deactivating a config reset AttachmentUtils state
-      AttachmentUtils.setAttachmentConfig(clientId, null);
+      AttachmentUtils.setAttachmentConfig(clientId, attachmentType, null);
     }
+    reprintableDocumentManager.invalidateAttachmentConfigurationCache(newAttConfig.getId());
   }
 
   /**
@@ -85,10 +92,11 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
     }
     final AttachmentConfig newAttConfig = (AttachmentConfig) event.getTargetInstance();
 
-    isAnyActivated(event);
+    validate(newAttConfig);
     String clientId = newAttConfig.getClient().getId();
+    AttachmentType attachmentType = AttachmentType.valueOf(newAttConfig.getAttachmentType());
     if ((Boolean) event.getCurrentState(propActive)) {
-      AttachmentUtils.setAttachmentConfig(clientId, newAttConfig.getId());
+      AttachmentUtils.setAttachmentConfig(clientId, attachmentType, newAttConfig.getId());
     }
   }
 
@@ -102,28 +110,47 @@ class AttachmentConfigEventHandler extends EntityPersistenceEventObserver {
 
     final AttachmentConfig deletedAttachmentConfig = (AttachmentConfig) event.getTargetInstance();
     String clientId = deletedAttachmentConfig.getClient().getId();
+    AttachmentType attachmentType = AttachmentType
+        .valueOf(deletedAttachmentConfig.getAttachmentType());
     if (deletedAttachmentConfig.isActive()) {
       // The active config of the client is deleted. Update AttachmentUtils with an empty config
-      AttachmentUtils.setAttachmentConfig(clientId, null);
+      AttachmentUtils.setAttachmentConfig(clientId, attachmentType, null);
     }
-
+    reprintableDocumentManager
+        .invalidateAttachmentConfigurationCache(deletedAttachmentConfig.getId());
   }
 
-  private void isAnyActivated(EntityPersistenceEvent event) {
-    final AttachmentConfig newAttachmentConfig = (AttachmentConfig) event.getTargetInstance();
+  private void validate(AttachmentConfig newAttachmentConfig) {
+    try {
+      OBContext.setAdminMode(true);
+      if (AttachmentUtils.AttachmentType.RD.name().equals(newAttachmentConfig.getAttachmentType())
+          && !newAttachmentConfig.getAttachmentMethod().isSupportReprintableDocuments()) {
+        throw new OBException(OBMessageUtils.messageBD("UnsupportedAttachmentType"));
+      }
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+    isAnyActivated(newAttachmentConfig);
+  }
+
+  private void isAnyActivated(AttachmentConfig newAttachmentConfig) {
     if (!newAttachmentConfig.isActive()) {
       return;
     }
     final OBQuery<AttachmentConfig> attachmentConfigQuery = OBDal.getInstance()
-        .createQuery(AttachmentConfig.class, "id!=:id and client.id=:clientId");
+        .createQuery(AttachmentConfig.class,
+            "id!=:id and client.id=:clientId and attachmentType=:attachmentType");
     attachmentConfigQuery.setNamedParameter("id", newAttachmentConfig.getId());
     attachmentConfigQuery.setNamedParameter("clientId", newAttachmentConfig.getClient().getId());
+    attachmentConfigQuery.setNamedParameter("attachmentType",
+        newAttachmentConfig.getAttachmentType());
     // Ensure that filtering by client and active is done.
     attachmentConfigQuery.setFilterOnReadableClients(true);
     attachmentConfigQuery.setFilterOnActive(true);
 
     if (!attachmentConfigQuery.list().isEmpty()) {
-      logger.error("Error saving, more than one active config detected.");
+      logger.error(
+          "Error saving, more than one active config for the same attachment type detected.");
       throw new OBException(OBMessageUtils.messageBD("AD_EnabledAttachmentMethod"));
     }
   }
