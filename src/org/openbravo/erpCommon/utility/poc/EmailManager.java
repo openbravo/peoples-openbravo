@@ -165,10 +165,16 @@ public class EmailManager {
   }
 
   private static MimeMessage getEmailMessage(String senderAddress, String subject, String content,
-      List<File> attachments, Date sentDate, List<String> headerExtras, String localReplyTo,
-      String localRecipientTO, String localRecipientCC, String localRecipientBCC,
-      String localContentType, Session mailSession) throws MessagingException, IOException {
+      List<File> attachments, Date sentDate, List<String> headerExtras, String replyTo,
+      String recipientTO, String recipientCC, String recipientBCC, String contentType,
+      Session mailSession) throws MessagingException, IOException {
     MimeMessage message = new MimeMessage(mailSession);
+
+    String localReplyTo = replyTo;
+    String localRecipientTO = recipientTO;
+    String localRecipientCC = recipientCC;
+    String localRecipientBCC = recipientBCC;
+    String localContentType = contentType;
 
     message.setFrom(new InternetAddress(senderAddress));
 
@@ -260,7 +266,7 @@ public class EmailManager {
   }
 
   private static Properties getProperties(String host, int port, int smtpServerTimeout,
-      String localConnSecurity) {
+      String connSecurity) {
     Properties props = new Properties();
 
     if (log4j.isDebugEnabled()) {
@@ -274,6 +280,7 @@ public class EmailManager {
     props.put("mail.smtp.timeout", timeout);
     props.put("mail.smtp.connectiontimeout", timeout);
     props.put("mail.smtp.writetimeout", timeout);
+    String localConnSecurity = connSecurity;
 
     if (localConnSecurity != null) {
       localConnSecurity = localConnSecurity.replaceAll(", *", ",");

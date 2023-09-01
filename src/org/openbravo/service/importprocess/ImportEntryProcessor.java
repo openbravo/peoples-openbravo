@@ -279,6 +279,16 @@ public abstract class ImportEntryProcessor {
     return true;
   }
 
+  /**
+   * Indicates if the import entry processor has a runnable that is to be executed in a non-blocking
+   * way
+   * 
+   * @return true if it is non-blocking, false otherwise
+   */
+  protected boolean isNonBlocking() {
+    return false;
+  }
+
   @Override
   public String toString() {
     return getClass().getSimpleName() + "\n"

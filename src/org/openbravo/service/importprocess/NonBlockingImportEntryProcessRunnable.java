@@ -25,6 +25,9 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.NonBlockingExecutorServiceProvider;
 import org.openbravo.service.importprocess.ImportEntryProcessor.ImportEntryProcessRunnable;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -41,6 +44,11 @@ import java.util.concurrent.ExecutorService;
  * {@link NonBlockingImportEntryProcessRunnable#markImportEntryWithError} methods.
  */
 public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryProcessRunnable {
+
+  @Inject
+  @Any
+  private Instance<ImportEntryPostProcessor> importEntryPostProcessors;
+
   private final Logger log = LogManager.getLogger();
 
   /**
@@ -105,6 +113,20 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
     } finally {
       OBDal.getInstance().commitAndClose();
       OBContext.restorePreviousMode();
+    }
+    executePostProcessors(importEntry);
+  }
+
+  /**
+   * Executes post proceessor hooks, provided by ImportEntryPostProcessor
+   *
+   * @param importEntry
+   *          ImportEntry that will be post-processed
+   */
+  private void executePostProcessors(ImportEntry importEntry) {
+    for (ImportEntryPostProcessor importEntryPostProcessor : importEntryPostProcessors
+        .select(new ImportEntryManager.ImportEntryProcessorSelector(importEntry.getTypeofdata()))) {
+      importEntryPostProcessor.afterProcessing(importEntry);
     }
   }
 
