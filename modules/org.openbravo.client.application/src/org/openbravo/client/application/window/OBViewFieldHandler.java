@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2022 Openbravo SLU
+ * All portions are Copyright (C) 2011-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -245,6 +245,11 @@ public class OBViewFieldHandler {
       OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement);
       auditFields.add(audit);
     }
+    if (true) { // TODO: read from config
+      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgCreationDate",
+          OBViewUtil.createdElement);
+      auditFields.add(orgAudit);
+    }
     if (!hasCreatedByField) {
       OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement);
       auditFields.add(audit);
@@ -252,6 +257,10 @@ public class OBViewFieldHandler {
     if (!hasUpdatedField) {
       OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement);
       auditFields.add(audit);
+    }
+    if (true) { // TODO: read from config
+      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgUpdatedDate", OBViewUtil.updatedElement);
+      auditFields.add(orgAudit);
     }
     if (!hasUpdatedByField) {
       OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement);
@@ -664,6 +673,7 @@ public class OBViewFieldHandler {
   public class OBViewFieldAudit implements OBViewFieldDefinition {
     private static final String SEARCH_REFERENCE = "30";
     private static final String DATETIME_REFERENCE = "16";
+    private static final String STRING_REFERENCE = "10";
     private String name;
     private String refType;
     private String refEntity;
@@ -719,6 +729,10 @@ public class OBViewFieldHandler {
         // User search
         refType = SEARCH_REFERENCE;
         refEntity = "User";
+      } else if (type.startsWith("org")) {
+        // Date time
+        refType = STRING_REFERENCE;
+        refEntity = "";
       } else {
         // Date time
         refType = DATETIME_REFERENCE;
@@ -732,7 +746,9 @@ public class OBViewFieldHandler {
         result.append(", fkField: true");
       }
 
-      if (tab != null) {
+      if (STRING_REFERENCE.equals(refType)) {
+        result.append(", canFilter: false, canSort: false");
+      } else if (tab != null) {
         JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(systemGridConfig,
             getTabGridConfig());
         try {

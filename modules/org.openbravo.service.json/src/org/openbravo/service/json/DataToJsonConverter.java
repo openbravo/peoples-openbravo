@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2022 Openbravo SLU
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,9 @@ package org.openbravo.service.json;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -46,9 +49,12 @@ import org.openbravo.base.model.domaintype.BinaryDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
+import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 
@@ -245,6 +251,13 @@ public class DataToJsonConverter {
           }
         }
       }
+
+      if (bob instanceof Traceable) { // TODO: DS must indicate if this fields must be created
+        Traceable traceable = (Traceable) bob;
+        jsonObject.put("orgCreationDate", toOrganizationTimeZone(traceable.getCreationDate()));
+        jsonObject.put("orgUpdatedDate", toOrganizationTimeZone(traceable.getUpdated()));
+      }
+
       // When table references are set, the identifier should contain the display property for as it
       // is done in the grid data. Refer https://issues.openbravo.com/view.php?id=26696
       if (StringUtils.isNotEmpty(displayProperty)) {
@@ -267,6 +280,16 @@ public class DataToJsonConverter {
     } catch (JSONException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  private String toOrganizationTimeZone(Date date) {
+    ZoneId targetTimeZone = ZoneId.of("America/New_York");
+    String pattern = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty(KernelConstants.DATETIME_FORMAT_PROPERTY, "dd-MM-yyyy HH:mm:ss");
+    ZonedDateTime zonedDateTime = date.toInstant().atZone(targetTimeZone);
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern + " (VV)");
+    return zonedDateTime.format(formatter);
   }
 
   private Map<String, Object> resolveAdditionalPropertyWithHook(BaseOBObject bob,
