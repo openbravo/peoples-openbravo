@@ -11,13 +11,13 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
-package org.openbravo.service.json.test;
+package org.openbravo.service.json;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,6 +28,10 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -51,11 +55,6 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.service.json.DataResolvingMode;
-import org.openbravo.service.json.DataToJsonConverter;
-import org.openbravo.service.json.JSONWriterToCSV;
-import org.openbravo.service.json.JsonConstants;
-import org.openbravo.service.json.JsonUtils;
 import org.openbravo.test.base.mock.HttpServletRequestMock;
 
 /**
@@ -65,7 +64,6 @@ import org.openbravo.test.base.mock.HttpServletRequestMock;
 public class JSONWriterToCSVTest extends WeldBaseTest {
 
   private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
-  private static final String CSV_EXTENSION = "." + ExportType.CSV.getExtension();
   private static final String CSV_SEPARATOR = "\",\"";
 
   private Path tmpFileAbsolutePath;
@@ -98,18 +96,19 @@ public class JSONWriterToCSVTest extends WeldBaseTest {
 
     Entity entity = ModelProvider.getInstance()
         .getEntity(params.get(JsonConstants.DATASOURCE_NAME), false);
-    File fileReport = new File(TMP_DIR, UUID.randomUUID().toString() + CSV_EXTENSION);
+    File fileReport = new File(TMP_DIR,
+        UUID.randomUUID().toString() + "." + ExportType.CSV.getExtension());
 
     Organization org = OBDal.getInstance().get(Organization.class, TEST_ORG_ID);
     final JSONObject json = toJsonConverter.toJsonObject(org, DataResolvingMode.FULL);
     json.put("Custom Field 1", "Test 1");
     json.put("Custom Field 2", "Test 2");
 
-    PrintWriter printWriter = new PrintWriter(fileReport);
-    JSONWriterToCSV writer = new JSONWriterToCSV(printWriter, vars, params, entity);
-    writer.write(json);
-    writer.writeCSVFooterNote(params);
-    printWriter.close();
+    try (PrintWriter printWriter = new PrintWriter(fileReport)) {
+      JSONWriterToCSV writer = new JSONWriterToCSV(printWriter, vars, params, entity);
+      writer.write(json);
+      writer.writeCSVFooterNote(params);
+    }
 
     tmpFileAbsolutePath = Paths.get(fileReport.getAbsolutePath());
 
@@ -120,7 +119,9 @@ public class JSONWriterToCSVTest extends WeldBaseTest {
 
   private Map<String, String> getRequestParameters() {
     Map<String, String> params = new HashMap<>();
-    params.put(JsonConstants.UTCOFFSETMILISECONDS_PARAMETER, "7200000");
+    int offset = Calendar.getInstance().get(Calendar.ZONE_OFFSET)
+        + Calendar.getInstance().get(Calendar.DST_OFFSET);
+    params.put(JsonConstants.UTCOFFSETMILISECONDS_PARAMETER, offset + "");
     params.put(JsonConstants.DATASOURCE_NAME, "Organization");
     params.put(JsonConstants.SELECTEDPROPERTIES_PARAMETER,
         "searchKey,name,summaryLevel,organizationType,legalEntityOrganization,creationDate,createdBy");
@@ -143,8 +144,12 @@ public class JSONWriterToCSVTest extends WeldBaseTest {
         + "\"" + org.getSearchKey() + CSV_SEPARATOR + org.getName() + CSV_SEPARATOR
         + org.isSummaryLevel() + CSV_SEPARATOR + org.getOrganizationType().getIdentifier()
         + CSV_SEPARATOR + org.getLegalEntityOrganization().getIdentifier() + CSV_SEPARATOR
-        + OBDateUtils.formatDateTime(org.getCreationDate()) + CSV_SEPARATOR
+        + formatDateInDefaultTimeZone(org.getCreationDate()) + CSV_SEPARATOR
         + org.getCreatedBy().getIdentifier() + "\",\"Test 1\",\"Test 2\"";
   }
 
+  private String formatDateInDefaultTimeZone(Date date) {
+    ZonedDateTime zonedDateTime = date.toInstant().atZone(ZoneId.systemDefault());
+    return OBDateUtils.formatDateTime(Date.from(zonedDateTime.toInstant()));
+  }
 }
