@@ -157,17 +157,27 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         inventoryLine.setDescription(description);
         inventoryLine.setCsvimported(true);
 
-        if (paramValues.has("importErrorHandling")
-            && paramValues.getString("importErrorHandling").equals("continue_at_error")) {
-          // Note: OBDal.getInstance().commitAndClose() does not work
-          // as it closes the session, doing the autocommit approach instead
-          OBDal.getInstance().getConnection().setAutoCommit(true);
-          OBDal.getInstance().save(inventoryLine);
-          OBDal.getInstance().flush();
-          OBDal.getInstance().getConnection().setAutoCommit(false);
-        } else {
-          OBDal.getInstance().save(inventoryLine);
+        // Note: try-catch inside the loop required to allow for the process to continue on error
+        try {
+          if (paramValues.has("importErrorHandling")
+              && paramValues.getString("importErrorHandling").equals("continue_at_error")) {
+            // Note: OBDal.getInstance().commitAndClose() does not work
+            // as it closes the session, doing the autocommit approach instead
+            OBDal.getInstance().getConnection().setAutoCommit(true);
+            OBDal.getInstance().save(inventoryLine);
+            OBDal.getInstance().flush();
+            OBDal.getInstance().getConnection().setAutoCommit(false);
+          } else {
+            OBDal.getInstance().save(inventoryLine);
+          }
+        } catch (Exception e) {
+          uploadResult.incErrorCount();
+          final Throwable ex = DbUtility
+              .getUnderlyingSQLException(e.getCause() != null ? e.getCause() : e);
+          final OBError errMsg = OBMessageUtils.translateError(ex.getMessage());
+          uploadResult.addErrorMessage(errMsg.getMessage() + "\n");
         }
+
         alreadyProcessed.add(inventoryLine.getId());
         if ((i > 0) && (i % 100) == 0) {
           OBDal.getInstance().flush();
@@ -318,10 +328,26 @@ public class ImportInventoryLines extends ProcessUploadedFile {
   }
 
   private Product getProduct(String upc, String productSearchkey) {
-    final OBQuery<Product> qry = OBDal.getInstance()
-        .createQuery(Product.class, "value=:value or upc=:upc");
-    qry.setNamedParameter("value", productSearchkey);
-    qry.setNamedParameter("upc", upc);
+    if (upc.isEmpty() && productSearchkey.isEmpty()) {
+      return null;
+    }
+
+    String whereClause;
+    if (upc.isEmpty()) {
+      whereClause = "value=:value";
+    } else if (productSearchkey.isEmpty()) {
+      whereClause = "upc=:upc";
+    } else {
+      whereClause = "value=:value or upc=:upc";
+    }
+
+    final OBQuery<Product> qry = OBDal.getInstance().createQuery(Product.class, whereClause);
+    if (!productSearchkey.isEmpty()) {
+      qry.setNamedParameter("value", productSearchkey);
+    }
+    if (!upc.isEmpty()) {
+      qry.setNamedParameter("upc", upc);
+    }
     qry.setMaxResult(1);
     return qry.uniqueResult();
   }
