@@ -67,6 +67,7 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
     }
     checkSingleAddressMappingIfMultiIntegration(event);
     checkEmptyCountry(event);
+    checkEmptyAddresses(event);
     checkMandatoryPropertiesIfMultiIntegration(event);
     checkDefaultAddressDuplicatesIfSingleIntegration(event);
   }
@@ -77,6 +78,7 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
     }
     checkSingleAddressMappingIfMultiIntegration(event);
     checkEmptyCountry(event);
+    checkEmptyAddresses(event);
     checkMandatoryPropertiesIfMultiIntegration(event);
     checkDefaultAddressDuplicatesIfSingleIntegration(event);
   }
@@ -88,6 +90,25 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
         .getCurrentState(externalBPAddressProperty);
     if (externalBPAddressCountry == null) {
       throw new OBException(OBMessageUtils.messageBD("ExtBPCountryMandatory"));
+    }
+  }
+
+  private void checkEmptyAddresses(EntityPersistenceEvent event) {
+    ExternalBusinessPartnerConfigLocation extBpPartnerConfigLocation = (ExternalBusinessPartnerConfigLocation) event
+        .getTargetInstance();
+    if (MULTI_INTEGRATION_TYPE
+        .equals(extBpPartnerConfigLocation.getCRMConnectorConfiguration().getTypeOfIntegration())) {
+      checkEmptyAddress(event, ExternalBusinessPartnerConfigLocation.PROPERTY_ISSHIPPINGADDRESS);
+      checkEmptyAddress(event, ExternalBusinessPartnerConfigLocation.PROPERTY_ISINVOICEADDRESS);
+    }
+  }
+
+  private void checkEmptyAddress(EntityPersistenceEvent event, String property) {
+    final Property externalBPAddressProperty = ENTITIES[0].getProperty(property);
+    final ExternalBusinessPartnerConfigProperty externalBPAddressCountry = (ExternalBusinessPartnerConfigProperty) event
+        .getCurrentState(externalBPAddressProperty);
+    if (externalBPAddressCountry == null) {
+      throw new OBException(OBMessageUtils.messageBD("ExtBPIsShippingInvoiceAddressMandatory"));
     }
   }
 
@@ -163,7 +184,9 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
               ExternalBusinessPartnerConfigLocation.PROPERTY_ADDRESSLINE2,
               ExternalBusinessPartnerConfigLocation.PROPERTY_CITYNAME,
               ExternalBusinessPartnerConfigLocation.PROPERTY_POSTALCODE,
-              ExternalBusinessPartnerConfigLocation.PROPERTY_REGION)
+              ExternalBusinessPartnerConfigLocation.PROPERTY_REGION,
+              ExternalBusinessPartnerConfigLocation.PROPERTY_ISSHIPPINGADDRESS,
+              ExternalBusinessPartnerConfigLocation.PROPERTY_ISINVOICEADDRESS)
           .forEach((propertyToCheck -> checkIfNonMandatoryProperty(event, propertyToCheck)));
     }
   }
