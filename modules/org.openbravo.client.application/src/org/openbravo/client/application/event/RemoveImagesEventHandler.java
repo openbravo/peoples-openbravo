@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2022 Openbravo SLU
+ * All portions are Copyright (C) 2014-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -29,6 +29,7 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
@@ -37,7 +38,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.common.plm.Product;
 
 /**
  * This observer takes care of deleting an image detected as no longer needed after removing the
@@ -59,10 +59,11 @@ class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
+    Entity entity = event.getTargetInstance().getEntity();
     // Iterate image properties of the entity
-    for (String property : getImageProperties(event.getTargetInstance().getEntity())) {
+    for (String propertyName : getImageProperties(event.getTargetInstance().getEntity())) {
 
-      Property imageProperty = event.getTargetInstance().getEntity().getProperty(property);
+      Property imageProperty = entity.getProperty(propertyName);
 
       // Remove image if it exists
       if (event.getCurrentState(imageProperty) != null) {
@@ -75,8 +76,8 @@ class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
           event.setCurrentState(imageProperty, getDummyImage(true));
         }
         if (bob != null) {
-          String selectedProduct = event.getId();
-          if (!checkImageUtilization(selectedProduct, bob)) {
+          String selectedRow = event.getId();
+          if (!checkImageUtilization(selectedRow, entity.getName(), imageProperty, bob)) {
             OBContext.setAdminMode(true);
             try {
               OBDal.getInstance().remove(bob);
@@ -137,7 +138,7 @@ class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
     // Iterate image properties of the entity
     for (String property : getImageProperties(event.getTargetInstance().getEntity())) {
 
-      Property imageProperty = event.getTargetInstance().getEntity().getProperty(property);
+      Property imageProperty = entity.getProperty(property);
       Image bob = (Image) event.getPreviousState(imageProperty);
       if (bob == null) {
         continue;
@@ -147,7 +148,7 @@ class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
       if (event.getPreviousState(imageProperty) != null
           && event.getCurrentState(imageProperty) != event.getPreviousState(imageProperty)) {
         String selectedProduct = event.getId();
-        if (!checkImageUtilization(selectedProduct, bob)) {
+        if (!checkImageUtilization(selectedProduct, entity.getName(), imageProperty, bob)) {
           OBContext.setAdminMode(true);
           try {
             OBDal.getInstance().remove(bob);
@@ -178,17 +179,18 @@ class RemoveImagesEventHandler extends EntityPersistenceEventObserver {
   }
 
   // Check if this image is used by another product
-  private static boolean checkImageUtilization(String productId, Image bob) {
-    final OBCriteria<Product> obCriteria = OBDal.getInstance().createCriteria(Product.class);
-    obCriteria.add(Restrictions.eq(Product.PROPERTY_IMAGE, bob));
-    obCriteria.add(Restrictions.ne(Product.PROPERTY_ID, productId));
+  private static boolean checkImageUtilization(String rowId, String entityName,
+      Property imageProperty, Image image) {
+    final OBCriteria<BaseOBObject> obCriteria = OBDal.getInstance().createCriteria(entityName);
+    obCriteria.add(Restrictions.eq(imageProperty.getName(), image));
+    obCriteria.add(Restrictions.ne("id", rowId));
     obCriteria.setFilterOnActive(false);
     obCriteria.setFilterOnReadableClients(false);
     obCriteria.setFilterOnReadableOrganization(false);
     obCriteria.setMaxResults(1);
-    Product product = (Product) obCriteria.uniqueResult();
+    BaseOBObject otherRow = (BaseOBObject) obCriteria.uniqueResult();
 
-    return product != null;
+    return otherRow != null;
   }
 
   private static List<String> getImageProperties(Entity entity) {
