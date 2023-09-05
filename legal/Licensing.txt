@@ -142,7 +142,7 @@ License is contained in the jar file itself (path: net/sf/jasperreports/fonts/de
 # poi-4.1.1.jar
 Under the Apache 2.0 license (included as Apache_poi_license.txt in this folder)
 
-# hibernate-core-5.6.0.Final.jar
+# hibernate-core-5.6.15.Final.jar
 # hibernate-commons-annotations-5.1.2.Final.jar
 All files under the LGPL 2.1 (available at www.gnu.org/licenses/lgpl.html)
 
@@ -187,7 +187,7 @@ Under the LGPL license (included as LGPL-2.1.txt in this folder)
 # caffeine-3.0.6.jar
 # guava-21.0.jar
 # jakarta.inject-api-1.0.jar
-# jboss-logging-3.4.2.Final.jar
+# jboss-logging-3.4.3.Final.jar
 # jboss-classfilewriter-1.2.4.Final.jar
 # weld-api-3.1.SP4.jar
 # weld-core-impl-3.1.7.SP1.jar
@@ -227,7 +227,7 @@ Under the LGPL license (included as LGPL-2.1.txt in this folder)
 # tomcat-juli.jar (version 9.0.37)
 # tomcat-jdbc.jar (version 9.0.37)
 # classmate-1.5.1.jar
-# jandex-2.2.3.Final.jar
+# jandex-2.4.2.Final.jar
 # FastInfoset-1.2.15.jar
 # JSMin.java
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
@@ -235,7 +235,7 @@ Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder)
 # reflections-0.9.11.jar
 Under the WTFPL license (included as WTFPL_license.txt in this folder)
 
-# byte-buddy-1.11.20.jar
+# byte-buddy-1.12.18.jar
 # byte-buddy-agent-1.11.20.jar
 Under the Apache 2.0 license (included as Apache_license-2.0.txt in this folder),
 note that Byte Buddy depends on the ASM library which is distributed under a BSD license (included as ASM_BSD_license.txt in this folder)
