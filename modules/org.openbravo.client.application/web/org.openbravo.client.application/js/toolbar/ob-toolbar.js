@@ -29,6 +29,7 @@ isc.OBToolbar.addClassProperties({
   TYPE_EXPORT: 'export',
   TYPE_ATTACHMENTS: 'attach',
   TYPE_CLONE: 'clone',
+  TYPE_ENABLE_DISABLE: 'enableDisable',
 
   SAVE_BUTTON_PROPERTIES: {
     action: function() {
@@ -801,6 +802,89 @@ isc.OBToolbar.addClassProperties({
       }
     },
     keyboardShortcutId: 'ToolBar_Clone'
+  },
+
+  ENABLE_DISABLE_BUTTON_PROPERTIES: {
+    action: function() {
+      var data = [];
+
+      this.menu = isc.Menu.create(
+        {
+          button: this,
+
+          // overridden to get much simpler custom style name
+          getBaseStyle: function(record, rowNum, colNum) {
+            if (colNum === 0) {
+              return this.baseStyle + 'Icon';
+            }
+            return this.baseStyle + 'Separator';
+          },
+
+          itemClick: function(item) {
+            item.doClick(this.button.view);
+          }
+        },
+        OB.Styles.Personalization.Menu
+      );
+      data.push({
+        title: OB.I18N.getLabel('OBUIAPP_EnableSelectedRows'),
+        doClick: function(view) {
+          //var selectedRows = this.view.viewGrid.getSelectedRecords();
+        }
+      });
+
+      data.push({
+        title: OB.I18N.getLabel('OBUIAPP_DisableSelectedRows'),
+        doClick: function(view) {
+          //var selectedRows = this.view.viewGrid.getSelectedRecords();
+        }
+      });
+
+      this.menu.setData(data);
+
+      this.Super('action', arguments);
+    },
+    buttonType: 'enableDisableSelectedRows',
+    sortPosition: 350,
+    prompt: OB.I18N.getLabel('OBUIAPP_EnableDisableSelectedRows'),
+    updateState: function() {
+      var view = this.view,
+        form = view.viewForm,
+        currentGrid,
+        length,
+        selectedRecords,
+        i;
+      if (view.isShowingTree) {
+        currentGrid = view.treeGrid;
+      } else {
+        currentGrid = view.viewGrid;
+      }
+      selectedRecords = currentGrid.getSelectedRecords();
+      length = selectedRecords.length;
+      for (i = 0; i < length; i++) {
+        if (!currentGrid.isWritable(selectedRecords[i])) {
+          this.setDisabled(true);
+          return;
+        }
+        if (selectedRecords[i]._new) {
+          this.setDisabled(true);
+          return;
+        }
+      }
+      if (view.isShowingForm) {
+        this.setDisabled(
+          form.isSaving || form.readOnly || !view.hasValidState() || form.isNew
+        );
+      } else {
+        this.setDisabled(
+          view.readOnly ||
+            !view.hasValidState() ||
+            !currentGrid.getSelectedRecords() ||
+            currentGrid.getSelectedRecords().length === 0
+        );
+      }
+    },
+    keyboardShortcutId: 'ToolBar_EnableDisableSelectedRows'
   }
 });
 
@@ -2522,6 +2606,16 @@ OB.ToolbarRegistry.registerButton(
   isc.OBToolbarIconButton,
   isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES,
   isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.ENABLE_DISABLE_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.ENABLE_DISABLE_BUTTON_PROPERTIES,
+  isc.OBToolbar.ENABLE_DISABLE_BUTTON_PROPERTIES.sortPosition,
   null,
   null,
   false
