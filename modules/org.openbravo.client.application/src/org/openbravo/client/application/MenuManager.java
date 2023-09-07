@@ -20,8 +20,10 @@ package org.openbravo.client.application;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
@@ -161,6 +164,19 @@ public class MenuManager {
   }
 
   private void linkProcessDefinition() {
+    Role role = OBContext.getOBContext().getRole();
+    List<String> processIds = Boolean.TRUE.equals(role.isManual())
+        ? getProcessIdsForManualRole(role)
+        : getProcessIdsForAutomaticRole(role);
+    for (String processId : processIds) {
+      MenuOption option = getMenuOptionByType(MenuEntryType.ProcessDefinition, processId);
+      if (option != null) {
+        option.setAccessGranted(true);
+      }
+    }
+  }
+
+  private List<String> getProcessIdsForManualRole(Role role) {
     final String processHql = "select pa.obuiappProcess.id " + //
         " from OBUIAPP_Process_Access pa " + //
         "where pa.role = :role" + //
@@ -168,14 +184,27 @@ public class MenuManager {
     final Query<String> processQry = OBDal.getInstance()
         .getSession()
         .createQuery(processHql, String.class);
-    processQry.setParameter("role", OBContext.getOBContext().getRole());
+    processQry.setParameter("role", role);
+    List<String> processIds = processQry.list();
+    return processIds;
+  }
 
-    for (String processId : processQry.list()) {
-      MenuOption option = getMenuOptionByType(MenuEntryType.ProcessDefinition, processId);
-      if (option != null) {
-        option.setAccessGranted(true);
-      }
-    }
+  private List<String> getProcessIdsForAutomaticRole(Role role) {
+
+    HashMap<String, List<String>> accessLevelForUserLevel = new HashMap<>();
+    accessLevelForUserLevel.put("S", Arrays.asList("4", "7", "6"));
+    accessLevelForUserLevel.put(" CO", Arrays.asList("7", "6", "3", "1"));
+    accessLevelForUserLevel.put(" C", Arrays.asList("7", "6", "3", "1"));
+    accessLevelForUserLevel.put("O", Arrays.asList("3", "1", "7"));
+
+    final String processHql = "select p.id " + //
+        " from OBUIAPP_Process p " + //
+        " where p.dataAccessLevel in :accessLevels ";
+    final Query<String> processQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(processHql, String.class);
+    processQry.setParameter("accessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+    return processQry.list();
   }
 
   private void linkViewDefinition() {

@@ -25,26 +25,8 @@ BEGIN
     END IF;
 
   IF INSERTING THEN 
-      INSERT INTO OBUIAPP_Process_Access
-      (
-        OBUIAPP_Process_Access_ID, OBUIAPP_Process_ID, AD_Role_ID, AD_Client_ID,
-        AD_Org_ID, IsActive, Created,
-        CreatedBy, Updated, UpdatedBy
-      )
-      SELECT get_uuid(), :new.OBUIAPP_Process_ID, R.AD_ROLE_ID, R.AD_CLIENT_ID,
-        R.AD_ORG_ID, 'Y', now(),
-        '0', now(), '0'
-      FROM AD_ROLE R
-      WHERE R.ISMANUAL = 'N'
-        AND (
-          (R.USERLEVEL = 'S' AND :new.ACCESSLEVEL IN ('4','7','6'))
-          OR
-          (R.USERLEVEL IN (' CO', ' C') AND :new.ACCESSLEVEL IN ('7','6','3','1'))
-          OR
-          (R.USERLEVEL = '  O' AND :new.ACCESSLEVEL IN ('3','1','7'))
-        );
 
-	INSERT INTO OBUIAPP_process_trl  
+	    INSERT INTO OBUIAPP_process_trl  
              (OBUIAPP_PROCESS_TRL_ID, AD_CLIENT_ID, AD_ORG_ID               ,
               ISACTIVE                , CREATED     , CREATEDBY               ,
               UPDATED                 , UPDATEDBY   , OBUIAPP_PROCESS_ID    ,
