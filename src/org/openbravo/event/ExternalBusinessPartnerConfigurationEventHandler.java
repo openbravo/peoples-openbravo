@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2020 Openbravo SLU
+ * All portions are Copyright (C) 2020-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -50,8 +50,6 @@ public class ExternalBusinessPartnerConfigurationEventHandler
           ExternalBusinessPartnerConfigProperty.PROPERTY_DETAILSEQUENCENUMBER },
       { ExternalBusinessPartnerConfigProperty.PROPERTY_DISPLAYINLIST,
           ExternalBusinessPartnerConfigProperty.PROPERTY_LISTSEQUENCENUMBER },
-      { ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN,
-          ExternalBusinessPartnerConfigProperty.PROPERTY_KEYSEQUENCENUMBER },
       { ExternalBusinessPartnerConfigProperty.PROPERTY_CATEGORYKEY,
           ExternalBusinessPartnerConfigProperty.PROPERTY_CATEGORYKEYSEQUENCENUMBER } };
 
