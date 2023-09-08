@@ -19,6 +19,7 @@
 package org.openbravo.client.application;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -27,11 +28,12 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
-import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.SessionInfo;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.json.JsonUtils;
 
@@ -48,38 +50,53 @@ public class EnableOrDisableMultipleRecords extends BaseActionHandler {
       final JSONObject dataObject = new JSONObject(data);
       final String tabId = dataObject.getString("tabId");
       final boolean action = Boolean.parseBoolean(dataObject.getString("action"));
-      final JSONArray recordIds = dataObject.getJSONArray("recordIds");
+      final JSONArray jsonRecordIds = dataObject.getJSONArray("recordIds");
+      HashSet<String> recordIds = new HashSet<String>();
+      for (int i = 0; i < jsonRecordIds.length(); i++) {
+        recordIds.add((String) jsonRecordIds.get(i));
+      }
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       String tableId = tab.getTable().getId();
-      String entityName = (ModelProvider.getInstance().getEntityByTableId(tableId)).getName();
+      Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
+      String entityName = entity.getName();
 
-      for (int i = 0; i < recordIds.length(); i++) {
-        final BaseOBObject object = OBDal.getInstance().get(entityName, recordIds.get(i));
-        if (object != null) {
+      int updateCount = 0;
+      final JSONObject jsonResponse = new JSONObject();
+
+      if (OBContext.getOBContext().getEntityAccessChecker().isWritable(entity)) {
+
         //@formatter:off
-            final String hql =
-                "update " + entityName +
-                "   set active = :action," +
-                "       updated = :newDate," +
-                "       updatedBy = :user" +
-                " where id = :recordId"+
-                "   and active != :action"+
-                "   and client = :clientId"+
-                "   and organization in ( :writableOrgs )";
-            //@formatter:on
-          OBDal.getInstance()
-              .getSession()
-              .createQuery(hql)
-              .setParameter("action", action)
-              .setParameter("newDate", new Date())
-              .setParameter("user", OBContext.getOBContext().getUser())
-              .setParameter("recordId", recordIds.get(i))
-              .setParameter("clientId", OBContext.getOBContext().getCurrentClient())
-              .setParameter("writableOrgs", OBContext.getOBContext().getWritableOrganizations())
-              .executeUpdate();
-        }
+              final String hql =
+                  "update " + entityName +
+                  "   set active = :action," +
+                  "       updated = :newDate," +
+                  "       updatedBy = :user" +
+                  " where id in (:recordIds)"+
+                  "   and active != :action"+
+                  "   and client = :clientId"+
+                  "   and organization.id in (:writableOrgs)";
+              //@formatter:on
+        updateCount = OBDal.getInstance()
+            .getSession()
+            .createQuery(hql)
+            .setParameter("action", action)
+            .setParameter("newDate", new Date())
+            .setParameter("user", OBContext.getOBContext().getUser())
+            .setParameter("recordIds", recordIds)
+            .setParameter("clientId", OBContext.getOBContext().getCurrentClient())
+            .setParameter("writableOrgs", OBContext.getOBContext().getWritableOrganizations())
+            .executeUpdate();
+
       }
-      return new JSONObject();
+
+      // Set information for audit trail
+      SessionInfo.setProcessType("W");
+      SessionInfo.setProcessId(tab.getWindow().getId());
+      SessionInfo.setUserId(OBContext.getOBContext().getUser().getId());
+      SessionInfo.saveContextInfoIntoDB(OBDal.getInstance().getConnection(false));
+
+      jsonResponse.put("updateCount", updateCount);
+      return jsonResponse;
     } catch (Exception e) {
       try {
         return new JSONObject(JsonUtils.convertExceptionToJson(e));
