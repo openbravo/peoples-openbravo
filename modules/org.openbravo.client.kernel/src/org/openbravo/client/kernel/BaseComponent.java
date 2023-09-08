@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -89,19 +89,23 @@ public abstract class BaseComponent implements Component {
 
   public String getContextUrl() {
     if (contextUrl != null) {
-      return stripHost(contextUrl);
+      return contextUrl;
     }
+
     if (hasParameter(KernelConstants.CONTEXT_URL)) {
-      contextUrl = getParameter(KernelConstants.CONTEXT_URL);
-      if (!contextUrl.endsWith("/")) {
-        contextUrl += "/";
+      String tmpContextUrl = getParameter(KernelConstants.CONTEXT_URL);
+      if (!tmpContextUrl.endsWith("/")) {
+        tmpContextUrl += "/";
       }
-      return stripHost(contextUrl);
+      tmpContextUrl = stripHost(tmpContextUrl);
+      setContextUrl(tmpContextUrl);
+      return contextUrl;
     }
+
     return "";
   }
 
-  public void setContextUrl(String contextUrl) {
+  private static synchronized void setContextUrl(String contextUrl) {
     BaseComponent.contextUrl = contextUrl;
   }
 
