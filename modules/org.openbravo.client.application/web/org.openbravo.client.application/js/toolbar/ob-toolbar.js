@@ -806,7 +806,9 @@ isc.OBToolbar.addClassProperties({
 
   ENABLE_DISABLE_BUTTON_PROPERTIES: {
     action: function() {
-      var data = [];
+      var data = [],
+        enableDisableInfo,
+        callBack;
 
       this.menu = isc.Menu.create(
         {
@@ -814,9 +816,6 @@ isc.OBToolbar.addClassProperties({
 
           // overridden to get much simpler custom style name
           getBaseStyle: function(record, rowNum, colNum) {
-            if (colNum === 0) {
-              return this.baseStyle + 'Icon';
-            }
             return this.baseStyle + 'Separator';
           },
 
@@ -826,17 +825,46 @@ isc.OBToolbar.addClassProperties({
         },
         OB.Styles.Personalization.Menu
       );
+
       data.push({
         title: OB.I18N.getLabel('OBUIAPP_EnableSelectedRows'),
         doClick: function(view) {
-          //var selectedRows = this.view.viewGrid.getSelectedRecords();
+          const selectedRows = view.viewGrid.getSelectedRecords();
+          enableDisableInfo = {};
+          enableDisableInfo.tabId = view.tabId;
+          enableDisableInfo.action = 'true';
+          enableDisableInfo.recordIds = [];
+          var i;
+          for (i = 0; i < selectedRows.length; i++) {
+            enableDisableInfo.recordIds.push(selectedRows[i][OB.Constants.ID]);
+          }
+          OB.RemoteCallManager.call(
+            'org.openbravo.client.application.EnableOrDisableMultipleRecords',
+            enableDisableInfo,
+            {},
+            callBack
+          );
         }
       });
 
       data.push({
         title: OB.I18N.getLabel('OBUIAPP_DisableSelectedRows'),
         doClick: function(view) {
-          //var selectedRows = this.view.viewGrid.getSelectedRecords();
+          const selectedRows = view.viewGrid.getSelectedRecords();
+          enableDisableInfo = {};
+          enableDisableInfo.tabId = view.tabId;
+          enableDisableInfo.action = 'false';
+          enableDisableInfo.recordIds = [];
+          var i;
+          for (i = 0; i < selectedRows.length; i++) {
+            enableDisableInfo.recordIds.push(selectedRows[i][OB.Constants.ID]);
+          }
+          OB.RemoteCallManager.call(
+            'org.openbravo.client.application.EnableOrDisableMultipleRecords',
+            enableDisableInfo,
+            {},
+            callBack
+          );
         }
       });
 
