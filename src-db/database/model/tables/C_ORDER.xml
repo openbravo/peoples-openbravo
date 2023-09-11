@@ -475,6 +475,9 @@
       <foreign-key foreignTable="FIN_PAYMENT_PRIORITY" name="FIN_ORDER_PAYMENT_PRIORITY">
         <reference local="FIN_PAYMENT_PRIORITY_ID" foreign="FIN_PAYMENT_PRIORITY_ID"/>
       </foreign-key>
+      <index name="C_ORDER_AD_ORGTRX" unique="false">
+        <index-column name="AD_ORGTRX_ID"/>
+      </index>
       <index name="C_ORDER_AD_USER" unique="false">
         <index-column name="AD_USER_ID"/>
         <whereClause><![CDATA[AD_USER_ID IS NOT NULL]]></whereClause>
