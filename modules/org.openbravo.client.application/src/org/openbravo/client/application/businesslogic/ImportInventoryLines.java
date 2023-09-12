@@ -181,10 +181,15 @@ public class ImportInventoryLines extends ProcessUploadedFile {
         alreadyProcessed.add(inventoryLine.getId());
         if ((i > 0) && (i % 100) == 0) {
           OBDal.getInstance().flush();
-          OBDal.getInstance().getSession().clear();
         }
         i++;
         uploadResult.incTotalCount();
+
+        // evicting the unneeded objects at the end to help with performance.
+        OBDal.getInstance().getSession().evict(product);
+        OBDal.getInstance().getSession().evict(uom);
+        OBDal.getInstance().getSession().evict(locator);
+        OBDal.getInstance().getSession().evict(inventoryLine);
       }
       OBDal.getInstance().flush();
 
@@ -194,7 +199,6 @@ public class ImportInventoryLines extends ProcessUploadedFile {
           .getUnderlyingSQLException(e.getCause() != null ? e.getCause() : e);
       final OBError errMsg = OBMessageUtils.translateError(ex.getMessage());
       uploadResult.addErrorMessage(errMsg.getMessage() + "\n");
-
     }
 
     try (ScrollableResults physicalInventorylines = getPhysicalInventoryLinesNotImported(
