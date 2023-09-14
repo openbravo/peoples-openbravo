@@ -46,7 +46,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -73,7 +72,6 @@ import org.openbravo.utils.FormatUtilities;
  * Tests to cover the sending of data with {@link HttpExternalSystem}. Note: these tests expect to
  * have the server running as they execute HTTP requests and evaluate the responses.
  */
-@Ignore("Fails with JDK 22")
 public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   @Inject
