@@ -112,6 +112,7 @@ public class ImportInventoryLines extends ProcessUploadedFile {
               + OBMessageUtils.getI18NMessage("OBUIAPP_ProductNotFound") + "\n");
           continue;
         }
+
         Locator locator = getLocator(bin, inventory.getWarehouse().getId());
         if (locator == null) {
           uploadResult.incErrorCount();
@@ -119,6 +120,14 @@ public class ImportInventoryLines extends ProcessUploadedFile {
               bin + " --> " + OBMessageUtils.getI18NMessage("OBUIAPP_LocatorNotFound") + "\n");
           continue;
         }
+
+        if (isNotValidProductForInventoryOrg(product, inventory)) {
+          uploadResult.incErrorCount();
+          uploadResult.addErrorMessage(upc + "/" + productSearchkey + " --> "
+              + OBMessageUtils.getI18NMessage("OBUIAPP_NotValidProductForInventoryOrg") + "\n");
+          continue;
+        }
+
         UOM uom = getUOM(uomName);
         if (uom == null) {
           uploadResult.incErrorCount();
@@ -214,6 +223,12 @@ public class ImportInventoryLines extends ProcessUploadedFile {
     executeHooks(inventoryCountUpdateHooks, inventory);
 
     return uploadResult;
+  }
+
+  private boolean isNotValidProductForInventoryOrg(Product product, InventoryCount inventory) {
+    return !OBContext.getOBContext()
+        .getOrganizationStructureProvider()
+        .isInNaturalTree(product.getOrganization(), inventory.getOrganization());
   }
 
   private void attachCSV(File file, InventoryCount inventory, String tabId) {
