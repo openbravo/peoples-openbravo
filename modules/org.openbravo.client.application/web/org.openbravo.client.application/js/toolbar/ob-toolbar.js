@@ -811,7 +811,7 @@ isc.OBToolbar.addClassProperties({
         callBack,
         selection,
         error,
-        view = this,
+        view = this.view,
         currentGrid;
 
       // Create the dropdown menu
@@ -866,7 +866,7 @@ isc.OBToolbar.addClassProperties({
           if (view.isShowingForm) {
             view.switchFormGridVisibility();
           }
-          view.view.messageBar.setMessage(
+          view.messageBar.setMessage(
             isc.OBMessageBar.TYPE_SUCCESS,
             null,
             OB.I18N.getLabel('OBUIAPP_EnableDisableSelectedRowsResult', [
@@ -875,9 +875,9 @@ isc.OBToolbar.addClassProperties({
           );
           // Refresh the grid based on Refresh After update preference
           if (view.isShowingForm) {
-            view.view.viewForm.refresh();
+            view.viewForm.refresh();
           } else {
-            view.view.refresh();
+            view.refresh();
           }
         } else {
           view.restoreGridSelection(selection);
@@ -927,11 +927,7 @@ isc.OBToolbar.addClassProperties({
           enableDisableInfo = {};
           enableDisableInfo.tabId = view.tabId;
           enableDisableInfo.action = 'true';
-          enableDisableInfo.recordIds = [];
-          var i;
-          for (i = 0; i < selectedRows.length; i++) {
-            enableDisableInfo.recordIds.push(selectedRows[i][OB.Constants.ID]);
-          }
+          enableDisableInfo.recordIds = selectedRows.map(row => row.id);
           isc.showPrompt(
             OB.I18N.getLabel('OBUIAPP_UpdatingRecords') +
               isc.Canvas.imgHTML({
@@ -954,11 +950,7 @@ isc.OBToolbar.addClassProperties({
           enableDisableInfo = {};
           enableDisableInfo.tabId = view.tabId;
           enableDisableInfo.action = 'false';
-          enableDisableInfo.recordIds = [];
-          var i;
-          for (i = 0; i < selectedRows.length; i++) {
-            enableDisableInfo.recordIds.push(selectedRows[i][OB.Constants.ID]);
-          }
+          enableDisableInfo.recordIds = selectedRows.map(row => row.id);
           isc.showPrompt(
             OB.I18N.getLabel('OBUIAPP_UpdatingRecords') +
               isc.Canvas.imgHTML({

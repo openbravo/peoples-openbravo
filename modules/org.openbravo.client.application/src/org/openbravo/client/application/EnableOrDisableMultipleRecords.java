@@ -28,6 +28,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.BaseActionHandler;
@@ -49,51 +50,51 @@ public class EnableOrDisableMultipleRecords extends BaseActionHandler {
     try {
       final JSONObject dataObject = new JSONObject(data);
       final String tabId = dataObject.getString("tabId");
+      // action = true will result in selected records being deactivated, active = false will
+      // deactivate them
       final boolean action = Boolean.parseBoolean(dataObject.getString("action"));
       final JSONArray jsonRecordIds = dataObject.getJSONArray("recordIds");
-      HashSet<String> recordIds = new HashSet<String>();
+      HashSet<String> recordIds = new HashSet<>();
       for (int i = 0; i < jsonRecordIds.length(); i++) {
         recordIds.add((String) jsonRecordIds.get(i));
       }
       Tab tab = OBDal.getInstance().get(Tab.class, tabId);
       String tableId = tab.getTable().getId();
       Entity entity = ModelProvider.getInstance().getEntityByTableId(tableId);
-      String entityName = entity.getName();
 
-      int updateCount = 0;
       final JSONObject jsonResponse = new JSONObject();
 
-      if (OBContext.getOBContext().getEntityAccessChecker().isWritable(entity)) {
-
-        //@formatter:off
-              final String hql =
-                  "update " + entityName +
-                  "   set active = :action," +
-                  "       updated = :newDate," +
-                  "       updatedBy = :user" +
-                  " where id in (:recordIds)"+
-                  "   and active != :action"+
-                  "   and client = :clientId"+
-                  "   and organization.id in (:writableOrgs)";
-              //@formatter:on
-        updateCount = OBDal.getInstance()
-            .getSession()
-            .createQuery(hql)
-            .setParameter("action", action)
-            .setParameter("newDate", new Date())
-            .setParameter("user", OBContext.getOBContext().getUser())
-            .setParameter("recordIds", recordIds)
-            .setParameter("clientId", OBContext.getOBContext().getCurrentClient())
-            .setParameter("writableOrgs", OBContext.getOBContext().getWritableOrganizations())
-            .executeUpdate();
-
+      if (!OBContext.getOBContext().getEntityAccessChecker().isWritable(entity)) {
+        throw new OBSecurityException("Entity " + entity + " is not writable by this user");
       }
 
       // Set information for audit trail
       SessionInfo.setProcessType("W");
-      SessionInfo.setProcessId(tab.getWindow().getId());
+      SessionInfo.setProcessId(tab.getId());
       SessionInfo.setUserId(OBContext.getOBContext().getUser().getId());
       SessionInfo.saveContextInfoIntoDB(OBDal.getInstance().getConnection(false));
+
+      //@formatter:off
+      final String hql =
+          "update " + entity.getName() +
+          "   set active = :action," +
+          "       updated = :now," +
+          "       updatedBy = :user" +
+          " where id in (:recordIds)"+
+          "   and active != :action"+
+          "   and client = :clientId"+
+          "   and organization.id in (:writableOrgs)";
+      //@formatter:on
+      int updateCount = OBDal.getInstance()
+          .getSession()
+          .createQuery(hql)
+          .setParameter("action", action)
+          .setParameter("now", new Date())
+          .setParameter("user", OBContext.getOBContext().getUser())
+          .setParameter("recordIds", recordIds)
+          .setParameter("clientId", OBContext.getOBContext().getCurrentClient())
+          .setParameter("writableOrgs", OBContext.getOBContext().getWritableOrganizations())
+          .executeUpdate();
 
       jsonResponse.put("updateCount", updateCount);
       return jsonResponse;
