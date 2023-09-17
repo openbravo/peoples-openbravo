@@ -293,6 +293,12 @@ html[data-useragent*=' Edge/'] .OBToolbarIconButtonSelectedDisabled {
   background-image: url(./images/toolbar/iconButton-clone.png);
 }
 
+.OBToolbarIconButton_icon_enableDisableSelectedRows {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-image: url(./images/toolbar/iconButton-enableDisableSelectedRows.png);
+}
+
 /* OBToolbarTextButton */
 
 .OBToolbarTextButton,

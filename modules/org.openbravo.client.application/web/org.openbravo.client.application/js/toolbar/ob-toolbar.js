@@ -29,6 +29,7 @@ isc.OBToolbar.addClassProperties({
   TYPE_EXPORT: 'export',
   TYPE_ATTACHMENTS: 'attach',
   TYPE_CLONE: 'clone',
+  TYPE_ENABLE_DISABLE: 'enableDisable',
 
   SAVE_BUTTON_PROPERTIES: {
     action: function() {
@@ -801,6 +802,215 @@ isc.OBToolbar.addClassProperties({
       }
     },
     keyboardShortcutId: 'ToolBar_Clone'
+  },
+
+  ENABLE_DISABLE_BUTTON_PROPERTIES: {
+    action: function() {
+      var data = [],
+        enableDisableInfo,
+        callBack,
+        selection,
+        error,
+        view = this.view,
+        currentGrid;
+
+      // Create the dropdown menu
+      this.menu = isc.Menu.create(
+        {
+          button: this,
+
+          // overridden to get much simpler custom style name
+          getBaseStyle: function(record, rowNum, colNum) {
+            return this.baseStyle + 'Separator';
+          },
+
+          itemClick: function(item) {
+            item.doClick(this.button.view);
+          }
+        },
+        OB.Styles.Personalization.Menu
+      );
+      if (view.isShowingTree) {
+        currentGrid = view.treeGrid;
+      } else {
+        currentGrid = view.viewGrid;
+      }
+
+      selection = currentGrid.getSelection().duplicate();
+
+      callBack = function(resp, data, req) {
+        var localData = resp.dataObject || resp.data || data;
+        const updateCount = resp.data.updateCount;
+        if (!localData) {
+          // bail out, an error occured which should be displayed to the user now
+          //clear updating prompt
+          view.restoreGridSelection(selection);
+          isc.clearPrompt();
+          return;
+        }
+        var status = resp.status;
+        if (
+          localData &&
+          Object.prototype.hasOwnProperty.call(localData, 'status')
+        ) {
+          status = localData.status;
+        }
+        if (
+          localData &&
+          localData.response &&
+          Object.prototype.hasOwnProperty.call(localData.response, 'status')
+        ) {
+          status = localData.response.status;
+        }
+        if (status === isc.RPCResponse.STATUS_SUCCESS) {
+          if (view.isShowingForm) {
+            view.switchFormGridVisibility();
+          }
+          view.messageBar.setMessage(
+            isc.OBMessageBar.TYPE_SUCCESS,
+            null,
+            OB.I18N.getLabel('OBUIAPP_EnableDisableSelectedRowsResult', [
+              updateCount
+            ])
+          );
+          // Refresh the grid based on Refresh After update preference
+          if (view.isShowingForm) {
+            view.viewForm.refresh();
+          } else {
+            view.refresh();
+          }
+        } else {
+          view.restoreGridSelection(selection);
+          // get the error message from the dataObject
+          if (
+            localData.response &&
+            localData.response.error &&
+            localData.response.error.message
+          ) {
+            error = localData.response.error;
+            if (error.type && error.type === 'user') {
+              view.messageBar.setLabel(
+                isc.OBMessageBar.TYPE_ERROR,
+                null,
+                error.message,
+                error.params
+              );
+            } else if (error.message && error.params) {
+              view.messageBar.setLabel(
+                isc.OBMessageBar.TYPE_ERROR,
+                null,
+                error.message,
+                error.params
+              );
+            } else if (error.message) {
+              view.messageBar.setMessage(
+                isc.OBMessageBar.TYPE_ERROR,
+                null,
+                error.message
+              );
+            } else {
+              view.messageBar.setMessage(
+                isc.OBMessageBar.TYPE_ERROR,
+                null,
+                OB.I18N.getLabel('OBUIAPP_EnableDisableSelectedRowsResult', [0])
+              );
+            }
+          }
+        }
+        isc.clearPrompt();
+      };
+
+      data.push({
+        title: OB.I18N.getLabel('OBUIAPP_EnableSelectedRows'),
+        doClick: function(view) {
+          const selectedRows = view.viewGrid.getSelectedRecords();
+          enableDisableInfo = {};
+          enableDisableInfo.tabId = view.tabId;
+          enableDisableInfo.action = 'true';
+          enableDisableInfo.recordIds = selectedRows.map(row => row.id);
+          isc.showPrompt(
+            OB.I18N.getLabel('OBUIAPP_UpdatingRecords') +
+              isc.Canvas.imgHTML({
+                src: OB.Styles.LoadingPrompt.loadingImage.src
+              })
+          );
+          OB.RemoteCallManager.call(
+            'org.openbravo.client.application.EnableOrDisableMultipleRecords',
+            enableDisableInfo,
+            {},
+            callBack
+          );
+        }
+      });
+
+      data.push({
+        title: OB.I18N.getLabel('OBUIAPP_DisableSelectedRows'),
+        doClick: function(view) {
+          const selectedRows = view.viewGrid.getSelectedRecords();
+          enableDisableInfo = {};
+          enableDisableInfo.tabId = view.tabId;
+          enableDisableInfo.action = 'false';
+          enableDisableInfo.recordIds = selectedRows.map(row => row.id);
+          isc.showPrompt(
+            OB.I18N.getLabel('OBUIAPP_UpdatingRecords') +
+              isc.Canvas.imgHTML({
+                src: OB.Styles.LoadingPrompt.loadingImage.src
+              })
+          );
+          OB.RemoteCallManager.call(
+            'org.openbravo.client.application.EnableOrDisableMultipleRecords',
+            enableDisableInfo,
+            {},
+            callBack
+          );
+        }
+      });
+
+      this.menu.setData(data);
+
+      this.Super('action', arguments);
+    },
+    buttonType: 'enableDisableSelectedRows',
+    sortPosition: 350,
+    prompt: OB.I18N.getLabel('OBUIAPP_EnableDisableSelectedRows'),
+    updateState: function() {
+      var view = this.view,
+        form = view.viewForm,
+        currentGrid,
+        length,
+        selectedRecords,
+        i;
+      if (view.isShowingTree) {
+        currentGrid = view.treeGrid;
+      } else {
+        currentGrid = view.viewGrid;
+      }
+      selectedRecords = currentGrid.getSelectedRecords();
+      length = selectedRecords.length;
+      for (i = 0; i < length; i++) {
+        if (!currentGrid.isWritable(selectedRecords[i])) {
+          this.setDisabled(true);
+          return;
+        }
+        if (selectedRecords[i]._new) {
+          this.setDisabled(true);
+          return;
+        }
+      }
+      if (view.isShowingForm) {
+        this.setDisabled(
+          form.isSaving || form.readOnly || !view.hasValidState() || form.isNew
+        );
+      } else {
+        this.setDisabled(
+          view.readOnly ||
+            !view.hasValidState() ||
+            !currentGrid.getSelectedRecords() ||
+            currentGrid.getSelectedRecords().length === 0
+        );
+      }
+    },
+    keyboardShortcutId: 'ToolBar_EnableDisableSelectedRows'
   }
 });
 
@@ -2522,6 +2732,16 @@ OB.ToolbarRegistry.registerButton(
   isc.OBToolbarIconButton,
   isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES,
   isc.OBToolbar.ATTACHMENTS_BUTTON_PROPERTIES.sortPosition,
+  null,
+  null,
+  false
+);
+
+OB.ToolbarRegistry.registerButton(
+  isc.OBToolbar.ENABLE_DISABLE_BUTTON_PROPERTIES.buttonType,
+  isc.OBToolbarIconButton,
+  isc.OBToolbar.ENABLE_DISABLE_BUTTON_PROPERTIES,
+  isc.OBToolbar.ENABLE_DISABLE_BUTTON_PROPERTIES.sortPosition,
   null,
   null,
   false
