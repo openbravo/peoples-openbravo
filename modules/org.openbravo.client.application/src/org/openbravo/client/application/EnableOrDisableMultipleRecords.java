@@ -35,6 +35,7 @@ import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.SessionInfo;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.service.json.JsonUtils;
 
@@ -100,7 +101,12 @@ public class EnableOrDisableMultipleRecords extends BaseActionHandler {
       return jsonResponse;
     } catch (Exception e) {
       try {
-        return new JSONObject(JsonUtils.convertExceptionToJson(e));
+        JSONObject errorResponse = new JSONObject(JsonUtils.convertExceptionToJson(e));
+        JSONObject response = errorResponse.getJSONObject("response");
+        JSONObject error = response.getJSONObject("error");
+        error.put("message",
+            OBMessageUtils.getI18NMessage("AllUpdatesCanceled") + error.getString("message"));
+        return errorResponse;
       } catch (JSONException t) {
         throw new OBException(t);
       }
