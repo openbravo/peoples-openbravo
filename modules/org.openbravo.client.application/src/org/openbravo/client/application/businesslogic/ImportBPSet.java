@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019 Openbravo SLU 
+ * All portions are Copyright (C) 2019-2022 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):
  ************************************************************************
@@ -23,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -34,15 +33,14 @@ import org.openbravo.base.provider.OBProvider;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.common.businesspartner.BusinessPartner;
 import org.openbravo.model.common.businesspartner.BusinessPartnerSet;
 import org.openbravo.model.common.businesspartner.BusinessPartnerSetLine;
-import org.openbravo.service.json.JsonUtils;
 
 public class ImportBPSet extends ProcessUploadedFile {
   private static final long serialVersionUID = 1L;
-  private static final DateFormat dateFormat = JsonUtils.createDateFormat();
 
   @Override
   protected void clearBeforeImport(String ownerId, JSONObject paramValues) {
@@ -60,8 +58,8 @@ public class ImportBPSet extends ProcessUploadedFile {
   protected UploadResult doProcessFile(JSONObject paramValues, File file) throws Exception {
     final UploadResult uploadResult = new UploadResult();
     final String bpSetId = paramValues.getString("inpOwnerId");
-    final Date startDate = getDate(paramValues.getString("startDate"));
-    final Date endDate = getDate(paramValues.getString("endDate"));
+    final Date startDate = OBDateUtils.convertUTCToDate(paramValues.getString("startDate"));
+    final Date endDate = OBDateUtils.convertUTCToDate(paramValues.getString("endDate"));
 
     final String errorMsgBPNotFound = OBMessageUtils.getI18NMessage("OBUIAPP_BPNotFound",
         new String[0]);
@@ -118,14 +116,6 @@ public class ImportBPSet extends ProcessUploadedFile {
       }
     }
     return uploadResult;
-  }
-
-  // note synchronized as the access to parse is not threadsafe
-  private synchronized Date getDate(String value) throws Exception {
-    if (value == null || value.equals("null") || value.trim().length() == 0) {
-      return null;
-    }
-    return dateFormat.parse(value);
   }
 
   @SuppressWarnings("unchecked")

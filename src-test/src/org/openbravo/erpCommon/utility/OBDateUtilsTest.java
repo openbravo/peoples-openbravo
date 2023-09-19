@@ -25,6 +25,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.text.ParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.openbravo.service.json.JsonUtils;
@@ -54,7 +55,7 @@ public class OBDateUtilsTest extends OBBaseTest {
   }
 
   /**
-   * Test truncate method wit specified unit.
+   * Test truncate method with specified unit.
    * 
    * @throws ParseException
    */
@@ -69,6 +70,30 @@ public class OBDateUtilsTest extends OBBaseTest {
     Date dateTrucanted = OBDateUtils.truncate(dateWithMinutes, ChronoUnit.HOURS);
 
     assertThat(dateTrucanted, equalTo(dateWithoutMinutes));
+  }
+
+  /**
+   * Tests getCurrentClientDate method
+   * 
+   * @throws ParseException
+   */
+  @Test
+  public void convertUTCToDate() throws ParseException {
+
+    TimeZone def = TimeZone.getDefault();
+    try {
+      String strDate = "2022-10-06T22:00:00";
+      String strDateResult = "Fri Oct 07 00:00:00 CEST 2022";
+
+      TimeZone.setDefault(TimeZone.getTimeZone("Europe/Madrid"));
+
+      Date currentDate = OBDateUtils.convertUTCToDate(strDate);
+
+      assertThat(currentDate.toString(), equalTo(strDateResult.toString()));
+    } finally {
+      TimeZone.setDefault(def);
+    }
+
   }
 
 }
