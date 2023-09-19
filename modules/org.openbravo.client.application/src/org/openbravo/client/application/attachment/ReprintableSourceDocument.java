@@ -21,8 +21,6 @@ package org.openbravo.client.application.attachment;
 import java.util.Optional;
 
 import org.hibernate.criterion.Restrictions;
-import org.openbravo.base.model.Entity;
-import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.ClientEnabled;
 import org.openbravo.base.structure.OrganizationEnabled;
@@ -110,17 +108,17 @@ public abstract class ReprintableSourceDocument<D extends BaseOBObject & ClientE
    * @return true if the document exists in the database or false otherwise
    */
   public boolean exists() {
-    return OBDal.getInstance()
-        .createCriteria(getEntity().getName())
-        .add(Restrictions.eq("id", id))
-        .setFilterOnReadableClients(false)
-        .setFilterOnReadableOrganization(false)
-        .setFilterOnActive(false)
-        .count() > 0;
-  }
-
-  private Entity getEntity() {
-    return ModelProvider.getInstance().getEntity(getBaseDocument().getEntityName());
+    try {
+      return OBDal.getInstance()
+          .createCriteria(getBaseDocument().getEntity().getName())
+          .add(Restrictions.eq("id", id))
+          .setFilterOnReadableClients(false)
+          .setFilterOnReadableOrganization(false)
+          .setFilterOnActive(false)
+          .count() > 0;
+    } catch (Exception ex) {
+      return false;
+    }
   }
 
   /**
