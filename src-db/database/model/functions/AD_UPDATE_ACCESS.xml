@@ -21,41 +21,6 @@
  v_ExtensionPointID varchar2(32) := '8261F79453B64AC7998873A9F81A1E5A';
  v_count NUMBER;
 BEGIN
---AD_FORM_ACCESS
-  INSERT INTO AD_Form_Access
-    (
-      AD_Form_Access_ID, AD_Form_ID, AD_Role_ID, AD_Client_ID,
-      AD_Org_ID, IsActive, Created,
-      CreatedBy, Updated, UpdatedBy, IsReadWrite
-    )
-  SELECT get_uuid(), AD_FORM.AD_FORM_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
-    AD_ROLE.AD_ORG_ID, 'Y', now(),
-    '0', now(), '0', 'Y'
-  FROM AD_FORM, AD_ROLE
-  WHERE AD_ROLE.ISMANUAL = 'N'
-  AND AD_FORM.IsActive='Y'
-    AND (
-      (AD_ROLE.USERLEVEL = 'S' AND AD_FORM.ACCESSLEVEL IN ('4','7','6'))
-      OR
-      (AD_ROLE.USERLEVEL IN (' CO', ' C') AND AD_FORM.ACCESSLEVEL IN ('7','6','3','1'))
-      OR
-      (AD_ROLE.USERLEVEL = '  O' AND AD_FORM.ACCESSLEVEL IN ('3','1','7'))
-    )
-    AND (AD_ROLE.ISADVANCED = 'Y' OR AD_FORM.ISADVANCEDFEATURE = 'N')
-    AND NOT EXISTS (SELECT 1
-                     FROM AD_FORM_ACCESS
-                    WHERE AD_FORM_ID = AD_FORM.AD_FORM_ID
-                      AND AD_ROLE_ID = AD_ROLE.AD_ROLE_ID);
-
-   DELETE FROM AD_Form_Access a 
-    WHERE EXISTS (SELECT 1
-                    FROM AD_Role r, AD_Form F
-                   WHERE r.IsAdvanced = 'N' 
-                     AND f.IsAdvancedFeature = 'Y' 
-                     AND r.AD_Role_ID = a.AD_Role_ID
-                     AND f.ad_form_ID = a.ad_form_id
-                     AND r.isManual = 'N');
-
 --AD_PROCESS_ACCESS
   INSERT INTO AD_Process_Access
     (AD_Process_Access_ID, AD_Process_ID, AD_Role_ID, AD_Client_ID,

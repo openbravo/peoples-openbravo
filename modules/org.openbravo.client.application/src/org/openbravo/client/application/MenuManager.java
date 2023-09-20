@@ -19,11 +19,11 @@
 package org.openbravo.client.application;
 
 import java.io.Serializable;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +59,12 @@ public class MenuManager {
   public static enum MenuEntryType {
     Window, Process, ProcessManual, Report, Form, External, Summary, View, ProcessDefinition
   };
+
+  private Map<String, List<String>> accessLevelForUserLevel = Map.ofEntries(
+      new AbstractMap.SimpleEntry<String, List<String>>("S", Arrays.asList("4", "7", "6")),
+      new AbstractMap.SimpleEntry<String, List<String>>(" CO", Arrays.asList("7", "6", "3", "1")),
+      new AbstractMap.SimpleEntry<String, List<String>>(" C", Arrays.asList("7", "6", "3", "1")),
+      new AbstractMap.SimpleEntry<String, List<String>>("O", Arrays.asList("3", "1", "7")));
 
   /**
    * Points to globally cached generic menu
@@ -118,17 +124,10 @@ public class MenuManager {
   }
 
   private void linkForms() {
-    final String formsHql = "select fa.specialForm.id " + //
-        " from ADFormAccess fa " + //
-        "where fa.role.id=:roleId" + //
-        "  and fa.active = true";
-
-    final Query<String> formsQry = OBDal.getInstance()
-        .getSession()
-        .createQuery(formsHql, String.class);
-    formsQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
-
-    for (String formId : formsQry.list()) {
+    Role role = OBContext.getOBContext().getRole();
+    List<String> formIds = Boolean.TRUE.equals(role.isManual()) ? getFormIdsForManualRole(role)
+        : getFormIdsForAutomaticRole(role);
+    for (String formId : formIds) {
       MenuOption option = getMenuOptionByType(MenuEntryType.Form, formId);
       if (option != null) {
         // allow access if not running in a webcontainer as then the config file can not be checked
@@ -138,6 +137,31 @@ public class MenuManager {
         option.setAccessGranted(hasAccess);
       }
     }
+  }
+
+  private List<String> getFormIdsForAutomaticRole(Role role) {
+    final String formsHql = "select f.id " + //
+        " from ADForm f " + //
+        "where f.dataAccessLevel in :accessLevels " + //
+        "  and f.active = true";
+    final Query<String> formsQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(formsHql, String.class);
+    formsQry.setParameter("accessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+    return formsQry.list();
+  }
+
+  private List<String> getFormIdsForManualRole(Role role) {
+    final String formsHql = "select fa.specialForm.id " + //
+        " from ADFormAccess fa " + //
+        "where fa.role.id=:roleId" + //
+        "  and fa.active = true";
+
+    final Query<String> formsQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(formsHql, String.class);
+    formsQry.setParameter("roleId", role);
+    return formsQry.list();
   }
 
   private void linkProcesses() {
@@ -190,16 +214,10 @@ public class MenuManager {
   }
 
   private List<String> getProcessIdsForAutomaticRole(Role role) {
-
-    HashMap<String, List<String>> accessLevelForUserLevel = new HashMap<>();
-    accessLevelForUserLevel.put("S", Arrays.asList("4", "7", "6"));
-    accessLevelForUserLevel.put(" CO", Arrays.asList("7", "6", "3", "1"));
-    accessLevelForUserLevel.put(" C", Arrays.asList("7", "6", "3", "1"));
-    accessLevelForUserLevel.put("O", Arrays.asList("3", "1", "7"));
-
     final String processHql = "select p.id " + //
         " from OBUIAPP_Process p " + //
-        " where p.dataAccessLevel in :accessLevels ";
+        " where p.dataAccessLevel in :accessLevels " + //
+        " and p.active = true";
     final Query<String> processQry = OBDal.getInstance()
         .getSession()
         .createQuery(processHql, String.class);

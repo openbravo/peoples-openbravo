@@ -54,36 +54,11 @@ BEGIN
     AND IsSystemLanguage='Y'
     and m.ad_module_id = :new.ad_module_id
     and m.ad_language != AD_Language.AD_Language;
-  -- Access for all
-  INSERT
-  INTO AD_Form_Access
-    (
-      AD_Form_Access_ID, AD_Form_ID, AD_Role_ID, AD_Client_ID,
-      AD_Org_ID, IsActive, Created,
-      CreatedBy, Updated, UpdatedBy,
-      IsReadWrite
-    )
-  SELECT get_uuid(), :new.AD_Form_ID,
-    r.AD_Role_ID,  r.AD_CLIENT_ID, r.AD_ORG_ID,
-     'Y', now(), '0',
-    now(), '0',  'Y'
-  FROM AD_Role r
-  where ismanual = 'N'
-  AND (r.IsAdvanced = 'Y' OR :new.IsAdvancedFeature='N');
  END IF;
  -- Inserting
  -- AD_Form update trigger
  --  synchronize name,... with Field if not centrally maintained
  IF(UPDATING) THEN
-  IF (:new.IsAdvancedFeature ='Y' and :old.IsAdvancedFeature ='N') THEN
-    delete from ad_form_access a
-    where a.ad_form_id = :new.ad_form_id
-      and exists (select 1 
-                    from ad_role r
-                   where r.ad_role_id = a.ad_role_id
-                    and r.isManual = 'N'
-                    and r.IsAdvanced = 'N');
-  END IF;
   IF((COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
   OR COALESCE(:old.Help, '.') <> COALESCE(:NEW.Help, '.')
   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')))
