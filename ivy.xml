@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    
+    <info organisation="org.openbravo" module="openbravo" />
+    
+    <configurations>
+        <conf name="build"  description="Required to compile application"/>
+        <conf name="runtime"  description="Additional run-time dependencies" extends="build"/>
+        <conf name="test"     description="Required for test only" extends="runtime"/>
+    </configurations>
+    
+    <dependencies>
+        <!-- build dependencies -->
+        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.1.0" conf="build->default"/>
+        
+        <!-- runtime dependencies -->
+        <dependency org="org.apache.ant" name="ant" rev="1.9.2" conf="runtime->default"/>
+        <dependency org="org.apache.ant" name="ant-nodeps" rev="1.7.1" conf="runtime->default"/>
+        <dependency org="tomcat" name="catalina-ant" rev="5.5.23" conf="runtime->default" transitive="false"/>
+        <dependency org="com.github.ben-manes.caffeine" name="caffeine" rev="3.0.6" conf="runtime->default">
+            <exclude org="com.google.errorprone" name="error_prone_annotations"/>
+            <exclude org="org.checkerframework" name="checker-qual"/>
+        </dependency>
+        <dependency org="org.freemarker" name="freemarker" rev="2.3.16" conf="runtime->default"/>
+        <dependency org="commons-dbcp" name="commons-dbcp" rev="1.4" conf="runtime->default"/>
+        <dependency org="commons-pool" name="commons-pool" rev="1.5.6" conf="runtime->default"/>
+        <dependency org="com.fasterxml" name="classmate" rev="1.5.1" conf="runtime->default"/>
+        <dependency org="commons-digester" name="commons-digester" rev="2.1" conf="runtime->default"/>
+        <dependency org="commons-fileupload" name="commons-fileupload" rev="1.4" conf="runtime->default"/>
+        <dependency org="commons-lang" name="commons-lang" rev="2.6" conf="runtime->default"/>
+        <dependency org="org.dom4j" name="dom4j" rev="2.1.3" conf="runtime->default"/>
+        <dependency org="org.eclipse.jdt" name="ecj" rev="3.23.0" conf="runtime->default"/>
+        <dependency org="com.sun.xml.fastinfoset" name="FastInfoset" rev="1.2.15" conf="runtime->default"/>
+        <dependency org="com.google.guava" name="guava" rev="21.0" conf="runtime->default"/>
+        <dependency org="org.hibernate" name="hibernate-core" rev="5.6.15.Final" conf="runtime->default" />
+        <dependency org="com.sun.mail" name="javax.mail" rev="1.6.1" conf="runtime->default" transitive="false"/>
+        <dependency org="com.sun.activation" name="javax.activation" rev="1.2.0" conf="runtime->default"/>
+        <dependency org="net.sf.jasperreports" name="jasperreports" rev="6.17.0" conf="runtime->default">
+            <exclude org="org.codehaus.castor" name="castor-xml"/>
+            <exclude org="org.codehaus.castor" name="castor-core"/>
+            <exclude org="org.apache.commons" name="commons-lang3"/>
+            <exclude org="org.jfree" name="jfreechart"/>
+            <exclude org="org.jfree" name="jcommon"/>
+            <exclude org="org.bouncycastle" name="bcprov-jdk15on"/>
+            <exclude org="org.bouncycastle" name="bcmail-jdk15on"/>
+            <exclude org="org.bouncycastle" name="bcpkix-jdk15on"/>
+        </dependency>
+        <dependency org="net.sf.jasperreports" name="jasperreports-fonts" rev="6.17.0" conf="runtime->default"/>
+        <dependency org="com.auth0" name="java-jwt" rev="4.4.0" conf="runtime->default">
+            <exclude org="org.codehaus.castor" name="castor-xml"/>
+            <exclude org="org.codehaus.castor" name="castor-core"/>
+            <exclude org="org.apache.commons" name="commons-lang3"/>
+        </dependency>
+        <dependency org="org.apache.logging.log4j" name="log4j-api" rev="2.17.1" conf="runtime->default"/>
+        <dependency org="org.apache.logging.log4j" name="log4j-1.2-api" rev="2.17.1" conf="runtime->default"/>
+        <dependency org="org.apache.logging.log4j" name="log4j-web" rev="2.17.1" conf="runtime->default"/>
+        <dependency org="org.apache.logging.log4j" name="log4j-slf4j-impl" rev="2.17.1" conf="runtime->default"/>
+        <dependency org="nekohtml" name="nekohtml" rev="0.9.5" conf="runtime->default">
+            <exclude org="xerces" name="xercesImpl"/>
+        </dependency>
+        <dependency org="com.oracle.database.jdbc" name="ojdbc8" rev="19.3.0.0" conf="runtime->default">
+            <exclude org="com.oracle.database.ha" name="simplefan"/>
+            <exclude org="com.oracle.database.ha" name="ons"/>
+            <exclude org="com.oracle.database.security" name="osdt_core"/>
+            <exclude org="com.oracle.database.security" name="osdt_cert"/>
+            <exclude org="com.oracle.database.security" name="oraclepki"/>
+            <exclude org="com.oracle.database.jdbc" name="ucp"/>
+        </dependency>
+        <dependency org="org.apache.poi" name="poi" rev="4.1.1" conf="runtime->default"/>
+        <dependency org="org.postgresql" name="postgresql" rev="42.5.0" conf="runtime->default">
+            <exclude org="org.checkerframework" name="checker-qual"/>
+        </dependency>
+        <dependency org="org.quartz-scheduler" name="quartz" rev="2.3.2" conf="runtime->default">
+            <exclude org="com.zaxxer" name="HikariCP-java7"/>
+            <exclude org="com.mchange" name="c3p0"/>
+            <exclude org="com.mchange" name="mchange-commons-java"/>
+        </dependency>
+        <dependency org="org.mozilla" name="rhino-engine" rev="1.7.13" conf="runtime->default"/>
+        
+        <!-- test dependencies -->
+        <dependency org="junit" name="junit" rev="4.13.2" conf="test->default" />
+        <dependency org="org.hamcrest" name="hamcrest-all" rev="1.3" conf="test->default"/>
+        <dependency org="org.mockito" name="mockito-inline" rev="4.11.0" conf="test->default"/>
+    </dependencies>
+    
+</ivy-module>
