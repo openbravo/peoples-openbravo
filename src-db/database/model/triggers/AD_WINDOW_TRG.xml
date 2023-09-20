@@ -62,36 +62,11 @@ BEGIN
     AND IsSystemLanguage='Y'
      AND M.AD_Module_ID = :new.AD_Module_ID
     AND M.AD_Language != AD_Language.AD_Language;
-  -- Access for all
-  INSERT
-  INTO AD_Window_Access
-    (
-      AD_Window_Access_ID, AD_Window_ID, AD_Role_ID, AD_Client_ID,
-      AD_Org_ID, IsActive, Created,
-      CreatedBy, Updated, UpdatedBy,
-      IsReadWrite
-    )
-  SELECT DISTINCT get_uuid(), :new.AD_Window_ID,
-    r.AD_Role_ID, r.AD_CLIENT_ID, r.AD_ORG_ID,
-     'Y', now(), '0',
-    now(), '0',  'Y'
-  FROM AD_Role r
-   WHERE isManual='N'
-     AND (r.IsAdvanced = 'Y' OR :new.IsAdvancedFeature='N');
  END IF;
  -- Inserting
  -- AD_Window update trigger
  --  synchronize name,...
  IF UPDATING THEN
-  IF (:new.IsAdvancedFeature ='Y' and :old.IsAdvancedFeature ='N') THEN
-    delete from ad_window_access a
-    where a.ad_window_id = :new.ad_window_id
-      and exists (select 1 
-                    from ad_role r
-                   where r.ad_role_id = a.ad_role_id
-                    and r.isManual = 'N'
-                    and r.IsAdvanced = 'N');
-  END IF;
   
   IF(COALESCE(:old.Name, '.') <> COALESCE(:NEW.Name, '.')
   OR COALESCE(:old.Description, '.') <> COALESCE(:NEW.Description, '.')

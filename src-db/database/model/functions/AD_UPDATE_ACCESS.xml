@@ -70,45 +70,7 @@ BEGIN
     AND NOT EXISTS (SELECT 1 FROM AD_ROLE_ORGACCESS
                     WHERE AD_ROLE_ID = AD_ROLE.AD_ROLE_ID
                       AND AD_ORG_ID = AD_ORG.AD_ORG_ID);                      
-                      
-
---AD_WINDOW_ACCESS
-  INSERT INTO aD_Window_Access
-    (
-      aD_Window_Access_ID, AD_Window_ID, AD_Role_ID, AD_Client_ID,
-      AD_Org_ID, IsActive, Created,
-      CreatedBy, Updated, UpdatedBy, IsReadWrite
-    )
-  SELECT DISTINCT get_uuid(), AD_WINDOW.AD_WINDOW_ID, AD_ROLE.AD_ROLE_ID, AD_ROLE.AD_CLIENT_ID,
-    AD_ROLE.AD_ORG_ID, 'Y', now(),
-    '0', now(), '0', 'Y'
-  FROM AD_WINDOW, AD_ROLE, AD_TAB, AD_TABLE
-  WHERE AD_ROLE.ISMANUAL = 'N'
-  AND AD_WINDOW.IsActive='Y'
-    AND AD_WINDOW.AD_WINDOW_ID = AD_TAB.AD_WINDOW_ID
-    AND AD_TAB.AD_TABLE_ID = AD_TABLE.AD_TABLE_ID
-    AND (
-      (AD_ROLE.USERLEVEL = 'S' AND AD_TABLE.ACCESSLEVEL IN ('4','7','6'))
-      OR
-      (AD_ROLE.USERLEVEL IN (' CO', ' C') AND AD_TABLE.ACCESSLEVEL IN ('7','6','3','1'))
-      OR
-      (AD_ROLE.USERLEVEL = '  O' AND AD_TABLE.ACCESSLEVEL IN ('3','1','7'))
-    )
-    AND AD_TAB.SEQNO = (SELECT MIN(SEQNO) FROM AD_TAB t WHERE t.AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID)
-    AND (AD_ROLE.ISADVANCED = 'Y' OR AD_WINDOW.ISADVANCEDFEATURE = 'N')
-    AND NOT EXISTS (SELECT 1 
-                       FROM AD_WINDOW_ACCESS
-                      WHERE AD_WINDOW_ID = AD_WINDOW.AD_WINDOW_ID
-                        AND AD_ROLE_ID = AD_ROLE.AD_ROLE_ID);
-
-   DELETE FROM AD_Window_Access a 
-    WHERE EXISTS (SELECT 1
-                    FROM AD_Role r, AD_Window w
-                   WHERE r.IsAdvanced = 'N' 
-                     AND w.IsAdvancedFeature = 'Y' 
-                     AND r.AD_Role_ID = a.AD_Role_ID
-                     AND w.ad_Window_ID = a.ad_Window_ID
-                     AND r.isManual = 'N');
+  
 
   --Add role 0 to user 100 (Openbravo)
   INSERT INTO AD_USER_ROLES

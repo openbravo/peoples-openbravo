@@ -244,6 +244,62 @@ public class MenuManager {
   }
 
   private void linkWindows() {
+    Role role = OBContext.getOBContext().getRole();
+    List<Object[]> windowAccess = getManualWindowAccess(role);
+    if (Boolean.FALSE.equals(role.isManual())) {
+      addMissingWindowsForAutomaticRoles(role, windowAccess);
+    }
+    for (Object[] row : windowAccess) {
+      final String windowId = (String) row[0];
+      final String tabId = (String) row[1];
+      final Boolean isEditableTab = (Boolean) row[2];
+      final Boolean isEditableWindow = (Boolean) row[3];
+      MenuOption option = getMenuOptionByType(MenuEntryType.Window, windowId);
+      if (option != null) {
+        boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
+            || ActivationKey.getInstance()
+                .hasLicenseAccess("MW", windowId) == FeatureRestriction.NO_RESTRICTION;
+        option.setAccessGranted(hasAccess);
+        if (tabId == null) {
+          option.setIsReadOnlyForRole(!isEditableWindow);
+        } else {
+          option.setIsReadOnlyForRole(!isEditableTab);
+        }
+      }
+    }
+  }
+
+  private void addMissingWindowsForAutomaticRoles(Role role, List<Object[]> windowAccess) {
+    List<String> manualWindowIds = windowAccess.stream()
+        .map((Object[] o) -> (String) o[0])
+        .collect(Collectors.toList());
+    windowAccess.addAll(getAutomaticWindowAccess(role, manualWindowIds));
+  }
+
+  private List<Object[]> getAutomaticWindowAccess(Role role, List<String> excludedWindowIds) {
+    String excludedIdsWhereClause = !excludedWindowIds.isEmpty()
+        ? " and w.id not in ( :excludedWindowIds ) "
+        : "";
+    final String windowsHql = "select w.id, tab.id, true, true" + //
+        " from ADWindow w " + //
+        " left join w.aDTabList as tab with tab.tabLevel = 0 " + //
+        " left join tab.table as table " + //
+        " where w.active = true " + //
+        " " + excludedIdsWhereClause + " " + //
+        " and tab.active = true " + //
+        " and table.dataAccessLevel in ( :roleAccessLevels ) " + //
+        " order by w.id, tab.sequenceNumber DESC ";
+    final Query<Object[]> windowsQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(windowsHql, Object[].class);
+    if (!excludedIdsWhereClause.isEmpty()) {
+      windowsQry.setParameter("excludedWindowIds", excludedWindowIds);
+    }
+    windowsQry.setParameter("roleAccessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+    return windowsQry.list();
+  }
+
+  private List<Object[]> getManualWindowAccess(Role role) {
     final String windowsHql = "select wa.window.id, t.id, ta.editableField, wa.editableField" + //
         " from ADWindowAccess wa " + //
         " left join wa.aDTabAccessList as ta " + //
@@ -255,27 +311,8 @@ public class MenuManager {
     final Query<Object[]> windowsQry = OBDal.getInstance()
         .getSession()
         .createQuery(windowsHql, Object[].class);
-    windowsQry.setParameter("role", OBContext.getOBContext().getRole());
-
-    for (Object[] row : windowsQry.list()) {
-      final String windowId = (String) row[0];
-      final String tabId = (String) row[1];
-      final Boolean isEditableTab = (Boolean) row[2];
-      final Boolean isEditableWindow = (Boolean) row[3];
-      MenuOption option = getMenuOptionByType(MenuEntryType.Window, windowId);
-      if (option != null) {
-        boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
-            || ActivationKey.getInstance()
-                .hasLicenseAccess("MW", windowId) == FeatureRestriction.NO_RESTRICTION;
-        option.setAccessGranted(hasAccess);
-
-        if (tabId == null) {
-          option.setIsReadOnlyForRole(!isEditableWindow);
-        } else {
-          option.setIsReadOnlyForRole(!isEditableTab);
-        }
-      }
-    }
+    windowsQry.setParameter("role", role);
+    return windowsQry.list();
   }
 
   private MenuOption getMenuOptionByType(MenuEntryType type, String objectId) {
