@@ -54,17 +54,6 @@ BEGIN
        WHERE AD_Language.IsActive = 'Y' AND IsSystemLanguage = 'Y'
        and m.ad_module_id = :new.ad_module_id
        and m.ad_language != AD_Language.AD_Language;
-
-    -- Add Access for all Roles
-    INSERT INTO AD_Process_Access
-                (AD_Process_Access_ID, AD_Process_ID, AD_Role_ID, AD_Client_ID, AD_Org_ID,
-                 IsActive, Created, CreatedBy, Updated, UpdatedBy,
-                 IsReadWrite)
-      SELECT get_uuid(), :NEW.AD_Process_ID, r.AD_Role_ID, r.AD_CLIENT_ID, r.AD_ORG_ID,
-             'Y', now(), '0', now(), '0', 'Y'
-        FROM AD_Role r
-       where isManual='N'
-        AND (r.IsAdvanced = 'Y' OR :new.IsAdvancedFeature='N');
   END IF;
 
 -- Inserting
@@ -73,15 +62,6 @@ BEGIN
 --      update AD_Column/AD_Field Name
   IF UPDATING
   THEN
-    IF (:new.IsAdvancedFeature ='Y' and :old.IsAdvancedFeature ='N') THEN
-      delete from ad_process_access a
-      where a.ad_process_id = :new.ad_process_id
-        and exists (select 1 
-                      from ad_role r
-                     where r.ad_role_id = a.ad_role_id
-                      and r.isManual = 'N'
-                      and r.IsAdvanced = 'N');
-    END IF;
     IF(    COALESCE (:OLD.NAME, '.') <> COALESCE (:NEW.NAME, '.')
         OR COALESCE (:OLD.Description, '.') <> COALESCE (:NEW.Description, '.')
         OR COALESCE (:OLD.HELP, '.') <> COALESCE (:NEW.HELP, '.') )
