@@ -78,6 +78,8 @@
             <exclude org="com.mchange" name="mchange-commons-java"/>
         </dependency>
         <dependency org="org.mozilla" name="rhino-engine" rev="1.7.13" conf="runtime->default"/>
+        <dependency org="FS" name="jettison" rev="1.3-patched" conf="runtime->default"/>
+        <dependency org="FS" name="xercesImpl" rev="2.9.0-patched" conf="runtime->default"/>
         
         <!-- test dependencies -->
         <dependency org="junit" name="junit" rev="4.13.2" conf="test->default" />

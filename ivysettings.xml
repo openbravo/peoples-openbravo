@@ -7,6 +7,12 @@
             <ibiblio name="maven-central" m2compatible="true" />
             <ibiblio name="jaspersoft-third-party" m2compatible="true" root="https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/"/>
         </chain>
+        <filesystem name="local">
+            <artifact pattern="${ivy.settings.dir}/lib/runtime/[artifact]-[revision].[ext]" />
+        </filesystem>
     </resolvers>
     
+    <modules>
+        <module organisation='FS' resolver='local' />
+    </modules>
 </ivysettings>
