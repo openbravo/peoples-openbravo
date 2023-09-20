@@ -70,6 +70,18 @@
         <Parameter name="rol"/>
         <Parameter name="client"/>
    </SqlMethod>
+   
+   <SqlMethod name="isAutomaticRole" type="preparedStatement" return="Boolean" default="false">
+      <SqlMethodComment></SqlMethodComment>
+      <Sql>
+        SELECT COUNT(*) AS TOTAL
+        FROM AD_ROLE
+        WHERE AD_ROLE_ID = ?
+        AND ISMANUAL = 'N'
+        AND ISACTIVE ='Y'
+      </Sql>
+        <Parameter name="rol"/>
+   </SqlMethod>   
 
    <SqlMethod name="isLoginRoleOrg" type="preparedStatement" return="Boolean" default="false">
       <SqlMethodComment></SqlMethodComment>

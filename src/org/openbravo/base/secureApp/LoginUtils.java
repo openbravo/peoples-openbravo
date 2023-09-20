@@ -131,7 +131,8 @@ public class LoginUtils {
 
   static boolean validRoleClient(ConnectionProvider conn, String role, String client)
       throws ServletException {
-    boolean valid = SeguridadData.isRoleClient(conn, role, client);
+    boolean valid = SeguridadData.isRoleClient(conn, role, client)
+        || SeguridadData.isAutomaticRole(conn, role);
     if (!valid) {
       log4j.error("Login client is not in role clients list. Role: " + role + ", Client: " + client,
           new Exception("stack trace"));
@@ -141,7 +142,8 @@ public class LoginUtils {
 
   static boolean validRoleOrg(ConnectionProvider conn, String role, String org)
       throws ServletException {
-    boolean valid = SeguridadData.isLoginRoleOrg(conn, role, org);
+    boolean valid = SeguridadData.isLoginRoleOrg(conn, role, org)
+        || SeguridadData.isAutomaticRole(conn, role);
     if (!valid) {
       log4j.error(
           "Login organization is not in role organizations list. Role: " + role + ", Org: " + org,
