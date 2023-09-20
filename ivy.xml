@@ -7,8 +7,8 @@
     
     <configurations>
         <conf name="build"  description="Required to compile application"/>
-        <conf name="runtime"  description="Additional run-time dependencies" extends="build"/>
-        <conf name="test"     description="Required for test only" extends="runtime"/>
+        <conf name="runtime"  description="Additional run-time dependencies"/>
+        <conf name="test"     description="Required for test only"/>
     </configurations>
     
     <dependencies>
