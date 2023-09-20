@@ -11,13 +11,15 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2021-2022 Openbravo SLU
+ * All portions are Copyright (C) 2021-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.event;
+
+import java.util.List;
 
 import javax.enterprise.event.Observes;
 
@@ -26,6 +28,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
@@ -56,20 +59,38 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     if (!isValidEvent(event)) {
       return;
     }
+    resetValuesWhenReferenceIsInvoiceOrShipping(event);
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
-    checkDefaultAddressDuplicates(event);
+    checkKeyColumnsAndAddress(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
+    resetValuesWhenReferenceIsInvoiceOrShipping(event);
     checkDefaultEmailDuplicates(event);
     checkDefaultPhoneDuplicates(event);
-    checkDefaultAddressDuplicates(event);
     checkMandatoryRemovalIfMultiIntegration(event);
     checkIdentifierScanningActionDuplicates(event);
+    checkKeyColumnsAndAddress(event);
+  }
+
+  private void resetValuesWhenReferenceIsInvoiceOrShipping(final EntityPersistenceEvent event) {
+    BaseOBObject targetInstance = event.getTargetInstance();
+    final Entity entity = targetInstance.getEntity();
+    final Entity transactionEntity = ModelProvider.getInstance()
+        .getEntity(targetInstance.getEntityName());
+    final String currentReferenceProperty = (String) event.getCurrentState(
+        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_REFERENCE));
+    if ("ShippingAddress".equals(currentReferenceProperty)
+        || "InvoiceAddress".equals(currentReferenceProperty)) {
+      event.setCurrentState(
+          entity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_TRANSLATABLE), false);
+      event.setCurrentState(entity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_TEXT),
+          currentReferenceProperty);
+    }
   }
 
   private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
@@ -123,33 +144,6 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     criteria.setMaxResults(1);
     if (criteria.uniqueResult() != null) {
       throw new OBException("@DuplicatedCRMDefaultPhone@");
-    }
-  }
-
-  private void checkDefaultAddressDuplicates(EntityPersistenceEvent event) {
-    final String id = event.getId();
-    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
-        .getTargetInstance();
-    final ExternalBusinessPartnerConfig currentExtBPConfig = property
-        .getExternalBusinessPartnerIntegrationConfiguration();
-
-    if (!property.isDefaultAddress() || !property.isActive()) {
-      return;
-    }
-
-    final OBCriteria<?> criteria = OBDal.getInstance()
-        .createCriteria(event.getTargetInstance().getClass());
-    criteria.add(Restrictions.eq(
-        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-        currentExtBPConfig));
-    criteria.add(
-        Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTADDRESS, true));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
-    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
-
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
-      throw new OBException(OBMessageUtils.messageBD("@DuplicatedCRMDefaultAddress@"));
     }
   }
 
@@ -216,5 +210,71 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     if (criteria.uniqueResult() != null) {
       throw new OBException("@DuplicatedCRMIdentifierScanningAction@");
     }
+  }
+
+  private void checkKeyColumnsAndAddress(EntityPersistenceEvent event) {
+    final Entity transactionEntity = ModelProvider.getInstance()
+        .getEntity(event.getTargetInstance().getEntityName());
+    final Boolean currentIsAddressProperty = (Boolean) event.getCurrentState(transactionEntity
+        .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISADDRESSPROPERTY));
+
+    // Check Key Column unique constrain
+    final Boolean currentKeyColumn = (Boolean) event.getCurrentState(
+        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN));
+    if (currentKeyColumn) {
+      final String id = event.getId();
+      OBCriteria<ExternalBusinessPartnerConfigProperty> criteria = getUniqueCriteria(event,
+          transactionEntity);
+      criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_KEYCOLUMN, true));
+      criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
+      List<ExternalBusinessPartnerConfigProperty> keyColumns = criteria.list();
+      if (currentIsAddressProperty) {
+        long countAddressKey = keyColumns.stream()
+            .filter(ExternalBusinessPartnerConfigProperty::isAddressProperty)
+            .count();
+        if (countAddressKey > 0) {
+          throw new OBException("@DuplicatedCRMAddressKeyColumn@");
+        }
+        return;
+      }
+      long countKey = keyColumns.stream().filter(col -> !col.isAddressProperty()).count();
+      if (countKey > 0) {
+        throw new OBException("@DuplicatedCRMKeyColumn@");
+      }
+    }
+
+    // Check Address reference constrains
+    final String currentReference = (String) event.getCurrentState(
+        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_REFERENCE));
+    if ("ShippingAddress".equals(currentReference) || "InvoiceAddress".equals(currentReference)) {
+      if (currentIsAddressProperty) {
+        throw new OBException("@AddressReferenceCRMNotAllowAtAddress@");
+      }
+      OBCriteria<ExternalBusinessPartnerConfigProperty> criteria = getUniqueCriteria(event,
+          transactionEntity);
+      criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_REFERENCE,
+          currentReference));
+      if (criteria.count() > 0) {
+        throw new OBException("@DuplicatedCRMRefenceAddress@");
+      }
+    }
+  }
+
+  private OBCriteria<ExternalBusinessPartnerConfigProperty> getUniqueCriteria(
+      EntityPersistenceEvent event, Entity transactionEntity) {
+    final ExternalBusinessPartnerConfig currentConfig = (ExternalBusinessPartnerConfig) event
+        .getCurrentState(transactionEntity.getProperty(
+            ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION));
+    final String currentApiKey = (String) event.getCurrentState(
+        transactionEntity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_APIKEY));
+
+    final OBCriteria<ExternalBusinessPartnerConfigProperty> criteria = OBDal.getInstance()
+        .createCriteria(ExternalBusinessPartnerConfigProperty.class);
+    criteria.add(Restrictions.eq(
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        currentConfig));
+    criteria
+        .add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_APIKEY, currentApiKey));
+    return criteria;
   }
 }

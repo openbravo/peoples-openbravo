@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2022 Openbravo SLU
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfig;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigLocation;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigProperty;
 
@@ -53,6 +54,7 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(ExternalBusinessPartnerConfigLocation.ENTITY_NAME) };
   private static final String MULTI_INTEGRATION_TYPE = "MI";
+  private static final String SINGLE_INTEGRATION_TYPE = "SI";
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -65,7 +67,9 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
     }
     checkSingleAddressMappingIfMultiIntegration(event);
     checkEmptyCountry(event);
+    checkEmptyAddresses(event);
     checkMandatoryPropertiesIfMultiIntegration(event);
+    checkDefaultAddressDuplicatesIfSingleIntegration(event);
   }
 
   public void onSave(@Observes EntityNewEvent event) {
@@ -74,7 +78,9 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
     }
     checkSingleAddressMappingIfMultiIntegration(event);
     checkEmptyCountry(event);
+    checkEmptyAddresses(event);
     checkMandatoryPropertiesIfMultiIntegration(event);
+    checkDefaultAddressDuplicatesIfSingleIntegration(event);
   }
 
   private void checkEmptyCountry(EntityPersistenceEvent event) {
@@ -84,6 +90,25 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
         .getCurrentState(externalBPAddressProperty);
     if (externalBPAddressCountry == null) {
       throw new OBException(OBMessageUtils.messageBD("ExtBPCountryMandatory"));
+    }
+  }
+
+  private void checkEmptyAddresses(EntityPersistenceEvent event) {
+    ExternalBusinessPartnerConfigLocation extBpPartnerConfigLocation = (ExternalBusinessPartnerConfigLocation) event
+        .getTargetInstance();
+    if (MULTI_INTEGRATION_TYPE
+        .equals(extBpPartnerConfigLocation.getCRMConnectorConfiguration().getTypeOfIntegration())) {
+      checkEmptyAddress(event, ExternalBusinessPartnerConfigLocation.PROPERTY_ISSHIPPINGADDRESS);
+      checkEmptyAddress(event, ExternalBusinessPartnerConfigLocation.PROPERTY_ISINVOICEADDRESS);
+    }
+  }
+
+  private void checkEmptyAddress(EntityPersistenceEvent event, String property) {
+    final Property externalBPAddressProperty = ENTITIES[0].getProperty(property);
+    final ExternalBusinessPartnerConfigProperty externalBPAddressCountry = (ExternalBusinessPartnerConfigProperty) event
+        .getCurrentState(externalBPAddressProperty);
+    if (externalBPAddressCountry == null) {
+      throw new OBException(OBMessageUtils.messageBD("ExtBPIsShippingInvoiceAddressMandatory"));
     }
   }
 
@@ -108,7 +133,45 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
         throw new OBException(OBMessageUtils.messageBD("DuplicatedCRMAddressMapping"));
       }
     }
+  }
 
+  private void checkDefaultAddressDuplicatesIfSingleIntegration(EntityPersistenceEvent event) {
+    final ExternalBusinessPartnerConfigLocation property = (ExternalBusinessPartnerConfigLocation) event
+        .getTargetInstance();
+    if (SINGLE_INTEGRATION_TYPE
+        .equals(property.getCRMConnectorConfiguration().getTypeOfIntegration())) {
+
+      if (!property.isActive()) {
+        return;
+      }
+
+      if (property.isShippingAddress() != true && property.isInvoicingAddress() != true) {
+        throw new OBException("@CRMSingleEndpoint_ShipInvMandatory@");
+      }
+
+      final ExternalBusinessPartnerConfig currentExtBPConfig = property
+          .getCRMConnectorConfiguration();
+
+      OBCriteria<?> criteriaShipAdds = buildCriteria(event, property);
+      criteriaShipAdds.add(
+          Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_CRMCONNECTORCONFIGURATION,
+              currentExtBPConfig));
+      criteriaShipAdds.add(
+          Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_SHIPPINGADDRESS, true));
+      if (criteriaShipAdds.count() > 0 && property.isShippingAddress() == true) {
+        throw new OBException("@CRMSingleEndpoint_OnlyOneShip@");
+      }
+
+      OBCriteria<?> criteriaInvAdds = buildCriteria(event, property);
+      criteriaInvAdds.add(
+          Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_CRMCONNECTORCONFIGURATION,
+              currentExtBPConfig));
+      criteriaInvAdds.add(
+          Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_INVOICINGADDRESS, true));
+      if (criteriaInvAdds.count() > 0 && property.isInvoicingAddress() == true) {
+        throw new OBException("@CRMSingleEndpoint_OnlyOneInv@");
+      }
+    }
   }
 
   private void checkMandatoryPropertiesIfMultiIntegration(EntityPersistenceEvent event) {
@@ -121,10 +184,11 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
               ExternalBusinessPartnerConfigLocation.PROPERTY_ADDRESSLINE2,
               ExternalBusinessPartnerConfigLocation.PROPERTY_CITYNAME,
               ExternalBusinessPartnerConfigLocation.PROPERTY_POSTALCODE,
-              ExternalBusinessPartnerConfigLocation.PROPERTY_REGION)
+              ExternalBusinessPartnerConfigLocation.PROPERTY_REGION,
+              ExternalBusinessPartnerConfigLocation.PROPERTY_ISSHIPPINGADDRESS,
+              ExternalBusinessPartnerConfigLocation.PROPERTY_ISINVOICEADDRESS)
           .forEach((propertyToCheck -> checkIfNonMandatoryProperty(event, propertyToCheck)));
     }
-
   }
 
   private void checkIfNonMandatoryProperty(EntityPersistenceEvent event,
@@ -138,4 +202,18 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
     }
   }
 
+  private OBCriteria<?> buildCriteria(EntityPersistenceEvent event,
+      ExternalBusinessPartnerConfigLocation property) {
+    final String id = event.getId();
+    final ExternalBusinessPartnerConfig currentExtBPConfig = property
+        .getCRMConnectorConfiguration();
+    final OBCriteria<?> criteria = OBDal.getInstance()
+        .createCriteria(event.getTargetInstance().getClass());
+    criteria.add(
+        Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_CRMCONNECTORCONFIGURATION,
+            currentExtBPConfig));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigLocation.PROPERTY_ACTIVE, true));
+    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigLocation.PROPERTY_ID, id));
+    return criteria;
+  }
 }

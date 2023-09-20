@@ -73,6 +73,22 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
+      <column name="ISSHIPPING_ADDRESS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISINVOICE_ADDRESS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISDEFAULT_SHIPPING_ADDRESS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISDEFAULT_INVOICE_ADDRESS" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ADD1">
         <reference local="ADDRESS1" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
       </foreign-key>
@@ -87,6 +103,18 @@
       </foreign-key>
       <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_COUNTRY">
         <reference local="COUNTRY" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ISDEF_INV">
+        <reference local="ISDEFAULT_INVOICE_ADDRESS" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ISDEF_SHIP">
+        <reference local="ISDEFAULT_SHIPPING_ADDRESS" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ISINVOICE">
+        <reference local="ISINVOICE_ADDRESS" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_ISSHIPPING">
+        <reference local="ISSHIPPING_ADDRESS" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
       </foreign-key>
       <foreign-key foreignTable="C_EXTBP_CONFIG_PROPERTY" name="C_EXTBP_CONF_LOC_POSTAL">
         <reference local="POSTAL" foreign="C_EXTBP_CONFIG_PROPERTY_ID"/>
