@@ -37,6 +37,7 @@ import java.util.Stack;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -646,6 +647,61 @@ public class OBContext implements OBNotSingleton, Serializable {
       return new ArrayList<>(orgList);
     }
 
+    List<String> currentOrgList = Boolean.TRUE.equals(targetRole.isManual())
+        ? getAvailableOrganizationsForManualRole(targetRole, isActiveOrganization)
+        : getAvailableOrganizationsForAutomaticRole(targetRole);
+
+    if (additionalOrgs != null) {
+      for (final String orgId : additionalOrgs) {
+        if (!currentOrgList.contains(orgId)) {
+          currentOrgList.add(orgId);
+        }
+      }
+    }
+    return new ArrayList<>(currentOrgList);
+  }
+
+  private List<String> getAvailableOrganizationsForAutomaticRole(Role targetRole) {
+    List<String> organizations = new ArrayList<>();
+
+    // Client or System level: Only *
+    if (StringUtils.equals(targetRole.getUserLevel(), " C")
+        || StringUtils.equals(targetRole.getUserLevel(), "S")) {
+      organizations.add("0");
+    }
+
+    // Client/Organization level: *, other Orgs (but *)
+    else if (StringUtils.equals(targetRole.getUserLevel(), " CO")) {
+      organizations.add("0");
+      // @formatter:off
+      final String orgsQryStr = "select o.id"
+          + " from Organization o"
+          + " where o.client.id= :clientId"
+          + "   and o.id <>'0'";
+      // @formatter:on
+      final Query<String> qry = SessionHandler.getInstance()
+          .createQuery(orgsQryStr, String.class)
+          .setParameter("clientId", targetRole.getClient().getId());
+      organizations.addAll(qry.list());
+    }
+    // Organization level: Orgs (but *) [isOrgAdmin=Y]
+    else if (StringUtils.equals(targetRole.getUserLevel(), "  O")) {
+      // @formatter:off
+      final String orgsQryStr = "select o.id"
+          + " from Organization o"
+          + " where o.client.id= :clientId"
+          + "   and o.id <>'0'";
+      // @formatter:on
+      final Query<String> qry = SessionHandler.getInstance()
+          .createQuery(orgsQryStr, String.class)
+          .setParameter("clientId", targetRole.getClient().getId());
+      organizations.addAll(qry.list());
+    }
+    return organizations;
+  }
+
+  private List<String> getAvailableOrganizationsForManualRole(Role targetRole,
+      boolean isActiveOrganization) {
     // @formatter:off
     final String orgsQryStr = "select o.id"
         + " from Organization o"
@@ -661,15 +717,7 @@ public class OBContext implements OBNotSingleton, Serializable {
         .setParameter("active", isActiveOrganization);
 
     List<String> currentOrgList = qry.list();
-
-    if (additionalOrgs != null) {
-      for (final String orgId : additionalOrgs) {
-        if (!currentOrgList.contains(orgId)) {
-          currentOrgList.add(orgId);
-        }
-      }
-    }
-    return new ArrayList<>(currentOrgList);
+    return currentOrgList;
   }
 
   private List<String> getOrganizations(Client client) {

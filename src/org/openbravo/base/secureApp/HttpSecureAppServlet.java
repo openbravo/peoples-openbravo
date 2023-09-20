@@ -58,6 +58,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
@@ -523,6 +524,10 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    */
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id) {
     try {
+      Role role = OBContext.getOBContext().getRole();
+      if (!role.isManual()) {
+        return true;
+      }
       ConnectionProvider cp = new DalConnectionProvider(false);
       final String accessLevel = SeguridadData.selectAccessLevel(cp, type, id);
       vars.setSessionValue("#CurrentAccessLevel", accessLevel);

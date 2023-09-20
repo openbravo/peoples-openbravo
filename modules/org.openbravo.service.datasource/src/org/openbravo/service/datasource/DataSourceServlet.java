@@ -64,6 +64,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.CsrfUtil;
 import org.openbravo.erpCommon.utility.PropertyNotFoundException;
 import org.openbravo.erpCommon.utility.StringCollectionUtils;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.datamodel.Column;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.ui.Field;
@@ -596,7 +597,10 @@ public class DataSourceServlet extends BaseKernelServlet {
         if (isAccessGranted) {
           return true;
         }
-
+        Role role = OBContext.getOBContext().getRole();
+        if (!role.isManual()) {
+          return true;
+        }
         // Finally select all columns that linked with selected processes and get their fields.
         OBCriteria<Column> columns = OBDal.getInstance().createCriteria(Column.class);
         columns.add(Restrictions.in(Column.PROPERTY_OBUIAPPPROCESS, obuiapProcesses));

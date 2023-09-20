@@ -473,6 +473,10 @@ public class QueryListDataSource extends ReadOnlyDataSourceService implements Po
   }
 
   private boolean isAccessibleWidgetInForm(WidgetClass widgetClass) {
+    Role role = OBContext.getOBContext().getRole();
+    if (!role.isManual()) {
+      return true;
+    }
     OBCriteria<WidgetReference> widgetInFormCriteria = OBDal.getInstance()
         .createCriteria(WidgetReference.class);
     widgetInFormCriteria.add(Restrictions.eq(WidgetReference.PROPERTY_WIDGETCLASS, widgetClass));

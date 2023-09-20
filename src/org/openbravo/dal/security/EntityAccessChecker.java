@@ -465,6 +465,10 @@ public class EntityAccessChecker implements OBNotSingleton {
     if (!OBContext.getOBContext().doAccessLevelCheck()) {
       return true;
     }
+    Role role = OBContext.getOBContext().getRole();
+    if (!role.isManual()) {
+      return true;
+    }
 
     if (accessLevel == 4 && userLevel.indexOf("S") == -1) {
       return false;

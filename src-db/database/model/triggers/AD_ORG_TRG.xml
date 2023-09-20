@@ -47,20 +47,6 @@ BEGIN
   END IF;
 
   IF(INSERTING) THEN
-    -- Add to all roles of the client
-    INSERT
-    INTO AD_Role_OrgAccess
-      (
-        AD_Role_OrgAccess_ID, AD_Role_ID, AD_Client_ID, AD_Org_ID,
-        IsActive, Created, CreatedBy,
-        Updated, UpdatedBy, is_org_admin
-      )
-    SELECT get_uuid(), AD_Role_ID, :new.AD_Client_ID, :new.AD_Org_ID,
-       'Y', now(), :new.CreatedBy,
-      now(), :new.CreatedBy, 'Y'
-    FROM AD_Role
-    WHERE AD_Client_ID=:new.AD_Client_ID
-      AND IsManual='N';
       
     --  Create TreeNode --
     --  get AD_Tree_ID + ParentID

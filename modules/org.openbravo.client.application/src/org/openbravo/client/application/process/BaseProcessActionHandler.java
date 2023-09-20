@@ -52,6 +52,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DbUtility;
@@ -320,6 +321,10 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     // Check Process Definition Permission
     String windowId = (String) parameters.get("windowId");
     if (windowId != null && !"null".equals(windowId)) {
+      Role role = OBContext.getOBContext().getRole();
+      if (!role.isManual()) {
+        return true;
+      }
       Window window = OBDal.getInstance().get(Window.class, windowId);
 
       boolean checkPermission = processDefinition.isRequiresExplicitAccessPermission();
