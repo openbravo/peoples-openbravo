@@ -6,6 +6,7 @@
         <chain name="chain">
             <ibiblio name="maven-central" m2compatible="true" />
             <ibiblio name="jaspersoft-third-party" m2compatible="true" root="https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/"/>
+            <ibiblio name="jboss-public" m2compatible="true" root="https://repository.jboss.org/nexus/content/repositories/public/"/>
         </chain>
         <filesystem name="local">
             <artifact pattern="${ivy.settings.dir}/lib/runtime/[artifact]-[revision].[ext]" />
