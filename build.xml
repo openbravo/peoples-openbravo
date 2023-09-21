@@ -319,6 +319,11 @@ export.database: exports database structure and data to xml files.
   <target name="init">
     <fail if="root.user" message="Don't run ant tasks with the root user" />
     <fail if="no.java.home" message="The environment variable JAVA_HOME is not set." />
+    <fail message="Using Openbravo on top of Oracle Database is no longer supported since the 23Q4 release">
+      <condition>
+        <equals arg1="${bbdd.rdbms}" arg2="ORACLE"/>
+      </condition>
+    </fail>
     <fail message="Unsupported Java version ${ant.java.version}. Minimum required is 11.">
       <condition>
         <or>
