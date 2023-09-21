@@ -41,5 +41,8 @@
     ],
     "class-methods-use-this": "off",
     "no-use-before-define": ["error", "nofunc"]
+  },
+  "globals": {
+    "_": "off"
   }
 }
