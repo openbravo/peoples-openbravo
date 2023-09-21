@@ -9,6 +9,7 @@
         <dependency org="commons-betwixt" name="commons-betwixt" rev="0.8" transitive="false"/>
         <dependency org="com.github.fangjinuo.jakarta-oro" name="jakarta-oro" rev="2.0.8"/>
         <dependency org="woodstox" name="wstx-asl" rev="3.0.2"/>
+        <dependency org="FS" name="dbsourcemanager" rev="1.0.0"/>
     </dependencies>
     
 </ivy-module>
