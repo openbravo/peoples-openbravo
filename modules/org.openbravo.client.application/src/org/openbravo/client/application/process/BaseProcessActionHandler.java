@@ -312,6 +312,10 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
    * 
    */
   public static boolean hasAccess(Process processDefinition, Map<String, Object> parameters) {
+    Role role = OBContext.getOBContext().getRole();
+    if (!role.isManual()) {
+      return true;
+    }
     // Check Process Definition Access Level
     String userLevel = OBContext.getOBContext().getUserLevel();
     int accessLevel = Integer.parseInt(processDefinition.getDataAccessLevel());
@@ -321,10 +325,6 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
     // Check Process Definition Permission
     String windowId = (String) parameters.get("windowId");
     if (windowId != null && !"null".equals(windowId)) {
-      Role role = OBContext.getOBContext().getRole();
-      if (!role.isManual()) {
-        return true;
-      }
       Window window = OBDal.getInstance().get(Window.class, windowId);
 
       boolean checkPermission = processDefinition.isRequiresExplicitAccessPermission();

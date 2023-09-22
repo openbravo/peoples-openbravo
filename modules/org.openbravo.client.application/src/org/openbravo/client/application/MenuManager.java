@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import org.hibernate.query.Query;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
 import org.openbravo.model.ad.access.Role;
@@ -160,16 +162,45 @@ public class MenuManager {
     final Query<String> formsQry = OBDal.getInstance()
         .getSession()
         .createQuery(formsHql, String.class);
-    formsQry.setParameter("roleId", role);
+    formsQry.setParameter("roleId", role.getId());
     return formsQry.list();
   }
 
-  private void linkProcesses() {
-    final String allowedProcessHql = "select pa.process.id " + //
+  private void linkProcessForAutoRole(Role role) {
+    List<String> roleAccessLevels = new ArrayList<>();
+    String userLevel = role.getUserLevel();
+    if (userLevel.equals("S")) {
+      roleAccessLevels.addAll(List.of("4", "7", "6"));
+    } else if (userLevel.equals("CO") || userLevel.equals("C")) {
+      roleAccessLevels.addAll(List.of("7", "6", "3", "1"));
+    } else if (userLevel.equals("O")) {
+      roleAccessLevels.addAll(List.of("3", "1", "7"));
+    }
+
+    final Map<String, Object> parameters = new HashMap<>(1);
+    parameters.put("roleAccessLevels", roleAccessLevels);
+    String processHql = " dataAccessLevel in ( :roleAccessLevels ) ";
+    final OBQuery<Process> resultList = OBDal.getInstance()
+        .createQuery(Process.class, processHql, parameters)
+        .setFilterOnReadableOrganization(false);
+
+    for (Process process : resultList.list()) {
+      MenuOption option = getMenuOptionByType(MenuEntryType.Process, process.getId());
+      if (option != null) {
+        // allow access if not running in a webcontainer as then the config file can not be checked
+        boolean hasAccess = !SessionFactoryController.isRunningInWebContainer()
+            || ActivationKey.getInstance()
+                .hasLicenseAccess("P", process.getId()) == FeatureRestriction.NO_RESTRICTION;
+        option.setAccessGranted(hasAccess);
+      }
+    }
+  }
+
+  private void linkProcessForManualRole() {
+    String allowedProcessHql = "select pa.process.id " + //
         " from ADProcessAccess pa " + //
         "where pa.role = :role" + //
         "  and pa.active = true";
-
     final Query<String> allowedProcessQry = OBDal.getInstance()
         .getSession()
         .createQuery(allowedProcessHql, String.class);
@@ -184,6 +215,15 @@ public class MenuManager {
                 .hasLicenseAccess("P", processId) == FeatureRestriction.NO_RESTRICTION;
         option.setAccessGranted(hasAccess);
       }
+    }
+  }
+
+  private void linkProcesses() {
+    Role role = OBContext.getOBContext().getRole();
+    if (role.isManual()) {
+      linkProcessForManualRole();
+    } else {
+      linkProcessForAutoRole(role);
     }
   }
 
