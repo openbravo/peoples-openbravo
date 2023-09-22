@@ -43,7 +43,7 @@ create.database.script: refer to create.database.script target of database.
 update.database.script: refer to update.database.script target of database.
 export.database: exports database structure and data to xml files.
 -->
-<project name="openbravo" default="compile.complete" basedir=".">
+<project name="openbravo" default="compile.complete" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
   <property environment="env" />
   <property name="base.config" location="config" />
   <property file="${base.config}/Openbravo.properties" />
@@ -165,6 +165,12 @@ export.database: exports database structure and data to xml files.
     </not>
   </condition>
 
+  <condition property="no.ivy.home" value="true">
+    <not>
+      <isset property="env.IVY_HOME" />
+    </not>
+  </condition>
+
   <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}" else="${bbdd.url}">
     <and>
       <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
@@ -183,9 +189,7 @@ export.database: exports database structure and data to xml files.
 
   <!-- Minimal classpath used for executing Wad at compile time -->
   <path id="wad.class.path">
-    <fileset dir="${base.lib}">
-      <include name="**/*.jar" />
-    </fileset>
+    <path refid="base.lib.path" />
     <fileset dir="${build.core.lib}">
       <include name="openbravo-core.jar" />
     </fileset>
@@ -203,9 +207,7 @@ export.database: exports database structure and data to xml files.
     <pathelement path="${base.config}" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
-    <fileset dir="${base.lib}">
-      <include name="**/*.jar" />
-    </fileset>
+    <path refid="base.lib.path" />
     <fileset dir="${build.core.lib}">
       <include name="openbravo-core.jar" />
     </fileset>
@@ -215,13 +217,7 @@ export.database: exports database structure and data to xml files.
     <fileset dir="${build.wad.lib}">
       <include name="openbravo-wad.jar" />
     </fileset>
-    <fileset dir="${base.lib}">
-      <include name="**/*.jar" />
-      <exclude name="**/test/*.jar" />
-    </fileset>
-    <fileset dir="${base.db}/lib/">
-      <include name="**/*.jar" />
-    </fileset>
+    <path refid="src-db.lib.path" />
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
        <exclude name="**/test/*.jar" />
@@ -237,9 +233,7 @@ export.database: exports database structure and data to xml files.
     <pathelement path="${build.apply.module}" />
     <pathelement path="${base.config}" />
     <pathelement path="${base.src}" />
-    <fileset dir="${base.lib}">
-      <include name="**/*.jar" />
-    </fileset>
+    <path refid="base.lib.path" />
     <fileset dir="${build.core.lib}">
       <include name="openbravo-core.jar" />
     </fileset>
@@ -249,12 +243,8 @@ export.database: exports database structure and data to xml files.
     <fileset dir="${build.wad.lib}">
       <include name="openbravo-wad.jar" />
     </fileset>
-    <fileset dir="${base.lib}">
-      <include name="**/*.jar" />
-    </fileset>
-    <fileset dir="${base.db}/lib/">
-      <include name="**/*.jar" />
-    </fileset>
+    <path refid="base.lib.path" />
+    <path refid="src-db.lib.path" />
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
     </fileset>
@@ -270,9 +260,7 @@ export.database: exports database structure and data to xml files.
     <pathelement path="${build.apply.module}" />
     <pathelement path="${build}" />
     <pathelement path="${base.src}" />
-    <fileset dir="${base.lib}">
-      <include name="**/*.jar" />
-    </fileset>
+    <path refid="base.lib.path" />
     <fileset dir="${build.core.lib}">
       <include name="openbravo-core.jar" />
     </fileset>
@@ -282,12 +270,7 @@ export.database: exports database structure and data to xml files.
     <fileset dir="${build.wad.lib}">
       <include name="openbravo-wad.jar" />
     </fileset>
-    <fileset dir="${base.lib}">
-      <include name="**/*.jar" />
-    </fileset>
-    <fileset dir="${base.db}/lib/">
-      <include name="**/*.jar" />
-    </fileset>
+    <path refid="src-db.lib.path" />
     <fileset dir="${base.modules}">
       <include name="*/lib/**" />
     </fileset>
@@ -297,7 +280,7 @@ export.database: exports database structure and data to xml files.
      <attribute name="v" default="NOT SET"/>
      <sequential>
        <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <classpath> <path refid="base.lib.path" /> </classpath>
          <transaction> UPDATE ad_system_info SET system_status='@{v}' ;
          </transaction>
        </sql>
@@ -309,7 +292,7 @@ export.database: exports database structure and data to xml files.
     <attribute name="previous" default="NOT SET"/>
      <sequential>
        <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}" onerror="continue" autocommit="true">
-         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <classpath> <path refid="base.lib.path" /> </classpath>
          <transaction> UPDATE ad_system_info SET system_status='@{v}' where system_status!='@{previous}' ;
          </transaction>
        </sql>
@@ -339,8 +322,17 @@ export.database: exports database structure and data to xml files.
         </not>
       </condition>
     </fail>
+    <fail if="no.ivy.home" message="The environment variable IVY_HOME is not set." />
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
+        <classpath>
+            <fileset dir="${env.IVY_HOME}" includes="*.jar"/>
+        </classpath>
+    </taskdef>
+    <ivy:settings id="ivy.settings" file="ivysettings.xml" />
+    <ivy:cachepath pathid="base.lib.path" file="ivy.xml" settingsRef="ivy.settings"/>
+  	<ivy:cachepath pathid="src-db.lib.path" file="src-db/database/ivy.xml" settingsref="ivy.settings" type="jar"/>
   </target>
-
+  
   <target name="compile.complete" depends="init, core.lib, wad.lib, trl.lib">
     <ant dir="${base.src}" target="compile.complete" inheritAll="true" inheritRefs="true" />
   </target>
@@ -536,7 +528,7 @@ export.database: exports database structure and data to xml files.
                   stableDBdir="${stableDBdir}"
                   testDBdir="${basedir}"
                   modules="${modules}"
-    />    
+    />
   </target>
   
   <target name="compile.src" depends="init">
@@ -723,20 +715,20 @@ export.database: exports database structure and data to xml files.
                    addAllDependencies="${obx.export.allDeps}"/>
   </target>
   
-  <target name="setup.compile">
+  <target name="setup.compile" depends="init">
 	<mkdir dir="build/classes" />
     <javac srcdir="src/org/openbravo/configuration" destdir="build/classes" fork="true" deprecation="off" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
-      <classpath refid="project.class.path"/>  
+      <classpath refid="project.class.path"/>
     </javac>
   </target>
 
-  <target name="setup" depends="init, setup.compile">
+  <target name="setup" depends="setup.compile">
     <echo message="Launching configuration application..."/>
     <taskdef name="configurationApp" classname="org.openbravo.configuration.ConfigurationApp">
       <classpath refid="project.class.path" />
     </taskdef>
     <configurationApp nonInteractive="${nonInteractive}" acceptLicense="${acceptLicense}"/>
-    </target>
+  </target>
   
   <target name="validate.wad">
     <ant dir="${base.src}" target="wadvalidation" inheritAll="true" inheritRefs="true" />
@@ -747,7 +739,7 @@ export.database: exports database structure and data to xml files.
          This task is kept to show an error message when updating from previous releases. -->
     <updatesystemstatus v="RB70"/> 
        <sql driver="${bbdd.driver}" url="${bbdd.owner.url}" userid="${bbdd.user}" password="${bbdd.password}"  autocommit="true">
-         <classpath> <fileset dir="${base.lib}"> <include name="**/*.jar"> </include> </fileset> </classpath>
+         <classpath> <path refid="base.lib.path" /> </classpath>
           insert into ad_error_log
              (ad_error_log_id,    ad_client_id,  ad_org_id,
              createdby,           updatedby,     system_status,
@@ -801,5 +793,45 @@ export.database: exports database structure and data to xml files.
       <classpath refid="project.class.path"/>
     </taskdef>
     <hostName/>
+  </target>
+  
+  <target name="retrieve.build" depends="init">
+    <ivy:resolve settingsref="ivy.settings" conf="build" type="jar"/>
+    <ivy:retrieve pattern="${base.lib}/build/[artifact]-[revision].[ext]" conf="build" />
+  </target>
+  
+  <target name="retrieve.runtime" depends="init">
+    <ivy:resolve settingsref="ivy.settings" conf="runtime" type="jar"/>
+    <ivy:retrieve pattern="${base.lib}/runtime/[artifact]-[revision].[ext]" conf="runtime" />
+  </target>
+  
+  <target name="retrieve.test" depends="init">
+    <ivy:resolve settingsref="ivy.settings" conf="test" type="jar"/>
+    <ivy:retrieve pattern="${base.lib}/test/[artifact]-[revision].[ext]" conf="test" />
+  </target>
+  
+  <target name="retrieve.weld.runtime" depends="init">
+    <ivy:resolve file="modules/org.openbravo.base.weld/ivy.xml" settingsref="ivy.settings" conf="runtime" type="jar"/>
+    <ivy:retrieve pattern="modules/org.openbravo.base.weld/lib/runtime/[artifact]-[revision].[ext]" conf="runtime" />
+  </target>
+  
+  <target name="retrieve.weld.test" depends="init">
+    <ivy:resolve file="modules/org.openbravo.base.weld/ivy.xml" settingsref="ivy.settings" conf="test" type="jar"/>
+    <ivy:retrieve pattern="modules/org.openbravo.base.weld/lib/test/[artifact]-[revision].[ext]" conf="test" />
+  </target>
+  
+  <target name="retrieve.application.runtime" depends="init">
+    <ivy:resolve file="modules/org.openbravo.client.application/ivy.xml" settingsref="ivy.settings" conf="runtime" type="jar"/>
+    <ivy:retrieve pattern="modules/org.openbravo.client.application/lib/runtime/[artifact]-[revision].[ext]" conf="runtime" />
+  </target>
+  
+  <target name="retrieve.apachejdbcconnectionpool.runtime" depends="init">
+    <ivy:resolve file="modules/org.openbravo.apachejdbcconnectionpool/ivy.xml" settingsref="ivy.settings" conf="runtime" type="jar"/>
+    <ivy:retrieve pattern="modules/org.openbravo.apachejdbcconnectionpool/lib/runtime/[artifact]-[revision].[ext]" conf="runtime" />
+  </target>
+  
+  <target name="retrieve.src-db" depends="init">
+    <ivy:resolve file="src-db/database/ivy.xml" settingsref="ivy.settings" type="jar"/>
+    <ivy:retrieve pattern="src-db/database/lib/[artifact]-[revision].[ext]" />
   </target>
 </project>
