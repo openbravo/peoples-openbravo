@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -40,6 +41,7 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
@@ -138,8 +140,29 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     }
   }
 
-  private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
-    //@formatter:off
+  private List<String> getAccessibleWidgetClassIdsForAutoRole(Role role) {
+    List<String> roleAccessLevels = new ArrayList<>();
+    String userLevel = role.getUserLevel();
+    if (userLevel.equals("S")) {
+      roleAccessLevels.addAll(List.of("4", "7", "6"));
+    } else if (userLevel.equals("CO") || userLevel.equals("C")) {
+      roleAccessLevels.addAll(List.of("7", "6", "3", "1"));
+    } else if (userLevel.equals("O")) {
+      roleAccessLevels.addAll(List.of("3", "1", "7"));
+    }
+
+    final Map<String, Object> parameters = new HashMap<>(1);
+    parameters.put("roleAccessLevels", roleAccessLevels);
+    String widgetHql = " dataAccessLevel in ( :roleAccessLevels ) ";
+    final OBQuery<WidgetClass> resultList = OBDal.getInstance()
+        .createQuery(WidgetClass.class, widgetHql, parameters)
+        .setFilterOnReadableOrganization(false);
+    return resultList.list().stream().map(WidgetClass::getId).collect(Collectors.toList());
+  }
+
+  private List<String> getAccessibleWidgetClassIdsForManualRole(String roleId,
+      String additionalWhereClause) {
+  //@formatter:off
     String hql = 
             "select widgetClassAccess.widgetClass.id " +
             "  from OBKMO_WidgetClassAccess widgetClassAccess " +
@@ -155,7 +178,19 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     } else {
       query.setParameter("roleId", roleId);
     }
-    List<String> widgetClassIds = query.list();
+    return query.list();
+  }
+
+  private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
+    // getRole(roleId);
+    List<String> widgetClassIds;
+    Role role = OBContext.getOBContext().getRole();
+    if (!role.isManual()) {
+      widgetClassIds = getAccessibleWidgetClassIdsForAutoRole(role);
+    } else {
+      widgetClassIds = getAccessibleWidgetClassIdsForManualRole(roleId, additionalWhereClause);
+    }
+
     List<String> anonymousWidgetClasses;
     if (isInDevelopment()) {
       anonymousWidgetClasses = myOBUtils.getAnonymousAccessibleWidgetClassesFromDatabase();

@@ -27,6 +27,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -265,7 +266,17 @@ public class MenuManager {
     return processQry.list();
   }
 
-  private void linkViewDefinition() {
+  private List<String> getAutoRoleViewDefinitionList() {
+    final OBQuery<OBUIAPPViewImplementation> resultList = OBDal.getInstance()
+        .createQuery(OBUIAPPViewImplementation.class, "active = true")
+        .setFilterOnReadableOrganization(false);
+    return resultList.list()
+        .stream()
+        .map(OBUIAPPViewImplementation::getId)
+        .collect(Collectors.toList());
+  }
+
+  private List<String> getManualRoleViewDefinitionList() {
     final String processHql = "select va.viewImplementation.id " + //
         " from obuiapp_ViewRoleAccess va " + //
         "where va.role = :role" + //
@@ -274,8 +285,19 @@ public class MenuManager {
         .getSession()
         .createQuery(processHql, String.class);
     processQry.setParameter("role", OBContext.getOBContext().getRole());
+    return processQry.list();
+  }
 
-    for (String processId : processQry.list()) {
+  private void linkViewDefinition() {
+    List<String> processDefinitionClassIds;
+    Role role = OBContext.getOBContext().getRole();
+    if (role.isManual()) {
+      processDefinitionClassIds = getManualRoleViewDefinitionList();
+    } else {
+      processDefinitionClassIds = getAutoRoleViewDefinitionList();
+    }
+
+    for (String processId : processDefinitionClassIds) {
       MenuOption option = getMenuOptionByType(MenuEntryType.View, processId);
       if (option != null) {
         option.setAccessGranted(true);
