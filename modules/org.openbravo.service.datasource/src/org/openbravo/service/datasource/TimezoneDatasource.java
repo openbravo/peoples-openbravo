@@ -54,13 +54,7 @@ public class TimezoneDatasource extends ReadOnlyDataSourceService {
 
     return ZoneId.getAvailableZoneIds()
         .stream() //
-        .filter(r -> {
-          if (!isCriteriaPresent) {
-            return true;
-          }
-
-          return filterRow(r, criteria.get());
-        }) //
+        .filter(r -> !isCriteriaPresent || filterRow(r, criteria.get())) //
         .skip(startRow) //
         .limit(rowsToFetch) //
         .sorted()
