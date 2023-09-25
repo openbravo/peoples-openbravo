@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2022 Openbravo SLU
+ * All portions are Copyright (C) 2012-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,18 +24,25 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Utilities to manage dates.
  */
 public class OBDateUtils {
+
+  private static final Logger logger = LogManager.getLogger();
 
   /**
    * Returns an String with the date in the <i>dateFormat.java</i> format defined in
@@ -306,4 +313,79 @@ public class OBDateUtils {
     return Date.from(truncatedInstant);
   }
 
+  /**
+   * Converts a UTC date contained in a Date object and transforms it into a ZonedDateTime object
+   * that takes into account the time zone provided as an argument
+   *
+   * @param {Date}
+   *          date - An UTC Date object
+   * @param {String}
+   *          timezone - a Time Zone identifier as returned by ZoneId.getAvailableZoneIds()
+   * @return {ZonedDateTime} a Date object now taking the provided Time zone into account or null if
+   *         the timezone is not valid
+   */
+  public static ZonedDateTime convertFromServerToOrgDateTime(Date date, String timezone) {
+    try {
+      ZoneId zoneId = ZoneId.of(timezone);
+      Instant serverDate = date.toInstant();
+      return serverDate.atZone(zoneId);
+    } catch (Exception e) {
+      logger.error("'{}' is not a valid Time Zone", timezone);
+      return null;
+    }
+  }
+
+  /**
+   * Converts a UTC date contained in a Date object and transforms it into a ZonedDateTime object
+   * that takes into account the time zone for the given Organization
+   *
+   * @param {Date}
+   *          date - An UTC Date object
+   * @param {Organization}
+   *          organization - An Organization instance
+   * @return {ZonedDateTime} a Date object now taking the provided Time zone into account or null if
+   *         the timezone is not valid
+   */
+  public static ZonedDateTime convertFromServerToOrgDateTime(Date date, Organization organization) {
+    String zoneId = organization.getTimezone();
+    if (zoneId == null || zoneId.isEmpty()) {
+      return null;
+    }
+
+    return convertFromServerToOrgDateTime(date, zoneId);
+  }
+
+  /**
+   * Format the given ZonedDateTime using the format provided in pattern
+   * 
+   * @param {ZonedDateTime}
+   *          date - A Date with Time zone information
+   * @param {String}
+   *          pattern - A Date pattern that should be accepted by DateTimeFormatter
+   * @return a String with a formatted date, or empty string if there is no date object
+   */
+  public static String formatZonedDateTime(ZonedDateTime date, String pattern) {
+    if (date == null) {
+      logger.error("No date provided to formatZonedDateTime method");
+      return "";
+    }
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+    return date.format(formatter);
+  }
+
+  /**
+   * Format the given ZonedDateTime using the <i>dateTimeFormat.java</i> format provided in
+   * Openbravo.properties including the time zone information
+   *
+   * @param {ZonedDateTime}
+   *          date - A Date with Time zone information
+   * @return a String with a formatted date, or empty string if there is no date object
+   */
+  public static String formatZonedDateTime(ZonedDateTime date) {
+    String pattern = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty(KernelConstants.DATETIME_FORMAT_PROPERTY, "dd-MM-yyyy HH:mm:ss");
+    return formatZonedDateTime(date, pattern + " (VV)");
+  }
 }
