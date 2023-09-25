@@ -314,8 +314,8 @@ public class OBDateUtils {
   }
 
   /**
-   * Converts a UTC date contained in a Date object and transforms it into a ZonedDateTime that
-   * takes into account the time zone provided as an argument
+   * Converts a UTC date contained in a Date object and transforms it into a ZonedDateTime object
+   * that takes into account the time zone provided as an argument
    *
    * @param {Date}
    *          date - An UTC Date object
@@ -336,8 +336,8 @@ public class OBDateUtils {
   }
 
   /**
-   * Converts a UTC date contained in a Date object and transforms it into a ZonedDateTime that
-   * takes into account the time zone for the given Organization
+   * Converts a UTC date contained in a Date object and transforms it into a ZonedDateTime object
+   * that takes into account the time zone for the given Organization
    *
    * @param {Date}
    *          date - An UTC Date object
@@ -359,13 +359,14 @@ public class OBDateUtils {
    * Format the given ZonedDateTime using the format provided in pattern
    * 
    * @param {ZonedDateTime}
-   *          date
+   *          date - A Date with Time zone information
    * @param {String}
    *          pattern - A Date pattern that should be accepted by DateTimeFormatter
    * @return a String with a formatted date, or empty string if there is no date object
    */
   public static String formatZonedDateTime(ZonedDateTime date, String pattern) {
     if (date == null) {
+      logger.error("No date provided to formatZonedDateTime method");
       return "";
     }
 
@@ -374,11 +375,11 @@ public class OBDateUtils {
   }
 
   /**
-   * Format the given ZonedDateTime using the format provided in Openbravo.properties including the
-   * time zone information
+   * Format the given ZonedDateTime using the <i>dateTimeFormat.java</i> format provided in
+   * Openbravo.properties including the time zone information
    *
    * @param {ZonedDateTime}
-   *          date
+   *          date - A Date with Time zone information
    * @return a String with a formatted date, or empty string if there is no date object
    */
   public static String formatZonedDateTime(ZonedDateTime date) {

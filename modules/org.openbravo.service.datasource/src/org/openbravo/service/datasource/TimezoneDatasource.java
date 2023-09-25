@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -33,9 +34,11 @@ import org.openbravo.service.json.JsonUtils;
 
 /**
  * This Datasource shows a list of Time zones according to Java's ZoneId class
+ *
+ * @see ZoneId
  */
 public class TimezoneDatasource extends ReadOnlyDataSourceService {
-  private static final org.apache.logging.log4j.Logger log = LogManager.getLogger();
+  private static final Logger log = LogManager.getLogger();
 
   @Override
   protected int getCount(Map<String, String> parameters) {
@@ -47,10 +50,17 @@ public class TimezoneDatasource extends ReadOnlyDataSourceService {
       int endRow) {
     int rowsToFetch = endRow - startRow + 1;
     Optional<JSONArray> criteria = getCriteria(parameters);
+    boolean isCriteriaPresent = criteria.isPresent();
 
     return ZoneId.getAvailableZoneIds()
         .stream() //
-        .filter(r -> filterRow(r, criteria)) //
+        .filter(r -> {
+          if (!isCriteriaPresent) {
+            return true;
+          }
+
+          return filterRow(r, criteria.get());
+        }) //
         .skip(startRow) //
         .limit(rowsToFetch) //
         .sorted()
@@ -74,16 +84,11 @@ public class TimezoneDatasource extends ReadOnlyDataSourceService {
     return Optional.empty();
   }
 
-  private static boolean filterRow(String row, Optional<JSONArray> criteria) {
-    if (!criteria.isPresent()) {
-      return true;
-    }
-
-    JSONArray criteriaArray = criteria.get();
+  private static boolean filterRow(String row, JSONArray criteria) {
     boolean meetsCriteria = true;
     try {
-      for (int i = 0; i < criteriaArray.length(); i++) {
-        JSONObject criterion = criteriaArray.getJSONObject(i);
+      for (int i = 0; i < criteria.length(); i++) {
+        JSONObject criterion = criteria.getJSONObject(i);
         String field = criterion.getString("fieldName");
         String value = criterion.getString("value").toLowerCase();
 

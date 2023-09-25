@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2022 Openbravo SLU
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.utility;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -88,6 +89,7 @@ public class OBDateUtilsTest extends OBBaseTest {
     ZonedDateTime convertedDate = OBDateUtils.convertFromServerToOrgDateTime(serverDate,
         organization);
 
+    assertNotNull(convertedDate);
     assertThat(convertedDate.toString(), equalTo(tokyoDate.toString()));
   }
 
@@ -99,7 +101,18 @@ public class OBDateUtilsTest extends OBBaseTest {
     ZonedDateTime convertedDate = OBDateUtils.convertFromServerToOrgDateTime(serverDate,
         "Asia/Tokyo");
 
+    assertNotNull(convertedDate);
     assertThat(convertedDate.toString(), equalTo(tokyoDate.toString()));
+  }
+
+  @Test
+  public void dateConverterWillReturnNullIfTheTimezoneDoesNotExist() {
+    Date serverDate = Date.from(Instant.parse("2023-09-18T10:00:00Z"));
+
+    ZonedDateTime convertedDate = OBDateUtils.convertFromServerToOrgDateTime(serverDate,
+        "Europe/Pamplona");
+
+    assertNull(convertedDate);
   }
 
   @Test
