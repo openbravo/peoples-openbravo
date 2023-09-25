@@ -21,9 +21,7 @@ package org.openbravo.service.json;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -49,14 +47,13 @@ import org.openbravo.base.model.domaintype.BinaryDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
-import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.weld.WeldUtils;
-import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.erpCommon.utility.OBDateUtils;
 
 /**
  * Is responsible for converting Openbravo business objects ({@link BaseOBObject} to a json
@@ -96,6 +93,8 @@ public class DataToJsonConverter {
   // entity of the data being converted. will be used in the convertToJsonObjects, as there are no
   // BaseOBObjects from which to infer the entity
   private Entity entity;
+
+  private boolean shouldDisplayOrgDate = false;
 
   private static final Logger log = LogManager.getLogger();
 
@@ -252,7 +251,7 @@ public class DataToJsonConverter {
         }
       }
 
-      if (bob instanceof Traceable) { // TODO: DS must indicate if this fields must be created
+      if (shouldDisplayOrgDate && bob instanceof Traceable) {
         Traceable traceable = (Traceable) bob;
         jsonObject.put("orgCreationDate", toOrganizationTimeZone(traceable.getCreationDate()));
         jsonObject.put("orgUpdatedDate", toOrganizationTimeZone(traceable.getUpdated()));
@@ -282,14 +281,14 @@ public class DataToJsonConverter {
     }
   }
 
+  public void setShouldDisplayOrgDate(boolean shouldDisplayOrgDate) {
+    this.shouldDisplayOrgDate = shouldDisplayOrgDate;
+  }
+
   private String toOrganizationTimeZone(Date date) {
-    ZoneId targetTimeZone = ZoneId.of("America/New_York");
-    String pattern = OBPropertiesProvider.getInstance()
-        .getOpenbravoProperties()
-        .getProperty(KernelConstants.DATETIME_FORMAT_PROPERTY, "dd-MM-yyyy HH:mm:ss");
-    ZonedDateTime zonedDateTime = date.toInstant().atZone(targetTimeZone);
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern + " (VV)");
-    return zonedDateTime.format(formatter);
+    ZonedDateTime zonedDateTime = OBDateUtils.convertFromServerToOrgDateTime(date,
+        "America/New_York"); // TODO pick zone from Org
+    return OBDateUtils.formatZonedDateTime(zonedDateTime);
   }
 
   private Map<String, Object> resolveAdditionalPropertyWithHook(BaseOBObject bob,

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.enterprise.inject.Any;
@@ -49,6 +50,9 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.CachedPreference;
+import org.openbravo.client.application.GCTab;
+import org.openbravo.client.application.window.OBViewUtil;
+import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -57,6 +61,7 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.db.DbUtility;
@@ -346,6 +351,21 @@ public class DefaultJsonDataService implements JsonDataService {
           && (!displayField.equals(JsonConstants.IDENTIFIER))) {
         toJsonConverter.setDisplayProperty(displayField);
       }
+      String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
+      String windowId = parameters.get(JsonConstants.WINDOW_ID);
+      Window window = OBDal.getInstance().get(Window.class, windowId);
+
+      // TODO: System grid config could be cached
+      Optional<GCTab> tabConfig = StandardWindowComponent.getTabsGridConfig(window).get(tabId);
+      JSONObject gridConfiguration = OBViewUtil
+          .getGridConfigurationSettings(StandardWindowComponent.getSystemGridConfig(), tabConfig);
+      boolean includeStoreDate = false;
+      try {
+        includeStoreDate = gridConfiguration.getBoolean("showStoreDates");
+      } catch (Exception e) {
+      }
+
+      toJsonConverter.setShouldDisplayOrgDate(includeStoreDate);
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
       addWritableAttribute(jsonObjects);

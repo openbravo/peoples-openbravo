@@ -51,6 +51,9 @@ public class OBViewUtil {
   public static final Element createdByElement;
   public static final Element updatedElement;
   public static final Element updatedByElement;
+  public static final Element orgCreatedElement;
+  public static final Element orgUpdatedElement;
+
   private static final String SORTABLE_PROPERTY = "PROPERTY_SORTABLE";
   private static final String FILTERABLE_PROPERTY = "PROPERTY_FILTERABLE";
   private static final String TEXTFILTERBEHAVIOR_PROPERTY = "PROPERTY_TEXTFILTERBEHAVIOR";
@@ -60,18 +63,23 @@ public class OBViewUtil {
   private static final String DISABLEFKCOMBO_PROPERTY = "PROPERTY_DISABLEFKCOMBO";
   private static final String THRESHOLDTOFILTER_PROPERTY = "PROPERTY_THRESHOLDTOFILTER";
   private static final String ISLAZYFILTERING_PROPERTY = "PROPERTY_ISLAZYFILTERING";
+  private static final String SHOWSTOREDATES_PROPERTY = "PROPERTY_SHOWSTOREDATES";
 
   static {
     createdElement = OBDal.getInstance().get(Element.class, "245");
     createdByElement = OBDal.getInstance().get(Element.class, "246");
     updatedElement = OBDal.getInstance().get(Element.class, "607");
     updatedByElement = OBDal.getInstance().get(Element.class, "608");
+    orgCreatedElement = OBDal.getInstance().get(Element.class, "8B22789BCEF84FF5A66D72DAE2E063D4");
+    orgUpdatedElement = OBDal.getInstance().get(Element.class, "E0C56968458E4820AFA58A16A04D6F94");
 
     // force loading translations for these fields as they might be used for labels
     Hibernate.initialize(createdElement.getADElementTrlList());
     Hibernate.initialize(createdByElement.getADElementTrlList());
     Hibernate.initialize(updatedElement.getADElementTrlList());
     Hibernate.initialize(updatedByElement.getADElementTrlList());
+    Hibernate.initialize(orgCreatedElement.getADElementTrlList());
+    Hibernate.initialize(orgUpdatedElement.getADElementTrlList());
   }
 
   private static Logger log = LogManager.getLogger();
@@ -258,6 +266,7 @@ public class OBViewUtil {
     private Long thresholdToFilter = null;
     private boolean isSortingColumnConfig;
     private boolean isFilteringColumnConfig;
+    private Boolean showStoreDates = null;
     private Field theField;
 
     private GridConfigSettings(Field field) {
@@ -311,6 +320,9 @@ public class OBViewUtil {
         }
         if (lazyFiltering == null && !(gcItem instanceof GCField)) {
           lazyFiltering = convertBoolean(gcItem, ISLAZYFILTERING_PROPERTY);
+        }
+        if (showStoreDates == null && !(gcItem instanceof GCField)) {
+          showStoreDates = convertBoolean(gcItem, SHOWSTOREDATES_PROPERTY);
         }
       } catch (Exception e) {
         log.error("Error while getting the properties of " + gcItem, e);
@@ -425,6 +437,9 @@ public class OBViewUtil {
         }
         if (disableFkDropdown != null) {
           result.put("disableFkDropdown", disableFkDropdown);
+        }
+        if (showStoreDates != null) {
+          result.put("showStoreDates", showStoreDates);
         }
       } catch (JSONException e) {
         log.error("Couldn't get field property value", e);

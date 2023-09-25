@@ -134,6 +134,8 @@ public class OrganizationNodeCache implements OBSingleton {
     boolean isTransactionsAllowed;
     boolean isPeriodControlAllowed;
 
+    String timeZoneId;
+
     private List<String> children = new ArrayList<>();
 
     void addChild(String childId) {
@@ -147,6 +149,7 @@ public class OrganizationNodeCache implements OBSingleton {
       isBusinessUnit = Objects.equals('Y', nodeDef[4]);
       isTransactionsAllowed = Objects.equals('Y', nodeDef[5]);
       isPeriodControlAllowed = Objects.equals('Y', nodeDef[6]);
+      // timeZoneId = (String) nodeDef[7];
     }
 
     void resolve(Map<String, OrgNode> orgNodes, String nodeId) {

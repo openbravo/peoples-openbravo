@@ -245,9 +245,18 @@ public class OBViewFieldHandler {
       OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement);
       auditFields.add(audit);
     }
-    if (true) { // TODO: read from config
+
+    JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(systemGridConfig,
+        getTabGridConfig());
+    boolean includeStoreDate = false;
+    try {
+      includeStoreDate = gridConfiguration.getBoolean("showStoreDates");
+    } catch (Exception e) {
+    }
+
+    if (includeStoreDate) {
       OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgCreationDate",
-          OBViewUtil.createdElement);
+          OBViewUtil.orgCreatedElement);
       auditFields.add(orgAudit);
     }
     if (!hasCreatedByField) {
@@ -258,8 +267,9 @@ public class OBViewFieldHandler {
       OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement);
       auditFields.add(audit);
     }
-    if (true) { // TODO: read from config
-      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgUpdatedDate", OBViewUtil.updatedElement);
+    if (includeStoreDate) {
+      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgUpdatedDate",
+          OBViewUtil.orgUpdatedElement);
       auditFields.add(orgAudit);
     }
     if (!hasUpdatedByField) {
