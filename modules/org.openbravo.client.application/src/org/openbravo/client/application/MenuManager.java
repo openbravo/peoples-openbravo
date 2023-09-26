@@ -66,7 +66,7 @@ public class MenuManager {
       new AbstractMap.SimpleEntry<String, List<String>>("S", Arrays.asList("4", "7", "6")),
       new AbstractMap.SimpleEntry<String, List<String>>(" CO", Arrays.asList("7", "6", "3", "1")),
       new AbstractMap.SimpleEntry<String, List<String>>(" C", Arrays.asList("7", "6", "3", "1")),
-      new AbstractMap.SimpleEntry<String, List<String>>("O", Arrays.asList("3", "1", "7")));
+      new AbstractMap.SimpleEntry<String, List<String>>("  O", Arrays.asList("3", "1", "7")));
 
   /**
    * Points to globally cached generic menu
