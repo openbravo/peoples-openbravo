@@ -19,6 +19,7 @@
 
 package org.openbravo.dal.security;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -425,6 +426,34 @@ public class OrganizationStructureProvider implements OBNotSingleton {
       orgNodes = OrganizationNodeCache.getInstance().getNodes(clientId);
     }
     return orgNodes.get(nodeId);
+  }
+
+  /**
+   * Retrieves the property value from the specified Organization nodeId. It can only retrieve those
+   * values that are cached using the OrgNode object.
+   *
+   * @see OrgNode
+   * 
+   * @param {String}
+   *          nodeId - The ID of the Organization to retrieve the info from
+   * @param {String}
+   *          property - The property as defined in OrgNode to retrieve
+   * @return An Object containing the value from OrgNode. Null if this value is empty or either the
+   *         OrgNode or the property does not exist
+   */
+  public Object getPropertyFromNode(String nodeId, String property) {
+    OrgNode node = getNode(nodeId);
+    if (node == null) {
+      return null;
+    }
+
+    try {
+      Field field = OrgNode.class.getDeclaredField(property);
+      return field.get(node);
+    } catch (Exception e) {
+      log.error("Cannot access to property {} in OrgNode", property, e);
+      return null;
+    }
   }
 
   private List<String> getTransactionAllowedOrgs(List<String> orgIds) {

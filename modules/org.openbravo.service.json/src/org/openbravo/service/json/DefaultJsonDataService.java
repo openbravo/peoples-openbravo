@@ -352,7 +352,7 @@ public class DefaultJsonDataService implements JsonDataService {
         toJsonConverter.setDisplayProperty(displayField);
       }
       String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
-      String windowId = parameters.get(JsonConstants.WINDOW_ID);
+      String windowId = parameters.get(JsonConstants.WINDOW_ID); // TODO CAN BE NULL
       Window window = OBDal.getInstance().get(Window.class, windowId);
 
       // TODO: System grid config could be cached

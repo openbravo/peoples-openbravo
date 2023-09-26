@@ -53,7 +53,9 @@ import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Is responsible for converting Openbravo business objects ({@link BaseOBObject} to a json
@@ -95,6 +97,7 @@ public class DataToJsonConverter {
   private Entity entity;
 
   private boolean shouldDisplayOrgDate = false;
+  private OrganizationStructureProvider organizationStructureProvider;
 
   private static final Logger log = LogManager.getLogger();
 
@@ -253,8 +256,14 @@ public class DataToJsonConverter {
 
       if (shouldDisplayOrgDate && bob instanceof Traceable) {
         Traceable traceable = (Traceable) bob;
-        jsonObject.put("orgCreationDate", toOrganizationTimeZone(traceable.getCreationDate()));
-        jsonObject.put("orgUpdatedDate", toOrganizationTimeZone(traceable.getUpdated()));
+        String orgId = ((Organization) bob.get("organization")).getId();
+        String timezoneId = organizationStructureProvider != null
+            ? (String) organizationStructureProvider.getPropertyFromNode(orgId, "timeZoneId")
+            : null;
+        jsonObject.put("orgCreationDate",
+            toOrganizationTimeZone(traceable.getCreationDate(), timezoneId));
+        jsonObject.put("orgUpdatedDate",
+            toOrganizationTimeZone(traceable.getUpdated(), timezoneId));
       }
 
       // When table references are set, the identifier should contain the display property for as it
@@ -285,9 +294,17 @@ public class DataToJsonConverter {
     this.shouldDisplayOrgDate = shouldDisplayOrgDate;
   }
 
-  private String toOrganizationTimeZone(Date date) {
+  public void setOrganizationStructureProvider(OrganizationStructureProvider osp) {
+    this.organizationStructureProvider = osp;
+  }
+
+  private String toOrganizationTimeZone(Date date, String organizationTimezone) {
+    if (date == null || organizationTimezone == null) {
+      return "";
+    }
+
     ZonedDateTime zonedDateTime = OBDateUtils.convertFromServerToOrgDateTime(date,
-        "America/New_York"); // TODO pick zone from Org
+        organizationTimezone);
     return OBDateUtils.formatZonedDateTime(zonedDateTime);
   }
 
