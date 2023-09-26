@@ -24,8 +24,6 @@ import static java.util.Comparator.comparing;
 import java.time.Duration;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.provider.OBSingleton;
@@ -38,7 +36,14 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 
 /**
- * TO BE DONE
+ * Cache that stores the System Grid Configuration and Tab Grid Configuration. It uses a
+ * TimeInvalidatedCache to avoid initializing this information too often. To avoid the potential
+ * case where we store several times the same configuration (e.g. every tab that has no
+ * configuration will use the system one), we cache separately the system and the tab ones and we
+ * compose them into a JSONObject with the getGridConfigurationForTab method.
+ *
+ * If this information changes, some time will passed until the update is reflected on the cache
+ * (see expireAfterDuration in cache builder)
  */
 public class GridConfigurationCache implements OBSingleton {
 
@@ -54,8 +59,6 @@ public class GridConfigurationCache implements OBSingleton {
       .name("Tab_GCC")
       .expireAfterDuration(Duration.ofMinutes(5))
       .build(GridConfigurationCache::initializeTabConfig);
-
-  private static final Logger log = LogManager.getLogger();
 
   /**
    * @return the singleton instance of OrganizationNodeCache
@@ -83,8 +86,7 @@ public class GridConfigurationCache implements OBSingleton {
   }
 
   /**
-   * TODO Explain why we wont cache the composed configuration as JSONObject (to avoid caching
-   * multiple copies of the same configuration)
+   * Get the cached system and Tab configuration and compose them into a single JSON Object
    */
   public JSONObject getGridConfigurationForTab(String tabId) {
     Optional<GCSystem> sysConf = systemGridConfigurationCache.get("system");

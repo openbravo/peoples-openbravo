@@ -556,7 +556,6 @@ public class DefaultJsonDataService implements JsonDataService {
     // Convert to Json only the properties specified in the request. If no properties are specified,
     // all of them will be converted to Json
     toJsonConverter.setSelectedProperties(selectedProperties);
-    // TODO Add datasource parameters here if we want to support new fields on CSV export
 
     final ScrollableResults scrollableResults = queryService.scroll();
     try {
