@@ -209,7 +209,9 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
         JSONObject field = fields.getJSONObject(i);
         if ((field.has("visible") && !field.getBoolean("visible"))
             || field.getString("name").equals("_checkboxField")
-            || field.getString("name").equals("_editLink")) {
+            || field.getString("name").equals("_editLink")
+            || field.getString("name").equals("orgCreationDate")
+            || field.getString("name").equals("orgUpdatedDate")) {
           // The field is not visible. We should not export it
           continue;
         }

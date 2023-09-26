@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.enterprise.inject.Any;
@@ -40,6 +39,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
+import org.openbravo.base.GridConfigurationCache;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.Entity;
@@ -50,9 +50,6 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.util.Check;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.application.CachedPreference;
-import org.openbravo.client.application.GCTab;
-import org.openbravo.client.application.window.OBViewUtil;
-import org.openbravo.client.application.window.StandardWindowComponent;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -61,7 +58,6 @@ import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.system.Client;
-import org.openbravo.model.ad.ui.Window;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.datasource.DataSourceUtils;
 import org.openbravo.service.db.DbUtility;
@@ -351,21 +347,13 @@ public class DefaultJsonDataService implements JsonDataService {
           && (!displayField.equals(JsonConstants.IDENTIFIER))) {
         toJsonConverter.setDisplayProperty(displayField);
       }
-      String tabId = parameters.get(JsonConstants.TAB_PARAMETER);
-      String windowId = parameters.get(JsonConstants.WINDOW_ID); // TODO CAN BE NULL
-      Window window = OBDal.getInstance().get(Window.class, windowId);
 
-      // TODO: System grid config could be cached
-      Optional<GCTab> tabConfig = StandardWindowComponent.getTabsGridConfig(window).get(tabId);
-      JSONObject gridConfiguration = OBViewUtil
-          .getGridConfigurationSettings(StandardWindowComponent.getSystemGridConfig(), tabConfig);
-      boolean includeStoreDate = false;
-      try {
-        includeStoreDate = gridConfiguration.getBoolean("showStoreDates");
-      } catch (Exception e) {
-      }
+      JSONObject gridConfiguration = GridConfigurationCache.getInstance()
+          .getGridConfigurationForTab(parameters.get(JsonConstants.TAB_PARAMETER));
+      toJsonConverter.setOrganizationStructureProvider(
+          OBContext.getOBContext().getOrganizationStructureProvider());
+      toJsonConverter.setShouldDisplayOrgDate(shouldIncludeStoreDate(gridConfiguration));
 
-      toJsonConverter.setShouldDisplayOrgDate(includeStoreDate);
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
       addWritableAttribute(jsonObjects);
@@ -379,6 +367,17 @@ public class DefaultJsonDataService implements JsonDataService {
       log.error(t.getMessage(), t);
       return JsonUtils.convertExceptionToJson(t);
     }
+  }
+
+  private boolean shouldIncludeStoreDate(JSONObject gridConfiguration) {
+    boolean includeStoreDate = false;
+    try {
+      includeStoreDate = gridConfiguration.getBoolean("showStoreDates");
+    } catch (Exception e) {
+      log.error("Error retrieving showStoreDates from Grid Configuration", e);
+    }
+
+    return includeStoreDate;
   }
 
   /**
@@ -557,6 +556,7 @@ public class DefaultJsonDataService implements JsonDataService {
     // Convert to Json only the properties specified in the request. If no properties are specified,
     // all of them will be converted to Json
     toJsonConverter.setSelectedProperties(selectedProperties);
+    // TODO Add datasource parameters here if we want to support new fields on CSV export
 
     final ScrollableResults scrollableResults = queryService.scroll();
     try {

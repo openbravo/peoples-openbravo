@@ -49,13 +49,13 @@ import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
-import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Is responsible for converting Openbravo business objects ({@link BaseOBObject} to a json
@@ -254,9 +254,9 @@ public class DataToJsonConverter {
         }
       }
 
-      if (shouldDisplayOrgDate && bob instanceof Traceable) {
+      if (shouldDisplayOrgDate && bob instanceof Traceable && bob instanceof OrganizationEnabled) {
         Traceable traceable = (Traceable) bob;
-        String orgId = ((Organization) bob.get("organization")).getId();
+        String orgId = ((OrganizationEnabled) bob).getOrganization().getId();
         String timezoneId = organizationStructureProvider != null
             ? (String) organizationStructureProvider.getPropertyFromNode(orgId, "timeZoneId")
             : null;
