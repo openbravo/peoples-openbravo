@@ -90,7 +90,8 @@ public class GridConfigurationCache implements OBSingleton {
    */
   public JSONObject getGridConfigurationForTab(String tabId) {
     Optional<GCSystem> sysConf = systemGridConfigurationCache.get("system");
-    Optional<GCTab> tabConf = tabGridConfigurationCache.get(tabId);
+    Optional<GCTab> tabConf = tabId != null ? tabGridConfigurationCache.get(tabId)
+        : Optional.empty();
     return OBViewUtil.getGridConfigurationSettings(sysConf, tabConf);
   }
 

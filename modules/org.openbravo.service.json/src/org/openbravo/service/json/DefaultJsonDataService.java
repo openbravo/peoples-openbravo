@@ -374,7 +374,6 @@ public class DefaultJsonDataService implements JsonDataService {
     try {
       includeStoreDate = gridConfiguration.getBoolean("showStoreDates");
     } catch (Exception e) {
-      log.error("Error retrieving showStoreDates from Grid Configuration", e);
     }
 
     return includeStoreDate;
