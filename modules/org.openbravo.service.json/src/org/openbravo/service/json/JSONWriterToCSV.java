@@ -209,9 +209,7 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
         JSONObject field = fields.getJSONObject(i);
         if ((field.has("visible") && !field.getBoolean("visible"))
             || field.getString("name").equals("_checkboxField")
-            || field.getString("name").equals("_editLink")
-            || field.getString("name").equals("orgCreationDate")
-            || field.getString("name").equals("orgUpdatedDate")) {
+            || field.getString("name").equals("_editLink")) {
           // The field is not visible. We should not export it
           continue;
         }
@@ -254,6 +252,20 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
         }
       }
     }
+    loadOrgAuditNiceFieldProperty();
+  }
+
+  /**
+   * Load Organization audit (orgCreation and orgUpdated) properties into niceFieldProperties to
+   * display proper labels for those field's header when they are visible in the View
+   */
+  private void loadOrgAuditNiceFieldProperty() {
+    Element orgCreatedElement = OBViewUtil.orgCreatedElement;
+    niceFieldProperties.put("orgCreationDate",
+        OBViewUtil.getLabel(orgCreatedElement, orgCreatedElement.getADElementTrlList()));
+    Element orgUpdatedElement = OBViewUtil.orgUpdatedElement;
+    niceFieldProperties.put("orgUpdatedDate",
+        OBViewUtil.getLabel(orgUpdatedElement, orgUpdatedElement.getADElementTrlList()));
   }
 
   private Map<String, Property> loadEntityProperties(Entity entity) {

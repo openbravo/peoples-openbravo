@@ -556,6 +556,12 @@ public class DefaultJsonDataService implements JsonDataService {
     // all of them will be converted to Json
     toJsonConverter.setSelectedProperties(selectedProperties);
 
+    JSONObject gridConfiguration = GridConfigurationCache.getInstance()
+        .getGridConfigurationForTab(parameters.get(JsonConstants.TAB_PARAMETER));
+    toJsonConverter.setOrganizationStructureProvider(
+        OBContext.getOBContext().getOrganizationStructureProvider());
+    toJsonConverter.setShouldDisplayOrgDate(shouldIncludeStoreDate(gridConfiguration));
+
     final ScrollableResults scrollableResults = queryService.scroll();
     try {
       int i = 0;
