@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.ThreadHandler;
 
 /**
@@ -52,6 +53,15 @@ public class KernelFilter implements Filter {
   @Override
   public void doFilter(final ServletRequest request, final ServletResponse response,
       final FilterChain chain) throws IOException, ServletException {
+
+    HttpServletResponse httpResp = (HttpServletResponse) response;
+    // httpResp.setHeader("X-Content-Type-Options", "nosniff");
+    if (OBContext.getOBContext() != null) {
+      httpResp.setHeader("Content-Security-Policy-Report-Only",
+          "default-src 'self'; report-uri /openbravo/csp");
+      // httpResp.setHeader("Content-Security-Policy", "default-src 'self'");
+    }
+
     final ThreadHandler dth = new ThreadHandler() {
 
       @Override
