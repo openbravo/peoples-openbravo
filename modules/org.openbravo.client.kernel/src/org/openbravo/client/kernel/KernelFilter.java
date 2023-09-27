@@ -30,7 +30,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.ThreadHandler;
 
 /**
@@ -55,12 +54,12 @@ public class KernelFilter implements Filter {
       final FilterChain chain) throws IOException, ServletException {
 
     HttpServletResponse httpResp = (HttpServletResponse) response;
-    // httpResp.setHeader("X-Content-Type-Options", "nosniff");
-    if (OBContext.getOBContext() != null) {
-      httpResp.setHeader("Content-Security-Policy-Report-Only",
-          "default-src 'self'; report-uri /openbravo/csp");
-      // httpResp.setHeader("Content-Security-Policy", "default-src 'self'");
-    }
+    httpResp.setHeader("X-Content-Type-Options", "nosniff");
+    // if (OBContext.getOBContext() != null) {
+    // httpResp.setHeader("Content-Security-Policy-Report-Only",
+    // "default-src 'self'; report-uri /openbravo/csp");
+    // // httpResp.setHeader("Content-Security-Policy", "default-src 'self'");
+    // }
 
     final ThreadHandler dth = new ThreadHandler() {
 
