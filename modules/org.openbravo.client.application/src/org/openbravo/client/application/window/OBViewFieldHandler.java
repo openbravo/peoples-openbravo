@@ -249,12 +249,7 @@ public class OBViewFieldHandler {
 
     JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(systemGridConfig,
         getTabGridConfig());
-    boolean includeStoreDate = false;
-    try {
-      includeStoreDate = gridConfiguration.getBoolean("showStoreDates");
-    } catch (Exception e) {
-    }
-
+    boolean includeStoreDate = gridConfiguration.optBoolean("showStoreDates", false);
     if (includeStoreDate) {
       OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgCreationDate", "OrgCreated");
       auditFields.add(orgAudit);
