@@ -734,10 +734,6 @@ public class OBViewFieldHandler {
         // User search
         refType = SEARCH_REFERENCE;
         refEntity = "User";
-      } else if (type.startsWith("org")) {
-        // Date time
-        refType = STRING_REFERENCE;
-        refEntity = "";
       } else {
         // Date time
         refType = DATETIME_REFERENCE;
@@ -748,16 +744,18 @@ public class OBViewFieldHandler {
     /**
      * Generate a new OBViewFieldAudit using a Message instead of an Element. Currently this is only
      * used for virtual audit fields (Created/Updated date in Store Time). That's why we assume this
-     * field is a datetime and this should be refactored in the future if we want to support more
-     * types
+     * field is a string (actually it is the string value of a datetime) and this should be
+     * refactored in the future if we want to support more types
      * 
      * @param type
+     *          Name of the audit field
      * @param labelMessageKey
+     *          Search key for the translated message we want to use as a label
      */
     public OBViewFieldAudit(String type, String labelMessageKey) {
       this.element = null;
       this.name = type;
-      this.refType = DATETIME_REFERENCE;
+      this.refType = STRING_REFERENCE;
       this.refEntity = "";
       this.messageKey = labelMessageKey;
     }

@@ -96,14 +96,16 @@ public class GridConfigurationCache implements OBSingleton {
   }
 
   /**
+   * Invalidates the cache for system Grid Configuration because the config has changed
    */
-  // TODO Use on eventHandler
-  void clearSystemGridConfiguration() {
+  public void clearSystemGridConfiguration() {
     systemGridConfigurationCache.invalidateAll();
   }
 
-  // TODO Use on eventHandler
-  void clearTabGridConfiguration(String tabId) {
+  /**
+   * Invalidates the cache for Tab Grid Configuration because the config has changed for this Tab
+   */
+  public void clearTabGridConfiguration(String tabId) {
     tabGridConfigurationCache.invalidate(tabId);
   }
 }
