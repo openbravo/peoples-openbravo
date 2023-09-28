@@ -260,12 +260,8 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
    * display proper labels for those field's header when they are visible in the View
    */
   private void loadOrgAuditNiceFieldProperty() {
-    Element orgCreatedElement = OBViewUtil.orgCreatedElement;
-    niceFieldProperties.put("orgCreationDate",
-        OBViewUtil.getLabel(orgCreatedElement, orgCreatedElement.getADElementTrlList()));
-    Element orgUpdatedElement = OBViewUtil.orgUpdatedElement;
-    niceFieldProperties.put("orgUpdatedDate",
-        OBViewUtil.getLabel(orgUpdatedElement, orgUpdatedElement.getADElementTrlList()));
+    niceFieldProperties.put("orgCreationDate", OBMessageUtils.getI18NMessage("OrgCreated"));
+    niceFieldProperties.put("orgUpdatedDate", OBMessageUtils.getI18NMessage("OrgUpdated"));
   }
 
   private Map<String, Property> loadEntityProperties(Entity entity) {

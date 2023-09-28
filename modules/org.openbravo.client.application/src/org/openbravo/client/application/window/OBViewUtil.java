@@ -51,8 +51,6 @@ public class OBViewUtil {
   public static final Element createdByElement;
   public static final Element updatedElement;
   public static final Element updatedByElement;
-  public static final Element orgCreatedElement;
-  public static final Element orgUpdatedElement;
 
   private static final String SORTABLE_PROPERTY = "PROPERTY_SORTABLE";
   private static final String FILTERABLE_PROPERTY = "PROPERTY_FILTERABLE";
@@ -70,16 +68,12 @@ public class OBViewUtil {
     createdByElement = OBDal.getInstance().get(Element.class, "246");
     updatedElement = OBDal.getInstance().get(Element.class, "607");
     updatedByElement = OBDal.getInstance().get(Element.class, "608");
-    orgCreatedElement = OBDal.getInstance().get(Element.class, "8B22789BCEF84FF5A66D72DAE2E063D4");
-    orgUpdatedElement = OBDal.getInstance().get(Element.class, "E0C56968458E4820AFA58A16A04D6F94");
 
     // force loading translations for these fields as they might be used for labels
     Hibernate.initialize(createdElement.getADElementTrlList());
     Hibernate.initialize(createdByElement.getADElementTrlList());
     Hibernate.initialize(updatedElement.getADElementTrlList());
     Hibernate.initialize(updatedByElement.getADElementTrlList());
-    Hibernate.initialize(orgCreatedElement.getADElementTrlList());
-    Hibernate.initialize(orgUpdatedElement.getADElementTrlList());
   }
 
   private static Logger log = LogManager.getLogger();

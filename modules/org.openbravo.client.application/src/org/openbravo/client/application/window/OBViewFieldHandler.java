@@ -55,6 +55,7 @@ import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldGroup;
@@ -255,8 +256,7 @@ public class OBViewFieldHandler {
     }
 
     if (includeStoreDate) {
-      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgCreationDate",
-          OBViewUtil.orgCreatedElement);
+      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgCreationDate", "OrgCreated");
       auditFields.add(orgAudit);
     }
     if (!hasCreatedByField) {
@@ -268,8 +268,7 @@ public class OBViewFieldHandler {
       auditFields.add(audit);
     }
     if (includeStoreDate) {
-      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgUpdatedDate",
-          OBViewUtil.orgUpdatedElement);
+      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgUpdatedDate", "OrgUpdated");
       auditFields.add(orgAudit);
     }
     if (!hasUpdatedByField) {
@@ -688,6 +687,7 @@ public class OBViewFieldHandler {
     private String refType;
     private String refEntity;
     private Element element;
+    private String messageKey;
 
     @Override
     public String getOnChangeFunction() {
@@ -748,6 +748,23 @@ public class OBViewFieldHandler {
         refType = DATETIME_REFERENCE;
         refEntity = "";
       }
+    }
+
+    /**
+     * Generate a new OBViewFieldAudit using a Message instead of an Element. Currently this is only
+     * used for virtual audit fields (Created/Updated date in Store Time). That's why we assume this
+     * field is a datetime and this should be refactored in the future if we want to support more
+     * types
+     * 
+     * @param type
+     * @param labelMessageKey
+     */
+    public OBViewFieldAudit(String type, String labelMessageKey) {
+      this.element = null;
+      this.name = type;
+      this.refType = DATETIME_REFERENCE;
+      this.refEntity = "";
+      this.messageKey = labelMessageKey;
     }
 
     public String getGridFieldProperties() {
@@ -813,7 +830,11 @@ public class OBViewFieldHandler {
 
     @Override
     public String getLabel() {
-      return OBViewUtil.getLabel(element, element.getADElementTrlList());
+      if (element != null) {
+        return OBViewUtil.getLabel(element, element.getADElementTrlList());
+      }
+
+      return OBMessageUtils.getI18NMessage(this.messageKey);
     }
 
     @Override
