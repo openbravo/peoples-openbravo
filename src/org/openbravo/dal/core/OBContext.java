@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -647,9 +649,16 @@ public class OBContext implements OBNotSingleton, Serializable {
       return new ArrayList<>(orgList);
     }
 
-    List<String> currentOrgList = Boolean.TRUE.equals(targetRole.isManual())
-        ? getAvailableOrganizationsForManualRole(targetRole, isActiveOrganization)
-        : getAvailableOrganizationsForAutomaticRole(targetRole);
+    List<String> currentOrgList = getAvailableOrganizationsForManualRole(targetRole,
+        isActiveOrganization);
+
+    if (Boolean.FALSE.equals(targetRole.isManual())) {
+      currentOrgList = Stream
+          .concat(currentOrgList.stream(),
+              getAvailableOrganizationsForAutomaticRole(targetRole).stream())
+          .distinct()
+          .collect(Collectors.toList());
+    }
 
     if (additionalOrgs != null) {
       for (final String orgId : additionalOrgs) {
@@ -963,6 +972,17 @@ public class OBContext implements OBNotSingleton, Serializable {
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
         setCurrentOrganization(getUser().getDefaultOrganization());
+      } else if (!getRole().isManual()) {
+        List<String> orgs = getAvailableOrganizationsForAutomaticRole(getRole());
+        Organization org = OBDal.getInstance().get(Organization.class, orgs.get(0));
+
+        Hibernate.initialize(org);
+        setCurrentOrganization(org);
+
+        // if no client id then use the client of the role
+        if (localClientId == null) {
+          localClientId = getCurrentOrganization().getClient().getId();
+        }
       } else {
         // @formatter:off
         final String roleOrgQryStr = "select roa"
