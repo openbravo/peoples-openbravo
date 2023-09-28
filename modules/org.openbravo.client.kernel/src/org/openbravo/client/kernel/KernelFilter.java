@@ -30,6 +30,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.ThreadHandler;
 
 /**
@@ -54,12 +56,16 @@ public class KernelFilter implements Filter {
       final FilterChain chain) throws IOException, ServletException {
 
     HttpServletResponse httpResp = (HttpServletResponse) response;
-    httpResp.setHeader("X-Content-Type-Options", "nosniff");
-    // if (OBContext.getOBContext() != null) {
-    // httpResp.setHeader("Content-Security-Policy-Report-Only",
-    // "default-src 'self'; report-uri /openbravo/csp");
-    // // httpResp.setHeader("Content-Security-Policy", "default-src 'self'");
-    // }
+    // httpResp.setHeader("X-Content-Type-Options", "nosniff");
+    String contextName = OBPropertiesProvider.getInstance()
+        .getOpenbravoProperties()
+        .getProperty("context.name");
+    String reportUri = "/" + contextName + "/csp";
+    if (OBContext.getOBContext() != null) {
+      httpResp.setHeader("Content-Security-Policy-Report-Only",
+          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self' http://oj0ijfii34kccq3ioto7mdspc7r2s7o9.ig.ig.gmodules.com; report-uri "
+              + reportUri + ";");
+    }
 
     final ThreadHandler dth = new ThreadHandler() {
 
