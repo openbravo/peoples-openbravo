@@ -3296,6 +3296,7 @@ For changes to become effective, you must re-login and re-start the Application 
 <!--256-->  <ISSORTTAB><![CDATA[N]]></ISSORTTAB>
 <!--256-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--256-->  <UIPATTERN><![CDATA[STD]]></UIPATTERN>
+<!--256-->  <HQLWHERECLAUSE><![CDATA[e.active='Y']]></HQLWHERECLAUSE>
 <!--256-->  <HQLORDERBYCLAUSE><![CDATA[lineNo]]></HQLORDERBYCLAUSE>
 <!--256-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
 <!--256-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
