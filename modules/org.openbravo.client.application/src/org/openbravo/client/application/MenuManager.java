@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -142,10 +142,12 @@ public class MenuManager {
   }
 
   private List<String> getFormIdsForAutomaticRole(Role role) {
+    // @formatter:off
     final String formsHql = "select f.id " + //
         " from ADForm f " + //
         "where f.dataAccessLevel in :accessLevels " + //
         "  and f.active = true";
+    // @formatter:on
     final Query<String> formsQry = OBDal.getInstance()
         .getSession()
         .createQuery(formsHql, String.class);
@@ -166,7 +168,7 @@ public class MenuManager {
     return formsQry.list();
   }
 
-  private List<String> linkProcessForAutoRole(Role role) {
+  private List<String> getLinkedProcessesForAutoRole(Role role) {
     String allowedProcessHql = "select a.id " + //
         " from ADProcess a " + //
         "where dataAccessLevel in ( :roleAccessLevels ) " + //
@@ -174,10 +176,9 @@ public class MenuManager {
 
     final Query<String> allowedProcessQry = OBDal.getInstance()
         .getSession()
-        .createQuery(allowedProcessHql, String.class);
-    return allowedProcessQry
-        .setParameter("roleAccessLevels", accessLevelForUserLevel.get(role.getUserLevel()))
-        .list();
+        .createQuery(allowedProcessHql, String.class)
+        .setParameter("roleAccessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+    return allowedProcessQry.list();
   }
 
   private List<String> linkProcessForManualRole() {
@@ -187,8 +188,9 @@ public class MenuManager {
         "  and pa.active = true";
     final Query<String> allowedProcessQry = OBDal.getInstance()
         .getSession()
-        .createQuery(allowedProcessHql, String.class);
-    return allowedProcessQry.setParameter("role", OBContext.getOBContext().getRole()).list();
+        .createQuery(allowedProcessHql, String.class)
+        .setParameter("role", OBContext.getOBContext().getRole());
+    return allowedProcessQry.list();
   }
 
   private void linkProcesses() {
@@ -197,7 +199,7 @@ public class MenuManager {
     if (role.isManual()) {
       processList = linkProcessForManualRole();
     } else {
-      processList = linkProcessForAutoRole(role);
+      processList = getLinkedProcessesForAutoRole(role);
     }
 
     for (String processId : processList) {
@@ -232,10 +234,9 @@ public class MenuManager {
         "  and pa.active = true ";
     final Query<String> processQry = OBDal.getInstance()
         .getSession()
-        .createQuery(processHql, String.class);
-    processQry.setParameter("role", role);
-    List<String> processIds = processQry.list();
-    return processIds;
+        .createQuery(processHql, String.class)
+        .setParameter("role", role);
+    return processQry.list();
   }
 
   private List<String> getProcessIdsForAutomaticRole(Role role) {
@@ -245,8 +246,8 @@ public class MenuManager {
         " and p.active = true";
     final Query<String> processQry = OBDal.getInstance()
         .getSession()
-        .createQuery(processHql, String.class);
-    processQry.setParameter("accessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+        .createQuery(processHql, String.class)
+        .setParameter("accessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
     return processQry.list();
   }
 
@@ -323,41 +324,48 @@ public class MenuManager {
   }
 
   private List<Object[]> getAutomaticWindowAccess(Role role, List<String> excludedWindowIds) {
-    String excludedIdsWhereClause = !excludedWindowIds.isEmpty()
-        ? " and w.id not in ( :excludedWindowIds ) "
-        : "";
-    final String windowsHql = "select w.id, tab.id, true, true" + //
-        " from ADWindow w " + //
-        " left join w.aDTabList as tab with tab.tabLevel = 0 " + //
-        " left join tab.table as table " + //
-        " where w.active = true " + //
-        " " + excludedIdsWhereClause + " " + //
-        " and tab.active = true " + //
-        " and table.dataAccessLevel in ( :roleAccessLevels ) " + //
+    // @formatter:off
+    String windowsHql =
+        "select w.id, tab.id, true, true" +
+        "  from ADWindow w " +
+        "    left join w.aDTabList as tab with tab.tabLevel = 0 " +
+        "    left join tab.table as table " +
+        " where w.active = true ";
+    // @formatter:on
+    windowsHql += !excludedWindowIds.isEmpty() ? " and w.id not in ( :excludedWindowIds ) " : "";
+    // @formatter:off
+    windowsHql +=
+        "   and tab.active = true " +
+        "   and table.dataAccessLevel in ( :roleAccessLevels ) " +
         " order by w.id, tab.sequenceNumber DESC ";
+    // @formatter:on
     final Query<Object[]> windowsQry = OBDal.getInstance()
         .getSession()
-        .createQuery(windowsHql, Object[].class);
-    if (!excludedIdsWhereClause.isEmpty()) {
+        .createQuery(windowsHql, Object[].class)
+        .setParameter("roleAccessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+    if (!excludedWindowIds.isEmpty()) {
       windowsQry.setParameter("excludedWindowIds", excludedWindowIds);
     }
-    windowsQry.setParameter("roleAccessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
     return windowsQry.list();
+
   }
 
   private List<Object[]> getManualWindowAccess(Role role) {
-    final String windowsHql = "select wa.window.id, t.id, ta.editableField, wa.editableField" + //
-        " from ADWindowAccess wa " + //
-        " left join wa.aDTabAccessList as ta " + //
-        " left join ta.tab as t with t.tabLevel = 0 " + //
-        " where wa.role = :role" + //
-        " and wa.active = true " + //
-        " and (ta.active = true or ta.active is null) " + //
+    // @formatter:off
+    final String windowsHql =
+        "select wa.window.id, t.id, ta.editableField, wa.editableField" +
+        "  from ADWindowAccess wa " +
+        "    left join wa.aDTabAccessList as ta " +
+        "    left join ta.tab as t with t.tabLevel = 0 " +
+        " where wa.role = :role" +
+        "   and wa.active = true " +
+        "   and (ta.active = true or ta.active is null) " +
         " order by wa.id, t.sequenceNumber DESC ";
+    // @formatter:on
     final Query<Object[]> windowsQry = OBDal.getInstance()
         .getSession()
-        .createQuery(windowsHql, Object[].class);
-    windowsQry.setParameter("role", role);
+        .createQuery(windowsHql, Object[].class)
+        .setParameter("role", role);
     return windowsQry.list();
   }
 

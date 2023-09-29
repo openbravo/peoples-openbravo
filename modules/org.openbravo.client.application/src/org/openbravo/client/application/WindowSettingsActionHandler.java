@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2011-2022 Openbravo SLU 
+ * All portions are Copyright (C) 2011-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -183,7 +183,6 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
   }
 
   private JSONArray getFieldLevelRoles(Window window) throws JSONException {
-    final String roleId = OBContext.getOBContext().getRole().getId();
     final JSONArray tabs = new JSONArray();
 
     List<TabAccess> tabAccessList = getManualTabAccess(window);

@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -162,7 +162,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
 
   private List<String> getAccessibleWidgetClassIdsForManualRole(String roleId,
       String additionalWhereClause) {
-  //@formatter:off
+    //@formatter:off
     String hql = 
             "select widgetClassAccess.widgetClass.id " +
             "  from OBKMO_WidgetClassAccess widgetClassAccess " +
@@ -182,7 +182,6 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   }
 
   private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
-    // getRole(roleId);
     List<String> widgetClassIds;
     Role role = OBContext.getOBContext().getRole();
     if (!role.isManual()) {

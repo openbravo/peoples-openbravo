@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -381,21 +381,23 @@ public class EntityAccessChecker implements OBNotSingleton {
   }
 
   private List<Object[]> getAutomaticTableAccess(Role role, List<String> excludedTableIds) {
-    String excludedIdsWhereClause = !excludedTableIds.isEmpty()
-        ? " and t.id not in ( :excludedTableIds ) "
-        : "";
-    final String tablesHql = "select t.id, true" + //
-        " from ADTable t " + //
-        " where t.active = true " + //
-        " and t.active = true " + //
-        " " + excludedIdsWhereClause + " " + //
-        " and t.dataAccessLevel in ( :roleAccessLevels ) ";
+    // Don't use dal because otherwise we can end up in infinite loops
+    // @formatter:off
+    String tablesHql =
+        "select t.id, true" +
+        "  from ADTable t " +
+        " where t.active = true " +
+        "   and t.active = true ";
+    // @formatter:on
+    tablesHql += !excludedTableIds.isEmpty() ? " and t.id not in ( :excludedTableIds ) " : "";
+    tablesHql += " and t.dataAccessLevel in ( :roleAccessLevels ) ";
     final Query<Object[]> tablesQry = OBDal.getInstance()
         .getSession()
         .createQuery(tablesHql, Object[].class);
-    if (!excludedIdsWhereClause.isEmpty()) {
+    if (!excludedTableIds.isEmpty()) {
       tablesQry.setParameter("excludedTableIds", excludedTableIds);
     }
+
     tablesQry.setParameter("roleAccessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
     return tablesQry.list();
   }
@@ -422,8 +424,6 @@ public class EntityAccessChecker implements OBNotSingleton {
     Query<String> processAccessQry = SessionHandler.getInstance()
         .createQuery(processAccessQryStr, String.class)
         .setParameter("roleId", getRoleId());
-
-    final List<String> processAccessQuery = processAccessQry.list();
     processAccessQry.list().forEach(process -> processes.add(process));
   }
 

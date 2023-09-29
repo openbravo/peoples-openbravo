@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015 Openbravo SLU 
+ * All portions are Copyright (C) 2015-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -365,7 +365,8 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
         template.setTemplate(false);
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
-        // Expected exception, the AD_ROLE_TRG avoids this save
+        // Expected exception, the AD_ROLE_TEMPLATE_ISMANUAL_CHK constraint avoids this save
+        OBDal.getInstance().rollbackAndClose();
       }
 
       template = OBDal.getInstance().get(Role.class, templateId);

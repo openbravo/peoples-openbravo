@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2022 Openbravo S.L.U.
+ * Copyright (C) 2001-2023 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -131,8 +131,8 @@ public class LoginUtils {
 
   static boolean validRoleClient(ConnectionProvider conn, String role, String client)
       throws ServletException {
-    boolean valid = SeguridadData.isRoleClient(conn, role, client)
-        || SeguridadData.isAutomaticRole(conn, role);
+    boolean valid = SeguridadData.isAutomaticRole(conn, role)
+        || SeguridadData.isRoleClient(conn, role, client);
     if (!valid) {
       log4j.error("Login client is not in role clients list. Role: " + role + ", Client: " + client,
           new Exception("stack trace"));
@@ -142,8 +142,8 @@ public class LoginUtils {
 
   static boolean validRoleOrg(ConnectionProvider conn, String role, String org)
       throws ServletException {
-    boolean valid = SeguridadData.isLoginRoleOrg(conn, role, org)
-        || SeguridadData.isAutomaticRole(conn, role);
+    boolean valid = SeguridadData.isAutomaticRole(conn, role)
+        || SeguridadData.isLoginRoleOrg(conn, role, org);
     if (!valid) {
       log4j.error(
           "Login organization is not in role organizations list. Role: " + role + ", Org: " + org,
