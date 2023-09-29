@@ -981,7 +981,7 @@ public class OBContext implements OBNotSingleton, Serializable {
 
         // if no client id then use the client of the role
         if (localClientId == null) {
-          localClientId = getCurrentOrganization().getClient().getId();
+          localClientId = getRole().getClient().getId();
         }
       } else {
         // @formatter:off
