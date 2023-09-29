@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
@@ -150,10 +151,8 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     }
   }
 
-  private JSONArray getFieldLevelRoles(Window window) throws JSONException {
+  private List<TabAccess> getManualTabAccess(Window window) {
     final String roleId = OBContext.getOBContext().getRole().getId();
-    final JSONArray tabs = new JSONArray();
-
     OBQuery<TabAccess> qTabAccess = OBDal.getInstance()
         .createQuery(TabAccess.class,
             "as ta where ta.windowAccess.role.id= :roleId\n"
@@ -163,46 +162,83 @@ public class WindowSettingsActionHandler extends BaseActionHandler {
     qTabAccess.setNamedParameter("roleId", roleId);
     qTabAccess.setNamedParameter("windowId", window.getId());
 
-    for (TabAccess tabAccess : qTabAccess.list()) {
-      Tab tab = adcs.getTab(tabAccess.getTab().getId());
-      boolean tabEditable = tabAccess.isEditableField();
-      final Entity entity = ModelProvider.getInstance().getEntityByTableId(tab.getTable().getId());
-      final JSONObject jTab = new JSONObject();
-      tabs.put(jTab);
-      jTab.put("tabId", tab.getId());
-      jTab.put("updatable", tabEditable);
-      final JSONObject jFields = new JSONObject();
-      jTab.put("fields", jFields);
-      final Set<String> fields = new TreeSet<String>();
-      List<Field> tabFields = tab.getADFieldList();
-      for (Field field : tabFields) {
-        if (!field.isReadOnly() && !field.isShownInStatusBar() && field.getColumn() != null
-            && field.getColumn().isUpdatable()) {
-          final Property property = KernelUtils.getProperty(entity, field);
-          if (property != null) {
-            fields.add(property.getName());
+    return qTabAccess.list();
+  }
+
+  private Map<Tab, TabAccess> getTabs(List<TabAccess> tabAccessList, Window window) {
+    Map<Tab, TabAccess> tabAccessMap = tabAccessList.stream()
+        .collect(Collectors.toMap(TabAccess::getTab, tabAccess -> tabAccess));
+
+    if (!OBContext.getOBContext().getRole().isManual()) {
+      Set<Tab> uniquetabAccessList = tabAccessList.stream()
+          .map(TabAccess::getTab)
+          .collect(Collectors.toSet());
+      List<Tab> tabList = window.getADTabList();
+      List<Tab> filteredTabList = tabList.stream()
+          .filter(tab -> !uniquetabAccessList.contains(tab))
+          .collect(Collectors.toList());
+      filteredTabList.forEach(tab -> tabAccessMap.put(tab, null));
+    }
+    return tabAccessMap;
+  }
+
+  private JSONArray getFieldLevelRoles(Window window) throws JSONException {
+    final String roleId = OBContext.getOBContext().getRole().getId();
+    final JSONArray tabs = new JSONArray();
+
+    List<TabAccess> tabAccessList = getManualTabAccess(window);
+    Map<Tab, TabAccess> tabAccessMap = getTabs(tabAccessList, window);
+
+    tabAccessMap.forEach((tab, tabAccess) -> {
+      try {
+        boolean tabEditable = true;
+        if (tabAccess != null) {
+          tabEditable = tabAccess.isEditableField();
+        }
+        final Entity entity = ModelProvider.getInstance()
+            .getEntityByTableId(tab.getTable().getId());
+        final JSONObject jTab = new JSONObject();
+        tabs.put(jTab);
+        jTab.put("tabId", tab.getId());
+        jTab.put("updatable", tabEditable);
+        final JSONObject jFields = new JSONObject();
+        jTab.put("fields", jFields);
+        final Set<String> fields = new TreeSet<String>();
+        List<Field> tabFields = tab.getADFieldList();
+
+        for (Field field : tabFields) {
+          if (!field.isReadOnly() && !field.isShownInStatusBar() && field.getColumn() != null
+              && field.getColumn().isUpdatable()) {
+            final Property property = KernelUtils.getProperty(entity, field);
+            if (property != null) {
+              fields.add(property.getName());
+            }
           }
         }
-      }
-      for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
-        if (!fieldAccess.isActive()) {
-          continue;
+        if (tabAccess != null) {
+          for (FieldAccess fieldAccess : tabAccess.getADFieldAccessList()) {
+            if (!fieldAccess.isActive()) {
+              continue;
+            }
+            Field field = getField(tabFields, fieldAccess.getField());
+            final Property property = field != null ? KernelUtils.getProperty(entity, field) : null;
+            if (property == null) {
+              continue;
+            }
+            final String name = property.getName();
+            if (fields.contains(name)) {
+              jFields.put(name, fieldAccess.isEditableField());
+              fields.remove(name);
+            }
+          }
         }
-        Field field = getField(tabFields, fieldAccess.getField());
-        final Property property = field != null ? KernelUtils.getProperty(entity, field) : null;
-        if (property == null) {
-          continue;
+        for (String name : fields) {
+          jFields.put(name, tabEditable);
         }
-        final String name = property.getName();
-        if (fields.contains(name)) {
-          jFields.put(name, fieldAccess.isEditableField());
-          fields.remove(name);
-        }
+      } catch (JSONException e) {
+        throw new OBException(e);
       }
-      for (String name : fields) {
-        jFields.put(name, tabEditable);
-      }
-    }
+    });
 
     return tabs;
   }
