@@ -94,11 +94,11 @@ public class DefaultJsonDataService implements JsonDataService {
   @Inject
   private DatasourceObservabilityLogger datasourceObservabilityLogger;
 
-  private static DefaultJsonDataService instance = WeldUtils
-      .getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
+  private static DefaultJsonDataService instance;
 
   public static DefaultJsonDataService getInstance() {
-    return instance;
+    return instance != null ? instance
+        : WeldUtils.getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
   }
 
   public static void setInstance(DefaultJsonDataService instance) {
@@ -370,13 +370,7 @@ public class DefaultJsonDataService implements JsonDataService {
   }
 
   private boolean shouldIncludeStoreDate(JSONObject gridConfiguration) {
-    boolean includeStoreDate = false;
-    try {
-      includeStoreDate = gridConfiguration.getBoolean("showStoreDates");
-    } catch (Exception e) {
-    }
-
-    return includeStoreDate;
+    return gridConfiguration.optBoolean("showStoreDates", false);
   }
 
   /**

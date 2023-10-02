@@ -318,9 +318,9 @@ public class OBDateUtils {
    * that takes into account the time zone provided as an argument
    *
    * @param date
-   *          An UTC Date object
+   *          A Date object in the server timezone
    * @param timezone
-   *          a Time Zone identifier as returned by ZoneId.getAvailableZoneIds()
+   *          A Time Zone identifier as returned by ZoneId.getAvailableZoneIds()
    * @return a Date object now taking the provided Time zone into account or null if the timezone is
    *         not valid
    */
@@ -340,7 +340,7 @@ public class OBDateUtils {
    * that takes into account the time zone for the given Organization
    *
    * @param date
-   *          An UTC Date object
+   *          A Date object in the server timezone
    * @param organization
    *          An Organization instance
    * @return a Date object now taking the provided Time zone into account or null if the timezone is
