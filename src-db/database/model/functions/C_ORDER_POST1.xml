@@ -452,6 +452,13 @@
         RAISE_APPLICATION_ERROR(-20000,'@AlreadyPosted@');
       END IF;
     ELSIF (v_DocAction='RE') THEN
+      select count(1)
+      into v_Aux
+      from c_reprintable_document
+      where c_order_id = v_Record_ID;
+      IF (v_Aux > 0) THEN
+        RAISE_APPLICATION_ERROR(-20000,'@ReactivationErrorWithReprintable@');
+      END IF;
       IF (v_IsProcessed = 'N') THEN
         RAISE_APPLICATION_ERROR(-20000,'@ActionNotSupported@');
       END IF;
