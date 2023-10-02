@@ -51,6 +51,7 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.role.RoleAccessUtils;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -445,14 +446,6 @@ public class LoginUtils {
     }
     validateDefault(strRole, strUserAuth, "Role");
 
-    String strOrg = DefaultOptionsData.defaultOrg(cp, strUserAuth);
-    // use default org
-    if (strOrg == null || !LoginUtils.validRoleOrg(cp, strRole, strOrg)) {
-      // if default not set or not valid take any one
-      strOrg = DefaultOptionsData.getDefaultOrg(cp, strRole);
-    }
-    validateDefault(strOrg, strRole, "Org");
-
     String strClient = DefaultOptionsData.defaultClient(cp, strUserAuth);
     // use default client
     if (strClient == null || !LoginUtils.validRoleClient(cp, strRole, strClient)) {
@@ -460,6 +453,18 @@ public class LoginUtils {
       strClient = DefaultOptionsData.getDefaultClient(cp, strRole);
     }
     validateDefault(strClient, strRole, "Client");
+
+    String strOrg = DefaultOptionsData.defaultOrg(cp, strUserAuth);
+    // use default org
+    if (strOrg == null || !LoginUtils.validRoleOrg(cp, strRole, strOrg)) {
+      if (RoleAccessUtils.isAutoRole(strRole)) {
+        strOrg = RoleAccessUtils.getOrganizationsForAutoRoleByClient(strClient, strRole).get(0);
+      } else {
+        // if default not set or not valid take any one
+        strOrg = DefaultOptionsData.getDefaultOrg(cp, strRole);
+      }
+    }
+    validateDefault(strOrg, strRole, "Org");
 
     String strWarehouse = DefaultOptionsData.defaultWarehouse(cp, strUserAuth);
     if (strWarehouse == null) {

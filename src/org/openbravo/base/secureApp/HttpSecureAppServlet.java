@@ -526,7 +526,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id) {
     try {
       Role role = OBContext.getOBContext().getRole();
-      if (RoleAccessUtils.isAutoRole(role)) {
+      if (RoleAccessUtils.isAutoRole(role.getId())) {
         return true;
       }
       ConnectionProvider cp = new DalConnectionProvider(false);
