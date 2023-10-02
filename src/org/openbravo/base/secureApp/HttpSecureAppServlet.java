@@ -66,6 +66,7 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
+import org.openbravo.role.RoleAccessUtils;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.web.UserContextCache;
 import org.openbravo.utils.FileUtility;
@@ -525,7 +526,7 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id) {
     try {
       Role role = OBContext.getOBContext().getRole();
-      if (!role.isManual()) {
+      if (RoleAccessUtils.isAutoRole(role)) {
         return true;
       }
       ConnectionProvider cp = new DalConnectionProvider(false);

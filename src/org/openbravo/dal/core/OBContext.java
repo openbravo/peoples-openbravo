@@ -61,6 +61,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.role.RoleAccessUtils;
 
 /**
  * Models the context in which Data Access Layer actions are executed. Contains the user, the client
@@ -652,7 +653,7 @@ public class OBContext implements OBNotSingleton, Serializable {
     List<String> currentOrgList = getAvailableOrganizationsForManualRole(targetRole,
         isActiveOrganization);
 
-    if (Boolean.FALSE.equals(targetRole.isManual())) {
+    if (RoleAccessUtils.isAutoRole(targetRole)) {
       currentOrgList = Stream
           .concat(currentOrgList.stream(),
               getAvailableOrganizationsForAutomaticRole(targetRole).stream())
@@ -972,7 +973,7 @@ public class OBContext implements OBNotSingleton, Serializable {
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
         setCurrentOrganization(getUser().getDefaultOrganization());
-      } else if (!getRole().isManual()) {
+      } else if (RoleAccessUtils.isAutoRole(getRole())) {
         List<String> orgs = getAvailableOrganizationsForAutomaticRole(getRole());
         Organization org = OBDal.getInstance().get(Organization.class, orgs.get(0));
 
