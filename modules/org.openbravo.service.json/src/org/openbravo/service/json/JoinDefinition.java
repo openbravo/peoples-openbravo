@@ -60,20 +60,19 @@ public class JoinDefinition {
    */
   public String getJoinStatement() {
     String propName = getPropertyName();
-    if (queryBuilder.getOrNesting() > 0) {
-      return " left outer join " + (fetchJoin ? "fetch " : "")
-          + (ownerAlias != null ? ownerAlias + DalUtil.DOT : "") + propName + " as " + joinAlias;
-    }
     if (unrelatedProperty != null) {
       return " left join " + unrelatedProperty.getEntity().getName() + " as " + joinAlias + " on "
           + joinAlias + DalUtil.DOT + unrelatedProperty.getName() + " = " + ownerAlias + DalUtil.DOT
           + propName;
     }
     String joinType = null;
+    if (queryBuilder.getOrNesting() > 0) {
+      joinType = " left outer join ";
+    }
     // if all the identifier properties of the target entity are mandatory, and if the joined
     // entity is used only in where clauses resulting from filtering the grid, an inner join can
     // be used
-    if (property == null || Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(property.getName())
+    else if (property == null || Entity.COMPUTED_COLUMNS_PROXY_PROPERTY.equals(property.getName())
         || KernelUtils.hasNullableIdentifierProperties(property.getTargetEntity())
         || !(queryBuilder.useInnerJoin(property))) {
       joinType = " left join ";
