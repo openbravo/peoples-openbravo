@@ -44,25 +44,31 @@ public class RoleAccessUtils {
     String userLevel = getUserLevel(roleId);
     List<String> organizations = new ArrayList<>();
 
-    // Client or System level: Only *
-    if (StringUtils.equals(userLevel, " C") || StringUtils.equals(userLevel, "S")
-        || StringUtils.equals(userLevel, " CO")) {
-      organizations.add("0");
-    }
-
     // " CO" Client/Organization level: *, other Orgs (but *)
     // " O" Organization level: Orgs (but *) [isOrgAdmin=Y]
-    else if (StringUtils.equals(userLevel, " CO") || StringUtils.equals(userLevel, "  O")) {
+    if (StringUtils.equals(userLevel, " CO") || StringUtils.equals(userLevel, "  O")) {
       // @formatter:off
       final String orgsQryStr = "select o.id"
           + " from Organization o"
           + " where o.client.id= :clientId"
-          + "   and o.id <>'0'";
+          + "   and o.id <>'0'"
+          + "   and o.active= 'Y' "
+          + "   and not exists ( select 1 "
+          + "   from ADRoleOrganization roa where (o.id=roa.organization.id)"
+          + "   and roa.role.id= :roleId"
+          + "   and roa.active= 'N')";
       // @formatter:on
       final Query<String> qry = SessionHandler.getInstance()
           .createQuery(orgsQryStr, String.class)
-          .setParameter("clientId", clientId);
+          .setParameter("clientId", clientId)
+          .setParameter("roleId", roleId);
       organizations.addAll(qry.list());
+    }
+
+    // Client or System level: Only *
+    if (StringUtils.equals(userLevel, " C") || StringUtils.equals(userLevel, "S")
+        || StringUtils.equals(userLevel, " CO")) {
+      organizations.add("0");
     }
     return organizations;
   }

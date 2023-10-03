@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +40,6 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
@@ -654,9 +654,9 @@ public class OBContext implements OBNotSingleton, Serializable {
         isActiveOrganization);
 
     if (RoleAccessUtils.isAutoRole(targetRole.getId())) {
-      currentOrgList = Stream
-          .concat(currentOrgList.stream(),
-              getAvailableOrganizationsForAutomaticRole(targetRole).stream())
+      List<String> orgListAutoRole = RoleAccessUtils
+          .getOrganizationsForAutoRoleByClient(targetRole);
+      currentOrgList = Stream.concat(currentOrgList.stream(), orgListAutoRole.stream())
           .distinct()
           .collect(Collectors.toList());
     }
@@ -669,45 +669,6 @@ public class OBContext implements OBNotSingleton, Serializable {
       }
     }
     return new ArrayList<>(currentOrgList);
-  }
-
-  private List<String> getAvailableOrganizationsForAutomaticRole(Role targetRole) {
-    List<String> organizations = new ArrayList<>();
-
-    // Client or System level: Only *
-    if (StringUtils.equals(targetRole.getUserLevel(), " C")
-        || StringUtils.equals(targetRole.getUserLevel(), "S")) {
-      organizations.add("0");
-    }
-
-    // Client/Organization level: *, other Orgs (but *)
-    else if (StringUtils.equals(targetRole.getUserLevel(), " CO")) {
-      organizations.add("0");
-      // @formatter:off
-      final String orgsQryStr = "select o.id"
-          + " from Organization o"
-          + " where o.client.id= :clientId"
-          + "   and o.id <>'0'";
-      // @formatter:on
-      final Query<String> qry = SessionHandler.getInstance()
-          .createQuery(orgsQryStr, String.class)
-          .setParameter("clientId", targetRole.getClient().getId());
-      organizations.addAll(qry.list());
-    }
-    // Organization level: Orgs (but *) [isOrgAdmin=Y]
-    else if (StringUtils.equals(targetRole.getUserLevel(), "  O")) {
-      // @formatter:off
-      final String orgsQryStr = "select o.id"
-          + " from Organization o"
-          + " where o.client.id= :clientId"
-          + "   and o.id <>'0'";
-      // @formatter:on
-      final Query<String> qry = SessionHandler.getInstance()
-          .createQuery(orgsQryStr, String.class)
-          .setParameter("clientId", targetRole.getClient().getId());
-      organizations.addAll(qry.list());
-    }
-    return organizations;
   }
 
   private List<String> getAvailableOrganizationsForManualRole(Role targetRole,
@@ -974,8 +935,9 @@ public class OBContext implements OBNotSingleton, Serializable {
           && getUser().getDefaultOrganization().isActive()) {
         setCurrentOrganization(getUser().getDefaultOrganization());
       } else if (RoleAccessUtils.isAutoRole(getRole().getId())) {
-        List<String> orgs = getAvailableOrganizationsForAutomaticRole(getRole());
-        Organization org = OBDal.getInstance().get(Organization.class, orgs.get(0));
+        List<String> orgs = RoleAccessUtils.getOrganizationsForAutoRoleByClient(getRole());
+        String orgIdAutoRole = orgs.stream().sorted(Comparator.reverseOrder()).findFirst().get();
+        Organization org = OBDal.getInstance().get(Organization.class, orgIdAutoRole);
 
         Hibernate.initialize(org);
         setCurrentOrganization(org);
