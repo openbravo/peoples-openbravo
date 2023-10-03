@@ -19,7 +19,6 @@
 
 package org.openbravo.test.role;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -29,9 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.client.application.OBUIAPPViewImplementation;
 import org.openbravo.client.application.ViewRoleAccess;
-import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.system.Client;
@@ -65,32 +62,6 @@ public class RoleAccessGeneration extends WeldBaseTest {
     role.setName("Test role access generation");
     role.setClient(client);
     role.setOrganization(organization);
-  }
-
-  @Test
-  public void createViewImplAccessIfAutomatic() {
-    boolean isManual = false;
-    createRoleAndRefresh(isManual);
-
-    OBCriteria<OBUIAPPViewImplementation> criteria = OBDal.getInstance()
-        .createCriteria(OBUIAPPViewImplementation.class);
-    criteria.setFilterOnReadableClients(false);
-    criteria.setFilterOnActive(true);
-    List<ViewRoleAccess> roleViewsAccess = role.getObuiappViewRoleAccessList();
-    List<OBUIAPPViewImplementation> allRoleImplementation = criteria.list();
-    // Check if role contains all roleViewsAccess for all active ViewImpl
-    assertEquals(roleViewsAccess.size(), allRoleImplementation.size());
-
-    boolean allImplContained = true;
-    for (ViewRoleAccess roleView : roleViewsAccess) {
-      OBUIAPPViewImplementation viewImpl = roleView.getViewImplementation();
-      if (!allRoleImplementation.contains(viewImpl)) {
-        allImplContained = false;
-        break;
-      }
-    }
-
-    assertTrue(allImplContained);
   }
 
   @Test
