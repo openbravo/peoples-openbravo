@@ -56,7 +56,8 @@ public class RoleAccessUtils {
           + "   and not exists ( select 1 "
           + "   from ADRoleOrganization roa where (o.id=roa.organization.id)"
           + "   and roa.role.id= :roleId"
-          + "   and roa.active= 'N')";
+          + "   and roa.active= 'N')"
+          + " order by o.id desc";
       // @formatter:on
       final Query<String> qry = SessionHandler.getInstance()
           .createQuery(orgsQryStr, String.class)
