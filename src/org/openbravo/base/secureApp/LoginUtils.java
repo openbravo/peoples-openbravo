@@ -13,10 +13,12 @@ package org.openbravo.base.secureApp;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -169,34 +171,11 @@ public class LoginUtils {
     }
   }
 
-  public static String buildClientList(List<RoleOrganization> roleorglist) {
-    StringBuilder clientlist = new StringBuilder();
-    String currentclient = null;
-    for (RoleOrganization roleorg : roleorglist) {
-      if (currentclient == null || !currentclient.equals(roleorg.getClient().getId())) {
-        currentclient = roleorg.getClient().getId();
-        if (clientlist.length() > 0) {
-          clientlist.append(',');
-        }
-        clientlist.append('\'');
-        clientlist.append(roleorg.getClient().getId());
-        clientlist.append('\'');
-      }
-    }
-    return clientlist.toString();
-  }
-
-  public static String buildOrgList(List<RoleOrganization> roleorglist) {
-    StringBuilder orglist = new StringBuilder();
-    for (RoleOrganization roleorg : roleorglist) {
-      if (orglist.length() > 0) {
-        orglist.append(',');
-      }
-      orglist.append('\'');
-      orglist.append(roleorg.getOrganization().getId());
-      orglist.append('\'');
-    }
-    return orglist.toString();
+  private static String buildConcatenatedList(List<String> elements) {
+    return elements.stream()
+        .distinct()
+        .map(element -> ("'" + element + "'"))
+        .collect(Collectors.joining(","));
   }
 
   public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars,
@@ -283,11 +262,26 @@ public class LoginUtils {
         return false;
       }
 
-      List<RoleOrganization> datarolelist = loadRoleOrganization(strRol);
+      List<String> orgIds;
+      List<String> clientIds;
+      if (RoleAccessUtils.isAutoRole(strRol)) {
+        clientIds = List.of(strCliente);
+        orgIds = RoleAccessUtils.getOrganizationsForAutoRoleByClient(strCliente, strRol);
+      } else {
+        List<RoleOrganization> roleOrganizations = loadRoleOrganization(strRol);
+        clientIds = roleOrganizations.stream()
+            .map(role -> role.getClient().getId())
+            .collect(Collectors.toList());
+        orgIds = roleOrganizations.stream()
+            .map(role -> role.getOrganization().getId())
+            .collect(Collectors.toList());
+      }
+      String userClient = buildConcatenatedList(clientIds);
+      String userOrg = buildConcatenatedList(orgIds);
 
       vars.setSessionValue("#User_Level", data[0].userlevel);
-      vars.setSessionValue("#User_Client", buildClientList(datarolelist));
-      vars.setSessionValue("#User_Org", buildOrgList(datarolelist));
+      vars.setSessionValue("#User_Client", userClient);
+      vars.setSessionValue("#User_Org", userOrg);
       vars.setSessionValue("#Approval_C_Currency_ID", data[0].cCurrencyId);
       vars.setSessionValue("#Approval_Amt", data[0].amtapproval);
       vars.setSessionValue("#Client_Value", data[0].value);
