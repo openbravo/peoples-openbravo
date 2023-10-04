@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -40,16 +40,17 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
  */
 class ExternalSystemDataEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = getExternalSystemConfigurationEntities();
-  private static final String externalSystemProperty = "externalSystem";
+  private static final String EXTERNAL_SYSTEM_PROPERTY = "externalSystem";
 
   private static Entity[] getExternalSystemConfigurationEntities() {
     List<Entity> externalSystemEntities = ModelProvider.getInstance()
         .getModel()
         .stream()
-        .filter(entity -> entity.hasProperty(externalSystemProperty)
-            && entity.getProperty(externalSystemProperty).getEntity() != null
+        .filter(entity -> entity.hasProperty(EXTERNAL_SYSTEM_PROPERTY)
+            && entity.getProperty(EXTERNAL_SYSTEM_PROPERTY).getEntity() != null
+            && entity.getProperty(EXTERNAL_SYSTEM_PROPERTY).isParent()
             && ExternalSystemData.ENTITY_NAME
-                .equals(entity.getProperty(externalSystemProperty).getTargetEntity().getName()))
+                .equals(entity.getProperty(EXTERNAL_SYSTEM_PROPERTY).getTargetEntity().getName()))
         .collect(Collectors.toList());
     externalSystemEntities
         .add(ModelProvider.getInstance().getEntity(ExternalSystemData.ENTITY_NAME));
@@ -89,7 +90,9 @@ class ExternalSystemDataEventHandler extends EntityPersistenceEventObserver {
   private void clearCachedExternalSystemInstance(EntityPersistenceEvent event) {
     BaseOBObject bob = event.getTargetInstance();
     ExternalSystemData config = bob instanceof ExternalSystemData ? ((ExternalSystemData) bob)
-        : ((ExternalSystemData) bob.get(externalSystemProperty));
-    externalSystemProvider.invalidateExternalSystem(config.getId());
+        : ((ExternalSystemData) bob.get(EXTERNAL_SYSTEM_PROPERTY));
+    if (config != null) {
+      externalSystemProvider.invalidateExternalSystem(config.getId());
+    }
   }
 }
