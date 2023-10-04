@@ -19,9 +19,7 @@
 package org.openbravo.client.application;
 
 import java.io.Serializable;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -47,6 +45,7 @@ import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TreeNode;
+import org.openbravo.role.RoleAccessUtils;
 
 /**
  * Configures cached global menu (@see {@link GlobalMenu}) to adapt it to the current session's
@@ -61,12 +60,6 @@ public class MenuManager {
   public static enum MenuEntryType {
     Window, Process, ProcessManual, Report, Form, External, Summary, View, ProcessDefinition
   };
-
-  private Map<String, List<String>> accessLevelForUserLevel = Map.ofEntries(
-      new AbstractMap.SimpleEntry<String, List<String>>("S", Arrays.asList("4", "7", "6")),
-      new AbstractMap.SimpleEntry<String, List<String>>(" CO", Arrays.asList("7", "6", "3", "1")),
-      new AbstractMap.SimpleEntry<String, List<String>>(" C", Arrays.asList("7", "6", "3", "1")),
-      new AbstractMap.SimpleEntry<String, List<String>>("  O", Arrays.asList("3", "1", "7")));
 
   /**
    * Points to globally cached generic menu
@@ -151,7 +144,8 @@ public class MenuManager {
     final Query<String> formsQry = OBDal.getInstance()
         .getSession()
         .createQuery(formsHql, String.class);
-    formsQry.setParameter("accessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+    formsQry.setParameter("accessLevels",
+        RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
     return formsQry.list();
   }
 
@@ -177,7 +171,8 @@ public class MenuManager {
     final Query<String> allowedProcessQry = OBDal.getInstance()
         .getSession()
         .createQuery(allowedProcessHql, String.class)
-        .setParameter("roleAccessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+        .setParameter("roleAccessLevels",
+            RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
     return allowedProcessQry.list();
   }
 
@@ -247,7 +242,8 @@ public class MenuManager {
     final Query<String> processQry = OBDal.getInstance()
         .getSession()
         .createQuery(processHql, String.class)
-        .setParameter("accessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+        .setParameter("accessLevels",
+            RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
     return processQry.list();
   }
 
@@ -342,7 +338,8 @@ public class MenuManager {
     final Query<Object[]> windowsQry = OBDal.getInstance()
         .getSession()
         .createQuery(windowsHql, Object[].class)
-        .setParameter("roleAccessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+        .setParameter("roleAccessLevels",
+            RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
     if (!excludedWindowIds.isEmpty()) {
       windowsQry.setParameter("excludedWindowIds", excludedWindowIds);
     }

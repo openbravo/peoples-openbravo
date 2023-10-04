@@ -19,9 +19,7 @@
 
 package org.openbravo.dal.security;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +44,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.TableAccess;
+import org.openbravo.role.RoleAccessUtils;
 
 /**
  * This class is responsible for determining the allowed read/write access for a combination of user
@@ -117,24 +116,6 @@ public class EntityAccessChecker implements OBNotSingleton {
   private static final int SELECTED_ID = 0;
   private static final int TAB_ID = 2;
   private static final int FILTER_ELEMENT_ID = 1;
-
-  private Map<String, List<String>> accessLevelForUserLevel = Map.ofEntries(
-      new AbstractMap.SimpleEntry<String, List<String>>("S", Arrays.asList("4", "7", "6")),
-      new AbstractMap.SimpleEntry<String, List<String>>(" CO", Arrays.asList("7", "6", "3", "1")),
-      new AbstractMap.SimpleEntry<String, List<String>>(" C", Arrays.asList("7", "6", "3", "1")),
-      new AbstractMap.SimpleEntry<String, List<String>>("  O", Arrays.asList("3", "1", "7")));
-  // Table Access Level:
-  // "6";"System/Client"
-  // "1";"Organization"
-  // "3";"Client/Organization"
-  // "4";"System only"
-  // "7";"All"
-
-  // User level:
-  // "S";"System"
-  // " C";"Client"
-  // " O";"Organization"
-  // " CO";"Client+Organization"
 
   private String roleId;
   private Set<String> tabsWithSelectors;
@@ -398,14 +379,15 @@ public class EntityAccessChecker implements OBNotSingleton {
       tablesQry.setParameter("excludedTableIds", excludedTableIds);
     }
 
-    tablesQry.setParameter("roleAccessLevels", accessLevelForUserLevel.get(role.getUserLevel()));
+    tablesQry.setParameter("roleAccessLevels",
+        RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
     return tablesQry.list();
   }
 
   private void linkProcessForAutoRole(Role role) {
     List<String> roleAccessLevels = new ArrayList<>();
     String userLevel = role.getUserLevel();
-    roleAccessLevels.addAll(accessLevelForUserLevel.get(userLevel));
+    roleAccessLevels.addAll(RoleAccessUtils.getAccessLevelForUserLevel(userLevel));
     final Map<String, Object> parameters = new HashMap<>(1);
     parameters.put("roleAccessLevels", roleAccessLevels);
     String processHql = " dataAccessLevel in ( :roleAccessLevels ) ";
