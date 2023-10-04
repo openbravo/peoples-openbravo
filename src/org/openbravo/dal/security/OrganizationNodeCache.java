@@ -73,7 +73,7 @@ public class OrganizationNodeCache implements OBSingleton {
     // allowed because this code is used while generating entities.
     //@formatter:off
     String sql = 
-            "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, o.isperiodcontrolallowed" +
+            "select n.node_id, n.parent_id, o.isready, ot.islegalentity, ot.isbusinessunit, ot.istransactionsallowed, o.isperiodcontrolallowed, o.timezone" +
             "  from ad_tree t, ad_treenode n, ad_org o, ad_orgtype ot" +
             " where n.node_id = o.ad_org_id " +
             "   and o.ad_orgtype_id = ot.ad_orgtype_id" +
@@ -133,6 +133,7 @@ public class OrganizationNodeCache implements OBSingleton {
     boolean isBusinessUnit;
     boolean isTransactionsAllowed;
     boolean isPeriodControlAllowed;
+    String timeZoneId;
 
     private List<String> children = new ArrayList<>();
 
@@ -147,6 +148,7 @@ public class OrganizationNodeCache implements OBSingleton {
       isBusinessUnit = Objects.equals('Y', nodeDef[4]);
       isTransactionsAllowed = Objects.equals('Y', nodeDef[5]);
       isPeriodControlAllowed = Objects.equals('Y', nodeDef[6]);
+      timeZoneId = (String) nodeDef[7];
     }
 
     void resolve(Map<String, OrgNode> orgNodes, String nodeId) {

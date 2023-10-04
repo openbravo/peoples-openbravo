@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,6 +60,7 @@ public class OBViewUtil {
   private static final String DISABLEFKCOMBO_PROPERTY = "PROPERTY_DISABLEFKCOMBO";
   private static final String THRESHOLDTOFILTER_PROPERTY = "PROPERTY_THRESHOLDTOFILTER";
   private static final String ISLAZYFILTERING_PROPERTY = "PROPERTY_ISLAZYFILTERING";
+  private static final String SHOWSTOREDATES_PROPERTY = "PROPERTY_SHOWSTOREDATES";
 
   static {
     createdElement = OBDal.getInstance().get(Element.class, "245");
@@ -258,6 +259,7 @@ public class OBViewUtil {
     private Long thresholdToFilter = null;
     private boolean isSortingColumnConfig;
     private boolean isFilteringColumnConfig;
+    private Boolean showStoreDates = null;
     private Field theField;
 
     private GridConfigSettings(Field field) {
@@ -311,6 +313,9 @@ public class OBViewUtil {
         }
         if (lazyFiltering == null && !(gcItem instanceof GCField)) {
           lazyFiltering = convertBoolean(gcItem, ISLAZYFILTERING_PROPERTY);
+        }
+        if (showStoreDates == null && !(gcItem instanceof GCField)) {
+          showStoreDates = convertBoolean(gcItem, SHOWSTOREDATES_PROPERTY);
         }
       } catch (Exception e) {
         log.error("Error while getting the properties of " + gcItem, e);
@@ -425,6 +430,9 @@ public class OBViewUtil {
         }
         if (disableFkDropdown != null) {
           result.put("disableFkDropdown", disableFkDropdown);
+        }
+        if (showStoreDates != null) {
+          result.put("showStoreDates", showStoreDates);
         }
       } catch (JSONException e) {
         log.error("Couldn't get field property value", e);

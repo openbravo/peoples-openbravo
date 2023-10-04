@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2022 Openbravo SLU
+ * All portions are Copyright (C) 2011-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,6 +55,7 @@ import org.openbravo.client.kernel.reference.UIDefinitionController;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Element;
 import org.openbravo.model.ad.ui.Field;
 import org.openbravo.model.ad.ui.FieldGroup;
@@ -245,6 +246,14 @@ public class OBViewFieldHandler {
       OBViewFieldAudit audit = new OBViewFieldAudit("creationDate", OBViewUtil.createdElement);
       auditFields.add(audit);
     }
+
+    JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(systemGridConfig,
+        getTabGridConfig());
+    boolean includeStoreDate = gridConfiguration.optBoolean("showStoreDates", false);
+    if (includeStoreDate) {
+      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgCreationDate", "OrgCreated");
+      auditFields.add(orgAudit);
+    }
     if (!hasCreatedByField) {
       OBViewFieldAudit audit = new OBViewFieldAudit("createdBy", OBViewUtil.createdByElement);
       auditFields.add(audit);
@@ -252,6 +261,10 @@ public class OBViewFieldHandler {
     if (!hasUpdatedField) {
       OBViewFieldAudit audit = new OBViewFieldAudit("updated", OBViewUtil.updatedElement);
       auditFields.add(audit);
+    }
+    if (includeStoreDate) {
+      OBViewFieldAudit orgAudit = new OBViewFieldAudit("orgUpdatedDate", "OrgUpdated");
+      auditFields.add(orgAudit);
     }
     if (!hasUpdatedByField) {
       OBViewFieldAudit audit = new OBViewFieldAudit("updatedBy", OBViewUtil.updatedByElement);
@@ -664,10 +677,12 @@ public class OBViewFieldHandler {
   public class OBViewFieldAudit implements OBViewFieldDefinition {
     private static final String SEARCH_REFERENCE = "30";
     private static final String DATETIME_REFERENCE = "16";
+    private static final String STRING_REFERENCE = "10";
     private String name;
     private String refType;
     private String refEntity;
     private Element element;
+    private String messageKey;
 
     @Override
     public String getOnChangeFunction() {
@@ -726,13 +741,34 @@ public class OBViewFieldHandler {
       }
     }
 
+    /**
+     * Generate a new OBViewFieldAudit using a Message instead of an Element. Currently this is only
+     * used for virtual audit fields (Created/Updated date in Store Time). That's why we assume this
+     * field is a string (actually it is the string value of a datetime) and this should be
+     * refactored in the future if we want to support more types
+     * 
+     * @param type
+     *          Name of the audit field
+     * @param labelMessageKey
+     *          Search key for the translated message we want to use as a label
+     */
+    public OBViewFieldAudit(String type, String labelMessageKey) {
+      this.element = null;
+      this.name = type;
+      this.refType = STRING_REFERENCE;
+      this.refEntity = "";
+      this.messageKey = labelMessageKey;
+    }
+
     public String getGridFieldProperties() {
       StringBuilder result = new StringBuilder();
       if (SEARCH_REFERENCE.equals(refType)) {
         result.append(", fkField: true");
       }
 
-      if (tab != null) {
+      if (STRING_REFERENCE.equals(refType)) {
+        result.append(", canFilter: false, canSort: false");
+      } else if (tab != null) {
         JSONObject gridConfiguration = OBViewUtil.getGridConfigurationSettings(systemGridConfig,
             getTabGridConfig());
         try {
@@ -787,7 +823,11 @@ public class OBViewFieldHandler {
 
     @Override
     public String getLabel() {
-      return OBViewUtil.getLabel(element, element.getADElementTrlList());
+      if (element != null) {
+        return OBViewUtil.getLabel(element, element.getADElementTrlList());
+      }
+
+      return OBMessageUtils.getI18NMessage(this.messageKey);
     }
 
     @Override

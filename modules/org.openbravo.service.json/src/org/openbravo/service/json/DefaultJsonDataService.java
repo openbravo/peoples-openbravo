@@ -39,6 +39,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ScrollableResults;
+import org.openbravo.base.GridConfigurationCache;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.Entity;
@@ -93,11 +94,11 @@ public class DefaultJsonDataService implements JsonDataService {
   @Inject
   private DatasourceObservabilityLogger datasourceObservabilityLogger;
 
-  private static DefaultJsonDataService instance = WeldUtils
-      .getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
+  private static DefaultJsonDataService instance;
 
   public static DefaultJsonDataService getInstance() {
-    return instance;
+    return instance != null ? instance
+        : WeldUtils.getInstanceFromStaticBeanManager(DefaultJsonDataService.class);
   }
 
   public static void setInstance(DefaultJsonDataService instance) {
@@ -346,6 +347,13 @@ public class DefaultJsonDataService implements JsonDataService {
           && (!displayField.equals(JsonConstants.IDENTIFIER))) {
         toJsonConverter.setDisplayProperty(displayField);
       }
+
+      JSONObject gridConfiguration = GridConfigurationCache.getInstance()
+          .getGridConfigurationForTab(parameters.get(JsonConstants.TAB_PARAMETER));
+      toJsonConverter.setOrganizationStructureProvider(
+          OBContext.getOBContext().getOrganizationStructureProvider());
+      toJsonConverter.setShouldDisplayOrgDate(shouldIncludeStoreDate(gridConfiguration));
+
       final List<JSONObject> jsonObjects = toJsonConverter.toJsonObjects(bobs);
 
       addWritableAttribute(jsonObjects);
@@ -359,6 +367,10 @@ public class DefaultJsonDataService implements JsonDataService {
       log.error(t.getMessage(), t);
       return JsonUtils.convertExceptionToJson(t);
     }
+  }
+
+  private boolean shouldIncludeStoreDate(JSONObject gridConfiguration) {
+    return gridConfiguration.optBoolean("showStoreDates", false);
   }
 
   /**
@@ -537,6 +549,12 @@ public class DefaultJsonDataService implements JsonDataService {
     // Convert to Json only the properties specified in the request. If no properties are specified,
     // all of them will be converted to Json
     toJsonConverter.setSelectedProperties(selectedProperties);
+
+    JSONObject gridConfiguration = GridConfigurationCache.getInstance()
+        .getGridConfigurationForTab(parameters.get(JsonConstants.TAB_PARAMETER));
+    toJsonConverter.setOrganizationStructureProvider(
+        OBContext.getOBContext().getOrganizationStructureProvider());
+    toJsonConverter.setShouldDisplayOrgDate(shouldIncludeStoreDate(gridConfiguration));
 
     final ScrollableResults scrollableResults = queryService.scroll();
     try {

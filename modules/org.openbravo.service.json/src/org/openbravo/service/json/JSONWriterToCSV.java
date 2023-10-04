@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -252,6 +252,16 @@ public class JSONWriterToCSV extends DefaultJsonDataService.QueryResultWriter {
         }
       }
     }
+    loadOrgAuditNiceFieldProperty();
+  }
+
+  /**
+   * Load Organization audit (orgCreation and orgUpdated) properties into niceFieldProperties to
+   * display proper labels for those field's header when they are visible in the View
+   */
+  private void loadOrgAuditNiceFieldProperty() {
+    niceFieldProperties.put("orgCreationDate", OBMessageUtils.getI18NMessage("OrgCreated"));
+    niceFieldProperties.put("orgUpdatedDate", OBMessageUtils.getI18NMessage("OrgUpdated"));
   }
 
   private Map<String, Property> loadEntityProperties(Entity entity) {
