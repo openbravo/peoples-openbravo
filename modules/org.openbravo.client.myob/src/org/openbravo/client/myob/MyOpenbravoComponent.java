@@ -48,6 +48,7 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.role.RoleAccessUtils;
 
 /**
  * Creates the Workspace properties list which is initially loaded in the client.
@@ -141,19 +142,10 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
   }
 
   private List<String> getAccessibleWidgetClassIdsForAutoRole(Role role) {
-    List<String> roleAccessLevels = new ArrayList<>();
-    String userLevel = role.getUserLevel();
-    if (userLevel.equals("S")) {
-      roleAccessLevels.addAll(List.of("4", "7", "6"));
-    } else if (userLevel.equals("CO") || userLevel.equals("C")) {
-      roleAccessLevels.addAll(List.of("7", "6", "3", "1"));
-    } else if (userLevel.equals("O")) {
-      roleAccessLevels.addAll(List.of("3", "1", "7"));
-    }
-
     final Map<String, Object> parameters = new HashMap<>(1);
-    parameters.put("roleAccessLevels", roleAccessLevels);
-    String widgetHql = " dataAccessLevel in ( :roleAccessLevels ) ";
+    parameters.put("roleAccessLevels",
+        RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
+    String widgetHql = " dataAccessLevel in ( :roleAccessLevels ) and superclass = 'N' ";
     final OBQuery<WidgetClass> resultList = OBDal.getInstance()
         .createQuery(WidgetClass.class, widgetHql, parameters)
         .setFilterOnReadableOrganization(false);
@@ -362,7 +354,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
 
   private List<WidgetInstance> getWidgetInstances(Client client, Role visibleAtRole,
       User visibleAtUser, List<String> widgetClasses) {
-    if (widgetClasses.isEmpty()){
+    if (widgetClasses.isEmpty()) {
       return Collections.emptyList();
     }
     OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);
