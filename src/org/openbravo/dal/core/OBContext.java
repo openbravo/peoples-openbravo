@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -656,19 +655,14 @@ public class OBContext implements OBNotSingleton, Serializable {
     if (RoleAccessUtils.isAutoRole(targetRole.getId())) {
       List<String> orgListAutoRole = RoleAccessUtils
           .getOrganizationsForAutoRoleByClient(targetRole);
-      currentOrgList = Stream.concat(currentOrgList.stream(), orgListAutoRole.stream())
-          .distinct()
-          .collect(Collectors.toList());
+      currentOrgList.addAll(orgListAutoRole);
     }
 
     if (additionalOrgs != null) {
-      for (final String orgId : additionalOrgs) {
-        if (!currentOrgList.contains(orgId)) {
-          currentOrgList.add(orgId);
-        }
-      }
+      currentOrgList.addAll(additionalOrgs);
     }
-    return new ArrayList<>(currentOrgList);
+
+    return currentOrgList.stream().distinct().collect(Collectors.toList());
   }
 
   private List<String> getAvailableOrganizationsForManualRole(Role targetRole,
@@ -936,7 +930,7 @@ public class OBContext implements OBNotSingleton, Serializable {
         setCurrentOrganization(getUser().getDefaultOrganization());
       } else if (RoleAccessUtils.isAutoRole(getRole().getId())) {
         List<String> orgs = RoleAccessUtils.getOrganizationsForAutoRoleByClient(getRole());
-        String orgIdAutoRole = orgs.stream().sorted(Comparator.reverseOrder()).findFirst().get();
+        String orgIdAutoRole = orgs.stream().max(Comparator.naturalOrder()).get();
         Organization org = OBDal.getInstance().get(Organization.class, orgIdAutoRole);
 
         Hibernate.initialize(org);

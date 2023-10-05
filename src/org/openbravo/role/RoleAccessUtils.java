@@ -28,19 +28,21 @@ import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.access.Role;
 
 public class RoleAccessUtils {
-
   private static Map<String, List<String>> ACCESS_LEVEL_FOR_USER_LEVEL = Map.of( //
       "S", List.of("4", "7", "6"), //
       " CO", List.of("7", "6", "3", "1"), //
       " C", List.of("7", "6", "3", "1"), //
       "  O", List.of("3", "1", "7"));
 
+  /**
+   * @return true if role is automatic.
+   */
   public static boolean isAutoRole(String role) {
     // @formatter:off
     final String roleQryStr = "select r.manual"
-    + " from ADRole r"
+    + "   from ADRole r"
     + " where r.id= :targetRoleId"
-    + " and r.active= 'Y'";
+    + "   and r.active= 'Y'";
     // @formatter:on
     final Query<Boolean> qry = SessionHandler.getInstance()
         .createQuery(roleQryStr, Boolean.class)
@@ -48,12 +50,15 @@ public class RoleAccessUtils {
     return !qry.uniqueResult();
   }
 
+  /**
+   * @return String userLevel based on role ID.
+   */
   public static String getUserLevel(String role) {
     // @formatter:off
     final String roleQryStr = "select r.userLevel"
-    + " from ADRole r"
+    + "   from ADRole r"
     + " where r.id= :targetRoleId"
-    + " and r.active= 'Y'";
+    + "   and r.active= 'Y'";
     // @formatter:on
     final Query<String> qry = SessionHandler.getInstance()
         .createQuery(roleQryStr, String.class)
@@ -87,10 +92,25 @@ public class RoleAccessUtils {
     return ACCESS_LEVEL_FOR_USER_LEVEL.get(userLevel);
   }
 
+  /**
+   * Get Organizations List for automatic Role based on "SCO" userLevel.
+   * 
+   * @param role
+   *          the role in order to get client and provide Organization List.
+   */
   public static List<String> getOrganizationsForAutoRoleByClient(Role role) {
     return getOrganizationsForAutoRoleByClient(role.getClient().getId(), role.getId());
   }
 
+  /**
+   * Get Organizations List for automatic Role based on "SCO" userLevel.
+   * 
+   * @param clientId
+   *          the clientId reference to provide Organization list.
+   * @param roleId
+   *          the roleId which is checked to avoid inactive Manual Organization access inserts.
+   * @return List<String> of Organizations IDs
+   */
   public static List<String> getOrganizationsForAutoRoleByClient(String clientId, String roleId) {
     String userLevel = getUserLevel(roleId);
     List<String> organizations = new ArrayList<>();
@@ -105,9 +125,9 @@ public class RoleAccessUtils {
           + "   and o.id <>'0'"
           + "   and o.active= 'Y' "
           + "   and not exists ( select 1 "
-          + "   from ADRoleOrganization roa where (o.id=roa.organization.id)"
-          + "   and roa.role.id= :roleId"
-          + "   and roa.active= 'N')"
+          + "     from ADRoleOrganization roa where (o.id=roa.organization.id)"
+          + "     and roa.role.id= :roleId"
+          + "     and roa.active= 'N')"
           + " order by o.id desc";
       // @formatter:on
       final Query<String> qry = SessionHandler.getInstance()
