@@ -27,7 +27,12 @@ import org.hibernate.query.Query;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.model.ad.access.Role;
 
+/**
+ * Utility class that contains method related to the access granted to roles
+ */
 public class RoleAccessUtils {
+
+  // This map determines the access level granted for eaceh user level
   private static Map<String, List<String>> ACCESS_LEVEL_FOR_USER_LEVEL = Map.of( //
       "S", List.of("4", "7", "6"), //
       " CO", List.of("7", "6", "3", "1"), //
@@ -35,34 +40,36 @@ public class RoleAccessUtils {
       "  O", List.of("3", "1", "7"));
 
   /**
-   * @return true if role is automatic.
+   * Given a role id, returns a boolean the specifies whether the role is automatic
+   * 
+   * @return true if role is automatic, false if it is manual
    */
-  public static boolean isAutoRole(String role) {
+  public static boolean isAutoRole(String roleId) {
     // @formatter:off
-    final String roleQryStr = "select r.manual"
-    + "   from ADRole r"
-    + " where r.id= :targetRoleId"
-    + "   and r.active= 'Y'";
+    final String roleQryStr = "select r.manual" + 
+                              "  from ADRole r" +
+                              " where r.id= :targetRoleId" +
+                              "   and r.active= 'Y'";
     // @formatter:on
     final Query<Boolean> qry = SessionHandler.getInstance()
         .createQuery(roleQryStr, Boolean.class)
-        .setParameter("targetRoleId", role);
+        .setParameter("targetRoleId", roleId);
     return !qry.uniqueResult();
   }
 
   /**
    * @return String userLevel based on role ID.
    */
-  public static String getUserLevel(String role) {
+  public static String getUserLevel(String roleId) {
     // @formatter:off
-    final String roleQryStr = "select r.userLevel"
-    + "   from ADRole r"
-    + " where r.id= :targetRoleId"
-    + "   and r.active= 'Y'";
+    final String roleQryStr = "select r.userLevel" +
+                              "  from ADRole r" +
+                              " where r.id= :targetRoleId" +
+                              "   and r.active= 'Y'";
     // @formatter:on
     final Query<String> qry = SessionHandler.getInstance()
         .createQuery(roleQryStr, String.class)
-        .setParameter("targetRoleId", role);
+        .setParameter("targetRoleId", roleId);
     return qry.uniqueResult();
   }
 
@@ -119,16 +126,17 @@ public class RoleAccessUtils {
     // " O" Organization level: Orgs (but *) [isOrgAdmin=Y]
     if (StringUtils.equals(userLevel, " CO") || StringUtils.equals(userLevel, "  O")) {
       // @formatter:off
-      final String orgsQryStr = "select o.id"
-          + " from Organization o"
-          + " where o.client.id= :clientId"
-          + "   and o.id <>'0'"
-          + "   and o.active= 'Y' "
-          + "   and not exists ( select 1 "
-          + "     from ADRoleOrganization roa where (o.id=roa.organization.id)"
-          + "     and roa.role.id= :roleId"
-          + "     and roa.active= 'N')"
-          + " order by o.id desc";
+      final String orgsQryStr = "select o.id" +
+                                "  from Organization o" +
+                                " where o.client.id= :clientId" +
+                                "   and o.id <>'0'" +
+                                "   and o.active= 'Y' " +
+                                "   and not exists ( " +
+                                "     select 1 " +
+                                "       from ADRoleOrganization roa where (o.id=roa.organization.id)" +
+                                "        and roa.role.id= :roleId" +
+                                "        and roa.active= 'N')" +
+                                " order by o.id desc";
       // @formatter:on
       final Query<String> qry = SessionHandler.getInstance()
           .createQuery(orgsQryStr, String.class)

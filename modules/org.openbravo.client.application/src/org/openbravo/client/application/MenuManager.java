@@ -136,10 +136,10 @@ public class MenuManager {
 
   private List<String> getFormIdsForAutomaticRole(Role role) {
     // @formatter:off
-    final String formsHql = "select f.id " + //
-        " from ADForm f " + //
-        "where f.dataAccessLevel in :accessLevels " + //
-        "  and f.active = true";
+    final String formsHql = "select f.id " +
+                            "  from ADForm f " +
+                            " where f.dataAccessLevel in :accessLevels " +
+                            "   and f.active = true";
     // @formatter:on
     final Query<String> formsQry = OBDal.getInstance()
         .getSession()
@@ -150,10 +150,12 @@ public class MenuManager {
   }
 
   private List<String> getFormIdsForManualRole(Role role) {
-    final String formsHql = "select fa.specialForm.id " + //
-        " from ADFormAccess fa " + //
-        "where fa.role.id=:roleId" + //
-        "  and fa.active = true";
+    //@formatter:off
+    final String formsHql = "select fa.specialForm.id " + 
+                            "  from ADFormAccess fa " + 
+                            " where fa.role.id=:roleId" + 
+                            "   and fa.active = true";
+    //@formatter:on
 
     final Query<String> formsQry = OBDal.getInstance()
         .getSession()
@@ -163,10 +165,12 @@ public class MenuManager {
   }
 
   private List<String> getLinkedProcessesForAutoRole(Role role) {
-    String allowedProcessHql = "select a.id " + //
-        " from ADProcess a " + //
-        "where dataAccessLevel in ( :roleAccessLevels ) " + //
-        "  and a.active = true";
+    //@formatter:off
+    String allowedProcessHql = "select a.id " + 
+                               "  from ADProcess a " + 
+                               " where dataAccessLevel in ( :roleAccessLevels ) " + 
+                               "   and a.active = true";
+    //@formatter:on
 
     final Query<String> allowedProcessQry = OBDal.getInstance()
         .getSession()
@@ -177,10 +181,12 @@ public class MenuManager {
   }
 
   private List<String> linkProcessForManualRole() {
-    String allowedProcessHql = "select pa.process.id " + //
-        " from ADProcessAccess pa " + //
-        "where pa.role = :role" + //
-        "  and pa.active = true";
+    //@formatter:off
+    String allowedProcessHql = "select pa.process.id " +
+                               "  from ADProcessAccess pa " +
+                               " where pa.role = :role" +
+                               "   and pa.active = true";
+    //@formatter:on
     final Query<String> allowedProcessQry = OBDal.getInstance()
         .getSession()
         .createQuery(allowedProcessHql, String.class)
@@ -223,10 +229,12 @@ public class MenuManager {
   }
 
   private List<String> getProcessIdsForManualRole(Role role) {
-    final String processHql = "select pa.obuiappProcess.id " + //
-        " from OBUIAPP_Process_Access pa " + //
-        "where pa.role = :role" + //
-        "  and pa.active = true ";
+    //@formatter:off
+    final String processHql = "select pa.obuiappProcess.id " +
+                              "  from OBUIAPP_Process_Access pa " +
+                              " where pa.role = :role" +
+                              "   and pa.active = true ";
+    //@formatter:on
     final Query<String> processQry = OBDal.getInstance()
         .getSession()
         .createQuery(processHql, String.class)
@@ -235,10 +243,12 @@ public class MenuManager {
   }
 
   private List<String> getProcessIdsForAutomaticRole(Role role) {
-    final String processHql = "select p.id " + //
-        " from OBUIAPP_Process p " + //
-        " where p.dataAccessLevel in :accessLevels " + //
-        " and p.active = true";
+    //@formatter:off
+    final String processHql = "select p.id " +
+                              "  from OBUIAPP_Process p " +
+                              " where p.dataAccessLevel in :accessLevels " +
+                              "   and p.active = true";
+    //@formatter:on
     final Query<String> processQry = OBDal.getInstance()
         .getSession()
         .createQuery(processHql, String.class)
@@ -258,10 +268,12 @@ public class MenuManager {
   }
 
   private List<String> getManualRoleViewDefinitionList() {
-    final String processHql = "select va.viewImplementation.id " + //
-        " from obuiapp_ViewRoleAccess va " + //
-        "where va.role = :role" + //
-        "  and va.active = true ";
+    //@formatter:off
+    final String processHql = "select va.viewImplementation.id " +
+                              "  from obuiapp_ViewRoleAccess va " +
+                              " where va.role = :role" +
+                              "   and va.active = true ";
+    //@formatter:on
     final Query<String> processQry = OBDal.getInstance()
         .getSession()
         .createQuery(processHql, String.class);

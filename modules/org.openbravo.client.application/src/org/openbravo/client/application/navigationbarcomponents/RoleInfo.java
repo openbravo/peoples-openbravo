@@ -93,10 +93,10 @@ public class RoleInfo {
 
     //@formatter:off
     String hql =   "select ro.organization.id, ro.organization.name " +
-              "  from ADRoleOrganization ro " +
-              " where ro.active=true" +
-              "   and ro.role.id=:roleId" +
-              "   and ro.organization.active=true ";
+                   "  from ADRoleOrganization ro " +
+                   " where ro.active=true" +
+                   "   and ro.role.id=:roleId" +
+                   "   and ro.organization.active=true ";
     //@formatter:on
     Query<Object[]> roleOrgs = OBDal.getInstance()
         .getSession()
