@@ -37,9 +37,6 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 /**
  * Event handler that ensures that the documentNo is a unique value in each organization.
- * 
- * Since the documentNo is not mandatory and has null values, it could not be implemented as a
- * unique constraint in the database as this behavior fails in Oracle.
  */
 
 class GoodsMovementEventHandler extends EntityPersistenceEventObserver {
