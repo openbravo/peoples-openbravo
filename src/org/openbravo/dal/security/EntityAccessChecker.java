@@ -21,10 +21,8 @@ package org.openbravo.dal.security;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,7 +39,6 @@ import org.openbravo.client.application.Process;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.TableAccess;
 import org.openbravo.role.RoleAccessUtils;
@@ -388,20 +385,27 @@ public class EntityAccessChecker implements OBNotSingleton {
     List<String> roleAccessLevels = new ArrayList<>();
     String userLevel = role.getUserLevel();
     roleAccessLevels.addAll(RoleAccessUtils.getAccessLevelForUserLevel(userLevel));
-    final Map<String, Object> parameters = new HashMap<>(1);
-    parameters.put("roleAccessLevels", roleAccessLevels);
-    String processHql = " dataAccessLevel in ( :roleAccessLevels ) ";
-    final OBQuery<Process> processAccessQry = OBDal.getInstance()
-        .createQuery(Process.class, processHql, parameters)
-        .setFilterOnReadableOrganization(false);
-    processAccessQry.list().forEach(process -> processes.add(process.getId()));
+
+    //@formatter:off
+    final String processAccessQryStr = "select p.id"
+      + "  from OBUIAPP_Process p"
+      + " where dataAccessLevel in ( :roleAccessLevels ) "
+      + "   and active = true";
+    // @formatter:on
+
+    Query<String> processAccessQry = SessionHandler.getInstance()
+        .createQuery(processAccessQryStr, String.class)
+        .setParameter("roleAccessLevels", roleAccessLevels);
+
+    processAccessQry.list().forEach(process -> processes.add(process));
   }
 
   private void linkProcessForManualRole() {
     //@formatter:off
     final String processAccessQryStr = "select p.obuiappProcess.id"
-      + " from OBUIAPP_Process_Access p"
-      + " where p.role.id= :roleId";
+      + "  from OBUIAPP_Process_Access p"
+      + " where p.role.id= :roleId"
+      + "   and active = true";
     // @formatter:on
     Query<String> processAccessQry = SessionHandler.getInstance()
         .createQuery(processAccessQryStr, String.class)

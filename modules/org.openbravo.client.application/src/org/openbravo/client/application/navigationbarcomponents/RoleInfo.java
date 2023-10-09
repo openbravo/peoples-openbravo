@@ -89,14 +89,13 @@ public class RoleInfo {
     }
     roleOrganizations = new LinkedHashMap<>();
     Map<String, String> manualOrganizations = new LinkedHashMap<>();
-    Map<String, String> autoOrganizations = new LinkedHashMap<>();
 
     //@formatter:off
     String hql =   "select ro.organization.id, ro.organization.name " +
-                   "  from ADRoleOrganization ro " +
-                   " where ro.active=true" +
-                   "   and ro.role.id=:roleId" +
-                   "   and ro.organization.active=true ";
+              "  from ADRoleOrganization ro " +
+              " where ro.active=true" +
+              "   and ro.role.id=:roleId" +
+              "   and ro.organization.active=true ";
     //@formatter:on
     Query<Object[]> roleOrgs = OBDal.getInstance()
         .getSession()
@@ -106,21 +105,21 @@ public class RoleInfo {
       manualOrganizations.put((String) orgInfo[0], (String) orgInfo[1]);
     });
 
+    roleOrganizations.putAll(manualOrganizations);
+
     if (!isManual) {
+      Map<String, String> autoOrganizations = new LinkedHashMap<>();
       List<String> autoRoleOrgs = RoleAccessUtils.getOrganizationsForAutoRoleByClient(clientId,
           roleId);
-      autoRoleOrgs.forEach((orgId) -> {
-        autoOrganizations.put((String) orgId,
-            (String) OBDal.getInstance().get(Organization.class, orgId).getName());
-      });
-      manualOrganizations.forEach((orgId, orgName) -> {
-        if (autoOrganizations.containsKey(orgId)) {
-          autoOrganizations.remove(orgId);
-        }
-      });
+      autoRoleOrgs.stream()
+          .filter(orgId -> !manualOrganizations.containsKey(orgId))
+          .forEach(orgId -> {
+            autoOrganizations.put(orgId,
+                OBDal.getInstance().get(Organization.class, orgId).getName());
+          });
+      roleOrganizations.putAll(autoOrganizations);
     }
-    roleOrganizations.putAll(manualOrganizations);
-    roleOrganizations.putAll(autoOrganizations);
+
     return roleOrganizations;
   }
 

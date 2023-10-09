@@ -180,7 +180,7 @@ public class MenuManager {
     return allowedProcessQry.list();
   }
 
-  private List<String> linkProcessForManualRole() {
+  private List<String> getLinkedProcessesManualRole() {
     //@formatter:off
     String allowedProcessHql = "select pa.process.id " +
                                "  from ADProcessAccess pa " +
@@ -198,7 +198,7 @@ public class MenuManager {
     List<String> processList;
     Role role = OBContext.getOBContext().getRole();
     if (role.isManual()) {
-      processList = linkProcessForManualRole();
+      processList = getLinkedProcessesManualRole();
     } else {
       processList = getLinkedProcessesForAutoRole(role);
     }
