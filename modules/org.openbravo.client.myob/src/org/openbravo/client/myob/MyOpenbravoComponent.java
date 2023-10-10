@@ -145,7 +145,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     final Map<String, Object> parameters = new HashMap<>(1);
     parameters.put("roleAccessLevels",
         RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
-    String widgetHql = " dataAccessLevel in ( :roleAccessLevels ) and superclass = 'N' ";
+    String widgetHql = " (allowAnonymousAccess = false or dataAccessLevel in ( :roleAccessLevels )) and superclass = 'N' ";
     final OBQuery<WidgetClass> resultList = OBDal.getInstance()
         .createQuery(WidgetClass.class, widgetHql, parameters)
         .setFilterOnReadableOrganization(false);
