@@ -168,7 +168,7 @@ public class MenuManager {
     //@formatter:off
     String allowedProcessHql = "select a.id " + 
                                "  from ADProcess a " + 
-                               " where dataAccessLevel in ( :roleAccessLevels ) " + 
+                               " where a.dataAccessLevel in ( :roleAccessLevels ) " + 
                                "   and a.active = true";
     //@formatter:on
 
