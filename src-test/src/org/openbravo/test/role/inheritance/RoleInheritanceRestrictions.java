@@ -365,7 +365,7 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
         template.setTemplate(false);
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
-        // Expected exception, the AD_ROLE_TEMPLATE_ISMANUAL_CHK constraint avoids this save
+        // Expected exception, the AD_ROLE_MANUALTEMPLATE_CHECK constraint avoids this save
         OBDal.getInstance().rollbackAndClose();
       }
 
@@ -403,7 +403,7 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
         OBDal.getInstance().flush();
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
-        // Expected exception, the AD_ROLE_TEMPLATE_ISMANUAL_CHK constraint avoids this save
+        // Expected exception, the AD_ROLE_MANUALTEMPLATE_CHECK constraint avoids this save
         OBDal.getInstance().rollbackAndClose();
       }
       template = OBDal.getInstance().get(Role.class, templateId);
@@ -421,7 +421,7 @@ public class RoleInheritanceRestrictions extends WeldBaseTest {
         OBDal.getInstance().flush();
         OBDal.getInstance().commitAndClose();
       } catch (Exception ex) {
-        // Expected exception, the AD_ROLE_TEMPLATE_ISMANUAL_CHK constraint avoids this update
+        // Expected exception, the AD_ROLE_MANUALTEMPLATE_CHECK constraint avoids this update
         OBDal.getInstance().rollbackAndClose();
       }
       template2 = OBDal.getInstance().get(Role.class, template2Id);
