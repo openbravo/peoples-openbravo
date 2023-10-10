@@ -652,7 +652,7 @@ public class OBContext implements OBNotSingleton, Serializable {
     List<String> currentOrgList = getAvailableOrganizationsForManualRole(targetRole,
         isActiveOrganization);
 
-    if (RoleAccessUtils.isAutoRole(targetRole.getId())) {
+    if (!targetRole.isManual()) {
       List<String> orgListAutoRole = RoleAccessUtils
           .getOrganizationsForAutoRoleByClient(targetRole);
       currentOrgList.addAll(orgListAutoRole);
@@ -928,7 +928,7 @@ public class OBContext implements OBNotSingleton, Serializable {
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
         setCurrentOrganization(getUser().getDefaultOrganization());
-      } else if (RoleAccessUtils.isAutoRole(getRole().getId())) {
+      } else if (!getRole().isManual()) {
         List<String> orgs = RoleAccessUtils.getOrganizationsForAutoRoleByClient(getRole());
         String orgIdAutoRole = orgs.stream().max(Comparator.naturalOrder()).get();
         Organization org = OBDal.getInstance().get(Organization.class, orgIdAutoRole);
