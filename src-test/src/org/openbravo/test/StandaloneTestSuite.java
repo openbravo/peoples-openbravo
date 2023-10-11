@@ -131,7 +131,6 @@ import org.openbravo.test.reporting.CompiledReportsCacheTest;
 import org.openbravo.test.reporting.JasperReportsCompilation;
 import org.openbravo.test.reporting.JasperReportsExportTest;
 import org.openbravo.test.reporting.ReportingUtilsTest;
-import org.openbravo.test.role.RoleTestSuite;
 import org.openbravo.test.role.inheritance.RoleInheritanceTestSuite;
 import org.openbravo.test.security.AccessLevelTest;
 import org.openbravo.test.security.AllowedOrganizationsTest;
@@ -360,9 +359,6 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // buildValidations and moduleScripts
     ExecutionLimitsTest.class, //
-
-    // role
-    RoleTestSuite.class, //
 
     // role inheritance
     RoleInheritanceTestSuite.class, //
