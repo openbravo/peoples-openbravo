@@ -20,6 +20,7 @@ package org.openbravo.service.importprocess;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.service.NonBlockingExecutorServiceProvider;
 import org.openbravo.service.importprocess.ImportEntryProcessor.ImportEntryProcessRunnable;
@@ -75,8 +76,13 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
   @Override
   protected void postProcessEntry(String importEntryId, long t0, ImportEntry localImportEntry,
       String typeOfData) {
-    if (!"Initial".equals(localImportEntry.getImportStatus())) {
-      super.postProcessEntry(importEntryId, t0, localImportEntry, typeOfData);
+    OBContext.setAdminMode(true);
+    try {
+      if (!"Initial".equals(localImportEntry.getImportStatus())) {
+        super.postProcessEntry(importEntryId, t0, localImportEntry, typeOfData);
+      }
+    } finally {
+      OBContext.restorePreviousMode();
     }
   }
 
@@ -90,6 +96,7 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
 
   private void completed(ImportEntry importEntry) {
     setImportEntryQueuedEntryContext(importEntry);
+    OBContext.setAdminMode(true);
     try {
       log.debug("Completed non-blocking import entry {}", importEntry);
       ImportEntryManager.getInstance().setImportEntryProcessed(importEntry.getId());
@@ -97,6 +104,7 @@ public abstract class NonBlockingImportEntryProcessRunnable extends ImportEntryP
       postProcessEntry(importEntry.getId(), 0L, importEntry, importEntry.getTypeofdata());
     } finally {
       OBDal.getInstance().commitAndClose();
+      OBContext.restorePreviousMode();
     }
   }
 
