@@ -434,10 +434,8 @@ public class OrganizationStructureProvider implements OBNotSingleton {
    *
    * @see OrgNode
    * 
-   * @param {String}
-   *          nodeId - The ID of the Organization to retrieve the info from
-   * @param {String}
-   *          property - The property as defined in OrgNode to retrieve
+   * @param nodeId - The ID of the Organization to retrieve the info from
+   * @param property - The property as defined in OrgNode to retrieve
    * @return An Object containing the value from OrgNode. Null if this value is empty or either the
    *         OrgNode or the property does not exist
    */
