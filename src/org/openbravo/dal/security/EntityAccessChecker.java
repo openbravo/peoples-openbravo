@@ -365,7 +365,11 @@ public class EntityAccessChecker implements OBNotSingleton {
         "select t.id, true" +
         "  from ADTable t " +
         " where t.active = true " +
-        "   and t.active = true ";
+        "   and not exists (select 1" +
+        "                     from ADTab tab, ADWindowAccess wa" +
+        "                    where t.id = tab.table.id" +
+        "                      and tab.window=wa.window" +
+        "                      and wa.active=false)";
     // @formatter:on
     tablesHql += !excludedTableIds.isEmpty() ? " and t.id not in ( :excludedTableIds ) " : "";
     tablesHql += " and t.dataAccessLevel in ( :roleAccessLevels ) ";
