@@ -27759,7 +27759,7 @@ You can revert your changes by reloading the current record from the database cl
 <!--E1B594C355D44D5D84D6DE1A80762D50-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--E1B594C355D44D5D84D6DE1A80762D50-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E1B594C355D44D5D84D6DE1A80762D50-->  <VALUE><![CDATA[ProductPriceExceptionExists]]></VALUE>
-<!--E1B594C355D44D5D84D6DE1A80762D50-->  <MSGTEXT><![CDATA[There are different product prices exceptions with same dates and organization. Product "@product@" and "@organization@" organization.]]></MSGTEXT>
+<!--E1B594C355D44D5D84D6DE1A80762D50-->  <MSGTEXT><![CDATA[Cannot be two product prices exceptions for the same orgdepth and valid from date. Product "@product@" and "@organization@" organization.]]></MSGTEXT>
 <!--E1B594C355D44D5D84D6DE1A80762D50-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--E1B594C355D44D5D84D6DE1A80762D50-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E1B594C355D44D5D84D6DE1A80762D50-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>

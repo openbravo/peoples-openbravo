@@ -63,7 +63,7 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
     }
     final ProductPriceException pppe = (ProductPriceException) event.getTargetInstance();
     if (existsRecord(pppe.getId(), pppe.getClient(), pppe.getOrganization(), pppe.getProductPrice(),
-        pppe.getValidFromDate(), pppe.getValidToDate())) {
+        pppe.getValidFromDate())) {
       Map<String, String> map = new HashMap<>();
       map.put("product", pppe.getProductPrice().getProduct().getName());
       map.put("organization", pppe.getOrganization().getName());
@@ -80,7 +80,7 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
     }
     final ProductPriceException pppe = (ProductPriceException) event.getTargetInstance();
     if (existsRecord(pppe.getId(), pppe.getClient(), pppe.getOrganization(), pppe.getProductPrice(),
-        pppe.getValidFromDate(), pppe.getValidToDate())) {
+        pppe.getValidFromDate())) {
       Map<String, String> map = new HashMap<>();
       map.put("product", pppe.getProductPrice().getProduct().getName());
       map.put("organization", pppe.getOrganization().getName());
@@ -102,8 +102,7 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
 
   // Check if exists another record using this validFromDate - validToDate in the same dates
   private boolean existsRecord(final String exceptionId, final Client client,
-      final Organization organization, final ProductPrice productPrice, final Date validFrom,
-      final Date validTo) {
+      final Organization organization, final ProductPrice productPrice, final Date validFrom) {
     //@formatter:off
     final String hql =
                   "select pppe.id" +
@@ -113,18 +112,8 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
                   "   and pppe.client.id = :clientId" +
                   "   and pppe.organization.id = :orgId" +
                   "   and pppe.productPrice.id = :productPriceId" +
-                  "   and" +
-                  "     (" +
-                  "       (" +
-                  "         :validFrom between pppe.validFromDate and pppe.validToDate" +
-                  "         or :validTo between pppe.validFromDate and pppe.validToDate" +
-                  "       )" +
-                  "       or" +
-                  "         (" +
-                  "           :validFrom < pppe.validFromDate" +
-                  "           and :validTo > pppe.validToDate" +
-                  "         )" +
-                  "     )";
+                  "   and pppe.orgdepth = :orgdepth " +
+                  "   and pppe.validFromDate = :validFrom ";
     //@formatter:on
 
     final Query<String> query = OBDal.getInstance()
@@ -135,7 +124,7 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
         .setParameter("orgId", organization.getId())
         .setParameter("productPriceId", productPrice.getId())
         .setParameter("validFrom", validFrom)
-        .setParameter("validTo", validTo)
+        .setParameter("orgdepth", getOrgDepth(organization))
         .setMaxResults(1);
 
     return !query.list().isEmpty();
