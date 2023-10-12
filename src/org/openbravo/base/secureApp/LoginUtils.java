@@ -205,6 +205,7 @@ public class LoginUtils {
           && currentContext.getWarehouse() != null
           && currentContext.getWarehouse().getId().equals(strAlmacen);
       if (!lightLogin || !sameContext) {
+        log4j.info("Setting OBContext, orgId= {}", strOrg);
         OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage, strAlmacen);
       }
     } catch (final OBSecurityException e) {
