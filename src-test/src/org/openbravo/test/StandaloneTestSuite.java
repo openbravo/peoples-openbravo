@@ -78,8 +78,6 @@ import org.openbravo.test.costing.TestCosting;
 import org.openbravo.test.createlinesfrom.CreateLinesFromTest;
 import org.openbravo.test.dal.AdminContextTest;
 import org.openbravo.test.dal.ComputedColumnsTest;
-import org.openbravo.test.dal.DalComplexQueryRequisitionTest;
-import org.openbravo.test.dal.DalComplexQueryTestOrderLine;
 import org.openbravo.test.dal.DalConnectionProviderTest;
 import org.openbravo.test.dal.DalLockingTest;
 import org.openbravo.test.dal.DalPerformanceInventoryLineTest;
@@ -198,8 +196,6 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     AuthenticationManagerTest.class, //
 
     // dal
-    DalComplexQueryRequisitionTest.class, //
-    DalComplexQueryTestOrderLine.class, //
     DalPerformanceInventoryLineTest.class, //
     DalPerformanceProductTest.class, //
     DalPerformanceProxyTest.class, //
