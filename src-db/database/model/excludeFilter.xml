@@ -58,7 +58,6 @@
     <excludedFunction name="HEX_TO_INT"/>
     <excludedFunction name="UUID_GENERATE_V4"/>
     <excludedFunction name="AD_ORG_CHK_DOCUMENTS"/>
-    <excludedFunction name="AD_ORG_CHK_DOC_PAYMENTS"/>
     <excludedFunction name="C_CREATE_TEMPORARY_TABLES"/>
     <excludedFunction name="AD_DB_MODIFIED"/>
     <excludedFunction name="AD_GET_RDBMS"/>
