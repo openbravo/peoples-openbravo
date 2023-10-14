@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2010-2021 Openbravo SLU 
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -88,9 +88,6 @@ class AuditTrailDeletedRecords {
     }
 
     sql.append("SELECT * FROM (\n");
-    if (hasRange && conn.getRDBMS().equalsIgnoreCase("ORACLE")) {
-      sql.append("SELECT ROWNUM AS RN1, ").append(tableName).append(".* FROM(\n");
-    }
     sql.append(
         "SELECT record_id as rowkey, event_time as audittrailtime, ad_user_id as audittrailuser, processType as audittrailprocesstype, process_id as audittrailprocessid\n");
     for (Column col : tab.getTable().getADColumnList()) {
@@ -166,22 +163,10 @@ class AuditTrailDeletedRecords {
 
     if (hasRange) {
       // wrap end SQL
-      // calc positions
-      String rangeStart = Integer.toString(startPosition + 1);
-      String rangeEnd = Integer.toString(startPosition + rangeLength);
-      if (conn.getRDBMS().equalsIgnoreCase("ORACLE")) {
-        sql.append(") WHERE RN1 ");
-        if (hasRangeLimit) {
-          sql.append("BETWEEN " + rangeStart + " AND " + rangeEnd);
-        } else {
-          sql.append(">= ").append(rangeStart);
-        }
-      } else {
-        if (hasRangeLimit) {
-          sql.append(" LIMIT " + Integer.toString(rangeLength));
-        }
-        sql.append(" OFFSET " + Integer.toString(startPosition));
+      if (hasRangeLimit) {
+        sql.append(" LIMIT " + Integer.toString(rangeLength));
       }
+      sql.append(" OFFSET " + Integer.toString(startPosition));
     }
 
     if (onlyCount) {
