@@ -97,7 +97,7 @@ class AuditTrailDeletedRecords {
       // obtain information for all columns
       sql.append(", ");
       sql.append(
-          "(SELECT COALESCE(OLD_CHAR, TO_CHAR(OLD_NCHAR), TO_CHAR(OLD_NUMBER), TO_CHAR(OLD_DATE), TO_CHAR(OLD_TEXT))\n");
+          "(SELECT COALESCE(OLD_CHAR, TO_CHAR(OLD_NUMBER), TO_CHAR(OLD_DATE), TO_CHAR(OLD_TEXT))\n");
       sql.append("  FROM AD_AUDIT_TRAIL\n");
       sql.append(" WHERE AD_TABLE_ID='").append(tab.getTable().getId()).append("'\n");
       sql.append("   AND AD_COLUMN_ID='").append(col.getId()).append("'\n");
