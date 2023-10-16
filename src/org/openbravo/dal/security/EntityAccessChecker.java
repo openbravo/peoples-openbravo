@@ -401,7 +401,7 @@ public class EntityAccessChecker implements OBNotSingleton {
         .createQuery(processAccessQryStr, String.class)
         .setParameter("roleAccessLevels", roleAccessLevels);
 
-    processAccessQry.list().forEach(process -> processes.add(process));
+    processes.addAll(processAccessQry.list());
   }
 
   private void linkProcessForManualRole() {
@@ -414,7 +414,7 @@ public class EntityAccessChecker implements OBNotSingleton {
     Query<String> processAccessQry = SessionHandler.getInstance()
         .createQuery(processAccessQryStr, String.class)
         .setParameter("roleId", getRoleId());
-    processAccessQry.list().forEach(process -> processes.add(process));
+    processes.addAll(processAccessQry.list());
   }
 
   private Set<String> getProcessAccessSelectors(Set<String> processTables) {
