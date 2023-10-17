@@ -148,7 +148,20 @@ public class RoleAccessUtils {
     // Client or System level: Only *
     if (StringUtils.equals(userLevel, " C") || StringUtils.equals(userLevel, "S")
         || StringUtils.equals(userLevel, " CO")) {
-      organizations.add("0");
+      // @formatter:off
+    	final String adminOrgQryStr = 
+                 "select roa.id " +
+                 "  from ADRoleOrganization roa "+
+                 "  where roa.organization.id = '0'" +
+                 "        and roa.role.id= :roleId" +
+                 "        and roa.active= 'N'";
+      // @formatter:on
+      final Query<String> qry = SessionHandler.getInstance()
+          .createQuery(adminOrgQryStr, String.class)
+          .setParameter("roleId", roleId);
+      if (qry.list().isEmpty()) {
+        organizations.add("0");
+      }
     }
     return organizations;
   }
