@@ -56,7 +56,6 @@ public class KernelFilter implements Filter {
       final FilterChain chain) throws IOException, ServletException {
 
     HttpServletResponse httpResp = (HttpServletResponse) response;
-    // httpResp.setHeader("X-Content-Type-Options", "nosniff");
     String contextName = OBPropertiesProvider.getInstance()
         .getOpenbravoProperties()
         .getProperty("context.name");
@@ -66,6 +65,11 @@ public class KernelFilter implements Filter {
           "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self' http://oj0ijfii34kccq3ioto7mdspc7r2s7o9.ig.ig.gmodules.com; report-uri "
               + reportUri + ";");
     }
+    httpResp.setHeader("X-Frame-Options", "SAMEORIGIN");
+    httpResp.setHeader("X-Content-Type-Options", "nosniff");
+    httpResp.setHeader("X-Permitted-Cross-Domain-Policies", "none");
+    httpResp.setHeader("Referrer-Policy", "same-origin");
+    httpResp.setHeader("X-Frame-Options", "SAMEORIGIN");
 
     final ThreadHandler dth = new ThreadHandler() {
 
