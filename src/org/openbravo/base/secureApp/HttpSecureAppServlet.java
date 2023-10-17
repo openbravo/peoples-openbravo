@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2022 Openbravo S.L.U.
+ * Copyright (C) 2001-2023 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -58,6 +58,7 @@ import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PrintJRData;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.system.SystemInformation;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.FormTrl;
@@ -65,6 +66,7 @@ import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.ad.ui.ProcessTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.ui.WindowTrl;
+import org.openbravo.role.RoleAccessUtils;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.openbravo.service.web.UserContextCache;
 import org.openbravo.utils.FileUtility;
@@ -523,20 +525,23 @@ public class HttpSecureAppServlet extends HttpBaseServlet {
    */
   protected boolean hasGeneralAccess(VariablesSecureApp vars, String type, String id) {
     try {
+      Role role = OBContext.getOBContext().getRole();
+      boolean isAutomaticRole = RoleAccessUtils.isAutoRole(role.getId());
       ConnectionProvider cp = new DalConnectionProvider(false);
       final String accessLevel = SeguridadData.selectAccessLevel(cp, type, id);
       vars.setSessionValue("#CurrentAccessLevel", accessLevel);
       if (type.equals("W")) {
-        return hasLevelAccess(vars, accessLevel)
-            && SeguridadData.selectAccess(cp, vars.getRole(), "TABLE", id).equals("0")
-            && !SeguridadData.selectAccess(cp, vars.getRole(), type, id).equals("0");
+        return hasLevelAccess(vars, accessLevel) && (isAutomaticRole
+            || (SeguridadData.selectAccess(cp, vars.getRole(), "TABLE", id).equals("0")
+                && !SeguridadData.selectAccess(cp, vars.getRole(), type, id).equals("0")));
       } else if (type.equals("S")) {
-        return !SeguridadData.selectAccessSearch(cp, vars.getRole(), id).equals("0");
+        return isAutomaticRole
+            || !SeguridadData.selectAccessSearch(cp, vars.getRole(), id).equals("0");
       } else if (type.equals("C")) {
         return true;
       } else {
-        return hasLevelAccess(vars, accessLevel)
-            && !SeguridadData.selectAccess(cp, vars.getRole(), type, id).equals("0");
+        return hasLevelAccess(vars, accessLevel) && (isAutomaticRole
+            || !SeguridadData.selectAccess(cp, vars.getRole(), type, id).equals("0"));
       }
     } catch (final Exception e) {
       log4j.error("Error checking access: ", e);

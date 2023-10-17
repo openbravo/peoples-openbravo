@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2022 Openbravo SLU
+ * All portions are Copyright (C) 2013-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,6 +53,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.ReferencedTree;
@@ -465,6 +466,10 @@ public abstract class TreeDatasourceService extends DefaultDataSourceService {
       return hasAccessToTable || isDerivedReadable;
     }
     if (hasAccessToTable && tab != null) {
+      Role role = OBContext.getOBContext().getRole();
+      if (!role.isManual()) {
+        return true;
+      }
       // If the tab has been provided, check if the user has access to its window
       OBCriteria<WindowAccess> qWindowAccess = OBDal.getInstance()
           .createCriteria(WindowAccess.class);

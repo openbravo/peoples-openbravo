@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2022 Openbravo S.L.U.
+ * Copyright (C) 2001-2023 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +52,7 @@ import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.role.RoleAccessUtils;
 import org.openbravo.service.db.DalConnectionProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -131,7 +133,8 @@ public class LoginUtils {
 
   static boolean validRoleClient(ConnectionProvider conn, String role, String client)
       throws ServletException {
-    boolean valid = SeguridadData.isRoleClient(conn, role, client);
+    boolean valid = SeguridadData.isAutomaticRole(conn, role)
+        || SeguridadData.isRoleClient(conn, role, client);
     if (!valid) {
       log4j.error("Login client is not in role clients list. Role: " + role + ", Client: " + client,
           new Exception("stack trace"));
@@ -141,7 +144,8 @@ public class LoginUtils {
 
   static boolean validRoleOrg(ConnectionProvider conn, String role, String org)
       throws ServletException {
-    boolean valid = SeguridadData.isLoginRoleOrg(conn, role, org);
+    boolean valid = SeguridadData.isAutomaticRole(conn, role)
+        || SeguridadData.isLoginRoleOrg(conn, role, org);
     if (!valid) {
       log4j.error(
           "Login organization is not in role organizations list. Role: " + role + ", Org: " + org,
@@ -166,34 +170,11 @@ public class LoginUtils {
     }
   }
 
-  public static String buildClientList(List<RoleOrganization> roleorglist) {
-    StringBuilder clientlist = new StringBuilder();
-    String currentclient = null;
-    for (RoleOrganization roleorg : roleorglist) {
-      if (currentclient == null || !currentclient.equals(roleorg.getClient().getId())) {
-        currentclient = roleorg.getClient().getId();
-        if (clientlist.length() > 0) {
-          clientlist.append(',');
-        }
-        clientlist.append('\'');
-        clientlist.append(roleorg.getClient().getId());
-        clientlist.append('\'');
-      }
-    }
-    return clientlist.toString();
-  }
-
-  public static String buildOrgList(List<RoleOrganization> roleorglist) {
-    StringBuilder orglist = new StringBuilder();
-    for (RoleOrganization roleorg : roleorglist) {
-      if (orglist.length() > 0) {
-        orglist.append(',');
-      }
-      orglist.append('\'');
-      orglist.append(roleorg.getOrganization().getId());
-      orglist.append('\'');
-    }
-    return orglist.toString();
+  private static String buildConcatenatedList(List<String> elements) {
+    return elements.stream()
+        .distinct()
+        .map(element -> ("'" + element + "'"))
+        .collect(Collectors.joining(","));
   }
 
   public static boolean fillSessionArguments(ConnectionProvider conn, VariablesSecureApp vars,
@@ -224,6 +205,7 @@ public class LoginUtils {
           && currentContext.getWarehouse() != null
           && currentContext.getWarehouse().getId().equals(strAlmacen);
       if (!lightLogin || !sameContext) {
+        log4j.info("Setting OBContext, orgId= {}", strOrg);
         OBContext.setOBContext(strUserAuth, strRol, strCliente, strOrg, strLanguage, strAlmacen);
       }
     } catch (final OBSecurityException e) {
@@ -280,11 +262,26 @@ public class LoginUtils {
         return false;
       }
 
-      List<RoleOrganization> datarolelist = loadRoleOrganization(strRol);
+      List<String> orgIds;
+      List<String> clientIds;
+      if (RoleAccessUtils.isAutoRole(strRol)) {
+        clientIds = List.of(strCliente);
+        orgIds = RoleAccessUtils.getOrganizationsForAutoRoleByClient(strCliente, strRol);
+      } else {
+        List<RoleOrganization> roleOrganizations = loadRoleOrganization(strRol);
+        clientIds = roleOrganizations.stream()
+            .map(role -> role.getClient().getId())
+            .collect(Collectors.toList());
+        orgIds = roleOrganizations.stream()
+            .map(role -> role.getOrganization().getId())
+            .collect(Collectors.toList());
+      }
+      String userClient = buildConcatenatedList(clientIds);
+      String userOrg = buildConcatenatedList(orgIds);
 
       vars.setSessionValue("#User_Level", data[0].userlevel);
-      vars.setSessionValue("#User_Client", buildClientList(datarolelist));
-      vars.setSessionValue("#User_Org", buildOrgList(datarolelist));
+      vars.setSessionValue("#User_Client", userClient);
+      vars.setSessionValue("#User_Org", userOrg);
       vars.setSessionValue("#Approval_C_Currency_ID", data[0].cCurrencyId);
       vars.setSessionValue("#Approval_Amt", data[0].amtapproval);
       vars.setSessionValue("#Client_Value", data[0].value);
@@ -443,14 +440,6 @@ public class LoginUtils {
     }
     validateDefault(strRole, strUserAuth, "Role");
 
-    String strOrg = DefaultOptionsData.defaultOrg(cp, strUserAuth);
-    // use default org
-    if (strOrg == null || !LoginUtils.validRoleOrg(cp, strRole, strOrg)) {
-      // if default not set or not valid take any one
-      strOrg = DefaultOptionsData.getDefaultOrg(cp, strRole);
-    }
-    validateDefault(strOrg, strRole, "Org");
-
     String strClient = DefaultOptionsData.defaultClient(cp, strUserAuth);
     // use default client
     if (strClient == null || !LoginUtils.validRoleClient(cp, strRole, strClient)) {
@@ -458,6 +447,18 @@ public class LoginUtils {
       strClient = DefaultOptionsData.getDefaultClient(cp, strRole);
     }
     validateDefault(strClient, strRole, "Client");
+
+    String strOrg = DefaultOptionsData.defaultOrg(cp, strUserAuth);
+    // use default org
+    if (strOrg == null || !LoginUtils.validRoleOrg(cp, strRole, strOrg)) {
+      if (RoleAccessUtils.isAutoRole(strRole)) {
+        strOrg = RoleAccessUtils.getOrganizationsForAutoRoleByClient(strClient, strRole).get(0);
+      } else {
+        // if default not set or not valid take any one
+        strOrg = DefaultOptionsData.getDefaultOrg(cp, strRole);
+      }
+    }
+    validateDefault(strOrg, strRole, "Org");
 
     String strWarehouse = DefaultOptionsData.defaultWarehouse(cp, strUserAuth);
     if (strWarehouse == null) {

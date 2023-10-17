@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2019 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,8 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.access.Role;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.role.RoleAccessUtils;
 
 /**
  * This class provides the organizations and warehouses that can be accessed for a particular role.
@@ -38,6 +40,7 @@ import org.openbravo.model.ad.access.Role;
  */
 public class RoleInfo {
   private String roleId;
+  private boolean isManual;
   private String roleName;
   private String clientId;
   private String clientName;
@@ -49,6 +52,7 @@ public class RoleInfo {
     this.roleName = (String) roleInfo[1];
     this.clientId = (String) roleInfo[2];
     this.clientName = (String) roleInfo[3];
+    this.isManual = (boolean) roleInfo[4];
   }
 
   public RoleInfo(Role role) {
@@ -56,6 +60,7 @@ public class RoleInfo {
     this.roleName = role.getIdentifier();
     this.clientId = role.getClient().getId();
     this.clientName = role.getClient().getIdentifier();
+    this.isManual = role.isManual();
   }
 
   public String getRoleId() {
@@ -83,22 +88,38 @@ public class RoleInfo {
       return roleOrganizations;
     }
     roleOrganizations = new LinkedHashMap<>();
+    Map<String, String> manualOrganizations = new LinkedHashMap<>();
 
     //@formatter:off
-    String hql = 
-            "select ro.organization.id, ro.organization.name " +
-            "  from ADRoleOrganization ro " +
-            " where ro.active=true" +
-            "   and ro.role.id=:roleId" +
-            "   and ro.organization.active=true ";
+    String hql =   "select ro.organization.id, ro.organization.name " +
+              "  from ADRoleOrganization ro " +
+              " where ro.active=true" +
+              "   and ro.role.id=:roleId" +
+              "   and ro.organization.active=true ";
     //@formatter:on
     Query<Object[]> roleOrgs = OBDal.getInstance()
         .getSession()
         .createQuery(hql, Object[].class)
         .setParameter("roleId", roleId);
-    for (Object[] orgInfo : roleOrgs.list()) {
-      roleOrganizations.put((String) orgInfo[0], (String) orgInfo[1]);
+    roleOrgs.list().forEach((orgInfo) -> {
+      manualOrganizations.put((String) orgInfo[0], (String) orgInfo[1]);
+    });
+
+    roleOrganizations.putAll(manualOrganizations);
+
+    if (!isManual) {
+      Map<String, String> autoOrganizations = new LinkedHashMap<>();
+      List<String> autoRoleOrgs = RoleAccessUtils.getOrganizationsForAutoRoleByClient(clientId,
+          roleId);
+      autoRoleOrgs.stream()
+          .filter(orgId -> !manualOrganizations.containsKey(orgId))
+          .forEach(orgId -> {
+            autoOrganizations.put(orgId,
+                OBDal.getInstance().get(Organization.class, orgId).getName());
+          });
+      roleOrganizations.putAll(autoOrganizations);
     }
+
     return roleOrganizations;
   }
 

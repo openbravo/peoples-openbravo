@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2020 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -40,12 +41,14 @@ import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.RoleOrganization;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.access.UserRoles;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.role.RoleAccessUtils;
 
 /**
  * Creates the Workspace properties list which is initially loaded in the client.
@@ -138,7 +141,19 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     }
   }
 
-  private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
+  private List<String> getAccessibleWidgetClassIdsForAutoRole(Role role) {
+    final Map<String, Object> parameters = new HashMap<>(1);
+    parameters.put("roleAccessLevels",
+        RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
+    String widgetHql = " (allowAnonymousAccess = false or dataAccessLevel in ( :roleAccessLevels )) and superclass = 'N' ";
+    final OBQuery<WidgetClass> resultList = OBDal.getInstance()
+        .createQuery(WidgetClass.class, widgetHql, parameters)
+        .setFilterOnReadableOrganization(false);
+    return resultList.list().stream().map(WidgetClass::getId).collect(Collectors.toList());
+  }
+
+  private List<String> getAccessibleWidgetClassIdsForManualRole(String roleId,
+      String additionalWhereClause) {
     //@formatter:off
     String hql = 
             "select widgetClassAccess.widgetClass.id " +
@@ -155,7 +170,18 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
     } else {
       query.setParameter("roleId", roleId);
     }
-    List<String> widgetClassIds = query.list();
+    return query.list();
+  }
+
+  private List<String> getAccessibleWidgetClassIds(String roleId, String additionalWhereClause) {
+    List<String> widgetClassIds;
+    Role role = OBContext.getOBContext().getRole();
+    if (!role.isManual()) {
+      widgetClassIds = getAccessibleWidgetClassIdsForAutoRole(role);
+    } else {
+      widgetClassIds = getAccessibleWidgetClassIdsForManualRole(roleId, additionalWhereClause);
+    }
+
     List<String> anonymousWidgetClasses;
     if (isInDevelopment()) {
       anonymousWidgetClasses = myOBUtils.getAnonymousAccessibleWidgetClassesFromDatabase();
@@ -328,7 +354,7 @@ public class MyOpenbravoComponent extends SessionDynamicTemplateComponent {
 
   private List<WidgetInstance> getWidgetInstances(Client client, Role visibleAtRole,
       User visibleAtUser, List<String> widgetClasses) {
-    if (widgetClasses.isEmpty()){
+    if (widgetClasses.isEmpty()) {
       return Collections.emptyList();
     }
     OBCriteria<WidgetInstance> obc = OBDal.getInstance().createCriteria(WidgetInstance.class);

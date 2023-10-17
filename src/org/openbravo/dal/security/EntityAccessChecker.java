@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +39,9 @@ import org.openbravo.client.application.Process;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.TableAccess;
+import org.openbravo.role.RoleAccessUtils;
 
 /**
  * This class is responsible for determining the allowed read/write access for a combination of user
@@ -110,19 +113,6 @@ public class EntityAccessChecker implements OBNotSingleton {
   private static final int SELECTED_ID = 0;
   private static final int TAB_ID = 2;
   private static final int FILTER_ELEMENT_ID = 1;
-
-  // Table Access Level:
-  // "6";"System/Client"
-  // "1";"Organization"
-  // "3";"Client/Organization"
-  // "4";"System only"
-  // "7";"All"
-
-  // User level:
-  // "S";"System"
-  // " C";"Client"
-  // " O";"Organization"
-  // " CO";"Client+Organization"
 
   private String roleId;
   private Set<String> tabsWithSelectors;
@@ -224,21 +214,13 @@ public class EntityAccessChecker implements OBNotSingleton {
       final ModelProvider mp = ModelProvider.getInstance();
       final String userLevel = obContext.getUserLevel();
 
-      // Don't use dal because otherwise we can end up in infinite loops
-      // there is always only one windowaccess per role due to unique constraints
-      // @formatter:off
-      final String qryStr = "select t.table.id, wa.editableField"
-          + " from ADTab t"
-          + "  left join t.window w"
-          + "  left join w.aDWindowAccessList wa"
-          + " where wa.role.id= :roleId";
-      // @formatter:on
-      final Query<Object[]> qry = SessionHandler.getInstance()
-          .createQuery(qryStr, Object[].class)
-          .setParameter("roleId", getRoleId());
-      final List<Object[]> tabData = qry.list();
+      List<Object[]> tableAccess = getManualTableAccess();
+      Role role = OBContext.getOBContext().getRole();
+      if (Boolean.FALSE.equals(role.isManual())) {
+        addMissingTablesForAutomaticRoles(role, tableAccess);
+      }
 
-      for (final Object[] os : tabData) {
+      for (final Object[] os : tableAccess) {
         final String tableId = (String) os[0];
         final Entity e = mp.getEntityByTableId(tableId);
         if (e == null) { // happens for AD_Client_Info and views
@@ -339,18 +321,10 @@ public class EntityAccessChecker implements OBNotSingleton {
       }
 
       // and take into account explicit process access
-      // @formatter:off
-      final String processAccessQryStr = "select p.obuiappProcess.id"
-          + " from OBUIAPP_Process_Access p"
-          + " where p.role.id= :roleId";
-      // @formatter:on
-      Query<String> processAccessQry = SessionHandler.getInstance()
-          .createQuery(processAccessQryStr, String.class)
-          .setParameter("roleId", getRoleId());
-
-      final List<String> processAccessQuery = processAccessQry.list();
-      for (final String processAccess : processAccessQuery) {
-        processes.add(processAccess);
+      if (role.isManual()) {
+        linkProcessForManualRole();
+      } else {
+        linkProcessForAutoRole(role);
       }
 
       addEntitiesFromProcesses();
@@ -358,6 +332,89 @@ public class EntityAccessChecker implements OBNotSingleton {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private List<Object[]> getManualTableAccess() {
+    // Don't use dal because otherwise we can end up in infinite loops
+    // there is always only one windowaccess per role due to unique constraints
+    // @formatter:off
+    final String qryStr = "select t.table.id, wa.editableField"
+        + " from ADTab t"
+        + "  left join t.window w"
+        + "  left join w.aDWindowAccessList wa"
+        + " where wa.role.id= :roleId";
+    // @formatter:on
+    final Query<Object[]> qry = SessionHandler.getInstance()
+        .createQuery(qryStr, Object[].class)
+        .setParameter("roleId", getRoleId());
+    List<Object[]> tableAccess = qry.list();
+    return tableAccess;
+  }
+
+  private void addMissingTablesForAutomaticRoles(Role role, List<Object[]> tableAccess) {
+    List<String> manualTableIds = tableAccess.stream()
+        .map((Object[] o) -> (String) o[0])
+        .collect(Collectors.toList());
+    tableAccess.addAll(getAutomaticTableAccess(role, manualTableIds));
+  }
+
+  private List<Object[]> getAutomaticTableAccess(Role role, List<String> excludedTableIds) {
+    // Don't use dal because otherwise we can end up in infinite loops
+    // @formatter:off
+    String tablesHql =
+        "select t.id, true" +
+        "  from ADTable t " +
+        " where t.active = true " +
+        "   and not exists (select 1" +
+        "                     from ADTab tab, ADWindowAccess wa" +
+        "                    where t.id = tab.table.id" +
+        "                      and tab.window=wa.window" +
+        "                      and wa.active=false)";
+    // @formatter:on
+    tablesHql += !excludedTableIds.isEmpty() ? " and t.id not in ( :excludedTableIds ) " : "";
+    tablesHql += " and t.dataAccessLevel in ( :roleAccessLevels ) ";
+    final Query<Object[]> tablesQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(tablesHql, Object[].class);
+    if (!excludedTableIds.isEmpty()) {
+      tablesQry.setParameter("excludedTableIds", excludedTableIds);
+    }
+
+    tablesQry.setParameter("roleAccessLevels",
+        RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
+    return tablesQry.list();
+  }
+
+  private void linkProcessForAutoRole(Role role) {
+    List<String> roleAccessLevels = new ArrayList<>();
+    String userLevel = role.getUserLevel();
+    roleAccessLevels.addAll(RoleAccessUtils.getAccessLevelForUserLevel(userLevel));
+
+    //@formatter:off
+    final String processAccessQryStr = "select p.id"
+      + "  from OBUIAPP_Process p"
+      + " where dataAccessLevel in ( :roleAccessLevels ) "
+      + "   and active = true";
+    // @formatter:on
+
+    Query<String> processAccessQry = SessionHandler.getInstance()
+        .createQuery(processAccessQryStr, String.class)
+        .setParameter("roleAccessLevels", roleAccessLevels);
+
+    processes.addAll(processAccessQry.list());
+  }
+
+  private void linkProcessForManualRole() {
+    //@formatter:off
+    final String processAccessQryStr = "select p.obuiappProcess.id"
+      + "  from OBUIAPP_Process_Access p"
+      + " where p.role.id= :roleId"
+      + "   and active = true";
+    // @formatter:on
+    Query<String> processAccessQry = SessionHandler.getInstance()
+        .createQuery(processAccessQryStr, String.class)
+        .setParameter("roleId", getRoleId());
+    processes.addAll(processAccessQry.list());
   }
 
   private Set<String> getProcessAccessSelectors(Set<String> processTables) {
@@ -396,6 +453,10 @@ public class EntityAccessChecker implements OBNotSingleton {
   public static boolean hasCorrectAccessLevel(String userLevel, int accessLevel) {
     // copied from HttpSecureAppServlet.
     if (!OBContext.getOBContext().doAccessLevelCheck()) {
+      return true;
+    }
+    Role role = OBContext.getOBContext().getRole();
+    if (!role.isManual()) {
       return true;
     }
 

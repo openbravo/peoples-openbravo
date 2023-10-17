@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -58,6 +60,7 @@ import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.system.Language;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.enterprise.Warehouse;
+import org.openbravo.role.RoleAccessUtils;
 
 /**
  * Models the context in which Data Access Layer actions are executed. Contains the user, the client
@@ -646,6 +649,25 @@ public class OBContext implements OBNotSingleton, Serializable {
       return new ArrayList<>(orgList);
     }
 
+    List<String> currentOrgList = getAvailableOrganizationsForManualRole(targetRole,
+        isActiveOrganization);
+
+    // do not use DAL to obtain that info, as we cannot use OBContext.setAdminMode here
+    if (RoleAccessUtils.isAutoRole(targetRole.getId())) {
+      List<String> orgListAutoRole = RoleAccessUtils
+          .getOrganizationsForAutoRoleByClient(targetRole);
+      currentOrgList.addAll(orgListAutoRole);
+    }
+
+    if (additionalOrgs != null) {
+      currentOrgList.addAll(additionalOrgs);
+    }
+
+    return currentOrgList.stream().distinct().collect(Collectors.toList());
+  }
+
+  private List<String> getAvailableOrganizationsForManualRole(Role targetRole,
+      boolean isActiveOrganization) {
     // @formatter:off
     final String orgsQryStr = "select o.id"
         + " from Organization o"
@@ -661,15 +683,7 @@ public class OBContext implements OBNotSingleton, Serializable {
         .setParameter("active", isActiveOrganization);
 
     List<String> currentOrgList = qry.list();
-
-    if (additionalOrgs != null) {
-      for (final String orgId : additionalOrgs) {
-        if (!currentOrgList.contains(orgId)) {
-          currentOrgList.add(orgId);
-        }
-      }
-    }
-    return new ArrayList<>(currentOrgList);
+    return currentOrgList;
   }
 
   private List<String> getOrganizations(Client client) {
@@ -901,7 +915,7 @@ public class OBContext implements OBNotSingleton, Serializable {
       }
 
       Check.isNotNull(getRole(), "Role may not be null");
-
+      String branchInfo = "";
       if (orgId != null) {
         // @formatter:off
         final String orgQryStr = "select r"
@@ -912,10 +926,31 @@ public class OBContext implements OBNotSingleton, Serializable {
         params.put("orgId", orgId);
         final Organization o = getOne(Organization.class, orgQryStr, params, true);
         setCurrentOrganization(o);
+        branchInfo += "orgId!=null, orgId=" + orgId + ", setting organization " + o;
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
         setCurrentOrganization(getUser().getDefaultOrganization());
+        branchInfo += "default organization, setting organization "
+            + getUser().getDefaultOrganization();
+        // do not use DAL to obtain that info, as we cannot use OBContext.setAdminMode here
+      } else if (RoleAccessUtils.isAutoRole(getRole().getId())) {
+        branchInfo += "Assigning org for auto role. ";
+        List<String> orgs = RoleAccessUtils.getOrganizationsForAutoRoleByClient(getRole());
+        branchInfo += "orgs = " + orgs;
+        String orgIdAutoRole = orgs.stream().max(Comparator.naturalOrder()).get();
+        branchInfo += ". orgId = " + orgIdAutoRole;
+        Organization org = OBDal.getInstance().get(Organization.class, orgIdAutoRole);
+        branchInfo += ". org = " + org;
+
+        Hibernate.initialize(org);
+        setCurrentOrganization(org);
+
+        // if no client id then use the client of the role
+        if (localClientId == null) {
+          localClientId = getRole().getClient().getId();
+        }
       } else {
+        branchInfo += " else branch. ";
         // @formatter:off
         final String roleOrgQryStr = "select roa"
             + " from ADRoleOrganization roa"
@@ -935,8 +970,15 @@ public class OBContext implements OBNotSingleton, Serializable {
           localClientId = roa.getClient().getId();
         }
       }
+      if (getCurrentOrganization() == null) {
+        Exception e = new Exception();
+        e.printStackTrace();
+      }
 
-      Check.isNotNull(getCurrentOrganization(), "Organization may not be null");
+      Check.isNotNull(getCurrentOrganization(),
+          "Organization may not be null, role = " + getRole().getId() + "auto orgs = "
+              + RoleAccessUtils.getOrganizationsForAutoRoleByClient(getRole()) + ", branch info = "
+              + branchInfo);
 
       // check that the current organization is actually writable!
       final Set<String> writableOrgs = getWritableOrganizations();

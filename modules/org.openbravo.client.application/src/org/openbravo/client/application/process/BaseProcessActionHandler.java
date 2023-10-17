@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -52,6 +52,7 @@ import org.openbravo.erpCommon.businessUtility.Preferences;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.PropertyException;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.access.WindowAccess;
 import org.openbravo.model.ad.ui.Window;
 import org.openbravo.service.db.DbUtility;
@@ -311,6 +312,10 @@ public abstract class BaseProcessActionHandler extends BaseActionHandler {
    * 
    */
   public static boolean hasAccess(Process processDefinition, Map<String, Object> parameters) {
+    Role role = OBContext.getOBContext().getRole();
+    if (!role.isManual()) {
+      return true;
+    }
     // Check Process Definition Access Level
     String userLevel = OBContext.getOBContext().getUserLevel();
     int accessLevel = Integer.parseInt(processDefinition.getDataAccessLevel());

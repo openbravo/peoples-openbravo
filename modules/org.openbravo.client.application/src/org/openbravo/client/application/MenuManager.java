@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2018 Openbravo SLU
+ * All portions are Copyright (C) 2010-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -35,13 +36,16 @@ import org.hibernate.query.Query;
 import org.openbravo.base.session.SessionFactoryController;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.obps.ActivationKey;
 import org.openbravo.erpCommon.obps.ActivationKey.FeatureRestriction;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.ui.Form;
 import org.openbravo.model.ad.ui.Menu;
 import org.openbravo.model.ad.ui.MenuTrl;
 import org.openbravo.model.ad.ui.Tab;
 import org.openbravo.model.ad.utility.TreeNode;
+import org.openbravo.role.RoleAccessUtils;
 
 /**
  * Configures cached global menu (@see {@link GlobalMenu}) to adapt it to the current session's
@@ -115,17 +119,10 @@ public class MenuManager {
   }
 
   private void linkForms() {
-    final String formsHql = "select fa.specialForm.id " + //
-        " from ADFormAccess fa " + //
-        "where fa.role.id=:roleId" + //
-        "  and fa.active = true";
-
-    final Query<String> formsQry = OBDal.getInstance()
-        .getSession()
-        .createQuery(formsHql, String.class);
-    formsQry.setParameter("roleId", OBContext.getOBContext().getRole().getId());
-
-    for (String formId : formsQry.list()) {
+    Role role = OBContext.getOBContext().getRole();
+    List<String> formIds = Boolean.TRUE.equals(role.isManual()) ? getFormIdsForManualRole(role)
+        : getFormIdsForAutomaticRole(role);
+    for (String formId : formIds) {
       MenuOption option = getMenuOptionByType(MenuEntryType.Form, formId);
       if (option != null) {
         // allow access if not running in a webcontainer as then the config file can not be checked
@@ -137,18 +134,76 @@ public class MenuManager {
     }
   }
 
-  private void linkProcesses() {
-    final String allowedProcessHql = "select pa.process.id " + //
-        " from ADProcessAccess pa " + //
-        "where pa.role = :role" + //
-        "  and pa.active = true";
+  private List<String> getFormIdsForAutomaticRole(Role role) {
+    // @formatter:off
+    final String formsHql = "select f.id " +
+                            "  from ADForm f " +
+                            " where f.dataAccessLevel in :accessLevels " +
+                            "   and f.active = true";
+    // @formatter:on
+    final Query<String> formsQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(formsHql, String.class);
+    formsQry.setParameter("accessLevels",
+        RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
+    return formsQry.list();
+  }
+
+  private List<String> getFormIdsForManualRole(Role role) {
+    //@formatter:off
+    final String formsHql = "select fa.specialForm.id " + 
+                            "  from ADFormAccess fa " + 
+                            " where fa.role.id=:roleId" + 
+                            "   and fa.active = true";
+    //@formatter:on
+
+    final Query<String> formsQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(formsHql, String.class);
+    formsQry.setParameter("roleId", role.getId());
+    return formsQry.list();
+  }
+
+  private List<String> getLinkedProcessesForAutoRole(Role role) {
+    //@formatter:off
+    String allowedProcessHql = "select a.id " + 
+                               "  from ADProcess a " + 
+                               " where a.dataAccessLevel in ( :roleAccessLevels ) " + 
+                               "   and a.active = true";
+    //@formatter:on
 
     final Query<String> allowedProcessQry = OBDal.getInstance()
         .getSession()
-        .createQuery(allowedProcessHql, String.class);
-    allowedProcessQry.setParameter("role", OBContext.getOBContext().getRole());
+        .createQuery(allowedProcessHql, String.class)
+        .setParameter("roleAccessLevels",
+            RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
+    return allowedProcessQry.list();
+  }
 
-    for (String processId : allowedProcessQry.list()) {
+  private List<String> getLinkedProcessesManualRole() {
+    //@formatter:off
+    String allowedProcessHql = "select pa.process.id " +
+                               "  from ADProcessAccess pa " +
+                               " where pa.role = :role" +
+                               "   and pa.active = true";
+    //@formatter:on
+    final Query<String> allowedProcessQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(allowedProcessHql, String.class)
+        .setParameter("role", OBContext.getOBContext().getRole());
+    return allowedProcessQry.list();
+  }
+
+  private void linkProcesses() {
+    List<String> processList;
+    Role role = OBContext.getOBContext().getRole();
+    if (role.isManual()) {
+      processList = getLinkedProcessesManualRole();
+    } else {
+      processList = getLinkedProcessesForAutoRole(role);
+    }
+
+    for (String processId : processList) {
       MenuOption option = getMenuOptionByType(MenuEntryType.Process, processId);
       if (option != null) {
         // allow access if not running in a webcontainer as then the config file can not be checked
@@ -161,16 +216,11 @@ public class MenuManager {
   }
 
   private void linkProcessDefinition() {
-    final String processHql = "select pa.obuiappProcess.id " + //
-        " from OBUIAPP_Process_Access pa " + //
-        "where pa.role = :role" + //
-        "  and pa.active = true ";
-    final Query<String> processQry = OBDal.getInstance()
-        .getSession()
-        .createQuery(processHql, String.class);
-    processQry.setParameter("role", OBContext.getOBContext().getRole());
-
-    for (String processId : processQry.list()) {
+    Role role = OBContext.getOBContext().getRole();
+    List<String> processIds = Boolean.TRUE.equals(role.isManual())
+        ? getProcessIdsForManualRole(role)
+        : getProcessIdsForAutomaticRole(role);
+    for (String processId : processIds) {
       MenuOption option = getMenuOptionByType(MenuEntryType.ProcessDefinition, processId);
       if (option != null) {
         option.setAccessGranted(true);
@@ -178,17 +228,69 @@ public class MenuManager {
     }
   }
 
-  private void linkViewDefinition() {
-    final String processHql = "select va.viewImplementation.id " + //
-        " from obuiapp_ViewRoleAccess va " + //
-        "where va.role = :role" + //
-        "  and va.active = true ";
+  private List<String> getProcessIdsForManualRole(Role role) {
+    //@formatter:off
+    final String processHql = "select pa.obuiappProcess.id " +
+                              "  from OBUIAPP_Process_Access pa " +
+                              " where pa.role = :role" +
+                              "   and pa.active = true ";
+    //@formatter:on
+    final Query<String> processQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(processHql, String.class)
+        .setParameter("role", role);
+    return processQry.list();
+  }
+
+  private List<String> getProcessIdsForAutomaticRole(Role role) {
+    //@formatter:off
+    final String processHql = "select p.id " +
+                              "  from OBUIAPP_Process p " +
+                              " where p.dataAccessLevel in :accessLevels " +
+                              "   and p.active = true";
+    //@formatter:on
+    final Query<String> processQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(processHql, String.class)
+        .setParameter("accessLevels",
+            RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
+    return processQry.list();
+  }
+
+  private List<String> getAutoRoleViewDefinitionList() {
+    final OBQuery<OBUIAPPViewImplementation> resultList = OBDal.getInstance()
+        .createQuery(OBUIAPPViewImplementation.class, "active = true")
+        .setFilterOnReadableOrganization(false);
+    return resultList.list()
+        .stream()
+        .map(OBUIAPPViewImplementation::getId)
+        .collect(Collectors.toList());
+  }
+
+  private List<String> getManualRoleViewDefinitionList() {
+    //@formatter:off
+    final String processHql = "select va.viewImplementation.id " +
+                              "  from obuiapp_ViewRoleAccess va " +
+                              " where va.role = :role" +
+                              "   and va.active = true ";
+    //@formatter:on
     final Query<String> processQry = OBDal.getInstance()
         .getSession()
         .createQuery(processHql, String.class);
     processQry.setParameter("role", OBContext.getOBContext().getRole());
+    return processQry.list();
+  }
 
-    for (String processId : processQry.list()) {
+  private void linkViewDefinition() {
+    List<String> processDefinitionClassIds;
+    Role role = OBContext.getOBContext().getRole();
+    if (role.isManual()) {
+      processDefinitionClassIds = getManualRoleViewDefinitionList();
+    } else {
+      processDefinitionClassIds = getAutoRoleViewDefinitionList();
+    }
+
+    for (String processId : processDefinitionClassIds) {
       MenuOption option = getMenuOptionByType(MenuEntryType.View, processId);
       if (option != null) {
         option.setAccessGranted(true);
@@ -197,20 +299,12 @@ public class MenuManager {
   }
 
   private void linkWindows() {
-    final String windowsHql = "select wa.window.id, t.id, ta.editableField, wa.editableField" + //
-        " from ADWindowAccess wa " + //
-        " left join wa.aDTabAccessList as ta " + //
-        " left join ta.tab as t with t.tabLevel = 0 " + //
-        " where wa.role = :role" + //
-        " and wa.active = true " + //
-        " and (ta.active = true or ta.active is null) " + //
-        " order by wa.id, t.sequenceNumber DESC ";
-    final Query<Object[]> windowsQry = OBDal.getInstance()
-        .getSession()
-        .createQuery(windowsHql, Object[].class);
-    windowsQry.setParameter("role", OBContext.getOBContext().getRole());
-
-    for (Object[] row : windowsQry.list()) {
+    Role role = OBContext.getOBContext().getRole();
+    List<Object[]> windowAccess = getManualWindowAccess(role);
+    if (Boolean.FALSE.equals(role.isManual())) {
+      addMissingWindowsForAutomaticRoles(role, windowAccess);
+    }
+    for (Object[] row : windowAccess) {
       final String windowId = (String) row[0];
       final String tabId = (String) row[1];
       final Boolean isEditableTab = (Boolean) row[2];
@@ -221,7 +315,6 @@ public class MenuManager {
             || ActivationKey.getInstance()
                 .hasLicenseAccess("MW", windowId) == FeatureRestriction.NO_RESTRICTION;
         option.setAccessGranted(hasAccess);
-
         if (tabId == null) {
           option.setIsReadOnlyForRole(!isEditableWindow);
         } else {
@@ -229,6 +322,60 @@ public class MenuManager {
         }
       }
     }
+  }
+
+  private void addMissingWindowsForAutomaticRoles(Role role, List<Object[]> windowAccess) {
+    List<String> manualWindowIds = windowAccess.stream()
+        .map((Object[] o) -> (String) o[0])
+        .collect(Collectors.toList());
+    windowAccess.addAll(getAutomaticWindowAccess(role, manualWindowIds));
+  }
+
+  private List<Object[]> getAutomaticWindowAccess(Role role, List<String> excludedWindowIds) {
+    // @formatter:off
+    String windowsHql =
+        "select w.id, tab.id, true, true" +
+        "  from ADWindow w " +
+        "    left join w.aDTabList as tab with tab.tabLevel = 0 " +
+        "    left join tab.table as table " +
+        " where w.active = true ";
+    // @formatter:on
+    windowsHql += !excludedWindowIds.isEmpty() ? " and w.id not in ( :excludedWindowIds ) " : "";
+    // @formatter:off
+    windowsHql +=
+        "   and tab.active = true " +
+        "   and table.dataAccessLevel in ( :roleAccessLevels ) " +
+        " order by w.id, tab.sequenceNumber DESC ";
+    // @formatter:on
+    final Query<Object[]> windowsQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(windowsHql, Object[].class)
+        .setParameter("roleAccessLevels",
+            RoleAccessUtils.getAccessLevelForUserLevel(role.getUserLevel()));
+    if (!excludedWindowIds.isEmpty()) {
+      windowsQry.setParameter("excludedWindowIds", excludedWindowIds);
+    }
+    return windowsQry.list();
+
+  }
+
+  private List<Object[]> getManualWindowAccess(Role role) {
+    // @formatter:off
+    final String windowsHql =
+        "select wa.window.id, t.id, ta.editableField, wa.editableField" +
+        "  from ADWindowAccess wa " +
+        "    left join wa.aDTabAccessList as ta " +
+        "    left join ta.tab as t with t.tabLevel = 0 " +
+        " where wa.role = :role" +
+        "   and wa.active = true " +
+        "   and (ta.active = true or ta.active is null) " +
+        " order by wa.id, t.sequenceNumber DESC ";
+    // @formatter:on
+    final Query<Object[]> windowsQry = OBDal.getInstance()
+        .getSession()
+        .createQuery(windowsHql, Object[].class)
+        .setParameter("role", role);
+    return windowsQry.list();
   }
 
   private MenuOption getMenuOptionByType(MenuEntryType type, String objectId) {
