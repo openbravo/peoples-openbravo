@@ -30,7 +30,7 @@ export.database.structure: Exports the database structure in the xml's files.
   <property name="forcedRecreation" value=""/>
   <property name="execute.modulescripts" value="true"/>
   <property name="max.threads" value="-1"/>
-  <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}" else="${bbdd.url}">
+  <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}?${bbdd.props}" else="${bbdd.url}?${bbdd.props}">
     <and>
       <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
     </and>

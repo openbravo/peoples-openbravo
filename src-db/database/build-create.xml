@@ -24,7 +24,7 @@ create.database: creates the database from scratch.
 -->
 <project name="openbravo" default="create.database" basedir=".">
   <property environment="env" />
-  <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}" else="${bbdd.url}">
+  <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}?${bbdd.props}" else="${bbdd.url}?${bbdd.props}">
     <and>
       <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
     </and>
