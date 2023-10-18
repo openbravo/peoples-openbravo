@@ -261,8 +261,9 @@ public abstract class SessionFactoryController {
       setJNDI(obProps, props);
     } else {
       props.setProperty(AvailableSettings.DRIVER, "org.postgresql.Driver");
-      props.setProperty(AvailableSettings.URL,
-          obProps.getProperty("bbdd.url") + "/" + obProps.getProperty("bbdd.sid"));
+      String extraProps = obProps.getProperty("bbdd.props");
+      props.setProperty(AvailableSettings.URL, obProps.getProperty("bbdd.url") + "/"
+          + obProps.getProperty("bbdd.sid") + (extraProps.isEmpty() ? "" : "?" + extraProps));
 
       props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
       props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));

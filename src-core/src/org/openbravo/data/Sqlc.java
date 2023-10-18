@@ -59,6 +59,7 @@ public class Sqlc extends DefaultHandler {
   String strURL;
   String strDBUser;
   String strDBPassword;
+  String strProps;
   String javaDateFormat;
   String queryExecutionStrategy;
   static String javaFileName;
@@ -632,8 +633,12 @@ public class Sqlc extends DefaultHandler {
       strURL = properties.getProperty("bbdd.url");
       strDBUser = properties.getProperty("bbdd.user");
       strDBPassword = properties.getProperty("bbdd.password");
+      strProps = properties.getProperty("bbdd.props");
       if (properties.getProperty("bbdd.rdbms").equalsIgnoreCase("POSTGRE")) {
         strURL += "/" + properties.getProperty("bbdd.sid");
+      }
+      if (!strProps.isEmpty()) {
+        strURL += "?" + strProps;
       }
       // read from properties file
       queryExecutionStrategy = properties.getProperty("sqlc.queryExecutionStrategy");
