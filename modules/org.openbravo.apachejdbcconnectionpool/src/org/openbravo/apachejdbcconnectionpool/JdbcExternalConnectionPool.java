@@ -205,7 +205,7 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
 
     if ("POSTGRE".equals(rbdms)) {
       String connectionURL = obUrl + "/" + sid;
-      if (!extraProps.isEmpty()) {
+      if (StringUtils.isNotBlank(extraProps)) {
         connectionURL += "?" + extraProps;
       }
       connectionURL += (connectionURL.contains("?") ? "&" : "?") + "ApplicationName=openbravo";

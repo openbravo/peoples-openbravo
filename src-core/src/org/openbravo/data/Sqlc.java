@@ -637,7 +637,7 @@ public class Sqlc extends DefaultHandler {
       if (properties.getProperty("bbdd.rdbms").equalsIgnoreCase("POSTGRE")) {
         strURL += "/" + properties.getProperty("bbdd.sid");
       }
-      if (!strProps.isEmpty()) {
+      if (strProps != null && !strProps.isEmpty()) {
         strURL += "?" + strProps;
       }
       // read from properties file
