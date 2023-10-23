@@ -2142,6 +2142,15 @@ isc.OBViewGrid.addProperties({
       filterDataCallback,
       me = this;
 
+    if (this.view.isShowingForm && this.sorter._iconEnabled) {
+      this.view.messageBar.setMessage(
+        isc.OBMessageBar.TYPE_INFO,
+        null,
+        OB.I18N.getLabel('OBUIAPP_NoRefreshOnLazyGrid')
+      );
+      return;
+    }
+
     //check whether newRecordsToBeIncluded contains records not part of the current grid and remove them.
     if (
       newRecordsToBeIncluded &&

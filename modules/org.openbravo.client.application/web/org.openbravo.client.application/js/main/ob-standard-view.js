@@ -2310,7 +2310,22 @@ isc.OBStandardView.addProperties({
       view = this,
       actionObject,
       formRefresh,
-      callback;
+      callback,
+      currentGrid;
+
+    if (this.isShowingTree) {
+      currentGrid = this.treeGrid;
+    } else {
+      currentGrid = this.viewGrid;
+    }
+
+    if (this.isShowingForm && currentGrid.sorter._iconEnabled) {
+      view.messageBar.setMessage(
+        isc.OBMessageBar.TYPE_INFO,
+        null,
+        OB.I18N.getLabel('OBUIAPP_NoRefreshOnLazyGrid')
+      );
+    }
 
     // first save what we have edited
     if (!autoSaveDone) {
