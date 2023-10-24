@@ -9,7 +9,7 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2019 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2023 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
@@ -108,7 +108,7 @@ public class EmailManager {
       List<File> attachments, Date sentDate, List<String> headerExtras, int smtpServerTimeout)
       throws Exception {
     try {
-      Properties props = getProperties(host, port, smtpServerTimeout, connSecurity);
+      Properties props = getProperties(host, port, smtpServerTimeout, connSecurity, auth);
 
       Session mailSession = getSession(auth, username, password, props);
 
@@ -135,7 +135,7 @@ public class EmailManager {
       String contentType, List<File> attachments, Date sentDate, List<String> headerExtras,
       int smtpServerTimeout) throws Exception {
     try {
-      Properties props = getProperties(host, port, smtpServerTimeout, connSecurity);
+      Properties props = getProperties(host, port, smtpServerTimeout, connSecurity, auth);
 
       Session mailSession = getSession(auth, username, password, props);
 
@@ -144,7 +144,7 @@ public class EmailManager {
       MimeMessage message = getEmailMessage(senderAddress, subject, content, attachments, sentDate,
           headerExtras, replyTo, recipientTO, recipientCC, recipientBCC, contentType, mailSession);
 
-      return CompletableFuture.supplyAsync(() -> {
+      return CompletableFuture.runAsync(() -> {
         try {
           transport.connect();
           transport.sendMessage(message, message.getAllRecipients());
@@ -152,7 +152,6 @@ public class EmailManager {
         } catch (Exception e) {
           throw new OBException(e);
         }
-        return null;
       }, NonBlockingExecutorServiceProvider.getExecutorService());
     } catch (final AddressException exception) {
       log4j.error(exception);
@@ -256,7 +255,6 @@ public class EmailManager {
       Properties props) {
     Session mailSession = null;
     if (auth) {
-      props.put("mail.smtp.auth", "true");
       Authenticator authentification = new SMTPAuthenticator(username, password);
       mailSession = Session.getInstance(props, authentification);
     } else {
@@ -266,7 +264,7 @@ public class EmailManager {
   }
 
   private static Properties getProperties(String host, int port, int smtpServerTimeout,
-      String connSecurity) {
+      String connSecurity, boolean auth) {
     Properties props = new Properties();
 
     if (log4j.isDebugEnabled()) {
@@ -296,16 +294,23 @@ public class EmailManager {
         }
       }
     }
+    if (auth) {
+      props.put("mail.smtp.auth", "true");
+    }
     return props;
   }
 
   /**
-   * TODO: Pending JavaDoc explanation
+   * Sends an email asynchronously by using CompletableFuture's API
    * 
    * @param conf
+   *          Email server configuration
    * @param email
-   * @return
+   *          Email information that will be sent
+   * @return CompletableFuture of send email action
    * @throws Exception
+   *           When the send email failed to be created. The CompletableFuture will throw its own
+   *           exception when email fails to be sent.
    */
   public static CompletableFuture<Void> sendEmailAsync(EmailServerConfiguration conf,
       EmailInfo email) throws Exception {
