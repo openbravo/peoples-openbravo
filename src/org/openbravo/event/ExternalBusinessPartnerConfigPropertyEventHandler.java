@@ -60,8 +60,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
       return;
     }
     resetValuesWhenReferenceIsInvoiceOrShipping(event);
-    checkDefaultEmailDuplicates(event);
-    checkDefaultPhoneDuplicates(event);
+    checkCRMBusinessPropertyUniqueness(event);
     checkKeyColumnsAndAddress(event);
   }
 
@@ -70,8 +69,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
       return;
     }
     resetValuesWhenReferenceIsInvoiceOrShipping(event);
-    checkDefaultEmailDuplicates(event);
-    checkDefaultPhoneDuplicates(event);
+    checkCRMBusinessPropertyUniqueness(event);
     checkMandatoryRemovalIfMultiIntegration(event);
     checkIdentifierScanningActionDuplicates(event);
     checkKeyColumnsAndAddress(event);
@@ -90,60 +88,6 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
           entity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_TRANSLATABLE), false);
       event.setCurrentState(entity.getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_TEXT),
           currentReferenceProperty);
-    }
-  }
-
-  private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
-    final String id = event.getId();
-    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
-        .getTargetInstance();
-    final ExternalBusinessPartnerConfig currentExtBPConfig = property
-        .getExternalBusinessPartnerIntegrationConfiguration();
-
-    if (!property.isDefaultemail() || !property.isActive()) {
-      return;
-    }
-
-    final OBCriteria<?> criteria = OBDal.getInstance()
-        .createCriteria(event.getTargetInstance().getClass());
-    criteria.add(Restrictions.eq(
-        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-        currentExtBPConfig));
-    criteria
-        .add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTEMAIL, true));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
-    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
-
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
-      throw new OBException("@DuplicatedCRMDefaultEmail@");
-    }
-  }
-
-  private void checkDefaultPhoneDuplicates(EntityPersistenceEvent event) {
-    final String id = event.getId();
-    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
-        .getTargetInstance();
-    final ExternalBusinessPartnerConfig currentExtBPConfig = property
-        .getExternalBusinessPartnerIntegrationConfiguration();
-
-    if (!property.isDefaultphone() || !property.isActive()) {
-      return;
-    }
-
-    final OBCriteria<?> criteria = OBDal.getInstance()
-        .createCriteria(event.getTargetInstance().getClass());
-    criteria.add(Restrictions.eq(
-        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-        currentExtBPConfig));
-    criteria
-        .add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTPHONE, true));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
-    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
-
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
-      throw new OBException("@DuplicatedCRMDefaultPhone@");
     }
   }
 
@@ -282,5 +226,44 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     criteria
         .add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_APIKEY, currentApiKey));
     return criteria;
+  }
+
+  private void checkCRMBusinessPropertyUniqueness(EntityPersistenceEvent event) {
+    final String[] CRMBusinessProperties = { "birthdayDate", "creditLimit", "creditUsed",
+        "currency", "defaultEmail", "defaultPhone", "language", "marketingConsentForEmail", "name",
+        "transactionMinAmt" };
+
+    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+
+    if (!property.isActive()) {
+      return;
+    }
+
+    for (String CRMBusinessProperty : CRMBusinessProperties) {
+      String propertyValue = property.getCrmBusinessProperty();
+
+      if (propertyValue == null || !propertyValue.equals(CRMBusinessProperty)) {
+        continue;
+      }
+
+      final OBCriteria<?> criteria = OBDal.getInstance()
+          .createCriteria(event.getTargetInstance().getClass());
+
+      criteria.add(Restrictions.eq(
+          ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+          property.getExternalBusinessPartnerIntegrationConfiguration()));
+      criteria.add(Restrictions.eq(
+          ExternalBusinessPartnerConfigProperty.PROPERTY_CRMBUSINESSPROPERTY, CRMBusinessProperty));
+      criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
+      criteria
+          .add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, event.getId()));
+
+      criteria.setMaxResults(1);
+
+      if (criteria.uniqueResult() != null) {
+        throw new OBException("@DuplicatedCRM_" + CRMBusinessProperty + "@");
+      }
+    }
   }
 }
