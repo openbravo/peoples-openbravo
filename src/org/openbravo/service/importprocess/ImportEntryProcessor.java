@@ -37,8 +37,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.DalThreadCleaner;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.core.SessionHandler;
 import org.openbravo.dal.core.TriggerHandler;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ExternalConnectionPool;
@@ -366,7 +366,7 @@ public abstract class ImportEntryProcessor {
 
             // bit rough but ensures that the connection is released/closed
             try {
-              OBDal.getInstance().rollbackAndClose();
+              DalThreadCleaner.getInstance().cleanWithRollback();
             } catch (Exception ignored) {
             }
 
@@ -481,7 +481,7 @@ public abstract class ImportEntryProcessor {
 
       // bit rough but ensures that the connection is released/closed
       try {
-        OBDal.getInstance().rollbackAndClose();
+        DalThreadCleaner.getInstance().cleanWithRollback();
       } catch (Exception ignored) {
       }
       try {
@@ -540,12 +540,7 @@ public abstract class ImportEntryProcessor {
       }
 
       // close sessions in case the import entry processEntry left them opened
-      if (SessionHandler.isSessionHandlerPresent()) {
-        OBDal.getInstance().commitAndClose();
-      }
-      if (SessionHandler.existsOpenedSessions()) {
-        SessionHandler.getInstance().cleanUpSessions();
-      }
+      DalThreadCleaner.getInstance().cleanWithCommit();
     }
 
     private boolean tryDeregisteringProcessThread() {
