@@ -230,8 +230,8 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
 
   private void checkCRMBusinessPropertyUniqueness(EntityPersistenceEvent event) {
     final String[] CRMBusinessProperties = { "birthdayDate", "commercialauth", "creditLimit",
-        "creditUsed", "currency", "defaultEmail", "defaultPhone", "language",
-        "marketingConsentForEmail", "marketingConsentForPhone", "name", "transactionMinAmt" };
+        "creditUsed", "currency", "defaultEmail", "defaultPhone", "language", "name",
+        "transactionMinAmt", "viaemail", "viasms" };
 
     final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
         .getTargetInstance();
