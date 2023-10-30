@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2019-2022 Openbravo SLU
+ * All portions are Copyright (C) 2019-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):
  ************************************************************************
@@ -58,8 +58,6 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
     final PriceAdjustment discount = OBDal.getInstance().get(PriceAdjustment.class, discountId);
     final String errorMsgProductNotFound = OBMessageUtils.getI18NMessage("OBUIAPP_ProductNotFound",
         new String[0]);
-    final String errorMsgProductNotUnique = OBMessageUtils
-        .getI18NMessage("OBUIAPP_ProductNotUnique", new String[0]);
 
     try (BufferedReader br = Files.newBufferedReader(Paths.get(file.getAbsolutePath()))) {
       String line;
@@ -75,39 +73,37 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
 
         final List<String> productIds = getProductIds(discount.getClient().getId(),
             discount.getOrganization().getId(), productKey);
-        if (productIds.size() == 0) {
+        if (productIds.isEmpty()) {
           uploadResult.incErrorCount();
           uploadResult.addErrorMessage(productKey + " --> " + errorMsgProductNotFound + "\n");
-        } else if (productIds.size() > 1) {
-          uploadResult.incErrorCount();
-          uploadResult.addErrorMessage(productKey + " --> " + errorMsgProductNotUnique + "\n");
         } else {
-          // check if the line already exists
-          final String productId = productIds.get(0);
-          final OBQuery<Product> productDiscountQry = OBDal.getInstance()
-              .createQuery(Product.class, "m_offer_id=:m_offer_id and m_product_id=:m_product_id");
-          productDiscountQry.setNamedParameter("m_offer_id", discountId);
-          productDiscountQry.setNamedParameter("m_product_id", productId);
-          productDiscountQry.setFilterOnActive(false);
-          final List<Product> lines = productDiscountQry.list();
-          Product productDiscount = null;
-          if (lines.size() == 0) {
-            // create a new one
-            productDiscount = OBProvider.getInstance().get(Product.class);
-            productDiscount.setClient(discount.getClient());
-            productDiscount.setOrganization(discount.getOrganization());
-            productDiscount.setPriceAdjustment(discount);
-            productDiscount.setProduct(
-                OBDal.getInstance().get(org.openbravo.model.common.plm.Product.class, productId));
-          } else {
-            // get the line from the result
-            productDiscount = lines.get(0);
+          for (String productId : productIds) {
+            // check if the line already exists
+            final OBQuery<Product> productDiscountQry = OBDal.getInstance()
+                .createQuery(Product.class,
+                    "m_offer_id=:m_offer_id and m_product_id=:m_product_id");
+            productDiscountQry.setNamedParameter("m_offer_id", discountId);
+            productDiscountQry.setNamedParameter("m_product_id", productId);
+            productDiscountQry.setFilterOnReadableOrganization(false);
+            productDiscountQry.setFilterOnActive(false);
+            productDiscountQry.setMaxResult(1);
+            Product productDiscount = productDiscountQry.uniqueResult();
+            if (productDiscount == null) {
+              // create a new one
+              productDiscount = OBProvider.getInstance().get(Product.class);
+              productDiscount.setClient(discount.getClient());
+              productDiscount.setOrganization(discount.getOrganization());
+              productDiscount.setPriceAdjustment(discount);
+              productDiscount.setProduct(
+                  OBDal.getInstance().get(org.openbravo.model.common.plm.Product.class, productId));
+            }
+            productDiscount.setActive(true);
+            OBDal.getInstance().save(productDiscount);
           }
-          productDiscount.setActive(true);
-          OBDal.getInstance().save(productDiscount);
         }
       }
     }
+    OBDal.getInstance().flush();
     return uploadResult;
   }
 
@@ -123,8 +119,6 @@ public class ImportProductInDiscount extends ProcessUploadedFile {
     qry.setParameter("clientId", clientId);
     qry.setParameter("orgId", orgId);
     qry.setParameter("value", productKey);
-    // only need max 2 to identify that there is more than one
-    qry.setMaxResults(2);
     return (List<String>) qry.list();
   }
 }
