@@ -912,12 +912,18 @@ isc.OBViewGrid.addProperties({
 
   // overridden to load all data in one request
   requestVisibleRows: function() {
+    var groupingDataLabel = 'Grouping data...';
+    // is grouping is currently taking place, there will be a promp that contains groupingDataLabel
+    // that label is not being included in any translation, so seems safe to use the English version
+    var isGroupingAsync =
+      this.isGrouped && isc.Dialog.Prompt.message.includes(groupingDataLabel);
     if (this.refreshingWithRecordSelected || this.refreshingWithScrolledGrid) {
       // don't make a request for the visible rows if the grid is already being refreshed
       return;
     }
     // fake smartclient to think that there groupByMaxRecords + 1 records
-    if (this.data && this.isGrouped && !this.data.allRows) {
+    // but do not do it if grouping is currently taking place (determined by isGroupingAsync)
+    if (!isGroupingAsync && this.data && this.isGrouped && !this.data.allRows) {
       this.data.totalRows = this.groupByMaxRecords + 1;
     }
     this.Super('requestVisibleRows', arguments);
