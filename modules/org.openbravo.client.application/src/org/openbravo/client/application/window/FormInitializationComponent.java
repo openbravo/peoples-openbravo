@@ -551,7 +551,19 @@ public class FormInitializationComponent extends BaseActionHandler {
         Iterator<String> keys = newObject.keys();
         while (keys.hasNext()) {
           String key = keys.next();
-          finalObject.put(key, newObject.get(key));
+          if ("sessionAttributes".equals(key)) {
+            JSONObject overwrittenSessionAttributes = (JSONObject) newObject.get(key);
+            @SuppressWarnings("unchecked")
+            Iterator<String> overwrittenSessionKeys = overwrittenSessionAttributes.keys();
+            final JSONObject sessionAttributes = (JSONObject) finalObject.get("sessionAttributes");
+            while (overwrittenSessionKeys.hasNext()) {
+              String overwrittenSessionKey = overwrittenSessionKeys.next();
+              sessionAttributes.put(overwrittenSessionKey,
+                  overwrittenSessionAttributes.get(overwrittenSessionKey));
+            }
+          } else {
+            finalObject.put(key, newObject.get(key));
+          }
         }
       }
 
