@@ -196,7 +196,7 @@ public class ExternalBusinessPartnerAddressMappingEventHandler
     if (addressPropertyName != null) {
       final ExternalBusinessPartnerConfigProperty propertyAddress = (ExternalBusinessPartnerConfigProperty) event
           .getCurrentState(ENTITIES[0].getProperty(addressPropertyName));
-      if (propertyAddress != null && !propertyAddress.isMandatory()) {
+      if (propertyAddress != null && !propertyAddress.isMandatoryCreate() && !propertyAddress.isMandatoryEdit()) {
         throw new OBException(OBMessageUtils.messageBD("ExtBPAddressPropertyMandatory"));
       }
     }

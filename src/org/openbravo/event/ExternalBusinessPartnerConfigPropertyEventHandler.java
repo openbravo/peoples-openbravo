@@ -148,35 +148,41 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
   }
 
   private void checkMandatoryRemovalIfMultiIntegration(EntityUpdateEvent event) {
-    final ExternalBusinessPartnerConfigProperty externalBusinessPartnerConfigProperty = (ExternalBusinessPartnerConfigProperty) event
+    final ExternalBusinessPartnerConfigProperty extBPConfigProperty = (ExternalBusinessPartnerConfigProperty) event
         .getTargetInstance();
-    final Property mandatoryProperty = ENTITIES[0]
-        .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_MANDATORY);
-    final ExternalBusinessPartnerConfig externalBusinessPartnerConfiguration = externalBusinessPartnerConfigProperty
+    final ExternalBusinessPartnerConfig extBPConfiguration = extBPConfigProperty
         .getExternalBusinessPartnerIntegrationConfiguration();
-    if (((Boolean) event.getPreviousState(mandatoryProperty))
-        && !((Boolean) event.getCurrentState(mandatoryProperty)) && MULTI_INTEGRATION_TYPE
-            .equals(externalBusinessPartnerConfiguration.getTypeOfIntegration())) {
-      // Query to check if the property being managed exists in address mapping
-      //@formatter:off
-      String hql = " cRMConnectorConfiguration.id = :crmConfigurationId "
-                 + " and ("
-                 + "         addressLine1.id = :propertyId "
-                 + "      or addressLine2.id = :propertyId "
-                 + "      or cityName.id = :propertyId "
-                 + "      or postalCode.id = :propertyId "
-                 + "      or country.id = :propertyId "
-                 + "      or region.id = :propertyId"
-                 + "     )";
-      //@formatter:on
+    if (MULTI_INTEGRATION_TYPE.equals(extBPConfiguration.getTypeOfIntegration())) {
+      final Property mandatoryCreateProp = ENTITIES[0]
+          .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISMANDATORYCREATE);
+      final Property mandatoryEditProp = ENTITIES[0]
+          .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISMANDATORYEDIT);
+      boolean changeMandatoryCreate = (Boolean) event.getPreviousState(mandatoryCreateProp)
+          && !((Boolean) event.getCurrentState(mandatoryCreateProp));
+      boolean changeMandatoryEdit = (Boolean) event.getPreviousState(mandatoryEditProp)
+          && !((Boolean) event.getCurrentState(mandatoryEditProp));
+      if (changeMandatoryCreate || changeMandatoryEdit) {
+        // Query to check if the property being managed exists in address mapping
+        //@formatter:off
+        String hql = " cRMConnectorConfiguration.id = :crmConfigurationId "
+            + " and ("
+            + "         addressLine1.id = :propertyId "
+            + "      or addressLine2.id = :propertyId "
+            + "      or cityName.id = :propertyId "
+            + "      or postalCode.id = :propertyId "
+            + "      or country.id = :propertyId "
+            + "      or region.id = :propertyId"
+            + "     )";
+        //@formatter:on
 
-      OBQuery<ExternalBusinessPartnerConfigLocation> hqlCriteria = OBDal.getInstance()
-          .createQuery(ExternalBusinessPartnerConfigLocation.class, hql)
-          .setNamedParameter("crmConfigurationId", externalBusinessPartnerConfiguration.getId())
-          .setNamedParameter("propertyId", externalBusinessPartnerConfigProperty.getId());
-      hqlCriteria.setMaxResult(1);
-      if (hqlCriteria.uniqueResult() != null) {
-        throw new OBException(OBMessageUtils.messageBD("UnnasignExtBPAddressPropertyMandatory"));
+        OBQuery<ExternalBusinessPartnerConfigLocation> hqlCriteria = OBDal.getInstance()
+            .createQuery(ExternalBusinessPartnerConfigLocation.class, hql)
+            .setNamedParameter("crmConfigurationId", extBPConfiguration.getId())
+            .setNamedParameter("propertyId", extBPConfigProperty.getId());
+        hqlCriteria.setMaxResult(1);
+        if (hqlCriteria.uniqueResult() != null) {
+          throw new OBException(OBMessageUtils.messageBD("UnnasignExtBPAddressPropertyMandatory"));
+        }
       }
     }
   }

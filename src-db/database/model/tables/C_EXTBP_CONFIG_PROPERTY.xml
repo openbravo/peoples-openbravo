@@ -181,6 +181,22 @@
         <default/>
         <onCreateDefault/>
       </column>
+      <column name="ISMANDATORY_CREATE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISMANDATORY_EDIT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISEDITABLE_CREATE" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="ISEDITABLE_EDIT" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTBPCONFPROP_CLIENT_FK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -217,12 +233,16 @@
       <check name="C_EXTBPCONFPROP_DISDET_CH"><![CDATA[ISDISPLAYEDINDETAIL IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_DISEDI_CH"><![CDATA[ISDISPLAYEDINCREATE IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_DISLIST_CH"><![CDATA[ISDISPLAYEDINLIST IN ('Y', 'N')]]></check>
+      <check name="C_EXTBPCONFPROP_EDIT_CRE_CHK"><![CDATA[ISEDITABLE_CREATE IN ('Y', 'N')]]></check>
+      <check name="C_EXTBPCONFPROP_EDIT_EDI_CHK"><![CDATA[ISEDITABLE_EDIT IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_EDITAB_CH"><![CDATA[ISEDITABLE IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_IDENTIF_CH"><![CDATA[ISIDENTIFIER IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_ISADDR_CH"><![CDATA[ISADDRESSPROPERTY IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_ISKEY_CH"><![CDATA[ISKEY IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_ISTR_CH"><![CDATA[ISTRANSLATABLE IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_MAND_CH"><![CDATA[ISMANDATORY IN ('Y', 'N')]]></check>
+      <check name="C_EXTBPCONFPROP_MAND_CRE_CHK"><![CDATA[ISMANDATORY_CREATE IN ('Y', 'N')]]></check>
+      <check name="C_EXTBPCONFPROP_MAND_EDI_CHK"><![CDATA[ISMANDATORY_EDIT IN ('Y', 'N')]]></check>
       <check name="C_EXTBPCONFPROP_TRMSG_CH"><![CDATA[ISTRANSLATABLE = 'N' OR AD_MESSAGE_ID IS NOT NULL AND ISTRANSLATABLE = 'Y']]></check>
       <check name="C_EXTBPCONFPROP_TXTMSG_CH"><![CDATA[TEXT IS NOT NULL OR ISTRANSLATABLE = 'Y']]></check>
       <check name="C_EXTBPCP_IDTFRSCNACTION_CHK"><![CDATA[IDENTIFIERSCANNINGACTION IN ('Y', 'N')]]></check>
