@@ -9,16 +9,18 @@
  * either express or implied. See the License for the specific language
  * governing rights and limitations under the License. The Original Code is
  * Openbravo ERP. The Initial Developer of the Original Code is Openbravo SLU All
- * portions are Copyright (C) 2001-2019 Openbravo SLU All Rights Reserved.
+ * portions are Copyright (C) 2001-2023 Openbravo SLU All Rights Reserved.
  * Contributor(s): ______________________________________.
  * ***********************************************************************
  */
 package org.openbravo.erpCommon.utility.poc;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.activation.DataHandler;
@@ -41,10 +43,12 @@ import javax.servlet.ServletException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.email.EmailUtils;
 import org.openbravo.model.common.enterprise.EmailServerConfiguration;
+import org.openbravo.service.NonBlockingExecutorServiceProvider;
 import org.openbravo.utils.FormatUtilities;
 
 public class EmailManager {
@@ -54,7 +58,7 @@ public class EmailManager {
   /**
    * Sends an email using the given SMTP Server configuration and the email definition contained in
    * the email parameter.
-   * 
+   *
    * @param conf
    *          The SMTP Server configuration
    * @param email
@@ -103,128 +107,15 @@ public class EmailManager {
       String recipientBCC, String replyTo, String subject, String content, String contentType,
       List<File> attachments, Date sentDate, List<String> headerExtras, int smtpServerTimeout)
       throws Exception {
-    String localReplyTo = replyTo;
-    String localRecipientTO = recipientTO;
-    String localRecipientCC = recipientCC;
-    String localRecipientBCC = recipientBCC;
-    String localConnSecurity = connSecurity;
-    String localContentType = contentType;
     try {
-      Properties props = new Properties();
+      Properties props = getProperties(host, port, smtpServerTimeout, connSecurity, auth);
 
-      if (log4j.isDebugEnabled()) {
-        props.put("mail.debug", "true");
-      }
-      props.put("mail.transport.protocol", "smtp");
-      props.put("mail.smtp.host", host);
-      props.put("mail.smtp.port", String.valueOf(port));
-
-      String timeout = String.valueOf(smtpServerTimeout);
-      props.put("mail.smtp.timeout", timeout);
-      props.put("mail.smtp.connectiontimeout", timeout);
-      props.put("mail.smtp.writetimeout", timeout);
-
-      if (localConnSecurity != null) {
-        localConnSecurity = localConnSecurity.replaceAll(", *", ",");
-        String[] connSecurityArray = localConnSecurity.split(",");
-        for (int i = 0; i < connSecurityArray.length; i++) {
-          if ("STARTTLS".equals(connSecurityArray[i])) {
-            props.put("mail.smtp.starttls.enable", "true");
-          }
-          if ("SSL".equals(connSecurityArray[i])) {
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-            props.put("mail.smtp.socketFactory.fallback", "false");
-            props.put("mail.smtp.socketFactory.port", port);
-          }
-        }
-      }
-
-      Session mailSession = null;
-      if (auth) {
-        props.put("mail.smtp.auth", "true");
-        Authenticator authentification = new SMTPAuthenticator(username, password);
-        mailSession = Session.getInstance(props, authentification);
-      } else {
-        mailSession = Session.getInstance(props, null);
-      }
+      Session mailSession = getSession(auth, username, password, props);
 
       Transport transport = mailSession.getTransport();
 
-      MimeMessage message = new MimeMessage(mailSession);
-
-      message.setFrom(new InternetAddress(senderAddress));
-
-      if (localRecipientTO != null) {
-        localRecipientTO = localRecipientTO.replaceAll(";", ",");
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(localRecipientTO));
-      }
-      if (localRecipientCC != null) {
-        localRecipientCC = localRecipientCC.replaceAll(";", ",");
-        message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(localRecipientCC));
-      }
-      if (localRecipientBCC != null) {
-        localRecipientBCC = localRecipientBCC.replaceAll(";", ",");
-        message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(localRecipientBCC));
-      }
-
-      if (localReplyTo != null) {
-        localReplyTo = localReplyTo.replaceAll(";", ",");
-        localReplyTo = localReplyTo.replaceAll(", *", ",");
-        String[] replyToArray = localReplyTo.split(",");
-
-        Address[] replyToAddresses = new InternetAddress[replyToArray.length];
-        for (int i = 0; i < replyToArray.length; i++) {
-          replyToAddresses[i] = new InternetAddress(replyToArray[i]);
-        }
-
-        message.setReplyTo(replyToAddresses);
-      }
-
-      if (subject != null) {
-        message.setSubject(subject);
-      }
-      if (sentDate != null) {
-        message.setSentDate(sentDate);
-      }
-
-      if (headerExtras != null && headerExtras.size() > 0) {
-        String[] headerExtrasArray = headerExtras.toArray(new String[headerExtras.size()]);
-        for (int i = 0; i < headerExtrasArray.length - 1; i++) {
-          message.addHeader(headerExtrasArray[i], headerExtrasArray[i + 1]);
-          i++;
-        }
-      }
-
-      if (attachments != null && attachments.size() > 0) {
-        Multipart multipart = new MimeMultipart();
-
-        if (content != null) {
-          MimeBodyPart messagePart = new MimeBodyPart();
-          if (localContentType == null) {
-            localContentType = "text/plain; charset=utf-8";
-          }
-          messagePart.setContent(content, localContentType);
-          multipart.addBodyPart(messagePart);
-        }
-
-        MimeBodyPart attachmentPart = null;
-        for (File attachmentFile : attachments) {
-          attachmentPart = new MimeBodyPart();
-          if (attachmentFile.exists() && attachmentFile.canRead()) {
-            attachmentPart.attachFile(attachmentFile);
-            multipart.addBodyPart(attachmentPart);
-          }
-        }
-
-        message.setContent(multipart);
-      } else {
-        if (content != null) {
-          if (localContentType == null) {
-            localContentType = "text/plain; charset=utf-8";
-          }
-          message.setContent(content, localContentType);
-        }
-      }
+      MimeMessage message = getEmailMessage(senderAddress, subject, content, attachments, sentDate,
+          headerExtras, replyTo, recipientTO, recipientCC, recipientBCC, contentType, mailSession);
 
       transport.connect();
       transport.sendMessage(message, message.getAllRecipients());
@@ -236,6 +127,202 @@ public class EmailManager {
       log4j.error(exception);
       throw new ServletException(exception.getMessage(), exception);
     }
+  }
+
+  private static CompletableFuture<Void> sendEmailAsync(String host, boolean auth, String username,
+      String password, String connSecurity, int port, String senderAddress, String recipientTO,
+      String recipientCC, String recipientBCC, String replyTo, String subject, String content,
+      String contentType, List<File> attachments, Date sentDate, List<String> headerExtras,
+      int smtpServerTimeout) throws Exception {
+    try {
+      Properties props = getProperties(host, port, smtpServerTimeout, connSecurity, auth);
+
+      Session mailSession = getSession(auth, username, password, props);
+
+      Transport transport = mailSession.getTransport();
+
+      MimeMessage message = getEmailMessage(senderAddress, subject, content, attachments, sentDate,
+          headerExtras, replyTo, recipientTO, recipientCC, recipientBCC, contentType, mailSession);
+
+      return CompletableFuture.runAsync(() -> {
+        try {
+          transport.connect();
+          transport.sendMessage(message, message.getAllRecipients());
+          transport.close();
+        } catch (Exception e) {
+          throw new OBException(e);
+        }
+      }, NonBlockingExecutorServiceProvider.getExecutorService());
+    } catch (final AddressException exception) {
+      log4j.error(exception);
+      return CompletableFuture.failedFuture(new ServletException(exception));
+    } catch (final MessagingException exception) {
+      log4j.error(exception);
+      return CompletableFuture
+          .failedFuture(new ServletException(exception.getMessage(), exception));
+    }
+  }
+
+  private static MimeMessage getEmailMessage(String senderAddress, String subject, String content,
+      List<File> attachments, Date sentDate, List<String> headerExtras, String replyTo,
+      String recipientTO, String recipientCC, String recipientBCC, String contentType,
+      Session mailSession) throws MessagingException, IOException {
+    MimeMessage message = new MimeMessage(mailSession);
+
+    String localReplyTo = replyTo;
+    String localRecipientTO = recipientTO;
+    String localRecipientCC = recipientCC;
+    String localRecipientBCC = recipientBCC;
+    String localContentType = contentType;
+
+    message.setFrom(new InternetAddress(senderAddress));
+
+    if (localRecipientTO != null) {
+      localRecipientTO = localRecipientTO.replaceAll(";", ",");
+      message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(localRecipientTO));
+    }
+    if (localRecipientCC != null) {
+      localRecipientCC = localRecipientCC.replaceAll(";", ",");
+      message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(localRecipientCC));
+    }
+    if (localRecipientBCC != null) {
+      localRecipientBCC = localRecipientBCC.replaceAll(";", ",");
+      message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(localRecipientBCC));
+    }
+
+    if (localReplyTo != null) {
+      localReplyTo = localReplyTo.replaceAll(";", ",");
+      localReplyTo = localReplyTo.replaceAll(", *", ",");
+      String[] replyToArray = localReplyTo.split(",");
+
+      Address[] replyToAddresses = new InternetAddress[replyToArray.length];
+      for (int i = 0; i < replyToArray.length; i++) {
+        replyToAddresses[i] = new InternetAddress(replyToArray[i]);
+      }
+
+      message.setReplyTo(replyToAddresses);
+    }
+
+    if (subject != null) {
+      message.setSubject(subject);
+    }
+    if (sentDate != null) {
+      message.setSentDate(sentDate);
+    }
+
+    if (headerExtras != null && headerExtras.size() > 0) {
+      String[] headerExtrasArray = headerExtras.toArray(new String[headerExtras.size()]);
+      for (int i = 0; i < headerExtrasArray.length - 1; i++) {
+        message.addHeader(headerExtrasArray[i], headerExtrasArray[i + 1]);
+        i++;
+      }
+    }
+
+    if (attachments != null && attachments.size() > 0) {
+      Multipart multipart = new MimeMultipart();
+
+      if (content != null) {
+        MimeBodyPart messagePart = new MimeBodyPart();
+        if (localContentType == null) {
+          localContentType = "text/plain; charset=utf-8";
+        }
+        messagePart.setContent(content, localContentType);
+        multipart.addBodyPart(messagePart);
+      }
+
+      MimeBodyPart attachmentPart = null;
+      for (File attachmentFile : attachments) {
+        attachmentPart = new MimeBodyPart();
+        if (attachmentFile.exists() && attachmentFile.canRead()) {
+          attachmentPart.attachFile(attachmentFile);
+          multipart.addBodyPart(attachmentPart);
+        }
+      }
+
+      message.setContent(multipart);
+    } else {
+      if (content != null) {
+        if (localContentType == null) {
+          localContentType = "text/plain; charset=utf-8";
+        }
+        message.setContent(content, localContentType);
+      }
+    }
+    return message;
+  }
+
+  private static Session getSession(boolean auth, String username, String password,
+      Properties props) {
+    Session mailSession = null;
+    if (auth) {
+      Authenticator authentification = new SMTPAuthenticator(username, password);
+      mailSession = Session.getInstance(props, authentification);
+    } else {
+      mailSession = Session.getInstance(props, null);
+    }
+    return mailSession;
+  }
+
+  private static Properties getProperties(String host, int port, int smtpServerTimeout,
+      String connSecurity, boolean auth) {
+    Properties props = new Properties();
+
+    if (log4j.isDebugEnabled()) {
+      props.put("mail.debug", "true");
+    }
+    props.put("mail.transport.protocol", "smtp");
+    props.put("mail.smtp.host", host);
+    props.put("mail.smtp.port", String.valueOf(port));
+
+    String timeout = String.valueOf(smtpServerTimeout);
+    props.put("mail.smtp.timeout", timeout);
+    props.put("mail.smtp.connectiontimeout", timeout);
+    props.put("mail.smtp.writetimeout", timeout);
+    String localConnSecurity = connSecurity;
+
+    if (localConnSecurity != null) {
+      localConnSecurity = localConnSecurity.replaceAll(", *", ",");
+      String[] connSecurityArray = localConnSecurity.split(",");
+      for (int i = 0; i < connSecurityArray.length; i++) {
+        if ("STARTTLS".equals(connSecurityArray[i])) {
+          props.put("mail.smtp.starttls.enable", "true");
+        }
+        if ("SSL".equals(connSecurityArray[i])) {
+          props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+          props.put("mail.smtp.socketFactory.fallback", "false");
+          props.put("mail.smtp.socketFactory.port", port);
+        }
+      }
+    }
+    if (auth) {
+      props.put("mail.smtp.auth", "true");
+    }
+    return props;
+  }
+
+  /**
+   * Sends an email asynchronously by using CompletableFuture's API
+   * 
+   * @param conf
+   *          Email server configuration
+   * @param email
+   *          Email information that will be sent
+   * @return CompletableFuture of send email action
+   * @throws Exception
+   *           When the send email failed to be created. The CompletableFuture will throw its own
+   *           exception when email fails to be sent.
+   */
+  public static CompletableFuture<Void> sendEmailAsync(EmailServerConfiguration conf,
+      EmailInfo email) throws Exception {
+    String decryptedPassword = FormatUtilities.encryptDecrypt(conf.getSmtpServerPassword(), false);
+    Long timeoutMillis = getSmtpConnectionTimeout(conf);
+
+    return sendEmailAsync(conf.getSmtpServer(), conf.isSMTPAuthentification(),
+        conf.getSmtpServerAccount(), decryptedPassword, conf.getSmtpConnectionSecurity(),
+        conf.getSmtpPort().intValue(), conf.getSmtpServerSenderAddress(), email.getRecipientTO(),
+        email.getRecipientCC(), email.getRecipientBCC(), email.getReplyTo(), email.getSubject(),
+        email.getContent(), email.getContentType(), email.getAttachments(), email.getSentDate(),
+        email.getHeaderExtras(), timeoutMillis.intValue());
   }
 
   private static class SMTPAuthenticator extends javax.mail.Authenticator {

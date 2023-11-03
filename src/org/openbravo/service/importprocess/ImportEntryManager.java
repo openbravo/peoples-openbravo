@@ -150,7 +150,7 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
   private boolean threadsStarted = false;
 
   private long initialWaitTime = 10000;
-  private long managerWaitTime = 600_000L;
+  private long managerWaitTime = 100_000L;
 
   // default to number of processors plus some additionals for the main threads
   private int numberOfThreads = Runtime.getRuntime().availableProcessors() + 3;
@@ -371,10 +371,12 @@ public class ImportEntryManager implements ImportEntryManagerMBean {
   public void createImportEntry(String id, String typeOfData, String json, boolean commitAndClose,
       boolean isNonBlocking) {
     try {
+      ImportEntryProcessor entryProcessor = getImportEntryProcessor(typeOfData);
       ImportEntryBuilder.newInstance(typeOfData, json) //
           .setId(id) //
           .setNotifyManager(commitAndClose) //
-          .setIsNonBlocking(isNonBlocking)
+          .setIsNonBlocking(
+              isNonBlocking || (entryProcessor != null && entryProcessor.isNonBlocking())) //
           .create();
     } catch (ImportEntryAlreadyExistsException e) {
       // Ignore exception when ImportEntry already exists either in ImportEntry or
