@@ -101,9 +101,19 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
           .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISMANDATORYCREATE);
       final Property mandatoryEditProp = ENTITIES[0]
           .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISMANDATORYEDIT);
-      boolean changeMandatoryCreate = (Boolean) event.getPreviousState(mandatoryCreateProp)
+
+      Object previousMandatoryCreatePropObject = event.getPreviousState(mandatoryCreateProp);
+      boolean previousMandatoryCreatePropValue = previousMandatoryCreatePropObject == null ? false
+          : (Boolean) previousMandatoryCreatePropObject;
+
+      boolean changeMandatoryCreate = previousMandatoryCreatePropValue
           && !((Boolean) event.getCurrentState(mandatoryCreateProp));
-      boolean changeMandatoryEdit = (Boolean) event.getPreviousState(mandatoryEditProp)
+
+      Object previousMandatoryEditPropObject = event.getPreviousState(mandatoryEditProp);
+      boolean previousMandatoryEditPropValue = previousMandatoryEditPropObject == null ? false
+          : (Boolean) previousMandatoryEditPropObject;
+
+      boolean changeMandatoryEdit = previousMandatoryEditPropValue
           && !((Boolean) event.getCurrentState(mandatoryEditProp));
       if (changeMandatoryCreate || changeMandatoryEdit) {
         // Query to check if the property being managed exists in address mapping
