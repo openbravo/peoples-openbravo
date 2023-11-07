@@ -29,16 +29,14 @@
   <SqlMethod name="updateCrmMandatory" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-        UPDATE c_extbp_config_property SET ismandatory_create = 'Y', ismandatory_edit = 'Y'
-        WHERE ismandatory = 'Y'
+        UPDATE c_extbp_config_property SET ismandatory_create = ismandatory, ismandatory_edit = ismandatory
       ]]>
     </Sql>
   </SqlMethod>
   <SqlMethod name="updateCrmEditable" type="preparedStatement" return="rowcount">
     <SqlMethodComment></SqlMethodComment>
     <Sql><![CDATA[
-        UPDATE c_extbp_config_property SET iseditable_create = 'Y', iseditable_edit = 'Y'
-        WHERE iseditable = 'Y'
+        UPDATE c_extbp_config_property SET iseditable_create = iseditable, iseditable_edit = iseditable
       ]]>
     </Sql>
   </SqlMethod>
