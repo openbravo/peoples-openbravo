@@ -44,7 +44,7 @@ public class UpdateCRMMandatoryAndEditableProp extends ModuleScript {
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     return new ModuleScriptExecutionLimits("0", null, 
-        new OpenbravoVersion(3,0,234900));
+        new OpenbravoVersion(3,0,241001));
   }
   
   @Override
