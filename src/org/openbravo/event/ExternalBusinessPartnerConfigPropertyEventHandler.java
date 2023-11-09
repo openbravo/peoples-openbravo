@@ -239,10 +239,6 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
   }
 
   private void checkCRMBusinessPropertyUniqueness(EntityPersistenceEvent event) {
-    final String[] CRMBusinessProperties = { "birthdayDate", "commercialauth", "creditLimit",
-        "creditUsed", "currency", "defaultEmail", "defaultPhone", "language", "name",
-        "transactionMinAmt", "viaemail", "viasms" };
-
     final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
         .getTargetInstance();
 
@@ -250,30 +246,25 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
       return;
     }
 
-    for (String CRMBusinessProperty : CRMBusinessProperties) {
-      String propertyValue = property.getCrmBusinessProperty();
+    String propertyValue = property.getCrmBusinessProperty();
 
-      if (propertyValue == null || !propertyValue.equals(CRMBusinessProperty)) {
-        continue;
-      }
+    final OBCriteria<?> criteria = OBDal.getInstance()
+        .createCriteria(event.getTargetInstance().getClass());
 
-      final OBCriteria<?> criteria = OBDal.getInstance()
-          .createCriteria(event.getTargetInstance().getClass());
+    criteria.add(Restrictions.eq(
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        property.getExternalBusinessPartnerIntegrationConfiguration()));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_CRMBUSINESSPROPERTY,
+        propertyValue));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
+    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, event.getId()));
 
-      criteria.add(Restrictions.eq(
-          ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-          property.getExternalBusinessPartnerIntegrationConfiguration()));
-      criteria.add(Restrictions.eq(
-          ExternalBusinessPartnerConfigProperty.PROPERTY_CRMBUSINESSPROPERTY, CRMBusinessProperty));
-      criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
-      criteria
-          .add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, event.getId()));
+    criteria.setMaxResults(1);
 
-      criteria.setMaxResults(1);
-
-      if (criteria.uniqueResult() != null) {
-        throw new OBException("@DuplicatedCRM_" + CRMBusinessProperty + "@");
-      }
+    if (criteria.uniqueResult() != null) {
+      String msg = OBMessageUtils.getI18NMessage("DuplicatedCRMBusinessProperty",
+          new String[] { propertyValue });
+      throw new OBException(msg);
     }
   }
 }
