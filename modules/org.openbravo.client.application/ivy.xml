@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    
+    <info organisation="org.openbravo" module="org.openbravo.client.application" />
+    
+    <configurations>
+        <conf name="runtime"  description="Additional run-time dependencies"/>
+    </configurations>
+    
+    <dependencies>
+        <!-- runtime dependencies -->
+        <dependency org="org.apache.httpcomponents" name="httpmime" rev="4.5.5" conf="runtime->default">
+            <exclude org="commons-codec" name="commons-codec"/>
+            <exclude org="commons-logging" name="commons-logging"/>
+        </dependency> 
+    </dependencies>
+    
+</ivy-module>

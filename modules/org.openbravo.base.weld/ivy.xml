@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    
+    <info organisation="org.openbravo" module="org.openbravo.base.weld" />
+    
+    <configurations>
+        <conf name="runtime"  description="Additional run-time dependencies"/>
+        <conf name="test"     description="Required for test only"/>
+    </configurations>
+    
+    <dependencies>
+        <!-- runtime dependencies -->
+        <dependency org="org.jboss.weld.servlet" name="weld-servlet-core" rev="3.1.7.SP1" conf="runtime->default"/>
+        
+        <!-- test dependencies -->
+        <dependency org="org.jboss.arquillian.junit" name="arquillian-junit-container" rev="1.4.1.Final" conf="test->default"/>
+        <dependency org="org.jboss.arquillian.container" name="arquillian-weld-embedded" rev="2.0.1.Final" conf="test->default"/>
+        <dependency org="org.eu.ingwar.tools" name="arquillian-suite-extension" rev="1.2.0" conf="test->default"/>
+        <dependency org="org.jboss.spec.javax.el" name="jboss-el-api_3.0_spec" rev="1.0.13.Final" conf="test->default"/>
+        <dependency org="org.jboss.ejb3" name="jboss-ejb3-api" rev="3.1.0" conf="test->default"/>
+    </dependencies>
+    
+</ivy-module>
