@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2021 Openbravo SLU
+* All portions are Copyright (C) 2001-2023 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -618,7 +618,11 @@ export.database: exports database structure and data to xml files.
   <target name="export.sample.data" depends="init, core.lib">
     <ant dir="${base.db}" target="export.sample.data" inheritAll="true" inheritRefs="true" />
   </target>
-
+	
+  <target name="export.sample.data.extension" depends="init, core.lib">
+    <ant dir="${base.db}" target="export.sample.data.extension" inheritAll="true" inheritRefs="true" />
+  </target>
+	
   <target name="import.sample.data" depends="init, core.lib">
     <ant dir="${base.db}" target="import.sample.data" inheritAll="true" inheritRefs="true" />
   </target>

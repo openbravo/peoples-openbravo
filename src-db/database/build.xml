@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -158,6 +158,28 @@ export.database.structure: Exports the database structure in the xml's files.
       <sysproperty key="javax.xml.parsers.SAXParserFactory" value="com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl" />
     </java>
   </target>
+	
+  <target name="export.sample.data.extension">
+  <java classname="org.openbravo.ddlutils.task.ExportSampledataExtension" failonerror="true" fork="true" maxmemory="${build.maxmemory}">
+      <arg value="${bbdd.driver}"/>
+      <arg value="${bbdd.owner.url}"/>
+      <arg value="${bbdd.user}"/>
+      <arg value="${bbdd.password}"/>
+      <arg value="${bbdd.rdbms}"/>
+      <arg value="${basedir}/../../"/>
+      <arg value="${client}"/>
+      <arg value="${module}"/>
+      <arg value="${exportFormat}"/>
+      <arg value="${max.threads}"/>
+      <arg value="${dataSetName}"/>
+      <classpath refid="runtime-classpath"/>
+      <syspropertyset>
+         <propertyref name="java.security.egd" />
+      </syspropertyset>
+      <sysproperty key="javax.xml.parsers.SAXParserFactory" value="com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl" />
+    </java>
+  </target> 
+	
 
   <target name="import.sample.data">
     <taskdef name="importsampledata" classname="org.openbravo.ddlutils.task.ImportSampledata">
