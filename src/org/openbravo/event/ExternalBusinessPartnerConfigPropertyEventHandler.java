@@ -37,6 +37,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.financial.paymentreport.erpCommon.ad_reports.PaymentReportDao;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfig;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigLocation;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigProperty;
@@ -262,8 +263,9 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     criteria.setMaxResults(1);
 
     if (criteria.uniqueResult() != null) {
+      String propertyTranslated = PaymentReportDao.translateRefList(propertyValue);
       String msg = OBMessageUtils.getI18NMessage("DuplicatedCRMBusinessProperty",
-          new String[] { propertyValue });
+          new String[] { propertyTranslated });
       throw new OBException(msg);
     }
   }
