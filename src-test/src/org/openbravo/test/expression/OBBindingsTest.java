@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2020 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,14 +20,23 @@ package org.openbravo.test.expression;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.script.ScriptException;
 
@@ -153,5 +162,53 @@ public class OBBindingsTest extends OBBaseTest {
   public void shouldGetNullWhenNull() throws ScriptException {
     Object result = engine.eval("null", bindings);
     assertNull(result);
+  }
+
+  @Test
+  public void shouldBeThreadSafe() throws InterruptedException, ExecutionException {
+    String script = "value";
+    long t = System.currentTimeMillis();
+    ExecutorService executor = Executors.newFixedThreadPool(10);
+    List<Future<ExpectedValue>> f = new ArrayList<>();
+    for (int i = 0; i < 10_000; i++) {
+      String expected = "" + i;
+      f.add(executor.submit(() -> {
+        try {
+          var value = engine.eval(script, Map.of("value", expected));
+          return new ExpectedValue(expected, value);
+        } catch (ScriptException e) {
+          throw new RuntimeException(e);
+        }
+      }));
+    }
+    executor.shutdown();
+    executor.awaitTermination(5, TimeUnit.SECONDS);
+
+    log.info("Done in {} ms", System.currentTimeMillis() - t);
+    for (Future<ExpectedValue> future : f) {
+      ExpectedValue ev = future.get();
+
+      assertEquals(ev.expected, ev.value);
+    }
+  }
+
+  @Test
+  public void invalidScriptsShouldThrowScriptException() {
+    assertThrows(ScriptException.class, () -> engine.eval("@InvalidScript@"));
+  }
+
+  @Test
+  public void exceptionsInScriptsShouldThrowScriptException() {
+    assertThrows(ScriptException.class, () -> engine.eval("throw 'failed!'"));
+  }
+
+  private static class ExpectedValue {
+    Object expected;
+    Object value;
+
+    ExpectedValue(Object exepected, Object value) {
+      this.expected = exepected;
+      this.value = value;
+    }
   }
 }
