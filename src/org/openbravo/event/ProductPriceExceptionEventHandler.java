@@ -20,14 +20,11 @@
 package org.openbravo.event;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.enterprise.event.Observes;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.query.Query;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -40,8 +37,6 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.pricing.pricelist.ProductPrice;
 import org.openbravo.model.pricing.pricelist.ProductPriceException;
@@ -61,15 +56,6 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
-    final ProductPriceException pppe = (ProductPriceException) event.getTargetInstance();
-    if (existsRecord(pppe.getId(), pppe.getClient(), pppe.getOrganization(), pppe.getProductPrice(),
-        pppe.getValidFromDate())) {
-      Map<String, String> map = new HashMap<>();
-      map.put("product", pppe.getProductPrice().getProduct().getName());
-      map.put("organization", pppe.getOrganization().getName());
-      throw new OBException(OBMessageUtils
-          .parseTranslation(OBMessageUtils.messageBD("ProductPriceExceptionExists"), map));
-    }
     checkDates(event);
     updateOrgDepth(event);
   }
@@ -77,15 +63,6 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
-    }
-    final ProductPriceException pppe = (ProductPriceException) event.getTargetInstance();
-    if (existsRecord(pppe.getId(), pppe.getClient(), pppe.getOrganization(), pppe.getProductPrice(),
-        pppe.getValidFromDate())) {
-      Map<String, String> map = new HashMap<>();
-      map.put("product", pppe.getProductPrice().getProduct().getName());
-      map.put("organization", pppe.getOrganization().getName());
-      throw new OBException(OBMessageUtils
-          .parseTranslation(OBMessageUtils.messageBD("ProductPriceExceptionExists"), map));
     }
     checkDates(event);
     updateOrgDepth(event);
@@ -98,36 +75,6 @@ class ProductPriceExceptionEventHandler extends EntityPersistenceEventObserver {
     }
     ProductPriceException prdPriceException = (ProductPriceException) event.getTargetInstance();
     prdPriceException.getProductPrice().setUpdated(new Date());
-  }
-
-  // Check if exists another record using this validFromDate - validToDate in the same dates
-  private boolean existsRecord(final String exceptionId, final Client client,
-      final Organization organization, final ProductPrice productPrice, final Date validFrom) {
-    //@formatter:off
-    final String hql =
-                  "select pppe.id" +
-                  "  from PricingProductPriceException as pppe" +
-                  " where pppe.id != :exceptionId" +
-                  "   and pppe.active = true" +
-                  "   and pppe.client.id = :clientId" +
-                  "   and pppe.organization.id = :orgId" +
-                  "   and pppe.productPrice.id = :productPriceId" +
-                  "   and pppe.orgdepth = :orgdepth " +
-                  "   and pppe.validFromDate = :validFrom ";
-    //@formatter:on
-
-    final Query<String> query = OBDal.getInstance()
-        .getSession()
-        .createQuery(hql, String.class)
-        .setParameter("exceptionId", exceptionId)
-        .setParameter("clientId", client.getId())
-        .setParameter("orgId", organization.getId())
-        .setParameter("productPriceId", productPrice.getId())
-        .setParameter("validFrom", validFrom)
-        .setParameter("orgdepth", getOrgDepth(organization))
-        .setMaxResults(1);
-
-    return !query.list().isEmpty();
   }
 
   private void updateOrgDepth(EntityPersistenceEvent event) {
