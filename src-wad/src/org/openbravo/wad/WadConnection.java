@@ -63,6 +63,7 @@ class WadConnection implements ConnectionProvider {
     int maxConns = 10;
     double maxConnTime = 0.5;
     String dbSessionConfig = null;
+    String dbProps = null;
 
     Properties properties = new Properties();
     try {
@@ -76,9 +77,13 @@ class WadConnection implements ConnectionProvider {
       maxConns = Integer.parseInt(properties.getProperty("bbdd.maxConns", "10"));
       maxConnTime = Double.parseDouble(properties.getProperty("maxConnTime", "0.5"));
       dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
+      dbProps = properties.getProperty("bbdd.props");
       this.rdbms = properties.getProperty("bbdd.rdbms");
       if (this.rdbms.equalsIgnoreCase("POSTGRE")) {
         this.bbdd += '/' + properties.getProperty("bbdd.sid");
+      }
+      if (dbProps != null && !dbProps.isEmpty()) {
+        this.bbdd += "?" + dbProps;
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -97,6 +102,7 @@ class WadConnection implements ConnectionProvider {
       log4j.debug("maxConnTime: " + Double.toString(maxConnTime));
       log4j.debug("dbSessionConfig: " + dbSessionConfig);
       log4j.debug("rdbms: " + this.rdbms);
+      log4j.debug("dbProps: " + dbProps);
     }
 
     try {

@@ -382,8 +382,10 @@ public class SystemService implements OBSingleton {
     Properties obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     // We disable check constraints before inserting reference data
     String driver = obProp.getProperty("bbdd.driver");
+    String extraProps = obProp.getProperty("bbdd.props");
     String url = obProp.getProperty("bbdd.rdbms").equals("POSTGRE")
         ? obProp.getProperty("bbdd.url") + "/" + obProp.getProperty("bbdd.sid")
+            + (extraProps.isEmpty() ? "" : "?" + extraProps)
         : obProp.getProperty("bbdd.url");
     String user = obProp.getProperty("bbdd.user");
     String password = obProp.getProperty("bbdd.password");

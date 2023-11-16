@@ -201,13 +201,24 @@ public class JdbcExternalConnectionPool extends ExternalConnectionPool {
     String username = getStringProperty(props, "bbdd.user", poolName);
     String password = getStringProperty(props, "bbdd.password", poolName);
     String rbdms = getStringProperty(props, "bbdd.rdbms", poolName);
+    String extraProps = getStringProperty(props, "bbdd.props", poolName);
 
     if ("POSTGRE".equals(rbdms)) {
       String connectionURL = obUrl + "/" + sid;
+
       connectionURL += (connectionURL.contains("?") ? "&" : "?") + "ApplicationName=openbravo";
+
+      if (StringUtils.isNotBlank(extraProps)) {
+        connectionURL += "&" + extraProps;
+      }
+
       poolProperties.setUrl(connectionURL);
     } else {
-      poolProperties.setUrl(obUrl);
+      String connectionURL = obUrl;
+      if (!extraProps.isEmpty()) {
+        connectionURL += "?" + extraProps;
+      }
+      poolProperties.setUrl(connectionURL);
     }
     poolProperties.setDriverClassName(driver);
     poolProperties.setUsername(username);

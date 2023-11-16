@@ -90,6 +90,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     double maxConnTime = 0.5;
     String dbSessionConfig = null;
     String _rdbms = null;
+    String dbProps = null;
 
     poolName = properties.getProperty("bbdd.poolName", "myPool");
     externalPoolClassName = properties.getProperty("db.externalPoolClassName");
@@ -102,8 +103,12 @@ public class ConnectionProviderImpl implements ConnectionProvider {
     maxConnTime = Double.parseDouble(properties.getProperty("maxConnTime", "0.5"));
     dbSessionConfig = properties.getProperty("bbdd.sessionConfig");
     _rdbms = properties.getProperty("bbdd.rdbms");
+    dbProps = properties.getProperty("bbdd.props");
     if (_rdbms.equalsIgnoreCase("POSTGRE")) {
       dbServer += "/" + properties.getProperty("bbdd.sid");
+    }
+    if (dbProps != null && !dbProps.isEmpty()) {
+      dbServer += "?" + dbProps;
     }
 
     if (log4j.isDebugEnabled()) {
@@ -118,6 +123,7 @@ public class ConnectionProviderImpl implements ConnectionProvider {
       log4j.debug("maxConnTime: " + Double.toString(maxConnTime));
       log4j.debug("dbSessionConfig: " + dbSessionConfig);
       log4j.debug("rdbms: " + _rdbms);
+      log4j.debug("dbProps: " + dbProps);
     }
 
     if (externalPoolClassName != null && !"".equals(externalPoolClassName)) {

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
@@ -261,8 +262,10 @@ public abstract class SessionFactoryController {
       setJNDI(obProps, props);
     } else {
       props.setProperty(AvailableSettings.DRIVER, "org.postgresql.Driver");
+      String extraProps = obProps.getProperty("bbdd.props");
       props.setProperty(AvailableSettings.URL,
-          obProps.getProperty("bbdd.url") + "/" + obProps.getProperty("bbdd.sid"));
+          obProps.getProperty("bbdd.url") + "/" + obProps.getProperty("bbdd.sid")
+              + (!StringUtils.isBlank(extraProps) ? "" : "?" + extraProps));
 
       props.setProperty(AvailableSettings.USER, obProps.getProperty("bbdd.user"));
       props.setProperty(AvailableSettings.PASS, obProps.getProperty("bbdd.password"));
