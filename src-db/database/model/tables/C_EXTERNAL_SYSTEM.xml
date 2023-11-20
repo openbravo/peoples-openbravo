@@ -49,6 +49,10 @@
         <default><![CDATA[36ADC30F67164F119013515280D82C01]]></default>
         <onCreateDefault><![CDATA['36ADC30F67164F119013515280D82C01']]></onCreateDefault>
       </column>
+      <column name="VALUE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTERNAL_SYSTEM_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
@@ -58,6 +62,10 @@
       <foreign-key foreignTable="AD_PROTOCOL" name="C_EXTERNAL_SYSTEM_AD_PROTOCOL">
         <reference local="AD_PROTOCOL_ID" foreign="AD_PROTOCOL_ID"/>
       </foreign-key>
+      <unique name="C_EXTERNAL_SYSTEM_VALUE_UNIQ">
+        <unique-column name="VALUE"/>
+        <unique-column name="AD_CLIENT_ID"/>
+      </unique>
       <check name="C_EXTERNAL_SYSTEM_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

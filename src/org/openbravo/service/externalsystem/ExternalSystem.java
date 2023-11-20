@@ -33,6 +33,7 @@ import java.util.function.Supplier;
 public abstract class ExternalSystem {
 
   private String name;
+  private String searchKey;
 
   /**
    * Operations that can be applied in the external system when sending the information
@@ -150,6 +151,7 @@ public abstract class ExternalSystem {
    */
   protected void configure(ExternalSystemData configuration) {
     name = configuration.getName();
+    searchKey = configuration.getSearchKey();
   }
 
   /**
@@ -157,5 +159,12 @@ public abstract class ExternalSystem {
    */
   protected String getName() {
     return name;
+  }
+
+  /**
+   * @return the search key of the external system
+   */
+  protected String getSearchKey() {
+    return searchKey;
   }
 }

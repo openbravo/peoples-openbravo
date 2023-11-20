@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -55,6 +55,7 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
     externalSystemData = OBProvider.getInstance().get(ExternalSystemData.class);
     externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
     externalSystemData.setName("Test");
+    externalSystemData.setSearchKey("Test");
     Protocol httpProtocol = OBDal.getInstance()
         .getProxy(Protocol.class, TestConstants.Protocols.HTTP);
     externalSystemData.setProtocol(httpProtocol);
@@ -97,6 +98,15 @@ public class ExternalSystemProviderTest extends WeldBaseTest {
   public void getExternalSystemForHttpProtocolById() {
     ExternalSystem externalSystem = externalSystemProvider
         .getExternalSystem(externalSystemData.getId())
+        .orElseThrow();
+
+    assertThat(externalSystem, instanceOf(HttpExternalSystem.class));
+  }
+
+  @Test
+  public void getExternalSystemForHttpProtocolBySearchKey() {
+    ExternalSystem externalSystem = externalSystemProvider
+        .getExternalSystemBySearchKey(externalSystemData.getSearchKey())
         .orElseThrow();
 
     assertThat(externalSystem, instanceOf(HttpExternalSystem.class));
