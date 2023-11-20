@@ -37,6 +37,7 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.financial.paymentreport.erpCommon.ad_reports.PaymentReportDao;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfig;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigLocation;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigProperty;
@@ -60,8 +61,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
       return;
     }
     resetValuesWhenReferenceIsInvoiceOrShipping(event);
-    checkDefaultEmailDuplicates(event);
-    checkDefaultPhoneDuplicates(event);
+    checkCRMBusinessPropertyUniqueness(event);
     checkKeyColumnsAndAddress(event);
   }
 
@@ -70,8 +70,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
       return;
     }
     resetValuesWhenReferenceIsInvoiceOrShipping(event);
-    checkDefaultEmailDuplicates(event);
-    checkDefaultPhoneDuplicates(event);
+    checkCRMBusinessPropertyUniqueness(event);
     checkMandatoryRemovalIfMultiIntegration(event);
     checkIdentifierScanningActionDuplicates(event);
     checkKeyColumnsAndAddress(event);
@@ -93,60 +92,6 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     }
   }
 
-  private void checkDefaultEmailDuplicates(EntityPersistenceEvent event) {
-    final String id = event.getId();
-    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
-        .getTargetInstance();
-    final ExternalBusinessPartnerConfig currentExtBPConfig = property
-        .getExternalBusinessPartnerIntegrationConfiguration();
-
-    if (!property.isDefaultemail() || !property.isActive()) {
-      return;
-    }
-
-    final OBCriteria<?> criteria = OBDal.getInstance()
-        .createCriteria(event.getTargetInstance().getClass());
-    criteria.add(Restrictions.eq(
-        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-        currentExtBPConfig));
-    criteria
-        .add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTEMAIL, true));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
-    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
-
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
-      throw new OBException("@DuplicatedCRMDefaultEmail@");
-    }
-  }
-
-  private void checkDefaultPhoneDuplicates(EntityPersistenceEvent event) {
-    final String id = event.getId();
-    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
-        .getTargetInstance();
-    final ExternalBusinessPartnerConfig currentExtBPConfig = property
-        .getExternalBusinessPartnerIntegrationConfiguration();
-
-    if (!property.isDefaultphone() || !property.isActive()) {
-      return;
-    }
-
-    final OBCriteria<?> criteria = OBDal.getInstance()
-        .createCriteria(event.getTargetInstance().getClass());
-    criteria.add(Restrictions.eq(
-        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-        currentExtBPConfig));
-    criteria
-        .add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ISDEFAULTPHONE, true));
-    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
-    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, id));
-
-    criteria.setMaxResults(1);
-    if (criteria.uniqueResult() != null) {
-      throw new OBException("@DuplicatedCRMDefaultPhone@");
-    }
-  }
-
   private void checkMandatoryRemovalIfMultiIntegration(EntityUpdateEvent event) {
     final ExternalBusinessPartnerConfigProperty extBPConfigProperty = (ExternalBusinessPartnerConfigProperty) event
         .getTargetInstance();
@@ -157,9 +102,19 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
           .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISMANDATORYCREATE);
       final Property mandatoryEditProp = ENTITIES[0]
           .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_ISMANDATORYEDIT);
-      boolean changeMandatoryCreate = (Boolean) event.getPreviousState(mandatoryCreateProp)
+
+      Object previousMandatoryCreatePropObject = event.getPreviousState(mandatoryCreateProp);
+      boolean previousMandatoryCreatePropValue = previousMandatoryCreatePropObject == null ? false
+          : (Boolean) previousMandatoryCreatePropObject;
+
+      boolean changeMandatoryCreate = previousMandatoryCreatePropValue
           && !((Boolean) event.getCurrentState(mandatoryCreateProp));
-      boolean changeMandatoryEdit = (Boolean) event.getPreviousState(mandatoryEditProp)
+
+      Object previousMandatoryEditPropObject = event.getPreviousState(mandatoryEditProp);
+      boolean previousMandatoryEditPropValue = previousMandatoryEditPropObject == null ? false
+          : (Boolean) previousMandatoryEditPropObject;
+
+      boolean changeMandatoryEdit = previousMandatoryEditPropValue
           && !((Boolean) event.getCurrentState(mandatoryEditProp));
       if (changeMandatoryCreate || changeMandatoryEdit) {
         // Query to check if the property being managed exists in address mapping
@@ -282,5 +237,36 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     criteria
         .add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_APIKEY, currentApiKey));
     return criteria;
+  }
+
+  private void checkCRMBusinessPropertyUniqueness(EntityPersistenceEvent event) {
+    final ExternalBusinessPartnerConfigProperty property = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+
+    if (!property.isActive()) {
+      return;
+    }
+
+    String propertyValue = property.getCrmBusinessProperty();
+
+    final OBCriteria<?> criteria = OBDal.getInstance()
+        .createCriteria(event.getTargetInstance().getClass());
+
+    criteria.add(Restrictions.eq(
+        ExternalBusinessPartnerConfigProperty.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        property.getExternalBusinessPartnerIntegrationConfiguration()));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_CRMBUSINESSPROPERTY,
+        propertyValue));
+    criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigProperty.PROPERTY_ACTIVE, true));
+    criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigProperty.PROPERTY_ID, event.getId()));
+
+    criteria.setMaxResults(1);
+
+    if (criteria.uniqueResult() != null) {
+      String propertyTranslated = PaymentReportDao.translateRefList(propertyValue);
+      String msg = OBMessageUtils.getI18NMessage("DuplicatedCRMBusinessProperty",
+          new String[] { propertyTranslated });
+      throw new OBException(msg);
+    }
   }
 }
