@@ -34,7 +34,7 @@ import javax.enterprise.context.Dependent;
  * expected that the classes extending this one to be defined as {@link Dependent} scoped.
  */
 @Dependent
-public abstract class ExternalSystem {
+public abstract class ExternalSystem implements AutoCloseable {
 
   private String name;
   private String searchKey;

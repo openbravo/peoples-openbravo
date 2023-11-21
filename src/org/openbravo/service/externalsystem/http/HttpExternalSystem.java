@@ -330,4 +330,11 @@ public class HttpExternalSystem extends ExternalSystem implements Cacheable {
   public String getURL() {
     return url;
   }
+
+  @Override
+  public void close() throws Exception {
+    // We do not need to manually close anything here because the resources are automatically
+    // released when the HttpClient is no longer referenced. This should happen when this instance
+    // is invalidated from the ExternalSystemProvider cache.
+  }
 }

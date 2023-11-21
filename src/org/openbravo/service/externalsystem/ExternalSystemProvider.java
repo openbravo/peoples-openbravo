@@ -54,6 +54,14 @@ public class ExternalSystemProvider {
     configuredExternalSystems = TimeInvalidatedCache.newBuilder()
         .name("External System")
         .expireAfterDuration(Duration.ofMinutes(10))
+        .removalListener((entry, reason) -> {
+          try {
+            ((ExternalSystem) entry.getValue()).close();
+            log.trace("External system {} closed, reason: {}", entry.getKey(), reason);
+          } catch (Exception ex) {
+            log.error("Error closing external system {}", entry.getKey(), ex);
+          }
+        })
         .build(this::getConfiguredExternalSystemInstance);
   }
 
