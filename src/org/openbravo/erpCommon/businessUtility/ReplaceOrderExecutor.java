@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019-2022 Openbravo SLU
+ * All portions are Copyright (C) 2019-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -674,7 +674,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
   }
 
   private void createNewReservations(final Order newOrder) {
-    if (getEnableStockReservationsPreferenceValue(newOrder.getOrganization())) {
+    if (getEnableStockReservationsPreferenceValue(newOrder)) {
       // Iterate old order lines
       try (final ScrollableResults newOrderLines = getOrderLineList(newOrder)) {
         int i = 0;
@@ -863,9 +863,13 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       // Pay fully inverse order in C&R.
       final BigDecimal outstandingAmount = getPaymentScheduleOutstandingAmount(paymentSchedule);
       final BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
-      final FIN_Payment nettingPayment = payOriginalAndInverseOrder(jsonOrder, oldOrder,
+      //original
+      /*final FIN_Payment nettingPayment = payOriginalAndInverseOrder(jsonOrder, oldOrder,
           inverseOrder, paymentOrganization, outstandingAmount, negativeAmount,
-          useOrderDocumentNoForRelatedDocs);
+          useOrderDocumentNoForRelatedDocs);*/
+      //RM-2572
+      final FIN_Payment nettingPayment = payOriginalAndInverseOrder(jsonOrder, oldOrder,
+          inverseOrder, outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs);
 
       BigDecimal paidAmount = paymentSchedule.getAmount().subtract(outstandingAmount);
       for (int i = 0; i < newOrders.size(); i++) {
@@ -903,7 +907,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
 
       // Pay of the new order the amount already paid in original order
       if (createPayments && newPaidAmount.compareTo(BigDecimal.ZERO) != 0) {
-        createOrUdpatePayment(nettingPayment, newOrder, paymentOrganization, null, newPaidAmount,
+        createOrUdpatePayment(nettingPayment, newOrder, null, newPaidAmount,
             null, null, null);
 
         final String description = nettingPayment.getDescription() + ": "
