@@ -50,6 +50,9 @@ source.path=/opt/openbravo
 #Deploy mode: valid values [class, war, none]
 deploy.mode=class
 
+#Deploy with Tomcat 10?
+deploy.tomcat10=false
+
 ############
 # Database #
 ############
