@@ -24,12 +24,16 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
+import javax.enterprise.context.Dependent;
+
 /**
  * Used to define the communication with an external system. Classes extending this class must be
  * annotated with {@link Protocol} to declare the communication protocol it uses.
  * 
- * The {@ExternalSystemProvider} class must be used to retrieve instances of this class.
+ * The {@ExternalSystemProvider} class must be used to retrieve instances of this class. It is
+ * expected that the classes extending this one to be defined as {@link Dependent} scoped.
  */
+@Dependent
 public abstract class ExternalSystem {
 
   private String name;

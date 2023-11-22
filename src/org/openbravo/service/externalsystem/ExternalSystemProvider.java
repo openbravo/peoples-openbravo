@@ -20,7 +20,9 @@ package org.openbravo.service.externalsystem;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -30,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.cache.Cacheable;
 import org.openbravo.cache.TimeInvalidatedCache;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
@@ -44,46 +47,52 @@ public class ExternalSystemProvider {
   private static final Logger log = LogManager.getLogger();
 
   private TimeInvalidatedCache<String, ExternalSystem> configuredExternalSystems;
+  private Map<String, Boolean> cacheableProtocols = new ConcurrentHashMap<>();
 
   @PostConstruct
   private void init() {
     configuredExternalSystems = TimeInvalidatedCache.newBuilder()
         .name("External System")
         .expireAfterDuration(Duration.ofMinutes(10))
-        .build(this::loadExternalSystem);
+        .build(this::getConfiguredExternalSystemInstance);
   }
 
-  private ExternalSystem loadExternalSystem(String externalSystemDataId) {
+  private ExternalSystem getConfiguredExternalSystemInstance(String externalSystemDataId) {
     try {
       OBContext.setAdminMode(true);
       ExternalSystemData externalSystemData = OBDal.getInstance()
           .get(ExternalSystemData.class, externalSystemDataId);
-      String protocol = externalSystemData.getProtocol().getSearchKey();
-      List<ExternalSystem> externalSystems = WeldUtils.getInstances(ExternalSystem.class,
-          new ProtocolSelector(protocol));
-
-      if (externalSystems.size() > 1) {
-        // For the moment it is only supported to have one ExternalSystem instance per
-        // protocol
-        throw new OBException("Found multiple external systems for protocol " + protocol);
-      }
-
-      if (externalSystems.isEmpty()) {
+      ExternalSystem externalSystem = getExternalSystemInstance(externalSystemData);
+      if (externalSystem == null) {
         return null;
       }
-
-      try {
-        ExternalSystem externalSystem = externalSystems.get(0);
-        externalSystem.configure(externalSystemData);
-        return externalSystem;
-      } catch (Exception ex) {
-        log.error("Could not configure an external system with configuration {}",
-            externalSystemDataId, ex);
-        return null;
-      }
+      externalSystem.configure(externalSystemData);
+      return externalSystem;
+    } catch (Exception ex) {
+      log.error("Could not configure an external system with configuration {}",
+          externalSystemDataId, ex);
+      return null;
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private ExternalSystem getExternalSystemInstance(ExternalSystemData externalSystemData) {
+    String protocol = externalSystemData.getProtocol().getSearchKey();
+    List<ExternalSystem> externalSystems = WeldUtils.getInstances(ExternalSystem.class,
+        new ProtocolSelector(protocol));
+
+    if (externalSystems.size() > 1) {
+      // For the moment it is only supported to have one ExternalSystem instance per
+      // protocol
+      throw new OBException("Found multiple external systems for protocol " + protocol);
+    }
+
+    if (externalSystems.isEmpty()) {
+      return null;
+    }
+
+    return externalSystems.get(0);
   }
 
   /**
@@ -137,7 +146,32 @@ public class ExternalSystemProvider {
     if (externalSystemData == null || !externalSystemData.isActive()) {
       return Optional.empty();
     }
-    return Optional.ofNullable(configuredExternalSystems.get(externalSystemData.getId()));
+    if (isCacheable(externalSystemData)) {
+      return Optional.ofNullable(configuredExternalSystems.get(externalSystemData.getId()));
+    }
+    // external system cannot be kept in cache: retrieve a new instance
+    ExternalSystem externalSystem = getConfiguredExternalSystemInstance(externalSystemData.getId());
+    return Optional.ofNullable(externalSystem);
+  }
+
+  /**
+   * Checks if {@link ExternalSystem} instance that is configured with the given
+   * {@link ExternalSystemData} can be kept in the cache or not, i.e, if it implements the
+   * {@link Cacheable} interface. This information is kept in a cache to avoid resolving the
+   * dependency injection to get the external system instance every time this method is invoked.
+   * Note that we can use the protocol as the key of the cache entries because for the moment it is
+   * only supported to have one {@link ExternalSystem} class per protocol.
+   *
+   * @return true if the external system can be kept in the cache or false otherwise.
+   */
+  private boolean isCacheable(ExternalSystemData externalSystemData) {
+    try {
+      OBContext.setAdminMode(true);
+      return cacheableProtocols.computeIfAbsent(externalSystemData.getProtocol().getId(),
+          k -> getExternalSystemInstance(externalSystemData) instanceof Cacheable);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**

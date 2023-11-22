@@ -47,6 +47,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.cache.Cacheable;
 import org.openbravo.service.NonBlockingExecutorServiceProvider;
 import org.openbravo.service.externalsystem.ExternalSystem;
 import org.openbravo.service.externalsystem.ExternalSystemConfigurationError;
@@ -61,7 +62,7 @@ import org.openbravo.service.externalsystem.Protocol;
  * Allows to communicate with an external system through HTTP requests
  */
 @Protocol("HTTP")
-public class HttpExternalSystem extends ExternalSystem {
+public class HttpExternalSystem extends ExternalSystem implements Cacheable {
   private static final Logger log = LogManager.getLogger();
   public static final int MAX_TIMEOUT = 30;
   private static final int MAX_RETRIES = 1;
