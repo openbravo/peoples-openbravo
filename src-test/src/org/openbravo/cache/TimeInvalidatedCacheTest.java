@@ -11,13 +11,14 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2022 Openbravo SLU
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.cache;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -28,6 +29,11 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.BiConsumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -200,6 +206,63 @@ public class TimeInvalidatedCacheTest {
         "Name must be set prior to executing TimeInvalidatedCacheBuilder build function."));
   }
 
+  @Test
+  public void removalListenerIsInvokedOnEntryExpiration()
+      throws ExecutionException, InterruptedException, TimeoutException {
+    FakeTicker ticker = new FakeTicker();
+    CompletableFuture<Boolean> future = new CompletableFuture<>();
+
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> "TestValue", ticker,
+        (entry, reason) -> future.complete(true));
+    assertEquals("TestValue", cache.get("testKey"));
+
+    ticker.advance(Duration.ofSeconds(5));
+    cache.get("testKey");
+
+    Boolean executed = future.get(500, TimeUnit.MILLISECONDS);
+
+    assertThat("Removal listener is executed", executed, equalTo(true));
+  }
+
+  @Test
+  public void removalListenerIsNotInvokedIfEntryIsNotExpired()
+      throws ExecutionException, InterruptedException, TimeoutException {
+    FakeTicker ticker = new FakeTicker();
+    CompletableFuture<Boolean> future = new CompletableFuture<>();
+
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> "TestValue", ticker,
+        (entry, reason) -> future.complete(true));
+    assertEquals("TestValue", cache.get("testKey"));
+
+    ticker.advance(Duration.ofSeconds(3));
+    cache.get("testKey");
+
+    Boolean executed;
+    try {
+      executed = future.get(500, TimeUnit.MILLISECONDS);
+    } catch (TimeoutException ex) {
+      executed = false;
+    }
+
+    assertThat("Removal listener is not executed", executed, equalTo(false));
+  }
+
+  @Test
+  public void removalListenerIsInvokedOnEntryInvalidation()
+      throws ExecutionException, InterruptedException, TimeoutException {
+    CompletableFuture<Boolean> future = new CompletableFuture<>();
+
+    TimeInvalidatedCache<String, String> cache = initializeCache(key -> "TestValue",
+        (entry, reason) -> future.complete(true));
+    assertEquals("TestValue", cache.get("testKey"));
+
+    cache.invalidate("testKey");
+
+    Boolean executed = future.get(500, TimeUnit.MILLISECONDS);
+
+    assertThat("Removal listener is executed", executed, equalTo(true));
+  }
+
   private TimeInvalidatedCache<String, String> initializeCache(UnaryOperator<String> buildMethod) {
     return TimeInvalidatedCache.newBuilder()
         .name("TestCache")
@@ -216,7 +279,26 @@ public class TimeInvalidatedCacheTest {
         .build(buildMethod);
   }
 
+  private TimeInvalidatedCache<String, String> initializeCache(UnaryOperator<String> buildMethod,
+      Ticker ticker, BiConsumer<Map.Entry<Object, Object>, String> listener) {
+    return TimeInvalidatedCache.newBuilder()
+        .name("TestCache")
+        .expireAfterDuration(Duration.ofSeconds(5))
+        .removalListener(listener)
+        .ticker(ticker)
+        .build(buildMethod);
+  }
+
+  private TimeInvalidatedCache<String, String> initializeCache(UnaryOperator<String> buildMethod,
+      BiConsumer<Map.Entry<Object, Object>, String> listener) {
+    return TimeInvalidatedCache.newBuilder()
+        .name("TestCache")
+        .expireAfterDuration(Duration.ofSeconds(5))
+        .removalListener(listener)
+        .build(buildMethod);
+  }
+
   private static class ValueTest {
-    public static String value;
+    private static String value;
   }
 }

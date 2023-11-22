@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2022 Openbravo SLU
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,8 @@
 package org.openbravo.cache;
 
 import java.time.Duration;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
@@ -57,6 +59,7 @@ public class TimeInvalidatedCacheBuilder<K, V> {
   private Duration expireDuration;
   private Ticker ticker;
   private String name;
+  private BiConsumer<Map.Entry<K, V>, String> removalListener;
 
   /**
    * Instantiate through {@link TimeInvalidatedCache#newBuilder()} method
@@ -98,6 +101,9 @@ public class TimeInvalidatedCacheBuilder<K, V> {
     cacheBuilder.expireAfterWrite(expireDuration);
     if (ticker != null) {
       cacheBuilder.ticker(ticker);
+    }
+    if (removalListener != null) {
+      cacheBuilder.removalListener(new TimeInvalidatedCacheRemovalListener<>(removalListener));
     }
 
     CacheLoader<K1, V1> cacheLoader = new CacheLoader<>() {
@@ -148,6 +154,20 @@ public class TimeInvalidatedCacheBuilder<K, V> {
    */
   TimeInvalidatedCacheBuilder<K, V> ticker(Ticker tickerToSet) {
     this.ticker = tickerToSet;
+    return this;
+  }
+
+  /**
+   * Sets the removal listener which is notified every time a cache entry is invalidated.
+   *
+   * @param listener
+   *          The removal listener. It is a {@link BiConsumer} with the invalidated entry as first
+   *          argument and the removal cause as second argument.
+   * @return this object
+   */
+  public TimeInvalidatedCacheBuilder<K, V> removalListener(
+      BiConsumer<Map.Entry<K, V>, String> listener) {
+    this.removalListener = listener;
     return this;
   }
 }
