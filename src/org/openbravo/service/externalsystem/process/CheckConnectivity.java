@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,6 +19,7 @@
 package org.openbravo.service.externalsystem.process;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -31,13 +32,13 @@ import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.dal.core.DalThreadCleaner;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.service.externalsystem.ExternalSystem.Operation;
 import org.openbravo.service.externalsystem.ExternalSystemProvider;
 import org.openbravo.service.externalsystem.ExternalSystemResponse;
 import org.openbravo.service.externalsystem.ExternalSystemResponse.Type;
 
 /**
- * Process that checks the connectivity of an HTTP protocol based external system with a given
- * configuration
+ * Process that checks the connectivity of an external system with a given configuration
  */
 public class CheckConnectivity extends BaseProcessActionHandler {
   private static final Logger log = LogManager.getLogger();
@@ -58,8 +59,10 @@ public class CheckConnectivity extends BaseProcessActionHandler {
 
     JSONObject dataToSend = new JSONObject();
     return externalSystemProvider.getExternalSystem(id)
-        .map(externalSystem -> externalSystem
-            .send(() -> new ByteArrayInputStream(dataToSend.toString().getBytes()))
+        .map(externalSystem -> externalSystem.send(Operation.CREATE,
+            () -> new ByteArrayInputStream(dataToSend.toString().getBytes(StandardCharsets.UTF_8)),
+            null,
+            Map.of("event", "ConnectivityTest", "id", "1", "timestamp", System.currentTimeMillis()))
             .thenApply(response -> {
               try {
                 return handleResponse(response);
