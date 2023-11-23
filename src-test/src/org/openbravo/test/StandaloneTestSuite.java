@@ -56,6 +56,7 @@ import org.openbravo.erpCommon.utility.OBDateUtilsTest;
 import org.openbravo.event.CharacteristicEventHandlerTest;
 import org.openbravo.materialmgmt.RelevantCharacteristicFieldTerminologyChecker;
 import org.openbravo.materialmgmt.RelevantCharacteristicPropertyTest;
+import org.openbravo.scheduling.ProcessBundleSerializationTest;
 import org.openbravo.scheduling.ProcessSchedulingTest;
 import org.openbravo.scheduling.trigger.MisfirePolicyTest;
 import org.openbravo.scheduling.trigger.TriggerProviderTest;
@@ -324,6 +325,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     ProcessSchedulingTest.class, //
     TriggerProviderTest.class, //
     MisfirePolicyTest.class, //
+    ProcessBundleSerializationTest.class, //
 
     // cdi
     CdiInfrastructure.class, //

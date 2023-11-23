@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2021 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -327,6 +327,10 @@ public class ProcessBundle implements Serializable {
 
   public void setLog(ProcessLogger logger) {
     this.logger = logger;
+  }
+
+  public void setGroupInfo(GroupInfo groupInfo) {
+    this.groupInfo = groupInfo;
   }
 
   public String getLog() {

@@ -1,6 +1,6 @@
 /*
  ************************************************************************************
- * Copyright (C) 2001-2018 Openbravo S.L.U.
+ * Copyright (C) 2001-2023 Openbravo S.L.U.
  * Licensed under the Apache Software License version 2.0
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  * Unless required by applicable law or agreed to  in writing,  software  distributed
@@ -11,6 +11,7 @@
  */
 package org.openbravo.base.secureApp;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,8 @@ import org.quartz.SchedulerException;
  * @author Openbravo
  * 
  */
-public class VariablesSecureApp extends VariablesBase {
+public class VariablesSecureApp extends VariablesBase implements Serializable {
+  private static final long serialVersionUID = 1L;
   private static final Logger log4j = LogManager.getLogger();
   private String user;
   private String role;

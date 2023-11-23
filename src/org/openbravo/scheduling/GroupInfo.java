@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,13 +19,16 @@
 
 package org.openbravo.scheduling;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
 
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.ProcessGroup;
@@ -33,9 +36,12 @@ import org.openbravo.model.ad.ui.ProcessGroupList;
 import org.openbravo.model.ad.ui.ProcessRequest;
 import org.openbravo.model.ad.ui.ProcessRun;
 import org.openbravo.scheduling.ProcessBundle.Channel;
+import org.openbravo.service.db.DalConnectionProvider;
 import org.quartz.SchedulerException;
 
-public class GroupInfo {
+public class GroupInfo implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   /**
    * String constant id for the Process Group process.
@@ -44,19 +50,23 @@ public class GroupInfo {
 
   public static final String END = "END";
 
-  private org.openbravo.model.ad.ui.ProcessGroup group;
+  private transient org.openbravo.model.ad.ui.ProcessGroup group;
+  private String groupId;
 
-  private ProcessRequest request;
+  private transient ProcessRequest request;
+  private String requestId;
 
-  private ProcessRun processRun;
+  private transient ProcessRun processRun;
+  private String processRunId;
 
-  private List<ProcessGroupList> groupList;
+  private transient List<ProcessGroupList> groupList;
+  private List<String> groupListIds;
 
   private int currentposition;
 
   private VariablesSecureApp vars;
 
-  private ConnectionProvider conn;
+  private transient ConnectionProvider conn;
 
   private StringBuilder groupLog;
 
@@ -91,12 +101,18 @@ public class GroupInfo {
       ConnectionProvider conn) {
     super();
     this.group = group;
+    this.groupId = group.getId();
     this.request = request;
+    this.requestId = request.getId();
     this.groupList = groupList;
+    this.groupListIds = groupList.stream()
+        .map(ProcessGroupList::getId)
+        .collect(Collectors.toList());
     this.currentposition = 0;
     this.vars = vars;
     this.conn = conn;
     this.processRun = processRun;
+    this.processRunId = processRun.getId();
     this.stopWhenFails = stopWhenFails;
     this.status = Process.SUCCESS;
   }
@@ -106,7 +122,24 @@ public class GroupInfo {
    * 
    * @return ProcessGroup
    */
+  public List<ProcessGroupList> getGroupList() {
+    if (groupList == null && groupListIds != null) {
+      groupList = groupListIds.stream()
+          .map(groupListId -> OBDal.getInstance().get(ProcessGroupList.class, groupListId))
+          .collect(Collectors.toList());
+    }
+    return groupList;
+  }
+
+  /**
+   * Returns the Process Group
+   * 
+   * @return ProcessGroup
+   */
   public ProcessGroup getGroup() {
+    if (group == null && groupId != null) {
+      group = OBDal.getInstance().get(ProcessGroup.class, groupId);
+    }
     return group;
   }
 
@@ -116,6 +149,9 @@ public class GroupInfo {
    * @return ProcessRequest of the group
    */
   public ProcessRequest getRequest() {
+    if (request == null && requestId != null) {
+      request = OBDal.getInstance().get(ProcessRequest.class, requestId);
+    }
     return request;
   }
 
@@ -125,6 +161,9 @@ public class GroupInfo {
    * @return ProcessRun of the group
    */
   public ProcessRun getProcessRun() {
+    if (processRun == null && processRunId != null) {
+      processRun = OBDal.getInstance().get(ProcessRun.class, processRunId);
+    }
     return processRun;
   }
 
@@ -145,7 +184,7 @@ public class GroupInfo {
   public String getLog() {
     String groupLogMessage = this.groupLog.toString();
     groupLogMessage = groupLogMessage
-        + OBMessageUtils.getI18NMessage("PROGROUP_End", new String[] { group.getName() });
+        + OBMessageUtils.getI18NMessage("PROGROUP_End", new String[] { getGroup().getName() });
     return groupLogMessage;
   }
 
@@ -171,10 +210,11 @@ public class GroupInfo {
               + "\n\n");
       startGroupTime = new Date();
     }
-    if (currentposition < groupList.size()
+
+    if (currentposition < getGroupList().size()
         && (status.equals(Process.SUCCESS) || (status.equals(Process.ERROR) && !stopWhenFails))) {
 
-      ProcessGroupList processList = groupList.get(currentposition);
+      ProcessGroupList processList = getGroupList().get(currentposition);
       String currentProcessId = processList.getProcess().getId();
       currentposition++;
       groupLog.append(now() + processList.getSequenceNumber() + OBMessageUtils.getI18NMessage(
@@ -182,14 +222,22 @@ public class GroupInfo {
 
       // Execute next process immediately
       final ProcessBundle firstProcess = new ProcessBundle(currentProcessId, vars,
-          Channel.SCHEDULED, request.getClient().getId(), request.getOrganization().getId(),
-          request.isSecurityBasedOnRole(), this).init(conn);
+          Channel.SCHEDULED, getRequest().getClient().getId(),
+          getRequest().getOrganization().getId(), getRequest().isSecurityBasedOnRole(), this)
+              .init(getConnectionProvider());
       OBScheduler.getInstance().schedule(firstProcess);
       return currentProcessId;
     } else {
       endGroupTime = new Date();
       return END;
     }
+  }
+
+  private ConnectionProvider getConnectionProvider() {
+    if (conn == null) {
+      conn = new DalConnectionProvider(true);
+    }
+    return conn;
   }
 
   /**
@@ -200,7 +248,7 @@ public class GroupInfo {
    */
   public void logProcess(String result) {
     String resultMessage = "";
-    ProcessGroupList processList = groupList.get(currentposition - 1);
+    ProcessGroupList processList = getGroupList().get(currentposition - 1);
     if (result.equals(Process.SUCCESS)) {
       resultMessage = OBMessageUtils.getI18NMessage("PROGROUP_Success", null);
     } else if (result.equals(Process.ERROR)) {

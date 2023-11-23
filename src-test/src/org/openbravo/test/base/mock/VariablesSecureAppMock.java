@@ -31,6 +31,7 @@ import org.openbravo.dal.core.OBContext;
  *
  */
 public class VariablesSecureAppMock extends VariablesSecureApp {
+  private static final long serialVersionUID = 1L;
   private Map<String, String> mockedParams;
 
   /** Creates a mock based on current session settings. */

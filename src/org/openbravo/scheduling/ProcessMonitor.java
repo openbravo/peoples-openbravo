@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2020 Openbravo SLU
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.SequenceIdData;
@@ -168,6 +169,10 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
 
       String executionStatus;
 
+      if (OBContext.getOBContext() == null) {
+        setObContext(ctx);
+      }
+
       if (jee != null) {
         executionStatus = ERROR;
       } else if (jobInstance instanceof DefaultJob && ((DefaultJob) jobInstance).isKilled()) {
@@ -190,6 +195,15 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       // return connection to pool and remove it from current thread
       SessionInfo.init();
     }
+  }
+
+  private void setObContext(final ProcessContext ctx) {
+    String userId = ctx.getUser();
+    String roleId = ctx.getRole();
+    String clientId = ctx.getClient();
+    String orgId = ctx.getOrganization();
+    String lang = ctx.getLanguage();
+    OBContext.setOBContext(userId, roleId, clientId, orgId, lang);
   }
 
   @Override
