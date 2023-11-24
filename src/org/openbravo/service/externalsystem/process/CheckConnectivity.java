@@ -28,10 +28,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.cache.Cacheable;
 import org.openbravo.client.application.process.BaseProcessActionHandler;
 import org.openbravo.client.application.process.ResponseActionsBuilder.MessageType;
 import org.openbravo.dal.core.DalThreadCleaner;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.service.externalsystem.ExternalSystem;
 import org.openbravo.service.externalsystem.ExternalSystem.Operation;
 import org.openbravo.service.externalsystem.ExternalSystemProvider;
 import org.openbravo.service.externalsystem.ExternalSystemResponse;
@@ -65,14 +68,31 @@ public class CheckConnectivity extends BaseProcessActionHandler {
             Map.of("event", "ConnectivityTest", "id", "1", "timestamp", System.currentTimeMillis()))
             .thenApply(response -> {
               try {
+                close(externalSystem);
                 return handleResponse(response);
               } finally {
                 // close the DAL session used to get the messages of the response
                 DalThreadCleaner.getInstance().cleanWithRollback();
               }
             })
+            .exceptionally(t -> {
+              close(externalSystem);
+              throw new OBException("Connectity test failed", t);
+            })
             .join())
         .orElse(buildError("C_ConnCheckMissingConfig"));
+  }
+
+  private void close(ExternalSystem externalSystem) {
+    // cacheable external systems are closed when they are invalidated in the ExternalSystem
+    // provider cache, so we need just to close the external system if it is not cacheable
+    if (!(externalSystem instanceof Cacheable)) {
+      try {
+        externalSystem.close();
+      } catch (Exception ex) {
+        log.error("Error closing external system ", ex);
+      }
+    }
   }
 
   private JSONObject handleResponse(ExternalSystemResponse response) {
