@@ -35,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.ConfigParameters;
 import org.openbravo.base.ConnectionProviderContextListener;
+import org.openbravo.dal.core.DalThreadCleaner;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.database.ConnectionProvider;
 import org.openbravo.database.SessionInfo;
@@ -193,7 +194,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       log.error(e.getMessage(), e);
     } finally {
       // return connection to pool and remove it from current thread
-      SessionInfo.init();
+      DalThreadCleaner.getInstance().cleanWithCommit();
     }
   }
 
