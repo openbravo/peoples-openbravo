@@ -26,8 +26,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -62,8 +60,6 @@ import org.openbravo.service.password.PasswordStrengthChecker;
  */
 @ApplicationScoped
 public class UserInfoWidgetActionHandler extends BaseActionHandler implements PortalAccessible {
-
-  private static final Logger log = LogManager.getLogger();
 
   @Inject
   private PasswordStrengthChecker passwordStrengthChecker;
@@ -145,9 +141,6 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     String orgId = getStringValue(json, "organization");
     if (orgId == null) {
       orgId = OBContext.getOBContext().getCurrentOrganization().getId();
-      log.info("orgId is null in content, using the one from the context: {}", orgId);
-    } else {
-      log.info("orgId included in content, {}", orgId);
     }
 
     String roleId = getStringValue(json, "role");
@@ -276,8 +269,6 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       request.getSession(true).setAttribute(AUTHENTICATED_USER, sessionUser);
 
       OBDal.getInstance().flush();
-
-      log.info("Resetting session, orgId= {}", organizationId);
       boolean result = LoginUtils.fillSessionArguments(new DalConnectionProvider(false), vars,
           userId, toSaveStr(language.getLanguage()), (language.isRTLLanguage() ? "Y" : "N"),
           toSaveStr(roleId), toSaveStr(clientId), toSaveStr(organizationId),

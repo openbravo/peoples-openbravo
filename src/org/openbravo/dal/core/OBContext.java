@@ -915,7 +915,7 @@ public class OBContext implements OBNotSingleton, Serializable {
       }
 
       Check.isNotNull(getRole(), "Role may not be null");
-      String branchInfo = "";
+
       if (orgId != null) {
         // @formatter:off
         final String orgQryStr = "select r"
@@ -926,21 +926,14 @@ public class OBContext implements OBNotSingleton, Serializable {
         params.put("orgId", orgId);
         final Organization o = getOne(Organization.class, orgQryStr, params, true);
         setCurrentOrganization(o);
-        branchInfo += "orgId!=null, orgId=" + orgId + ", setting organization " + o;
       } else if (getUser().getDefaultOrganization() != null
           && getUser().getDefaultOrganization().isActive()) {
         setCurrentOrganization(getUser().getDefaultOrganization());
-        branchInfo += "default organization, setting organization "
-            + getUser().getDefaultOrganization();
         // do not use DAL to obtain that info, as we cannot use OBContext.setAdminMode here
       } else if (RoleAccessUtils.isAutoRole(getRole().getId())) {
-        branchInfo += "Assigning org for auto role. ";
         List<String> orgs = RoleAccessUtils.getOrganizationsForAutoRoleByClient(getRole());
-        branchInfo += "orgs = " + orgs;
         String orgIdAutoRole = orgs.stream().max(Comparator.naturalOrder()).get();
-        branchInfo += ". orgId = " + orgIdAutoRole;
         Organization org = OBDal.getInstance().get(Organization.class, orgIdAutoRole);
-        branchInfo += ". org = " + org;
 
         Hibernate.initialize(org);
         setCurrentOrganization(org);
@@ -950,7 +943,6 @@ public class OBContext implements OBNotSingleton, Serializable {
           localClientId = getRole().getClient().getId();
         }
       } else {
-        branchInfo += " else branch. ";
         // @formatter:off
         final String roleOrgQryStr = "select roa"
             + " from ADRoleOrganization roa"
@@ -970,15 +962,8 @@ public class OBContext implements OBNotSingleton, Serializable {
           localClientId = roa.getClient().getId();
         }
       }
-      if (getCurrentOrganization() == null) {
-        Exception e = new Exception();
-        e.printStackTrace();
-      }
 
-      Check.isNotNull(getCurrentOrganization(),
-          "Organization may not be null, role = " + getRole().getId() + "auto orgs = "
-              + RoleAccessUtils.getOrganizationsForAutoRoleByClient(getRole()) + ", branch info = "
-              + branchInfo);
+      Check.isNotNull(getCurrentOrganization(), "Organization may not be null");
 
       // check that the current organization is actually writable!
       final Set<String> writableOrgs = getWritableOrganizations();
