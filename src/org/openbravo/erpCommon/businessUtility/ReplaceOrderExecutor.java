@@ -863,13 +863,9 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       // Pay fully inverse order in C&R.
       final BigDecimal outstandingAmount = getPaymentScheduleOutstandingAmount(paymentSchedule);
       final BigDecimal negativeAmount = paymentSchedule.getAmount().negate();
-      //original
-      /*final FIN_Payment nettingPayment = payOriginalAndInverseOrder(jsonOrder, oldOrder,
-          inverseOrder, paymentOrganization, outstandingAmount, negativeAmount,
-          useOrderDocumentNoForRelatedDocs);*/
-      //RM-2572
       final FIN_Payment nettingPayment = payOriginalAndInverseOrder(jsonOrder, oldOrder,
-          inverseOrder, outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs);
+          inverseOrder, paymentOrganization, outstandingAmount, negativeAmount,
+          useOrderDocumentNoForRelatedDocs);
 
       BigDecimal paidAmount = paymentSchedule.getAmount().subtract(outstandingAmount);
       for (int i = 0; i < newOrders.size(); i++) {
@@ -907,7 +903,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
 
       // Pay of the new order the amount already paid in original order
       if (createPayments && newPaidAmount.compareTo(BigDecimal.ZERO) != 0) {
-        createOrUdpatePayment(nettingPayment, newOrder, null, newPaidAmount,
+        createOrUdpatePayment(nettingPayment, newOrder, paymentOrganization, null, newPaidAmount,
             null, null, null);
 
         final String description = nettingPayment.getDescription() + ": "

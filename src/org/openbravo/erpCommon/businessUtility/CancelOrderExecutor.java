@@ -124,7 +124,7 @@ class CancelOrderExecutor extends CancelAndReplaceUtils {
           .getPaymentScheduleOutstandingAmount(paymentSchedule);
       final BigDecimal negativeAmount = outstandingAmount.negate();
       final FIN_Payment nettingPayment = outstandingAmount.compareTo(BigDecimal.ZERO) != 0
-          ? payOriginalAndInverseOrder(jsonOrder, oldOrder, inverseOrder,
+          ? payOriginalAndInverseOrder(jsonOrder, oldOrder, inverseOrder, paymentOrganization,
               outstandingAmount, negativeAmount, useOrderDocumentNoForRelatedDocs)
           : null;
       if (nettingPayment != null) {
