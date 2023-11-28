@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2021 Openbravo SLU
+ * All portions are Copyright (C) 2021-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
@@ -34,9 +35,10 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfig;
 import org.openbravo.model.externalbpartner.ExternalBusinessPartnerConfigFilter;
 
-public class ExternalBusinessPartnerConfigFilterEventHandler extends EntityPersistenceEventObserver {
+public class ExternalBusinessPartnerConfigFilterEventHandler
+    extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
-    ModelProvider.getInstance().getEntity(ExternalBusinessPartnerConfigFilter.ENTITY_NAME) };
+      ModelProvider.getInstance().getEntity(ExternalBusinessPartnerConfigFilter.ENTITY_NAME) };
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -48,6 +50,7 @@ public class ExternalBusinessPartnerConfigFilterEventHandler extends EntityPersi
       return;
     }
     checkScanFilterIsUnique(event);
+    checkTranslatableFields(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -55,12 +58,15 @@ public class ExternalBusinessPartnerConfigFilterEventHandler extends EntityPersi
       return;
     }
     checkScanFilterIsUnique(event);
+    checkTranslatableFields(event);
   }
 
   private void checkScanFilterIsUnique(final EntityPersistenceEvent event) {
     final String id = event.getId();
-    final ExternalBusinessPartnerConfigFilter filter = (ExternalBusinessPartnerConfigFilter) event.getTargetInstance();
-    final ExternalBusinessPartnerConfig currentExtBPConfig = filter.getExternalBusinessPartnerIntegrationConfiguration();
+    final ExternalBusinessPartnerConfigFilter filter = (ExternalBusinessPartnerConfigFilter) event
+        .getTargetInstance();
+    final ExternalBusinessPartnerConfig currentExtBPConfig = filter
+        .getExternalBusinessPartnerIntegrationConfiguration();
 
     if (!filter.isScanIdentifier() || !filter.isActive()) {
       return;
@@ -70,18 +76,30 @@ public class ExternalBusinessPartnerConfigFilterEventHandler extends EntityPersi
     // isScanIdentifier=true.
     // Fail otherwise
     final OBCriteria<?> criteria = OBDal.getInstance()
-      .createCriteria(event.getTargetInstance().getClass());
+        .createCriteria(event.getTargetInstance().getClass());
     criteria.add(Restrictions.eq(
-      ExternalBusinessPartnerConfigFilter.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
-      currentExtBPConfig));
+        ExternalBusinessPartnerConfigFilter.PROPERTY_EXTERNALBUSINESSPARTNERINTEGRATIONCONFIGURATION,
+        currentExtBPConfig));
     criteria
-      .add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ISSCANIDENTIFIER, true));
+        .add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ISSCANIDENTIFIER, true));
     criteria.add(Restrictions.eq(ExternalBusinessPartnerConfigFilter.PROPERTY_ACTIVE, true));
     criteria.add(Restrictions.ne(ExternalBusinessPartnerConfigFilter.PROPERTY_ID, id));
 
     criteria.setMaxResults(1);
     if (criteria.uniqueResult() != null) {
       throw new OBException("@DuplicatedCRMScanFilter@");
+    }
+  }
+
+  private void checkTranslatableFields(EntityPersistenceEvent event) {
+    final ExternalBusinessPartnerConfigFilter filter = (ExternalBusinessPartnerConfigFilter) event
+        .getTargetInstance();
+    if (filter.isTranslatable()) {
+      final Entity extBPConfigFilterEntity = ModelProvider.getInstance()
+          .getEntity(ExternalBusinessPartnerConfigFilter.ENTITY_NAME);
+      final Property textProperty = extBPConfigFilterEntity
+          .getProperty(ExternalBusinessPartnerConfigFilter.PROPERTY_TEXT);
+      event.setCurrentState(textProperty, "");
     }
   }
 }

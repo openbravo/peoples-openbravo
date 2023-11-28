@@ -63,6 +63,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     resetValuesWhenReferenceIsInvoiceOrShipping(event);
     checkCRMBusinessPropertyUniqueness(event);
     checkKeyColumnsAndAddress(event);
+    checkTranslatableFields(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -74,6 +75,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkMandatoryRemovalIfMultiIntegration(event);
     checkIdentifierScanningActionDuplicates(event);
     checkKeyColumnsAndAddress(event);
+    checkTranslatableFields(event);
   }
 
   private void resetValuesWhenReferenceIsInvoiceOrShipping(final EntityPersistenceEvent event) {
@@ -267,6 +269,18 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
       String msg = OBMessageUtils.getI18NMessage("DuplicatedCRMBusinessProperty",
           new String[] { propertyTranslated });
       throw new OBException(msg);
+    }
+  }
+
+  private void checkTranslatableFields(EntityPersistenceEvent event) {
+    final ExternalBusinessPartnerConfigProperty extBPConfigProperty = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    if (extBPConfigProperty.isTranslatable()) {
+      final Entity extBPConfigEntity = ModelProvider.getInstance()
+          .getEntity(ExternalBusinessPartnerConfigProperty.ENTITY_NAME);
+      final Property textProperty = extBPConfigEntity
+          .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_TEXT);
+      event.setCurrentState(textProperty, "");
     }
   }
 }
