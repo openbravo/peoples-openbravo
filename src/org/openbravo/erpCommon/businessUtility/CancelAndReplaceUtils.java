@@ -275,6 +275,7 @@ public class CancelAndReplaceUtils {
     String oldOrderId = null;
     String inverseOrderId = null;
     List<Invoice> inverseInvoices = new ArrayList<>();
+    List<Invoice> oldInvoices = new ArrayList<>();
     OBContext.setAdminMode(false);
     try {
 
@@ -320,13 +321,22 @@ public class CancelAndReplaceUtils {
         String negativeDocNo = jsonorder != null && jsonorder.has("negativeDocNo")
             ? jsonorder.getString("negativeDocNo")
             : null;
-
         // Create inverse Order header
         inverseOrder = createInverseOrder(oldOrder, negativeDocNo, triggersDisabled);
-        for (Invoice oldInvoice : oldOrder.getInvoiceList()) {
-          inverseInvoices = createInverseInvoice(oldInvoice, inverseOrder, triggersDisabled,
-              inverseInvoices, negativeDocNo);
+        if (!oldOrder.getInvoiceList().isEmpty()) {
+          for (Invoice oldInvoice : oldOrder.getInvoiceList()) {
+            inverseInvoices = createInverseInvoice(oldInvoice, inverseOrder, triggersDisabled,
+                inverseInvoices, negativeDocNo);
+          }
+        } else {
+          oldInvoices = getInvoiceListFromOldOrder(oldOrder);
+          // Order Lines from old order
+          for (Invoice oldInvoice : oldInvoices) {
+            inverseInvoices = createInverseInvoice(oldInvoice, inverseOrder, triggersDisabled,
+                inverseInvoices, negativeDocNo);
+          }
         }
+
       } else {
         inverseOrder = OBDal.getInstance().get(Order.class, jsonorder.getString("id"));
       }
@@ -489,12 +499,25 @@ public class CancelAndReplaceUtils {
             inverseOrder = OBDal.getInstance().get(Order.class, inverseOrderId);
           }
         }
-        for (Invoice oldInvoice : oldOrder.getInvoiceList()) {
-          Invoice inverseInvoice = invoiceRelations.get(oldInvoice.getId());
-          for (InvoiceLine invoiceLine : oldInvoice.getInvoiceLineList()) {
-            createInverseinvoiceLine(invoiceLine, inverseInvoice);
+
+        // Order Lines from old order
+        if (!oldOrder.getInvoiceList().isEmpty()) {
+          for (Invoice oldInvoice : oldOrder.getInvoiceList()) {
+            Invoice inverseInvoice = invoiceRelations.get(oldInvoice.getId());
+            for (InvoiceLine invoiceLine : oldInvoice.getInvoiceLineList()) {
+              createInverseinvoiceLine(invoiceLine, inverseInvoice);
+            }
+          }
+        } else {
+          oldInvoices = getInvoiceListFromOldOrder(oldOrder);
+          for (Invoice oldInvoice : oldInvoices) {
+            Invoice inverseInvoice = invoiceRelations.get(oldInvoice.getId());
+            for (InvoiceLine invoiceLine : oldInvoice.getInvoiceLineList()) {
+              createInverseinvoiceLine(invoiceLine, inverseInvoice);
+            }
           }
         }
+
         invoiceRelations.clear();
       }
       // Create or update the needed services relations
@@ -649,7 +672,7 @@ public class CancelAndReplaceUtils {
   }
 
   private static Order createInverseOrder(Order oldOrder, String documentNo,
-      boolean triggersDisabled) throws JSONException, ParseException {
+      boolean triggersDisabled) throws ParseException {
     Order inverseOrder = (Order) DalUtil.copy(oldOrder, false, true);
     // Change order values
     inverseOrder.setCreatedBy(OBContext.getOBContext().getUser());
@@ -963,16 +986,14 @@ public class CancelAndReplaceUtils {
     olc.add(Restrictions.eq(OrderLine.PROPERTY_REPLACEDORDERLINE, oldOrderLine));
     olc.add(Restrictions.eq(OrderLine.PROPERTY_SALESORDER, newOrder));
     olc.setMaxResults(1);
-    OrderLine newOrderLine = (OrderLine) olc.uniqueResult();
-    return newOrderLine;
+    return (OrderLine) olc.uniqueResult();
   }
 
   private static ScrollableResults getShipmentLineListOfOrderLine(OrderLine line) {
     OBCriteria<ShipmentInOutLine> goodsShipmentLineCriteria = OBDal.getInstance()
         .createCriteria(ShipmentInOutLine.class);
     goodsShipmentLineCriteria.add(Restrictions.eq(ShipmentInOutLine.PROPERTY_SALESORDERLINE, line));
-    ScrollableResults shipmentLines = goodsShipmentLineCriteria.scroll(ScrollMode.FORWARD_ONLY);
-    return shipmentLines;
+    return goodsShipmentLineCriteria.scroll(ScrollMode.FORWARD_ONLY);
   }
 
   /**
@@ -2073,6 +2094,31 @@ public class CancelAndReplaceUtils {
         .setMaxResults(1)
         .setLockOptions(LockOptions.UPGRADE)
         .uniqueResult();
+  }
+
+  static List<Invoice> getInvoiceListFromOldOrder(Order oldOrder) {
+    // Order Lines from old order
+    List<OrderLine> oldOrdeLines = new ArrayList<>();
+    oldOrdeLines = oldOrder.getOrderLineList();
+    List<Invoice> oldInvoices = new ArrayList<>();
+    String invoiceLineId = null;
+    for (OrderLine oldOrderLine : oldOrdeLines) {
+      // Finding invoice lines with orderline_id matching order line
+      OBCriteria<InvoiceLine> invoiceLinesCriteria = OBDal.getInstance()
+          .createCriteria(InvoiceLine.class);
+      invoiceLinesCriteria.add(Restrictions.eq(InvoiceLine.PROPERTY_SALESORDERLINE, oldOrderLine));
+      invoiceLinesCriteria.setMaxResults(1);
+      List<InvoiceLine> listInvoiceLine = invoiceLinesCriteria.list();
+      if (listInvoiceLine != null && !listInvoiceLine.isEmpty()) {
+        invoiceLineId = listInvoiceLine.get(0).getId();
+      }
+      // getting associated Invoice from the invoiceLine
+      InvoiceLine tempInvoiceLine = OBDal.getInstance().get(InvoiceLine.class, invoiceLineId);
+      String oldInvoiceId = tempInvoiceLine.getInvoice().getId();
+      Invoice tempInvoice = OBDal.getInstance().get(Invoice.class, oldInvoiceId);
+      oldInvoices.add(tempInvoice);
+    }
+    return oldInvoices;
   }
 
   static void runCancelAndReplaceOrderHooks(final Order oldOrder, final Order inverseOrder,
