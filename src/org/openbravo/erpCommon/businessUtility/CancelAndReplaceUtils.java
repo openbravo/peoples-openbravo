@@ -2111,12 +2111,12 @@ public class CancelAndReplaceUtils {
       List<InvoiceLine> listInvoiceLine = invoiceLinesCriteria.list();
       if (listInvoiceLine != null && !listInvoiceLine.isEmpty()) {
         invoiceLineId = listInvoiceLine.get(0).getId();
+        // getting associated Invoice from the invoiceLine
+        InvoiceLine tempInvoiceLine = OBDal.getInstance().get(InvoiceLine.class, invoiceLineId);
+        String oldInvoiceId = tempInvoiceLine.getInvoice().getId();
+        Invoice tempInvoice = OBDal.getInstance().get(Invoice.class, oldInvoiceId);
+        oldInvoices.add(tempInvoice);
       }
-      // getting associated Invoice from the invoiceLine
-      InvoiceLine tempInvoiceLine = OBDal.getInstance().get(InvoiceLine.class, invoiceLineId);
-      String oldInvoiceId = tempInvoiceLine.getInvoice().getId();
-      Invoice tempInvoice = OBDal.getInstance().get(Invoice.class, oldInvoiceId);
-      oldInvoices.add(tempInvoice);
     }
     return oldInvoices;
   }
