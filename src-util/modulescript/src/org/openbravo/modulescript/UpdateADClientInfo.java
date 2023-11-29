@@ -50,6 +50,8 @@ public class UpdateADClientInfo extends ModuleScript {
       UpdateADClientInfoData.insertMissingTreeNodes(cp, "AS", "A_ASSET");
       // Insert Missing Treenodes for Product Categories
       UpdateADClientInfoData.insertMissingTreeNodes(cp, "PC", "M_PRODUCT_CATEGORY");
+      // Insert Missing Treenodes for Business Partner
+      UpdateADClientInfoData.insertMissingTreeNodes(cp, "BP", "C_BPartner");      
     } catch (Exception e) {
       handleError(e);
     }
@@ -58,7 +60,7 @@ public class UpdateADClientInfo extends ModuleScript {
   @Override
   protected ModuleScriptExecutionLimits getModuleScriptExecutionLimits() {
     return new ModuleScriptExecutionLimits("0", null, 
-        new OpenbravoVersion(3,0,18977));
+        new OpenbravoVersion(3,0,234900));
   }
 
     private void createTreeAndUpdateClientInfo(final ConnectionProvider cp, final String treeTypeName, final String treeTypeValue, final String columnName)

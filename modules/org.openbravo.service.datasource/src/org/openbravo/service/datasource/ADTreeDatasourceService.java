@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2013-2021 Openbravo SLU
+ * All portions are Copyright (C) 2013-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -545,6 +545,8 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
     OBCriteria<Tree> adTreeCriteria = OBDal.getInstance().createCriteria(Tree.class);
     adTreeCriteria.setFilterOnActive(false);
     adTreeCriteria.add(Restrictions.eq(Tree.PROPERTY_TABLE, table));
+    adTreeCriteria
+        .add(Restrictions.eq(Tree.PROPERTY_CLIENT, OBContext.getOBContext().getCurrentClient()));
     tree = (Tree) adTreeCriteria.uniqueResult();
     return tree;
   }
