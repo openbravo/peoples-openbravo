@@ -53,26 +53,13 @@ public class Column extends ModelObject {
   @Transient
   private static final Logger log = LogManager.getLogger();
 
-  @Id
-  @javax.persistence.Column(name = "ad_column_id")
-  @GeneratedValue(generator = "DalUUIDGenerator")
-  private String id;
-  @Transient
   private Property property;
   private String columnName;
-  @ManyToOne
-  @JoinColumn(name = "ad_module_id", nullable = false)
+
   private Module module;
-  @ManyToOne
-  @JoinColumn(name = "ad_table_id", nullable = false)
   private org.openbravo.base.model.Table table;
-  @ManyToOne
-  @JoinColumn(name = "ad_reference_id", nullable = false)
   private Reference reference;
-  @ManyToOne
-  @JoinColumn(name = "ad_reference_value_id")
   private Reference referenceValue;
-  @Transient
   private Column referenceType = null;
   private int fieldLength;
   private String defaultValue;
@@ -112,6 +99,20 @@ public class Column extends ModelObject {
   @javax.persistence.Column(name = "is_child_property_in_parent")
   private boolean childPropertyInParent;
 
+  @Id
+  @javax.persistence.Column(name = "ad_column_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  @Override
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
+
+  @Transient
   public DomainType getDomainType() {
     if (referenceValue != null) {
       final DomainType refValueDomainType = referenceValue.getDomainType();
@@ -148,6 +149,8 @@ public class Column extends ModelObject {
     this.columnName = columnName;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
   public org.openbravo.base.model.Table getTable() {
     return table;
   }
@@ -156,6 +159,8 @@ public class Column extends ModelObject {
     this.table = table;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_id", nullable = false)
   public Reference getReference() {
     return reference;
   }
@@ -164,6 +169,8 @@ public class Column extends ModelObject {
     this.reference = reference;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_value_id")
   public Reference getReferenceValue() {
     return referenceValue;
   }
@@ -252,11 +259,13 @@ public class Column extends ModelObject {
     this.valueMax = valueMax;
   }
 
+  @Transient
   public boolean isPrimitiveType() {
     // anything else than foreign key is a primitive
     return getDomainType() instanceof PrimitiveDomainType;
   }
 
+  @Transient
   public Class<?> getPrimitiveType() {
     if (isPrimitiveType()) {
       return ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
@@ -270,6 +279,7 @@ public class Column extends ModelObject {
     return null;
   }
 
+  @Transient
   public Column getReferenceType() {
     if (!isPrimitiveType()) {
       return referenceType;
@@ -390,6 +400,7 @@ public class Column extends ModelObject {
     }
   }
 
+  @Transient
   public Property getProperty() {
     return property;
   }
@@ -411,6 +422,7 @@ public class Column extends ModelObject {
    * 
    * @return the set of allowed values for this Column.
    */
+  @Transient
   @SuppressWarnings("unchecked")
   public Set<String> getAllowedValues() {
     // TODO: discrepancy with the application dictionary, solve this later
@@ -451,6 +463,8 @@ public class Column extends ModelObject {
     this.position = position;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_module_id", nullable = false)
   public Module getModule() {
     return module;
   }

@@ -37,8 +37,7 @@ import javax.persistence.Table;
 public class Package extends ModelObject {
   @Column(name = "javapackage")
   private String javaPackage;
-  @ManyToOne
-  @JoinColumn(name = "ad_module_id", nullable = false)
+
   private Module module;
 
   @Id
@@ -62,6 +61,8 @@ public class Package extends ModelObject {
     this.javaPackage = javaPackage;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_module_id", nullable = false)
   public Module getModule() {
     return module;
   }

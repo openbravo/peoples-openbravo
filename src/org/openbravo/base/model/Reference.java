@@ -102,11 +102,11 @@ public class Reference extends ModelObject {
 
   @Column(name = "model_impl")
   private String modelImpl;
-  @Transient
+
   private DomainType domainType;
-  @ManyToOne
-  @JoinColumn(name = "parentreference_id")
+
   private Reference parentReference;
+
   @Column(name = "isbasereference")
   private boolean baseReference;
 
@@ -135,6 +135,7 @@ public class Reference extends ModelObject {
     return getDomainType() instanceof PrimitiveDomainType;
   }
 
+  @Transient
   public DomainType getDomainType() {
     if (domainType != null) {
       return domainType;
@@ -179,6 +180,8 @@ public class Reference extends ModelObject {
     this.modelImpl = modelImpl;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "parentreference_id")
   public Reference getParentReference() {
     return parentReference;
   }
