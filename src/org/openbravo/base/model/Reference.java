@@ -28,6 +28,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -102,6 +104,8 @@ public class Reference extends ModelObject {
   private String modelImpl;
   @Transient
   private DomainType domainType;
+  @ManyToOne
+  @JoinColumn(name = "parentreference_id")
   private Reference parentReference;
   @Column(name = "isbasereference")
   private boolean baseReference;

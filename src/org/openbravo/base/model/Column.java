@@ -25,6 +25,8 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -58,9 +60,17 @@ public class Column extends ModelObject {
   @Transient
   private Property property;
   private String columnName;
+  @ManyToOne
+  @JoinColumn(name = "ad_module_id", nullable = false)
   private Module module;
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
   private org.openbravo.base.model.Table table;
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_id", nullable = false)
   private Reference reference;
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_value_id")
   private Reference referenceValue;
   @Transient
   private Column referenceType = null;

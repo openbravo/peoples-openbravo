@@ -23,6 +23,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -35,6 +37,8 @@ import javax.persistence.Table;
 public class Package extends ModelObject {
   @Column(name = "javapackage")
   private String javaPackage;
+  @ManyToOne
+  @JoinColumn(name = "ad_module_id", nullable = false)
   private Module module;
 
   @Id
