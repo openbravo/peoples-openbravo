@@ -42,16 +42,8 @@ import org.openbravo.base.model.domaintype.TableDomainType;
 public class RefTable extends ModelObject {
   private static final Logger log = LogManager.getLogger();
 
-  @ManyToOne
-  @JoinColumn(name = "ad_reference_id", nullable = false, insertable = false, updatable = false)
   private Reference reference;
-
-  @ManyToOne
-  @JoinColumn(name = "ad_key", nullable = false)
   private Column column;
-
-  @ManyToOne
-  @JoinColumn(name = "ad_display", nullable = false)
   private Column displayColumn;
 
   @javax.persistence.Column(name = "IsValueDisplayed", nullable = false)
@@ -70,6 +62,8 @@ public class RefTable extends ModelObject {
     super.setId(id);
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_key", nullable = false)
   public Column getColumn() {
     return column;
   }
@@ -78,6 +72,8 @@ public class RefTable extends ModelObject {
     this.column = column;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_id", nullable = false, insertable = false, updatable = false)
   public Reference getReference() {
     return reference;
   }
@@ -93,6 +89,8 @@ public class RefTable extends ModelObject {
     }
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_display", nullable = false)
   public Column getDisplayColumn() {
     return displayColumn;
   }

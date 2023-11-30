@@ -35,12 +35,7 @@ import javax.persistence.ManyToOne;
 @javax.persistence.Table(name = "ad_ref_tree")
 public class RefTree extends ModelObject {
 
-  @ManyToOne
-  @JoinColumn(name = "ad_table_id", nullable = false)
   private Table table;
-
-  @ManyToOne
-  @JoinColumn(name = "ad_column_id", nullable = false)
   private Column column;
 
   @javax.persistence.Column(name = "ad_reference_id", nullable = false)
@@ -59,6 +54,8 @@ public class RefTree extends ModelObject {
     super.setId(id);
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_column_id", nullable = false)
   public Column getColumn() {
     return column;
   }
@@ -75,6 +72,8 @@ public class RefTree extends ModelObject {
     this.referenceId = referenceId;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
   public Table getTable() {
     return table;
   }

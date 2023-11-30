@@ -42,7 +42,6 @@ import org.apache.logging.log4j.Logger;
 public class Table extends ModelObject {
   private static final Logger log = LogManager.getLogger();
 
-  @Transient
   private Entity entity;
 
   @javax.persistence.Column(name = "dataorigintype", nullable = false)
@@ -54,25 +53,14 @@ public class Table extends ModelObject {
 
   @javax.persistence.Column(name = "isdeleteable")
   private boolean isDeletable;
-
-  @Transient
   private List<Column> columns = new ArrayList<Column>();
-
-  @Transient
   private List<Column> primaryKeyColumns = null;
-
-  @Transient
   private List<Column> identifierColumns = null;
-
-  @Transient
   private List<Column> parentColumns = null;
   private String className = null;
 
   @javax.persistence.Column(name = "accesslevel")
   private String accessLevel;
-
-  @ManyToOne
-  @JoinColumn(name = "ad_package_id", nullable = false)
   private Package thePackage;
 
   @javax.persistence.Column(name = "treetype")
@@ -126,6 +114,7 @@ public class Table extends ModelObject {
    * 
    * @return the list of Column instances of this table
    */
+  @Transient
   public List<Column> getColumns() {
     return columns;
   }
@@ -139,6 +128,7 @@ public class Table extends ModelObject {
     this.columns = columns;
   }
 
+  @Transient
   public List<Column> getPrimaryKeyColumns() {
     if (primaryKeyColumns == null) {
       primaryKeyColumns = new ArrayList<Column>();
@@ -156,6 +146,7 @@ public class Table extends ModelObject {
     this.primaryKeyColumns = primaryKeyColumns;
   }
 
+  @Transient
   public List<Column> getIdentifierColumns() {
     if (identifierColumns == null) {
       identifierColumns = new ArrayList<Column>();
@@ -172,6 +163,7 @@ public class Table extends ModelObject {
     this.parentColumns = parentColums;
   }
 
+  @Transient
   public List<Column> getParentColumns() {
     if (parentColumns == null) {
       parentColumns = new ArrayList<Column>();
@@ -228,6 +220,7 @@ public class Table extends ModelObject {
     return "no.package.defined.for.table." + getName();
   }
 
+  @Transient
   public Entity getEntity() {
     return entity;
   }
@@ -257,6 +250,8 @@ public class Table extends ModelObject {
     this.accessLevel = accessLevel;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_package_id", nullable = false)
   public Package getThePackage() {
     return thePackage;
   }

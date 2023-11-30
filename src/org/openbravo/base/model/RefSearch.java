@@ -45,13 +45,7 @@ public class RefSearch extends ModelObject {
 
   @Transient
   private String reference;
-
-  @ManyToOne
-  @JoinColumn(name = "ad_reference_id", nullable = false)
   private Reference referenceObject;
-
-  @ManyToOne
-  @JoinColumn(name = "ad_column_id", nullable = false)
   private Column column;
 
   @Override
@@ -67,6 +61,8 @@ public class RefSearch extends ModelObject {
     super.setId(id);
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_id", nullable = false)
   public Reference getReferenceObject() {
     return referenceObject;
   }
@@ -83,6 +79,8 @@ public class RefSearch extends ModelObject {
     }
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_column_id", nullable = false)
   public Column getColumn() {
     return column;
   }

@@ -38,19 +38,11 @@ import org.openbravo.base.model.Table;
 @javax.persistence.Table(name = "obuisel_selector")
 public class SelectorDefinition extends ModelObject {
 
-  @ManyToOne
-  @JoinColumn(name = "ad_table_id", nullable = false)
   private Table table;
-
-  @ManyToOne
-  @JoinColumn(name = "ad_column_id", nullable = false)
   private Column column;
 
   @javax.persistence.Column(name = "ad_reference_id", nullable = false)
   private String referenceId;
-
-  @ManyToOne
-  @JoinColumn(name = "obserds_datasource_id", nullable = false)
   private DatasourceDefinition datasourceDefinition;
 
   @Override
@@ -66,6 +58,8 @@ public class SelectorDefinition extends ModelObject {
     super.setId(id);
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_column_id", nullable = false)
   public Column getColumn() {
     return column;
   }
@@ -82,6 +76,8 @@ public class SelectorDefinition extends ModelObject {
     this.referenceId = referenceId;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
   public Table getTable() {
     return table;
   }
@@ -90,6 +86,8 @@ public class SelectorDefinition extends ModelObject {
     this.table = table;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "obserds_datasource_id", nullable = false)
   public DatasourceDefinition getDatasourceDefinition() {
     return datasourceDefinition;
   }

@@ -38,8 +38,6 @@ import org.openbravo.base.model.Table;
 @javax.persistence.Table(name = "obserds_datasource")
 public class DatasourceDefinition extends ModelObject {
 
-  @ManyToOne
-  @JoinColumn(name = "ad_table_id", nullable = false)
   private Table table;
 
   @Override
@@ -55,6 +53,8 @@ public class DatasourceDefinition extends ModelObject {
     super.setId(id);
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
   public Table getTable() {
     return table;
   }
