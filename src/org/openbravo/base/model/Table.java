@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -22,6 +22,12 @@ package org.openbravo.base.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,26 +37,59 @@ import org.apache.logging.log4j.Logger;
  * 
  * @author iperdomo
  */
-
+@javax.persistence.Table(name = "ad_table")
+@javax.persistence.Entity
 public class Table extends ModelObject {
   private static final Logger log = LogManager.getLogger();
 
+  @Transient
   private Entity entity;
+
+  @javax.persistence.Column(name = "dataorigintype", nullable = false)
   private String dataOrigin;
   private String tableName;
+
+  @javax.persistence.Column(name = "isview")
   private boolean view;
+
+  @javax.persistence.Column(name = "isdeleteable")
   private boolean isDeletable;
+
+  @Transient
   private List<Column> columns = new ArrayList<Column>();
+
+  @Transient
   private List<Column> primaryKeyColumns = null;
+
+  @Transient
   private List<Column> identifierColumns = null;
+
+  @Transient
   private List<Column> parentColumns = null;
   private String className = null;
 
+  @javax.persistence.Column(name = "accesslevel")
   private String accessLevel;
 
+  @ManyToOne
+  @JoinColumn(name = "ad_package_id", nullable = false)
   private Package thePackage;
 
+  @javax.persistence.Column(name = "treetype")
   private String treeType;
+
+  @Override
+  @Id
+  @javax.persistence.Column(name = "ad_table_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
 
   public String getTreeType() {
     return treeType;

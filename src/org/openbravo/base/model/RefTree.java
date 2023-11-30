@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,17 +19,45 @@
 
 package org.openbravo.base.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Ref_Table table in the application
  * dictionary.
  * 
  * @author AugustoMauch
  */
-
+@Entity
+@javax.persistence.Table(name = "ad_ref_tree")
 public class RefTree extends ModelObject {
+
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
   private Table table;
+
+  @ManyToOne
+  @JoinColumn(name = "ad_column_id", nullable = false)
   private Column column;
+
+  @javax.persistence.Column(name = "ad_reference_id", nullable = false)
   private String referenceId;
+
+  @Override
+  @Id
+  @javax.persistence.Column(name = "ad_ref_tree_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
 
   public Column getColumn() {
     return column;

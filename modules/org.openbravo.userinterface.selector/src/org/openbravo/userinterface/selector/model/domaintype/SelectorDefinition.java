@@ -11,12 +11,18 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.userinterface.selector.model.domaintype;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import org.openbravo.base.model.Column;
 import org.openbravo.base.model.ModelObject;
@@ -28,12 +34,37 @@ import org.openbravo.base.model.Table;
  * 
  * @author mtaal
  */
+@Entity
+@javax.persistence.Table(name = "obuisel_selector")
 public class SelectorDefinition extends ModelObject {
 
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
   private Table table;
+
+  @ManyToOne
+  @JoinColumn(name = "ad_column_id", nullable = false)
   private Column column;
+
+  @javax.persistence.Column(name = "ad_reference_id", nullable = false)
   private String referenceId;
+
+  @ManyToOne
+  @JoinColumn(name = "obserds_datasource_id", nullable = false)
   private DatasourceDefinition datasourceDefinition;
+
+  @Override
+  @Id
+  @javax.persistence.Column(name = "obuisel_selector_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
 
   public Column getColumn() {
     return column;

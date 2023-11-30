@@ -11,13 +11,20 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.base.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,17 +37,38 @@ import org.openbravo.base.model.domaintype.TableDomainType;
  * 
  * @author iperdomo
  */
-
+@Entity
+@Table(name = "ad_ref_table")
 public class RefTable extends ModelObject {
   private static final Logger log = LogManager.getLogger();
 
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_id", nullable = false, insertable = false, updatable = false)
   private Reference reference;
 
+  @ManyToOne
+  @JoinColumn(name = "ad_key", nullable = false)
   private Column column;
 
+  @ManyToOne
+  @JoinColumn(name = "ad_display", nullable = false)
   private Column displayColumn;
 
+  @javax.persistence.Column(name = "IsValueDisplayed", nullable = false)
   private boolean displayedValue;
+
+  @Override
+  @Id
+  @javax.persistence.Column(name = "ad_reference_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
 
   public Column getColumn() {
     return column;

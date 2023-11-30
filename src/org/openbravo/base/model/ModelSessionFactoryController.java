@@ -48,11 +48,11 @@ public class ModelSessionFactoryController extends SessionFactoryController {
     cfg.addAnnotatedClass(Package.class);
     cfg.addAnnotatedClass(Reference.class);
     cfg.addAnnotatedClass(RefList.class);
-    cfg.addClass(RefSearch.class);
-    cfg.addClass(RefTable.class);
-    cfg.addClass(Table.class);
+    cfg.addAnnotatedClass(RefSearch.class);
+    cfg.addAnnotatedClass(RefTable.class);
+    cfg.addAnnotatedClass(Table.class);
     for (Class<?> clz : additionalClasses) {
-      cfg.addClass(clz);
+      cfg.addAnnotatedClass(clz);
     }
   }
 

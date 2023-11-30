@@ -11,12 +11,19 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.userinterface.selector.model.domaintype;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import org.openbravo.base.model.ModelObject;
 import org.openbravo.base.model.Table;
@@ -27,9 +34,26 @@ import org.openbravo.base.model.Table;
  * 
  * @author mtaal
  */
+@Entity
+@javax.persistence.Table(name = "obserds_datasource")
 public class DatasourceDefinition extends ModelObject {
 
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
   private Table table;
+
+  @Override
+  @Id
+  @Column(name = "obserds_datasource_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
 
   public Table getTable() {
     return table;

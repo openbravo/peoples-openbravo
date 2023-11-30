@@ -11,13 +11,21 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.base.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,13 +38,34 @@ import org.openbravo.base.model.domaintype.SearchDomainType;
  * 
  * @author iperdomo
  */
-
+@Entity
+@Table(name = "ad_ref_search")
 public class RefSearch extends ModelObject {
   private static final Logger log = LogManager.getLogger();
 
+  @Transient
   private String reference;
+
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_id", nullable = false)
   private Reference referenceObject;
+
+  @ManyToOne
+  @JoinColumn(name = "ad_column_id", nullable = false)
   private Column column;
+
+  @Override
+  @Id
+  @javax.persistence.Column(name = "ad_ref_search_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
 
   public Reference getReferenceObject() {
     return referenceObject;
