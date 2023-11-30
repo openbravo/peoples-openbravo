@@ -11,13 +11,20 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.base.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,12 +36,28 @@ import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
  * 
  * @author mtaal
  */
+@Entity
+@Table(name = "ad_ref_list")
 public class RefList extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
-  private Reference reference;
+  @Id
+  @Column(name = "ad_ref_list_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  private String id;
 
   private String value;
+
+  public String getValue() {
+    return value;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
+  }
+
+  private Reference reference;
 
   public Reference getReference() {
     return reference;
@@ -50,13 +73,4 @@ public class RefList extends ModelObject {
       ((StringEnumerateDomainType) domainType).addEnumerateValue(value);
     }
   }
-
-  public String getValue() {
-    return value;
-  }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-
 }

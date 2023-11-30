@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,15 +19,36 @@
 
 package org.openbravo.base.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * Models the ad_package table. Is used for generating correct java classnames.
  * 
  * @author mtaal
  */
+@Entity
+@Table(name = "ad_package")
 public class Package extends ModelObject {
-
+  @Column(name = "javapackage")
   private String javaPackage;
   private Module module;
+
+  @Id
+  @Column(name = "ad_package_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  @Override
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
 
   public String getJavaPackage() {
     return javaPackage;

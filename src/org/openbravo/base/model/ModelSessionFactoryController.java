@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,14 +43,14 @@ public class ModelSessionFactoryController extends SessionFactoryController {
 
   @Override
   protected void mapModel(Configuration cfg) {
-    cfg.addClass(Table.class);
-    cfg.addClass(Package.class);
-    cfg.addClass(Column.class);
+    cfg.addAnnotatedClass(Column.class);
+    cfg.addAnnotatedClass(Module.class);
+    cfg.addAnnotatedClass(Package.class);
     cfg.addClass(Reference.class);
+    cfg.addAnnotatedClass(RefList.class);
     cfg.addClass(RefSearch.class);
     cfg.addClass(RefTable.class);
-    cfg.addClass(RefList.class);
-    cfg.addClass(Module.class);
+    cfg.addClass(Table.class);
     for (Class<?> clz : additionalClasses) {
       cfg.addClass(clz);
     }

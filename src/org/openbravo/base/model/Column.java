@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2021 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,6 +21,12 @@ package org.openbravo.base.model;
 
 import java.util.Collections;
 import java.util.Set;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,40 +45,62 @@ import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
  * @author iperdomo
  * @author mtaal
  */
-
+@Entity
+@Table(name = "ad_column")
 public class Column extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
+  @Id
+  @javax.persistence.Column(name = "ad_column_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  private String id;
+  @Transient
   private Property property;
   private String columnName;
-  private Table table;
+  private Module module;
+  private org.openbravo.base.model.Table table;
   private Reference reference;
   private Reference referenceValue;
+  @Transient
   private Column referenceType = null;
   private int fieldLength;
   private String defaultValue;
+  @javax.persistence.Column(name = "iskey")
   private boolean key;
+  @javax.persistence.Column(name = "issecondarykey")
   private boolean secondaryKey;
+  @javax.persistence.Column(name = "issessionattr")
   private boolean storedInSession;
+  @javax.persistence.Column(name = "isparent")
   private boolean parent;
+  @javax.persistence.Column(name = "ismandatory")
   private boolean mandatory;
+  @javax.persistence.Column(name = "isencrypted")
   private boolean encrypted;
+  @javax.persistence.Column(name = "isdesencryptable")
   private boolean decryptable;
+  @javax.persistence.Column(name = "isupdateable")
   private boolean updatable;
+  @javax.persistence.Column(name = "isidentifier")
   private boolean identifier;
   private String valueMin;
   private String valueMax;
   private String sqlLogic;
+  @javax.persistence.Column(name = "istransient")
   private Boolean isTransient;
+  @javax.persistence.Column(name = "istransientcondition")
   private String isTransientCondition;
   private Integer position;
+  @javax.persistence.Column(name = "istranslated")
   private boolean translatable;
   private Integer seqno;
+  @javax.persistence.Column(name = "isusedsequence")
   private boolean usedSequence;
+  @javax.persistence.Column(name = "allowed_cross_org_link")
   private boolean isAllowedCrossOrgReference;
+  @javax.persistence.Column(name = "is_child_property_in_parent")
   private boolean childPropertyInParent;
-
-  private Module module;
 
   public DomainType getDomainType() {
     if (referenceValue != null) {
@@ -110,11 +138,11 @@ public class Column extends ModelObject {
     this.columnName = columnName;
   }
 
-  public Table getTable() {
+  public org.openbravo.base.model.Table getTable() {
     return table;
   }
 
-  public void setTable(Table table) {
+  public void setTable(org.openbravo.base.model.Table table) {
     this.table = table;
   }
 
@@ -243,6 +271,7 @@ public class Column extends ModelObject {
     this.referenceType = column;
   }
 
+  @javax.persistence.Column(name = "isactive", nullable = false)
   @Override
   public boolean isActive() {
     if (super.isActive() && !isPrimitiveType()) {

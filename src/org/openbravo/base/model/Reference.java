@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,6 +23,13 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,19 +45,31 @@ import org.openbravo.base.util.OBClassLoader;
  * 
  * @author iperdomo
  */
+@Entity
+@Table(name = "ad_reference")
 public class Reference extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
   // Ids of ReferenceTypes
+  @Transient
   public static final String TABLE = "18";
+  @Transient
   public static final String TABLEDIR = "19";
+  @Transient
   public static final String SEARCH = "30";
+  @Transient
   public static final String IMAGE = "32";
+  @Transient
   public static final String IMAGE_BLOB = "4AA6C3BE9D3B4D84A3B80489505A23E5";
+  @Transient
   public static final String RESOURCE_ASSIGNMENT = "33";
+  @Transient
   public static final String PRODUCT_ATTRIBUTE = "35";
+  @Transient
   public static final String NO_REFERENCE = "-1";
 
+  @Transient
   private static HashMap<String, Class<?>> primitiveTypes;
 
   static {
@@ -79,10 +98,26 @@ public class Reference extends ModelObject {
     primitiveTypes.put("800101", String.class);
   }
 
+  @Column(name = "model_impl")
   private String modelImpl;
+  @Transient
   private DomainType domainType;
   private Reference parentReference;
+  @Column(name = "isbasereference")
   private boolean baseReference;
+
+  @Id
+  @Column(name = "ad_reference_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  @Override
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
 
   public boolean isBaseReference() {
     return baseReference;
