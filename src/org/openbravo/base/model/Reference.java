@@ -131,6 +131,7 @@ public class Reference extends ModelObject {
     this.baseReference = baseReference;
   }
 
+  @Transient
   public boolean isPrimitive() {
     return getDomainType() instanceof PrimitiveDomainType;
   }
@@ -163,6 +164,7 @@ public class Reference extends ModelObject {
    * 
    * @return the modelImpl or if not set, the value set in the parent.
    */
+  @Transient
   public String getModelImplementationClassName() {
     // only call the parent if the parent is a base reference and this is not a basereference
     if (getModelImpl() == null && !isBaseReference() && getParentReference() != null

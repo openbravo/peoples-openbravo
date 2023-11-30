@@ -136,6 +136,7 @@ public class Column extends ModelObject {
     return reference.getDomainType();
   }
 
+  @Transient
   public boolean isBoolean() {
     return isPrimitiveType() && (getPrimitiveType().getName().compareTo("boolean") == 0
         || Boolean.class == getPrimitiveType());
@@ -311,6 +312,7 @@ public class Column extends ModelObject {
 
   // method to prevent infinite looping checking for exceptions. See this issue:
   // https://issues.openbravo.com/view.php?id=8632
+  @Transient
   private boolean isSuperActive() {
     return super.isActive();
   }
@@ -340,6 +342,7 @@ public class Column extends ModelObject {
 
   // returns the primitive type name or the class of the
   // referenced type
+  @Transient
   public String getTypeName() {
     final String typeName;
     if (isPrimitiveType()) {
@@ -354,6 +357,7 @@ public class Column extends ModelObject {
   }
 
   // the last part of the class name
+  @Transient
   public String getSimpleTypeName() {
     final String typeName = getTypeName();
     if (typeName.indexOf(".") == -1) {
@@ -369,6 +373,7 @@ public class Column extends ModelObject {
    * 
    * @return the name of the class of the type of this column
    */
+  @Transient
   public String getObjectTypeName() {
     if (isPrimitiveType()) {
       final String typeName = getTypeName();

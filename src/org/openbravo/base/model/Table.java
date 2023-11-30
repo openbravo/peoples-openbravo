@@ -188,6 +188,7 @@ public class Table extends ModelObject {
     return view;
   }
 
+  @Transient
   public String getNotNullClassName() {
     if (getClassName() == null || getClassName().trim().length() == 0) {
       return getName();
@@ -211,6 +212,7 @@ public class Table extends ModelObject {
     }
   }
 
+  @Transient
   public String getPackageName() {
     if (getThePackage() != null) {
       return getThePackage().getJavaPackage();
