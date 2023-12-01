@@ -19,6 +19,8 @@
 
 package org.openbravo.base.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -44,13 +46,23 @@ public class RefList extends ModelObject {
   @Transient
   private static final Logger log = LogManager.getLogger();
 
+  private String value;
+  private Reference reference;
+
   @Id
   @Column(name = "ad_ref_list_id")
   @GeneratedValue(generator = "DalUUIDGenerator")
-  private String id;
+  @Override
+  public String getId() {
+    return super.getId();
+  }
 
-  private String value;
+  @Override
+  public void setId(String id) {
+    super.setId(id);
+  }
 
+  @Column(name = "value")
   public String getValue() {
     return value;
   }
@@ -61,8 +73,6 @@ public class RefList extends ModelObject {
 
   @ManyToOne
   @JoinColumn(name = "ad_reference_id", nullable = false)
-  private Reference reference;
-
   public Reference getReference() {
     return reference;
   }
@@ -76,5 +86,16 @@ public class RefList extends ModelObject {
     } else {
       ((StringEnumerateDomainType) domainType).addEnumerateValue(value);
     }
+  }
+
+  @Column(name = "updated")
+  @Override
+  public Date getUpdated() {
+    return super.getUpdated();
+  }
+
+  @Override
+  public void setUpdated(Date date) {
+    super.setUpdated(date);
   }
 }

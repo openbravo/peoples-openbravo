@@ -19,6 +19,8 @@
 
 package org.openbravo.base.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +36,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ad_module")
 public class Module extends ModelObject {
-  @Column(nullable = false)
   private String name;
   private Integer seqno;
   private String javaPackage;
@@ -52,6 +53,18 @@ public class Module extends ModelObject {
     super.setId(id);
   }
 
+  @Column(name = "isactive", nullable = false)
+  @Override
+  public boolean isActive() {
+    return super.isActive();
+  }
+
+  @Override
+  public void setActive(boolean active) {
+    super.setActive(active);
+  }
+
+  @Column(name = "name", nullable = false)
   @Override
   public String getName() {
     return name;
@@ -62,6 +75,7 @@ public class Module extends ModelObject {
     this.name = name;
   }
 
+  @Column(name = "seqno")
   public Integer getSeqno() {
     return seqno;
   }
@@ -70,11 +84,23 @@ public class Module extends ModelObject {
     this.seqno = seqno;
   }
 
+  @Column(name = "javaPackage")
   public String getJavaPackage() {
     return javaPackage;
   }
 
   public void setJavaPackage(String javaPackage) {
     this.javaPackage = javaPackage;
+  }
+
+  @Column(name = "updated")
+  @Override
+  public Date getUpdated() {
+    return super.getUpdated();
+  }
+
+  @Override
+  public void setUpdated(Date date) {
+    super.setUpdated(date);
   }
 }

@@ -100,14 +100,9 @@ public class Reference extends ModelObject {
     primitiveTypes.put("800101", String.class);
   }
 
-  @Column(name = "model_impl")
   private String modelImpl;
-
   private DomainType domainType;
-
   private Reference parentReference;
-
-  @Column(name = "isbasereference")
   private boolean baseReference;
 
   @Id
@@ -123,6 +118,48 @@ public class Reference extends ModelObject {
     super.setId(id);
   }
 
+  @Column(name = "isactive", nullable = false)
+  @Override
+  public boolean isActive() {
+    return super.isActive();
+  }
+
+  @Override
+  public void setActive(boolean active) {
+    super.setActive(active);
+  }
+
+  @Column(name = "name", nullable = false)
+  @Override
+  public String getName() {
+    return super.getName();
+  }
+
+  @Override
+  public void setName(String name) {
+    super.setName(name);
+  }
+
+  @Column(name = "model_impl")
+  public String getModelImpl() {
+    return modelImpl;
+  }
+
+  public void setModelImpl(String modelImpl) {
+    this.modelImpl = modelImpl;
+  }
+
+  @ManyToOne
+  @JoinColumn(name = "parentreference_id")
+  public Reference getParentReference() {
+    return parentReference;
+  }
+
+  public void setParentReference(Reference parentReference) {
+    this.parentReference = parentReference;
+  }
+
+  @Column(name = "isbasereference", nullable = false)
   public boolean isBaseReference() {
     return baseReference;
   }
@@ -173,23 +210,4 @@ public class Reference extends ModelObject {
     }
     return getModelImpl();
   }
-
-  public String getModelImpl() {
-    return modelImpl;
-  }
-
-  public void setModelImpl(String modelImpl) {
-    this.modelImpl = modelImpl;
-  }
-
-  @ManyToOne
-  @JoinColumn(name = "parentreference_id")
-  public Reference getParentReference() {
-    return parentReference;
-  }
-
-  public void setParentReference(Reference parentReference) {
-    this.parentReference = parentReference;
-  }
-
 }
