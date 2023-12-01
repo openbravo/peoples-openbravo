@@ -40,8 +40,6 @@ public class SelectorDefinition extends ModelObject {
 
   private Table table;
   private Column column;
-
-  @javax.persistence.Column(name = "ad_reference_id", nullable = false)
   private String referenceId;
   private DatasourceDefinition datasourceDefinition;
 
@@ -68,6 +66,7 @@ public class SelectorDefinition extends ModelObject {
     this.column = column;
   }
 
+  @javax.persistence.Column(name = "ad_reference_id", nullable = false)
   public String getReferenceId() {
     return referenceId;
   }

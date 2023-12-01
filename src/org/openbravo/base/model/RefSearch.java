@@ -19,6 +19,8 @@
 
 package org.openbravo.base.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -59,6 +61,28 @@ public class RefSearch extends ModelObject {
   @Override
   public void setId(String id) {
     super.setId(id);
+  }
+
+  @Override
+  @javax.persistence.Column(name = "isactive", nullable = false)
+  public boolean isActive() {
+    return super.isActive();
+  }
+
+  @Override
+  public void setActive(boolean active) {
+    super.setActive(active);
+  }
+
+  @Override
+  @javax.persistence.Column(name = "updated")
+  public Date getUpdated() {
+    return super.getUpdated();
+  }
+
+  @Override
+  public void setUpdated(Date updated) {
+    super.setUpdated(updated);
   }
 
   @ManyToOne

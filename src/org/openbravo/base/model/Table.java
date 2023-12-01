@@ -20,6 +20,7 @@
 package org.openbravo.base.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.GeneratedValue;
@@ -43,15 +44,10 @@ public class Table extends ModelObject {
   private static final Logger log = LogManager.getLogger();
 
   private Entity entity;
-
-  @javax.persistence.Column(name = "dataorigintype", nullable = false)
   private String dataOrigin;
   private String tableName;
-
-  @javax.persistence.Column(name = "isview")
   private boolean view;
 
-  @javax.persistence.Column(name = "isdeleteable")
   private boolean isDeletable;
   private List<Column> columns = new ArrayList<Column>();
   private List<Column> primaryKeyColumns = null;
@@ -79,6 +75,39 @@ public class Table extends ModelObject {
     super.setId(id);
   }
 
+  @Override
+  @javax.persistence.Column(name = "name", nullable = false)
+  public String getName() {
+    return super.getName();
+  }
+
+  @Override
+  public void setName(String name) {
+    super.setName(name);
+  }
+
+  @Override
+  @javax.persistence.Column(name = "isactive", nullable = false)
+  public boolean isActive() {
+    return super.isActive();
+  }
+
+  @Override
+  public void setActive(boolean active) {
+    super.setActive(active);
+  }
+
+  @Override
+  @javax.persistence.Column(name = "updated")
+  public Date getUpdated() {
+    return super.getUpdated();
+  }
+
+  @Override
+  public void setUpdated(Date updated) {
+    super.setUpdated(updated);
+  }
+
   public String getTreeType() {
     return treeType;
   }
@@ -87,6 +116,7 @@ public class Table extends ModelObject {
     this.treeType = treeType;
   }
 
+  @javax.persistence.Column(name = "dataorigintype", nullable = false)
   public String getDataOrigin() {
     return dataOrigin;
   }
@@ -184,6 +214,7 @@ public class Table extends ModelObject {
     this.view = view;
   }
 
+  @javax.persistence.Column(name = "isview")
   public boolean isView() {
     return view;
   }
@@ -236,6 +267,7 @@ public class Table extends ModelObject {
     return getTableName();
   }
 
+  @javax.persistence.Column(name = "isdeleteable")
   public boolean isDeletable() {
     return isDeletable;
   }
