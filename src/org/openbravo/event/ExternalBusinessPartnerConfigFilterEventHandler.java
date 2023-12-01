@@ -51,6 +51,7 @@ public class ExternalBusinessPartnerConfigFilterEventHandler
     }
     checkScanFilterIsUnique(event);
     checkTranslatableFields(event);
+    checkAdvancedFilterOrMainFilterAreChecked(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -59,6 +60,7 @@ public class ExternalBusinessPartnerConfigFilterEventHandler
     }
     checkScanFilterIsUnique(event);
     checkTranslatableFields(event);
+    checkAdvancedFilterOrMainFilterAreChecked(event);
   }
 
   private void checkScanFilterIsUnique(final EntityPersistenceEvent event) {
@@ -100,6 +102,14 @@ public class ExternalBusinessPartnerConfigFilterEventHandler
       final Property textProperty = extBPConfigFilterEntity
           .getProperty(ExternalBusinessPartnerConfigFilter.PROPERTY_TEXT);
       event.setCurrentState(textProperty, "");
+    }
+  }
+
+  private void checkAdvancedFilterOrMainFilterAreChecked(final EntityPersistenceEvent event) {
+    final ExternalBusinessPartnerConfigFilter filter = (ExternalBusinessPartnerConfigFilter) event
+        .getTargetInstance();
+    if (filter.isAdvancedFilter() && filter.isMainFilter()) {
+      throw new OBException("@CRMFilterCannotBeAdvancedAndMain@");
     }
   }
 }
