@@ -60,16 +60,19 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
       return;
     }
     validateData(event);
+    validatePriceAdjustmentScope((PriceAdjustment) event.getTargetInstance());
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
+    PriceAdjustment discount = (PriceAdjustment) event.getTargetInstance();
+
     validateData(event);
-    updateOrganizationDates((PriceAdjustment) event.getTargetInstance(),
-        (Date) event.getPreviousState(startingDateProperty),
+    updateOrganizationDates(discount, (Date) event.getPreviousState(startingDateProperty),
         (Date) event.getPreviousState(endingDateProperty));
+    validatePriceAdjustmentScope(discount);
   }
 
   private void validateData(EntityPersistenceEvent event) {
@@ -113,6 +116,20 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
           .setParameter("updated", discount.getUpdated())
           .setParameter("updatedBy", discount.getUpdatedBy())
           .executeUpdate();
+    }
+  }
+
+  /**
+   * Checks that a discounts Included Products field is 'Only those defined' if the Price Adjustment
+   * Scope is 'Set a specific price adjustment for each product'.
+   *
+   * @param discount
+   *          The discount that is being created or updated
+   */
+  private void validatePriceAdjustmentScope(PriceAdjustment discount) {
+    if (discount.getPriceAdjustmentScope().equals("E")
+        && !discount.getIncludedProducts().equals("N")) {
+      throw new OBException("@PriceAdjustmentScopeError@");
     }
   }
 }
