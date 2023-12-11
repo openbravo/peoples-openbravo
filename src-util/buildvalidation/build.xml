@@ -85,6 +85,7 @@
     </java>
     <javac srcdir="${base.modules}/${module}/src-util/buildvalidation/src" includes="**/*.java" destdir="${base.modules}/${module}/build/classes" fork="true" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="buildvalidation.class.path" />
+      <compilerarg value="${procfull.java21}" />
     </javac>
   </target>
 
@@ -99,6 +100,7 @@
   <target name="javacModule" unless="checkCore">
     <javac srcdir="${main.dir}" includes="modules/${module}/src-util/buildvalidation/**/*.java" fork="true" destdir="${base.modules}/${module}/build/classes" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="buildvalidation.class.path" />
+      <compilerarg value="${procfull.java21}" />
     </javac>
   </target>
   

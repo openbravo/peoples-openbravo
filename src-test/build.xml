@@ -64,7 +64,7 @@
      <javac destdir="${build.test}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <src refid="test-src-dirs"/>
       <classpath refid="test.class.path" />
-      <compilerarg value="-proc:full" />
+      <compilerarg value="${procfull.java21}" />
     </javac>
   </target>
 
