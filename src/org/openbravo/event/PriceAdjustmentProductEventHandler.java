@@ -57,7 +57,8 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
   }
 
   /**
-   * Checks that the dates in the Product tab are between the ones in the discount header
+   * For price adjustments that are set for each product, checks that the dates in the Product tab
+   * are between the ones in the discount header
    * 
    * @param discountProduct
    *          The Product where a discount is applied that we need to check
@@ -65,6 +66,11 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
   private void validateDates(Product discountProduct) {
     final PriceAdjustment discount = discountProduct.getPriceAdjustment();
 
+    // Only check price adjustments that are set for each product
+    if (!discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+        || !discount.getPriceAdjustmentScope().equals("E")) {
+      return;
+    }
     if (discountProduct.getStartingDate() != null
         && discountProduct.getStartingDate().before(discount.getStartingDate())) {
       throw new OBException("@PriceAdjustmentProductDateError@");

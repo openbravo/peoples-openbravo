@@ -34,7 +34,9 @@ import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
+import org.openbravo.model.pricing.priceadjustment.Product;
 
 /**
  * Validates mandatory to choose Priority Rule if there is max quantity
@@ -59,8 +61,11 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
     if (!isValidEvent(event)) {
       return;
     }
+    PriceAdjustment discount = (PriceAdjustment) event.getTargetInstance();
+
     validateData(event);
-    validatePriceAdjustmentScope((PriceAdjustment) event.getTargetInstance());
+    validatePriceAdjustmentScope(discount);
+    validatePriceAdjustmentDates(discount);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -73,6 +78,7 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
     updateOrganizationDates(discount, (Date) event.getPreviousState(startingDateProperty),
         (Date) event.getPreviousState(endingDateProperty));
     validatePriceAdjustmentScope(discount);
+    validatePriceAdjustmentDates(discount);
   }
 
   private void validateData(EntityPersistenceEvent event) {
@@ -127,9 +133,40 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
    *          The discount that is being created or updated
    */
   private void validatePriceAdjustmentScope(PriceAdjustment discount) {
-    if (discount.getPriceAdjustmentScope().equals("E")
+    if (discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+        && discount.getPriceAdjustmentScope().equals("E")
         && !discount.getIncludedProducts().equals("N")) {
       throw new OBException("@PriceAdjustmentScopeError@");
+    }
+  }
+
+  /**
+   * For price adjustments that are set for each product, checks that the dates in the Product tab
+   * are between the ones in the discount header
+   * 
+   * @param discount
+   *          The discount that is being created or updated
+   */
+  private void validatePriceAdjustmentDates(PriceAdjustment discount) {
+    // Only check price adjustments that are set for each product
+    if (!discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+        || !discount.getPriceAdjustmentScope().equals("E")) {
+      return;
+    }
+
+    final Product wrongProduct = discount.getPricingAdjustmentProductList()
+        .stream()
+        .filter(product -> (product.getStartingDate() != null
+            && product.getStartingDate().before(discount.getStartingDate()))
+            || (product.getEndingDate() != null
+                && product.getEndingDate().after(discount.getEndingDate())))
+        .findAny()
+        .orElse(null);
+
+    if (wrongProduct != null) {
+      throw new OBException(
+          String.format(OBMessageUtils.messageBD("PriceAdjustmentProductDateErrorWithProduct"),
+              wrongProduct.getIdentifier()));
     }
   }
 }
