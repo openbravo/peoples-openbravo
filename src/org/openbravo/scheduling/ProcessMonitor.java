@@ -243,9 +243,10 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
           null);
     } catch (Exception e) {
       // ignore: exception while trying to log
+    } finally {
+      // return connection to pool and remove it from current thread
+      SessionInfo.init();
     }
-
-    // Not implemented
   }
 
   @Override
