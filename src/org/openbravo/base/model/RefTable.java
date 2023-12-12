@@ -50,7 +50,6 @@ public class RefTable extends ModelObject {
   private Column column;
   private Column displayColumn;
 
-  @javax.persistence.Column(name = "IsValueDisplayed", nullable = false)
   private boolean displayedValue;
 
   @Override
@@ -125,6 +124,7 @@ public class RefTable extends ModelObject {
     this.displayColumn = displayColumn;
   }
 
+  @javax.persistence.Column(name = "IsValueDisplayed", nullable = false)
   public boolean getDisplayedValue() {
     return this.displayedValue;
   }
