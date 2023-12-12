@@ -114,6 +114,7 @@ public class RefSearch extends ModelObject {
     this.column = column;
   }
 
+  @Transient
   /**
    * Deprecated use {@link #getReferenceObject()}
    */
