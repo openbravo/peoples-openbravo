@@ -65,6 +65,7 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
 
     validateData(event);
     validatePriceAdjustmentScope(discount);
+    validatePriceAdjustmentType(discount);
     validatePriceAdjustmentDates(discount);
   }
 
@@ -78,6 +79,7 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
     updateOrganizationDates(discount, (Date) event.getPreviousState(startingDateProperty),
         (Date) event.getPreviousState(endingDateProperty));
     validatePriceAdjustmentScope(discount);
+    validatePriceAdjustmentType(discount);
     validatePriceAdjustmentDates(discount);
   }
 
@@ -137,6 +139,33 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
         && discount.getPriceAdjustmentScope().equals("E")
         && !discount.getIncludedProducts().equals("N")) {
       throw new OBException("@PriceAdjustmentScopeError@");
+    }
+  }
+
+  /**
+   * When a Price Adjustment is set for all the products, the Price Adjustment Type field will
+   * decide which kind of discount to apply, so the corresponding field needs to be filled. Also,
+   * when a Fixed Percentage Discount is set, the percentage needs to be filled.
+   * 
+   * @param discount
+   *          The discount that is being created or updated
+   */
+  private void validatePriceAdjustmentType(PriceAdjustment discount) {
+    if (discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+        && discount.getPriceAdjustmentScope().equals("A")) {
+      if (discount.getPriceAdjustmentType().equals("A") && discount.getDiscountAmount() == null) {
+        throw new OBException("@PriceAdjustmentEmptyField@");
+      }
+      if (discount.getPriceAdjustmentType().equals("P") && discount.getDiscount() == null) {
+        throw new OBException("@PriceAdjustmentEmptyField@");
+      }
+      if (discount.getPriceAdjustmentType().equals("F") && discount.getFixedPrice() == null) {
+        throw new OBException("@PriceAdjustmentEmptyField@");
+      }
+    }
+    if (discount.getDiscountType().getId().equals("697A7AB9FD9C4EE0A3E891D3D3CCA0A7")
+        && discount.getDiscount() == null) {
+      throw new OBException("@PriceAdjustmentEmptyField@");
     }
   }
 

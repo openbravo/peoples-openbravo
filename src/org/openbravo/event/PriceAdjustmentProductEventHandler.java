@@ -46,14 +46,45 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
     if (!isValidEvent(event)) {
       return;
     }
-    validateDates((Product) event.getTargetInstance());
+    final Product discountProduct = (Product) event.getTargetInstance();
+    validatePriceAdjustmentType(discountProduct);
+    validateDates(discountProduct);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    validateDates((Product) event.getTargetInstance());
+    final Product discountProduct = (Product) event.getTargetInstance();
+    validatePriceAdjustmentType(discountProduct);
+    validateDates(discountProduct);
+  }
+
+  /**
+   * When a Price Adjustment is set for each product, the Price Adjustment Type field will decide
+   * which kind of discount to apply, so the corresponding field needs to be filled.
+   * 
+   * @param discountProduct
+   *          The Product where a discount is applied that we need to check
+   */
+  private void validatePriceAdjustmentType(Product discountProduct) {
+    final PriceAdjustment discount = discountProduct.getPriceAdjustment();
+    if (!discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+        || !discount.getPriceAdjustmentScope().equals("E")) {
+      return;
+    }
+    if (discountProduct.getPriceAdjustmentType().equals("A")
+        && discountProduct.getDiscountAmount() == null) {
+      throw new OBException("@PriceAdjustmentEmptyField@");
+    }
+    if (discountProduct.getPriceAdjustmentType().equals("P")
+        && discountProduct.getDiscount() == null) {
+      throw new OBException("@PriceAdjustmentEmptyField@");
+    }
+    if (discountProduct.getPriceAdjustmentType().equals("F")
+        && discountProduct.getFixedUnitPrice() == null) {
+      throw new OBException("@PriceAdjustmentEmptyField@");
+    }
   }
 
   /**

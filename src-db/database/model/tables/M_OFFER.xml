@@ -41,11 +41,11 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="ADDAMT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="ADDAMT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
-      <column name="DISCOUNT" primaryKey="false" required="true" type="DECIMAL" autoIncrement="false">
+      <column name="DISCOUNT" primaryKey="false" required="false" type="DECIMAL" autoIncrement="false">
         <default><![CDATA[0]]></default>
         <onCreateDefault/>
       </column>
