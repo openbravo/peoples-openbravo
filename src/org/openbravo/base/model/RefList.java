@@ -27,6 +27,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -79,12 +80,19 @@ public class RefList extends ModelObject {
 
   public void setReference(Reference reference) {
     this.reference = reference;
-    final DomainType domainType = reference.getDomainType();
-    if (!(domainType instanceof StringEnumerateDomainType)) {
-      log.error("Domain type of reference " + reference.getId() + " is not a TableDomainType but a "
-          + domainType);
-    } else {
-      ((StringEnumerateDomainType) domainType).addEnumerateValue(value);
+  }
+
+  @PostLoad
+  private void postLoad() {
+    // Perform the logic that requires both 'value' and 'reference'
+    if (reference != null) {
+      final DomainType domainType = reference.getDomainType();
+      if (domainType instanceof StringEnumerateDomainType) {
+        ((StringEnumerateDomainType) domainType).addEnumerateValue(value);
+      } else {
+        log.error("Domain type of reference " + reference.getId()
+            + " is not a StringEnumerateDomainType but a " + domainType);
+      }
     }
   }
 
