@@ -22,10 +22,13 @@ package org.openbravo.base.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.openbravo.base.session.BooleanYNConverter;
 
 /**
  * Models a simple version of the module present in the database. It is a simple version because
@@ -53,6 +56,7 @@ public class Module extends ModelObject {
     super.setId(id);
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @Column(name = "isactive", nullable = false)
   @Override
   public boolean isActive() {

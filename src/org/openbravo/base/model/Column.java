@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -40,6 +41,7 @@ import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
+import org.openbravo.base.session.BooleanYNConverter;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Column table in the application
@@ -195,6 +197,7 @@ public class Column extends ModelObject {
     this.defaultValue = defaultValue;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "iskey")
   public boolean isKey() {
     return key;
@@ -204,6 +207,7 @@ public class Column extends ModelObject {
     this.key = key;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "issecondarykey")
   public boolean isSecondaryKey() {
     return secondaryKey;
@@ -213,6 +217,7 @@ public class Column extends ModelObject {
     this.secondaryKey = secondaryKey;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "isparent")
   public boolean isParent() {
     return parent;
@@ -222,6 +227,7 @@ public class Column extends ModelObject {
     this.parent = parent;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "ismandatory")
   public boolean isMandatory() {
     return mandatory;
@@ -231,6 +237,7 @@ public class Column extends ModelObject {
     this.mandatory = mandatory;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "isupdateable")
   public boolean isUpdatable() {
     return updatable;
@@ -240,6 +247,7 @@ public class Column extends ModelObject {
     this.updatable = updatable;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "isidentifier")
   public boolean isIdentifier() {
     return identifier;
@@ -299,6 +307,7 @@ public class Column extends ModelObject {
     this.referenceType = column;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "isactive", nullable = false)
   @Override
   public boolean isActive() {
@@ -447,17 +456,14 @@ public class Column extends ModelObject {
     return Collections.EMPTY_SET;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "istransient")
   public Boolean isTransient() {
     return isTransient;
   }
 
   public void setTransient(Boolean isTransient) {
-    if (isTransient == null) {
-      this.isTransient = Boolean.FALSE;
-    } else {
-      this.isTransient = isTransient;
-    }
+    this.isTransient = isTransient;
   }
 
   @javax.persistence.Column(name = "istransientcondition")
@@ -488,6 +494,7 @@ public class Column extends ModelObject {
     this.module = module;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "isencrypted")
   public boolean isEncrypted() {
     return encrypted;
@@ -497,6 +504,7 @@ public class Column extends ModelObject {
     this.encrypted = encrypted;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "isdesencryptable")
   public boolean isDecryptable() {
     return decryptable;
@@ -506,6 +514,7 @@ public class Column extends ModelObject {
     this.decryptable = decryptable;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "istranslated")
   public boolean isTranslatable() {
     return translatable;
@@ -515,6 +524,7 @@ public class Column extends ModelObject {
     this.translatable = translatable;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "issessionattr")
   public boolean isStoredInSession() {
     return storedInSession;
@@ -533,6 +543,7 @@ public class Column extends ModelObject {
     this.seqno = seqno;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "isusedsequence")
   public boolean isUsedSequence() {
     return usedSequence;
@@ -557,6 +568,7 @@ public class Column extends ModelObject {
    * 
    * @see Property#isAllowedCrossOrgReference()
    */
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "allowed_cross_org_link")
   public boolean isAllowedCrossOrgReference() {
     return isAllowedCrossOrgReference;
@@ -567,6 +579,7 @@ public class Column extends ModelObject {
     this.isAllowedCrossOrgReference = allowedCrossOrgReference;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @javax.persistence.Column(name = "is_child_property_in_parent")
   public boolean isChildPropertyInParent() {
     return childPropertyInParent;
