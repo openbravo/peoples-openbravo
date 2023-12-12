@@ -27,6 +27,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +43,7 @@ import org.openbravo.base.model.domaintype.TableDomainType;
 @Entity
 @Table(name = "ad_ref_table")
 public class RefTable extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
   private Reference reference;

@@ -43,6 +43,7 @@ import org.openbravo.base.model.domaintype.SearchDomainType;
 @Entity
 @Table(name = "ad_ref_search")
 public class RefSearch extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
   @Transient

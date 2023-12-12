@@ -41,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 @javax.persistence.Table(name = "ad_table")
 @javax.persistence.Entity
 public class Table extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
   private Entity entity;
