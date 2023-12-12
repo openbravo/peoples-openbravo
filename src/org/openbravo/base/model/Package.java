@@ -22,12 +22,15 @@ package org.openbravo.base.model;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.openbravo.base.session.BooleanYNConverter;
 
 /**
  * Models the ad_package table. Is used for generating correct java classnames.
@@ -53,6 +56,7 @@ public class Package extends ModelObject {
     super.setId(id);
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @Column(name = "isactive", nullable = false)
   @Override
   public boolean isActive() {

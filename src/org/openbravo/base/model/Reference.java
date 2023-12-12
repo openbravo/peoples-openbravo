@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -39,6 +40,7 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
+import org.openbravo.base.session.BooleanYNConverter;
 import org.openbravo.base.util.OBClassLoader;
 
 /**
@@ -118,6 +120,7 @@ public class Reference extends ModelObject {
     super.setId(id);
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @Column(name = "isactive", nullable = false)
   @Override
   public boolean isActive() {
@@ -159,6 +162,7 @@ public class Reference extends ModelObject {
     this.parentReference = parentReference;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
   @Column(name = "isbasereference", nullable = false)
   public boolean isBaseReference() {
     return baseReference;

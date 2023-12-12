@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Convert;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -31,6 +32,7 @@ import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.session.BooleanYNConverter;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Table table in the application
@@ -48,19 +50,14 @@ public class Table extends ModelObject {
   private String dataOrigin;
   private String tableName;
   private boolean view;
-
   private boolean isDeletable;
   private List<Column> columns = new ArrayList<Column>();
   private List<Column> primaryKeyColumns = null;
   private List<Column> identifierColumns = null;
   private List<Column> parentColumns = null;
   private String className = null;
-
-  @javax.persistence.Column(name = "accesslevel")
   private String accessLevel;
   private Package thePackage;
-
-  @javax.persistence.Column(name = "treetype")
   private String treeType;
 
   @Override
@@ -89,6 +86,7 @@ public class Table extends ModelObject {
 
   @Override
   @javax.persistence.Column(name = "isactive", nullable = false)
+  @Convert(converter = BooleanYNConverter.class)
   public boolean isActive() {
     return super.isActive();
   }
@@ -109,6 +107,7 @@ public class Table extends ModelObject {
     super.setUpdated(updated);
   }
 
+  @javax.persistence.Column(name = "treetype")
   public String getTreeType() {
     return treeType;
   }
@@ -216,6 +215,7 @@ public class Table extends ModelObject {
   }
 
   @javax.persistence.Column(name = "isview")
+  @Convert(converter = BooleanYNConverter.class)
   public boolean isView() {
     return view;
   }
@@ -269,6 +269,7 @@ public class Table extends ModelObject {
   }
 
   @javax.persistence.Column(name = "isdeleteable")
+  @Convert(converter = BooleanYNConverter.class)
   public boolean isDeletable() {
     return isDeletable;
   }
@@ -277,6 +278,7 @@ public class Table extends ModelObject {
     this.isDeletable = isDeletable;
   }
 
+  @javax.persistence.Column(name = "accesslevel")
   public String getAccessLevel() {
     return accessLevel;
   }

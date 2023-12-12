@@ -37,7 +37,6 @@ public class RefTree extends ModelObject {
 
   private Table table;
   private Column column;
-
   private String referenceId;
 
   @Override

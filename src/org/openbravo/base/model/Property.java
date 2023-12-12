@@ -201,7 +201,6 @@ public class Property {
       setOrderByProperty(false);
     }
 
-    // review other nullable boolean properties and use Boolean.TRUE.equals as well
     setTransient(Boolean.TRUE.equals(fromColumn.isTransient()));
     setTransientCondition(fromColumn.getIsTransientCondition());
 

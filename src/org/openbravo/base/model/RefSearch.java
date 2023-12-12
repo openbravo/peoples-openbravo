@@ -21,6 +21,7 @@ package org.openbravo.base.model;
 
 import java.util.Date;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -33,6 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.SearchDomainType;
+import org.openbravo.base.session.BooleanYNConverter;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Reference table in the application
@@ -46,7 +48,6 @@ public class RefSearch extends ModelObject {
   @Transient
   private static final Logger log = LogManager.getLogger();
 
-  @Transient
   private String reference;
   private Reference referenceObject;
   private Column column;
@@ -66,6 +67,7 @@ public class RefSearch extends ModelObject {
 
   @Override
   @javax.persistence.Column(name = "isactive", nullable = false)
+  @Convert(converter = BooleanYNConverter.class)
   public boolean isActive() {
     return super.isActive();
   }
@@ -114,10 +116,10 @@ public class RefSearch extends ModelObject {
     this.column = column;
   }
 
-  @Transient
   /**
    * Deprecated use {@link #getReferenceObject()}
    */
+  @Transient
   public String getReference() {
     return reference;
   }
