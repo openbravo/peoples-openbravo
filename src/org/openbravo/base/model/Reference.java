@@ -173,6 +173,12 @@ public class Reference extends ModelObject {
     return getDomainType() instanceof PrimitiveDomainType;
   }
 
+  @Column(name = "updated", nullable = false)
+  @Override
+  public Date getUpdated() {
+    return super.getUpdated();
+  }
+
   @Transient
   public DomainType getDomainType() {
     if (domainType != null) {
