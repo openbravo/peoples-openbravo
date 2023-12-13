@@ -36,6 +36,7 @@ import org.openbravo.model.pricing.priceadjustment.Product;
 public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(Product.ENTITY_NAME) };
+  private static final String PRICE_ADJUSTMENT_ID = "5D4BAF6BB86D4D2C9ED3D5A6FC051579";
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -69,7 +70,7 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
    */
   private void validatePriceAdjustmentType(Product discountProduct) {
     final PriceAdjustment discount = discountProduct.getPriceAdjustment();
-    if (!discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+    if (!discount.getDiscountType().getId().equals(PRICE_ADJUSTMENT_ID)
         || !discount.getPriceAdjustmentScope().equals("E")) {
       return;
     }
@@ -98,7 +99,7 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
     final PriceAdjustment discount = discountProduct.getPriceAdjustment();
 
     // Only check price adjustments that are set for each product
-    if (!discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+    if (!discount.getDiscountType().getId().equals(PRICE_ADJUSTMENT_ID)
         || !discount.getPriceAdjustmentScope().equals("E")) {
       return;
     }

@@ -44,6 +44,8 @@ import org.openbravo.model.pricing.priceadjustment.Product;
 public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(PriceAdjustment.ENTITY_NAME) };
+  private static final String PRICE_ADJUSTMENT_ID = "5D4BAF6BB86D4D2C9ED3D5A6FC051579";
+  private static final String FIXED_PERCENTAGE_ID = "697A7AB9FD9C4EE0A3E891D3D3CCA0A7";
 
   private final Entity priceAdjustmentEntity = ModelProvider.getInstance()
       .getEntity(PriceAdjustment.ENTITY_NAME);
@@ -66,7 +68,6 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
     validateData(event);
     validatePriceAdjustmentScope(discount);
     validatePriceAdjustmentType(discount);
-    validatePriceAdjustmentDates(discount);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -135,7 +136,7 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
    *          The discount that is being created or updated
    */
   private void validatePriceAdjustmentScope(PriceAdjustment discount) {
-    if (discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+    if (discount.getDiscountType().getId().equals(PRICE_ADJUSTMENT_ID)
         && discount.getPriceAdjustmentScope().equals("E")
         && !discount.getIncludedProducts().equals("N")) {
       throw new OBException("@PriceAdjustmentScopeError@");
@@ -151,7 +152,7 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
    *          The discount that is being created or updated
    */
   private void validatePriceAdjustmentType(PriceAdjustment discount) {
-    if (discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+    if (discount.getDiscountType().getId().equals(PRICE_ADJUSTMENT_ID)
         && discount.getPriceAdjustmentScope().equals("A")) {
       if (discount.getPriceAdjustmentType().equals("A") && discount.getDiscountAmount() == null) {
         throw new OBException("@PriceAdjustmentEmptyField@");
@@ -163,7 +164,7 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
         throw new OBException("@PriceAdjustmentEmptyField@");
       }
     }
-    if (discount.getDiscountType().getId().equals("697A7AB9FD9C4EE0A3E891D3D3CCA0A7")
+    if (discount.getDiscountType().getId().equals(FIXED_PERCENTAGE_ID)
         && discount.getDiscount() == null) {
       throw new OBException("@PriceAdjustmentEmptyField@");
     }
@@ -178,7 +179,7 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
    */
   private void validatePriceAdjustmentDates(PriceAdjustment discount) {
     // Only check price adjustments that are set for each product
-    if (!discount.getDiscountType().getId().equals("5D4BAF6BB86D4D2C9ED3D5A6FC051579")
+    if (!discount.getDiscountType().getId().equals(PRICE_ADJUSTMENT_ID)
         || !discount.getPriceAdjustmentScope().equals("E")) {
       return;
     }
