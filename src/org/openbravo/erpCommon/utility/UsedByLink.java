@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2022 Openbravo SLU
+ * All portions are Copyright (C) 2001-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.data.Sqlc;
 import org.openbravo.erpCommon.businessUtility.Preferences;
+import org.openbravo.model.ad.access.Role;
 import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.ui.Window;
 
@@ -241,6 +242,7 @@ public class UsedByLink extends HttpSecureAppServlet {
 
       if (data != null && data.length > 0) {
         final Vector<UsedByLinkData> vecTotal = new Vector<UsedByLinkData>();
+        Role role = OBContext.getOBContext().getRole();
         for (int i = 0; i < data.length; i++) {
           if (log4j.isDebugEnabled()) {
             log4j.debug("***Referenced tab: " + data[i].adTabId);
@@ -283,7 +285,7 @@ public class UsedByLink extends HttpSecureAppServlet {
 
             data[i].total = Integer.toString(total);
 
-            if (data[i].accessible.equals("N") && total > 0) {
+            if (data[i].accessible.equals("N") && role.isManual() && total > 0) {
               nonAccessible = true;
             } else if (total > 0 && !existsInVector(data[i], vecTotal)) {
               vecTotal.addElement(data[i]);
