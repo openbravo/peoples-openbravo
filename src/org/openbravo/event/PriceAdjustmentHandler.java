@@ -25,6 +25,7 @@ import java.util.Objects;
 
 import javax.enterprise.event.Observes;
 
+import org.hibernate.criterion.Restrictions;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
@@ -33,6 +34,7 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.pricing.priceadjustment.PriceAdjustment;
@@ -184,15 +186,15 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
       return;
     }
 
-    final Product wrongProduct = discount.getPricingAdjustmentProductList()
-        .stream()
-        .filter(product -> (product.getStartingDate() != null
-            && product.getStartingDate().before(discount.getStartingDate()))
-            || (product.getEndingDate() != null
-                && product.getEndingDate().after(discount.getEndingDate())))
-        .findAny()
-        .orElse(null);
+    OBCriteria<Product> productDateCriteria = OBDal.getInstance().createCriteria(Product.class);
+    productDateCriteria
+        .add(Restrictions.eq(Product.PROPERTY_PRICEADJUSTMENT + "." + PriceAdjustment.PROPERTY_ID,
+            discount.getId()))
+        .add(Restrictions.or(
+            Restrictions.lt(Product.PROPERTY_STARTINGDATE, discount.getStartingDate()),
+            Restrictions.gt(Product.PROPERTY_ENDINGDATE, discount.getEndingDate())));
 
+    Product wrongProduct = (Product) productDateCriteria.uniqueResult();
     if (wrongProduct != null) {
       throw new OBException(
           String.format(OBMessageUtils.messageBD("PriceAdjustmentProductDateErrorWithProduct"),

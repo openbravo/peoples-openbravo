@@ -265,7 +265,7 @@
       </column>
       <column name="PRICE_ADJUSTMENT_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[P]]></default>
-        <onCreateDefault><![CDATA['P']]></onCreateDefault>
+        <onCreateDefault><![CDATA[CASE WHEN (fixed IS NOT NULL AND fixed != 0) THEN 'F' WHEN (discount IS NOT NULL AND discount != 0) THEN 'P' WHEN (addamt IS NOT NULL AND addamt != 0) THEN 'A' ELSE 'P']]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_OFFER_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

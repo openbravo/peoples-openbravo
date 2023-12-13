@@ -83,7 +83,7 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
       throw new OBException("@PriceAdjustmentEmptyField@");
     }
     if (discountProduct.getPriceAdjustmentType().equals("F")
-        && discountProduct.getFixedUnitPrice() == null) {
+        && discountProduct.getFixedPrice() == null) {
       throw new OBException("@PriceAdjustmentEmptyField@");
     }
   }
