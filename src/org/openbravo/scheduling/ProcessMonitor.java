@@ -194,6 +194,7 @@ class ProcessMonitor implements SchedulerListener, JobListener, TriggerListener 
       log.error(e.getMessage(), e);
     } finally {
       // return connection to pool and remove it from current thread
+      SessionInfo.init();
       DalThreadCleaner.getInstance().cleanWithCommit();
     }
   }
