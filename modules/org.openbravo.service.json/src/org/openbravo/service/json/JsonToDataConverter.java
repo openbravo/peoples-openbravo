@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2009-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -418,17 +418,20 @@ public class JsonToDataConverter {
         if (!entity.hasProperty(keyName)) {
           continue;
         }
+        Object value = jsonObject.get(keyName);
         final Property property = entity.getProperty(keyName);
         if (property.getDomainType() instanceof EncryptedStringDomainType
             || property.getDomainType() instanceof HashedStringDomainType) {
           if (jsonObject.has(keyName + "_cleartext")) {
             Object valCleartext = jsonObject.get(keyName + "_cleartext");
             setValue(obObject, property, valCleartext);
+          } else if (isEmptyOrNull(value)) {
+            setValue(obObject, property, null);
           } else {
             // no _cleartext value found -> skipping field
           }
         } else {
-          setValue(obObject, property, jsonObject.get(keyName));
+          setValue(obObject, property, value);
         }
       }
     }
