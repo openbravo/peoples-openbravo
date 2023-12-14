@@ -27806,8 +27806,10 @@ This field will display only when the base document type is Sales Order.]]></HEL
 <!--6559D13B4A0444D7AA9FBCFD21F98E9E-->  <COLUMNNAME><![CDATA[Characteristic_Selection]]></COLUMNNAME>
 <!--6559D13B4A0444D7AA9FBCFD21F98E9E-->  <NAME><![CDATA[Included Characteristics]]></NAME>
 <!--6559D13B4A0444D7AA9FBCFD21F98E9E-->  <PRINTNAME><![CDATA[Product Characteristics Selection Mode]]></PRINTNAME>
-<!--6559D13B4A0444D7AA9FBCFD21F98E9E-->  <DESCRIPTION><![CDATA[Product Characteristics Selection Mode]]></DESCRIPTION>
-<!--6559D13B4A0444D7AA9FBCFD21F98E9E-->  <HELP><![CDATA[Defines the way Product Characteristics will be selected (including or excluding the taken ones)]]></HELP>
+<!--6559D13B4A0444D7AA9FBCFD21F98E9E-->  <DESCRIPTION><![CDATA[Defines inclusion filter in order to include characteristics for a selected definition/rule.]]></DESCRIPTION>
+<!--6559D13B4A0444D7AA9FBCFD21F98E9E-->  <HELP><![CDATA[If the rule is defined as "All Characteristics", then a product with any characteristics qualifies to be included for the rule.
+If the rule is defined as "All of the values defined", then a product must have all the characteristics defined here qualifies to be included for the rule.
+If the rule is defined as "Any of the values defined", then a product that has at least one of the characteristics defined here qualifies to be included for the rule.]]></HELP>
 <!--6559D13B4A0444D7AA9FBCFD21F98E9E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6559D13B4A0444D7AA9FBCFD21F98E9E-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--6559D13B4A0444D7AA9FBCFD21F98E9E--></AD_ELEMENT>
@@ -28437,9 +28439,11 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--6E9953B8C3D64C7793D42E7F00C00002-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6E9953B8C3D64C7793D42E7F00C00002-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6E9953B8C3D64C7793D42E7F00C00002-->  <COLUMNNAME><![CDATA[Characteristics_Excl_Selection]]></COLUMNNAME>
-<!--6E9953B8C3D64C7793D42E7F00C00002-->  <NAME><![CDATA[Exclude Characteristics]]></NAME>
+<!--6E9953B8C3D64C7793D42E7F00C00002-->  <NAME><![CDATA[Excluded Characteristics]]></NAME>
 <!--6E9953B8C3D64C7793D42E7F00C00002-->  <PRINTNAME><![CDATA[Exclude Characteristics]]></PRINTNAME>
-<!--6E9953B8C3D64C7793D42E7F00C00002-->  <DESCRIPTION><![CDATA[Product Characteristics Selection Mode]]></DESCRIPTION>
+<!--6E9953B8C3D64C7793D42E7F00C00002-->  <DESCRIPTION><![CDATA[Defines exclusion filter in order to exclude characteristics for a selected definition/rule.]]></DESCRIPTION>
+<!--6E9953B8C3D64C7793D42E7F00C00002-->  <HELP><![CDATA[If the rule is defined as "All of the values defined", then a product must have all the characteristics defined here qualifies to be excluded for the rule.
+If the rule is defined as "Any of the values defined", then a product that has at least one of the characteristics defined here qualifies to be excluded for the rule.]]></HELP>
 <!--6E9953B8C3D64C7793D42E7F00C00002-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--6E9953B8C3D64C7793D42E7F00C00002-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--6E9953B8C3D64C7793D42E7F00C00002--></AD_ELEMENT>

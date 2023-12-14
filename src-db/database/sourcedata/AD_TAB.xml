@@ -20696,9 +20696,9 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--D28DF93499FC45D4B1DC4C0029FFA914-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--D28DF93499FC45D4B1DC4C0029FFA914-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D28DF93499FC45D4B1DC4C0029FFA914-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--D28DF93499FC45D4B1DC4C0029FFA914-->  <NAME><![CDATA[Include Characteristics]]></NAME>
-<!--D28DF93499FC45D4B1DC4C0029FFA914-->  <DESCRIPTION><![CDATA[Add product characteristics in order to include or exclude them from a selected Promotion/Discount..]]></DESCRIPTION>
-<!--D28DF93499FC45D4B1DC4C0029FFA914-->  <HELP><![CDATA[Add product characteristics in order to include or exclude them from a selected Promotion/Discount..]]></HELP>
+<!--D28DF93499FC45D4B1DC4C0029FFA914-->  <NAME><![CDATA[Included Characteristics]]></NAME>
+<!--D28DF93499FC45D4B1DC4C0029FFA914-->  <DESCRIPTION><![CDATA[Add product characteristics in order to include them from a selected Promotion/Discount..]]></DESCRIPTION>
+<!--D28DF93499FC45D4B1DC4C0029FFA914-->  <HELP><![CDATA[Add product characteristics in order to include them from a selected Promotion/Discount..]]></HELP>
 <!--D28DF93499FC45D4B1DC4C0029FFA914-->  <AD_TABLE_ID><![CDATA[8FF90F99857D4F0F842FE3B2C356E9B4]]></AD_TABLE_ID>
 <!--D28DF93499FC45D4B1DC4C0029FFA914-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--D28DF93499FC45D4B1DC4C0029FFA914-->  <SEQNO><![CDATA[70]]></SEQNO>
@@ -21758,7 +21758,9 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <NAME><![CDATA[Exclude Characteristics]]></NAME>
+<!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <NAME><![CDATA[Excluded Characteristics]]></NAME>
+<!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <DESCRIPTION><![CDATA[Add product characteristics in order to exclude them from a selected Promotion/Discount..]]></DESCRIPTION>
+<!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <HELP><![CDATA[Add product characteristics in order to exclude them from a selected Promotion/Discount..]]></HELP>
 <!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <AD_TABLE_ID><![CDATA[8FF90F99857D4F0F842FE3B2C356E9B4]]></AD_TABLE_ID>
 <!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <AD_WINDOW_ID><![CDATA[800028]]></AD_WINDOW_ID>
 <!--FCD9F93ADD924AA2AF0846651C3CC4ED-->  <SEQNO><![CDATA[80]]></SEQNO>
