@@ -18,8 +18,8 @@
  */
 package org.openbravo.client.application;
 
-import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -31,9 +31,11 @@ import org.openbravo.base.exception.OBException;
 import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.client.kernel.BaseActionHandler;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.dal.service.OBQuery;
 import org.openbravo.database.SessionInfo;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.ui.Tab;
@@ -75,27 +77,21 @@ public class EnableOrDisableMultipleRecords extends BaseActionHandler {
       SessionInfo.setUserId(OBContext.getOBContext().getUser().getId());
       SessionInfo.saveContextInfoIntoDB(OBDal.getInstance().getConnection(false));
 
-      //@formatter:off
-      final String hql =
-          "update " + entity.getName() +
-          "   set active = :action," +
-          "       updated = :now," +
-          "       updatedBy = :user" +
-          " where id in (:recordIds)"+
-          "   and active != :action"+
-          "   and client = :clientId"+
-          "   and organization.id in (:writableOrgs)";
-      //@formatter:on
-      int updateCount = OBDal.getInstance()
-          .getSession()
-          .createQuery(hql)
-          .setParameter("action", action)
-          .setParameter("now", new Date())
-          .setParameter("user", OBContext.getOBContext().getUser())
-          .setParameter("recordIds", recordIds)
-          .setParameter("clientId", OBContext.getOBContext().getCurrentClient())
-          .setParameter("writableOrgs", OBContext.getOBContext().getWritableOrganizations())
-          .executeUpdate();
+      final String whereClause = " e where e.id in (:recordIds)" + " and e.active <> :active";
+
+      final OBQuery<BaseOBObject> baseOBObjectQuery = OBDal.getInstance()
+          .createQuery(entity.getName(), whereClause);
+      baseOBObjectQuery.setNamedParameter("recordIds", recordIds);
+      baseOBObjectQuery.setNamedParameter("active", action);
+      baseOBObjectQuery.setFilterOnActive(false);
+
+      final List<BaseOBObject> baseOBObjects = baseOBObjectQuery.list();
+
+      for (BaseOBObject bo : baseOBObjects) {
+        bo.set("active", action);
+      }
+      OBDal.getInstance().flush();
+      int updateCount = baseOBObjects.size();
 
       jsonResponse.put("updateCount", updateCount);
       return jsonResponse;
