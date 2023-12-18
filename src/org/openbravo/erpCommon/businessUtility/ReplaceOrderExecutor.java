@@ -259,7 +259,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     Order inverseOrder = createInverseOrder(oldOrder, negativeDocNo,
         areTriggersDisabled(jsonOrder));
 
-    // RM-2752
+    // RM-2572
     if (!oldOrder.getInvoiceList().isEmpty()) {
       for (Invoice oldInvoice : oldOrder.getInvoiceList()) {
         inverseInvoices = createInverseInvoice(oldInvoice, inverseOrder,
@@ -426,7 +426,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       processShipmentHeader(nettingShipment);
     }
 
-    // RM-2752
+    // RM-2572
     // Invoice Lines from old order
     if (!oldOrder.getInvoiceList().isEmpty()) {
       for (Invoice oldInvoice : oldOrder.getInvoiceList()) {
@@ -449,7 +449,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     return inverseOrder;
   }
 
-  // RM-2752
+  // RM-2572
   private static List<Invoice> createInverseInvoice(Invoice oldInvoice, Order inverseOrder,
       boolean triggersDisabled, List<Invoice> inverseInvoices) throws ParseException {
     Invoice inverseInvoice = (Invoice) DalUtil.copy(oldInvoice, false, true);
@@ -486,7 +486,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     return inverseInvoices;
   }
 
-  // RM-2752
+  // RM-2572
   private static void createInverseInvoiceTaxes(Invoice oldInvoice, Invoice inverseInvoice) {
     for (InvoiceTax invoiceTax : oldInvoice.getInvoiceTaxList()) {
       InvoiceTax inverseInvoiceTax = (InvoiceTax) DalUtil.copy(invoiceTax, false, true);
@@ -501,7 +501,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  // RM-2752
+  // RM-2572
   private static void createInverseinvoiceLine(InvoiceLine invoiceLine, Invoice inverseInvoice) {
     InvoiceLine inverseInvoiceLine = (InvoiceLine) DalUtil.copy(invoiceLine, false, true);
     inverseInvoiceLine.setInvoice(inverseInvoice);
@@ -521,13 +521,13 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     createInverseInvoiceLineTaxes(invoiceLine, inverseInvoiceLine);
   }
 
-  // RM-2752
+  // RM-2572
   private static OrderLine getInverseOrderLine(InvoiceLine inverseInvoiceLine) {
     String originalOrderLineId = inverseInvoiceLine.getSalesOrderLine().getId();
     return OBDal.getInstance().get(OrderLine.class, linesRelations.get(originalOrderLineId));
   }
 
-  // RM-2752
+  // RM-2572
   private static void createInverseInvoiceLineDiscounts(InvoiceLine invoiceLine,
       InvoiceLine inverseInvoiceLine) {
     for (InvoiceLineOffer invoiceLineOffer : invoiceLine.getInvoiceLineOfferList()) {
@@ -552,7 +552,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  // RM-2752
+  // RM-2572
   private static void createInverseInvoiceLineTaxes(InvoiceLine invoiceLine,
       InvoiceLine inverseInvoiceLine) {
     for (InvoiceLineTax invoiceLineTax : invoiceLine.getInvoiceLineTaxList()) {
@@ -571,7 +571,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OBDal.getInstance().flush();
   }
 
-  // RM-2752
+  // RM-2572
   private static void closeInverseInvoiceList(List<Invoice> inverseInvoices) {
     for (Invoice inverseInvoice : inverseInvoices) {
       inverseInvoice.setDocumentStatus("CO");
