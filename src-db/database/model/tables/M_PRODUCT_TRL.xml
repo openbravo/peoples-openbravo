@@ -53,7 +53,7 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CHARACTERISTIC_DESCRIPTION" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
+      <column name="CHARACTERISTIC_DESC" primaryKey="false" required="false" type="VARCHAR" size="2000" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
