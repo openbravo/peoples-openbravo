@@ -192,7 +192,8 @@ public class PriceAdjustmentHandler extends EntityPersistenceEventObserver {
             discount.getId()))
         .add(Restrictions.or(
             Restrictions.lt(Product.PROPERTY_STARTINGDATE, discount.getStartingDate()),
-            Restrictions.gt(Product.PROPERTY_ENDINGDATE, discount.getEndingDate())));
+            Restrictions.gt(Product.PROPERTY_ENDINGDATE, discount.getEndingDate())))
+        .setMaxResults(1);
 
     Product wrongProduct = (Product) productDateCriteria.uniqueResult();
     if (wrongProduct != null) {
