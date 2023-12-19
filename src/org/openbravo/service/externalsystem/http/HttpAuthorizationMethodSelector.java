@@ -25,13 +25,21 @@ import javax.enterprise.util.AnnotationLiteral;
  * Selector for the {@link HttpAuthorizationMethod} annotation
  */
 @SuppressWarnings("all")
-class HttpAuthorizationMethodSelector extends AnnotationLiteral<HttpAuthorizationMethod>
+public class HttpAuthorizationMethodSelector extends AnnotationLiteral<HttpAuthorizationMethod>
     implements HttpAuthorizationMethod {
   private static final long serialVersionUID = 1L;
 
   private final String value;
 
-  HttpAuthorizationMethodSelector(String value) {
+  /**
+   * Builds a new HttpAuthorizationMethodSelector
+   *
+   * @param value
+   *          The identifier of an authorization method. This is a value used to annotate
+   *          {@link HttpAuthorizationProvider} instances with the {@link HttpAuthorizationMethod}
+   *          annotation.
+   */
+  public HttpAuthorizationMethodSelector(String value) {
     this.value = value;
   }
 

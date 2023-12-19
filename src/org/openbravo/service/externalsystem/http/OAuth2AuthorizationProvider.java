@@ -33,6 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.service.externalsystem.ExternalSystemConfigurationError;
 import org.openbravo.service.externalsystem.HttpExternalSystemData;
 import org.openbravo.utils.FormatUtilities;
@@ -53,6 +54,7 @@ public class OAuth2AuthorizationProvider
   private String authServerURL;
   private HttpClient httpClient;
   private OAuth2AccessToken accessToken;
+  private boolean isCacheableToken;
 
   @Override
   public void init(HttpExternalSystemData configuration) {
@@ -67,12 +69,50 @@ public class OAuth2AuthorizationProvider
           "Error decrypting OAuth2 Client Secret of HTTP configuration " + configuration.getId());
     }
     httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(TIMEOUT)).build();
+    isCacheableToken = true;
+    accessToken = null;
+  }
+
+  /**
+   * Initializes the required information based on the provided configuration
+   *
+   * @param configuration
+   *          A BaseOBObject containing the following properties: <br>
+   *          - id: the ID of the external system. Used for logging purposes. <br>
+   *          - oauth2AuthServerUrl: the URL of the authorization server that serves the tokens <br>
+   *          - oauth2ClientIdentifier: the ID of the OAuth2 client <br>
+   *          - oauth2ClientSecret: the OAuth2 client secret encrypted and decryptable using
+   *          {@link FormatUtilities#encryptDecrypt(String, boolean)}
+   *
+   * @throws ExternalSystemConfigurationError
+   *           if there is an error decrypting the provided client secret
+   */
+  @Override
+  public void init(BaseOBObject configuration) {
+    clientId = (String) configuration.get("oauth2ClientIdentifier");
+    authServerURL = (String) configuration.get("oauth2AuthServerUrl");
+    try {
+      clientSecret = FormatUtilities
+          .encryptDecrypt((String) configuration.get("oauth2ClientSecret"), false);
+    } catch (ServletException ex) {
+      log.error("Error decrypting OAuth2 Client Secret of HTTP configuration {}",
+          configuration.get("id"));
+      throw new ExternalSystemConfigurationError(
+          "Error decrypting OAuth2 Client Secret of HTTP configuration " + configuration.get("id"));
+    }
+    httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(TIMEOUT)).build();
+    isCacheableToken = false;
     accessToken = null;
   }
 
   @Override
+  public Map<String, Object> getAuthorizationData() {
+    return Map.of("expiresIn", accessToken.getExpiresIn());
+  }
+
+  @Override
   public Map<String, String> getHeaders() {
-    if (accessToken == null || accessToken.isExpired()) {
+    if (!isCacheableToken || accessToken == null || accessToken.isExpired()) {
       accessToken = requestAccessToken();
     }
     return Map.of("Authorization", accessToken.getAuthorization());

@@ -30,6 +30,7 @@ class OAuth2AccessToken {
   static final String BEARER = "Bearer";
 
   private final String value;
+  private final int expiresIn;
   private final long validUntil;
 
   /**
@@ -43,7 +44,16 @@ class OAuth2AccessToken {
    */
   OAuth2AccessToken(String value, int expiresIn) {
     this.value = value;
+    this.expiresIn = expiresIn;
     validUntil = Instant.now().getEpochSecond() + expiresIn;
+  }
+
+  /**
+   * @return the original token expiration time (in seconds) that was received from the
+   *         authentication server
+   */
+  public int getExpiresIn() {
+    return expiresIn;
   }
 
   /**
