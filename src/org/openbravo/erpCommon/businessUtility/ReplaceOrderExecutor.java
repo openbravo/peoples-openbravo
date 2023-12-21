@@ -507,6 +507,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     OrderLine inverseOrderLine = getInverseOrderLine(inverseInvoiceLine);
     inverseInvoiceLine.setSalesOrderLine(inverseOrderLine);
     inverseInvoiceLine.setGoodsShipmentLine(inverseOrderLine.getGoodsShipmentLine());
+    inverseOrderLine.setInvoicedQuantity(inverseOrderLine.getOrderedQuantity());
     inverseInvoice.getInvoiceLineList().add(inverseInvoiceLine);
     OBDal.getInstance().save(inverseInvoiceLine);
 
