@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2023 Openbravo SLU
+ * All portions are Copyright (C) 2009-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -63,6 +63,7 @@ import org.openbravo.scheduling.trigger.TriggerProviderTest;
 import org.openbravo.service.datasource.ModelDataSourceServiceTest;
 import org.openbravo.service.externalsystem.ExternalSystemProviderTest;
 import org.openbravo.service.externalsystem.http.HttpExternalSystemDataCreationTest;
+import org.openbravo.service.externalsystem.http.OAuth2AccessTokenTest;
 import org.openbravo.service.json.AdvancedQueryBuilderTest;
 import org.openbravo.service.json.JSONWriterToCSVTest;
 import org.openbravo.service.json.JsonUtilsTest;
@@ -387,7 +388,8 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // external system
     ExternalSystemProviderTest.class, //
-    HttpExternalSystemDataCreationTest.class,
+    HttpExternalSystemDataCreationTest.class, //
+    OAuth2AccessTokenTest.class,
 
     // synchronization events
     SynchronizationEventTest.class, //

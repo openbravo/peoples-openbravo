@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022-2023 Openbravo SLU 
+ * All portions are Copyright (C) 2022-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -71,7 +71,7 @@ public class HttpExternalSystem extends ExternalSystem implements Cacheable {
   private String requestMethod;
   private int timeout;
   private HttpClient client;
-  HttpAuthorizationProvider authorizationProvider;
+  private HttpAuthorizationProvider authorizationProvider;
 
   @Inject
   @Any
@@ -91,7 +91,7 @@ public class HttpExternalSystem extends ExternalSystem implements Cacheable {
     url = httpConfig.getURL();
     requestMethod = httpConfig.getRequestMethod();
     timeout = getTimeoutValue(httpConfig);
-    authorizationProvider = newHttpAuthorizationProvider(httpConfig);
+    setAuthorizationProvider(newHttpAuthorizationProvider(httpConfig));
     client = buildClient();
   }
 
@@ -101,6 +101,11 @@ public class HttpExternalSystem extends ExternalSystem implements Cacheable {
       return MAX_TIMEOUT;
     }
     return configTimeout.intValue();
+  }
+
+  /** Internal API, this method is not private only because of testing purposes */
+  void setAuthorizationProvider(HttpAuthorizationProvider authorizationProvider) {
+    this.authorizationProvider = authorizationProvider;
   }
 
   private HttpClient buildClient() {
@@ -179,9 +184,7 @@ public class HttpExternalSystem extends ExternalSystem implements Cacheable {
     }
   }
 
-  /**
-   * Internal API, this method is not private only because of testing purposes
-   */
+  /** Internal API, this method is not private only because of testing purposes */
   CompletableFuture<ExternalSystemResponse> sendRequest(Supplier<HttpRequest> requestSupplier) {
     return sendRequestWithRetry(requestSupplier, MAX_RETRIES);
   }

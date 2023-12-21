@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2023 Openbravo SLU 
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -118,7 +118,8 @@ public class OAuth2AuthorizationProvider
     return Map.of("Authorization", accessToken.getAuthorization());
   }
 
-  private OAuth2AccessToken requestAccessToken() {
+  /** Internal API, this method is not private only because of testing purposes */
+  OAuth2AccessToken requestAccessToken() {
     String credentials = clientId + ":" + clientSecret;
 
     HttpRequest authRequest = HttpRequest.newBuilder()

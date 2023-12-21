@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022-2023 Openbravo SLU
+ * All portions are Copyright (C) 2022-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -23,7 +23,11 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.openbravo.test.base.TestConstants.Orgs.MAIN;
 import static org.openbravo.test.matchers.json.JSONMatchers.equal;
 import static org.openbravo.test.matchers.json.JSONMatchers.matchesObject;
@@ -33,6 +37,7 @@ import java.io.InputStream;
 import java.net.http.HttpRequest;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
@@ -54,7 +59,10 @@ import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.SequenceIdData;
+import org.openbravo.model.ad.access.User;
 import org.openbravo.model.ad.utility.Protocol;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.geography.Country;
@@ -63,6 +71,8 @@ import org.openbravo.service.externalsystem.ExternalSystem.Operation;
 import org.openbravo.service.externalsystem.ExternalSystemData;
 import org.openbravo.service.externalsystem.ExternalSystemProvider;
 import org.openbravo.service.externalsystem.ExternalSystemResponse;
+import org.openbravo.service.externalsystem.ExternalSystemResponse.Type;
+import org.openbravo.service.externalsystem.ExternalSystemResponseBuilder;
 import org.openbravo.service.externalsystem.HttpExternalSystemData;
 import org.openbravo.test.base.Issue;
 import org.openbravo.test.base.TestConstants;
@@ -79,13 +89,15 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   private ExternalSystemData externalSystemData;
   private HttpExternalSystemData httpExternalSystemData;
-  ArgumentCaptor<Supplier<HttpRequest>> requestCaptor;
+  private ArgumentCaptor<Supplier<HttpRequest>> requestCaptor;
 
   @Before
   @SuppressWarnings("unchecked")
   public void init() {
     setTestAdminContext();
+    setDefaultContext();
     createTestData();
+    OBDal.getInstance().commitAndClose();
 
     externalSystemData = OBProvider.getInstance().get(ExternalSystemData.class);
     externalSystemData.setOrganization(OBDal.getInstance().getProxy(Organization.class, MAIN));
@@ -113,13 +125,26 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
     requestCaptor = ArgumentCaptor.forClass(Supplier.class);
   }
 
+  private void setDefaultContext() {
+    try {
+      OBContext.setAdminMode(false);
+      User user = OBDal.getInstance().get(User.class, OBContext.getOBContext().getUser().getId());
+      user.setDefaultRole(OBContext.getOBContext().getRole());
+      user.setDefaultClient(OBContext.getOBContext().getCurrentClient());
+      user.setDefaultOrganization(OBContext.getOBContext().getCurrentOrganization());
+      user.setDefaultWarehouse(OBContext.getOBContext().getWarehouse());
+      OBDal.getInstance().flush();
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
   private void createTestData() {
     Country newCountry = OBProvider.getInstance().get(Country.class);
     newCountry.setName("Wonderland");
     newCountry.setISOCountryCode("WL");
     newCountry.setAddressPrintFormat("-");
     OBDal.getInstance().save(newCountry);
-    OBDal.getInstance().commitAndClose();
   }
 
   private String getURL() {
@@ -147,7 +172,7 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   @Test
   public void sendWithBasicAuth() throws JSONException, ServletException {
-    ExternalSystemResponse response = sendWithBasicCredentials("BASIC");
+    ExternalSystemResponse response = sendWithAuthorization("BASIC");
 
     assertResponse(response, ExternalSystemResponse.Type.SUCCESS, HttpServletResponse.SC_OK);
     assertThat("Expected Response Data", (JSONObject) response.getData(),
@@ -157,16 +182,77 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
   @Test
   @Issue("49159")
   public void sendWithBasicAuthAlwaysInHeader() throws JSONException, ServletException {
-    ExternalSystemResponse response = sendWithBasicCredentials("BASIC_ALWAYS_HEADER");
+    ExternalSystemResponse response = sendWithAuthorization("BASIC_ALWAYS_HEADER");
 
     assertResponse(response, ExternalSystemResponse.Type.SUCCESS, HttpServletResponse.SC_OK);
     assertThat("Expected Response Data", (JSONObject) response.getData(),
         equal(getExpectedResponseData()));
   }
 
-  private ExternalSystemResponse sendWithBasicCredentials(String authorizationType)
+  private ExternalSystemResponse sendWithAuthorization(String authorizationType)
       throws JSONException, ServletException {
     return getExternalSystem(authorizationType).send(getRequestDataSupplier()).join();
+  }
+
+  @Test
+  public void checkOAuth2TokenRetrieval() throws JSONException, ServletException {
+    HttpExternalSystem externalSystem = getExternalSystem("OAUTH2");
+    OAuth2AccessToken token1 = createAccessToken();
+    OAuth2AccessToken token2 = createAccessToken();
+    OAuth2AuthorizationProvider authProvider = getOAuth2AuthorizationProvider();
+    doReturn(token1, token2).when(authProvider).requestAccessToken();
+    externalSystem.setAuthorizationProvider(authProvider);
+
+    doReturn(CompletableFuture.completedFuture(ExternalSystemResponseBuilder.newBuilder()
+        .withData("")
+        .withStatusCode(200)
+        .withType(Type.SUCCESS)
+        .build())).when(externalSystem).sendRequest(any());
+
+    // first call, a new token is requested
+    externalSystem.send(getRequestDataSupplier()).join();
+    verifyRequestAuthorizationHeader(externalSystem, 1, token1.getAuthorization());
+
+    // while the token is not expired it is reused
+    externalSystem.send(getRequestDataSupplier()).join();
+    verifyRequestAuthorizationHeader(externalSystem, 2, token1.getAuthorization());
+    externalSystem.send(getRequestDataSupplier()).join();
+    verifyRequestAuthorizationHeader(externalSystem, 3, token1.getAuthorization());
+
+    // when the token expires, a new one is requested
+    when(token1.isExpired()).thenReturn(true);
+    externalSystem.send(getRequestDataSupplier()).join();
+    verifyRequestAuthorizationHeader(externalSystem, 4, token2.getAuthorization());
+
+    // two token requests have been done
+    verify(authProvider, Mockito.times(2)).requestAccessToken();
+  }
+
+  @Test
+  public void retryOnceWithOAuth2OnUnauthorizedError() throws JSONException, ServletException {
+    HttpExternalSystem externalSystem = getExternalSystem("OAUTH2");
+    OAuth2AccessToken token = createAccessToken();
+    OAuth2AuthorizationProvider authProvider = getOAuth2AuthorizationProvider();
+    doReturn(token).when(authProvider).requestAccessToken();
+    externalSystem.setAuthorizationProvider(authProvider);
+
+    // this request to the backoffice is going to fail with a unauthorized (401) error due to the
+    // authorization that we are using. We take advantage of it to test that a request retry is
+    // done when receiving that error status from the external system when using OAuth 2.0
+    externalSystem.send(getRequestDataSupplier()).join();
+
+    verify(authProvider, Mockito.times(1)).handleRequestRetry(401);
+    verify(authProvider, Mockito.times(2)).requestAccessToken();
+  }
+
+  private OAuth2AuthorizationProvider getOAuth2AuthorizationProvider() {
+    OAuth2AuthorizationProvider authProvider = new OAuth2AuthorizationProvider();
+    authProvider.init(httpExternalSystemData);
+    return spy(authProvider);
+  }
+
+  private OAuth2AccessToken createAccessToken() {
+    return spy(new OAuth2AccessToken(SequenceIdData.getUUID(), 100));
   }
 
   @Test
@@ -309,8 +395,14 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
 
   private HttpExternalSystem getExternalSystem(String authorizationType) throws ServletException {
     httpExternalSystemData.setAuthorizationType(authorizationType);
-    httpExternalSystemData.setUsername("Openbravo");
-    httpExternalSystemData.setPassword(FormatUtilities.encryptDecrypt("openbravo", true));
+    if ("OAUTH2".equals(authorizationType)) {
+      httpExternalSystemData.setOauth2AuthServerUrl("https://authServer.com");
+      httpExternalSystemData.setOauth2ClientIdentifier("1234");
+      httpExternalSystemData.setOauth2ClientSecret(FormatUtilities.encryptDecrypt("abcd", true));
+    } else {
+      httpExternalSystemData.setUsername("Openbravo");
+      httpExternalSystemData.setPassword(FormatUtilities.encryptDecrypt("openbravo", true));
+    }
 
     ExternalSystem externalSystem = externalSystemProvider.getExternalSystem(externalSystemData)
         .orElseThrow();
@@ -345,7 +437,17 @@ public class HttpExternalSystemCommunicationTest extends WeldBaseTest {
   private void verifyRequestMethod(HttpExternalSystem externalSystemSpy, String method) {
     verify(externalSystemSpy, Mockito.times(1)).sendRequest(requestCaptor.capture());
     HttpRequest request = requestCaptor.getValue().get();
+
     assertThat("Expected Request Method", request.method(), equalTo(method));
+  }
+
+  private void verifyRequestAuthorizationHeader(HttpExternalSystem externalSystemSpy, int times,
+      String authorization) {
+    verify(externalSystemSpy, Mockito.times(times)).sendRequest(requestCaptor.capture());
+    HttpRequest request = requestCaptor.getValue().get();
+
+    assertThat("Expected Request Authorization Header",
+        request.headers().map().get("Authorization").get(0), equalTo(authorization));
   }
 
   private JSONObject getExpectedResponseData() throws JSONException {

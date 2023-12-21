@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2023 Openbravo SLU 
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -45,7 +45,7 @@ class OAuth2AccessToken {
   OAuth2AccessToken(String value, int expiresIn) {
     this.value = value;
     this.expiresIn = expiresIn;
-    validUntil = Instant.now().getEpochSecond() + expiresIn;
+    validUntil = now() + expiresIn;
   }
 
   /**
@@ -60,7 +60,12 @@ class OAuth2AccessToken {
    * @return true if the token has expired, or false if it is still valid
    */
   boolean isExpired() {
-    return validUntil < Instant.now().getEpochSecond();
+    return validUntil < now();
+  }
+
+  /** Internal API: it is not a private method because of testing purposes */
+  long now() {
+    return Instant.now().getEpochSecond();
   }
 
   /**
