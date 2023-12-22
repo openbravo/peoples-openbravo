@@ -32,6 +32,7 @@ import org.openbravo.client.application.GCSystem;
 import org.openbravo.client.application.GCTab;
 import org.openbravo.client.application.window.OBViewUtil;
 import org.openbravo.client.application.window.StandardWindowComponent;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 
@@ -89,10 +90,15 @@ public class GridConfigurationCache implements OBSingleton {
    * Get the cached system and Tab configuration and compose them into a single JSON Object
    */
   public JSONObject getGridConfigurationForTab(String tabId) {
-    Optional<GCSystem> sysConf = systemGridConfigurationCache.get("system");
-    Optional<GCTab> tabConf = tabId != null ? tabGridConfigurationCache.get(tabId)
-        : Optional.empty();
-    return OBViewUtil.getGridConfigurationSettings(sysConf, tabConf);
+    try {
+      OBContext.setAdminMode(true);
+      Optional<GCSystem> sysConf = systemGridConfigurationCache.get("system");
+      Optional<GCTab> tabConf = tabId != null ? tabGridConfigurationCache.get(tabId)
+          : Optional.empty();
+      return OBViewUtil.getGridConfigurationSettings(sysConf, tabConf);
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
