@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2019-2022 Openbravo SLU
+ * All portions are Copyright (C) 2019-2023 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -50,10 +50,15 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBQuery;
 import org.openbravo.erpCommon.utility.OBDateUtils;
 import org.openbravo.materialmgmt.ReservationUtils;
+import org.openbravo.model.ad.access.InvoiceLineTax;
 import org.openbravo.model.ad.access.OrderLineTax;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.common.invoice.Invoice;
+import org.openbravo.model.common.invoice.InvoiceLine;
+import org.openbravo.model.common.invoice.InvoiceLineOffer;
+import org.openbravo.model.common.invoice.InvoiceTax;
 import org.openbravo.model.common.order.Order;
 import org.openbravo.model.common.order.OrderLine;
 import org.openbravo.model.common.order.OrderLineOffer;
@@ -85,7 +90,8 @@ import org.openbravo.service.db.DbUtility;
 @Dependent
 class ReplaceOrderExecutor extends CancelAndReplaceUtils {
   private Logger log4j = LogManager.getLogger();
-  private Map<String, String> linesRelations = new HashMap<>();
+  private static Map<String, String> linesRelations = new HashMap<>();
+  private static Map<String, Invoice> invoiceRelations = new HashMap<>();
   private String oldOrderId;
   private Set<String> newOrderIds;
   private String paymentOrganizationId;
@@ -241,6 +247,7 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
   }
 
   private Order createInverseOrderAndNettingShipment() throws ParseException, JSONException {
+    List<Invoice> inverseInvoices = new ArrayList<>();
     Order oldOrder = OBDal.getInstance().get(Order.class, oldOrderId);
 
     // Get documentNo for the inverse Order Header coming from jsonOrder, if exists
@@ -251,6 +258,13 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
     // Create inverse Order header
     Order inverseOrder = createInverseOrder(oldOrder, negativeDocNo,
         areTriggersDisabled(jsonOrder));
+
+    if (!oldOrder.getInvoiceList().isEmpty()) {
+      for (Invoice oldInvoice : oldOrder.getInvoiceList()) {
+        inverseInvoices = createInverseInvoice(oldInvoice, inverseOrder,
+            areTriggersDisabled(jsonOrder), inverseInvoices);
+      }
+    }
 
     // Define netting goods shipment and its lines
     ShipmentInOut nettingShipment = null;
@@ -411,12 +425,154 @@ class ReplaceOrderExecutor extends CancelAndReplaceUtils {
       processShipmentHeader(nettingShipment);
     }
 
+    // Invoice Lines from old order
+    if (!oldOrder.getInvoiceList().isEmpty()) {
+      for (Invoice oldInvoice : oldOrder.getInvoiceList()) {
+        Invoice inverseInvoice = invoiceRelations.get(oldInvoice.getId());
+        for (InvoiceLine invoiceLine : oldInvoice.getInvoiceLineList()) {
+          createInverseinvoiceLine(invoiceLine, inverseInvoice);
+        }
+      }
+    }
+
+    invoiceRelations.clear();
+    // Complete Cancellation Invoices
+    closeInverseInvoiceList(inverseInvoices);
+
     // Adjust the taxes
     if (!areTriggersDisabled(jsonOrder)) {
       callCOrderTaxAdjustment(inverseOrder);
     }
 
     return inverseOrder;
+  }
+
+  private static List<Invoice> createInverseInvoice(Invoice oldInvoice, Order inverseOrder,
+      boolean triggersDisabled, List<Invoice> inverseInvoices) throws ParseException {
+    Invoice inverseInvoice = (Invoice) DalUtil.copy(oldInvoice, false, true);
+
+    // Change order values
+    inverseInvoice.setCreatedBy(OBContext.getOBContext().getUser());
+    inverseInvoice.setPosted("N");
+    inverseInvoice.setProcessed(false);
+    inverseInvoice.setDocumentStatus("DR");
+    inverseInvoice.setDocumentAction("CO");
+    inverseInvoice.setSalesOrder(inverseOrder);
+    inverseOrder.getInvoiceList().add(inverseInvoice);
+    if (triggersDisabled) {
+      inverseInvoice.setGrandTotalAmount(oldInvoice.getGrandTotalAmount().negate());
+      inverseInvoice.setSummedLineAmount(oldInvoice.getSummedLineAmount().negate());
+    } else {
+      inverseInvoice.setGrandTotalAmount(BigDecimal.ZERO);
+      inverseInvoice.setSummedLineAmount(BigDecimal.ZERO);
+    }
+
+    Date today = new Date();
+    inverseInvoice.setOrderDate(OBDateUtils.getDate(OBDateUtils.formatDate(today)));
+    inverseInvoice.setInvoiceDate(OBDateUtils.getDate(OBDateUtils.formatDate(today)));
+    inverseInvoice.setCreationDate(today);
+    inverseInvoice.setUpdated(today);
+    String newDocumentNo = inverseInvoice.getDocumentNo() + REVERSE_PREFIX;
+    inverseInvoice.setDocumentNo(newDocumentNo);
+    OBDal.getInstance().save(inverseInvoice);
+
+    createInverseInvoiceTaxes(oldInvoice, inverseInvoice);
+
+    invoiceRelations.put(oldInvoice.getId(), inverseInvoice);
+
+    inverseInvoices.add(inverseInvoice);
+    return inverseInvoices;
+  }
+
+  private static void createInverseInvoiceTaxes(Invoice oldInvoice, Invoice inverseInvoice) {
+    for (InvoiceTax invoiceTax : oldInvoice.getInvoiceTaxList()) {
+      InvoiceTax inverseInvoiceTax = (InvoiceTax) DalUtil.copy(invoiceTax, false, true);
+      BigDecimal inverseTaxAmount = invoiceTax.getTaxAmount().negate();
+      BigDecimal inverseTaxableAmount = invoiceTax.getTaxableAmount().negate();
+      inverseInvoiceTax.setTaxAmount(inverseTaxAmount);
+      inverseInvoiceTax.setTaxableAmount(inverseTaxableAmount);
+      inverseInvoiceTax.setInvoice(inverseInvoice);
+      inverseInvoice.getInvoiceTaxList().add(inverseInvoiceTax);
+      OBDal.getInstance().save(inverseInvoiceTax);
+    }
+    OBDal.getInstance().flush();
+  }
+
+  private static void createInverseinvoiceLine(InvoiceLine invoiceLine, Invoice inverseInvoice) {
+    InvoiceLine inverseInvoiceLine = (InvoiceLine) DalUtil.copy(invoiceLine, false, true);
+    inverseInvoiceLine.setInvoice(inverseInvoice);
+    inverseInvoiceLine.setInvoicedQuantity(invoiceLine.getInvoicedQuantity().negate());
+    inverseInvoiceLine.setLineNetAmount(invoiceLine.getLineNetAmount().negate());
+    inverseInvoiceLine.setChargeAmount(invoiceLine.getChargeAmount().negate());
+    OrderLine inverseOrderLine = getInverseOrderLine(inverseInvoiceLine);
+    inverseInvoiceLine.setSalesOrderLine(inverseOrderLine);
+    inverseInvoiceLine.setGoodsShipmentLine(inverseOrderLine.getGoodsShipmentLine());
+    inverseOrderLine.setInvoicedQuantity(inverseOrderLine.getOrderedQuantity());
+    inverseInvoice.getInvoiceLineList().add(inverseInvoiceLine);
+    OBDal.getInstance().save(inverseInvoiceLine);
+
+    // Copy the discounts of the original line
+    createInverseInvoiceLineDiscounts(invoiceLine, inverseInvoiceLine);
+    // Copy old order taxes to inverse, it is done when is executed from Web POS because triggers
+    // are disabled
+    createInverseInvoiceLineTaxes(invoiceLine, inverseInvoiceLine);
+  }
+
+  private static OrderLine getInverseOrderLine(InvoiceLine inverseInvoiceLine) {
+    String originalOrderLineId = inverseInvoiceLine.getSalesOrderLine().getId();
+    return OBDal.getInstance().get(OrderLine.class, linesRelations.get(originalOrderLineId));
+  }
+
+  private static void createInverseInvoiceLineDiscounts(InvoiceLine invoiceLine,
+      InvoiceLine inverseInvoiceLine) {
+    for (InvoiceLineOffer invoiceLineOffer : invoiceLine.getInvoiceLineOfferList()) {
+      final InvoiceLineOffer inverseInvoiceLineOffer = (InvoiceLineOffer) DalUtil
+          .copy(invoiceLineOffer, false, true);
+      if (inverseInvoiceLineOffer.getBaseGrossUnitPrice() != null) {
+        inverseInvoiceLineOffer
+            .setBaseGrossUnitPrice(inverseInvoiceLineOffer.getBaseGrossUnitPrice().negate());
+      }
+      if (inverseInvoiceLineOffer.getDisplayedTotalAmount() != null) {
+        inverseInvoiceLineOffer
+            .setDisplayedTotalAmount(inverseInvoiceLineOffer.getDisplayedTotalAmount().negate());
+      }
+      if (inverseInvoiceLineOffer.getPriceAdjustmentAmt() != null) {
+        inverseInvoiceLineOffer
+            .setPriceAdjustmentAmt(inverseInvoiceLineOffer.getPriceAdjustmentAmt().negate());
+      }
+      inverseInvoiceLineOffer.setTotalAmount(inverseInvoiceLineOffer.getTotalAmount().negate());
+      inverseInvoiceLineOffer.setInvoiceLine(inverseInvoiceLine);
+      OBDal.getInstance().save(inverseInvoiceLineOffer);
+    }
+    OBDal.getInstance().flush();
+  }
+
+  private static void createInverseInvoiceLineTaxes(InvoiceLine invoiceLine,
+      InvoiceLine inverseInvoiceLine) {
+    for (InvoiceLineTax invoiceLineTax : invoiceLine.getInvoiceLineTaxList()) {
+      final InvoiceLineTax inverseInvoiceLineTax = (InvoiceLineTax) DalUtil.copy(invoiceLineTax,
+          false, true);
+      BigDecimal inverseTaxAmount = invoiceLineTax.getTaxAmount().negate();
+      BigDecimal inverseTaxableAmount = invoiceLineTax.getTaxableAmount().negate();
+      inverseInvoiceLineTax.setTaxAmount(inverseTaxAmount);
+      inverseInvoiceLineTax.setTaxableAmount(inverseTaxableAmount);
+      inverseInvoiceLineTax.setInvoice(inverseInvoiceLine.getInvoice());
+      inverseInvoiceLineTax.setInvoiceLine(inverseInvoiceLine);
+      inverseInvoiceLine.getInvoiceLineTaxList().add(inverseInvoiceLineTax);
+      inverseInvoiceLine.getInvoice().getInvoiceLineTaxList().add(inverseInvoiceLineTax);
+      OBDal.getInstance().save(inverseInvoiceLineTax);
+    }
+    OBDal.getInstance().flush();
+  }
+
+  private static void closeInverseInvoiceList(List<Invoice> inverseInvoices) {
+    for (Invoice inverseInvoice : inverseInvoices) {
+      inverseInvoice.setDocumentStatus("CO");
+      inverseInvoice.setDocumentAction("--");
+      inverseInvoice.setProcessed(true);
+      inverseInvoice.setProcessNow(false);
+      OBDal.getInstance().save(inverseInvoice);
+    }
   }
 
   private void createInverseOrderTaxes(final Order oldOrder, final Order inverseOrder) {
