@@ -58,11 +58,6 @@ public class RefList extends ModelObject {
     return super.getId();
   }
 
-  @Override
-  public void setId(String id) {
-    super.setId(id);
-  }
-
   @Column(name = "value")
   public String getValue() {
     return value;
@@ -100,10 +95,5 @@ public class RefList extends ModelObject {
   @Override
   public Date getUpdated() {
     return super.getUpdated();
-  }
-
-  @Override
-  public void setUpdated(Date date) {
-    super.setUpdated(date);
   }
 }

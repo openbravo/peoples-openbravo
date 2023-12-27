@@ -51,11 +51,6 @@ public class Package extends ModelObject {
     return super.getId();
   }
 
-  @Override
-  public void setId(String id) {
-    super.setId(id);
-  }
-
   @Convert(converter = BooleanYNConverter.class)
   @Column(name = "isactive", nullable = false)
   @Override
@@ -63,20 +58,10 @@ public class Package extends ModelObject {
     return super.isActive();
   }
 
-  @Override
-  public void setActive(boolean active) {
-    super.setActive(active);
-  }
-
   @Column(name = "name", nullable = false)
   @Override
   public String getName() {
     return super.getName();
-  }
-
-  @Override
-  public void setName(String name) {
-    super.setName(name);
   }
 
   @Column(name = "javapackage")
@@ -102,10 +87,5 @@ public class Package extends ModelObject {
   @Override
   public Date getUpdated() {
     return super.getUpdated();
-  }
-
-  @Override
-  public void setUpdated(Date date) {
-    super.setUpdated(date);
   }
 }

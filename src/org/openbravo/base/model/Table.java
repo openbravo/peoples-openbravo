@@ -69,19 +69,9 @@ public class Table extends ModelObject {
   }
 
   @Override
-  public void setId(String id) {
-    super.setId(id);
-  }
-
-  @Override
   @javax.persistence.Column(name = "name", nullable = false)
   public String getName() {
     return super.getName();
-  }
-
-  @Override
-  public void setName(String name) {
-    super.setName(name);
   }
 
   @Override
@@ -92,19 +82,9 @@ public class Table extends ModelObject {
   }
 
   @Override
-  public void setActive(boolean active) {
-    super.setActive(active);
-  }
-
-  @Override
   @javax.persistence.Column(name = "updated")
   public Date getUpdated() {
     return super.getUpdated();
-  }
-
-  @Override
-  public void setUpdated(Date updated) {
-    super.setUpdated(updated);
   }
 
   @javax.persistence.Column(name = "treetype")

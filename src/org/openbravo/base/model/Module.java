@@ -39,7 +39,6 @@ import org.openbravo.base.session.BooleanYNConverter;
 @Entity
 @Table(name = "ad_module")
 public class Module extends ModelObject {
-  private String name;
   private Integer seqno;
   private String javaPackage;
 
@@ -51,11 +50,6 @@ public class Module extends ModelObject {
     return super.getId();
   }
 
-  @Override
-  public void setId(String id) {
-    super.setId(id);
-  }
-
   @Convert(converter = BooleanYNConverter.class)
   @Column(name = "isactive", nullable = false)
   @Override
@@ -63,20 +57,10 @@ public class Module extends ModelObject {
     return super.isActive();
   }
 
-  @Override
-  public void setActive(boolean active) {
-    super.setActive(active);
-  }
-
   @Column(name = "name", nullable = false)
   @Override
   public String getName() {
-    return name;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.name = name;
+    return super.getName();
   }
 
   @Column(name = "seqno")
@@ -101,10 +85,5 @@ public class Module extends ModelObject {
   @Override
   public Date getUpdated() {
     return super.getUpdated();
-  }
-
-  @Override
-  public void setUpdated(Date date) {
-    super.setUpdated(date);
   }
 }

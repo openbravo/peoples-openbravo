@@ -47,11 +47,6 @@ public class RefTree extends ModelObject {
     return super.getId();
   }
 
-  @Override
-  public void setId(String id) {
-    super.setId(id);
-  }
-
   @ManyToOne
   @JoinColumn(name = "ad_column_id", nullable = false)
   public Column getColumn() {

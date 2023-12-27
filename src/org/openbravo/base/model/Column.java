@@ -94,20 +94,10 @@ public class Column extends ModelObject {
     return super.getId();
   }
 
-  @Override
-  public void setId(String id) {
-    super.setId(id);
-  }
-
   @javax.persistence.Column(name = "name", nullable = false)
   @Override
   public String getName() {
     return super.getName();
-  }
-
-  @Override
-  public void setName(String name) {
-    super.setName(name);
   }
 
   @Transient
@@ -595,8 +585,4 @@ public class Column extends ModelObject {
     return super.getUpdated();
   }
 
-  @Override
-  public void setUpdated(Date date) {
-    super.setUpdated(date);
-  }
 }
