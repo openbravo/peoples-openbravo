@@ -77,6 +77,7 @@ build: compile the project, including the xsql's files and generates the jar
   <target name="compileSqlc" depends="sqlc">
     <javac srcdir="${build.wad.sqlc}/src" includes="**/*.java" destdir="${build.wad}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" fork="true" includeantruntime="false">
       <classpath refid="wad.class.path" />
+      <compilerarg value="${procfull.java21}" />  
     </javac>
   </target>
 
@@ -91,6 +92,7 @@ build: compile the project, including the xsql's files and generates the jar
     <javac destdir="${build.wad}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" fork="true" includeantruntime="false">
       <src refid="my-src-wad-dirs" />
       <classpath refid="wad.class.path" />
+      <compilerarg value="${procfull.java21}" />  
     </javac>
 
     <copy todir="${build.wad}" encoding="UTF-8">

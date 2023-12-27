@@ -149,8 +149,6 @@ public class BaseReportActionHandler extends FileExportActionHandler {
    *          Map including the parameters of the call.
    * @param jsonContent
    *          JSONObject with the values set in the filter parameters.
-   * @param action
-   *          String with the output type of the report.
    * 
    * @return JSONObject with the content of response that is returned to the client
    * 
