@@ -107,7 +107,7 @@ public class PriceAdjustmentProductEventHandler extends EntityPersistenceEventOb
         && discountProduct.getStartingDate().before(discount.getStartingDate())) {
       throw new OBException("@PriceAdjustmentProductDateError@");
     }
-    if (discountProduct.getEndingDate() != null
+    if (discountProduct.getEndingDate() != null && discount.getEndingDate() != null
         && discountProduct.getEndingDate().after(discount.getEndingDate())) {
       throw new OBException("@PriceAdjustmentProductDateError@");
     }
