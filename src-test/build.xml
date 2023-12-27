@@ -73,7 +73,8 @@
   -->
 
   <target name="run.all.tests" depends="compile.test">
-    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
+    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false" fork="true">
+      <jvmarg value="-XX:+EnableDynamicAgentLoading"/>
       <sysproperty key="net.bytebuddy.experimental" value="true" />
       <classpath refid="test.class.path" />
       <test name="org.openbravo.test.StandaloneTestSuite" haltonfailure="no" outfile="../src/result">
@@ -83,7 +84,8 @@
   </target>
 
   <target name="run.test" depends="compile.test">
-    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
+    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false" fork="true">
+      <jvmarg value="-XX:+EnableDynamicAgentLoading"/>
       <sysproperty key="net.bytebuddy.experimental" value="true" />
       <classpath refid="test.class.path" />
       <test name="${test}" haltonfailure="no" outfile="../src/result-${test}">
@@ -93,7 +95,8 @@
   </target>
 
   <target name="run.webservice.tests" depends="compile.test">
-    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false">
+    <junit printsummary="no" haltonfailure="yes" showoutput="yes" outputtoformatters="false" fork="true">
+      <jvmarg value="-XX:+EnableDynamicAgentLoading"/>
       <sysproperty key="net.bytebuddy.experimental" value="true" />
       <classpath refid="test.class.path" />
       <test name="org.openbravo.test.WebserviceTestSuite" haltonfailure="no" outfile="../src/resultws">
