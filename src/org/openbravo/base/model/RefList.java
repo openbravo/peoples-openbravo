@@ -11,13 +11,25 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 
 package org.openbravo.base.model;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,28 +41,24 @@ import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
  * 
  * @author mtaal
  */
+@Entity
+@Table(name = "ad_ref_list")
 public class RefList extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
+  private String value;
   private Reference reference;
 
-  private String value;
-
-  public Reference getReference() {
-    return reference;
+  @Id
+  @Column(name = "ad_ref_list_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  @Override
+  public String getId() {
+    return super.getId();
   }
 
-  public void setReference(Reference reference) {
-    this.reference = reference;
-    final DomainType domainType = reference.getDomainType();
-    if (!(domainType instanceof StringEnumerateDomainType)) {
-      log.error("Domain type of reference " + reference.getId() + " is not a TableDomainType but a "
-          + domainType);
-    } else {
-      ((StringEnumerateDomainType) domainType).addEnumerateValue(value);
-    }
-  }
-
+  @Column(name = "value")
   public String getValue() {
     return value;
   }
@@ -59,4 +67,33 @@ public class RefList extends ModelObject {
     this.value = value;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_id", nullable = false)
+  public Reference getReference() {
+    return reference;
+  }
+
+  public void setReference(Reference reference) {
+    this.reference = reference;
+  }
+
+  @PostLoad
+  private void postLoad() {
+    // Perform the logic that requires both 'value' and 'reference'
+    if (reference != null) {
+      final DomainType domainType = reference.getDomainType();
+      if (domainType instanceof StringEnumerateDomainType) {
+        ((StringEnumerateDomainType) domainType).addEnumerateValue(value);
+      } else {
+        log.error("Domain type of reference " + reference.getId()
+            + " is not a StringEnumerateDomainType but a " + domainType);
+      }
+    }
+  }
+
+  @Column(name = "updated")
+  @Override
+  public Date getUpdated() {
+    return super.getUpdated();
+  }
 }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2013 Openbravo SLU 
+ * All portions are Copyright (C) 2013-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,18 +19,36 @@
 
 package org.openbravo.base.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Ref_Table table in the application
  * dictionary.
  * 
  * @author AugustoMauch
  */
-
+@Entity
+@javax.persistence.Table(name = "ad_ref_tree")
 public class RefTree extends ModelObject {
+
   private Table table;
   private Column column;
   private String referenceId;
 
+  @Override
+  @Id
+  @javax.persistence.Column(name = "ad_ref_tree_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  public String getId() {
+    return super.getId();
+  }
+
+  @ManyToOne
+  @JoinColumn(name = "ad_column_id", nullable = false)
   public Column getColumn() {
     return column;
   }
@@ -39,6 +57,7 @@ public class RefTree extends ModelObject {
     this.column = column;
   }
 
+  @javax.persistence.Column(name = "ad_reference_id", nullable = false)
   public String getReferenceId() {
     return referenceId;
   }
@@ -47,6 +66,8 @@ public class RefTree extends ModelObject {
     this.referenceId = referenceId;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
   public Table getTable() {
     return table;
   }

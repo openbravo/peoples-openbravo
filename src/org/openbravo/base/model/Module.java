@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,28 +19,51 @@
 
 package org.openbravo.base.model;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.openbravo.base.session.BooleanYNConverter;
+
 /**
  * Models a simple version of the module present in the database. It is a simple version because
  * only the properties required for the module related functionality are modeled here.
  * 
  * @author mtaal
  */
-
+@Entity
+@Table(name = "ad_module")
 public class Module extends ModelObject {
-  private String name;
   private Integer seqno;
   private String javaPackage;
 
+  @Id
+  @Column(name = "ad_module_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  @Override
+  public String getId() {
+    return super.getId();
+  }
+
+  @Convert(converter = BooleanYNConverter.class)
+  @Column(name = "isactive", nullable = false)
+  @Override
+  public boolean isActive() {
+    return super.isActive();
+  }
+
+  @Column(name = "name", nullable = false)
   @Override
   public String getName() {
-    return name;
+    return super.getName();
   }
 
-  @Override
-  public void setName(String name) {
-    this.name = name;
-  }
-
+  @Column(name = "seqno")
   public Integer getSeqno() {
     return seqno;
   }
@@ -49,11 +72,18 @@ public class Module extends ModelObject {
     this.seqno = seqno;
   }
 
+  @Column(name = "javaPackage")
   public String getJavaPackage() {
     return javaPackage;
   }
 
   public void setJavaPackage(String javaPackage) {
     this.javaPackage = javaPackage;
+  }
+
+  @Column(name = "updated")
+  @Override
+  public Date getUpdated() {
+    return super.getUpdated();
   }
 }

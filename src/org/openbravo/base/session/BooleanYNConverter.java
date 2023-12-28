@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+/*
  *************************************************************************
  * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
@@ -12,26 +11,38 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2011 Openbravo SLU 
+ * All portions are Copyright (C) 2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
- -->
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.openbravo.base.model.RefList" lazy="false" table="ad_ref_list">
-		<cache usage="read-write"/>
-		
-		<id name="id" type="string" column="ad_ref_list_id">
-            <generator class="org.openbravo.base.session.DalUUIDGenerator" />
-		</id>
-		
-		<property name="value" type="string" column="value" />		
-		 
-		<many-to-one name="reference" not-null="true" class="org.openbravo.base.model.Reference" column="ad_reference_id" />
-		
-		<property name="updated"/>
-		
-	</class>
+ */
 
-</hibernate-mapping>
+package org.openbravo.base.session;
+
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
+
+import org.apache.commons.lang.StringUtils;
+
+/**
+ * Converts the char 'Y'/'N' columns values into boolean true/false java mappings
+ */
+@Converter
+public class BooleanYNConverter implements AttributeConverter<Boolean, String> {
+
+  @Override
+  public String convertToDatabaseColumn(Boolean attribute) {
+    if (attribute == null) {
+      return null;
+    }
+    return attribute ? "Y" : "N";
+  }
+
+  @Override
+  public Boolean convertToEntityAttribute(String dbData) {
+    if (StringUtils.isBlank(dbData)) {
+      return null;
+    }
+    return "Y".equals(dbData);
+  }
+}

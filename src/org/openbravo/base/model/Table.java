@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2013 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,10 +20,19 @@
 package org.openbravo.base.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Convert;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.session.BooleanYNConverter;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Table table in the application
@@ -31,8 +40,10 @@ import org.apache.logging.log4j.Logger;
  * 
  * @author iperdomo
  */
-
+@javax.persistence.Table(name = "ad_table")
+@javax.persistence.Entity
 public class Table extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
   private Entity entity;
@@ -45,13 +56,38 @@ public class Table extends ModelObject {
   private List<Column> identifierColumns = null;
   private List<Column> parentColumns = null;
   private String className = null;
-
   private String accessLevel;
-
   private Package thePackage;
-
   private String treeType;
 
+  @Override
+  @Id
+  @javax.persistence.Column(name = "ad_table_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  @javax.persistence.Column(name = "name", nullable = false)
+  public String getName() {
+    return super.getName();
+  }
+
+  @Override
+  @javax.persistence.Column(name = "isactive", nullable = false)
+  @Convert(converter = BooleanYNConverter.class)
+  public boolean isActive() {
+    return super.isActive();
+  }
+
+  @Override
+  @javax.persistence.Column(name = "updated")
+  public Date getUpdated() {
+    return super.getUpdated();
+  }
+
+  @javax.persistence.Column(name = "treetype")
   public String getTreeType() {
     return treeType;
   }
@@ -60,6 +96,7 @@ public class Table extends ModelObject {
     this.treeType = treeType;
   }
 
+  @javax.persistence.Column(name = "dataorigintype", nullable = false)
   public String getDataOrigin() {
     return dataOrigin;
   }
@@ -87,6 +124,7 @@ public class Table extends ModelObject {
    * 
    * @return the list of Column instances of this table
    */
+  @Transient
   public List<Column> getColumns() {
     return columns;
   }
@@ -100,6 +138,7 @@ public class Table extends ModelObject {
     this.columns = columns;
   }
 
+  @Transient
   public List<Column> getPrimaryKeyColumns() {
     if (primaryKeyColumns == null) {
       primaryKeyColumns = new ArrayList<Column>();
@@ -117,6 +156,7 @@ public class Table extends ModelObject {
     this.primaryKeyColumns = primaryKeyColumns;
   }
 
+  @Transient
   public List<Column> getIdentifierColumns() {
     if (identifierColumns == null) {
       identifierColumns = new ArrayList<Column>();
@@ -133,6 +173,7 @@ public class Table extends ModelObject {
     this.parentColumns = parentColums;
   }
 
+  @Transient
   public List<Column> getParentColumns() {
     if (parentColumns == null) {
       parentColumns = new ArrayList<Column>();
@@ -153,10 +194,13 @@ public class Table extends ModelObject {
     this.view = view;
   }
 
+  @javax.persistence.Column(name = "isview")
+  @Convert(converter = BooleanYNConverter.class)
   public boolean isView() {
     return view;
   }
 
+  @Transient
   public String getNotNullClassName() {
     if (getClassName() == null || getClassName().trim().length() == 0) {
       return getName();
@@ -180,6 +224,7 @@ public class Table extends ModelObject {
     }
   }
 
+  @Transient
   public String getPackageName() {
     if (getThePackage() != null) {
       return getThePackage().getJavaPackage();
@@ -189,6 +234,7 @@ public class Table extends ModelObject {
     return "no.package.defined.for.table." + getName();
   }
 
+  @Transient
   public Entity getEntity() {
     return entity;
   }
@@ -202,6 +248,8 @@ public class Table extends ModelObject {
     return getTableName();
   }
 
+  @javax.persistence.Column(name = "isdeleteable")
+  @Convert(converter = BooleanYNConverter.class)
   public boolean isDeletable() {
     return isDeletable;
   }
@@ -210,6 +258,7 @@ public class Table extends ModelObject {
     this.isDeletable = isDeletable;
   }
 
+  @javax.persistence.Column(name = "accesslevel")
   public String getAccessLevel() {
     return accessLevel;
   }
@@ -218,6 +267,8 @@ public class Table extends ModelObject {
     this.accessLevel = accessLevel;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_package_id", nullable = false)
   public Package getThePackage() {
     return thePackage;
   }

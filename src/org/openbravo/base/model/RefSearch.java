@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2010 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -19,10 +19,22 @@
 
 package org.openbravo.base.model;
 
+import java.util.Date;
+
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.model.domaintype.DomainType;
 import org.openbravo.base.model.domaintype.SearchDomainType;
+import org.openbravo.base.session.BooleanYNConverter;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Reference table in the application
@@ -30,14 +42,39 @@ import org.openbravo.base.model.domaintype.SearchDomainType;
  * 
  * @author iperdomo
  */
-
+@Entity
+@Table(name = "ad_ref_search")
 public class RefSearch extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
   private String reference;
   private Reference referenceObject;
   private Column column;
 
+  @Override
+  @Id
+  @javax.persistence.Column(name = "ad_ref_search_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  public String getId() {
+    return super.getId();
+  }
+
+  @Override
+  @javax.persistence.Column(name = "isactive", nullable = false)
+  @Convert(converter = BooleanYNConverter.class)
+  public boolean isActive() {
+    return super.isActive();
+  }
+
+  @Override
+  @javax.persistence.Column(name = "updated")
+  public Date getUpdated() {
+    return super.getUpdated();
+  }
+
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_id", nullable = false)
   public Reference getReferenceObject() {
     return referenceObject;
   }
@@ -54,6 +91,8 @@ public class RefSearch extends ModelObject {
     }
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_column_id", nullable = false)
   public Column getColumn() {
     return column;
   }
@@ -65,6 +104,7 @@ public class RefSearch extends ModelObject {
   /**
    * Deprecated use {@link #getReferenceObject()}
    */
+  @Transient
   public String getReference() {
     return reference;
   }

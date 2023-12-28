@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2021 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,7 +20,17 @@
 package org.openbravo.base.model;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Set;
+
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +41,7 @@ import org.openbravo.base.model.domaintype.ForeignKeyDomainType;
 import org.openbravo.base.model.domaintype.PrimitiveDomainType;
 import org.openbravo.base.model.domaintype.StringDomainType;
 import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
+import org.openbravo.base.session.BooleanYNConverter;
 
 /**
  * Used by the {@link ModelProvider ModelProvider}, maps the AD_Column table in the application
@@ -39,13 +50,16 @@ import org.openbravo.base.model.domaintype.StringEnumerateDomainType;
  * @author iperdomo
  * @author mtaal
  */
-
+@Entity
+@Table(name = "ad_column")
 public class Column extends ModelObject {
+  @Transient
   private static final Logger log = LogManager.getLogger();
 
   private Property property;
   private String columnName;
-  private Table table;
+  private Module module;
+  private org.openbravo.base.model.Table table;
   private Reference reference;
   private Reference referenceValue;
   private Column referenceType = null;
@@ -72,8 +86,21 @@ public class Column extends ModelObject {
   private boolean isAllowedCrossOrgReference;
   private boolean childPropertyInParent;
 
-  private Module module;
+  @Id
+  @javax.persistence.Column(name = "ad_column_id")
+  @GeneratedValue(generator = "DalUUIDGenerator")
+  @Override
+  public String getId() {
+    return super.getId();
+  }
 
+  @javax.persistence.Column(name = "name", nullable = false)
+  @Override
+  public String getName() {
+    return super.getName();
+  }
+
+  @Transient
   public DomainType getDomainType() {
     if (referenceValue != null) {
       final DomainType refValueDomainType = referenceValue.getDomainType();
@@ -97,11 +124,13 @@ public class Column extends ModelObject {
     return reference.getDomainType();
   }
 
+  @Transient
   public boolean isBoolean() {
     return isPrimitiveType() && (getPrimitiveType().getName().compareTo("boolean") == 0
         || Boolean.class == getPrimitiveType());
   }
 
+  @javax.persistence.Column(name = "columnName")
   public String getColumnName() {
     return columnName;
   }
@@ -110,14 +139,18 @@ public class Column extends ModelObject {
     this.columnName = columnName;
   }
 
-  public Table getTable() {
+  @ManyToOne
+  @JoinColumn(name = "ad_table_id", nullable = false)
+  public org.openbravo.base.model.Table getTable() {
     return table;
   }
 
-  public void setTable(Table table) {
+  public void setTable(org.openbravo.base.model.Table table) {
     this.table = table;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_id", nullable = false)
   public Reference getReference() {
     return reference;
   }
@@ -126,6 +159,8 @@ public class Column extends ModelObject {
     this.reference = reference;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_reference_value_id")
   public Reference getReferenceValue() {
     return referenceValue;
   }
@@ -134,6 +169,7 @@ public class Column extends ModelObject {
     this.referenceValue = referenceValue;
   }
 
+  @javax.persistence.Column(name = "fieldLength")
   public int getFieldLength() {
     return fieldLength;
   }
@@ -142,6 +178,7 @@ public class Column extends ModelObject {
     this.fieldLength = fieldLength;
   }
 
+  @javax.persistence.Column(name = "defaultValue")
   public String getDefaultValue() {
     return defaultValue;
   }
@@ -150,6 +187,8 @@ public class Column extends ModelObject {
     this.defaultValue = defaultValue;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "iskey")
   public boolean isKey() {
     return key;
   }
@@ -158,6 +197,8 @@ public class Column extends ModelObject {
     this.key = key;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "issecondarykey")
   public boolean isSecondaryKey() {
     return secondaryKey;
   }
@@ -166,6 +207,8 @@ public class Column extends ModelObject {
     this.secondaryKey = secondaryKey;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "isparent")
   public boolean isParent() {
     return parent;
   }
@@ -174,6 +217,8 @@ public class Column extends ModelObject {
     this.parent = parent;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "ismandatory")
   public boolean isMandatory() {
     return mandatory;
   }
@@ -182,6 +227,8 @@ public class Column extends ModelObject {
     this.mandatory = mandatory;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "isupdateable")
   public boolean isUpdatable() {
     return updatable;
   }
@@ -190,6 +237,8 @@ public class Column extends ModelObject {
     this.updatable = updatable;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "isidentifier")
   public boolean isIdentifier() {
     return identifier;
   }
@@ -198,6 +247,7 @@ public class Column extends ModelObject {
     this.identifier = identifier;
   }
 
+  @javax.persistence.Column(name = "valueMin")
   public String getValueMin() {
     return valueMin;
   }
@@ -206,6 +256,7 @@ public class Column extends ModelObject {
     this.valueMin = valueMin;
   }
 
+  @javax.persistence.Column(name = "valueMax")
   public String getValueMax() {
     return valueMax;
   }
@@ -214,11 +265,13 @@ public class Column extends ModelObject {
     this.valueMax = valueMax;
   }
 
+  @Transient
   public boolean isPrimitiveType() {
     // anything else than foreign key is a primitive
     return getDomainType() instanceof PrimitiveDomainType;
   }
 
+  @Transient
   public Class<?> getPrimitiveType() {
     if (isPrimitiveType()) {
       return ((PrimitiveDomainType) getDomainType()).getPrimitiveType();
@@ -232,6 +285,7 @@ public class Column extends ModelObject {
     return null;
   }
 
+  @Transient
   public Column getReferenceType() {
     if (!isPrimitiveType()) {
       return referenceType;
@@ -243,6 +297,8 @@ public class Column extends ModelObject {
     this.referenceType = column;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "isactive", nullable = false)
   @Override
   public boolean isActive() {
     if (super.isActive() && !isPrimitiveType()) {
@@ -262,6 +318,7 @@ public class Column extends ModelObject {
 
   // method to prevent infinite looping checking for exceptions. See this issue:
   // https://issues.openbravo.com/view.php?id=8632
+  @Transient
   private boolean isSuperActive() {
     return super.isActive();
   }
@@ -291,6 +348,7 @@ public class Column extends ModelObject {
 
   // returns the primitive type name or the class of the
   // referenced type
+  @Transient
   public String getTypeName() {
     final String typeName;
     if (isPrimitiveType()) {
@@ -305,6 +363,7 @@ public class Column extends ModelObject {
   }
 
   // the last part of the class name
+  @Transient
   public String getSimpleTypeName() {
     final String typeName = getTypeName();
     if (typeName.indexOf(".") == -1) {
@@ -320,6 +379,7 @@ public class Column extends ModelObject {
    * 
    * @return the name of the class of the type of this column
    */
+  @Transient
   public String getObjectTypeName() {
     if (isPrimitiveType()) {
       final String typeName = getTypeName();
@@ -351,6 +411,7 @@ public class Column extends ModelObject {
     }
   }
 
+  @Transient
   public Property getProperty() {
     return property;
   }
@@ -372,6 +433,7 @@ public class Column extends ModelObject {
    * 
    * @return the set of allowed values for this Column.
    */
+  @Transient
   @SuppressWarnings("unchecked")
   public Set<String> getAllowedValues() {
     // TODO: discrepancy with the application dictionary, solve this later
@@ -384,18 +446,17 @@ public class Column extends ModelObject {
     return Collections.EMPTY_SET;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "istransient")
   public Boolean isTransient() {
     return isTransient;
   }
 
   public void setTransient(Boolean isTransient) {
-    if (isTransient == null) {
-      this.isTransient = Boolean.FALSE;
-    } else {
-      this.isTransient = isTransient;
-    }
+    this.isTransient = isTransient;
   }
 
+  @javax.persistence.Column(name = "istransientcondition")
   public String getIsTransientCondition() {
     return isTransientCondition;
   }
@@ -404,6 +465,7 @@ public class Column extends ModelObject {
     this.isTransientCondition = isTransientCondition;
   }
 
+  @javax.persistence.Column(name = "position")
   public Integer getPosition() {
     return position;
   }
@@ -412,6 +474,8 @@ public class Column extends ModelObject {
     this.position = position;
   }
 
+  @ManyToOne
+  @JoinColumn(name = "ad_module_id", nullable = false)
   public Module getModule() {
     return module;
   }
@@ -420,6 +484,8 @@ public class Column extends ModelObject {
     this.module = module;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "isencrypted")
   public boolean isEncrypted() {
     return encrypted;
   }
@@ -428,6 +494,8 @@ public class Column extends ModelObject {
     this.encrypted = encrypted;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "isdesencryptable")
   public boolean isDecryptable() {
     return decryptable;
   }
@@ -436,6 +504,8 @@ public class Column extends ModelObject {
     this.decryptable = decryptable;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "istranslated")
   public boolean isTranslatable() {
     return translatable;
   }
@@ -444,6 +514,8 @@ public class Column extends ModelObject {
     this.translatable = translatable;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "issessionattr")
   public boolean isStoredInSession() {
     return storedInSession;
   }
@@ -452,6 +524,7 @@ public class Column extends ModelObject {
     this.storedInSession = storedInSession;
   }
 
+  @javax.persistence.Column(name = "seqno")
   public Integer getSeqno() {
     return seqno;
   }
@@ -460,6 +533,8 @@ public class Column extends ModelObject {
     this.seqno = seqno;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "isusedsequence")
   public boolean isUsedSequence() {
     return usedSequence;
   }
@@ -468,6 +543,7 @@ public class Column extends ModelObject {
     this.usedSequence = usedSequence;
   }
 
+  @javax.persistence.Column(name = "sqlLogic")
   public String getSqlLogic() {
     return sqlLogic;
   }
@@ -482,6 +558,8 @@ public class Column extends ModelObject {
    * 
    * @see Property#isAllowedCrossOrgReference()
    */
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "allowed_cross_org_link")
   public boolean isAllowedCrossOrgReference() {
     return isAllowedCrossOrgReference;
   }
@@ -491,12 +569,20 @@ public class Column extends ModelObject {
     this.isAllowedCrossOrgReference = allowedCrossOrgReference;
   }
 
+  @Convert(converter = BooleanYNConverter.class)
+  @javax.persistence.Column(name = "is_child_property_in_parent")
   public boolean isChildPropertyInParent() {
     return childPropertyInParent;
   }
 
   public void setChildPropertyInParent(boolean isChildPropertyInParent) {
     this.childPropertyInParent = isChildPropertyInParent;
+  }
+
+  @javax.persistence.Column(name = "updated")
+  @Override
+  public Date getUpdated() {
+    return super.getUpdated();
   }
 
 }
