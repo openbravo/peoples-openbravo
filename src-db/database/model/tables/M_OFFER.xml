@@ -259,6 +259,7 @@
       </column>
       <column name="DISPLAY_UPSELLINGMSG" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
         <default><![CDATA[N]]></default>
+      </column>
       <column name="PRICE_ADJUSTMENT_SCOPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[A]]></default>
         <onCreateDefault><![CDATA['A']]></onCreateDefault>
