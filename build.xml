@@ -165,10 +165,12 @@ export.database: exports database structure and data to xml files.
     </not>
   </condition>
 
-  <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}?${bbdd.props}" else="${bbdd.url}?${bbdd.props}">
-    <and>
-      <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
-    </and>
+  <condition property="bbdd.noncomplete.url" value="${bbdd.url}/${bbdd.sid}" else="${bbdd.url}">
+    <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
+  </condition>
+
+  <condition property="bbdd.owner.url" value="${bbdd.noncomplete.url}?${bbdd.props}" else="${bbdd.noncomplete.url}">
+    <isset property="bbdd.props" />
   </condition>
 
   <condition property="root.user">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
  *************************************************************************
- * The contents of this hfile are subject to the Openbravo  Public  License
+ * The contents of this file are subject to the Openbravo  Public  License
  * Version  1.1  (the  "License"),  being   the  Mozilla   Public  License
  * Version 1.1  with a permitted attribution clause; you may not  use this
  * file except in compliance with the License. You  may  obtain  a copy of
@@ -12,7 +12,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2001-2023 Openbravo SLU
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -24,10 +24,16 @@ create.database: creates the database from scratch.
 -->
 <project name="openbravo" default="create.database" basedir=".">
   <property environment="env" />
-  <condition property="bbdd.owner.url" value="${bbdd.url}/${bbdd.sid}?${bbdd.props}" else="${bbdd.url}?${bbdd.props}">
-    <and>
-      <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
-    </and>
+  <condition property="bbdd.noncomplete.url" value="${bbdd.url}/${bbdd.sid}" else="${bbdd.url}">
+    <equals arg1="${bbdd.rdbms}" arg2="POSTGRE" />
+  </condition>
+
+  <condition property="bbdd.owner.url" value="${bbdd.noncomplete.url}?${bbdd.props}" else="${bbdd.noncomplete.url}">
+    <isset property="bbdd.props" />
+  </condition>
+
+  <condition property="bbdd.clean.postgres.url" value="${bbdd.url}/postgres?${bbdd.props}" else="${bbdd.url}/postgres">
+    <isset property="bbdd.props" />
   </condition>
 
   <path id="runtime-classpath-create">
@@ -92,7 +98,7 @@ create.database: creates the database from scratch.
   <target name="clean.database.POSTGRE">
     <antcall target="clean.database.POSTGRE.param">
       <param name="driver" value="${bbdd.driver}"/>
-      <param name="url" value="${bbdd.url}/postgres"/>
+      <param name="url" value="${bbdd.clean.postgres.url}"/>
       <param name="systemUser" value="${bbdd.systemUser}"/>
       <param name="user" value="${bbdd.user}"/>
       <param name="systemPassword" value="${bbdd.systemPassword}"/>
@@ -210,7 +216,7 @@ create.database: creates the database from scratch.
   <target name="POSTGRE.structure">
     <antcall target="POSTGRE.structure.param">
       <param name="driver" value="${bbdd.driver}"/>
-      <param name="url" value="${bbdd.url}/postgres"/>
+      <param name="url" value="${bbdd.clean.postgres.url}"/>
       <param name="systemUser" value="${bbdd.systemUser}"/>
       <param name="systemPassword" value="${bbdd.systemPassword}"/>
       <param name="user" value="${bbdd.user}"/>
