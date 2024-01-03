@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018-2023 Openbravo SLU
+ * All portions are Copyright (C) 2018-2022 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -327,16 +326,7 @@ public class InvoiceGeneratorFromGoodsShipment {
   private BigDecimal getQtyToInvoice(final OrderLine orderLine) {
     OBDal.getInstance().getSession().refresh(orderLine); // Necessary to get updated deliveredQty
     final BigDecimal qtyShip = orderLine.getDeliveredQuantity(); // Previous shipments + this one
-    BigDecimal qtyPreviouslyInvoiced = orderLine.getInvoicedQuantity();
-
-    // Calculate QtyInvoiced for OrderLine in this same invoice
-    if (invoice != null) {
-      for (InvoiceLine invLine : invoice.getInvoiceLineList()) {
-        if (StringUtils.equals(invLine.getSalesOrderLine().getId(), orderLine.getId())) {
-          qtyPreviouslyInvoiced = qtyPreviouslyInvoiced.add(invLine.getInvoicedQuantity());
-        }
-      }
-    }
+    final BigDecimal qtyPreviouslyInvoiced = orderLine.getInvoicedQuantity();
 
     BigDecimal qtyToInvoice = qtyShip.subtract(qtyPreviouslyInvoiced);
 
