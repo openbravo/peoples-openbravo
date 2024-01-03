@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2022 Openbravo SLU
+ * All portions are Copyright (C) 2014-2023 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -102,8 +102,11 @@ public class PriceAdjustment {
       priceActual = promo.getFixedPrice();
     } else {
       if (applyDiscount) {
-        priceActual = priceActual.subtract(promo.getDiscountAmount())
-            .multiply(BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))))
+        BigDecimal discountAmount = promo.getDiscountAmount() != null ? promo.getDiscountAmount()
+            : BigDecimal.ZERO;
+        BigDecimal discount = promo.getDiscount() != null ? promo.getDiscount() : BigDecimal.ZERO;
+        priceActual = priceActual.subtract(discountAmount)
+            .multiply(BigDecimal.ONE.subtract(discount.divide(BigDecimal.valueOf(100))))
             .setScale(precision, RoundingMode.HALF_UP);
       }
     }
@@ -146,14 +149,17 @@ public class PriceAdjustment {
         && qty.remainder(promo.getMultiple()).compareTo(BigDecimal.ZERO) != 0) {
       applyDiscount = false;
     }
-    log.debug("promo:" + promo + "-" + promo.getDiscount());
+    BigDecimal discount = promo.getDiscount() != null ? promo.getDiscount() : BigDecimal.ZERO;
+    log.debug("promo:" + promo + "-" + discount);
     if (applyDiscount) {
+      BigDecimal discountAmount = promo.getDiscountAmount() != null ? promo.getDiscountAmount()
+          : BigDecimal.ZERO;
       // Avoids divide by zero error
-      if (BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100)))
+      if (BigDecimal.ONE.subtract(discount.divide(BigDecimal.valueOf(100)))
           .compareTo(BigDecimal.ZERO) != 0) {
-        priceStd = priceStd.add(promo.getDiscountAmount())
-            .divide(BigDecimal.ONE.subtract(promo.getDiscount().divide(BigDecimal.valueOf(100))),
-                precision, RoundingMode.HALF_UP);
+        priceStd = priceStd.add(discountAmount)
+            .divide(BigDecimal.ONE.subtract(discount.divide(BigDecimal.valueOf(100))), precision,
+                RoundingMode.HALF_UP);
       } else {
         // 100 % Discount in price adjustment results in priceStd = Zero
         priceStd = BigDecimal.ZERO;
