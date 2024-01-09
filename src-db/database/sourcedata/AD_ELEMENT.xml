@@ -17552,7 +17552,7 @@ Process Quantity = Quantity  x  Conversion Rate]]></HELP>
 <!--800703-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--800703-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--800703-->  <COLUMNNAME><![CDATA[Pricelist_Selection]]></COLUMNNAME>
-<!--800703-->  <NAME><![CDATA[Include Price Lists]]></NAME>
+<!--800703-->  <NAME><![CDATA[Included Price Lists]]></NAME>
 <!--800703-->  <PRINTNAME><![CDATA[Pricelist Selection Mode]]></PRINTNAME>
 <!--800703-->  <DESCRIPTION><![CDATA[Pricelist Selection Mode]]></DESCRIPTION>
 <!--800703-->  <HELP><![CDATA[Defines the way Price Lists will be selected (including or excluding the taken ones)]]></HELP>
