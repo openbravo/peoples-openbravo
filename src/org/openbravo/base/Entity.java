@@ -6,6 +6,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.openbravo.base.structure.BaseOBObject;
+
 /**
  * Annotation to associate a Java component to a process ID
  */
@@ -14,5 +16,5 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Inherited
 public @interface Entity {
-  String value();
+  Class<? extends BaseOBObject> value();
 }

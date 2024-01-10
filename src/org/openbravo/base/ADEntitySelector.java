@@ -20,6 +20,7 @@ package org.openbravo.base;
 
 import javax.enterprise.util.AnnotationLiteral;
 
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.erpCommon.ad_process.ADProcessID;
 
 /**
@@ -29,14 +30,14 @@ import org.openbravo.erpCommon.ad_process.ADProcessID;
 public class ADEntitySelector extends AnnotationLiteral<Entity> implements Entity {
   private static final long serialVersionUID = 1L;
 
-  final String value;
+  final Class<? extends BaseOBObject> value;
 
-  public ADEntitySelector(String value) {
+  public ADEntitySelector(Class<? extends BaseOBObject> value) {
     this.value = value;
   }
 
   @Override
-  public String value() {
+  public Class<? extends BaseOBObject> value() {
     return value;
   }
 }
