@@ -39,6 +39,8 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.ObjectNotFoundException;
+import org.openbravo.base.ADEntitySelector;
+import org.openbravo.base.OrganizationPropertyHook;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.model.domaintype.AbsoluteDateTimeDomainType;
@@ -253,10 +255,9 @@ public class DataToJsonConverter {
           }
         }
       }
-
       if (shouldDisplayOrgDate && bob instanceof Traceable && bob instanceof OrganizationEnabled) {
         Traceable traceable = (Traceable) bob;
-        String orgId = ((OrganizationEnabled) bob).getOrganization().getId();
+        String orgId = getOrganizationId(bob);
         String timezoneId = organizationStructureProvider != null
             ? (String) organizationStructureProvider.getPropertyFromNode(orgId, "timeZoneId")
             : null;
@@ -489,5 +490,27 @@ public class DataToJsonConverter {
 
   public void setEntity(Entity entity) {
     this.entity = entity;
+  }
+
+  /**
+   * 
+   * @return a list with the instances implementing OrganizationPropertyHook ordered by priority
+   */
+  private List<OrganizationPropertyHook> getOrganizationProperty(BaseOBObject bob) {
+    return WeldUtils.getInstancesSortedByPriority(OrganizationPropertyHook.class,
+        new ADEntitySelector(bob.getEntityName()));
+
+  }
+
+  /**
+   * 
+   * @return the organization property in the bob’s entity to look for the timezone
+   */
+  private String getOrganizationId(BaseOBObject bob) {
+    List<OrganizationPropertyHook> organizationPropertyHookList = getOrganizationProperty(bob);
+    if (organizationPropertyHookList.isEmpty()) {
+      return ((OrganizationEnabled) bob).getOrganization().getId();
+    }
+    return organizationPropertyHookList.get(0).getOrganizationProperty(bob);
   }
 }
