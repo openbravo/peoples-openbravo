@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2012-2023 Openbravo SLU
+ * All portions are Copyright (C) 2012-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,12 +28,19 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openbravo.base.ADEntitySelector;
+import org.openbravo.base.OrganizationPropertyHook;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
+import org.openbravo.base.structure.BaseOBObject;
+import org.openbravo.base.structure.OrganizationEnabled;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.KernelConstants;
 import org.openbravo.model.common.enterprise.Organization;
 
@@ -387,5 +394,28 @@ public class OBDateUtils {
         .getOpenbravoProperties()
         .getProperty(KernelConstants.DATETIME_FORMAT_PROPERTY, "dd-MM-yyyy HH:mm:ss");
     return formatZonedDateTime(date, pattern + " (VV)");
+  }
+
+  /**
+   * @return an Optional describing the organization with the time zone used to calculate the time
+   *         zone based properties of the given bob. An empty optional may be returned in case no
+   *         Organization can be found for the given BaseOBObject.
+   * @param bob
+   *          A BaseOBObject
+   */
+  public static Optional<Organization> getTimeZonedOrganization(BaseOBObject bob) {
+    List<OrganizationPropertyHook> hooks = WeldUtils.getInstancesSortedByPriority(
+        OrganizationPropertyHook.class, new ADEntitySelector(bob.getClass()));
+    Organization organization;
+    if (!hooks.isEmpty()) {
+      organization = (Organization) bob.get(hooks.get(0).getOrganizationProperty(bob));
+    } else if (bob instanceof Organization) {
+      organization = ((Organization) bob);
+    } else if (bob instanceof OrganizationEnabled) {
+      organization = ((OrganizationEnabled) bob).getOrganization();
+    } else {
+      organization = null;
+    }
+    return Optional.ofNullable(organization);
   }
 }
