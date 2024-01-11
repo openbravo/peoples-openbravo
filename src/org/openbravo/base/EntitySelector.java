@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2022 Openbravo SLU
+ * All portions are Copyright (C) 2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,18 +21,17 @@ package org.openbravo.base;
 import javax.enterprise.util.AnnotationLiteral;
 
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.erpCommon.ad_process.ADProcessID;
 
 /**
- * Selector for the {@link ADProcessID} annotation
+ * Selector for the {@link Entity} annotation
  */
 @SuppressWarnings("all")
-public class ADEntitySelector extends AnnotationLiteral<Entity> implements Entity {
+public class EntitySelector extends AnnotationLiteral<Entity> implements Entity {
   private static final long serialVersionUID = 1L;
 
   final Class<? extends BaseOBObject> value;
 
-  public ADEntitySelector(Class<? extends BaseOBObject> value) {
+  public EntitySelector(Class<? extends BaseOBObject> value) {
     this.value = value;
   }
 
