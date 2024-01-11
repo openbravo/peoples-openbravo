@@ -12,7 +12,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2008-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2008-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -35,15 +35,22 @@
   <SqlMethod name="selectOrganization" type="preparedStatement" return="multiple">
      <SqlMethodComment></SqlMethodComment>
      <Sql><![CDATA[
-       SELECT A_O.AD_ORG_ID AS ID, A_O.NAME 
+       SELECT DISTINCT A_O.AD_ORG_ID AS ID, A_O.NAME 
        FROM AD_ORG A_O, AD_ROLE_ORGACCESS A_R_O, AD_ROLE R 
-       WHERE A_R_O.AD_ORG_ID = A_O.AD_ORG_ID 
-       AND A_R_O.ISACTIVE = 'Y' 
-       AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
-       AND R.ISACTIVE = 'Y'
-       AND A_R_O.AD_ROLE_ID = ? 
+       WHERE R.ISACTIVE = 'Y'
+       AND R.AD_ROLE_ID = ? 
        AND A_O.AD_Org_ID IN('1')
+       AND ( 
+        R.ISMANUAL = 'N'
+        OR(
+          R.ISMANUAL = 'Y'
+          AND A_R_O.AD_ORG_ID = A_O.AD_ORG_ID 
+          AND A_R_O.ISACTIVE = 'Y' 
+          AND A_R_O.AD_ROLE_ID = R.AD_ROLE_ID 
+        ) 
+       )
        ORDER BY A_O.NAME
+       
      ]]></Sql>
        <Parameter name="rol"/>
        <Parameter name="adOrgClient" type="replace" optional="true" after="A_O.AD_Org_ID IN(" text="'1'"/>
