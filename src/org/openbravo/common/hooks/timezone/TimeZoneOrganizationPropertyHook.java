@@ -23,7 +23,9 @@ import org.openbravo.base.structure.BaseOBObject;
 
 /**
  * Allows to implement exceptions to select the property that references the organization with the
- * time zone used to compute the organization time zone based properties of a BaseOBObject.
+ * time zone used to compute the organization time zone based properties of a BaseOBObject. The
+ * classes implementing this interface must be annotated with the Entity for which the exception
+ * must be implemented.
  * 
  * @author Eugen Hamuraru
  *
