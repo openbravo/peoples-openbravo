@@ -256,7 +256,7 @@ public class DataToJsonConverter {
       }
       if (shouldDisplayOrgDate && bob instanceof Traceable) {
         Traceable traceable = (Traceable) bob;
-        Optional<Organization> org = OBDateUtils.getTimeZonedOrganization(bob);
+        Optional<Organization> org = OBDateUtils.getTimeZoneOrganization(bob);
         String timezoneId = org.isPresent() && organizationStructureProvider != null
             ? (String) organizationStructureProvider.getPropertyFromNode(org.get().getId(),
                 "timeZoneId")

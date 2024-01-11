@@ -34,14 +34,14 @@ import java.util.Optional;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openbravo.base.ADEntitySelector;
-import org.openbravo.base.OrganizationPropertyHook;
+import org.openbravo.base.EntitySelector;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.session.OBPropertiesProvider;
 import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.client.kernel.KernelConstants;
+import org.openbravo.common.hooks.timezone.TimeZoneOrganizationPropertyHook;
 import org.openbravo.model.common.enterprise.Organization;
 
 /**
@@ -397,15 +397,21 @@ public class OBDateUtils {
   }
 
   /**
+   * Retrieves the organization with the time zone used to calculate the time zone based properties
+   * of a BaseOBObject.
+   *
+   * @see #convertFromServerToOrgDateTime(Date, String)
+   * @see #convertFromServerToOrgDateTime(Date, Organization)
+   *
    * @return an Optional describing the organization with the time zone used to calculate the time
-   *         zone based properties of the given bob. An empty optional may be returned in case no
-   *         Organization can be found for the given BaseOBObject.
+   *         zone based properties of the given BaseOBObject. An empty optional may be returned in
+   *         case no Organization can be found for the given BaseOBObject.
    * @param bob
    *          A BaseOBObject
    */
-  public static Optional<Organization> getTimeZonedOrganization(BaseOBObject bob) {
-    List<OrganizationPropertyHook> hooks = WeldUtils.getInstancesSortedByPriority(
-        OrganizationPropertyHook.class, new ADEntitySelector(bob.getClass()));
+  public static Optional<Organization> getTimeZoneOrganization(BaseOBObject bob) {
+    List<TimeZoneOrganizationPropertyHook> hooks = WeldUtils.getInstancesSortedByPriority(
+        TimeZoneOrganizationPropertyHook.class, new EntitySelector(bob.getClass()));
     Organization organization;
     if (!hooks.isEmpty()) {
       organization = (Organization) bob.get(hooks.get(0).getOrganizationProperty(bob));
@@ -416,6 +422,7 @@ public class OBDateUtils {
     } else {
       organization = null;
     }
+    logger.trace("The {} organization timezone should be used for BOB {}", organization, bob);
     return Optional.ofNullable(organization);
   }
 }
