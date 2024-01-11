@@ -23,25 +23,13 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.model.common.order.Order;
 
 /**
- * Selector for the {@link Entity} annotation, allow's to implement the logic for the Order entity
- * needed to get the organization property that will define the time zone. This logic will be
- * executed record per record.
+ * Allows to implement the exception to get the organization property used to calculate the time
+ * zone based fields of the orders: if the order is a return the organization to be used is the one
+ * referenced by the {@link Order#PROPERTY_TRXORGANIZATION} property.
  */
-
 @Entity(Order.class)
 public class OrderTimeZoneOrganizationPropertyHook implements TimeZoneOrganizationPropertyHook {
 
-  /**
-   * @return the name of the property that references the organization with the time zone used to
-   *         compute the organization time zone based properties of the given BaseOBObject. In case
-   *         the BaseOBObject is a return the trxOrganization property will be used and in any other
-   *         case (bob is a order) the organization property will be used.
-   * 
-   * @param bob
-   *          a BaseOBObject that contains the record information used to retrieve the organization
-   *          property.
-   * 
-   */
   @Override
   public String getOrganizationProperty(BaseOBObject bob) {
     Order order = (Order) bob;

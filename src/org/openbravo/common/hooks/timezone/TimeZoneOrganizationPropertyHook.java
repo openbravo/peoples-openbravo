@@ -18,14 +18,15 @@
  */
 package org.openbravo.common.hooks.timezone;
 
+import org.openbravo.base.Entity;
 import org.openbravo.base.Prioritizable;
 import org.openbravo.base.structure.BaseOBObject;
 
 /**
  * Allows to implement exceptions to select the property that references the organization with the
  * time zone used to compute the organization time zone based properties of a BaseOBObject. The
- * classes implementing this interface must be annotated with the Entity for which the exception
- * must be implemented.
+ * classes implementing this interface must be annotated with the {@link Entity} annotation for
+ * which the exception must be implemented.
  * 
  * @author Eugen Hamuraru
  *
