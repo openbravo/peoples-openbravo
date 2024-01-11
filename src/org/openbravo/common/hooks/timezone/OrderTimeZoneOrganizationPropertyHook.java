@@ -24,17 +24,16 @@ import org.openbravo.model.common.order.Order;
 
 /**
  * Allows to implement the exception to get the organization property used to calculate the time
- * zone based fields of the orders: if the order is a return the organization to be used is the one
- * referenced by the {@link Order#PROPERTY_TRXORGANIZATION} property.
+ * zone based fields of the orders: if the order has the transaction organization property defined
+ * the organization to be used is the one referenced by the {@link Order#PROPERTY_TRXORGANIZATION}
+ * property.
  */
 @Entity(Order.class)
 public class OrderTimeZoneOrganizationPropertyHook implements TimeZoneOrganizationPropertyHook {
 
   @Override
   public String getOrganizationProperty(BaseOBObject bob) {
-    Order order = (Order) bob;
-    return order.getTransactionDocument().isReturn() && order.getTrxOrganization() != null
-        ? Order.PROPERTY_TRXORGANIZATION
+    return bob.get(Order.PROPERTY_TRXORGANIZATION) != null ? Order.PROPERTY_TRXORGANIZATION
         : Order.PROPERTY_ORGANIZATION;
   }
 }
