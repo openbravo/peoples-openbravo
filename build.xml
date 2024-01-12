@@ -183,14 +183,6 @@ export.database: exports database structure and data to xml files.
     </and>
   </condition>
 
-  <!-- Avoid annotation processing warnings during compilation since Java 21. ISSUE-53971 -->
-  <condition property="procfull.java21" value="-proc:full" else="">
-    <or>
-          <equals arg1="${ant.java.version}" arg2="21"/>
-          <equals arg1="${ant.java.version}" arg2="22"/>
-    </or>
-  </condition>
-
   <!-- Minimal classpath used for executing Wad at compile time -->
   <path id="wad.class.path">
     <fileset dir="${base.lib}">
@@ -746,7 +738,6 @@ export.database: exports database structure and data to xml files.
 	<mkdir dir="build/classes" />
     <javac srcdir="src/org/openbravo/configuration" destdir="build/classes" fork="true" deprecation="off" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="project.class.path"/>  
-      <compilerarg value="${procfull.java21}" />    
     </javac>
   </target>
 

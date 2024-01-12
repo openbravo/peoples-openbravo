@@ -145,7 +145,6 @@ build.war: build a war file in the lib directory.
       <src path="../modules/org.openbravo.base.weld/src/"/>
       <classpath refid="apply.module.compile.classpath" />
       <compilerarg value="-implicit:class" />
-      <compilerarg value="${procfull.java21}" />
     </javac>
   </target>
   
@@ -213,11 +212,9 @@ build.war: build a war file in the lib directory.
       </src>
       <classpath refid="project.class.path" />
       <compilerarg value="-implicit:class" />
-      <compilerarg value="${procfull.java21}" />
     </javac>
       <javac srcdir="${base.src.gen}" excludes="org/openbravo/model/**,org/openbravo/base/structure/**,org/openbravo/dal/**,org/openbravo/service/dataset/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
         <classpath refid="project.class.path" />
-        <compilerarg value="${procfull.java21}" />
       </javac>
   </target>
 
@@ -234,17 +231,14 @@ build.war: build a war file in the lib directory.
     <javac excludes="*/src-wad/**,*/src-util/**,**/org/openbravo/erpWindows/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <src refid="my-src-dirs"/>
       <classpath refid="project.class.path" />
-      <compilerarg value="${procfull.java21}" />
     </javac>
 
     <javac srcdir="${build.sqlc}/srcAD" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="project.class.path" />
-      <compilerarg value="${procfull.java21}" />
     </javac>
 
     <javac srcdir="${build.AD}" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="project.class.path" />
-      <compilerarg value="${procfull.java21}" />
     </javac>
   </target>
 
@@ -252,7 +246,6 @@ build.war: build a war file in the lib directory.
     <javac srcdir="${basedir}" includes="org/openbravo/base/exception/**,org/openbravo/base/gen/**,org/openbravo/base/expression/**,org/openbravo/base/provider/**,org/openbravo/base/model/**,org/openbravo/base/session/**,org/openbravo/base/validation/**,org/openbravo/base/util/**" destdir="${build}" encoding="UTF-8" fork="true" memorymaximumsize="${build.maxmemory}" debug="true" debuglevel="lines,vars,source" deprecation="on" includeantruntime="false">
       <classpath refid="project.class.path" />
       <compilerarg value="-implicit:class" />
-      <compilerarg value="${procfull.java21}" />
     </javac>
     <copy todir="${build}">
       <fileset dir="${basedir}">
@@ -269,7 +262,6 @@ build.war: build a war file in the lib directory.
         </dirset>
       </src>
       <classpath refid="project.class.path" />
-      <compilerarg value="${procfull.java21}" />
     </javac>
     
     <!-- copy all configuration files in modules to the output path also -->
