@@ -2888,7 +2888,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--3DA7267B2FEC42B287B4428DF658C7E5-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--3DA7267B2FEC42B287B4428DF658C7E5-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--3DA7267B2FEC42B287B4428DF658C7E5-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--3DA7267B2FEC42B287B4428DF658C7E5-->  <NAME><![CDATA[Referenced Inventory Type]]></NAME>
+<!--3DA7267B2FEC42B287B4428DF658C7E5-->  <NAME><![CDATA[Handling Unit Type]]></NAME>
 <!--3DA7267B2FEC42B287B4428DF658C7E5-->  <DESCRIPTION><![CDATA[Defines different types of containers or boxes, which includes any kind of object that can contain goods.]]></DESCRIPTION>
 <!--3DA7267B2FEC42B287B4428DF658C7E5-->  <HELP><![CDATA[Defines different types of containers or boxes, which includes any kind of object that can contain goods.]]></HELP>
 <!--3DA7267B2FEC42B287B4428DF658C7E5-->  <WINDOWTYPE><![CDATA[M]]></WINDOWTYPE>
