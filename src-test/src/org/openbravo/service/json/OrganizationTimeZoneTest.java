@@ -52,6 +52,7 @@ public class OrganizationTimeZoneTest extends WeldBaseTest {
     setOrganizationTimeZone(TestConstants.Orgs.FB_GROUP, "America/Chicago");
     setOrganizationTimeZone(TestConstants.Orgs.ESP_NORTE, "Europe/Madrid");
     OBDal.getInstance().flush();
+    OBContext.getOBContext().getOrganizationStructureProvider().reInitialize();
   }
 
   private void setOrganizationTimeZone(String orgId, String timeZone) {
