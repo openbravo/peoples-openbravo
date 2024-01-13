@@ -48,7 +48,7 @@
       <foreign-key foreignTable="AD_CLIENT" name="M_ORG_SEQUENCE_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_REFINVENTORY_TYPE" name="M_ORG_SEQUENCE_HUTYPE">
+      <foreign-key foreignTable="M_REFINVENTORY_TYPE" name="M_ORG_SEQUENCE_HUTYPE" onDelete="cascade">
         <reference local="M_REFINVENTORY_TYPE_ID" foreign="M_REFINVENTORY_TYPE_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="M_ORG_SEQUENCE_ORG">
@@ -59,6 +59,7 @@
       </foreign-key>
       <unique name="M_ORG_SEQUENCE_ORGSEQ_UN">
         <unique-column name="AD_ORG_ID"/>
+        <unique-column name="M_REFINVENTORY_TYPE_ID"/>
       </unique>
       <check name="M_ORG_SEQUENCE_ISACTIVE_CH"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>

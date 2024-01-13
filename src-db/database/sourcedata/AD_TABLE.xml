@@ -9445,8 +9445,8 @@ You can also select if transactions are allowed or not for this organization typ
 <!--24733E0ACF73466898137EDD27BA464B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--24733E0ACF73466898137EDD27BA464B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--24733E0ACF73466898137EDD27BA464B-->  <NAME><![CDATA[MaterialMgmtReferencedInventoryType]]></NAME>
-<!--24733E0ACF73466898137EDD27BA464B-->  <DESCRIPTION><![CDATA[Referenced Inventory Type]]></DESCRIPTION>
-<!--24733E0ACF73466898137EDD27BA464B-->  <HELP><![CDATA[Defines different types of containers or boxes, which includes any kind of object that can contain goods.]]></HELP>
+<!--24733E0ACF73466898137EDD27BA464B-->  <DESCRIPTION><![CDATA[Referenced Inventory Type - Handling Type Unit]]></DESCRIPTION>
+<!--24733E0ACF73466898137EDD27BA464B-->  <HELP><![CDATA[Defines different types of containers or boxes, which includes any kind of object that can contain goods - Handling Type Unit.]]></HELP>
 <!--24733E0ACF73466898137EDD27BA464B-->  <TABLENAME><![CDATA[M_RefInventory_Type]]></TABLENAME>
 <!--24733E0ACF73466898137EDD27BA464B-->  <CLASSNAME><![CDATA[ReferencedInventoryType]]></CLASSNAME>
 <!--24733E0ACF73466898137EDD27BA464B-->  <ISVIEW><![CDATA[N]]></ISVIEW>
