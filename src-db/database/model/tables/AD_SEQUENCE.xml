@@ -81,11 +81,30 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
+      <column name="CONTROL_DIGIT" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[N]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="CALCULATION_METHOD" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="SEQUENCENO_LENGTH" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[V]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="BASE_SEQUENCE_ID" primaryKey="false" required="false" type="VARCHAR" size="32" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_SEQUENCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
       <foreign-key foreignTable="AD_ORG" name="AD_SEQUENCE_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_SEQUENCE" name="AD_SEQUENCE_BASEDOCSEQ">
+        <reference local="BASE_SEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
       <unique name="AD_SEQUENCE_NAME">
         <unique-column name="AD_CLIENT_ID"/>
