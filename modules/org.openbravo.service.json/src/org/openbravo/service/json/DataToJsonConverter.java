@@ -434,10 +434,6 @@ public class DataToJsonConverter {
         final String formattedValue = jsTimeFormat.format(value);
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
       } else if (property.getDomainType() instanceof OrganizationDateTimeDomainType) {
-        // TODO:
-        // 1- get the organization with OBDateUtils.getTimeZoneOrganization(bob) if bob!=null
-        // 2- get the timezone from the org
-        // 3- return toOrganizationTimeZone((Date) value, timezoneId);
         Optional<Organization> org = OBDateUtils.getTimeZoneOrganization(bob);
         String timezoneId = org.isPresent() && organizationStructureProvider != null
             ? (String) organizationStructureProvider.getPropertyFromNode(org.get().getId(),
