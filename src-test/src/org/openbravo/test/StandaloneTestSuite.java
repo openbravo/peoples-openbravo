@@ -67,6 +67,7 @@ import org.openbravo.service.externalsystem.http.OAuth2AccessTokenTest;
 import org.openbravo.service.json.AdvancedQueryBuilderTest;
 import org.openbravo.service.json.JSONWriterToCSVTest;
 import org.openbravo.service.json.JsonUtilsTest;
+import org.openbravo.service.json.OrganizationTimeZoneTest;
 import org.openbravo.synchronization.event.EventTriggeringTest;
 import org.openbravo.synchronization.event.SynchronizationEventTest;
 import org.openbravo.test.accounting.PostDocumentTest;
@@ -356,6 +357,7 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     AdvancedQueryBuilderTest.class, //
     JSONWriterToCSVTest.class, //
     JsonUtilsTest.class, //
+    OrganizationTimeZoneTest.class, //
 
     // service datasource
     ModelDataSourceServiceTest.class, //

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2009-2023 Openbravo SLU
+ * All portions are Copyright (C) 2009-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
@@ -49,13 +50,13 @@ import org.openbravo.base.model.domaintype.HashedStringDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
-import org.openbravo.base.structure.OrganizationEnabled;
 import org.openbravo.base.structure.Traceable;
 import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.security.OrganizationStructureProvider;
 import org.openbravo.erpCommon.utility.OBDateUtils;
+import org.openbravo.model.common.enterprise.Organization;
 
 /**
  * Is responsible for converting Openbravo business objects ({@link BaseOBObject} to a json
@@ -253,12 +254,12 @@ public class DataToJsonConverter {
           }
         }
       }
-
-      if (shouldDisplayOrgDate && bob instanceof Traceable && bob instanceof OrganizationEnabled) {
+      if (shouldDisplayOrgDate && bob instanceof Traceable) {
         Traceable traceable = (Traceable) bob;
-        String orgId = ((OrganizationEnabled) bob).getOrganization().getId();
-        String timezoneId = organizationStructureProvider != null
-            ? (String) organizationStructureProvider.getPropertyFromNode(orgId, "timeZoneId")
+        Optional<Organization> org = OBDateUtils.getTimeZoneOrganization(bob);
+        String timezoneId = org.isPresent() && organizationStructureProvider != null
+            ? (String) organizationStructureProvider.getPropertyFromNode(org.get().getId(),
+                "timeZoneId")
             : null;
         jsonObject.put("orgCreationDate",
             toOrganizationTimeZone(traceable.getCreationDate(), timezoneId));
@@ -290,10 +291,26 @@ public class DataToJsonConverter {
     }
   }
 
+  /**
+   * Used to configure if the organization time zone based audit fields must be calculated or not
+   * when converting a BaseOBObject into JSON.
+   *
+   * @param shouldDisplayOrgDate
+   *          true to calculate the organization time zone based audit or false not calculate them
+   */
   public void setShouldDisplayOrgDate(boolean shouldDisplayOrgDate) {
     this.shouldDisplayOrgDate = shouldDisplayOrgDate;
   }
 
+  /**
+   * Sets the {@link OrganizationStructureProvider} required to calculate the value of the
+   * organization time zone based audit fields.
+   *
+   * @see #setShouldDisplayOrgDate(boolean)
+   *
+   * @param osp
+   *          The {@link OrganizationStructureProvider} used by the converter
+   */
   public void setOrganizationStructureProvider(OrganizationStructureProvider osp) {
     this.organizationStructureProvider = osp;
   }
