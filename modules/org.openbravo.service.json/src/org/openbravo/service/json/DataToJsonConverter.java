@@ -429,10 +429,8 @@ public class DataToJsonConverter {
         Date UTCTime = convertToUTC(localTime);
 
         return xmlTimeFormatWithoutMTOffset.format(UTCTime);
-      } else if (property.getDomainType() instanceof AbsoluteTimeDomainType) {
-        final String formattedValue = jsTimeFormat.format(value);
-        return JsonUtils.convertToCorrectXSDFormat(formattedValue);
-      } else if (property.getDomainType() instanceof AbsoluteDateTimeDomainType) {
+      } else if (property.getDomainType() instanceof AbsoluteTimeDomainType
+          || property.getDomainType() instanceof AbsoluteDateTimeDomainType) {
         final String formattedValue = jsTimeFormat.format(value);
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
       } else if (property.getDomainType() instanceof OrganizationDateTimeDomainType) {
