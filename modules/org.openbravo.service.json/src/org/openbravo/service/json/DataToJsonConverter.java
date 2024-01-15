@@ -47,6 +47,7 @@ import org.openbravo.base.model.domaintype.AbsoluteTimeDomainType;
 import org.openbravo.base.model.domaintype.BinaryDomainType;
 import org.openbravo.base.model.domaintype.EncryptedStringDomainType;
 import org.openbravo.base.model.domaintype.HashedStringDomainType;
+import org.openbravo.base.model.domaintype.OrganizationDateTimeDomainType;
 import org.openbravo.base.model.domaintype.TimestampDomainType;
 import org.openbravo.base.structure.ActiveEnabled;
 import org.openbravo.base.structure.BaseOBObject;
@@ -213,7 +214,7 @@ public class DataToJsonConverter {
         if (value != null) {
           if (property.isPrimitive()) {
             // TODO: format!
-            jsonObject.put(property.getName(), convertPrimitiveValue(property, value));
+            jsonObject.put(property.getName(), convertPrimitiveValue(property, value, bob));
           } else {
             addBaseOBObject(jsonObject, property, property.getName(),
                 property.getReferencedProperty(), (BaseOBObject) value);
@@ -249,7 +250,7 @@ public class DataToJsonConverter {
               jsonObject.put(replaceDots(additionalProperty), value);
             } else {
               jsonObject.put(replaceDots(additionalProperty),
-                  convertPrimitiveValue(property, value));
+                  convertPrimitiveValue(property, value, bob));
             }
           }
         }
@@ -415,8 +416,11 @@ public class DataToJsonConverter {
     }
   }
 
-  // TODO: do some form of formatting here?
   protected Object convertPrimitiveValue(Property property, Object value) {
+    return convertPrimitiveValue(property, value, null);
+  }
+
+  private Object convertPrimitiveValue(Property property, Object value, BaseOBObject bob) {
     final Class<?> clz = property.getPrimitiveObjectType();
     if (Date.class.isAssignableFrom(clz)) {
       if (property.getDomainType() instanceof TimestampDomainType) {
@@ -431,6 +435,17 @@ public class DataToJsonConverter {
       } else if (property.getDomainType() instanceof AbsoluteDateTimeDomainType) {
         final String formattedValue = jsTimeFormat.format(value);
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
+      } else if (property.getDomainType() instanceof OrganizationDateTimeDomainType) {
+        // TODO:
+        // 1- get the organization with OBDateUtils.getTimeZoneOrganization(bob) if bob!=null
+        // 2- get the timezone from the org
+        // 3- return toOrganizationTimeZone((Date) value, timezoneId);
+        Optional<Organization> org = OBDateUtils.getTimeZoneOrganization(bob);
+        String timezoneId = org.isPresent() && organizationStructureProvider != null
+            ? (String) organizationStructureProvider.getPropertyFromNode(org.get().getId(),
+                "timeZoneId")
+            : null;
+        return toOrganizationTimeZone((Date) value, timezoneId);
       } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
         final String formattedValue = xmlDateTimeFormat.format(value);
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
