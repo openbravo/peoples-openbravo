@@ -257,7 +257,7 @@ public class DataToJsonConverter {
       }
       if (shouldDisplayOrgDate && bob instanceof Traceable) {
         Traceable traceable = (Traceable) bob;
-        String timezoneId = getTimeZoneFromOrganization(bob);
+        String timezoneId = getTimeZoneFromBOB(bob);
         jsonObject.put("orgCreationDate",
             toOrganizationTimeZone(traceable.getCreationDate(), timezoneId));
         jsonObject.put("orgUpdatedDate",
@@ -430,7 +430,7 @@ public class DataToJsonConverter {
         final String formattedValue = jsTimeFormat.format(value);
         return JsonUtils.convertToCorrectXSDFormat(formattedValue);
       } else if (property.getDomainType() instanceof OrganizationDateTimeDomainType) {
-        String timezoneId = getTimeZoneFromOrganization(bob);
+        String timezoneId = getTimeZoneFromBOB(bob);
         return toOrganizationTimeZone((Date) value, timezoneId);
       } else if (property.isDatetime() || Timestamp.class.isAssignableFrom(clz)) {
         final String formattedValue = xmlDateTimeFormat.format(value);
@@ -509,14 +509,14 @@ public class DataToJsonConverter {
     this.entity = entity;
   }
 
-  private String getTimeZoneFromOrganization(BaseOBObject bob) {
-    if (bob != null) {
-      Optional<Organization> org = OBDateUtils.getTimeZoneOrganization(bob);
-      return org.isPresent() && organizationStructureProvider != null
-          ? (String) organizationStructureProvider.getPropertyFromNode(org.get().getId(),
-              "timeZoneId")
-          : null;
+  private String getTimeZoneFromBOB(BaseOBObject bob) {
+    if (bob == null) {
+      return null;
     }
-    return null;
+    Optional<Organization> org = OBDateUtils.getTimeZoneOrganization(bob);
+    return org.isPresent() && organizationStructureProvider != null
+        ? (String) organizationStructureProvider.getPropertyFromNode(org.get().getId(),
+            "timeZoneId")
+        : null;
   }
 }
