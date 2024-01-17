@@ -20,9 +20,15 @@ package org.openbravo.service.json;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.codehaus.jettison.json.JSONException;
@@ -30,6 +36,10 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.OrganizationDateTimeDomainType;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
@@ -109,6 +119,53 @@ public class OrganizationTimeZoneTest extends WeldBaseTest {
         equalTo("10-01-2024 12:30:20 (Europe/Madrid)"));
     assertThat("Expected orgUpdatedDate", json.getString("orgUpdatedDate"),
         equalTo("12-01-2024 17:40:30 (Europe/Madrid)"));
+  }
+
+  @Test
+  public void calculateOrgTimeZoneReferenceColumns() throws JSONException {
+    Invoice invoice = spy(getInvoice(TestConstants.Orgs.FB_GROUP));
+    Entity invoiceEntity = spy(ModelProvider.getInstance().getEntity(Invoice.class));
+    List<Property> properties = new ArrayList<>(invoiceEntity.getProperties());
+    Property property = mock(Property.class);
+    properties.add(property);
+    OrganizationDateTimeDomainType dateTimeDomainType = new OrganizationDateTimeDomainType();
+    String columnName = "computedOrgTimeZoneCreatedColumn";
+
+    when(invoiceEntity.getProperties()).thenReturn(properties);
+    when(invoice.getEntity()).thenReturn(invoiceEntity);
+    when(property.getName()).thenReturn(columnName);
+    doReturn(getCreationDate()).when(invoice).get(columnName);
+    when(property.isPrimitive()).thenReturn(true);
+    when(property.getDomainType()).thenReturn(dateTimeDomainType);
+    doReturn(Date.class).when(property).getPrimitiveObjectType();
+    JSONObject json = getDataToJsonConverter().toJsonObject(invoice, DataResolvingMode.FULL);
+
+    assertThat("Expected " + columnName, json.getString(columnName),
+        equalTo("10-01-2024 05:30:20 (America/Chicago)"));
+  }
+
+  @Test
+  @Issue("54285")
+  public void calculateOrgTimeZoneReferenceColumnsWithException() throws JSONException {
+    Order order = spy(getReturn(TestConstants.Orgs.ESP, TestConstants.Orgs.ESP_NORTE));
+    Entity orderEntity = spy(ModelProvider.getInstance().getEntity(Order.class));
+    List<Property> properties = new ArrayList<>(orderEntity.getProperties());
+    Property property = mock(Property.class);
+    properties.add(property);
+    OrganizationDateTimeDomainType dateTimeDomainType = new OrganizationDateTimeDomainType();
+    String columnName = "computedOrgTimeZoneCreatedColumn";
+
+    when(orderEntity.getProperties()).thenReturn(properties);
+    when(order.getEntity()).thenReturn(orderEntity);
+    when(property.getName()).thenReturn(columnName);
+    doReturn(getCreationDate()).when(order).get(columnName);
+    when(property.isPrimitive()).thenReturn(true);
+    when(property.getDomainType()).thenReturn(dateTimeDomainType);
+    doReturn(Date.class).when(property).getPrimitiveObjectType();
+    JSONObject json = getDataToJsonConverter().toJsonObject(order, DataResolvingMode.FULL);
+
+    assertThat("Expected " + "columnName", json.getString(columnName),
+        equalTo("10-01-2024 12:30:20 (Europe/Madrid)"));
   }
 
   private DataToJsonConverter getDataToJsonConverter() {

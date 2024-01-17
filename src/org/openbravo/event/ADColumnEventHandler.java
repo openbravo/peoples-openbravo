@@ -38,7 +38,8 @@ import org.openbravo.model.ad.datamodel.Column;
  */
 class ADColumnEventHandler extends EntityPersistenceEventObserver {
 
-  private static Entity[] entities = { ModelProvider.getInstance().getEntity(Column.ENTITY_NAME) };
+  private static final Entity[] entities = {
+      ModelProvider.getInstance().getEntity(Column.ENTITY_NAME) };
   private static final String ORG_DATE_TIME_REFERENCE = "F8428F177B6146D3A13C4830FB87DE49";
 
   @Override
