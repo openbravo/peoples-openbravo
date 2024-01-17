@@ -213,7 +213,6 @@ public class DataToJsonConverter {
         }
         if (value != null) {
           if (property.isPrimitive()) {
-            // TODO: format!
             jsonObject.put(property.getName(), convertPrimitiveValue(property, value, bob));
           } else {
             addBaseOBObject(jsonObject, property, property.getName(),
@@ -310,6 +309,17 @@ public class DataToJsonConverter {
    */
   public void setOrganizationStructureProvider(OrganizationStructureProvider osp) {
     this.organizationStructureProvider = osp;
+  }
+
+  private String getTimeZoneFromBOB(BaseOBObject bob) {
+    if (bob == null) {
+      return null;
+    }
+    Optional<Organization> org = OBDateUtils.getTimeZoneOrganization(bob);
+    return org.isPresent() && organizationStructureProvider != null
+        ? (String) organizationStructureProvider.getPropertyFromNode(org.get().getId(),
+            "timeZoneId")
+        : null;
   }
 
   private String toOrganizationTimeZone(Date date, String organizationTimezone) {
@@ -507,16 +517,5 @@ public class DataToJsonConverter {
 
   public void setEntity(Entity entity) {
     this.entity = entity;
-  }
-
-  private String getTimeZoneFromBOB(BaseOBObject bob) {
-    if (bob == null) {
-      return null;
-    }
-    Optional<Organization> org = OBDateUtils.getTimeZoneOrganization(bob);
-    return org.isPresent() && organizationStructureProvider != null
-        ? (String) organizationStructureProvider.getPropertyFromNode(org.get().getId(),
-            "timeZoneId")
-        : null;
   }
 }

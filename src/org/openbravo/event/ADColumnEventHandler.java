@@ -28,17 +28,15 @@ import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.datamodel.Column;
-import org.openbravo.model.ad.domain.Preference;
 
 /**
- * The purpose of the event handler is to ensure that only computed {@link Column} can use the
- * Organization DateTime {@link Preference}, i.e. only those columns that use
- * {@link Column#PROPERTY_SQLLOGIC}.
+ * The purpose of the event handler is to ensure that only computed columns can use the Organization
+ * DateTime reference.
  * 
  * @author Eugen Hamuraru
  *
  */
-public class ADColumnEventHandler extends EntityPersistenceEventObserver {
+class ADColumnEventHandler extends EntityPersistenceEventObserver {
 
   private static Entity[] entities = { ModelProvider.getInstance().getEntity(Column.ENTITY_NAME) };
   private static final String ORG_DATE_TIME_REFERENCE = "F8428F177B6146D3A13C4830FB87DE49";
@@ -48,13 +46,6 @@ public class ADColumnEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
-  /**
-   * Check when a new Column is saved, if the {@link Column#PROPERTY_SQLLOGIC} is not defined then
-   * the Organization DateTime could not be used
-   *
-   * @param event
-   *          the event for a entity saved for first time.
-   */
   public void onSave(@Observes EntityNewEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -63,13 +54,6 @@ public class ADColumnEventHandler extends EntityPersistenceEventObserver {
     checkReference(column);
   }
 
-  /**
-   * Check when a new Column is updated, if the {@link Column#PROPERTY_SQLLOGIC} is not defined then
-   * the Organization DateTime could not be used
-   *
-   * @param event
-   *          the event for a updated entity.
-   */
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -79,8 +63,8 @@ public class ADColumnEventHandler extends EntityPersistenceEventObserver {
   }
 
   /**
-   * @param event
-   *          the event for a updated entity.
+   * @param column
+   *          the created or updated {@link Column}.
    * 
    * @throws OBException
    *           exception if the given Column {@link Column#PROPERTY_SQLLOGIC} property is not
