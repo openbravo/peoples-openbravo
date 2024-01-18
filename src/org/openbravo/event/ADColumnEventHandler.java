@@ -69,7 +69,7 @@ class ADColumnEventHandler extends EntityPersistenceEventObserver {
    * 
    * @throws OBException
    *           exception if the given Column {@link Column#PROPERTY_SQLLOGIC} property is not
-   *           defined and the Organization DateTime preference is set.
+   *           defined and the Organization DateTime reference is set.
    */
   private void checkReference(Column column) {
     if (column.getSqllogic() == null

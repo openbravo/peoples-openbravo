@@ -48,6 +48,7 @@ import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.datamodel.Table;
 import org.openbravo.model.ad.domain.Reference;
 import org.openbravo.model.ad.module.Module;
 import org.openbravo.model.ad.system.Client;
@@ -156,27 +157,34 @@ public class OrganizationTimeZoneTest extends WeldBaseTest {
   @Test
   public void doNotAllowOrgTimeZoneReferenceColumnsWithouSqllogic() {
     try {
-      OBContext.setAdminMode(false);
-      Module module = OBDal.getInstance().get(Module.class, "0");
+      Column column = prepareColumnWithOrgDateTimeReference();
 
-      module.setInDevelopment(true);
-      Column column = OBProvider.getInstance().get(Column.class);
-      column.setActive(true);
-      column.setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
-      column.setOrganization(
-          OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
-      column.setName("testingColumn");
-      column.setDBColumnName("testingColumns");
-      column.setModule(module);
-      column.setReference((Reference) OBDal.getInstance()
-          .getProxy(Reference.ENTITY_NAME, "F8428F177B6146D3A13C4830FB87DE49"));
       OBException exceptionRule = assertThrows(OBException.class,
           () -> OBDal.getInstance().save(column));
       assertThat(exceptionRule.getMessage(), equalTo(
           "The reference Organization DateTime must be used with a computed column (Sqllogic cannot be empty)."));
+
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private Column prepareColumnWithOrgDateTimeReference() {
+    OBContext.setAdminMode(false);
+    Module module = OBDal.getInstance().get(Module.class, "0");
+    module.setInDevelopment(true);
+    Column column = OBProvider.getInstance().get(Column.class);
+    column.setActive(true);
+    column.setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
+    column
+        .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
+    column.setTable(OBDal.getInstance().getProxy(Table.class, TestConstants.Tables.C_ORDER));
+    column.setName("testingColumn");
+    column.setDBColumnName("testingColumns");
+    column.setModule(module);
+    column.setReference((Reference) OBDal.getInstance()
+        .getProxy(Reference.ENTITY_NAME, "F8428F177B6146D3A13C4830FB87DE49"));
+    return column;
   }
 
   private BaseOBObject prepareBOBWithOrgDateTimeProperty(BaseOBObject bob, String propertyName) {
