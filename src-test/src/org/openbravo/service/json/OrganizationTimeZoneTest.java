@@ -20,6 +20,7 @@ package org.openbravo.service.json;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -36,6 +37,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
@@ -45,6 +47,10 @@ import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
@@ -145,6 +151,32 @@ public class OrganizationTimeZoneTest extends WeldBaseTest {
 
     assertThat("Expected " + propertyName, json.getString(propertyName),
         equalTo("10-01-2024 12:30:20 (Europe/Madrid)"));
+  }
+
+  @Test
+  public void doNotAllowOrgTimeZoneReferenceColumnsWithouSqllogic() {
+    try {
+      OBContext.setAdminMode(false);
+      Module module = OBDal.getInstance().get(Module.class, "0");
+
+      module.setInDevelopment(true);
+      Column column = OBProvider.getInstance().get(Column.class);
+      column.setActive(true);
+      column.setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
+      column.setOrganization(
+          OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
+      column.setName("testingColumn");
+      column.setDBColumnName("testingColumns");
+      column.setModule(module);
+      column.setReference((Reference) OBDal.getInstance()
+          .getProxy(Reference.ENTITY_NAME, "F8428F177B6146D3A13C4830FB87DE49"));
+      OBException exceptionRule = assertThrows(OBException.class,
+          () -> OBDal.getInstance().save(column));
+      assertThat(exceptionRule.getMessage(), equalTo(
+          "The reference Organization DateTime must be used with a computed column (Sqllogic cannot be empty)."));
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private BaseOBObject prepareBOBWithOrgDateTimeProperty(BaseOBObject bob, String propertyName) {
