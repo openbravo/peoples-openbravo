@@ -58,8 +58,8 @@
         <reference local="AD_SEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
       <unique name="M_ORG_SEQUENCE_ORGSEQ_UN">
-        <unique-column name="AD_ORG_ID"/>
         <unique-column name="M_REFINVENTORY_TYPE_ID"/>
+        <unique-column name="AD_ORG_ID"/>
       </unique>
       <check name="M_ORG_SEQUENCE_ISACTIVE_CH"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
