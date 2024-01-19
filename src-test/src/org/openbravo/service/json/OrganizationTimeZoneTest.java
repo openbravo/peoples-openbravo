@@ -20,9 +20,16 @@ package org.openbravo.service.json;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.codehaus.jettison.json.JSONException;
@@ -30,11 +37,21 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openbravo.base.exception.OBException;
+import org.openbravo.base.model.Entity;
+import org.openbravo.base.model.ModelProvider;
+import org.openbravo.base.model.Property;
+import org.openbravo.base.model.domaintype.OrganizationDateTimeDomainType;
 import org.openbravo.base.provider.OBProvider;
+import org.openbravo.base.structure.BaseOBObject;
 import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.model.common.enterprise.DocumentType;
+import org.openbravo.model.ad.datamodel.Column;
+import org.openbravo.model.ad.datamodel.Table;
+import org.openbravo.model.ad.domain.Reference;
+import org.openbravo.model.ad.module.Module;
+import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.invoice.Invoice;
 import org.openbravo.model.common.order.Order;
@@ -101,7 +118,7 @@ public class OrganizationTimeZoneTest extends WeldBaseTest {
   @Test
   @Issue("54285")
   public void calculateFieldsWithException() throws JSONException {
-    Order order = getReturn(TestConstants.Orgs.ESP, TestConstants.Orgs.ESP_NORTE);
+    Order order = getOrder(TestConstants.Orgs.ESP, TestConstants.Orgs.ESP_NORTE);
 
     JSONObject json = getDataToJsonConverter().toJsonObject(order, DataResolvingMode.FULL);
 
@@ -109,6 +126,82 @@ public class OrganizationTimeZoneTest extends WeldBaseTest {
         equalTo("10-01-2024 12:30:20 (Europe/Madrid)"));
     assertThat("Expected orgUpdatedDate", json.getString("orgUpdatedDate"),
         equalTo("12-01-2024 17:40:30 (Europe/Madrid)"));
+  }
+
+  @Test
+  @Issue("54339")
+  public void calculateOrgTimeZoneReferenceField() throws JSONException {
+    Invoice invoice = getInvoice(TestConstants.Orgs.FB_GROUP);
+    String propertyName = "computedOrgTimeZoneCreatedColumn";
+    BaseOBObject bob = prepareBOBWithOrgDateTimeProperty(invoice, propertyName);
+
+    JSONObject json = getDataToJsonConverter().toJsonObject(bob, DataResolvingMode.FULL);
+
+    assertThat("Expected " + propertyName, json.getString(propertyName),
+        equalTo("10-01-2024 05:30:20 (America/Chicago)"));
+  }
+
+  @Test
+  @Issue("54339")
+  public void calculateOrgTimeZoneReferenceFieldWithException() throws JSONException {
+    Order order = getOrder(TestConstants.Orgs.ESP, TestConstants.Orgs.ESP_NORTE);
+    String propertyName = "computedOrgTimeZoneCreatedColumn";
+    BaseOBObject bob = prepareBOBWithOrgDateTimeProperty(order, propertyName);
+
+    JSONObject json = getDataToJsonConverter().toJsonObject(bob, DataResolvingMode.FULL);
+
+    assertThat("Expected " + propertyName, json.getString(propertyName),
+        equalTo("10-01-2024 12:30:20 (Europe/Madrid)"));
+  }
+
+  @Test
+  public void doNotAllowOrgTimeZoneReferenceColumnsWithouSqllogic() {
+    OBException exceptionRule = assertThrows(OBException.class,
+        () -> createColumnWithOrgDateTimeReference());
+    assertThat(exceptionRule.getMessage(), equalTo(
+        "The reference Organization DateTime must be used with a computed column (Sqllogic cannot be empty)."));
+  }
+
+  private Column createColumnWithOrgDateTimeReference() {
+    OBContext.setAdminMode(false);
+    try {
+      Module module = OBDal.getInstance().get(Module.class, "0");
+      module.setInDevelopment(true);
+      Column column = OBProvider.getInstance().get(Column.class);
+      column.setActive(true);
+      column.setClient(OBDal.getInstance().getProxy(Client.class, TestConstants.Clients.SYSTEM));
+      column.setOrganization(
+          OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
+      column.setTable(OBDal.getInstance().getProxy(Table.class, TestConstants.Tables.C_ORDER));
+      column.setName("testingColumn");
+      column.setDBColumnName("testingColumns");
+      column.setModule(module);
+      column.setReference((Reference) OBDal.getInstance()
+          .getProxy(Reference.ENTITY_NAME, "F8428F177B6146D3A13C4830FB87DE49"));
+      OBDal.getInstance().save(column);
+      return column;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
+  }
+
+  private BaseOBObject prepareBOBWithOrgDateTimeProperty(BaseOBObject bob, String propertyName) {
+    Property property = mock(Property.class);
+    when(property.isPrimitive()).thenReturn(true);
+    when(property.getDomainType()).thenReturn(new OrganizationDateTimeDomainType());
+    when(property.getName()).thenReturn(propertyName);
+    doReturn(Date.class).when(property).getPrimitiveObjectType();
+
+    Entity entity = spy(ModelProvider.getInstance().getEntity(bob.getEntityName()));
+    List<Property> properties = new ArrayList<>(entity.getProperties());
+    properties.add(property);
+    when(entity.getProperties()).thenReturn(properties);
+
+    BaseOBObject bobSpy = spy(bob);
+    when(bobSpy.getEntity()).thenReturn(entity);
+    doReturn(getCreationDate()).when(bobSpy).get(propertyName);
+
+    return bobSpy;
   }
 
   private DataToJsonConverter getDataToJsonConverter() {
@@ -127,12 +220,10 @@ public class OrganizationTimeZoneTest extends WeldBaseTest {
     return invoice;
   }
 
-  private Order getReturn(String orgId, String trxOrgId) {
+  private Order getOrder(String orgId, String trxOrgId) {
     Order order = OBProvider.getInstance().get(Order.class);
     order.setOrganization(OBDal.getInstance().getProxy(Organization.class, orgId));
     order.setTrxOrganization(OBDal.getInstance().getProxy(Organization.class, trxOrgId));
-    order.setTransactionDocument(
-        OBDal.getInstance().get(DocumentType.class, "D964E402700D418CA1784DB162C7C67F"));
     order.setCreationDate(getCreationDate());
     order.setUpdated(getUpdationDate());
     return order;
