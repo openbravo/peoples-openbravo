@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2011-2023 Openbravo SLU
+ * All portions are Copyright (C) 2011-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -113,6 +113,9 @@ isc.OBTextItem.addProperties({
       value = this.getValue();
     } else if (this.mask) {
       value = this.mask;
+    }
+    if (value === undefined) {
+      return value;
     }
     // unescape before escaping to prevent escaping text that is already escaped
     unescapedDisplayValue = value.unescapeHTML();
