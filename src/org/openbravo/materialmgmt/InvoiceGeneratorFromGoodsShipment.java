@@ -218,6 +218,7 @@ public class InvoiceGeneratorFromGoodsShipment {
         OBDal.getInstance().refresh(invoice);
       }
     } catch (Exception e) {
+      log.error("Error when creating invoice considering invoice terms.", e);
       OBDal.getInstance().rollbackAndClose();
       Throwable ex = DbUtility.getUnderlyingSQLException(e);
       throw new OBException(OBMessageUtils.translateError(ex.getMessage()).getMessage());
@@ -332,7 +333,8 @@ public class InvoiceGeneratorFromGoodsShipment {
     // Calculate QtyInvoiced for OrderLine in this same invoice
     if (invoice != null) {
       for (InvoiceLine invLine : invoice.getInvoiceLineList()) {
-        if (StringUtils.equals(invLine.getSalesOrderLine().getId(), orderLine.getId())) {
+        if (invLine.getSalesOrderLine() != null
+            && StringUtils.equals(invLine.getSalesOrderLine().getId(), orderLine.getId())) {
           qtyPreviouslyInvoiced = qtyPreviouslyInvoiced.add(invLine.getInvoicedQuantity());
         }
       }
