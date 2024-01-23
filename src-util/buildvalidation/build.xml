@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2010-2022 Openbravo SLU
+* All portions are Copyright (C) 2010-2024 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -72,6 +72,7 @@
     </java>
     <javac srcdir="${build.validation.sqlc}/src" includes="**/*.java" destdir="${build.validation}" fork="true" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="buildvalidation.class.path" />
+      <compilerarg line="${javac.proc}" />
     </javac>
   </target>
 
@@ -85,6 +86,7 @@
     </java>
     <javac srcdir="${base.modules}/${module}/src-util/buildvalidation/src" includes="**/*.java" destdir="${base.modules}/${module}/build/classes" fork="true" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="buildvalidation.class.path" />
+      <compilerarg line="${javac.proc}" />
     </javac>
   </target>
 
@@ -93,12 +95,14 @@
            includes="src-util/buildvalidation/src/**/*.java"
            destdir="${build.validation}" fork="true" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="buildvalidation.class.path" />
+      <compilerarg line="${javac.proc}" />
     </javac>
   </target>
 
   <target name="javacModule" unless="checkCore">
     <javac srcdir="${main.dir}" includes="modules/${module}/src-util/buildvalidation/**/*.java" fork="true" destdir="${base.modules}/${module}/build/classes" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="buildvalidation.class.path" />
+      <compilerarg line="${javac.proc}" />
     </javac>
   </target>
   

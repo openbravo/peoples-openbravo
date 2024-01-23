@@ -13,7 +13,7 @@
  * and  limitations under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2005-2017 Openbravo SLU 
+ * All portions are Copyright (C) 2005-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s): Openbravo S.L.U.
  ************************************************************************
@@ -77,6 +77,7 @@ build: compile the project, including the xsql's files and generates the jar
   <target name="compileSqlc" depends="sqlc">
     <javac srcdir="${build.wad.sqlc}/src" includes="**/*.java" destdir="${build.wad}" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" fork="true" includeantruntime="false">
       <classpath refid="wad.class.path" />
+      <compilerarg line="${javac.proc}" />
     </javac>
   </target>
 
@@ -91,6 +92,7 @@ build: compile the project, including the xsql's files and generates the jar
     <javac destdir="${build.wad}" deprecation="on" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" fork="true" includeantruntime="false">
       <src refid="my-src-wad-dirs" />
       <classpath refid="wad.class.path" />
+      <compilerarg line="${javac.proc}" />
     </javac>
 
     <copy todir="${build.wad}" encoding="UTF-8">
