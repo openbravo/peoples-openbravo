@@ -208,6 +208,34 @@
       <foreign-key foreignTable="C_EXTBP_CONFIG_FILTER" name="C_EXTBPCONFPROP_CFGFILTER_FK">
         <reference local="C_EXTBP_CONFIG_FILTER_ID" foreign="C_EXTBP_CONFIG_FILTER_ID"/>
       </foreign-key>
+      <column name="VALIDATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[no]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="VALIDATIONTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[empty]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="SELECTORNOTIFICATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[no]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="SELECTORNOTIF_SEQNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="HEADERNOTIFICATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[no]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="HEADERNOTIF_SEQNO" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
+      <column name="VALIDATIONREGEXP" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault/>
+      </column>
       <foreign-key foreignTable="AD_CLIENT" name="C_EXTBPCONFPROP_CLIENT_FK">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
