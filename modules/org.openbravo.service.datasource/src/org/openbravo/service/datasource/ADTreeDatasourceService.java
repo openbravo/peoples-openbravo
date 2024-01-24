@@ -346,7 +346,6 @@ public class ADTreeDatasourceService extends TreeDatasourceService {
    *          the id of the node to be checked
    * @param hqlWhereClause
    *          the where clause to be applied to the children
-   * @return
    */
   protected boolean nodeHasChildren(Entity entity, String nodeId, String hqlWhereClause) {
     //@formatter:off

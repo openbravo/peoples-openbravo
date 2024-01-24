@@ -67,7 +67,7 @@ public abstract class BaseActionHandler implements ActionHandler {
 
   /**
    * Utility function used by execute() that lets us extend the part where we extract the list of
-   * parameters of the request and returns it as a Map<String, Object>
+   * parameters of the request and returns it as a Map&lt;String, Object&gt;
    *
    * @param request
    *          The request

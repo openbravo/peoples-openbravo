@@ -241,7 +241,7 @@ public class TestUtils {
    * Returns a new Goods Receipt/Shipment Line based on the given one. It is a clone of the first
    * one but with different product
    * 
-   * @param line
+   * @param oldLine
    *          Original Goods Receipt/Shipment
    * @param newInOut
    *          new Goods Receipt/Shipment (a clone of the original one)
