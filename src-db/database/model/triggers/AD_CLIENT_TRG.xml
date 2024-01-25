@@ -17,7 +17,7 @@
     * parts created by ComPiere are Copyright (C) ComPiere, Inc.;
     * All Rights Reserved.
     * Contributor(s): Openbravo SLU
-    * Contributions are Copyright (C) 2001-2008 Openbravo, S.L.U.
+    * Contributions are Copyright (C) 2001-2024 Openbravo, S.L.U.
     *
     * Specifically, this derivative work is based upon the following Compiere
     * file and version.
@@ -36,7 +36,6 @@ BEGIN
     
     IF AD_isTriggerEnabled()='N' THEN RETURN;
     END IF;
-
 
   -- See also: AD_Sequence_Check
   FOR CUR_DSequence IN
@@ -69,7 +68,8 @@ BEGIN
         Description, VFormat, IsAutoSequence,
         IncrementNo, StartNo, CurrentNext,
         CurrentNextSys, IsTableID,
-        Prefix, Suffix, StartNewYear
+        Prefix, Suffix, StartNewYear,
+		Calculation_Method
       )
       VALUES
       (
@@ -79,7 +79,8 @@ BEGIN
         NULL,  'Y', 1,
         10000000, 10000000, 10000000,
         'N',  NULL,
-        NULL,  'N'
+        NULL,  'N',
+		'A'
       )
       ;
   END LOOP;
