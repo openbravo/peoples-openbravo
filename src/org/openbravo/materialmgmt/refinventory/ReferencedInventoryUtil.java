@@ -43,6 +43,7 @@ import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
+import org.openbravo.model.materialmgmt.onhandquantity.OrganizationSequence;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
@@ -57,6 +58,8 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 public class ReferencedInventoryUtil {
   public static final String REFERENCEDINVENTORYPREFIX = "[";
   public static final String REFERENCEDINVENTORYSUFFIX = "]";
+  private static final String GLOBAL_SEQUENCE_TYPE = "G";
+  private static final String PER_STORE_SEQUENCE_TYPE = "P";
 
   /**
    * Create and return a new AttributeSetInstance from the given originalAttributeSetInstance and
@@ -252,5 +255,104 @@ public class ReferencedInventoryUtil {
     sdQuery.setParameter("uomId", storageDetail.getUOM().getId());
     sdQuery.setFetchSize(1000);
     return sdQuery.scroll(ScrollMode.FORWARD_ONLY);
+  }
+
+  public static String getNextProposedValueWithoutUpdatingSequence(
+      final String referencedInventoryTypeId, final String orgId, final boolean updateNext) {
+    Sequence seq = null;
+    ReferencedInventoryType handlingUnitType = OBDal.getInstance()
+        .get(ReferencedInventoryType.class, referencedInventoryTypeId);
+    if (StringUtils.equals(GLOBAL_SEQUENCE_TYPE, handlingUnitType.getSequenceType())) {
+      // Parent Sequence from Handling Unit Header
+      seq = handlingUnitType.getSequence();
+    } else {
+      if (StringUtils.equals(PER_STORE_SEQUENCE_TYPE, handlingUnitType.getSequenceType())) {
+        // Parent Sequence from Organization Sequence Tab
+        seq = ReferencedInventoryUtil.getPerStoreSequence(referencedInventoryTypeId, orgId);
+      }
+    }
+    if (seq != null) {
+      // Base Sequence
+      Sequence baseSeq = seq.getBaseSequence();
+      if (baseSeq != null) {
+        String baseSeqPrefixA2 = baseSeq.getPrefix();
+        String storeCodeB = OBDal.getInstance().get(Organization.class, orgId).getSearchKey();
+        String sequentialNumberC = ReferencedInventoryUtil.getDocumentNo(updateNext, baseSeq);
+
+        // Append as many zeros as prefix to match the length of 5 digit
+        sequentialNumberC = String.format("%5s", sequentialNumberC).replace(' ', '0');
+
+        int controlDigitD = ReferencedInventoryUtil
+            .getControlDigit(baseSeqPrefixA2 + storeCodeB + sequentialNumberC);
+
+        String gTIN13 = baseSeqPrefixA2 + storeCodeB + sequentialNumberC + controlDigitD;
+
+        String parentDocSeqPrefixA1 = seq.getPrefix();
+        String parentDocSeqSuffixE = seq.getSuffix();
+
+        int controlDigitF = ReferencedInventoryUtil
+            .getControlDigit(parentDocSeqPrefixA1 + gTIN13 + parentDocSeqSuffixE);
+
+        String sSCC = parentDocSeqPrefixA1 + gTIN13 + parentDocSeqSuffixE + controlDigitF;
+
+        if (updateNext) {
+          return StringUtils.isBlank(sSCC) ? "" : sSCC;
+        } else {
+          return StringUtils.isBlank(sSCC) ? "" : "<" + sSCC + ">";
+        }
+      }
+    }
+    return null;
+  }
+
+  public static Sequence getPerStoreSequence(final String referencedInventoryTypeId, String orgId) {
+    final OBCriteria<OrganizationSequence> criteria = OBDao.getFilteredCriteria(
+        OrganizationSequence.class,
+        Restrictions.eq(OrganizationSequence.PROPERTY_REFERENCEDINVENTORYTYPE + ".id",
+            referencedInventoryTypeId),
+        Restrictions.eq(AttributeSetInstance.PROPERTY_ORGANIZATION + ".id", orgId));
+    criteria.setMaxResults(1);
+    OrganizationSequence orgSeq = (OrganizationSequence) criteria.uniqueResult();
+    return orgSeq.getSequence();
+  }
+
+  public static String getDocumentNo(boolean updateNext, Sequence seqParam) {
+    if (seqParam == null) {
+      return null;
+    }
+    Sequence seq = FIN_Utility.getSequenceAndLockIfUpdateNext(updateNext, seqParam);
+    return getNextDocNumberAndIncrementSeqIfUpdateNext(updateNext, seq);
+
+  }
+
+  private static String getNextDocNumberAndIncrementSeqIfUpdateNext(final boolean updateNext,
+      final Sequence seq) {
+    final StringBuilder nextDocNumber = new StringBuilder();
+    nextDocNumber.append(seq.getNextAssignedNumber().toString());
+    FIN_Utility.incrementSeqIfUpdateNext(updateNext, seq);
+    return nextDocNumber.toString();
+  }
+
+  public static int getControlDigit(String sequence) {
+    if (sequence == null || sequence.trim().isEmpty()) {
+      throw new IllegalArgumentException("Invalid sequence");
+    }
+    int sum = 0;
+    boolean isOddIndexedDigit = true;
+    String reverserSequence = new StringBuilder(sequence).reverse().toString();
+    for (int i = 0; i <= reverserSequence.length() - 1; i++) {
+      char digitChar = reverserSequence.charAt(i);
+      if (!Character.isDigit(digitChar)) {
+        throw new IllegalArgumentException("Invalid character in sequence");
+      }
+      int digit = Character.getNumericValue(digitChar);
+      if (isOddIndexedDigit) {
+        sum += digit * 3;
+      } else {
+        sum += digit;
+      }
+      isOddIndexedDigit = !isOddIndexedDigit;
+    }
+    return (10 - (sum % 10)) % 10;
   }
 }

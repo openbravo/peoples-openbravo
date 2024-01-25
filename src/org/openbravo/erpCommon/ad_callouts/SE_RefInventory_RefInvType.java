@@ -26,7 +26,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
+import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 
 /**
  * Sets the proposed value from the sequence associated to the referenced inventory type. The
@@ -35,6 +37,7 @@ import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
  */
 public class SE_RefInventory_RefInvType extends SimpleCallout {
   private static final Logger log = LogManager.getLogger();
+  private static final String NONE_SEQUENCE_TYPE = "N";
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
@@ -42,8 +45,14 @@ public class SE_RefInventory_RefInvType extends SimpleCallout {
       OBContext.setAdminMode(true);
       final String referencedInventoryTypeId = info.getStringParameter("inpmRefinventoryTypeId",
           IsIDFilter.instance);
-      final String proposedValue = getNextProposedValueWithoutUpdatingSequence(
-          referencedInventoryTypeId);
+      final String orgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
+      ReferencedInventoryType handlingUnitType = OBDal.getInstance()
+          .get(ReferencedInventoryType.class, referencedInventoryTypeId);
+      final String proposedValue = StringUtils.equals(NONE_SEQUENCE_TYPE,
+          handlingUnitType.getSequenceType())
+              ? getNextProposedValueWithoutUpdatingSequence(referencedInventoryTypeId)
+              : ReferencedInventoryUtil.getNextProposedValueWithoutUpdatingSequence(
+                  referencedInventoryTypeId, orgId, false);
       info.addResult("inpvalue", proposedValue);
     } catch (Exception logAndIgnore) {
       log.warn("Unexpected error in callout " + this.getClass().getName(), logAndIgnore);

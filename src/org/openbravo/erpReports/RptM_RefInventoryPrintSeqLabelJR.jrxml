@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PrintHUTypeSequenceLabelReport" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="e28245b7-c848-4637-a242-22fc69491184">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DB Omni"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<parameter name="M_REFINVENTORY_ID" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT RI.VALUE AS SSCC_CODE,
+HU.DESCRIPTION||'0' AS GTIN13,
+O.SOCIAL_NAME AS COMPANYNAME,
+O.VALUE AS STOREID,
+O.NAME AS STORENAME,
+O.NAME AS OWNING_STORENAME,
+'' AS STORETYPECODE,
+RI.CREATED AS CREATIONDATETIME,
+RI.CREATEDBY AS CREATEBYUSER,
+RI.UPDATED AS LASTMODIFIED_DATETIME,
+RI.UPDATEDBY AS LASTMODIFIEDBY_USER
+FROM M_REFINVENTORY RI
+JOIN M_REFINVENTORY_TYPE HU ON HU.M_REFINVENTORY_TYPE_ID = RI.M_REFINVENTORY_TYPE_ID
+JOIN AD_ORG O ON O.AD_ORG_ID = RI.AD_ORG_ID
+WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
+	</queryString>
+	<field name="sscc_code" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sscc_code"/>
+		<property name="com.jaspersoft.studio.field.label" value="sscc_code"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_refinventory"/>
+	</field>
+	<field name="gtin13" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="gtin13"/>
+		<property name="com.jaspersoft.studio.field.label" value="gtin13"/>
+	</field>
+	<field name="companyname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="companyname"/>
+		<property name="com.jaspersoft.studio.field.label" value="companyname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_org"/>
+	</field>
+	<field name="storeid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="storeid"/>
+		<property name="com.jaspersoft.studio.field.label" value="storeid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_org"/>
+	</field>
+	<field name="storename" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="storename"/>
+		<property name="com.jaspersoft.studio.field.label" value="storename"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_org"/>
+	</field>
+	<field name="owning_storename" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="owning_storename"/>
+		<property name="com.jaspersoft.studio.field.label" value="owning_storename"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ad_org"/>
+	</field>
+	<field name="storetypecode" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="storetypecode"/>
+		<property name="com.jaspersoft.studio.field.label" value="storetypecode"/>
+	</field>
+	<field name="creationdatetime" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="creationdatetime"/>
+		<property name="com.jaspersoft.studio.field.label" value="creationdatetime"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_refinventory"/>
+	</field>
+	<field name="createbyuser" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="createbyuser"/>
+		<property name="com.jaspersoft.studio.field.label" value="createbyuser"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_refinventory"/>
+	</field>
+	<field name="lastmodified_datetime" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="lastmodified_datetime"/>
+		<property name="com.jaspersoft.studio.field.label" value="lastmodified_datetime"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_refinventory"/>
+	</field>
+	<field name="lastmodifiedby_user" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="lastmodifiedby_user"/>
+		<property name="com.jaspersoft.studio.field.label" value="lastmodifiedby_user"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="m_refinventory"/>
+	</field>
+	<group name="Group1" isStartNewPage="true"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="30" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="30" uuid="452c2a49-2000-465e-b9fd-d5c7b210128b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Palette Stockage]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="120" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<componentElement>
+				<reportElement x="0" y="30" width="200" height="59" uuid="e199d439-0ba3-4392-bc6e-869c0c67645d">
+					<property name="com.jaspersoft.studio.unit.barWidth" value="px"/>
+					<property name="com.jaspersoft.studio.unit.barHeight" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="1" barHeight="54" evaluationTime="Column">
+					<jr:codeExpression><![CDATA[$F{sscc_code}]]></jr:codeExpression>
+				</jr:barbecue>
+			</componentElement>
+			<textField>
+				<reportElement x="0" y="0" width="200" height="30" uuid="2058f195-fca7-4127-bbc2-ba09ff4b19ef">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Bottom" markup="html">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No:"+$F{sscc_code}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="90" width="200" height="30" uuid="1de8cf05-4070-4574-91ae-95df93480f0c"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Code-barres magasin]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</summary>
+</jasperReport>

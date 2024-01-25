@@ -30,6 +30,7 @@ import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 
@@ -37,6 +38,8 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
  * Event Observer over {@link ReferencedInventory} entity
  */
 class ReferenceInventoryEventHandler extends EntityPersistenceEventObserver {
+
+  private static final String NONE_SEQUENCE_TYPE = "N";
 
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(ReferencedInventory.ENTITY_NAME) };
@@ -65,15 +68,19 @@ class ReferenceInventoryEventHandler extends EntityPersistenceEventObserver {
 
     final Property valueProperty = ENTITIES[0].getProperty(ReferencedInventory.PROPERTY_SEARCHKEY);
     final String value = (String) event.getCurrentState(valueProperty);
-
     if (isValueAutomaticallySet(value)) {
       final Property refInvTypeProperty = ENTITIES[0]
           .getProperty(ReferencedInventory.PROPERTY_REFERENCEDINVENTORYTYPE);
+      final Property orgProperty = ENTITIES[0]
+          .getProperty(ReferencedInventory.PROPERTY_ORGANIZATION);
       final ReferencedInventoryType refInvType = (ReferencedInventoryType) event
           .getCurrentState(refInvTypeProperty);
+      final Organization org = (Organization) event.getCurrentState(orgProperty);
 
-      final String documentNo = ReferencedInventoryUtil
-          .getProposedValueFromSequenceOrNull(refInvType.getId(), true);
+      final String documentNo = StringUtils.equals(NONE_SEQUENCE_TYPE, refInvType.getSequenceType())
+          ? ReferencedInventoryUtil.getProposedValueFromSequenceOrNull(refInvType.getId(), true)
+          : ReferencedInventoryUtil.getNextProposedValueWithoutUpdatingSequence(refInvType.getId(),
+              org.getId(), true);
       event.setCurrentState(valueProperty, documentNo);
     }
   }
