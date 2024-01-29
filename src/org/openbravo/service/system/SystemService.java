@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2009-2020 Openbravo SLU
+ * All portions are Copyright (C) 2009-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -382,7 +382,7 @@ public class SystemService implements OBSingleton {
     Properties obProp = OBPropertiesProvider.getInstance().getOpenbravoProperties();
     // We disable check constraints before inserting reference data
     String driver = obProp.getProperty("bbdd.driver");
-    String extraProps = obProp.getProperty("bbdd.props");
+    String extraProps = obProp.getProperty("bbdd.props", "");
     String url = obProp.getProperty("bbdd.rdbms").equals("POSTGRE")
         ? obProp.getProperty("bbdd.url") + "/" + obProp.getProperty("bbdd.sid")
             + (extraProps.isEmpty() ? "" : "?" + extraProps)
