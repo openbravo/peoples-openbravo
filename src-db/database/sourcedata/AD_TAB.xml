@@ -20636,7 +20636,9 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--D012A8BFDCE647B99A6155194606C494-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--D012A8BFDCE647B99A6155194606C494-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D012A8BFDCE647B99A6155194606C494-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--D012A8BFDCE647B99A6155194606C494-->  <NAME><![CDATA[Store Sequence]]></NAME>
+<!--D012A8BFDCE647B99A6155194606C494-->  <NAME><![CDATA[Organization Sequence]]></NAME>
+<!--D012A8BFDCE647B99A6155194606C494-->  <DESCRIPTION><![CDATA[Defines sequence per organization for Handling Unit Type]]></DESCRIPTION>
+<!--D012A8BFDCE647B99A6155194606C494-->  <HELP><![CDATA[Defines sequence per organization for Handling Unit Type]]></HELP>
 <!--D012A8BFDCE647B99A6155194606C494-->  <AD_TABLE_ID><![CDATA[64E921B0255F4863A76A8A10C6126DA5]]></AD_TABLE_ID>
 <!--D012A8BFDCE647B99A6155194606C494-->  <AD_WINDOW_ID><![CDATA[3DA7267B2FEC42B287B4428DF658C7E5]]></AD_WINDOW_ID>
 <!--D012A8BFDCE647B99A6155194606C494-->  <SEQNO><![CDATA[20]]></SEQNO>
@@ -20920,8 +20922,8 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <NAME><![CDATA[Handling Unit Type]]></NAME>
-<!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <DESCRIPTION><![CDATA[Defines different types of containers or boxes, which includes any kind of object that can contain goods - Handling Unit Type.]]></DESCRIPTION>
-<!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <HELP><![CDATA[Defines different types of containers or boxes, which includes any kind of object that can contain goods - Handling Unit Type.]]></HELP>
+<!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <DESCRIPTION><![CDATA[Defines different types of containers or boxes, which includes any kind of object that can contain goods.]]></DESCRIPTION>
+<!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <HELP><![CDATA[Defines different types of containers or boxes, which includes any kind of object that can contain goods.]]></HELP>
 <!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <AD_TABLE_ID><![CDATA[24733E0ACF73466898137EDD27BA464B]]></AD_TABLE_ID>
 <!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <AD_WINDOW_ID><![CDATA[3DA7267B2FEC42B287B4428DF658C7E5]]></AD_WINDOW_ID>
 <!--D8E2185F2F7E4AA58EC41B1B99FAA0C8-->  <SEQNO><![CDATA[10]]></SEQNO>

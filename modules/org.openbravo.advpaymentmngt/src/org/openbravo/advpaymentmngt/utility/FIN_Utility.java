@@ -349,7 +349,7 @@ public class FIN_Utility {
 
   }
 
-  public static Sequence getSequenceAndLockIfUpdateNext(final boolean updateNext,
+  private static Sequence getSequenceAndLockIfUpdateNext(final boolean updateNext,
       final Sequence seqParam) {
     if (updateNext) {
       // We lock the sequence with a select for update to avoid duplicates
@@ -389,7 +389,7 @@ public class FIN_Utility {
     return nextDocNumber.toString();
   }
 
-  public static void incrementSeqIfUpdateNext(final boolean updateNext, final Sequence seq) {
+  private static void incrementSeqIfUpdateNext(final boolean updateNext, final Sequence seq) {
     if (updateNext) {
       seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
       OBDal.getInstance().save(seq);

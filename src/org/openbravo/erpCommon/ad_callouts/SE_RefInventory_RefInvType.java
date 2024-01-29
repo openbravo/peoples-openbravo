@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,14 +21,11 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.dal.core.OBContext;
-import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 
 /**
  * Sets the proposed value from the sequence associated to the referenced inventory type. The
@@ -37,7 +34,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
  */
 public class SE_RefInventory_RefInvType extends SimpleCallout {
   private static final Logger log = LogManager.getLogger();
-  private static final String NONE_SEQUENCE_TYPE = "N";
 
   @Override
   protected void execute(CalloutInfo info) throws ServletException {
@@ -46,25 +42,15 @@ public class SE_RefInventory_RefInvType extends SimpleCallout {
       final String referencedInventoryTypeId = info.getStringParameter("inpmRefinventoryTypeId",
           IsIDFilter.instance);
       final String orgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
-      ReferencedInventoryType handlingUnitType = OBDal.getInstance()
-          .get(ReferencedInventoryType.class, referencedInventoryTypeId);
-      final String proposedValue = StringUtils.equals(NONE_SEQUENCE_TYPE,
-          handlingUnitType.getSequenceType())
-              ? getNextProposedValueWithoutUpdatingSequence(referencedInventoryTypeId)
-              : ReferencedInventoryUtil.getNextProposedValueWithoutUpdatingSequence(
-                  referencedInventoryTypeId, orgId, false);
+      final String proposedValue = ReferencedInventoryUtil
+          .getProposedValueFromSequenceOrNull(referencedInventoryTypeId, orgId, false);
       info.addResult("inpvalue", proposedValue);
     } catch (Exception logAndIgnore) {
+      info.addResult("inpvalue", "");
+      info.addResult("ERROR", logAndIgnore.getMessage());
       log.warn("Unexpected error in callout " + this.getClass().getName(), logAndIgnore);
     } finally {
       OBContext.restorePreviousMode();
     }
-  }
-
-  private String getNextProposedValueWithoutUpdatingSequence(
-      final String referencedInventoryTypeId) {
-    final String nextProposedValue = ReferencedInventoryUtil
-        .getProposedValueFromSequenceOrNull(referencedInventoryTypeId, false);
-    return StringUtils.isBlank(nextProposedValue) ? "" : "<" + nextProposedValue + ">";
   }
 }

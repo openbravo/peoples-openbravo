@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2017-2019 Openbravo SLU 
+ * All portions are Copyright (C) 2017-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,8 +38,6 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
  * Event Observer over {@link ReferencedInventory} entity
  */
 class ReferenceInventoryEventHandler extends EntityPersistenceEventObserver {
-
-  private static final String NONE_SEQUENCE_TYPE = "N";
 
   private static final Entity[] ENTITIES = {
       ModelProvider.getInstance().getEntity(ReferencedInventory.ENTITY_NAME) };
@@ -77,10 +75,8 @@ class ReferenceInventoryEventHandler extends EntityPersistenceEventObserver {
           .getCurrentState(refInvTypeProperty);
       final Organization org = (Organization) event.getCurrentState(orgProperty);
 
-      final String documentNo = StringUtils.equals(NONE_SEQUENCE_TYPE, refInvType.getSequenceType())
-          ? ReferencedInventoryUtil.getProposedValueFromSequenceOrNull(refInvType.getId(), true)
-          : ReferencedInventoryUtil.getNextProposedValueWithoutUpdatingSequence(refInvType.getId(),
-              org.getId(), true);
+      final String documentNo = ReferencedInventoryUtil
+          .getProposedValueFromSequenceOrNull(refInvType.getId(), org.getId(), true);
       event.setCurrentState(valueProperty, documentNo);
     }
   }

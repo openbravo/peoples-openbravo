@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-  <database name="TABLE M_ORG_SEQUENCE">
-    <table name="M_ORG_SEQUENCE" primaryKey="M_ORG_SEQUENCE_KEY">
-      <column name="M_ORG_SEQUENCE_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
+  <database name="TABLE M_REFINVENTORY_TYPE_ORGSEQ">
+    <table name="M_REFINVENTORY_TYPE_ORGSEQ" primaryKey="M_REFINV_TYPE_ORGSQ_KEY">
+      <column name="M_REFINVENTORY_TYPE_ORGSEQ_ID" primaryKey="true" required="true" type="VARCHAR" size="32" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -33,7 +33,7 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <column name="DESCRIPTION" primaryKey="false" required="false" type="VARCHAR" size="255" autoIncrement="false">
+      <column name="DESCRIPTION" primaryKey="false" required="false" type="NVARCHAR" size="255" autoIncrement="false">
         <default/>
         <onCreateDefault/>
       </column>
@@ -45,22 +45,22 @@
         <default/>
         <onCreateDefault/>
       </column>
-      <foreign-key foreignTable="AD_CLIENT" name="M_ORG_SEQUENCE_CLIENT">
+      <foreign-key foreignTable="AD_CLIENT" name="M_REFINV_TYPE_ORGSQ_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="M_REFINVENTORY_TYPE" name="M_ORG_SEQUENCE_HUTYPE" onDelete="cascade">
-        <reference local="M_REFINVENTORY_TYPE_ID" foreign="M_REFINVENTORY_TYPE_ID"/>
-      </foreign-key>
-      <foreign-key foreignTable="AD_ORG" name="M_ORG_SEQUENCE_ORG">
+      <foreign-key foreignTable="AD_ORG" name="M_REFINV_TYPE_ORGSQ_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
-      <foreign-key foreignTable="AD_SEQUENCE" name="M_ORG_SEQUENCE_SEQUENCE">
+      <foreign-key foreignTable="M_REFINVENTORY_TYPE" name="M_REFINV_TYPE_ORGSQ_REFINVTYPE" onDelete="cascade">
+        <reference local="M_REFINVENTORY_TYPE_ID" foreign="M_REFINVENTORY_TYPE_ID"/>
+      </foreign-key>
+      <foreign-key foreignTable="AD_SEQUENCE" name="M_REFINV_TYPE_ORGSQ_SEQUENCE">
         <reference local="AD_SEQUENCE_ID" foreign="AD_SEQUENCE_ID"/>
       </foreign-key>
-      <unique name="M_ORG_SEQUENCE_ORGSEQ_UN">
+      <unique name="M_REFINV_TYPE_ORGSQ_ORGSEQ_UN">
         <unique-column name="M_REFINVENTORY_TYPE_ID"/>
         <unique-column name="AD_ORG_ID"/>
       </unique>
-      <check name="M_ORG_SEQUENCE_ISACTIVE_CH"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
+      <check name="M_REFINV_TYPE_ORGSQ_ACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>

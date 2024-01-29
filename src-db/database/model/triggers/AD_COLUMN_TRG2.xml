@@ -82,16 +82,14 @@ BEGIN
         Name, Description, 
         VFormat, IsAutoSequence, IncrementNo, 
         StartNo, CurrentNext, CurrentNextSys, 
-        IsTableID, Prefix, Suffix, StartNewYear,
-		Calculation_Method
+        IsTableID, Prefix, Suffix, StartNewYear, Calculation_Method
       ) VALUES (
         v_NextNo, CUR_Clients.ad_client_id, '0', 'Y',
         now(), '0', now(), '0',
         'DocumentNo_' || v_TableName,  'DocumentNo/Value for Table ' || v_TableName,
         NULL,  'Y', 1,
         10000000, 10000000, 10000000,
-        'N', NULL, NULL, 'N',
-		'A'
+        'N', NULL, NULL, 'N', 'A'
       );
     END LOOP;
   END IF;
