@@ -149,6 +149,27 @@ public class ReferencedInventoryUtil {
    * @param updateNext
    *          if true updates the sequence's next value in database
    */
+  @Deprecated
+  public static String getProposedValueFromSequenceOrNull(final String referencedInventoryTypeId,
+      final boolean updateNext) {
+    if (StringUtils.isBlank(referencedInventoryTypeId)) {
+      return null;
+    } else {
+      return FIN_Utility.getDocumentNo(updateNext, getSequence(referencedInventoryTypeId));
+    }
+  }
+
+  /**
+   * If the given referenced inventory type id is associated to a sequence, it then return the next
+   * value in that sequence. Otherwise returns null.
+   * 
+   * @param referencedInventoryTypeId
+   *          Referenced Inventory Type Id used to get its sequence
+   * @param orgId
+   *          Organization Id used to get sequence from Organization Sequence
+   * @param updateNext
+   *          if true updates the sequence's next value in database
+   */
   public static String getProposedValueFromSequenceOrNull(final String referencedInventoryTypeId,
       final String orgId, final boolean updateNext) {
     if (StringUtils.isBlank(referencedInventoryTypeId)) {
@@ -161,9 +182,10 @@ public class ReferencedInventoryUtil {
         Sequence baseSeq = seq.getBaseSequence();
         if (baseSeq != null) {
           // Compute Sequence as per Module 10 algorithm
-          String baseSeqPrefixA2 = baseSeq.getPrefix();
+          String baseSeqPrefixA2 = baseSeq.getPrefix() != null ? baseSeq.getPrefix() : "";
           String storeCodeB = OBDal.getInstance().get(Organization.class, orgId).getSearchKey();
-          String sequentialNumberC = FIN_Utility.getDocumentNo(updateNext, baseSeq);
+          String sequentialNumberC = FIN_Utility
+              .getNextDocNumberWithOutPrefixSuffixAndIncrementSeqIfUpdateNext(updateNext, baseSeq);
 
           // Append as many zeros as prefix to match the length of 5 digit
           sequentialNumberC = String.format("%5s", sequentialNumberC).replace(' ', '0');
@@ -173,8 +195,8 @@ public class ReferencedInventoryUtil {
 
           String gTIN13 = baseSeqPrefixA2 + storeCodeB + sequentialNumberC + controlDigitD;
 
-          String parentDocSeqPrefixA1 = seq.getPrefix();
-          String parentDocSeqSuffixE = seq.getSuffix();
+          String parentDocSeqPrefixA1 = seq.getPrefix() != null ? seq.getPrefix() : "";
+          String parentDocSeqSuffixE = seq.getSuffix() != null ? seq.getSuffix() : "";
 
           int controlDigitF = ReferencedInventoryUtil
               .getControlDigit(parentDocSeqPrefixA1 + gTIN13 + parentDocSeqSuffixE);
@@ -198,6 +220,17 @@ public class ReferencedInventoryUtil {
 
   /**
    * Returns the sequence associated to the given referenced inventory type id or null if not found
+   */
+  @Deprecated
+  private static Sequence getSequence(final String referencedInventoryTypeId) {
+    return OBDal.getInstance()
+        .get(ReferencedInventoryType.class, referencedInventoryTypeId)
+        .getSequence();
+  }
+
+  /**
+   * Returns the sequence associated to the given referenced inventory type id if Sequence Type is
+   * Global or from Organization Sequence in case Sequence Type is Per Organization
    */
   private static Sequence getSequence(final String referencedInventoryTypeId, final String orgId) {
     Sequence seq = null;

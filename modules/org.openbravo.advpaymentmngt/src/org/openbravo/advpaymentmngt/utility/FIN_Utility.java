@@ -389,6 +389,22 @@ public class FIN_Utility {
     return nextDocNumber.toString();
   }
 
+  /*
+   * Returns next assigned number without prefix and suffix
+   */
+
+  public static String getNextDocNumberWithOutPrefixSuffixAndIncrementSeqIfUpdateNext(
+      final boolean updateNext, final Sequence seqParam) {
+    if (seqParam == null) {
+      return null;
+    }
+    final StringBuilder nextDocNumber = new StringBuilder();
+    Sequence seq = getSequenceAndLockIfUpdateNext(updateNext, seqParam);
+    nextDocNumber.append(seq.getNextAssignedNumber().toString());
+    FIN_Utility.incrementSeqIfUpdateNext(updateNext, seq);
+    return nextDocNumber.toString();
+  }
+
   private static void incrementSeqIfUpdateNext(final boolean updateNext, final Sequence seq) {
     if (updateNext) {
       seq.setNextAssignedNumber(seq.getNextAssignedNumber() + seq.getIncrementBy());
