@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,11 +47,13 @@ import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
+import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryTypeOrgSequence;
 import org.openbravo.model.materialmgmt.onhandquantity.Reservation;
 import org.openbravo.model.materialmgmt.onhandquantity.ReservationStock;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
@@ -125,6 +127,25 @@ class ReferencedInventoryTestUtils {
     reservationsPreference.setUserContact(null);
     reservationsPreference.setWindow(null);
     OBDal.getInstance().save(reservationsPreference);
+  }
+
+  /*
+   * Creates Reference Inventory Type Organization Sequence when Sequence Type is Per Organization
+   */
+
+  static void createReferencedInventoryTypeOrgSeq(ReferencedInventoryType refInvType,
+      Sequence parentSequence) {
+    final ReferencedInventoryTypeOrgSequence refInvTypeOrgSeq = OBProvider.getInstance()
+        .get(ReferencedInventoryTypeOrgSequence.class);
+    refInvTypeOrgSeq.setClient(OBContext.getOBContext().getCurrentClient());
+    refInvTypeOrgSeq
+        .setOrganization(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID));
+    refInvTypeOrgSeq.setReferencedInventoryType(refInvType);
+    refInvTypeOrgSeq.setSequence(parentSequence);
+    OBDal.getInstance().save(refInvTypeOrgSeq);
+    assertThat("Referenced Inventory Type Organization Sequence is successfully created",
+        refInvTypeOrgSeq, notNullValue());
+    OBDal.getInstance().flush();
   }
 
   static ReferencedInventoryType createReferencedInventoryType() {
