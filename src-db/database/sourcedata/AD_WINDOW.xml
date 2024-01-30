@@ -2856,9 +2856,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--396E76B84F574F8F850D1F4606AD06E3-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--396E76B84F574F8F850D1F4606AD06E3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--396E76B84F574F8F850D1F4606AD06E3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--396E76B84F574F8F850D1F4606AD06E3-->  <NAME><![CDATA[Unbox Referenced Inventory P&E]]></NAME>
-<!--396E76B84F574F8F850D1F4606AD06E3-->  <DESCRIPTION><![CDATA[Show stock that can be unboxed from a referenced inventory]]></DESCRIPTION>
-<!--396E76B84F574F8F850D1F4606AD06E3-->  <HELP><![CDATA[Show stock that can be unboxed from a referenced inventory]]></HELP>
+<!--396E76B84F574F8F850D1F4606AD06E3-->  <NAME><![CDATA[Unbox Handling Unit P&E]]></NAME>
+<!--396E76B84F574F8F850D1F4606AD06E3-->  <DESCRIPTION><![CDATA[Show stock that can be unboxed from a handling unit]]></DESCRIPTION>
+<!--396E76B84F574F8F850D1F4606AD06E3-->  <HELP><![CDATA[Show stock that can be unboxed from a handling unit]]></HELP>
 <!--396E76B84F574F8F850D1F4606AD06E3-->  <WINDOWTYPE><![CDATA[OBUIAPP_PickAndExecute]]></WINDOWTYPE>
 <!--396E76B84F574F8F850D1F4606AD06E3-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--396E76B84F574F8F850D1F4606AD06E3-->  <PROCESSING><![CDATA[N]]></PROCESSING>
@@ -3082,7 +3082,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--6A5963EA222743ACB44F9C65DF7F658C-->  <NAME><![CDATA[Referenced Inventory]]></NAME>
+<!--6A5963EA222743ACB44F9C65DF7F658C-->  <NAME><![CDATA[Handling Unit]]></NAME>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <DESCRIPTION><![CDATA[Defines the containers or boxes, which includes any kind of object that can contain goods.]]></DESCRIPTION>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <HELP><![CDATA[Defines the containers or boxes, which includes any kind of object that can contain goods.]]></HELP>
 <!--6A5963EA222743ACB44F9C65DF7F658C-->  <WINDOWTYPE><![CDATA[T]]></WINDOWTYPE>
@@ -3515,9 +3515,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <NAME><![CDATA[Box Referenced Inventory P&E]]></NAME>
-<!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <DESCRIPTION><![CDATA[Show stock that can be boxed into a referenced inventory]]></DESCRIPTION>
-<!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <HELP><![CDATA[Show stock that can be boxed into a referenced inventory]]></HELP>
+<!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <NAME><![CDATA[Box Handling Unit P&E]]></NAME>
+<!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <DESCRIPTION><![CDATA[Show stock that can be boxed into a handling unit]]></DESCRIPTION>
+<!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <HELP><![CDATA[Show stock that can be boxed into a handling unit]]></HELP>
 <!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <WINDOWTYPE><![CDATA[OBUIAPP_PickAndExecute]]></WINDOWTYPE>
 <!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <ISSOTRX><![CDATA[N]]></ISSOTRX>
 <!--B05F8C73ED3F430296FC9E7C7FAABB7F-->  <PROCESSING><![CDATA[N]]></PROCESSING>

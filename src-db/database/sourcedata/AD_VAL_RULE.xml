@@ -1501,8 +1501,8 @@ AND MA_Toolset.MA_Toolset_Type_ID IN (SELECT MA_Toolset_Type_ID FROM MA_ToolsetP
 <!--37ACEA9559724E168D4237C46FFBEE2A-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--37ACEA9559724E168D4237C46FFBEE2A-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--37ACEA9559724E168D4237C46FFBEE2A-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--37ACEA9559724E168D4237C46FFBEE2A-->  <NAME><![CDATA[Only current referenced inventory bin or all bins if empty]]></NAME>
-<!--37ACEA9559724E168D4237C46FFBEE2A-->  <DESCRIPTION><![CDATA[Show the valid bin to for boxing a referenced inventory. If not empty the bin to is restricted to current one.]]></DESCRIPTION>
+<!--37ACEA9559724E168D4237C46FFBEE2A-->  <NAME><![CDATA[Only current handling unit bin or all bins if empty]]></NAME>
+<!--37ACEA9559724E168D4237C46FFBEE2A-->  <DESCRIPTION><![CDATA[Show the valid bin to for boxing a handling unit. If not empty the bin to is restricted to current one.]]></DESCRIPTION>
 <!--37ACEA9559724E168D4237C46FFBEE2A-->  <TYPE><![CDATA[HQL_JS]]></TYPE>
 <!--37ACEA9559724E168D4237C46FFBEE2A-->  <CODE><![CDATA[if (OB.getParameters().get('M_RefInventory_ID') != null && OB.getParameters().get('M_RefInventory_ID') != "null") { 
   "exists (select 1 from MaterialMgmtStorageDetail sd where sd.quantityOnHand > 0 and sd.storageBin.id = e.id and sd.referencedInventory.id = '" + OB.getParameters().get('M_RefInventory_ID') + "' ) or not exists (select 1 from MaterialMgmtStorageDetail sd where sd.quantityOnHand > 0 and sd.referencedInventory.id = '" + OB.getParameters().get('M_RefInventory_ID') + "' )"

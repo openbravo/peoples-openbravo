@@ -85,10 +85,6 @@
         <default><![CDATA[N]]></default>
         <onCreateDefault/>
       </column>
-      <column name="CALCULATION_METHOD" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
-        <onCreateDefault><![CDATA[CASE WHEN ISAUTOSEQUENCE 'Y' THEN 'A' ELSE NULL END]]></onCreateDefault>
-      </column>
       <column name="SEQUENCE_LENGTH_TYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[V]]></default>
         <onCreateDefault/>
@@ -100,6 +96,10 @@
       <column name="SEQUENCE_LENGTH" primaryKey="false" required="false" type="DECIMAL" size="10,0" autoIncrement="false">
         <default/>
         <onCreateDefault/>
+      </column>
+      <column name="CALCULATION_METHOD" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+        <default/>
+        <onCreateDefault><![CDATA[(CASE WHEN ISAUTOSEQUENCE='Y' THEN 'A' ELSE NULL END)]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_SEQUENCE_AD_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>

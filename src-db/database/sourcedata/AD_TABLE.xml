@@ -9470,7 +9470,7 @@ You can also select if transactions are allowed or not for this organization typ
 <!--25A3F31FD66945008C11C2C94272B20B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--25A3F31FD66945008C11C2C94272B20B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--25A3F31FD66945008C11C2C94272B20B-->  <NAME><![CDATA[MaterialMgmtReferencedInventory]]></NAME>
-<!--25A3F31FD66945008C11C2C94272B20B-->  <DESCRIPTION><![CDATA[Referenced Inventory]]></DESCRIPTION>
+<!--25A3F31FD66945008C11C2C94272B20B-->  <DESCRIPTION><![CDATA[Handling Unit]]></DESCRIPTION>
 <!--25A3F31FD66945008C11C2C94272B20B-->  <HELP><![CDATA[Defines the containers or boxes, which includes any kind of object that can contain goods.]]></HELP>
 <!--25A3F31FD66945008C11C2C94272B20B-->  <TABLENAME><![CDATA[M_RefInventory]]></TABLENAME>
 <!--25A3F31FD66945008C11C2C94272B20B-->  <CLASSNAME><![CDATA[ReferencedInventory]]></CLASSNAME>
