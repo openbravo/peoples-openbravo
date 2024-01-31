@@ -124,8 +124,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     OBException thrown = assertThrows(OBException.class, () -> {
       new BoxProcessor(refInv2, storageDetailsJS, null).createAndProcessGoodsMovement();
     });
-    assertThat(thrown.getMessage(),
-        containsString(" is already linked to the referenced inventory "));
+    assertThat(thrown.getMessage(), containsString(" is already linked to the handling unit "));
   }
 
   @Test
@@ -142,8 +141,7 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
       new BoxProcessor(refInv, storageDetailsJS, ReferencedInventoryTestUtils.BIN_SPAIN_L03)
           .createAndProcessGoodsMovement();
     });
-    assertThat(thrown.getMessage(),
-        containsString(" referenced inventory is also located in bin: "));
+    assertThat(thrown.getMessage(), containsString(" handling unit is also located in bin: "));
   }
 
   @Test

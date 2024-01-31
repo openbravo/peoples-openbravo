@@ -70,11 +70,18 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
 
   @Test
   public void testReferenceInventorySequenceUsingModule10() {
+
+    Organization org = OBDal.getInstance()
+        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
+    String orgCode = org.getSearchKey();
+
+    // Set numeric search key for Organization
+    setOrganizationCode(org, "10491");
+
     // Create a Child Sequence
     final Sequence childSequence = (Sequence) DalUtil
         .copy(OBDal.getInstance().getProxy(Sequence.class, ANY_EXISTING_SEQUENCE_ID));
-    childSequence.setOrganization(OBDal.getInstance()
-        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID));
+    childSequence.setOrganization(org);
     childSequence.setName(UUID.randomUUID().toString());
     childSequence.setCalculationMethod("A");
     childSequence.setIncrementBy(1L);
@@ -99,7 +106,7 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
     parentSequence.setIncrementBy(1L);
     parentSequence.setNextAssignedNumber(1000000L);
     parentSequence.setStartingNo(1000000L);
-    parentSequence.setPrefix("06");
+    parentSequence.setPrefix("6");
     parentSequence.setSuffix("000");
     parentSequence.setControlDigit("M10");
     parentSequence.setSequenceLengthType("V");
@@ -124,5 +131,23 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
         refInvType.getId(), ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, false);
     assertThat("Referenced Inventory Search Key is computed from sequence", proposedSequence,
         equalTo("<60110491282110004>"));
+
+    // Reset search key of Organization
+    setOrganizationCode(org, orgCode);
+  }
+
+  /**
+   * Sets numeric search key to the organization used in the test
+   *
+   * @param org
+   *          Organization used to create Sequence, Handling Unit Type, Handling Unit
+   * @param searchKey
+   *          Search Key of the Organization
+   */
+
+  private void setOrganizationCode(Organization org, String searchKey) {
+    org.setSearchKey(searchKey);
+    OBDal.getInstance().save(org);
+    OBDal.getInstance().flush();
   }
 }
