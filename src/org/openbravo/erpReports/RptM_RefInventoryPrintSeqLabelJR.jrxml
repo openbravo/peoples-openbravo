@@ -258,32 +258,33 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 					<rightPen lineWidth="3.0"/>
 				</box>
 				<staticText>
-					<reportElement x="0" y="15" width="91" height="15" uuid="c5403041-9fa8-42bc-9c98-276e64f75b03">
+					<reportElement x="3" y="15" width="88" height="15" uuid="c5403041-9fa8-42bc-9c98-276e64f75b03">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[  Date Modified:]]></text>
+					<text><![CDATA[Date Modified:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="-1" y="0" width="91" height="15" uuid="df50565b-c597-4bf7-8ba1-d9188fcf9797">
+					<reportElement x="3" y="0" width="88" height="15" uuid="df50565b-c597-4bf7-8ba1-d9188fcf9797">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[  Date Created:]]></text>
+					<text><![CDATA[Date Created:]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="0" y="30" width="91" height="15" uuid="1f7536e9-72b7-4e3c-a4b3-eb492ae5afe5">
+					<reportElement x="3" y="30" width="88" height="15" uuid="1f7536e9-72b7-4e3c-a4b3-eb492ae5afe5">
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					</reportElement>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[  Date Printed:]]></text>
+					<text><![CDATA[Date Printed:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="175" y="1" width="100" height="15" uuid="9e5e0fa8-f86d-4c4c-9758-3468ab4380a2">
