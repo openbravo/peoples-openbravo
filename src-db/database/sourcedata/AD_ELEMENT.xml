@@ -21375,8 +21375,11 @@ If one of the trees of a table uses the ADTree tree structure, that must be the 
 <!--0EAE94C718EB4CC8B6F4C9A94E32F219-->  <COLUMNNAME><![CDATA[SequenceType]]></COLUMNNAME>
 <!--0EAE94C718EB4CC8B6F4C9A94E32F219-->  <NAME><![CDATA[Sequence Type]]></NAME>
 <!--0EAE94C718EB4CC8B6F4C9A94E32F219-->  <PRINTNAME><![CDATA[Sequence Type]]></PRINTNAME>
-<!--0EAE94C718EB4CC8B6F4C9A94E32F219-->  <DESCRIPTION><![CDATA[Define the sequence type as Global, Per Store or None (for old records).]]></DESCRIPTION>
-<!--0EAE94C718EB4CC8B6F4C9A94E32F219-->  <HELP><![CDATA[Define the sequence type as Global, Per Store or None (for old records).]]></HELP>
+<!--0EAE94C718EB4CC8B6F4C9A94E32F219-->  <DESCRIPTION><![CDATA[Define the sequence type as Global, Per Organization or None (for old records).]]></DESCRIPTION>
+<!--0EAE94C718EB4CC8B6F4C9A94E32F219-->  <HELP><![CDATA[Define sequence type options as
+1. Global - globally defined Sequence for All organization/stores,
+2. Per Organization - Each organization store will have its own sequence.
+3. None - Default value for existing sequences that might have or not have sequence defined.]]></HELP>
 <!--0EAE94C718EB4CC8B6F4C9A94E32F219-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--0EAE94C718EB4CC8B6F4C9A94E32F219-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--0EAE94C718EB4CC8B6F4C9A94E32F219--></AD_ELEMENT>
@@ -21982,11 +21985,13 @@ Advanced features are only granted to the automatic roles defined as advanced.]]
 <!--1914BCA0BAF94AC0A725E6A9B586553C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1914BCA0BAF94AC0A725E6A9B586553C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1914BCA0BAF94AC0A725E6A9B586553C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1914BCA0BAF94AC0A725E6A9B586553C-->  <COLUMNNAME><![CDATA[Sequence_Length_Type]]></COLUMNNAME>
-<!--1914BCA0BAF94AC0A725E6A9B586553C-->  <NAME><![CDATA[Sequence Length Type]]></NAME>
+<!--1914BCA0BAF94AC0A725E6A9B586553C-->  <COLUMNNAME><![CDATA[Sequence_Number_Length]]></COLUMNNAME>
+<!--1914BCA0BAF94AC0A725E6A9B586553C-->  <NAME><![CDATA[Sequence Number Length]]></NAME>
 <!--1914BCA0BAF94AC0A725E6A9B586553C-->  <PRINTNAME><![CDATA[Sequence Length Type]]></PRINTNAME>
-<!--1914BCA0BAF94AC0A725E6A9B586553C-->  <DESCRIPTION><![CDATA[Defines Sequence Length Type as Variable of Fixed.]]></DESCRIPTION>
-<!--1914BCA0BAF94AC0A725E6A9B586553C-->  <HELP><![CDATA[Defines Sequence Length Type as Variable of Fixed.]]></HELP>
+<!--1914BCA0BAF94AC0A725E6A9B586553C-->  <DESCRIPTION><![CDATA[Defines option for Sequence Number Length as Variable of Fix Length.]]></DESCRIPTION>
+<!--1914BCA0BAF94AC0A725E6A9B586553C-->  <HELP><![CDATA[Defines option for Sequence Number Length as Variable of Fix Length.
+1. Computed Sequence has a variable length.
+2. Computed Sequence has a fix length. If the sequence length is short, computed sequence is append by as many zeros as prefix to match the defined Sequence Length.]]></HELP>
 <!--1914BCA0BAF94AC0A725E6A9B586553C-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--1914BCA0BAF94AC0A725E6A9B586553C-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--1914BCA0BAF94AC0A725E6A9B586553C--></AD_ELEMENT>
@@ -24323,7 +24328,8 @@ By default the type is empty (null), which means the product characteristic does
 <!--461378E3215A4C4684D162260BE688B9-->  <NAME><![CDATA[Base Sequence]]></NAME>
 <!--461378E3215A4C4684D162260BE688B9-->  <PRINTNAME><![CDATA[Base Sequence]]></PRINTNAME>
 <!--461378E3215A4C4684D162260BE688B9-->  <DESCRIPTION><![CDATA[Defines a base sequence when Calculation Method is Sequence.]]></DESCRIPTION>
-<!--461378E3215A4C4684D162260BE688B9-->  <HELP><![CDATA[Defines a base sequence when Calculation Method is Sequence.]]></HELP>
+<!--461378E3215A4C4684D162260BE688B9-->  <HELP><![CDATA[Defines a base sequence when Calculation Method is Sequence. The result of base sequence computation is used as the number for the parent sequence which uses base sequence.
+]]></HELP>
 <!--461378E3215A4C4684D162260BE688B9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--461378E3215A4C4684D162260BE688B9-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--461378E3215A4C4684D162260BE688B9--></AD_ELEMENT>
@@ -27497,8 +27503,11 @@ This field will display only when the base document type is Sales Order.]]></HEL
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <COLUMNNAME><![CDATA[Calculation_Method]]></COLUMNNAME>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <NAME><![CDATA[Calculation Method]]></NAME>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <PRINTNAME><![CDATA[Calculation Method]]></PRINTNAME>
-<!--5E8A860C0E054A409DB4650661E7CFDD-->  <DESCRIPTION><![CDATA[Defines method Empty (Default) or Auto Numbering or Sequence to calculate the sequence.]]></DESCRIPTION>
-<!--5E8A860C0E054A409DB4650661E7CFDD-->  <HELP><![CDATA[Defines method Empty (Default) or Auto Numbering or Sequence to calculate the sequence.]]></HELP>
+<!--5E8A860C0E054A409DB4650661E7CFDD-->  <DESCRIPTION><![CDATA[Defines options Empty (Default) or Auto Numbering or Sequence to calculate the sequence.]]></DESCRIPTION>
+<!--5E8A860C0E054A409DB4650661E7CFDD-->  <HELP><![CDATA[Defines options as Empty (Default) or Auto Numbering or Sequence to calculate the sequence.
+1. Empty has same behaviour as IsAutoNumbering = No
+2. Auto Numbering replaces and has behaviour as IsAutoNumbering = Yes
+3. Sequence to use a base sequence whose computed result would be used a number for the parent sequence that uses base sequence.]]></HELP>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--5E8A860C0E054A409DB4650661E7CFDD--></AD_ELEMENT>

@@ -4783,8 +4783,11 @@ There is no any kind of timezone conversion. The stored time does not have timez
 <!--271A5C00D2784EFD9257833C554CE3E7-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--271A5C00D2784EFD9257833C554CE3E7-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--271A5C00D2784EFD9257833C554CE3E7-->  <NAME><![CDATA[Sequence Type]]></NAME>
-<!--271A5C00D2784EFD9257833C554CE3E7-->  <DESCRIPTION><![CDATA[Sequence Type selection as Global, Per Store or None (for old records).]]></DESCRIPTION>
-<!--271A5C00D2784EFD9257833C554CE3E7-->  <HELP><![CDATA[Sequence Type selection as Global, Per Store or None (for old records).]]></HELP>
+<!--271A5C00D2784EFD9257833C554CE3E7-->  <DESCRIPTION><![CDATA[Sequence Type selection as Global, Per Organization or None (for old records).]]></DESCRIPTION>
+<!--271A5C00D2784EFD9257833C554CE3E7-->  <HELP><![CDATA[Define sequence type options as
+1. Global - globally defined Sequence for All organization/stores,
+2. Per Organization - Each organization store will have its own sequence.
+3. None - Default value for existing sequences that might have or not have sequence defined.]]></HELP>
 <!--271A5C00D2784EFD9257833C554CE3E7-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--271A5C00D2784EFD9257833C554CE3E7-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
 <!--271A5C00D2784EFD9257833C554CE3E7-->  <PARENTREFERENCE_ID><![CDATA[17]]></PARENTREFERENCE_ID>
@@ -5683,9 +5686,9 @@ By default the type is empty (null), which means the product characteristic does
 <!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <NAME><![CDATA[Sequence Length Type]]></NAME>
+<!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <NAME><![CDATA[Sequence Number Length]]></NAME>
 <!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <DESCRIPTION><![CDATA[Sequence Number Length selection as Variable or Fixed.]]></DESCRIPTION>
-<!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <HELP><![CDATA[Sequence Number Length selection as Variable or Fixed.]]></HELP>
+<!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <HELP><![CDATA[Sequence Number Length selection as Variable or Fix]]></HELP>
 <!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <ISBASEREFERENCE><![CDATA[N]]></ISBASEREFERENCE>
 <!--60627CEE6AF04DCD8326CA3FF6D7736E-->  <PARENTREFERENCE_ID><![CDATA[17]]></PARENTREFERENCE_ID>

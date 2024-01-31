@@ -240,7 +240,7 @@ public class ReferencedInventoryUtil {
   private static String appendZeroAsPrefixToMatchFixedLengthSequence(Sequence seq,
       String strSequence) {
     String sequence = strSequence;
-    if (seq != null && StringUtils.equals(seq.getSequenceLengthType(), "F")) {
+    if (seq != null && StringUtils.equals(seq.getSequenceNumberLength(), "F")) {
       int diffInLength = seq.getSequenceLength().intValue() - strSequence.length();
       if (diffInLength > 0) {
         // If the length of calculated sequence is less than specified sequence length, append
