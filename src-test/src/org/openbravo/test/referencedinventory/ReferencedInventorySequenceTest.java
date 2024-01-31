@@ -123,6 +123,6 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
     String proposedSequence = ReferencedInventoryUtil.getProposedValueFromSequenceOrNull(
         refInvType.getId(), ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, false);
     assertThat("Referenced Inventory Search Key is computed from sequence", proposedSequence,
-        equalTo("<601104910282130002>"));
+        equalTo("<60110491282110004>"));
   }
 }

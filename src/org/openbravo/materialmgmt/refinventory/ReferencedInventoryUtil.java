@@ -61,6 +61,8 @@ public class ReferencedInventoryUtil {
   private static final String GLOBAL_SEQUENCE_TYPE = "G";
   private static final String PER_STORE_SEQUENCE_TYPE = "P";
   private static final String NONE_SEQUENCE_TYPE = "N";
+  private static final String MODULE10_CONTROLDIGIT = "M10";
+  private static final String SEQUENCE_CALCULATIONMETHOD = "S";
 
   /**
    * Create and return a new AttributeSetInstance from the given originalAttributeSetInstance and
@@ -178,33 +180,47 @@ public class ReferencedInventoryUtil {
       String proposedSequence = null;
       Sequence seq = getSequence(referencedInventoryTypeId, orgId);
       if (seq != null) {
-        // Base Sequence
-        Sequence baseSeq = seq.getBaseSequence();
-        if (baseSeq != null) {
+        // When calculation method is Sequence
+        if (StringUtils.equals(seq.getCalculationMethod(), SEQUENCE_CALCULATIONMETHOD)) {
           // Compute Sequence as per Module 10 algorithm
-          String baseSeqPrefixA2 = baseSeq.getPrefix() != null ? baseSeq.getPrefix() : "";
-          String storeCodeB = OBDal.getInstance().get(Organization.class, orgId).getSearchKey();
-          String sequentialNumberC = FIN_Utility
-              .getNextDocNumberWithOutPrefixSuffixAndIncrementSeqIfUpdateNext(updateNext, baseSeq);
+          if (StringUtils.equals(seq.getControlDigit(), MODULE10_CONTROLDIGIT)) {
+            // Base Sequence
+            Sequence baseSeq = seq.getBaseSequence();
+            String gTIN13 = "";
+            if (baseSeq != null) {
+              if (StringUtils.equals(baseSeq.getControlDigit(), MODULE10_CONTROLDIGIT)) {
+                // Compute Sequence as per Module 10 algorithm
+                String baseSeqPrefix = baseSeq.getPrefix() != null ? baseSeq.getPrefix() : "";
+                String storeCodeB = OBDal.getInstance()
+                    .get(Organization.class, orgId)
+                    .getSearchKey();
+                String sequentialNumber = FIN_Utility
+                    .getNextDocNumberWithOutPrefixSuffixAndIncrementSeqIfUpdateNext(updateNext,
+                        baseSeq);
+                int controlDigitD = ReferencedInventoryUtil
+                    .getControlDigit(baseSeqPrefix + storeCodeB + sequentialNumber);
+                gTIN13 = baseSeqPrefix + storeCodeB + sequentialNumber + controlDigitD;
+              } else {
+                // When Control Digit is None, calculate the sequence without Module 10 algorithm
+                gTIN13 = FIN_Utility.getDocumentNo(updateNext, baseSeq);
+              }
+            }
+            // appends as many Zero as prefix to match Fixed Length Sequences
+            gTIN13 = appendZeroAsPrefixToMatchFixedLengthSequence(baseSeq, gTIN13);
 
-          // Append as many zeros as prefix to match the length of 5 digit
-          sequentialNumberC = String.format("%5s", sequentialNumberC).replace(' ', '0');
-
-          int controlDigitD = ReferencedInventoryUtil
-              .getControlDigit(baseSeqPrefixA2 + storeCodeB + sequentialNumberC);
-
-          String gTIN13 = baseSeqPrefixA2 + storeCodeB + sequentialNumberC + controlDigitD;
-
-          String parentDocSeqPrefixA1 = seq.getPrefix() != null ? seq.getPrefix() : "";
-          String parentDocSeqSuffixE = seq.getSuffix() != null ? seq.getSuffix() : "";
-
-          int controlDigitF = ReferencedInventoryUtil
-              .getControlDigit(parentDocSeqPrefixA1 + gTIN13 + parentDocSeqSuffixE);
-
-          proposedSequence = parentDocSeqPrefixA1 + gTIN13 + parentDocSeqSuffixE + controlDigitF;
-
+            String parentDocSeqPrefix = seq.getPrefix() != null ? seq.getPrefix() : "";
+            String parentDocSeqSuffix = seq.getSuffix() != null ? seq.getSuffix() : "";
+            int controlDigitF = ReferencedInventoryUtil
+                .getControlDigit(parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix);
+            proposedSequence = parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix + controlDigitF;
+          } else {
+            // When Control Digit is None, calculate the sequence without Module 10 algorithm
+            proposedSequence = FIN_Utility.getDocumentNo(updateNext, seq);
+          }
+          // appends as many Zero as prefix to match Fixed Length Sequences
+          proposedSequence = appendZeroAsPrefixToMatchFixedLengthSequence(seq, proposedSequence);
         } else {
-          // Compute Sequence as per previous way
+          // When calculation method is Empty or Auto Numbering
           proposedSequence = FIN_Utility.getDocumentNo(updateNext, seq);
         }
         if (updateNext) {
@@ -216,6 +232,24 @@ public class ReferencedInventoryUtil {
         return null;
       }
     }
+  }
+  /*
+   * This method appends as many Zero as prefix to match Fixed Length Sequences
+   */
+
+  private static String appendZeroAsPrefixToMatchFixedLengthSequence(Sequence seq,
+      String strSequence) {
+    String sequence = strSequence;
+    if (seq != null && StringUtils.equals(seq.getSequenceLengthType(), "F")) {
+      int diffInLength = seq.getSequenceLength().intValue() - strSequence.length();
+      if (diffInLength > 0) {
+        // If the length of calculated sequence is less than specified sequence length, append
+        // as many zeros as prefix to sequence to complete the specified length
+        sequence = String.format("%" + seq.getSequenceLength().intValue() + "s", sequence)
+            .replace(' ', '0');
+      }
+    }
+    return sequence;
   }
 
   /**
