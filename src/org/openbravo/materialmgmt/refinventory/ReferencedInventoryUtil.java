@@ -362,20 +362,26 @@ public class ReferencedInventoryUtil {
 
   private static Sequence getPerOrganizationSequence(final String referencedInventoryTypeId,
       String orgId) {
-    final OBCriteria<ReferencedInventoryTypeOrgSequence> criteria = OBDao.getFilteredCriteria(
-        ReferencedInventoryTypeOrgSequence.class,
-        Restrictions.eq(ReferencedInventoryTypeOrgSequence.PROPERTY_REFERENCEDINVENTORYTYPE + ".id",
-            referencedInventoryTypeId),
-        Restrictions.eq(AttributeSetInstance.PROPERTY_ORGANIZATION + ".id", orgId));
-    criteria.setMaxResults(1);
-    ReferencedInventoryTypeOrgSequence orgSeq = (ReferencedInventoryTypeOrgSequence) criteria
-        .uniqueResult();
-    return orgSeq != null ? orgSeq.getSequence() : null;
+    try {
+      OBContext.setAdminMode(true);
+      final OBCriteria<ReferencedInventoryTypeOrgSequence> criteria = OBDao.getFilteredCriteria(
+          ReferencedInventoryTypeOrgSequence.class,
+          Restrictions.eq(
+              ReferencedInventoryTypeOrgSequence.PROPERTY_REFERENCEDINVENTORYTYPE + ".id",
+              referencedInventoryTypeId),
+          Restrictions.eq(AttributeSetInstance.PROPERTY_ORGANIZATION + ".id", orgId));
+      criteria.setMaxResults(1);
+      ReferencedInventoryTypeOrgSequence orgSeq = (ReferencedInventoryTypeOrgSequence) criteria
+          .uniqueResult();
+      return orgSeq != null ? orgSeq.getSequence() : null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   private static int getControlDigit(String sequence) {
     if (sequence == null || sequence.trim().isEmpty()) {
-      throw new IllegalArgumentException("Invalid sequence");
+      throw new OBException("Invalid sequence, it is null or empty.");
     }
     int sum = 0;
     boolean isOddIndexedDigit = true;
@@ -383,7 +389,7 @@ public class ReferencedInventoryUtil {
     for (int i = 0; i <= reverserSequence.length() - 1; i++) {
       char digitChar = reverserSequence.charAt(i);
       if (!Character.isDigit(digitChar)) {
-        throw new IllegalArgumentException("Invalid character in sequence...." + sequence);
+        throw new OBException("Invalid character " + digitChar + " in sequence " + sequence);
       }
       int digit = Character.getNumericValue(digitChar);
       if (isOddIndexedDigit) {
