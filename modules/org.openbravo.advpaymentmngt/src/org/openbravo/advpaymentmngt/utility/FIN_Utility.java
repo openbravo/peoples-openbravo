@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2010-2022 Openbravo SLU
+ * All portions are Copyright (C) 2010-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  *************************************************************************
@@ -400,9 +400,31 @@ public class FIN_Utility {
     }
     final StringBuilder nextDocNumber = new StringBuilder();
     Sequence seq = getSequenceAndLockIfUpdateNext(updateNext, seqParam);
-    nextDocNumber.append(seq.getNextAssignedNumber().toString());
+    String strSequence = seq.getNextAssignedNumber().toString();
+    // appends as many Zero as prefix to match specified Fix Length Sequences
+    nextDocNumber.append(appendZeroAsPrefixToMatchFixedLengthSequence(seq, strSequence));
     FIN_Utility.incrementSeqIfUpdateNext(updateNext, seq);
     return nextDocNumber.toString();
+  }
+
+  /*
+   * This method appends as many Zero as prefix to match specified Fix Length Sequences, strSequence
+   * Sequence Length excluding prefix and suffix
+   */
+
+  public static String appendZeroAsPrefixToMatchFixedLengthSequence(Sequence seq,
+      String strSequence) {
+    String sequence = strSequence;
+    if (seq != null && StringUtils.equals(seq.getSequenceNumberLength(), "F")) {
+      int diffInLength = seq.getSequenceLength().intValue() - strSequence.length();
+      if (diffInLength > 0) {
+        // If the length of sequence is less than specified sequence length, append
+        // as many zeros as prefix to sequence to complete the specified length
+        sequence = String.format("%" + seq.getSequenceLength().intValue() + "s", sequence)
+            .replace(' ', '0');
+      }
+    }
+    return sequence;
   }
 
   private static void incrementSeqIfUpdateNext(final boolean updateNext, final Sequence seq) {

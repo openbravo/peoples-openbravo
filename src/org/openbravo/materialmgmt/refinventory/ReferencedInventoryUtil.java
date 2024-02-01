@@ -58,11 +58,13 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 public class ReferencedInventoryUtil {
   public static final String REFERENCEDINVENTORYPREFIX = "[";
   public static final String REFERENCEDINVENTORYSUFFIX = "]";
-  private static final String GLOBAL_SEQUENCE_TYPE = "G";
-  private static final String PER_STORE_SEQUENCE_TYPE = "P";
-  private static final String NONE_SEQUENCE_TYPE = "N";
-  private static final String MODULE10_CONTROLDIGIT = "M10";
-  private static final String SEQUENCE_CALCULATIONMETHOD = "S";
+  public static final String GLOBAL_SEQUENCE_TYPE = "G";
+  public static final String PER_STORE_SEQUENCE_TYPE = "P";
+  public static final String NONE_SEQUENCE_TYPE = "N";
+  public static final String MODULE10_CONTROLDIGIT = "M10";
+  public static final String SEQUENCE_CALCULATIONMETHOD = "S";
+  public static final String AUTONUMBERING_CALCULATIONMETHOD = "A";
+  public static final String VARIABLE_SEQUENCENUMBERLENGTH = "V";
 
   /**
    * Create and return a new AttributeSetInstance from the given originalAttributeSetInstance and
@@ -180,10 +182,10 @@ public class ReferencedInventoryUtil {
       String proposedSequence = null;
       Sequence seq = getSequence(referencedInventoryTypeId, orgId);
       if (seq != null) {
-        // When calculation method is Sequence
-        if (StringUtils.equals(seq.getCalculationMethod(), SEQUENCE_CALCULATIONMETHOD)) {
-          // Compute Sequence as per Module 10 algorithm
-          if (StringUtils.equals(seq.getControlDigit(), MODULE10_CONTROLDIGIT)) {
+        // Compute Sequence as per Module 10 algorithm
+        if (StringUtils.equals(seq.getControlDigit(), MODULE10_CONTROLDIGIT)) {
+          // When calculation method is Sequence
+          if (StringUtils.equals(seq.getCalculationMethod(), SEQUENCE_CALCULATIONMETHOD)) {
             // Base Sequence
             Sequence baseSeq = seq.getBaseSequence();
             String gTIN13 = "";
@@ -191,38 +193,39 @@ public class ReferencedInventoryUtil {
               if (StringUtils.equals(baseSeq.getControlDigit(), MODULE10_CONTROLDIGIT)) {
                 // Compute Sequence as per Module 10 algorithm
                 String baseSeqPrefix = baseSeq.getPrefix() != null ? baseSeq.getPrefix() : "";
-                String storeCodeB = OBDal.getInstance()
+                String storeCode = OBDal.getInstance()
                     .get(Organization.class, orgId)
                     .getSearchKey();
                 String sequentialNumber = FIN_Utility
                     .getNextDocNumberWithOutPrefixSuffixAndIncrementSeqIfUpdateNext(updateNext,
                         baseSeq);
                 int controlDigitD = ReferencedInventoryUtil
-                    .getControlDigit(baseSeqPrefix + storeCodeB + sequentialNumber);
-                gTIN13 = baseSeqPrefix + storeCodeB + sequentialNumber + controlDigitD;
+                    .getControlDigit(baseSeqPrefix + storeCode + sequentialNumber);
+                gTIN13 = baseSeqPrefix + storeCode + sequentialNumber + controlDigitD;
               } else {
                 // When Control Digit is None, calculate the sequence without Module 10 algorithm
                 gTIN13 = FIN_Utility.getDocumentNo(updateNext, baseSeq);
               }
-            }
-            // appends as many Zero as prefix to match Fixed Length Sequences
-            gTIN13 = appendZeroAsPrefixToMatchFixedLengthSequence(baseSeq, gTIN13);
+              // appends as many Zero as prefix to match specified Fix Length Sequences
+              gTIN13 = FIN_Utility.appendZeroAsPrefixToMatchFixedLengthSequence(seq, gTIN13);
 
-            String parentDocSeqPrefix = seq.getPrefix() != null ? seq.getPrefix() : "";
-            String parentDocSeqSuffix = seq.getSuffix() != null ? seq.getSuffix() : "";
-            int controlDigitF = ReferencedInventoryUtil
-                .getControlDigit(parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix);
-            proposedSequence = parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix + controlDigitF;
+              String parentDocSeqPrefix = seq.getPrefix() != null ? seq.getPrefix() : "";
+              String parentDocSeqSuffix = seq.getSuffix() != null ? seq.getSuffix() : "";
+              int controlDigitF = ReferencedInventoryUtil
+                  .getControlDigit(parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix);
+              proposedSequence = parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix + controlDigitF;
+            }
           } else {
-            // When Control Digit is None, calculate the sequence without Module 10 algorithm
+            // When Calculation Method is Empty or Auto Numbering, calculate as per previous way
+            // without Module 10 algorithm.
             proposedSequence = FIN_Utility.getDocumentNo(updateNext, seq);
           }
-          // appends as many Zero as prefix to match Fixed Length Sequences
-          proposedSequence = appendZeroAsPrefixToMatchFixedLengthSequence(seq, proposedSequence);
+
         } else {
-          // When calculation method is Empty or Auto Numbering
+          // When Control Digit is None, calculate as per previous way without Module 10 algorithm.
           proposedSequence = FIN_Utility.getDocumentNo(updateNext, seq);
         }
+
         if (updateNext) {
           return StringUtils.isBlank(proposedSequence) ? "" : proposedSequence;
         } else {
@@ -232,24 +235,6 @@ public class ReferencedInventoryUtil {
         return null;
       }
     }
-  }
-  /*
-   * This method appends as many Zero as prefix to match Fixed Length Sequences
-   */
-
-  private static String appendZeroAsPrefixToMatchFixedLengthSequence(Sequence seq,
-      String strSequence) {
-    String sequence = strSequence;
-    if (seq != null && StringUtils.equals(seq.getSequenceNumberLength(), "F")) {
-      int diffInLength = seq.getSequenceLength().intValue() - strSequence.length();
-      if (diffInLength > 0) {
-        // If the length of calculated sequence is less than specified sequence length, append
-        // as many zeros as prefix to sequence to complete the specified length
-        sequence = String.format("%" + seq.getSequenceLength().intValue() + "s", sequence)
-            .replace(' ', '0');
-      }
-    }
-    return sequence;
   }
 
   /**

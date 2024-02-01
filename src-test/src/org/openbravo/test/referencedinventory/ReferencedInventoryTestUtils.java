@@ -45,6 +45,7 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
 import org.openbravo.materialmgmt.ReservationUtils;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Sequence;
@@ -134,12 +135,11 @@ class ReferencedInventoryTestUtils {
    */
 
   static void createReferencedInventoryTypeOrgSeq(ReferencedInventoryType refInvType,
-      Sequence parentSequence) {
+      Organization org, Sequence parentSequence) {
     final ReferencedInventoryTypeOrgSequence refInvTypeOrgSeq = OBProvider.getInstance()
         .get(ReferencedInventoryTypeOrgSequence.class);
     refInvTypeOrgSeq.setClient(OBContext.getOBContext().getCurrentClient());
-    refInvTypeOrgSeq
-        .setOrganization(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID));
+    refInvTypeOrgSeq.setOrganization(org);
     refInvTypeOrgSeq.setReferencedInventoryType(refInvType);
     refInvTypeOrgSeq.setSequence(parentSequence);
     OBDal.getInstance().save(refInvTypeOrgSeq);
@@ -148,16 +148,50 @@ class ReferencedInventoryTestUtils {
     OBDal.getInstance().flush();
   }
 
-  static ReferencedInventoryType createReferencedInventoryType() {
+  /*
+   * Creates Document Sequence to be used
+   */
+
+  static Sequence createDocumentSequence(Organization org, Sequence existingSequence,
+      String controlDigit, String calculationMethod, String prefix, Long startingNo,
+      Long nextAssignedNumber, Long incrementBy, String suffix, Sequence baseSequence,
+      String sequenceNoLength, Long sequenceLength) {
+    // Create a Sequence
+    final Sequence sequence = (Sequence) DalUtil.copy(existingSequence);
+    sequence.setOrganization(org);
+    sequence.setName(UUID.randomUUID().toString());
+    sequence.setControlDigit(controlDigit);
+    sequence.setCalculationMethod(calculationMethod);
+    sequence.setPrefix(prefix);
+    sequence.setStartingNo(startingNo);
+    sequence.setNextAssignedNumber(nextAssignedNumber);
+    sequence.setIncrementBy(incrementBy);
+    sequence.setSuffix(suffix);
+    sequence.setBaseSequence(baseSequence);
+    sequence.setSequenceNumberLength(sequenceNoLength);
+    sequence.setSequenceLength(sequenceLength);
+    OBDal.getInstance().save(sequence);
+    OBDal.getInstance().flush(); // Required to lock sequence at db level later on
+    return sequence;
+  }
+
+  static ReferencedInventoryType createReferencedInventoryType(Organization org,
+      String sequenceType) {
     final ReferencedInventoryType refInvType = OBProvider.getInstance()
         .get(ReferencedInventoryType.class);
     refInvType.setClient(OBContext.getOBContext().getCurrentClient());
-    refInvType.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+    refInvType.setOrganization(org);
+    refInvType.setSequenceType(sequenceType);
     refInvType.setName(UUID.randomUUID().toString());
     refInvType.setShared(true);
     OBDal.getInstance().save(refInvType);
     assertThat("Referenced Inventory Type is successfully created", refInvType, notNullValue());
     return refInvType;
+  }
+
+  static ReferencedInventoryType createReferencedInventoryType() {
+    return createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+        ReferencedInventoryUtil.NONE_SEQUENCE_TYPE);
   }
 
   static ReferencedInventory createReferencedInventory(final String orgId,

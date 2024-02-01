@@ -78,54 +78,27 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
     // Set numeric search key for Organization
     setOrganizationCode(org, "10491");
 
-    // Create a Child Sequence
-    final Sequence childSequence = (Sequence) DalUtil
-        .copy(OBDal.getInstance().getProxy(Sequence.class, ANY_EXISTING_SEQUENCE_ID));
-    childSequence.setOrganization(org);
-    childSequence.setName(UUID.randomUUID().toString());
-    childSequence.setCalculationMethod("A");
-    childSequence.setIncrementBy(1L);
-    childSequence.setNextAssignedNumber(2821L);
-    childSequence.setStartingNo(2820L);
-    childSequence.setPrefix("01");
-    childSequence.setSuffix(null);
-    childSequence.setControlDigit("M10");
-    childSequence.setSequenceLengthType("V");
-    childSequence.setBaseSequence(null);
-    childSequence.setSequenceLength(null);
-    OBDal.getInstance().save(childSequence);
-    OBDal.getInstance().flush(); // Required to lock sequence at db level later on
+    Sequence existingSequence = OBDal.getInstance()
+        .getProxy(Sequence.class, ANY_EXISTING_SEQUENCE_ID);
+
+    final Sequence childSequence = ReferencedInventoryTestUtils.createDocumentSequence(org,
+        existingSequence, ReferencedInventoryUtil.MODULE10_CONTROLDIGIT,
+        ReferencedInventoryUtil.AUTONUMBERING_CALCULATIONMETHOD, "01", 2820L, 2821L, 1L, "", null,
+        ReferencedInventoryUtil.VARIABLE_SEQUENCENUMBERLENGTH, null);
 
     // Create Parent Sequence with Child Sequence created above as its Base Sequence
-    final Sequence parentSequence = (Sequence) DalUtil
-        .copy(OBDal.getInstance().getProxy(Sequence.class, ANY_EXISTING_SEQUENCE_ID));
-    parentSequence.setOrganization(OBDal.getInstance()
-        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID));
-    parentSequence.setName(UUID.randomUUID().toString());
-    parentSequence.setCalculationMethod("S");
-    parentSequence.setIncrementBy(1L);
-    parentSequence.setNextAssignedNumber(1000000L);
-    parentSequence.setStartingNo(1000000L);
-    parentSequence.setPrefix("6");
-    parentSequence.setSuffix("000");
-    parentSequence.setControlDigit("M10");
-    parentSequence.setSequenceLengthType("V");
-    parentSequence.setBaseSequence(childSequence);
-    parentSequence.setSequenceLength(null);
-    OBDal.getInstance().save(parentSequence);
-    OBDal.getInstance().flush(); // Required to lock sequence at db level later on
+    final Sequence parentSequence = ReferencedInventoryTestUtils.createDocumentSequence(org,
+        existingSequence, ReferencedInventoryUtil.MODULE10_CONTROLDIGIT,
+        ReferencedInventoryUtil.SEQUENCE_CALCULATIONMETHOD, "6", 1L, 1L, 1L, "000", childSequence,
+        ReferencedInventoryUtil.VARIABLE_SEQUENCENUMBERLENGTH, null);
 
     // Create Referenced Inventory Type with Sequence Type as Per Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType();
-    refInvType.setOrganization(OBDal.getInstance()
-        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID));
-    refInvType.setSequenceType("P");
-    OBDal.getInstance().save(refInvType);
-    OBDal.getInstance().flush(); // Required to lock sequence at db level later on
+        .createReferencedInventoryType(org, ReferencedInventoryUtil.PER_STORE_SEQUENCE_TYPE);
 
     // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
-    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, parentSequence);
+    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, org,
+        parentSequence);
 
     String proposedSequence = ReferencedInventoryUtil.getProposedValueFromSequenceOrNull(
         refInvType.getId(), ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, false);
