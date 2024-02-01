@@ -29,10 +29,14 @@ import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.database.ConnectionProvider;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.service.db.DalConnectionProvider;
 
 /**
  * This class validates that sequence being set as base sequence should not have alphanumeric prefix
@@ -46,11 +50,6 @@ import org.openbravo.model.ad.utility.Sequence;
 class ADSequenceEventHandler extends EntityPersistenceEventObserver {
   private static Entity[] entities = {
       ModelProvider.getInstance().getEntity(Sequence.ENTITY_NAME) };
-  final Entity sequenceEntity = ModelProvider.getInstance().getEntity(Sequence.ENTITY_NAME);
-  final Property prefixProperty = sequenceEntity.getProperty(Sequence.PROPERTY_PREFIX);
-  final Property suffixProperty = sequenceEntity.getProperty(Sequence.PROPERTY_SUFFIX);
-  final Property baseSequenceProperty = sequenceEntity.getProperty(Sequence.PROPERTY_BASESEQUENCE);
-  final Property controlDigitProperty = sequenceEntity.getProperty(Sequence.PROPERTY_CONTROLDIGIT);
 
   @Override
   protected Entity[] getObservedEntities() {
@@ -78,6 +77,13 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     }
 
     Sequence sequence = (Sequence) event.getTargetInstance();
+    final Entity sequenceEntity = ModelProvider.getInstance().getEntity(Sequence.ENTITY_NAME);
+    final Property prefixProperty = sequenceEntity.getProperty(Sequence.PROPERTY_PREFIX);
+    final Property suffixProperty = sequenceEntity.getProperty(Sequence.PROPERTY_SUFFIX);
+    final Property baseSequenceProperty = sequenceEntity
+        .getProperty(Sequence.PROPERTY_BASESEQUENCE);
+    final Property controlDigitProperty = sequenceEntity
+        .getProperty(Sequence.PROPERTY_CONTROLDIGIT);
 
     // validate sequence
 
@@ -129,8 +135,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
 
   private void validateBaseSequence(Sequence baseSequence, boolean parentWithControlDigit) {
     if (isPrefixOrSuffixAlphanumericForSequence(baseSequence) && parentWithControlDigit) {
-      throw new OBException(
-          "Alphanumeric prefix/suffix are not allowed for Sequence used as Base Sequence in a Sequence with Module 10 control digit");
+      throw new OBException(getErrorMessage("ValidateBaseSequence"));
     }
   }
 
@@ -144,12 +149,10 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
   private void validateSequencePrefixSuffix(Sequence sequence) {
     if (isPrefixOrSuffixAlphanumericForSequence(sequence)) {
       if (hasControldigit(sequence)) {
-        throw new OBException(
-            "Alphanumeric prefix/suffix are not allowed for Sequence with Module 10 control digit");
+        throw new OBException(getErrorMessage("ValidateSequence"));
       }
       if (isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(sequence.getId())) {
-        throw new OBException(
-            "Alphanumeric prefix/suffix are not allowed for Sequence used as Base Sequence in a Sequence with Module 10 control digit");
+        throw new OBException(getErrorMessage("ValidateBaseSequence"));
       }
     }
   }
@@ -201,5 +204,18 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
       }
     }
     return false;
+  }
+
+  /**
+   * Returns error message for validation
+   * 
+   * @param messageCode
+   * @return
+   */
+
+  private String getErrorMessage(String messageCode) {
+    ConnectionProvider conn = new DalConnectionProvider(false);
+    String language = OBContext.getOBContext().getLanguage().getLanguage();
+    return Utility.messageBD(conn, messageCode, language);
   }
 }
