@@ -190,7 +190,7 @@
 <!--1004400000-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1004400000-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--1004400000-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--1004400000-->  <NAME><![CDATA[Requisition To Order]]></NAME>
+<!--1004400000-->  <NAME><![CDATA[Requisition to Purchase Order]]></NAME>
 <!--1004400000-->  <DESCRIPTION><![CDATA[Create a Purchase Order from Requisition lines.]]></DESCRIPTION>
 <!--1004400000-->  <HELP><![CDATA[Procurement management team can use this window to manage "Completed" requisitions all at once.]]></HELP>
 <!--1004400000-->  <ACCESSLEVEL><![CDATA[3]]></ACCESSLEVEL>
