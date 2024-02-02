@@ -29,22 +29,22 @@ import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.database.ConnectionProvider;
-import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.model.ad.utility.Sequence;
-import org.openbravo.service.db.DalConnectionProvider;
 
 /**
- * This class validates that sequence being set as base sequence should not have alphanumeric prefix
- * and suffix values if it is configured in parent sequence having control digit as Module 10.
+ * This class validates that sequence being set as base sequence should not have alphanumeric
+ * prefix/suffix values if it is configured in parent sequence having control digit as Module 10.
+ * 
  * Alternatively sequence that is already used as base sequence should not have alphanumeric prefix
- * and suffix values when the control digit is calculated using Module 10 algorithm.
+ * and suffix values when the control digit is calculated using Module 10 algorithm in its parent
+ * sequence.
  * 
  * Validates that sequences with control digit Module 10 should not have alphanumeric prefix/suffix.
+ * 
  */
 
 class ADSequenceEventHandler extends EntityPersistenceEventObserver {
@@ -108,7 +108,8 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     Sequence previousBaseSequence = (Sequence) event.getPreviousState(baseSequenceProperty);
     boolean isCurrentBaseSequenceChanged = currentBaseSequence != null
         && (previousBaseSequence == null || !previousBaseSequence.equals(currentBaseSequence));
-    if (isCurrentBaseSequenceChanged) {
+    // When base sequence or control digit is being changed
+    if (isCurrentBaseSequenceChanged || isControlDigitChanged) {
       validateBaseSequence(currentBaseSequence, hasControldigit(sequence));
     }
   }
@@ -117,7 +118,8 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    * Checks whether sequence is configured with Module 10 control digit.
    * 
    * @param sequence
-   * @return
+   *          Input Sequence
+   * @return whether sequence has Module 10 control digit
    */
 
   private boolean hasControldigit(Sequence sequence) {
@@ -130,12 +132,14 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    * the parent sequence with control digit Module 10. Such base sequences are not allowed
    * 
    * @param baseSequence
-   * @param parentSequence
+   *          Input sequence that is set as Base Sequence in parent Sequence
+   * @param parentWithControlDigit
+   *          is parent Sequence of base Sequence set with Module 10 control digit
    */
 
   private void validateBaseSequence(Sequence baseSequence, boolean parentWithControlDigit) {
     if (isPrefixOrSuffixAlphanumericForSequence(baseSequence) && parentWithControlDigit) {
-      throw new OBException(getErrorMessage("ValidateBaseSequence"));
+      throw new OBException(OBMessageUtils.messageBD("ValidateBaseSequence"));
     }
   }
 
@@ -144,15 +148,16 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    * prefix/suffix.
    * 
    * @param sequence
+   *          Input Sequence to validate
    */
 
   private void validateSequencePrefixSuffix(Sequence sequence) {
     if (isPrefixOrSuffixAlphanumericForSequence(sequence)) {
       if (hasControldigit(sequence)) {
-        throw new OBException(getErrorMessage("ValidateSequence"));
+        throw new OBException(OBMessageUtils.messageBD("ValidateSequence"));
       }
       if (isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(sequence.getId())) {
-        throw new OBException(getErrorMessage("ValidateBaseSequence"));
+        throw new OBException(OBMessageUtils.messageBD("ValidateBaseSequence"));
       }
     }
   }
@@ -161,14 +166,15 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    * This method detects whether sequence has alphanumeric prefix or suffix
    * 
    * @param sequence
-   * @return
+   *          Input sequence
+   * @return whether prefix/suffix of sequence is alphanumeric
    */
 
   private boolean isPrefixOrSuffixAlphanumericForSequence(Sequence sequence) {
     String prefix = sequence.getPrefix();
     String suffix = sequence.getSuffix();
-    return ((prefix != null && isAlphanumeric(prefix))
-        || (suffix != null && isAlphanumeric(suffix)));
+    return ((prefix != null && ReferencedInventoryUtil.isAlphaNumeric(prefix))
+        || (suffix != null && ReferencedInventoryUtil.isAlphaNumeric(suffix)));
   }
 
   /**
@@ -177,7 +183,8 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    * not have alphanumeric prefix/suffix.
    * 
    * @param sequenceId
-   * @return
+   *          Input Sequence ID
+   * @return Whether sequence is used as base sequence in Sequence with Module 10 control digit
    */
   private boolean isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(String sequenceId) {
     OBCriteria<Sequence> seqCriteria = OBDal.getInstance().createCriteria(Sequence.class);
@@ -187,35 +194,5 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
         ReferencedInventoryUtil.MODULE10_CONTROLDIGIT));
     seqCriteria.setMaxResults(1);
     return seqCriteria.uniqueResult() != null;
-  }
-
-  /**
-   * checks whether sequence is alphanumeric or not
-   * 
-   * @param strSequence
-   * @return
-   */
-
-  private boolean isAlphanumeric(String strSequence) {
-    for (char character : strSequence.toCharArray()) {
-      // Check if the character is not a digit
-      if (!Character.isDigit(character)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Returns error message for validation
-   * 
-   * @param messageCode
-   * @return
-   */
-
-  private String getErrorMessage(String messageCode) {
-    ConnectionProvider conn = new DalConnectionProvider(false);
-    String language = OBContext.getOBContext().getLanguage().getLanguage();
-    return Utility.messageBD(conn, messageCode, language);
   }
 }

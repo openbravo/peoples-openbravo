@@ -39,6 +39,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -196,12 +197,16 @@ public class ReferencedInventoryUtil {
                 String storeCode = OBDal.getInstance()
                     .get(Organization.class, orgId)
                     .getSearchKey();
+                // check store code if it is alphanumeric
+                if (isAlphaNumeric(storeCode)) {
+                  // TODO raise exception or skip store code in computation
+                }
                 String sequentialNumber = FIN_Utility
                     .getNextDocNumberWithOutPrefixSuffixAndIncrementSeqIfUpdateNext(updateNext,
                         baseSeq);
-                int controlDigitD = ReferencedInventoryUtil
+                int controlDigitforBaseSequence = ReferencedInventoryUtil
                     .getControlDigit(baseSeqPrefix + storeCode + sequentialNumber);
-                gTIN13 = baseSeqPrefix + storeCode + sequentialNumber + controlDigitD;
+                gTIN13 = baseSeqPrefix + storeCode + sequentialNumber + controlDigitforBaseSequence;
               } else {
                 // When Control Digit is None, calculate the sequence without Module 10 algorithm
                 gTIN13 = FIN_Utility.getDocumentNo(updateNext, baseSeq);
@@ -211,9 +216,10 @@ public class ReferencedInventoryUtil {
 
               String parentDocSeqPrefix = seq.getPrefix() != null ? seq.getPrefix() : "";
               String parentDocSeqSuffix = seq.getSuffix() != null ? seq.getSuffix() : "";
-              int controlDigitF = ReferencedInventoryUtil
+              int controlDigitForSequence = ReferencedInventoryUtil
                   .getControlDigit(parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix);
-              proposedSequence = parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix + controlDigitF;
+              proposedSequence = parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix
+                  + controlDigitForSequence;
             }
           } else {
             // When Calculation Method is Empty or Auto Numbering, calculate as per previous way
@@ -379,18 +385,23 @@ public class ReferencedInventoryUtil {
     }
   }
 
+  /**
+   * Compute control digit based o Module 10 algorithm
+   * 
+   * @param sequence
+   *          The input sequence string
+   * @return Computed control digit using Module 10 algorithm
+   */
+
   private static int getControlDigit(String sequence) {
-    if (sequence == null || sequence.trim().isEmpty()) {
-      throw new OBException("Invalid sequence, it is null or empty.");
+    if (sequence == null || sequence.trim().isEmpty() || isAlphaNumeric(sequence)) {
+      throw new OBException(OBMessageUtils.messageBD("ValidateSequenceForControlDigit"));
     }
     int sum = 0;
     boolean isOddIndexedDigit = true;
     String reverserSequence = new StringBuilder(sequence).reverse().toString();
     for (int i = 0; i <= reverserSequence.length() - 1; i++) {
       char digitChar = reverserSequence.charAt(i);
-      if (!Character.isDigit(digitChar)) {
-        throw new OBException("Invalid character " + digitChar + " in sequence " + sequence);
-      }
       int digit = Character.getNumericValue(digitChar);
       if (isOddIndexedDigit) {
         sum += digit * 3;
@@ -400,5 +411,22 @@ public class ReferencedInventoryUtil {
       isOddIndexedDigit = !isOddIndexedDigit;
     }
     return (10 - (sum % 10)) % 10;
+  }
+
+  /**
+   * checks whether sequence is alphanumeric or not
+   * 
+   * @param strSequence
+   * @return Input sequence string is alphanumeric or not
+   */
+
+  public static boolean isAlphaNumeric(String strSequence) {
+    for (char character : strSequence.toCharArray()) {
+      // Check if the character is not a digit
+      if (!Character.isDigit(character)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

@@ -55,11 +55,11 @@ class ReferencedInventoryEventHandler extends EntityPersistenceEventObserver {
   private void clearSequenceInRefInvType(EntityUpdateEvent event) {
     final Entity refInvType = ModelProvider.getInstance()
         .getEntity(ReferencedInventoryType.ENTITY_NAME);
-    final Property sequenceType = refInvType
+    final Property sequenceTypeProperty = refInvType
         .getProperty(ReferencedInventoryType.PROPERTY_SEQUENCETYPE);
     final Property sequence = refInvType.getProperty(ReferencedInventoryType.PROPERTY_SEQUENCE);
-    String currentSequenceType = (String) event.getCurrentState(sequenceType);
-    String previousSequenceType = (String) event.getPreviousState(sequenceType);
+    String currentSequenceType = (String) event.getCurrentState(sequenceTypeProperty);
+    String previousSequenceType = (String) event.getPreviousState(sequenceTypeProperty);
     if (!StringUtils.equals(previousSequenceType, currentSequenceType)
         && !StringUtils.equals(currentSequenceType, ReferencedInventoryUtil.GLOBAL_SEQUENCE_TYPE)) {
       event.setCurrentState(sequence, null);
