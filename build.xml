@@ -12,7 +12,7 @@
 * under the License.
 * The Original Code is Openbravo ERP.
 * The Initial Developer of the Original Code is Openbravo SLU
-* All portions are Copyright (C) 2001-2023 Openbravo SLU
+* All portions are Copyright (C) 2001-2024 Openbravo SLU
 * All Rights Reserved.
 * Contributor(s):  ______________________________________.
 ************************************************************************
@@ -88,6 +88,8 @@ export.database: exports database structure and data to xml files.
   <property name="checkTranslationConsistency" value="true"/>
   <property name="buildValidation" value="true"/>
   <property name="modules" value=""/> 
+  <!-- see issue 54452 -->
+  <property name="javac.proc" value="-proc:none"/>
  
   <condition property="deploy.mode" value="class">
     <not>
@@ -738,6 +740,7 @@ export.database: exports database structure and data to xml files.
 	<mkdir dir="build/classes" />
     <javac srcdir="src/org/openbravo/configuration" destdir="build/classes" fork="true" deprecation="off" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="project.class.path"/>  
+      <compilerarg line="${javac.proc}" />
     </javac>
   </target>
 
@@ -807,6 +810,7 @@ export.database: exports database structure and data to xml files.
     <mkdir dir="build/classes"/>
     <javac srcdir="src/org/openbravo/base/session" includes="HostNameTask.java" destdir="build/classes" fork="true" deprecation="off" encoding="UTF-8" debug="true" debuglevel="lines,vars,source" includeantruntime="false">
       <classpath refid="project.class.path"/>
+      <compilerarg line="${javac.proc}" />
     </javac>
     <taskdef name="hostName" classname="org.openbravo.base.session.HostNameTask">
       <classpath refid="project.class.path"/>
