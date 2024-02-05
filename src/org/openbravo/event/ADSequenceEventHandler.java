@@ -109,7 +109,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     boolean isCurrentBaseSequenceChanged = currentBaseSequence != null
         && (previousBaseSequence == null || !previousBaseSequence.equals(currentBaseSequence));
     // When base sequence or control digit is being changed
-    if (isCurrentBaseSequenceChanged || isControlDigitChanged) {
+    if (currentBaseSequence != null && (isCurrentBaseSequenceChanged || isControlDigitChanged)) {
       validateBaseSequence(currentBaseSequence, hasControldigit(sequence));
     }
   }

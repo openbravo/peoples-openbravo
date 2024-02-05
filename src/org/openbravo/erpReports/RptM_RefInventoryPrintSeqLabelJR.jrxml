@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 8.2.0.final using JasperReports Library version 6.20.3-415f9428cffdb6805c6f85bbb29ebaf18813a2ab  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PrintHUTypeSequenceLabelReport" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e28245b7-c848-4637-a242-22fc69491184">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DB Omni"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
@@ -16,7 +16,6 @@
 	<queryString>
 		<![CDATA[SELECT RI.AD_ORG_ID AS ORGID,
 RI.VALUE AS SSCC_CODE,
-HU.NAME AS HUNAME,
 O.SOCIAL_NAME AS COMPANYNAME,
 O.VALUE AS STOREID,
 O.NAME AS STORENAME,
@@ -29,7 +28,6 @@ M.NAME AS LASTMODIFIEDBY_USER,
 C_LOCATION_DESCRIPTION(OI.C_LOCATION_ID) AS ADDR,
 U.PHONE AS TEL
 FROM M_REFINVENTORY RI
-JOIN M_REFINVENTORY_TYPE HU ON HU.M_REFINVENTORY_TYPE_ID = RI.M_REFINVENTORY_TYPE_ID
 JOIN AD_USER C ON C.AD_USER_ID = RI.CREATEDBY
 JOIN AD_USER M ON M.AD_USER_ID = RI.UPDATEDBY
 JOIN AD_ORG O ON O.AD_ORG_ID = RI.AD_ORG_ID
@@ -46,11 +44,6 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 		<property name="com.jaspersoft.studio.field.name" value="sscc_code"/>
 		<property name="com.jaspersoft.studio.field.label" value="sscc_code"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="m_refinventory"/>
-	</field>
-	<field name="huname" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="huname"/>
-		<property name="com.jaspersoft.studio.field.label" value="huname"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="m_refinventory_type"/>
 	</field>
 	<field name="companyname" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="companyname"/>
@@ -150,10 +143,10 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 					<property name="com.jaspersoft.studio.unit.barHeight" value="px"/>
 				</reportElement>
 				<jr:barbecue xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" type="Code39" drawText="false" checksumRequired="false" barWidth="0" barHeight="20" evaluationTime="Column">
-					<jr:codeExpression><![CDATA[$F{sscc_code}]]></jr:codeExpression>
+					<jr:codeExpression><![CDATA[$F{sscc_code}  != null ? $F{sscc_code} : "0"]]></jr:codeExpression>
 				</jr:barbecue>
 			</componentElement>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="30" y="6" width="490" height="40" uuid="2058f195-fca7-4127-bbc2-ba09ff4b19ef">
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
 					<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -163,7 +156,7 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
 					<font size="18" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["N<sup>o</sup> : "+$F{sscc_code}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["N<sup>o</sup> : "+ $F{sscc_code} != null ? $F{sscc_code} : ""]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="30" y="104" width="491" height="26" uuid="1de8cf05-4070-4574-91ae-95df93480f0c">
@@ -215,7 +208,7 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 					</textElement>
 					<text><![CDATA[Addr:]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="71" y="0" width="59" height="12" uuid="b5dcdd87-c7d4-457a-ae30-848547f6573d">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -224,7 +217,7 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{storeid}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="131" y="0" width="119" height="12" uuid="e3e6c6bd-a3d0-4878-85fc-2d0474b91262"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
@@ -304,27 +297,27 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 					</textElement>
 					<text><![CDATA[Last Modified By:]]></text>
 				</staticText>
-				<textField pattern="dd/MM/yyyy">
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement x="91" y="1" width="79" height="15" uuid="fa31a968-eb50-4f6f-a169-12b31cf40890"/>
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{creationdatetime}]]></textFieldExpression>
 				</textField>
-				<textField pattern="dd/MM/yyyy">
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement x="91" y="16" width="79" height="15" uuid="2949c38e-3924-4e29-ab29-11343d220c28"/>
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{lastmodified_datetime}]]></textFieldExpression>
 				</textField>
-				<textField pattern="dd/MM/yyyy">
+				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 					<reportElement x="91" y="31" width="79" height="15" uuid="fefee50f-1859-4d64-8453-d43fc1eaf9d0"/>
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="275" y="1" width="100" height="15" uuid="35936d6f-2b3c-4d16-9375-3559f4180f17"/>
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{createbyuser}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="275" y="16" width="100" height="15" uuid="d0a5dcf7-889b-40e9-8529-7d164d215a38"/>
 					<textElement verticalAlignment="Middle"/>
 					<textFieldExpression><![CDATA[$F{lastmodifiedby_user}]]></textFieldExpression>
@@ -410,7 +403,7 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 					</textElement>
 					<text><![CDATA[Tel:]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="3" y="46" width="487" height="34" uuid="1c83630d-bac8-4aca-9e33-186fea5b003a">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>
@@ -426,9 +419,9 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{huname}.toUpperCase()]]></textFieldExpression>
+					<textFieldExpression><![CDATA[""]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="106" y="1" width="100" height="15" uuid="da050f66-d84f-4aad-9413-9881bac5a80f">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 					</reportElement>

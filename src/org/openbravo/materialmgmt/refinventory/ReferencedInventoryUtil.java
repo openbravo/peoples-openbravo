@@ -194,12 +194,13 @@ public class ReferencedInventoryUtil {
               if (StringUtils.equals(baseSeq.getControlDigit(), MODULE10_CONTROLDIGIT)) {
                 // Compute Sequence as per Module 10 algorithm
                 String baseSeqPrefix = baseSeq.getPrefix() != null ? baseSeq.getPrefix() : "";
-                String storeCode = OBDal.getInstance()
-                    .get(Organization.class, orgId)
-                    .getSearchKey();
+                Organization org = OBDal.getInstance().get(Organization.class, orgId);
+                String storeCode = org.getSearchKey();
                 // check store code if it is alphanumeric
                 if (isAlphaNumeric(storeCode)) {
-                  // TODO raise exception or skip store code in computation
+                  throw new OBException(String.format(
+                      OBMessageUtils.messageBD("OrgWithAlphaNumericSearchKeyNotAllowed"),
+                      org.getIdentifier(), storeCode));
                 }
                 String sequentialNumber = FIN_Utility
                     .getNextDocNumberWithOutPrefixSuffixAndIncrementSeqIfUpdateNext(updateNext,
