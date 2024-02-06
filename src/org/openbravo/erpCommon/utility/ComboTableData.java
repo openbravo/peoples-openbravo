@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2001-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2001-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 
@@ -32,11 +33,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.base.exception.OBSecurityException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.client.kernel.RequestContext;
+import org.openbravo.dal.core.OBContext;
 import org.openbravo.data.FieldProvider;
 import org.openbravo.data.Sqlc;
 import org.openbravo.data.UtilSql;
@@ -343,7 +346,15 @@ public class ComboTableData {
       return Utility.getContext(new DalConnectionProvider(false), vars, "#User_Org", windowId,
           accessLevel);
     } else {
-      return Utility.getReferenceableOrg(vars, vars.getStringParameter("inpadOrgId"));
+      String orgId = vars.getStringParameter("inpadOrgId");
+
+      if (!StringUtils.isEmpty(orgId)
+          && !Set.of(OBContext.getOBContext().getReadableOrganizations()).contains(orgId)) {
+        throw new OBSecurityException("Organization " + orgId + " cannot be read by role "
+            + OBContext.getOBContext().getRole() + " while calculating combo " + getObjectName());
+      }
+
+      return Utility.getReferenceableOrg(vars, orgId);
     }
   }
 

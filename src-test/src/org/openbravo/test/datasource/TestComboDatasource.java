@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2014-2018 Openbravo SLU 
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,6 +46,9 @@ import org.junit.Test;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.service.json.JsonConstants;
 import org.openbravo.test.base.Issue;
+import org.openbravo.test.base.TestConstants.Languages;
+import org.openbravo.test.base.TestConstants.Orgs;
+import org.openbravo.test.base.TestConstants.Roles;
 
 public class TestComboDatasource extends BaseDataSourceTestDal {
 
@@ -277,6 +280,25 @@ public class TestComboDatasource extends BaseDataSourceTestDal {
     params.put("_endRow", "75");
     JSONObject jsonResponse = requestCombo(params);
     assertTrue("Combo should have data", getData(jsonResponse).length() > 0);
+  }
+
+  @Test
+  @Issue("54096")
+  public void testFetchDataFromNonGrantedOrg() throws Exception {
+    changeProfile(Roles.ESP_EMPLOYEE, Languages.EN_US_LANG_ID, Orgs.ESP_NORTE, TEST_WAREHOUSE_ID);
+
+    // Fetching Price List combo in Requisition window
+    Map<String, String> params = new HashMap<String, String>();
+    params.put("inpadOrgId", Orgs.US);
+    params.put("fieldId", "803817");
+    params.put("_operationType", "fetch");
+    params.put("_startRow", "0");
+    params.put("_endRow", "75");
+
+    String response = doRequest("/org.openbravo.service.datasource/ComboTableDatasourceService",
+        params, 200, "POST");
+    JSONObject jsonResponse = new JSONObject(response);
+    assertResponseStatusIsNot(jsonResponse, JsonConstants.RPCREQUEST_STATUS_SUCCESS);
   }
 
   private JSONObject requestCombo(Map<String, String> params) throws Exception {

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2023 Openbravo SLU
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -43,6 +43,7 @@ public class TestConstants {
   public static class Roles {
     public static final String FB_GRP_ADMIN = "42D0EEB1C66F497A90DD526DC597E6F0";
     public static final String ESP_ADMIN = "F3196A30B53A42778727B2852FF90C24";
+    public static final String ESP_EMPLOYEE = "D615084948E046E3A439915008F464A6";
     public static final String US_ADMIN = "E669860946664B24BD1AE1ACDF2F5FC3";
     public static final String QA_ADMIN_ROLE = "4028E6C72959682B01295A071429011E";
     public static final String SYS_ADMIN = "0";
@@ -81,6 +82,7 @@ public class TestConstants {
   public static class Languages {
     public static final String ES_ES_LANG_ID = "140";
     public static final String ES_ES_ISOCODE = "es_ES";
+    public static final String EN_US_LANG_ID = "192";
     public static final String SQ_AL_LANG_ID = "181";
     public static final String SQ_AL_ISOCODE = "sq_AL";
   }
