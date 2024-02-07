@@ -68,7 +68,8 @@
     "moduleNameMapper": {
       "\\.(scss)$": "identity-obj-proxy",
       "\\.(css)$": "identity-obj-proxy",
-      "\\.(svg)$": "<rootDir>/modules/org.openbravo.client.kernel/jsutils/fileMock.js"
+      "\\.(svg)$": "<rootDir>/modules/org.openbravo.client.kernel/jsutils/fileMock.js",
+      "\\.(mp3)$": "identity-obj-proxy"
     },
     "coverageDirectory": "./test-reports/coverage",
     "setupFilesAfterEnv": [
