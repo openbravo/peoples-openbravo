@@ -13987,7 +13987,7 @@
 <!--E1308AE1C00C41C3937D1130A7672463-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--E1308AE1C00C41C3937D1130A7672463-->  <VALUE><![CDATA[F]]></VALUE>
 <!--E1308AE1C00C41C3937D1130A7672463-->  <NAME><![CDATA[Fix Length]]></NAME>
-<!--E1308AE1C00C41C3937D1130A7672463-->  <DESCRIPTION><![CDATA[Computed sequence is of fix length that is equal to Sequence Length defined, if sequence length is short zeros are appended as prefix to match the defined sequence length.]]></DESCRIPTION>
+<!--E1308AE1C00C41C3937D1130A7672463-->  <DESCRIPTION><![CDATA[Computed sequence is of fix length that is equal to Sequence Length defined. If sequence length is short, zeros are appended as prefix to match the defined sequence length.]]></DESCRIPTION>
 <!--E1308AE1C00C41C3937D1130A7672463-->  <AD_REFERENCE_ID><![CDATA[60627CEE6AF04DCD8326CA3FF6D7736E]]></AD_REFERENCE_ID>
 <!--E1308AE1C00C41C3937D1130A7672463-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E1308AE1C00C41C3937D1130A7672463--></AD_REF_LIST>

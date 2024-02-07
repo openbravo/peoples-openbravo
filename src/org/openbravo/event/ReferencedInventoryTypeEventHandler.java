@@ -24,9 +24,12 @@ import org.apache.commons.lang.StringUtils;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
+import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
+import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 
 /**
@@ -42,6 +45,13 @@ class ReferencedInventoryEventHandler extends EntityPersistenceEventObserver {
     return entities;
   }
 
+  public void onSave(@Observes EntityNewEvent event) {
+    if (!isValidEvent(event)) {
+      return;
+    }
+    clearSequenceInRefInvType(event);
+  }
+
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
@@ -52,17 +62,19 @@ class ReferencedInventoryEventHandler extends EntityPersistenceEventObserver {
   /**
    * This method clears the Sequence in Handling Unit Type if Sequence Type is not Global
    */
-  private void clearSequenceInRefInvType(EntityUpdateEvent event) {
+  private void clearSequenceInRefInvType(EntityPersistenceEvent event) {
     final Entity refInvType = ModelProvider.getInstance()
         .getEntity(ReferencedInventoryType.ENTITY_NAME);
     final Property sequenceTypeProperty = refInvType
         .getProperty(ReferencedInventoryType.PROPERTY_SEQUENCETYPE);
-    final Property sequence = refInvType.getProperty(ReferencedInventoryType.PROPERTY_SEQUENCE);
+    final Property sequenceProperty = refInvType
+        .getProperty(ReferencedInventoryType.PROPERTY_SEQUENCE);
     String currentSequenceType = (String) event.getCurrentState(sequenceTypeProperty);
-    String previousSequenceType = (String) event.getPreviousState(sequenceTypeProperty);
-    if (!StringUtils.equals(previousSequenceType, currentSequenceType)
-        && !StringUtils.equals(currentSequenceType, ReferencedInventoryUtil.GLOBAL_SEQUENCE_TYPE)) {
-      event.setCurrentState(sequence, null);
+    Sequence sequence = (Sequence) event.getCurrentState(sequenceProperty);
+
+    if (!StringUtils.equals(currentSequenceType, ReferencedInventoryUtil.GLOBAL_SEQUENCE_TYPE)
+        && sequence != null) {
+      event.setCurrentState(sequenceProperty, null);
     }
   }
 

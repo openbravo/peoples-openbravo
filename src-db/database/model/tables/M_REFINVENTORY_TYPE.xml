@@ -51,7 +51,7 @@
       </column>
       <column name="SEQUENCETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[N]]></default>
-        <onCreateDefault/>
+        <onCreateDefault><![CDATA[(CASE WHEN AD_SEQUENCE_ID IS NOT NULL THEN 'G' ELSE 'N' END)]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_REFINVTYPE_CLIENT">
         <reference local="AD_CLIENT_ID" foreign="AD_CLIENT_ID"/>
@@ -66,7 +66,7 @@
         <unique-column name="NAME"/>
         <unique-column name="AD_CLIENT_ID"/>
       </unique>
-      <check name="M_REFINVENTORY_TYPE_SEQ_CH"><![CDATA[SEQUENCETYPE <> 'G' OR AD_SEQUENCE_ID IS NOT NULL]]></check>
+      <check name="M_REFINVENTORY_TYPE_SEQ_CH"><![CDATA[SEQUENCETYPE <> 'G' AND AD_SEQUENCE_ID IS NULL OR SEQUENCETYPE = 'G' AND AD_SEQUENCE_ID IS NOT NULL]]></check>
       <check name="M_REFINVTYPE_ISACTIVE_CH"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="M_REFINVTYPE_ISSHARED_CH"><![CDATA[ISSHARED IN ('Y', 'N')]]></check>
     </table>
