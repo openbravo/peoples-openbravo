@@ -11,17 +11,22 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.authentication;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.Prioritizable;
+import org.openbravo.model.ad.access.User;
 
 /**
  * Provides authentication using an external authentication provider. Classes extending this one
@@ -51,4 +56,23 @@ public abstract class ExternalAuthenticationManager extends AuthenticationManage
    */
   public abstract AuthenticatedUser doExternalAuthentication(HttpServletRequest request,
       HttpServletResponse response);
+
+  /**
+   * Method to perform the external authentication from a given object containing the user
+   * credentials
+   *
+   * @param credential
+   *          The credentials needed to perform the external authentication
+   *
+   * @return an Optional describing the authenticated user or an empty optional if the
+   *         authentication fails or cannot be done with the given credentials
+   *
+   * @throws JSONException
+   *           if there is an error retrieving the information from the credential
+   * @throws AuthenticationException
+   *           if there is an error during the external authentication process
+   */
+  public Optional<User> authenticate(JSONObject credential) throws JSONException {
+    throw new AuthenticationException("Not implemented");
+  }
 }
