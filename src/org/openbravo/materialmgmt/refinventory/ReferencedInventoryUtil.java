@@ -30,7 +30,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
-import org.openbravo.advpaymentmngt.utility.FIN_Utility;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.base.provider.OBProvider;
 import org.openbravo.base.util.Check;
@@ -39,7 +38,7 @@ import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
-import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.SequenceUtil;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Locator;
 import org.openbravo.model.common.enterprise.Organization;
@@ -59,13 +58,16 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovementLine;
 public class ReferencedInventoryUtil {
   public static final String REFERENCEDINVENTORYPREFIX = "[";
   public static final String REFERENCEDINVENTORYSUFFIX = "]";
-  public static final String GLOBAL_SEQUENCE_TYPE = "G";
-  public static final String PER_STORE_SEQUENCE_TYPE = "P";
-  public static final String NONE_SEQUENCE_TYPE = "N";
-  public static final String MODULE10_CONTROLDIGIT = "M10";
-  public static final String SEQUENCE_CALCULATIONMETHOD = "S";
-  public static final String AUTONUMBERING_CALCULATIONMETHOD = "A";
-  public static final String VARIABLE_SEQUENCENUMBERLENGTH = "V";
+
+  public enum SequenceType {
+    GLOBAL("G"), NONE("N"), PER_ORGANIZATION("P");
+
+    public final String value;
+
+    SequenceType(String value) {
+      this.value = value;
+    }
+  }
 
   /**
    * Create and return a new AttributeSetInstance from the given originalAttributeSetInstance and
@@ -153,6 +155,10 @@ public class ReferencedInventoryUtil {
    *          Referenced Inventory Type Id used to get its sequence
    * @param updateNext
    *          if true updates the sequence's next value in database
+   * 
+   * @deprecated this method doesn't support the Sequence Type combo, so the new "Per Organization"
+   *             feature is not supported. Please use instead
+   *             {@link #getProposedValueFromSequence(String, String, boolean)}
    */
   @Deprecated
   public static String getProposedValueFromSequenceOrNull(final String referencedInventoryTypeId,
@@ -160,98 +166,32 @@ public class ReferencedInventoryUtil {
     if (StringUtils.isBlank(referencedInventoryTypeId)) {
       return null;
     } else {
-      return FIN_Utility.getDocumentNo(updateNext, getSequence(referencedInventoryTypeId));
+      return SequenceUtil.getDocumentNo(updateNext,
+          OBDal.getInstance()
+              .getProxy(ReferencedInventoryType.class, referencedInventoryTypeId)
+              .getSequence());
     }
   }
 
   /**
-   * If the given referenced inventory type id is associated to a sequence, it then return the next
-   * value in that sequence. Otherwise returns null.
+   * If the given referenced inventory type id is associated to a sequence (either with a Sequence
+   * Type Global or Per Organization), it then return the next value in that sequence. If sequence
+   * type is None, it returns null.
    * 
    * @param referencedInventoryTypeId
    *          Referenced Inventory Type Id used to get its sequence
    * @param orgId
-   *          Organization Id used to get sequence from Organization Sequence
+   *          Organization Id of the referenced inventory. It is used when Sequence Type is Per
+   *          Organization
    * @param updateNext
    *          if true updates the sequence's next value in database
    */
-  public static String getProposedValueFromSequenceOrNull(final String referencedInventoryTypeId,
+  public static String getProposedValueFromSequence(final String referencedInventoryTypeId,
       final String orgId, final boolean updateNext) {
     if (StringUtils.isBlank(referencedInventoryTypeId)) {
       return null;
-    } else {
-      String proposedSequence = null;
-      Sequence seq = getSequence(referencedInventoryTypeId, orgId);
-      if (seq != null) {
-        // Compute Sequence as per Module 10 algorithm
-        if (StringUtils.equals(seq.getControlDigit(), MODULE10_CONTROLDIGIT)) {
-          // When calculation method is Sequence
-          if (StringUtils.equals(seq.getCalculationMethod(), SEQUENCE_CALCULATIONMETHOD)) {
-            // Base Sequence
-            Sequence baseSeq = seq.getBaseSequence();
-            String gTIN13 = "";
-            if (baseSeq != null) {
-              if (StringUtils.equals(baseSeq.getControlDigit(), MODULE10_CONTROLDIGIT)) {
-                // Compute Sequence as per Module 10 algorithm
-                String baseSeqPrefix = baseSeq.getPrefix() != null ? baseSeq.getPrefix() : "";
-                Organization org = OBDal.getInstance().get(Organization.class, orgId);
-                String storeCode = org.getSearchKey();
-                // check store code if it is alphanumeric
-                if (isAlphaNumeric(storeCode)) {
-                  throw new OBException(String.format(
-                      OBMessageUtils.messageBD("OrgWithAlphaNumericSearchKeyNotAllowed"),
-                      org.getIdentifier(), storeCode));
-                }
-                String sequentialNumber = FIN_Utility
-                    .getNextDocNumberWithOutPrefixSuffixAndIncrementSeqIfUpdateNext(updateNext,
-                        baseSeq);
-                int controlDigitforBaseSequence = ReferencedInventoryUtil
-                    .getControlDigit(baseSeqPrefix + storeCode + sequentialNumber);
-                gTIN13 = baseSeqPrefix + storeCode + sequentialNumber + controlDigitforBaseSequence;
-              } else {
-                // When Control Digit is None, calculate the sequence without Module 10 algorithm
-                gTIN13 = FIN_Utility.getDocumentNo(updateNext, baseSeq);
-              }
-              // appends as many Zero as prefix to match specified Fix Length Sequences
-              gTIN13 = FIN_Utility.appendZeroAsPrefixToMatchFixedLengthSequence(seq, gTIN13);
-
-              String parentDocSeqPrefix = seq.getPrefix() != null ? seq.getPrefix() : "";
-              String parentDocSeqSuffix = seq.getSuffix() != null ? seq.getSuffix() : "";
-              int controlDigitForSequence = ReferencedInventoryUtil
-                  .getControlDigit(parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix);
-              proposedSequence = parentDocSeqPrefix + gTIN13 + parentDocSeqSuffix
-                  + controlDigitForSequence;
-            }
-          } else {
-            // When Calculation Method is Empty or Auto Numbering, calculate as per previous way
-            // without Module 10 algorithm.
-            proposedSequence = FIN_Utility.getDocumentNo(updateNext, seq);
-          }
-
-        } else {
-          // When Control Digit is None, calculate as per previous way without Module 10 algorithm.
-          proposedSequence = FIN_Utility.getDocumentNo(updateNext, seq);
-        }
-
-        if (updateNext) {
-          return StringUtils.isBlank(proposedSequence) ? "" : proposedSequence;
-        } else {
-          return StringUtils.isBlank(proposedSequence) ? "" : "<" + proposedSequence + ">";
-        }
-      } else {
-        return null;
-      }
     }
-  }
-
-  /**
-   * Returns the sequence associated to the given referenced inventory type id or null if not found
-   */
-  @Deprecated
-  private static Sequence getSequence(final String referencedInventoryTypeId) {
-    return OBDal.getInstance()
-        .get(ReferencedInventoryType.class, referencedInventoryTypeId)
-        .getSequence();
+    return SequenceUtil.getDocumentNo(updateNext, getSequence(referencedInventoryTypeId, orgId));
   }
 
   /**
@@ -259,21 +199,37 @@ public class ReferencedInventoryUtil {
    * Global or from Organization Sequence in case Sequence Type is Per Organization
    */
   private static Sequence getSequence(final String referencedInventoryTypeId, final String orgId) {
-    Sequence seq = null;
-    ReferencedInventoryType refInventoryType = OBDal.getInstance()
-        .get(ReferencedInventoryType.class, referencedInventoryTypeId);
+    final ReferencedInventoryType refInventoryType = OBDal.getInstance()
+        .getProxy(ReferencedInventoryType.class, referencedInventoryTypeId);
+    final String riSequenceType = refInventoryType.getSequenceType();
 
-    if (StringUtils.equals(GLOBAL_SEQUENCE_TYPE, refInventoryType.getSequenceType())
-        || StringUtils.equals(NONE_SEQUENCE_TYPE, refInventoryType.getSequenceType())) {
-      // Parent Sequence from Referenced Inventory Type
-      seq = refInventoryType.getSequence();
+    if (SequenceType.GLOBAL.value.equals(riSequenceType)) {
+      return refInventoryType.getSequence();
+    } else if (SequenceType.PER_ORGANIZATION.value.equals(riSequenceType)) {
+      return ReferencedInventoryUtil.getPerOrganizationSequence(referencedInventoryTypeId, orgId);
+    } else if (SequenceType.NONE.value.equals(riSequenceType)) {
+      return null;
     } else {
-      if (StringUtils.equals(PER_STORE_SEQUENCE_TYPE, refInventoryType.getSequenceType())) {
-        // Parent Sequence from Organization Sequence Tab
-        seq = ReferencedInventoryUtil.getPerOrganizationSequence(referencedInventoryTypeId, orgId);
-      }
+      throw new OBException("Sequence Type not supported: " + riSequenceType, true);
     }
-    return seq;
+  }
+
+  private static Sequence getPerOrganizationSequence(final String referencedInventoryTypeId,
+      String orgId) {
+    try {
+      OBContext.setAdminMode(true);
+      final OBCriteria<ReferencedInventoryTypeOrgSequence> criteria = OBDao.getFilteredCriteria(
+          ReferencedInventoryTypeOrgSequence.class,
+          Restrictions.eq(
+              ReferencedInventoryTypeOrgSequence.PROPERTY_REFERENCEDINVENTORYTYPE + ".id",
+              referencedInventoryTypeId),
+          Restrictions.eq(ReferencedInventoryTypeOrgSequence.PROPERTY_ORGANIZATION + ".id", orgId));
+      ReferencedInventoryTypeOrgSequence orgSeq = (ReferencedInventoryTypeOrgSequence) criteria
+          .uniqueResult();
+      return orgSeq != null ? orgSeq.getSequence() : null;
+    } finally {
+      OBContext.restorePreviousMode();
+    }
   }
 
   /**
@@ -367,67 +323,4 @@ public class ReferencedInventoryUtil {
     return sdQuery.scroll(ScrollMode.FORWARD_ONLY);
   }
 
-  private static Sequence getPerOrganizationSequence(final String referencedInventoryTypeId,
-      String orgId) {
-    try {
-      OBContext.setAdminMode(true);
-      final OBCriteria<ReferencedInventoryTypeOrgSequence> criteria = OBDao.getFilteredCriteria(
-          ReferencedInventoryTypeOrgSequence.class,
-          Restrictions.eq(
-              ReferencedInventoryTypeOrgSequence.PROPERTY_REFERENCEDINVENTORYTYPE + ".id",
-              referencedInventoryTypeId),
-          Restrictions.eq(AttributeSetInstance.PROPERTY_ORGANIZATION + ".id", orgId));
-      criteria.setMaxResults(1);
-      ReferencedInventoryTypeOrgSequence orgSeq = (ReferencedInventoryTypeOrgSequence) criteria
-          .uniqueResult();
-      return orgSeq != null ? orgSeq.getSequence() : null;
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
-
-  /**
-   * Compute control digit based o Module 10 algorithm
-   * 
-   * @param sequence
-   *          The input sequence string
-   * @return Computed control digit using Module 10 algorithm
-   */
-
-  private static int getControlDigit(String sequence) {
-    if (sequence == null || sequence.trim().isEmpty() || isAlphaNumeric(sequence)) {
-      throw new OBException(OBMessageUtils.messageBD("ValidateSequenceForControlDigit"));
-    }
-    int sum = 0;
-    boolean isOddIndexedDigit = true;
-    String reverserSequence = new StringBuilder(sequence).reverse().toString();
-    for (int i = 0; i <= reverserSequence.length() - 1; i++) {
-      char digitChar = reverserSequence.charAt(i);
-      int digit = Character.getNumericValue(digitChar);
-      if (isOddIndexedDigit) {
-        sum += digit * 3;
-      } else {
-        sum += digit;
-      }
-      isOddIndexedDigit = !isOddIndexedDigit;
-    }
-    return (10 - (sum % 10)) % 10;
-  }
-
-  /**
-   * checks whether sequence is alphanumeric or not
-   * 
-   * @param strSequence
-   * @return Input sequence string is alphanumeric or not
-   */
-
-  public static boolean isAlphaNumeric(String strSequence) {
-    for (char character : strSequence.toCharArray()) {
-      // Check if the character is not a digit
-      if (!Character.isDigit(character)) {
-        return true;
-      }
-    }
-    return false;
-  }
 }

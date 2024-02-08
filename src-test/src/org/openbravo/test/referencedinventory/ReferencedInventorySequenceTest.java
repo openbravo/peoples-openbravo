@@ -22,12 +22,13 @@ package org.openbravo.test.referencedinventory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.util.UUID;
-
 import org.junit.Test;
-import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
+import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
+import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
@@ -37,19 +38,17 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
  * Test referenced inventory type sequence is properly used
  */
 public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
-  private static final String ANY_EXISTING_SEQUENCE_ID = "FF8080812C2ABFC6012C2B3BE4970094";
 
   @Test
   public void testReferencedInventorySequenceIsUsed() {
-    final Sequence sequence = (Sequence) DalUtil
-        .copy(OBDal.getInstance().getProxy(Sequence.class, ANY_EXISTING_SEQUENCE_ID));
-    sequence.setName(UUID.randomUUID().toString());
-    OBDal.getInstance().save(sequence);
-    OBDal.getInstance().flush(); // Required to lock sequence at db level later on
+    final Sequence sequence = ReferencedInventoryTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        ControlDigit.NONE, CalculationMethod.AUTONUMERING, null, 1L, 1000000L, 1L, null, null,
+        SequenceNumberLength.VARIABLE, null);
 
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType();
-    refInvType.setSequence(sequence);
+        .createReferencedInventoryType(sequence.getOrganization(), SequenceType.GLOBAL, sequence);
     OBDal.getInstance().save(refInvType);
     Long currentSequenceNumber = sequence.getNextAssignedNumber();
 
@@ -64,63 +63,50 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
         equalTo(Long.toString(currentSequenceNumber + 1)));
   }
 
+  @Test
+  public void testReferenceInventorySequenceUsingModule10_a() {
+    testModule10(2821L, "000", "601104910282130002");
+  }
+
+  @Test
+  public void testReferenceInventorySequenceUsingModule10_b() {
+    testModule10(2821L, "001", "601104910282130019");
+  }
+
+  @Test
+  public void testReferenceInventorySequenceUsingModule10_c() {
+    testModule10(2822L, "248", "601104910282202488");
+  }
+
   /**
    * Test sequence computation in Referenced Inventory using Module 10 algorithm
    */
-
-  @Test
-  public void testReferenceInventorySequenceUsingModule10() {
-
+  private void testModule10(Long nextAssignedNumberChild, String parentSuffix,
+      String expectedOutput) {
     Organization org = OBDal.getInstance()
         .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
-    String orgCode = org.getSearchKey();
-
-    // Set numeric search key for Organization
-    setOrganizationCode(org, "10491");
-
-    Sequence existingSequence = OBDal.getInstance()
-        .getProxy(Sequence.class, ANY_EXISTING_SEQUENCE_ID);
 
     final Sequence childSequence = ReferencedInventoryTestUtils.createDocumentSequence(org,
-        existingSequence, ReferencedInventoryUtil.MODULE10_CONTROLDIGIT,
-        ReferencedInventoryUtil.AUTONUMBERING_CALCULATIONMETHOD, "01", 2820L, 2821L, 1L, "", null,
-        ReferencedInventoryUtil.VARIABLE_SEQUENCENUMBERLENGTH, null);
+        ControlDigit.MODULE10, CalculationMethod.AUTONUMERING, "0110491", 1L,
+        nextAssignedNumberChild, 1L, "", null, SequenceNumberLength.FIXED, 5L);
 
     // Create Parent Sequence with Child Sequence created above as its Base Sequence
     final Sequence parentSequence = ReferencedInventoryTestUtils.createDocumentSequence(org,
-        existingSequence, ReferencedInventoryUtil.MODULE10_CONTROLDIGIT,
-        ReferencedInventoryUtil.SEQUENCE_CALCULATIONMETHOD, "6", 1L, 1L, 1L, "000", childSequence,
-        ReferencedInventoryUtil.VARIABLE_SEQUENCENUMBERLENGTH, null);
+        ControlDigit.MODULE10, CalculationMethod.SEQUENCE, "6", null, null, null, parentSuffix,
+        childSequence, SequenceNumberLength.VARIABLE, null);
 
     // Create Referenced Inventory Type with Sequence Type as Per Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(org, ReferencedInventoryUtil.PER_STORE_SEQUENCE_TYPE);
+        .createReferencedInventoryType(org, SequenceType.PER_ORGANIZATION, null);
 
     // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
     ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, org,
         parentSequence);
 
-    String proposedSequence = ReferencedInventoryUtil.getProposedValueFromSequenceOrNull(
+    String proposedSequence = ReferencedInventoryUtil.getProposedValueFromSequence(
         refInvType.getId(), ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, false);
     assertThat("Referenced Inventory Search Key is computed from sequence", proposedSequence,
-        equalTo("<60110491282110004>"));
-
-    // Reset search key of Organization
-    setOrganizationCode(org, orgCode);
+        equalTo(expectedOutput));
   }
 
-  /**
-   * Sets numeric search key to the organization used in the test
-   *
-   * @param org
-   *          Organization used to create Sequence, Handling Unit Type, Handling Unit
-   * @param searchKey
-   *          Search Key of the Organization
-   */
-
-  private void setOrganizationCode(Organization org, String searchKey) {
-    org.setSearchKey(searchKey);
-    OBDal.getInstance().save(org);
-    OBDal.getInstance().flush();
-  }
 }

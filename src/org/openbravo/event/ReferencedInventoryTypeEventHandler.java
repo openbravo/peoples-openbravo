@@ -28,7 +28,7 @@ import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
-import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 
@@ -72,8 +72,7 @@ class ReferencedInventoryEventHandler extends EntityPersistenceEventObserver {
     String currentSequenceType = (String) event.getCurrentState(sequenceTypeProperty);
     Sequence sequence = (Sequence) event.getCurrentState(sequenceProperty);
 
-    if (!StringUtils.equals(currentSequenceType, ReferencedInventoryUtil.GLOBAL_SEQUENCE_TYPE)
-        && sequence != null) {
+    if (!StringUtils.equals(currentSequenceType, SequenceType.GLOBAL.value) && sequence != null) {
       event.setCurrentState(sequenceProperty, null);
     }
   }

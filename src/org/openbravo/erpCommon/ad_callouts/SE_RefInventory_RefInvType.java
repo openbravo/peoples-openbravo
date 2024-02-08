@@ -21,6 +21,7 @@ package org.openbravo.erpCommon.ad_callouts;
 
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openbravo.base.filter.IsIDFilter;
@@ -42,8 +43,8 @@ public class SE_RefInventory_RefInvType extends SimpleCallout {
       final String referencedInventoryTypeId = info.getStringParameter("inpmRefinventoryTypeId",
           IsIDFilter.instance);
       final String orgId = info.getStringParameter("inpadOrgId", IsIDFilter.instance);
-      final String proposedValue = ReferencedInventoryUtil
-          .getProposedValueFromSequenceOrNull(referencedInventoryTypeId, orgId, false);
+      final String proposedValue = getNextProposedValueWithoutUpdatingSequence(
+          referencedInventoryTypeId, orgId);
       info.addResult("inpvalue", proposedValue);
     } catch (Exception logAndIgnore) {
       info.addResult("inpvalue", "");
@@ -52,5 +53,12 @@ public class SE_RefInventory_RefInvType extends SimpleCallout {
     } finally {
       OBContext.restorePreviousMode();
     }
+  }
+
+  private String getNextProposedValueWithoutUpdatingSequence(final String referencedInventoryTypeId,
+      String orgId) {
+    final String nextProposedValue = ReferencedInventoryUtil
+        .getProposedValueFromSequence(referencedInventoryTypeId, orgId, false);
+    return StringUtils.isBlank(nextProposedValue) ? "" : "<" + nextProposedValue + ">";
   }
 }

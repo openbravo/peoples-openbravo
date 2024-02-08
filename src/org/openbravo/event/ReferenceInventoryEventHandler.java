@@ -76,7 +76,7 @@ class ReferenceInventoryEventHandler extends EntityPersistenceEventObserver {
       final Organization org = (Organization) event.getCurrentState(orgProperty);
 
       final String documentNo = ReferencedInventoryUtil
-          .getProposedValueFromSequenceOrNull(refInvType.getId(), org.getId(), true);
+          .getProposedValueFromSequence(refInvType.getId(), org.getId(), true);
       event.setCurrentState(valueProperty, documentNo);
     }
   }

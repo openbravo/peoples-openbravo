@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -28,6 +28,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
@@ -73,7 +75,8 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
   private void testBoxSeveralStorageDetailsInSameMovement(final String productId,
       final String attributeSetInstanceId, final String toBinId) throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType();
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.NONE, null);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 

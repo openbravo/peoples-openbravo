@@ -32,7 +32,7 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
+import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.model.ad.utility.Sequence;
 
 /**
@@ -67,7 +67,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     // validate base sequence
     Sequence baseSequence = sequence.getBaseSequence();
     if (baseSequence != null) {
-      validateBaseSequence(baseSequence, hasControldigit(sequence));
+      validateBaseSequence(baseSequence, hasModule10Controldigit(sequence));
     }
   }
 
@@ -110,7 +110,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
         && (previousBaseSequence == null || !previousBaseSequence.equals(currentBaseSequence));
     // When base sequence or control digit is being changed
     if (currentBaseSequence != null && (isCurrentBaseSequenceChanged || isControlDigitChanged)) {
-      validateBaseSequence(currentBaseSequence, hasControldigit(sequence));
+      validateBaseSequence(currentBaseSequence, hasModule10Controldigit(sequence));
     }
   }
 
@@ -121,10 +121,8 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    *          Input Sequence
    * @return whether sequence has Module 10 control digit
    */
-
-  private boolean hasControldigit(Sequence sequence) {
-    return StringUtils.equals(sequence.getControlDigit(),
-        ReferencedInventoryUtil.MODULE10_CONTROLDIGIT);
+  private boolean hasModule10Controldigit(Sequence sequence) {
+    return ControlDigit.MODULE10.value.equals(sequence.getControlDigit());
   }
 
   /**
@@ -153,7 +151,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
 
   private void validateSequencePrefixSuffix(Sequence sequence) {
     if (isPrefixOrSuffixAlphanumericForSequence(sequence)) {
-      if (hasControldigit(sequence)) {
+      if (hasModule10Controldigit(sequence)) {
         throw new OBException(OBMessageUtils.messageBD("ValidateSequence"));
       }
       if (isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(sequence.getId())) {
@@ -173,8 +171,8 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
   private boolean isPrefixOrSuffixAlphanumericForSequence(Sequence sequence) {
     String prefix = sequence.getPrefix();
     String suffix = sequence.getSuffix();
-    return ((prefix != null && ReferencedInventoryUtil.isAlphaNumeric(prefix))
-        || (suffix != null && ReferencedInventoryUtil.isAlphaNumeric(suffix)));
+    return ((prefix != null && !StringUtils.isNumeric(prefix))
+        || (suffix != null && !StringUtils.isNumeric(suffix)));
   }
 
   /**
@@ -190,8 +188,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     OBCriteria<Sequence> seqCriteria = OBDal.getInstance().createCriteria(Sequence.class);
     seqCriteria.add(Restrictions.eq(Sequence.PROPERTY_BASESEQUENCE + ".id", sequenceId));
     seqCriteria.add(Restrictions.ne(Sequence.PROPERTY_ID, sequenceId));
-    seqCriteria.add(Restrictions.eq(Sequence.PROPERTY_CONTROLDIGIT,
-        ReferencedInventoryUtil.MODULE10_CONTROLDIGIT));
+    seqCriteria.add(Restrictions.eq(Sequence.PROPERTY_CONTROLDIGIT, ControlDigit.MODULE10.value));
     seqCriteria.setMaxResults(1);
     return seqCriteria.uniqueResult() != null;
   }
