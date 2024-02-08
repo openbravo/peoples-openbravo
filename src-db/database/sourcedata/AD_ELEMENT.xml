@@ -24328,8 +24328,7 @@ By default the type is empty (null), which means the product characteristic does
 <!--461378E3215A4C4684D162260BE688B9-->  <NAME><![CDATA[Base Sequence]]></NAME>
 <!--461378E3215A4C4684D162260BE688B9-->  <PRINTNAME><![CDATA[Base Sequence]]></PRINTNAME>
 <!--461378E3215A4C4684D162260BE688B9-->  <DESCRIPTION><![CDATA[Defines a base sequence when Calculation Method is Sequence.]]></DESCRIPTION>
-<!--461378E3215A4C4684D162260BE688B9-->  <HELP><![CDATA[Defines a base sequence when Calculation Method is Sequence. The result of base sequence computation is used as the number for the parent sequence which uses base sequence.
-]]></HELP>
+<!--461378E3215A4C4684D162260BE688B9-->  <HELP><![CDATA[Defines a base sequence when Calculation Method is defined as "Based on Sequence". The result of base sequence computation is used as the number for the parent sequence which uses the base sequence.]]></HELP>
 <!--461378E3215A4C4684D162260BE688B9-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--461378E3215A4C4684D162260BE688B9-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--461378E3215A4C4684D162260BE688B9--></AD_ELEMENT>
@@ -27504,10 +27503,11 @@ This field will display only when the base document type is Sales Order.]]></HEL
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <NAME><![CDATA[Calculation Method]]></NAME>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <PRINTNAME><![CDATA[Calculation Method]]></PRINTNAME>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <DESCRIPTION><![CDATA[Defines options Empty (Default) or Auto Numbering or Sequence to calculate the sequence.]]></DESCRIPTION>
-<!--5E8A860C0E054A409DB4650661E7CFDD-->  <HELP><![CDATA[Defines options as Empty (Default) or Auto Numbering or Sequence to calculate the sequence.
-1. Empty has same behaviour as IsAutoNumbering = No
-2. Auto Numbering replaces and has behaviour as IsAutoNumbering = Yes
-3. Sequence to use a base sequence whose computed result would be used a number for the parent sequence that uses base sequence.]]></HELP>
+<!--5E8A860C0E054A409DB4650661E7CFDD-->  <HELP><![CDATA[Describes the available calculation methods for sequence management:
+
+"Auto Numbering": This option reflects the traditional behavior of a sequence being automatically handled by the system. It automatically uses the Next Assigned Number. This feature replaces and mirrors the legacy functionality of Auto Numbering flag.
+
+"Based on Sequence": Select this option to utilize a Base Sequence. The resulting computation from the Base Sequence will be applied as the number for this sequence]]></HELP>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--5E8A860C0E054A409DB4650661E7CFDD--></AD_ELEMENT>

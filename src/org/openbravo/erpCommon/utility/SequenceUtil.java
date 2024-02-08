@@ -38,7 +38,9 @@ import org.openbravo.model.ad.utility.Sequence;
 public class SequenceUtil {
 
   public enum CalculationMethod {
-    NO_AUTONUMERING(null), AUTONUMERING("A"), SEQUENCE("S");
+    DOCUMENTNO_TABLENAME("N"), // Deprecated and not supported by this class
+    AUTONUMERING("A"),
+    SEQUENCE("S");
 
     public final String value;
 
@@ -121,12 +123,13 @@ public class SequenceUtil {
     final String calculationMethod = sequence.getCalculationMethod();
 
     final StringBuilder documentNo = new StringBuilder();
+
     if (CalculationMethod.AUTONUMERING.value.equals(calculationMethod)) {
       documentNo.append(getNextDocNumberWithoutPrefixSuffix(updatedNext, sequence));
     } else if (CalculationMethod.SEQUENCE.value.equals(calculationMethod)) {
       documentNo.append(getDocumentNo(updatedNext, sequence.getBaseSequence()));
-    } else if (calculationMethod == null) { // CalculationMethod.NO_AUTONUMERING
-      // Deprecated Calculation Method
+    } else if (CalculationMethod.DOCUMENTNO_TABLENAME.value.equals(calculationMethod)) {
+      // Deprecated Calculation Method (former AutoNumbering=N)
       throw new OBException("Calculation Method not supported: " + calculationMethod
           + " by this method. Please use instead: "
           + "org.openbravo.erpCommon.utility.Utility.getDocumentNo(ConnectionProvider conn, String AD_Client_ID, String TableName, boolean updateNext)"
