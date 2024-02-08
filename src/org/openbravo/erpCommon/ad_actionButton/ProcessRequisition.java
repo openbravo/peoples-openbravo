@@ -35,13 +35,15 @@ import org.openbravo.data.FieldProvider;
 import org.openbravo.erpCommon.reference.PInstanceProcessData;
 import org.openbravo.erpCommon.utility.OBError;
 import org.openbravo.erpCommon.utility.Utility;
+import org.openbravo.materialmgmt.RequisitionProcessor;
 import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.procurement.Requisition;
-import org.openbravo.service.db.CallProcess;
-import org.openbravo.synchronization.event.SynchronizationEvent;
 import org.openbravo.xmlEngine.XmlDocument;
 
+/*
+ * Process the  transaction document Status of the Requisition through the Requisition Processor.
+ */
 public class ProcessRequisition extends HttpSecureAppServlet {
   private static final long serialVersionUID = 1L;
   private static final String M_REQUISITION_POST_ID = "1004400003";
@@ -195,25 +197,6 @@ public class ProcessRequisition extends HttpSecureAppServlet {
     }
   }
 
-  private Process getProcessRequisition() {
-    Process process = null;
-    try {
-      OBContext.setAdminMode(true);
-      process = (Process) OBDal.getInstance().getProxy(Process.ENTITY_NAME, M_REQUISITION_POST_ID);
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-    return process;
-  }
-
-  public void triggerPushEvent(String requisitionId) throws OBException {
-    try {
-      SynchronizationEvent.getInstance().triggerEvent("API_Process_Requisition", requisitionId);
-    } catch (Exception e) {
-      throw new OBException("Error triggering Push API event for requisition", e);
-    }
-  }
-
   private void processRequisition(final HttpServletResponse response, final VariablesSecureApp vars)
       throws ServletException, IOException {
     final String strWindowId = vars.getGlobalVariable("inpwindowId", "ProcessRequisition|Window_ID",
@@ -223,21 +206,11 @@ public class ProcessRequisition extends HttpSecureAppServlet {
     final String strM_Requisition_ID = vars.getGlobalVariable("inpKey",
         strWindowId + "|M_Requisition_ID", "");
     final String strdocaction = vars.getStringParameter("inpdocaction");
-
     OBError myMessage = null;
     try {
-      final Requisition requisition = (Requisition) OBDal.getInstance()
-          .getProxy(Requisition.ENTITY_NAME, strM_Requisition_ID);
-      requisition.setDocumentAction(strdocaction);
-      OBDal.getInstance().save(requisition);
-      OBDal.getInstance().flush();
-
-      final ProcessInstance pinstance = CallProcess.getInstance()
-          .call(getProcessRequisition(), strM_Requisition_ID, null);
-
-      OBDal.getInstance().commitAndClose();
-
-      triggerPushEvent(strM_Requisition_ID);
+      RequisitionProcessor requisitionProcessor = new RequisitionProcessor();
+      ProcessInstance pinstance = requisitionProcessor.processRequisition(strM_Requisition_ID,
+          strdocaction);
 
       final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this,
           pinstance.getId());
@@ -251,7 +224,7 @@ public class ProcessRequisition extends HttpSecureAppServlet {
       }
       printPageClosePopUp(response, vars, strWindowPath);
 
-    } catch (ServletException ex) {
+    } catch (OBException ex) {
       generateErrorProcessReceipt(response, vars, strTabId, ex);
     }
   }
