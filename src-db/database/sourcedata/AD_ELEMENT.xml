@@ -27502,7 +27502,7 @@ This field will display only when the base document type is Sales Order.]]></HEL
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <COLUMNNAME><![CDATA[Calculation_Method]]></COLUMNNAME>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <NAME><![CDATA[Calculation Method]]></NAME>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <PRINTNAME><![CDATA[Calculation Method]]></PRINTNAME>
-<!--5E8A860C0E054A409DB4650661E7CFDD-->  <DESCRIPTION><![CDATA[Defines options Empty (Default) or Auto Numbering or Sequence to calculate the sequence.]]></DESCRIPTION>
+<!--5E8A860C0E054A409DB4650661E7CFDD-->  <DESCRIPTION><![CDATA[Describes the available calculation methods for sequence management]]></DESCRIPTION>
 <!--5E8A860C0E054A409DB4650661E7CFDD-->  <HELP><![CDATA[Describes the available calculation methods for sequence management:
 
 "Auto Numbering": This option reflects the traditional behavior of a sequence being automatically handled by the system. It automatically uses the Next Assigned Number. This feature replaces and mirrors the legacy functionality of Auto Numbering flag.

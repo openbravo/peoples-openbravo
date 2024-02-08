@@ -54,7 +54,7 @@ BEGIN
   SELECT CurrentNext - (CASE WHEN p_Update_Next='Y' THEN IncrementNo ELSE 0 END), Prefix, Suffix
   INTO v_NextNo, v_Prefix, v_Suffix
   FROM AD_Sequence
-  WHERE Name=p_SequenceName  AND IsActive='Y'  AND IsTableID='N'  AND (IsAutoSequence='Y' OR Calculation_Method='A')  AND AD_Client_ID=p_AD_Client_ID;
+  WHERE Name=p_SequenceName  AND IsActive='Y'  AND IsTableID='N'  AND Calculation_Method='A'  AND AD_Client_ID=p_AD_Client_ID;
 
   p_DocumentNo:=COALESCE(v_Prefix, '') || v_NextNo || COALESCE(v_Suffix, '') ;
 EXCEPTION
