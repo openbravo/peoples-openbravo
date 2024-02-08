@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.filter.IsIDFilter;
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
@@ -38,6 +39,7 @@ import org.openbravo.model.ad.process.ProcessInstance;
 import org.openbravo.model.ad.ui.Process;
 import org.openbravo.model.procurement.Requisition;
 import org.openbravo.service.db.CallProcess;
+import org.openbravo.synchronization.event.SynchronizationEvent;
 import org.openbravo.xmlEngine.XmlDocument;
 
 public class ProcessRequisition extends HttpSecureAppServlet {
@@ -122,7 +124,7 @@ public class ProcessRequisition extends HttpSecureAppServlet {
       final Requisition requisition) {
     final String[] discard = { "newDiscard" };
     final XmlDocument xmlDocument = xmlEngine
-        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/DocAction", discard)
+        .readXmlTemplate("org/openbravo/erpCommon/ad_actionButton/ProcessRequisition", discard)
         .createXmlDocument();
 
     xmlDocument.setParameter("key", strM_Requisition_ID);
@@ -204,6 +206,14 @@ public class ProcessRequisition extends HttpSecureAppServlet {
     return process;
   }
 
+  public void triggerPushEvent(String requisitionId) throws OBException {
+    try {
+      SynchronizationEvent.getInstance().triggerEvent("API_Process_Requisition", requisitionId);
+    } catch (Exception e) {
+      throw new OBException("Error triggering Push API event for requisition", e);
+    }
+  }
+
   private void processRequisition(final HttpServletResponse response, final VariablesSecureApp vars)
       throws ServletException, IOException {
     final String strWindowId = vars.getGlobalVariable("inpwindowId", "ProcessRequisition|Window_ID",
@@ -226,6 +236,8 @@ public class ProcessRequisition extends HttpSecureAppServlet {
           .call(getProcessRequisition(), strM_Requisition_ID, null);
 
       OBDal.getInstance().commitAndClose();
+
+      triggerPushEvent(strM_Requisition_ID);
 
       final PInstanceProcessData[] pinstanceData = PInstanceProcessData.select(this,
           pinstance.getId());
