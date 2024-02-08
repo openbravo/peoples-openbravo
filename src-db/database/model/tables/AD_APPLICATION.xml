@@ -58,6 +58,9 @@
       <foreign-key foreignTable="AD_ORG" name="AD_APP_AD_ORG">
         <reference local="AD_ORG_ID" foreign="AD_ORG_ID"/>
       </foreign-key>
+      <unique name="AD_APPLICATION_VALUE">
+        <unique-column name="VALUE"/>
+      </unique>
       <check name="AD_APPLICATION_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
     </table>
   </database>
