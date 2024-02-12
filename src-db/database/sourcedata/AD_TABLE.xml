@@ -10128,7 +10128,9 @@ You can also select if transactions are allowed or not for this organization typ
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--42FB6DA5B5574B5684F297608BDBCE0C-->  <NAME><![CDATA[ServicePriceRuleVersion]]></NAME>
+<!--42FB6DA5B5574B5684F297608BDBCE0C-->  <NAME><![CDATA[RelatableProductPriceRuleVersion]]></NAME>
+<!--42FB6DA5B5574B5684F297608BDBCE0C-->  <DESCRIPTION><![CDATA[Defines price rule versions for Relatable Products (Services and Contributions)]]></DESCRIPTION>
+<!--42FB6DA5B5574B5684F297608BDBCE0C-->  <HELP><![CDATA[Defines price rule versions for Relatable Products (Services and Contributions).]]></HELP>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <TABLENAME><![CDATA[M_ServicePriceRule_Version]]></TABLENAME>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <CLASSNAME><![CDATA[ServicePriceRuleVersion]]></CLASSNAME>
 <!--42FB6DA5B5574B5684F297608BDBCE0C-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -11082,9 +11084,9 @@ GROUP BY
 <!--63FA2782CDF34716A6443706038ECE8B-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--63FA2782CDF34716A6443706038ECE8B-->  <NAME><![CDATA[ServiceProduct]]></NAME>
-<!--63FA2782CDF34716A6443706038ECE8B-->  <DESCRIPTION><![CDATA[Products included/excluded in a Service Product]]></DESCRIPTION>
-<!--63FA2782CDF34716A6443706038ECE8B-->  <HELP><![CDATA[The user can define if a product can be related to a product of 'Service' type by creating a relation between an Order Line of the Service product and another Sales Order Line of the product included/excluded.]]></HELP>
+<!--63FA2782CDF34716A6443706038ECE8B-->  <NAME><![CDATA[RelatedProduct]]></NAME>
+<!--63FA2782CDF34716A6443706038ECE8B-->  <DESCRIPTION><![CDATA[Products included/excluded in relation to a Relatable Product]]></DESCRIPTION>
+<!--63FA2782CDF34716A6443706038ECE8B-->  <HELP><![CDATA[The user can define if a product can be related to a product of 'Relatable Product' type (e.g. Services and Contributions) by creating a relation between an Order Line of the related product and another Sales Order Line of the product included/excluded.]]></HELP>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <TABLENAME><![CDATA[M_Product_Service]]></TABLENAME>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <CLASSNAME><![CDATA[ServiceProduct]]></CLASSNAME>
 <!--63FA2782CDF34716A6443706038ECE8B-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -12069,8 +12071,9 @@ GROUP BY
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--8B0BBDDB2169404BB55CC816A573B88B-->  <NAME><![CDATA[ServicePriceRule]]></NAME>
-<!--8B0BBDDB2169404BB55CC816A573B88B-->  <DESCRIPTION><![CDATA[Define rules to determine service price based on related products]]></DESCRIPTION>
+<!--8B0BBDDB2169404BB55CC816A573B88B-->  <NAME><![CDATA[RelatableProductPriceRule]]></NAME>
+<!--8B0BBDDB2169404BB55CC816A573B88B-->  <DESCRIPTION><![CDATA[Define rules to determine service/contribution price based on its related products]]></DESCRIPTION>
+<!--8B0BBDDB2169404BB55CC816A573B88B-->  <HELP><![CDATA[Used to define price rules for 'Relatable Products' (Services and Contributions)]]></HELP>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <TABLENAME><![CDATA[M_ServicePriceRule]]></TABLENAME>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <CLASSNAME><![CDATA[ServicePriceRule]]></CLASSNAME>
 <!--8B0BBDDB2169404BB55CC816A573B88B-->  <ISVIEW><![CDATA[N]]></ISVIEW>
@@ -14166,9 +14169,9 @@ and @insertion_point@]]></HQLQUERY>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--F27592C9833B4F58919199CCB7742EDC-->  <NAME><![CDATA[ServiceProductCategory]]></NAME>
-<!--F27592C9833B4F58919199CCB7742EDC-->  <DESCRIPTION><![CDATA[Product Categories included/excluded in a Service Product]]></DESCRIPTION>
-<!--F27592C9833B4F58919199CCB7742EDC-->  <HELP><![CDATA[The user can define if a product of a certain product category can be related to a product of 'Service' type by creating a relation between an Order Line of the Service product and another Sales Order Line of the product belonging to included/excluded product categories.]]></HELP>
+<!--F27592C9833B4F58919199CCB7742EDC-->  <NAME><![CDATA[RelatedProductCategory]]></NAME>
+<!--F27592C9833B4F58919199CCB7742EDC-->  <DESCRIPTION><![CDATA[Product Categories included/excluded in relation to a Relatable Product]]></DESCRIPTION>
+<!--F27592C9833B4F58919199CCB7742EDC-->  <HELP><![CDATA[The user can define if a product of a certain product category can be related to a product of 'Relatable Product' type (e.g. Services or Contributions) by creating a relation between an Order Line of the related product and another Sales Order Line of the product belonging to included/excluded product categories.]]></HELP>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <TABLENAME><![CDATA[M_Product_Category_Service]]></TABLENAME>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <CLASSNAME><![CDATA[ServiceProductCategory]]></CLASSNAME>
 <!--F27592C9833B4F58919199CCB7742EDC-->  <ISVIEW><![CDATA[N]]></ISVIEW>

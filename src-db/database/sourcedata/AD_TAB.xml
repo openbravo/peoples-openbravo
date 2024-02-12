@@ -14472,9 +14472,9 @@ The corresponding tables have then the following setting:
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <NAME><![CDATA[Products]]></NAME>
-<!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <DESCRIPTION><![CDATA[Products included/excluded in a Service Product]]></DESCRIPTION>
-<!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <HELP><![CDATA[The user can define if a product can be related to a product of 'Service' type by creating a relation between an Order Line of the Service product and another Sales Order Line of the product included/excluded.]]></HELP>
+<!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <NAME><![CDATA[Related Products]]></NAME>
+<!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <DESCRIPTION><![CDATA[Products included/excluded in relation to a Relatable Product]]></DESCRIPTION>
+<!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <HELP><![CDATA[The user can define if a product can be related to a product of 'Relatable Product' type (e.g. Services and Contributions) by creating a relation between an Order Line of the related product and another Sales Order Line of the product included/excluded.]]></HELP>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <AD_TABLE_ID><![CDATA[63FA2782CDF34716A6443706038ECE8B]]></AD_TABLE_ID>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <SEQNO><![CDATA[180]]></SEQNO>
@@ -14490,7 +14490,7 @@ The corresponding tables have then the following setting:
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <UIPATTERN><![CDATA[ED]]></UIPATTERN>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
-<!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <DISPLAYLOGIC><![CDATA[@Product_Selection@!''&@Product_Selection@!null&@Product_Selection@!'null'&@Islinkedtoproduct@='Y'&@ProductType@='S']]></DISPLAYLOGIC>
+<!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <DISPLAYLOGIC><![CDATA[@Product_Selection@!''&@Product_Selection@!null&@Product_Selection@!'null'&@Islinkedtoproduct@='Y'&(@ProductType@='S'|@ProductType@='C')]]></DISPLAYLOGIC>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <ISREADONLYTREE><![CDATA[N]]></ISREADONLYTREE>
 <!--2E64079E1AE84FDFBC6F58E909F7F5BD-->  <ISSHOWTREENODEICONS><![CDATA[Y]]></ISSHOWTREENODEICONS>
@@ -14728,8 +14728,8 @@ The corresponding tables have then the following setting:
 <!--361A63248C2942868C6248F8613130C8-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--361A63248C2942868C6248F8613130C8-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--361A63248C2942868C6248F8613130C8-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--361A63248C2942868C6248F8613130C8-->  <NAME><![CDATA[Service Price Rule]]></NAME>
-<!--361A63248C2942868C6248F8613130C8-->  <DESCRIPTION><![CDATA[Define rules to establish service price]]></DESCRIPTION>
+<!--361A63248C2942868C6248F8613130C8-->  <NAME><![CDATA[Relatable Product Price Rule]]></NAME>
+<!--361A63248C2942868C6248F8613130C8-->  <DESCRIPTION><![CDATA[Define rules to establish prices for Relatable Products (Services and Contributions)]]></DESCRIPTION>
 <!--361A63248C2942868C6248F8613130C8-->  <AD_TABLE_ID><![CDATA[8B0BBDDB2169404BB55CC816A573B88B]]></AD_TABLE_ID>
 <!--361A63248C2942868C6248F8613130C8-->  <AD_WINDOW_ID><![CDATA[B2C0C2AE3B7B49B1A68F864FA8FC603C]]></AD_WINDOW_ID>
 <!--361A63248C2942868C6248F8613130C8-->  <SEQNO><![CDATA[10]]></SEQNO>
@@ -18537,7 +18537,9 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--994A26A418BB4E51AA9C42FE786E24A0-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--994A26A418BB4E51AA9C42FE786E24A0-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--994A26A418BB4E51AA9C42FE786E24A0-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--994A26A418BB4E51AA9C42FE786E24A0-->  <NAME><![CDATA[Product Price Rule Version]]></NAME>
+<!--994A26A418BB4E51AA9C42FE786E24A0-->  <NAME><![CDATA[Relatable Product Price Rule Version]]></NAME>
+<!--994A26A418BB4E51AA9C42FE786E24A0-->  <DESCRIPTION><![CDATA[Defines price rule versions for Relatable Products (Services and Contributions)]]></DESCRIPTION>
+<!--994A26A418BB4E51AA9C42FE786E24A0-->  <HELP><![CDATA[Defines price rule versions for Relatable Products (Services and Contributions).]]></HELP>
 <!--994A26A418BB4E51AA9C42FE786E24A0-->  <AD_TABLE_ID><![CDATA[42FB6DA5B5574B5684F297608BDBCE0C]]></AD_TABLE_ID>
 <!--994A26A418BB4E51AA9C42FE786E24A0-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--994A26A418BB4E51AA9C42FE786E24A0-->  <SEQNO><![CDATA[185]]></SEQNO>
@@ -19026,9 +19028,9 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--A7977DEF565B42D28D668A5E78C2A816-->  <NAME><![CDATA[Product Categories]]></NAME>
-<!--A7977DEF565B42D28D668A5E78C2A816-->  <DESCRIPTION><![CDATA[Product Categories included/excluded in a Service Product]]></DESCRIPTION>
-<!--A7977DEF565B42D28D668A5E78C2A816-->  <HELP><![CDATA[The user can define if a product of a certain product category can be related to a product of 'Service' type by creating a relation between an Order Line of the Service product and another Sales Order Line of the product belonging to included/excluded product categories.]]></HELP>
+<!--A7977DEF565B42D28D668A5E78C2A816-->  <NAME><![CDATA[Related Product Categories]]></NAME>
+<!--A7977DEF565B42D28D668A5E78C2A816-->  <DESCRIPTION><![CDATA[Product Categories included/excluded in relation to a Relatable Product]]></DESCRIPTION>
+<!--A7977DEF565B42D28D668A5E78C2A816-->  <HELP><![CDATA[The user can define if a product of a certain product category can be related to a product of 'Relatable Product' type (e.g. Services or Contributions) by creating a relation between an Order Line of the related product and another Sales Order Line of the product belonging to included/excluded product categories.]]></HELP>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <AD_TABLE_ID><![CDATA[F27592C9833B4F58919199CCB7742EDC]]></AD_TABLE_ID>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <SEQNO><![CDATA[170]]></SEQNO>
@@ -19044,7 +19046,7 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <UIPATTERN><![CDATA[ED]]></UIPATTERN>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <SHOWPARENTBUTTONS><![CDATA[Y]]></SHOWPARENTBUTTONS>
-<!--A7977DEF565B42D28D668A5E78C2A816-->  <DISPLAYLOGIC><![CDATA[@Prod_Cat_Selection@!''&@Prod_Cat_Selection@!null&@Prod_Cat_Selection@!'null'&@Islinkedtoproduct@='Y'&@ProductType@='S']]></DISPLAYLOGIC>
+<!--A7977DEF565B42D28D668A5E78C2A816-->  <DISPLAYLOGIC><![CDATA[@Prod_Cat_Selection@!''&@Prod_Cat_Selection@!null&@Prod_Cat_Selection@!'null'&@Islinkedtoproduct@='Y'&(@ProductType@='S'|@ProductType@='C')]]></DISPLAYLOGIC>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <DISABLE_PARENT_KEY_PROPERTY><![CDATA[N]]></DISABLE_PARENT_KEY_PROPERTY>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <ISREADONLYTREE><![CDATA[N]]></ISREADONLYTREE>
 <!--A7977DEF565B42D28D668A5E78C2A816-->  <ISSHOWTREENODEICONS><![CDATA[Y]]></ISSHOWTREENODEICONS>
@@ -21885,7 +21887,7 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--FD12E781543C4CE99EF685A67A7D2142-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--FD12E781543C4CE99EF685A67A7D2142-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--FD12E781543C4CE99EF685A67A7D2142-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--FD12E781543C4CE99EF685A67A7D2142-->  <NAME><![CDATA[Category Price Rule Version]]></NAME>
+<!--FD12E781543C4CE99EF685A67A7D2142-->  <NAME><![CDATA[Relatable Product Category Price Rule Version]]></NAME>
 <!--FD12E781543C4CE99EF685A67A7D2142-->  <AD_TABLE_ID><![CDATA[42FB6DA5B5574B5684F297608BDBCE0C]]></AD_TABLE_ID>
 <!--FD12E781543C4CE99EF685A67A7D2142-->  <AD_WINDOW_ID><![CDATA[140]]></AD_WINDOW_ID>
 <!--FD12E781543C4CE99EF685A67A7D2142-->  <SEQNO><![CDATA[175]]></SEQNO>
