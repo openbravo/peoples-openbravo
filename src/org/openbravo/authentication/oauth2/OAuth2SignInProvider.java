@@ -89,6 +89,7 @@ public class OAuth2SignInProvider implements SignInProvider {
           .add(Restrictions.eq(AuthenticationProvider.PROPERTY_TYPE, type))
           .add(Restrictions.eq(AuthenticationProvider.PROPERTY_APPLICATION,
               OBDal.getInstance().getProxy(Application.class, BACKOFFICE_APP)))
+          .add(Restrictions.eq(AuthenticationProvider.PROPERTY_FLOW, "LOGIN"))
           .addOrderBy(AuthenticationProvider.PROPERTY_SEQUENCENUMBER, true)
           .list()
           .stream()
