@@ -5195,7 +5195,7 @@ If the Generic Product already has any Variant created the process returns an er
 <!--EF591985C486468F9B97B605D15A1633-->  <VALUE><![CDATA[Process Requisition]]></VALUE>
 <!--EF591985C486468F9B97B605D15A1633-->  <NAME><![CDATA[Process Requisition]]></NAME>
 <!--EF591985C486468F9B97B605D15A1633-->  <DESCRIPTION><![CDATA[A means of changing the transaction status of the document.]]></DESCRIPTION>
-<!--EF591985C486468F9B97B605D15A1633-->  <HELP><![CDATA[You find the current status in the Document Status field. The options are listed in a popup]]></HELP>
+<!--EF591985C486468F9B97B605D15A1633-->  <HELP><![CDATA[You find the current status in the Document Status field. The options are listed in a popup.]]></HELP>
 <!--EF591985C486468F9B97B605D15A1633-->  <ACCESSLEVEL><![CDATA[1]]></ACCESSLEVEL>
 <!--EF591985C486468F9B97B605D15A1633-->  <ISUSERSTARTABLE><![CDATA[N]]></ISUSERSTARTABLE>
 <!--EF591985C486468F9B97B605D15A1633-->  <ISREPORT><![CDATA[N]]></ISREPORT>
