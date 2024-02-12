@@ -28625,8 +28625,8 @@ The distribution algorithm will be driven by this priority. The pending payments
 <!--6C0C6F7437984998BB5ABA0CA84383F1-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--6C0C6F7437984998BB5ABA0CA84383F1-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--6C0C6F7437984998BB5ABA0CA84383F1-->  <COLUMNNAME><![CDATA[M_Servicepricerule_ID]]></COLUMNNAME>
-<!--6C0C6F7437984998BB5ABA0CA84383F1-->  <NAME><![CDATA[Relatable Products Price Rule]]></NAME>
-<!--6C0C6F7437984998BB5ABA0CA84383F1-->  <PRINTNAME><![CDATA[Relatable Products Price Rule]]></PRINTNAME>
+<!--6C0C6F7437984998BB5ABA0CA84383F1-->  <NAME><![CDATA[Service Price Rule]]></NAME>
+<!--6C0C6F7437984998BB5ABA0CA84383F1-->  <PRINTNAME><![CDATA[Service Price Rule]]></PRINTNAME>
 <!--6C0C6F7437984998BB5ABA0CA84383F1-->  <DESCRIPTION><![CDATA[Rules to establish the price of 'Relatable Products' (Services and Contributions)]]></DESCRIPTION>
 <!--6C0C6F7437984998BB5ABA0CA84383F1-->  <HELP><![CDATA[Rules to establish the price of 'Relatable Products' (Services and Contributions).]]></HELP>
 <!--6C0C6F7437984998BB5ABA0CA84383F1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
