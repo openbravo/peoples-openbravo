@@ -32,6 +32,8 @@ public class ProductProductSubtypeCallout extends SimpleCallout {
       info.addResult("inpquantityRule", productSubtype.getQuantityRule());
       info.addResult("inpispricerulebased",
           Boolean.TRUE.equals(productSubtype.isPriceRuleBased()) ? "Y" : "N");
+      // used for services and must be set, but isn't relevant to contributions
+      info.addResult("inpemObposProposalType", "OP");
     }
 
   }
