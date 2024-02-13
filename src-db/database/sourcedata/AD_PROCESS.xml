@@ -4062,7 +4062,7 @@ Once the Purchase Order is created, it is marked as Completed and its Document N
 <!--1004400003-->  <AD_PROCESS_ID><![CDATA[1004400003]]></AD_PROCESS_ID>
 <!--1004400003-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--1004400003-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--1004400003-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
+<!--1004400003-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--1004400003-->  <VALUE><![CDATA[M_Requisition_Post]]></VALUE>
 <!--1004400003-->  <NAME><![CDATA[Post Requisition]]></NAME>
 <!--1004400003-->  <DESCRIPTION><![CDATA[Deprecated! Use Process Requisition (Java) instead]]></DESCRIPTION>
