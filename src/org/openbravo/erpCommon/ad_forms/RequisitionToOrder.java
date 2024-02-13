@@ -24,6 +24,8 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -53,6 +55,7 @@ import org.openbravo.erpCommon.utility.ToolBar;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.materialmgmt.UOMUtil;
 import org.openbravo.model.procurement.RequisitionLine;
+import org.openbravo.synchronization.event.SynchronizationEvent;
 import org.openbravo.utils.Replace;
 import org.openbravo.xmlEngine.XmlDocument;
 
@@ -732,8 +735,8 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
                 lines[i].mAttributesetinstanceId, strWarehouse, lines[i].mProductUomId,
                 lines[i].cUomId, lines[i].cAum, lines[i].quantityorder, lines[i].lockqty,
                 lines[i].aumqty, cCurrencyId, lines[i].pricelist, lines[i].priceactual,
-                lines[i].pricelimit, lines[i].tax, "", lines[i].discount,
-                lines[i].grossUnit, lines[i].grossAmt);
+                lines[i].pricelimit, lines[i].tax, "", lines[i].discount, lines[i].grossUnit,
+                lines[i].grossAmt);
           } catch (ServletException ex) {
             myMessage = Utility.translateError(this, vars, vars.getLanguage(), ex.getMessage());
             releaseRollbackConnection(conn);
@@ -774,6 +777,7 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
       }
 
       unlockRequisitionLines(vars, strSelected);
+      Set<String> requisitionIdsToClose = new HashSet<>();
       for (int i = 0; lines != null && i < lines.length; i++) {
         String strRequisitionOrderId = SequenceIdData.getUUID();
         try {
@@ -788,8 +792,14 @@ public class RequisitionToOrder extends HttpSecureAppServlet {
         if (lines[i].toClose.equals("Y")) {
           RequisitionToOrderData.requisitionStatus(conn, this, lines[i].mRequisitionlineId,
               vars.getUser());
+          requisitionIdsToClose.add(lines[i].mRequisitionId);
         }
+
       }
+
+      requisitionIdsToClose.forEach(requisitionID -> {
+        SynchronizationEvent.getInstance().triggerEvent("API_Process_Requisition", requisitionID);
+      });
 
       OBError myMessageAux = cOrderPost(conn, vars, strCOrderId);
       releaseCommitConnection(conn);
