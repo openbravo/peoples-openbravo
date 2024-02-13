@@ -63,6 +63,7 @@ export.database: exports database structure and data to xml files.
   <property name="base.design" location="${base.context}/src-loc" />
   <property name="base.lib" location="lib" />
   <property name="base.modules" location="modules" />
+  <property name="base.attachments" location="attachments" />
   <property name="build" location="build/classes" />
   <property name="build.apply.module" location="build.apply/classes" />
   <property name="build.AD" location="srcAD" />
@@ -649,7 +650,7 @@ export.database: exports database structure and data to xml files.
     </taskdef>
     <applyModule userId="0" adminMode="true" forceRefData="${forceRefData}" propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
-  
+
   <target name="compile.apply.module" depends="init">
     <updatesystemstatus v="RB31"/>
     <ant dir="${base.src}" target="compile.apply.module" inheritAll="true" inheritRefs="true" />
@@ -668,6 +669,14 @@ export.database: exports database structure and data to xml files.
       <classpath refid="apply.module.runtime.classpath" />
     </java>
    <delete includeEmptyDirs="true"  dir="${build.apply.module}" />
+  </target>
+  
+  <target name="export.translation">
+    <property name="strLang" value="es_ES" />
+    <taskdef name="exportTranslation" classname="org.openbravo.erpCommon.modules.TranslationManagerTask">
+      <classpath refid="project.class.path" />
+    </taskdef>
+    <exportTranslation strLang="${strLang}" exportDirectory="${base.attachments}" propertiesFile="${base.config}/Openbravo.properties"/>
   </target>
   
   <target name="tomcat.list">
