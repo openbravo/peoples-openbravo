@@ -19,6 +19,8 @@
 package org.openbravo.erpReports;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.servlet.ServletException;
@@ -27,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openbravo.base.secureApp.HttpSecureAppServlet;
 import org.openbravo.base.secureApp.VariablesSecureApp;
+import org.openbravo.base.weld.WeldUtils;
+import org.openbravo.common.hooks.GetPrintTemplateHook;
 
 /*
  * Report and Process class configured in Reference Inventory tab print button to print Reference Inventory Label
@@ -35,6 +39,7 @@ import org.openbravo.base.secureApp.VariablesSecureApp;
 public class RptM_RefInventoryPrintSeqLabel extends HttpSecureAppServlet {
 
   private static final long serialVersionUID = 1L;
+  private static final String DEFAULT_OUTPUT_NAME = "HULabel";
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -56,6 +61,30 @@ public class RptM_RefInventoryPrintSeqLabel extends HttpSecureAppServlet {
     log4j.debug("Output: PDF report");
     final HashMap<String, Object> parameters = new HashMap<>(1);
     parameters.put("M_REFINVENTORY_ID", strHandlingUnitId);
-    renderJR(vars, response, null, "pdf", parameters, null, null);
+    renderJR(vars, response, getPrintTemplate(), getOutputReportFilename(), "pdf", parameters, null,
+        null, true);
+  }
+
+  /*
+   * Gets the print template for Handling Unit Label printing from highest priority hook either
+   * Custom template from external module that implements GetPrintTemplateHook or default template
+   * from core module GetDefaultPrintTemplate
+   */
+
+  private String getPrintTemplate() {
+    return WeldUtils.getInstancesSortedByPriority(GetPrintTemplateHook.class)
+        .get(0) // Only get the highest priority hook
+        .getPrintTemplate();
+  }
+
+  /*
+   * This method computes the suffix to be added for output report file name based on current date
+   * i.e ddMMyyyhhmmss format
+   */
+
+  private String getOutputReportFilename() {
+    SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyhhmmss");
+    String dateSuffix = dateFormatter.format(new Date());
+    return DEFAULT_OUTPUT_NAME + dateSuffix;
   }
 }
