@@ -27,11 +27,13 @@ import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.base.model.Property;
 import org.openbravo.client.kernel.event.EntityNewEvent;
+import org.openbravo.client.kernel.event.EntityPersistenceEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.SequenceUtil;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.model.ad.utility.Sequence;
 
@@ -69,6 +71,12 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     if (baseSequence != null) {
       validateBaseSequence(baseSequence, hasModule10Controldigit(sequence));
     }
+
+    // Clears Sequence Length if Sequence Number Length is not Fix Length
+    clearSequenceLength(event);
+
+    // clears Base Sequence if Calculation Method is not Based on Sequence
+    clearBaseSequence(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -112,6 +120,12 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     if (currentBaseSequence != null && (isCurrentBaseSequenceChanged || isControlDigitChanged)) {
       validateBaseSequence(currentBaseSequence, hasModule10Controldigit(sequence));
     }
+
+    // Clears Sequence Length if Sequence Number Length is not Fix Length
+    clearSequenceLength(event);
+
+    // clears Base Sequence if Calculation Method is not Based on Sequence
+    clearBaseSequence(event);
   }
 
   /**
@@ -191,5 +205,43 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     seqCriteria.add(Restrictions.eq(Sequence.PROPERTY_CONTROLDIGIT, ControlDigit.MODULE10.value));
     seqCriteria.setMaxResults(1);
     return seqCriteria.uniqueResult() != null;
+  }
+
+  /**
+   * This method clears the Sequence Length in Sequence if Sequence Type is not Fix Length
+   */
+  private void clearSequenceLength(EntityPersistenceEvent event) {
+    final Entity sequenceEntity = ModelProvider.getInstance().getEntity(Sequence.ENTITY_NAME);
+    final Property sequenceNumberLengthProperty = sequenceEntity
+        .getProperty(Sequence.PROPERTY_SEQUENCENUMBERLENGTH);
+    final Property sequenceLengthProperty = sequenceEntity
+        .getProperty(Sequence.PROPERTY_SEQUENCELENGTH);
+    String currentSequenceNumberLength = (String) event
+        .getCurrentState(sequenceNumberLengthProperty);
+    Long currentSequenceLength = (Long) event.getCurrentState(sequenceLengthProperty);
+
+    if (!StringUtils.equals(currentSequenceNumberLength,
+        SequenceUtil.SequenceNumberLength.FIXED.value) && currentSequenceLength != null) {
+      event.setCurrentState(sequenceLengthProperty, null);
+    }
+  }
+
+  /**
+   * This method clears the Base Sequence in Sequence if Calculation Method is not Based on
+   * Sequence.
+   */
+  private void clearBaseSequence(EntityPersistenceEvent event) {
+    final Entity sequenceEntity = ModelProvider.getInstance().getEntity(Sequence.ENTITY_NAME);
+    final Property baseSequenceProperty = sequenceEntity
+        .getProperty(Sequence.PROPERTY_BASESEQUENCE);
+    final Property calculationMethodProperty = sequenceEntity
+        .getProperty(Sequence.PROPERTY_CALCULATIONMETHOD);
+    Sequence currentBaseSequence = (Sequence) event.getCurrentState(baseSequenceProperty);
+    String currentSequenceType = (String) event.getCurrentState(calculationMethodProperty);
+
+    if (!StringUtils.equals(currentSequenceType, SequenceUtil.CalculationMethod.SEQUENCE.value)
+        && currentBaseSequence != null) {
+      event.setCurrentState(baseSequenceProperty, null);
+    }
   }
 }

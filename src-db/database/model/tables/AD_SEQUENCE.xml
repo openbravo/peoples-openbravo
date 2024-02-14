@@ -98,7 +98,7 @@
         <onCreateDefault/>
       </column>
       <column name="CALCULATION_METHOD" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
+        <default><![CDATA[A]]></default>
         <onCreateDefault><![CDATA[CASE WHEN ISAUTOSEQUENCE='Y' THEN 'A' ELSE 'N' END]]></onCreateDefault>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="AD_SEQUENCE_AD_CLIENT">
@@ -115,6 +115,7 @@
         <unique-column name="AD_ORG_ID"/>
         <unique-column name="NAME"/>
       </unique>
+      <check name="AD_SEQUENCE_BASESEQ_CHK"><![CDATA[CALCULATION_METHOD = 'S' AND BASE_SEQUENCE_ID IS NOT NULL OR CALCULATION_METHOD <> 'S' AND BASE_SEQUENCE_ID IS NULL]]></check>
       <check name="AD_SEQUENCE_ISACTIVE_CHK"><![CDATA[ISACTIVE IN ('Y', 'N')]]></check>
       <check name="AD_SEQUENCE_ISAUTOSEQUENCE_CHK"><![CDATA[ISAUTOSEQUENCE IN ('Y', 'N')]]></check>
       <check name="AD_SEQUENCE_ISTABLEID_CHK"><![CDATA[ISTABLEID IN ('Y', 'N')]]></check>
