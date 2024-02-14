@@ -30940,8 +30940,8 @@ a Dark theme. Note that this logo should have different colors or more contrast 
 <!--82E738779E1347A8B5A766E9D3C1DF51-->  <COLUMNNAME><![CDATA[Validationtype]]></COLUMNNAME>
 <!--82E738779E1347A8B5A766E9D3C1DF51-->  <NAME><![CDATA[Validation Type]]></NAME>
 <!--82E738779E1347A8B5A766E9D3C1DF51-->  <PRINTNAME><![CDATA[Validation Type]]></PRINTNAME>
-<!--82E738779E1347A8B5A766E9D3C1DF51-->  <DESCRIPTION><![CDATA[Type of validation in notification engine]]></DESCRIPTION>
-<!--82E738779E1347A8B5A766E9D3C1DF51-->  <HELP><![CDATA[Type of validation in notification engine. Possible values:
+<!--82E738779E1347A8B5A766E9D3C1DF51-->  <DESCRIPTION><![CDATA[Type of validation for the data]]></DESCRIPTION>
+<!--82E738779E1347A8B5A766E9D3C1DF51-->  <HELP><![CDATA[Type of validation for the data. Possible values:
  - Empty: Checks if the value is empty or not.
  - Regular Expression: Checks if the value is correct due a regular expression.
  - DQM: Checks if the values is correct due an external DQM.]]></HELP>
@@ -35649,8 +35649,8 @@ If this flag is checked the creation and deletion of tree nodes will be handled 
 <!--C61B9460672F4657A62AF941F2CB51C1-->  <COLUMNNAME><![CDATA[Validationregexp]]></COLUMNNAME>
 <!--C61B9460672F4657A62AF941F2CB51C1-->  <NAME><![CDATA[Validation Regular Expression]]></NAME>
 <!--C61B9460672F4657A62AF941F2CB51C1-->  <PRINTNAME><![CDATA[Validation Regular Expression]]></PRINTNAME>
-<!--C61B9460672F4657A62AF941F2CB51C1-->  <DESCRIPTION><![CDATA[Validation Regular Expression for Notifications]]></DESCRIPTION>
-<!--C61B9460672F4657A62AF941F2CB51C1-->  <HELP><![CDATA[Regular Expression string for validate Notifications]]></HELP>
+<!--C61B9460672F4657A62AF941F2CB51C1-->  <DESCRIPTION><![CDATA[Validation Regular Expression for Validations]]></DESCRIPTION>
+<!--C61B9460672F4657A62AF941F2CB51C1-->  <HELP><![CDATA[Regular Expression string to validate the validations]]></HELP>
 <!--C61B9460672F4657A62AF941F2CB51C1-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--C61B9460672F4657A62AF941F2CB51C1-->  <ISGLOSSARY><![CDATA[N]]></ISGLOSSARY>
 <!--C61B9460672F4657A62AF941F2CB51C1--></AD_ELEMENT>
@@ -38342,8 +38342,8 @@ For details - http://wiki.openbravo.com/wiki/Role#Permissions_Inheritance]]></HE
 <!--E961C715396B43A8AD0B3B915FE45F95-->  <COLUMNNAME><![CDATA[Validation]]></COLUMNNAME>
 <!--E961C715396B43A8AD0B3B915FE45F95-->  <NAME><![CDATA[Validation]]></NAME>
 <!--E961C715396B43A8AD0B3B915FE45F95-->  <PRINTNAME><![CDATA[Validation]]></PRINTNAME>
-<!--E961C715396B43A8AD0B3B915FE45F95-->  <DESCRIPTION><![CDATA[Validation mode for notification engine]]></DESCRIPTION>
-<!--E961C715396B43A8AD0B3B915FE45F95-->  <HELP><![CDATA[Validation mode for notification engine. Possible values:
+<!--E961C715396B43A8AD0B3B915FE45F95-->  <DESCRIPTION><![CDATA[Validation mode for the data]]></DESCRIPTION>
+<!--E961C715396B43A8AD0B3B915FE45F95-->  <HELP><![CDATA[Validation mode for the data. Possible values:
  - No: No validation.
  - Informative: Only shows a notification.
  - Required to Save the Record: Data is required to change the value.]]></HELP>
