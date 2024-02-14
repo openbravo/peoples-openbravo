@@ -147,15 +147,6 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 				</textElement>
 				<textFieldExpression><![CDATA["N<sup>o</sup> : "+ $F{sscc_code} != null ? $F{sscc_code} : ""]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement x="30" y="104" width="491" height="26" uuid="1de8cf05-4070-4574-91ae-95df93480f0c">
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Store Barcode]]></text>
-			</staticText>
 			<frame>
 				<reportElement x="10" y="133" width="265" height="52" uuid="7458387f-0fa5-4801-bfb2-4a573df17634">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -371,7 +362,7 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 					<textElement verticalAlignment="Middle">
 						<font isBold="true"/>
 					</textElement>
-					<text><![CDATA[Proprietor:]]></text>
+					<text><![CDATA[Owner:]]></text>
 				</staticText>
 				<staticText>
 					<reportElement x="269" y="16" width="32" height="15" uuid="6e6d8fb9-5860-444d-8181-28eb758101bd">
