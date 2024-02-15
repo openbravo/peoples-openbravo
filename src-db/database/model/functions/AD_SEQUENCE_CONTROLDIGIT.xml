@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION AD_SEQUENCE_CONTROLDIGIT">
+    <function name="AD_SEQUENCE_CONTROLDIGIT" type="NULL">
+      <parameter name="p_documentno" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_controldigit" type="NUMERIC" mode="out">
+        <default/>
+      </parameter>
+      <body><![CDATA[v_sum NUMBER:=0;
+  v_sequence VARCHAR2(60);
+  v_digit NUMBER;
+BEGIN
+  -- Is Document No NULL OR EMPTY OR ALPHANUMERIC
+  IF(TO_NUMBER(p_DocumentNo) IS NULL) THEN
+    p_ControlDigit:=NULL;
+	RETURN;
+  END IF;
+
+  v_sequence:=REVERSE(p_DocumentNo);
+  FOR i IN 1..LENGTH(v_sequence) LOOP
+    v_digit := TO_NUMBER(SUBSTRING(v_sequence FROM i FOR 1));
+    IF (i%2) = 1 THEN
+      v_sum = v_sum + v_digit*3;
+    ELSE
+      v_sum = v_sum + v_digit;
+    END IF;
+  END LOOP;
+  p_ControlDigit:=(10 - (v_sum % 10)) % 10;
+
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+  RAISE_APPLICATION_ERROR(-20000, '@DocumentTypeSequenceNotFound@') ;
+END AD_SEQUENCE_CONTROLDIGIT
+]]></body>
+    </function>
+  </database>

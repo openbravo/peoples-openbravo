@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+  <database name="FUNCTION AD_SEQUENCE_DOCUMENTNO">
+    <function name="AD_SEQUENCE_DOCUMENTNO" type="VARCHAR">
+      <parameter name="p_sequence_id" type="VARCHAR" mode="in">
+        <default/>
+      </parameter>
+      <parameter name="p_update_next" type="CHAR" mode="in">
+        <default/>
+      </parameter>
+      <body><![CDATA[v_NextNo AD_SEQUENCE.CurrentNext%TYPE;
+  v_Prefix AD_SEQUENCE.PREFIX%TYPE;
+  v_Suffix AD_SEQUENCE.SUFFIX%TYPE;
+  v_Calculation_Method AD_SEQUENCE.CALCULATION_METHOD%TYPE;
+  v_Control_Digit AD_SEQUENCE.CONTROL_DIGIT%TYPE;
+  v_Sequence_Number_Length AD_SEQUENCE.SEQUENCE_NUMBER_LENGTH%TYPE;
+  v_Sequence_Length AD_SEQUENCE.SEQUENCE_LENGTH%TYPE;
+  v_Base_Sequence_ID AD_SEQUENCE.BASE_SEQUENCE_ID%TYPE;
+  v_documentNo VARCHAR2(60);
+  v_controldigit NUMBER;
+
+BEGIN
+  IF(p_Sequence_ID IS NULL) THEN -- No Sequence Number
+	RETURN NULL;
+  ELSE
+    IF p_Update_Next='Y' THEN
+      UPDATE AD_Sequence
+        SET CurrentNext=CurrentNext + IncrementNo
+      WHERE AD_Sequence_ID=p_Sequence_ID;
+    END IF;
+
+    SELECT s.CurrentNext - (CASE WHEN p_Update_Next='Y' THEN IncrementNo ELSE 0 END), s.Prefix, s.Suffix,
+         s.Calculation_Method, s.Control_Digit, s.Sequence_Number_Length, s.Sequence_Length, s.Base_Sequence_ID
+    INTO v_NextNo, v_Prefix, v_Suffix,
+       v_Calculation_Method, v_Control_Digit, v_Sequence_Number_Length, v_Sequence_Length, v_Base_Sequence_ID
+    FROM AD_Sequence s
+    WHERE s.AD_Sequence_ID = p_Sequence_ID
+      AND s.IsActive='Y';
+
+    IF (v_Calculation_Method = 'A') THEN
+      v_documentNo:=v_NextNo;
+    ELSIF (v_Calculation_Method = 'S') THEN
+      v_documentNo:= AD_SEQUENCE_DOCUMENTNO(v_Base_Sequence_ID, p_update_next);
+    ELSE
+      RAISE NO_DATA_FOUND||v_Calculation_Method;
+    END IF;
+
+	IF (v_Sequence_Number_Length = 'F' AND LENGTH(v_documentNo) < v_Sequence_Length) THEN
+	  v_documentNo:=lpad(v_documentNo::text, v_Sequence_Length::integer, '0'::text);
+	END IF;
+
+    v_documentNo:=COALESCE(v_Prefix, '') || v_documentNo || COALESCE(v_Suffix, '');
+	IF (v_Control_Digit = 'M10') THEN
+	  v_documentNo:=v_documentNo||AD_SEQUENCE_CONTROLDIGIT(v_documentNo);
+	END IF;
+
+    RETURN v_documentNo;
+
+  END IF;
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+  RAISE_APPLICATION_ERROR(-20000, '@DocumentTypeSequenceNotFound@') ;
+END AD_SEQUENCE_DOCUMENTNO
+]]></body>
+    </function>
+  </database>
