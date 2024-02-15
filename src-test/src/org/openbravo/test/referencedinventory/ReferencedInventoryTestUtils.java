@@ -411,4 +411,30 @@ class ReferencedInventoryTestUtils {
     assertThat("Reservation has the expected attribute at header",
         reservation.getAttributeSetValue(), isForceAttributeSet ? notNullValue() : nullValue());
   }
+
+  /**
+   * get documentNo using computation of sequence and control digit in PL
+   *
+   * @param sequenceId
+   *          Document Sequence configiration used to compute document No.
+   * @param updateNext
+   *          flag to update current next in AD_Sequence
+   * @param functionName
+   *          name of function to be used for computation of sequence and control digit
+   * @return computed documentNo using computation of sequence and control digit in PL
+   */
+
+  public static String callADSequenceDocumentNoFunction(String sequenceId, boolean updateNext,
+      String functionName) {
+    String value = "";
+    try {
+      final List<Object> parameters = new ArrayList<Object>();
+      parameters.add(sequenceId);
+      parameters.add(updateNext);
+      value = ((String) CallStoredProcedure.getInstance().call(functionName, parameters, null));
+    } catch (Exception e) {
+      throw new IllegalStateException(e);
+    }
+    return value;
+  }
 }

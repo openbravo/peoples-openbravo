@@ -107,6 +107,14 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
         refInvType.getId(), ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, false);
     assertThat("Referenced Inventory Search Key is computed from sequence", proposedSequence,
         equalTo(expectedOutput));
+
+    // get proposed sequence using control digit & sequence computation in PL
+    String proposedSequenceUsingPL = ReferencedInventoryTestUtils
+        .callADSequenceDocumentNoFunction(parentSequence.getId(), false, "AD_SEQUENCE_DOCUMENTNO");
+
+    assertThat("Referenced Inventory Search Key is computed from sequence using PL",
+        proposedSequenceUsingPL, equalTo(expectedOutput));
+
   }
 
 }
