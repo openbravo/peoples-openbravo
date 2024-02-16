@@ -42,11 +42,9 @@
   *  If no Document Sequence is defined, return null !
   *   Use AD_Sequence_Doc('DocumentNo_myTable',.. to get it directly
   ************************************************************************/
-  v_NextNo VARCHAR2(32);
 
   v_Sequence_ID VARCHAR2(32):=NULL;
-  v_Prefix VARCHAR2(30) ;
-  v_Suffix VARCHAR2(30) ;
+
 BEGIN
   -- Is a document Sequence defined and valid
 BEGIN
@@ -59,23 +57,7 @@ EXCEPTION
 WHEN OTHERS THEN
   NULL;
 END;
-IF(v_Sequence_ID IS NULL) THEN -- No Sequence Number
-  p_DocumentNo:= NULL; -- Return NULL
-  DBMS_OUTPUT.PUT_LINE('[AD_Sequence_DocType: not found - C_DocType_ID=' || p_DocType_ID || ']') ;
-  RETURN;
-END IF;
-  IF p_Update_Next='Y' THEN
-    UPDATE AD_Sequence
-      SET CurrentNext=CurrentNext + IncrementNo
-    WHERE AD_Sequence_ID=v_Sequence_ID;
-  END IF;
-
-  SELECT s.CurrentNext - (CASE WHEN p_Update_Next='Y' THEN IncrementNo ELSE 0 END), s.Prefix, s.Suffix
-  INTO v_NextNo, v_Prefix, v_Suffix
-  FROM AD_Sequence s
-  WHERE s.AD_Sequence_ID = v_Sequence_ID  AND s.IsActive='Y'  AND s.IsTableID='N'  AND s.Calculation_Method='A';
-
-  p_DocumentNo:=COALESCE(v_Prefix, '') || v_NextNo || COALESCE(v_Suffix, '') ;
+  p_DocumentNo:=AD_SEQUENCE_DOCUMENTNO(v_Sequence_ID, p_update_next);
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
   RAISE_APPLICATION_ERROR(-20000, '@DocumentTypeSequenceNotFound@') ;

@@ -39,16 +39,21 @@ BEGIN
     IF (v_Calculation_Method = 'A') THEN
       v_documentNo:=v_NextNo;
     ELSIF (v_Calculation_Method = 'S') THEN
+	  -- Compute sequence based on base sequence defined in Sequence
       v_documentNo:= AD_SEQUENCE_DOCUMENTNO(v_Base_Sequence_ID, p_update_next);
     ELSE
-      RAISE NO_DATA_FOUND||v_Calculation_Method;
+      RAISE_APPLICATION_ERROR(-20000,'@CalculationMethodNotSupported@' || v_Calculation_Method);
     END IF;
 
+	--Add leading zeros to the computed sequence if the sequence number length is fix length
+	--and computed sequence length is less than specified sequence length
 	IF (v_Sequence_Number_Length = 'F' AND LENGTH(v_documentNo) < v_Sequence_Length) THEN
 	  v_documentNo:=lpad(v_documentNo::text, v_Sequence_Length::integer, '0'::text);
 	END IF;
 
     v_documentNo:=COALESCE(v_Prefix, '') || v_documentNo || COALESCE(v_Suffix, '');
+
+	--Compute Control Digit based on Module 10 Algorithm
 	IF (v_Control_Digit = 'M10') THEN
 	  v_documentNo:=v_documentNo||AD_SEQUENCE_CONTROLDIGIT(v_documentNo);
 	END IF;
@@ -58,7 +63,7 @@ BEGIN
   END IF;
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20000, '@DocumentTypeSequenceNotFound@') ;
+  RAISE_APPLICATION_ERROR(-20000, '@ComputingSequenceFailed@') ;
 END AD_SEQUENCE_DOCUMENTNO
 ]]></body>
     </function>

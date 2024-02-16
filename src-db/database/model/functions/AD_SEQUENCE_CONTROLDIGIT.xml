@@ -13,6 +13,7 @@
 BEGIN
   -- Is Document No NULL OR EMPTY OR ALPHANUMERIC
   IF(TO_NUMBER(p_DocumentNo) IS NULL) THEN
+    DBMS_OUTPUT.PUT_LINE( '@ValidateSequenceForControlDigit@'); --OBTG:-20000--
     p_ControlDigit:=NULL;
 	RETURN;
   END IF;
@@ -30,7 +31,7 @@ BEGIN
 
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
-  RAISE_APPLICATION_ERROR(-20000, '@DocumentTypeSequenceNotFound@') ;
+  RAISE_APPLICATION_ERROR(-20000, '@ValidateSequenceForControlDigit@') ;
 END AD_SEQUENCE_CONTROLDIGIT
 ]]></body>
     </function>
