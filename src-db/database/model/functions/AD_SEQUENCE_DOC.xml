@@ -47,9 +47,9 @@ BEGIN
  /*There is unique constraint ad_client_id, ad_org, name
   *name could be similar for ad_client_id with different ad_org_id
  */
-  SELECT MAX(DocNoSequence_ID)
+  SELECT MAX(AD_Sequence_ID)
   INTO v_Sequence_ID
-  FROM C_DocType
+  FROM AD_SEQUENCE
   WHERE Name=p_SequenceName -- parameter
     AND ad_client_id=p_ad_client_id;
 EXCEPTION
