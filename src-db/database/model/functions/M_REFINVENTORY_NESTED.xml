@@ -1,8 +1,11 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_REFINVENTORY_NESTED">
-    <function name="M_REFINVENTORY_NESTED" type="VARCHAR">
+    <function name="M_REFINVENTORY_NESTED" type="VARCHAR" volatility="STABLE">
       <parameter name="p_refinventory_id" type="VARCHAR" mode="in">
         <default/>
+      </parameter>
+      <parameter name="p_innermost_only" type="CHAR" mode="in">
+        <default><![CDATA[N]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -21,12 +24,13 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 /*************************************************************************
-* Title: Return the nested referenced inventories for the given 
-* p_refinventory_id, including it too.
+* Title: Return the nested referenced inventories for the given p_refinventory_id,
+* always including the specified p_refinventory_id itself.
+* If p_innermost_only is Y, then returns only the innermost referenced inventory, 
+* otherwise returns every nested referenced inventory.
 *
-* The output is aggregated in a comma-separated list of referenced 
-* inventories IDs because there is no other way supported by DBSM to 
-* return an array or a set of rows.
+* The output is aggregated in a comma-separated list of referenced inventories IDs 
+* because there is no other way supported by DBSM to return an array or a set of rows.
 *
 * This string can be used as the input parameter for an IN or ANY clauses 
 * like this: 
@@ -54,9 +58,11 @@ BEGIN
   join m_attributesetinstance masi on (ript.parent_attributesetinstance_id = masi.m_attributesetinstance_id)
   where coalesce(ript.parent_attributesetinstance_id, '0') <> '0'
  )
- select string_agg(sd.m_refinventory_id, ',')
+ select string_agg(m_refinventory_id, ',')
  into v_refinventory_id
- from riTree sd;
+ from riTree
+ where (p_innermost_only = 'Y' and coalesce(parent_attributesetinstance_id ,'0')='0')
+       or p_innermost_only <> 'Y';
 
  RETURN v_refinventory_id;
 END M_REFINVENTORY_NESTED
