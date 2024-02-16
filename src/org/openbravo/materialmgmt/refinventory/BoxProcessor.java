@@ -47,7 +47,7 @@ public class BoxProcessor extends ReferencedInventoryProcessor {
       final JSONArray selectedStorageDetails, final String newStorageBinId) throws JSONException {
     super(referencedInventory);
     super.setSelectedStorageDetailsAndValidateThem(selectedStorageDetails);
-    checkStorageDetailsNotAlreadyInReferencedInventory(selectedStorageDetails);
+    // checkStorageDetailsNotAlreadyInReferencedInventory(selectedStorageDetails);
     setAndValidateNewStorageBinId(newStorageBinId);
     storageDetailNewAttributeIdMap = new HashMap<>(selectedStorageDetails.length());
   }

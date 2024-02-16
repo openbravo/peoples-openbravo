@@ -127,9 +127,9 @@ public class ReferencedInventoryExceptionTest extends ReferencedInventoryBoxTest
     final JSONArray storageDetailsJS = ReferencedInventoryTestUtils
         .getStorageDetailsToBoxJSArray(storageDetail, BigDecimal.ONE);
 
-    OBException thrown = assertThrows(OBException.class, () -> {
-      new BoxProcessor(refInv2, storageDetailsJS, null).createAndProcessGoodsMovement();
-    });
+    OBException thrown = assertThrows(OBException.class,
+        () -> new BoxProcessor(refInv2, storageDetailsJS, storageDetail.getStorageBin().getId())
+            .createAndProcessGoodsMovement());
     assertThat(thrown.getMessage(), containsString(" is already linked to the handling unit "));
   }
 
