@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2015-2022 Openbravo SLU
+ * All portions are Copyright (C) 2015-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -60,7 +60,7 @@ public class HorizontalInheritance extends WeldBaseTest {
   private final List<String> FORMS = Arrays.asList("About", "Heartbeat", "Logout", "Menu",
       "Payment Execution");
   private final List<String> WIDGETS = Arrays.asList("Best Sellers", "Invoices to collect",
-      "Motion Chart", "Planet", "Twitter");
+      "Invoices to pay", "Pending Goods Receipt", "Twitter");
   private final List<String> VIEWS = Arrays.asList("OBUIAPP_AlertManagement",
       RoleInheritanceTestUtils.DUMMY_VIEW_IMPL_NAME);
   private final List<String> PROCESSES = Arrays.asList("Create Purchase Order Lines",
