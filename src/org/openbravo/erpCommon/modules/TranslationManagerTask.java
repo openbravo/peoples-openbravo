@@ -20,7 +20,7 @@
 package org.openbravo.erpCommon.modules;
 
 import org.apache.tools.ant.BuildException;
-import org.openbravo.dal.core.DalInitializingTask;
+import org.apache.tools.ant.Task;
 import org.openbravo.database.CPStandAlone;
 import org.openbravo.erpCommon.ad_forms.TranslationManager;
 
@@ -28,13 +28,14 @@ import org.openbravo.erpCommon.ad_forms.TranslationManager;
  * Ant task for Export Translation
  * 
  */
-public class TranslationManagerTask extends DalInitializingTask {
+public class TranslationManagerTask extends Task {
 
   private static final String STR_CLIENT = "0";
   private static final String UI_LANGUAGE = "en_US";
 
   private String exportDirectory;
   private String strLang;
+  private String propertiesFile;
 
   public void setExportDirectory(String exportDirectory) {
     this.exportDirectory = exportDirectory;
@@ -44,8 +45,16 @@ public class TranslationManagerTask extends DalInitializingTask {
     this.strLang = strLang;
   }
 
+  public void setPropertiesFile(String propertiesFile) {
+    this.propertiesFile = propertiesFile;
+  }
+
   @Override
   public void execute() {
+    if (strLang.isBlank()) {
+      throw new BuildException(
+          "Parameter strLang cannot be empty. Example: ant export.translation -DstrLang=\"es_ES\"");
+    }
     try {
       TranslationManager.exportTrl(new CPStandAlone(propertiesFile), exportDirectory, strLang,
           STR_CLIENT, UI_LANGUAGE);

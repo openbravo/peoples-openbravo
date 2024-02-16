@@ -672,7 +672,7 @@ export.database: exports database structure and data to xml files.
   </target>
   
   <target name="export.translation">
-    <property name="strLang" value="es_ES" />
+    <property name="strLang" value="" />
     <taskdef name="exportTranslation" classname="org.openbravo.erpCommon.modules.TranslationManagerTask">
       <classpath refid="project.class.path" />
     </taskdef>
