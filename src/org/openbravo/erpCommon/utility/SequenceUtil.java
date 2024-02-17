@@ -110,16 +110,16 @@ public class SequenceUtil {
    *          Use false when you want to retrieve the next document number without updating the
    *          sequence in the database, for instance, to preview the document number before saving
    *          the document.
-   * @param sequence
+   * @param seq
    *          The sequence from which to generate the document number.
    * 
    * @return The next document number ready to be used, or null if no sequence is found.
    */
-  public static String getDocumentNo(boolean updatedNext, final Sequence sequence) {
-    if (sequence == null) {
+  public static String getDocumentNo(boolean updatedNext, final Sequence seq) {
+    if (seq == null) {
       return null;
     }
-
+    Sequence sequence = getSequenceAndLockIfUpdateNext(updatedNext, seq);
     final String calculationMethod = sequence.getCalculationMethod();
 
     final StringBuilder documentNo = new StringBuilder();
@@ -152,17 +152,12 @@ public class SequenceUtil {
     return documentNo.toString();
   }
 
-  private static Long getNextDocNumberWithoutPrefixSuffix(final boolean updateNext,
-      final Sequence seqParam) {
-    if (seqParam == null) {
-      return null;
-    }
-
-    Long documentNo = null;
-    final Sequence seq = getSequenceAndLockIfUpdateNext(updateNext, seqParam);
-    documentNo = seq.getNextAssignedNumber();
+  private static String getNextDocNumberWithoutPrefixSuffix(final boolean updateNext,
+      final Sequence seq) {
+    final StringBuilder nextDocNumber = new StringBuilder();
+    nextDocNumber.append(seq.getNextAssignedNumber().toString());
     incrementSeqIfUpdateNext(updateNext, seq);
-    return documentNo;
+    return nextDocNumber.toString();
   }
 
   private static Sequence getSequenceAndLockIfUpdateNext(final boolean updateNext,
