@@ -16,7 +16,6 @@
   v_Sequence_Length AD_SEQUENCE.SEQUENCE_LENGTH%TYPE;
   v_Base_Sequence_ID AD_SEQUENCE.BASE_SEQUENCE_ID%TYPE;
   v_documentNo VARCHAR2(60);
-  v_controldigit NUMBER;
 
 BEGIN
   IF(p_Sequence_ID IS NULL) THEN -- No Sequence Number
