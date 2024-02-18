@@ -89,9 +89,8 @@ BEGIN
   IF (v_attributesetinstance <> '0') THEN -- '0' attribute is never associated to RI
     BEGIN
       -- Get the innermost reference inventory
-      SELECT M_REFINVENTORY_NESTED(m_refinventory_id, 'Y') INTO v_refinventoryid
-      FROM m_attributesetinstance
-      WHERE m_attributesetinstance_id = v_attributesetinstance;
+      SELECT M_REFINVENTORY_NESTED(v_attributesetinstance, 'Y') INTO v_refinventoryid
+      FROM dual;
     EXCEPTION 
       WHEN NO_DATA_FOUND THEN
         v_refinventoryid := NULL;

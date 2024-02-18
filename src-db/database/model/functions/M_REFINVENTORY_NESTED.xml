@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_REFINVENTORY_NESTED">
     <function name="M_REFINVENTORY_NESTED" type="VARCHAR" volatility="STABLE">
-      <parameter name="p_refinventory_id" type="VARCHAR" mode="in">
+      <parameter name="p_attributesetinstance_id" type="VARCHAR" mode="in">
         <default/>
       </parameter>
       <parameter name="p_innermost_only" type="CHAR" mode="in">
@@ -24,8 +24,8 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 /*************************************************************************
-* Title: Return the nested referenced inventories for the given p_refinventory_id,
-* always including the specified p_refinventory_id itself.
+* Title: Return the nested referenced inventories for the given p_attributesetinstance_id,
+* always including the m_refinventory_id linked to the p_attributesetinstance_id.
 * If p_innermost_only is Y, then returns only the innermost referenced inventory, 
 * otherwise returns every nested referenced inventory.
 *
@@ -48,20 +48,23 @@
 v_refinventory_id VARCHAR;
 
 BEGIN
- WITH RECURSIVE riTree (m_attributesetinstance_id, parent_attributesetinstance_id, m_refinventory_id) AS
- (select m_attributesetinstance_id, parent_attributesetinstance_id, m_refinventory_id
+ WITH RECURSIVE riTree (m_attributesetinstance_id, parent_attributesetinstance_id,
+                        m_refinventory_id, level) AS
+ (select m_attributesetinstance_id, parent_attributesetinstance_id,
+         m_refinventory_id, 1 as level
   from m_attributesetinstance
-  where m_refinventory_id = p_refinventory_id
+  where m_attributesetinstance_id = p_attributesetinstance_id
   union all
-  select masi.m_attributesetinstance_id, masi.parent_attributesetinstance_id, masi.m_refinventory_id
+  select masi.m_attributesetinstance_id, masi.parent_attributesetinstance_id,
+         masi.m_refinventory_id, ript.level + 1
   from riTree ript
   join m_attributesetinstance masi on (ript.parent_attributesetinstance_id = masi.m_attributesetinstance_id)
-  where coalesce(ript.parent_attributesetinstance_id, '0') <> '0'
+  where masi.m_refinventory_id is not null
  )
  select string_agg(m_refinventory_id, ',')
  into v_refinventory_id
  from riTree
- where (p_innermost_only = 'Y' and coalesce(parent_attributesetinstance_id ,'0')='0')
+ where (p_innermost_only = 'Y' and level = (select max(level) from riTree))
        or p_innermost_only <> 'Y';
 
  RETURN v_refinventory_id;
