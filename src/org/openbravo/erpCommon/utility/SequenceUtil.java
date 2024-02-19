@@ -131,10 +131,7 @@ public class SequenceUtil {
     } else if (CalculationMethod.DOCUMENTNO_TABLENAME.value.equals(calculationMethod)) {
       // Deprecated Calculation Method (former AutoNumbering=N)
       throw new OBException("Calculation Method not supported: " + calculationMethod
-          + " by this method. Please use instead: "
-          + "org.openbravo.erpCommon.utility.Utility.getDocumentNo(ConnectionProvider conn, String AD_Client_ID, String TableName, boolean updateNext)"
-          + "Remember this calculation method is a DEPRECATED feature that you should stop using.",
-          true);
+          + " by this method." + OBMessageUtils.messageBD("DeprecatedCalculationMethod"), true);
     } else {
       throw new OBException("Calculation Method not supported: " + calculationMethod, true);
     }

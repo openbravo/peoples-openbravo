@@ -38,8 +38,10 @@ BEGIN
     IF (v_Calculation_Method = 'A') THEN
       v_documentNo:=v_NextNo;
     ELSIF (v_Calculation_Method = 'S') THEN
-	  -- Compute sequence based on base sequence defined in Sequence
+      -- Compute sequence based on base sequence defined in Sequence
       v_documentNo:= AD_SEQUENCE_DOCUMENTNO(v_Base_Sequence_ID, p_update_next);
+    ELSIF (v_Calculation_Method = 'N') THEN
+      RAISE_APPLICATION_ERROR(-20000,'@CalculationMethodNotSupported@' || v_Calculation_Method || '@DeprecatedCalculationMethod@');
     ELSE
       RAISE_APPLICATION_ERROR(-20000,'@CalculationMethodNotSupported@' || v_Calculation_Method);
     END IF;

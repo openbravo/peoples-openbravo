@@ -60,12 +60,6 @@ END;
     p_DocumentNo:=NULL;
 	RETURN;
   ELSE
-    IF p_Update_Next='Y' THEN
-      UPDATE AD_Sequence
-        SET CurrentNext=CurrentNext + IncrementNo, Updated=now()
-      WHERE AD_Sequence_ID=v_Sequence_ID;
-    END IF;
-
     p_DocumentNo:=AD_SEQUENCE_DOCUMENTNO(v_Sequence_ID, p_update_next);
   END IF;
   EXCEPTION
