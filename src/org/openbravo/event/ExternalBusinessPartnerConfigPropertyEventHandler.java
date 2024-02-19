@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2021-2023 Openbravo SLU
+ * All portions are Copyright (C) 2021-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -64,6 +64,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkCRMBusinessPropertyUniqueness(event);
     checkKeyColumnsAndAddress(event);
     checkTranslatableFields(event);
+    checkIsUniqueFields(event);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
@@ -76,6 +77,7 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
     checkIdentifierScanningActionDuplicates(event);
     checkKeyColumnsAndAddress(event);
     checkTranslatableFields(event);
+    checkIsUniqueFields(event);
   }
 
   private void resetValuesWhenReferenceIsInvoiceOrShipping(final EntityPersistenceEvent event) {
@@ -281,6 +283,14 @@ public class ExternalBusinessPartnerConfigPropertyEventHandler
       final Property textProperty = extBPConfigEntity
           .getProperty(ExternalBusinessPartnerConfigProperty.PROPERTY_TEXT);
       event.setCurrentState(textProperty, "");
+    }
+  }
+
+  private void checkIsUniqueFields(EntityPersistenceEvent event) {
+    final ExternalBusinessPartnerConfigProperty extBPConfigProperty = (ExternalBusinessPartnerConfigProperty) event
+        .getTargetInstance();
+    if (extBPConfigProperty.isUnique() && extBPConfigProperty.getFilterForUnique() == null) {
+      throw new OBException("@NotNullCRMFilterForUnique@");
     }
   }
 }
