@@ -50,8 +50,6 @@
     <excludedFunction name="LOWEREQUAL"/>
     <excludedFunction name="LOWEREQUALNUMERIC"/>
     <excludedFunction name="LOWEREQUALTIMESTAMP"/>
-    <excludedFunction name="DBA_RECOMPILE"/>
-    <excludedFunction name="DBA_AFTERIMPORT"/>
     <excludedFunction name="NOW"/>
     <excludedFunction name="UPDATE_DATEFORMAT"/>
     <excludedFunction name="GET_UUID"/>

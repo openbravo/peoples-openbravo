@@ -896,30 +896,6 @@ NOTE: You will not be able to close the fiscal year if you close all its periods
 <!--184-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
 <!--184--></AD_PROCESS>
 
-<!--185--><AD_PROCESS>
-<!--185-->  <AD_PROCESS_ID><![CDATA[185]]></AD_PROCESS_ID>
-<!--185-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
-<!--185-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--185-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--185-->  <VALUE><![CDATA[DBA_Recompile]]></VALUE>
-<!--185-->  <NAME><![CDATA[Recompile DB Objects]]></NAME>
-<!--185-->  <DESCRIPTION><![CDATA[Recompile Database Objects]]></DESCRIPTION>
-<!--185-->  <HELP><![CDATA[Recompile Functions, Procedures, Triggers, Views, etc.]]></HELP>
-<!--185-->  <ACCESSLEVEL><![CDATA[4]]></ACCESSLEVEL>
-<!--185-->  <ISUSERSTARTABLE><![CDATA[Y]]></ISUSERSTARTABLE>
-<!--185-->  <PROCEDURENAME><![CDATA[DBA_Recompile]]></PROCEDURENAME>
-<!--185-->  <ISREPORT><![CDATA[N]]></ISREPORT>
-<!--185-->  <ISDIRECTPRINT><![CDATA[N]]></ISDIRECTPRINT>
-<!--185-->  <ISBACKGROUND><![CDATA[N]]></ISBACKGROUND>
-<!--185-->  <ISJASPER><![CDATA[N]]></ISJASPER>
-<!--185-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
-<!--185-->  <UIPATTERN><![CDATA[S]]></UIPATTERN>
-<!--185-->  <ISADVANCEDFEATURE><![CDATA[N]]></ISADVANCEDFEATURE>
-<!--185-->  <PREVENTCONCURRENT><![CDATA[N]]></PREVENTCONCURRENT>
-<!--185-->  <IS_EXPLICIT_ACCESS><![CDATA[N]]></IS_EXPLICIT_ACCESS>
-<!--185-->  <ISKILLABLE><![CDATA[N]]></ISKILLABLE>
-<!--185--></AD_PROCESS>
-
 <!--186--><AD_PROCESS>
 <!--186-->  <AD_PROCESS_ID><![CDATA[186]]></AD_PROCESS_ID>
 <!--186-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
