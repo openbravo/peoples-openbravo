@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2023 Openbravo SLU 
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -41,6 +41,7 @@ import org.openbravo.base.weld.test.WeldBaseTest;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.model.ad.module.Application;
 import org.openbravo.model.ad.system.Client;
 import org.openbravo.model.ad.utility.Image;
 import org.openbravo.model.authentication.AuthenticationProvider;
@@ -123,6 +124,8 @@ public class OAuth2SignInProviderTest extends WeldBaseTest {
         .setOrganization(OBDal.getInstance().getProxy(Organization.class, TestConstants.Orgs.MAIN));
     config.setName(name);
     config.setType("OPENID");
+    config.setApplication(
+        OBDal.getInstance().getProxy(Application.class, TestConstants.Applications.BACKOFFICE));
     config.setSequenceNumber(sequenceNumber);
     if (imageId != null) {
       config.setIcon(OBDal.getInstance().getProxy(Image.class, imageId));

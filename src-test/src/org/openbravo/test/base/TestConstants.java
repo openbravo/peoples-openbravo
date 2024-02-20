@@ -95,6 +95,10 @@ public class TestConstants {
     public static final String HTTP = "36ADC30F67164F119013515280D82C01";
   }
 
+  public static class Applications {
+    public static final String BACKOFFICE = "85A6864E67B3427C9DEA981AAE11B306";
+  }
+
   private TestConstants() {
   }
 }
