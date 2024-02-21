@@ -21403,9 +21403,9 @@ AND (e.storageBin is null OR ad_org_isinnaturaltree(@MaterialMgmtShipmentInOut.o
 <!--E372ABF0DD8E42DA8A09001B10B21E23-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--E372ABF0DD8E42DA8A09001B10B21E23-->  <UIPATTERN><![CDATA[RO]]></UIPATTERN>
 <!--E372ABF0DD8E42DA8A09001B10B21E23-->  <HQLWHERECLAUSE><![CDATA[e.quantityOnHand > 0
-AND e.referencedInventory.id = ANY(select unnest(m_refinventory_nested(masi.id))
-                                   from AttributeSetInstance masi
-                                   where masi.referencedInventory.id=@MaterialMgmtReferencedInventory.id@
+AND e.referencedInventory.id = ANY(select unnest(m_refinventory_nested(ri.id))
+                                   from MaterialMgmtReferencedInventory ri
+                                   where ri.id=@MaterialMgmtReferencedInventory.id@
                                    )]]></HQLWHERECLAUSE>
 <!--E372ABF0DD8E42DA8A09001B10B21E23-->  <HQLFILTERCLAUSE><![CDATA[e.referencedInventory.id = @MaterialMgmtReferencedInventory.id@]]></HQLFILTERCLAUSE>
 <!--E372ABF0DD8E42DA8A09001B10B21E23-->  <FILTERNAME><![CDATA[Exclude content in nested handling units]]></FILTERNAME>

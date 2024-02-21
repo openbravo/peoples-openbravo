@@ -1,11 +1,8 @@
 <?xml version="1.0"?>
   <database name="FUNCTION M_REFINVENTORY_NESTED">
     <function name="M_REFINVENTORY_NESTED" type="VARCHAR" volatility="STABLE">
-      <parameter name="p_attributesetinstance_id" type="VARCHAR" mode="in">
+      <parameter name="p_refinventory_id" type="VARCHAR" mode="in">
         <default/>
-      </parameter>
-      <parameter name="p_innermost_only" type="CHAR" mode="in">
-        <default><![CDATA[N]]></default>
       </parameter>
       <body><![CDATA[/*************************************************************************
 * The contents of this file are subject to the Openbravo  Public  License
@@ -24,10 +21,8 @@
 * Contributor(s):  ______________________________________.
 ************************************************************************/
 /*************************************************************************
-* Title: Return the nested referenced inventories for the given p_attributesetinstance_id,
-* always including the m_refinventory_id linked to the p_attributesetinstance_id.
-* If p_innermost_only is Y, then returns only the innermost referenced inventory, 
-* otherwise returns every nested referenced inventory.
+* Title: Return the nested referenced inventories for the given p_refinventory_id,
+* always including the p_refinventory_id.
 *
 * The output is aggregated in a comma-separated list of referenced inventories IDs 
 * because there is no other way supported by DBSM to return an array or a set of rows.
@@ -48,24 +43,22 @@
 v_refinventory_id VARCHAR;
 
 BEGIN
- WITH RECURSIVE riTree (m_attributesetinstance_id, parent_attributesetinstance_id,
-                        m_refinventory_id, level) AS
- (select m_attributesetinstance_id, parent_attributesetinstance_id,
-         m_refinventory_id, 1 as level
-  from m_attributesetinstance
-  where m_attributesetinstance_id = p_attributesetinstance_id
+ WITH RECURSIVE riTree (m_refinventory_id, parent_refinventory_id, 
+                        level) AS
+ (select m_refinventory_id, parent_refinventory_id,
+         1 as level
+  from m_refinventory
+  where m_refinventory_id = p_refinventory_id
   union all
-  select masi.m_attributesetinstance_id, masi.parent_attributesetinstance_id,
-         masi.m_refinventory_id, ript.level + 1
+  select ri.m_refinventory_id, ri.parent_refinventory_id,
+         ript.level + 1
   from riTree ript
-  join m_attributesetinstance masi on (ript.parent_attributesetinstance_id = masi.m_attributesetinstance_id)
-  where masi.m_refinventory_id is not null
+  join m_refinventory ri on (ri.parent_refinventory_id = ript.m_refinventory_id)
+  where ri.parent_refinventory_id is not null
  )
  select string_agg(m_refinventory_id, ',')
  into v_refinventory_id
- from riTree
- where (p_innermost_only = 'Y' and level = (select max(level) from riTree))
-       or p_innermost_only <> 'Y';
+ from riTree;
 
  RETURN v_refinventory_id;
 END M_REFINVENTORY_NESTED

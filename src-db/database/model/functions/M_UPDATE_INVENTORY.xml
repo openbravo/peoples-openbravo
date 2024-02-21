@@ -89,8 +89,22 @@ BEGIN
   IF (v_attributesetinstance <> '0') THEN -- '0' attribute is never associated to RI
     BEGIN
       -- Get the innermost reference inventory
-      SELECT M_REFINVENTORY_NESTED(v_attributesetinstance, 'Y') INTO v_refinventoryid
-      FROM dual;
+      WITH RECURSIVE masiTree (m_attributesetinstance_id, parent_attributesetinstance_id,
+                        m_refinventory_id, level) AS
+      (select m_attributesetinstance_id, parent_attributesetinstance_id,
+              m_refinventory_id, 1 as level
+       from m_attributesetinstance
+       where m_attributesetinstance_id = v_attributesetinstance
+       union all
+       select masi.m_attributesetinstance_id, masi.parent_attributesetinstance_id,
+              masi.m_refinventory_id, ript.level + 1
+       from masiTree ript
+       join m_attributesetinstance masi on (ript.parent_attributesetinstance_id = masi.m_attributesetinstance_id)
+       where masi.m_refinventory_id is not null
+      )
+      SELECT M_REFINVENTORY_ID INTO v_refinventoryid
+      FROM masiTree
+      WHERE level = (select max(level) from masiTree);
     EXCEPTION 
       WHEN NO_DATA_FOUND THEN
         v_refinventoryid := NULL;
