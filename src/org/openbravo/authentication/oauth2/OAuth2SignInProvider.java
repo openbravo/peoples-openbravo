@@ -45,7 +45,7 @@ import org.openbravo.model.authentication.AuthenticationProvider;
 public class OAuth2SignInProvider implements SignInProvider {
   private static final String TEMPLATE_ID = "64F02C64E2A14E09BCD145D74F2DE93F";
   private static final String OPENID = "OPENID";
-  private static final String BACKOFFICE_APP = "85A6864E67B3427C9DEA981AAE11B306";
+  static final String BACKOFFICE_APP = "85A6864E67B3427C9DEA981AAE11B306";
   private Template template;
 
   @Inject

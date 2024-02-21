@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -21,12 +21,14 @@ package org.openbravo.authentication.oauth2;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.openbravo.base.exception.OBException;
 import org.openbravo.base.model.Entity;
 import org.openbravo.base.model.ModelProvider;
 import org.openbravo.client.kernel.event.EntityDeleteEvent;
 import org.openbravo.client.kernel.event.EntityNewEvent;
 import org.openbravo.client.kernel.event.EntityPersistenceEventObserver;
 import org.openbravo.client.kernel.event.EntityUpdateEvent;
+import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
@@ -35,6 +37,8 @@ import org.openbravo.model.authentication.AuthenticationProvider;
  * a clustered environment, this mechanism will only invalidate the cache in the node were the
  * changes occurred. For the rest of the nodes in the cluster it will be necessary to wait for the
  * expiration of the cache entry.
+ *
+ * It also checks that the authentication providers of type OpenID are correctly configured.
  *
  * @see OpenIDSignInProvider#invalidateCache()
  */
@@ -61,17 +65,29 @@ class AuthenticationProviderEventHandler extends EntityPersistenceEventObserver 
     if (!isValidEvent(event)) {
       return;
     }
-    invalidateOAuth2ConfigurationCache((AuthenticationProvider) event.getTargetInstance());
+    AuthenticationProvider authProvider = (AuthenticationProvider) event.getTargetInstance();
+    checkSupportedAppAndFlow(authProvider);
+    invalidateOAuth2ConfigurationCache(authProvider);
   }
 
   public void onUpdate(@Observes EntityUpdateEvent event) {
     if (!isValidEvent(event)) {
       return;
     }
-    invalidateOAuth2ConfigurationCache((AuthenticationProvider) event.getTargetInstance());
+    AuthenticationProvider authProvider = (AuthenticationProvider) event.getTargetInstance();
+    checkSupportedAppAndFlow(authProvider);
+    invalidateOAuth2ConfigurationCache(authProvider);
   }
 
   private void invalidateOAuth2ConfigurationCache(AuthenticationProvider authProvider) {
     oauth2SignInProvider.invalidateCache(authProvider.getType());
+  }
+
+  private void checkSupportedAppAndFlow(AuthenticationProvider authProvider) {
+    if ("OPENID".equals(authProvider.getType())
+        && (!OAuth2SignInProvider.BACKOFFICE_APP.equals(authProvider.getApplication().getId())
+            || !"LOGIN".equals(authProvider.getFlow()))) {
+      throw new OBException(OBMessageUtils.messageBD("AuthProviderUnsupportedAppFlow"));
+    }
   }
 }
