@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2024 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,7 @@ import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.materialmgmt.ReservationUtils;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.domain.Preference;
 import org.openbravo.model.ad.system.Client;
@@ -201,9 +202,9 @@ class ReferencedInventoryTestUtils {
     refInv.setClient(OBContext.getOBContext().getCurrentClient());
     refInv.setOrganization(OBDal.getInstance().getProxy(Organization.class, orgId));
     refInv.setReferencedInventoryType(refInvType);
-    refInv.setSearchKey(
-        refInvType.getSequence() == null ? StringUtils.left(UUID.randomUUID().toString(), 30)
-            : "<to be replaced>");
+    refInv.setSearchKey(refInvType.getSequence() == null
+        ? StringUtils.left(UUID.randomUUID().toString(), 30)
+        : ReferencedInventoryUtil.getProposedValueFromSequence(refInvType.getId(), orgId, true));
     OBDal.getInstance().save(refInv);
     assertThat("Referenced Inventory is successfully created", refInv, notNullValue());
     assertThat("Referenced Inventory is empty", refInv.getMaterialMgmtStorageDetailList(), empty());
@@ -410,6 +411,52 @@ class ReferencedInventoryTestUtils {
         isForceBin ? notNullValue() : nullValue());
     assertThat("Reservation has the expected attribute at header",
         reservation.getAttributeSetValue(), isForceAttributeSet ? notNullValue() : nullValue());
+  }
+
+  /**
+   * This method sets up a child sequence with or without base sequence as per input parameters
+   *
+   * @param org
+   *          Organization in which sequence is defined
+   * @param controlDigit
+   *          Control Digit for the child sequence
+   * @param calculationMethod
+   *          Calculation Method for the child sequence
+   * @param prefix
+   *          Prefix for the child sequence
+   * @param startingNo
+   *          Starting Number for the child sequence
+   * @param nextAssignedNumber
+   *          Next Assigned Number for the child sequence
+   * @param incrementBy
+   *          Increment Child Sequence By
+   * @param suffix
+   *          Suffix to be appended for the child sequence
+   * @param sequenceNoLength
+   *          Sequence Number Length for the child Sequence - Variable or Fix Length
+   * @param sequenceLength
+   *          Sequence Length for child sequence in case of Fix Length
+   * @param childSequenceHasBaseSequence
+   *          flag to define a base sequence for the child sequence
+   * @return Document sequence to be used as base sequence in the parent sequence for reference type
+   */
+
+  public static Sequence setUpChildSequence(Organization org, ControlDigit controlDigit,
+      CalculationMethod calculationMethod, String prefix, Long startingNo, Long nextAssignedNumber,
+      Long incrementBy, String suffix, SequenceNumberLength sequenceNoLength, Long sequenceLength,
+      boolean childSequenceHasBaseSequence) {
+
+    if (childSequenceHasBaseSequence) {
+      Sequence childSequence = ReferencedInventoryTestUtils.createDocumentSequence(org,
+          controlDigit, calculationMethod, prefix, startingNo, nextAssignedNumber, incrementBy,
+          suffix, null, sequenceNoLength, sequenceLength);
+      return ReferencedInventoryTestUtils.createDocumentSequence(org, ControlDigit.NONE,
+          CalculationMethod.SEQUENCE, null, null, null, null, null, childSequence, sequenceNoLength,
+          sequenceLength);
+    }
+    return ReferencedInventoryTestUtils.createDocumentSequence(org, controlDigit, calculationMethod,
+        prefix, startingNo, nextAssignedNumber, incrementBy, suffix, null, sequenceNoLength,
+        sequenceLength);
   }
 
   /**

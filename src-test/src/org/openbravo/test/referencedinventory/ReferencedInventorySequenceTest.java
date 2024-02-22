@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2024 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -65,35 +65,78 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
 
   @Test
   public void testReferenceInventorySequenceUsingModule10_a() {
-    testModule10(2821L, "000", "601104910282130002");
+    testModule10(2821L, "6", "000", "0110491", null, SequenceNumberLength.FIXED, 5L,
+        SequenceNumberLength.VARIABLE, null, false, "601104910282130002");
   }
 
   @Test
   public void testReferenceInventorySequenceUsingModule10_b() {
-    testModule10(2821L, "001", "601104910282130019");
+    testModule10(2821L, "6", "001", "0110491", null, SequenceNumberLength.FIXED, 5L,
+        SequenceNumberLength.VARIABLE, null, false, "601104910282130019");
   }
 
   @Test
   public void testReferenceInventorySequenceUsingModule10_c() {
-    testModule10(2822L, "248", "601104910282202488");
+    testModule10(2822L, "6", "248", "0110491", null, SequenceNumberLength.FIXED, 5L,
+        SequenceNumberLength.VARIABLE, null, false, "601104910282202488");
+  }
+
+  @Test
+  public void testReferenceInventorySequenceUsingModule10_d() {
+    // Parent sequence prefix is empty or null, Child Sequence suffix is empty or null
+    testModule10(2822L, null, "248", "0110491", null, SequenceNumberLength.FIXED, 5L,
+        SequenceNumberLength.VARIABLE, null, false, "01104910282202486");
+  }
+
+  @Test
+  public void testReferenceInventorySequenceUsingModule10_e() {
+    // Parent sequence prefix & suffix is empty or null, Child Sequence suffix is empty or null
+    testModule10(2822L, null, null, "0110491", null, SequenceNumberLength.FIXED, 5L,
+        SequenceNumberLength.VARIABLE, null, false, "01104910282200");
+  }
+
+  @Test
+  public void testReferenceInventorySequenceUsingModule10_f() {
+    // Parent sequence prefix & suffix is empty or null, Child Sequence prefix & suffix is empty
+    // or null
+    testModule10(2822L, null, null, null, null, SequenceNumberLength.FIXED, 5L,
+        SequenceNumberLength.VARIABLE, null, false, "0282260");
+  }
+
+  @Test
+  public void testReferenceInventorySequenceUsingModule10_g() {
+    // Create a child sequence with base sequence
+    testModule10(2821L, "6", "000", "0110491", null, SequenceNumberLength.FIXED, 5L,
+        SequenceNumberLength.FIXED, 15L, true, "60001104910282130002");
+  }
+
+  @Test
+  public void testReferenceInventorySequenceUsingModule10_h() {
+    // Create a child sequence with base sequence
+    testModule10(2821L, "6", "000", "0110491", null, SequenceNumberLength.FIXED, 7L,
+        SequenceNumberLength.FIXED, 15L, true, "60110491000282130002");
   }
 
   /**
-   * Test sequence computation in Referenced Inventory using Module 10 algorithm
+   * Test sequence computation in Referenced Inventory using Module 10 algorithm with child sequence
+   * having a base sequence or having no base sequence
    */
-  private void testModule10(Long nextAssignedNumberChild, String parentSuffix,
-      String expectedOutput) {
+  private void testModule10(Long nextAssignedNumberChild, String parentPrefix, String parentSuffix,
+      String childPrefix, String childSuffix, SequenceNumberLength childSequenceNumberLength,
+      Long childSequenceLength, SequenceNumberLength parentSequenceNumberLength,
+      Long parentSequenceLength, Boolean childSequenceHasBaseSequence, String expectedOutput) {
     Organization org = OBDal.getInstance()
         .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
-
-    final Sequence childSequence = ReferencedInventoryTestUtils.createDocumentSequence(org,
-        ControlDigit.MODULE10, CalculationMethod.AUTONUMERING, "0110491", 1L,
-        nextAssignedNumberChild, 1L, "", null, SequenceNumberLength.FIXED, 5L);
+    // Create child sequence with or without base sequence
+    Sequence childSequence = ReferencedInventoryTestUtils.setUpChildSequence(org,
+        ControlDigit.MODULE10, CalculationMethod.AUTONUMERING, childPrefix, 1L,
+        nextAssignedNumberChild, 1L, childSuffix, childSequenceNumberLength, childSequenceLength,
+        childSequenceHasBaseSequence);
 
     // Create Parent Sequence with Child Sequence created above as its Base Sequence
     final Sequence parentSequence = ReferencedInventoryTestUtils.createDocumentSequence(org,
-        ControlDigit.MODULE10, CalculationMethod.SEQUENCE, "6", null, null, null, parentSuffix,
-        childSequence, SequenceNumberLength.VARIABLE, null);
+        ControlDigit.MODULE10, CalculationMethod.SEQUENCE, parentPrefix, null, null, null,
+        parentSuffix, childSequence, parentSequenceNumberLength, parentSequenceLength);
 
     // Create Referenced Inventory Type with Sequence Type as Per Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
@@ -103,10 +146,10 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
     ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, org,
         parentSequence);
 
-    String proposedSequence = ReferencedInventoryUtil.getProposedValueFromSequence(
+    String proposedSequenceUsingDal = ReferencedInventoryUtil.getProposedValueFromSequence(
         refInvType.getId(), ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, false);
-    assertThat("Referenced Inventory Search Key is computed from sequence", proposedSequence,
-        equalTo(expectedOutput));
+    assertThat("Referenced Inventory Search Key is computed from sequence",
+        proposedSequenceUsingDal, equalTo(expectedOutput));
 
     // get proposed sequence using control digit & sequence computation in PL
     String proposedSequenceUsingPL = ReferencedInventoryTestUtils
@@ -115,6 +158,12 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
     assertThat("Referenced Inventory Search Key is computed from sequence using PL",
         proposedSequenceUsingPL, equalTo(expectedOutput));
 
+    OBDal.getInstance().remove(refInvType);
+    OBDal.getInstance().remove(parentSequence);
+    if (childSequence.getBaseSequence() != null) {
+      Sequence baseSequence = childSequence.getBaseSequence();
+      OBDal.getInstance().remove(childSequence);
+      OBDal.getInstance().remove(baseSequence);
+    }
   }
-
 }

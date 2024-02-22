@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -48,6 +48,8 @@ public class ReferencedInventoryPartialBoxTest extends ReferencedInventoryBoxTes
     for (String[] product : PRODUCTS) {
       for (String toBinId : BINS) {
         testBox(toBinId, product[0], product[1], params.qtyToBox, null, false);
+        testBox_a(toBinId, product[0], product[1], params.qtyToBox, null, false);
+        testBox_b(toBinId, product[0], product[1], params.qtyToBox, null, false);
         OBDal.getInstance().getSession().clear();
       }
     }
