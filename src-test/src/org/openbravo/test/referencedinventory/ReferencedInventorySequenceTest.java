@@ -157,13 +157,5 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
 
     assertThat("Referenced Inventory Search Key is computed from sequence using PL",
         proposedSequenceUsingPL, equalTo(expectedOutput));
-
-    OBDal.getInstance().remove(refInvType);
-    OBDal.getInstance().remove(parentSequence);
-    if (childSequence.getBaseSequence() != null) {
-      Sequence baseSequence = childSequence.getBaseSequence();
-      OBDal.getInstance().remove(childSequence);
-      OBDal.getInstance().remove(baseSequence);
-    }
   }
 }

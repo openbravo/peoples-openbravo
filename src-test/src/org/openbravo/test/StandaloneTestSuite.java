@@ -129,6 +129,7 @@ import org.openbravo.test.pricelist.PriceListTest;
 import org.openbravo.test.process.order.OrderProcessTest;
 import org.openbravo.test.productStatus.ProductStatusTest;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
+import org.openbravo.test.referencedinventorytypesequence.ReferenceInventoryTypeSequenceTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
 import org.openbravo.test.reporting.CompiledReportsCacheTest;
 import org.openbravo.test.reporting.JasperReportsCompilation;
@@ -427,6 +428,9 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
 
     // Referenced Inventory
     ReferencedInventoryTestSuite.class,
+
+    // Referenced Inventory Type & Sequence
+    ReferenceInventoryTypeSequenceTestSuite.class,
 
     // AD_Org Persist Information
     ADOrgPersistInfoTestSuite.class,

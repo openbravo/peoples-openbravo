@@ -48,6 +48,10 @@ public class ReferencedInventoryBoxPartialReservation1MovementLineTest
         for (String toBinId : BINS) {
           testBox(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
               isAllocated);
+          testBox_a(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
+              isAllocated);
+          testBox_b(toBinId, product[0], product[1], params.qtyToBox, params.reservationQty,
+              isAllocated);
           OBDal.getInstance().getSession().clear();
         }
       }
