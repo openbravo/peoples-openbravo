@@ -133,8 +133,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
     // Create child sequence with or without base sequence
     Sequence childSequence = ReferencedInventoryTestUtils.setUpChildSequence(org,
         ControlDigit.MODULE10, CalculationMethod.AUTONUMERING, "0110491", 1L,
-        new RandomDataGenerator().nextLong(1L, 9999L), 1L, null, SequenceNumberLength.FIXED, 5L,
-        false);
+        new RandomDataGenerator().nextLong(1L, 999999999L), 1L, null, SequenceNumberLength.VARIABLE,
+        null, false);
     return ReferencedInventoryTestUtils.createDocumentSequence(org, ControlDigit.MODULE10,
         CalculationMethod.SEQUENCE, "6", null, null, null, "000", childSequence,
         SequenceNumberLength.VARIABLE, null);
