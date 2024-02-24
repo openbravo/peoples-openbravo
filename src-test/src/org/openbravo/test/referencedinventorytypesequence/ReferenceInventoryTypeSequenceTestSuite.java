@@ -25,9 +25,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 
     ReferencedInventoryTypeTest.class, //
-    ReferencedInventoryTypeSequenceSequenceNumberLength.class, //
-    ReferencedInventoryTypeSequenceCalculationMethod.class, //
-    ReferencedInventoryTypeSequenceControlDigitPrefixSuffix.class, //
+    ReferencedInventoryTypeSequenceSequenceNumberLengthTest.class, //
+    ReferencedInventoryTypeSequenceCalculationMethodTest.class, //
+    ReferencedInventoryTypeSequenceControlDigitPrefixSuffixTest.class, //
     ReferencedInventoryTypeOrgSequenceTest.class
 
 })

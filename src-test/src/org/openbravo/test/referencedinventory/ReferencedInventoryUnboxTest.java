@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -38,12 +38,45 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 public abstract class ReferencedInventoryUnboxTest extends ReferencedInventoryBoxTest {
   private static final BigDecimal QTYINBOX_10 = new BigDecimal("10");
 
+  /**
+   * test Unbox with Referenced Inventory having Referenced Inventory Type of Sequence Type - None
+   */
   protected TestUnboxOutputParams testUnbox(final String toBinId, final String productId,
       final String attributeSetInstanceId, final BigDecimal qtyToUnbox,
       final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
-
     ReferencedInventory refInv = testBox(null, productId, attributeSetInstanceId, QTYINBOX_10,
-        reservationQty, isAllocated);
+        reservationQty, isAllocated, false, false);
+    return testUnbox(refInv, toBinId, productId, attributeSetInstanceId, qtyToUnbox, null, false);
+  }
+
+  /**
+   * test Unbox with Referenced Inventory having Referenced Inventory Type of Sequence Type - Global
+   */
+  protected TestUnboxOutputParams testUnbox_a(final String toBinId, final String productId,
+      final String attributeSetInstanceId, final BigDecimal qtyToUnbox,
+      final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
+    ReferencedInventory refInv = testBox_a(null, productId, attributeSetInstanceId, QTYINBOX_10,
+        reservationQty, isAllocated, false, false);
+    return testUnbox(refInv, toBinId, productId, attributeSetInstanceId, qtyToUnbox, null, false);
+  }
+
+  /**
+   * test Unbox with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
+   * Organization
+   */
+  protected TestUnboxOutputParams testUnbox_b(final String toBinId, final String productId,
+      final String attributeSetInstanceId, final BigDecimal qtyToUnbox,
+      final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
+    ReferencedInventory refInv = testBox_b(null, productId, attributeSetInstanceId, QTYINBOX_10,
+        reservationQty, isAllocated, false, false);
+    return testUnbox(refInv, toBinId, productId, attributeSetInstanceId, qtyToUnbox, null, false);
+  }
+
+  protected TestUnboxOutputParams testUnbox(final ReferencedInventory refInventorty,
+      final String toBinId, final String productId, final String attributeSetInstanceId,
+      final BigDecimal qtyToUnbox, final BigDecimal reservationQty, final boolean isAllocated)
+      throws Exception {
+    ReferencedInventory refInv = refInventorty;
     final StorageDetail storageDetail = refInv.getMaterialMgmtStorageDetailList().get(0);
     final Product originalProduct = storageDetail.getProduct();
     final String originalAttributeSet = ReferencedInventoryUtil

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2021 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -26,6 +26,7 @@ import static org.junit.Assume.assumeThat;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
@@ -36,6 +37,11 @@ import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
+import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
+import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
+import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
 /**
@@ -46,6 +52,8 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
 
   // All tests creates a new product with 10 units
   protected static final BigDecimal RECEIVEDQTY_10 = new BigDecimal("10");
+
+  protected static Sequence SEQUENCE = null;
 
   protected final String[] BINS = { ReferencedInventoryTestUtils.BIN_SPAIN_L01,
       ReferencedInventoryTestUtils.BIN_SPAIN_L02 };
@@ -78,6 +86,10 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
         OBContext.getOBContext().getCurrentOrganization().getId());
     RequestContext.get().setVariableSecureApp(vsa);
     ReferencedInventoryTestUtils.initializeReservationsPreferenceIfDoesnotExist();
+
+    // create single document sequence to be used throughout the tests to avoid duplicate document
+    // numbers
+    SEQUENCE = createSequenceForRefInvType();
   }
 
   void assertsGoodsMovementIsProcessed(final InternalMovement boxMovement) {
@@ -89,6 +101,24 @@ public abstract class ReferencedInventoryTest extends WeldBaseTest {
     assertThat("Box Movement has one line",
         boxMovement.getMaterialMgmtInternalMovementLineList().size(),
         equalTo(expectedNumberOfLines));
+  }
+
+  /**
+   * Define Sequence for Referenced Inventory Type
+   * 
+   * @return Sequence to be defined for Referenced Inventory Type
+   */
+
+  protected static Sequence createSequenceForRefInvType() {
+    Organization org = OBDal.getInstance()
+        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
+    Sequence childSequence = ReferencedInventoryTestUtils.setUpChildSequence(org,
+        ControlDigit.MODULE10, CalculationMethod.AUTONUMERING, "0110491", 1L,
+        new RandomDataGenerator().nextLong(1L, 999999999L), 1L, null, SequenceNumberLength.VARIABLE,
+        null, false);
+    return ReferencedInventoryTestUtils.createDocumentSequence(org, ControlDigit.MODULE10,
+        CalculationMethod.SEQUENCE, "6", null, null, null, "000", childSequence,
+        SequenceNumberLength.VARIABLE, null);
   }
 
   @After

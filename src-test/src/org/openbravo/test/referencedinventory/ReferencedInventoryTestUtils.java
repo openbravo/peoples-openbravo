@@ -135,7 +135,7 @@ class ReferencedInventoryTestUtils {
   }
 
   /*
-   * Creates Reference Inventory Type Organization Sequence when Sequence Type is Per Organization
+   * Creates Referenced Inventory Type Organization Sequence when Sequence Type is Per Organization
    */
 
   static void createReferencedInventoryTypeOrgSeq(ReferencedInventoryType refInvType,
@@ -198,13 +198,15 @@ class ReferencedInventoryTestUtils {
 
   static ReferencedInventory createReferencedInventory(final String orgId,
       final ReferencedInventoryType refInvType) {
+    String strSequence = ReferencedInventoryUtil.getProposedValueFromSequence(refInvType.getId(),
+        orgId, true);
     final ReferencedInventory refInv = OBProvider.getInstance().get(ReferencedInventory.class);
     refInv.setClient(OBContext.getOBContext().getCurrentClient());
     refInv.setOrganization(OBDal.getInstance().getProxy(Organization.class, orgId));
     refInv.setReferencedInventoryType(refInvType);
-    refInv.setSearchKey(refInvType.getSequence() == null
+    refInv.setSearchKey(strSequence == null || StringUtils.isEmpty(strSequence)
         ? StringUtils.left(UUID.randomUUID().toString(), 30)
-        : ReferencedInventoryUtil.getProposedValueFromSequence(refInvType.getId(), orgId, true));
+        : strSequence);
     OBDal.getInstance().save(refInv);
     assertThat("Referenced Inventory is successfully created", refInv, notNullValue());
     assertThat("Referenced Inventory is empty", refInv.getMaterialMgmtStorageDetailList(), empty());
@@ -438,7 +440,8 @@ class ReferencedInventoryTestUtils {
    *          Sequence Length for child sequence in case of Fix Length
    * @param childSequenceHasBaseSequence
    *          flag to define a base sequence for the child sequence
-   * @return Document sequence to be used as base sequence in the parent sequence for reference type
+   * @return Document sequence to be used as base sequence in the parent sequence for referenced
+   *         inventory type
    */
 
   public static Sequence setUpChildSequence(Organization org, ControlDigit controlDigit,
@@ -457,6 +460,27 @@ class ReferencedInventoryTestUtils {
     return ReferencedInventoryTestUtils.createDocumentSequence(org, controlDigit, calculationMethod,
         prefix, startingNo, nextAssignedNumber, incrementBy, suffix, null, sequenceNoLength,
         sequenceLength);
+  }
+
+  static ReferencedInventoryType createRefInvTypeSequenceTypeNone() {
+    return createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+        SequenceType.NONE, null);
+  }
+
+  static ReferencedInventoryType createRefInvTypeSequenceTypeGlobal(Sequence sequence) {
+    return createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+        SequenceType.GLOBAL, sequence);
+  }
+
+  static ReferencedInventoryType createRefInvTypeSequenceTypePerOrganization(Sequence sequence) {
+    Organization org = OBDal.getInstance()
+        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
+    // Create Referenced Inventory Type with Sequence Type as Per Organization
+    final ReferencedInventoryType refInvType = createReferencedInventoryType(org,
+        SequenceType.PER_ORGANIZATION, null);
+    // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
+    createReferencedInventoryTypeOrgSeq(refInvType, org, sequence);
+    return refInvType;
   }
 
   /**

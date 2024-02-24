@@ -63,7 +63,7 @@ class ReferencedInventoryTypeSequenceTestUtils {
   }
 
   /*
-   * Creates Reference Inventory Type
+   * Creates Referenced Inventory Type
    */
 
   static ReferencedInventoryType createReferencedInventoryType(SequenceType sequenceType,
@@ -80,7 +80,7 @@ class ReferencedInventoryTypeSequenceTestUtils {
   }
 
   /*
-   * Creates Reference Inventory Type Organization Sequence when Sequence Type is Per Organization
+   * Creates Referenced Inventory Type Organization Sequence when Sequence Type is Per Organization
    */
 
   static ReferencedInventoryTypeOrgSequence createReferencedInventoryTypeOrgSeq(

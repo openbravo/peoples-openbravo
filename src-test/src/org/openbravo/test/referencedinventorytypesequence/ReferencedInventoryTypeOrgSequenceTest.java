@@ -35,7 +35,7 @@ import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryTypeOr
 public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryTypeSequenceTest {
 
   /**
-   * test unique sequence defined in Organization Sequence Tab for Reference Inventory Type with
+   * test unique sequence defined in Organization Sequence Tab for Referenced Inventory Type with
    * Sequence Type as Per Organization
    */
   @Test

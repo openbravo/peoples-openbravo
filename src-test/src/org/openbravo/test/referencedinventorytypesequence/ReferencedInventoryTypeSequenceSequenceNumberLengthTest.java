@@ -30,56 +30,79 @@ import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.model.ad.utility.Sequence;
 
-public class ReferencedInventoryTypeSequenceSequenceNumberLength
+public class ReferencedInventoryTypeSequenceSequenceNumberLengthTest
     extends ReferencedInventoryTypeSequenceTest {
+
+  /**
+   * test sequence with Variable sequence number length and empty sequence length
+   */
   @Test
   public void sequenceWithSequenceNumberLength_Variable() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null);
+    final Sequence sequence = createSequence(SequenceNumberLength.VARIABLE, null);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
     assertTrue("Sequence with Sequence Number Length - Variable is not created", sequence != null);
   }
 
+  /**
+   * test sequence with Fixed sequence number length and non empty non zero long sequence length
+   */
+
   @Test
   public void sequenceWithSequenceNumberLength_Fixed() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.FIXED, 7L);
+    final Sequence sequence = createSequence(SequenceNumberLength.FIXED, 7L);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
     assertTrue("Sequence with Sequence Number Length - Fixed is not created", sequence != null);
   }
 
+  /**
+   * test sequence with Fixed sequence number length and zero sequence length
+   */
+
   @Test
   public void sequenceWithSequenceNumberLength_Fixed_SequenceLength_a() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.FIXED, 0L);
+    final Sequence sequence = createSequence(SequenceNumberLength.FIXED, 0L);
     OBDal.getInstance().save(sequence);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
   }
+
+  /**
+   * test sequence with Fixed sequence number length and empty sequence length
+   */
 
   @Test
   public void sequenceWithSequenceNumberLength_Fixed_SequenceLength_b() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.FIXED, null);
+    final Sequence sequence = createSequence(SequenceNumberLength.FIXED, null);
     OBDal.getInstance().save(sequence);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
   }
 
+  /**
+   * test sequence with Fixed sequence number length and non empty sequence length, but when saving
+   * such sequence, sequence length is set as null
+   */
+
   @Test
   public void sequenceWithSequenceNumberLength_Variable_SequenceLength() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, 10L);
+    final Sequence sequence = createSequence(SequenceNumberLength.VARIABLE, 10L);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
     assertTrue("Sequence with Sequence Number Length - Variable is with Sequence Length",
         sequence.getSequenceLength() == null);
+  }
+
+  /**
+   * Create sequence with calculation method auto numbering, Fixed or Variable sequence number
+   * length, sequence length
+   * 
+   * @return Sequence for various sequence number length and sequence length combinations
+   */
+  private Sequence createSequence(SequenceNumberLength sequenceNumberLength, Long sequenceLength) {
+    return ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
+        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
+        sequenceNumberLength, sequenceLength);
   }
 }

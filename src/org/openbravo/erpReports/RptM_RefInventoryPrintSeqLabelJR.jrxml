@@ -135,18 +135,6 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 	<detail>
 		<band height="420" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
-			<textField isBlankWhenNull="true">
-				<reportElement x="30" y="6" width="490" height="40" uuid="2058f195-fca7-4127-bbc2-ba09ff4b19ef">
-					<property name="com.jaspersoft.studio.unit.x" value="px"/>
-					<property name="com.jaspersoft.studio.unit.y" value="px"/>
-					<property name="com.jaspersoft.studio.unit.width" value="px"/>
-					<property name="com.jaspersoft.studio.unit.height" value="px"/>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle" markup="html">
-					<font size="18" isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["N<sup>o</sup> : "+ $F{sscc_code} != null ? $F{sscc_code} : ""]]></textFieldExpression>
-			</textField>
 			<frame>
 				<reportElement x="10" y="133" width="265" height="52" uuid="7458387f-0fa5-4801-bfb2-4a573df17634">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -423,6 +411,30 @@ WHERE RI.M_REFINVENTORY_ID IN $P!{M_REFINVENTORY_ID}]]>
 					<textFieldExpression><![CDATA[$F{tel}]]></textFieldExpression>
 				</textField>
 			</frame>
+			<textField isBlankWhenNull="true">
+				<reportElement x="195" y="1" width="316" height="40" uuid="658c0096-b704-4e78-8a46-e5c8cdc52380">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="html">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[ $F{sscc_code}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="75" y="1" width="120" height="40" uuid="4f81a5c7-65b4-4747-9e13-2c1c9420b29c">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["N<sup>o</sup>: "]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>

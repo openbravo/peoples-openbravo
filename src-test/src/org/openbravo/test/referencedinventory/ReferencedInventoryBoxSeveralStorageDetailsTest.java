@@ -28,11 +28,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
-import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
-import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.Product;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
 import org.openbravo.model.materialmgmt.transaction.InternalMovement;
 
@@ -42,16 +39,56 @@ import org.openbravo.model.materialmgmt.transaction.InternalMovement;
  */
 public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedInventoryBoxTest {
 
+  /** testBox with Referenced Inventory having Referenced Inventory Type of Sequence Type - None */
   protected ReferencedInventory testBox(final String _toBinId, final String productId,
       final String attributeSetInstanceId) throws Exception {
-    return testBox(_toBinId, productId, attributeSetInstanceId, new BigDecimal("10"), null, false);
+    return testBox(_toBinId, productId, attributeSetInstanceId, new BigDecimal("10"), null, false,
+        false, false);
+  }
+
+  /**
+   * testBox with Referenced Inventory having Referenced Inventory Type of Sequence Type - Global
+   */
+  protected ReferencedInventory testBox_a(final String _toBinId, final String productId,
+      final String attributeSetInstanceId) throws Exception {
+    return testBox_a(_toBinId, productId, attributeSetInstanceId, new BigDecimal("10"), null, false,
+        false, false);
+  }
+
+  /**
+   * testBox with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
+   * Organization
+   */
+  protected ReferencedInventory testBox_b(final String _toBinId, final String productId,
+      final String attributeSetInstanceId) throws Exception {
+    return testBox_b(_toBinId, productId, attributeSetInstanceId, new BigDecimal("10"), null, false,
+        false, false);
   }
 
   @Test
   public void allTestsBoxSeveralStorageDetailsInSameMovement() throws Exception {
     for (String[] product : PRODUCTS) {
       for (String toBinId : BINS) {
-        testBoxSeveralStorageDetailsInSameMovement(product[0], product[1], toBinId);
+
+        // Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - None
+        final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
+            ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ReferencedInventoryTestUtils.createRefInvTypeSequenceTypeNone());
+        assertBoxSeveralStorageDetailsInSameMovement(refInv, product[0], product[1], toBinId);
+
+        // Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Global
+        final ReferencedInventory refInv_a = ReferencedInventoryTestUtils.createReferencedInventory(
+            ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ReferencedInventoryTestUtils.createRefInvTypeSequenceTypeGlobal(SEQUENCE));
+        assertBoxSeveralStorageDetailsInSameMovement(refInv_a, product[0], product[1], toBinId);
+
+        // Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
+        // Organization
+        final ReferencedInventory refInv_b = ReferencedInventoryTestUtils.createReferencedInventory(
+            ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID,
+            ReferencedInventoryTestUtils.createRefInvTypeSequenceTypePerOrganization(SEQUENCE));
+        assertBoxSeveralStorageDetailsInSameMovement(refInv_b, product[0], product[1], toBinId);
+
         OBDal.getInstance().getSession().clear();
       }
     }
@@ -63,8 +100,25 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
       for (String toBinId : BINS) {
         for (String[] product2 : PRODUCTS) {
           if (!product1[0].equals(product2[0])) {
-            testBoxSeveralStorageDetailsInTwoMovements(product1[0], product1[1], product2[0],
-                product2[1], toBinId);
+
+            // Test with Referenced Inventory having Referenced Inventory Type of Sequence Type -
+            // None
+            final ReferencedInventory refInv = testBox(toBinId, product1[0], product1[1]);
+            assertBoxSeveralStorageDetailsInTwoMovements(refInv, product2[0], product2[1], toBinId);
+
+            // Test with Referenced Inventory having Referenced Inventory Type of Sequence Type -
+            // Global
+            final ReferencedInventory refInv_a = testBox_a(toBinId, product1[0], product1[1]);
+            assertBoxSeveralStorageDetailsInTwoMovements(refInv_a, product2[0], product2[1],
+                toBinId);
+
+            // Test with Referenced Inventory having Referenced Inventory Type of Sequence Type -
+            // Per
+            // Organization
+            final ReferencedInventory refInv_b = testBox_b(toBinId, product1[0], product1[1]);
+            assertBoxSeveralStorageDetailsInTwoMovements(refInv_b, product2[0], product2[1],
+                toBinId);
+
             OBDal.getInstance().getSession().clear();
           }
         }
@@ -72,14 +126,9 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
     }
   }
 
-  private void testBoxSeveralStorageDetailsInSameMovement(final String productId,
-      final String attributeSetInstanceId, final String toBinId) throws Exception {
-    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils
-        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
-
+  private void assertBoxSeveralStorageDetailsInSameMovement(final ReferencedInventory refInv,
+      final String productId, final String attributeSetInstanceId, final String toBinId)
+      throws Exception {
     final Product product1 = ReferencedInventoryTestUtils.cloneProduct(productId);
     final BigDecimal receivedQty = new BigDecimal("10");
     ReferencedInventoryTestUtils.receiveProduct(product1, receivedQty, attributeSetInstanceId);
@@ -110,10 +159,9 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
         refInv.getMaterialMgmtStorageDetailList().size(), equalTo(2));
   }
 
-  private void testBoxSeveralStorageDetailsInTwoMovements(final String productId1,
-      final String attributeSetInstanceId1, final String productId2,
-      final String attributeSetInstanceId2, final String toBinId) throws Exception {
-    final ReferencedInventory refInv = testBox(toBinId, productId1, attributeSetInstanceId1);
+  private void assertBoxSeveralStorageDetailsInTwoMovements(ReferencedInventory refInv,
+      final String productId2, final String attributeSetInstanceId2, final String toBinId)
+      throws Exception {
     final Product product2 = ReferencedInventoryTestUtils.cloneProduct(productId2);
     final BigDecimal receivedQty = new BigDecimal("10");
     ReferencedInventoryTestUtils.receiveProduct(product2, receivedQty, attributeSetInstanceId2);
@@ -133,5 +181,4 @@ public class ReferencedInventoryBoxSeveralStorageDetailsTest extends ReferencedI
     assertThat("Referenced Inventory has two different storage details",
         refInv.getMaterialMgmtStorageDetailList().size(), equalTo(2));
   }
-
 }

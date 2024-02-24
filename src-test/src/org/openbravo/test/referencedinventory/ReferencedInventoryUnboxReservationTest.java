@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -32,10 +32,40 @@ import org.openbravo.model.materialmgmt.onhandquantity.StorageDetail;
  */
 public abstract class ReferencedInventoryUnboxReservationTest extends ReferencedInventoryUnboxTest {
 
+  /**
+   * test Unbox with Referenced Inventory having Referenced Inventory Type of Sequence Type - None
+   */
   protected TestUnboxOutputParams testUnboxReservation(final String toBinId, final String productId,
       final String attributeSetInstanceId, final BigDecimal qtyToBox, final BigDecimal qtyToUnbox,
       final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
     final TestUnboxOutputParams outParams = super.testUnbox(toBinId, productId,
+        attributeSetInstanceId, qtyToUnbox, reservationQty, isAllocated);
+    assertsStorageDetailsQtyAndReservationQty(qtyToBox, qtyToUnbox, outParams, reservationQty);
+    return outParams;
+  }
+
+  /**
+   * test Unbox with Referenced Inventory having Referenced Inventory Type of Sequence Type - Global
+   */
+  protected TestUnboxOutputParams testUnboxReservation_a(final String toBinId,
+      final String productId, final String attributeSetInstanceId, final BigDecimal qtyToBox,
+      final BigDecimal qtyToUnbox, final BigDecimal reservationQty, final boolean isAllocated)
+      throws Exception {
+    final TestUnboxOutputParams outParams = super.testUnbox_a(toBinId, productId,
+        attributeSetInstanceId, qtyToUnbox, reservationQty, isAllocated);
+    assertsStorageDetailsQtyAndReservationQty(qtyToBox, qtyToUnbox, outParams, reservationQty);
+    return outParams;
+  }
+
+  /**
+   * test Unbox with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
+   * Organization
+   */
+  protected TestUnboxOutputParams testUnboxReservation_b(final String toBinId,
+      final String productId, final String attributeSetInstanceId, final BigDecimal qtyToBox,
+      final BigDecimal qtyToUnbox, final BigDecimal reservationQty, final boolean isAllocated)
+      throws Exception {
+    final TestUnboxOutputParams outParams = super.testUnbox_b(toBinId, productId,
         attributeSetInstanceId, qtyToUnbox, reservationQty, isAllocated);
     assertsStorageDetailsQtyAndReservationQty(qtyToBox, qtyToUnbox, outParams, reservationQty);
     return outParams;

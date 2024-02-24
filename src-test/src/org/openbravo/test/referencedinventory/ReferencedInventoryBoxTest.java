@@ -31,16 +31,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.math3.random.RandomDataGenerator;
 import org.openbravo.dal.service.OBDal;
-import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
-import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
-import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.materialmgmt.refinventory.BoxProcessor;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
-import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.common.plm.AttributeSetInstance;
 import org.openbravo.model.common.plm.Product;
@@ -78,74 +73,47 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
 
   protected ReferencedInventory testBox(final String toBinId, final String productId,
       final String attributeSetInstanceId, final BigDecimal qtyInBox,
-      final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
+      final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
+      final boolean isForceAttribute) throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
             SequenceType.NONE, null);
     return testBox(toBinId, productId, attributeSetInstanceId, qtyInBox, reservationQty,
-        isAllocated, false, false, refInvType);
+        isAllocated, isForceBin, isForceAttribute, refInvType);
   }
 
   /**
-   * Test Reference Inventory Type having Global Sequence Type
+   * testBox with Referenced Inventory Type of Sequence Type - Global
    */
 
   protected ReferencedInventory testBox_a(final String toBinId, final String productId,
       final String attributeSetInstanceId, final BigDecimal qtyInBox,
-      final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
-    Organization org = OBDal.getInstance()
-        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
+      final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
+      final boolean isForceAttribute) throws Exception {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.GLOBAL, createSequenceForRefInvType(org));
+            SequenceType.GLOBAL, SEQUENCE);
     return testBox(toBinId, productId, attributeSetInstanceId, qtyInBox, reservationQty,
-        isAllocated, false, false, refInvType);
+        isAllocated, isForceBin, isForceAttribute, refInvType);
   }
 
   /**
-   * Test Reference Inventory Type having Per Organization Sequence Type
+   * testBox with Referenced Inventory Type of Sequence Type - Per Organization
    */
 
   protected ReferencedInventory testBox_b(final String toBinId, final String productId,
       final String attributeSetInstanceId, final BigDecimal qtyInBox,
-      final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
+      final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
+      final boolean isForceAttribute) throws Exception {
     Organization org = OBDal.getInstance()
         .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
     // Create Referenced Inventory Type with Sequence Type as Per Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(org, SequenceType.PER_ORGANIZATION, null);
     // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
-    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, org,
-        createSequenceForRefInvType(org));
+    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, org, SEQUENCE);
     return testBox(toBinId, productId, attributeSetInstanceId, qtyInBox, reservationQty,
-        isAllocated, false, false, refInvType);
-  }
-
-  /**
-   * Define Sequence for Reference Inventory Type
-   *
-   * @param org
-   *          Organization under which sequence is defined
-   * @return Sequence to be defined for Reference Inventory Type
-   */
-
-  private Sequence createSequenceForRefInvType(Organization org) {
-    // Create child sequence with or without base sequence
-    Sequence childSequence = ReferencedInventoryTestUtils.setUpChildSequence(org,
-        ControlDigit.MODULE10, CalculationMethod.AUTONUMERING, "0110491", 1L,
-        new RandomDataGenerator().nextLong(1L, 999999999L), 1L, null, SequenceNumberLength.VARIABLE,
-        null, false);
-    return ReferencedInventoryTestUtils.createDocumentSequence(org, ControlDigit.MODULE10,
-        CalculationMethod.SEQUENCE, "6", null, null, null, "000", childSequence,
-        SequenceNumberLength.VARIABLE, null);
-  }
-
-  protected ReferencedInventory testBox(final String _toBinId, final String productId,
-      final String attributeSetInstanceId, final BigDecimal _qtyInBox,
-      final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
-      final boolean isForceAttribute) throws Exception {
-    return testBox(_toBinId, productId, attributeSetInstanceId, _qtyInBox, reservationQty,
-        isAllocated, isForceBin, isForceAttribute, null);
+        isAllocated, isForceBin, isForceAttribute, refInvType);
   }
 
   protected ReferencedInventory testBox(final String _toBinId, final String productId,
@@ -153,14 +121,8 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
       final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
       final boolean isForceAttribute, final ReferencedInventoryType refInvType) throws Exception {
 
-    ReferencedInventoryType referenceInventoryType = refInvType;
-    if (refInvType == null) {
-      referenceInventoryType = ReferencedInventoryTestUtils.createReferencedInventoryType(
-          OBDal.getInstance().getProxy(Organization.class, "0"), SequenceType.NONE, null);
-      ;
-    }
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils.createReferencedInventory(
-        ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, referenceInventoryType);
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
     final Product product = ReferencedInventoryTestUtils.cloneProduct(productId);
     ReferencedInventoryTestUtils.receiveProduct(product, RECEIVEDQTY_10, attributeSetInstanceId);

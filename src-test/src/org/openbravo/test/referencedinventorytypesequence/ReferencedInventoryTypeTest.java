@@ -79,12 +79,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
 
   @Test
   public void testReferencedInventoryType_None_Sequence() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null);
-    OBDal.getInstance().save(sequence);
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
-        .createReferencedInventoryType(SequenceType.NONE, sequence);
+        .createReferencedInventoryType(SequenceType.NONE, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue("Referenced Inventory Type with Sequence Type - None is set with Sequence",
@@ -97,12 +93,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
 
   @Test
   public void testReferencedInventoryType_PerOrganization_Sequence() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null);
-    OBDal.getInstance().save(sequence);
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
-        .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, sequence);
+        .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue(
@@ -116,12 +108,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
 
   @Test
   public void testReferencedInventoryType_Global_Sequence_a() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null);
-    OBDal.getInstance().save(sequence);
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
-        .createReferencedInventoryType(SequenceType.GLOBAL, sequence);
+        .createReferencedInventoryType(SequenceType.GLOBAL, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue("Referenced Inventory Type with Sequence Type - Global is not set with Sequence",
@@ -134,12 +122,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
 
   @Test
   public void testReferencedInventoryType_Global_Sequence_b() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null);
-    OBDal.getInstance().save(sequence);
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
-        .createReferencedInventoryType(SequenceType.GLOBAL, sequence);
+        .createReferencedInventoryType(SequenceType.GLOBAL, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
 
@@ -147,5 +131,18 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
     OBDal.getInstance().save(referencedInventoryType);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
+  }
+
+  /**
+   * Create sequence with calculation method auto numbering
+   * 
+   * @return Sequence to be used for defined Referenced Inventory Type
+   */
+  private Sequence createSequence() {
+    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
+        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
+        SequenceNumberLength.VARIABLE, null);
+    OBDal.getInstance().save(sequence);
+    return sequence;
   }
 }

@@ -30,7 +30,7 @@ import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.model.ad.utility.Sequence;
 
-public class ReferencedInventoryTypeSequenceCalculationMethod
+public class ReferencedInventoryTypeSequenceCalculationMethodTest
     extends ReferencedInventoryTypeSequenceTest {
 
   /**
@@ -38,8 +38,7 @@ public class ReferencedInventoryTypeSequenceCalculationMethod
    */
   @Test
   public void sequenceWithCalculationMethod_Sequence() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.SEQUENCE, null, "0110491", null, null, null, null, ControlDigit.NONE,
+    final Sequence sequence = createBaseSequence(CalculationMethod.SEQUENCE, "0110491",
         SequenceNumberLength.FIXED, 7L);
     OBDal.getInstance().save(sequence);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
@@ -51,8 +50,7 @@ public class ReferencedInventoryTypeSequenceCalculationMethod
    */
   @Test
   public void sequenceWithCalculationMethod_AutoNumbering() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
+    final Sequence sequence = createBaseSequence(CalculationMethod.AUTONUMERING, "0110491",
         SequenceNumberLength.FIXED, 7L);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
@@ -65,9 +63,8 @@ public class ReferencedInventoryTypeSequenceCalculationMethod
 
   @Test
   public void sequenceWithCalculationMethod_DocumentNoTableName() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.DOCUMENTNO_TABLENAME, null, "0110491", null, null, null, null,
-        ControlDigit.NONE, SequenceNumberLength.FIXED, 7L);
+    final Sequence sequence = createBaseSequence(CalculationMethod.DOCUMENTNO_TABLENAME, "0110491",
+        SequenceNumberLength.FIXED, 7L);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
     assertTrue("Sequence with calculation method - DocumentNo_TableName is not created",
@@ -79,13 +76,10 @@ public class ReferencedInventoryTypeSequenceCalculationMethod
    */
   @Test
   public void sequenceWithCalculationMethod_Sequence_a() {
-    final Sequence baseSequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "100", null, null, null, null, ControlDigit.NONE,
+    final Sequence baseSequence = createBaseSequence(CalculationMethod.AUTONUMERING, "100",
         SequenceNumberLength.VARIABLE, null);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.SEQUENCE, baseSequence, "06", null, null, null, null,
-        ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null);
+    final Sequence parentSequence = createParentSequence(baseSequence);
     OBDal.getInstance().save(parentSequence);
     OBDal.getInstance().flush();
 
@@ -100,19 +94,40 @@ public class ReferencedInventoryTypeSequenceCalculationMethod
    */
   @Test
   public void sequenceWithCalculationMethod_Sequence_b() {
-    final Sequence baseSequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "100", null, null, null, null, ControlDigit.NONE,
+    final Sequence baseSequence = createBaseSequence(CalculationMethod.AUTONUMERING, "100",
         SequenceNumberLength.VARIABLE, null);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
-        CalculationMethod.SEQUENCE, baseSequence, "06", null, null, null, null,
-        ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null);
+    final Sequence parentSequence = createParentSequence(baseSequence);
     OBDal.getInstance().save(parentSequence);
     OBDal.getInstance().flush();
     assertTrue(
         "Sequence with calculation method - Sequence with Sequence and its valid base sequence is not created",
         parentSequence != null && parentSequence.getBaseSequence() != null);
 
+  }
+
+  /**
+   * Create sequence with calculation method, prefix, sequence number length and sequence length
+   * 
+   * @return Sequence to be used for defined Referenced Inventory Type
+   */
+
+  private Sequence createBaseSequence(CalculationMethod calculationMethod, String prefix,
+      SequenceNumberLength sequenceNumberLength, Long sequenceLength) {
+    return ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(calculationMethod, null,
+        prefix, null, null, null, null, ControlDigit.NONE, sequenceNumberLength, sequenceLength);
+  }
+
+  /**
+   * Create sequence with base sequence
+   * 
+   * @return Sequence to be used for defined Referenced Inventory Type
+   */
+
+  private Sequence createParentSequence(Sequence baseSequence) {
+    return ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
+        CalculationMethod.SEQUENCE, baseSequence, "06", null, null, null, null,
+        ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null);
   }
 
 }

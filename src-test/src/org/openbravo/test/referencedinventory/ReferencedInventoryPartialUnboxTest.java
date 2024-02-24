@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018 Openbravo SLU 
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -53,9 +53,23 @@ public class ReferencedInventoryPartialUnboxTest extends ReferencedInventoryUnbo
 
   private void testPartialUnbox(final String _toBinId, final String productId,
       final String attributeSetInstanceId) throws Exception {
+
+    // test Unbox with Referenced Inventory having Referenced Inventory Type of Sequence Type - None
     final TestUnboxOutputParams outParams = testUnbox(_toBinId, productId, attributeSetInstanceId,
         BigDecimal.ONE, null, false);
     assertsReferenceInventoryIsNotEmpty(outParams.refInv, new BigDecimal("9"));
+
+    // test Unbox with Referenced Inventory having Referenced Inventory Type of Sequence Type -
+    // Global
+    final TestUnboxOutputParams outParams_a = testUnbox_a(_toBinId, productId,
+        attributeSetInstanceId, BigDecimal.ONE, null, false);
+    assertsReferenceInventoryIsNotEmpty(outParams_a.refInv, new BigDecimal("9"));
+
+    // test Unbox with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
+    // Organization
+    final TestUnboxOutputParams outParams_b = testUnbox_b(_toBinId, productId,
+        attributeSetInstanceId, BigDecimal.ONE, null, false);
+    assertsReferenceInventoryIsNotEmpty(outParams_b.refInv, new BigDecimal("9"));
   }
 
 }

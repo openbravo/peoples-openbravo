@@ -47,9 +47,17 @@ public class ReferencedInventoryFullBoxTest extends ReferencedInventoryBoxTest {
   public void allTests() throws Exception {
     for (String[] product : PRODUCTS) {
       for (String toBinId : BINS) {
-        testBox(toBinId, product[0], product[1], params.qtyToBox, null, false);
-        testBox_a(toBinId, product[0], product[1], params.qtyToBox, null, false);
-        testBox_b(toBinId, product[0], product[1], params.qtyToBox, null, false);
+
+        // test with Referenced Inventory having Referenced Inventory Type of Sequence Type - None
+        testBox(toBinId, product[0], product[1], params.qtyToBox, null, false, false, false);
+
+        // test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Global
+        testBox_a(toBinId, product[0], product[1], params.qtyToBox, null, false, false, false);
+
+        // test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
+        // Organization
+        testBox_b(toBinId, product[0], product[1], params.qtyToBox, null, false, false, false);
+
         OBDal.getInstance().getSession().clear();
       }
     }
