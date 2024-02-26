@@ -27,6 +27,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.Prioritizable;
 import org.openbravo.model.ad.access.User;
+import org.openbravo.model.authentication.AuthenticationProvider;
 
 /**
  * Provides authentication using an external authentication provider. Classes extending this one
@@ -61,6 +62,8 @@ public abstract class ExternalAuthenticationManager extends AuthenticationManage
    * Method to perform the external authentication from a given object containing the user
    * credentials
    *
+   * @param authProvider
+   *          The name of the {@link AuthenticationProvider} used to authenticate
    * @param credential
    *          The credentials needed to perform the external authentication
    *
@@ -72,7 +75,8 @@ public abstract class ExternalAuthenticationManager extends AuthenticationManage
    * @throws AuthenticationException
    *           if there is an error during the external authentication process
    */
-  public Optional<User> authenticate(JSONObject credential) throws JSONException {
+  public Optional<User> authenticate(String authProvider, JSONObject credential)
+      throws JSONException {
     throw new AuthenticationException("Not implemented");
   }
 }
