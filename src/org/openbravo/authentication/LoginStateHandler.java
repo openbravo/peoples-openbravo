@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2023 Openbravo SLU
+ * All portions are Copyright (C) 2023-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,8 +46,22 @@ public class LoginStateHandler {
    * @return the generated UUID
    */
   public String addNewConfiguration(String configId) {
+    return addNewConfiguration(configId, SequenceIdData.getUUID());
+  }
+
+  /**
+   * Saves the given configuration ID in the session, linked to given random value
+   *
+   * @param configId
+   *          The ID of the record where the configuration is kept
+   * @param random
+   *          A random value
+   *
+   * @return the saved random value
+   */
+  public String addNewConfiguration(String configId, String random) {
     Map<String, String> loginState = getLoginState();
-    loginState.putIfAbsent(configId, SequenceIdData.getUUID());
+    loginState.putIfAbsent(configId, random);
     return loginState.get(configId);
   }
 
@@ -61,6 +75,18 @@ public class LoginStateHandler {
    */
   public boolean isValidKey(String key) {
     return getLoginState().containsValue(key);
+  }
+
+  /**
+   * Gets the random value stored for a given configuration
+   *
+   * @param configId
+   *          The configuration ID
+   *
+   * @return the value stored for the given configuration
+   */
+  public String getValue(String configId) {
+    return getLoginState().get(configId);
   }
 
   /**
