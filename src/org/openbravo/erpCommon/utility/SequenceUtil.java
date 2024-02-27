@@ -151,8 +151,7 @@ public class SequenceUtil {
 
   private static String getNextDocNumberWithoutPrefixSuffix(final boolean updateNext,
       final Sequence seq) {
-    final StringBuilder nextDocNumber = new StringBuilder();
-    nextDocNumber.append(seq.getNextAssignedNumber().toString());
+    final Long nextDocNumber = seq.getNextAssignedNumber();
     incrementSeqIfUpdateNext(updateNext, seq);
     return nextDocNumber.toString();
   }
