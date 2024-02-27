@@ -35,28 +35,24 @@
   *************************************************************************
   * $Id: AD_Sequence_DocType.sql,v 1.9 2003/08/06 06:51:27 jjanke Exp $
   ***
-  * Title: Get the next DocumentNo of Document Type
-  * Description:
-  *  store in parameter p_DocumentNo
-  *  If ID < 1000000, use System Doc Sequence
-  *  If no Document Sequence is defined, return null !
-  *   Use AD_Sequence_Doc('DocumentNo_myTable',.. to get it directly
+  * Title: Get next DocumentNo of the Sequence defined in the Document Type
+  * Description: This gets the next DocumentNo of the sequence defined in
+  * the Document Type.
   ************************************************************************/
 
-  v_Sequence_ID VARCHAR2(32):=NULL;
+  v_Sequence_ID AD_SEQUENCE.AD_Sequence_ID%TYPE:=NULL; --OBTG:VARCHAR2--
 
 BEGIN
-  -- Is a document Sequence defined and valid
-BEGIN
-  SELECT DocNoSequence_ID
-  INTO v_Sequence_ID
-  FROM C_DocType
-  WHERE C_DocType_ID=p_DocType_ID -- parameter
-    AND IsDocNoControlled='Y'  AND IsActive='Y';
-EXCEPTION
-WHEN OTHERS THEN
-  NULL;
-END;
+  BEGIN
+    SELECT DocNoSequence_ID
+    INTO v_Sequence_ID
+    FROM C_DocType
+    WHERE C_DocType_ID=p_DocType_ID -- parameter
+      AND IsDocNoControlled='Y'  AND IsActive='Y';
+  EXCEPTION
+  WHEN OTHERS THEN
+    NULL;
+  END;
   p_DocumentNo:=AD_SEQUENCE_DOCUMENTNO(v_Sequence_ID, p_update_next);
 EXCEPTION
 WHEN NO_DATA_FOUND THEN
