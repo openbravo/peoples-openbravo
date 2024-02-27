@@ -18,14 +18,18 @@
  */
 package org.openbravo.authentication;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.openbravo.base.Prioritizable;
+import org.openbravo.base.weld.WeldUtils;
 import org.openbravo.model.ad.access.User;
 import org.openbravo.model.authentication.AuthenticationProvider;
 
@@ -36,6 +40,29 @@ import org.openbravo.model.authentication.AuthenticationProvider;
  */
 public abstract class ExternalAuthenticationManager extends AuthenticationManager
     implements Prioritizable {
+  private static final Logger log = LogManager.getLogger();
+
+  /**
+   * Get a ExternalAuthenticationManager instance
+   * 
+   * @param authMethod
+   *          The identifier of the authentication method
+   *
+   * @return an optional describing the ExternalAuthenticationManager instance for authentication
+   *         using the given method or an empty optional if no instance can be retrieved for the
+   *         given method
+   */
+  public static Optional<ExternalAuthenticationManager> newInstance(String authMethod) {
+    List<ExternalAuthenticationManager> externalAuthManagers = WeldUtils
+        .getInstancesSortedByPriority(ExternalAuthenticationManager.class,
+            new AuthenticationTypeSelector(authMethod));
+    if (externalAuthManagers.isEmpty()) {
+      log.error("Could not find an ExternalAuthenticationManager instance for method {}",
+          authMethod);
+      return Optional.empty();
+    }
+    return Optional.of(externalAuthManagers.get(0));
+  }
 
   @Override
   public String doAuthenticate(HttpServletRequest request, HttpServletResponse response) {
