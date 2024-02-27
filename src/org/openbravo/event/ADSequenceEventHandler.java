@@ -18,6 +18,8 @@
  */
 package org.openbravo.event;
 
+import java.util.List;
+
 import javax.enterprise.event.Observes;
 
 import org.apache.commons.lang.StringUtils;
@@ -70,7 +72,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     // validate base sequence
     Sequence baseSequence = sequence.getBaseSequence();
     if (baseSequence != null) {
-      validateBaseSequence(baseSequence, hasModule10Controldigit(sequence));
+      validateBaseSequence(baseSequence, sequence);
     }
 
     // Clears Sequence Length if Sequence Number Length is not Fix Length
@@ -117,9 +119,10 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     Sequence previousBaseSequence = (Sequence) event.getPreviousState(baseSequenceProperty);
     boolean isCurrentBaseSequenceChanged = currentBaseSequence != null
         && (previousBaseSequence == null || !previousBaseSequence.equals(currentBaseSequence));
+
     // When base sequence or control digit is being changed
     if (currentBaseSequence != null && (isCurrentBaseSequenceChanged || isControlDigitChanged)) {
-      validateBaseSequence(currentBaseSequence, hasModule10Controldigit(sequence));
+      validateBaseSequence(currentBaseSequence, sequence);
     }
 
     // Clears Sequence Length if Sequence Number Length is not Fix Length
@@ -150,9 +153,14 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    *          is parent Sequence of base Sequence set with Module 10 control digit
    */
 
-  private void validateBaseSequence(Sequence baseSequence, boolean parentWithControlDigit) {
-    if (isPrefixOrSuffixAlphanumericForSequence(baseSequence) && parentWithControlDigit) {
+  private void validateBaseSequence(Sequence baseSequence, Sequence sequence) {
+    if (isPrefixOrSuffixAlphanumericForSequence(baseSequence) && (hasModule10Controldigit(sequence)
+        || isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(sequence.getId()))) {
       throw new OBException(OBMessageUtils.messageBD("ValidateBaseSequence"));
+    }
+    // check recursively
+    if (baseSequence.getBaseSequence() != null) {
+      validateBaseSequence(baseSequence.getBaseSequence(), baseSequence);
     }
   }
 
@@ -200,12 +208,32 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    * @return Whether sequence is used as base sequence in Sequence with Module 10 control digit
    */
   private boolean isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(String sequenceId) {
+    for (Sequence parentSequence : getParentSequence(sequenceId)) {
+      if (parentSequence != null) {
+        if (hasModule10Controldigit(parentSequence)) {
+          return true;
+        } else {
+          // check recursively
+          return isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(parentSequence.getId());
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * This method gives the list of sequence that has input parameter sequence as base sequence
+   *
+   * @param sequenceId
+   *          Input Sequence ID
+   * @return list of sequences that have sequence as its base sequence
+   */
+  private List<Sequence> getParentSequence(String sequenceId) {
     OBCriteria<Sequence> seqCriteria = OBDal.getInstance().createCriteria(Sequence.class);
     seqCriteria.add(Restrictions.eq(Sequence.PROPERTY_BASESEQUENCE + ".id", sequenceId));
     seqCriteria.add(Restrictions.ne(Sequence.PROPERTY_ID, sequenceId));
-    seqCriteria.add(Restrictions.eq(Sequence.PROPERTY_CONTROLDIGIT, ControlDigit.MODULE10.value));
-    seqCriteria.setMaxResults(1);
-    return seqCriteria.uniqueResult() != null;
+    return seqCriteria.list();
+
   }
 
   /**
