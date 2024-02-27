@@ -47,7 +47,7 @@ public abstract class ExternalAuthenticationManager extends AuthenticationManage
   }
 
   /**
-   * To be implemented with the logic of the external authentication
+   * To be implemented with the logic of the external authentication for the login flow.
    *
    * @param request
    *          HTTP request object to handle parameters and session attributes
@@ -60,7 +60,8 @@ public abstract class ExternalAuthenticationManager extends AuthenticationManage
 
   /**
    * Method to perform the external authentication from a given object containing the user
-   * credentials
+   * credentials. This method is invoked when trying to perform an authentication in flows different
+   * from the login flow.
    *
    * @param authProvider
    *          The name of the {@link AuthenticationProvider} used to authenticate
