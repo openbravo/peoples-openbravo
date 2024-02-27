@@ -3107,7 +3107,7 @@ This operation can take a long time to complete.]]></HELP>
 <!--800168-->  <AD_PROCESS_ID><![CDATA[800168]]></AD_PROCESS_ID>
 <!--800168-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800168-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800168-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800168-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800168-->  <VALUE><![CDATA[ReportNotPosted]]></VALUE>
 <!--800168-->  <NAME><![CDATA[Not Posted Transaction Report]]></NAME>
 <!--800168-->  <DESCRIPTION><![CDATA[Not Posted Transaction Report]]></DESCRIPTION>

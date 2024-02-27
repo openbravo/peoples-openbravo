@@ -3088,7 +3088,7 @@
 <!--800225-->  <AD_MENU_ID><![CDATA[800225]]></AD_MENU_ID>
 <!--800225-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--800225-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
-<!--800225-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
+<!--800225-->  <ISACTIVE><![CDATA[N]]></ISACTIVE>
 <!--800225-->  <NAME><![CDATA[Not Posted Transaction Report]]></NAME>
 <!--800225-->  <DESCRIPTION><![CDATA[Not Posted Transaction Report]]></DESCRIPTION>
 <!--800225-->  <ISSUMMARY><![CDATA[N]]></ISSUMMARY>
