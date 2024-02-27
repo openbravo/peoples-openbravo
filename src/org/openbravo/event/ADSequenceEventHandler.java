@@ -33,8 +33,9 @@ import org.openbravo.client.kernel.event.EntityUpdateEvent;
 import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
-import org.openbravo.erpCommon.utility.SequenceUtil;
+import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
+import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.model.ad.utility.Sequence;
 
 /**
@@ -220,8 +221,8 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
         .getCurrentState(sequenceNumberLengthProperty);
     Long currentSequenceLength = (Long) event.getCurrentState(sequenceLengthProperty);
 
-    if (!StringUtils.equals(currentSequenceNumberLength,
-        SequenceUtil.SequenceNumberLength.FIXED.value) && currentSequenceLength != null) {
+    if (!StringUtils.equals(currentSequenceNumberLength, SequenceNumberLength.FIXED.value)
+        && currentSequenceLength != null) {
       event.setCurrentState(sequenceLengthProperty, null);
     }
   }
@@ -239,9 +240,10 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     Sequence currentBaseSequence = (Sequence) event.getCurrentState(baseSequenceProperty);
     String currentSequenceType = (String) event.getCurrentState(calculationMethodProperty);
 
-    if (!StringUtils.equals(currentSequenceType, SequenceUtil.CalculationMethod.SEQUENCE.value)
+    if (!StringUtils.equals(currentSequenceType, CalculationMethod.SEQUENCE.value)
         && currentBaseSequence != null) {
       event.setCurrentState(baseSequenceProperty, null);
     }
   }
+
 }
