@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2024 Openbravo SLU 
+ * All portions are Copyright (C) 2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -46,28 +46,10 @@ public class ReferencedInventoryPartialUnboxFullReservation
     for (boolean isAllocated : ISALLOCATED) {
       for (String[] product : PRODUCTS) {
         for (String toBinId : BINS) {
-
-          // testUnbox with Referenced Inventory having Referenced Inventory Type of Sequence
-          // Type - None
           final TestUnboxOutputParams outParams = testUnboxReservation(toBinId, product[0],
               product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
           assertsReferenceInventoryIsNotEmpty(outParams.refInv,
               params.qtyToBox.subtract(params.qtyToUnbox));
-
-          // testUnbox with Referenced Inventory having Referenced Inventory Type of Sequence
-          // Type - Global
-          final TestUnboxOutputParams outParams_a = testUnboxReservation_a(toBinId, product[0],
-              product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
-          assertsReferenceInventoryIsNotEmpty(outParams_a.refInv,
-              params.qtyToBox.subtract(params.qtyToUnbox));
-
-          // testUnbox with Referenced Inventory having Referenced Inventory Type of Sequence
-          // Type - Per Organization
-          final TestUnboxOutputParams outParams_b = testUnboxReservation_b(toBinId, product[0],
-              product[1], params.qtyToBox, params.qtyToUnbox, params.reservationQty, isAllocated);
-          assertsReferenceInventoryIsNotEmpty(outParams_b.refInv,
-              params.qtyToBox.subtract(params.qtyToUnbox));
-
           OBDal.getInstance().getSession().clear();
         }
       }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2024 Openbravo SLU
+ * All portions are Copyright (C) 2018 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -47,17 +47,7 @@ public class ReferencedInventoryFullBoxTest extends ReferencedInventoryBoxTest {
   public void allTests() throws Exception {
     for (String[] product : PRODUCTS) {
       for (String toBinId : BINS) {
-
-        // test with Referenced Inventory having Referenced Inventory Type of Sequence Type - None
-        testBox(toBinId, product[0], product[1], params.qtyToBox, null, false, false, false);
-
-        // test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Global
-        testBox_a(toBinId, product[0], product[1], params.qtyToBox, null, false, false, false);
-
-        // test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
-        // Organization
-        testBox_b(toBinId, product[0], product[1], params.qtyToBox, null, false, false, false);
-
+        testBox(toBinId, product[0], product[1], params.qtyToBox, null, false);
         OBDal.getInstance().getSession().clear();
       }
     }

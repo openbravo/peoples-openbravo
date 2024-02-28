@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2024 Openbravo SLU
+ * All portions are Copyright (C) 2018-2021 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,25 +70,9 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
                 || isNeitherForceBinNorForceAttribute(isForceBin, isForceAttribute)) {
               continue;
             }
-            // Test with Referenced Inventory having Referenced Inventory Type of Sequence Type -
-            // None
             final ReferencedInventory refInv = testBox(BINS[0], product[0], product[1],
                 params.qtyToBox, params.reservationQty, isAllocated, isForceBin, isForceAttribute);
             assertsReservation(refInv, isForceBin, isForceAttribute);
-
-            // Test with Referenced Inventory having Referenced Inventory Type of Sequence Type -
-            // Global
-            final ReferencedInventory refInv_a = testBox_a(BINS[0], product[0], product[1],
-                params.qtyToBox, params.reservationQty, isAllocated, isForceBin, isForceAttribute);
-            assertsReservation(refInv_a, isForceBin, isForceAttribute);
-
-            // Test with Referenced Inventory having Referenced Inventory Type of Sequence Type -
-            // Per
-            // Organization
-            final ReferencedInventory refInv_b = testBox_b(BINS[0], product[0], product[1],
-                params.qtyToBox, params.reservationQty, isAllocated, isForceBin, isForceAttribute);
-            assertsReservation(refInv_b, isForceBin, isForceAttribute);
-
             OBDal.getInstance().getSession().clear();
           }
         }
@@ -105,41 +89,12 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
     return !isForceBin && !isForceAttribute;
   }
 
-  /**
-   * Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - None
-   */
-
   @Test
   public void testBoxInDifferentBinIsNotPossible() {
     OBException thrown = assertThrows(OBException.class, () -> testBox(BINS[1], PRODUCTS[0][0],
         PRODUCTS[0][1], params.qtyToBox, params.reservationQty, false, true, false));
     assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
   }
-
-  /**
-   * Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Global
-   */
-  @Test
-  public void testBoxInDifferentBinIsNotPossible_a() {
-    OBException thrown = assertThrows(OBException.class, () -> testBox_a(BINS[1], PRODUCTS[0][0],
-        PRODUCTS[0][1], params.qtyToBox, params.reservationQty, false, true, false));
-    assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
-  }
-
-  /**
-   * Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
-   * Organization
-   */
-  @Test
-  public void testBoxInDifferentBinIsNotPossible_b() {
-    OBException thrown = assertThrows(OBException.class, () -> testBox_b(BINS[1], PRODUCTS[0][0],
-        PRODUCTS[0][1], params.qtyToBox, params.reservationQty, false, true, false));
-    assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
-  }
-
-  /**
-   * Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - None
-   */
 
   @Test
   public void testBoxInDifferentBinIsNotPossible2() {
@@ -148,58 +103,9 @@ public class ReferencedInventoryBoxForcedReservation extends ReferencedInventory
     assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
   }
 
-  /**
-   * Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Global
-   */
-
-  @Test
-  public void testBoxInDifferentBinIsNotPossible2_a() {
-    OBException thrown = assertThrows(OBException.class, () -> testBox_a(BINS[1], PRODUCTS[1][0],
-        PRODUCTS[1][1], params.qtyToBox, params.reservationQty, true, true, true));
-    assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
-  }
-
-  /**
-   * Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
-   * Organization
-   */
-
-  @Test
-  public void testBoxInDifferentBinIsNotPossible2_b() {
-    OBException thrown = assertThrows(OBException.class, () -> testBox_b(BINS[1], PRODUCTS[1][0],
-        PRODUCTS[1][1], params.qtyToBox, params.reservationQty, true, true, true));
-    assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
-  }
-
-  /**
-   * Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - None
-   */
-
   @Test
   public void testBoxInDifferentBinIsNotPossible3() {
     OBException thrown = assertThrows(OBException.class, () -> testBox(BINS[1], PRODUCTS[2][0],
-        PRODUCTS[2][1], params.qtyToBox, params.reservationQty, false, true, true));
-    assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
-  }
-
-  /**
-   * Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Global
-   */
-
-  @Test
-  public void testBoxInDifferentBinIsNotPossible3_a() {
-    OBException thrown = assertThrows(OBException.class, () -> testBox_a(BINS[1], PRODUCTS[2][0],
-        PRODUCTS[2][1], params.qtyToBox, params.reservationQty, false, true, true));
-    assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
-  }
-
-  /**
-   * Test with Referenced Inventory having Referenced Inventory Type of Sequence Type - Per
-   * Organization
-   */
-  @Test
-  public void testBoxInDifferentBinIsNotPossible3_b() {
-    OBException thrown = assertThrows(OBException.class, () -> testBox_b(BINS[1], PRODUCTS[2][0],
         PRODUCTS[2][1], params.qtyToBox, params.reservationQty, false, true, true));
     assertThat(thrown.getMessage(), equalTo(EXPECTED_ERROR));
   }

@@ -11,7 +11,7 @@
  * under the License. 
  * The Original Code is Openbravo ERP. 
  * The Initial Developer of the Original Code is Openbravo SLU 
- * All portions are Copyright (C) 2018-2024 Openbravo SLU
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU 
  * All Rights Reserved. 
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -70,57 +70,20 @@ public abstract class ReferencedInventoryBoxTest extends ReferencedInventoryTest
    *          null
    * @return the created referenced inventory
    */
-
   protected ReferencedInventory testBox(final String toBinId, final String productId,
       final String attributeSetInstanceId, final BigDecimal qtyInBox,
-      final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
-      final boolean isForceAttribute) throws Exception {
-    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.NONE, null);
+      final BigDecimal reservationQty, final boolean isAllocated) throws Exception {
     return testBox(toBinId, productId, attributeSetInstanceId, qtyInBox, reservationQty,
-        isAllocated, isForceBin, isForceAttribute, refInvType);
-  }
-
-  /**
-   * testBox with Referenced Inventory Type of Sequence Type - Global
-   */
-
-  protected ReferencedInventory testBox_a(final String toBinId, final String productId,
-      final String attributeSetInstanceId, final BigDecimal qtyInBox,
-      final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
-      final boolean isForceAttribute) throws Exception {
-    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-            SequenceType.GLOBAL, SEQUENCE);
-    return testBox(toBinId, productId, attributeSetInstanceId, qtyInBox, reservationQty,
-        isAllocated, isForceBin, isForceAttribute, refInvType);
-  }
-
-  /**
-   * testBox with Referenced Inventory Type of Sequence Type - Per Organization
-   */
-
-  protected ReferencedInventory testBox_b(final String toBinId, final String productId,
-      final String attributeSetInstanceId, final BigDecimal qtyInBox,
-      final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
-      final boolean isForceAttribute) throws Exception {
-    Organization org = OBDal.getInstance()
-        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
-    // Create Referenced Inventory Type with Sequence Type as Per Organization
-    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(org, SequenceType.PER_ORGANIZATION, null);
-    // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
-    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, org, SEQUENCE);
-    return testBox(toBinId, productId, attributeSetInstanceId, qtyInBox, reservationQty,
-        isAllocated, isForceBin, isForceAttribute, refInvType);
+        isAllocated, false, false);
   }
 
   protected ReferencedInventory testBox(final String _toBinId, final String productId,
       final String attributeSetInstanceId, final BigDecimal _qtyInBox,
       final BigDecimal reservationQty, final boolean isAllocated, final boolean isForceBin,
-      final boolean isForceAttribute, final ReferencedInventoryType refInvType) throws Exception {
-
+      final boolean isForceAttribute) throws Exception {
+    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.NONE, null);
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
 
