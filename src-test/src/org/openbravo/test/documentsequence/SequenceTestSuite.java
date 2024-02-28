@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.test.referencedinventorytypesequence;
+package org.openbravo.test.documentsequence;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -24,13 +24,14 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 
-    ReferencedInventoryTypeTest.class, //
-    ReferencedInventoryTypeSequenceSequenceNumberLengthTest.class, //
-    ReferencedInventoryTypeSequenceCalculationMethodTest.class, //
-    ReferencedInventoryTypeSequenceControlDigitPrefixSuffixTest.class, //
-    ReferencedInventoryTypeOrgSequenceTest.class
+    SequenceSequenceNumberLengthTest.class, //
+    SequenceCalculationMethodTest.class, //
+    SequenceControlDigitPrefixSuffixTest.class, //
+    SequenceExceptionTest.class, //
+    SequenceUtilSequenceTest.class, //
+    UtilitySequenceTest.class //
 
 })
-public class ReferenceInventoryTypeSequenceTestSuite {
+public class SequenceTestSuite {
 
 }

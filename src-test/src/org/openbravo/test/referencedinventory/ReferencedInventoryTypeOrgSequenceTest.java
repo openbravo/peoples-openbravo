@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.test.referencedinventorytypesequence;
+package org.openbravo.test.referencedinventory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -32,7 +32,7 @@ import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryTypeOrgSequence;
 
-public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryTypeSequenceTest {
+public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryTest {
 
   /**
    * test unique sequence defined in Organization Sequence Tab for Referenced Inventory Type with
@@ -40,27 +40,27 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
    */
   @Test
   public void testReferencedInventoryTypeOrgSequenceTest() {
-    final Sequence baseSequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
+    final Sequence baseSequence = ReferencedInventoryTestUtils.createDocumentSequence(
         CalculationMethod.AUTONUMERING, null, null, null, null, null, "100", ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
+    final Sequence parentSequence = ReferencedInventoryTestUtils.createDocumentSequence(
         CalculationMethod.SEQUENCE, baseSequence, "06", null, null, null, null,
         ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null);
     OBDal.getInstance().save(parentSequence);
 
     // Create Referenced Inventory Type with Sequence Type as Per Organization
-    final ReferencedInventoryType refInvType = ReferencedInventoryTypeSequenceTestUtils
+    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, parentSequence);
     OBDal.getInstance().save(refInvType);
 
     // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
-    ReferencedInventoryTypeOrgSequence referencedInventoryTypeOrgSequence = ReferencedInventoryTypeSequenceTestUtils
+    ReferencedInventoryTypeOrgSequence referencedInventoryTypeOrgSequence = ReferencedInventoryTestUtils
         .createReferencedInventoryTypeOrgSeq(refInvType, parentSequence);
     OBDal.getInstance().save(referencedInventoryTypeOrgSequence);
     OBDal.getInstance().flush();
 
-    referencedInventoryTypeOrgSequence = ReferencedInventoryTypeSequenceTestUtils
+    referencedInventoryTypeOrgSequence = ReferencedInventoryTestUtils
         .createReferencedInventoryTypeOrgSeq(refInvType, baseSequence);
     OBDal.getInstance().save(referencedInventoryTypeOrgSequence);
 

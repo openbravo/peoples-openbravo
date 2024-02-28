@@ -46,7 +46,10 @@ import org.junit.runners.Suite;
     ReferencedInventoryPartialUnboxPartialReservation2MovementLinesUnboxTest.class, //
     ReferencedInventoryFullUnboxPartialReservation.class, //
     // Force bin or attribute set at reservation header
-    ReferencedInventoryBoxForcedReservation.class //
+    ReferencedInventoryBoxForcedReservation.class, //
+
+    ReferencedInventoryTypeOrgSequenceTest.class, //
+    ReferencedInventoryTypeTest.class //
 })
 public class ReferencedInventoryTestSuite {
 }

@@ -483,6 +483,65 @@ class ReferencedInventoryTestUtils {
     return refInvType;
   }
 
+  /*
+   * Creates Document Sequence
+   */
+
+  static Sequence createDocumentSequence(CalculationMethod calculationMethod, Sequence baseSequence,
+      String prefix, Long startingNo, Long nextAssignedNumber, Long incrementBy, String suffix,
+      ControlDigit controlDigit, SequenceNumberLength sequenceNoLength, Long sequenceLength) {
+    final Sequence anyExistingSequence = OBDal.getInstance()
+        .getProxy(Sequence.class, "FF8080812C2ABFC6012C2B3BE4970094");
+    // Create a Sequence
+    final Sequence sequence = (Sequence) DalUtil.copy(anyExistingSequence);
+    sequence.setOrganization(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID));
+    sequence.setName(UUID.randomUUID().toString());
+    sequence.setControlDigit(controlDigit.value);
+    sequence.setCalculationMethod(calculationMethod.value);
+    sequence.setPrefix(prefix);
+    sequence.setStartingNo(startingNo == null ? 1L : startingNo);
+    sequence.setNextAssignedNumber(nextAssignedNumber == null ? 1L : nextAssignedNumber);
+    sequence.setIncrementBy(incrementBy == null ? 1L : incrementBy);
+    sequence.setSuffix(suffix);
+    sequence.setBaseSequence(baseSequence);
+    sequence.setSequenceNumberLength(sequenceNoLength.value);
+    sequence.setSequenceLength(sequenceLength);
+    return sequence;
+  }
+
+  /*
+   * Creates Referenced Inventory Type
+   */
+
+  static ReferencedInventoryType createReferencedInventoryType(SequenceType sequenceType,
+      Sequence sequence) {
+    final ReferencedInventoryType refInvType = OBProvider.getInstance()
+        .get(ReferencedInventoryType.class);
+    refInvType.setClient(OBContext.getOBContext().getCurrentClient());
+    refInvType.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
+    refInvType.setSequenceType(sequenceType.value);
+    refInvType.setSequence(sequence);
+    refInvType.setName(UUID.randomUUID().toString());
+    refInvType.setShared(true);
+    return refInvType;
+  }
+
+  /*
+   * Creates Referenced Inventory Type Organization Sequence when Sequence Type is Per Organization
+   */
+
+  static ReferencedInventoryTypeOrgSequence createReferencedInventoryTypeOrgSeq(
+      ReferencedInventoryType refInvType, Sequence parentSequence) {
+    final ReferencedInventoryTypeOrgSequence refInvTypeOrgSeq = OBProvider.getInstance()
+        .get(ReferencedInventoryTypeOrgSequence.class);
+    refInvTypeOrgSeq.setClient(OBContext.getOBContext().getCurrentClient());
+    refInvTypeOrgSeq
+        .setOrganization(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID));
+    refInvTypeOrgSeq.setReferencedInventoryType(refInvType);
+    refInvTypeOrgSeq.setSequence(parentSequence);
+    return refInvTypeOrgSeq;
+  }
+
   /**
    * get documentNo using computation of sequence and control digit in PL
    *

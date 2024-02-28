@@ -16,7 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.test.referencedinventorytypesequence;
+package org.openbravo.test.referencedinventory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -32,14 +32,14 @@ import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceT
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 
-public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequenceTest {
+public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
 
   /**
    * test Referenced Inventory Type with Sequence Type : None
    */
   @Test
   public void testReferencedInventoryType_None() {
-    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
+    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.NONE, null);
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
@@ -53,7 +53,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
 
   @Test
   public void testReferencedInventoryType_Global() {
-    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
+    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.GLOBAL, null);
     OBDal.getInstance().save(referencedInventoryType);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
@@ -65,7 +65,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
    */
   @Test
   public void testReferencedInventoryType_PerOrganization() {
-    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
+    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, null);
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
@@ -79,7 +79,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
 
   @Test
   public void testReferencedInventoryType_None_Sequence() {
-    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
+    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.NONE, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
@@ -93,7 +93,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
 
   @Test
   public void testReferencedInventoryType_PerOrganization_Sequence() {
-    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
+    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
@@ -108,7 +108,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
 
   @Test
   public void testReferencedInventoryType_Global_Sequence_a() {
-    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
+    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.GLOBAL, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
@@ -122,7 +122,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
 
   @Test
   public void testReferencedInventoryType_Global_Sequence_b() {
-    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTypeSequenceTestUtils
+    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.GLOBAL, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
@@ -139,7 +139,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTypeSequence
    * @return Sequence to be used for defined Referenced Inventory Type
    */
   private Sequence createSequence() {
-    final Sequence sequence = ReferencedInventoryTypeSequenceTestUtils.createDocumentSequence(
+    final Sequence sequence = ReferencedInventoryTestUtils.createDocumentSequence(
         CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null);
     OBDal.getInstance().save(sequence);

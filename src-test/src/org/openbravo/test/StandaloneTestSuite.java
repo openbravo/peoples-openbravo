@@ -105,6 +105,7 @@ import org.openbravo.test.db.model.functions.Ad_isorgincludedTest;
 import org.openbravo.test.db.model.functions.CLocationGetIdentifierTest;
 import org.openbravo.test.db.model.functions.SqlCallableStatement;
 import org.openbravo.test.db.pool.PoolHasNoConnectionsDetection;
+import org.openbravo.test.documentsequence.SequenceTestSuite;
 import org.openbravo.test.expression.EvaluationTest;
 import org.openbravo.test.expression.OBBindingsTest;
 import org.openbravo.test.generalsetup.enterprise.organization.ADOrgPersistInfoTestSuite;
@@ -129,7 +130,6 @@ import org.openbravo.test.pricelist.PriceListTest;
 import org.openbravo.test.process.order.OrderProcessTest;
 import org.openbravo.test.productStatus.ProductStatusTest;
 import org.openbravo.test.referencedinventory.ReferencedInventoryTestSuite;
-import org.openbravo.test.referencedinventorytypesequence.ReferenceInventoryTypeSequenceTestSuite;
 import org.openbravo.test.reporting.AllJrxmlCompilation;
 import org.openbravo.test.reporting.CompiledReportsCacheTest;
 import org.openbravo.test.reporting.JasperReportsCompilation;
@@ -429,8 +429,8 @@ import org.openbravo.userinterface.selectors.test.ExpressionsTest;
     // Referenced Inventory
     ReferencedInventoryTestSuite.class,
 
-    // Referenced Inventory Type & Sequence
-    ReferenceInventoryTypeSequenceTestSuite.class,
+    // Document Sequence
+    SequenceTestSuite.class,
 
     // AD_Org Persist Information
     ADOrgPersistInfoTestSuite.class,

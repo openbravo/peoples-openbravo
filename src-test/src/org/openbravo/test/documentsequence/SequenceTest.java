@@ -16,10 +16,7 @@
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
-package org.openbravo.test.referencedinventorytypesequence;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assume.assumeThat;
+package org.openbravo.test.documentsequence;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,35 +24,19 @@ import org.junit.After;
 import org.junit.Before;
 import org.openbravo.base.secureApp.VariablesSecureApp;
 import org.openbravo.base.weld.test.WeldBaseTest;
-import org.openbravo.client.kernel.KernelUtils;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 
 /**
- * Helper class to develop Referenced Inventory Type Sequence related tests
+ * Helper class to develop Sequence related tests
  */
 
-public class ReferencedInventoryTypeSequenceTest extends WeldBaseTest {
+public class SequenceTest extends WeldBaseTest {
   protected static final Logger log = LogManager.getLogger();
-
-  private boolean isAwoInstalled() {
-    try {
-      OBContext.setAdminMode(true);
-      return KernelUtils.getInstance()
-          .isModulePresent("org.openbravo.warehouse.advancedwarehouseoperations");
-    } finally {
-      OBContext.restorePreviousMode();
-    }
-  }
 
   @Before
   public void initialize() {
-
-    boolean awoIsInstalled = isAwoInstalled();
-    assumeThat("Auto-Disabled test case as incompatible with AWO (found to be installed) ",
-        awoIsInstalled, is(false));
-
     setUserContext(QA_TEST_ADMIN_USER_ID);
     VariablesSecureApp vsa = new VariablesSecureApp(OBContext.getOBContext().getUser().getId(),
         OBContext.getOBContext().getCurrentClient().getId(),
