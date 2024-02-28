@@ -154,7 +154,7 @@
 <!--128-->  <AD_KEY><![CDATA[1186]]></AD_KEY>
 <!--128-->  <AD_DISPLAY><![CDATA[216]]></AD_DISPLAY>
 <!--128-->  <ISVALUEDISPLAYED><![CDATA[N]]></ISVALUEDISPLAYED>
-<!--128-->  <WHERECLAUSE><![CDATA[AD_Sequence.IsTableID='N']]></WHERECLAUSE>
+<!--128-->  <WHERECLAUSE><![CDATA[AD_Sequence.IsTableID='N' AND Calculation_Method<>'N']]></WHERECLAUSE>
 <!--128-->  <ORDERBYCLAUSE><![CDATA[AD_Sequence.Name]]></ORDERBYCLAUSE>
 <!--128--></AD_REF_TABLE>
 
