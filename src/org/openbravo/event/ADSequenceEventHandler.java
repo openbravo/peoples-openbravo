@@ -216,15 +216,13 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    * @return Whether sequence is used as base sequence in Sequence with Module 10 control digit
    */
   private boolean isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(String sequenceId) {
-    for (Sequence parentSequence : getParentSequence(sequenceId)) {
-      if (parentSequence != null) {
-        if (hasModule10Controldigit(parentSequence)) {
-          return true;
-        } else {
-          // check recursively
-          return isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(parentSequence.getId());
-        }
-      }
+    final Sequence sequence = OBDal.getInstance().get(Sequence.class, sequenceId);
+    if (sequence != null && hasModule10Controldigit(sequence)) {
+      return true;
+    }
+    for (Sequence parentSequence : getAllParentSequence(sequenceId)) {
+      // check recursively
+      return isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(parentSequence.getId());
     }
     return false;
   }
@@ -233,7 +231,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    * check recursively all parent sequences that has input sequence as its BaseSequence
    */
   private boolean checkAllParentSequencesthatHasInputSequenceAsItsBaseSequence(String sequenceId) {
-    for (Sequence parentSequence : getParentSequence(sequenceId)) {
+    for (Sequence parentSequence : getAllParentSequence(sequenceId)) {
       if (isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(parentSequence.getId())) {
         // Return only when any one of the parent sequence found with Module 10 control digit
         return true;
@@ -252,7 +250,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    *          Input Sequence ID
    * @return list of sequences that have sequence as its base sequence
    */
-  private List<Sequence> getParentSequence(String sequenceId) {
+  private List<Sequence> getAllParentSequence(String sequenceId) {
     OBCriteria<Sequence> seqCriteria = OBDal.getInstance().createCriteria(Sequence.class);
     seqCriteria.add(Restrictions.eq(Sequence.PROPERTY_BASESEQUENCE + ".id", sequenceId));
     seqCriteria.add(Restrictions.ne(Sequence.PROPERTY_ID, sequenceId));
@@ -266,7 +264,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    */
   private void validateBaseSequence(String currentBaseSequenceId, String sequenceId) {
     if (StringUtils.equals(currentBaseSequenceId, sequenceId)) {
-      throw new OBException(OBMessageUtils.messageBD(""));
+      throw new OBException(OBMessageUtils.messageBD("NotValidBaseSequence"));
     }
     Sequence sequence = OBDal.getInstance().get(Sequence.class, currentBaseSequenceId);
     // Base case: sequence is null or it doesn't have a base sequence
