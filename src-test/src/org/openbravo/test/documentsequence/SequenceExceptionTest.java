@@ -39,7 +39,7 @@ import org.openbravo.model.ad.utility.Sequence;
 public class SequenceExceptionTest extends SequenceTest {
 
   /**
-   * test Sequence with Calculation Method as Sequence and null Base Sequence
+   * Test sequence with Calculation Method: Based On Sequence and Base Sequence: empty/null
    */
   @Test
   public void testSequenceExceptionWithCalculationMethod_Sequence() {
@@ -51,7 +51,8 @@ public class SequenceExceptionTest extends SequenceTest {
   }
 
   /**
-   * test Sequence with Calculation Method as Sequence and update Base Sequence as empty/null.
+   * test Sequence with Calculation Method: Based On Sequence and update Base Sequence as
+   * empty/null.
    */
   @Test
   public void testSequenceExceptionWithCalculationMethod_AutoNumbering() {
@@ -69,7 +70,7 @@ public class SequenceExceptionTest extends SequenceTest {
   }
 
   /**
-   * test sequence with Fixed sequence number length and zero sequence length
+   * test sequence with Sequence Number Length:Fixed and Sequence Length: 0L
    */
 
   @Test
@@ -81,7 +82,7 @@ public class SequenceExceptionTest extends SequenceTest {
   }
 
   /**
-   * test sequence with Fixed sequence number length and empty sequence length
+   * test sequence with Sequence Number Length:Fixed and Sequence Length: NULL
    */
 
   @Test
@@ -92,7 +93,7 @@ public class SequenceExceptionTest extends SequenceTest {
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
   }
 
-  /** Test Sequence with Alphanumeric prefix and Module 10 control digit */
+  /** Test sequence with alphanumeric Prefix and Control Digit: Module 10 */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_AlphanumericPrefix() {
     final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
@@ -103,7 +104,7 @@ public class SequenceExceptionTest extends SequenceTest {
         containsString(OBMessageUtils.messageBD("ValidateSequence")));
   }
 
-  /** Test Sequence with Alphanumeric suffix and Module 10 control digit */
+  /** Test sequence with alphanumeric Suffix and Control Digit: Module 10 */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_AlphanumericSuffix() {
     final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
@@ -114,7 +115,7 @@ public class SequenceExceptionTest extends SequenceTest {
         containsString(OBMessageUtils.messageBD("ValidateSequence")));
   }
 
-  /** Use Base sequence with alphanumeric prefix */
+  /** Test parent sequence with Base Sequence having alphanumeric Prefix */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_BaseSequenceAlphanumericPrefix() {
     final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
@@ -128,7 +129,7 @@ public class SequenceExceptionTest extends SequenceTest {
         containsString(OBMessageUtils.messageBD("ValidateSequence")));
   }
 
-  /** Use Base sequence with alphanumeric suffix */
+  /** Test parent sequence with Base Sequence having alphanumeric Suffix */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_BaseSequenceAlphanumericSuffix() {
     final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
@@ -142,7 +143,10 @@ public class SequenceExceptionTest extends SequenceTest {
         containsString(OBMessageUtils.messageBD("ValidateSequence")));
   }
 
-  /** Update Base sequence with alphanumeric suffix */
+  /**
+   * Test update base sequence with alphanumeric Suffix used in parent sequence with Control Digit:
+   * Module 10
+   */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_UpdateBaseSequenceAlphanumericSuffix() {
     final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
@@ -163,7 +167,10 @@ public class SequenceExceptionTest extends SequenceTest {
         containsString(OBMessageUtils.messageBD("ValidateBaseSequence")));
   }
 
-  /** Update Base sequence with alphanumeric prefix */
+  /**
+   * Test update base sequence with alphanumeric Prefix used in parent sequence with Control Digit:
+   * Module 10
+   */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_UpdateBaseSequenceAlphanumericPrefix() {
     final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
@@ -240,7 +247,7 @@ public class SequenceExceptionTest extends SequenceTest {
     assertThat(exception.getMessage(),
         containsString(OBMessageUtils.messageBD("ValidateSequence")));
 
-    // new base sequence with alphanumeric prefix
+    // new base sequence with alphanumeric prefix, suffix
     newBaseSequenceAlphanumericSuffix.setSuffix("102");
     newBaseSequenceAlphanumericSuffix.setPrefix("1A2");
     OBDal.getInstance().save(newBaseSequenceAlphanumericSuffix);
@@ -258,7 +265,7 @@ public class SequenceExceptionTest extends SequenceTest {
 
   /**
    * Add Level 3 Sequences to check Base sequence with Alphanumeric prefix or suffix in first level
-   * disallows to create Sequence with its parent as base sequence and control digit module 10.
+   * does not allow to create Sequence with its parent as base sequence and control digit module 10.
    */
   @Test
   public void testSequenceException_ControlDigitModule10_3Level() {

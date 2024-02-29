@@ -28,7 +28,7 @@ import org.openbravo.model.ad.utility.Sequence;
 public class SequenceSequenceNumberLengthTest extends SequenceTest {
 
   /**
-   * test sequence with Variable sequence number length and empty sequence length
+   * test sequence with Variable sequence number length and Empty sequence length
    */
   @Test
   public void testSequenceWithSequenceNumberLength_Variable() {
@@ -39,7 +39,7 @@ public class SequenceSequenceNumberLengthTest extends SequenceTest {
   }
 
   /**
-   * test sequence with Fixed sequence number length and non empty non zero long sequence length
+   * test sequence with Fixed sequence number length and non empty or non zero long sequence length
    */
 
   @Test

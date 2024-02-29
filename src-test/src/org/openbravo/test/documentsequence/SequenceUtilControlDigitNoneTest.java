@@ -33,7 +33,7 @@ import org.openbravo.model.ad.utility.Sequence;
 public class SequenceUtilControlDigitNoneTest extends SequenceTest {
 
   /**
-   * Test documentno from sequence with none control digit and no prefix, no suffix, no
+   * Test documentNo from sequence with none control digit and no prefix, no suffix, no
    * nextAssignedNo, sequence number length variable
    */
   @Test
@@ -43,12 +43,12 @@ public class SequenceUtilControlDigitNoneTest extends SequenceTest {
         SequenceNumberLength.VARIABLE, null, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
-            + "no prefix, no suffix, no next Assigned No and Control Digit - None",
+            + "no prefix, no suffix, no nextAssignedNo, ControlDigit - None",
         "1", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with none control digit and no prefix, no suffix, nextAssignedNo:
+   * Test documentNo from sequence with none control digit and no prefix, no suffix, nextAssignedNo:
    * 1000000L, sequence number length variable
    */
   @Test
@@ -58,12 +58,12 @@ public class SequenceUtilControlDigitNoneTest extends SequenceTest {
         SequenceNumberLength.VARIABLE, null, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
-            + " next Assigned No, Control Digit - None and no prefix/suffix",
+            + " valid nextAssignedNo, ControlDigit - None, no Prefix/Suffix",
         "1000000", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with none control digit and prefix: SUT/, no suffix,
+   * Test documentNo from sequence with none control digit and prefix: SUT/, no suffix,
    * nextAssignedNo: 1000000L, sequence number length variable
    */
   @Test
@@ -73,12 +73,12 @@ public class SequenceUtilControlDigitNoneTest extends SequenceTest {
         SequenceNumberLength.VARIABLE, null, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
-            + "prefix, next Assigned No and Control Digit - None",
+            + "valid Prefix, valid nextAssignedNo, no Suffix, ControlDigit - None",
         "SUT/1000000", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with none control digit, no prefix, suffix: 000, nextAssignedNo:
+   * Test documentNo from sequence with none control digit, no prefix, suffix: 000, nextAssignedNo:
    * 1000000L, sequence number length variable
    */
   @Test
@@ -88,12 +88,12 @@ public class SequenceUtilControlDigitNoneTest extends SequenceTest {
         SequenceNumberLength.VARIABLE, null, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
-            + "suffix, next Assigned No and Control Digit - None",
+            + "valid Suffix, valid nextAssignedNo, no Suffix, ControlDigit - None",
         "1000000000", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with none control digit, prefix: SUT/, suffix: 000,
+   * Test documentNo from sequence with none control digit, prefix: SUT/, suffix: 000,
    * nextAssignedNo: 1000000L, sequence number length variable
    */
   @Test
@@ -102,12 +102,13 @@ public class SequenceUtilControlDigitNoneTest extends SequenceTest {
         CalculationMethod.AUTONUMERING, null, "SUT/", null, 1000000L, null, "000",
         ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
     assertThat(
-        "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - None",
+        "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
+            + "valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None",
         "SUT/1000000000", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with none control digit, prefix: SUT/, suffix: 000,
+   * Test documentNo from sequence with none control digit, prefix: SUT/, suffix: 000,
    * nextAssignedNo: 1000000L, sequence number length fixed: 10L
    */
   @Test
@@ -116,12 +117,13 @@ public class SequenceUtilControlDigitNoneTest extends SequenceTest {
         CalculationMethod.AUTONUMERING, null, "SUT/", null, 1000000L, null, "000",
         ControlDigit.NONE, SequenceNumberLength.FIXED, 10L, true);
     assertThat(
-        "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - None",
+        "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
+            + "valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Fixed Length 10L",
         "SUT/0001000000000", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with none control digit, prefix: SUT/, suffix: 000,
+   * Test documentNo from sequence with none control digit, prefix: SUT/, suffix: 000,
    * nextAssignedNo: 1000000L, sequence number length fixed: 5L
    */
   @Test
@@ -130,7 +132,8 @@ public class SequenceUtilControlDigitNoneTest extends SequenceTest {
         CalculationMethod.AUTONUMERING, null, "SUT/", null, 1000000L, null, "000",
         ControlDigit.NONE, SequenceNumberLength.FIXED, 5L, true);
     assertThat(
-        "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - None",
+        "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
+            + "valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Fixed Length 5L",
         "SUT/1000000000", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 }

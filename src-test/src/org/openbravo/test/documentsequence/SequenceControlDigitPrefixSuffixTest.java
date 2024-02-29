@@ -28,7 +28,7 @@ import org.openbravo.model.ad.utility.Sequence;
 
 public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
   /**
-   * Empty prefix and suffix, None control digit
+   * Test sequence with empty prefix and suffix, None control digit
    */
   @Test
   public void testSequenceControlDigit_None() {
@@ -39,7 +39,7 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
         sequence != null);
   }
 
-  /** Sequence with Control Digit Module 10, Numeric prefix */
+  /** Test Sequence with Control Digit Module 10, Numeric prefix */
   @Test
   public void testSequenceControlDigit_Module10_NumericPrefix() {
     final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
@@ -49,7 +49,7 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
         sequence != null);
   }
 
-  /** Sequence with Control Digit Module 10, Numeric suffix */
+  /** Test sequence with Control Digit: Module 10, Numeric suffix */
   @Test
   public void testSequenceControlDigit_Module10_NumericSuffix() {
     final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
@@ -59,7 +59,7 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
         sequence != null);
   }
 
-  /** Update Base sequence with numeric prefix */
+  /** Test update of base sequence with numeric prefix */
   @Test
   public void testSequenceControlDigit_Module10_UpdateBaseSequenceWithNumericPrefixSuffix() {
     final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
@@ -78,7 +78,7 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
         baseSequence.getPrefix() == "102");
   }
 
-  /** Update Base sequence with numeric suffix */
+  /** Test update of base sequence with numeric suffix */
   @Test
   public void testSequenceControlDigit_Module10_UpdateBaseSequenceWithNumericSuffix() {
     final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,

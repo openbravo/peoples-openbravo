@@ -55,7 +55,8 @@ public class SequenceCalculationMethodTest extends SequenceTest {
   }
 
   /**
-   * test Sequence with Calculation Method as Sequence with Sequence and its valid Base Sequence
+   * test Sequence with Calculation Method as Based On Sequence with Sequence and its valid Base
+   * Sequence
    */
   @Test
   public void testSequenceWithCalculationMethod_Sequence() {

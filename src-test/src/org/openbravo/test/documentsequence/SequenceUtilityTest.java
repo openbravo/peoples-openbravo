@@ -36,7 +36,7 @@ public class SequenceUtilityTest extends SequenceTest {
    * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : None,
    * NextAssignedNo: 1000000L, SequenceNumberLength: Variable,
    * 
-   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   * Test with Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
    */
   @Test
   public void utilitySequenceTest_NextAssignedNo() {
@@ -70,7 +70,7 @@ public class SequenceUtilityTest extends SequenceTest {
    * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : None,
    * NextAssignedNo: 1000000L, SequenceNumberLength: Variable, Prefix: SUT/
    * 
-   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   * Test with Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
    */
 
   @Test
@@ -106,7 +106,7 @@ public class SequenceUtilityTest extends SequenceTest {
    * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : None,
    * NextAssignedNo: 1000000L, SequenceNumberLength: Variable, Prefix: 6, Suffix: 000
    * 
-   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   * Test with Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
    */
 
   @Test
@@ -140,7 +140,7 @@ public class SequenceUtilityTest extends SequenceTest {
    * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : None, No
    * NextAssignedNo, No Prefix, No Suffix, SequenceNumberLength: Variable.
    * 
-   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   * Test with Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
    */
 
   @Test
@@ -175,7 +175,7 @@ public class SequenceUtilityTest extends SequenceTest {
    * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : Module 10, No
    * NextAssignedNo, No Prefix, No Suffix, SequenceNumberLength: Variable.
    * 
-   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   * Test with Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
    */
 
   @Test
@@ -207,8 +207,7 @@ public class SequenceUtilityTest extends SequenceTest {
   }
 
   /**
-   * 
-   * 2 Level
+   * 2 Level Sequences
    * 
    * Test with Base Sequence having CalculationMethod: Auto numbering, Control Digit : Module10,
    * NextAssignedNo: 2821L, SequenceNumberLength: Fixed, Sequence Length: 5L, Prefix: 0110491.
@@ -216,7 +215,7 @@ public class SequenceUtilityTest extends SequenceTest {
    * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
    * Digit : Module10, SequenceNumberLength: Variable, Prefix: 6, Suffix: 000
    * 
-   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   * Test using Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
    */
 
   @Test
@@ -260,7 +259,7 @@ public class SequenceUtilityTest extends SequenceTest {
    * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
    * Digit : Module10, SequenceNumberLength: Variable, Prefix: 9, Suffix: 1
    * 
-   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   * Test using Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
    */
 
   @Test

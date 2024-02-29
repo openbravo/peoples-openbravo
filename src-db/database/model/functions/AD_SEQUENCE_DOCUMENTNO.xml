@@ -36,9 +36,19 @@
   v_Sequence_Length AD_SEQUENCE.SEQUENCE_LENGTH%TYPE;
   v_Base_Sequence_ID AD_SEQUENCE.BASE_SEQUENCE_ID%TYPE;
   v_documentNo VARCHAR2(60);
+  v_count NUMBER:=0;
 
 BEGIN
   IF(p_Sequence_ID IS NULL) THEN -- No Sequence Number
+    RETURN NULL;
+  END IF;
+
+  SELECT COUNT(AD_Sequence_ID) INTO v_count
+  FROM AD_Sequence
+  WHERE AD_Sequence_ID=p_Sequence_ID;
+
+  -- No sequence with Id exists
+  IF v_count = 0 THEN
     RETURN NULL;
   END IF;
 

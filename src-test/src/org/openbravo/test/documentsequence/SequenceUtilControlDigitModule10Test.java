@@ -33,7 +33,7 @@ import org.openbravo.model.ad.utility.Sequence;
 public class SequenceUtilControlDigitModule10Test extends SequenceTest {
 
   /**
-   * Test documentno from sequence with module 10 control digit and no prefix, no suffix, no
+   * Test documentNo from sequence with module 10 control digit, no prefix, no suffix, no
    * nextAssignedNo, sequence number length variable
    */
   @Test
@@ -41,14 +41,13 @@ public class SequenceUtilControlDigitModule10Test extends SequenceTest {
     final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
         CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.MODULE10,
         SequenceNumberLength.VARIABLE, null, true);
-    assertThat(
-        "Sequence is not computed correctly using SequenceUtil for AutoNumbering "
-            + "calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
+    assertThat("Sequence is not computed correctly using SequenceUtil for AutoNumbering "
+        + "calculation method, no prefix, no suffix, no nextAssignedNo and Control Digit - Module 10",
         "17", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with module 10 control digit and no prefix, no suffix,
+   * Test documentNo from sequence with module 10 control digit, no prefix, no suffix,
    * nextAssignedNo:1000000L, sequence number length variable
    */
   @Test
@@ -58,12 +57,12 @@ public class SequenceUtilControlDigitModule10Test extends SequenceTest {
         ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
-            + "next Assigned No. and Control Digit - Module 10",
+            + "valid nextAssignedNo, no prefix, no suffix and Control Digit - Module 10",
         "10000007", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with module 10 control digit and prefix: 6, no suffix,
+   * Test documentNo from sequence with module 10 control digit and prefix: 6, no suffix,
    * nextAssignedNo:1000000L, sequence number length variable
    */
   @Test
@@ -73,12 +72,12 @@ public class SequenceUtilControlDigitModule10Test extends SequenceTest {
         ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
-            + "prefix, next Assigned No and Control Digit - Module 10",
+            + "valid prefix, nextAssignedNo, no suffix and Control Digit - Module 10",
         "610000001", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with module 10 control digit and no prefix, suffix 000,
+   * Test documentNo from sequence with module 10 control digit and no prefix, suffix 000,
    * nextAssignedNo:1000000L, sequence number length variable
    */
   @Test
@@ -88,12 +87,12 @@ public class SequenceUtilControlDigitModule10Test extends SequenceTest {
         ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
-            + "suffix, next Assigned No and Control Digit - MOdule 10",
+            + "valid suffix, nextAssignedNo, no prefix, Control Digit - MOdule 10",
         "10000000009", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
   /**
-   * Test documentno from sequence with module 10 control digit, prefix 6, suffix 000,
+   * Test documentNo from sequence with module 10 control digit, prefix 6, suffix 000,
    * nextAssignedNo:1000000L, sequence number length variable
    */
   @Test
@@ -103,7 +102,7 @@ public class SequenceUtilControlDigitModule10Test extends SequenceTest {
         ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method,"
-            + "prefix, suffix, next Assigned No and Control Digit - Module 10",
+            + "valid prefix, suffix, nextAssignedNo and Control Digit - Module 10",
         "610000000001", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
@@ -118,7 +117,7 @@ public class SequenceUtilControlDigitModule10Test extends SequenceTest {
         ControlDigit.MODULE10, SequenceNumberLength.FIXED, 10L, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
-            + "prefix, suffix, next Assigned No and Control Digit - Module 10, Fixed Length 10L",
+            + "valid prefix, suffix, nextAssignedNo, Control Digit - Module 10, Fixed Length 10L",
         "700010230450004", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 
@@ -133,7 +132,7 @@ public class SequenceUtilControlDigitModule10Test extends SequenceTest {
         ControlDigit.MODULE10, SequenceNumberLength.FIXED, 5L, true);
     assertThat(
         "Sequence is not computed correctly using SequenceUtil for AutoNumbering calculation method, "
-            + "prefix, suffix, next Assigned No and Control Digit - Module 10, Fixed Length 5L",
+            + "valid prefix, suffix, nextAssignedNo, Control Digit - Module 10, Fixed Length 5L",
         "810250450001", equalTo(SequenceUtil.getDocumentNo(false, sequence)));
   }
 }

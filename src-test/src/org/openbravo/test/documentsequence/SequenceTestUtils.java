@@ -154,7 +154,7 @@ class SequenceTestUtils {
   /**
    * Create sequence with calculation method, prefix, sequence number length and sequence length
    * 
-   * @return Sequence to be used for defined Referenced Inventory Type
+   * @return Sequence to be used in tests
    */
 
   public static Sequence createBaseSequence(CalculationMethod calculationMethod, String prefix,
@@ -166,7 +166,7 @@ class SequenceTestUtils {
   /**
    * Create sequence with base sequence
    * 
-   * @return Sequence to be used for defined Referenced Inventory Type
+   * @return Sequence to be used in tests
    */
 
   public static Sequence createParentSequence(Sequence baseSequence) {
@@ -227,7 +227,7 @@ class SequenceTestUtils {
   }
 
   /**
-   * Call AD_Sequence_DocType
+   * Call AD_Sequence_DocType to compute documentNo based on sequence defined in document type
    */
   public static String getDocumentNo(String windowId, String tableName, String docTypeTargetId,
       String docTypeId, boolean onlyDocType, boolean updateNext) {
@@ -237,7 +237,7 @@ class SequenceTestUtils {
   }
 
   /**
-   * Call AD_Sequence_Doc
+   * Call AD_Sequence_Doc to compute documentNo based on sequence name
    */
   public static String getDocumentNo(String clientId, String tableName, boolean updateNext) {
     return Utility.getDocumentNo(new DalConnectionProvider(false), clientId, tableName, updateNext);

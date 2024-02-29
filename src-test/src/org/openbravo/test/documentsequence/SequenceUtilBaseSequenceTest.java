@@ -35,13 +35,15 @@ public class SequenceUtilBaseSequenceTest extends SequenceTest {
   @Test
 
   /**
+   * 2 Level Sequences
+   * 
    * Test with Base Sequence having CalculationMethod: Auto numbering, Control Digit : None, No
    * NextAssignedNo, SequenceNumberLength: Variable, No Prefix, No Suffix
    * 
    * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
    * Digit : Module10, SequenceNumberLength: Variable, No Prefix, No Suffix
    * 
-   * Compute document no using SequenceUtil
+   * Compute documentNo using SequenceUtil getDocumentNo
    */
   public void sequenceUtilTest_BaseSequence_AutoNumbering_Level2() {
 
@@ -58,13 +60,15 @@ public class SequenceUtilBaseSequenceTest extends SequenceTest {
   }
 
   /**
+   * 2 Level Sequences
+   * 
    * Test with Base Sequence having CalculationMethod: Auto numbering, Control Digit : Module10,
    * NextAssignedNo: 2821L, SequenceNumberLength: Fixed, Sequence Length: 5L, Prefix: 0110491.
    * 
    * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
    * Digit : Module10, SequenceNumberLength: Variable, Prefix: 6, Suffix: 000
    * 
-   * Compute document no using SequenceUtil
+   * Compute documentNo using SequenceUtil getDocumentNo
    */
 
   @Test
@@ -92,7 +96,7 @@ public class SequenceUtilBaseSequenceTest extends SequenceTest {
    * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
    * Digit : Module10, SequenceNumberLength: Variable, Prefix: 6, Suffix: 000
    * 
-   * Compute document no using SequenceUtil, AD_SEQUENCE_DOCUMENTNO
+   * Compute documentNo using SequenceUtil getDocumentNo, AD_SEQUENCE_DOCUMENTNO
    */
   @Test
   public void sequenceUtilTest_BaseSequence_AutoNumbering_NextAssignedNo_PrefixSuffix_Level2() {
@@ -126,7 +130,7 @@ public class SequenceUtilBaseSequenceTest extends SequenceTest {
    * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
    * Digit : Module10, SequenceNumberLength: Variable, Prefix: 9, Suffix: 1
    * 
-   * Compute document no using SequenceUtil, AD_SEQUENCE_DOCUMENTNO
+   * Compute documentNo using SequenceUtil getDocumentNo, AD_SEQUENCE_DOCUMENTNO
    */
 
   @Test
@@ -162,7 +166,7 @@ public class SequenceUtilBaseSequenceTest extends SequenceTest {
    * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
    * Digit : Module10, SequenceNumberLength: Variable, Prefix: 6, Suffix: 000
    * 
-   * Compute document no using SequenceUtil, AD_SEQUENCE_DOCUMENTNO
+   * Compute documentNo using SequenceUtil getDocumentNo, AD_SEQUENCE_DOCUMENTNO
    */
 
   @Test
@@ -194,7 +198,7 @@ public class SequenceUtilBaseSequenceTest extends SequenceTest {
    * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
    * Digit : None, SequenceNumberLength: Variable, No Prefix, No Suffix
    * 
-   * Compute document no using SequenceUtil, AD_SEQUENCE_DOCUMENTNO
+   * Compute documentNo using SequenceUtil getDocumentNo, AD_SEQUENCE_DOCUMENTNO
    */
 
   @Test
