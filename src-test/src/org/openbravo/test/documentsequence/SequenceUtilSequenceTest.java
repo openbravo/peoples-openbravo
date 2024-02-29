@@ -22,6 +22,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertTrue;
 
+import java.util.UUID;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.openbravo.erpCommon.utility.SequenceUtil;
@@ -34,7 +36,7 @@ public class SequenceUtilSequenceTest extends SequenceTest {
 
   @Test
   public void sequenceUtilTest_a() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
         CalculationMethod.AUTONUMERING, null, null, null, 1000000L, null, null, ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null, true);
     assertTrue(
@@ -44,7 +46,7 @@ public class SequenceUtilSequenceTest extends SequenceTest {
 
   @Test
   public void sequenceUtilTest_b() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
         CalculationMethod.AUTONUMERING, null, "SUT/", null, 1000000L, null, null, ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null, true);
     assertThat(
@@ -54,7 +56,7 @@ public class SequenceUtilSequenceTest extends SequenceTest {
 
   @Test
   public void sequenceUtilTest_c() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
         CalculationMethod.AUTONUMERING, null, null, null, 1000000L, null, "000", ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null, true);
     assertThat(
@@ -64,7 +66,7 @@ public class SequenceUtilSequenceTest extends SequenceTest {
 
   @Test
   public void sequenceUtilTest_d() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
         CalculationMethod.AUTONUMERING, null, "SUT/", null, 1000000L, null, "000",
         ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
     assertThat(
@@ -74,7 +76,7 @@ public class SequenceUtilSequenceTest extends SequenceTest {
 
   @Test
   public void sequenceUtilTest_e() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
         CalculationMethod.AUTONUMERING, null, "6", null, 1000000L, null, "000",
         ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
     assertThat(
@@ -84,7 +86,7 @@ public class SequenceUtilSequenceTest extends SequenceTest {
 
   @Test
   public void sequenceUtilTest_f() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
         CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null, true);
     assertThat(
@@ -94,7 +96,7 @@ public class SequenceUtilSequenceTest extends SequenceTest {
 
   @Test
   public void sequenceUtilTest_g() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
         CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.MODULE10,
         SequenceNumberLength.VARIABLE, null, true);
     assertThat(

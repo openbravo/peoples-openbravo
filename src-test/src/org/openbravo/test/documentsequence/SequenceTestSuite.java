@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
     SequenceControlDigitPrefixSuffixTest.class, //
     SequenceExceptionTest.class, //
     SequenceUtilSequenceTest.class, //
-    UtilitySequenceTest.class //
+    SequenceUtilityTest.class //
 
 })
 public class SequenceTestSuite {

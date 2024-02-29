@@ -20,6 +20,7 @@ package org.openbravo.test.referencedinventory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
@@ -28,8 +29,11 @@ import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
+import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.enterprise.Organization;
+import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
 
 public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
@@ -48,6 +52,26 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   }
 
   /**
+   * compute Referenced Inventory Type with Sequence Type : None
+   */
+
+  @Test
+  public void testReferencedInventoryType_None_ComputeSequence() {
+    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(SequenceType.NONE, null);
+    OBDal.getInstance().save(refInvType);
+    OBDal.getInstance().flush();
+    String strSequence = ReferencedInventoryUtil.getProposedValueFromSequence(refInvType.getId(),
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID)
+            .getId(),
+        true);
+    assertThat(
+        "Proposed Referenced Inventory Search Key with Sequence Type None is not computed properly using DAL",
+        null, equalTo(strSequence));
+  }
+
+  /**
    * test Referenced Inventory Type with Sequence Type : Global
    */
 
@@ -63,6 +87,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   /**
    * test Referenced Inventory Type with Sequence Type : Per Organization
    */
+
   @Test
   public void testReferencedInventoryType_PerOrganization() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
@@ -107,7 +132,7 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
    */
 
   @Test
-  public void testReferencedInventoryType_Global_Sequence_a() {
+  public void testReferencedInventoryType_Global_WithSequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.GLOBAL, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
@@ -117,11 +142,38 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   }
 
   /**
+   * compute sequence for Referenced Inventory Type with Sequence Type : Global and Sequence not
+   * empty
+   */
+
+  @Test
+  public void testReferencedInventoryType_Global_ComputeSequence() {
+
+    final Sequence baseSequence = ReferencedInventoryTestUtils.createDocumentSequence(
+        CalculationMethod.AUTONUMERING, null, "0110491", null, 2821L, null, null,
+        ControlDigit.MODULE10, SequenceNumberLength.FIXED, 5L);
+    OBDal.getInstance().save(baseSequence);
+    final Sequence parentSequence = ReferencedInventoryTestUtils.createDocumentSequence(
+        CalculationMethod.SEQUENCE, baseSequence, "6", null, null, null, "000",
+        ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null);
+    OBDal.getInstance().save(parentSequence);
+
+    final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
+        .createReferencedInventoryType(SequenceType.GLOBAL, parentSequence);
+    OBDal.getInstance().save(refInvType);
+    OBDal.getInstance().flush();
+    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
+    assertThat("Referenced Inventory Search Key is not computed properly using DAL",
+        "601104910282130002", equalTo(refInv.getSearchKey()));
+  }
+
+  /**
    * test Referenced Inventory Type with Sequence Type : Global and Update Sequence as empty
    */
 
   @Test
-  public void testReferencedInventoryType_Global_Sequence_b() {
+  public void testReferencedInventoryType_Global_WithoutSequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(SequenceType.GLOBAL, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
@@ -138,9 +190,10 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
    * 
    * @return Sequence to be used for defined Referenced Inventory Type
    */
+
   private Sequence createSequence() {
     final Sequence sequence = ReferencedInventoryTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, null, null, null, ControlDigit.NONE,
+        CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null);
     OBDal.getInstance().save(sequence);
     return sequence;

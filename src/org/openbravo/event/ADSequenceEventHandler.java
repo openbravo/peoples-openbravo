@@ -67,13 +67,16 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     }
 
     Sequence sequence = (Sequence) event.getTargetInstance();
-    // validate sequence
-    validateSequencePrefixSuffix(sequence);
+
+    // validate sequence and its base sequence when it has Module 10 Control Digit
+    if (hasModule10Controldigit(sequence)) {
+      validateSequencePrefixSuffix(sequence);
+    }
 
     // validate base sequence
     Sequence baseSequence = sequence.getBaseSequence();
     if (baseSequence != null) {
-      validateBaseSequence(baseSequence, sequence);
+      validateBaseSequence(baseSequence);
     }
 
     // Clears Sequence Length if Sequence Number Length is not Fix Length
@@ -111,7 +114,13 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
         && (previousSuffix == null || !previousSuffix.equals(currentSuffix));
     boolean isControlDigitChanged = !(StringUtils.equals(previousControlDigit,
         currentControlDigit));
-    if ((isCurrentPrefixChanged || isCurrentSuffixChanged || isControlDigitChanged)) {
+
+    // Check when prefix or suffix is being changed
+    if ((isCurrentPrefixChanged || isCurrentSuffixChanged)) {
+      validateSequenceControlDigit(sequence);
+    }
+    // check when control digit is being changed
+    if (isControlDigitChanged) {
       validateSequencePrefixSuffix(sequence);
     }
 
@@ -124,12 +133,20 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     // Check whether sequence being used as current base sequence does not have sequence
     // as its base sequence to avoid infinite loop in the recursive check
     if (currentBaseSequence != null) {
-      validateBaseSequence(currentBaseSequence.getId(), sequence.getId());
+      checkForValidBaseSequence(currentBaseSequence.getId(), sequence.getId());
     }
 
-    // When base sequence or control digit is being changed
-    if (currentBaseSequence != null && (isCurrentBaseSequenceChanged || isControlDigitChanged)) {
-      validateBaseSequence(currentBaseSequence, sequence);
+    // When base sequence is being changed
+    if (currentBaseSequence != null && isCurrentBaseSequenceChanged) {
+      if (hasModule10Controldigit(sequence)) {
+        validateSequencePrefixSuffix(currentBaseSequence);
+      }
+      // validateBaseSequence(currentBaseSequence);
+    }
+
+    // When control digit is being changed
+    if (isControlDigitChanged) {
+      validateSequencePrefixSuffix(sequence);
     }
 
     // Clears Sequence Length if Sequence Number Length is not Fix Length
@@ -151,8 +168,8 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
   }
 
   /**
-   * This method validates whether base sequence has alphanumeric prefix/suffix that is being set in
-   * the parent sequence with control digit Module 10. Such base sequences are not allowed
+   * This method validates whether base sequence does not have alphanumeric prefix/suffix and
+   * recursively checks it base sequence does not have alphanumeric prefix/suffix.
    * 
    * @param baseSequence
    *          Input sequence that is set as Base Sequence in parent Sequence
@@ -160,21 +177,40 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    *          is parent Sequence of base Sequence set with Module 10 control digit
    */
 
-  private void validateBaseSequence(Sequence baseSequence, Sequence sequence) {
-    if (isPrefixOrSuffixAlphanumericForSequence(baseSequence) && (hasModule10Controldigit(sequence)
-        || isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(sequence.getId()))) {
+  private void validateBaseSequence(Sequence baseSequence) {
+    if (isPrefixOrSuffixAlphanumericForSequence(baseSequence)
+        && hasModule10Controldigit(baseSequence)) {
       throw new OBException(OBMessageUtils.messageBD("ValidateBaseSequence"));
     }
     // check recursively
     if (baseSequence.getBaseSequence() != null) {
-      validateBaseSequence(baseSequence.getBaseSequence(), baseSequence);
+      validateBaseSequence(baseSequence.getBaseSequence());
     }
   }
 
   /**
-   * This method validates if sequence has control digit as Module 10 or recursively checks whether
-   * sequence is used in parent sequence which has control digit as Module 10 , should not have
-   * alphanumeric prefix/suffix.
+   * This method validates if sequence has control digit as Module 10 and alphanumeric suffix /
+   * prefix and recursively checks whether parent sequence does has control digit as Module 10
+   *
+   * @param sequence
+   *          Input Sequence to validate
+   */
+
+  private void validateSequenceControlDigit(Sequence sequence) {
+    // Check whether sequence itself has Control Digit as Module 10
+    if (isPrefixOrSuffixAlphanumericForSequence(sequence) && hasModule10Controldigit(sequence)) {
+      throw new OBException(OBMessageUtils.messageBD("ValidateSequence"));
+    }
+    // Check recursively whether parent sequence has Module 10. Control Digit.
+    if (checkAllParentSequencesthatHasInputSequenceAsItsBaseSequence(sequence.getId())) {
+      throw new OBException(OBMessageUtils.messageBD("ValidateBaseSequence"));
+    }
+
+  }
+
+  /**
+   * This method validates sequence should not have alphanumeric prefix/suffix or recursively check
+   * its base sequences does not have alphanumeric prefix/suffix
    * 
    * @param sequence
    *          Input Sequence to validate
@@ -182,12 +218,11 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
 
   private void validateSequencePrefixSuffix(Sequence sequence) {
     if (isPrefixOrSuffixAlphanumericForSequence(sequence)) {
-      if (hasModule10Controldigit(sequence)) {
-        throw new OBException(OBMessageUtils.messageBD("ValidateSequence"));
-      }
-      if (checkAllParentSequencesthatHasInputSequenceAsItsBaseSequence(sequence.getId())) {
-        throw new OBException(OBMessageUtils.messageBD("ValidateBaseSequence"));
-      }
+      throw new OBException(OBMessageUtils.messageBD("ValidateSequence"));
+    }
+    // check recursively
+    if (sequence.getBaseSequence() != null) {
+      validateSequencePrefixSuffix(sequence.getBaseSequence());
     }
   }
 
@@ -207,37 +242,15 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
   }
 
   /**
-   * This method checks that whether sequence is set as base sequence in parent sequence whose
-   * control digit is set as Module 10 to compute control digit in this case base sequence should
-   * not have alphanumeric prefix/suffix.
-   * 
-   * @param sequenceId
-   *          Input Sequence ID
-   * @return Whether sequence is used as base sequence in Sequence with Module 10 control digit
-   */
-  private boolean isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(String sequenceId) {
-    final Sequence sequence = OBDal.getInstance().get(Sequence.class, sequenceId);
-    if (sequence != null && hasModule10Controldigit(sequence)) {
-      return true;
-    }
-    for (Sequence parentSequence : getAllParentSequence(sequenceId)) {
-      // check recursively
-      return isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(parentSequence.getId());
-    }
-    return false;
-  }
-
-  /**
-   * check recursively all parent sequences that has input sequence as its BaseSequence
+   * check recursively all parent sequences does not have Module 10 control digit
    */
   private boolean checkAllParentSequencesthatHasInputSequenceAsItsBaseSequence(String sequenceId) {
     for (Sequence parentSequence : getAllParentSequence(sequenceId)) {
-      if (isSeqUsedAsBaseSeqInParentSeqWithModule10ControlDigit(parentSequence.getId())) {
+      if (hasModule10Controldigit(parentSequence)) {
         // Return only when any one of the parent sequence found with Module 10 control digit
         return true;
       } else {
-        // Continue to traverse, until all parent sequences are checked.
-        continue;
+        return checkAllParentSequencesthatHasInputSequenceAsItsBaseSequence(parentSequence.getId());
       }
     }
     return false;
@@ -262,7 +275,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
    * Check whether sequence being used as base sequence or its subsequent base sequences does not
    * have sequence with id sequenceId as its base sequence to avoid infinite loop in recursive check
    */
-  private void validateBaseSequence(String currentBaseSequenceId, String sequenceId) {
+  private void checkForValidBaseSequence(String currentBaseSequenceId, String sequenceId) {
     if (StringUtils.equals(currentBaseSequenceId, sequenceId)) {
       throw new OBException(OBMessageUtils.messageBD("NotValidBaseSequence"));
     }
@@ -273,7 +286,7 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
     }
 
     // Recursive case: sequence has a base sequence
-    validateBaseSequence(sequence.getBaseSequence().getId(), sequenceId);
+    checkForValidBaseSequence(sequence.getBaseSequence().getId(), sequenceId);
   }
 
   /**

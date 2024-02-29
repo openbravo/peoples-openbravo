@@ -462,28 +462,7 @@ class ReferencedInventoryTestUtils {
         sequenceLength);
   }
 
-  static ReferencedInventoryType createRefInvTypeSequenceTypeNone() {
-    return createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-        SequenceType.NONE, null);
-  }
-
-  static ReferencedInventoryType createRefInvTypeSequenceTypeGlobal(Sequence sequence) {
-    return createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
-        SequenceType.GLOBAL, sequence);
-  }
-
-  static ReferencedInventoryType createRefInvTypeSequenceTypePerOrganization(Sequence sequence) {
-    Organization org = OBDal.getInstance()
-        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
-    // Create Referenced Inventory Type with Sequence Type as Per Organization
-    final ReferencedInventoryType refInvType = createReferencedInventoryType(org,
-        SequenceType.PER_ORGANIZATION, null);
-    // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
-    createReferencedInventoryTypeOrgSeq(refInvType, org, sequence);
-    return refInvType;
-  }
-
-  /*
+  /**
    * Creates Document Sequence
    */
 
@@ -509,7 +488,7 @@ class ReferencedInventoryTestUtils {
     return sequence;
   }
 
-  /*
+  /**
    * Creates Referenced Inventory Type
    */
 
@@ -526,7 +505,7 @@ class ReferencedInventoryTestUtils {
     return refInvType;
   }
 
-  /*
+  /**
    * Creates Referenced Inventory Type Organization Sequence when Sequence Type is Per Organization
    */
 

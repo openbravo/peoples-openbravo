@@ -23,21 +23,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.openbravo.base.provider.OBProvider;
 import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
-import org.openbravo.dal.core.OBContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.erpCommon.utility.Utility;
-import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryTypeOrgSequence;
 import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 
@@ -48,16 +43,16 @@ class SequenceTestUtils {
    * Creates Document Sequence to be used
    */
 
-  static Sequence createDocumentSequence(Organization org, CalculationMethod calculationMethod,
-      Sequence baseSequence, String prefix, Long startingNo, Long nextAssignedNumber,
-      Long incrementBy, String suffix, ControlDigit controlDigit,
+  static Sequence createDocumentSequence(Organization org, String sequenceName,
+      CalculationMethod calculationMethod, Sequence baseSequence, String prefix, Long startingNo,
+      Long nextAssignedNumber, Long incrementBy, String suffix, ControlDigit controlDigit,
       SequenceNumberLength sequenceNoLength, Long sequenceLength, boolean saveAndflush) {
     final Sequence anyExistingSequence = OBDal.getInstance()
         .getProxy(Sequence.class, "FF8080812C2ABFC6012C2B3BE4970094");
     // Create a Sequence
     final Sequence sequence = (Sequence) DalUtil.copy(anyExistingSequence);
     sequence.setOrganization(org);
-    sequence.setName(UUID.randomUUID().toString());
+    sequence.setName(sequenceName);
     sequence.setControlDigit(controlDigit.value);
     sequence.setCalculationMethod(calculationMethod.value);
     sequence.setPrefix(prefix);
@@ -73,6 +68,20 @@ class SequenceTestUtils {
       OBDal.getInstance().flush(); // Required to lock sequence at db level later on
     }
     return sequence;
+  }
+
+  /**
+   * create document sequence with default organization QA_SPAIN_ORG_ID
+   */
+
+  public static Sequence createDocumentSequence(String sequenceName,
+      CalculationMethod calculationMethod, Sequence baseSequence, String prefix, Long startingNo,
+      Long nextAssignedNumber, Long incrementBy, String suffix, ControlDigit controlDigit,
+      SequenceNumberLength sequenceNumberLength, Long sequenceLength, boolean saveAndflush) {
+    Organization org = OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID);
+    return createDocumentSequence(org, sequenceName, calculationMethod, baseSequence, prefix,
+        startingNo, nextAssignedNumber, incrementBy, suffix, controlDigit, sequenceNumberLength,
+        sequenceLength, saveAndflush);
   }
 
   /**
@@ -104,65 +113,27 @@ class SequenceTestUtils {
    *         inventory type
    */
 
-  public static Sequence setUpChildSequence(Organization org, ControlDigit controlDigit,
-      CalculationMethod calculationMethod, String prefix, Long startingNo, Long nextAssignedNumber,
-      Long incrementBy, String suffix, SequenceNumberLength sequenceNoLength, Long sequenceLength,
+  public static Sequence setUpChildSequence(Organization org, String sequenceName,
+      ControlDigit controlDigit, CalculationMethod calculationMethod, String prefix,
+      Long startingNo, Long nextAssignedNumber, Long incrementBy, String suffix,
+      SequenceNumberLength sequenceNoLength, Long sequenceLength,
       boolean childSequenceHasBaseSequence) {
 
     if (childSequenceHasBaseSequence) {
-      Sequence childSequence = createDocumentSequence(org, calculationMethod, null, prefix,
-          startingNo, nextAssignedNumber, incrementBy, suffix, controlDigit, sequenceNoLength,
-          sequenceLength, true);
-      return createDocumentSequence(org, CalculationMethod.SEQUENCE, childSequence, null, null,
-          null, null, null, ControlDigit.NONE, sequenceNoLength, sequenceLength, true);
+      Sequence childSequence = createDocumentSequence(org, sequenceName, calculationMethod, null,
+          prefix, startingNo, nextAssignedNumber, incrementBy, suffix, controlDigit,
+          sequenceNoLength, sequenceLength, true);
+      return createDocumentSequence(org, sequenceName, CalculationMethod.SEQUENCE, childSequence,
+          null, null, null, null, null, ControlDigit.NONE, sequenceNoLength, sequenceLength, true);
     }
-    return createDocumentSequence(org, calculationMethod, null, prefix, startingNo,
+    return createDocumentSequence(org, sequenceName, calculationMethod, null, prefix, startingNo,
         nextAssignedNumber, incrementBy, suffix, controlDigit, sequenceNoLength, sequenceLength,
         true);
   }
 
-  /*
-   * Creates Referenced Inventory Type
+  /**
+   * Create Document Type using
    */
-
-  static ReferencedInventoryType createReferencedInventoryType(SequenceType sequenceType,
-      Sequence sequence) {
-    final ReferencedInventoryType refInvType = OBProvider.getInstance()
-        .get(ReferencedInventoryType.class);
-    refInvType.setClient(OBContext.getOBContext().getCurrentClient());
-    refInvType.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
-    refInvType.setSequenceType(sequenceType.value);
-    refInvType.setSequence(sequence);
-    refInvType.setName(UUID.randomUUID().toString());
-    refInvType.setShared(true);
-    return refInvType;
-  }
-
-  /*
-   * Creates Referenced Inventory Type Organization Sequence when Sequence Type is Per Organization
-   */
-
-  static ReferencedInventoryTypeOrgSequence createReferencedInventoryTypeOrgSeq(
-      ReferencedInventoryType refInvType, Sequence parentSequence) {
-    final ReferencedInventoryTypeOrgSequence refInvTypeOrgSeq = OBProvider.getInstance()
-        .get(ReferencedInventoryTypeOrgSequence.class);
-    refInvTypeOrgSeq.setClient(OBContext.getOBContext().getCurrentClient());
-    refInvTypeOrgSeq
-        .setOrganization(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID));
-    refInvTypeOrgSeq.setReferencedInventoryType(refInvType);
-    refInvTypeOrgSeq.setSequence(parentSequence);
-    return refInvTypeOrgSeq;
-  }
-
-  public static Sequence createDocumentSequence(CalculationMethod calculationMethod,
-      Sequence baseSequence, String prefix, Long startingNo, Long nextAssignedNumber,
-      Long incrementBy, String suffix, ControlDigit controlDigit,
-      SequenceNumberLength sequenceNumberLength, Long sequenceLength, boolean saveAndflush) {
-    Organization org = OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID);
-    return createDocumentSequence(org, calculationMethod, baseSequence, prefix, startingNo,
-        nextAssignedNumber, incrementBy, suffix, controlDigit, sequenceNumberLength, sequenceLength,
-        saveAndflush);
-  }
 
   public static DocumentType createDocumentType(String docTypeId, Sequence sequence) {
     final DocumentType anyExistingDocType = OBDal.getInstance()
@@ -186,8 +157,8 @@ class SequenceTestUtils {
 
   public static Sequence createBaseSequence(CalculationMethod calculationMethod, String prefix,
       SequenceNumberLength sequenceNumberLength, Long sequenceLength) {
-    return createDocumentSequence(calculationMethod, null, prefix, null, null, null, null,
-        ControlDigit.NONE, sequenceNumberLength, sequenceLength, false);
+    return createDocumentSequence(UUID.randomUUID().toString(), calculationMethod, null, prefix,
+        null, null, null, null, ControlDigit.NONE, sequenceNumberLength, sequenceLength, false);
   }
 
   /**
@@ -197,8 +168,9 @@ class SequenceTestUtils {
    */
 
   public static Sequence createParentSequence(Sequence baseSequence) {
-    return createDocumentSequence(CalculationMethod.SEQUENCE, baseSequence, "06", null, null, null,
-        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
+    return createDocumentSequence(UUID.randomUUID().toString(), CalculationMethod.SEQUENCE,
+        baseSequence, "06", null, null, null, null, ControlDigit.MODULE10,
+        SequenceNumberLength.VARIABLE, null, false);
   }
 
   /**
@@ -209,8 +181,9 @@ class SequenceTestUtils {
    */
   public static Sequence createSequence(SequenceNumberLength sequenceNumberLength,
       Long sequenceLength) {
-    return createDocumentSequence(CalculationMethod.AUTONUMERING, null, "0110491", null, null, null,
-        null, ControlDigit.NONE, sequenceNumberLength, sequenceLength, false);
+    return createDocumentSequence(UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING,
+        null, "0110491", null, null, null, null, ControlDigit.NONE, sequenceNumberLength,
+        sequenceLength, false);
   }
 
   /**
@@ -220,8 +193,8 @@ class SequenceTestUtils {
    */
   public static Sequence createSequence(CalculationMethod calculationMethod, Sequence baseSequence,
       String prefix, String suffix, ControlDigit controlDigit) {
-    return createDocumentSequence(calculationMethod, baseSequence, prefix, null, null, null, suffix,
-        controlDigit, SequenceNumberLength.VARIABLE, null, false);
+    return createDocumentSequence(UUID.randomUUID().toString(), calculationMethod, baseSequence,
+        prefix, null, null, null, suffix, controlDigit, SequenceNumberLength.VARIABLE, null, false);
   }
 
   /**
