@@ -37,7 +37,9 @@ import org.openbravo.service.db.CallStoredProcedure;
 import org.openbravo.service.db.DalConnectionProvider;
 
 class SequenceTestUtils {
-  static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
+  public static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
+  public static final String DOC_TYPE_ID = "FF8080812C2ABFC6012C2B3BDF4D005A";
+  public static final String TABLE_NAME = "C_Order";
 
   /*
    * Creates Document Sequence to be used
@@ -132,7 +134,7 @@ class SequenceTestUtils {
   }
 
   /**
-   * Create Document Type using
+   * Create Document Type with Document Sequence
    */
 
   public static DocumentType createDocumentType(String docTypeId, Sequence sequence) {

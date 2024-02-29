@@ -70,6 +70,10 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
   }
 
+  /**
+   * compute sequence for Referenced Inventory Type with Sequence Type : Per Organization and
+   * Sequence exists with base sequence
+   */
   @Test
   public void testReferencedInventoryTypeOrgSequence_DocumentSequence() {
     final Sequence baseSequence = ReferencedInventoryTestUtils.createDocumentSequence(

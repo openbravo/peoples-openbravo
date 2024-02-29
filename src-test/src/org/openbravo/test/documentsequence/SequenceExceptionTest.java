@@ -20,13 +20,17 @@ package org.openbravo.test.documentsequence;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+
+import java.util.UUID;
 
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
+import org.openbravo.erpCommon.utility.SequenceUtil;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
@@ -88,7 +92,7 @@ public class SequenceExceptionTest extends SequenceTest {
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
   }
 
-  /** Alphanumeric prefix */
+  /** Test Sequence with Alphanumeric prefix and Module 10 control digit */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_AlphanumericPrefix() {
     final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
@@ -99,7 +103,7 @@ public class SequenceExceptionTest extends SequenceTest {
         containsString(OBMessageUtils.messageBD("ValidateSequence")));
   }
 
-  /** Alphanumeric suffix */
+  /** Test Sequence with Alphanumeric suffix and Module 10 control digit */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_AlphanumericSuffix() {
     final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
@@ -253,7 +257,8 @@ public class SequenceExceptionTest extends SequenceTest {
   }
 
   /**
-   * Add Level 3 Sequences verification
+   * Add Level 3 Sequences to check Base sequence with Alphanumeric prefix or suffix in first level
+   * disallows to create Sequence with its parent as base sequence and control digit module 10.
    */
   @Test
   public void testSequenceException_ControlDigitModule10_3Level() {
@@ -272,5 +277,52 @@ public class SequenceExceptionTest extends SequenceTest {
     assertThat(exception.getMessage(),
         containsString(OBMessageUtils.messageBD("ValidateSequence")));
 
+  }
+
+  /**
+   * Compute document no using SequenceUtil with invalid input
+   */
+
+  @Test
+  public void utilitySequenceTest_SequenceUtil_InvalidSequenceId() {
+
+    assertThat("Sequence with invalid information is not computed correctly using SequenceUtil",
+        null, equalTo(SequenceUtil.getDocumentNo(false, null)));
+  }
+
+  /**
+   * SequenceTestUtils - AD_SEQUENCE_DOCUMENTNO with invalid input
+   */
+
+  @Test
+  public void utilitySequenceTest_AD_SEQUENCE_DOCUMENTNO_InvalidInput() {
+    assertThat(
+        "Sequence with invalid information is not computed correctly using AD_SEQUENCE_DOCUMENTNO",
+        null, equalTo(SequenceTestUtils.getDocumentNo(UUID.randomUUID().toString(), false,
+            "AD_SEQUENCE_DOCUMENTNO")));
+  }
+
+  /**
+   * Utility: AD_SEQUENCE_DOC with invalid input
+   * 
+   */
+  @Test
+  public void utilitySequenceTest_AD_SEQUENCE_DOC_InvalidInput() {
+    assertThat(
+        "Sequence with invalid information is not computed correctly using Utility - AD_SEQUENCE_DOC",
+        "", equalTo(SequenceTestUtils.getDocumentNo(UUID.randomUUID().toString(),
+            UUID.randomUUID().toString(), false)));
+  }
+
+  /**
+   * Utility: AD_SEQUENCE_DOCTYPE with invalid input
+   */
+
+  @Test
+  public void utilitySequenceTest_AD_SEQUENCE_DOCTYPE_InvalidInput() {
+    assertThat(
+        "Sequence with invalid information is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
+        "", equalTo(SequenceTestUtils.getDocumentNo("", SequenceTestUtils.TABLE_NAME, "",
+            UUID.randomUUID().toString(), false, false)));
   }
 }

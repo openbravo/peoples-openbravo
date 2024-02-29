@@ -32,182 +32,267 @@ import org.openbravo.model.common.enterprise.DocumentType;
 
 public class SequenceUtilityTest extends SequenceTest {
 
-  private static final String DOC_TYPE_ID = "FF8080812C2ABFC6012C2B3BDF4D005A";
-  private static final String TABLE_NAME = "C_Order";
-
+  /**
+   * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : None,
+   * NextAssignedNo: 1000000L, SequenceNumberLength: Variable,
+   * 
+   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   */
   @Test
-  public void utilitySequenceTest_a() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
-        CalculationMethod.AUTONUMERING, null, null, null, 1000000L, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
-    // Create a document Type
-    final DocumentType docType = SequenceTestUtils.createDocumentType(DOC_TYPE_ID, sequence);
-    assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE for AutoNumbering calculation method, next Assigned No. and Control Digit - None",
-        "1000000", equalTo(
-            SequenceTestUtils.getDocumentNo("", TABLE_NAME, "", docType.getId(), false, false)));
-  }
+  public void utilitySequenceTest_NextAssignedNo() {
 
-  @Test
-  public void utilitySequenceTest_aa() {
-    String tableName = TABLE_NAME + "_1";
+    String tableName = SequenceTestUtils.TABLE_NAME + "_1";
+
     final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
         CalculationMethod.AUTONUMERING, null, null, null, 1000000L, null, null, ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null, true);
+
     assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOC for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : None, "
+            + "NextAssignedNo: 1000000L, SequenceNumberLength: Variable,"
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOC",
         "1000000",
         equalTo(SequenceTestUtils.getDocumentNo(sequence.getClient().getId(), tableName, false)));
-  }
 
-  @Test
-  public void utilitySequenceTest_b() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
-        CalculationMethod.AUTONUMERING, null, "SUT/", null, 1000000L, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
     // Create a document Type
-    final DocumentType docType = SequenceTestUtils.createDocumentType(DOC_TYPE_ID, sequence);
+    final DocumentType docType = SequenceTestUtils.createDocumentType(SequenceTestUtils.DOC_TYPE_ID,
+        sequence);
+
     assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE for AutoNumbering calculation method, prefix, next Assigned No and Control Digit - None",
-        "SUT/1000000", equalTo(
-            SequenceTestUtils.getDocumentNo("", TABLE_NAME, "", docType.getId(), false, false)));
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : None, "
+            + "NextAssignedNo: 1000000L, SequenceNumberLength: Variable, "
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
+        "1000000", equalTo(SequenceTestUtils.getDocumentNo("", SequenceTestUtils.TABLE_NAME, "",
+            docType.getId(), false, false)));
   }
 
+  /**
+   * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : None,
+   * NextAssignedNo: 1000000L, SequenceNumberLength: Variable, Prefix: SUT/
+   * 
+   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   */
+
   @Test
-  public void utilitySequenceTest_bb() {
-    String tableName = TABLE_NAME + "_1";
+  public void utilitySequenceTest_Prefix() {
+
+    String tableName = SequenceTestUtils.TABLE_NAME + "_1";
+
     final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
         CalculationMethod.AUTONUMERING, null, "SUT/", null, 1000000L, null, null, ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null, true);
+
     assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOC for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : None, "
+            + "Prefix: SUT/, NextAssignedNo: 1000000L, SequenceNumberLength: Variable,"
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOC",
         "SUT/1000000",
         equalTo(SequenceTestUtils.getDocumentNo(sequence.getClient().getId(), tableName, false)));
-  }
 
-  @Test
-  public void utilitySequenceTest_c() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
-        CalculationMethod.AUTONUMERING, null, null, null, 1000000L, null, "000", ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
     // Create a document Type
-    final DocumentType docType = SequenceTestUtils.createDocumentType(DOC_TYPE_ID, sequence);
+    final DocumentType docType = SequenceTestUtils.createDocumentType(SequenceTestUtils.DOC_TYPE_ID,
+        sequence);
+
     assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE for AutoNumbering calculation method, suffix, next Assigned No and Control Digit - None",
-        "1000000000", equalTo(
-            SequenceTestUtils.getDocumentNo("", TABLE_NAME, "", docType.getId(), false, false)));
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : None, "
+            + "Prefix: SUT/, NextAssignedNo: 1000000L, SequenceNumberLength: Variable,"
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
+        "SUT/1000000", equalTo(SequenceTestUtils.getDocumentNo("", SequenceTestUtils.TABLE_NAME, "",
+            docType.getId(), false, false)));
+
   }
 
-  @Test
-  public void utilitySequenceTest_cc() {
-    String tableName = TABLE_NAME + "_1";
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, null, null, 1000000L, null, "000", ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
-    assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOC for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
-        "1000000000",
-        equalTo(SequenceTestUtils.getDocumentNo(sequence.getClient().getId(), tableName, false)));
-  }
+  /**
+   * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : None,
+   * NextAssignedNo: 1000000L, SequenceNumberLength: Variable, Prefix: 6, Suffix: 000
+   * 
+   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   */
 
   @Test
-  public void utilitySequenceTest_d() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
-        CalculationMethod.AUTONUMERING, null, "SUT/", null, 1000000L, null, "000",
-        ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
-    // Create a document Type
-    final DocumentType docType = SequenceTestUtils.createDocumentType(DOC_TYPE_ID, sequence);
-    assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - None",
-        "SUT/1000000000", equalTo(
-            SequenceTestUtils.getDocumentNo("", TABLE_NAME, "", docType.getId(), false, false)));
-  }
+  public void utilitySequenceTest_PrefixSuffix() {
 
-  @Test
-  public void utilitySequenceTest_dd() {
-    String tableName = TABLE_NAME + "_1";
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, "SUT/", null, 1000000L, null, "000",
-        ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
-    assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOC for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
-        "SUT/1000000000",
-        equalTo(SequenceTestUtils.getDocumentNo(sequence.getClient().getId(), tableName, false)));
-  }
+    String tableName = SequenceTestUtils.TABLE_NAME + "_1";
 
-  @Test
-  public void utilitySequenceTest_e() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
-        CalculationMethod.AUTONUMERING, null, "6", null, 1000000L, null, "000",
-        ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
-    // Create a document Type
-    final DocumentType docType = SequenceTestUtils.createDocumentType(DOC_TYPE_ID, sequence);
-    assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
-        "610000000001", equalTo(
-            SequenceTestUtils.getDocumentNo("", TABLE_NAME, "", docType.getId(), false, false)));
-  }
-
-  @Test
-  public void utilitySequenceTest_ee() {
-    String tableName = TABLE_NAME + "_1";
     final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
         CalculationMethod.AUTONUMERING, null, "6", null, 1000000L, null, "000",
         ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
+
     assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOC for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : None, "
+            + "Prefix: 6, Suffix: 000, NextAssignedNo: 1000000L, SequenceNumberLength: Variable,"
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOC",
         "610000000001",
         equalTo(SequenceTestUtils.getDocumentNo(sequence.getClient().getId(), tableName, false)));
-  }
 
-  @Test
-  public void utilitySequenceTest_f() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
-        CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
     // Create a document Type
-    final DocumentType docType = SequenceTestUtils.createDocumentType(DOC_TYPE_ID, sequence);
+    final DocumentType docType = SequenceTestUtils.createDocumentType(SequenceTestUtils.DOC_TYPE_ID,
+        sequence);
     assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - None",
-        "1", equalTo(
-            SequenceTestUtils.getDocumentNo("", TABLE_NAME, "", docType.getId(), false, false)));
-
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : None, "
+            + "Prefix: 6, Suffix: 000, NextAssignedNo: 1000000L, SequenceNumberLength: Variable,"
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
+        "610000000001", equalTo(SequenceTestUtils.getDocumentNo("", SequenceTestUtils.TABLE_NAME,
+            "", docType.getId(), false, false)));
   }
 
+  /**
+   * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : None, No
+   * NextAssignedNo, No Prefix, No Suffix, SequenceNumberLength: Variable.
+   * 
+   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   */
+
   @Test
-  public void utilitySequenceTest_ff() {
-    String tableName = TABLE_NAME + "_1";
+  public void utilitySequenceTest_NoPrefixSuffixNextAssignedNo_ControlDigitNone() {
+
+    String tableName = SequenceTestUtils.TABLE_NAME + "_1";
+
     final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
         CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.NONE,
         SequenceNumberLength.VARIABLE, null, true);
+
     assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOC for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : None, "
+            + "No Prefix, Suffix, NextAssignedNo, SequenceNumberLength: Variable,"
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOC",
         "1",
         equalTo(SequenceTestUtils.getDocumentNo(sequence.getClient().getId(), tableName, false)));
-  }
 
-  @Test
-  public void utilitySequenceTest_g() {
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
-        CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.MODULE10,
-        SequenceNumberLength.VARIABLE, null, true);
     // Create a document Type
-    final DocumentType docType = SequenceTestUtils.createDocumentType(DOC_TYPE_ID, sequence);
+    final DocumentType docType = SequenceTestUtils.createDocumentType(SequenceTestUtils.DOC_TYPE_ID,
+        sequence);
     assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
-        "17", equalTo(
-            SequenceTestUtils.getDocumentNo("", TABLE_NAME, "", docType.getId(), false, false)));
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : None, "
+            + "No Prefix, Suffix, NextAssignedNo, SequenceNumberLength: Variable,"
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
+        "1", equalTo(SequenceTestUtils.getDocumentNo("", SequenceTestUtils.TABLE_NAME, "",
+            docType.getId(), false, false)));
+
   }
 
+  /**
+   * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : Module 10, No
+   * NextAssignedNo, No Prefix, No Suffix, SequenceNumberLength: Variable.
+   * 
+   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   */
+
   @Test
-  public void utilitySequenceTest_gg() {
-    String tableName = TABLE_NAME + "_1";
+  public void utilitySequenceTest_NoPrefixSuffixNextAssignedNo_ControlDigitModule10() {
+
+    String tableName = SequenceTestUtils.TABLE_NAME + "_1";
+
     final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
         CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.MODULE10,
         SequenceNumberLength.VARIABLE, null, true);
+
     assertThat(
-        "Sequence is not computed correctly using Utility - AD_SEQUENCE_DOC for AutoNumbering calculation method, prefix, suffix, next Assigned No and Control Digit - Module 10",
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : Module 10, "
+            + "No Prefix, Suffix, NextAssignedNo, SequenceNumberLength: Variable,"
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOC",
         "17",
         equalTo(SequenceTestUtils.getDocumentNo(sequence.getClient().getId(), tableName, false)));
+
+    // Create a document Type
+    final DocumentType docType = SequenceTestUtils.createDocumentType(SequenceTestUtils.DOC_TYPE_ID,
+        sequence);
+
+    assertThat(
+        "Sequence with CalculationMethod: Auto numbering, Control Digit : Module 10, "
+            + "No Prefix, Suffix, NextAssignedNo, SequenceNumberLength: Variable,"
+            + "SequenceLength: Null is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
+        "17", equalTo(SequenceTestUtils.getDocumentNo("", SequenceTestUtils.TABLE_NAME, "",
+            docType.getId(), false, false)));
   }
+
+  /**
+   * 
+   * 2 Level
+   * 
+   * Test with Base Sequence having CalculationMethod: Auto numbering, Control Digit : Module10,
+   * NextAssignedNo: 2821L, SequenceNumberLength: Fixed, Sequence Length: 5L, Prefix: 0110491.
+   * 
+   * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
+   * Digit : Module10, SequenceNumberLength: Variable, Prefix: 6, Suffix: 000
+   * 
+   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   */
+
+  @Test
+  public void utilitySequenceTest_PrefixSuffixNextAssignedNo_ControlDigitModule10_Level2() {
+
+    String tableName = SequenceTestUtils.TABLE_NAME + "_1";
+
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, 2821L,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.FIXED, 5L, true);
+
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        "DocumentNo_" + tableName, CalculationMethod.SEQUENCE, baseSequence, "6", null, null, null,
+        "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
+
+    assertThat(
+        "Sequence with base sequence is not computed correctly using Utility - AD_SEQUENCE_DOC",
+        "601104910282130002", equalTo(
+            SequenceTestUtils.getDocumentNo(parentSequence.getClient().getId(), tableName, false)));
+
+    // Create a document Type
+    final DocumentType docType = SequenceTestUtils.createDocumentType(SequenceTestUtils.DOC_TYPE_ID,
+        parentSequence);
+
+    assertThat(
+        "Sequence with base sequence is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
+        "601104910282130002", equalTo(SequenceTestUtils.getDocumentNo("",
+            SequenceTestUtils.TABLE_NAME, "", docType.getId(), false, false)));
+  }
+
+  /**
+   * 
+   * 3 Level Sequences
+   * 
+   * Test with Sequence having CalculationMethod: Auto numbering, Control Digit : Module10,
+   * NextAssignedNo: 5000L, SequenceNumberLength: Variable, Prefix: 3, Suffix: 7
+   * 
+   * Base Sequence having CalculationMethod: Based On Sequence, Sequence as above, Control Digit :
+   * Module10, SequenceNumberLength: Variable, Prefix: 8, Suffix: 2
+   * 
+   * Parent Sequence having CalculationMethod: Based On Sequence, Base Sequence as above, Control
+   * Digit : Module10, SequenceNumberLength: Variable, Prefix: 9, Suffix: 1
+   * 
+   * Utility: AD_SEQUENCE_DOCTYPE, AD_SEQUENCE_DOC
+   */
+
+  @Test
+  public void utilitySequenceTest_PrefixSuffixNextAssignedNo_ControlDigitModule10_Level3() {
+
+    String tableName = SequenceTestUtils.TABLE_NAME + "_1";
+
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
+        CalculationMethod.AUTONUMERING, null, "3", null, 5000L, null, "7", ControlDigit.NONE,
+        SequenceNumberLength.VARIABLE, null, true);
+
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence, "8", null, null, null,
+        "2", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
+
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        "DocumentNo_" + tableName, CalculationMethod.SEQUENCE, baseSequence, "9", null, null, null,
+        "1", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
+
+    assertThat(
+        "Sequence with base sequence is not computed correctly using Utility - AD_SEQUENCE_DOC",
+        "983500072510", equalTo(
+            SequenceTestUtils.getDocumentNo(parentSequence.getClient().getId(), tableName, false)));
+
+    // Create a document Type
+    final DocumentType docType = SequenceTestUtils.createDocumentType(SequenceTestUtils.DOC_TYPE_ID,
+        parentSequence);
+
+    assertThat(
+        "Sequence with base sequence is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
+        "983500072510", equalTo(SequenceTestUtils.getDocumentNo("", SequenceTestUtils.TABLE_NAME,
+            "", docType.getId(), false, false)));
+  }
+
 }

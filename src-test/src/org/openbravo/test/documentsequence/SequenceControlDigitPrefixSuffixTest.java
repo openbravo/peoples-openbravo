@@ -39,7 +39,7 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
         sequence != null);
   }
 
-  /** Numeric prefix */
+  /** Sequence with Control Digit Module 10, Numeric prefix */
   @Test
   public void testSequenceControlDigit_Module10_NumericPrefix() {
     final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
@@ -49,7 +49,7 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
         sequence != null);
   }
 
-  /** Numeric suffix */
+  /** Sequence with Control Digit Module 10, Numeric suffix */
   @Test
   public void testSequenceControlDigit_Module10_NumericSuffix() {
     final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
