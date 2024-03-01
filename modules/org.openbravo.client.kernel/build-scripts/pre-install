@@ -19,13 +19,13 @@
 NODE_VERSION=$(node -v)
 NPM_VERSION=$(npm -v)
 
-if [[ ! "$NODE_VERSION" =~ ^v(16|18|20)[.].*$ ]]; then
-  echo "Node version $NODE_VERSION not supported. Only Node 16.x, 18.x and 20.x are supported"
+if [[ ! "$NODE_VERSION" =~ ^v(18|20)[.].*$ ]]; then
+  echo "Node version $NODE_VERSION not supported. Only Node 18.x and 20.x are supported"
   exit 1
 fi
 
-if [[ ! "$NPM_VERSION" =~ ^(8|9|10)[.].*$ ]]; then
-  echo "npm version $NPM_VERSION not supported. Only npm 8.x, 9.x and 10.x are supported"
+if [[ ! "$NPM_VERSION" =~ ^(9|10)[.].*$ ]]; then
+  echo "npm version $NPM_VERSION not supported. Only npm 9.x and 10.x are supported"
   exit 1
 fi
 
