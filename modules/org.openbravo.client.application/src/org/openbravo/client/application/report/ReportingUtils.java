@@ -11,7 +11,7 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2014-2022 Openbravo SLU
+ * All portions are Copyright (C) 2014-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
@@ -20,6 +20,7 @@ package org.openbravo.client.application.report;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
@@ -66,6 +67,7 @@ import net.sf.jasperreports.engine.export.JRXlsAbstractExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
+import net.sf.jasperreports.engine.util.JRSaver;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 import net.sf.jasperreports.export.SimpleCsvReportConfiguration;
 import net.sf.jasperreports.export.SimpleExporterInput;
@@ -1061,6 +1063,36 @@ public class ReportingUtils {
    */
   public static JasperReport compileReport(String jasperFilePath) throws JRException {
     return compiledReportManager.compileReport(jasperFilePath, null, null);
+  }
+
+  /**
+   * Compiles a report design content generating a JasperReport object.
+   *
+   * @param reportData
+   *          The report content
+   * @return A JasperReport object with the compiled report.
+   * @throws JRException
+   *           In case there is any error compiling the report an exception is thrown with the error
+   *           message.
+   */
+  public static JasperReport compileReportData(String reportData) throws JRException {
+    return compiledReportManager.compileReportData(reportData, null);
+  }
+
+  /**
+   * Compiles a report design content placing the result in the file specified by the given Path.
+   *
+   * @param reportData
+   *          The report content
+   * @param file
+   *          The path of the file to place the compiled report design into
+   * @throws JRException
+   *           In case there is any error compiling the report an exception is thrown with the error
+   *           message.
+   */
+  public static void compileReportDataToFile(String reportData, Path file) throws JRException {
+    JasperReport report = compileReportData(reportData);
+    JRSaver.saveObject(report, file.toString());
   }
 
   /**

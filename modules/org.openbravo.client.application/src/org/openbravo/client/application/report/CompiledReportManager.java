@@ -11,13 +11,17 @@
  * under the License.
  * The Original Code is Openbravo ERP.
  * The Initial Developer of the Original Code is Openbravo SLU
- * All portions are Copyright (C) 2018 Openbravo SLU
+ * All portions are Copyright (C) 2018-2024 Openbravo SLU
  * All Rights Reserved.
  * Contributor(s):  ______________________________________.
  ************************************************************************
  */
 package org.openbravo.client.application.report;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,6 +36,7 @@ import org.openbravo.database.ConnectionProvider;
 import org.openbravo.service.db.DalConnectionProvider;
 
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;
 
 /**
@@ -71,6 +76,24 @@ class CompiledReportManager {
     return jReport;
   }
 
+  JasperReport compileReportData(String reportData, String language) throws JRException {
+    CompiledReport compiledReport = getCompiledReport(reportData, language);
+    if (compiledReport != null) {
+      log.trace("Retrieving compiled report from cache: {}", reportData);
+      return compiledReport.mainReport;
+    }
+    log.trace("Compiling report: {}", reportData);
+    JasperReport jReport;
+    try (InputStream is = new ByteArrayInputStream(reportData.getBytes(StandardCharsets.UTF_8))) {
+      jReport = JasperCompileManager.compileReport(is);
+    } catch (IOException ex) {
+      log.error("Error reading report stream, report data: {}", reportData);
+      throw new JRException(ex);
+    }
+    putCompiledReport(reportData, language, new CompiledReport(jReport));
+    return jReport;
+  }
+
   JasperReport compileReportWithSubreports(String reportPath, String language,
       Map<String, Object> parameters, ConnectionProvider subRepConnProvider) throws JRException {
     JasperReport jReport;
@@ -94,8 +117,8 @@ class CompiledReportManager {
     return jReport;
   }
 
-  private CompiledReport getCompiledReport(String reportPath, String language) {
-    return compiledReports.get(getKey(reportPath, language));
+  private CompiledReport getCompiledReport(String reportId, String language) {
+    return compiledReports.get(getKey(reportId, language));
   }
 
   private void putCompiledReport(String reportPath, String language,
@@ -106,11 +129,11 @@ class CompiledReportManager {
     compiledReports.putIfAbsent(getKey(reportPath, language), compiledReport);
   }
 
-  private String getKey(String reportPath, String language) {
+  private String getKey(String reportId, String language) {
     if (language == null) {
-      return reportPath;
+      return reportId;
     }
-    return reportPath + "-" + language;
+    return reportId + "-" + language;
   }
 
   Set<String> getCachedReports() {
