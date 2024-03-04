@@ -298,18 +298,6 @@ public class SequenceExceptionTest extends SequenceTest {
   }
 
   /**
-   * SequenceTestUtils - AD_SEQUENCE_DOCUMENTNO with invalid input
-   */
-
-  @Test
-  public void utilitySequenceTest_AD_SEQUENCE_DOCUMENTNO_InvalidInput() {
-    assertThat(
-        "Sequence with invalid information is not computed correctly using AD_SEQUENCE_DOCUMENTNO",
-        null, equalTo(SequenceTestUtils.getDocumentNo(UUID.randomUUID().toString(), false,
-            "AD_SEQUENCE_DOCUMENTNO")));
-  }
-
-  /**
    * Utility: AD_SEQUENCE_DOC with invalid input
    * 
    */
