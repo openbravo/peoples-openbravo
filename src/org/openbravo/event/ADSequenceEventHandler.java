@@ -41,14 +41,15 @@ import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.model.ad.utility.Sequence;
 
 /**
- * This class validates that sequence being set as base sequence should not have alphanumeric
- * prefix/suffix values if it is configured in parent sequence having control digit as Module 10.
+ * This class validates recursively that sequence being set as base sequence should not have
+ * alphanumeric prefix/suffix values if it is configured in parent sequence having control digit as
+ * Module 10.
  * 
  * Alternatively sequence that is already used as base sequence should not have alphanumeric prefix
  * and suffix values when the control digit is calculated using Module 10 algorithm in its parent
  * sequence.
  * 
- * Validates that sequences with control digit Module 10 should not have alphanumeric prefix/suffix.
+ * Clear some fields based on the status of another field
  * 
  */
 class ADSequenceEventHandler extends EntityPersistenceEventObserver {
@@ -132,7 +133,12 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
   }
 
   /**
-   * Ensure configuration allows to perform Module 10 control digit
+   * Ensure configuration allows to perform Module 10 control digit.
+   * 
+   * It recursively validates the MOD10 configuration only if this sequence or any base sequence in
+   * the child tree defines alphanumeric prefix/suffix. In this case it validates recursively that
+   * this sequence, or any other sequence whose base parent is this sequence, is not configured to
+   * work with MOD10 control digit.
    */
   private void validateModule10Configuration(final EntityPersistenceEvent event) {
     if (isMod10ControlDigit(event) && isAlphanumericPrefixOrSuffix(event)) {
