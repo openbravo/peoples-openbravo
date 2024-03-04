@@ -21050,9 +21050,8 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <AD_CLIENT_ID><![CDATA[0]]></AD_CLIENT_ID>
 <!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
-<!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <VALUE><![CDATA[ValidateBaseSequence]]></VALUE>
-<!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <MSGTEXT><![CDATA[Alphanumeric prefix/suffix are not allowed for Sequence used as Base Sequence in a Sequence having Module 10 control digit.]]></MSGTEXT>
-<!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <MSGTIP><![CDATA[Alphanumeric prefix/suffix are not allowed for Sequence used as Base Sequence in a Sequence having Module 10 control digit.]]></MSGTIP>
+<!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <VALUE><![CDATA[ValidateBaseSequenceMod10]]></VALUE>
+<!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <MSGTEXT><![CDATA[The sequence %0 can't have an alphanumeric prefix or suffix as it is designated (either directly or indirectly) as the base sequence for %1. The configuration of %1 includes a Module 10 Control Digit, which prohibits the use of alphanumeric characters.]]></MSGTEXT>
 <!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <MSGTYPE><![CDATA[E]]></MSGTYPE>
 <!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--66A3ECCD998C45ABA79A840E3DDD3A3B-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>
@@ -23112,8 +23111,7 @@ You can upgrade the license of your instance by contacting Openbravo sales staff
 <!--89236907D30A4D2C848B0D5A287193D3-->  <AD_ORG_ID><![CDATA[0]]></AD_ORG_ID>
 <!--89236907D30A4D2C848B0D5A287193D3-->  <ISACTIVE><![CDATA[Y]]></ISACTIVE>
 <!--89236907D30A4D2C848B0D5A287193D3-->  <VALUE><![CDATA[NotValidBaseSequence]]></VALUE>
-<!--89236907D30A4D2C848B0D5A287193D3-->  <MSGTEXT><![CDATA[Not a valid base sequence, infinite loop problem.]]></MSGTEXT>
-<!--89236907D30A4D2C848B0D5A287193D3-->  <MSGTIP><![CDATA[Not a valid base sequence, infinite loop problem.]]></MSGTIP>
+<!--89236907D30A4D2C848B0D5A287193D3-->  <MSGTEXT><![CDATA[Not a valid base sequence, infinite loop problem detected]]></MSGTEXT>
 <!--89236907D30A4D2C848B0D5A287193D3-->  <MSGTYPE><![CDATA[I]]></MSGTYPE>
 <!--89236907D30A4D2C848B0D5A287193D3-->  <AD_MODULE_ID><![CDATA[0]]></AD_MODULE_ID>
 <!--89236907D30A4D2C848B0D5A287193D3-->  <ISINCLUDEINI18N><![CDATA[N]]></ISINCLUDEINI18N>

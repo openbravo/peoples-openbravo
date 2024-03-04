@@ -126,7 +126,8 @@ public class SequenceExceptionTest extends SequenceTest {
     OBException exception = assertThrows(OBException.class,
         () -> OBDal.getInstance().save(parentSequence));
     assertThat(exception.getMessage(),
-        containsString(OBMessageUtils.messageBD("ValidateSequence")));
+        containsString(OBMessageUtils.getI18NMessage("ValidateBaseSequenceMod10",
+            new String[] { baseSequence.getIdentifier(), parentSequence.getIdentifier() })));
   }
 
   /** Test parent sequence with Base Sequence having alphanumeric Suffix */
@@ -140,7 +141,8 @@ public class SequenceExceptionTest extends SequenceTest {
     OBException exception = assertThrows(OBException.class,
         () -> OBDal.getInstance().save(parentSequence));
     assertThat(exception.getMessage(),
-        containsString(OBMessageUtils.messageBD("ValidateSequence")));
+        containsString(OBMessageUtils.getI18NMessage("ValidateBaseSequenceMod10",
+            new String[] { baseSequence.getIdentifier(), parentSequence.getIdentifier() })));
   }
 
   /**
@@ -164,7 +166,8 @@ public class SequenceExceptionTest extends SequenceTest {
     OBDal.getInstance().save(baseSequence);
     OBException exception = assertThrows(OBException.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(),
-        containsString(OBMessageUtils.messageBD("ValidateBaseSequence")));
+        containsString(OBMessageUtils.getI18NMessage("ValidateBaseSequenceMod10",
+            new String[] { baseSequence.getIdentifier(), parentSequence.getIdentifier() })));
   }
 
   /**
@@ -187,7 +190,8 @@ public class SequenceExceptionTest extends SequenceTest {
     OBDal.getInstance().save(baseSequence);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(),
-        containsString(OBMessageUtils.messageBD("ValidateBaseSequence")));
+        containsString(OBMessageUtils.getI18NMessage("ValidateBaseSequenceMod10",
+            new String[] { baseSequence.getIdentifier(), parentSequence.getIdentifier() })));
   }
 
   /**
@@ -209,7 +213,8 @@ public class SequenceExceptionTest extends SequenceTest {
 
     OBException exception = assertThrows(OBException.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(),
-        containsString(OBMessageUtils.messageBD("ValidateSequence")));
+        containsString(OBMessageUtils.getI18NMessage("ValidateBaseSequenceMod10",
+            new String[] { baseSequence.getIdentifier(), parentSequence.getIdentifier() })));
 
     baseSequence.setControlDigit(ControlDigit.MODULE10.value);
     OBDal.getInstance().save(baseSequence);
@@ -245,7 +250,8 @@ public class SequenceExceptionTest extends SequenceTest {
 
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(),
-        containsString(OBMessageUtils.messageBD("ValidateSequence")));
+        containsString(OBMessageUtils.getI18NMessage("ValidateBaseSequenceMod10", new String[] {
+            newBaseSequenceAlphanumericSuffix.getIdentifier(), parentSequence.getIdentifier() })));
 
     // new base sequence with alphanumeric prefix, suffix
     newBaseSequenceAlphanumericSuffix.setSuffix("102");
@@ -259,7 +265,8 @@ public class SequenceExceptionTest extends SequenceTest {
 
     exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(),
-        containsString(OBMessageUtils.messageBD("ValidateSequence")));
+        containsString(OBMessageUtils.getI18NMessage("ValidateBaseSequenceMod10", new String[] {
+            newBaseSequenceAlphanumericSuffix.getIdentifier(), parentSequence.getIdentifier() })));
 
   }
 
@@ -273,16 +280,17 @@ public class SequenceExceptionTest extends SequenceTest {
         null, "A", null, ControlDigit.NONE);
     OBDal.getInstance().save(sequence1);
 
-    final Sequence Sequence2 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
+    final Sequence sequence2 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
         sequence1, null, null, ControlDigit.NONE);
-    OBDal.getInstance().save(Sequence2);
+    OBDal.getInstance().save(sequence2);
 
-    final Sequence Sequence3 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        Sequence2, null, null, ControlDigit.MODULE10);
+    final Sequence sequence3 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
+        sequence2, null, null, ControlDigit.MODULE10);
 
-    Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().save(Sequence3));
+    Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().save(sequence3));
     assertThat(exception.getMessage(),
-        containsString(OBMessageUtils.messageBD("ValidateSequence")));
+        containsString(OBMessageUtils.getI18NMessage("ValidateBaseSequenceMod10",
+            new String[] { sequence1.getIdentifier(), sequence3.getIdentifier() })));
 
   }
 
