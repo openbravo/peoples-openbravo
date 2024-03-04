@@ -295,6 +295,73 @@ public class SequenceExceptionTest extends SequenceTest {
   }
 
   /**
+   * test to check whether updating base sequence of first sequence in a tree that creates an
+   * infinite loop problem.
+   */
+
+  @Test
+  public void testSequenceException_InfiniteLoopProblemBaseSequence() {
+
+    final Sequence sequence1 = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
+        null, null, null, ControlDigit.NONE);
+    OBDal.getInstance().save(sequence1);
+
+    final Sequence sequence2 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
+        sequence1, null, null, ControlDigit.NONE);
+    OBDal.getInstance().save(sequence2);
+
+    final Sequence sequence3 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
+        sequence2, null, null, ControlDigit.MODULE10);
+    OBDal.getInstance().save(sequence3);
+
+    final Sequence sequence0 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
+        sequence3, null, null, ControlDigit.MODULE10);
+    OBDal.getInstance().save(sequence0);
+
+    // Update calculation method and base sequence of first sequence in the tree
+    sequence1.setCalculationMethod(CalculationMethod.SEQUENCE.value);
+    sequence1.setBaseSequence(sequence0);
+    OBDal.getInstance().save(sequence1);
+    Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
+    assertThat(exception.getMessage(),
+        containsString(OBMessageUtils.getI18NMessage("NotValidBaseSequence")));
+
+  }
+
+  /**
+   * test to check whether updating base sequence of intermediate sequence in a tree that creates an
+   * infinite loop problem.
+   */
+
+  @Test
+  public void testSequenceException_InfiniteLoopProblem_IntermediateBaseSequence() {
+
+    final Sequence sequence1 = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
+        null, null, null, ControlDigit.NONE);
+    OBDal.getInstance().save(sequence1);
+
+    final Sequence sequence2 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
+        sequence1, null, null, ControlDigit.NONE);
+    OBDal.getInstance().save(sequence2);
+
+    final Sequence sequence3 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
+        sequence2, null, null, ControlDigit.MODULE10);
+    OBDal.getInstance().save(sequence3);
+
+    final Sequence sequence0 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
+        sequence3, null, null, ControlDigit.MODULE10);
+    OBDal.getInstance().save(sequence0);
+
+    // Update base sequence of intermediate sequence in the tree
+    sequence2.setBaseSequence(sequence0);
+    OBDal.getInstance().save(sequence2);
+    Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
+    assertThat(exception.getMessage(),
+        containsString(OBMessageUtils.getI18NMessage("NotValidBaseSequence")));
+
+  }
+
+  /**
    * Compute document no using SequenceUtil with invalid input
    */
 
