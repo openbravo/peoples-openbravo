@@ -27,6 +27,16 @@ public class UpdateDocTypeDocumentSequence extends ModuleScript {
 
   private static final Logger log4j = LogManager.getLogger();
 
+  /**
+   * Updates DocType with IsDocNoControlled as N and DocNoSequence_ID as NULL
+   * when the DocumentSequence associated with DocType has Calculation
+   * Method as N (System DocumentNo_<tableName>) and IsDocNoControlled is Y.
+   *
+   * This way document sequence having CalculationMethod as N i.e
+   * (System DocumentNo_<tableName>) are not used in any of the
+   * existing document types as this calculation method is deprecated.
+   */
+
   @Override
   public void execute() {
     try {
@@ -41,6 +51,7 @@ public class UpdateDocTypeDocumentSequence extends ModuleScript {
           log4j.info("Updated " + docTypeDocumentSequenceUpdated + " Document Types in "
               + (System.currentTimeMillis() - init) + " ms.");
         }
+        UpdateDocTypeDocumentSequenceData.createPreference(cp);
       }
     } catch (Exception e) {
       handleError(e);
