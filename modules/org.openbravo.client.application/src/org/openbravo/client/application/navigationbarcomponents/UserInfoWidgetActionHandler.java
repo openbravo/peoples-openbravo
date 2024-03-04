@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
@@ -63,6 +65,10 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
 
   @Inject
   private PasswordStrengthChecker passwordStrengthChecker;
+
+  @Inject
+  @Any
+  private Instance<UserInfoWidgetActionHandlerAdditionalCheck> additionalChecks;
 
   /*
    * (non-Javadoc)
@@ -188,11 +194,29 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       defaultRoleProperty = User.PROPERTY_DEFAULTROLE;
     }
 
+    String application = getStringValue(json, "appSearchKey");
+    UserInfoWidgetActionHandlerAdditionalCheck checker = getRoleAdditionalChecker(application);
+    if (checker != null) {
+      try {
+        checker.checkRole(role, application);
+      } catch (Exception e) {
+        return createErrorResponse(e.getMessage());
+      }
+    }
+
     new UserSessionSetter().resetSession(request, isDefault,
         OBContext.getOBContext().getUser().getId(), roleId, clientId, orgId, languageId,
         warehouseId, defaultRoleProperty, setOnlyRole);
 
     return ApplicationConstants.ACTION_RESULT_SUCCESS;
+  }
+
+  private JSONObject createErrorResponse(String messageKey) throws JSONException {
+    final JSONObject response = new JSONObject();
+    response.put("result", "error");
+    response.put("message", messageKey);
+
+    return response;
   }
 
   private String pickLanguage() {
@@ -222,6 +246,19 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     return json.getString(name);
   }
 
+  private UserInfoWidgetActionHandlerAdditionalCheck getRoleAdditionalChecker(String appName) {
+    if (appName == null || appName.isEmpty()) {
+      return null;
+    }
+
+    for (UserInfoWidgetActionHandlerAdditionalCheck checker : additionalChecks) {
+      if (checker.getApplicableAppSearchKeyList().contains(appName)) {
+        return checker;
+      }
+    }
+    return null;
+  }
+
   // ugly inheriting from HttpSecureAppServlet because it provides a number of methods...
   private static class UserSessionSetter extends HttpSecureAppServlet {
     private static final long serialVersionUID = 1L;
@@ -229,6 +266,10 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
     private static final String SESSION_ID = "#AD_Session_ID";
     private static final String AUTHENTICATED_USER = "#Authenticated_user";
     private static final String CURRENT_APPLICATION = "#APPLICATION_SEARCH_KEY";
+    // Application Mode is a concept introduced in Core2, but as this is a private static class
+    // there is no other way to extend this class to include additional values
+    // stored in Session
+    private static final String CURRENT_APPLICATION_MODE = "#APPLICATION_MODE";
 
     private void resetSession(HttpServletRequest request, boolean isDefault, String userId,
         String roleId, String clientId, String organizationId, String languageId,
@@ -265,11 +306,13 @@ public class UserInfoWidgetActionHandler extends BaseActionHandler implements Po
       // Clear session variables maintaining session and user
       String sessionID = vars.getSessionValue(SESSION_ID);
       String currentApp = vars.getSessionValue(CURRENT_APPLICATION, "");
+      String currentAppMode = vars.getSessionValue(CURRENT_APPLICATION_MODE, "");
       String sessionUser = (String) request.getSession(true).getAttribute(AUTHENTICATED_USER);
       vars.clearSession(false);
       vars.setSessionValue(SESSION_ID, sessionID);
       request.getSession(true).setAttribute(AUTHENTICATED_USER, sessionUser);
       vars.setSessionValue(CURRENT_APPLICATION, currentApp);
+      vars.setSessionValue(CURRENT_APPLICATION_MODE, currentAppMode);
 
       OBDal.getInstance().flush();
       boolean result = LoginUtils.fillSessionArguments(new DalConnectionProvider(false), vars,
