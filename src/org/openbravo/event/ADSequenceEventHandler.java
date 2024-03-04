@@ -88,7 +88,13 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
   }
 
   /**
-   * Returns true when the sequence is being updated because it is being consumed
+   * Returns true when the sequence is being updated because it is being consumed.
+   * 
+   * To check if we are consuming the sequence, it checks whether currentNumber == previousNumber +
+   * incrementBy
+   * 
+   * Note that this is not accurate, as someone manually can do the same. In this case, if the user
+   * bypasses the configuration checks, the sequence calculation might fail when consumed
    */
   private boolean isConsumingSequence(EntityUpdateEvent event) {
     if (CalculationMethod.AUTONUMERING.value.equals(
@@ -97,10 +103,10 @@ class ADSequenceEventHandler extends EntityPersistenceEventObserver {
           .getProperty(Sequence.PROPERTY_NEXTASSIGNEDNUMBER);
       final Long previousNumber = (Long) event.getPreviousState(sequenceNumberProperty);
       final Long currentNumber = (Long) event.getCurrentState(sequenceNumberProperty);
-      final Long startingNumber = (Long) event
-          .getCurrentState(entities[0].getProperty(Sequence.PROPERTY_STARTINGNO));
+      final Long incrementBy = (Long) event
+          .getCurrentState(entities[0].getProperty(Sequence.PROPERTY_INCREMENTBY));
 
-      return (currentNumber > previousNumber && currentNumber > startingNumber);
+      return currentNumber == (previousNumber + incrementBy);
     }
 
     return false;
