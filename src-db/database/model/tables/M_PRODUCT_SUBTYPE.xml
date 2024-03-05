@@ -45,8 +45,8 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="PRICETYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
-        <default/>
+      <column name="PRICECALCULATION" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
+        <default><![CDATA[L]]></default>
         <onCreateDefault/>
       </column>
       <column name="ALLOCATIONTYPE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
@@ -57,12 +57,16 @@
         <default><![CDATA[Y]]></default>
         <onCreateDefault/>
       </column>
-      <column name="QUANTITY_RULE" primaryKey="false" required="false" type="VARCHAR" size="60" autoIncrement="false">
+      <column name="QUANTITY_RULE" primaryKey="false" required="true" type="VARCHAR" size="60" autoIncrement="false">
         <default><![CDATA[PP]]></default>
         <onCreateDefault/>
       </column>
-      <column name="ISPRICERULEBASED" primaryKey="false" required="false" type="CHAR" size="1" autoIncrement="false">
-        <default><![CDATA[N]]></default>
+      <column name="INCLUDEDINPRODUCTPRICE" primaryKey="false" required="true" type="CHAR" size="1" autoIncrement="false">
+        <default><![CDATA[Y]]></default>
+        <onCreateDefault/>
+      </column>
+      <column name="VALUE" primaryKey="false" required="true" type="VARCHAR" size="40" autoIncrement="false">
+        <default/>
         <onCreateDefault/>
       </column>
       <foreign-key foreignTable="AD_CLIENT" name="M_PRODUCT_SUBTYPE_AD_CLIENT">
