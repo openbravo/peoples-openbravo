@@ -33,14 +33,14 @@ import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.CallStoredProcedure;
 
-class SequenceTestUtils {
+public class SequenceTestUtils {
   public static final String C_ORDER_TABLE_NAME = "C_Order";
   private static final String ANY_EXISTING_SEQUENCE_ID = "FF8080812C2ABFC6012C2B3BE4970094";
 
   /*
    * Creates Document Sequence to be used
    */
-  static Sequence createDocumentSequence(Organization org, String sequenceName,
+  public static Sequence createDocumentSequence(Organization org, String sequenceName,
       CalculationMethod calculationMethod, Sequence baseSequence, String prefix, Long startingNo,
       Long nextAssignedNumber, Long incrementBy, String suffix, ControlDigit controlDigit,
       SequenceNumberLength sequenceNoLength, Long sequenceLength, boolean saveAndflush) {
@@ -91,11 +91,9 @@ class SequenceTestUtils {
    *          Document Sequence configuration used to compute document No.
    * @param updateNext
    *          flag to update current next in AD_Sequence
-   * @param functionName
-   *          name of function to be used for computation of sequence and control digit
    * @return computed documentNo using computation of sequence and control digit in PL
    */
-  static String callADSequenceDocumentNo(String sequenceId, boolean updateNext) {
+  public static String callADSequenceDocumentNo(String sequenceId, boolean updateNext) {
     try {
       final List<Object> parameters = new ArrayList<>();
       parameters.add(sequenceId);

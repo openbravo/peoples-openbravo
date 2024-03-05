@@ -24,6 +24,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import java.util.UUID;
+
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
@@ -35,21 +37,9 @@ import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
+import org.openbravo.test.documentsequence.SequenceTestUtils;
 
 public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
-
-  /**
-   * test Referenced Inventory Type with Sequence Type : None
-   */
-  @Test
-  public void testReferencedInventoryType_None() {
-    final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.NONE, null);
-    OBDal.getInstance().save(referencedInventoryType);
-    OBDal.getInstance().flush();
-    assertTrue("Referenced Inventory Type with Sequence Type - None is not created",
-        referencedInventoryType != null);
-  }
 
   /**
    * compute Referenced Inventory Type with Sequence Type : None
@@ -58,9 +48,14 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   @Test
   public void testReferencedInventoryType_None_ComputeSequence() {
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.NONE, null);
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.NONE, null);
     OBDal.getInstance().save(refInvType);
     OBDal.getInstance().flush();
+
+    assertTrue("Referenced Inventory Type with Sequence Type - None is not created",
+        refInvType != null);
+
     String strSequence = ReferencedInventoryUtil.getProposedValueFromSequence(refInvType.getId(),
         OBDal.getInstance()
             .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID)
@@ -78,7 +73,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   @Test
   public void testReferencedInventoryType_Global() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.GLOBAL, null);
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.GLOBAL, null);
     OBDal.getInstance().save(referencedInventoryType);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
@@ -91,7 +87,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   @Test
   public void testReferencedInventoryType_PerOrganization() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, null);
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.PER_ORGANIZATION, null);
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue("Referenced Inventory Type with Sequence Type - None is not created",
@@ -105,7 +102,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   @Test
   public void testReferencedInventoryType_None_Sequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.NONE, createSequence());
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.NONE, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue("Referenced Inventory Type with Sequence Type - None is set with Sequence",
@@ -119,7 +117,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   @Test
   public void testReferencedInventoryType_PerOrganization_Sequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, createSequence());
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.PER_ORGANIZATION, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue(
@@ -134,7 +133,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   @Test
   public void testReferencedInventoryType_Global_WithSequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.GLOBAL, createSequence());
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.GLOBAL, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
     assertTrue("Referenced Inventory Type with Sequence Type - Global is not set with Sequence",
@@ -149,17 +149,22 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   @Test
   public void testReferencedInventoryType_Global_ComputeSequence() {
 
-    final Sequence baseSequence = ReferencedInventoryTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, 2821L, null, null,
-        ControlDigit.MODULE10, SequenceNumberLength.FIXED, 5L);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, 2821L,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.FIXED, 5L, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = ReferencedInventoryTestUtils.createDocumentSequence(
-        CalculationMethod.SEQUENCE, baseSequence, "6", null, null, null, "000",
-        ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "6", null, null,
+        null, "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
 
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.GLOBAL, parentSequence);
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.GLOBAL, parentSequence);
     OBDal.getInstance().save(refInvType);
     OBDal.getInstance().flush();
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
@@ -175,7 +180,8 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
   @Test
   public void testReferencedInventoryType_Global_WithoutSequence() {
     final ReferencedInventoryType referencedInventoryType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.GLOBAL, createSequence());
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.GLOBAL, createSequence());
     OBDal.getInstance().save(referencedInventoryType);
     OBDal.getInstance().flush();
 
@@ -192,9 +198,11 @@ public class ReferencedInventoryTypeTest extends ReferencedInventoryTest {
    */
 
   private Sequence createSequence() {
-    final Sequence sequence = ReferencedInventoryTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(sequence);
     return sequence;
   }

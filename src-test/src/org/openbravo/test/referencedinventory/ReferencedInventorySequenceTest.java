@@ -22,6 +22,8 @@ package org.openbravo.test.referencedinventory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.UUID;
+
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
@@ -33,6 +35,7 @@ import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
+import org.openbravo.test.documentsequence.SequenceTestUtils;
 
 /**
  * Test referenced inventory type sequence is properly used
@@ -41,11 +44,11 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
 
   @Test
   public void testReferencedInventorySequenceIsUsed() {
-    final Sequence sequence = ReferencedInventoryTestUtils.createDocumentSequence(
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
         OBDal.getInstance()
             .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
-        ControlDigit.NONE, CalculationMethod.AUTONUMERING, null, 1L, 1000000L, 1L, null, null,
-        SequenceNumberLength.VARIABLE, null);
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, 1L, 1000000L, 1L,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
         .createReferencedInventoryType(sequence.getOrganization(), SequenceType.GLOBAL, sequence);
@@ -128,15 +131,15 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
     Organization org = OBDal.getInstance()
         .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID);
     // Create child sequence with or without base sequence
-    Sequence childSequence = ReferencedInventoryTestUtils.setUpChildSequence(org,
-        ControlDigit.MODULE10, CalculationMethod.AUTONUMERING, childPrefix, 1L,
-        nextAssignedNumberChild, 1L, childSuffix, childSequenceNumberLength, childSequenceLength,
-        childSequenceHasBaseSequence);
+    Sequence childSequence = setUpChildSequence(org, ControlDigit.MODULE10,
+        CalculationMethod.AUTONUMERING, childPrefix, 1L, nextAssignedNumberChild, 1L, childSuffix,
+        childSequenceNumberLength, childSequenceLength, childSequenceHasBaseSequence);
 
     // Create Parent Sequence with Child Sequence created above as its Base Sequence
-    final Sequence parentSequence = ReferencedInventoryTestUtils.createDocumentSequence(org,
-        ControlDigit.MODULE10, CalculationMethod.SEQUENCE, parentPrefix, null, null, null,
-        parentSuffix, childSequence, parentSequenceNumberLength, parentSequenceLength);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(org,
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, childSequence, parentPrefix, null,
+        null, null, parentSuffix, ControlDigit.MODULE10, parentSequenceNumberLength,
+        parentSequenceLength, true);
 
     // Create Referenced Inventory Type with Sequence Type as Per Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
@@ -152,10 +155,59 @@ public class ReferencedInventorySequenceTest extends ReferencedInventoryTest {
         proposedSequenceUsingDal, equalTo(expectedOutput));
 
     // get proposed sequence using control digit & sequence computation in PL
-    String proposedSequenceUsingPL = ReferencedInventoryTestUtils
-        .callADSequenceDocumentNoFunction(parentSequence.getId(), false, "AD_SEQUENCE_DOCUMENTNO");
+    String proposedSequenceUsingPL = SequenceTestUtils
+        .callADSequenceDocumentNo(parentSequence.getId(), false);
 
     assertThat("Referenced Inventory Search Key is computed from sequence using PL",
         proposedSequenceUsingPL, equalTo(expectedOutput));
   }
+
+  /**
+   * This method sets up a child sequence with or without base sequence as per input parameters
+   *
+   * @param org
+   *          Organization in which sequence is defined
+   * @param controlDigit
+   *          Control Digit for the child sequence
+   * @param calculationMethod
+   *          Calculation Method for the child sequence
+   * @param prefix
+   *          Prefix for the child sequence
+   * @param startingNo
+   *          Starting Number for the child sequence
+   * @param nextAssignedNumber
+   *          Next Assigned Number for the child sequence
+   * @param incrementBy
+   *          Increment Child Sequence By
+   * @param suffix
+   *          Suffix to be appended for the child sequence
+   * @param sequenceNoLength
+   *          Sequence Number Length for the child Sequence - Variable or Fix Length
+   * @param sequenceLength
+   *          Sequence Length for child sequence in case of Fix Length
+   * @param childSequenceHasBaseSequence
+   *          flag to define a base sequence for the child sequence
+   * @return Document sequence to be used as base sequence in the parent sequence for referenced
+   *         inventory type
+   */
+
+  private static Sequence setUpChildSequence(Organization org, ControlDigit controlDigit,
+      CalculationMethod calculationMethod, String prefix, Long startingNo, Long nextAssignedNumber,
+      Long incrementBy, String suffix, SequenceNumberLength sequenceNoLength, Long sequenceLength,
+      boolean childSequenceHasBaseSequence) {
+
+    if (childSequenceHasBaseSequence) {
+      Sequence childSequence = SequenceTestUtils.createDocumentSequence(org,
+          UUID.randomUUID().toString(), calculationMethod, null, prefix, startingNo,
+          nextAssignedNumber, incrementBy, suffix, controlDigit, sequenceNoLength, sequenceLength,
+          true);
+      return SequenceTestUtils.createDocumentSequence(org, UUID.randomUUID().toString(),
+          CalculationMethod.SEQUENCE, childSequence, null, null, null, null, null,
+          ControlDigit.NONE, sequenceNoLength, sequenceLength, true);
+    }
+    return SequenceTestUtils.createDocumentSequence(org, UUID.randomUUID().toString(),
+        calculationMethod, null, prefix, startingNo, nextAssignedNumber, incrementBy, suffix,
+        controlDigit, sequenceNoLength, sequenceLength, true);
+  }
+
 }

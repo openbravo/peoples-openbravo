@@ -23,6 +23,9 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThrows;
 
+import java.util.UUID;
+
+import org.junit.After;
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
@@ -33,6 +36,7 @@ import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
+import org.openbravo.test.documentsequence.SequenceTestUtils;
 
 public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryTest {
 
@@ -42,18 +46,23 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
    */
   @Test
   public void testReferencedInventoryTypeOrgSequenceTest() {
-    final Sequence baseSequence = ReferencedInventoryTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, null, null, null, null, "100", ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "100", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = ReferencedInventoryTestUtils.createDocumentSequence(
-        CalculationMethod.SEQUENCE, baseSequence, "06", null, null, null, null,
-        ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
 
     // Create Referenced Inventory Type with Sequence Type as Per Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, parentSequence);
+        .createReferencedInventoryType(OBDal.getInstance().getProxy(Organization.class, "0"),
+            SequenceType.PER_ORGANIZATION, parentSequence);
     OBDal.getInstance().save(refInvType);
 
     ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType,
@@ -75,30 +84,72 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
    */
   @Test
   public void testReferencedInventoryTypeOrgSequence_DocumentSequence() {
-    final Sequence baseSequence = ReferencedInventoryTestUtils.createDocumentSequence(
-        CalculationMethod.AUTONUMERING, null, "0110491", null, 2821L, null, null,
-        ControlDigit.MODULE10, SequenceNumberLength.FIXED, 5L);
+
+    // create a base sequence in Spain Organization
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, 3821L,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.FIXED, 5L, true);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = ReferencedInventoryTestUtils.createDocumentSequence(
-        CalculationMethod.SEQUENCE, baseSequence, "6", null, null, null, "000",
-        ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null);
+
+    // create a parent sequence with above base sequence in Spain Organization
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "6", null, null,
+        null, "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
 
-    // Create Referenced Inventory Type with Sequence Type as Per Organization
+    // Create Referenced Inventory Type with Sequence Type as Per Organization in Main Organization
     final ReferencedInventoryType refInvType = ReferencedInventoryTestUtils
-        .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, parentSequence);
+        .createReferencedInventoryType(
+            OBDal.getInstance()
+                .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_MAIN_ORG_ID),
+            SequenceType.PER_ORGANIZATION, parentSequence);
     OBDal.getInstance().save(refInvType);
 
-    // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
+    // Create Referenced Inventory Type Organization Sequence with Parent Sequence created above in
+    // Spain Organization
     ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType,
         OBDal.getInstance()
             .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
         parentSequence);
 
-    final ReferencedInventory refInv = ReferencedInventoryTestUtils
+    // Create Referenced Inventory in Spain Organization
+    final ReferencedInventory refInvSpain = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);
     assertThat("Referenced Inventory Search Key is not computed properly using DAL",
-        "601104910282130002", equalTo(refInv.getSearchKey()));
+        "601104910382120002", equalTo(refInvSpain.getSearchKey()));
 
+    // Create a document sequence in USA Organization
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_USA_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "6", null, 1000L, null,
+        "000", ControlDigit.MODULE10, SequenceNumberLength.FIXED, 7L, true);
+
+    // Create Referenced Inventory Type Organization Sequence with Sequence created above in USA
+    // Organization
+    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType, OBDal.getInstance()
+        .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_USA_ORG_ID), sequence);
+
+    // Create Referenced Inventory in USA Organization
+    final ReferencedInventory refInvUSA = ReferencedInventoryTestUtils
+        .createReferencedInventory(ReferencedInventoryTestUtils.QA_USA_ORG_ID, refInvType);
+
+    assertThat("Referenced Inventory Search Key is not computed properly using DAL", "600010000009",
+        equalTo(refInvUSA.getSearchKey()));
+
+  }
+
+  /**
+   * roll back after the tests are executed in order to cleanup the data created by tests, this way
+   * failing unique constraint for ad_client_id, search key in referenced inventory could be
+   * avoided.
+   */
+  @After
+  public void cleanup() {
+    OBDal.getInstance().rollbackAndClose();
   }
 }

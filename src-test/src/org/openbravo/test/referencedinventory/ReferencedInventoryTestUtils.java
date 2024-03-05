@@ -44,9 +44,6 @@ import org.openbravo.dal.service.OBCriteria;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.dal.service.OBDao;
 import org.openbravo.erpCommon.utility.SequenceIdData;
-import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
-import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
-import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.materialmgmt.ReservationUtils;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
@@ -81,7 +78,9 @@ class ReferencedInventoryTestUtils {
   // Reservations preference
   private static final String RESERVATIONS_PREFERENCE = "StockReservations";
 
+  static final String QA_MAIN_ORG_ID = "43D590B4814049C6B85C6545E8264E37";
   static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
+  static final String QA_USA_ORG_ID = "5EFF95EB540740A3B10510D9814EFAD5";
   static final String QA_SPAIN_WAREHOUSE_ID = "4028E6C72959682B01295ECFEF4502A0";
   static final String ORG_STAR_ID = "0";
   static final String QA_CLIENT_ID = "4028E6C72959682B01295A070852010D";
@@ -150,35 +149,6 @@ class ReferencedInventoryTestUtils {
     assertThat("Referenced Inventory Type Organization Sequence is successfully created",
         refInvTypeOrgSeq, notNullValue());
     OBDal.getInstance().flush();
-  }
-
-  /*
-   * Creates Document Sequence to be used
-   */
-
-  static Sequence createDocumentSequence(Organization org, ControlDigit controlDigit,
-      CalculationMethod calculationMethod, String prefix, Long startingNo, Long nextAssignedNumber,
-      Long incrementBy, String suffix, Sequence baseSequence, SequenceNumberLength sequenceNoLength,
-      Long sequenceLength) {
-    final Sequence anyExistingSequence = OBDal.getInstance()
-        .getProxy(Sequence.class, "FF8080812C2ABFC6012C2B3BE4970094");
-    // Create a Sequence
-    final Sequence sequence = (Sequence) DalUtil.copy(anyExistingSequence);
-    sequence.setOrganization(org);
-    sequence.setName(UUID.randomUUID().toString());
-    sequence.setControlDigit(controlDigit.value);
-    sequence.setCalculationMethod(calculationMethod.value);
-    sequence.setPrefix(prefix);
-    sequence.setStartingNo(startingNo == null ? 1L : startingNo);
-    sequence.setNextAssignedNumber(nextAssignedNumber == null ? 1L : nextAssignedNumber);
-    sequence.setIncrementBy(incrementBy == null ? 1L : incrementBy);
-    sequence.setSuffix(suffix);
-    sequence.setBaseSequence(baseSequence);
-    sequence.setSequenceNumberLength(sequenceNoLength.value);
-    sequence.setSequenceLength(sequenceLength);
-    OBDal.getInstance().save(sequence);
-    OBDal.getInstance().flush(); // Required to lock sequence at db level later on
-    return sequence;
   }
 
   static ReferencedInventoryType createReferencedInventoryType(Organization org,
@@ -413,121 +383,5 @@ class ReferencedInventoryTestUtils {
         isForceBin ? notNullValue() : nullValue());
     assertThat("Reservation has the expected attribute at header",
         reservation.getAttributeSetValue(), isForceAttributeSet ? notNullValue() : nullValue());
-  }
-
-  /**
-   * This method sets up a child sequence with or without base sequence as per input parameters
-   *
-   * @param org
-   *          Organization in which sequence is defined
-   * @param controlDigit
-   *          Control Digit for the child sequence
-   * @param calculationMethod
-   *          Calculation Method for the child sequence
-   * @param prefix
-   *          Prefix for the child sequence
-   * @param startingNo
-   *          Starting Number for the child sequence
-   * @param nextAssignedNumber
-   *          Next Assigned Number for the child sequence
-   * @param incrementBy
-   *          Increment Child Sequence By
-   * @param suffix
-   *          Suffix to be appended for the child sequence
-   * @param sequenceNoLength
-   *          Sequence Number Length for the child Sequence - Variable or Fix Length
-   * @param sequenceLength
-   *          Sequence Length for child sequence in case of Fix Length
-   * @param childSequenceHasBaseSequence
-   *          flag to define a base sequence for the child sequence
-   * @return Document sequence to be used as base sequence in the parent sequence for referenced
-   *         inventory type
-   */
-
-  public static Sequence setUpChildSequence(Organization org, ControlDigit controlDigit,
-      CalculationMethod calculationMethod, String prefix, Long startingNo, Long nextAssignedNumber,
-      Long incrementBy, String suffix, SequenceNumberLength sequenceNoLength, Long sequenceLength,
-      boolean childSequenceHasBaseSequence) {
-
-    if (childSequenceHasBaseSequence) {
-      Sequence childSequence = ReferencedInventoryTestUtils.createDocumentSequence(org,
-          controlDigit, calculationMethod, prefix, startingNo, nextAssignedNumber, incrementBy,
-          suffix, null, sequenceNoLength, sequenceLength);
-      return ReferencedInventoryTestUtils.createDocumentSequence(org, ControlDigit.NONE,
-          CalculationMethod.SEQUENCE, null, null, null, null, null, childSequence, sequenceNoLength,
-          sequenceLength);
-    }
-    return ReferencedInventoryTestUtils.createDocumentSequence(org, controlDigit, calculationMethod,
-        prefix, startingNo, nextAssignedNumber, incrementBy, suffix, null, sequenceNoLength,
-        sequenceLength);
-  }
-
-  /**
-   * Creates Document Sequence
-   */
-
-  static Sequence createDocumentSequence(CalculationMethod calculationMethod, Sequence baseSequence,
-      String prefix, Long startingNo, Long nextAssignedNumber, Long incrementBy, String suffix,
-      ControlDigit controlDigit, SequenceNumberLength sequenceNoLength, Long sequenceLength) {
-    final Sequence anyExistingSequence = OBDal.getInstance()
-        .getProxy(Sequence.class, "FF8080812C2ABFC6012C2B3BE4970094");
-    // Create a Sequence
-    final Sequence sequence = (Sequence) DalUtil.copy(anyExistingSequence);
-    sequence.setOrganization(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID));
-    sequence.setName(UUID.randomUUID().toString());
-    sequence.setControlDigit(controlDigit.value);
-    sequence.setCalculationMethod(calculationMethod.value);
-    sequence.setPrefix(prefix);
-    sequence.setStartingNo(startingNo == null ? 1L : startingNo);
-    sequence.setNextAssignedNumber(nextAssignedNumber == null ? 1L : nextAssignedNumber);
-    sequence.setIncrementBy(incrementBy == null ? 1L : incrementBy);
-    sequence.setSuffix(suffix);
-    sequence.setBaseSequence(baseSequence);
-    sequence.setSequenceNumberLength(sequenceNoLength.value);
-    sequence.setSequenceLength(sequenceLength);
-    return sequence;
-  }
-
-  /**
-   * Creates Referenced Inventory Type
-   */
-
-  static ReferencedInventoryType createReferencedInventoryType(SequenceType sequenceType,
-      Sequence sequence) {
-    final ReferencedInventoryType refInvType = OBProvider.getInstance()
-        .get(ReferencedInventoryType.class);
-    refInvType.setClient(OBContext.getOBContext().getCurrentClient());
-    refInvType.setOrganization(OBDal.getInstance().getProxy(Organization.class, "0"));
-    refInvType.setSequenceType(sequenceType.value);
-    refInvType.setSequence(sequence);
-    refInvType.setName(UUID.randomUUID().toString());
-    refInvType.setShared(true);
-    return refInvType;
-  }
-
-  /**
-   * get documentNo using computation of sequence and control digit in PL
-   *
-   * @param sequenceId
-   *          Document Sequence configiration used to compute document No.
-   * @param updateNext
-   *          flag to update current next in AD_Sequence
-   * @param functionName
-   *          name of function to be used for computation of sequence and control digit
-   * @return computed documentNo using computation of sequence and control digit in PL
-   */
-
-  public static String callADSequenceDocumentNoFunction(String sequenceId, boolean updateNext,
-      String functionName) {
-    String value = "";
-    try {
-      final List<Object> parameters = new ArrayList<Object>();
-      parameters.add(sequenceId);
-      parameters.add(updateNext);
-      value = ((String) CallStoredProcedure.getInstance().call(functionName, parameters, null));
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-    return value;
   }
 }
