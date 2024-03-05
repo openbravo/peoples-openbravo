@@ -165,7 +165,11 @@ public class LoginHandler extends HttpBaseServlet {
     }
   }
 
-  private boolean isExternalLoginRequest(VariablesSecureApp vars) {
+  /**
+   * @return true if the authentication for the login request is done with an external
+   *         authentication provider of false in any other case.
+   */
+  protected final boolean isExternalLoginRequest(VariablesSecureApp vars) {
     return !StringUtils.isBlank(vars.getStringParameter("loginMethod"));
   }
 
