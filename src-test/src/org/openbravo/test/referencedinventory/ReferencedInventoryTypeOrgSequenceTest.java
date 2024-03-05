@@ -30,9 +30,9 @@ import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.materialmgmt.refinventory.ReferencedInventoryUtil.SequenceType;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventory;
 import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryType;
-import org.openbravo.model.materialmgmt.onhandquantity.ReferencedInventoryTypeOrgSequence;
 
 public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryTest {
 
@@ -56,17 +56,16 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
         .createReferencedInventoryType(SequenceType.PER_ORGANIZATION, parentSequence);
     OBDal.getInstance().save(refInvType);
 
-    // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
-    ReferencedInventoryTypeOrgSequence referencedInventoryTypeOrgSequence = ReferencedInventoryTestUtils
-        .createReferencedInventoryTypeOrgSeq(refInvType, parentSequence);
-    OBDal.getInstance().save(referencedInventoryTypeOrgSequence);
-    OBDal.getInstance().flush();
+    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType,
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        parentSequence);
 
-    referencedInventoryTypeOrgSequence = ReferencedInventoryTestUtils
-        .createReferencedInventoryTypeOrgSeq(refInvType, baseSequence);
-    OBDal.getInstance().save(referencedInventoryTypeOrgSequence);
-
-    Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
+    Exception exception = assertThrows(Exception.class,
+        () -> ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType,
+            OBDal.getInstance()
+                .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+            baseSequence));
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
   }
 
@@ -91,10 +90,10 @@ public class ReferencedInventoryTypeOrgSequenceTest extends ReferencedInventoryT
     OBDal.getInstance().save(refInvType);
 
     // Create Referenced Inventory Type Organization Sequence with Parent Sequence created Above.
-    ReferencedInventoryTypeOrgSequence referencedInventoryTypeOrgSequence = ReferencedInventoryTestUtils
-        .createReferencedInventoryTypeOrgSeq(refInvType, parentSequence);
-    OBDal.getInstance().save(referencedInventoryTypeOrgSequence);
-    OBDal.getInstance().flush();
+    ReferencedInventoryTestUtils.createReferencedInventoryTypeOrgSeq(refInvType,
+        OBDal.getInstance()
+            .getProxy(Organization.class, ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID),
+        parentSequence);
 
     final ReferencedInventory refInv = ReferencedInventoryTestUtils
         .createReferencedInventory(ReferencedInventoryTestUtils.QA_SPAIN_ORG_ID, refInvType);

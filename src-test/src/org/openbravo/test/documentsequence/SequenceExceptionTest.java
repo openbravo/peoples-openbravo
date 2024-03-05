@@ -28,13 +28,16 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.openbravo.base.exception.OBException;
+import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.OBMessageUtils;
 import org.openbravo.erpCommon.utility.SequenceUtil;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
+import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.service.db.DalConnectionProvider;
 
 public class SequenceExceptionTest extends SequenceTest {
 
@@ -380,8 +383,8 @@ public class SequenceExceptionTest extends SequenceTest {
   public void utilitySequenceTest_AD_SEQUENCE_DOC_InvalidInput() {
     assertThat(
         "Sequence with invalid information is not computed correctly using Utility - AD_SEQUENCE_DOC",
-        "", equalTo(SequenceTestUtils.getDocumentNo(UUID.randomUUID().toString(),
-            UUID.randomUUID().toString(), false)));
+        "", equalTo(Utility.getDocumentNo(new DalConnectionProvider(false),
+            UUID.randomUUID().toString(), UUID.randomUUID().toString(), false)));
   }
 
   /**
@@ -392,7 +395,9 @@ public class SequenceExceptionTest extends SequenceTest {
   public void utilitySequenceTest_AD_SEQUENCE_DOCTYPE_InvalidInput() {
     assertThat(
         "Sequence with invalid information is not computed correctly using Utility - AD_SEQUENCE_DOCTYPE",
-        "", equalTo(SequenceTestUtils.getDocumentNo("", SequenceTestUtils.TABLE_NAME, "",
+        "",
+        equalTo(Utility.getDocumentNo(new DalConnectionProvider(false),
+            RequestContext.get().getVariablesSecureApp(), "", SequenceTestUtils.TABLE_NAME, "",
             UUID.randomUUID().toString(), false, false)));
   }
 }

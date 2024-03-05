@@ -27,11 +27,8 @@ import org.junit.runners.Suite;
     SequenceSequenceNumberLengthTest.class, //
     SequenceCalculationMethodTest.class, //
     SequenceControlDigitPrefixSuffixTest.class, //
-    SequenceUtilBaseSequenceTest.class, //
     SequenceExceptionTest.class, //
-    SequenceUtilControlDigitNoneTest.class, //
-    SequenceUtilControlDigitModule10Test.class, //
-    SequenceUtilityTest.class //
+    SequenceUtilAndUtilityTest.class //
 
 })
 public class SequenceTestSuite {

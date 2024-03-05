@@ -506,22 +506,6 @@ class ReferencedInventoryTestUtils {
   }
 
   /**
-   * Creates Referenced Inventory Type Organization Sequence when Sequence Type is Per Organization
-   */
-
-  static ReferencedInventoryTypeOrgSequence createReferencedInventoryTypeOrgSeq(
-      ReferencedInventoryType refInvType, Sequence parentSequence) {
-    final ReferencedInventoryTypeOrgSequence refInvTypeOrgSeq = OBProvider.getInstance()
-        .get(ReferencedInventoryTypeOrgSequence.class);
-    refInvTypeOrgSeq.setClient(OBContext.getOBContext().getCurrentClient());
-    refInvTypeOrgSeq
-        .setOrganization(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID));
-    refInvTypeOrgSeq.setReferencedInventoryType(refInvType);
-    refInvTypeOrgSeq.setSequence(parentSequence);
-    return refInvTypeOrgSeq;
-  }
-
-  /**
    * get documentNo using computation of sequence and control digit in PL
    *
    * @param sequenceId

@@ -23,18 +23,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.openbravo.client.kernel.RequestContext;
 import org.openbravo.dal.core.DalUtil;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
-import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.Sequence;
 import org.openbravo.model.common.enterprise.DocumentType;
 import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.CallStoredProcedure;
-import org.openbravo.service.db.DalConnectionProvider;
 
 class SequenceTestUtils {
   public static final String QA_SPAIN_ORG_ID = "357947E87C284935AD1D783CF6F099A1";
@@ -84,53 +81,6 @@ class SequenceTestUtils {
     return createDocumentSequence(org, sequenceName, calculationMethod, baseSequence, prefix,
         startingNo, nextAssignedNumber, incrementBy, suffix, controlDigit, sequenceNumberLength,
         sequenceLength, saveAndflush);
-  }
-
-  /**
-   * This method sets up a child sequence with or without base sequence as per input parameters
-   *
-   * @param org
-   *          Organization in which sequence is defined
-   * @param controlDigit
-   *          Control Digit for the child sequence
-   * @param calculationMethod
-   *          Calculation Method for the child sequence
-   * @param prefix
-   *          Prefix for the child sequence
-   * @param startingNo
-   *          Starting Number for the child sequence
-   * @param nextAssignedNumber
-   *          Next Assigned Number for the child sequence
-   * @param incrementBy
-   *          Increment Child Sequence By
-   * @param suffix
-   *          Suffix to be appended for the child sequence
-   * @param sequenceNoLength
-   *          Sequence Number Length for the child Sequence - Variable or Fix Length
-   * @param sequenceLength
-   *          Sequence Length for child sequence in case of Fix Length
-   * @param childSequenceHasBaseSequence
-   *          flag to define a base sequence for the child sequence
-   * @return Document sequence to be used as base sequence in the parent sequence for referenced
-   *         inventory type
-   */
-
-  public static Sequence setUpChildSequence(Organization org, String sequenceName,
-      ControlDigit controlDigit, CalculationMethod calculationMethod, String prefix,
-      Long startingNo, Long nextAssignedNumber, Long incrementBy, String suffix,
-      SequenceNumberLength sequenceNoLength, Long sequenceLength,
-      boolean childSequenceHasBaseSequence) {
-
-    if (childSequenceHasBaseSequence) {
-      Sequence childSequence = createDocumentSequence(org, sequenceName, calculationMethod, null,
-          prefix, startingNo, nextAssignedNumber, incrementBy, suffix, controlDigit,
-          sequenceNoLength, sequenceLength, true);
-      return createDocumentSequence(org, sequenceName, CalculationMethod.SEQUENCE, childSequence,
-          null, null, null, null, null, ControlDigit.NONE, sequenceNoLength, sequenceLength, true);
-    }
-    return createDocumentSequence(org, sequenceName, calculationMethod, null, prefix, startingNo,
-        nextAssignedNumber, incrementBy, suffix, controlDigit, sequenceNoLength, sequenceLength,
-        true);
   }
 
   /**
@@ -224,22 +174,5 @@ class SequenceTestUtils {
       throw new IllegalStateException(e);
     }
     return value;
-  }
-
-  /**
-   * Call AD_Sequence_DocType to compute documentNo based on sequence defined in document type
-   */
-  public static String getDocumentNo(String windowId, String tableName, String docTypeTargetId,
-      String docTypeId, boolean onlyDocType, boolean updateNext) {
-    return Utility.getDocumentNo(new DalConnectionProvider(false),
-        RequestContext.get().getVariablesSecureApp(), windowId, tableName, docTypeTargetId,
-        docTypeId, onlyDocType, updateNext);
-  }
-
-  /**
-   * Call AD_Sequence_Doc to compute documentNo based on sequence name
-   */
-  public static String getDocumentNo(String clientId, String tableName, boolean updateNext) {
-    return Utility.getDocumentNo(new DalConnectionProvider(false), clientId, tableName, updateNext);
   }
 }
