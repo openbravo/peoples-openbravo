@@ -70,20 +70,6 @@ class SequenceTestUtils {
   }
 
   /**
-   * create document sequence with default organization QA_SPAIN_ORG_ID
-   */
-
-  public static Sequence createDocumentSequence(String sequenceName,
-      CalculationMethod calculationMethod, Sequence baseSequence, String prefix, Long startingNo,
-      Long nextAssignedNumber, Long incrementBy, String suffix, ControlDigit controlDigit,
-      SequenceNumberLength sequenceNumberLength, Long sequenceLength, boolean saveAndflush) {
-    Organization org = OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID);
-    return createDocumentSequence(org, sequenceName, calculationMethod, baseSequence, prefix,
-        startingNo, nextAssignedNumber, incrementBy, suffix, controlDigit, sequenceNumberLength,
-        sequenceLength, saveAndflush);
-  }
-
-  /**
    * Create Document Type with Document Sequence
    */
 
@@ -109,8 +95,9 @@ class SequenceTestUtils {
 
   public static Sequence createBaseSequence(CalculationMethod calculationMethod, String prefix,
       SequenceNumberLength sequenceNumberLength, Long sequenceLength) {
-    return createDocumentSequence(UUID.randomUUID().toString(), calculationMethod, null, prefix,
-        null, null, null, null, ControlDigit.NONE, sequenceNumberLength, sequenceLength, false);
+    return createDocumentSequence(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), calculationMethod, null, prefix, null, null, null, null,
+        ControlDigit.NONE, sequenceNumberLength, sequenceLength, false);
   }
 
   /**
@@ -120,9 +107,9 @@ class SequenceTestUtils {
    */
 
   public static Sequence createParentSequence(Sequence baseSequence) {
-    return createDocumentSequence(UUID.randomUUID().toString(), CalculationMethod.SEQUENCE,
-        baseSequence, "06", null, null, null, null, ControlDigit.MODULE10,
-        SequenceNumberLength.VARIABLE, null, false);
+    return createDocumentSequence(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
   }
 
   /**
@@ -133,9 +120,9 @@ class SequenceTestUtils {
    */
   public static Sequence createSequence(SequenceNumberLength sequenceNumberLength,
       Long sequenceLength) {
-    return createDocumentSequence(UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING,
-        null, "0110491", null, null, null, null, ControlDigit.NONE, sequenceNumberLength,
-        sequenceLength, false);
+    return createDocumentSequence(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, null,
+        null, null, ControlDigit.NONE, sequenceNumberLength, sequenceLength, false);
   }
 
   /**
@@ -145,8 +132,9 @@ class SequenceTestUtils {
    */
   public static Sequence createSequence(CalculationMethod calculationMethod, Sequence baseSequence,
       String prefix, String suffix, ControlDigit controlDigit) {
-    return createDocumentSequence(UUID.randomUUID().toString(), calculationMethod, baseSequence,
-        prefix, null, null, null, suffix, controlDigit, SequenceNumberLength.VARIABLE, null, false);
+    return createDocumentSequence(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), calculationMethod, baseSequence, prefix, null, null, null,
+        suffix, controlDigit, SequenceNumberLength.VARIABLE, null, false);
   }
 
   /**

@@ -32,6 +32,7 @@ import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class SequenceUtilAndUtilityTest extends SequenceTest {
@@ -50,9 +51,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " no Prefix, no Suffix, no nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "1");
@@ -83,9 +85,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " no Prefix, no Suffix, valid nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, null, null, 1000L, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, null, null, 1000L, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks with updateNext as No
     runAllChecks(sequence, tableName, assertionMsg, "1000");
@@ -116,9 +119,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " valid Prefix, no Suffix, valid nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, "A", null, 1000L, null, null, ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, "A", null, 1000L, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "A1000");
@@ -149,9 +153,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " no Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, null, null, 1000L, null, "000", ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, null, null, 1000L, null,
+        "000", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "1000000");
@@ -182,9 +187,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Variable Sequence Number Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, "A", null, 1000L, null, "000", ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, "A", null, 1000L, null,
+        "000", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "A1000000");
@@ -215,9 +221,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Fixed Length 7L";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, "A", null, 1000L, null, "000", ControlDigit.NONE,
-        SequenceNumberLength.FIXED, 7L, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, "A", null, 1000L, null,
+        "000", ControlDigit.NONE, SequenceNumberLength.FIXED, 7L, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "A0001000000");
@@ -248,9 +255,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - None, Fixed Length 4L";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, "A", null, 1000L, null, "000", ControlDigit.NONE,
-        SequenceNumberLength.FIXED, 4L, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, "A", null, 1000L, null,
+        "000", ControlDigit.NONE, SequenceNumberLength.FIXED, 4L, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "A1000000");
@@ -281,9 +289,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " no Prefix, no Suffix, no nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, null, null, null, null, null, ControlDigit.MODULE10,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "17");
@@ -314,9 +323,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " no Prefix, no Suffix, valid nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, null, null, 1000L, null, null, ControlDigit.MODULE10,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, null, null, 1000L, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "10009");
@@ -347,9 +357,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " valid Prefix, no Suffix, valid nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, "6", null, 1000L, null, null, ControlDigit.MODULE10,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, "6", null, 1000L, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "610001");
@@ -380,9 +391,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " no Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, null, null, 1000L, null, "000", ControlDigit.MODULE10,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, null, null, 1000L, null,
+        "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "10000007");
@@ -413,9 +425,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - Module 10, Variable Sequence Length";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, "6", null, 1000L, null, "000", ControlDigit.MODULE10,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, "6", null, 1000L, null,
+        "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "610000001");
@@ -446,9 +459,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - Module 10, Fixed Sequence Number Length: 7L";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, "7", null, 1001L, null, "000", ControlDigit.MODULE10,
-        SequenceNumberLength.FIXED, 7L, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, "7", null, 1001L, null,
+        "000", ControlDigit.MODULE10, SequenceNumberLength.FIXED, 7L, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "700010010005");
@@ -480,9 +494,10 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " valid Prefix, valid Suffix, valid nextAssignedNo, ControlDigit - Module 10, Fixed Sequence Number Length: 7L";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence("DocumentNo_" + tableName,
-        CalculationMethod.AUTONUMERING, null, "8", null, 1001L, null, "000", ControlDigit.MODULE10,
-        SequenceNumberLength.FIXED, 3L, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        "DocumentNo_" + tableName, CalculationMethod.AUTONUMERING, null, "8", null, 1001L, null,
+        "000", ControlDigit.MODULE10, SequenceNumberLength.FIXED, 3L, true);
 
     // Run checks when updateNext is No
     runAllChecks(sequence, tableName, assertionMsg, "810010008");
@@ -520,10 +535,12 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
 
     final String tableName = UUID.randomUUID().toString();
     final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
         UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, 2821L,
         null, null, ControlDigit.MODULE10, SequenceNumberLength.FIXED, 5L, true);
 
     final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
         "DocumentNo_" + tableName, CalculationMethod.SEQUENCE, baseSequence, "6", null, null, null,
         "000", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
@@ -569,15 +586,18 @@ public class SequenceUtilAndUtilityTest extends SequenceTest {
         + " with Based On Sequence calculation method, 3 Level Base Sequence";
 
     final String tableName = UUID.randomUUID().toString();
-    final Sequence sequence = SequenceTestUtils.createDocumentSequence(UUID.randomUUID().toString(),
-        CalculationMethod.AUTONUMERING, null, "3", null, 5000L, null, "7", ControlDigit.NONE,
-        SequenceNumberLength.VARIABLE, null, true);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "3", null, 5000L, null,
+        "7", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, true);
 
     final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
         UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence, "8", null, null, null,
         "2", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 
     final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
         "DocumentNo_" + tableName, CalculationMethod.SEQUENCE, baseSequence, "9", null, null, null,
         "1", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, true);
 

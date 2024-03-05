@@ -75,7 +75,7 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
     OBDal.getInstance().save(baseSequence);
     assertTrue(
         "Sequence with control digit Module 10 and base sequence with numeric prefix is not updated.",
-        baseSequence.getPrefix() == "102");
+        baseSequence.getPrefix().equals("102"));
   }
 
   /** Test update of base sequence with numeric suffix */
@@ -95,6 +95,6 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
     OBDal.getInstance().save(baseSequence);
     assertTrue(
         "Sequence with control digit Module 10 and base sequence with numeric prefix is not updated.",
-        baseSequence.getSuffix() == "102");
+        baseSequence.getSuffix().equals("102"));
   }
 }
