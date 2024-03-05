@@ -20,11 +20,15 @@ package org.openbravo.test.documentsequence;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.UUID;
+
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
 import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
+import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
   /**
@@ -32,8 +36,10 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
    */
   @Test
   public void testSequenceControlDigit_None() {
-    final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
-        null, null, ControlDigit.NONE);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(sequence);
     assertTrue("Sequence with control digit None and empty prefix/suffix is not created.",
         sequence != null);
@@ -42,8 +48,10 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
   /** Test Sequence with Control Digit Module 10, Numeric prefix */
   @Test
   public void testSequenceControlDigit_Module10_NumericPrefix() {
-    final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
-        "102", null, ControlDigit.MODULE10);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "102", null, null, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(sequence);
     assertTrue("Sequence with control digit Module 10 and numeric prefix is not created.",
         sequence != null);
@@ -52,8 +60,10 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
   /** Test sequence with Control Digit: Module 10, Numeric suffix */
   @Test
   public void testSequenceControlDigit_Module10_NumericSuffix() {
-    final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
-        null, "101", ControlDigit.MODULE10);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "101", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(sequence);
     assertTrue("Sequence with control digit Module 10 and numeric suffix is not created.",
         sequence != null);
@@ -62,11 +72,15 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
   /** Test update of base sequence with numeric prefix */
   @Test
   public void testSequenceControlDigit_Module10_UpdateBaseSequenceWithNumericPrefixSuffix() {
-    final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, null, "100", ControlDigit.NONE);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "100", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        baseSequence, "06", null, ControlDigit.MODULE10);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
     assertTrue(
         "Sequence with control digit Module 10 and base sequence with numeric prefix is not created.",
@@ -81,11 +95,15 @@ public class SequenceControlDigitPrefixSuffixTest extends SequenceTest {
   /** Test update of base sequence with numeric suffix */
   @Test
   public void testSequenceControlDigit_Module10_UpdateBaseSequenceWithNumericSuffix() {
-    final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, null, "100", ControlDigit.NONE);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "100", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        baseSequence, "06", null, ControlDigit.MODULE10);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
     assertTrue(
         "Sequence with control digit Module 10 and base sequence with numeric suffix is not created.",

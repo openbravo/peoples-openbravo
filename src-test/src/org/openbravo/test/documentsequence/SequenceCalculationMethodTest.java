@@ -20,11 +20,15 @@ package org.openbravo.test.documentsequence;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.UUID;
+
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
 import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
+import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class SequenceCalculationMethodTest extends SequenceTest {
 
@@ -33,8 +37,10 @@ public class SequenceCalculationMethodTest extends SequenceTest {
    */
   @Test
   public void testSequenceWithCalculationMethod_AutoNumbering() {
-    final Sequence sequence = SequenceTestUtils.createBaseSequence(CalculationMethod.AUTONUMERING,
-        "0110491", SequenceNumberLength.FIXED, 7L);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, null,
+        null, null, ControlDigit.NONE, SequenceNumberLength.FIXED, 7L, false);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
     assertTrue("Sequence with calculation method - AutoNumbering is not created", sequence != null);
@@ -46,8 +52,10 @@ public class SequenceCalculationMethodTest extends SequenceTest {
 
   @Test
   public void testSequenceWithCalculationMethod_DocumentNoTableName() {
-    final Sequence sequence = SequenceTestUtils.createBaseSequence(
-        CalculationMethod.DOCUMENTNO_TABLENAME, "0110491", SequenceNumberLength.FIXED, 7L);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.DOCUMENTNO_TABLENAME, null, "0110491", null,
+        null, null, null, ControlDigit.NONE, SequenceNumberLength.FIXED, 7L, false);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
     assertTrue("Sequence with calculation method - DocumentNo_TableName is not created",
@@ -60,10 +68,15 @@ public class SequenceCalculationMethodTest extends SequenceTest {
    */
   @Test
   public void testSequenceWithCalculationMethod_Sequence() {
-    final Sequence baseSequence = SequenceTestUtils.createBaseSequence(
-        CalculationMethod.AUTONUMERING, "100", SequenceNumberLength.VARIABLE, null);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "100", null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createParentSequence(baseSequence);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
     OBDal.getInstance().flush();
     assertTrue(

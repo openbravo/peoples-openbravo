@@ -37,6 +37,7 @@ import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.erpCommon.utility.Utility;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.enterprise.Organization;
 import org.openbravo.service.db.DalConnectionProvider;
 
 public class SequenceExceptionTest extends SequenceTest {
@@ -46,8 +47,10 @@ public class SequenceExceptionTest extends SequenceTest {
    */
   @Test
   public void testSequenceExceptionWithCalculationMethod_Sequence() {
-    final Sequence sequence = SequenceTestUtils.createBaseSequence(CalculationMethod.SEQUENCE,
-        "0110491", SequenceNumberLength.FIXED, 7L);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, null, "0110491", null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.FIXED, 7L, false);
     OBDal.getInstance().save(sequence);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
@@ -59,10 +62,15 @@ public class SequenceExceptionTest extends SequenceTest {
    */
   @Test
   public void testSequenceExceptionWithCalculationMethod_AutoNumbering() {
-    final Sequence baseSequence = SequenceTestUtils.createBaseSequence(
-        CalculationMethod.AUTONUMERING, "100", SequenceNumberLength.VARIABLE, null);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "100", null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createParentSequence(baseSequence);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
     OBDal.getInstance().flush();
 
@@ -78,7 +86,10 @@ public class SequenceExceptionTest extends SequenceTest {
 
   @Test
   public void testSequenceExceptionWithSequenceNumberLength_Fixed_SequenceLength_0L() {
-    final Sequence sequence = SequenceTestUtils.createSequence(SequenceNumberLength.FIXED, 0L);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, null,
+        null, null, ControlDigit.NONE, SequenceNumberLength.FIXED, 0L, false);
     OBDal.getInstance().save(sequence);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
@@ -90,7 +101,10 @@ public class SequenceExceptionTest extends SequenceTest {
 
   @Test
   public void testSequenceExceptionWithSequenceNumberLength_Fixed_SequenceLength_Empty() {
-    final Sequence sequence = SequenceTestUtils.createSequence(SequenceNumberLength.FIXED, null);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, null,
+        null, null, ControlDigit.NONE, SequenceNumberLength.FIXED, null, false);
     OBDal.getInstance().save(sequence);
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().flush());
     assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
@@ -99,8 +113,10 @@ public class SequenceExceptionTest extends SequenceTest {
   /** Test sequence with alphanumeric Prefix and Control Digit: Module 10 */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_AlphanumericPrefix() {
-    final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
-        "1A2", null, ControlDigit.MODULE10);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "1A2", null, null, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBException exception = assertThrows(OBException.class,
         () -> OBDal.getInstance().save(sequence));
     assertThat(exception.getMessage(),
@@ -110,8 +126,10 @@ public class SequenceExceptionTest extends SequenceTest {
   /** Test sequence with alphanumeric Suffix and Control Digit: Module 10 */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_AlphanumericSuffix() {
-    final Sequence sequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING, null,
-        null, "1A2", ControlDigit.MODULE10);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "1A2", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBException exception = assertThrows(OBException.class,
         () -> OBDal.getInstance().save(sequence));
     assertThat(exception.getMessage(),
@@ -121,11 +139,15 @@ public class SequenceExceptionTest extends SequenceTest {
   /** Test parent sequence with Base Sequence having alphanumeric Prefix */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_BaseSequenceAlphanumericPrefix() {
-    final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, "1A2", null, ControlDigit.NONE);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "1A2", null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        baseSequence, "06", null, ControlDigit.MODULE10);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBException exception = assertThrows(OBException.class,
         () -> OBDal.getInstance().save(parentSequence));
     assertThat(exception.getMessage(),
@@ -136,11 +158,15 @@ public class SequenceExceptionTest extends SequenceTest {
   /** Test parent sequence with Base Sequence having alphanumeric Suffix */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_BaseSequenceAlphanumericSuffix() {
-    final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, null, "1A2", ControlDigit.NONE);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "1A2", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        baseSequence, "06", null, ControlDigit.MODULE10);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBException exception = assertThrows(OBException.class,
         () -> OBDal.getInstance().save(parentSequence));
     assertThat(exception.getMessage(),
@@ -154,11 +180,15 @@ public class SequenceExceptionTest extends SequenceTest {
    */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_UpdateBaseSequenceAlphanumericSuffix() {
-    final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, null, "100", ControlDigit.NONE);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "100", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        baseSequence, "06", null, ControlDigit.MODULE10);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
     OBDal.getInstance().flush();
     assertTrue(
@@ -179,11 +209,15 @@ public class SequenceExceptionTest extends SequenceTest {
    */
   @Test
   public void testSequenceExceptionWithControlDigit_Module10_UpdateBaseSequenceAlphanumericPrefix() {
-    final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, null, "100", ControlDigit.NONE);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "100", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        baseSequence, "06", null, ControlDigit.MODULE10);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
     OBDal.getInstance().flush();
     assertTrue(
@@ -203,11 +237,15 @@ public class SequenceExceptionTest extends SequenceTest {
    */
   @Test
   public void testSequenceException_UpdateControlDigitModule10() {
-    final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, null, "1A2", ControlDigit.NONE);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "1A2", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        baseSequence, "100", null, ControlDigit.NONE);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "100", null, null,
+        null, null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(parentSequence);
     OBDal.getInstance().flush();
 
@@ -233,17 +271,26 @@ public class SequenceExceptionTest extends SequenceTest {
    */
   @Test
   public void testSequenceException_ControlDigitModule10_UpdateBaseSequenceWithAlphanumericPrefixSuffix() {
-    final Sequence baseSequence = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, null, "100", ControlDigit.NONE);
+    final Sequence baseSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "100", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
+
     OBDal.getInstance().save(baseSequence);
-    final Sequence parentSequence = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        baseSequence, "06", null, ControlDigit.MODULE10);
+    final Sequence parentSequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
+        null, "100", ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
+
     OBDal.getInstance().save(parentSequence);
     OBDal.getInstance().flush();
 
     // new base sequence with alphanumeric suffix
-    final Sequence newBaseSequenceAlphanumericSuffix = SequenceTestUtils
-        .createSequence(CalculationMethod.AUTONUMERING, null, null, "1A2", ControlDigit.NONE);
+    final Sequence newBaseSequenceAlphanumericSuffix = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        "1A2", ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
+
     OBDal.getInstance().save(newBaseSequenceAlphanumericSuffix);
 
     // set parent sequence having Module10 control digit with new base sequence with alphanumeric
@@ -279,16 +326,23 @@ public class SequenceExceptionTest extends SequenceTest {
    */
   @Test
   public void testSequenceException_ControlDigitModule10_3Level() {
-    final Sequence sequence1 = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, "A", null, ControlDigit.NONE);
+    final Sequence sequence1 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "A", null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
+
     OBDal.getInstance().save(sequence1);
 
-    final Sequence sequence2 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        sequence1, null, null, ControlDigit.NONE);
+    final Sequence sequence2 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence1, null, null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(sequence2);
 
-    final Sequence sequence3 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        sequence2, null, null, ControlDigit.MODULE10);
+    final Sequence sequence3 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence2, null, null, null, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
 
     Exception exception = assertThrows(Exception.class, () -> OBDal.getInstance().save(sequence3));
     assertThat(exception.getMessage(),
@@ -305,20 +359,29 @@ public class SequenceExceptionTest extends SequenceTest {
   @Test
   public void testSequenceException_InfiniteLoopProblemBaseSequence() {
 
-    final Sequence sequence1 = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, null, null, ControlDigit.NONE);
+    final Sequence sequence1 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(sequence1);
 
-    final Sequence sequence2 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        sequence1, null, null, ControlDigit.NONE);
+    final Sequence sequence2 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence1, null, null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(sequence2);
 
-    final Sequence sequence3 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        sequence2, null, null, ControlDigit.MODULE10);
+    final Sequence sequence3 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence2, null, null, null, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(sequence3);
 
-    final Sequence sequence0 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        sequence3, null, null, ControlDigit.MODULE10);
+    final Sequence sequence0 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence3, null, null, null, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
+
     OBDal.getInstance().save(sequence0);
 
     // Update calculation method and base sequence of first sequence in the tree
@@ -339,20 +402,32 @@ public class SequenceExceptionTest extends SequenceTest {
   @Test
   public void testSequenceException_InfiniteLoopProblem_IntermediateBaseSequence() {
 
-    final Sequence sequence1 = SequenceTestUtils.createSequence(CalculationMethod.AUTONUMERING,
-        null, null, null, ControlDigit.NONE);
+    final Sequence sequence1 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, null, null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
+
     OBDal.getInstance().save(sequence1);
 
-    final Sequence sequence2 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        sequence1, null, null, ControlDigit.NONE);
+    final Sequence sequence2 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence1, null, null, null, null,
+        null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
+
     OBDal.getInstance().save(sequence2);
 
-    final Sequence sequence3 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        sequence2, null, null, ControlDigit.MODULE10);
+    final Sequence sequence3 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence2, null, null, null, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
+
     OBDal.getInstance().save(sequence3);
 
-    final Sequence sequence0 = SequenceTestUtils.createSequence(CalculationMethod.SEQUENCE,
-        sequence3, null, null, ControlDigit.MODULE10);
+    final Sequence sequence0 = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, sequence3, null, null, null, null,
+        null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
+
     OBDal.getInstance().save(sequence0);
 
     // Update base sequence of intermediate sequence in the tree

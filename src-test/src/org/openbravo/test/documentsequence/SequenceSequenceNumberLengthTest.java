@@ -20,10 +20,15 @@ package org.openbravo.test.documentsequence;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.UUID;
+
 import org.junit.Test;
 import org.openbravo.dal.service.OBDal;
+import org.openbravo.erpCommon.utility.SequenceUtil.CalculationMethod;
+import org.openbravo.erpCommon.utility.SequenceUtil.ControlDigit;
 import org.openbravo.erpCommon.utility.SequenceUtil.SequenceNumberLength;
 import org.openbravo.model.ad.utility.Sequence;
+import org.openbravo.model.common.enterprise.Organization;
 
 public class SequenceSequenceNumberLengthTest extends SequenceTest {
 
@@ -32,7 +37,10 @@ public class SequenceSequenceNumberLengthTest extends SequenceTest {
    */
   @Test
   public void testSequenceWithSequenceNumberLength_Variable() {
-    final Sequence sequence = SequenceTestUtils.createSequence(SequenceNumberLength.VARIABLE, null);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, null,
+        null, null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, null, false);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
     assertTrue("Sequence with Sequence Number Length - Variable is not created", sequence != null);
@@ -44,7 +52,10 @@ public class SequenceSequenceNumberLengthTest extends SequenceTest {
 
   @Test
   public void testSequenceWithSequenceNumberLength_Fixed() {
-    final Sequence sequence = SequenceTestUtils.createSequence(SequenceNumberLength.FIXED, 7L);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, null,
+        null, null, ControlDigit.NONE, SequenceNumberLength.FIXED, 7L, false);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
     assertTrue("Sequence with Sequence Number Length - Fixed is not created", sequence != null);
@@ -57,7 +68,10 @@ public class SequenceSequenceNumberLengthTest extends SequenceTest {
 
   @Test
   public void testSequenceWithSequenceNumberLength_Variable_SequenceLength() {
-    final Sequence sequence = SequenceTestUtils.createSequence(SequenceNumberLength.VARIABLE, 10L);
+    final Sequence sequence = SequenceTestUtils.createDocumentSequence(
+        OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
+        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, null,
+        null, null, ControlDigit.NONE, SequenceNumberLength.VARIABLE, 10L, false);
     OBDal.getInstance().save(sequence);
     OBDal.getInstance().flush();
     assertTrue("Sequence with Sequence Number Length - Variable is with Sequence Length",

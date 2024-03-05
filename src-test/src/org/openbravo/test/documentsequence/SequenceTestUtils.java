@@ -88,56 +88,6 @@ class SequenceTestUtils {
   }
 
   /**
-   * Create sequence with calculation method, prefix, sequence number length and sequence length
-   * 
-   * @return Sequence to be used in tests
-   */
-
-  public static Sequence createBaseSequence(CalculationMethod calculationMethod, String prefix,
-      SequenceNumberLength sequenceNumberLength, Long sequenceLength) {
-    return createDocumentSequence(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
-        UUID.randomUUID().toString(), calculationMethod, null, prefix, null, null, null, null,
-        ControlDigit.NONE, sequenceNumberLength, sequenceLength, false);
-  }
-
-  /**
-   * Create sequence with base sequence
-   * 
-   * @return Sequence to be used in tests
-   */
-
-  public static Sequence createParentSequence(Sequence baseSequence) {
-    return createDocumentSequence(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
-        UUID.randomUUID().toString(), CalculationMethod.SEQUENCE, baseSequence, "06", null, null,
-        null, null, ControlDigit.MODULE10, SequenceNumberLength.VARIABLE, null, false);
-  }
-
-  /**
-   * Create sequence with calculation method auto numbering, Fixed or Variable sequence number
-   * length, sequence length
-   * 
-   * @return Sequence for various sequence number length and sequence length combinations
-   */
-  public static Sequence createSequence(SequenceNumberLength sequenceNumberLength,
-      Long sequenceLength) {
-    return createDocumentSequence(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
-        UUID.randomUUID().toString(), CalculationMethod.AUTONUMERING, null, "0110491", null, null,
-        null, null, ControlDigit.NONE, sequenceNumberLength, sequenceLength, false);
-  }
-
-  /**
-   * Create sequence with calculation method, baseSequence, controlDigit, prefix and suffix
-   * 
-   * @return Sequence to be used for validate prefix/suffix/control digit combination
-   */
-  public static Sequence createSequence(CalculationMethod calculationMethod, Sequence baseSequence,
-      String prefix, String suffix, ControlDigit controlDigit) {
-    return createDocumentSequence(OBDal.getInstance().getProxy(Organization.class, QA_SPAIN_ORG_ID),
-        UUID.randomUUID().toString(), calculationMethod, baseSequence, prefix, null, null, null,
-        suffix, controlDigit, SequenceNumberLength.VARIABLE, null, false);
-  }
-
-  /**
    * 
    * Call AD_SEQUENCE_DOCUMENTNO - get documentNo using computation of sequence and control digit in
    * PL
